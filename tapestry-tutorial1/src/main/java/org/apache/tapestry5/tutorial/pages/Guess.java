@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.tutorial.pages;
+package org.apache.tapestry5.tutorial.pages;
 
-import org.apache.tapestry.annotation.InjectPage;
-import org.apache.tapestry.annotation.Persist;
-import org.apache.tapestry.annotation.Property;
+import org.apache.tapestry5.annotations.InjectPage;
+import org.apache.tapestry5.annotations.Persist;
+import org.apache.tapestry5.annotations.Property;
 
 public class Guess
 {

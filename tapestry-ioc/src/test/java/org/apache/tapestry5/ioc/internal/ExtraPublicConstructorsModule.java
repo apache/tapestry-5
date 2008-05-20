@@ -12,13 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.internal;
+package org.apache.tapestry5.ioc.internal;
 
-import org.apache.tapestry.ioc.annotation.InjectService;
-import org.apache.tapestry.ioc.services.ClassFactory;
+import org.apache.tapestry5.ioc.annotations.InjectService;
+import org.apache.tapestry5.ioc.services.ClassFactory;
 
 /**
- * Used by {@link org.apache.tapestry.ioc.internal.ModuleImplTest}.
+ * Used by {@link org.apache.tapestry5.ioc.internal.ModuleImplTest}.
  */
 public class ExtraPublicConstructorsModule
 {

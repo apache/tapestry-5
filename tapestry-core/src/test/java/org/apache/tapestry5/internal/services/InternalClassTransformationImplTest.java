@@ -12,31 +12,31 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
 import javassist.*;
-import org.apache.tapestry.annotation.Meta;
-import org.apache.tapestry.annotation.OnEvent;
-import org.apache.tapestry.annotation.Retain;
-import org.apache.tapestry.annotation.SetupRender;
-import org.apache.tapestry.internal.InternalComponentResources;
-import org.apache.tapestry.internal.model.MutableComponentModelImpl;
-import org.apache.tapestry.internal.test.InternalBaseTestCase;
-import org.apache.tapestry.internal.transform.FieldRemoval;
-import org.apache.tapestry.internal.transform.InheritedAnnotation;
-import org.apache.tapestry.internal.transform.TestPackageAwareLoader;
-import org.apache.tapestry.internal.transform.pages.*;
-import org.apache.tapestry.ioc.internal.services.ClassFactoryClassPool;
-import org.apache.tapestry.ioc.internal.services.ClassFactoryImpl;
-import org.apache.tapestry.ioc.services.ClassFactory;
-import org.apache.tapestry.ioc.services.PropertyAccess;
-import org.apache.tapestry.ioc.util.BodyBuilder;
-import org.apache.tapestry.model.MutableComponentModel;
-import org.apache.tapestry.runtime.Component;
-import org.apache.tapestry.runtime.ComponentResourcesAware;
-import org.apache.tapestry.services.ClassTransformation;
-import org.apache.tapestry.services.MethodFilter;
-import org.apache.tapestry.services.TransformMethodSignature;
+import org.apache.tapestry5.annotations.Meta;
+import org.apache.tapestry5.annotations.OnEvent;
+import org.apache.tapestry5.annotations.Retain;
+import org.apache.tapestry5.annotations.SetupRender;
+import org.apache.tapestry5.internal.InternalComponentResources;
+import org.apache.tapestry5.internal.model.MutableComponentModelImpl;
+import org.apache.tapestry5.internal.test.InternalBaseTestCase;
+import org.apache.tapestry5.internal.transform.FieldRemoval;
+import org.apache.tapestry5.internal.transform.InheritedAnnotation;
+import org.apache.tapestry5.internal.transform.TestPackageAwareLoader;
+import org.apache.tapestry5.internal.transform.pages.*;
+import org.apache.tapestry5.ioc.internal.services.ClassFactoryClassPool;
+import org.apache.tapestry5.ioc.internal.services.ClassFactoryImpl;
+import org.apache.tapestry5.ioc.services.ClassFactory;
+import org.apache.tapestry5.ioc.services.PropertyAccess;
+import org.apache.tapestry5.ioc.util.BodyBuilder;
+import org.apache.tapestry5.model.MutableComponentModel;
+import org.apache.tapestry5.runtime.Component;
+import org.apache.tapestry5.runtime.ComponentResourcesAware;
+import org.apache.tapestry5.services.ClassTransformation;
+import org.apache.tapestry5.services.MethodFilter;
+import org.apache.tapestry5.services.TransformMethodSignature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.AfterClass;
@@ -193,7 +193,7 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
         catch (RuntimeException ex)
         {
             assertEquals(ex.getMessage(),
-                         "Class org.apache.tapestry.internal.transform.pages.ParentClass does not contain a field named 'unknownField'.");
+                         "Class org.apache.tapestry5.internal.transform.pages.ParentClass does not contain a field named 'unknownField'.");
         }
 
         verify();
@@ -339,7 +339,7 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
         catch (RuntimeException ex)
         {
             assertEquals(ex.getMessage(),
-                         "Field _field4 of class org.apache.tapestry.internal.transform.pages.ClaimedFields is already claimed by Fred and can not be claimed by Barney.");
+                         "Field _field4 of class org.apache.tapestry5.internal.transform.pages.ClaimedFields is already claimed by Fred and can not be claimed by Barney.");
         }
 
         verify();
@@ -635,7 +635,7 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
             // The PropertyAccess layer adds a wrapper exception around the real one.
 
             assertEquals(ex.getCause().getMessage(),
-                         "Field org.apache.tapestry.internal.transform.pages.ReadOnlyBean._value is read-only.");
+                         "Field org.apache.tapestry5.internal.transform.pages.ReadOnlyBean._value is read-only.");
         }
 
         verify();
@@ -720,7 +720,7 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
             // The PropertyAccess layer adds a wrapper exception around the real one.
 
             assertEquals(ex.getCause().getMessage(),
-                         "Field org.apache.tapestry.internal.transform.pages.ReadOnlyBean._value is read-only.");
+                         "Field org.apache.tapestry5.internal.transform.pages.ReadOnlyBean._value is read-only.");
         }
 
         verify();
@@ -827,7 +827,7 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
 
         assertEquals(l.size(), 2);
         assertEquals(l.get(0).toString(), "void beforeRender()");
-        assertEquals(l.get(1).toString(), "boolean earlyRender(org.apache.tapestry.MarkupWriter)");
+        assertEquals(l.get(1).toString(), "boolean earlyRender(org.apache.tapestry5.MarkupWriter)");
 
         // Check up on cacheing
 
@@ -865,7 +865,7 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
 
         assertEquals(l.size(), 2);
         assertEquals(l.get(0).toString(), "void beforeRender()");
-        assertEquals(l.get(1).toString(), "boolean earlyRender(org.apache.tapestry.MarkupWriter)");
+        assertEquals(l.get(1).toString(), "boolean earlyRender(org.apache.tapestry5.MarkupWriter)");
 
         // Check up on cacheing
 
@@ -968,7 +968,7 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
         catch (IllegalArgumentException ex)
         {
             assertEquals(ex.getMessage(),
-                         "Class org.apache.tapestry.internal.transform.pages.ParentClass does not declare method 'public void foo()'.");
+                         "Class org.apache.tapestry5.internal.transform.pages.ParentClass does not declare method 'public void foo()'.");
         }
 
         verify();
@@ -1164,7 +1164,7 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
         TransformMethodSignature sig = sigs.get(0);
 
         assertEquals(ct.getMethodIdentifier(sig),
-                     "org.apache.tapestry.internal.transform.pages.MethodIdentifier.makeWaves(java.lang.String, int[]) (at MethodIdentifier.java:24)");
+                     "org.apache.tapestry5.internal.transform.pages.MethodIdentifier.makeWaves(java.lang.String, int[]) (at MethodIdentifier.java:24)");
 
         verify();
     }

@@ -12,16 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.def;
+package org.apache.tapestry5.ioc.def;
 
-import org.apache.tapestry.ioc.*;
+import org.apache.tapestry5.ioc.*;
 
 /**
  * Contribution to a service configuration.
  * <p/>
- * The toString() method of the ContributionDef will be used for some exception reporting and should
- * clearly identify where the contribution comes from; the normal behavior is to identify the class
- * and method of the contribution method.
+ * The toString() method of the ContributionDef will be used for some exception reporting and should clearly identify
+ * where the contribution comes from; the normal behavior is to identify the class and method of the contribution
+ * method.
  */
 public interface ContributionDef
 {

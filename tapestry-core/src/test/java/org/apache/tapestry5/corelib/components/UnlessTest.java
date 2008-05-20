@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.corelib.components;
+package org.apache.tapestry5.corelib.components;
 
+import org.apache.tapestry5.Block;
+import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.testng.annotations.Test;
-import org.apache.tapestry.Block;
-import org.apache.tapestry.internal.test.InternalBaseTestCase;
 
 public class UnlessTest extends InternalBaseTestCase
 {

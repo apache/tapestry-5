@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.transform;
+package org.apache.tapestry5.internal.transform;
 
-import org.apache.tapestry.annotation.MixinAfter;
-import org.apache.tapestry.internal.test.InternalBaseTestCase;
-import org.apache.tapestry.model.MutableComponentModel;
-import org.apache.tapestry.services.ClassTransformation;
+import org.apache.tapestry5.annotations.MixinAfter;
+import org.apache.tapestry5.internal.test.InternalBaseTestCase;
+import org.apache.tapestry5.model.MutableComponentModel;
+import org.apache.tapestry5.services.ClassTransformation;
 import org.testng.annotations.Test;
 
 public class MixinAfterWorkerTest extends InternalBaseTestCase

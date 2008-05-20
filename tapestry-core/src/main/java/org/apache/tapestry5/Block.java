@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry;
+package org.apache.tapestry5;
 
 /**
  * A block is a collection of static text and elements, and components, derived from a component template. In the

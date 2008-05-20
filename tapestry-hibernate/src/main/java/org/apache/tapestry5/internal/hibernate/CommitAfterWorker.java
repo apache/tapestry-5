@@ -12,17 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.hibernate;
+package org.apache.tapestry5.internal.hibernate;
 
-import org.apache.tapestry.hibernate.HibernateSessionManager;
-import org.apache.tapestry.hibernate.annotations.CommitAfter;
-import org.apache.tapestry.model.MutableComponentModel;
-import org.apache.tapestry.services.*;
+import org.apache.tapestry5.hibernate.HibernateSessionManager;
+import org.apache.tapestry5.hibernate.annotations.CommitAfter;
+import org.apache.tapestry5.model.MutableComponentModel;
+import org.apache.tapestry5.services.*;
 
 /**
- * Searches for methods that have the {@link org.apache.tapestry.hibernate.annotations.CommitAfter} annotation and adds
+ * Searches for methods that have the {@link org.apache.tapestry5.hibernate.annotations.CommitAfter} annotation and adds
  * logic around the method to commit or abort the transaction.  The commit/abort logic is the same as for the {@link
- * org.apache.tapestry.hibernate.HibernateTransactionDecorator} service.
+ * org.apache.tapestry5.hibernate.HibernateTransactionDecorator} service.
  */
 public class CommitAfterWorker implements ComponentClassTransformWorker
 {

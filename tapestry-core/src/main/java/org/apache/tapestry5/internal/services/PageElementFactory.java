@@ -12,23 +12,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry.Binding;
-import org.apache.tapestry.ComponentResources;
-import org.apache.tapestry.annotation.Component;
-import org.apache.tapestry.internal.parser.AttributeToken;
-import org.apache.tapestry.internal.parser.ExpansionToken;
-import org.apache.tapestry.internal.structure.ComponentPageElement;
-import org.apache.tapestry.internal.structure.Page;
-import org.apache.tapestry.internal.structure.PageElement;
-import org.apache.tapestry.ioc.Location;
-import org.apache.tapestry.services.BindingSource;
+import org.apache.tapestry5.Binding;
+import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.annotations.Component;
+import org.apache.tapestry5.internal.parser.AttributeToken;
+import org.apache.tapestry5.internal.parser.ExpansionToken;
+import org.apache.tapestry5.internal.structure.ComponentPageElement;
+import org.apache.tapestry5.internal.structure.Page;
+import org.apache.tapestry5.internal.structure.PageElement;
+import org.apache.tapestry5.ioc.Location;
+import org.apache.tapestry5.services.BindingSource;
 
 import java.util.Locale;
 
 /**
- * Used by the {@link org.apache.tapestry.internal.services.PageLoader} to create page elements
+ * Used by the {@link org.apache.tapestry5.internal.services.PageLoader} to create page elements
  */
 public interface PageElementFactory
 {

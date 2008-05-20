@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.hibernate;
+package org.apache.tapestry5.internal.hibernate;
 
 import org.dom4j.Document;
 import org.hibernate.HibernateException;
@@ -494,5 +494,5 @@ final class ImmutableConfiguration extends Configuration
     public String toString()
     {
         return "ImmutableConfiguration[" + config + "]";
-	}
+    }
 }

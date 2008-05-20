@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.services;
+package org.apache.tapestry5.services;
 
 /**
  * An object that receives control around an "advised" method of a component. The advise can query or even replace
- * method parameters.  After invoking {@link org.apache.tapestry.services.ComponentMethodInvocation#proceed()}, the
+ * method parameters.  After invoking {@link org.apache.tapestry5.services.ComponentMethodInvocation#proceed()}, the
  * advise may query and override thrown exceptions or the return value of the invocation.
  *
  * @see ClassTransformation#advise(TransformMethodSignature, ComponentMethodAdvice)

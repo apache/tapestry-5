@@ -12,16 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.corelib.components;
+package org.apache.tapestry5.corelib.components;
 
-import org.apache.tapestry.Binding;
-import org.apache.tapestry.ComponentResources;
-import org.apache.tapestry.MarkupWriter;
-import org.apache.tapestry.annotation.Parameter;
-import org.apache.tapestry.annotation.SupportsInformalParameters;
-import org.apache.tapestry.ioc.annotation.Inject;
-import org.apache.tapestry.ioc.internal.util.InternalUtils;
-import org.apache.tapestry.services.ComponentDefaultProvider;
+import org.apache.tapestry5.Binding;
+import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.annotations.Parameter;
+import org.apache.tapestry5.annotations.SupportsInformalParameters;
+import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.services.ComponentDefaultProvider;
 
 import java.text.Format;
 

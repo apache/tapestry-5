@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry;
+package org.apache.tapestry5;
 
 import org.apache.commons.codec.net.URLCodec;
 
@@ -21,7 +21,7 @@ import java.util.List;
 /**
  * A link is the Tapestry representation of a URL or URI that triggers dynamic behavior. This link is in three parts: a
  * path portion, an optional anchor, and a set of query parameters. A request for a link will ultimately be recognized
- * by a {@link org.apache.tapestry.services.Dispatcher}.
+ * by a {@link org.apache.tapestry5.services.Dispatcher}.
  * <p/>
  * Query parameter values are kept separate from the path portion to support encoding those values into hidden form
  * fields (where appropriate).

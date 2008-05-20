@@ -12,15 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.services;
+package org.apache.tapestry5.services;
 
-import org.apache.tapestry.Asset;
-import org.apache.tapestry.ioc.Resource;
+import org.apache.tapestry5.Asset;
+import org.apache.tapestry5.ioc.Resource;
 
 /**
  * Used by {@link AssetSource} to create new {@link Asset}s as needed.
  *
- * @see org.apache.tapestry.services.AssetSource
+ * @see org.apache.tapestry5.services.AssetSource
  */
 public interface AssetFactory
 {

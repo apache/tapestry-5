@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.internal.util;
+package org.apache.tapestry5.ioc.internal.util;
 
-import org.apache.tapestry.ioc.services.ClassFabUtils;
+import org.apache.tapestry5.ioc.services.ClassFabUtils;
 
 import java.util.Iterator;
 import java.util.LinkedList;

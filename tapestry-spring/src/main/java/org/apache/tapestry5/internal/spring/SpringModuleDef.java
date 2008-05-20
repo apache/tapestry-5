@@ -12,16 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.spring;
+package org.apache.tapestry5.internal.spring;
 
-import org.apache.tapestry.ioc.IOCConstants;
-import org.apache.tapestry.ioc.ObjectCreator;
-import org.apache.tapestry.ioc.ServiceBuilderResources;
-import org.apache.tapestry.ioc.def.ContributionDef;
-import org.apache.tapestry.ioc.def.DecoratorDef;
-import org.apache.tapestry.ioc.def.ModuleDef;
-import org.apache.tapestry.ioc.def.ServiceDef;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newCaseInsensitiveMap;
+import org.apache.tapestry5.ioc.IOCConstants;
+import org.apache.tapestry5.ioc.ObjectCreator;
+import org.apache.tapestry5.ioc.ServiceBuilderResources;
+import org.apache.tapestry5.ioc.def.ContributionDef;
+import org.apache.tapestry5.ioc.def.DecoratorDef;
+import org.apache.tapestry5.ioc.def.ModuleDef;
+import org.apache.tapestry5.ioc.def.ServiceDef;
+import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newCaseInsensitiveMap;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.WebApplicationContext;

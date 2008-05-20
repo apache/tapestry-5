@@ -12,17 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry.internal.event.InvalidationEventHub;
-import org.apache.tapestry.ioc.internal.services.CtClassSource;
-import org.apache.tapestry.ioc.services.ClassFactory;
+import org.apache.tapestry5.internal.event.InvalidationEventHub;
+import org.apache.tapestry5.ioc.internal.services.CtClassSource;
+import org.apache.tapestry5.ioc.services.ClassFactory;
 
 /**
- * Creates {@link org.apache.tapestry.internal.services.Instantiator}s for components, based on component class name.
+ * Creates {@link org.apache.tapestry5.internal.services.Instantiator}s for components, based on component class name.
  * This will involve transforming the component's class before it is loaded.
  * <p/>
- * In addition, a source acts as an event hub for {@link org.apache.tapestry.internal.events.InvalidationListener}s, so
+ * In addition, a source acts as an event hub for {@link org.apache.tapestry5.internal.events.InvalidationListener}s, so
  * that any information derived from loaded classes can be discarded and rebuilt when classes change.
  * <p/>
  * The strategy used is that when <em>any</em> class (in a controlled package) changes, the entire class loader is

@@ -12,18 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.services;
+package org.apache.tapestry5.services;
 
-import org.apache.tapestry.MarkupWriter;
+import org.apache.tapestry5.MarkupWriter;
 
 /**
- * Filter interface for {@link org.apache.tapestry.services.MarkupRenderer}, which allows for code to execute before
+ * Filter interface for {@link org.apache.tapestry5.services.MarkupRenderer}, which allows for code to execute before
  * and/or after the main rendering process.  Typically, this is to allow for the placement of {@linkplain
- * org.apache.tapestry.services.Environment environmental services}.
+ * org.apache.tapestry5.services.Environment environmental services}.
  *
- * @see org.apache.tapestry.services.TapestryModule#contributeMarkupRenderer(org.apache.tapestry.ioc.OrderedConfiguration,
- *      org.apache.tapestry.Asset, org.apache.tapestry.Asset, ValidationMessagesSource,
- *      org.apache.tapestry.ioc.services.SymbolSource, AssetSource)
+ * @see org.apache.tapestry5.services.TapestryModule#contributeMarkupRenderer(org.apache.tapestry5.ioc.OrderedConfiguration,
+ *      org.apache.tapestry5.Asset, org.apache.tapestry5.Asset, ValidationMessagesSource,
+ *      org.apache.tapestry5.ioc.services.SymbolSource, AssetSource)
  */
 public interface MarkupRendererFilter
 {

@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.internal.services;
+package org.apache.tapestry5.ioc.internal.services;
 
-import org.apache.tapestry.ioc.internal.IOCInternalTestCase;
-import org.apache.tapestry.ioc.services.ClassFactory;
+import org.apache.tapestry5.ioc.internal.IOCInternalTestCase;
+import org.apache.tapestry5.ioc.services.ClassFactory;
 import org.slf4j.Logger;
 import org.testng.annotations.Test;
 
@@ -63,7 +63,7 @@ public class BridgeBuilderTest extends IOCInternalTestCase
 
         assertEquals(
                 bridge.toString(),
-                "<PipelineBridge from org.apache.tapestry.ioc.internal.services.StandardService to org.apache.tapestry.ioc.internal.services.StandardFilter>");
+                "<PipelineBridge from org.apache.tapestry5.ioc.internal.services.StandardService to org.apache.tapestry5.ioc.internal.services.StandardFilter>");
 
         verify();
     }
@@ -143,7 +143,7 @@ public class BridgeBuilderTest extends IOCInternalTestCase
 
         logger
                 .error("Method void extraFilterMethod() of filter interface "
-                        + "org.apache.tapestry.ioc.internal.services.ExtraFilterMethod does not have a matching method "
+                        + "org.apache.tapestry5.ioc.internal.services.ExtraFilterMethod does not have a matching method "
                         + "in java.io.Serializable.");
 
         replay();

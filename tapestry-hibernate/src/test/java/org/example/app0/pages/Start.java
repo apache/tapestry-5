@@ -14,8 +14,8 @@
 
 package org.example.app0.pages;
 
-import org.apache.tapestry.annotation.InjectPage;
-import org.apache.tapestry.ioc.annotation.Inject;
+import org.apache.tapestry5.annotations.InjectPage;
+import org.apache.tapestry5.ioc.annotations.Inject;
 import org.example.app0.entities.User;
 import org.example.app0.services.UserDAO;
 

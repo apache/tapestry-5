@@ -12,14 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.services;
+package org.apache.tapestry5.services;
 
-import org.apache.tapestry.model.MutableComponentModel;
+import org.apache.tapestry5.model.MutableComponentModel;
 
 /**
  * Interface for a set of objects that can perform component class transformations. Implementations should be
  * multithreaded, ideally they should be stateless (all necessary state can be stored in the {@link
- * org.apache.tapestry.services.ClassTransformation}).
+ * org.apache.tapestry5.services.ClassTransformation}).
  */
 public interface ComponentClassTransformWorker
 {

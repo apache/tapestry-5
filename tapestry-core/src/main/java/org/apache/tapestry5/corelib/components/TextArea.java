@@ -12,19 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.corelib.components;
+package org.apache.tapestry5.corelib.components;
 
-import org.apache.tapestry.MarkupWriter;
-import org.apache.tapestry.corelib.base.AbstractTextField;
+import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.corelib.base.AbstractTextField;
 
 /**
  * TextArea component corresponds to a &lt;textarea&gt; element. The value parameter is almost always bound to a string,
  * but this is not an absolute requirement.
  * <p/>
- * Includes the <code>cols</code> attribute, if a {@link org.apache.tapestry.beaneditor.Width} annotation is present on
+ * Includes the <code>cols</code> attribute, if a {@link org.apache.tapestry5.beaneditor.Width} annotation is present on
  * the property bound to the value parameter.
  *
- * @see org.apache.tapestry.corelib.components.TextOutput
+ * @see org.apache.tapestry5.corelib.components.TextOutput
  */
 public final class TextArea extends AbstractTextField
 {

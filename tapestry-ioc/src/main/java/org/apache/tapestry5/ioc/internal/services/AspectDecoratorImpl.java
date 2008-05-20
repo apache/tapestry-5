@@ -12,14 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.internal.services;
+package org.apache.tapestry5.ioc.internal.services;
 
-import org.apache.tapestry.ioc.MethodAdvice;
-import org.apache.tapestry.ioc.internal.util.Defense;
-import org.apache.tapestry.ioc.services.AspectDecorator;
-import org.apache.tapestry.ioc.services.AspectInterceptorBuilder;
-import org.apache.tapestry.ioc.services.Builtin;
-import org.apache.tapestry.ioc.services.ClassFactory;
+import org.apache.tapestry5.ioc.MethodAdvice;
+import org.apache.tapestry5.ioc.internal.util.Defense;
+import org.apache.tapestry5.ioc.services.AspectDecorator;
+import org.apache.tapestry5.ioc.services.AspectInterceptorBuilder;
+import org.apache.tapestry5.ioc.services.Builtin;
+import org.apache.tapestry5.ioc.services.ClassFactory;
 
 import java.lang.reflect.Method;
 

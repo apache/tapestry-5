@@ -12,13 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry.MarkupWriter;
-import org.apache.tapestry.MarkupWriterListener;
-import org.apache.tapestry.dom.Element;
-import org.apache.tapestry.dom.XMLMarkupModel;
-import org.apache.tapestry.internal.test.InternalBaseTestCase;
+import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.MarkupWriterListener;
+import org.apache.tapestry5.dom.Element;
+import org.apache.tapestry5.dom.XMLMarkupModel;
+import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.testng.annotations.Test;
 
 public class MarkupWriterImplTest extends InternalBaseTestCase

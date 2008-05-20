@@ -12,20 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
 import javassist.CtClass;
-import org.apache.tapestry.internal.util.MultiKey;
-import org.apache.tapestry.ioc.internal.util.IdAllocator;
-import org.apache.tapestry.model.MutableComponentModel;
-import org.apache.tapestry.services.ClassTransformation;
-import org.apache.tapestry.services.ComponentClassTransformWorker;
-import org.apache.tapestry.services.TransformMethodSignature;
+import org.apache.tapestry5.internal.util.MultiKey;
+import org.apache.tapestry5.ioc.internal.util.IdAllocator;
+import org.apache.tapestry5.model.MutableComponentModel;
+import org.apache.tapestry5.services.ClassTransformation;
+import org.apache.tapestry5.services.ComponentClassTransformWorker;
+import org.apache.tapestry5.services.TransformMethodSignature;
 
 import java.util.List;
 
 /**
- * Extends {@link org.apache.tapestry.services.ClassTransformation} with additional methods that may only be used
+ * Extends {@link org.apache.tapestry5.services.ClassTransformation} with additional methods that may only be used
  * internally by Tapestry.
  */
 public interface InternalClassTransformation extends ClassTransformation

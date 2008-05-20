@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.services;
+package org.apache.tapestry5.ioc.services;
 
 /**
- * Analyzes an exception, providing an analysis. The analysis easily exposes properties of the
- * exception, the stack trace, and nested exceptions.
+ * Analyzes an exception, providing an analysis. The analysis easily exposes properties of the exception, the stack
+ * trace, and nested exceptions.
  */
 public interface ExceptionAnalyzer
 {

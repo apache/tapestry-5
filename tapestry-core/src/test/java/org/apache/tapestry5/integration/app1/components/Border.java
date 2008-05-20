@@ -12,14 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.integration.app1.components;
+package org.apache.tapestry5.integration.app1.components;
 
-import org.apache.tapestry.annotation.IncludeStylesheet;
-import org.apache.tapestry.ioc.annotation.Inject;
-import org.apache.tapestry.ioc.services.Builtin;
-import org.apache.tapestry.ioc.services.ClassFactory;
-import org.apache.tapestry.services.ComponentLayer;
-import org.apache.tapestry.services.Request;
+import org.apache.tapestry5.annotations.IncludeStylesheet;
+import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.services.Builtin;
+import org.apache.tapestry5.ioc.services.ClassFactory;
+import org.apache.tapestry5.services.ComponentLayer;
+import org.apache.tapestry5.services.Request;
 
 /**
  * Here's a component with a template, including a t:body element.   Really should rename this to "Layout" as that's the

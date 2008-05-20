@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc;
+package org.apache.tapestry5.ioc;
 
 /**
- * A method invocation passed to an {@link org.apache.tapestry.ioc.MethodAdvice}.
+ * A method invocation passed to an {@link org.apache.tapestry5.ioc.MethodAdvice}.
  */
 public interface Invocation
 {

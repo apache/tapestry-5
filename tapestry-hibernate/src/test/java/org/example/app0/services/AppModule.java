@@ -14,13 +14,13 @@
 
 package org.example.app0.services;
 
-import org.apache.tapestry.SymbolConstants;
-import org.apache.tapestry.hibernate.HibernateModule;
-import org.apache.tapestry.hibernate.HibernateTransactionDecorator;
-import org.apache.tapestry.ioc.MappedConfiguration;
-import org.apache.tapestry.ioc.ServiceBinder;
-import org.apache.tapestry.ioc.annotation.Match;
-import org.apache.tapestry.ioc.annotation.SubModule;
+import org.apache.tapestry5.SymbolConstants;
+import org.apache.tapestry5.hibernate.HibernateModule;
+import org.apache.tapestry5.hibernate.HibernateTransactionDecorator;
+import org.apache.tapestry5.ioc.MappedConfiguration;
+import org.apache.tapestry5.ioc.ServiceBinder;
+import org.apache.tapestry5.ioc.annotations.Match;
+import org.apache.tapestry5.ioc.annotations.SubModule;
 
 @SubModule(HibernateModule.class)
 public class AppModule

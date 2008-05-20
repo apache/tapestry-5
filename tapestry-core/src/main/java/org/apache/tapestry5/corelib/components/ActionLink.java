@@ -12,13 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.corelib.components;
+package org.apache.tapestry5.corelib.components;
 
-import org.apache.tapestry.ComponentResources;
-import org.apache.tapestry.EventConstants;
-import org.apache.tapestry.Link;
-import org.apache.tapestry.corelib.base.AbstractComponentEventLink;
-import org.apache.tapestry.ioc.annotation.Inject;
+import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.EventConstants;
+import org.apache.tapestry5.Link;
+import org.apache.tapestry5.corelib.base.AbstractComponentEventLink;
+import org.apache.tapestry5.ioc.annotations.Inject;
 
 /**
  * Component that triggers an action on the server with a subsequent full page refresh.

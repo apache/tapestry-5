@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.integration.app1;
+package org.apache.tapestry5.integration.app1;
 
 /**
  * Used in a test for TAPESTRY-1934; base classes should be in the .base package.

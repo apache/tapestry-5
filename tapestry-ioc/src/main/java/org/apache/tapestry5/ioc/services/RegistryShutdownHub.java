@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.services;
+package org.apache.tapestry5.ioc.services;
 
 /**
- * Event hub for notifications when the IOC {@link org.apache.tapestry.ioc.Registry} shuts down.
+ * Event hub for notifications when the IOC {@link org.apache.tapestry5.ioc.Registry} shuts down.
  */
 public interface RegistryShutdownHub
 {

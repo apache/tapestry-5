@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.transform;
+package org.apache.tapestry5.internal.transform;
 
 import javassist.ClassPool;
 import javassist.Loader;
@@ -30,7 +30,7 @@ public class TestPackageAwareLoader extends Loader
         int lastdotx = className.lastIndexOf('.');
         String packageName = className.substring(0, lastdotx);
 
-        if (packageName.startsWith("org.apache.tapestry.internal.transform.")) return super.findClass(className);
+        if (packageName.startsWith("org.apache.tapestry5.internal.transform.")) return super.findClass(className);
 
         // Returning null forces delegation to the parent class loader.
 

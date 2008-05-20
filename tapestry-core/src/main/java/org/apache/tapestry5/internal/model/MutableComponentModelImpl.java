@@ -12,15 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.model;
+package org.apache.tapestry5.internal.model;
 
-import org.apache.tapestry.ioc.Location;
-import org.apache.tapestry.ioc.Resource;
-import org.apache.tapestry.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry.ioc.internal.util.Defense;
-import org.apache.tapestry.ioc.internal.util.IdAllocator;
-import org.apache.tapestry.ioc.internal.util.InternalUtils;
-import org.apache.tapestry.model.*;
+import org.apache.tapestry5.ioc.Location;
+import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.internal.util.Defense;
+import org.apache.tapestry5.ioc.internal.util.IdAllocator;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.model.*;
 import org.slf4j.Logger;
 
 import java.util.Collections;
@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Internal implementation of {@link org.apache.tapestry.model.MutableComponentModel}.
+ * Internal implementation of {@link org.apache.tapestry5.model.MutableComponentModel}.
  */
 public final class MutableComponentModelImpl implements MutableComponentModel
 {

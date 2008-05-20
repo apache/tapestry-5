@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.upload.internal.services;
+package org.apache.tapestry5.upload.internal.services;
 
 import static org.testng.Assert.*;
 import org.testng.annotations.Test;
@@ -31,7 +31,7 @@ public class ParameterValueTest
     public void multiReturnsArrayWithConstructedParameterByDefault() throws Exception
     {
         ParameterValue value = new ParameterValue("foo");
-        assertEquals(value.multi(), new String[]{"foo"});
+        assertEquals(value.multi(), new String[] { "foo" });
     }
 
     @Test
@@ -46,7 +46,7 @@ public class ParameterValueTest
     {
         ParameterValue value = new ParameterValue("foo");
         value.add("blah");
-        assertEquals(value.multi(), new String[]{"foo", "blah"});
+        assertEquals(value.multi(), new String[] { "foo", "blah" });
     }
 
     @Test

@@ -12,27 +12,27 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.transform;
+package org.apache.tapestry5.internal.transform;
 
 import javassist.CtClass;
 import javassist.Loader;
 import javassist.LoaderClassPath;
 import javassist.NotFoundException;
-import org.apache.tapestry.annotation.ApplicationState;
-import org.apache.tapestry.internal.InternalComponentResources;
-import org.apache.tapestry.internal.services.*;
-import org.apache.tapestry.internal.test.InternalBaseTestCase;
-import org.apache.tapestry.internal.transform.pages.MaybeStateHolder;
-import org.apache.tapestry.internal.transform.pages.StateHolder;
-import org.apache.tapestry.ioc.internal.services.ClassFactoryClassPool;
-import org.apache.tapestry.ioc.internal.services.ClassFactoryImpl;
-import org.apache.tapestry.ioc.internal.services.PropertyAccessImpl;
-import org.apache.tapestry.ioc.services.ClassFactory;
-import org.apache.tapestry.ioc.services.PropertyAccess;
-import org.apache.tapestry.model.MutableComponentModel;
-import org.apache.tapestry.services.ApplicationStateManager;
-import org.apache.tapestry.services.ClassTransformation;
-import org.apache.tapestry.services.ComponentClassTransformWorker;
+import org.apache.tapestry5.annotations.ApplicationState;
+import org.apache.tapestry5.internal.InternalComponentResources;
+import org.apache.tapestry5.internal.services.*;
+import org.apache.tapestry5.internal.test.InternalBaseTestCase;
+import org.apache.tapestry5.internal.transform.pages.MaybeStateHolder;
+import org.apache.tapestry5.internal.transform.pages.StateHolder;
+import org.apache.tapestry5.ioc.internal.services.ClassFactoryClassPool;
+import org.apache.tapestry5.ioc.internal.services.ClassFactoryImpl;
+import org.apache.tapestry5.ioc.internal.services.PropertyAccessImpl;
+import org.apache.tapestry5.ioc.services.ClassFactory;
+import org.apache.tapestry5.ioc.services.PropertyAccess;
+import org.apache.tapestry5.model.MutableComponentModel;
+import org.apache.tapestry5.services.ApplicationStateManager;
+import org.apache.tapestry5.services.ClassTransformation;
+import org.apache.tapestry5.services.ComponentClassTransformWorker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.AfterClass;

@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.grid;
+package org.apache.tapestry5.grid;
 
 import java.util.List;
 
 /**
- * Defines how a {@link org.apache.tapestry.corelib.components.Grid} component (and its sub-components) gain access to
+ * Defines how a {@link org.apache.tapestry5.corelib.components.Grid} component (and its sub-components) gain access to
  * the row data that is displayed on the page. In many cases, this is just a wrapper around a simple List, but the
  * abstractions exist to support access to a large data set that is accessible in sections.
  */
@@ -45,7 +45,7 @@ public interface GridDataSource
 
     /**
      * Returns the type of value in the rows, or null if not known. This value is used to create a default {@link
-     * org.apache.tapestry.beaneditor.BeanModel} when no such model is explicitly provided.
+     * org.apache.tapestry5.beaneditor.BeanModel} when no such model is explicitly provided.
      *
      * @return the row type, or null
      */

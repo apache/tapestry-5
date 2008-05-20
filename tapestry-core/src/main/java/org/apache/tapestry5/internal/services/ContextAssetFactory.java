@@ -12,13 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry.Asset;
-import org.apache.tapestry.ioc.Resource;
-import org.apache.tapestry.services.AssetFactory;
-import org.apache.tapestry.services.Context;
-import org.apache.tapestry.services.Request;
+import org.apache.tapestry5.Asset;
+import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.services.AssetFactory;
+import org.apache.tapestry5.services.Context;
+import org.apache.tapestry5.services.Request;
 
 /**
  * Implementation of {@link AssetFactory} for assets that are part of the web application context.

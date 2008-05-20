@@ -12,19 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.upload.components;
+package org.apache.tapestry5.upload.components;
 
-import org.apache.tapestry.*;
-import org.apache.tapestry.annotation.Environmental;
-import org.apache.tapestry.annotation.Mixin;
-import org.apache.tapestry.annotation.Parameter;
-import org.apache.tapestry.corelib.base.AbstractField;
-import org.apache.tapestry.corelib.mixins.RenderDisabled;
-import org.apache.tapestry.ioc.annotation.Inject;
-import org.apache.tapestry.services.FieldValidatorDefaultSource;
-import org.apache.tapestry.services.FormSupport;
-import org.apache.tapestry.upload.services.MultipartDecoder;
-import org.apache.tapestry.upload.services.UploadedFile;
+import org.apache.tapestry5.*;
+import org.apache.tapestry5.annotations.Environmental;
+import org.apache.tapestry5.annotations.Mixin;
+import org.apache.tapestry5.annotations.Parameter;
+import org.apache.tapestry5.corelib.base.AbstractField;
+import org.apache.tapestry5.corelib.mixins.RenderDisabled;
+import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.services.FieldValidatorDefaultSource;
+import org.apache.tapestry5.services.FormSupport;
+import org.apache.tapestry5.upload.services.MultipartDecoder;
+import org.apache.tapestry5.upload.services.UploadedFile;
 
 import java.util.Locale;
 

@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal;
+package org.apache.tapestry5.internal;
 
-import org.apache.tapestry.ioc.services.ClassFactory;
+import org.apache.tapestry5.ioc.services.ClassFactory;
 
 /**
- * Used as test when setting the order of properties via {@link TapestryInternalUtils#orderProperties(org.apache.tapestry.ioc.services.ClassPropertyAdapter,
+ * Used as test when setting the order of properties via {@link TapestryInternalUtils#orderProperties(org.apache.tapestry5.ioc.services.ClassPropertyAdapter,
  * ClassFactory, java.util.List)}.
  */
 public class DataBean

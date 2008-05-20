@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry.ioc.util.Stack;
-import org.apache.tapestry.services.Context;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.util.Stack;
+import org.apache.tapestry5.services.Context;
 
 import javax.servlet.ServletContext;
 import java.io.File;

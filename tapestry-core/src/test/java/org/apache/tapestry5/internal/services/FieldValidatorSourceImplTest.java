@@ -12,20 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry.ComponentResources;
-import org.apache.tapestry.Field;
-import org.apache.tapestry.FieldValidator;
-import org.apache.tapestry.Validator;
-import org.apache.tapestry.internal.test.InternalBaseTestCase;
-import org.apache.tapestry.ioc.MessageFormatter;
-import org.apache.tapestry.ioc.Messages;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
-import org.apache.tapestry.ioc.services.TypeCoercer;
-import org.apache.tapestry.runtime.Component;
-import org.apache.tapestry.services.FieldValidatorSource;
-import org.apache.tapestry.services.ValidationMessagesSource;
+import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.Field;
+import org.apache.tapestry5.FieldValidator;
+import org.apache.tapestry5.Validator;
+import org.apache.tapestry5.internal.test.InternalBaseTestCase;
+import org.apache.tapestry5.ioc.MessageFormatter;
+import org.apache.tapestry5.ioc.Messages;
+import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newMap;
+import org.apache.tapestry5.ioc.services.TypeCoercer;
+import org.apache.tapestry5.runtime.Component;
+import org.apache.tapestry5.services.FieldValidatorSource;
+import org.apache.tapestry5.services.ValidationMessagesSource;
 import org.testng.annotations.Test;
 
 import java.util.Arrays;

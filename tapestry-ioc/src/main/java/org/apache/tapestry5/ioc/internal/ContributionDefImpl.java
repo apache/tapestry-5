@@ -12,13 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.internal;
+package org.apache.tapestry5.ioc.internal;
 
-import org.apache.tapestry.ioc.*;
-import org.apache.tapestry.ioc.def.ContributionDef;
-import org.apache.tapestry.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry.ioc.internal.util.InternalUtils;
-import org.apache.tapestry.ioc.services.ClassFactory;
+import org.apache.tapestry5.ioc.*;
+import org.apache.tapestry5.ioc.def.ContributionDef;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.ioc.services.ClassFactory;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

@@ -12,19 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
 import javassist.CtClass;
-import org.apache.tapestry.ioc.Location;
-import org.apache.tapestry.ioc.Messages;
-import org.apache.tapestry.ioc.Resource;
-import org.apache.tapestry.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry.ioc.internal.util.InternalUtils;
-import org.apache.tapestry.ioc.internal.util.MessagesImpl;
-import org.apache.tapestry.ioc.services.ClassFabUtils;
-import org.apache.tapestry.runtime.Component;
-import org.apache.tapestry.runtime.RenderCommand;
-import org.apache.tapestry.services.TransformMethodSignature;
+import org.apache.tapestry5.ioc.Location;
+import org.apache.tapestry5.ioc.Messages;
+import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.ioc.internal.util.MessagesImpl;
+import org.apache.tapestry5.ioc.services.ClassFabUtils;
+import org.apache.tapestry5.runtime.Component;
+import org.apache.tapestry5.runtime.RenderCommand;
+import org.apache.tapestry5.services.TransformMethodSignature;
 
 import java.util.Collection;
 import java.util.List;
@@ -359,7 +359,7 @@ class ServicesMessages
         return MESSAGES.format("resource-access-forbidden", URI);
     }
 
-    static String noMarkupFromPageRender(org.apache.tapestry.internal.structure.Page page)
+    static String noMarkupFromPageRender(org.apache.tapestry5.internal.structure.Page page)
     {
         return MESSAGES.format("no-markup-from-page-render", page.getLogicalName());
     }

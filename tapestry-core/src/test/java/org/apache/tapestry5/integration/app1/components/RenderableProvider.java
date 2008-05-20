@@ -12,14 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.integration.app1.components;
+package org.apache.tapestry5.integration.app1.components;
 
-import org.apache.tapestry.MarkupWriter;
-import org.apache.tapestry.Renderable;
-import org.apache.tapestry.annotation.CleanupRender;
-import org.apache.tapestry.annotation.SetupRender;
-import org.apache.tapestry.ioc.annotation.Inject;
-import org.apache.tapestry.services.Environment;
+import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.Renderable;
+import org.apache.tapestry5.annotations.CleanupRender;
+import org.apache.tapestry5.annotations.SetupRender;
+import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.services.Environment;
 
 public class RenderableProvider
 {

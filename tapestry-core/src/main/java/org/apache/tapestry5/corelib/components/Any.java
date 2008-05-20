@@ -12,13 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.corelib.components;
+package org.apache.tapestry5.corelib.components;
 
-import org.apache.tapestry.*;
-import org.apache.tapestry.annotation.Parameter;
-import org.apache.tapestry.annotation.SupportsInformalParameters;
-import org.apache.tapestry.dom.Element;
-import org.apache.tapestry.ioc.annotation.Inject;
+import org.apache.tapestry5.*;
+import org.apache.tapestry5.annotations.Parameter;
+import org.apache.tapestry5.annotations.SupportsInformalParameters;
+import org.apache.tapestry5.dom.Element;
+import org.apache.tapestry5.ioc.annotations.Inject;
 
 /**
  * Renders an arbitrary element including informal parameters.

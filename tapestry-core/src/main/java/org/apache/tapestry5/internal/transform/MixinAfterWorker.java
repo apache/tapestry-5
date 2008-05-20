@@ -12,16 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.transform;
+package org.apache.tapestry5.internal.transform;
 
-import org.apache.tapestry.annotation.MixinAfter;
-import org.apache.tapestry.model.MutableComponentModel;
-import org.apache.tapestry.services.ClassTransformation;
-import org.apache.tapestry.services.ComponentClassTransformWorker;
+import org.apache.tapestry5.annotations.MixinAfter;
+import org.apache.tapestry5.model.MutableComponentModel;
+import org.apache.tapestry5.services.ClassTransformation;
+import org.apache.tapestry5.services.ComponentClassTransformWorker;
 
 /**
- * Looks for the {@link org.apache.tapestry.annotation.MixinAfter} annotatation and sets the {@link
- * org.apache.tapestry.model.ComponentModel#isMixinAfter() mixinAfter flag} is present.
+ * Looks for the {@link org.apache.tapestry5.annotations.MixinAfter} annotatation and sets the {@link
+ * org.apache.tapestry5.model.ComponentModel#isMixinAfter() mixinAfter flag} is present.
  */
 public class MixinAfterWorker implements ComponentClassTransformWorker
 {

@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry.services.ApplicationStateCreator;
-import org.apache.tapestry.services.ApplicationStatePersistenceStrategy;
-import org.apache.tapestry.services.Request;
-import org.apache.tapestry.services.Session;
+import org.apache.tapestry5.services.ApplicationStateCreator;
+import org.apache.tapestry5.services.ApplicationStatePersistenceStrategy;
+import org.apache.tapestry5.services.Request;
+import org.apache.tapestry5.services.Session;
 
 /**
  * Stores ASOs in the {@link Session}, which will be created as necessary.

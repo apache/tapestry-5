@@ -15,7 +15,7 @@
 /**
  *
  */
-package org.apache.tapestry.ioc.internal.util;
+package org.apache.tapestry5.ioc.internal.util;
 
 
 /**

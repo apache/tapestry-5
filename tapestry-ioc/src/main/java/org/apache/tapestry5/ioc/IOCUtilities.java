@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc;
+package org.apache.tapestry5.ioc;
 
-import static org.apache.tapestry.ioc.IOCConstants.MODULE_BUILDER_MANIFEST_ENTRY_NAME;
-import org.apache.tapestry.ioc.annotation.SubModule;
+import static org.apache.tapestry5.ioc.IOCConstants.MODULE_BUILDER_MANIFEST_ENTRY_NAME;
+import org.apache.tapestry5.ioc.annotations.SubModule;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -26,7 +26,7 @@ import java.util.jar.Manifest;
 
 /**
  * A collection of utility methods for a couple of different areas, including creating the initial {@link
- * org.apache.tapestry.ioc.Registry}.
+ * org.apache.tapestry5.ioc.Registry}.
  */
 public final class IOCUtilities
 {

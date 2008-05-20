@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry.PropertyConduit;
-import org.apache.tapestry.ioc.services.TypeCoercer;
+import org.apache.tapestry5.PropertyConduit;
+import org.apache.tapestry5.ioc.services.TypeCoercer;
 
 import java.lang.annotation.Annotation;
 

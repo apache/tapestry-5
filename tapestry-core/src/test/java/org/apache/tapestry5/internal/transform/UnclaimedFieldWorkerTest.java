@@ -12,13 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.transform;
+package org.apache.tapestry5.internal.transform;
 
-import org.apache.tapestry.internal.test.InternalBaseTestCase;
-import org.apache.tapestry.model.MutableComponentModel;
-import org.apache.tapestry.services.ClassTransformation;
-import static org.apache.tapestry.services.TransformConstants.CONTAINING_PAGE_DID_DETACH_SIGNATURE;
-import static org.apache.tapestry.services.TransformConstants.CONTAINING_PAGE_DID_LOAD_SIGNATURE;
+import org.apache.tapestry5.internal.test.InternalBaseTestCase;
+import org.apache.tapestry5.model.MutableComponentModel;
+import org.apache.tapestry5.services.ClassTransformation;
+import static org.apache.tapestry5.services.TransformConstants.CONTAINING_PAGE_DID_DETACH_SIGNATURE;
+import static org.apache.tapestry5.services.TransformConstants.CONTAINING_PAGE_DID_LOAD_SIGNATURE;
 import org.testng.annotations.Test;
 
 import java.lang.reflect.Modifier;

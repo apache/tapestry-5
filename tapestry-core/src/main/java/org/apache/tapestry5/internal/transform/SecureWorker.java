@@ -12,17 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.transform;
+package org.apache.tapestry5.internal.transform;
 
-import org.apache.tapestry.MetaDataConstants;
-import org.apache.tapestry.annotation.Secure;
-import org.apache.tapestry.model.MutableComponentModel;
-import org.apache.tapestry.services.ClassTransformation;
-import org.apache.tapestry.services.ComponentClassTransformWorker;
+import org.apache.tapestry5.MetaDataConstants;
+import org.apache.tapestry5.annotations.Secure;
+import org.apache.tapestry5.model.MutableComponentModel;
+import org.apache.tapestry5.services.ClassTransformation;
+import org.apache.tapestry5.services.ComponentClassTransformWorker;
 
 /**
- * Recognizes the {@link org.apache.tapestry.annotation.Secure} annotation and sets the {@link
- * org.apache.tapestry.MetaDataConstants#SECURE_PAGE} meta data to "true".
+ * Recognizes the {@link org.apache.tapestry5.annotations.Secure} annotation and sets the {@link
+ * org.apache.tapestry5.MetaDataConstants#SECURE_PAGE} meta data to "true".
  */
 public class SecureWorker implements ComponentClassTransformWorker
 {

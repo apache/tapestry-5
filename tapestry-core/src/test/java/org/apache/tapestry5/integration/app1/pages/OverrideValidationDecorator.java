@@ -13,13 +13,13 @@
 // limitations under the License.
 
 
-package org.apache.tapestry.integration.app1.pages;
+package org.apache.tapestry5.integration.app1.pages;
 
-import org.apache.tapestry.MarkupWriter;
-import org.apache.tapestry.ValidationDecorator;
-import org.apache.tapestry.integration.app1.ChattyValidationDecorator;
-import org.apache.tapestry.ioc.annotation.Inject;
-import org.apache.tapestry.services.Environment;
+import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.ValidationDecorator;
+import org.apache.tapestry5.integration.app1.ChattyValidationDecorator;
+import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.services.Environment;
 
 public class OverrideValidationDecorator
 {

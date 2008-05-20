@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.integration.app1.components;
+package org.apache.tapestry5.integration.app1.components;
 
-import org.apache.tapestry.MarkupWriter;
-import org.apache.tapestry.annotation.BeginRender;
-import org.apache.tapestry.annotation.Parameter;
+import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.annotations.BeginRender;
+import org.apache.tapestry5.annotations.Parameter;
 
 /**
  * Echos out its value parameter. Uused to test parameter overrides between component annoation and template. Also, used

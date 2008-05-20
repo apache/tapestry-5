@@ -12,13 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry.internal.structure.ComponentPageElement;
-import org.apache.tapestry.internal.structure.Page;
-import org.apache.tapestry.internal.test.InternalBaseTestCase;
-import org.apache.tapestry.runtime.Component;
-import org.apache.tapestry.services.ComponentSource;
+import org.apache.tapestry5.internal.structure.ComponentPageElement;
+import org.apache.tapestry5.internal.structure.Page;
+import org.apache.tapestry5.internal.test.InternalBaseTestCase;
+import org.apache.tapestry5.runtime.Component;
+import org.apache.tapestry5.services.ComponentSource;
 import org.testng.annotations.Test;
 
 public class ComponentSourceImplTest extends InternalBaseTestCase

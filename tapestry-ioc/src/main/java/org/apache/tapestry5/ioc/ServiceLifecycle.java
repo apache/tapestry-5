@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc;
+package org.apache.tapestry5.ioc;
 
 /**
  * Allows certain types of lifecycles to control exactly how services are instantiated.
@@ -20,14 +20,12 @@ package org.apache.tapestry.ioc;
 public interface ServiceLifecycle
 {
     /**
-     * Returns the same creator, or a new one, that encapsulates the creation of the core service
-     * implementation.
+     * Returns the same creator, or a new one, that encapsulates the creation of the core service implementation.
      *
-     * @param resources source of information about the service to be created, and source of additional
-     *                  services or other resources that may be needed when constructing the core service
-     *                  implementation
-     * @param creator   object capable of creating the service implementation on demand. This is a wrapper
-     *                  around the service's builder method.
+     * @param resources source of information about the service to be created, and source of additional services or
+     *                  other resources that may be needed when constructing the core service implementation
+     * @param creator   object capable of creating the service implementation on demand. This is a wrapper around the
+     *                  service's builder method.
      * @return the service or equivalent service proxy
      */
     Object createService(ServiceResources resources, ObjectCreator creator);

@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.util;
+package org.apache.tapestry5.util;
 
-import org.apache.tapestry.StreamResponse;
-import static org.apache.tapestry.ioc.internal.util.Defense.notBlank;
-import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
-import org.apache.tapestry.services.Response;
+import org.apache.tapestry5.StreamResponse;
+import static org.apache.tapestry5.ioc.internal.util.Defense.notBlank;
+import static org.apache.tapestry5.ioc.internal.util.Defense.notNull;
+import org.apache.tapestry5.services.Response;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;

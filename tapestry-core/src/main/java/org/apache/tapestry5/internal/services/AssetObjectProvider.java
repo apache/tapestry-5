@@ -12,18 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry.Asset;
-import org.apache.tapestry.annotation.Path;
-import org.apache.tapestry.ioc.AnnotationProvider;
-import org.apache.tapestry.ioc.ObjectLocator;
-import org.apache.tapestry.ioc.ObjectProvider;
-import org.apache.tapestry.ioc.services.Builtin;
-import org.apache.tapestry.ioc.services.SymbolSource;
-import org.apache.tapestry.ioc.services.TypeCoercer;
-import org.apache.tapestry.services.AssetSource;
-import org.apache.tapestry.services.Core;
+import org.apache.tapestry5.Asset;
+import org.apache.tapestry5.annotations.Path;
+import org.apache.tapestry5.ioc.AnnotationProvider;
+import org.apache.tapestry5.ioc.ObjectLocator;
+import org.apache.tapestry5.ioc.ObjectProvider;
+import org.apache.tapestry5.ioc.services.Builtin;
+import org.apache.tapestry5.ioc.services.SymbolSource;
+import org.apache.tapestry5.ioc.services.TypeCoercer;
+import org.apache.tapestry5.services.AssetSource;
+import org.apache.tapestry5.services.Core;
 
 /**
  * Exposes assets (in the current locale). The Inject annotation must be supplemented by a {@link Path} annotation, to

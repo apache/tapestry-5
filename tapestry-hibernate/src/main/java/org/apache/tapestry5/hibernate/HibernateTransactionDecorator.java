@@ -12,13 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.hibernate;
+package org.apache.tapestry5.hibernate;
 
 /**
  * Service that can create an interceptor that wraps around a service implementation. After invoking service methods
- * marked by {@link org.apache.tapestry.hibernate.annotations.CommitAfter} the current transaction is committed.
- * Declared exceptions will also {@linkplain org.apache.tapestry.hibernate.HibernateSessionManager#commit() commit the
- * transaction}; runtime exceptions will {@linkplain org.apache.tapestry.hibernate.HibernateSessionManager#abort() the
+ * marked by {@link org.apache.tapestry5.hibernate.annotations.CommitAfter} the current transaction is committed.
+ * Declared exceptions will also {@linkplain org.apache.tapestry5.hibernate.HibernateSessionManager#commit() commit the
+ * transaction}; runtime exceptions will {@linkplain org.apache.tapestry5.hibernate.HibernateSessionManager#abort() the
  * transaction}.
  */
 public interface HibernateTransactionDecorator

@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry;
+package org.apache.tapestry5;
 
-import org.apache.tapestry.dom.Document;
-import org.apache.tapestry.dom.Element;
-import org.apache.tapestry.dom.MarkupModel;
-import org.apache.tapestry.dom.Raw;
+import org.apache.tapestry5.dom.Document;
+import org.apache.tapestry5.dom.Element;
+import org.apache.tapestry5.dom.MarkupModel;
+import org.apache.tapestry5.dom.Raw;
 
 import java.io.PrintWriter;
 

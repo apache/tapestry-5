@@ -12,15 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry.PropertyConduit;
-import org.apache.tapestry.internal.bindings.PropBindingFactoryTest;
-import org.apache.tapestry.internal.test.InternalBaseTestCase;
-import org.apache.tapestry.ioc.internal.services.ClassFactoryImpl;
-import org.apache.tapestry.ioc.services.ClassFab;
-import org.apache.tapestry.ioc.services.ClassFactory;
-import org.apache.tapestry.services.PropertyConduitSource;
+import org.apache.tapestry5.PropertyConduit;
+import org.apache.tapestry5.internal.bindings.PropBindingFactoryTest;
+import org.apache.tapestry5.internal.test.InternalBaseTestCase;
+import org.apache.tapestry5.ioc.internal.services.ClassFactoryImpl;
+import org.apache.tapestry5.ioc.services.ClassFab;
+import org.apache.tapestry5.ioc.services.ClassFactory;
+import org.apache.tapestry5.services.PropertyConduitSource;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;

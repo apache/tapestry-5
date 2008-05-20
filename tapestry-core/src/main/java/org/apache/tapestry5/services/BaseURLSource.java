@@ -12,16 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.services;
+package org.apache.tapestry5.services;
 
 /**
  * Used when switching between normal/insecure (HTTP) and secure (HTTPS) mode.  When a switch occurs, it is no longer
  * possible to use relative URLs, instead absolute URLs must be generated. The default implementation of this is
- * simple-minded: it just tacks the correct scheme in front of {@link org.apache.tapestry.services.Request#getServerName()}.
+ * simple-minded: it just tacks the correct scheme in front of {@link org.apache.tapestry5.services.Request#getServerName()}.
  * In production, behind a firewall, it is often necessary to do a bit more, since <code>getServerName()</code> will
  * often be the name of the internal server (not visible to the client web browser), and a hard-coded name of a server
  * that <em>is</em> visible to the web browser is needed.  Further, in testing, non-default ports are often used. In
- * those cases, an overriding contribution to the {@link org.apache.tapestry.services.Alias} service will allow a custom
+ * those cases, an overriding contribution to the {@link org.apache.tapestry5.services.Alias} service will allow a custom
  * implementation to supercede the default version.
  */
 public interface BaseURLSource

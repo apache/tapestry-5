@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.annotation;
+package org.apache.tapestry5.annotations;
 
 import java.lang.annotation.Documented;
 import static java.lang.annotation.ElementType.TYPE;
@@ -23,7 +23,7 @@ import java.lang.annotation.Target;
 /**
  * A marker annotation that indicates that the page in question may only be accessed via HTTPS.
  *
- * @see org.apache.tapestry.MetaDataConstants#SECURE_PAGE
+ * @see org.apache.tapestry5.MetaDataConstants#SECURE_PAGE
  */
 @Target(TYPE)
 @Retention(RUNTIME)

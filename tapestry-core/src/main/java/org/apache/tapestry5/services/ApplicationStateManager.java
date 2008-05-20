@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.services;
+package org.apache.tapestry5.services;
 
 /**
  * Responsible for managing <em>application state objects</em>, objects which persist between requests, but are not tied

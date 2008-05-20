@@ -12,17 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.internal.services;
+package org.apache.tapestry5.ioc.internal.services;
 
 import javassist.CtClass;
 import javassist.CtConstructor;
 import javassist.CtMethod;
-import org.apache.tapestry.ioc.Location;
-import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
-import org.apache.tapestry.ioc.internal.util.InternalUtils;
-import org.apache.tapestry.ioc.services.ClassFab;
-import org.apache.tapestry.ioc.services.ClassFabUtils;
-import org.apache.tapestry.ioc.services.ClassFactory;
+import org.apache.tapestry5.ioc.Location;
+import static org.apache.tapestry5.ioc.internal.util.Defense.notNull;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.ioc.services.ClassFab;
+import org.apache.tapestry5.ioc.services.ClassFabUtils;
+import org.apache.tapestry5.ioc.services.ClassFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,7 +30,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 
 /**
- * Implementation of {@link org.apache.tapestry.ioc.services.ClassFactory}.
+ * Implementation of {@link org.apache.tapestry5.ioc.services.ClassFactory}.
  */
 public class ClassFactoryImpl implements ClassFactory
 {

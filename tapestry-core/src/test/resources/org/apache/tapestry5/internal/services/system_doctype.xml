@@ -13,5 +13,5 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 -->
-<!DOCTYPE foo SYSTEM "src/test/resources/org/apache/tapestry/internal/services/simple.dtd" >
+<!DOCTYPE foo SYSTEM "src/test/resources/org/apache/tapestry5/internal/services/simple.dtd" >
 <foo>bar</foo>

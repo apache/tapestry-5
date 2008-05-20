@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.corelib.base;
+package org.apache.tapestry5.corelib.base;
 
+import org.apache.tapestry5.PropertyConduit;
+import org.apache.tapestry5.beaneditor.PropertyModel;
+import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.testng.annotations.Test;
-import org.apache.tapestry.beaneditor.PropertyModel;
-import org.apache.tapestry.internal.test.InternalBaseTestCase;
-import org.apache.tapestry.PropertyConduit;
 
 public class AbstractPropertyOutputTest extends InternalBaseTestCase
 {

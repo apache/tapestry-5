@@ -19,10 +19,10 @@
     <test name="Tapesty Upload Component">
         <parameter name="tapestry.integration-webapp" value="src/test/webapp"/>
         <packages>
-            <package name="org.apache.tapestry.upload.components"/>
-            <package name="org.apache.tapestry.upload.internal.services"/>
+            <package name="org.apache.tapestry5.upload.components"/>
+            <package name="org.apache.tapestry5.upload.internal.services"/>
             <!-- One day might be able to run this too -->
-            <!--package name="org.apache.tapestry.upload.integration"/-->
+            <!--package name="org.apache.tapestry5.upload.integration"/-->
         </packages>
     </test>
 </suite>

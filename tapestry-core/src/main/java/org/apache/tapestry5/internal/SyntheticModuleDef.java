@@ -12,13 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal;
+package org.apache.tapestry5.internal;
 
-import org.apache.tapestry.ioc.def.ContributionDef;
-import org.apache.tapestry.ioc.def.DecoratorDef;
-import org.apache.tapestry.ioc.def.ModuleDef;
-import org.apache.tapestry.ioc.def.ServiceDef;
-import org.apache.tapestry.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.def.ContributionDef;
+import org.apache.tapestry5.ioc.def.DecoratorDef;
+import org.apache.tapestry5.ioc.def.ModuleDef;
+import org.apache.tapestry5.ioc.def.ServiceDef;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 
 import java.util.Collections;
 import java.util.Set;

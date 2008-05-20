@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry.RenderSupport;
-import org.apache.tapestry.test.TapestryTestCase;
+import org.apache.tapestry5.RenderSupport;
 import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
+import org.apache.tapestry5.test.TapestryTestCase;
 import org.testng.annotations.Test;
 
 public class ClientBehaviorSupportImplTest extends TapestryTestCase

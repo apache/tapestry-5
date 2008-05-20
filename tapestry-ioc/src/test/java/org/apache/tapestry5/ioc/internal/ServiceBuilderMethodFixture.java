@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.internal;
+package org.apache.tapestry5.ioc.internal;
 
-import org.apache.tapestry.ioc.ServiceResources;
-import org.apache.tapestry.ioc.annotation.Inject;
-import org.apache.tapestry.ioc.annotation.InjectService;
-import org.apache.tapestry.ioc.annotation.Value;
+import org.apache.tapestry5.ioc.ServiceResources;
+import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.annotations.InjectService;
+import org.apache.tapestry5.ioc.annotations.Value;
 import org.slf4j.Logger;
 import org.testng.Assert;
 
@@ -26,7 +26,7 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * Used by {@link org.apache.tapestry.ioc.internal.ServiceBuilderMethodInvokerTest}.
+ * Used by {@link org.apache.tapestry5.ioc.internal.ServiceBuilderMethodInvokerTest}.
  */
 public class ServiceBuilderMethodFixture extends Assert
 {

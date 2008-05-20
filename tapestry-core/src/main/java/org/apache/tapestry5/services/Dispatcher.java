@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.services;
+package org.apache.tapestry5.services;
 
 import java.io.IOException;
 
@@ -20,9 +20,9 @@ import java.io.IOException;
  * A dispatcher is responsible for recognizing an incoming request. Dispatchers form an ordered chain of command, with
  * each dispatcher responsible for recognizing requests that it can process.
  *
- * @see org.apache.tapestry.services.TapestryModule#contributeMasterDispatcher(org.apache.tapestry.ioc.OrderedConfiguration,
- *      ClasspathAssetAliasManager, org.apache.tapestry.internal.services.ResourceCache,
- *      org.apache.tapestry.internal.services.ResourceStreamer, PageRenderRequestHandler, ComponentEventRequestHandler,
+ * @see org.apache.tapestry5.services.TapestryModule#contributeMasterDispatcher(org.apache.tapestry5.ioc.OrderedConfiguration,
+ *      ClasspathAssetAliasManager, org.apache.tapestry5.internal.services.ResourceCache,
+ *      org.apache.tapestry5.internal.services.ResourceStreamer, PageRenderRequestHandler, ComponentEventRequestHandler,
  *      ComponentClassResolver, ContextValueEncoder, String)
  */
 public interface Dispatcher

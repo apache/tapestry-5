@@ -12,15 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.internal.services;
+package org.apache.tapestry5.ioc.internal.services;
 
 import javassist.CtClass;
-import org.apache.tapestry.ioc.Messages;
-import org.apache.tapestry.ioc.internal.util.MessagesImpl;
-import org.apache.tapestry.ioc.services.ClassFabUtils;
-import org.apache.tapestry.ioc.services.Coercion;
-import org.apache.tapestry.ioc.services.MethodSignature;
-import org.apache.tapestry.ioc.services.ThreadCleanupListener;
+import org.apache.tapestry5.ioc.Messages;
+import org.apache.tapestry5.ioc.internal.util.MessagesImpl;
+import org.apache.tapestry5.ioc.services.ClassFabUtils;
+import org.apache.tapestry5.ioc.services.Coercion;
+import org.apache.tapestry5.ioc.services.MethodSignature;
+import org.apache.tapestry5.ioc.services.ThreadCleanupListener;
 
 final class ServiceMessages
 {

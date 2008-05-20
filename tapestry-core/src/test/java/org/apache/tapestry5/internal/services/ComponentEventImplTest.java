@@ -12,14 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry.ComponentEventCallback;
-import org.apache.tapestry.EventContext;
-import org.apache.tapestry.internal.structure.PageResources;
-import org.apache.tapestry.internal.test.InternalBaseTestCase;
-import org.apache.tapestry.ioc.services.TypeCoercer;
-import org.apache.tapestry.runtime.ComponentEvent;
+import org.apache.tapestry5.ComponentEventCallback;
+import org.apache.tapestry5.EventContext;
+import org.apache.tapestry5.internal.structure.PageResources;
+import org.apache.tapestry5.internal.test.InternalBaseTestCase;
+import org.apache.tapestry5.ioc.services.TypeCoercer;
+import org.apache.tapestry5.runtime.ComponentEvent;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;

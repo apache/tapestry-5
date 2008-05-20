@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.services;
+package org.apache.tapestry5.services;
 
 import java.util.NoSuchElementException;
 
@@ -24,8 +24,8 @@ import java.util.NoSuchElementException;
  * type. Most often, a stack has zero or one elements, but on occasion, a particular component will push an override
  * onto the stack for the benefit of the components it encloses.
  *
- * @see org.apache.tapestry.annotation.Environmental
- * @see org.apache.tapestry.services.EnvironmentalShadowBuilder
+ * @see org.apache.tapestry5.annotations.Environmental
+ * @see org.apache.tapestry5.services.EnvironmentalShadowBuilder
  */
 public interface Environment
 {

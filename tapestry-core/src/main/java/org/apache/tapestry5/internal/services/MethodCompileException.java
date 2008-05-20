@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
 /**
  * Exception thrown when a method body fails to compile; this will allow the method body to be displayed to the user on

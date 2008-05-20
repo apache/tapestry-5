@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.integration.app2.pages;
+package org.apache.tapestry5.integration.app2.pages;
 
-import org.apache.tapestry.annotation.OnEvent;
-import org.apache.tapestry.ioc.annotation.Inject;
-import org.apache.tapestry.services.PersistentLocale;
+import org.apache.tapestry5.annotations.OnEvent;
+import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.services.PersistentLocale;
 
 import java.util.Locale;
 

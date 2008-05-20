@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.internal.services;
+package org.apache.tapestry5.ioc.internal.services;
 
-import org.apache.tapestry.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry.ioc.internal.util.InternalUtils;
-import org.apache.tapestry.ioc.services.ClassNameLocator;
-import org.apache.tapestry.ioc.util.Stack;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.ioc.services.ClassNameLocator;
+import org.apache.tapestry5.ioc.util.Stack;
 
 import java.io.*;
 import java.net.JarURLConnection;

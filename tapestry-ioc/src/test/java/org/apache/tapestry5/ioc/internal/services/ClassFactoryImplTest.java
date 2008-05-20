@@ -12,15 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.internal.services;
+package org.apache.tapestry5.ioc.internal.services;
 
-import org.apache.tapestry.ioc.Location;
-import org.apache.tapestry.ioc.internal.util.LocationImpl;
-import org.apache.tapestry.ioc.services.ClassFab;
-import org.apache.tapestry.ioc.services.ClassFabUtils;
-import org.apache.tapestry.ioc.services.ClassFactory;
-import org.apache.tapestry.ioc.services.MethodSignature;
-import org.apache.tapestry.ioc.test.IOCTestCase;
+import org.apache.tapestry5.ioc.Location;
+import org.apache.tapestry5.ioc.internal.util.LocationImpl;
+import org.apache.tapestry5.ioc.services.ClassFab;
+import org.apache.tapestry5.ioc.services.ClassFabUtils;
+import org.apache.tapestry5.ioc.services.ClassFactory;
+import org.apache.tapestry5.ioc.services.MethodSignature;
+import org.apache.tapestry5.ioc.test.IOCTestCase;
 import org.testng.annotations.Test;
 
 import java.lang.reflect.Constructor;
@@ -100,7 +100,7 @@ public class ClassFactoryImplTest extends IOCTestCase
         Location l = factory.getMethodLocation(m);
         assertEquals(
                 l.toString(),
-                "org.apache.tapestry.ioc.internal.services.LineNumberBean.fred() (at LineNumberBean.java:25)");
+                "org.apache.tapestry5.ioc.internal.services.LineNumberBean.fred() (at LineNumberBean.java:25)");
         assertEquals(l.getLine(), 25);
 
         m = target.getMethod("betty", String.class, int.class);
@@ -109,13 +109,13 @@ public class ClassFactoryImplTest extends IOCTestCase
 
         assertEquals(
                 factory.getMethodLocation(m).toString(),
-                "org.apache.tapestry.ioc.internal.services.LineNumberBean.betty(String, int) (at LineNumberBean.java:29)");
+                "org.apache.tapestry5.ioc.internal.services.LineNumberBean.betty(String, int) (at LineNumberBean.java:29)");
 
         m = target.getDeclaredMethod("wilma", int[].class, Double[][][].class);
 
         assertEquals(
                 factory.getMethodLocation(m).toString(),
-                "org.apache.tapestry.ioc.internal.services.LineNumberBean.wilma(int[], Double[][][]) (at LineNumberBean.java:34)");
+                "org.apache.tapestry5.ioc.internal.services.LineNumberBean.wilma(int[], Double[][][]) (at LineNumberBean.java:34)");
     }
 
     private void addRunMethod(ClassFab cf)
@@ -136,7 +136,7 @@ public class ClassFactoryImplTest extends IOCTestCase
                 .getConstructorLocation(cc)
                 .toString()
                 .matches(
-                "org.apache.tapestry.ioc.internal.services.LineNumberBean\\(String, int\\) \\(at LineNumberBean.java:(19|20)\\)"));
+                "org.apache.tapestry5.ioc.internal.services.LineNumberBean\\(String, int\\) \\(at LineNumberBean.java:(19|20)\\)"));
     }
 
     /**
@@ -152,8 +152,8 @@ public class ClassFactoryImplTest extends IOCTestCase
     }
 
     /**
-     * Import a class where the bytecode is not available, to ensure that the super-class (from an
-     * available class loader) is returned.
+     * Import a class where the bytecode is not available, to ensure that the super-class (from an available class
+     * loader) is returned.
      */
     @Test
     public void import_proxy_class() throws Exception

@@ -17,10 +17,10 @@
  * 
  * 
  */
-package org.apache.tapestry.internal.structure;
+package org.apache.tapestry5.internal.structure;
 
-import org.apache.tapestry.MarkupWriter;
-import org.apache.tapestry.runtime.RenderQueue;
+import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.runtime.RenderQueue;
 
 public class DTDPageElement implements PageElement
 {

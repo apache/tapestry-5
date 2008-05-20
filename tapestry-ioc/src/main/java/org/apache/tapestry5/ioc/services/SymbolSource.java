@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.services;
+package org.apache.tapestry5.ioc.services;
 
-import org.apache.tapestry.ioc.annotation.Value;
+import org.apache.tapestry5.ioc.annotations.Value;
 
 /**
  * Used to manage <em>symbols</em>, configuration properties whose value is evaluated at runtime. Symbols use the Ant

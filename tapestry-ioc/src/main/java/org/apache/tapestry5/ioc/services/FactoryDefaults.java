@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.services;
+package org.apache.tapestry5.ioc.services;
 
 import java.lang.annotation.Documented;
 import static java.lang.annotation.ElementType.FIELD;
@@ -22,11 +22,11 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Target;
 
 /**
- * Used to disambiguate which version of {@link SymbolProvider} is being referenced. Symbols defined
- * by contributing to FactoryDefaults are overridden by contributions to {@link ApplicationDefaults}.
+ * Used to disambiguate which version of {@link SymbolProvider} is being referenced. Symbols defined by contributing to
+ * FactoryDefaults are overridden by contributions to {@link ApplicationDefaults}.
  */
 @Target(
-        {PARAMETER, FIELD})
+        { PARAMETER, FIELD })
 @Retention(RUNTIME)
 @Documented
 public @interface FactoryDefaults

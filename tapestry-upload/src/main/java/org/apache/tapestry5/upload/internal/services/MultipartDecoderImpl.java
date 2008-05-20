@@ -12,20 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.upload.internal.services;
+package org.apache.tapestry5.upload.internal.services;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileItemFactory;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
-import org.apache.tapestry.ioc.annotation.Inject;
-import org.apache.tapestry.ioc.annotation.Symbol;
-import org.apache.tapestry.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry.ioc.services.ThreadCleanupListener;
-import org.apache.tapestry.upload.services.MultipartDecoder;
-import org.apache.tapestry.upload.services.UploadSymbols;
-import org.apache.tapestry.upload.services.UploadedFile;
+import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.annotations.Symbol;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.services.ThreadCleanupListener;
+import org.apache.tapestry5.upload.services.MultipartDecoder;
+import org.apache.tapestry5.upload.services.UploadSymbols;
+import org.apache.tapestry5.upload.services.UploadedFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;

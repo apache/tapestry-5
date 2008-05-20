@@ -12,16 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.model;
+package org.apache.tapestry5.model;
 
-import org.apache.tapestry.annotation.Component;
-import org.apache.tapestry.ioc.Locatable;
+import org.apache.tapestry5.annotations.Component;
+import org.apache.tapestry5.ioc.Locatable;
 
 import java.util.List;
 
 /**
  * The model for a component embedded within another component, as defined by the {@link
- * org.apache.tapestry.annotation.Component} annotation.
+ * org.apache.tapestry5.annotations.Component} annotation.
  */
 public interface EmbeddedComponentModel extends Locatable
 {

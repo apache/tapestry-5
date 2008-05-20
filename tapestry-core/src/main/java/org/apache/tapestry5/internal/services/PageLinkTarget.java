@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
 /**
  * It represents a component invocation target for a page link. It is passed to an {@link
- * org.apache.tapestry.services.ComponentEventRequestHandler} by both the {@link org.apache.tapestry.test.PageTester}
- * and the real Tapestry code {@link org.apache.tapestry.internal.services.PageRenderDispatcher} in order to invoke a
+ * org.apache.tapestry5.services.ComponentEventRequestHandler} by both the {@link org.apache.tapestry5.test.PageTester}
+ * and the real Tapestry code {@link org.apache.tapestry5.internal.services.PageRenderDispatcher} in order to invoke a
  * page link.
  */
 public class PageLinkTarget implements InvocationTarget

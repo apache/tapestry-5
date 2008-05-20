@@ -24,7 +24,7 @@ Unordered Service Configurations
   The checksum is derived from the file contents; thus it can't be spoofed from the client unless the client already has the file contents.
 
   This is controlled by the 
-  {{{../../apidocs/org/apache/tapestry/services/ResourceDigestGenerator.html}ResourceDigestGenerator}} service, which uses its
+  {{{../../apidocs/org/apache/tapestry5/services/ResourceDigestGenerator.html}ResourceDigestGenerator}} service, which uses its
   configuration to determine which file extensions require an MD5 digest.
 
 * Contributing to a Service
@@ -41,7 +41,7 @@ Unordered Service Configurations
 
   This is a <service contribution method>, a method that is invoked to provide values for a configuration.  We'll see how the
   service receives these contributions shortly.  The 
-  {{{../../apidocs/org/apache/tapestry/ioc/Configuration.html}Configuration}} object is how
+  {{{../../apidocs/org/apache/tapestry5/ioc/Configuration.html}Configuration}} object is how
   values are added to the service's configuration. Other parameters to a service configuration method are injected
   much as with a service's constructor, or a service builder method.
 
@@ -102,7 +102,7 @@ Ordered Configurations
   {{{../pipeline.html}Pipeline}}.
 
   Here, the example is the
-  {{{../../apidocs/org/apache/tapestry/services/Dispatcher.html}Dispatcher}} interface; a Dispatcher inside Tapestry
+  {{{../../apidocs/org/apache/tapestry5/services/Dispatcher.html}Dispatcher}} interface; a Dispatcher inside Tapestry
   is roughly equivalent to a servlet, though a touch more active.  It is passed a Request and decides if the URL
   for the Request is something it can handle; if so it will process the request, send a response, and return true.
 
@@ -129,7 +129,7 @@ public void contributeMasterDispatcher(OrderedConfiguration<Dispatcher> configur
 }
 +---+
 
-  With an {{{../../apidcos/org/apache/tapestry/ioc/OrderedConfiguration.html}OrderedConfiguration}}, 
+  With an {{{../../apidcos/org/apache/tapestry5/ioc/OrderedConfiguration.html}OrderedConfiguration}},
   each contribution gets a name, which must be unique.  Here the names are RootPath, Asset, PageRender and ComponentAction.
 
   The add() method takes a name, the contributed object for that name, and then zero or more optional constraints.
@@ -139,8 +139,8 @@ public void contributeMasterDispatcher(OrderedConfiguration<Dispatcher> configur
   The ordering occurs on the complete set of contributions, from all modules. 
 
   Here, we need a specific order, used to make sure that the Dispatchers don't get confused about which URLs
-  are appropriate ... for example, an asset URL might be /assets/tapestry/tapestry.js.  This looks just like
-  a component action URL (for page "assets/tapestry/tapestry" and component "js"). Given that software is totally lacking
+  are appropriate ... for example, an asset URL might be /assets/tapestry5/tapestry.js.  This looks just like
+  a component action URL (for page "assets/tapestry5/tapestry" and component "js"). Given that software is totally lacking
   in basic common-sense, we instead use careful ordering of the Dipstachers to ensure that AssetDispatcher is checked <before> 
   the ComponentAction dispatcher.
 
@@ -158,7 +158,7 @@ public void contributeMasterDispatcher(OrderedConfiguration<Dispatcher> configur
   }
 +----+
 
-  {{{../../apidocs/org/apache/tapestry/ioc/services/ChainBuilder.html}ChainBuilder}} is a service that
+  {{{../../apidocs/org/apache/tapestry5/ioc/services/ChainBuilder.html}ChainBuilder}} is a service that
   <builds other services>.  Here it creates an object of type Dispatcher in terms of the list of Dispatchers.
   This is one of the most common uses of service builder methods ... for when the service implementation
   doesn't exist, but can be constructed at runtime.
@@ -171,7 +171,7 @@ Mapped Configurations
 
   Tapestry IoC's {{{../symbols.html}symbols}} mechanism allows configuration values to be defined and perhaps overridden, then
   provided to services via injection, using
-  the  {{{../../apidocs/org/apache/tapestry/ioc/annotations/Value.html}Value}} annotation.
+  the  {{{../../apidocs/org/apache/tapestry5/ioc/annotations/Value.html}Value}} annotation.
 
   The first step is to contribute values.
 
@@ -186,8 +186,8 @@ Mapped Configurations
     configuration.add("tapestry.scriptaculous", "classpath:${tapestry.scriptaculous.path}");
     configuration.add(
             "tapestry.scriptaculous.path",
-            "org/apache/tapestry/scriptaculous_1_7_1_beta_3");
-    configuration.add("tapestry.jscalendar.path", "org/apache/tapestry/jscalendar-1.0");
+            "org/apache/tapestry5/scriptaculous_1_7_1_beta_3");
+    configuration.add("tapestry.jscalendar.path", "org/apache/tapestry5/jscalendar-1.0");
     configuration.add("tapestry.jscalendar", "classpath:${tapestry.jscalendar.path}");
   }
 +---+

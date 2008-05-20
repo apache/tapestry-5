@@ -12,13 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.grid;
+package org.apache.tapestry5.grid;
 
-import org.apache.tapestry.beaneditor.PropertyModel;
-import org.apache.tapestry.ioc.internal.util.Defense;
+import org.apache.tapestry5.beaneditor.PropertyModel;
+import org.apache.tapestry5.ioc.internal.util.Defense;
 
 /**
- * Identifies how a single column (identified as a {@link org.apache.tapestry.beaneditor.PropertyModel}) is sorted.
+ * Identifies how a single column (identified as a {@link org.apache.tapestry5.beaneditor.PropertyModel}) is sorted.
  */
 public class SortConstraint
 {

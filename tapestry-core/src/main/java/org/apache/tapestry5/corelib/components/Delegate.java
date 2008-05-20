@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.corelib.components;
+package org.apache.tapestry5.corelib.components;
 
-import org.apache.tapestry.Block;
-import org.apache.tapestry.annotation.Parameter;
+import org.apache.tapestry5.Block;
+import org.apache.tapestry5.annotations.Parameter;
 
 /**
  * A component that does not do any rendering of its own, but will delegate to some other object that can do rendering.

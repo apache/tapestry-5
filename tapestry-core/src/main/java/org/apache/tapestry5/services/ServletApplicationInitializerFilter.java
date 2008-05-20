@@ -12,14 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.services;
+package org.apache.tapestry5.services;
 
 import javax.servlet.ServletContext;
 
 /**
- * Filter interface for {@link org.apache.tapestry.services.ServletApplicationInitializer}.
+ * Filter interface for {@link org.apache.tapestry5.services.ServletApplicationInitializer}.
  *
- * @see org.apache.tapestry.services.ServletApplicationInitializer
+ * @see org.apache.tapestry5.services.ServletApplicationInitializer
  */
 public interface ServletApplicationInitializerFilter
 {

@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc;
+package org.apache.tapestry5.ioc;
 
-import org.apache.tapestry.ioc.annotation.EagerLoad;
+import org.apache.tapestry5.ioc.annotations.EagerLoad;
 
 /**
  * Public access to the IoC service registry.
@@ -25,8 +25,8 @@ public interface Registry extends ObjectLocator
      * Invoked at the end of a request to discard any thread-specific information accumulated during the current
      * request.
      *
-     * @see org.apache.tapestry.ioc.services.PerthreadManager
-     * @see org.apache.tapestry.ioc.services.ThreadCleanupListener
+     * @see org.apache.tapestry5.ioc.services.PerthreadManager
+     * @see org.apache.tapestry5.ioc.services.ThreadCleanupListener
      */
     void cleanupThread();
 
@@ -34,8 +34,8 @@ public interface Registry extends ObjectLocator
      * Shuts down a Registry instance. Notifies all listeners that the registry has shutdown. Further method invocations
      * on the Registry are no longer allowed, and the Registry instance should be discarded.
      *
-     * @see org.apache.tapestry.ioc.services.RegistryShutdownHub
-     * @see org.apache.tapestry.ioc.services.RegistryShutdownListener
+     * @see org.apache.tapestry5.ioc.services.RegistryShutdownHub
+     * @see org.apache.tapestry5.ioc.services.RegistryShutdownListener
      */
     void shutdown();
 

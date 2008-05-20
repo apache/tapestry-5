@@ -12,16 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry;
+package org.apache.tapestry5;
 
-import org.apache.tapestry.ioc.Locatable;
+import org.apache.tapestry5.ioc.Locatable;
 import org.slf4j.Logger;
 
 import java.util.Locale;
 
 /**
- * Operations shared by the public {@link org.apache.tapestry.ComponentResources} interface and {@link
- * org.apache.tapestry.internal.structure.ComponentPageElement} interface (on the internal side).
+ * Operations shared by the public {@link org.apache.tapestry5.ComponentResources} interface and {@link
+ * org.apache.tapestry5.internal.structure.ComponentPageElement} interface (on the internal side).
  */
 public interface ComponentResourcesCommon extends Locatable
 {
@@ -45,14 +45,14 @@ public interface ComponentResourcesCommon extends Locatable
      * <p/>
      * This value is often used to obtain an equivalent component instance in a later request.
      *
-     * @see org.apache.tapestry.services.ComponentSource#getComponent(String)
+     * @see org.apache.tapestry5.services.ComponentSource#getComponent(String)
      */
 
     String getCompleteId();
 
     /**
      * A convienience for invoking {@link #triggerContextEvent(String, EventContext , ComponentEventCallback)}. Wraps
-     * the context values into an {@link org.apache.tapestry.EventContext}.
+     * the context values into an {@link org.apache.tapestry5.EventContext}.
      *
      * @param eventType event type (as determined from the request, or otherwise by design)
      * @param context   Values that may be provided to the event handler method as method parameters, or null if no
@@ -61,10 +61,10 @@ public interface ComponentResourcesCommon extends Locatable
      *                  support return values from event handler methods (the value true is allowed even if the handler
      *                  is null).
      * @return true if any event handler was invoked (even if no event handler method returns a non-null value)
-     * @throws org.apache.tapestry.runtime.ComponentEventException
+     * @throws org.apache.tapestry5.runtime.ComponentEventException
      *          if an event handler method throws a checked or unchecked exception
-     * @see org.apache.tapestry.internal.transform.OnEventWorker
-     * @see org.apache.tapestry.annotation.OnEvent
+     * @see org.apache.tapestry5.internal.transform.OnEventWorker
+     * @see org.apache.tapestry5.annotations.OnEvent
      */
     boolean triggerEvent(String eventType, Object[] contextValues, ComponentEventCallback callback);
 
@@ -83,10 +83,10 @@ public interface ComponentResourcesCommon extends Locatable
      *                  support return values from event handler methods (the value true is allowed even if the handler
      *                  is null).
      * @return true if any event handler was invoked (even if no event handler method returns a non-null value)
-     * @throws org.apache.tapestry.runtime.ComponentEventException
+     * @throws org.apache.tapestry5.runtime.ComponentEventException
      *          if an event handler method throws a checked or unchecked exception
-     * @see org.apache.tapestry.internal.transform.OnEventWorker
-     * @see org.apache.tapestry.annotation.OnEvent
+     * @see org.apache.tapestry5.internal.transform.OnEventWorker
+     * @see org.apache.tapestry5.annotations.OnEvent
      */
     boolean triggerContextEvent(String eventType, EventContext context, ComponentEventCallback callback);
 
@@ -99,7 +99,7 @@ public interface ComponentResourcesCommon extends Locatable
     /**
      * Returns the log instance associated with the component (which is based on the component or mixin's class name).
      *
-     * @see org.apache.tapestry.model.ComponentModel#getLogger()
+     * @see org.apache.tapestry5.model.ComponentModel#getLogger()
      */
     Logger getLogger();
 

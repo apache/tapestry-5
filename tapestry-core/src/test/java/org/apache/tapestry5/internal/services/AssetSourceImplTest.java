@@ -12,15 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry.Asset;
-import org.apache.tapestry.internal.test.InternalBaseTestCase;
-import org.apache.tapestry.ioc.Resource;
-import org.apache.tapestry.ioc.internal.util.ClasspathResource;
-import org.apache.tapestry.ioc.services.ThreadLocale;
-import org.apache.tapestry.services.AssetFactory;
-import org.apache.tapestry.services.AssetSource;
+import org.apache.tapestry5.Asset;
+import org.apache.tapestry5.internal.test.InternalBaseTestCase;
+import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.ioc.internal.util.ClasspathResource;
+import org.apache.tapestry5.ioc.services.ThreadLocale;
+import org.apache.tapestry5.services.AssetFactory;
+import org.apache.tapestry5.services.AssetSource;
 import org.testng.annotations.Test;
 
 import java.util.Collections;
@@ -30,7 +30,7 @@ import java.util.Map;
 public class AssetSourceImplTest extends InternalBaseTestCase
 {
     private final Resource baseResource = new ClasspathResource(
-            "org/apache/tapestry/internal/services/SimpleComponent.class");
+            "org/apache/tapestry5/internal/services/SimpleComponent.class");
 
     private final Resource rootResource = new ClasspathResource("/");
 
@@ -86,7 +86,7 @@ public class AssetSourceImplTest extends InternalBaseTestCase
         // First try creates it:
 
         assertSame(source.getClasspathAsset(
-                "org/apache/tapestry/internal/services/SimpleComponent.properties",
+                "org/apache/tapestry5/internal/services/SimpleComponent.properties",
                 Locale.UK), asset);
 
         verify();
@@ -116,7 +116,7 @@ public class AssetSourceImplTest extends InternalBaseTestCase
 
         assertSame(
                 source
-                        .getClasspathAsset("org/apache/tapestry/internal/services/SimpleComponent.properties"),
+                        .getClasspathAsset("org/apache/tapestry5/internal/services/SimpleComponent.properties"),
                 asset);
 
         verify();
@@ -130,7 +130,7 @@ public class AssetSourceImplTest extends InternalBaseTestCase
         Asset asset = mockAsset();
 
         Resource expectedResource = rootResource
-                .forFile("org/apache/tapestry/internal/services/SimpleComponent_en_GB.properties");
+                .forFile("org/apache/tapestry5/internal/services/SimpleComponent_en_GB.properties");
 
         train_getRootResource(factory, rootResource);
 
@@ -144,14 +144,14 @@ public class AssetSourceImplTest extends InternalBaseTestCase
 
         assertSame(source.getAsset(
                 baseResource,
-                "classpath:org/apache/tapestry/internal/services/SimpleComponent.properties",
+                "classpath:org/apache/tapestry5/internal/services/SimpleComponent.properties",
                 Locale.UK), asset);
 
         // Check that a leading slash is not a problem:
 
         assertSame(source.getAsset(
                 baseResource,
-                "classpath:/org/apache/tapestry/internal/services/SimpleComponent.properties",
+                "classpath:/org/apache/tapestry5/internal/services/SimpleComponent.properties",
                 Locale.UK), asset);
 
         verify();
@@ -172,7 +172,7 @@ public class AssetSourceImplTest extends InternalBaseTestCase
         {
             source.getAsset(
                     baseResource,
-                    "classpath:org/apache/tapestry/internal/services/SimpleComponent.properties",
+                    "classpath:org/apache/tapestry5/internal/services/SimpleComponent.properties",
                     Locale.UK);
             unreachable();
         }
@@ -180,7 +180,7 @@ public class AssetSourceImplTest extends InternalBaseTestCase
         {
             assertEquals(
                     ex.getMessage(),
-                    "Unknown prefix for asset path 'classpath:org/apache/tapestry/internal/services/SimpleComponent.properties'.");
+                    "Unknown prefix for asset path 'classpath:org/apache/tapestry5/internal/services/SimpleComponent.properties'.");
         }
 
         verify();
@@ -206,7 +206,7 @@ public class AssetSourceImplTest extends InternalBaseTestCase
         {
             assertEquals(
                     ex.getMessage(),
-                    "Unable to locate asset 'classpath:org/apache/tapestry/internal/services/DoesNotExist.properties' (the file does not exist).");
+                    "Unable to locate asset 'classpath:org/apache/tapestry5/internal/services/DoesNotExist.properties' (the file does not exist).");
         }
 
         verify();

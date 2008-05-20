@@ -35,7 +35,7 @@ Configuring Tapestry
     </context-param>
     <filter>
         <filter-name>app</filter-name>
-        <filter-class>org.apache.tapestry.TapestryFilter</filter-class>
+        <filter-class>org.apache.tapestry5.TapestryFilter</filter-class>
     </filter>
     <filter-mapping>
         <filter-name>app</filter-name>
@@ -81,7 +81,7 @@ Configuring Tapestry
 
   These symbols are always defined in terms of strings, that are coerced to the appropriate type (a number,
   a boolean, etc.).  Of special note are <time intervals>, which are specified in a
-  {{{../../apidocs/org/apache/tapestry/ioc/util/TimeInterval.html}particular format}}.
+  {{{../../apidocs/org/apache/tapestry5/ioc/util/TimeInterval.html}particular format}}.
 
 
   [tapestry.compress-whitespace]
@@ -104,7 +104,7 @@ Configuring Tapestry
     of the stylesheet are subject to change at any time (they are considered internal), so replacing the stylesheet,
     rather than overriding selected rules within it, entails some risk.
 
-    The default is org/apache/tapestry/default.css, stored on the classpath.
+    The default is org/apache/tapestry5/default.css, stored on the classpath.
   
   [tapestry.file-check-interval]
     Time interval between file system checks. During a file system check, only a single thread is active (all others
@@ -164,7 +164,7 @@ Configuring Tapestry
     an entirely new page instance.  The default is "10 ms".
 
   [tapestry.secure-page]
-    If true, then the page may only be accessed via HTTPS.  The {{{../../apidocs/org/apache/tapestry/annotation/Secure.html}@Secure}}
+    If true, then the page may only be accessed via HTTPS.  The {{{../../apidocs/org/apache/tapestry5/annotations/Secure.html}@Secure}}
     annotation will set this value to true.
 
   [tapestry.scriptaculous]

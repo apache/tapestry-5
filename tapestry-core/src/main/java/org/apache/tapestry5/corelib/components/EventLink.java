@@ -12,17 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.corelib.components;
+package org.apache.tapestry5.corelib.components;
 
-import org.apache.tapestry.BindingConstants;
-import org.apache.tapestry.ComponentResources;
-import org.apache.tapestry.Link;
-import org.apache.tapestry.annotation.Parameter;
-import org.apache.tapestry.corelib.base.AbstractComponentEventLink;
-import org.apache.tapestry.ioc.annotation.Inject;
+import org.apache.tapestry5.BindingConstants;
+import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.Link;
+import org.apache.tapestry5.annotations.Parameter;
+import org.apache.tapestry5.corelib.base.AbstractComponentEventLink;
+import org.apache.tapestry5.ioc.annotations.Inject;
 
 /**
- * A close relative of {@link org.apache.tapestry.corelib.components.ActionLink} except in two ways.
+ * A close relative of {@link org.apache.tapestry5.corelib.components.ActionLink} except in two ways.
  * <p/>
  * First, the event that it triggers is explicitly controlled, rather than always "action".
  * <p/>
@@ -35,7 +35,7 @@ public class EventLink extends AbstractComponentEventLink
 {
     /**
      * The name of the event to be triggered in the parent component. Defaults to the id of the component. An {@link
-     * org.apache.tapestry.corelib.components.ActionLink} triggers an "action" event on itself, and EventLink component
+     * org.apache.tapestry5.corelib.components.ActionLink} triggers an "action" event on itself, and EventLink component
      * triggers any arbitrary event on <em>its container</em>.
      */
     @Parameter(defaultPrefix = BindingConstants.LITERAL)

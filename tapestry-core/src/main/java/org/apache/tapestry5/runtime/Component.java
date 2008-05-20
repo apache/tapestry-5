@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.runtime;
+package org.apache.tapestry5.runtime;
 
-import org.apache.tapestry.MarkupWriter;
-import org.apache.tapestry.annotation.OnEvent;
+import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.annotations.OnEvent;
 
 /**
  * Interface that defines the lifecycle of a component, within a page, allowing for callbacks into the component for
@@ -32,7 +32,7 @@ public interface Component extends ComponentResourcesAware, PageLifecycleListene
 {
 
     /**
-     * Lifecycle method invoked at the end of the {@link org.apache.tapestry.annotation.CleanupRender} render phase.
+     * Lifecycle method invoked at the end of the {@link org.apache.tapestry5.annotations.CleanupRender} render phase.
      * There is no annotation for this method, it is part of CleanupRender, but is always invoked. Its specific use is
      * to allow components to clean up cached parameter values.
      */
@@ -70,7 +70,7 @@ public interface Component extends ComponentResourcesAware, PageLifecycleListene
 
     /**
      * Generally used to write the close tag matching any open tag written by {@link
-     * #beginRender(org.apache.tapestry.MarkupWriter, Event)}.
+     * #beginRender(org.apache.tapestry5.MarkupWriter, Event)}.
      */
     void afterRender(MarkupWriter writer, Event event);
 

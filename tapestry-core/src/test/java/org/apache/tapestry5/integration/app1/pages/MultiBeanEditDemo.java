@@ -12,14 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.integration.app1.pages;
+package org.apache.tapestry5.integration.app1.pages;
 
-import org.apache.tapestry.annotation.ApplicationState;
-import org.apache.tapestry.annotation.Component;
-import org.apache.tapestry.annotation.InjectPage;
-import org.apache.tapestry.corelib.components.Form;
-import org.apache.tapestry.integration.app1.data.RolePath;
-import org.apache.tapestry.integration.app1.data.UserCredentials;
+import org.apache.tapestry5.annotations.ApplicationState;
+import org.apache.tapestry5.annotations.Component;
+import org.apache.tapestry5.annotations.InjectPage;
+import org.apache.tapestry5.corelib.components.Form;
+import org.apache.tapestry5.integration.app1.data.RolePath;
+import org.apache.tapestry5.integration.app1.data.UserCredentials;
 
 public class MultiBeanEditDemo
 {

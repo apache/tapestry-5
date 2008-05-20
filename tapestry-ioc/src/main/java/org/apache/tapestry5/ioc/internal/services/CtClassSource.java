@@ -12,14 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.internal.services;
+package org.apache.tapestry5.ioc.internal.services;
 
 import javassist.CtClass;
 
 /**
  * Used when generating new classes on the fly.
  *
- * @see org.apache.tapestry.ioc.services.ClassFactory
+ * @see org.apache.tapestry5.ioc.services.ClassFactory
  */
 public interface CtClassSource
 {

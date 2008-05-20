@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.test;
+package org.apache.tapestry5.internal.test;
 
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;

@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry;
+package org.apache.tapestry5;
 
-import org.apache.tapestry.dom.Element;
+import org.apache.tapestry5.dom.Element;
 
 /**
  * An object responsible for performing decorations around fields and field labels. The decorator is notified at
@@ -22,13 +22,13 @@ import org.apache.tapestry.dom.Element;
  * <p/>
  * In most western languages (written left to right) the label will render before the field, so the properties of the
  * Field may not be set yet (or may reflect a previous looping's rendering). It may be necessary to {@linkplain
- * org.apache.tapestry.services.Heartbeat#defer(Runnable)} defer any rendering} until after the Label and the Field have
+ * org.apache.tapestry5.services.Heartbeat#defer(Runnable)} defer any rendering} until after the Label and the Field have
  * both had their change to initialize and render.
  */
 public interface ValidationDecorator
 {
     /**
-     * Invoked by a {@link org.apache.tapestry.corelib.components.Label} before rendering itself.
+     * Invoked by a {@link org.apache.tapestry5.corelib.components.Label} before rendering itself.
      *
      * @param field for this label
      */
@@ -45,7 +45,7 @@ public interface ValidationDecorator
 
 
     /**
-     * Invoked by {@link org.apache.tapestry.corelib.components.Label} after rendering itself.
+     * Invoked by {@link org.apache.tapestry5.corelib.components.Label} after rendering itself.
      *
      * @param field
      */

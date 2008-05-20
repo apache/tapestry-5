@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry;
+package org.apache.tapestry5;
 
-import org.apache.tapestry.ioc.AnnotationProvider;
+import org.apache.tapestry5.ioc.AnnotationProvider;
 
 /**
  * Used to read or update the value associated with a property. A PropertyConduit provides access to the annotations on

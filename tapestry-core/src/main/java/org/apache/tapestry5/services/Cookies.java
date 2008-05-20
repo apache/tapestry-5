@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.services;
+package org.apache.tapestry5.services;
 
 /**
  * Used by other services to obtain cookie values for the current request.
@@ -28,7 +28,7 @@ public interface Cookies
 
     /**
      * Creates or updates a cookie value. The value is stored using a max age (in seconds) defined by the symbol
-     * <code>org.apache.tapestry.default-cookie-max-age</code>. The factory default for this value is the equivalent of
+     * <code>org.apache.tapestry5.default-cookie-max-age</code>. The factory default for this value is the equivalent of
      * one week.
      */
 

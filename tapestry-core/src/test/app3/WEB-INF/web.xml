@@ -22,11 +22,11 @@
     <display-name>Integration Test App 3</display-name>
     <context-param>
         <param-name>tapestry.app-package</param-name>
-        <param-value>org.apache.tapestry.integration.app3</param-value>
+        <param-value>org.apache.tapestry5.integration.app3</param-value>
     </context-param>
     <filter>
         <filter-name>app</filter-name>
-        <filter-class>org.apache.tapestry.TapestryFilter</filter-class>
+        <filter-class>org.apache.tapestry5.TapestryFilter</filter-class>
     </filter>
     <filter-mapping>
         <filter-name>app</filter-name>

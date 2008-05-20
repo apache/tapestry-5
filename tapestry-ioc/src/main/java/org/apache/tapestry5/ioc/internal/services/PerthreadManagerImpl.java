@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.internal.services;
+package org.apache.tapestry5.ioc.internal.services;
 
-import org.apache.tapestry.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry.ioc.services.PerthreadManager;
-import org.apache.tapestry.ioc.services.ThreadCleanupListener;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.services.PerthreadManager;
+import org.apache.tapestry5.ioc.services.ThreadCleanupListener;
 import org.slf4j.Logger;
 
 import java.util.List;

@@ -12,13 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.internal.services;
+package org.apache.tapestry5.ioc.internal.services;
 
-import org.apache.tapestry.ioc.services.SymbolProvider;
+import org.apache.tapestry5.ioc.services.SymbolProvider;
 
 /**
- * Obtains symbol values from JVM System properties. This implementation is usually ordered first,
- * so that explicit overrides, provided as JVM system properties, can take effect.
+ * Obtains symbol values from JVM System properties. This implementation is usually ordered first, so that explicit
+ * overrides, provided as JVM system properties, can take effect.
  */
 public class SystemPropertiesSymbolProvider implements SymbolProvider
 {

@@ -12,13 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import static org.apache.tapestry.ioc.IOCConstants.PERTHREAD_SCOPE;
-import org.apache.tapestry.ioc.annotation.Scope;
-import org.apache.tapestry.ioc.internal.util.CollectionFactory;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newLinkedList;
-import org.apache.tapestry.services.Environment;
+import static org.apache.tapestry5.ioc.IOCConstants.PERTHREAD_SCOPE;
+import org.apache.tapestry5.ioc.annotations.Scope;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newLinkedList;
+import org.apache.tapestry5.services.Environment;
 
 import java.util.LinkedList;
 import java.util.List;

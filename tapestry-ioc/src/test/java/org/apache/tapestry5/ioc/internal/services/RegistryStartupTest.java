@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.internal.services;
+package org.apache.tapestry5.ioc.internal.services;
 
-import org.apache.tapestry.ioc.Registry;
-import org.apache.tapestry.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry.ioc.test.IOCTestCase;
+import org.apache.tapestry5.ioc.Registry;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.test.IOCTestCase;
 import org.slf4j.Logger;
 import org.testng.annotations.Test;
 
@@ -109,7 +109,7 @@ public class RegistryStartupTest extends IOCTestCase
         }
         catch (IllegalStateException ex)
         {
-            assertMessageContains(ex, "Method org.apache.tapestry.ioc.internal.services.RegistryStartup.run(",
+            assertMessageContains(ex, "Method org.apache.tapestry5.ioc.internal.services.RegistryStartup.run(",
                                   "may no longer be invoked.");
 
         }

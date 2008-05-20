@@ -12,13 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.services;
+package org.apache.tapestry5.services;
 
-import org.apache.tapestry.Field;
-import org.apache.tapestry.FieldValidator;
-import org.apache.tapestry.Validator;
-import org.apache.tapestry.corelib.components.BeanEditForm;
-import org.apache.tapestry.ioc.Messages;
+import org.apache.tapestry5.Field;
+import org.apache.tapestry5.FieldValidator;
+import org.apache.tapestry5.Validator;
+import org.apache.tapestry5.corelib.components.BeanEditForm;
+import org.apache.tapestry5.ioc.Messages;
 
 import java.util.Locale;
 

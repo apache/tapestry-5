@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.hibernate;
+package org.apache.tapestry5.internal.hibernate;
 
-import org.apache.tapestry.ioc.Registry;
-import org.apache.tapestry.ioc.services.PropertyAccess;
-import org.apache.tapestry.ioc.services.TypeCoercer;
-import org.apache.tapestry.ioc.test.IOCTestCase;
+import org.apache.tapestry5.ioc.Registry;
+import org.apache.tapestry5.ioc.services.PropertyAccess;
+import org.apache.tapestry5.ioc.services.TypeCoercer;
+import org.apache.tapestry5.ioc.test.IOCTestCase;
 import org.hibernate.Session;
 import org.hibernate.mapping.Property;
 import org.hibernate.mapping.RootClass;
@@ -76,7 +76,7 @@ public class HibernateEntityValueEncoderTest extends IOCTestCase
         }
         catch (IllegalStateException ex)
         {
-            assertMessageContains(ex, "Entity org.apache.tapestry.internal.hibernate.SampleEntity",
+            assertMessageContains(ex, "Entity org.apache.tapestry5.internal.hibernate.SampleEntity",
                                   "has an id property of null");
         }
 

@@ -12,15 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.internal.services;
+package org.apache.tapestry5.ioc.internal.services;
 
 import javassist.CtClass;
-import org.apache.tapestry.ioc.BaseLocatable;
-import org.apache.tapestry.ioc.internal.services.LoggingDecoratorImplTest.ToStringService;
-import org.apache.tapestry.ioc.services.ClassFab;
-import org.apache.tapestry.ioc.services.MethodSignature;
-import org.apache.tapestry.ioc.services.PropertyAccess;
-import org.apache.tapestry.ioc.test.IOCTestCase;
+import org.apache.tapestry5.ioc.BaseLocatable;
+import org.apache.tapestry5.ioc.internal.services.LoggingDecoratorImplTest.ToStringService;
+import org.apache.tapestry5.ioc.services.ClassFab;
+import org.apache.tapestry5.ioc.services.MethodSignature;
+import org.apache.tapestry5.ioc.services.PropertyAccess;
+import org.apache.tapestry5.ioc.test.IOCTestCase;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.Test;
 

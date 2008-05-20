@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.integration.pagelevel;
+package org.apache.tapestry5.integration.pagelevel;
 
-import org.apache.tapestry.dom.Document;
-import org.apache.tapestry.test.PageTester;
+import org.apache.tapestry5.dom.Document;
+import org.apache.tapestry5.test.PageTester;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -33,16 +33,16 @@ public class DTDTest extends Assert
     {
         return new Object[][]
                 {
-                        {"DTDFromPage", FRAMESET, "slagheap",},
-                        {"DTDFromComponent", TRANSITIONAL, "flubber",},
-                        {"MultipleDTD", STRICT, "blubber",},
-                        {"NoDTD", "", "no_dtd_loser",}};
+                        { "DTDFromPage", FRAMESET, "slagheap", },
+                        { "DTDFromComponent", TRANSITIONAL, "flubber", },
+                        { "MultipleDTD", STRICT, "blubber", },
+                        { "NoDTD", "", "no_dtd_loser", } };
     }
 
     @Test(dataProvider = "dtd_page_provider")
     public void verify_correct_dtds(String pageName, String expectedDTD, String checkText)
     {
-        String appPackage = "org.apache.tapestry.integration.app2";
+        String appPackage = "org.apache.tapestry5.integration.app2";
         String appName = "";
         PageTester tester = new PageTester(appPackage, appName);
         Document doc = tester.renderPage(pageName);

@@ -12,13 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry.Field;
-import org.apache.tapestry.Link;
-import org.apache.tapestry.RenderSupport;
-import org.apache.tapestry.corelib.data.InsertPosition;
-import org.apache.tapestry.ioc.internal.util.Defense;
+import org.apache.tapestry5.Field;
+import org.apache.tapestry5.Link;
+import org.apache.tapestry5.RenderSupport;
+import org.apache.tapestry5.corelib.data.InsertPosition;
+import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
 
@@ -125,7 +125,7 @@ public class ClientBehaviorSupportImpl implements ClientBehaviorSupport
     }
 
     /**
-     * Invoked at the end of rendering to commit (to the {@link org.apache.tapestry.RenderSupport}) any accumulated
+     * Invoked at the end of rendering to commit (to the {@link org.apache.tapestry5.RenderSupport}) any accumulated
      * validations.
      */
     public void commit()

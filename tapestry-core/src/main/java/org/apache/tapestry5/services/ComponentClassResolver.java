@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.services;
+package org.apache.tapestry5.services;
 
-import org.apache.tapestry.ioc.services.ClassNameLocator;
+import org.apache.tapestry5.ioc.services.ClassNameLocator;
 
 /**
  * Resolves page names and component types to fully qualified class names. Pages and components may be provided by the
@@ -22,7 +22,7 @@ import org.apache.tapestry.ioc.services.ClassNameLocator;
  * appear in component template (when specifying the type of an embedded component).
  * <p/>
  * The service is configured using a collection of {@link LibraryMapping}s. Each mapping maps a prefix, such as "core"
- * to a root package name, such as "org.apache.tapestry.corelib". The root package is expected to have sub-packages:
+ * to a root package name, such as "org.apache.tapestry5.corelib". The root package is expected to have sub-packages:
  * "pages", "components", "mixins" and "base" ("base" is for base classes).
  * <p/>
  * The resolver performs a search of the classpath (via {@link ClassNameLocator}), to build up a set of case-insensitive

@@ -12,24 +12,24 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry.Binding;
-import org.apache.tapestry.BindingConstants;
-import org.apache.tapestry.ComponentResources;
-import org.apache.tapestry.MarkupWriter;
-import org.apache.tapestry.internal.parser.AttributeToken;
-import org.apache.tapestry.internal.parser.ExpansionToken;
-import org.apache.tapestry.internal.structure.*;
-import org.apache.tapestry.ioc.Location;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
-import org.apache.tapestry.ioc.internal.util.InternalUtils;
-import org.apache.tapestry.ioc.internal.util.TapestryException;
-import org.apache.tapestry.ioc.services.TypeCoercer;
-import org.apache.tapestry.model.ComponentModel;
-import org.apache.tapestry.runtime.RenderQueue;
-import org.apache.tapestry.services.BindingSource;
-import org.apache.tapestry.services.ComponentClassResolver;
+import org.apache.tapestry5.Binding;
+import org.apache.tapestry5.BindingConstants;
+import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.internal.parser.AttributeToken;
+import org.apache.tapestry5.internal.parser.ExpansionToken;
+import org.apache.tapestry5.internal.structure.*;
+import org.apache.tapestry5.ioc.Location;
+import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newList;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.ioc.internal.util.TapestryException;
+import org.apache.tapestry5.ioc.services.TypeCoercer;
+import org.apache.tapestry5.model.ComponentModel;
+import org.apache.tapestry5.runtime.RenderQueue;
+import org.apache.tapestry5.services.BindingSource;
+import org.apache.tapestry5.services.ComponentClassResolver;
 
 import java.util.List;
 import java.util.Locale;

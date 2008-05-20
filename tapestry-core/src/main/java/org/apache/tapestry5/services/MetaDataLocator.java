@@ -12,19 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.services;
+package org.apache.tapestry5.services;
 
-import org.apache.tapestry.ComponentResources;
+import org.apache.tapestry5.ComponentResources;
 
 /**
  * Used to lookup meta data concerning a particular component. The primary source of meta data is the meta data defined
- * for the component, accessed via {@link org.apache.tapestry.model.ComponentModel#getMeta(String)}. This includes meta
+ * for the component, accessed via {@link org.apache.tapestry5.model.ComponentModel#getMeta(String)}. This includes meta
  * data defined by base classes. When meta-data for a particular component can not be found, a search works up the
  * containment hierarchy (to the component's container, and the container's container, and so on). If <em>that</em>
  * proves unfruitful, a system of defaults is provided by configuration and matched against the containing page's
  * logical name.
  * <p/>
- * Finally, if no metadata is available, then {@link org.apache.tapestry.ioc.services.SymbolSource#valueForSymbol(String)}
+ * Finally, if no metadata is available, then {@link org.apache.tapestry5.ioc.services.SymbolSource#valueForSymbol(String)}
  * is used to obtain a value.
  */
 public interface MetaDataLocator

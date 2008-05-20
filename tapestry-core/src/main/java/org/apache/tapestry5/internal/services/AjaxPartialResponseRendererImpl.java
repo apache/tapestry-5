@@ -12,16 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry.ContentType;
-import org.apache.tapestry.MarkupWriter;
-import org.apache.tapestry.internal.InternalConstants;
-import org.apache.tapestry.services.MarkupWriterFactory;
-import org.apache.tapestry.services.PartialMarkupRenderer;
-import org.apache.tapestry.services.Request;
-import org.apache.tapestry.services.Response;
+import org.apache.tapestry5.ContentType;
+import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.json.JSONObject;
+import org.apache.tapestry5.services.MarkupWriterFactory;
+import org.apache.tapestry5.services.PartialMarkupRenderer;
+import org.apache.tapestry5.services.Request;
+import org.apache.tapestry5.services.Response;
 
 import java.io.IOException;
 import java.io.PrintWriter;

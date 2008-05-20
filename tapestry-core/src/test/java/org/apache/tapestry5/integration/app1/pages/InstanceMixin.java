@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.integration.app1.pages;
+package org.apache.tapestry5.integration.app1.pages;
 
-import org.apache.tapestry.annotation.*;
-import org.apache.tapestry.integration.app1.components.Output;
-import org.apache.tapestry.integration.app1.mixins.Emphasis;
+import org.apache.tapestry5.annotations.*;
+import org.apache.tapestry5.integration.app1.components.Output;
+import org.apache.tapestry5.integration.app1.mixins.Emphasis;
 
 import java.sql.Date;
 import java.text.DateFormat;

@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.tutorial.pages;
+package org.apache.tapestry5.tutorial.pages;
 
-import org.apache.tapestry.annotation.InjectPage;
-import org.apache.tapestry.ioc.annotation.Inject;
-import org.apache.tapestry.tutorial.entities.Address;
+import org.apache.tapestry5.annotations.InjectPage;
+import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.tutorial.entities.Address;
 import org.hibernate.Session;
 
 import java.util.List;

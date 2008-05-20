@@ -12,19 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.services;
+package org.apache.tapestry5.ioc.services;
 
 /**
- * Used by {@link org.apache.tapestry.ioc.services.LoggingDecorator} to track which exceptions have
- * been logged during the current request (the ExceptionTracker is perthread). This keeps redundant
- * information from appearing in the console output.
+ * Used by {@link org.apache.tapestry5.ioc.services.LoggingDecorator} to track which exceptions have been logged during
+ * the current request (the ExceptionTracker is perthread). This keeps redundant information from appearing in the
+ * console output.
  */
 public interface ExceptionTracker
 {
     /**
-     * Returns true if the indicated exception has already been logged (it is assumed that the
-     * exception will be logged if this method returns false). The exception is recorded for later
-     * checks.
+     * Returns true if the indicated exception has already been logged (it is assumed that the exception will be logged
+     * if this method returns false). The exception is recorded for later checks.
      *
      * @param exception to check
      * @return false if the exception has not been previously checked, true otherwise

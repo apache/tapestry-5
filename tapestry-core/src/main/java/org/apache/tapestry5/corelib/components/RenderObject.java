@@ -12,14 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.corelib.components;
+package org.apache.tapestry5.corelib.components;
 
-import org.apache.tapestry.MarkupWriter;
-import org.apache.tapestry.annotation.Parameter;
-import org.apache.tapestry.corelib.pages.ExceptionReport;
-import org.apache.tapestry.ioc.annotation.Inject;
-import org.apache.tapestry.ioc.annotation.Primary;
-import org.apache.tapestry.services.ObjectRenderer;
+import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.annotations.Parameter;
+import org.apache.tapestry5.corelib.pages.ExceptionReport;
+import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.annotations.Primary;
+import org.apache.tapestry5.services.ObjectRenderer;
 
 /**
  * Renders out an object using the {@link ObjectRenderer} service. Used primarily on the {@link ExceptionReport} page.

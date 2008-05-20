@@ -12,14 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.transform;
+package org.apache.tapestry5.internal.transform;
 
-import org.apache.tapestry.annotation.Property;
-import org.apache.tapestry.ioc.internal.util.InternalUtils;
-import org.apache.tapestry.model.MutableComponentModel;
-import org.apache.tapestry.services.ClassTransformation;
-import org.apache.tapestry.services.ComponentClassTransformWorker;
-import org.apache.tapestry.services.TransformMethodSignature;
+import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.model.MutableComponentModel;
+import org.apache.tapestry5.services.ClassTransformation;
+import org.apache.tapestry5.services.ComponentClassTransformWorker;
+import org.apache.tapestry5.services.TransformMethodSignature;
 
 import java.lang.reflect.Modifier;
 
@@ -28,7 +28,7 @@ import java.lang.reflect.Modifier;
  * be transformed as necessary by other annotations. This worker needs to be scheduled before any worker that might
  * delete a field.
  *
- * @see org.apache.tapestry.annotation.Property
+ * @see org.apache.tapestry5.annotations.Property
  */
 public class PropertyWorker implements ComponentClassTransformWorker
 {

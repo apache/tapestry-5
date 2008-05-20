@@ -12,13 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry.internal.TapestryInternalUtils;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
-import static org.apache.tapestry.ioc.internal.util.Defense.notBlank;
-import org.apache.tapestry.ioc.internal.util.InternalUtils;
-import org.apache.tapestry.test.PageTester;
+import org.apache.tapestry5.internal.TapestryInternalUtils;
+import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newMap;
+import static org.apache.tapestry5.ioc.internal.util.Defense.notBlank;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.test.PageTester;
 
 import java.util.List;
 import java.util.Map;

@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.integration.app1.pages;
+package org.apache.tapestry5.integration.app1.pages;
 
-import org.apache.tapestry.ValueEncoder;
-import org.apache.tapestry.beaneditor.Validate;
-import org.apache.tapestry.internal.services.StringValueEncoder;
+import org.apache.tapestry5.ValueEncoder;
+import org.apache.tapestry5.beaneditor.Validate;
+import org.apache.tapestry5.internal.services.StringValueEncoder;
 
 import java.util.Date;
 import java.util.List;

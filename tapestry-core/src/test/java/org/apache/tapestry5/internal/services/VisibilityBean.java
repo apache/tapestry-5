@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry.annotation.Retain;
+import org.apache.tapestry5.annotations.Retain;
 
 /**
  * Used to test some issues related to visibility.

@@ -11,7 +11,7 @@ Securing your application with HTTPS
   This could be a login page, or a product ordering wizard, or administrative pages.
 
   All that is necessary to mark a page as secure is to add
-  the {{{../../apidocs/org/apache/tapestry/annotation/Secure.html}Secure}} annotation to the page class:
+  the {{{../../apidocs/org/apache/tapestry5/annotations/Secure.html}Secure}} annotation to the page class:
 
 ----
 @Secure
@@ -41,7 +41,7 @@ Securing Multiple Pages
   enable security for folders of pages.  All pages in or beneath the folder will be secured.
 
   This is accomplished by making a contribution to the
-  {{{../../apidocs/org/apache/tapestry/services/MetaDataLocator.html}MetaDataLocator}}
+  {{{../../apidocs/org/apache/tapestry5/services/MetaDataLocator.html}MetaDataLocator}}
   service configuration.  For example, to secure all pages in the "admin" folder:
 
 ----
@@ -84,7 +84,7 @@ Base URL Support
 
   Because of this, Tapestry includes a hook to allow you to override how these default
   URLs are created: the
-  {{{../../apidocs/org/apache/tapestry/services/BaseURLSource.html}BaseURLSource}} service.
+  {{{../../apidocs/org/apache/tapestry5/services/BaseURLSource.html}BaseURLSource}} service.
 
   The default implementation is based on just the getServerName() method; it's often not the
   correct choice even for development.

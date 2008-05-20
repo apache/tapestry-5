@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc;
+package org.apache.tapestry5.ioc;
 
-import org.apache.tapestry.ioc.internal.util.Defense;
+import org.apache.tapestry5.ioc.internal.util.Defense;
 
 /**
  * A wrapper that allows objects of a target type to be ordered. Each Orderable object is given a unique id and a set of

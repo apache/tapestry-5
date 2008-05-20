@@ -12,14 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry.EventConstants;
-import org.apache.tapestry.internal.structure.Page;
-import org.apache.tapestry.services.ComponentEventResultProcessor;
-import org.apache.tapestry.services.PageRenderRequestHandler;
-import org.apache.tapestry.services.PageRenderRequestParameters;
-import org.apache.tapestry.services.Traditional;
+import org.apache.tapestry5.EventConstants;
+import org.apache.tapestry5.internal.structure.Page;
+import org.apache.tapestry5.services.ComponentEventResultProcessor;
+import org.apache.tapestry5.services.PageRenderRequestHandler;
+import org.apache.tapestry5.services.PageRenderRequestParameters;
+import org.apache.tapestry5.services.Traditional;
 
 import java.io.IOException;
 

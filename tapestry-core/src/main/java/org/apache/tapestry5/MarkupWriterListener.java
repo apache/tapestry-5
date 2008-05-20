@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry;
+package org.apache.tapestry5;
 
-import org.apache.tapestry.dom.Element;
+import org.apache.tapestry5.dom.Element;
 
 
 /**
@@ -26,8 +26,8 @@ public interface MarkupWriterListener
      * Invoked just after an element and its initial set of attributes has been written.
      *
      * @param element element just created and populated with attributes
-     * @see org.apache.tapestry.MarkupWriter#element(String, Object[])
-     * @see org.apache.tapestry.MarkupWriter#elementNS(String, String)
+     * @see org.apache.tapestry5.MarkupWriter#element(String, Object[])
+     * @see org.apache.tapestry5.MarkupWriter#elementNS(String, String)
      */
     void elementDidStart(Element element);
 
@@ -35,7 +35,7 @@ public interface MarkupWriterListener
      * Invoked just after an element has ended.
      *
      * @param element just ended
-     * @see org.apache.tapestry.MarkupWriter#end()
+     * @see org.apache.tapestry5.MarkupWriter#end()
      */
     void elementDidEnd(Element element);
 }

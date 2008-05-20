@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry.ValueEncoder;
+import org.apache.tapestry5.ValueEncoder;
 
 /**
  * Passes the string value from the server to the client and vice-versa without any translation.

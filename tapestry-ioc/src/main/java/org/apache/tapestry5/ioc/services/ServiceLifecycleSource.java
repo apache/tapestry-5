@@ -12,13 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.services;
+package org.apache.tapestry5.ioc.services;
 
-import org.apache.tapestry.ioc.ServiceLifecycle;
+import org.apache.tapestry5.ioc.ServiceLifecycle;
 
 /**
- * Provides access to user defined lifecycles (beyond the two built-in lifecycles: "singleton" and
- * "primitive"). The user defined lifecycles are contributed into the service's configuration.
+ * Provides access to user defined lifecycles (beyond the two built-in lifecycles: "singleton" and "primitive"). The
+ * user defined lifecycles are contributed into the service's configuration.
  */
 public interface ServiceLifecycleSource
 {

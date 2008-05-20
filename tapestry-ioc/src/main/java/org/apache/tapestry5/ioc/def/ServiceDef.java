@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.def;
+package org.apache.tapestry5.ioc.def;
 
-import org.apache.tapestry.ioc.ObjectCreator;
-import org.apache.tapestry.ioc.ServiceBuilderResources;
+import org.apache.tapestry5.ioc.ObjectCreator;
+import org.apache.tapestry5.ioc.ServiceBuilderResources;
 
 import java.util.Set;
 
@@ -59,7 +59,7 @@ public interface ServiceDef
 
     /**
      * Returns the lifecycle defined for the service. This is indicated by adding a {@link
-     * org.apache.tapestry.ioc.annotation.Scope} annotation to the service builder method for the service.
+     * org.apache.tapestry5.ioc.annotations.Scope} annotation to the service builder method for the service.
      * <p/>
      * Services that are not proxied will ignore their scope; such services are always treated as singletons.
      */
@@ -68,7 +68,7 @@ public interface ServiceDef
     /**
      * Returns true if the service should be eagerly loaded at Registry startup.
      *
-     * @see org.apache.tapestry.ioc.annotation.EagerLoad
+     * @see org.apache.tapestry5.ioc.annotations.EagerLoad
      */
     boolean isEagerLoad();
 }

@@ -12,32 +12,30 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.services;
+package org.apache.tapestry5.ioc.services;
 
-import org.apache.tapestry.ioc.AnnotationProvider;
-import org.apache.tapestry.ioc.ObjectLocator;
-import org.apache.tapestry.ioc.ObjectProvider;
+import org.apache.tapestry5.ioc.AnnotationProvider;
+import org.apache.tapestry5.ioc.ObjectLocator;
+import org.apache.tapestry5.ioc.ObjectProvider;
 
 /**
- * Rolls up a number of {@link ObjectProvider}, but allows for the case where no object may be
- * provided.
+ * Rolls up a number of {@link ObjectProvider}, but allows for the case where no object may be provided.
  */
 public interface MasterObjectProvider
 {
     /**
-     * Provides an object based on an expression. The process of providing objects occurs within a
-     * particular <em>context</em>, which will typically be a service builder method, service
-     * contributor method, or service decorator method. The locator parameter provides access to the
-     * services visible <em>to that context</em>.
+     * Provides an object based on an expression. The process of providing objects occurs within a particular
+     * <em>context</em>, which will typically be a service builder method, service contributor method, or service
+     * decorator method. The locator parameter provides access to the services visible <em>to that context</em>.
      * <p/>
-     * When the value is required and no {@link ObjectProvider} provided a non-null value, then
-     * {@link ObjectLocator#getService(Class)} is invoked, to provide a uniquely matching service,
-     * or throw a failure exception if no <em>single</em> service can be found.
+     * When the value is required and no {@link ObjectProvider} provided a non-null value, then {@link
+     * ObjectLocator#getService(Class)} is invoked, to provide a uniquely matching service, or throw a failure exception
+     * if no <em>single</em> service can be found.
      *
      * @param objectType         the expected object type
      * @param annotationProvider provides access to annotations (typically, the field or parameter to which an
-     *                           injection-related annotation is attached); annotations on the field or parameter
-     *                           may also be used when resolving the desired object
+     *                           injection-related annotation is attached); annotations on the field or parameter may
+     *                           also be used when resolving the desired object
      * @param locator            locator for the <em>context</em> in which the provider is being used
      * @param required           if true (normal case) a value must be provided; if false then it is allowed for no
      *                           ObjectProvider to provide a value, and this method may return null to indicate the

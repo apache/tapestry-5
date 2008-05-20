@@ -83,7 +83,7 @@ Autobuilding Services
 +---+
 package org.example.myapp.services;
 
-import org.apache.tapestry.ioc.ServiceBinder;
+import org.apache.tapestry5.ioc.ServiceBinder;
 
 public class MyAppModule
 {
@@ -158,7 +158,7 @@ public class MyModule
       
   * {{{http://www.slf4j.org/api/org/slf4j/Logger.html}org.slf4j.Logger}}: logger for the module (derived from the module's class name)
    
-  * {{{../apidocs/org/apache/tapestry/ioc/ObjectLocator.html}ObjectLocator}}:  access to other services
+  * {{{../apidocs/org/apache/tapestry5/ioc/ObjectLocator.html}ObjectLocator}}:  access to other services
   
   []
   
@@ -235,7 +235,7 @@ SubModule Annotation
   or packages).
   
   A better alternative is the 
-  {{{../apidocs/org/apache/tapestry/ioc/annotations/SubModule.html}@SubModule annotation}}.
+  {{{../apidocs/org/apache/tapestry5/ioc/annotations/SubModule.html}@SubModule annotation}}.
   
   The value for this annotation is a list of <additional> classes to be treated as module builder classes,
   exactly as if they were identified in the manifest.  For example:

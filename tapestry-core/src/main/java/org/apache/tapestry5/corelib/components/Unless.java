@@ -12,13 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.corelib.components;
+package org.apache.tapestry5.corelib.components;
 
-import org.apache.tapestry.Block;
-import org.apache.tapestry.annotation.Parameter;
+import org.apache.tapestry5.Block;
+import org.apache.tapestry5.annotations.Parameter;
 
 /**
- * A close relative of the {@link org.apache.tapestry.corelib.components.If} component that inverts the meaning of its
+ * A close relative of the {@link org.apache.tapestry5.corelib.components.If} component that inverts the meaning of its
  * test.  This is easier than an If component with the negate parameter set to true.
  */
 public class Unless
@@ -30,8 +30,8 @@ public class Unless
     private boolean test;
 
     /**
-     * An alternate {@link org.apache.tapestry.Block} to render if the test parameter is false. The default, null, means
-     * render nothing in that situation.
+     * An alternate {@link org.apache.tapestry5.Block} to render if the test parameter is false. The default, null,
+     * means render nothing in that situation.
      */
     @Parameter(name = "else")
     private Block elseBlock;

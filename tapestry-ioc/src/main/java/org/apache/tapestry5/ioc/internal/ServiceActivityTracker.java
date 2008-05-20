@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.internal;
+package org.apache.tapestry5.ioc.internal;
 
-import org.apache.tapestry.ioc.def.ServiceDef;
-import org.apache.tapestry.ioc.services.ServiceActivityScoreboard;
-import org.apache.tapestry.ioc.services.Status;
+import org.apache.tapestry5.ioc.def.ServiceDef;
+import org.apache.tapestry5.ioc.services.ServiceActivityScoreboard;
+import org.apache.tapestry5.ioc.services.Status;
 
 /**
  * Used to update the status of services defined by the {@link ServiceActivityScoreboard}.

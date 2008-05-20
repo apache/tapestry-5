@@ -13,7 +13,7 @@ Injection with Components
   
 Inject Annotation
 
-  The {{{../../apidocs/org/apache/tapestry/ioc/annotation/Inject.html}Inject annotation}} is used to identify fields that will contain injected services and other resources.
+  The {{{../../apidocs/org/apache/tapestry5/ioc/annotations/Inject.html}Inject annotation}} is used to identify fields that will contain injected services and other resources.
   
   Tapestry allows for two kinds of injection:
   
@@ -34,17 +34,17 @@ Inject Annotation
 * Asset Injection
 
   When the 
-  {{{../../apidocs/org/apache/tapestry/annotation/Path.html}Path}} annotation is also present, then the injected value
+  {{{../../apidocs/org/apache/tapestry5/annotations/Path.html}Path}} annotation is also present, then the injected value
   (relative to the component) will be a localized  {{{assets.html}asset}}.  
   
   Symbols in the annotation value are expanded.  
   
 * Block Injection
 
-  For field type {{{../../apidocs/org/apache/tapestry/Block.html}Block}}, the value of the Inject annotation is the
+  For field type {{{../../apidocs/org/apache/tapestry5/Block.html}Block}}, the value of the Inject annotation is the
   id of the {{{templates.apt}\<block\> element}} within the component's template.  Normally, the id of the block is determined from the field name
   (after stripping out leading "_" and "$" characters).  Where that is not appropriate, an
-  {{{../../apidocs/org/apache/tapestry/annotation/Id.html}Id}} annotation can be supplied:
+  {{{../../apidocs/org/apache/tapestry5/annotations/Id.html}Id}} annotation can be supplied:
   
 +---+
   @Inject
@@ -63,7 +63,7 @@ Inject Annotation
   For a particular set of field types, Tapestry will inject a <resource> related to the component, such as its Locale.
   
   A very common example occurs when a component needs access to its
-  {{{../../apidocs/org/apache/tapestry/ComponentResources.html}resources}}.  The component
+  {{{../../apidocs/org/apache/tapestry5/ComponentResources.html}resources}}.  The component
   can define a field of the appropriate type
   and use the Inject annotation without a value:
   
@@ -86,17 +86,17 @@ private ComponentResources resources;
   [org.apache.commons.logging.Log]
     A Log instance configured for the component, based on the component's class name.
   
-  [org.apache.tapestry.ComponentResources]
+  [org.apache.tapestry5.ComponentResources]
   	The resources for the component, often used to generate links related to the component.
   		
-  [org.apache.tapestry.ioc.Messages]
+  [org.apache.tapestry5.ioc.Messages]
     The component message catalog for the component, from which
     {{{localization.html}localized}} messages can be generated.
    
 
 Explicit Service Injection
 
-  Here, a specific object is requested. A {{{../../apidocs/org/apache/tapestry/annotation/Service.html}Service}} annotation
+  Here, a specific object is requested. A {{{../../apidocs/org/apache/tapestry5/annotations/Service.html}Service}} annotation
   is used to identify the service name.
   
   Example:
@@ -128,7 +128,7 @@ Default Injection
 Defining New Injection Logic
 
   Annonymous injection is controlled by the 
-  {{{../../apidocs/org/apache/tapestry/services/InjectionProvider.html}InjectionProvider}}
+  {{{../../apidocs/org/apache/tapestry5/services/InjectionProvider.html}InjectionProvider}}
   service. The configuration for this service is a 
   {{{http://tapestry.apache.org/tapestry5/tapestry-ioc/command.html}chain of command}} for handling component injections.
 

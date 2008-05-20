@@ -12,14 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc;
+package org.apache.tapestry5.ioc;
 
 import java.util.List;
 
 /**
- * Used for testing of ordered and unordered contributions. The names are contributed in from
- * multiple modules. For unordered contributions, the values are sorted alphabetically. For ordered
- * contributions, the values are ordered as per the contributions.
+ * Used for testing of ordered and unordered contributions. The names are contributed in from multiple modules. For
+ * unordered contributions, the values are sorted alphabetically. For ordered contributions, the values are ordered as
+ * per the contributions.
  */
 public interface NameListHolder
 {

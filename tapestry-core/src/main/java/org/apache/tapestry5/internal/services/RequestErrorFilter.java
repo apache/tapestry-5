@@ -1,11 +1,12 @@
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry.services.*;
+import org.apache.tapestry5.services.*;
 
 import java.io.IOException;
 
 /**
- * Filter for the {@link org.apache.tapestry.services.RequestHandler} pipeline used to intercept and report exceptions.
+ * Filter for the {@link org.apache.tapestry5.services.RequestHandler} pipeline used to intercept and report
+ * exceptions.
  */
 public class RequestErrorFilter implements RequestFilter
 {

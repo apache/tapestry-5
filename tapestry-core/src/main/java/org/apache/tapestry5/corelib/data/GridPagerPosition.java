@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.corelib.data;
+package org.apache.tapestry5.corelib.data;
 
-import org.apache.tapestry.corelib.components.Grid;
+import org.apache.tapestry5.corelib.components.Grid;
 
 /**
  * Used by the {@link Grid} component to control where the pager portion of the Grid should be displayed.

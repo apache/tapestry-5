@@ -12,17 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc;
+package org.apache.tapestry5.ioc;
 
 /**
- * Interface used to encapsulate any strategy used defer the creation of some object until just as
- * needed.
+ * Interface used to encapsulate any strategy used defer the creation of some object until just as needed.
  */
 public interface ObjectCreator
 {
     /**
-     * Create and return the object.  In some limited circumstances, the implementation may cache
-     * the result, returning the same object for repeated calls.
+     * Create and return the object.  In some limited circumstances, the implementation may cache the result, returning
+     * the same object for repeated calls.
      */
     Object createObject();
 }

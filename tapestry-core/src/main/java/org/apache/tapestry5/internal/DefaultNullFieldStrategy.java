@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal;
+package org.apache.tapestry5.internal;
 
-import org.apache.tapestry.NullFieldStrategy;
+import org.apache.tapestry5.NullFieldStrategy;
 
 /**
  * Default strategy, which is to do nothing: null values stay null.

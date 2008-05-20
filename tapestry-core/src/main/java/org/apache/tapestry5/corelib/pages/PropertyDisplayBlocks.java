@@ -12,14 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.corelib.pages;
+package org.apache.tapestry5.corelib.pages;
 
-import org.apache.tapestry.MarkupWriter;
-import org.apache.tapestry.Renderable;
-import org.apache.tapestry.annotation.Environmental;
-import org.apache.tapestry.internal.TapestryInternalUtils;
-import org.apache.tapestry.ioc.annotation.Inject;
-import org.apache.tapestry.services.PropertyOutputContext;
+import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.Renderable;
+import org.apache.tapestry5.annotations.Environmental;
+import org.apache.tapestry5.internal.TapestryInternalUtils;
+import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.services.PropertyOutputContext;
 
 import java.text.DateFormat;
 import java.util.Locale;

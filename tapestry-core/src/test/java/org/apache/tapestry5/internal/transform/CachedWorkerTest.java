@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.transform;
+package org.apache.tapestry5.internal.transform;
 
-import org.apache.tapestry.annotation.Cached;
-import org.apache.tapestry.services.ClassTransformation;
-import org.apache.tapestry.services.TransformMethodSignature;
-import org.apache.tapestry.test.TapestryTestCase;
+import org.apache.tapestry5.annotations.Cached;
+import org.apache.tapestry5.services.ClassTransformation;
+import org.apache.tapestry5.services.TransformMethodSignature;
+import org.apache.tapestry5.test.TapestryTestCase;
 import org.testng.annotations.Test;
 
 import java.lang.reflect.Modifier;

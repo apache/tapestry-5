@@ -12,15 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.corelib.components;
+package org.apache.tapestry5.corelib.components;
 
-import org.apache.tapestry.*;
-import org.apache.tapestry.annotation.Environmental;
-import org.apache.tapestry.annotation.Parameter;
-import org.apache.tapestry.annotation.SupportsInformalParameters;
-import org.apache.tapestry.dom.Element;
-import org.apache.tapestry.internal.services.ClientBehaviorSupport;
-import org.apache.tapestry.ioc.annotation.Inject;
+import org.apache.tapestry5.*;
+import org.apache.tapestry5.annotations.Environmental;
+import org.apache.tapestry5.annotations.Parameter;
+import org.apache.tapestry5.annotations.SupportsInformalParameters;
+import org.apache.tapestry5.dom.Element;
+import org.apache.tapestry5.internal.services.ClientBehaviorSupport;
+import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.json.JSONObject;
 
 
@@ -33,7 +33,7 @@ import org.apache.tapestry5.json.JSONObject;
  * false).
  * <p/>
  * <p/>
- * When a user clicks an {@link org.apache.tapestry.corelib.components.ActionLink} whose zone parameter is set, the
+ * When a user clicks an {@link org.apache.tapestry5.corelib.components.ActionLink} whose zone parameter is set, the
  * corresponding client-side Tapestry.Zone object is located. It will update the content of the Zone's &lt;div&gt; and
  * then invoke either a show method (if the div is not visible) or an update method (if the div is visible).  The show
  * and update parameters are the <em>names</em> of functions attached to the Tapestry.ElementEffect object.

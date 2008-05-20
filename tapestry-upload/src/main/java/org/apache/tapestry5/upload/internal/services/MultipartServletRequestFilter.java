@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.upload.internal.services;
+package org.apache.tapestry5.upload.internal.services;
 
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
-import org.apache.tapestry.services.HttpServletRequestFilter;
-import org.apache.tapestry.services.HttpServletRequestHandler;
-import org.apache.tapestry.upload.services.MultipartDecoder;
+import org.apache.tapestry5.services.HttpServletRequestFilter;
+import org.apache.tapestry5.services.HttpServletRequestHandler;
+import org.apache.tapestry5.upload.services.MultipartDecoder;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

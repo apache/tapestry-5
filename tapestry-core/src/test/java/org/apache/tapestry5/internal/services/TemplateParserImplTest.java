@@ -12,17 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry.internal.parser.*;
-import org.apache.tapestry.internal.test.InternalBaseTestCase;
-import org.apache.tapestry.ioc.Locatable;
-import org.apache.tapestry.ioc.Location;
-import org.apache.tapestry.ioc.Resource;
-import org.apache.tapestry.ioc.internal.util.ClasspathResource;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newSet;
-import org.apache.tapestry.ioc.internal.util.TapestryException;
-import org.apache.tapestry.test.TapestryTestConstants;
+import org.apache.tapestry5.internal.parser.*;
+import org.apache.tapestry5.internal.test.InternalBaseTestCase;
+import org.apache.tapestry5.ioc.Locatable;
+import org.apache.tapestry5.ioc.Location;
+import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.ioc.internal.util.ClasspathResource;
+import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newSet;
+import org.apache.tapestry5.ioc.internal.util.TapestryException;
+import org.apache.tapestry5.test.TapestryTestConstants;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -32,8 +32,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * This is used to test the template parser ... and in some cases, the underlying behavior of the
- * SAX APIs.
+ * This is used to test the template parser ... and in some cases, the underlying behavior of the SAX APIs.
  */
 public class TemplateParserImplTest extends InternalBaseTestCase
 {
@@ -208,7 +207,7 @@ public class TemplateParserImplTest extends InternalBaseTestCase
 
         TextToken t = get(tokens, 1);
 
-        // This is OK because the org.apache.tapestry.dom.Text will convert the characters back into
+        // This is OK because the org.apache.tapestry5.dom.Text will convert the characters back into
         // XML entities.
 
         assertEquals(t.getText().trim(), "lt:< gt:> amp:&");
@@ -611,28 +610,28 @@ public class TemplateParserImplTest extends InternalBaseTestCase
     @DataProvider(name = "parse_failure_data")
     public Object[][] parse_failure_data()
     {
-        return new Object[][]{
+        return new Object[][] {
 
-                {"mixin_requires_id_or_type.tml",
-                 "You may not specify mixins for element <span> because it does not represent a component (which requires either an id attribute or a type attribute).",
-                 2},
+                { "mixin_requires_id_or_type.tml",
+                        "You may not specify mixins for element <span> because it does not represent a component (which requires either an id attribute or a type attribute).",
+                        2 },
 
-                {"illegal_nesting_within_body_element.tml", "Element 'xyz' is nested within a Tapestry body element",
-                 2},
+                { "illegal_nesting_within_body_element.tml", "Element 'xyz' is nested within a Tapestry body element",
+                        2 },
 
-                {"unexpected_attribute_in_parameter_element.tml",
-                 "Element <parameter> does not support an attribute named 'grok'. The only allowed attribute name is 'name'.",
-                 4},
+                { "unexpected_attribute_in_parameter_element.tml",
+                        "Element <parameter> does not support an attribute named 'grok'. The only allowed attribute name is 'name'.",
+                        4 },
 
-                {"name_attribute_of_parameter_element_omitted.tml",
-                 "The name attribute of the <parameter> element must be specified.", 4},
+                { "name_attribute_of_parameter_element_omitted.tml",
+                        "The name attribute of the <parameter> element must be specified.", 4 },
 
-                {"name_attribute_of_parameter_element_blank.tml",
-                 "The name attribute of the <parameter> element must be specified.", 4},
+                { "name_attribute_of_parameter_element_blank.tml",
+                        "The name attribute of the <parameter> element must be specified.", 4 },
 
-                {"unexpected_attribute_in_block_element.tml",
-                 "Element <block> does not support an attribute named 'name'. The only allowed attribute name is 'id'.",
-                 3},
+                { "unexpected_attribute_in_block_element.tml",
+                        "Element <block> does not support an attribute named 'name'. The only allowed attribute name is 'id'.",
+                        3 },
 
         };
     }
@@ -660,8 +659,8 @@ public class TemplateParserImplTest extends InternalBaseTestCase
     @DataProvider(name = "doctype_parsed_correctly_data")
     public Object[][] doctype_parsed_correctly_data()
     {
-        return new Object[][]{{"xhtml1_strict_doctype.tml"}, {"xhtml1_transitional_doctype.tml"},
-                              {"xhtml1_frameset_doctype.tml"}};
+        return new Object[][] { { "xhtml1_strict_doctype.tml" }, { "xhtml1_transitional_doctype.tml" },
+                { "xhtml1_frameset_doctype.tml" } };
     }
 
     @Test(dataProvider = "doctype_parsed_correctly_data")
@@ -676,28 +675,28 @@ public class TemplateParserImplTest extends InternalBaseTestCase
     @DataProvider(name = "doctype_token_added_correctly_data")
     public Object[][] doctype_token_added_correctly_data()
     {
-        return new Object[][]{
+        return new Object[][] {
 
-                {"xhtml1_strict_doctype.tml", "html", "-//W3C//DTD XHTML 1.0 Strict//EN",
-                 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"},
+                { "xhtml1_strict_doctype.tml", "html", "-//W3C//DTD XHTML 1.0 Strict//EN",
+                        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd" },
 
-                {"xhtml1_transitional_doctype.tml", "html", "-//W3C//DTD XHTML 1.0 Transitional//EN",
-                 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"},
+                { "xhtml1_transitional_doctype.tml", "html", "-//W3C//DTD XHTML 1.0 Transitional//EN",
+                        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd" },
 
-                {"xhtml1_frameset_doctype.tml", "html", "-//W3C//DTD XHTML 1.0 Frameset//EN",
-                 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd"},
+                { "xhtml1_frameset_doctype.tml", "html", "-//W3C//DTD XHTML 1.0 Frameset//EN",
+                        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd" },
 
-                {"html4_strict_doctype.tml", "HTML", "-//W3C//DTD HTML 4.01//EN",
-                 "http://www.w3.org/TR/html4/strict.dtd"},
+                { "html4_strict_doctype.tml", "HTML", "-//W3C//DTD HTML 4.01//EN",
+                        "http://www.w3.org/TR/html4/strict.dtd" },
 
-                {"html4_transitional_doctype.tml", "HTML", "-//W3C//DTD HTML 4.01 Transitional//EN",
-                 "http://www.w3.org/TR/html4/loose.dtd"},
+                { "html4_transitional_doctype.tml", "HTML", "-//W3C//DTD HTML 4.01 Transitional//EN",
+                        "http://www.w3.org/TR/html4/loose.dtd" },
 
-                {"html4_frameset_doctype.tml", "HTML", "-//W3C//DTD HTML 4.01 Frameset//EN",
-                 "http://www.w3.org/TR/html4/frameset.dtd"},
+                { "html4_frameset_doctype.tml", "HTML", "-//W3C//DTD HTML 4.01 Frameset//EN",
+                        "http://www.w3.org/TR/html4/frameset.dtd" },
 
-                {"system_doctype.xml", "foo", null,
-                 "src/test/resources/org/apache/tapestry/internal/services/simple.dtd"}};
+                { "system_doctype.xml", "foo", null,
+                        "src/test/resources/org/apache/tapestry5/internal/services/simple.dtd" } };
     }
 
     @Test(dataProvider = "doctype_token_added_correctly_data")

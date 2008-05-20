@@ -12,13 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.internal.services;
+package org.apache.tapestry5.ioc.internal.services;
 
-import org.apache.tapestry.ioc.AnnotationProvider;
-import org.apache.tapestry.ioc.ObjectLocator;
-import org.apache.tapestry.ioc.ObjectProvider;
-import org.apache.tapestry.ioc.services.MasterObjectProvider;
-import org.apache.tapestry.ioc.test.IOCTestCase;
+import org.apache.tapestry5.ioc.AnnotationProvider;
+import org.apache.tapestry5.ioc.ObjectLocator;
+import org.apache.tapestry5.ioc.ObjectProvider;
+import org.apache.tapestry5.ioc.services.MasterObjectProvider;
+import org.apache.tapestry5.ioc.test.IOCTestCase;
 import org.testng.annotations.Test;
 
 import java.util.Arrays;

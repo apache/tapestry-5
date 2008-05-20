@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal;
+package org.apache.tapestry5.internal;
 
-import org.apache.tapestry.AbstractOptionModel;
+import org.apache.tapestry5.AbstractOptionModel;
 
 public class OptionModelImpl extends AbstractOptionModel
 {

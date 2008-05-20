@@ -12,16 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.grid;
+package org.apache.tapestry5.internal.grid;
 
-import org.apache.tapestry.ComponentResources;
-import org.apache.tapestry.beaneditor.BeanModel;
-import org.apache.tapestry.beaneditor.PropertyModel;
-import org.apache.tapestry.grid.ColumnSort;
-import org.apache.tapestry.grid.SortConstraint;
-import org.apache.tapestry.internal.test.InternalBaseTestCase;
-import org.apache.tapestry.ioc.Messages;
-import org.apache.tapestry.services.BeanModelSource;
+import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.beaneditor.BeanModel;
+import org.apache.tapestry5.beaneditor.PropertyModel;
+import org.apache.tapestry5.grid.ColumnSort;
+import org.apache.tapestry5.grid.SortConstraint;
+import org.apache.tapestry5.internal.test.InternalBaseTestCase;
+import org.apache.tapestry5.ioc.Messages;
+import org.apache.tapestry5.services.BeanModelSource;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;

@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.services;
+package org.apache.tapestry5.services;
 
-import org.apache.tapestry.MarkupWriter;
+import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.json.JSONObject;
 
 /**
@@ -24,7 +24,7 @@ import org.apache.tapestry5.json.JSONObject;
  * <p/>
  * <p/>
  * The PartialMarkupRenderer service takes an ordered configuration of {@link PartialMarkupRendererFilter}s.  It can be
- * selected using the {@link org.apache.tapestry.ioc.annotation.Primary} marker annotation.
+ * selected using the {@link org.apache.tapestry5.ioc.annotations.Primary} marker annotation.
  */
 public interface PartialMarkupRenderer
 {

@@ -12,17 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry.internal.structure.Page;
+import org.apache.tapestry5.internal.structure.Page;
 
 /**
  * Per-thread service that caches page instances for the duration of the request, and is also responsible for tracking
  * the active page (the page which will ultimately render the response).
  * <p/>
  * <p/>
- * Since {@link org.apache.tapestry.internal.structure.Page} is internal, most user-code should use the {@link
- * org.apache.tapestry.services.ComponentSource} service instead.
+ * Since {@link org.apache.tapestry5.internal.structure.Page} is internal, most user-code should use the {@link
+ * org.apache.tapestry5.services.ComponentSource} service instead.
  */
 public interface RequestPageCache
 {

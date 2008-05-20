@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.integration.pagelevel;
+package org.apache.tapestry5.integration.pagelevel;
 
-import org.apache.tapestry.dom.Document;
-import org.apache.tapestry.integration.app2.services.LocaleAppModule;
-import org.apache.tapestry.test.PageTester;
+import org.apache.tapestry5.dom.Document;
+import org.apache.tapestry5.integration.app2.services.LocaleAppModule;
+import org.apache.tapestry5.test.PageTester;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -28,7 +28,7 @@ public class PrefixMethodTest extends Assert
     public void prefix_method() throws Exception
     {
         // REFACTOR this happens in a bunch of places
-        String appPackage = "org.apache.tapestry.integration.app2";
+        String appPackage = "org.apache.tapestry5.integration.app2";
         String appName = "";
         tester = new PageTester(appPackage, appName, PageTester.DEFAULT_CONTEXT_PATH, LocaleAppModule.class);
         Document doc = tester.renderPage("TestPrefixMethod");

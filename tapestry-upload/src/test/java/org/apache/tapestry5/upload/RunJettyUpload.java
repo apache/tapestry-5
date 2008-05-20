@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.upload;
+package org.apache.tapestry5.upload;
 
-import org.apache.tapestry.test.JettyRunner;
+import org.apache.tapestry5.test.JettyRunner;
 
 import java.io.File;
 

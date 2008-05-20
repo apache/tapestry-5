@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.structure;
+package org.apache.tapestry5.internal.structure;
 
-import org.apache.tapestry.runtime.Component;
+import org.apache.tapestry5.runtime.Component;
 
 /**
  * Callback interface, used when invoking lifecycle methods on components.

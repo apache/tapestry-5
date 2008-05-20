@@ -22,4 +22,4 @@ Case Insensitivity
   Just case is ignored --
   other punctuation, as well as whitespace, must exactly match.
   
-  Under the covers, this is supported by the {{{../apidocs/org/apache/tapestry/ioc/CaseInsensitiveMap.html}CaseInsensitiveMap}} class.
+  Under the covers, this is supported by the {{{../apidocs/org/apache/tapestry5/ioc/CaseInsensitiveMap.html}CaseInsensitiveMap}} class.

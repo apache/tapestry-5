@@ -12,13 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.internal;
+package org.apache.tapestry5.ioc.internal;
 
-import org.apache.tapestry.ioc.ModuleBuilderSource;
-import org.apache.tapestry.ioc.ServiceDecorator;
-import org.apache.tapestry.ioc.def.ContributionDef;
-import org.apache.tapestry.ioc.def.DecoratorDef;
-import org.apache.tapestry.ioc.def.ServiceDef;
+import org.apache.tapestry5.ioc.ModuleBuilderSource;
+import org.apache.tapestry5.ioc.ServiceDecorator;
+import org.apache.tapestry5.ioc.def.ContributionDef;
+import org.apache.tapestry5.ioc.def.DecoratorDef;
+import org.apache.tapestry5.ioc.def.ServiceDef;
 
 import java.util.Collection;
 import java.util.List;
@@ -53,7 +53,7 @@ public interface Module extends ModuleBuilderSource
     /**
      * Locates all the decorators that should apply the identified service. This includes visibility rules (private
      * services may only be decorated by decorators in the same module) and other filtering rules. The resulting list is
-     * ordered and from the list of {@link org.apache.tapestry.ioc.def.DecoratorDef}s, a list of {@link
+     * ordered and from the list of {@link org.apache.tapestry5.ioc.def.DecoratorDef}s, a list of {@link
      * ServiceDecorator}s is returned.
      *
      * @param serviceId identifies the service to be decorated
@@ -76,7 +76,7 @@ public interface Module extends ModuleBuilderSource
     Set<ContributionDef> getContributorDefsForService(String serviceId);
 
     /**
-     * Locates services with the {@link org.apache.tapestry.ioc.annotation.EagerLoad} annotation and generates proxies
+     * Locates services with the {@link org.apache.tapestry5.ioc.annotations.EagerLoad} annotation and generates proxies
      * for them, then adds them to the proxies list for instantiation.
      *
      * @param proxies collection of proxies to which any eager load services in the module should be added

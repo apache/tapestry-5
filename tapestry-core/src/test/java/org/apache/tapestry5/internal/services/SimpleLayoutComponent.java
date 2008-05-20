@@ -17,7 +17,7 @@
  * 
  * 
  */
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
 public class SimpleLayoutComponent
 {

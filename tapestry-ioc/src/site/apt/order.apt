@@ -27,7 +27,7 @@ Ordering by Constraints
   control what other objects must come before a contribution, or come after.
   
   The constraints are specified using the
-  {{{../apidocs/org/apache/tapestry/ioc/annotations/Order.html}Order}} annotation (for
+  {{{../apidocs/org/apache/tapestry5/ioc/annotations/Order.html}Order}} annotation (for
   service decorator methods), or as variable arguments at the end of the add() method
   for ordered configurations.
   

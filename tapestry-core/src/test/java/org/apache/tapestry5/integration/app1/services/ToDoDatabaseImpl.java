@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.integration.app1.services;
+package org.apache.tapestry5.integration.app1.services;
 
-import org.apache.tapestry.integration.app1.data.ToDoItem;
-import org.apache.tapestry.integration.app1.data.Urgency;
-import org.apache.tapestry.ioc.internal.util.CollectionFactory;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
+import org.apache.tapestry5.integration.app1.data.ToDoItem;
+import org.apache.tapestry5.integration.app1.data.Urgency;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newList;
 
 import java.util.Collections;
 import java.util.Comparator;

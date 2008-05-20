@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.integration.app3.services;
+package org.apache.tapestry5.integration.app3.services;
 
-import org.apache.tapestry.ioc.Configuration;
-import org.apache.tapestry.services.BeanBlockContribution;
+import org.apache.tapestry5.ioc.Configuration;
+import org.apache.tapestry5.services.BeanBlockContribution;
 
 public class AppModule
 {

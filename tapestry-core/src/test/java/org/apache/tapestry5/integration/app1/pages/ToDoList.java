@@ -12,15 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.integration.app1.pages;
+package org.apache.tapestry5.integration.app1.pages;
 
-import org.apache.tapestry.PrimaryKeyEncoder;
-import org.apache.tapestry.annotation.Component;
-import org.apache.tapestry.corelib.components.Form;
-import org.apache.tapestry.integration.app1.data.ToDoItem;
-import org.apache.tapestry.integration.app1.services.ToDoDatabase;
-import org.apache.tapestry.ioc.annotation.Inject;
-import org.apache.tapestry.util.DefaultPrimaryKeyEncoder;
+import org.apache.tapestry5.PrimaryKeyEncoder;
+import org.apache.tapestry5.annotations.Component;
+import org.apache.tapestry5.corelib.components.Form;
+import org.apache.tapestry5.integration.app1.data.ToDoItem;
+import org.apache.tapestry5.integration.app1.services.ToDoDatabase;
+import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.util.DefaultPrimaryKeyEncoder;
 
 import java.util.List;
 

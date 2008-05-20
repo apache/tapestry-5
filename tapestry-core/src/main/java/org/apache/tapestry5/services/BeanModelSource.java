@@ -12,20 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.services;
+package org.apache.tapestry5.services;
 
-import org.apache.tapestry.ComponentResources;
-import org.apache.tapestry.beaneditor.BeanModel;
-import org.apache.tapestry.beaneditor.OrderBefore;
+import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.beaneditor.BeanModel;
+import org.apache.tapestry5.beaneditor.OrderBefore;
 
 /**
  * Used by a component to create a default {@link BeanModel} for a particular bean class. Also provides support to the
  * model by generating validation information for individual fields.
  * <p/>
- * BeanModels are the basis for the {@link org.apache.tapestry.corelib.components.BeanEditor} and {@link
- * org.apache.tapestry.corelib.components.Grid} comopnents.
+ * BeanModels are the basis for the {@link org.apache.tapestry5.corelib.components.BeanEditor} and {@link
+ * org.apache.tapestry5.corelib.components.Grid} comopnents.
  *
- * @see org.apache.tapestry.services.PropertyConduitSource
+ * @see org.apache.tapestry5.services.PropertyConduitSource
  */
 public interface BeanModelSource
 {
@@ -39,10 +39,10 @@ public interface BeanModelSource
      *
      * @param beanClass                class of object to be edited
      * @param filterReadOnlyProperties if true, then properties that are read-only will be skipped (leaving only
-     *                                 read-write properties, appropriate for {@link org.apache.tapestry.corelib.components.BeanEditForm},
+     *                                 read-write properties, appropriate for {@link org.apache.tapestry5.corelib.components.BeanEditForm},
      *                                 etc.). If false, then both read-only and read-write properties will be included
-     *                                 (appropriate for {@link org.apache.tapestry.corelib.components.Grid} or {@link
-     *                                 org.apache.tapestry.corelib.components.BeanDisplay}).
+     *                                 (appropriate for {@link org.apache.tapestry5.corelib.components.Grid} or {@link
+     *                                 org.apache.tapestry5.corelib.components.BeanDisplay}).
      * @param resources                used when resolving resources, especially component messages (used to access
      *                                 labels)
      * @return a model

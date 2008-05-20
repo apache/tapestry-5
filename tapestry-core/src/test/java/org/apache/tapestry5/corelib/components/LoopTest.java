@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.corelib.components;
+package org.apache.tapestry5.corelib.components;
 
-import org.apache.tapestry.internal.test.InternalBaseTestCase;
-import org.apache.tapestry.services.Heartbeat;
+import org.apache.tapestry5.internal.test.InternalBaseTestCase;
+import org.apache.tapestry5.services.Heartbeat;
 import org.testng.annotations.Test;
 
 import java.util.Arrays;

@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.structure;
+package org.apache.tapestry5.internal.structure;
 
-import org.apache.tapestry.internal.test.InternalBaseTestCase;
-import org.apache.tapestry.runtime.PageLifecycleListener;
+import org.apache.tapestry5.internal.test.InternalBaseTestCase;
+import org.apache.tapestry5.runtime.PageLifecycleListener;
 import static org.easymock.EasyMock.contains;
 import static org.easymock.EasyMock.same;
 import org.slf4j.Logger;

@@ -12,14 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry.internal.test.InternalBaseTestCase;
-import org.apache.tapestry.internal.util.URLChangeTracker;
-import org.apache.tapestry.ioc.Messages;
-import org.apache.tapestry.ioc.Resource;
-import org.apache.tapestry.ioc.internal.util.ClasspathResource;
-import org.apache.tapestry.model.ComponentModel;
+import org.apache.tapestry5.internal.test.InternalBaseTestCase;
+import org.apache.tapestry5.internal.util.URLChangeTracker;
+import org.apache.tapestry5.ioc.Messages;
+import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.ioc.internal.util.ClasspathResource;
+import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.services.ComponentMessagesSource;
 import org.testng.annotations.Test;
 
@@ -34,12 +34,12 @@ public class ComponentMessagesSourceImplTest extends InternalBaseTestCase
 {
     // With control of the tracker, we can force changes as if underlying files were changed.
 
-    private static final String SIMPLE_COMPONENT_CLASS_NAME = "org.apache.tapestry.internal.services.SimpleComponent";
+    private static final String SIMPLE_COMPONENT_CLASS_NAME = "org.apache.tapestry5.internal.services.SimpleComponent";
 
     private final URLChangeTracker tracker = new URLChangeTracker();
 
     private final Resource simpleComponentResource = new ClasspathResource(
-            "org/apache/tapestry/internal/services/SimpleComponent.class");
+            "org/apache/tapestry5/internal/services/SimpleComponent.class");
 
     private final ComponentMessagesSourceImpl source = new ComponentMessagesSourceImpl(
             simpleComponentResource, "AppCatalog.properties", tracker);
@@ -144,10 +144,10 @@ public class ComponentMessagesSourceImplTest extends InternalBaseTestCase
 
         train_getComponentClassName(
                 model,
-                "org.apache.tapestry.internal.services.SubclassComponent");
+                "org.apache.tapestry5.internal.services.SubclassComponent");
 
         train_getBaseResource(model, new ClasspathResource(
-                "org/apache/tapestry/internal/services/SubclassComponent.class"));
+                "org/apache/tapestry5/internal/services/SubclassComponent.class"));
 
         train_getParentModel(model, parent);
 
@@ -188,10 +188,10 @@ public class ComponentMessagesSourceImplTest extends InternalBaseTestCase
 
         train_getComponentClassName(
                 model,
-                "org.apache.tapestry.internal.services.SubclassComponent");
+                "org.apache.tapestry5.internal.services.SubclassComponent");
 
         train_getBaseResource(model, new ClasspathResource(
-                "org/apache/tapestry/internal/services/SubclassComponent.class"));
+                "org/apache/tapestry5/internal/services/SubclassComponent.class"));
 
         train_getParentModel(model, parent);
 

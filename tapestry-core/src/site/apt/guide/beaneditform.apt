@@ -51,7 +51,7 @@ Using the BeanEditForm Component
 
   In some cases, a property may be updatable and of a supported type for editing, but should not be presented to the user for editing: for example,
   a property that holds the primary key of a database entity. In such a case, the
-  {{{../../apidocs/org/apache/tapestry/beaneditor/NonVisual.html}NonVisual}} annotation may be applied to the property (either the getter
+  {{{../../apidocs/org/apache/tapestry5/beaneditor/NonVisual.html}NonVisual}} annotation may be applied to the property (either the getter
   or the setter method). 
     
 * Default Validation
@@ -59,12 +59,12 @@ Using the BeanEditForm Component
   Default validation for fields is primary determined by property type.
   
   If desired, additional validation may be specified using the 
-  {{{../../apidocs/org/apache/tapestry/beaneditor/Validate.html}Validate}} annotation.
+  {{{../../apidocs/org/apache/tapestry5/beaneditor/Validate.html}Validate}} annotation.
   
 * Property ordering
 
   By default, the order in which properties are presented is as defined above (order of the getter method).
-  The {{{../../apidocs/org/apache/tapestry/beaneditor/Order.html}Order}} annotation may be used to modify the normal ordering.
+  The {{{../../apidocs/org/apache/tapestry5/beaneditor/Order.html}Order}} annotation may be used to modify the normal ordering.
   
 * Default Label
 
@@ -113,7 +113,7 @@ Customizing the BeanModel
     
 Providing the BeanModel
 
-  The BeanEditForm component operates in terms of a {{{../../apidocs/org/apache/tapestry/beaneditor/BeanModel.html}BeanModel}}, which describes
+  The BeanEditForm component operates in terms of a {{{../../apidocs/org/apache/tapestry5/beaneditor/BeanModel.html}BeanModel}}, which describes
   the properties, their presentation order, labels and so forth.
   
   Normally, the BeanEditForm automatically creates the BeanModel as needed, based on the type of object bound to its object parameter.
@@ -163,8 +163,8 @@ Adding New Property Editors
   First, decide on a logical name for the data type.  For example, you may decide that the BigDecimal type will represent currency in your application, so name the data type "currency".
   
   Next, you must make contributions to the
-  {{{../../apidocs/org/apache/tapestry/services/DataTypeAnalyzer.html}DataTypeAnalyzer}} or
-  {{{../../apidocs/org/apache/tapestry/services/DefaultDataTypeAnalyzer.html}DefaultDataTypeAnalyzer}} services to match properties to your new name.
+  {{{../../apidocs/org/apache/tapestry5/services/DataTypeAnalyzer.html}DataTypeAnalyzer}} or
+  {{{../../apidocs/org/apache/tapestry5/services/DefaultDataTypeAnalyzer.html}DefaultDataTypeAnalyzer}} services to match properties to your new name.
   
   DataTypeAnalyzer is a chain of command that can make match properties to data types based on property type or annotations on the property.  In general, 
   DefaultDataTypeAnalyzer is used, as that only needs to consider property type.  DefaultDataTypeAnalyzer matches property types to data types, based on a search up
@@ -216,7 +216,7 @@ public class AppPropertyEditBlocks
 +--+
 
   Finally, we tell the BeanEditForm component about the editor via a contribution to the 
-  {{{../../apidocs/org/apache/tapestry/services/BeanBlockSource.html}BeanBlockSource}} service:
+  {{{../../apidocs/org/apache/tapestry5/services/BeanBlockSource.html}BeanBlockSource}} service:
   
 +---+
 public static void contributeBeanBlockSource(Configuration<BeanBlockContribution> configuration)

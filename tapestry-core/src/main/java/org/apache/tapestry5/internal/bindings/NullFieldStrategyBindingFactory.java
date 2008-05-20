@@ -12,18 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.bindings;
+package org.apache.tapestry5.internal.bindings;
 
-import org.apache.tapestry.Binding;
-import org.apache.tapestry.ComponentResources;
-import org.apache.tapestry.NullFieldStrategy;
-import org.apache.tapestry.ioc.Location;
-import org.apache.tapestry.services.BindingFactory;
-import org.apache.tapestry.services.NullFieldStrategySource;
+import org.apache.tapestry5.Binding;
+import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.NullFieldStrategy;
+import org.apache.tapestry5.ioc.Location;
+import org.apache.tapestry5.services.BindingFactory;
+import org.apache.tapestry5.services.NullFieldStrategySource;
 
 /**
- * Treats the expression as the name of a {@link org.apache.tapestry.NullFieldStrategy}, accessed via the {@link
- * org.apache.tapestry.services.NullFieldStrategySource} service.
+ * Treats the expression as the name of a {@link org.apache.tapestry5.NullFieldStrategy}, accessed via the {@link
+ * org.apache.tapestry5.services.NullFieldStrategySource} service.
  */
 public class NullFieldStrategyBindingFactory implements BindingFactory
 {

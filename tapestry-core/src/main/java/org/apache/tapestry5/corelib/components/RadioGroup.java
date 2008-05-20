@@ -12,14 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.corelib.components;
+package org.apache.tapestry5.corelib.components;
 
-import org.apache.tapestry.*;
-import org.apache.tapestry.annotation.Environmental;
-import org.apache.tapestry.annotation.Parameter;
-import org.apache.tapestry.internal.TapestryInternalUtils;
-import org.apache.tapestry.ioc.annotation.Inject;
-import org.apache.tapestry.services.*;
+import org.apache.tapestry5.*;
+import org.apache.tapestry5.annotations.Environmental;
+import org.apache.tapestry5.annotations.Parameter;
+import org.apache.tapestry5.internal.TapestryInternalUtils;
+import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.services.*;
 
 public class RadioGroup implements Field
 {
@@ -201,7 +201,7 @@ public class RadioGroup implements Field
 
     /**
      * Returns null; the radio group does not render as a tag and so doesn't have an id to share.  RadioGroup implements
-     * {@link org.apache.tapestry.Field} only so it can interact with the {@link org.apache.tapestry.ValidationTracker}.
+     * {@link org.apache.tapestry5.Field} only so it can interact with the {@link org.apache.tapestry5.ValidationTracker}.
      *
      * @return null
      */

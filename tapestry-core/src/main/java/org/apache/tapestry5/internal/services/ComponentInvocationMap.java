@@ -12,13 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry.Link;
-import org.apache.tapestry.MarkupWriter;
-import org.apache.tapestry.dom.Document;
-import org.apache.tapestry.dom.Element;
-import org.apache.tapestry.test.PageTester;
+import org.apache.tapestry5.Link;
+import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.dom.Document;
+import org.apache.tapestry5.dom.Element;
+import org.apache.tapestry5.test.PageTester;
 
 /**
  * Used by the {@link PageTester} to map {@link Element}s (pulled from the rendered {@link Document}) into {@link

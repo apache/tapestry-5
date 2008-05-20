@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.integration.app4.services;
+package org.apache.tapestry5.integration.app4.services;
 
-import org.apache.tapestry.SymbolConstants;
-import org.apache.tapestry.ioc.MappedConfiguration;
+import org.apache.tapestry5.SymbolConstants;
+import org.apache.tapestry5.ioc.MappedConfiguration;
 
 /**
  * A module that exists for testing the immediate response mode: sending markup in response to action requests, rather

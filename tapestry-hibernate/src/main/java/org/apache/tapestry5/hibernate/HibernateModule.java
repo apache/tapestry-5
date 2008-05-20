@@ -12,22 +12,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.hibernate;
+package org.apache.tapestry5.hibernate;
 
-import org.apache.tapestry.ValueEncoder;
-import org.apache.tapestry.internal.InternalConstants;
-import org.apache.tapestry.internal.hibernate.*;
-import org.apache.tapestry.ioc.*;
-import static org.apache.tapestry.ioc.IOCConstants.PERTHREAD_SCOPE;
-import org.apache.tapestry.ioc.annotation.Inject;
-import org.apache.tapestry.ioc.annotation.InjectService;
-import org.apache.tapestry.ioc.annotation.Scope;
-import org.apache.tapestry.ioc.annotation.Symbol;
-import org.apache.tapestry.ioc.services.*;
-import org.apache.tapestry.services.AliasContribution;
-import org.apache.tapestry.services.ComponentClassTransformWorker;
-import org.apache.tapestry.services.PersistentFieldStrategy;
-import org.apache.tapestry.services.ValueEncoderFactory;
+import org.apache.tapestry5.ValueEncoder;
+import org.apache.tapestry5.internal.InternalConstants;
+import org.apache.tapestry5.internal.hibernate.*;
+import org.apache.tapestry5.ioc.*;
+import static org.apache.tapestry5.ioc.IOCConstants.PERTHREAD_SCOPE;
+import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.annotations.InjectService;
+import org.apache.tapestry5.ioc.annotations.Scope;
+import org.apache.tapestry5.ioc.annotations.Symbol;
+import org.apache.tapestry5.ioc.services.*;
+import org.apache.tapestry5.services.AliasContribution;
+import org.apache.tapestry5.services.ComponentClassTransformWorker;
+import org.apache.tapestry5.services.PersistentFieldStrategy;
+import org.apache.tapestry5.services.ValueEncoderFactory;
 import org.hibernate.Session;
 import org.hibernate.mapping.PersistentClass;
 import org.slf4j.Logger;
@@ -178,7 +178,7 @@ public class HibernateModule
     }
 
     /**
-     * Adds the CommitAfter annotation work, to process the {@link org.apache.tapestry.hibernate.annotations.CommitAfter}
+     * Adds the CommitAfter annotation work, to process the {@link org.apache.tapestry5.hibernate.annotations.CommitAfter}
      * annotation.
      */
     public static void contributeComponentClassTransformWorker(

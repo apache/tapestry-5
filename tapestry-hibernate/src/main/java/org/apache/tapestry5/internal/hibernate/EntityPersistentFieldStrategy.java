@@ -12,16 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.hibernate;
+package org.apache.tapestry5.internal.hibernate;
 
-import org.apache.tapestry.internal.services.AbstractSessionPersistentFieldStrategy;
-import org.apache.tapestry.internal.services.PersistentFieldChangeImpl;
-import org.apache.tapestry.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry.ioc.internal.util.Defense;
-import org.apache.tapestry.ioc.services.TypeCoercer;
-import org.apache.tapestry.services.PersistentFieldChange;
-import org.apache.tapestry.services.PersistentFieldStrategy;
-import org.apache.tapestry.services.Request;
+import org.apache.tapestry5.internal.services.AbstractSessionPersistentFieldStrategy;
+import org.apache.tapestry5.internal.services.PersistentFieldChangeImpl;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.internal.util.Defense;
+import org.apache.tapestry5.ioc.services.TypeCoercer;
+import org.apache.tapestry5.services.PersistentFieldChange;
+import org.apache.tapestry5.services.PersistentFieldStrategy;
+import org.apache.tapestry5.services.Request;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.metadata.ClassMetadata;

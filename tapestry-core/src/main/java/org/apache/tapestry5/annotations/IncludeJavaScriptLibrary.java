@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.annotation;
+package org.apache.tapestry5.annotations;
 
 import java.lang.annotation.*;
 
@@ -21,8 +21,8 @@ import java.lang.annotation.*;
  * Allows for the inclusion of one or more JavaScript libraries.  The libraries are assets, usually (but not always)
  * stored on the classpath with the component.
  *
- * @see org.apache.tapestry.annotation.IncludeStylesheet
- * @see org.apache.tapestry.annotation.Path
+ * @see org.apache.tapestry5.annotations.IncludeStylesheet
+ * @see org.apache.tapestry5.annotations.Path
  */
 @Target({ ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)

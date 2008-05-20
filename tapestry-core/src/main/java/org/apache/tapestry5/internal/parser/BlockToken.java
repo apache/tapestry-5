@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.parser;
+package org.apache.tapestry5.internal.parser;
 
-import org.apache.tapestry.ioc.Location;
+import org.apache.tapestry5.ioc.Location;
 
 /**
  * A block, used to enclose a chunk of template (including components) and control when or if the content is rendered.

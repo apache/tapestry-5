@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry.ComponentResources;
-import org.apache.tapestry.services.ComponentMethodAdvice;
-import org.apache.tapestry.services.ComponentMethodInvocation;
+import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.services.ComponentMethodAdvice;
+import org.apache.tapestry5.services.ComponentMethodInvocation;
 
 public abstract class AbstractComponentMethodInvocation implements ComponentMethodInvocation
 {

@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal;
+package org.apache.tapestry5.internal;
 
-import org.apache.tapestry.ioc.Registry;
-import org.apache.tapestry.util.Transformer;
+import org.apache.tapestry5.ioc.Registry;
+import org.apache.tapestry5.util.Transformer;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -26,7 +26,7 @@ public class TapestryAppInitializerTest extends Assert
     @Test
     public void testLoadAppModule()
     {
-        Registry registry = new TapestryAppInitializer("org.apache.tapestry.integration.app0",
+        Registry registry = new TapestryAppInitializer("org.apache.tapestry5.integration.app0",
                                                        "foo", "").getRegistry();
 
         Transformer<String> s1 = registry.getService("Service1", Transformer.class);

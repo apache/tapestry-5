@@ -12,17 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.internal;
+package org.apache.tapestry5.ioc.internal;
 
-import org.apache.tapestry.ioc.ServiceBuilderResources;
-import org.apache.tapestry.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.ioc.ServiceBuilderResources;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Map;
 
 /**
- * Basic implementation of {@link org.apache.tapestry.ioc.ObjectCreator} that handles invoking a method on the module
+ * Basic implementation of {@link org.apache.tapestry5.ioc.ObjectCreator} that handles invoking a method on the module
  * builder, and figures out the correct parameters to pass into the annotated method.
  */
 public class ServiceBuilderMethodInvoker extends AbstractServiceCreator

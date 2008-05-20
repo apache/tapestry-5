@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.hibernate;
+package org.apache.tapestry5.internal.hibernate;
 
-import org.apache.tapestry.hibernate.HibernateSessionManager;
-import org.apache.tapestry.hibernate.HibernateSessionSource;
-import org.apache.tapestry.ioc.services.ThreadCleanupListener;
+import org.apache.tapestry5.hibernate.HibernateSessionManager;
+import org.apache.tapestry5.hibernate.HibernateSessionSource;
+import org.apache.tapestry5.ioc.services.ThreadCleanupListener;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 

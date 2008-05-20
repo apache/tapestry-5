@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.internal;
+package org.apache.tapestry5.ioc.internal;
 
-import org.apache.tapestry.ioc.Configuration;
-import org.apache.tapestry.ioc.def.ContributionDef;
+import org.apache.tapestry5.ioc.Configuration;
+import org.apache.tapestry5.ioc.def.ContributionDef;
 import org.slf4j.Logger;
 
 /**

@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.integration.pagelevel;
+package org.apache.tapestry5.integration.pagelevel;
 
-import org.apache.tapestry.dom.Document;
-import org.apache.tapestry.dom.Element;
-import org.apache.tapestry.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry.test.PageTester;
+import org.apache.tapestry5.dom.Document;
+import org.apache.tapestry5.dom.Element;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.test.PageTester;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -68,7 +68,7 @@ public class SubmitTest extends Assert
     @BeforeMethod
     public void before()
     {
-        String appPackage = "org.apache.tapestry.integration.app2";
+        String appPackage = "org.apache.tapestry5.integration.app2";
         String appName = "";
         tester = new PageTester(appPackage, appName);
         doc = tester.renderPage("TestPageForSubmit");

@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.internal.util;
+package org.apache.tapestry5.ioc.internal.util;
 
-import org.apache.tapestry.ioc.Messages;
-import org.apache.tapestry.ioc.util.AbstractMessages;
+import org.apache.tapestry5.ioc.Messages;
+import org.apache.tapestry5.ioc.util.AbstractMessages;
 
 import java.util.Enumeration;
 import java.util.Locale;
@@ -23,7 +23,7 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 /**
- * Implementation of {@link org.apache.tapestry.ioc.Messages} based around a {@link java.util.ResourceBundle}.
+ * Implementation of {@link org.apache.tapestry5.ioc.Messages} based around a {@link java.util.ResourceBundle}.
  */
 public class MessagesImpl extends AbstractMessages
 {

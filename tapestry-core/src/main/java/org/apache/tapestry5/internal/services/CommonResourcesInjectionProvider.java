@@ -12,14 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry.ioc.Messages;
-import org.apache.tapestry.ioc.ObjectLocator;
-import org.apache.tapestry.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry.model.MutableComponentModel;
-import org.apache.tapestry.services.ClassTransformation;
-import org.apache.tapestry.services.InjectionProvider;
+import org.apache.tapestry5.ioc.Messages;
+import org.apache.tapestry5.ioc.ObjectLocator;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.model.MutableComponentModel;
+import org.apache.tapestry5.services.ClassTransformation;
+import org.apache.tapestry5.services.InjectionProvider;
 import org.slf4j.Logger;
 
 import java.util.Locale;

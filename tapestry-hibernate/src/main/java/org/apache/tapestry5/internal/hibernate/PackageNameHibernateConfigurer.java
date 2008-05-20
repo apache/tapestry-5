@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.hibernate;
+package org.apache.tapestry5.internal.hibernate;
 
-import org.apache.tapestry.hibernate.HibernateConfigurer;
-import org.apache.tapestry.hibernate.HibernateEntityPackageManager;
-import org.apache.tapestry.ioc.internal.util.Defense;
-import org.apache.tapestry.ioc.services.ClassNameLocator;
+import org.apache.tapestry5.hibernate.HibernateConfigurer;
+import org.apache.tapestry5.hibernate.HibernateEntityPackageManager;
+import org.apache.tapestry5.ioc.internal.util.Defense;
+import org.apache.tapestry5.ioc.services.ClassNameLocator;
 import org.hibernate.cfg.AnnotationConfiguration;
 import org.hibernate.cfg.Configuration;
 

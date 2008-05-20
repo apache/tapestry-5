@@ -12,23 +12,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.structure;
+package org.apache.tapestry5.internal.structure;
 
-import org.apache.tapestry.Block;
-import org.apache.tapestry.ComponentResources;
-import org.apache.tapestry.ComponentResourcesCommon;
-import org.apache.tapestry.internal.InternalComponentResources;
-import org.apache.tapestry.internal.InternalComponentResourcesCommon;
-import org.apache.tapestry.internal.services.Instantiator;
-import org.apache.tapestry.ioc.Location;
-import org.apache.tapestry.model.ParameterModel;
-import org.apache.tapestry.runtime.Component;
-import org.apache.tapestry.runtime.ComponentEvent;
-import org.apache.tapestry.runtime.PageLifecycleListener;
-import org.apache.tapestry.runtime.RenderQueue;
+import org.apache.tapestry5.Block;
+import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.ComponentResourcesCommon;
+import org.apache.tapestry5.internal.InternalComponentResources;
+import org.apache.tapestry5.internal.InternalComponentResourcesCommon;
+import org.apache.tapestry5.internal.services.Instantiator;
+import org.apache.tapestry5.ioc.Location;
+import org.apache.tapestry5.model.ParameterModel;
+import org.apache.tapestry5.runtime.Component;
+import org.apache.tapestry5.runtime.ComponentEvent;
+import org.apache.tapestry5.runtime.PageLifecycleListener;
+import org.apache.tapestry5.runtime.RenderQueue;
 
 /**
- * Extended version of {@link org.apache.tapestry.internal.structure.PageElement} for elements that are, in fact,
+ * Extended version of {@link org.apache.tapestry5.internal.structure.PageElement} for elements that are, in fact,
  * components (rather than just static markup).
  */
 public interface ComponentPageElement extends ComponentResourcesCommon, InternalComponentResourcesCommon, PageElement, BodyPageElement, PageLifecycleListener
@@ -92,7 +92,7 @@ public interface ComponentPageElement extends ComponentResourcesCommon, Internal
     ComponentPageElement getEmbeddedElement(String id);
 
     /**
-     * Returns the {@link org.apache.tapestry.ComponentResources} for a mixin attached to this component element. Mixin
+     * Returns the {@link org.apache.tapestry5.ComponentResources} for a mixin attached to this component element. Mixin
      * ids are the simple names of the mixin class.
      *
      * @param mixinId the mixin id (case insensitive)

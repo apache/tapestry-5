@@ -12,16 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.event;
+package org.apache.tapestry5.internal.event;
 
-import org.apache.tapestry.internal.events.InvalidationListener;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newThreadSafeList;
+import org.apache.tapestry5.internal.events.InvalidationListener;
+import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newThreadSafeList;
 
 import java.util.List;
 
 /**
  * Base implementation class for classes (especially services) that need to manage a list of {@link
- * org.apache.tapestry.internal.events.InvalidationListener}s.
+ * org.apache.tapestry5.internal.events.InvalidationListener}s.
  */
 public class InvalidationEventHubImpl implements InvalidationEventHub
 {

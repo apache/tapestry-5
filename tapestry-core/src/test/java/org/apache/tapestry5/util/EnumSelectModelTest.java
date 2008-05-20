@@ -12,13 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.util;
+package org.apache.tapestry5.util;
 
-import org.apache.tapestry.OptionModel;
-import org.apache.tapestry.SelectModel;
-import org.apache.tapestry.Stooge;
-import org.apache.tapestry.ioc.Messages;
-import org.apache.tapestry.test.TapestryTestCase;
+import org.apache.tapestry5.OptionModel;
+import org.apache.tapestry5.SelectModel;
+import org.apache.tapestry5.Stooge;
+import org.apache.tapestry5.ioc.Messages;
+import org.apache.tapestry5.test.TapestryTestCase;
 import org.testng.annotations.Test;
 
 import java.util.List;

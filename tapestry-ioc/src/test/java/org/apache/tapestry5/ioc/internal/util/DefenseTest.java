@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.internal.util;
+package org.apache.tapestry5.ioc.internal.util;
 
-import static org.apache.tapestry.ioc.internal.util.Defense.*;
-import org.apache.tapestry.ioc.test.TestBase;
+import static org.apache.tapestry5.ioc.internal.util.Defense.*;
+import org.apache.tapestry5.ioc.test.TestBase;
 import org.testng.annotations.Test;
 
 public class DefenseTest extends TestBase

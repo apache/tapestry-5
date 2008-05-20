@@ -12,13 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.internal.services;
+package org.apache.tapestry5.ioc.internal.services;
 
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
-import org.apache.tapestry.ioc.services.ClassFab;
-import org.apache.tapestry.ioc.services.ClassFactory;
-import org.apache.tapestry.ioc.services.MethodIterator;
-import org.apache.tapestry.ioc.services.MethodSignature;
+import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newList;
+import org.apache.tapestry5.ioc.services.ClassFab;
+import org.apache.tapestry5.ioc.services.ClassFactory;
+import org.apache.tapestry5.ioc.services.MethodIterator;
+import org.apache.tapestry5.ioc.services.MethodSignature;
 import org.slf4j.Logger;
 
 import static java.lang.String.format;
@@ -28,7 +28,7 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * Used by the {@link org.apache.tapestry.ioc.internal.services.PipelineBuilderImpl} to create bridge classes and to
+ * Used by the {@link org.apache.tapestry5.ioc.internal.services.PipelineBuilderImpl} to create bridge classes and to
  * create instances of bridge classes. A bridge class implements the <em>service</em> interface. Within the chain,
  * bridge 1 is passed to filter 1. Invoking methods on bridge 1 will invoke methods on filter 2.
  */

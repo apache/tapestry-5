@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal;
+package org.apache.tapestry5.internal;
 
-import org.apache.tapestry.ioc.services.SymbolProvider;
-import org.apache.tapestry.ioc.test.TestBase;
+import org.apache.tapestry5.ioc.services.SymbolProvider;
+import org.apache.tapestry5.ioc.test.TestBase;
 import org.testng.annotations.Test;
 
 import javax.servlet.ServletContext;

@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.annotation;
+package org.apache.tapestry5.annotations;
 
-import org.apache.tapestry.BindingConstants;
-import org.apache.tapestry.services.BindingFactory;
+import org.apache.tapestry5.BindingConstants;
+import org.apache.tapestry5.services.BindingFactory;
 
 import java.lang.annotation.Documented;
 import static java.lang.annotation.ElementType.FIELD;
@@ -48,7 +48,7 @@ public @interface Parameter
     /**
      * If true (the default), then the value for the parameter is cached while the component is, itself, rendering.
      * Values from invariant bindings (such as literal strings) are always cached, regardless of this setting. Set this
-     * attribute to false to force the parameter to be {@link org.apache.tapestry.Binding#get() re-read} every time the
+     * attribute to false to force the parameter to be {@link org.apache.tapestry5.Binding#get() re-read} every time the
      * field is accessed, even while the component is rendering.
      */
     boolean cache() default true;
@@ -65,7 +65,7 @@ public @interface Parameter
      * specific {@link BindingFactory} implementations, and used with parameters whose name reflects the binding
      * prefix.
      *
-     * @see org.apache.tapestry.BindingConstants
+     * @see org.apache.tapestry5.BindingConstants
      */
     String defaultPrefix() default BindingConstants.PROP;
 

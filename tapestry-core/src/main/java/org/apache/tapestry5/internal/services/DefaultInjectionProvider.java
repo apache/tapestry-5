@@ -12,24 +12,24 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry.ioc.AnnotationProvider;
-import org.apache.tapestry.ioc.ObjectLocator;
-import org.apache.tapestry.ioc.services.MasterObjectProvider;
-import org.apache.tapestry.model.MutableComponentModel;
-import org.apache.tapestry.services.ClassTransformation;
-import org.apache.tapestry.services.InjectionProvider;
+import org.apache.tapestry5.ioc.AnnotationProvider;
+import org.apache.tapestry5.ioc.ObjectLocator;
+import org.apache.tapestry5.ioc.services.MasterObjectProvider;
+import org.apache.tapestry5.model.MutableComponentModel;
+import org.apache.tapestry5.services.ClassTransformation;
+import org.apache.tapestry5.services.InjectionProvider;
 
 import java.lang.annotation.Annotation;
 
 /**
- * Worker for the {@link org.apache.tapestry.ioc.annotation.Inject} annotation that delegates out to the master {@link
- * org.apache.tapestry.ioc.services.MasterObjectProvider} to access the value. This worker must be scheduled after
+ * Worker for the {@link org.apache.tapestry5.ioc.annotations.Inject} annotation that delegates out to the master {@link
+ * org.apache.tapestry5.ioc.services.MasterObjectProvider} to access the value. This worker must be scheduled after
  * certain other workers, such as {@link BlockInjectionProvider} (which is keyed off a combination of type and the
  * Inject annotation).
  *
- * @see org.apache.tapestry.ioc.services.MasterObjectProvider
+ * @see org.apache.tapestry5.ioc.services.MasterObjectProvider
  */
 public class DefaultInjectionProvider implements InjectionProvider
 {

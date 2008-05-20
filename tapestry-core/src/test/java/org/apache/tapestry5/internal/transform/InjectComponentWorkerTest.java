@@ -12,15 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.transform;
+package org.apache.tapestry5.internal.transform;
 
-import org.apache.tapestry.annotation.InjectComponent;
-import org.apache.tapestry.corelib.components.Grid;
-import org.apache.tapestry.model.MutableComponentModel;
-import org.apache.tapestry.services.ClassTransformation;
-import org.apache.tapestry.services.ComponentClassTransformWorker;
-import org.apache.tapestry.services.TransformConstants;
-import org.apache.tapestry.test.TapestryTestCase;
+import org.apache.tapestry5.annotations.InjectComponent;
+import org.apache.tapestry5.corelib.components.Grid;
+import org.apache.tapestry5.model.MutableComponentModel;
+import org.apache.tapestry5.services.ClassTransformation;
+import org.apache.tapestry5.services.ComponentClassTransformWorker;
+import org.apache.tapestry5.services.TransformConstants;
+import org.apache.tapestry5.test.TapestryTestCase;
 import static org.easymock.EasyMock.contains;
 import static org.easymock.EasyMock.same;
 import org.testng.annotations.Test;

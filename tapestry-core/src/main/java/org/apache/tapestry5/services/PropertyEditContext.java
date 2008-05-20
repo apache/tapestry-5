@@ -12,19 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.services;
+package org.apache.tapestry5.services;
 
-import org.apache.tapestry.Field;
-import org.apache.tapestry.FieldValidator;
-import org.apache.tapestry.Translator;
-import org.apache.tapestry.ioc.AnnotationProvider;
-import org.apache.tapestry.ioc.Messages;
+import org.apache.tapestry5.Field;
+import org.apache.tapestry5.FieldValidator;
+import org.apache.tapestry5.Translator;
+import org.apache.tapestry5.ioc.AnnotationProvider;
+import org.apache.tapestry5.ioc.Messages;
 
 /**
- * Defines a context for editing a property of a bean via {@link org.apache.tapestry.corelib.components.BeanEditor}.
- * This value is made available to blocks via the {@link org.apache.tapestry.annotation.Environmental} annotation.
+ * Defines a context for editing a property of a bean via {@link org.apache.tapestry5.corelib.components.BeanEditor}.
+ * This value is made available to blocks via the {@link org.apache.tapestry5.annotations.Environmental} annotation.
  *
- * @see org.apache.tapestry.services.BeanBlockSource
+ * @see org.apache.tapestry5.services.BeanBlockSource
  */
 public interface PropertyEditContext extends AnnotationProvider
 {
@@ -42,7 +42,7 @@ public interface PropertyEditContext extends AnnotationProvider
     void setPropertyValue(Object value);
 
     /**
-     * Returns the user-presentable label, for use with the {@link org.apache.tapestry.corelib.components.Label}
+     * Returns the user-presentable label, for use with the {@link org.apache.tapestry5.corelib.components.Label}
      * component, or to be integrated into any validation error messages.
      */
     String getLabel();
@@ -57,8 +57,8 @@ public interface PropertyEditContext extends AnnotationProvider
     /**
      * Returns the FieldValidator for the field.
      *
-     * @see org.apache.tapestry.beaneditor.Validate
-     * @see org.apache.tapestry.services.FieldValidatorDefaultSource
+     * @see org.apache.tapestry5.beaneditor.Validate
+     * @see org.apache.tapestry5.services.FieldValidatorDefaultSource
      */
     FieldValidator getValidator(Field field);
 
@@ -74,7 +74,7 @@ public interface PropertyEditContext extends AnnotationProvider
     Class getPropertyType();
 
     /**
-     * Returns the message catalog for the container of the {@link org.apache.tapestry.corelib.components.BeanEditForm},
+     * Returns the message catalog for the container of the {@link org.apache.tapestry5.corelib.components.BeanEditForm},
      * which is the correct place to look for strings used for labels, etc.
      */
     Messages getContainerMessages();

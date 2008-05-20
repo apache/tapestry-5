@@ -12,17 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.corelib.base;
+package org.apache.tapestry5.corelib.base;
 
-import org.apache.tapestry.ComponentResources;
-import org.apache.tapestry.Link;
-import org.apache.tapestry.MarkupWriter;
-import org.apache.tapestry.dom.Element;
-import org.apache.tapestry.internal.services.ComponentInvocation;
-import org.apache.tapestry.internal.services.ComponentInvocationMap;
-import org.apache.tapestry.internal.services.MarkupWriterImpl;
-import org.apache.tapestry.internal.test.InternalBaseTestCase;
-import org.apache.tapestry.internal.test.PageTesterComponentInvocationMap;
+import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.Link;
+import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.dom.Element;
+import org.apache.tapestry5.internal.services.ComponentInvocation;
+import org.apache.tapestry5.internal.services.ComponentInvocationMap;
+import org.apache.tapestry5.internal.services.MarkupWriterImpl;
+import org.apache.tapestry5.internal.test.InternalBaseTestCase;
+import org.apache.tapestry5.internal.test.PageTesterComponentInvocationMap;
 import org.testng.annotations.Test;
 
 public class AbstractLinkTest extends InternalBaseTestCase

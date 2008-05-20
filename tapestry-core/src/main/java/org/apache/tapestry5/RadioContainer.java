@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry;
+package org.apache.tapestry5;
 
-import org.apache.tapestry.corelib.components.Radio;
+import org.apache.tapestry5.corelib.components.Radio;
 
 /**
  * A container of {@link Radio} components, used to identify the element name used when rendering the individual radio

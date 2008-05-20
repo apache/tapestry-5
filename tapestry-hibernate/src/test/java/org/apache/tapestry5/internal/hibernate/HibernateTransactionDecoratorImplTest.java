@@ -12,15 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.hibernate;
+package org.apache.tapestry5.internal.hibernate;
 
-import org.apache.tapestry.hibernate.HibernateSessionManager;
-import org.apache.tapestry.hibernate.HibernateTransactionDecorator;
-import org.apache.tapestry.hibernate.annotations.CommitAfter;
-import org.apache.tapestry.ioc.IOCUtilities;
-import org.apache.tapestry.ioc.Registry;
-import org.apache.tapestry.ioc.services.AspectDecorator;
-import org.apache.tapestry.test.TapestryTestCase;
+import org.apache.tapestry5.hibernate.HibernateSessionManager;
+import org.apache.tapestry5.hibernate.HibernateTransactionDecorator;
+import org.apache.tapestry5.hibernate.annotations.CommitAfter;
+import org.apache.tapestry5.ioc.IOCUtilities;
+import org.apache.tapestry5.ioc.Registry;
+import org.apache.tapestry5.ioc.services.AspectDecorator;
+import org.apache.tapestry5.test.TapestryTestCase;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;

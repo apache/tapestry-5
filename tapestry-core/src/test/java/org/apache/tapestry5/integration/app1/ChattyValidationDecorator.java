@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.integration.app1;
+package org.apache.tapestry5.integration.app1;
 
-import org.apache.tapestry.Field;
-import org.apache.tapestry.MarkupWriter;
-import org.apache.tapestry.ValidationDecorator;
-import org.apache.tapestry.dom.Element;
+import org.apache.tapestry5.Field;
+import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.ValidationDecorator;
+import org.apache.tapestry5.dom.Element;
 
 public class ChattyValidationDecorator implements ValidationDecorator
 {

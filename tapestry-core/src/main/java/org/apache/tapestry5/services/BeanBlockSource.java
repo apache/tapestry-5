@@ -12,24 +12,24 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.services;
+package org.apache.tapestry5.services;
 
-import org.apache.tapestry.Block;
+import org.apache.tapestry5.Block;
 
 /**
  * A source of {@link Block}s used to display the properties of a bean (used by the {@link
- * org.apache.tapestry.corelib.components.Grid} component), or to edit the properties of a bean (used by the {@link
- * org.apache.tapestry.corelib.components.BeanEditForm} component). Contributions to this service (a configuration of
+ * org.apache.tapestry5.corelib.components.Grid} component), or to edit the properties of a bean (used by the {@link
+ * org.apache.tapestry5.corelib.components.BeanEditForm} component). Contributions to this service (a configuration of
  * {@link BeanBlockContribution}s) define what properties may be editted.
  * <p/>
  * Blocks are accessed in terms of a <strong>data type</strong> a string that identifies the type of data to be editted,
  * such as "string", "date", "boolean", etc.
  * <p/>
  * Tapestry contributes a number of default data types and corresponding edit and display blocks. The {@link
- * org.apache.tapestry.services.BeanBlockOverrideSource} service allows these to be overridden.
+ * org.apache.tapestry5.services.BeanBlockOverrideSource} service allows these to be overridden.
  *
- * @see org.apache.tapestry.services.DataTypeAnalyzer
- * @see org.apache.tapestry.services.TapestryModule#contributeBeanBlockSource(org.apache.tapestry.ioc.Configuration)
+ * @see org.apache.tapestry5.services.DataTypeAnalyzer
+ * @see org.apache.tapestry5.services.TapestryModule#contributeBeanBlockSource(org.apache.tapestry5.ioc.Configuration)
  */
 public interface BeanBlockSource
 {

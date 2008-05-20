@@ -12,13 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry;
+package org.apache.tapestry5;
 
 import java.util.Map;
 
 /**
  * Base class for implementing {@link OptionModel}.  Subclasses must implement {@link
- * org.apache.tapestry.OptionModel#getLabel()} and {@link org.apache.tapestry.OptionModel#getValue()} }.
+ * org.apache.tapestry5.OptionModel#getLabel()} and {@link org.apache.tapestry5.OptionModel#getValue()} }.
  */
 public abstract class AbstractOptionModel implements OptionModel
 {

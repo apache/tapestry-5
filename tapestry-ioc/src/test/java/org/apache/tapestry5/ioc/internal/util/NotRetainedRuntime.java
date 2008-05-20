@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.internal.util;
+package org.apache.tapestry5.ioc.internal.util;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Target;
@@ -21,7 +21,7 @@ import java.lang.annotation.Target;
 /**
  * Used for testing; this annotation is NOT retained at runtime.
  */
-@Target({ElementType.PARAMETER, ElementType.FIELD})
+@Target({ ElementType.PARAMETER, ElementType.FIELD })
 public @interface NotRetainedRuntime
 {
 }

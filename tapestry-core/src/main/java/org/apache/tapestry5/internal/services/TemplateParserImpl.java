@@ -12,21 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry.SymbolConstants;
-import org.apache.tapestry.internal.parser.*;
-import static org.apache.tapestry.ioc.IOCConstants.PERTHREAD_SCOPE;
-import org.apache.tapestry.ioc.Location;
-import org.apache.tapestry.ioc.Resource;
-import org.apache.tapestry.ioc.annotation.Scope;
-import org.apache.tapestry.ioc.annotation.Symbol;
-import org.apache.tapestry.ioc.internal.util.CollectionFactory;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
-import org.apache.tapestry.ioc.internal.util.InternalUtils;
-import org.apache.tapestry.ioc.internal.util.LocationImpl;
-import org.apache.tapestry.ioc.internal.util.TapestryException;
-import org.apache.tapestry.ioc.util.Stack;
+import org.apache.tapestry5.SymbolConstants;
+import org.apache.tapestry5.internal.parser.*;
+import static org.apache.tapestry5.ioc.IOCConstants.PERTHREAD_SCOPE;
+import org.apache.tapestry5.ioc.Location;
+import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.ioc.annotations.Scope;
+import org.apache.tapestry5.ioc.annotations.Symbol;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newList;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.ioc.internal.util.LocationImpl;
+import org.apache.tapestry5.ioc.internal.util.TapestryException;
+import org.apache.tapestry5.ioc.util.Stack;
 import org.slf4j.Logger;
 import org.xml.sax.*;
 import org.xml.sax.ext.LexicalHandler;
@@ -97,8 +97,8 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
     /**
      * Because {@link org.xml.sax.ContentHandler#startPrefixMapping(String, String)} events arrive before the
      * corresponding {@link org.xml.sax.ContentHandler#startElement(String, String, String, org.xml.sax.Attributes)}
-     * events, we need to accumlate the {@link org.apache.tapestry.internal.parser.DefineNamespacePrefixToken}s ahead of
-     * time to get the correct ordering in the output tokens list.
+     * events, we need to accumlate the {@link org.apache.tapestry5.internal.parser.DefineNamespacePrefixToken}s ahead
+     * of time to get the correct ordering in the output tokens list.
      */
     private final List<DefineNamespacePrefixToken> defineNamespaceTokens = newList();
 
@@ -297,8 +297,8 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
      * Scans the text, using a regular expression pattern, for expansion patterns, and adds appropriate tokens for what
      * it finds.
      *
-     * @param text to add as {@link org.apache.tapestry.internal.parser.TextToken}s and {@link
-     *             org.apache.tapestry.internal.parser.ExpansionToken}s
+     * @param text to add as {@link org.apache.tapestry5.internal.parser.TextToken}s and {@link
+     *             org.apache.tapestry5.internal.parser.ExpansionToken}s
      */
     private void addTokensForText(String text)
     {

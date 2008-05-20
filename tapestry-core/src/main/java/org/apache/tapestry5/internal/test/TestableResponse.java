@@ -12,15 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.test;
+package org.apache.tapestry5.internal.test;
 
-import org.apache.tapestry.Link;
-import org.apache.tapestry.services.Response;
+import org.apache.tapestry5.Link;
+import org.apache.tapestry5.services.Response;
 
 public interface TestableResponse extends Response
 {
     /**
-     * Returns the link redirected to via {@link org.apache.tapestry.services.Response#sendRedirect(org.apache.tapestry.Link)}.
+     * Returns the link redirected to via {@link org.apache.tapestry5.services.Response#sendRedirect(org.apache.tapestry5.Link)}.
      */
     Link getRedirectLink();
 

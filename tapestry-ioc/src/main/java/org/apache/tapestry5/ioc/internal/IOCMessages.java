@@ -12,16 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.internal;
+package org.apache.tapestry5.ioc.internal;
 
-import org.apache.tapestry.ioc.Messages;
-import org.apache.tapestry.ioc.def.ContributionDef;
-import org.apache.tapestry.ioc.def.ServiceDef;
-import org.apache.tapestry.ioc.internal.util.InternalUtils;
-import static org.apache.tapestry.ioc.internal.util.InternalUtils.asString;
-import org.apache.tapestry.ioc.internal.util.MessagesImpl;
-import org.apache.tapestry.ioc.services.ClassFabUtils;
-import static org.apache.tapestry.ioc.services.ClassFabUtils.toJavaClassName;
+import org.apache.tapestry5.ioc.Messages;
+import org.apache.tapestry5.ioc.def.ContributionDef;
+import org.apache.tapestry5.ioc.def.ServiceDef;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import static org.apache.tapestry5.ioc.internal.util.InternalUtils.asString;
+import org.apache.tapestry5.ioc.internal.util.MessagesImpl;
+import org.apache.tapestry5.ioc.services.ClassFabUtils;
+import static org.apache.tapestry5.ioc.services.ClassFabUtils.toJavaClassName;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;

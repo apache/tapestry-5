@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.integration.app3.pages;
+package org.apache.tapestry5.integration.app3.pages;
 
 public class BeanDisplayOverrideDemo
 {
@@ -25,5 +25,5 @@ public class BeanDisplayOverrideDemo
     {
         return false;
     }
-    
+
 }

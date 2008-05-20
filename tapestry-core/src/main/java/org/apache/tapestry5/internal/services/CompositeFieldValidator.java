@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry.FieldValidator;
-import org.apache.tapestry.MarkupWriter;
-import org.apache.tapestry.ValidationException;
+import org.apache.tapestry5.FieldValidator;
+import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.ValidationException;
 
 import java.util.List;
 

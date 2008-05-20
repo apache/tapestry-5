@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.util;
+package org.apache.tapestry5.ioc.util;
 
-import org.apache.tapestry.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 
 /**
  * A simple, streamlined implementation of {@link java.util.Stack}. The implementation is <em>not</em> threadsafe.

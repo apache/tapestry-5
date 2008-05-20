@@ -12,13 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry.Block;
-import org.apache.tapestry.internal.structure.Page;
-import org.apache.tapestry.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry.services.BeanBlockContribution;
-import org.apache.tapestry.services.BeanBlockOverrideSource;
+import org.apache.tapestry5.Block;
+import org.apache.tapestry5.internal.structure.Page;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.services.BeanBlockContribution;
+import org.apache.tapestry5.services.BeanBlockOverrideSource;
 
 import java.util.Collection;
 import java.util.Map;

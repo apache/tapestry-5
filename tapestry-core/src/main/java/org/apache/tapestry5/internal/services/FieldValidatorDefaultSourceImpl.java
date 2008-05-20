@@ -12,16 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry.Field;
-import org.apache.tapestry.FieldValidator;
-import org.apache.tapestry.ioc.AnnotationProvider;
-import org.apache.tapestry.ioc.Messages;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
-import org.apache.tapestry.services.FieldValidatorDefaultSource;
-import org.apache.tapestry.services.FieldValidatorSource;
-import org.apache.tapestry.services.ValidationConstraintGenerator;
+import org.apache.tapestry5.Field;
+import org.apache.tapestry5.FieldValidator;
+import org.apache.tapestry5.ioc.AnnotationProvider;
+import org.apache.tapestry5.ioc.Messages;
+import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newList;
+import org.apache.tapestry5.services.FieldValidatorDefaultSource;
+import org.apache.tapestry5.services.FieldValidatorSource;
+import org.apache.tapestry5.services.ValidationConstraintGenerator;
 
 import java.util.List;
 import java.util.Locale;

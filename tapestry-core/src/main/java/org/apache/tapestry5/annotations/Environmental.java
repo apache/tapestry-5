@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.annotation;
+package org.apache.tapestry5.annotations;
 
-import org.apache.tapestry.services.Environment;
+import org.apache.tapestry5.services.Environment;
 
 import java.lang.annotation.Documented;
 import static java.lang.annotation.ElementType.FIELD;

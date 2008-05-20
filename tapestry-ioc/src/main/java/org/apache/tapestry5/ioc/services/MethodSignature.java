@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.services;
+package org.apache.tapestry5.ioc.services;
 
-import static org.apache.tapestry.ioc.internal.util.Defense.notBlank;
-import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
-import static org.apache.tapestry.ioc.internal.util.InternalUtils.size;
+import static org.apache.tapestry5.ioc.internal.util.Defense.notBlank;
+import static org.apache.tapestry5.ioc.internal.util.Defense.notNull;
+import static org.apache.tapestry5.ioc.internal.util.InternalUtils.size;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -31,7 +31,7 @@ import java.util.Arrays;
  * instance and static methods</em>.
  * <p/>
  * This version of MethodSignature works with <em>loaded</em> classes, and it usually used in the context of {@link
- * org.apache.tapestry.ioc.services.ClassFab} to create new classes and subclasses.
+ * org.apache.tapestry5.ioc.services.ClassFab} to create new classes and subclasses.
  */
 public class MethodSignature
 {

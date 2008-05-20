@@ -12,20 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal;
+package org.apache.tapestry5.internal;
 
-import org.apache.tapestry.ioc.IOCUtilities;
-import org.apache.tapestry.ioc.Registry;
-import org.apache.tapestry.ioc.RegistryBuilder;
-import org.apache.tapestry.ioc.def.ContributionDef;
-import org.apache.tapestry.ioc.def.ModuleDef;
-import org.apache.tapestry.ioc.internal.util.InternalUtils;
-import org.apache.tapestry.ioc.services.SymbolProvider;
-import org.apache.tapestry.services.Alias;
-import org.apache.tapestry.services.TapestryModule;
+import org.apache.tapestry5.ioc.IOCUtilities;
+import org.apache.tapestry5.ioc.Registry;
+import org.apache.tapestry5.ioc.RegistryBuilder;
+import org.apache.tapestry5.ioc.def.ContributionDef;
+import org.apache.tapestry5.ioc.def.ModuleDef;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.ioc.services.SymbolProvider;
+import org.apache.tapestry5.services.Alias;
+import org.apache.tapestry5.services.TapestryModule;
 
 /**
- * This class is used to build the {@link Registry}. The Registry contains {@link org.apache.tapestry.ioc.services.TapestryIOCModule}
+ * This class is used to build the {@link Registry}. The Registry contains {@link org.apache.tapestry5.ioc.services.TapestryIOCModule}
  * and {@link TapestryModule}, any modules identified by {@link #addModules(Class[])} )}, plus the application module.
  * <p/>
  * The application module is optional.

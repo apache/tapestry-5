@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.util;
+package org.apache.tapestry5.internal.util;
 
-import org.apache.tapestry.services.ClassTransformation;
+import org.apache.tapestry5.services.ClassTransformation;
 
 /**
- * Builds single parameter value to pass into a method being invoked by a {@link org.apache.tapestry.internal.util.MethodInvocationBuilder}.
+ * Builds single parameter value to pass into a method being invoked by a {@link org.apache.tapestry5.internal.util.MethodInvocationBuilder}.
  */
 public interface ParameterBuilder
 {

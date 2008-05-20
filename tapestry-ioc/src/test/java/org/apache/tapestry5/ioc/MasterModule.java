@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc;
+package org.apache.tapestry5.ioc;
 
-import org.apache.tapestry.ioc.annotation.SubModule;
+import org.apache.tapestry5.ioc.annotations.SubModule;
 
 /**
- * Used by {@link org.apache.tapestry.ioc.RegistryBuilderTest}.
+ * Used by {@link org.apache.tapestry5.ioc.RegistryBuilderTest}.
  */
 @SubModule(
         { FredModule.class, BarneyModule.class })

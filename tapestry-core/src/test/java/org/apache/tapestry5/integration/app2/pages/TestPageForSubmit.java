@@ -12,13 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.integration.app2.pages;
+package org.apache.tapestry5.integration.app2.pages;
 
-import org.apache.tapestry.annotation.Component;
-import org.apache.tapestry.annotation.Persist;
-import org.apache.tapestry.corelib.components.Form;
-import org.apache.tapestry.corelib.components.Submit;
-import org.apache.tapestry.corelib.components.TextField;
+import org.apache.tapestry5.annotations.Component;
+import org.apache.tapestry5.annotations.Persist;
+import org.apache.tapestry5.corelib.components.Form;
+import org.apache.tapestry5.corelib.components.Submit;
+import org.apache.tapestry5.corelib.components.TextField;
 
 public class TestPageForSubmit
 {

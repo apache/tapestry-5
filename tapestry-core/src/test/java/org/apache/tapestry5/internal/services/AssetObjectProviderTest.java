@@ -12,17 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry.Asset;
-import org.apache.tapestry.annotation.Path;
-import org.apache.tapestry.internal.test.InternalBaseTestCase;
-import org.apache.tapestry.ioc.AnnotationProvider;
-import org.apache.tapestry.ioc.ObjectLocator;
-import org.apache.tapestry.ioc.ObjectProvider;
-import org.apache.tapestry.ioc.services.SymbolSource;
-import org.apache.tapestry.ioc.services.TypeCoercer;
-import org.apache.tapestry.services.AssetSource;
+import org.apache.tapestry5.Asset;
+import org.apache.tapestry5.annotations.Path;
+import org.apache.tapestry5.internal.test.InternalBaseTestCase;
+import org.apache.tapestry5.ioc.AnnotationProvider;
+import org.apache.tapestry5.ioc.ObjectLocator;
+import org.apache.tapestry5.ioc.ObjectProvider;
+import org.apache.tapestry5.ioc.services.SymbolSource;
+import org.apache.tapestry5.ioc.services.TypeCoercer;
+import org.apache.tapestry5.services.AssetSource;
 import org.testng.annotations.Test;
 
 public class AssetObjectProviderTest extends InternalBaseTestCase

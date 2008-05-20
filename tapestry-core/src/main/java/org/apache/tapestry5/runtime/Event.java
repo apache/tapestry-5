@@ -12,14 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.runtime;
+package org.apache.tapestry5.runtime;
 
 /**
  * The core methods related to event handling. Events used in this way exist to gather data from user code, by invoking
  * user methods and capturing the response. Return values from methods, if non-null, are passed to a {@link
- * org.apache.tapestry.ComponentEventCallback}. The {@link ComponentEvent} subinterface extends this by providing access
- * to a context, or set of information related to the event, along with additional data used, at runtime, to match
- * events to user code methods.
+ * org.apache.tapestry5.ComponentEventCallback}. The {@link ComponentEvent} subinterface extends this by providing
+ * access to a context, or set of information related to the event, along with additional data used, at runtime, to
+ * match events to user code methods.
  */
 public interface Event
 {
@@ -41,7 +41,7 @@ public interface Event
 
     /**
      * Stores a result for the event. Storing a non-null result value may abort the event (at the discretion of the
-     * {@link org.apache.tapestry.ComponentEventCallback}).
+     * {@link org.apache.tapestry5.ComponentEventCallback}).
      *
      * @param result the result obtained from a method invocations
      * @return true if the event is now aborted

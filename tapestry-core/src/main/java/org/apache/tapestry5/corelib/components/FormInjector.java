@@ -12,23 +12,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.corelib.components;
+package org.apache.tapestry5.corelib.components;
 
-import org.apache.tapestry.*;
-import org.apache.tapestry.annotation.Environmental;
-import org.apache.tapestry.annotation.Parameter;
-import org.apache.tapestry.annotation.SupportsInformalParameters;
-import org.apache.tapestry.corelib.data.InsertPosition;
-import org.apache.tapestry.corelib.internal.FormSupportImpl;
-import org.apache.tapestry.internal.services.ClientBehaviorSupport;
-import org.apache.tapestry.internal.services.ComponentResultProcessorWrapper;
-import org.apache.tapestry.internal.services.PageRenderQueue;
-import org.apache.tapestry.internal.util.Base64ObjectOutputStream;
-import org.apache.tapestry.ioc.annotation.Inject;
-import org.apache.tapestry.ioc.internal.util.IdAllocator;
-import org.apache.tapestry.runtime.RenderCommand;
-import org.apache.tapestry.runtime.RenderQueue;
-import org.apache.tapestry.services.*;
+import org.apache.tapestry5.*;
+import org.apache.tapestry5.annotations.Environmental;
+import org.apache.tapestry5.annotations.Parameter;
+import org.apache.tapestry5.annotations.SupportsInformalParameters;
+import org.apache.tapestry5.corelib.data.InsertPosition;
+import org.apache.tapestry5.corelib.internal.FormSupportImpl;
+import org.apache.tapestry5.internal.services.ClientBehaviorSupport;
+import org.apache.tapestry5.internal.services.ComponentResultProcessorWrapper;
+import org.apache.tapestry5.internal.services.PageRenderQueue;
+import org.apache.tapestry5.internal.util.Base64ObjectOutputStream;
+import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.internal.util.IdAllocator;
+import org.apache.tapestry5.runtime.RenderCommand;
+import org.apache.tapestry5.runtime.RenderQueue;
+import org.apache.tapestry5.services.*;
 
 import java.io.IOException;
 import java.util.List;

@@ -12,14 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry.ioc.services.Builtin;
-import org.apache.tapestry.ioc.services.ClassFab;
-import org.apache.tapestry.ioc.services.ClassFactory;
-import org.apache.tapestry.ioc.services.MethodSignature;
-import org.apache.tapestry.services.Environment;
-import org.apache.tapestry.services.EnvironmentalShadowBuilder;
+import org.apache.tapestry5.ioc.services.Builtin;
+import org.apache.tapestry5.ioc.services.ClassFab;
+import org.apache.tapestry5.ioc.services.ClassFactory;
+import org.apache.tapestry5.ioc.services.MethodSignature;
+import org.apache.tapestry5.services.Environment;
+import org.apache.tapestry5.services.EnvironmentalShadowBuilder;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;

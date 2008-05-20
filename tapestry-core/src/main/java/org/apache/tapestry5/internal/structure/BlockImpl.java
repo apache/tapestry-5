@@ -12,15 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.structure;
+package org.apache.tapestry5.internal.structure;
 
-import org.apache.tapestry.Block;
-import org.apache.tapestry.MarkupWriter;
-import org.apache.tapestry.ioc.BaseLocatable;
-import org.apache.tapestry.ioc.Location;
-import org.apache.tapestry.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry.runtime.RenderCommand;
-import org.apache.tapestry.runtime.RenderQueue;
+import org.apache.tapestry5.Block;
+import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.ioc.BaseLocatable;
+import org.apache.tapestry5.ioc.Location;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.runtime.RenderCommand;
+import org.apache.tapestry5.runtime.RenderQueue;
 
 import java.util.List;
 

@@ -12,20 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.corelib.components;
+package org.apache.tapestry5.corelib.components;
 
-import org.apache.tapestry.ComponentResources;
-import org.apache.tapestry.beaneditor.PropertyModel;
-import org.apache.tapestry.ioc.Location;
-import org.apache.tapestry.ioc.Messages;
-import org.apache.tapestry.ioc.internal.util.TapestryException;
-import org.apache.tapestry.services.BeanBlockSource;
-import org.apache.tapestry.test.TapestryTestCase;
+import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.beaneditor.PropertyModel;
+import org.apache.tapestry5.ioc.Location;
+import org.apache.tapestry5.ioc.Messages;
+import org.apache.tapestry5.ioc.internal.util.TapestryException;
+import org.apache.tapestry5.services.BeanBlockSource;
+import org.apache.tapestry5.test.TapestryTestCase;
 import org.testng.annotations.Test;
 
 /**
- * Tests an error case for the PropertyEditor component. The success cases are mixed into the
- * BeanEditForm component's integration tests.
+ * Tests an error case for the PropertyEditor component. The success cases are mixed into the BeanEditForm component's
+ * integration tests.
  */
 public class PropertyEditorTest extends TapestryTestCase
 {

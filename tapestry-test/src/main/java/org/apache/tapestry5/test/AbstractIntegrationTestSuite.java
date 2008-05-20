@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.test;
+package org.apache.tapestry5.test;
 
 import com.thoughtworks.selenium.CommandProcessor;
 import com.thoughtworks.selenium.DefaultSelenium;
@@ -36,7 +36,7 @@ import org.testng.annotations.BeforeClass;
  * instance it creates. It also extends the normal exception reporting for any failed command or query to produce a more
  * detailed report to the main console.
  *
- * @see org.apache.tapestry.test.JettyRunner
+ * @see org.apache.tapestry5.test.JettyRunner
  */
 public class AbstractIntegrationTestSuite extends Assert implements Selenium
 {

@@ -12,14 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.services;
+package org.apache.tapestry5.services;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
- * Filter interface for {@link org.apache.tapestry.services.HttpServletRequestHandler}.
+ * Filter interface for {@link org.apache.tapestry5.services.HttpServletRequestHandler}.
  */
 public interface HttpServletRequestFilter
 {

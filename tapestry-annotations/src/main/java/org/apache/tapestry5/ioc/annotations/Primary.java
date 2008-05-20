@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.annotation;
+package org.apache.tapestry5.ioc.annotations;
 
 import java.lang.annotation.Documented;
 import static java.lang.annotation.ElementType.FIELD;
@@ -23,8 +23,8 @@ import java.lang.annotation.Target;
 
 /**
  * Marker annotation used to denote a service that is the primary instance of some common interface. This is often used
- * when a service is a {@linkplain org.apache.tapestry.ioc.services.ChainBuilder chain of command} or {@linkplain
- * org.apache.tapestry.ioc.services.StrategyBuilder strategy-based} and, therefore, many services will implement the
+ * when a service is a {@linkplain org.apache.tapestry5.ioc.services.ChainBuilder chain of command} or {@linkplain
+ * org.apache.tapestry5.ioc.services.StrategyBuilder strategy-based} and, therefore, many services will implement the
  * same interface.
  */
 @Target(

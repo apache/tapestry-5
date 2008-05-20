@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry.internal.test.InternalBaseTestCase;
-import org.apache.tapestry.ioc.services.ClassNameLocator;
-import org.apache.tapestry.services.ComponentClassResolver;
-import org.apache.tapestry.services.LibraryMapping;
+import org.apache.tapestry5.internal.test.InternalBaseTestCase;
+import org.apache.tapestry5.ioc.services.ClassNameLocator;
+import org.apache.tapestry5.services.ComponentClassResolver;
+import org.apache.tapestry5.services.LibraryMapping;
 import org.easymock.EasyMock;
 import static org.easymock.EasyMock.isA;
 import org.slf4j.Logger;
@@ -34,7 +34,7 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
 
     private static final String CORE_PREFIX = "core";
 
-    private static final String CORE_ROOT_PACKAGE = "org.apache.tapestry.corelib";
+    private static final String CORE_ROOT_PACKAGE = "org.apache.tapestry5.corelib";
 
     private static final String LIB_PREFIX = "lib";
 

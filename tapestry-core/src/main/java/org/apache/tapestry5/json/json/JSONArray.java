@@ -38,7 +38,7 @@ package org.apache.tapestry5.json;
  SOFTWARE.
  */
 
-import org.apache.tapestry.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 
 import java.util.List;
 

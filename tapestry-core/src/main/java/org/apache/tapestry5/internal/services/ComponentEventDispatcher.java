@@ -12,15 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry.EventConstants;
-import org.apache.tapestry.EventContext;
-import org.apache.tapestry.internal.EmptyEventContext;
-import org.apache.tapestry.internal.InternalConstants;
-import org.apache.tapestry.internal.TapestryInternalUtils;
-import org.apache.tapestry.internal.URLEventContext;
-import org.apache.tapestry.services.*;
+import org.apache.tapestry5.EventConstants;
+import org.apache.tapestry5.EventContext;
+import org.apache.tapestry5.internal.EmptyEventContext;
+import org.apache.tapestry5.internal.InternalConstants;
+import org.apache.tapestry5.internal.TapestryInternalUtils;
+import org.apache.tapestry5.internal.URLEventContext;
+import org.apache.tapestry5.services.*;
 
 import java.io.IOException;
 import java.util.regex.Matcher;
@@ -38,10 +38,10 @@ import java.util.regex.Pattern;
  * page with action context "foo" , "gnu"</li> </ul>
  * <p/>
  * The page name portion may itself consist of a series of folder names, i.e., "admin/user/create".  The context portion
- * isn't the concern of this code, since {@link org.apache.tapestry.services.Request#getPath()} will already have
+ * isn't the concern of this code, since {@link org.apache.tapestry5.services.Request#getPath()} will already have
  * stripped that off.  We can act as if the context is always "/" (the path always starts with a slash).
  *
- * @see LinkFactory#createActionLink(org.apache.tapestry.internal.structure.Page, String, String,boolean, Object...)
+ * @see LinkFactory#createActionLink(org.apache.tapestry5.internal.structure.Page, String, String,boolean, Object...)
  */
 public class ComponentEventDispatcher implements Dispatcher
 {

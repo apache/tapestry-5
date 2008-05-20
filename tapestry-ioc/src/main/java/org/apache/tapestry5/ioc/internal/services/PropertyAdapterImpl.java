@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.internal.services;
+package org.apache.tapestry5.ioc.internal.services;
 
-import static org.apache.tapestry.ioc.internal.util.Defense.notBlank;
-import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
-import org.apache.tapestry.ioc.services.PropertyAdapter;
+import static org.apache.tapestry5.ioc.internal.util.Defense.notBlank;
+import static org.apache.tapestry5.ioc.internal.util.Defense.notNull;
+import org.apache.tapestry5.ioc.services.PropertyAdapter;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;

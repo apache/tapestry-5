@@ -12,20 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.internal;
+package org.apache.tapestry5.ioc.internal;
 
-import org.apache.tapestry.ioc.*;
-import org.apache.tapestry.ioc.annotation.*;
-import org.apache.tapestry.ioc.def.ContributionDef;
-import org.apache.tapestry.ioc.def.DecoratorDef;
-import org.apache.tapestry.ioc.def.ModuleDef;
-import org.apache.tapestry.ioc.def.ServiceDef;
-import static org.apache.tapestry.ioc.internal.ConfigurationType.*;
-import static org.apache.tapestry.ioc.internal.IOCMessages.*;
-import org.apache.tapestry.ioc.internal.util.CollectionFactory;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.*;
-import org.apache.tapestry.ioc.internal.util.InternalUtils;
-import org.apache.tapestry.ioc.services.ClassFactory;
+import org.apache.tapestry5.ioc.*;
+import org.apache.tapestry5.ioc.annotations.*;
+import org.apache.tapestry5.ioc.def.ContributionDef;
+import org.apache.tapestry5.ioc.def.DecoratorDef;
+import org.apache.tapestry5.ioc.def.ModuleDef;
+import org.apache.tapestry5.ioc.def.ServiceDef;
+import static org.apache.tapestry5.ioc.internal.ConfigurationType.*;
+import static org.apache.tapestry5.ioc.internal.IOCMessages.*;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.*;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.ioc.services.ClassFactory;
 import org.slf4j.Logger;
 
 import java.lang.reflect.InvocationTargetException;

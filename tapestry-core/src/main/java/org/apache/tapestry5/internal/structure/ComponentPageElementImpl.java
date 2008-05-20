@@ -12,45 +12,45 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.structure;
+package org.apache.tapestry5.internal.structure;
 
-import org.apache.tapestry.*;
-import org.apache.tapestry.dom.Element;
-import org.apache.tapestry.internal.InternalComponentResources;
-import org.apache.tapestry.internal.TapestryInternalUtils;
-import org.apache.tapestry.internal.services.ComponentEventImpl;
-import org.apache.tapestry.internal.services.EventImpl;
-import org.apache.tapestry.internal.services.Instantiator;
-import org.apache.tapestry.internal.util.NotificationEventCallback;
-import org.apache.tapestry.ioc.BaseLocatable;
-import org.apache.tapestry.ioc.Location;
-import org.apache.tapestry.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry.ioc.internal.util.Defense;
-import static org.apache.tapestry.ioc.internal.util.Defense.notBlank;
-import org.apache.tapestry.ioc.internal.util.InternalUtils;
-import org.apache.tapestry.ioc.internal.util.TapestryException;
-import org.apache.tapestry.model.ComponentModel;
-import org.apache.tapestry.model.ParameterModel;
-import org.apache.tapestry.runtime.*;
+import org.apache.tapestry5.*;
+import org.apache.tapestry5.dom.Element;
+import org.apache.tapestry5.internal.InternalComponentResources;
+import org.apache.tapestry5.internal.TapestryInternalUtils;
+import org.apache.tapestry5.internal.services.ComponentEventImpl;
+import org.apache.tapestry5.internal.services.EventImpl;
+import org.apache.tapestry5.internal.services.Instantiator;
+import org.apache.tapestry5.internal.util.NotificationEventCallback;
+import org.apache.tapestry5.ioc.BaseLocatable;
+import org.apache.tapestry5.ioc.Location;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.internal.util.Defense;
+import static org.apache.tapestry5.ioc.internal.util.Defense.notBlank;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.ioc.internal.util.TapestryException;
+import org.apache.tapestry5.model.ComponentModel;
+import org.apache.tapestry5.model.ParameterModel;
+import org.apache.tapestry5.runtime.*;
 import org.slf4j.Logger;
 
 import java.util.*;
 
 /**
- * Implements {@link org.apache.tapestry.internal.structure.PageElement} and represents a component within an overall
+ * Implements {@link org.apache.tapestry5.internal.structure.PageElement} and represents a component within an overall
  * page. Much of a component page element's behavior is delegated to user code, via a {@link
- * org.apache.tapestry.runtime.Component} instance.
+ * org.apache.tapestry5.runtime.Component} instance.
  * <p/>
  * Once instantiated, a ComponentPageElement should be registered as a {@linkplain
- * org.apache.tapestry.internal.structure.Page#addLifecycleListener(org.apache.tapestry.runtime.PageLifecycleListener)
+ * org.apache.tapestry5.internal.structure.Page#addLifecycleListener(org.apache.tapestry5.runtime.PageLifecycleListener)
  * lifecycle listener}. This could be done inside the constructors, but that tends to complicate unit tests, so its done
- * by {@link org.apache.tapestry.internal.services.PageElementFactoryImpl}.
+ * by {@link org.apache.tapestry5.internal.services.PageElementFactoryImpl}.
  * <p/>
  */
 public class ComponentPageElementImpl extends BaseLocatable implements ComponentPageElement, PageLifecycleListener
 {
     /**
-     * @see #render(org.apache.tapestry.MarkupWriter, org.apache.tapestry.runtime.RenderQueue)
+     * @see #render(org.apache.tapestry5.MarkupWriter, org.apache.tapestry5.runtime.RenderQueue)
      */
     private static final RenderCommand POP_COMPONENT_ID = new RenderCommand()
     {
@@ -450,7 +450,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
 
     /**
      * Used to detect mismatches calls to {@link MarkupWriter#element(String, Object[])} } and {@link
-     * org.apache.tapestry.MarkupWriter#end()}.  The expectation is that any element(s) begun by this component during
+     * org.apache.tapestry5.MarkupWriter#end()}.  The expectation is that any element(s) begun by this component during
      * rendering will be balanced by end() calls, resulting in the current element reverting to its initial value.
      */
     private Element elementAtSetup;

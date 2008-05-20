@@ -12,17 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.internal;
+package org.apache.tapestry5.ioc.internal;
 
-import org.apache.tapestry.ioc.Registry;
-import org.apache.tapestry.ioc.RegistryBuilder;
-import org.apache.tapestry.ioc.def.DecoratorDef;
-import org.apache.tapestry.ioc.def.ModuleDef;
-import org.apache.tapestry.ioc.def.ServiceDef;
-import org.apache.tapestry.ioc.internal.services.ClassFactoryImpl;
-import org.apache.tapestry.ioc.services.ClassFactory;
-import org.apache.tapestry.ioc.services.RegistryShutdownListener;
-import org.apache.tapestry.ioc.services.Status;
+import org.apache.tapestry5.ioc.Registry;
+import org.apache.tapestry5.ioc.RegistryBuilder;
+import org.apache.tapestry5.ioc.def.DecoratorDef;
+import org.apache.tapestry5.ioc.def.ModuleDef;
+import org.apache.tapestry5.ioc.def.ServiceDef;
+import org.apache.tapestry5.ioc.internal.services.ClassFactoryImpl;
+import org.apache.tapestry5.ioc.services.ClassFactory;
+import org.apache.tapestry5.ioc.services.RegistryShutdownListener;
+import org.apache.tapestry5.ioc.services.Status;
 import static org.easymock.EasyMock.contains;
 import static org.easymock.EasyMock.isA;
 import org.slf4j.Logger;
@@ -155,7 +155,7 @@ public class ModuleImplTest extends IOCInternalTestCase
         catch (RuntimeException ex)
         {
             assertEquals(ex.getMessage(),
-                         "Module builder class org.apache.tapestry.ioc.internal.PrivateConstructorModule " + "does not contain any public constructors.");
+                         "Module builder class org.apache.tapestry5.ioc.internal.PrivateConstructorModule " + "does not contain any public constructors.");
         }
 
         verify();
@@ -209,7 +209,7 @@ public class ModuleImplTest extends IOCInternalTestCase
         UpcaseService us = registry.getService(UpcaseService.class);
 
         assertEquals(us.upcase("hello"), "HELLO");
-        assertEquals(us.toString(), "<Proxy for Upcase(org.apache.tapestry.ioc.internal.UpcaseService)>");
+        assertEquals(us.toString(), "<Proxy for Upcase(org.apache.tapestry5.ioc.internal.UpcaseService)>");
 
         ToStringService ts = registry.getService(ToStringService.class);
 

@@ -12,21 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.services;
+package org.apache.tapestry5.ioc.services;
 
 import java.util.EventListener;
 
 /**
  * Listener interface for object that need to know about thread event cleanup.
  * <p/>
- * Note that registration with the {@link org.apache.tapestry.ioc.services.PerthreadManager} is a
- * one-shot affair; it lasts no longer than the next cleanup.
+ * Note that registration with the {@link org.apache.tapestry5.ioc.services.PerthreadManager} is a one-shot affair; it
+ * lasts no longer than the next cleanup.
  */
 public interface ThreadCleanupListener extends EventListener
 {
     /**
-     * Invoked by {@link org.apache.tapestry.ioc.services.PerthreadManager} service when a thread
-     * performs and end-of-request cleanup.
+     * Invoked by {@link org.apache.tapestry5.ioc.services.PerthreadManager} service when a thread performs and
+     * end-of-request cleanup.
      */
     void threadDidCleanup();
 }

@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry.ioc.internal.util.TapestryException;
+import org.apache.tapestry5.ioc.internal.util.TapestryException;
 
 /**
  * Exception used when rendering, to capture the stack of active components (for propery reporting in the exception

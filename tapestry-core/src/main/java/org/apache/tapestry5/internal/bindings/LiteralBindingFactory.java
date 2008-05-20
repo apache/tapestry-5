@@ -12,17 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.bindings;
+package org.apache.tapestry5.internal.bindings;
 
-import org.apache.tapestry.Binding;
-import org.apache.tapestry.ComponentResources;
-import org.apache.tapestry.ioc.Location;
-import org.apache.tapestry.services.BindingFactory;
+import org.apache.tapestry5.Binding;
+import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.ioc.Location;
+import org.apache.tapestry5.services.BindingFactory;
 
 /**
  * Binding factory that treats the expression as a literal string. The simplest form of binding.
  *
- * @see org.apache.tapestry.internal.bindings.LiteralBinding
+ * @see org.apache.tapestry5.internal.bindings.LiteralBinding
  */
 public class LiteralBindingFactory implements BindingFactory
 {

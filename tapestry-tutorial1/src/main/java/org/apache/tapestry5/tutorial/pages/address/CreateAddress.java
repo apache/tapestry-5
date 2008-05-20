@@ -12,14 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.tutorial.pages.address;
+package org.apache.tapestry5.tutorial.pages.address;
 
-import org.apache.tapestry.annotation.InjectPage;
-import org.apache.tapestry.annotation.Property;
-import org.apache.tapestry.hibernate.annotations.CommitAfter;
-import org.apache.tapestry.ioc.annotation.Inject;
-import org.apache.tapestry.tutorial.entities.Address;
-import org.apache.tapestry.tutorial.pages.Index;
+import org.apache.tapestry5.annotations.InjectPage;
+import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.hibernate.annotations.CommitAfter;
+import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.tutorial.entities.Address;
+import org.apache.tapestry5.tutorial.pages.Index;
 import org.hibernate.Session;
 
 public class CreateAddress

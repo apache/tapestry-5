@@ -12,16 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.integration.app1.pages;
+package org.apache.tapestry5.integration.app1.pages;
 
-import org.apache.tapestry.ComponentResources;
-import org.apache.tapestry.annotation.Component;
-import org.apache.tapestry.beaneditor.BeanModel;
-import org.apache.tapestry.corelib.components.Grid;
-import org.apache.tapestry.integration.app1.data.Track;
-import org.apache.tapestry.integration.app1.services.MusicLibrary;
-import org.apache.tapestry.ioc.annotation.Inject;
-import org.apache.tapestry.services.BeanModelSource;
+import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.annotations.Component;
+import org.apache.tapestry5.beaneditor.BeanModel;
+import org.apache.tapestry5.corelib.components.Grid;
+import org.apache.tapestry5.integration.app1.data.Track;
+import org.apache.tapestry5.integration.app1.services.MusicLibrary;
+import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.services.BeanModelSource;
 
 import java.util.List;
 

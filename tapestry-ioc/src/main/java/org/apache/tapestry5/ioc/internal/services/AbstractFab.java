@@ -12,14 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.internal.services;
+package org.apache.tapestry5.ioc.internal.services;
 
 import javassist.CtClass;
-import org.apache.tapestry.ioc.internal.util.OneShotLock;
+import org.apache.tapestry5.ioc.internal.util.OneShotLock;
 import org.slf4j.Logger;
 
 /**
- * Base class for {@link org.apache.tapestry.ioc.internal.services.ClassFabImpl}. This code is a fork from HiveMind; it
+ * Base class for {@link org.apache.tapestry5.ioc.internal.services.ClassFabImpl}. This code is a fork from HiveMind; it
  * is kept seperate from ClassFabImpl in case we want to re-introduce the idea of an InterfaceFab.
  */
 public class AbstractFab

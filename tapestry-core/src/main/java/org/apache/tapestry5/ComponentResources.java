@@ -12,14 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry;
+package org.apache.tapestry5;
 
-import org.apache.tapestry.ioc.AnnotationProvider;
-import org.apache.tapestry.ioc.Messages;
-import org.apache.tapestry.ioc.Resource;
-import org.apache.tapestry.model.ComponentModel;
-import org.apache.tapestry.runtime.Component;
-import org.apache.tapestry.runtime.PageLifecycleListener;
+import org.apache.tapestry5.ioc.AnnotationProvider;
+import org.apache.tapestry5.ioc.Messages;
+import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.model.ComponentModel;
+import org.apache.tapestry5.runtime.Component;
+import org.apache.tapestry5.runtime.PageLifecycleListener;
 
 import java.lang.annotation.Annotation;
 
@@ -188,7 +188,7 @@ public interface ComponentResources extends ComponentResourcesCommon
 
     /**
      * Discards all persistent field changes for the page containing the component.  Changes are eliminated from
-     * persistent storage (such as the {@link org.apache.tapestry.services.Session}) which will take effect in the
+     * persistent storage (such as the {@link org.apache.tapestry5.services.Session}) which will take effect in the
      * <em>next</em> request (the attached page instance is not affected).
      */
     void discardPersistentFieldChanges();

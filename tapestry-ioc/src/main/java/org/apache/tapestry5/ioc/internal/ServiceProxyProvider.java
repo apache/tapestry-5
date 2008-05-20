@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.internal;
+package org.apache.tapestry5.ioc.internal;
 
 /**
- * Used in concert with {@link org.apache.tapestry.ioc.internal.SerializationSupport} to
- * convert service tokens back into service proxies.
+ * Used in concert with {@link org.apache.tapestry5.ioc.internal.SerializationSupport} to convert service tokens back
+ * into service proxies.
  */
 public interface ServiceProxyProvider
 {

@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.corelib.components;
+package org.apache.tapestry5.corelib.components;
 
-import org.apache.tapestry.Block;
-import org.apache.tapestry.annotation.Parameter;
+import org.apache.tapestry5.Block;
+import org.apache.tapestry5.annotations.Parameter;
 
 /**
  * Conditionally renders its body.
@@ -38,8 +38,8 @@ public class If
     private boolean negate;
 
     /**
-     * An alternate {@link org.apache.tapestry.Block} to render if the test parameter is false. The default, null, means
-     * render nothing in that situation.
+     * An alternate {@link org.apache.tapestry5.Block} to render if the test parameter is false. The default, null,
+     * means render nothing in that situation.
      */
     @Parameter(name = "else")
     private Block elseBlock;

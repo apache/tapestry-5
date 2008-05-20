@@ -12,14 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.util;
+package org.apache.tapestry5.internal.util;
 
-import org.apache.tapestry.services.ClassTransformation;
+import org.apache.tapestry5.services.ClassTransformation;
 
 import static java.lang.String.format;
 
 /**
- * Implementation of {@link org.apache.tapestry.internal.util.ParameterBuilder} that simply provides a static string
+ * Implementation of {@link org.apache.tapestry5.internal.util.ParameterBuilder} that simply provides a static string
  * value for the parameter expression.
  */
 public final class StringParameterBuilder implements ParameterBuilder

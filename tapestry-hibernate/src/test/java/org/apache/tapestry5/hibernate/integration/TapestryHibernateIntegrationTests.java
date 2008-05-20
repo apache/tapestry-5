@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.hibernate.integration;
+package org.apache.tapestry5.hibernate.integration;
 
-import org.apache.tapestry.test.AbstractIntegrationTestSuite;
+import org.apache.tapestry5.test.AbstractIntegrationTestSuite;
 import org.testng.annotations.Test;
 
 @Test(sequential = true, groups = "integration")

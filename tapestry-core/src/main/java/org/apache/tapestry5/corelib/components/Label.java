@@ -12,25 +12,25 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.corelib.components;
+package org.apache.tapestry5.corelib.components;
 
-import org.apache.tapestry.ComponentResources;
-import org.apache.tapestry.Field;
-import org.apache.tapestry.MarkupWriter;
-import org.apache.tapestry.ValidationDecorator;
-import org.apache.tapestry.annotation.*;
-import org.apache.tapestry.dom.Element;
-import org.apache.tapestry.ioc.annotation.Inject;
-import org.apache.tapestry.ioc.internal.util.InternalUtils;
-import org.apache.tapestry.services.Heartbeat;
+import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.Field;
+import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.ValidationDecorator;
+import org.apache.tapestry5.annotations.*;
+import org.apache.tapestry5.dom.Element;
+import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.services.Heartbeat;
 
 /**
  * Generates a &lt;label&gt; element for a particular field.
  * <p/>
  * A Label will render its body, if it has one.  However, in most cases it will not have a body, and will render its
- * {@linkplain org.apache.tapestry.Field#getLabel() field's label} as it's body. Remember, however, that it is the field
- * label that will be used in any error messages. The Label component allows for client- and server-side validation
- * error decorations.
+ * {@linkplain org.apache.tapestry5.Field#getLabel() field's label} as it's body. Remember, however, that it is the
+ * field label that will be used in any error messages. The Label component allows for client- and server-side
+ * validation error decorations.
  */
 @SupportsInformalParameters
 public class Label

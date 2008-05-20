@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.integration.app1.components;
+package org.apache.tapestry5.integration.app1.components;
 
-import org.apache.tapestry.MarkupWriter;
-import org.apache.tapestry.Renderable;
-import org.apache.tapestry.annotation.BeginRender;
-import org.apache.tapestry.annotation.Environmental;
+import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.Renderable;
+import org.apache.tapestry5.annotations.BeginRender;
+import org.apache.tapestry5.annotations.Environmental;
 
 /**
  * Used, with {@link RenderableProvider}, to test the {@link Environmental} annotation.

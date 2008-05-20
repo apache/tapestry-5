@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.services;
+package org.apache.tapestry5.ioc.services;
 
-import org.apache.tapestry.ioc.test.IOCTestCase;
+import org.apache.tapestry5.ioc.test.IOCTestCase;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
@@ -86,8 +86,8 @@ public class MethodSignatureTest extends IOCTestCase
     @Test
     public void equals_with_parameters_mismatch()
     {
-        MethodSignature m1 = new MethodSignature(void.class, "foo", new Class[]{String.class}, null);
-        MethodSignature m2 = new MethodSignature(void.class, "foo", new Class[]{Boolean.class}, null);
+        MethodSignature m1 = new MethodSignature(void.class, "foo", new Class[] { String.class }, null);
+        MethodSignature m2 = new MethodSignature(void.class, "foo", new Class[] { Boolean.class }, null);
 
         assertEquals(false, m1.equals(m2));
     }
@@ -155,7 +155,7 @@ public class MethodSignatureTest extends IOCTestCase
     public void overriding_signature_parameters_mismatch()
     {
         MethodSignature m1 = new MethodSignature(void.class, "foo", null, null);
-        MethodSignature m2 = new MethodSignature(void.class, "foo", new Class[]{String.class}, null);
+        MethodSignature m2 = new MethodSignature(void.class, "foo", new Class[] { String.class }, null);
 
         assertEquals(m1.isOverridingSignatureOf(m2), false);
     }
@@ -163,8 +163,8 @@ public class MethodSignatureTest extends IOCTestCase
     @Test
     public void overriding_signature()
     {
-        MethodSignature m1 = new MethodSignature(void.class, "close", null, new Class[]{Exception.class});
-        MethodSignature m2 = new MethodSignature(void.class, "close", null, new Class[]{RuntimeException.class});
+        MethodSignature m1 = new MethodSignature(void.class, "close", null, new Class[] { Exception.class });
+        MethodSignature m2 = new MethodSignature(void.class, "close", null, new Class[] { RuntimeException.class });
 
         assertEquals(m1.isOverridingSignatureOf(m2), true);
         assertEquals(m2.isOverridingSignatureOf(m1), false);
@@ -177,7 +177,7 @@ public class MethodSignatureTest extends IOCTestCase
     public void overriding_signature_with_no_exceptions()
     {
         MethodSignature m1 = new MethodSignature(void.class, "close", null, null);
-        MethodSignature m2 = new MethodSignature(void.class, "close", null, new Class[]{RuntimeException.class});
+        MethodSignature m2 = new MethodSignature(void.class, "close", null, new Class[] { RuntimeException.class });
 
         assertEquals(m1.isOverridingSignatureOf(m2), false);
         assertEquals(m2.isOverridingSignatureOf(m1), true);
@@ -190,9 +190,9 @@ public class MethodSignatureTest extends IOCTestCase
     public void overriding_signature_with_multiple_matched_exceptions()
     {
         MethodSignature m1 = new MethodSignature(void.class, "close", null,
-                                                 new Class[]{SQLException.class, NumberFormatException.class});
+                                                 new Class[] { SQLException.class, NumberFormatException.class });
         MethodSignature m2 = new MethodSignature(void.class, "close", null,
-                                                 new Class[]{SQLException.class, IOException.class});
+                                                 new Class[] { SQLException.class, IOException.class });
 
         assertEquals(m1.isOverridingSignatureOf(m2), false);
         assertEquals(m2.isOverridingSignatureOf(m1), false);

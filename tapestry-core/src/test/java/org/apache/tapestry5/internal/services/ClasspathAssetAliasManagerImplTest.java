@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry.internal.test.InternalBaseTestCase;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
-import org.apache.tapestry.services.ClasspathAssetAliasManager;
-import org.apache.tapestry.services.Request;
+import org.apache.tapestry5.internal.test.InternalBaseTestCase;
+import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newMap;
+import org.apache.tapestry5.services.ClasspathAssetAliasManager;
+import org.apache.tapestry5.services.Request;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -30,8 +30,8 @@ public class ClasspathAssetAliasManagerImplTest extends InternalBaseTestCase
     {
         Map<String, String> configuration = newMap();
 
-        configuration.put("tapestry/", "org/apache/tapestry/");
-        configuration.put("tapestry-internal/", "org/apache/tapestry/internal/");
+        configuration.put("tapestry/", "org/apache/tapestry5/");
+        configuration.put("tapestry-internal/", "org/apache/tapestry5/internal/");
         configuration.put("mylib/", "com/example/mylib/");
 
         return configuration;
@@ -65,8 +65,8 @@ public class ClasspathAssetAliasManagerImplTest extends InternalBaseTestCase
         return new Object[][] { { "foo/bar/Baz.txt", "foo/bar/Baz.txt" },
                 { "com/example/mylib/Foo.bar", "mylib/Foo.bar" },
                 { "com/example/mylib/nested/Foo.bar", "mylib/nested/Foo.bar" },
-                { "org/apache/tapestry/internal/Foo.bar", "tapestry-internal/Foo.bar" },
-                { "org/apache/tapestry/Foo.bar", "tapestry/Foo.bar" }, };
+                { "org/apache/tapestry5/internal/Foo.bar", "tapestry-internal/Foo.bar" },
+                { "org/apache/tapestry5/Foo.bar", "tapestry/Foo.bar" }, };
     }
 
     @Test(dataProvider = "to_resource_path_data")

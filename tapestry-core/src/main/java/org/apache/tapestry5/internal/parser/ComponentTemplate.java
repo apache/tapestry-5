@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.parser;
+package org.apache.tapestry5.internal.parser;
 
-import org.apache.tapestry.ioc.Resource;
+import org.apache.tapestry5.ioc.Resource;
 
 import java.util.List;
 import java.util.Set;
@@ -40,8 +40,8 @@ public interface ComponentTemplate
     List<TemplateToken> getTokens();
 
     /**
-     * Returns a set of strings corresponding to {@link org.apache.tapestry.internal.parser.StartComponentToken}s within
-     * the template that have a non-blank id attribute.
+     * Returns a set of strings corresponding to {@link org.apache.tapestry5.internal.parser.StartComponentToken}s
+     * within the template that have a non-blank id attribute.
      */
     Set<String> getComponentIds();
 }

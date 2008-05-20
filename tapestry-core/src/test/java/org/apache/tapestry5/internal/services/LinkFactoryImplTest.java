@@ -12,19 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry.ComponentEventCallback;
-import org.apache.tapestry.EventConstants;
-import org.apache.tapestry.Link;
-import org.apache.tapestry.internal.InternalConstants;
-import org.apache.tapestry.internal.structure.ComponentPageElement;
-import org.apache.tapestry.internal.structure.Page;
-import org.apache.tapestry.internal.test.InternalBaseTestCase;
-import org.apache.tapestry.internal.util.Holder;
-import org.apache.tapestry.services.ContextValueEncoder;
-import org.apache.tapestry.services.Request;
-import org.apache.tapestry.services.Response;
+import org.apache.tapestry5.ComponentEventCallback;
+import org.apache.tapestry5.EventConstants;
+import org.apache.tapestry5.Link;
+import org.apache.tapestry5.internal.InternalConstants;
+import org.apache.tapestry5.internal.structure.ComponentPageElement;
+import org.apache.tapestry5.internal.structure.Page;
+import org.apache.tapestry5.internal.test.InternalBaseTestCase;
+import org.apache.tapestry5.internal.util.Holder;
+import org.apache.tapestry5.services.ContextValueEncoder;
+import org.apache.tapestry5.services.Request;
+import org.apache.tapestry5.services.Response;
 import org.easymock.EasyMock;
 import static org.easymock.EasyMock.*;
 import org.easymock.IAnswer;

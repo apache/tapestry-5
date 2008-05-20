@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.util;
+package org.apache.tapestry5.util;
 
-import org.apache.tapestry.PrimaryKeyEncoder;
-import org.apache.tapestry.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry.ioc.internal.util.Defense;
+import org.apache.tapestry5.PrimaryKeyEncoder;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.internal.util.Defense;
 
 import java.io.Serializable;
 import java.util.LinkedHashMap;

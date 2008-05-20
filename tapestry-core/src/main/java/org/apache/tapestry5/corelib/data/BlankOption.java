@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.corelib.data;
+package org.apache.tapestry5.corelib.data;
 
 /**
- * Used with the {@link org.apache.tapestry.corelib.components.Select} component to control whether an initial blank
+ * Used with the {@link org.apache.tapestry5.corelib.components.Select} component to control whether an initial blank
  * option is supplied.  Determines the optionality of the undelrying property from the Select's {@linkplain
- * org.apache.tapestry.FieldValidator#isRequired() validate parameter}
+ * org.apache.tapestry5.FieldValidator#isRequired() validate parameter}
  */
 public enum BlankOption
 {

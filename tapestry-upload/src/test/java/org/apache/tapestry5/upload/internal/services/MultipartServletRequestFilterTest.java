@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.upload.internal.services;
+package org.apache.tapestry5.upload.internal.services;
 
-import org.apache.tapestry.services.HttpServletRequestHandler;
-import org.apache.tapestry.test.TapestryTestCase;
-import org.apache.tapestry.upload.services.MultipartDecoder;
+import org.apache.tapestry5.services.HttpServletRequestHandler;
+import org.apache.tapestry5.test.TapestryTestCase;
+import org.apache.tapestry5.upload.services.MultipartDecoder;
 import org.testng.annotations.Test;
 
 import javax.servlet.http.HttpServletRequest;

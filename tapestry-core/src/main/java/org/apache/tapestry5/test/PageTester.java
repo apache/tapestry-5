@@ -12,22 +12,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.test;
+package org.apache.tapestry5.test;
 
-import org.apache.tapestry.dom.Document;
-import org.apache.tapestry.dom.Element;
-import org.apache.tapestry.dom.Node;
-import org.apache.tapestry.internal.InternalConstants;
-import org.apache.tapestry.internal.SingleKeySymbolProvider;
-import org.apache.tapestry.internal.TapestryAppInitializer;
-import org.apache.tapestry.internal.services.*;
-import org.apache.tapestry.internal.test.*;
-import org.apache.tapestry.ioc.Registry;
-import org.apache.tapestry.ioc.def.ModuleDef;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
-import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
-import org.apache.tapestry.ioc.services.SymbolProvider;
-import org.apache.tapestry.ioc.util.StrategyRegistry;
+import org.apache.tapestry5.dom.Document;
+import org.apache.tapestry5.dom.Element;
+import org.apache.tapestry5.dom.Node;
+import org.apache.tapestry5.internal.InternalConstants;
+import org.apache.tapestry5.internal.SingleKeySymbolProvider;
+import org.apache.tapestry5.internal.TapestryAppInitializer;
+import org.apache.tapestry5.internal.services.*;
+import org.apache.tapestry5.internal.test.*;
+import org.apache.tapestry5.ioc.Registry;
+import org.apache.tapestry5.ioc.def.ModuleDef;
+import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newMap;
+import static org.apache.tapestry5.ioc.internal.util.Defense.notNull;
+import org.apache.tapestry5.ioc.services.SymbolProvider;
+import org.apache.tapestry5.ioc.util.StrategyRegistry;
 import org.apache.tapestry5.services.ApplicationGlobals;
 
 import java.util.Locale;

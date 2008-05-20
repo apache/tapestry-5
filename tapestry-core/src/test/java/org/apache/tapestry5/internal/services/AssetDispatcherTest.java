@@ -12,15 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry.internal.test.InternalBaseTestCase;
-import org.apache.tapestry.ioc.Resource;
-import org.apache.tapestry.ioc.internal.util.ClasspathResource;
-import org.apache.tapestry.services.ClasspathAssetAliasManager;
-import org.apache.tapestry.services.Dispatcher;
-import org.apache.tapestry.services.Request;
-import org.apache.tapestry.services.Response;
+import org.apache.tapestry5.internal.test.InternalBaseTestCase;
+import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.ioc.internal.util.ClasspathResource;
+import org.apache.tapestry5.services.ClasspathAssetAliasManager;
+import org.apache.tapestry5.services.Dispatcher;
+import org.apache.tapestry5.services.Request;
+import org.apache.tapestry5.services.Response;
 import static org.easymock.EasyMock.contains;
 import static org.easymock.EasyMock.eq;
 import org.testng.annotations.Test;
@@ -31,7 +31,7 @@ public class AssetDispatcherTest extends InternalBaseTestCase
 {
     private static final String SMILEY_CLIENT_URL = "/assets/app1/pages/smiley.png";
 
-    private static final String SMILEY_PATH = "org/apache/tapestry/integration/app1/pages/smiley.png";
+    private static final String SMILEY_PATH = "org/apache/tapestry5/integration/app1/pages/smiley.png";
 
     private static final Resource SMILEY = new ClasspathResource(SMILEY_PATH);
 
@@ -89,7 +89,7 @@ public class AssetDispatcherTest extends InternalBaseTestCase
         ResourceStreamer streamer = mockResourceStreamer();
 
         String clientURL = "/assets/app1/pages/smiley_png";
-        String resourcePath = "org/apache/tapestry/integration/app1/pages/smiley_png";
+        String resourcePath = "org/apache/tapestry5/integration/app1/pages/smiley_png";
 
         train_getPath(request, clientURL);
 
@@ -118,7 +118,7 @@ public class AssetDispatcherTest extends InternalBaseTestCase
         ResourceStreamer streamer = mockResourceStreamer();
 
         String clientURL = "/assets/app1/pages/smiley.WRONG.png";
-        String resourcePath = "org/apache/tapestry/integration/app1/pages/smiley.WRONG.png";
+        String resourcePath = "org/apache/tapestry5/integration/app1/pages/smiley.WRONG.png";
 
         train_getPath(request, clientURL);
 
@@ -149,7 +149,7 @@ public class AssetDispatcherTest extends InternalBaseTestCase
         ResourceStreamer streamer = mockResourceStreamer();
 
         String clientURL = RequestConstants.ASSET_PATH_PREFIX + "app1/pages/smiley.RIGHT.png";
-        String resourcePath = "org/apache/tapestry/integration/app1/pages/smiley.RIGHT.png";
+        String resourcePath = "org/apache/tapestry5/integration/app1/pages/smiley.RIGHT.png";
 
         train_getPath(request, clientURL);
 

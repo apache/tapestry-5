@@ -12,19 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.services;
+package org.apache.tapestry5.services;
 
-import org.apache.tapestry.MarkupWriter;
+import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.json.JSONObject;
 
 /**
  * A filter (the main interface being {@link PartialMarkupRenderer}) applied when performing a partial page render as
- * part of an Ajax-oriented request.  This is similar to {@link org.apache.tapestry.services.MarkupRendererFilter} and
- * filters are often in place so as to contribute {@link org.apache.tapestry.annotation.Environmental} services to the
+ * part of an Ajax-oriented request.  This is similar to {@link org.apache.tapestry5.services.MarkupRendererFilter} and
+ * filters are often in place so as to contribute {@link org.apache.tapestry5.annotations.Environmental} services to the
  * pages and components that render.
  *
- * @see org.apache.tapestry.services.TapestryModule#contributePartialMarkupRenderer(org.apache.tapestry.ioc.OrderedConfiguration,
- *      org.apache.tapestry.Asset, ValidationMessagesSource, org.apache.tapestry.ioc.services.SymbolSource,
+ * @see org.apache.tapestry5.services.TapestryModule#contributePartialMarkupRenderer(org.apache.tapestry5.ioc.OrderedConfiguration,
+ *      org.apache.tapestry5.Asset, ValidationMessagesSource, org.apache.tapestry5.ioc.services.SymbolSource,
  *      AssetSource)
  */
 public interface PartialMarkupRendererFilter

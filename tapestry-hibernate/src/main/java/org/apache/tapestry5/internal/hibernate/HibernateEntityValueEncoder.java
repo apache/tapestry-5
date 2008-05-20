@@ -12,14 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.hibernate;
+package org.apache.tapestry5.internal.hibernate;
 
-import org.apache.tapestry.ValueEncoder;
-import org.apache.tapestry.ioc.internal.util.Defense;
-import org.apache.tapestry.ioc.internal.util.InternalUtils;
-import org.apache.tapestry.ioc.services.PropertyAccess;
-import org.apache.tapestry.ioc.services.PropertyAdapter;
-import org.apache.tapestry.ioc.services.TypeCoercer;
+import org.apache.tapestry5.ValueEncoder;
+import org.apache.tapestry5.ioc.internal.util.Defense;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.ioc.services.PropertyAccess;
+import org.apache.tapestry5.ioc.services.PropertyAdapter;
+import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.hibernate.Session;
 import org.hibernate.mapping.PersistentClass;
 import org.hibernate.mapping.Property;

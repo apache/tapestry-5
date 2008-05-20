@@ -12,18 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.transform;
+package org.apache.tapestry5.internal.transform;
 
-import org.apache.tapestry.annotation.Persist;
-import org.apache.tapestry.ioc.util.BodyBuilder;
-import org.apache.tapestry.model.MutableComponentModel;
-import org.apache.tapestry.services.*;
+import org.apache.tapestry5.annotations.Persist;
+import org.apache.tapestry5.ioc.util.BodyBuilder;
+import org.apache.tapestry5.model.MutableComponentModel;
+import org.apache.tapestry5.services.*;
 
 import static java.lang.String.format;
 import java.lang.reflect.Modifier;
 
 /**
- * Converts fields with the {@link org.apache.tapestry.annotation.Persist} annotation into persistent fields.
+ * Converts fields with the {@link org.apache.tapestry5.annotations.Persist} annotation into persistent fields.
  */
 public class PersistWorker implements ComponentClassTransformWorker
 {
@@ -40,8 +40,8 @@ public class PersistWorker implements ComponentClassTransformWorker
      * Making a field persistent: <ul> <li>Need a secondary default field that stores the initial value</li> <li>Store
      * the active value into the default field when the page finishes loading</li> <li>Roll the active value back to the
      * default when the page detaches</li> <ii>On changes to the active field, post the change via the {@link
-     * org.apache.tapestry.internal.InternalComponentResources} </li> <li>When the page attaches, pull the persisted
-     * value for the field out of the {@link org.apache.tapestry.services.PersistentFieldBundle}</li> </ul>
+     * org.apache.tapestry5.internal.InternalComponentResources} </li> <li>When the page attaches, pull the persisted
+     * value for the field out of the {@link org.apache.tapestry5.services.PersistentFieldBundle}</li> </ul>
      */
     private void makeFieldPersistent(String fieldName, ClassTransformation transformation,
                                      MutableComponentModel model)

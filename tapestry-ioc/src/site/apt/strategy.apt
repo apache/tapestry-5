@@ -7,7 +7,7 @@ Strategy Pattern
   Another of the Gang Of Four patterns, the strategy pattern as implemented in Tapestry IoC is a kind of late binding.
   
   The idea is that <adapters> for objects are accessed based on the <actual type> of an object.  These adapters supply additional functionality.  The adapters
-  are located using an {{{../apidocs/org/apache/tapestry/util/StrategyRegistry.html}StrategyRegistry}}.
+  are located using an {{{../apidocs/org/apache/tapestry5/util/StrategyRegistry.html}StrategyRegistry}}.
   
   The lookup of adapters is based on an inheritance search; thus providing an adapter for type java.util.Map will match any object that implements the Map interface.
   The inheritance search works its way up the class hierarchy looking for a matching registration. If nothing is found, then all the interfaces directly or indirectly
@@ -17,7 +17,7 @@ Strategy Pattern
   
   As a special case, the value null is search for as if it was an instance of the class void.
     
-  The {{{../apidocs/org/apache/tapestry/ioc/services/StrategyBuilder.html}StrategyBuilder}} service creates a service implementation around a strategy registry.
+  The {{{../apidocs/org/apache/tapestry5/ioc/services/StrategyBuilder.html}StrategyBuilder}} service creates a service implementation around a strategy registry.
   
 +---+
 public interface StrategyBuilder

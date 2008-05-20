@@ -12,18 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry.Asset;
-import org.apache.tapestry.ComponentResources;
-import org.apache.tapestry.RenderSupport;
-import org.apache.tapestry.ioc.internal.util.Defense;
-import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
-import org.apache.tapestry.ioc.internal.util.IdAllocator;
-import org.apache.tapestry.ioc.services.SymbolSource;
-import org.apache.tapestry.services.AssetSource;
+import org.apache.tapestry5.Asset;
+import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.RenderSupport;
+import org.apache.tapestry5.ioc.internal.util.Defense;
+import static org.apache.tapestry5.ioc.internal.util.Defense.notNull;
+import org.apache.tapestry5.ioc.internal.util.IdAllocator;
+import org.apache.tapestry5.ioc.services.SymbolSource;
 import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
+import org.apache.tapestry5.services.AssetSource;
 
 import static java.lang.String.format;
 import java.util.Arrays;
@@ -49,7 +49,7 @@ public class RenderSupportImpl implements RenderSupport
      * @param linker       Used to assemble JavaScript includes and snippets
      * @param symbolSource Used to example symbols (in {@linkplain #addClasspathScriptLink(String...) in classpath
      *                     scripts)
-     * @param assetSource  Used to convert classpath scripts to {@link org.apache.tapestry.Asset}s
+     * @param assetSource  Used to convert classpath scripts to {@link org.apache.tapestry5.Asset}s
      * @param coreScripts  core scripts (evaluated as classpaths scripts) that are added to any page that includes a
      *                     script link or script block
      */
@@ -63,7 +63,7 @@ public class RenderSupportImpl implements RenderSupport
      * @param linker       Used to assemble JavaScript includes and snippets
      * @param symbolSource Used to example symbols (in {@linkplain #addClasspathScriptLink(String...) in classpath
      *                     scripts)
-     * @param assetSource  Used to convert classpath scripts to {@link org.apache.tapestry.Asset}s
+     * @param assetSource  Used to convert classpath scripts to {@link org.apache.tapestry5.Asset}s
      * @param idAllocator  Used to allocate unique client ids during the render
      * @param coreScripts  core scripts (evaluated as classpaths scripts) that are added to any page that includes a
      *                     script link or script block

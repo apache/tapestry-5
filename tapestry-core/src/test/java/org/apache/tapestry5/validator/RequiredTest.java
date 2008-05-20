@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.validator;
+package org.apache.tapestry5.validator;
 
-import org.apache.tapestry.Field;
-import org.apache.tapestry.ValidationException;
-import org.apache.tapestry.ioc.MessageFormatter;
-import org.apache.tapestry.test.TapestryTestCase;
+import org.apache.tapestry5.Field;
+import org.apache.tapestry5.ValidationException;
+import org.apache.tapestry5.ioc.MessageFormatter;
+import org.apache.tapestry5.test.TapestryTestCase;
 import org.testng.annotations.Test;
 
 public class RequiredTest extends TapestryTestCase

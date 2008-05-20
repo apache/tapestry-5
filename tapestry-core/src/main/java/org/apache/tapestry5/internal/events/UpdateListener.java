@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.events;
+package org.apache.tapestry5.internal.events;
 
 /**
  * Interface for objects which can periodically check for updates.

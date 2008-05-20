@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.util;
+package org.apache.tapestry5.util;
 
-import org.apache.tapestry.ioc.internal.util.Orderer;
+import org.apache.tapestry5.ioc.internal.util.Orderer;
 
 import static java.lang.System.out;
 import java.lang.reflect.Method;

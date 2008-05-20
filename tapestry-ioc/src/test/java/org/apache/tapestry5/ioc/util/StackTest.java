@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.util;
+package org.apache.tapestry5.ioc.util;
 
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newStack;
-import org.apache.tapestry.ioc.test.TestBase;
+import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newStack;
+import org.apache.tapestry5.ioc.test.TestBase;
 import org.testng.annotations.Test;
 
 public class StackTest extends TestBase
@@ -73,7 +73,7 @@ public class StackTest extends TestBase
 
         Object[] snapshot = stack.getSnapshot();
 
-        assertArraysEqual(snapshot, new Object[]{fred, barney});
+        assertArraysEqual(snapshot, new Object[] { fred, barney });
 
         assertEquals(stack.pop(), barney);
         assertEquals(stack.peek(), fred);

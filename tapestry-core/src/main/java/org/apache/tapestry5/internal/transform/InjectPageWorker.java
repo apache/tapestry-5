@@ -12,13 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.transform;
+package org.apache.tapestry5.internal.transform;
 
-import org.apache.tapestry.annotation.InjectPage;
-import org.apache.tapestry.ioc.internal.util.InternalUtils;
-import org.apache.tapestry.ioc.util.BodyBuilder;
-import org.apache.tapestry.model.MutableComponentModel;
-import org.apache.tapestry.services.*;
+import org.apache.tapestry5.annotations.InjectPage;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.ioc.util.BodyBuilder;
+import org.apache.tapestry5.model.MutableComponentModel;
+import org.apache.tapestry5.services.*;
 
 import java.lang.reflect.Modifier;
 import java.util.List;
@@ -26,7 +26,7 @@ import java.util.List;
 /**
  * Peforms transformations that allow pages to be injected into components.
  *
- * @see org.apache.tapestry.annotation.InjectPage
+ * @see org.apache.tapestry5.annotations.InjectPage
  */
 public class InjectPageWorker implements ComponentClassTransformWorker
 {

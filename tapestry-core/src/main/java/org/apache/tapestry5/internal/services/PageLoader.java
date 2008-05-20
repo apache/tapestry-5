@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry.ComponentResourcesCommon;
-import org.apache.tapestry.internal.event.InvalidationEventHub;
-import org.apache.tapestry.internal.structure.Page;
+import org.apache.tapestry5.ComponentResourcesCommon;
+import org.apache.tapestry5.internal.event.InvalidationEventHub;
+import org.apache.tapestry5.internal.structure.Page;
 
 import java.util.Locale;
 

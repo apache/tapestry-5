@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.internal.services;
+package org.apache.tapestry5.ioc.internal.services;
 
-import org.apache.tapestry.ioc.services.*;
-import org.apache.tapestry.ioc.util.BodyBuilder;
-import org.apache.tapestry.ioc.util.StrategyRegistry;
+import org.apache.tapestry5.ioc.services.*;
+import org.apache.tapestry5.ioc.util.BodyBuilder;
+import org.apache.tapestry5.ioc.util.StrategyRegistry;
 
 import java.lang.reflect.Modifier;
 

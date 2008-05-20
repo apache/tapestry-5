@@ -12,22 +12,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.corelib.components;
+package org.apache.tapestry5.corelib.components;
 
-import org.apache.tapestry.CSSClassConstants;
-import org.apache.tapestry.MarkupWriter;
-import org.apache.tapestry.ValidationTracker;
-import org.apache.tapestry.annotation.Environmental;
-import org.apache.tapestry.annotation.Parameter;
-import org.apache.tapestry.corelib.internal.InternalMessages;
-import org.apache.tapestry.services.FormSupport;
+import org.apache.tapestry5.CSSClassConstants;
+import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.ValidationTracker;
+import org.apache.tapestry5.annotations.Environmental;
+import org.apache.tapestry5.annotations.Parameter;
+import org.apache.tapestry5.corelib.internal.InternalMessages;
+import org.apache.tapestry5.services.FormSupport;
 
 import java.util.List;
 
 /**
- * Standard validation error presenter. Must be enclosed by a {@link org.apache.tapestry.corelib.components.Form}
+ * Standard validation error presenter. Must be enclosed by a {@link org.apache.tapestry5.corelib.components.Form}
  * component. If errors are present, renders a div element around a banner message and around an unnumbered list of
- * error messages. Renders nothing if the {@link org.apache.tapestry.ValidationTracker} shows no errors.
+ * error messages. Renders nothing if the {@link org.apache.tapestry5.ValidationTracker} shows no errors.
  */
 public class Errors
 {

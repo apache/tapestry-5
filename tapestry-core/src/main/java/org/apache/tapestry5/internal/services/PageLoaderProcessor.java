@@ -12,29 +12,29 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry.Binding;
-import org.apache.tapestry.BindingConstants;
-import org.apache.tapestry.ComponentResources;
-import org.apache.tapestry.MarkupWriter;
-import org.apache.tapestry.internal.bindings.LiteralBinding;
-import org.apache.tapestry.internal.parser.*;
-import org.apache.tapestry.internal.structure.*;
-import org.apache.tapestry.ioc.Location;
-import org.apache.tapestry.ioc.internal.util.CollectionFactory;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newCaseInsensitiveMap;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
-import org.apache.tapestry.ioc.internal.util.IdAllocator;
-import static org.apache.tapestry.ioc.internal.util.InternalUtils.isBlank;
-import static org.apache.tapestry.ioc.internal.util.InternalUtils.isNonBlank;
-import org.apache.tapestry.ioc.internal.util.OneShotLock;
-import org.apache.tapestry.ioc.internal.util.TapestryException;
-import org.apache.tapestry.ioc.util.Stack;
-import org.apache.tapestry.model.ComponentModel;
-import org.apache.tapestry.model.EmbeddedComponentModel;
-import org.apache.tapestry.runtime.RenderQueue;
-import org.apache.tapestry.services.BindingSource;
+import org.apache.tapestry5.Binding;
+import org.apache.tapestry5.BindingConstants;
+import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.internal.bindings.LiteralBinding;
+import org.apache.tapestry5.internal.parser.*;
+import org.apache.tapestry5.internal.structure.*;
+import org.apache.tapestry5.ioc.Location;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newCaseInsensitiveMap;
+import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newMap;
+import org.apache.tapestry5.ioc.internal.util.IdAllocator;
+import static org.apache.tapestry5.ioc.internal.util.InternalUtils.isBlank;
+import static org.apache.tapestry5.ioc.internal.util.InternalUtils.isNonBlank;
+import org.apache.tapestry5.ioc.internal.util.OneShotLock;
+import org.apache.tapestry5.ioc.internal.util.TapestryException;
+import org.apache.tapestry5.ioc.util.Stack;
+import org.apache.tapestry5.model.ComponentModel;
+import org.apache.tapestry5.model.EmbeddedComponentModel;
+import org.apache.tapestry5.runtime.RenderQueue;
+import org.apache.tapestry5.services.BindingSource;
 import org.slf4j.Logger;
 
 import java.util.List;
@@ -199,7 +199,7 @@ class PageLoaderProcessor
 
     /**
      * @param model                embededded model defining the new component, from an {@link
-     *                             org.apache.tapestry.annotation.Component} annotation
+     *                             org.apache.tapestry5.annotations.Component} annotation
      * @param loadingComponent     the currently loading container component
      * @param newComponent         the new child of the container whose parameters are being bound
      * @param newComponentBindings map of bindings for the new component (used to handle inheriting of informal
@@ -732,7 +732,7 @@ class PageLoaderProcessor
 
     /**
      * Invoked when a component's end tag is reached, to check and process informal parameters as per the {@link
-     * org.apache.tapestry.model.EmbeddedComponentModel#getInheritInformalParameters()} flag.
+     * org.apache.tapestry5.model.EmbeddedComponentModel#getInheritInformalParameters()} flag.
      *
      * @param loadingComponent     the container component that was loaded
      * @param model

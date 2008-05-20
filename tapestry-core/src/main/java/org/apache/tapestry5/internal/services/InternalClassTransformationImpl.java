@@ -12,31 +12,31 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
 import javassist.*;
 import javassist.expr.ExprEditor;
 import javassist.expr.FieldAccess;
-import org.apache.tapestry.ComponentResources;
-import org.apache.tapestry.internal.InternalComponentResources;
-import org.apache.tapestry.internal.util.MultiKey;
-import org.apache.tapestry.ioc.internal.services.CtClassSource;
-import org.apache.tapestry.ioc.internal.util.CollectionFactory;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.*;
-import org.apache.tapestry.ioc.internal.util.Defense;
-import static org.apache.tapestry.ioc.internal.util.Defense.notBlank;
-import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
-import org.apache.tapestry.ioc.internal.util.IdAllocator;
-import org.apache.tapestry.ioc.internal.util.InternalUtils;
-import org.apache.tapestry.ioc.services.ClassFab;
-import org.apache.tapestry.ioc.services.ClassFabUtils;
-import org.apache.tapestry.ioc.services.ClassFactory;
-import org.apache.tapestry.ioc.services.MethodSignature;
-import org.apache.tapestry.ioc.util.BodyBuilder;
-import org.apache.tapestry.model.ComponentModel;
-import org.apache.tapestry.model.MutableComponentModel;
-import org.apache.tapestry.runtime.Component;
-import org.apache.tapestry.services.*;
+import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.internal.InternalComponentResources;
+import org.apache.tapestry5.internal.util.MultiKey;
+import org.apache.tapestry5.ioc.internal.services.CtClassSource;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.*;
+import org.apache.tapestry5.ioc.internal.util.Defense;
+import static org.apache.tapestry5.ioc.internal.util.Defense.notBlank;
+import static org.apache.tapestry5.ioc.internal.util.Defense.notNull;
+import org.apache.tapestry5.ioc.internal.util.IdAllocator;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.ioc.services.ClassFab;
+import org.apache.tapestry5.ioc.services.ClassFabUtils;
+import org.apache.tapestry5.ioc.services.ClassFactory;
+import org.apache.tapestry5.ioc.services.MethodSignature;
+import org.apache.tapestry5.ioc.util.BodyBuilder;
+import org.apache.tapestry5.model.ComponentModel;
+import org.apache.tapestry5.model.MutableComponentModel;
+import org.apache.tapestry5.runtime.Component;
+import org.apache.tapestry5.services.*;
 import org.slf4j.Logger;
 
 import static java.lang.String.format;
@@ -45,7 +45,7 @@ import java.lang.reflect.Modifier;
 import java.util.*;
 
 /**
- * Implementation of the {@link org.apache.tapestry.internal.services.InternalClassTransformation} interface.
+ * Implementation of the {@link org.apache.tapestry5.internal.services.InternalClassTransformation} interface.
  */
 public final class InternalClassTransformationImpl implements InternalClassTransformation
 {

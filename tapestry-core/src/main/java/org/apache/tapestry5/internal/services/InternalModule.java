@@ -12,32 +12,30 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry.SymbolConstants;
-import org.apache.tapestry.internal.structure.PageResourcesSource;
-import org.apache.tapestry.internal.structure.PageResourcesSourceImpl;
-import static org.apache.tapestry.ioc.IOCConstants.PERTHREAD_SCOPE;
-import org.apache.tapestry.ioc.ObjectLocator;
-import org.apache.tapestry.ioc.ServiceBinder;
-import org.apache.tapestry.ioc.ServiceResources;
-import org.apache.tapestry.ioc.annotation.Marker;
-import org.apache.tapestry.ioc.annotation.Scope;
-import org.apache.tapestry.ioc.annotation.Symbol;
-import org.apache.tapestry.ioc.internal.services.CtClassSource;
-import org.apache.tapestry.ioc.services.Builtin;
-import org.apache.tapestry.ioc.services.ClassFactory;
-import org.apache.tapestry.ioc.services.PerthreadManager;
-import org.apache.tapestry.ioc.services.PropertyShadowBuilder;
-import org.apache.tapestry.services.*;
-import org.apache.tapestry5.services.ComponentMessagesSource;
-import org.apache.tapestry5.services.RequestGlobals;
+import org.apache.tapestry5.SymbolConstants;
+import org.apache.tapestry5.internal.structure.PageResourcesSource;
+import org.apache.tapestry5.internal.structure.PageResourcesSourceImpl;
+import static org.apache.tapestry5.ioc.IOCConstants.PERTHREAD_SCOPE;
+import org.apache.tapestry5.ioc.ObjectLocator;
+import org.apache.tapestry5.ioc.ServiceBinder;
+import org.apache.tapestry5.ioc.ServiceResources;
+import org.apache.tapestry5.ioc.annotations.Marker;
+import org.apache.tapestry5.ioc.annotations.Scope;
+import org.apache.tapestry5.ioc.annotations.Symbol;
+import org.apache.tapestry5.ioc.internal.services.CtClassSource;
+import org.apache.tapestry5.ioc.services.Builtin;
+import org.apache.tapestry5.ioc.services.ClassFactory;
+import org.apache.tapestry5.ioc.services.PerthreadManager;
+import org.apache.tapestry5.ioc.services.PropertyShadowBuilder;
+import org.apache.tapestry5.services.*;
 import org.slf4j.Logger;
 
 import javax.servlet.http.Cookie;
 
 /**
- * {@link org.apache.tapestry.services.TapestryModule} has gotten too complicated and it is nice to demarkate public
+ * {@link org.apache.tapestry5.services.TapestryModule} has gotten too complicated and it is nice to demarkate public
  * (and stable) from internal (and volatile).
  */
 @Marker(Core.class)

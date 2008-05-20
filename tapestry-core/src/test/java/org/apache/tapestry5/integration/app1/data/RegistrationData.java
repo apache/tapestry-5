@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.integration.app1.data;
+package org.apache.tapestry5.integration.app1.data;
 
-import org.apache.tapestry.beaneditor.*;
+import org.apache.tapestry5.beaneditor.*;
 
 public class RegistrationData
 {

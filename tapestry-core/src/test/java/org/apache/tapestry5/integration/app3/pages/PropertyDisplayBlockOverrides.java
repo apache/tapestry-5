@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.integration.app3.pages;
+package org.apache.tapestry5.integration.app3.pages;
 
-import org.apache.tapestry.annotation.Environmental;
-import org.apache.tapestry.services.PropertyOutputContext;
+import org.apache.tapestry5.annotations.Environmental;
+import org.apache.tapestry5.services.PropertyOutputContext;
 
 public class PropertyDisplayBlockOverrides
 {

@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.runtime;
+package org.apache.tapestry5.runtime;
 
-import org.apache.tapestry.ComponentResources;
+import org.apache.tapestry5.ComponentResources;
 
 /**
  * Interface implemented by components (after they have been transformed at load time). Component classes should not

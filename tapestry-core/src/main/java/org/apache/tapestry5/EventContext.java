@@ -12,14 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry;
+package org.apache.tapestry5;
 
 /**
  * A collection of parameters that may eventually be passed to an event handler method.  Includes the ability to coerce
  * or encode parameters as needed.
  *
- * @see org.apache.tapestry.ioc.services.TypeCoercer
- * @see org.apache.tapestry.ValueEncoder
+ * @see org.apache.tapestry5.ioc.services.TypeCoercer
+ * @see org.apache.tapestry5.ValueEncoder
  */
 public interface EventContext
 {

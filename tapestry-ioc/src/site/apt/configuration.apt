@@ -129,7 +129,7 @@ Configuration Types
   of the service.  
   
   On the contribution side, a service contribution method sees a 
-  {{{apidocs/org/apache/tapestry/ioc/Configuration.html}Configuration}} object:
+  {{{apidocs/org/apache/tapestry5/ioc/Configuration.html}Configuration}} object:
   
 +------+
   public static void contributeStartup(Configuration<Runnable> configuration)
@@ -188,7 +188,7 @@ Configuration Types
   
   For our service contribution methods, we must provide a parameter
   of type 
-  {{{apidocs/org/apache/tapestry/ioc/OrderedConfiguration.html}OrderedConfiguration}}:
+  {{{apidocs/org/apache/tapestry5/ioc/OrderedConfiguration.html}OrderedConfiguration}}:
  
 +------+
   public static void contributeStartup(OrderedConfiguration<Runnable> configuration)
@@ -224,7 +224,7 @@ Configuration Types
   The value may not be null.
   
   For mapped configurations where the key type is String, a 
-  {{{apidocs/org/apache/tapestry/ioc/util/CaseInsensitiveMap.html}CaseInsensitiveMap}}
+  {{{apidocs/org/apache/tapestry5/ioc/util/CaseInsensitiveMap.html}CaseInsensitiveMap}}
   will be  automatically used (and passed to the service builder method), to help ensure that {{{case.html}case insensitivity}} 
   is automatic and pervasive.
   
@@ -236,7 +236,7 @@ Injecting Resources
   other things to be injected.
   
   
-  * {{{apidocs/org/apache/tapestry/ioc/ObjectLocator.html}ObjectLocator}}:  access to other services visible
+  * {{{apidocs/org/apache/tapestry5/ioc/ObjectLocator.html}ObjectLocator}}:  access to other services visible
   to the contributing module
   
   []

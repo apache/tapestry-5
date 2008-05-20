@@ -12,14 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.internal.services;
+package org.apache.tapestry5.ioc.internal.services;
 
-import org.apache.tapestry.ioc.Location;
-import org.apache.tapestry.ioc.internal.IOCInternalTestCase;
-import org.apache.tapestry.ioc.internal.util.TapestryException;
-import org.apache.tapestry.ioc.services.ExceptionAnalysis;
-import org.apache.tapestry.ioc.services.ExceptionAnalyzer;
-import org.apache.tapestry.ioc.services.ExceptionInfo;
+import org.apache.tapestry5.ioc.Location;
+import org.apache.tapestry5.ioc.internal.IOCInternalTestCase;
+import org.apache.tapestry5.ioc.internal.util.TapestryException;
+import org.apache.tapestry5.ioc.services.ExceptionAnalysis;
+import org.apache.tapestry5.ioc.services.ExceptionAnalyzer;
+import org.apache.tapestry5.ioc.services.ExceptionInfo;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;

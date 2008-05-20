@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry.ioc.Messages;
-import org.apache.tapestry.ioc.Resource;
+import org.apache.tapestry5.ioc.Messages;
+import org.apache.tapestry5.ioc.Resource;
 
 /**
  * Represents a bundle of properties files that can be used to collect properties that are eventually used to form a

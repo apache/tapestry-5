@@ -12,14 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.structure;
+package org.apache.tapestry5.internal.structure;
 
-import org.apache.tapestry.internal.services.ComponentClassCache;
-import org.apache.tapestry.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry.ioc.internal.util.Defense;
-import org.apache.tapestry.ioc.services.TypeCoercer;
-import org.apache.tapestry.services.ContextValueEncoder;
+import org.apache.tapestry5.internal.services.ComponentClassCache;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.internal.util.Defense;
+import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.services.ComponentMessagesSource;
+import org.apache.tapestry5.services.ContextValueEncoder;
 
 import java.util.Locale;
 import java.util.Map;

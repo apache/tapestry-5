@@ -12,14 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.util;
+package org.apache.tapestry5.ioc.util;
 
-import org.apache.tapestry.ioc.MessageFormatter;
-import org.apache.tapestry.ioc.Messages;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newCaseInsensitiveMap;
-import org.apache.tapestry.ioc.internal.util.ConcurrentBarrier;
-import org.apache.tapestry.ioc.internal.util.Invokable;
-import org.apache.tapestry.ioc.internal.util.MessageFormatterImpl;
+import org.apache.tapestry5.ioc.MessageFormatter;
+import org.apache.tapestry5.ioc.Messages;
+import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newCaseInsensitiveMap;
+import org.apache.tapestry5.ioc.internal.util.ConcurrentBarrier;
+import org.apache.tapestry5.ioc.internal.util.Invokable;
+import org.apache.tapestry5.ioc.internal.util.MessageFormatterImpl;
 
 import java.util.Locale;
 import java.util.Map;

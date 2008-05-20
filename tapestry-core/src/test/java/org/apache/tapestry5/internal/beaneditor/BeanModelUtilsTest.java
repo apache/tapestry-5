@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.beaneditor;
+package org.apache.tapestry5.internal.beaneditor;
 
-import org.apache.tapestry.beaneditor.BeanModel;
-import org.apache.tapestry.beaneditor.PropertyModel;
-import org.apache.tapestry.internal.test.InternalBaseTestCase;
+import org.apache.tapestry5.beaneditor.BeanModel;
+import org.apache.tapestry5.beaneditor.PropertyModel;
+import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 

@@ -12,20 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.corelib.components;
+package org.apache.tapestry5.corelib.components;
 
-import org.apache.tapestry.*;
-import org.apache.tapestry.annotation.Environmental;
-import org.apache.tapestry.annotation.IncludeJavaScriptLibrary;
-import org.apache.tapestry.annotation.IncludeStylesheet;
-import org.apache.tapestry.annotation.Parameter;
-import org.apache.tapestry.corelib.base.AbstractField;
-import org.apache.tapestry.ioc.Messages;
-import org.apache.tapestry.ioc.annotation.Inject;
-import org.apache.tapestry.ioc.internal.util.InternalUtils;
-import org.apache.tapestry.services.FieldValidatorDefaultSource;
-import org.apache.tapestry.services.Request;
+import org.apache.tapestry5.*;
+import org.apache.tapestry5.annotations.Environmental;
+import org.apache.tapestry5.annotations.IncludeJavaScriptLibrary;
+import org.apache.tapestry5.annotations.IncludeStylesheet;
+import org.apache.tapestry5.annotations.Parameter;
+import org.apache.tapestry5.corelib.base.AbstractField;
+import org.apache.tapestry5.ioc.Messages;
+import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.json.JSONObject;
+import org.apache.tapestry5.services.FieldValidatorDefaultSource;
+import org.apache.tapestry5.services.Request;
 
 import java.text.DateFormat;
 import java.text.ParseException;

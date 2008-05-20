@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.model;
+package org.apache.tapestry5.internal.model;
 
-import org.apache.tapestry.model.ParameterModel;
+import org.apache.tapestry5.model.ParameterModel;
 
 public class ParameterModelImpl implements ParameterModel
 {

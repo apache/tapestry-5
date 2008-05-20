@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.dom;
+package org.apache.tapestry5.dom;
 
 /**
  * Used by a the DOM to determine how to produce markup. Delegates details about converted entities and some formatting

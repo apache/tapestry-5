@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.integration.app0.services;
+package org.apache.tapestry5.integration.app0.services;
 
-import org.apache.tapestry.util.Transformer;
-import org.apache.tapestry.util.UppercaseTransformer;
+import org.apache.tapestry5.util.Transformer;
+import org.apache.tapestry5.util.UppercaseTransformer;
 
 public class FooModule
 {

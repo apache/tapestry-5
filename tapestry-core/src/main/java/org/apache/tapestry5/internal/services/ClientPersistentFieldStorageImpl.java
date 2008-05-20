@@ -12,18 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry.Link;
-import org.apache.tapestry.internal.util.Base64ObjectInputStream;
-import org.apache.tapestry.internal.util.Base64ObjectOutputStream;
-import static org.apache.tapestry.ioc.IOCConstants.PERTHREAD_SCOPE;
-import org.apache.tapestry.ioc.annotation.Scope;
-import org.apache.tapestry.ioc.internal.util.CollectionFactory;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
-import org.apache.tapestry.ioc.internal.util.InternalUtils;
-import org.apache.tapestry.services.PersistentFieldChange;
-import org.apache.tapestry.services.Request;
+import org.apache.tapestry5.Link;
+import org.apache.tapestry5.internal.util.Base64ObjectInputStream;
+import org.apache.tapestry5.internal.util.Base64ObjectOutputStream;
+import static org.apache.tapestry5.ioc.IOCConstants.PERTHREAD_SCOPE;
+import org.apache.tapestry5.ioc.annotations.Scope;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newMap;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.services.PersistentFieldChange;
+import org.apache.tapestry5.services.Request;
 
 import java.io.ObjectInputStream;
 import java.io.Serializable;

@@ -12,14 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.services;
+package org.apache.tapestry5.ioc.services;
 
-import org.apache.tapestry.ioc.*;
-import static org.apache.tapestry.ioc.IOCConstants.PERTHREAD_SCOPE;
-import org.apache.tapestry.ioc.annotation.Marker;
-import org.apache.tapestry.ioc.annotation.Value;
-import org.apache.tapestry.ioc.internal.services.*;
-import org.apache.tapestry.ioc.util.TimeInterval;
+import org.apache.tapestry5.ioc.*;
+import static org.apache.tapestry5.ioc.IOCConstants.PERTHREAD_SCOPE;
+import org.apache.tapestry5.ioc.annotations.Marker;
+import org.apache.tapestry5.ioc.annotations.Value;
+import org.apache.tapestry5.ioc.internal.services.*;
+import org.apache.tapestry5.ioc.util.TimeInterval;
 
 import java.io.File;
 import java.lang.reflect.Array;
@@ -104,7 +104,7 @@ public final class TapestryIOCModule
      * strings are true)</li> <li>Long to Boolean (true if long value is non zero)</li> <li>Null to Boolean (always
      * false)</li> <li>Collection to Boolean (false if empty)</li> <li>Object[] to List</li> <li>primitive[] to
      * List</li> <li>Object to List (by wrapping as a singleton list)</li>  <li>String to File</li> <li>String to {@link
-     * org.apache.tapestry.ioc.util.TimeInterval}</li> <li>{@link org.apache.tapestry.ioc.util.TimeInterval} to
+     * org.apache.tapestry5.ioc.util.TimeInterval}</li> <li>{@link org.apache.tapestry5.ioc.util.TimeInterval} to
      * Long</li> </ul>
      */
     @SuppressWarnings("unchecked")

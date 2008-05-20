@@ -12,14 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.upload.components;
+package org.apache.tapestry5.upload.components;
 
-import org.apache.tapestry.*;
-import org.apache.tapestry.dom.Element;
-import org.apache.tapestry.services.FormSupport;
-import org.apache.tapestry.test.TapestryTestCase;
-import org.apache.tapestry.upload.services.MultipartDecoder;
-import org.apache.tapestry.upload.services.UploadedFile;
+import org.apache.tapestry5.*;
+import org.apache.tapestry5.dom.Element;
+import org.apache.tapestry5.services.FormSupport;
+import org.apache.tapestry5.test.TapestryTestCase;
+import org.apache.tapestry5.upload.services.MultipartDecoder;
+import org.apache.tapestry5.upload.services.UploadedFile;
 import static org.easymock.EasyMock.expectLastCall;
 import org.testng.annotations.Test;
 
@@ -145,7 +145,7 @@ public class UploadTest extends TapestryTestCase
 
     }
 
-    @SuppressWarnings({"unchecked"})
+    @SuppressWarnings({ "unchecked" })
     @Test
     public void process_submission_extracts_value_from_decoder() throws Exception
     {
@@ -171,7 +171,7 @@ public class UploadTest extends TapestryTestCase
         assertSame(component.getValue(), uploadedFile);
     }
 
-    @SuppressWarnings({"unchecked"})
+    @SuppressWarnings({ "unchecked" })
     @Test
     public void process_submission_ignores_null_value() throws Exception
     {
@@ -222,7 +222,7 @@ public class UploadTest extends TapestryTestCase
         verify();
     }
 
-    @SuppressWarnings({"unchecked", "ThrowableInstanceNeverThrown"})
+    @SuppressWarnings({ "unchecked", "ThrowableInstanceNeverThrown" })
     @Test
     public void process_submission_tracks_validator_errors() throws Exception
     {

@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry;
+package org.apache.tapestry5;
 
-import org.apache.tapestry.ioc.Resource;
+import org.apache.tapestry5.ioc.Resource;
 
 /**
  * An Asset is any kind of resource that can be exposed to the client web browser. Although quite often an Asset is a

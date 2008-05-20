@@ -12,25 +12,25 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal;
+package org.apache.tapestry5.internal;
 
 import org.apache.commons.codec.EncoderException;
 import org.apache.commons.codec.net.URLCodec;
-import org.apache.tapestry.OptionModel;
-import org.apache.tapestry.SelectModel;
-import org.apache.tapestry.beaneditor.OrderAfter;
-import org.apache.tapestry.beaneditor.OrderBefore;
-import org.apache.tapestry.ioc.Location;
-import org.apache.tapestry.ioc.Messages;
-import org.apache.tapestry.ioc.internal.util.CollectionFactory;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
-import org.apache.tapestry.ioc.internal.util.Defense;
-import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
-import org.apache.tapestry.ioc.internal.util.InternalUtils;
-import org.apache.tapestry.ioc.internal.util.Orderer;
-import org.apache.tapestry.ioc.services.ClassFactory;
-import org.apache.tapestry.ioc.services.ClassPropertyAdapter;
-import org.apache.tapestry.ioc.services.PropertyAdapter;
+import org.apache.tapestry5.OptionModel;
+import org.apache.tapestry5.SelectModel;
+import org.apache.tapestry5.beaneditor.OrderAfter;
+import org.apache.tapestry5.beaneditor.OrderBefore;
+import org.apache.tapestry5.ioc.Location;
+import org.apache.tapestry5.ioc.Messages;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newList;
+import org.apache.tapestry5.ioc.internal.util.Defense;
+import static org.apache.tapestry5.ioc.internal.util.Defense.notNull;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.ioc.internal.util.Orderer;
+import org.apache.tapestry5.ioc.services.ClassFactory;
+import org.apache.tapestry5.ioc.services.ClassPropertyAdapter;
+import org.apache.tapestry5.ioc.services.PropertyAdapter;
 import org.slf4j.Logger;
 
 import java.lang.reflect.Method;

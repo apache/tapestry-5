@@ -12,16 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.bindings;
+package org.apache.tapestry5.internal.bindings;
 
-import org.apache.tapestry.Binding;
-import org.apache.tapestry.ComponentResources;
-import org.apache.tapestry.Field;
-import org.apache.tapestry.FieldValidator;
-import org.apache.tapestry.ioc.Location;
-import org.apache.tapestry.ioc.internal.util.TapestryException;
-import org.apache.tapestry.services.BindingFactory;
-import org.apache.tapestry.services.FieldValidatorSource;
+import org.apache.tapestry5.Binding;
+import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.Field;
+import org.apache.tapestry5.FieldValidator;
+import org.apache.tapestry5.ioc.Location;
+import org.apache.tapestry5.ioc.internal.util.TapestryException;
+import org.apache.tapestry5.services.BindingFactory;
+import org.apache.tapestry5.services.FieldValidatorSource;
 
 /**
  * Factory for bindings that provide a {@link FieldValidator} based on a validator specification. This binding factory

@@ -12,19 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.corelib.mixins;
+package org.apache.tapestry5.corelib.mixins;
 
-import org.apache.tapestry.*;
-import org.apache.tapestry.ContentType;
-import org.apache.tapestry.annotation.*;
-import org.apache.tapestry.internal.services.ResponseRenderer;
-import org.apache.tapestry.internal.util.Holder;
-import org.apache.tapestry.ioc.annotation.Inject;
-import org.apache.tapestry.ioc.services.TypeCoercer;
-import org.apache.tapestry.services.MarkupWriterFactory;
-import org.apache.tapestry.services.Request;
-import org.apache.tapestry.util.TextStreamResponse;
+import org.apache.tapestry5.*;
+import org.apache.tapestry5.ContentType;
+import org.apache.tapestry5.annotations.*;
+import org.apache.tapestry5.internal.services.ResponseRenderer;
+import org.apache.tapestry5.internal.util.Holder;
+import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.json.JSONObject;
+import org.apache.tapestry5.services.MarkupWriterFactory;
+import org.apache.tapestry5.services.Request;
+import org.apache.tapestry5.util.TextStreamResponse;
 
 import java.util.Collections;
 import java.util.List;
@@ -80,7 +80,7 @@ public class Autocomplete
     private MarkupWriterFactory factory;
 
     @Inject
-    @Path("classpath:org/apache/tapestry/ajax-loader.gif")
+    @Path("classpath:org/apache/tapestry5/ajax-loader.gif")
     private Asset loader;
 
     /**

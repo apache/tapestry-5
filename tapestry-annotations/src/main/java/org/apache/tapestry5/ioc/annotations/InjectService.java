@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.annotation;
+package org.apache.tapestry5.ioc.annotations;
 
 import java.lang.annotation.Documented;
 import static java.lang.annotation.ElementType.PARAMETER;
@@ -26,7 +26,7 @@ import java.lang.annotation.Target;
 /**
  * Annotation used with parameters of service builder methods to identify the service to be injected
  * into the service builder method via the parameter. In many cases the
- * {@link org.apache.tapestry.ioc.annotation.Inject} annotation is more flexible or appropriate.
+ * {@link org.apache.tapestry5.ioc.annotations.Inject} annotation is more flexible or appropriate.
  *
  *
  */

@@ -12,24 +12,24 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry.ComponentResources;
-import org.apache.tapestry.beaneditor.BeanModel;
-import org.apache.tapestry.beaneditor.NonVisual;
-import org.apache.tapestry.internal.TapestryInternalUtils;
-import org.apache.tapestry.internal.beaneditor.BeanModelImpl;
-import org.apache.tapestry.ioc.LoggerSource;
-import org.apache.tapestry.ioc.Messages;
-import org.apache.tapestry.ioc.ObjectLocator;
-import org.apache.tapestry.ioc.annotation.Primary;
-import org.apache.tapestry.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry.ioc.internal.util.Defense;
-import org.apache.tapestry.ioc.services.*;
-import org.apache.tapestry.services.BeanModelSource;
-import org.apache.tapestry.services.ComponentLayer;
-import org.apache.tapestry.services.DataTypeAnalyzer;
-import org.apache.tapestry.services.PropertyConduitSource;
+import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.beaneditor.BeanModel;
+import org.apache.tapestry5.beaneditor.NonVisual;
+import org.apache.tapestry5.internal.TapestryInternalUtils;
+import org.apache.tapestry5.internal.beaneditor.BeanModelImpl;
+import org.apache.tapestry5.ioc.LoggerSource;
+import org.apache.tapestry5.ioc.Messages;
+import org.apache.tapestry5.ioc.ObjectLocator;
+import org.apache.tapestry5.ioc.annotations.Primary;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.internal.util.Defense;
+import org.apache.tapestry5.ioc.services.*;
+import org.apache.tapestry5.services.BeanModelSource;
+import org.apache.tapestry5.services.ComponentLayer;
+import org.apache.tapestry5.services.DataTypeAnalyzer;
+import org.apache.tapestry5.services.PropertyConduitSource;
 
 import java.util.List;
 import java.util.Map;

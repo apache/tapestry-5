@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.upload.internal.services;
+package org.apache.tapestry5.upload.internal.services;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.io.input.NullInputStream;
-import org.apache.tapestry.test.TapestryTestCase;
+import org.apache.tapestry5.test.TapestryTestCase;
 import org.testng.annotations.Test;
 
 import java.io.File;

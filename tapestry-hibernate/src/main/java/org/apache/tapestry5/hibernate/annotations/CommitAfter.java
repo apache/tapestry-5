@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.hibernate.annotations;
+package org.apache.tapestry5.hibernate.annotations;
 
 import java.lang.annotation.Documented;
 import static java.lang.annotation.ElementType.METHOD;
@@ -22,10 +22,10 @@ import java.lang.annotation.Target;
 
 /**
  * Marks a method of a service (or a component method) as transactional: the active transaction should {@linkplain
- * org.apache.tapestry.hibernate.HibernateSessionManager#commit() commit} after invoking the method.  Runtime exceptions
- * will abort the transaction, checked exceptions will <also commit> the transaction.
+ * org.apache.tapestry5.hibernate.HibernateSessionManager#commit() commit} after invoking the method.  Runtime
+ * exceptions will abort the transaction, checked exceptions will <also commit> the transaction.
  *
- * @see org.apache.tapestry.hibernate.HibernateTransactionDecorator
+ * @see org.apache.tapestry5.hibernate.HibernateTransactionDecorator
  */
 @Target(METHOD)
 @Retention(RUNTIME)

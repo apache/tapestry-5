@@ -12,17 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.internal.services;
+package org.apache.tapestry5.ioc.internal.services;
 
 import javassist.*;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newSet;
-import org.apache.tapestry.ioc.internal.util.Defense;
-import org.apache.tapestry.ioc.internal.util.InternalUtils;
-import org.apache.tapestry.ioc.services.ClassFab;
-import org.apache.tapestry.ioc.services.ClassFabUtils;
-import org.apache.tapestry.ioc.services.MethodIterator;
-import org.apache.tapestry.ioc.services.MethodSignature;
+import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newMap;
+import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newSet;
+import org.apache.tapestry5.ioc.internal.util.Defense;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.ioc.services.ClassFab;
+import org.apache.tapestry5.ioc.services.ClassFabUtils;
+import org.apache.tapestry5.ioc.services.MethodIterator;
+import org.apache.tapestry5.ioc.services.MethodSignature;
 import org.slf4j.Logger;
 
 import static java.lang.String.format;
@@ -32,7 +32,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Implementation of {@link org.apache.tapestry.ioc.services.ClassFab}. Hides, as much as possible, the underlying
+ * Implementation of {@link org.apache.tapestry5.ioc.services.ClassFab}. Hides, as much as possible, the underlying
  * library (Javassist).
  */
 public class ClassFabImpl extends AbstractFab implements ClassFab

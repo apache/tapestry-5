@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.util;
+package org.apache.tapestry5.internal.util;
 
-import org.apache.tapestry.internal.test.InternalBaseTestCase;
-import org.apache.tapestry.runtime.Component;
+import org.apache.tapestry5.internal.test.InternalBaseTestCase;
+import org.apache.tapestry5.runtime.Component;
 import org.testng.annotations.Test;
 
 public class NotificationEventCallbackTest extends InternalBaseTestCase

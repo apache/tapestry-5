@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc;
+package org.apache.tapestry5.ioc;
 
-import org.apache.tapestry.ioc.annotation.EagerLoad;
-import org.apache.tapestry.ioc.annotation.Scope;
-import org.apache.tapestry.ioc.def.ServiceDef;
+import org.apache.tapestry5.ioc.annotations.EagerLoad;
+import org.apache.tapestry5.ioc.annotations.Scope;
+import org.apache.tapestry5.ioc.def.ServiceDef;
 
 import java.lang.annotation.Annotation;
 

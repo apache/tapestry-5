@@ -12,20 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry.PropertyConduit;
-import org.apache.tapestry.internal.events.InvalidationListener;
-import org.apache.tapestry.internal.util.MultiKey;
-import org.apache.tapestry.ioc.AnnotationProvider;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newConcurrentMap;
-import static org.apache.tapestry.ioc.internal.util.Defense.notBlank;
-import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
-import org.apache.tapestry.ioc.internal.util.GenericsUtils;
-import org.apache.tapestry.ioc.services.*;
-import org.apache.tapestry.ioc.util.BodyBuilder;
-import org.apache.tapestry.services.ComponentLayer;
-import org.apache.tapestry.services.PropertyConduitSource;
+import org.apache.tapestry5.PropertyConduit;
+import org.apache.tapestry5.internal.events.InvalidationListener;
+import org.apache.tapestry5.internal.util.MultiKey;
+import org.apache.tapestry5.ioc.AnnotationProvider;
+import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newConcurrentMap;
+import static org.apache.tapestry5.ioc.internal.util.Defense.notBlank;
+import static org.apache.tapestry5.ioc.internal.util.Defense.notNull;
+import org.apache.tapestry5.ioc.internal.util.GenericsUtils;
+import org.apache.tapestry5.ioc.services.*;
+import org.apache.tapestry5.ioc.util.BodyBuilder;
+import org.apache.tapestry5.services.ComponentLayer;
+import org.apache.tapestry5.services.PropertyConduitSource;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;

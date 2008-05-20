@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.corelib.components;
+package org.apache.tapestry5.corelib.components;
 
-import org.apache.tapestry.MarkupWriter;
-import org.apache.tapestry.dom.XMLMarkupModel;
-import org.apache.tapestry.internal.services.MarkupWriterImpl;
-import org.apache.tapestry.internal.test.InternalBaseTestCase;
+import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.dom.XMLMarkupModel;
+import org.apache.tapestry5.internal.services.MarkupWriterImpl;
+import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.testng.annotations.Test;
 
 public class TextOutputTest extends InternalBaseTestCase

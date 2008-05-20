@@ -12,19 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal;
+package org.apache.tapestry5.internal;
 
-import org.apache.tapestry.ComponentResources;
-import org.apache.tapestry.OptionModel;
-import org.apache.tapestry.SelectModel;
-import org.apache.tapestry.internal.test.InternalBaseTestCase;
-import org.apache.tapestry.ioc.Messages;
-import org.apache.tapestry.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry.ioc.services.ClassFactory;
-import org.apache.tapestry.ioc.services.ClassPropertyAdapter;
-import org.apache.tapestry.ioc.services.PropertyAccess;
-import org.apache.tapestry.ioc.services.TypeCoercer;
-import org.apache.tapestry.runtime.ComponentResourcesAware;
+import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.OptionModel;
+import org.apache.tapestry5.SelectModel;
+import org.apache.tapestry5.internal.test.InternalBaseTestCase;
+import org.apache.tapestry5.ioc.Messages;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.services.ClassFactory;
+import org.apache.tapestry5.ioc.services.ClassPropertyAdapter;
+import org.apache.tapestry5.ioc.services.PropertyAccess;
+import org.apache.tapestry5.ioc.services.TypeCoercer;
+import org.apache.tapestry5.runtime.ComponentResourcesAware;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;

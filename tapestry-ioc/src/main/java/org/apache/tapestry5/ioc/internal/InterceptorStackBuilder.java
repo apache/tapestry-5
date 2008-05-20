@@ -12,17 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.internal;
+package org.apache.tapestry5.ioc.internal;
 
-import org.apache.tapestry.ioc.ObjectCreator;
-import org.apache.tapestry.ioc.ServiceDecorator;
+import org.apache.tapestry5.ioc.ObjectCreator;
+import org.apache.tapestry5.ioc.ServiceDecorator;
 
 import java.util.Collections;
 import java.util.List;
 
 /**
  * Responsible for constructing the interceptor stack, on demand, by invoking an ordered series of decorators ({@link
- * org.apache.tapestry.ioc.def.DecoratorDef} (which are converted into {@link ServiceDecorator}s).
+ * org.apache.tapestry5.ioc.def.DecoratorDef} (which are converted into {@link ServiceDecorator}s).
  */
 public class InterceptorStackBuilder implements ObjectCreator
 {

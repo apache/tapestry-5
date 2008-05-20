@@ -12,15 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.model;
+package org.apache.tapestry5.model;
 
-import org.apache.tapestry.annotation.Parameter;
-import org.apache.tapestry.annotation.Persist;
-import org.apache.tapestry.internal.InternalComponentResources;
-import org.apache.tapestry.ioc.Location;
+import org.apache.tapestry5.annotations.Parameter;
+import org.apache.tapestry5.annotations.Persist;
+import org.apache.tapestry5.internal.InternalComponentResources;
+import org.apache.tapestry5.ioc.Location;
 
 /**
- * Mutable version of {@link org.apache.tapestry.model.ComponentModel} used during the transformation phase.
+ * Mutable version of {@link org.apache.tapestry5.model.ComponentModel} used during the transformation phase.
  */
 public interface MutableComponentModel extends ComponentModel
 {

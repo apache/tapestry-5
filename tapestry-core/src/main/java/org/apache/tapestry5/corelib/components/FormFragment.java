@@ -12,24 +12,24 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.corelib.components;
+package org.apache.tapestry5.corelib.components;
 
-import org.apache.tapestry.*;
-import org.apache.tapestry.annotation.Environmental;
-import org.apache.tapestry.annotation.Parameter;
-import org.apache.tapestry.annotation.SupportsInformalParameters;
-import org.apache.tapestry.corelib.internal.FormSupportAdapter;
-import org.apache.tapestry.corelib.internal.WrappedComponentAction;
-import org.apache.tapestry.dom.Element;
-import org.apache.tapestry.internal.services.ClientBehaviorSupport;
-import org.apache.tapestry.ioc.annotation.Inject;
-import org.apache.tapestry.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry.ioc.internal.util.Defense;
-import org.apache.tapestry.runtime.Component;
-import org.apache.tapestry.services.ComponentSource;
-import org.apache.tapestry.services.Environment;
-import org.apache.tapestry.services.FormSupport;
-import org.apache.tapestry.services.Request;
+import org.apache.tapestry5.*;
+import org.apache.tapestry5.annotations.Environmental;
+import org.apache.tapestry5.annotations.Parameter;
+import org.apache.tapestry5.annotations.SupportsInformalParameters;
+import org.apache.tapestry5.corelib.internal.FormSupportAdapter;
+import org.apache.tapestry5.corelib.internal.WrappedComponentAction;
+import org.apache.tapestry5.dom.Element;
+import org.apache.tapestry5.internal.services.ClientBehaviorSupport;
+import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.internal.util.Defense;
+import org.apache.tapestry5.runtime.Component;
+import org.apache.tapestry5.services.ComponentSource;
+import org.apache.tapestry5.services.Environment;
+import org.apache.tapestry5.services.FormSupport;
+import org.apache.tapestry5.services.Request;
 
 import java.util.List;
 
@@ -39,7 +39,7 @@ import java.util.List;
  * processing for such fields when the form is submitted; the fragment uses a hidden field to track its client-side
  * visibility and will bypass field component submission logic for the components it encloses.
  *
- * @see org.apache.tapestry.corelib.mixins.TriggerFragment
+ * @see org.apache.tapestry5.corelib.mixins.TriggerFragment
  */
 @SupportsInformalParameters
 public class FormFragment implements ClientElement
@@ -128,7 +128,7 @@ public class FormFragment implements ClientElement
     }
 
     /**
-     * Renders a &lt;div&gt; tag and provides an override of the {@link org.apache.tapestry.services.FormSupport}
+     * Renders a &lt;div&gt; tag and provides an override of the {@link org.apache.tapestry5.services.FormSupport}
      * environmental.
      */
     void beginRender(MarkupWriter writer)
@@ -196,7 +196,7 @@ public class FormFragment implements ClientElement
     }
 
     /**
-     * Closes the &lt;div&gt; tag and pops off the {@link org.apache.tapestry.services.FormSupport} environmental
+     * Closes the &lt;div&gt; tag and pops off the {@link org.apache.tapestry5.services.FormSupport} environmental
      * override.
      *
      * @param writer

@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.renderers;
+package org.apache.tapestry5.internal.renderers;
 
-import org.apache.tapestry.MarkupWriter;
-import org.apache.tapestry.internal.InternalConstants;
-import org.apache.tapestry.services.ObjectRenderer;
-import org.apache.tapestry.services.Request;
+import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.internal.InternalConstants;
+import org.apache.tapestry5.services.ObjectRenderer;
+import org.apache.tapestry5.services.Request;
 
 import java.util.List;
 

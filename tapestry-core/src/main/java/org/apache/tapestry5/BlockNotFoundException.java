@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry;
+package org.apache.tapestry5;
 
-import org.apache.tapestry.ioc.Locatable;
-import org.apache.tapestry.ioc.Location;
+import org.apache.tapestry5.ioc.Locatable;
+import org.apache.tapestry5.ioc.Location;
 
 /**
  * Exception thrown when a {@link Block} is requested but not found.

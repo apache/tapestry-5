@@ -12,17 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.corelib.components;
+package org.apache.tapestry5.corelib.components;
 
-import org.apache.tapestry.Binding;
-import org.apache.tapestry.ComponentResources;
-import org.apache.tapestry.MarkupWriter;
-import org.apache.tapestry.ValidationTracker;
-import org.apache.tapestry.annotation.*;
-import org.apache.tapestry.corelib.base.AbstractField;
-import org.apache.tapestry.corelib.mixins.RenderDisabled;
-import org.apache.tapestry.ioc.annotation.Inject;
-import org.apache.tapestry.services.Request;
+import org.apache.tapestry5.Binding;
+import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.ValidationTracker;
+import org.apache.tapestry5.annotations.*;
+import org.apache.tapestry5.corelib.base.AbstractField;
+import org.apache.tapestry5.corelib.mixins.RenderDisabled;
+import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.services.Request;
 
 /**
  * A Checkbox component is simply a &lt;input type="checkbox"&gt;.

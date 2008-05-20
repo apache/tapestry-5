@@ -12,15 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.corelib.components;
+package org.apache.tapestry5.corelib.components;
 
-import org.apache.tapestry.ComponentResources;
-import org.apache.tapestry.beaneditor.BeanModel;
-import org.apache.tapestry.integration.app1.data.RegistrationData;
-import org.apache.tapestry.ioc.Location;
-import org.apache.tapestry.ioc.internal.util.TapestryException;
-import org.apache.tapestry.services.BeanModelSource;
-import org.apache.tapestry.test.TapestryTestCase;
+import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.beaneditor.BeanModel;
+import org.apache.tapestry5.integration.app1.data.RegistrationData;
+import org.apache.tapestry5.ioc.Location;
+import org.apache.tapestry5.ioc.internal.util.TapestryException;
+import org.apache.tapestry5.services.BeanModelSource;
+import org.apache.tapestry5.test.TapestryTestCase;
 import org.testng.annotations.Test;
 
 public class BeanEditorTest extends TapestryTestCase

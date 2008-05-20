@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal;
+package org.apache.tapestry5.internal;
 
-import org.apache.tapestry.OptionModel;
+import org.apache.tapestry5.OptionModel;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 

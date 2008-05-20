@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.transform.pages;
+package org.apache.tapestry5.internal.transform.pages;
 
 /**
  * A subclass for TargetObject, used to check that values can be inherited from a base class.

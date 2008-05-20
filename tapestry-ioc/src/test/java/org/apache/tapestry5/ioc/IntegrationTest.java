@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc;
+package org.apache.tapestry5.ioc;
 
-import org.apache.tapestry.ioc.internal.ExceptionInConstructorModule;
-import org.apache.tapestry.ioc.internal.IOCInternalTestCase;
-import org.apache.tapestry.ioc.services.*;
+import org.apache.tapestry5.ioc.internal.ExceptionInConstructorModule;
+import org.apache.tapestry5.ioc.internal.IOCInternalTestCase;
+import org.apache.tapestry5.ioc.services.*;
 import org.easymock.EasyMock;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -456,7 +456,7 @@ public class IntegrationTest extends IOCInternalTestCase
         catch (RuntimeException ex)
         {
             assertMessageContains(ex,
-                                  "Class org.apache.tapestry.ioc.UnbuildablePingable does not contain a public constructor needed to autobuild.");
+                                  "Class org.apache.tapestry5.ioc.UnbuildablePingable does not contain a public constructor needed to autobuild.");
 
             // Like to check that the message includes the source location
 
@@ -480,7 +480,7 @@ public class IntegrationTest extends IOCInternalTestCase
         catch (RuntimeException ex)
         {
             assertMessageContains(ex,
-                                  "Class org.apache.tapestry.ioc.UnbuildablePingable does not contain a public constructor needed to autobuild.");
+                                  "Class org.apache.tapestry5.ioc.UnbuildablePingable does not contain a public constructor needed to autobuild.");
         }
 
         r.shutdown();
@@ -499,7 +499,7 @@ public class IntegrationTest extends IOCInternalTestCase
         }
         catch (RuntimeException ex)
         {
-            assertMessageContains(ex, "Error invoking constructor org.apache.tapestry.ioc.FailInConstructorRunnable()",
+            assertMessageContains(ex, "Error invoking constructor org.apache.tapestry5.ioc.FailInConstructorRunnable()",
                                   "Failure in Runnable constructor.");
 
             // Like to check that the message includes the source location
@@ -560,7 +560,7 @@ public class IntegrationTest extends IOCInternalTestCase
         catch (RuntimeException ex)
         {
             assertEquals(ex.getMessage(),
-                         "Service interface org.apache.tapestry.ioc.Pingable is matched by 2 services: Barney, Fred.  Automatic dependency resolution requires that exactly one service implement the interface.");
+                         "Service interface org.apache.tapestry5.ioc.Pingable is matched by 2 services: Barney, Fred.  Automatic dependency resolution requires that exactly one service implement the interface.");
         }
 
         r.shutdown();
@@ -592,7 +592,7 @@ public class IntegrationTest extends IOCInternalTestCase
         Greeter g = r.getService("Greeter", Greeter.class);
 
         assertEquals(g.getGreeting(), "Hello");
-        assertEquals(g.toString(), "<Proxy for Greeter(org.apache.tapestry.ioc.Greeter)>");
+        assertEquals(g.toString(), "<Proxy for Greeter(org.apache.tapestry5.ioc.Greeter)>");
 
         r.shutdown();
     }
@@ -605,7 +605,7 @@ public class IntegrationTest extends IOCInternalTestCase
         Greeter g = r.getService("${greeter}", Greeter.class);
 
         assertEquals(g.getGreeting(), "Hello");
-        assertEquals(g.toString(), "<Proxy for HelloGreeter(org.apache.tapestry.ioc.Greeter)>");
+        assertEquals(g.toString(), "<Proxy for HelloGreeter(org.apache.tapestry5.ioc.Greeter)>");
 
         r.shutdown();
     }
@@ -637,9 +637,9 @@ public class IntegrationTest extends IOCInternalTestCase
         catch (RuntimeException ex)
         {
             assertMessageContains(ex, "Error invoking service builder method",
-                                  "Unable to locate a single service assignable to type org.apache.tapestry.ioc.Greeter with marker annotation org.apache.tapestry.ioc.RedMarker",
-                                  "org.apache.tapestry.ioc.GreeterModule.buildRedGreeter1()",
-                                  "org.apache.tapestry.ioc.GreeterModule.buildRedGreeter2()");
+                                  "Unable to locate a single service assignable to type org.apache.tapestry5.ioc.Greeter with marker annotation org.apache.tapestry5.ioc.RedMarker",
+                                  "org.apache.tapestry5.ioc.GreeterModule.buildRedGreeter1()",
+                                  "org.apache.tapestry5.ioc.GreeterModule.buildRedGreeter2()");
         }
 
         r.shutdown();
@@ -660,7 +660,7 @@ public class IntegrationTest extends IOCInternalTestCase
         catch (RuntimeException ex)
         {
             assertMessageContains(ex, "Error invoking service builder method",
-                                  " Unable to locate any service assignable to type org.apache.tapestry.ioc.Greeter with marker annotation org.apache.tapestry.ioc.YellowMarker.");
+                                  " Unable to locate any service assignable to type org.apache.tapestry5.ioc.Greeter with marker annotation org.apache.tapestry5.ioc.YellowMarker.");
         }
 
         r.shutdown();
@@ -749,7 +749,7 @@ public class IntegrationTest extends IOCInternalTestCase
         assertEquals(CountingGreeterImpl.instantiationCount, 0);
 
         assertEquals(g.toString(),
-                     "<Autobuild proxy org.apache.tapestry.ioc.CountingGreeterImpl(org.apache.tapestry.ioc.Greeter)>");
+                     "<Autobuild proxy org.apache.tapestry5.ioc.CountingGreeterImpl(org.apache.tapestry5.ioc.Greeter)>");
 
         assertEquals(CountingGreeterImpl.instantiationCount, 0);
 

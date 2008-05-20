@@ -12,13 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry.Link;
-import org.apache.tapestry.dom.Element;
+import org.apache.tapestry5.Link;
+import org.apache.tapestry5.dom.Element;
 
 /**
- * The production implementation for {@link org.apache.tapestry.internal.services.ComponentInvocationMap}. It does
+ * The production implementation for {@link org.apache.tapestry5.internal.services.ComponentInvocationMap}. It does
  * absolutely nothing because it is not needed in production.
  */
 public class NoOpComponentInvocationMap implements ComponentInvocationMap

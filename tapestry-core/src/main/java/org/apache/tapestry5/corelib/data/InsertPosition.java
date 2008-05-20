@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.corelib.data;
+package org.apache.tapestry5.corelib.data;
 
 public enum InsertPosition
 {

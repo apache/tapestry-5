@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.services;
+package org.apache.tapestry5.services;
 
 /**
  * Used to provide access to stategies via a logical name for the stategy, such as "session".
  *
- * @see org.apache.tapestry.services.TapestryModule#contributeApplicationStatePersistenceStrategySource(org.apache.tapestry.ioc.MappedConfiguration,
+ * @see org.apache.tapestry5.services.TapestryModule#contributeApplicationStatePersistenceStrategySource(org.apache.tapestry5.ioc.MappedConfiguration,
  *      Request)
  */
 public interface ApplicationStatePersistenceStrategySource

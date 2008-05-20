@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal;
+package org.apache.tapestry5.internal;
 
-import org.apache.tapestry.services.Alias;
+import org.apache.tapestry5.services.Alias;
 
 public final class InternalConstants
 {
@@ -76,15 +76,15 @@ public final class InternalConstants
 
     /**
      * Used in some Ajax scenarios to set the content type for the response early, when the Page instance (the authority
-     * on content types) is known. The value is of type {@link org.apache.tapestry.ContentType}.
+     * on content types) is known. The value is of type {@link org.apache.tapestry5.ContentType}.
      */
     public static final String CONTENT_TYPE_ATTRIBUTE_NAME = "content-type";
 
     public static final String CHARSET_CONTENT_TYPE_PARAMETER = "charset";
 
     /**
-     * Request attribute that stores a {@link org.apache.tapestry.internal.structure.Page} instance that will be
-     * rendered as the {@linkplain org.apache.tapestry.SymbolConstants#SUPPRESS_REDIRECT_FROM_ACTION_REQUESTS immediate
+     * Request attribute that stores a {@link org.apache.tapestry5.internal.structure.Page} instance that will be
+     * rendered as the {@linkplain org.apache.tapestry5.SymbolConstants#SUPPRESS_REDIRECT_FROM_ACTION_REQUESTS immediate
      * mode response}.
      */
     public static final String IMMEDIATE_RESPONSE_PAGE_ATTRIBUTE = "tapestry.immediate-response-page";

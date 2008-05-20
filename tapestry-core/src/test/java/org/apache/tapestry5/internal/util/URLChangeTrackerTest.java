@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.util;
+package org.apache.tapestry5.internal.util;
 
-import org.apache.tapestry.test.TapestryTestCase;
+import org.apache.tapestry5.test.TapestryTestCase;
 import org.testng.annotations.Test;
 
 import java.io.File;

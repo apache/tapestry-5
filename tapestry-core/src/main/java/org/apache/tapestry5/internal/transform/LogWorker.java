@@ -12,20 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.transform;
+package org.apache.tapestry5.internal.transform;
 
-import org.apache.tapestry.annotation.Log;
-import org.apache.tapestry.ioc.MethodAdvice;
-import org.apache.tapestry.ioc.internal.services.LoggingAdvice;
-import org.apache.tapestry.ioc.services.ExceptionTracker;
-import org.apache.tapestry.model.MutableComponentModel;
-import org.apache.tapestry.services.*;
+import org.apache.tapestry5.annotations.Log;
+import org.apache.tapestry5.ioc.MethodAdvice;
+import org.apache.tapestry5.ioc.internal.services.LoggingAdvice;
+import org.apache.tapestry5.ioc.services.ExceptionTracker;
+import org.apache.tapestry5.model.MutableComponentModel;
+import org.apache.tapestry5.services.*;
 
 import java.util.List;
 
 /**
- * Looks for the {@link org.apache.tapestry.annotation.Log} marker annotation and adds method advice to perform the
- * logging. This is similar to what the {@link org.apache.tapestry.ioc.services.LoggingDecorator} does for service
+ * Looks for the {@link org.apache.tapestry5.annotations.Log} marker annotation and adds method advice to perform the
+ * logging. This is similar to what the {@link org.apache.tapestry5.ioc.services.LoggingDecorator} does for service
  * interface methods.
  */
 public class LogWorker implements ComponentClassTransformWorker

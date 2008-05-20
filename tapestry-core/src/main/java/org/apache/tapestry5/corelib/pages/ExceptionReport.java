@@ -12,25 +12,25 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.corelib.pages;
+package org.apache.tapestry5.corelib.pages;
 
-import org.apache.tapestry.SymbolConstants;
-import org.apache.tapestry.annotation.ContentType;
-import org.apache.tapestry.annotation.Property;
-import org.apache.tapestry.ioc.annotation.Inject;
-import org.apache.tapestry.ioc.annotation.Symbol;
-import org.apache.tapestry.ioc.internal.util.InternalUtils;
-import org.apache.tapestry.services.ExceptionReporter;
-import org.apache.tapestry.services.Request;
-import org.apache.tapestry.services.Session;
+import org.apache.tapestry5.SymbolConstants;
+import org.apache.tapestry5.annotations.ContentType;
+import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.annotations.Symbol;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.services.ExceptionReporter;
+import org.apache.tapestry5.services.Request;
+import org.apache.tapestry5.services.Session;
 
 import java.util.List;
 
 /**
  * Responsible for reporting runtime exceptions. This page is quite verbose and is usually overridden in a production
- * application. When {@link org.apache.tapestry.SymbolConstants#PRODUCTION_MODE} is "true", it is very abbreviated.
+ * application. When {@link org.apache.tapestry5.SymbolConstants#PRODUCTION_MODE} is "true", it is very abbreviated.
  *
- * @see org.apache.tapestry.corelib.components.ExceptionDisplay
+ * @see org.apache.tapestry5.corelib.components.ExceptionDisplay
  */
 @ContentType("text/html")
 public class ExceptionReport implements ExceptionReporter

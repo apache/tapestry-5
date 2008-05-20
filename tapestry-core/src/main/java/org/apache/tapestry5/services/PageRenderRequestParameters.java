@@ -12,14 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.services;
+package org.apache.tapestry5.services;
 
-import org.apache.tapestry.EventContext;
-import org.apache.tapestry.ioc.internal.util.Defense;
+import org.apache.tapestry5.EventContext;
+import org.apache.tapestry5.ioc.internal.util.Defense;
 
 /**
- * Used with {@link org.apache.tapestry.services.PageRenderRequestHandler} and {@link
- * org.apache.tapestry.services.PageRenderRequestFilter} to define the logical page name and activation context for the
+ * Used with {@link org.apache.tapestry5.services.PageRenderRequestHandler} and {@link
+ * org.apache.tapestry5.services.PageRenderRequestFilter} to define the logical page name and activation context for the
  * request.
  */
 public class PageRenderRequestParameters

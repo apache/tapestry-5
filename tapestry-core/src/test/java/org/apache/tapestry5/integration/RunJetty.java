@@ -12,15 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.integration;
+package org.apache.tapestry5.integration;
 
-import org.apache.tapestry.test.JettyRunner;
+import org.apache.tapestry5.test.JettyRunner;
 
 import java.io.File;
 
 /**
- * A "shim" to run Demo App #1 inside IntelliJ.  I still haven't found a way to get IntelliJ to
- * export test classes and resources into a web facet.
+ * A "shim" to run Demo App #1 inside IntelliJ.  I still haven't found a way to get IntelliJ to export test classes and
+ * resources into a web facet.
  */
 public class RunJetty
 {

@@ -12,16 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry.Asset;
-import org.apache.tapestry.ioc.Resource;
-import org.apache.tapestry.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry.ioc.internal.util.Defense;
-import org.apache.tapestry.ioc.services.ThreadLocale;
-import org.apache.tapestry.ioc.util.StrategyRegistry;
-import org.apache.tapestry.services.AssetFactory;
-import org.apache.tapestry.services.AssetSource;
+import org.apache.tapestry5.Asset;
+import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.internal.util.Defense;
+import org.apache.tapestry5.ioc.services.ThreadLocale;
+import org.apache.tapestry5.ioc.util.StrategyRegistry;
+import org.apache.tapestry5.services.AssetFactory;
+import org.apache.tapestry5.services.AssetSource;
 
 import java.util.Locale;
 import java.util.Map;

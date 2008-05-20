@@ -12,16 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.integration.app2.services;
+package org.apache.tapestry5.integration.app2.services;
 
-import org.apache.tapestry.integration.app2.FortyTwo;
-import org.apache.tapestry.integration.app2.PlusOne;
-import org.apache.tapestry.ioc.MappedConfiguration;
-import org.apache.tapestry.ioc.OrderedConfiguration;
-import org.apache.tapestry.model.MutableComponentModel;
-import org.apache.tapestry.services.ClassTransformation;
-import org.apache.tapestry.services.ComponentClassTransformWorker;
-import org.apache.tapestry.services.TransformMethodSignature;
+import org.apache.tapestry5.integration.app2.FortyTwo;
+import org.apache.tapestry5.integration.app2.PlusOne;
+import org.apache.tapestry5.ioc.MappedConfiguration;
+import org.apache.tapestry5.ioc.OrderedConfiguration;
+import org.apache.tapestry5.model.MutableComponentModel;
+import org.apache.tapestry5.services.ClassTransformation;
+import org.apache.tapestry5.services.ComponentClassTransformWorker;
+import org.apache.tapestry5.services.TransformMethodSignature;
 
 public class LocaleAppModule
 {

@@ -15,7 +15,7 @@ Using Patterns
 Chain of Command Pattern
 
   Let's look at another example, again from the Tapestry code base.  The
-  {{{../../apidocs/org/apache/tapestry/services/InjectionProvider.html}InjectProvider}} interface
+  {{{../../apidocs/org/apache/tapestry5/services/InjectionProvider.html}InjectProvider}} interface
   is used to process the @Inject annotation on the fields of a Tapestry page or component.
   Many different instances are combined together to form a
   {{{../command.html}chain of command}}.

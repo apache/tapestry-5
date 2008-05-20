@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry.internal.structure.Page;
-import org.apache.tapestry.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.internal.structure.Page;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 
 import java.util.LinkedList;
 import java.util.ListIterator;
@@ -26,7 +26,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
- * Used by  {@link org.apache.tapestry.internal.services.PagePoolImpl} to maintain a cache of available and in-use page
+ * Used by  {@link org.apache.tapestry5.internal.services.PagePoolImpl} to maintain a cache of available and in-use page
  * instances.
  * <p/>
  * This code is designed to handle high volume sites and deal with request fluctuations.
@@ -79,7 +79,7 @@ final class PagePoolCache
 
     /**
      * Tracks the usage of a page instance, allowing a last access property to be associated with the page. CachedPage
-     * instances are only accessed from within a {@link org.apache.tapestry.internal.services.PagePoolCache}, which
+     * instances are only accessed from within a {@link org.apache.tapestry5.internal.services.PagePoolCache}, which
      * handles synchronization concerns.
      * <p/>
      * An earlier version of this code used <em>soft references</em>, but those seem to be problematic (the test suite
@@ -226,7 +226,7 @@ final class PagePoolCache
     /**
      * Finds and returns the first available page.
      * <p/>
-     * Side effect: removes the {@link org.apache.tapestry.internal.services.PagePoolCache.CachedPage} from the
+     * Side effect: removes the {@link org.apache.tapestry5.internal.services.PagePoolCache.CachedPage} from the
      * available list and moves it to the in use list.
      *
      * @return the page, if any found, or null if no page is available

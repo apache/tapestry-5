@@ -1,7 +1,7 @@
-package org.apache.tapestry.grid;
+package org.apache.tapestry5.grid;
 
 /**
- * Identifies how a column within a {@link org.apache.tapestry.grid.GridSortModel} is sorted.
+ * Identifies how a column within a {@link org.apache.tapestry5.grid.GridSortModel} is sorted.
  */
 public enum ColumnSort
 {

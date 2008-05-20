@@ -12,14 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc;
+package org.apache.tapestry5.ioc;
 
 import org.slf4j.Logger;
 
 /**
- * Contains resources that may be provided to a service when it initializes, which includes other
- * services defined in the registry. ServiceResources provides access to other services (it extends
- * {@link org.apache.tapestry.ioc.ObjectLocator}).
+ * Contains resources that may be provided to a service when it initializes, which includes other services defined in
+ * the registry. ServiceResources provides access to other services (it extends {@link
+ * org.apache.tapestry5.ioc.ObjectLocator}).
  */
 public interface ServiceResources extends ObjectLocator
 {
@@ -34,10 +34,9 @@ public interface ServiceResources extends ObjectLocator
     Class getServiceInterface();
 
     /**
-     * Returns a Logger appropriate for logging messages. This includes debug level messages about
-     * the creation and configuration of the underlying service, as well as debug, warning, or error
-     * level messages from the service itself. Often service interceptors will make use of the
-     * service's logger.
+     * Returns a Logger appropriate for logging messages. This includes debug level messages about the creation and
+     * configuration of the underlying service, as well as debug, warning, or error level messages from the service
+     * itself. Often service interceptors will make use of the service's logger.
      */
     Logger getLogger();
 }

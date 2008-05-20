@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.services;
+package org.apache.tapestry5.ioc.services;
 
-import org.apache.tapestry.ioc.test.IOCTestCase;
+import org.apache.tapestry5.ioc.test.IOCTestCase;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
@@ -139,7 +139,7 @@ public class MethodIteratorTest extends IOCTestCase
 
         MethodSignature actual = mi.next();
 
-        assertEquals(new MethodSignature(void.class, "open", null, new Class[]{IOException.class}), actual);
+        assertEquals(new MethodSignature(void.class, "open", null, new Class[] { IOException.class }), actual);
 
         assertEquals(false, mi.hasNext());
     }

@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.annotation;
+package org.apache.tapestry5.ioc.annotations;
 
 import java.lang.annotation.Documented;
 import static java.lang.annotation.ElementType.METHOD;
@@ -24,7 +24,7 @@ import java.lang.annotation.Target;
  * Used with a service decorator method to control the order in which decorations occur. Identifies other decorators
  * which should occur before the annotated decorator.
  *
- * @see org.apache.tapestry.ioc.def.DecoratorDef
+ * @see org.apache.tapestry5.ioc.def.DecoratorDef
  */
 @Target(METHOD)
 @Retention(RUNTIME)

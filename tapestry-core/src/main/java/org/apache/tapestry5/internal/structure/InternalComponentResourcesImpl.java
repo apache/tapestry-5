@@ -12,23 +12,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.structure;
+package org.apache.tapestry5.internal.structure;
 
-import org.apache.tapestry.*;
-import org.apache.tapestry.internal.InternalComponentResources;
-import org.apache.tapestry.internal.services.Instantiator;
-import org.apache.tapestry.ioc.AnnotationProvider;
-import org.apache.tapestry.ioc.Location;
-import org.apache.tapestry.ioc.Messages;
-import org.apache.tapestry.ioc.Resource;
-import org.apache.tapestry.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry.ioc.internal.util.Defense;
-import org.apache.tapestry.ioc.internal.util.InternalUtils;
-import org.apache.tapestry.ioc.internal.util.TapestryException;
-import org.apache.tapestry.model.ComponentModel;
-import org.apache.tapestry.runtime.Component;
-import org.apache.tapestry.runtime.PageLifecycleListener;
-import org.apache.tapestry.runtime.RenderQueue;
+import org.apache.tapestry5.*;
+import org.apache.tapestry5.internal.InternalComponentResources;
+import org.apache.tapestry5.internal.services.Instantiator;
+import org.apache.tapestry5.ioc.AnnotationProvider;
+import org.apache.tapestry5.ioc.Location;
+import org.apache.tapestry5.ioc.Messages;
+import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.internal.util.Defense;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.ioc.internal.util.TapestryException;
+import org.apache.tapestry5.model.ComponentModel;
+import org.apache.tapestry5.runtime.Component;
+import org.apache.tapestry5.runtime.PageLifecycleListener;
+import org.apache.tapestry5.runtime.RenderQueue;
 import org.slf4j.Logger;
 
 import java.lang.annotation.Annotation;

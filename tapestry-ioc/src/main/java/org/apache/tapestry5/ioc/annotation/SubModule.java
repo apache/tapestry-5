@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.annotation;
+package org.apache.tapestry5.ioc.annotations;
 
 import java.lang.annotation.Documented;
 import static java.lang.annotation.ElementType.TYPE;

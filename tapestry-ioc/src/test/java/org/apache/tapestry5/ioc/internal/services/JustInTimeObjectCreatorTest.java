@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.internal.services;
+package org.apache.tapestry5.ioc.internal.services;
 
-import org.apache.tapestry.ioc.ObjectCreator;
-import org.apache.tapestry.ioc.internal.IOCInternalTestCase;
-import org.apache.tapestry.ioc.internal.ServiceActivityTracker;
-import org.apache.tapestry.ioc.services.Status;
+import org.apache.tapestry5.ioc.ObjectCreator;
+import org.apache.tapestry5.ioc.internal.IOCInternalTestCase;
+import org.apache.tapestry5.ioc.internal.ServiceActivityTracker;
+import org.apache.tapestry5.ioc.services.Status;
 import org.testng.annotations.Test;
 
 public class JustInTimeObjectCreatorTest extends IOCInternalTestCase

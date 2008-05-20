@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.transform.components;
+package org.apache.tapestry5.internal.transform.components;
 
-import org.apache.tapestry.Binding;
-import org.apache.tapestry.annotation.Parameter;
-import org.apache.tapestry.internal.transform.ParameterWorkerTest;
+import org.apache.tapestry5.Binding;
+import org.apache.tapestry5.annotations.Parameter;
+import org.apache.tapestry5.internal.transform.ParameterWorkerTest;
 
 public class DefaultParameterBindingMethodComponent
 {

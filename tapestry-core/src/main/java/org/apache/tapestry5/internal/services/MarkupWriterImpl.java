@@ -12,14 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry.MarkupWriter;
-import org.apache.tapestry.MarkupWriterListener;
-import org.apache.tapestry.dom.*;
-import org.apache.tapestry.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry.ioc.internal.util.Defense;
-import org.apache.tapestry.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.MarkupWriterListener;
+import org.apache.tapestry5.dom.*;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.internal.util.Defense;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 
 import java.io.PrintWriter;
 import java.util.List;

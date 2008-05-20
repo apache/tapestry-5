@@ -12,15 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry.ValueEncoder;
-import org.apache.tapestry.internal.events.InvalidationListener;
-import org.apache.tapestry.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry.ioc.internal.util.Defense;
-import org.apache.tapestry.ioc.util.StrategyRegistry;
-import org.apache.tapestry.services.ValueEncoderFactory;
-import org.apache.tapestry.services.ValueEncoderSource;
+import org.apache.tapestry5.ValueEncoder;
+import org.apache.tapestry5.internal.events.InvalidationListener;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.internal.util.Defense;
+import org.apache.tapestry5.ioc.util.StrategyRegistry;
+import org.apache.tapestry5.services.ValueEncoderFactory;
+import org.apache.tapestry5.services.ValueEncoderSource;
 
 import java.util.Map;
 

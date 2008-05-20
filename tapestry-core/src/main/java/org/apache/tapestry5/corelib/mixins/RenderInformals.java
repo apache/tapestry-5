@@ -12,15 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.corelib.mixins;
+package org.apache.tapestry5.corelib.mixins;
 
-import org.apache.tapestry.ComponentResources;
-import org.apache.tapestry.MarkupWriter;
-import org.apache.tapestry.annotation.*;
-import org.apache.tapestry.ioc.annotation.Inject;
+import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.annotations.*;
+import org.apache.tapestry5.ioc.annotations.Inject;
 
 /**
- * Used to render out all informal parameters, at the end of the {@link org.apache.tapestry.annotation.BeginRender}
+ * Used to render out all informal parameters, at the end of the {@link org.apache.tapestry5.annotations.BeginRender}
  * phase.
  * <p/>
  * This mixin can be used with components that render a single tag inside the {@link BeginRender} phase. RenderInformals

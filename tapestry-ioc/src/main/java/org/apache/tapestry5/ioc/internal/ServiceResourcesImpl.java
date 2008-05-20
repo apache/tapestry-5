@@ -12,14 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.internal;
+package org.apache.tapestry5.ioc.internal;
 
-import org.apache.tapestry.ioc.ObjectCreator;
-import org.apache.tapestry.ioc.ServiceBuilderResources;
-import org.apache.tapestry.ioc.def.ServiceDef;
-import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
-import org.apache.tapestry.ioc.internal.util.InternalUtils;
-import org.apache.tapestry.ioc.services.ClassFactory;
+import org.apache.tapestry5.ioc.ObjectCreator;
+import org.apache.tapestry5.ioc.ServiceBuilderResources;
+import org.apache.tapestry5.ioc.def.ServiceDef;
+import static org.apache.tapestry5.ioc.internal.util.Defense.notNull;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.ioc.services.ClassFactory;
 import org.slf4j.Logger;
 
 import java.lang.reflect.Constructor;
@@ -28,9 +28,9 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Implementation of {@link org.apache.tapestry.ioc.ServiceBuilderResources}. We just have one implementation that fills
- * the purposes of methods that need a {@link org.apache.tapestry.ioc.ServiceResources} (which includes service
- * decorator methods) as well as methods that need a {@link org.apache.tapestry.ioc.ServiceBuilderResources} (which is
+ * Implementation of {@link org.apache.tapestry5.ioc.ServiceBuilderResources}. We just have one implementation that
+ * fills the purposes of methods that need a {@link org.apache.tapestry5.ioc.ServiceResources} (which includes service
+ * decorator methods) as well as methods that need a {@link org.apache.tapestry5.ioc.ServiceBuilderResources} (which is
  * just service builder methods). Since it is most commonly used for the former, we'll just leave the name as
  * ServiceResourcesImpl.
  */

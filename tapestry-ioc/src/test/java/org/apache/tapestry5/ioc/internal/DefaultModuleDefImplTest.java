@@ -12,19 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.internal;
+package org.apache.tapestry5.ioc.internal;
 
-import org.apache.tapestry.ioc.*;
-import org.apache.tapestry.ioc.def.ContributionDef;
-import org.apache.tapestry.ioc.def.DecoratorDef;
-import org.apache.tapestry.ioc.def.ModuleDef;
-import org.apache.tapestry.ioc.def.ServiceDef;
-import static org.apache.tapestry.ioc.internal.IOCMessages.buildMethodConflict;
-import org.apache.tapestry.ioc.internal.services.ClassFactoryImpl;
-import org.apache.tapestry.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry.ioc.internal.util.InternalUtils;
-import org.apache.tapestry.ioc.services.ClassFactory;
-import org.apache.tapestry.ioc.test.IOCTestCase;
+import org.apache.tapestry5.ioc.*;
+import org.apache.tapestry5.ioc.def.ContributionDef;
+import org.apache.tapestry5.ioc.def.DecoratorDef;
+import org.apache.tapestry5.ioc.def.ModuleDef;
+import org.apache.tapestry5.ioc.def.ServiceDef;
+import static org.apache.tapestry5.ioc.internal.IOCMessages.buildMethodConflict;
+import org.apache.tapestry5.ioc.internal.services.ClassFactoryImpl;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.ioc.services.ClassFactory;
+import org.apache.tapestry5.ioc.test.IOCTestCase;
 import static org.easymock.EasyMock.and;
 import static org.easymock.EasyMock.contains;
 import org.slf4j.Logger;
@@ -385,7 +385,7 @@ public class DefaultModuleDefImplTest extends IOCTestCase
         catch (RuntimeException ex)
         {
             assertEquals(ex.getMessage(),
-                         "Class org.apache.tapestry.ioc.internal.RunnableServiceImpl (implementation of service \'Runnable\') does not contain any public constructors.");
+                         "Class org.apache.tapestry5.ioc.internal.RunnableServiceImpl (implementation of service \'Runnable\') does not contain any public constructors.");
         }
 
         verify();
@@ -421,7 +421,7 @@ public class DefaultModuleDefImplTest extends IOCTestCase
 
         logger
                 .debug(contains(
-                        "Invoking constructor org.apache.tapestry.ioc.internal.MultipleConstructorsAutobuildService(StringHolder)"));
+                        "Invoking constructor org.apache.tapestry5.ioc.internal.MultipleConstructorsAutobuildService(StringHolder)"));
 
         train_getServiceId(resources, "StringHolder");
         train_getLogger(resources, logger);
@@ -464,7 +464,7 @@ public class DefaultModuleDefImplTest extends IOCTestCase
             assertTrue(ex
                     .getMessage()
                     .matches(
-                    "Error invoking service binder method org.apache.tapestry.ioc.internal.ExceptionInBindMethod.bind\\(ServiceBinder\\) " + "\\(at ExceptionInBindMethod.java:\\d+\\): Really, how often is this going to happen\\?"));
+                    "Error invoking service binder method org.apache.tapestry5.ioc.internal.ExceptionInBindMethod.bind\\(ServiceBinder\\) " + "\\(at ExceptionInBindMethod.java:\\d+\\): Really, how often is this going to happen\\?"));
         }
 
         verify();

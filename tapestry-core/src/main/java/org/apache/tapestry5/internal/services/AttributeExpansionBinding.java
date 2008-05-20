@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry.Binding;
-import org.apache.tapestry.internal.bindings.AbstractBinding;
-import org.apache.tapestry.ioc.Location;
+import org.apache.tapestry5.Binding;
+import org.apache.tapestry5.internal.bindings.AbstractBinding;
+import org.apache.tapestry5.ioc.Location;
 
 /**
  * Wraps a {@link StringProvider} as a read-only {@link Binding}.

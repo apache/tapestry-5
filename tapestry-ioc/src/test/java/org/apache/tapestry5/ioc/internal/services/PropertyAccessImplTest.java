@@ -12,16 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.internal.services;
+package org.apache.tapestry5.ioc.internal.services;
 
-import org.apache.tapestry.ioc.Registry;
-import org.apache.tapestry.ioc.annotation.Scope;
-import org.apache.tapestry.ioc.internal.IOCInternalTestCase;
-import org.apache.tapestry.ioc.internal.util.Pair;
-import org.apache.tapestry.ioc.internal.util.StringLongPair;
-import org.apache.tapestry.ioc.services.ClassPropertyAdapter;
-import org.apache.tapestry.ioc.services.PropertyAccess;
-import org.apache.tapestry.ioc.services.PropertyAdapter;
+import org.apache.tapestry5.ioc.Registry;
+import org.apache.tapestry5.ioc.annotations.Scope;
+import org.apache.tapestry5.ioc.internal.IOCInternalTestCase;
+import org.apache.tapestry5.ioc.internal.util.Pair;
+import org.apache.tapestry5.ioc.internal.util.StringLongPair;
+import org.apache.tapestry5.ioc.services.ClassPropertyAdapter;
+import org.apache.tapestry5.ioc.services.PropertyAccess;
+import org.apache.tapestry5.ioc.services.PropertyAdapter;
 import org.testng.annotations.Test;
 
 import java.awt.*;

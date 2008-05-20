@@ -12,15 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.corelib.internal;
+package org.apache.tapestry5.corelib.internal;
 
-import org.apache.tapestry.ComponentAction;
-import org.apache.tapestry.Field;
-import org.apache.tapestry.services.FormSupport;
+import org.apache.tapestry5.ComponentAction;
+import org.apache.tapestry5.Field;
+import org.apache.tapestry5.services.FormSupport;
 
 /**
- * An implementation of {@link org.apache.tapestry.services.FormSupport} that delegates all behavior to another instance
- * of FormSupport. This allows some of the behavior to be overridden easily.
+ * An implementation of {@link org.apache.tapestry5.services.FormSupport} that delegates all behavior to another
+ * instance of FormSupport. This allows some of the behavior to be overridden easily.
  */
 public class FormSupportAdapter implements FormSupport
 {

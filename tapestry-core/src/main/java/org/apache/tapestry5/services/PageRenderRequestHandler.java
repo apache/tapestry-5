@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.services;
+package org.apache.tapestry5.services;
 
 import java.io.IOException;
 
@@ -25,7 +25,7 @@ public interface PageRenderRequestHandler
 {
     /**
      * Invoked to activate and render a page. In certain cases, based on values returned when activating the page, a
-     * {@link org.apache.tapestry.services.ComponentEventResultProcessor} may be used to send an alternate response
+     * {@link org.apache.tapestry5.services.ComponentEventResultProcessor} may be used to send an alternate response
      * (typically, a redirect).
      *
      * @param parameters defines the page name and activation context

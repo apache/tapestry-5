@@ -12,17 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.corelib.components;
+package org.apache.tapestry5.corelib.components;
 
-import org.apache.tapestry.*;
-import org.apache.tapestry.annotation.Environmental;
-import org.apache.tapestry.annotation.Mixin;
-import org.apache.tapestry.annotation.Parameter;
-import org.apache.tapestry.corelib.mixins.DiscardBody;
-import org.apache.tapestry.corelib.mixins.RenderDisabled;
-import org.apache.tapestry.corelib.mixins.RenderInformals;
-import org.apache.tapestry.ioc.annotation.Inject;
-import org.apache.tapestry.services.ComponentDefaultProvider;
+import org.apache.tapestry5.*;
+import org.apache.tapestry5.annotations.Environmental;
+import org.apache.tapestry5.annotations.Mixin;
+import org.apache.tapestry5.annotations.Parameter;
+import org.apache.tapestry5.corelib.mixins.DiscardBody;
+import org.apache.tapestry5.corelib.mixins.RenderDisabled;
+import org.apache.tapestry5.corelib.mixins.RenderInformals;
+import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.services.ComponentDefaultProvider;
 
 /**
  * A radio button (i.e., &lt;input type="radio"&gt;). Radio buttons <strong>must</strong> operate within a {@link
@@ -94,7 +94,7 @@ public class Radio implements Field
     }
 
     /**
-     * Returns the control name provided by the containing {@link org.apache.tapestry.RadioContainer}.
+     * Returns the control name provided by the containing {@link org.apache.tapestry5.RadioContainer}.
      */
     public String getControlName()
     {

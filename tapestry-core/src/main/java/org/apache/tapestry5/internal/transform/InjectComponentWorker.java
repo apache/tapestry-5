@@ -12,19 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.transform;
+package org.apache.tapestry5.internal.transform;
 
-import org.apache.tapestry.ComponentResources;
-import org.apache.tapestry.annotation.InjectComponent;
-import org.apache.tapestry.ioc.internal.util.InternalUtils;
-import org.apache.tapestry.ioc.util.BodyBuilder;
-import org.apache.tapestry.model.MutableComponentModel;
-import org.apache.tapestry.services.ClassTransformation;
-import org.apache.tapestry.services.ComponentClassTransformWorker;
-import org.apache.tapestry.services.TransformConstants;
+import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.annotations.InjectComponent;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.ioc.util.BodyBuilder;
+import org.apache.tapestry5.model.MutableComponentModel;
+import org.apache.tapestry5.services.ClassTransformation;
+import org.apache.tapestry5.services.ComponentClassTransformWorker;
+import org.apache.tapestry5.services.TransformConstants;
 
 /**
- * Recognizes the {@link org.apache.tapestry.annotation.InjectComponent} annotation, and converts the field into a
+ * Recognizes the {@link org.apache.tapestry5.annotations.InjectComponent} annotation, and converts the field into a
  * read-only field containing the component.  The id of the component may be explicitly stated or will be determined
  * from the field name.
  */

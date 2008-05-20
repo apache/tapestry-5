@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.internal;
+package org.apache.tapestry5.ioc.internal;
 
-import org.apache.tapestry.ioc.MappedConfiguration;
-import org.apache.tapestry.ioc.def.ContributionDef;
+import org.apache.tapestry5.ioc.MappedConfiguration;
+import org.apache.tapestry5.ioc.def.ContributionDef;
 import org.slf4j.Logger;
 
 import java.util.Map;
@@ -23,7 +23,7 @@ import java.util.Map;
 /**
  * Provides two forms of validation for mapped configurations: <ul> <li>If either key or value is null, then a warning
  * is logged </li> <li>If the key has previously been stored (by some other {@link
- * org.apache.tapestry.ioc.def.ContributionDef}, then a warning is logged</li> </ul>
+ * org.apache.tapestry5.ioc.def.ContributionDef}, then a warning is logged</li> </ul>
  * <p/>
  * When a warning is logged, the key/value pair is not added to the delegate.
  *

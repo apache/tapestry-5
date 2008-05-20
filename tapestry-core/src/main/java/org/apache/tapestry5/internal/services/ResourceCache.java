@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry.internal.event.InvalidationEventHub;
-import org.apache.tapestry.ioc.Resource;
-import org.apache.tapestry.services.ResourceDigestGenerator;
+import org.apache.tapestry5.internal.event.InvalidationEventHub;
+import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.services.ResourceDigestGenerator;
 
 /**
  * Caches information about resources on the classpath. In addition, acts as an invalidation hub for any resources for

@@ -12,17 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry.Field;
-import org.apache.tapestry.Link;
-import org.apache.tapestry.corelib.data.InsertPosition;
+import org.apache.tapestry5.Field;
+import org.apache.tapestry5.Link;
+import org.apache.tapestry5.corelib.data.InsertPosition;
 
 /**
  * Collects details about zone usage for efficient initialization of the client side objects.  This has grown to include
- * the client-side behavior associated with {@link org.apache.tapestry.corelib.components.FormFragment}s.
+ * the client-side behavior associated with {@link org.apache.tapestry5.corelib.components.FormFragment}s.
  *
- * @see org.apache.tapestry.corelib.components.Zone
+ * @see org.apache.tapestry5.corelib.components.Zone
  */
 public interface ClientBehaviorSupport
 {

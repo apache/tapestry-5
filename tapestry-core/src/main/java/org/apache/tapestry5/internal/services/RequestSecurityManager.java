@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry.internal.structure.Page;
+import org.apache.tapestry5.internal.structure.Page;
 
 import java.io.IOException;
 
@@ -22,7 +22,7 @@ import java.io.IOException;
  * Used to manage the relationship between the security of a request and the security of a page. By secure, we mean
  * whether a request uses HTTPS and whether a page demands the use of HTTPS.
  *
- * @see org.apache.tapestry.services.Request#isSecure()
+ * @see org.apache.tapestry5.services.Request#isSecure()
  */
 public interface RequestSecurityManager
 {
@@ -42,7 +42,7 @@ public interface RequestSecurityManager
      *
      * @param page for the security check
      * @return a base URL when switching security levels, or null if the page's security matches the request security
-     * @see org.apache.tapestry.services.BaseURLSource#getBaseURL(boolean)
+     * @see org.apache.tapestry5.services.BaseURLSource#getBaseURL(boolean)
      */
     String getBaseURL(Page page);
 }

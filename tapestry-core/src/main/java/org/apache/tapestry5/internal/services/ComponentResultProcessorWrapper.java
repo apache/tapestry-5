@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry.ComponentEventCallback;
-import org.apache.tapestry.services.ComponentEventResultProcessor;
+import org.apache.tapestry5.ComponentEventCallback;
+import org.apache.tapestry5.services.ComponentEventResultProcessor;
 
 import java.io.IOException;
 
@@ -52,7 +52,7 @@ public class ComponentResultProcessorWrapper implements ComponentEventCallback
     }
 
     /**
-     * Returns true if {@link org.apache.tapestry.ComponentEventCallback#handleResult(Object)} was invoked, false
+     * Returns true if {@link org.apache.tapestry5.ComponentEventCallback#handleResult(Object)} was invoked, false
      * otherwise.
      *
      * @return true if the event was aborted

@@ -12,13 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc;
+package org.apache.tapestry5.ioc;
 
 /**
- * A kind of tag applied to other objects to identify where they came from, in terms of a file (the
- * resource), a line number, and a column number. This is part of "line precise exception
- * reporting", whereby errors at runtime can be tracked backwards to the files from which they were
- * parsed or otherwise constructed.
+ * A kind of tag applied to other objects to identify where they came from, in terms of a file (the resource), a line
+ * number, and a column number. This is part of "line precise exception reporting", whereby errors at runtime can be
+ * tracked backwards to the files from which they were parsed or otherwise constructed.
  */
 public interface Location
 {

@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.util;
+package org.apache.tapestry5.util;
 
-import org.apache.tapestry.ValueEncoder;
-import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
-import org.apache.tapestry.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.ValueEncoder;
+import static org.apache.tapestry5.ioc.internal.util.Defense.notNull;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 
 /**
  * A value encoder that can be used for aribrary Enum types. The enum name is stored as the client side value.

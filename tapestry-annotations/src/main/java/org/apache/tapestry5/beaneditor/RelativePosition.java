@@ -12,12 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.beaneditor;
+package org.apache.tapestry5.beaneditor;
 
 /**
  * Controls the position of newly added {@link PropertyModel}s inside a {@link BeanModel}.
  */
-public enum RelativePosition {
+public enum RelativePosition
+{
     /**
      * The new {@link PropertyModel} goes before the existing model.
      */

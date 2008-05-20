@@ -12,13 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.integration.app1.pages;
+package org.apache.tapestry5.integration.app1.pages;
 
-import org.apache.tapestry.annotation.Persist;
-import org.apache.tapestry.integration.app1.data.Department;
-import org.apache.tapestry.internal.TapestryInternalUtils;
-import org.apache.tapestry.ioc.Messages;
-import org.apache.tapestry.ioc.annotation.Inject;
+import org.apache.tapestry5.annotations.Persist;
+import org.apache.tapestry5.integration.app1.data.Department;
+import org.apache.tapestry5.internal.TapestryInternalUtils;
+import org.apache.tapestry5.ioc.Messages;
+import org.apache.tapestry5.ioc.annotations.Inject;
 
 public class RadioDemo
 {

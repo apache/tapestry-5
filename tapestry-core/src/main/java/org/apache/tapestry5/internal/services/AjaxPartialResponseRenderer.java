@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
 import java.io.IOException;
 
@@ -20,15 +20,15 @@ import java.io.IOException;
  * Used to render portions of a page as part of an {@linkplain AjaxComponentEventRequestHandler Ajax request}.    This
  * encapsulates rendering of the partial response and then the construction of a {@linkplain
  * org.apache.tapestry5.json.JSONObject JSON reply}. Works with the pipeline defined by the {@link
- * org.apache.tapestry.services.PartialMarkupRenderer} service.
+ * org.apache.tapestry5.services.PartialMarkupRenderer} service.
  *
- * @see org.apache.tapestry.internal.services.PageRenderQueue
+ * @see org.apache.tapestry5.internal.services.PageRenderQueue
  */
 public interface AjaxPartialResponseRenderer
 {
     /**
      * Used to render a partial response as part of an Ajax action request. A call to {@link
-     * org.apache.tapestry.internal.services.PageRenderQueue#initializeForPartialPageRender(org.apache.tapestry.runtime.RenderCommand)}
+     * org.apache.tapestry5.internal.services.PageRenderQueue#initializeForPartialPageRender(org.apache.tapestry5.runtime.RenderCommand)}
      * should precede this call.
      */
     void renderPartialPageMarkup() throws IOException;

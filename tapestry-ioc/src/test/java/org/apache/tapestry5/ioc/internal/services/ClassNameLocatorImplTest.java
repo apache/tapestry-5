@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.internal.services;
+package org.apache.tapestry5.ioc.internal.services;
 
-import org.apache.tapestry.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry.ioc.internal.util.InternalUtils;
-import org.apache.tapestry.ioc.services.ClassNameLocator;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.ioc.services.ClassNameLocator;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -77,11 +77,11 @@ public class ClassNameLocatorImplTest extends Assert
         ClassNameLocator locator = new ClassNameLocatorImpl();
 
         Collection<String> names = locator
-                .locateClassNames("org.apache.tapestry.ioc.services");
+                .locateClassNames("org.apache.tapestry5.ioc.services");
 
-        assertInList(names, "org.apache.tapestry.ioc.services", "SymbolSource", "TapestryIOCModule");
+        assertInList(names, "org.apache.tapestry5.ioc.services", "SymbolSource", "TapestryIOCModule");
 
-        assertNotInList(names, "org.apache.tapestry.ioc.services", "TapestryIOCModule$1");
+        assertNotInList(names, "org.apache.tapestry5.ioc.services", "TapestryIOCModule$1");
     }
 
     @Test
@@ -89,15 +89,15 @@ public class ClassNameLocatorImplTest extends Assert
     {
         ClassNameLocator locator = new ClassNameLocatorImpl();
 
-        Collection<String> names = locator.locateClassNames("org.apache.tapestry");
+        Collection<String> names = locator.locateClassNames("org.apache.tapestry5");
 
         assertInList(
                 names,
-                "org.apache.tapestry",
+                "org.apache.tapestry5",
                 "ioc.Orderable",
                 "ioc.services.ChainBuilder");
 
-        assertNotInList(names, "org.apache.tapestry.ioc", "services.TapestryIOCModule$1");
+        assertNotInList(names, "org.apache.tapestry5.ioc", "services.TapestryIOCModule$1");
     }
 
     void assertInList(Collection<String> names, String packageName, String... classNames)

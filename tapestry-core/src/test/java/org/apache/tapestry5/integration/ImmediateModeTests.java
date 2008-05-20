@@ -12,13 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.integration;
+package org.apache.tapestry5.integration;
 
-import org.apache.tapestry.test.AbstractIntegrationTestSuite;
+import org.apache.tapestry5.test.AbstractIntegrationTestSuite;
 import org.testng.annotations.Test;
 
 /**
- * Tests for immediate mode (aka T4 mode, aka {@linkplain org.apache.tapestry.SymbolConstants#SUPPRESS_REDIRECT_FROM_ACTION_REQUESTS
+ * Tests for immediate mode (aka T4 mode, aka {@linkplain org.apache.tapestry5.SymbolConstants#SUPPRESS_REDIRECT_FROM_ACTION_REQUESTS
  * redirects suppressed} mode).
  */
 @Test(timeOut = 50000, sequential = true, groups = { "integration" })
