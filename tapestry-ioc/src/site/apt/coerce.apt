@@ -12,9 +12,9 @@ Type Coercion
   may also happen inside tapestry-ioc, such as when injecting a value, rather than a service, into a builder method.
   
   Like everything else in Tapestry, type coercions are extensible.  At the root is the
-  {{{../apidocs/org/apache/tapestry/ioc/services/TypeCoercer.html}TypeCoercer}} service. Its configuration consists
+  {{{../apidocs/org/apache/tapestry5/ioc/services/TypeCoercer.html}TypeCoercer}} service. Its configuration consists
   of a number of 
-  {{{../apidocs/org/apache/tapestry/ioc/services/CoercionTuple.html}CoercionTuple}}s.  Each tuple defines how to coerce from one type to another.
+  {{{../apidocs/org/apache/tapestry5/ioc/services/CoercionTuple.html}CoercionTuple}}s.  Each tuple defines how to coerce from one type to another.
   The initial set of coercions is focused primarily on coercions between different numeric types:
   
 [images/type-coercer.png] Default Type Coercions  

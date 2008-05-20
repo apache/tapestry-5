@@ -77,13 +77,13 @@ Binding and Autobuilding
   instantiate your services.
 
   Every module may have an optional, static bind() method which is passed a
-  {{{../apidocs/org/apache/tapestry/ioc/ServiceBinder.html}ServiceBinder}}.  Services may be registered with
+  {{{../apidocs/org/apache/tapestry5/ioc/ServiceBinder.html}ServiceBinder}}.  Services may be registered with
   the container by "binding" a service interface to a service implementation:
   
 +------+
 package org.example.myapp.services;
 
-import org.apache.tapestry.ioc.ServiceBinder;
+import org.apache.tapestry5.ioc.ServiceBinder;
 
 public class MyAppModule
 {
@@ -179,7 +179,7 @@ Service Ids
   it down to a <single> service. At this point, it is necessary to <disambiguate> the link between
   the service interface and <one> service.  One approach is to use
   the 
-  {{{../apidocs/org/apache/tapestry/ioc/annotations/InjectService.html}InjectService}} annotation:
+  {{{../apidocs/org/apache/tapestry5/ioc/annotations/InjectService.html}InjectService}} annotation:
   
   
 +-----------------------------------------------------------------------------------+
@@ -278,7 +278,7 @@ public class MyServiceImpl implements MyService
   will be able to update all the uses of the annotation or interface.
 
   With a service builder method, you use the
-  {{{../apidocs/org/apache/tapestry/ioc/annotations/Marker.html}@Marker}} annotation:
+  {{{../apidocs/org/apache/tapestry5/ioc/annotations/Marker.html}@Marker}} annotation:
 
 +---+
   @Marker(Clustered.class)
@@ -300,7 +300,7 @@ Injecting Dependencies for Autobuilt Services
 +---+
 package org.example.myapp.services;
 
-import org.apache.tapestry.ioc.annotation.InjectService;
+import org.apache.tapestry5.ioc.annotations.InjectService;
 
 public class IndexerImpl implements Indexer
 {
@@ -330,7 +330,7 @@ public class IndexerImpl implements Indexer
 +---+
 package org.example.myapp.services;
 
-import org.apache.tapestry.ioc.annotation.InjectService;
+import org.apache.tapestry5.ioc.annotations.InjectService;
 
 public class IndexerImpl implements Indexer
 {
@@ -360,7 +360,7 @@ Defining Service Scope
   more can be added.
   
   Service lifecycle is specified using the 
-  {{{../apidocs/org/apache/tapestry/ioc/annotations/Scope.html}@Scope annotation}},
+  {{{../apidocs/org/apache/tapestry5/ioc/annotations/Scope.html}@Scope annotation}},
   which is attached to a builder method.  When this annotation is not present, the
   default scope, "singleton" is used.
     
@@ -370,7 +370,7 @@ Defining Service Scope
   is created when the service is first referenced.  By reference, we mean any situation in which
   the service is requested by name, such as using the @InjectService annotation on a
   service builder method, or by using the
-  {{{../apidocs/org/apache/tapestry/ioc/Registry.html}Registry}} API from outside the
+  {{{../apidocs/org/apache/tapestry5/ioc/Registry.html}Registry}} API from outside the
   container.
   
   In any case, the service proxy will only create the service implementation when a method
@@ -434,7 +434,7 @@ Eager Loading Services
   Services are normally created only as needed (per the scope discussion above).
   
   This can be tweaked slightly; by adding the 
-  {{{../apidocs/org/apache/tapestry/ioc/annotations/EagerLoad.html}EagerLoad}} annotation to
+  {{{../apidocs/org/apache/tapestry5/ioc/annotations/EagerLoad.html}EagerLoad}} annotation to
   the service builder method, Tapestry will instantiate the service when the Registry is first created.
   
   This will cause the service builder method to be invoked, as well as any service decorator methods.
@@ -475,7 +475,7 @@ Injecting Resources
   
   * java.lang.Class: service interface implemented by the service to be constructed
   
-  * {{{../apidocs/org/apache/tapestry/ioc/ServiceResources.html}ServiceResources}}:  access to other services
+  * {{{../apidocs/org/apache/tapestry5/ioc/ServiceResources.html}ServiceResources}}:  access to other services
   
   []
   
@@ -553,7 +553,7 @@ Injecting Resources
 
   It doesn't work because type String always gets the service id, as a resource (as with the serviceId parameter).
   In order to get this to work, we need to turn off the resource injection for the alertEmail parameter.
-  That's what the {{{../apidocs/org/apache/tapestry/ioc/annotations/Inject.html}Inject}} annotation does:
+  That's what the {{{../apidocs/org/apache/tapestry5/ioc/annotations/Inject.html}Inject}} annotation does:
   
 +-----------------------------------------------------------------------------------+
   public static Indexer build(String serviceId, Log serviceLog,  
@@ -577,18 +577,18 @@ Builtin Services
   A few services within the Tapestry IOC Module are "builtin"; there is no 
   service builder method
   in the
-  {{{../apidocs/org/apache/tapestry/ioc/services/TapestryIOCModule.html}TapestryIOCModule}} class.
+  {{{../apidocs/org/apache/tapestry5/ioc/services/TapestryIOCModule.html}TapestryIOCModule}} class.
   
 *---------------------+-----------------------------------------------------------------------------------------+
 | <<Service Id>>      | <<Service Interface>>                                                                   |
 *---------------------+-----------------------------------------------------------------------------------------+
-| ClassFactory        | {{{../apidocs/org/apache/tapestry/ioc/services/ClassFactory.html}ClassFactory}}         |
+| ClassFactory        | {{{../apidocs/org/apache/tapestry5/ioc/services/ClassFactory.html}ClassFactory}}         |
 *---------------------+-----------------------------------------------------------------------------------------+
-| LoggerSource        | {{{../apidocs/org/apache/tapestry/ioc/LoggerSource.html}LoggerSource}}                  |
+| LoggerSource        | {{{../apidocs/org/apache/tapestry5/ioc/LoggerSource.html}LoggerSource}}                  |
 *---------------------+-----------------------------------------------------------------------------------------+
-| RegistryShutdownHub | {{{../apidocs/org/apache/tapestry/ioc/RegistryShutdownHub.html}RegistryShutdownHub}}    |
+| RegistryShutdownHub | {{{../apidocs/org/apache/tapestry5/ioc/RegistryShutdownHub.html}RegistryShutdownHub}}    |
 *---------------------+-----------------------------------------------------------------------------------------+
-| PerthreadManager    | {{{../apidocs/org/apache/tapestry/ioc/services/PerthreadManager.html}PerthreadManager}} |
+| PerthreadManager    | {{{../apidocs/org/apache/tapestry5/ioc/services/PerthreadManager.html}PerthreadManager}} |
 *---------------------+-----------------------------------------------------------------------------------------+
 
   Consult the JavaDoc for each of these services to identify under what circumstances you'll need to use them.

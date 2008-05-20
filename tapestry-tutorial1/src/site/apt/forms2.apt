@@ -166,14 +166,14 @@ Adding Hibernate Annotations
   annotations can be applied to fields or to accessor methods, but the Tapestry annotations we use below
   are for methods only.
 
-  <<src/main/java/org/apache/tapestry/tutorial/entities/Address.java:>>
+  <<src/main/java/org/apache/tapestry5/tutorial/entities/Address.java:>>
 
 ----
-package org.apache.tapestry.tutorial.entities;
+package org.apache.tapestry5.tutorial.entities;
 
-import org.apache.tapestry.beaneditor.NonVisual;
-import org.apache.tapestry.beaneditor.Validate;
-import org.apache.tapestry.tutorial.data.Honorific;
+import org.apache.tapestry5.beaneditor.NonVisual;
+import org.apache.tapestry5.beaneditor.Validate;
+import org.apache.tapestry5.tutorial.data.Honorific;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -345,17 +345,17 @@ Updating the Database
 
   []
 
-  <<src/main/java/org/apache/tapestry/tutorial/pages/address/CreateAddress.java:>>
+  <<src/main/java/org/apache/tapestry5/tutorial/pages/address/CreateAddress.java:>>
 
 ----
-package org.apache.tapestry.tutorial.pages.address;
+package org.apache.tapestry5.tutorial.pages.address;
 
-import org.apache.tapestry.annotation.InjectPage;
-import org.apache.tapestry.annotation.Property;
-import org.apache.tapestry.hibernate.annotations.CommitAfter;
-import org.apache.tapestry.ioc.annotation.Inject;
-import org.apache.tapestry.tutorial.entities.Address;
-import org.apache.tapestry.tutorial.pages.Index;
+import org.apache.tapestry5.annotations.InjectPage;
+import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.hibernate.annotations.CommitAfter;
+import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.tutorial.entities.Address;
+import org.apache.tapestry5.tutorial.pages.Index;
 import org.hibernate.Session;
 
 public class CreateAddress
@@ -379,7 +379,7 @@ public class CreateAddress
 }
 ----
 
-  The {{{../apidocs/org/apache/tapestry/ioc/annotations/Inject.html}Inject}} annotation tells Tapestry to inject a service into the
+  The {{{../apidocs/org/apache/tapestry5/ioc/annotations/Inject.html}Inject}} annotation tells Tapestry to inject a service into the
   annotated field; 
   Tapestry includes a sophisticated
   Inversion of Control container (similar in many ways to Spring) that is very good at locating available services
@@ -390,7 +390,7 @@ public class CreateAddress
   of the request.  If we make changes to persistent objects, such as adding a new Address object,
   then it is necessary to commit the transaction.
 
-  The {{{../apidocs/org/apache/tapestry/hibernate/annotations/CommitAfter.html}CommitAfter}} annotation can be applied to any component method; if the method completes normally, the transaction
+  The {{{../apidocs/org/apache/tapestry5/hibernate/annotations/CommitAfter.html}CommitAfter}} annotation can be applied to any component method; if the method completes normally, the transaction
   will be committed (and a new transaction started to replace the committed transaction).
 
   After persisting the new address, we return to the main Index page of the application.
@@ -407,7 +407,7 @@ Showing Addresses
 [index-grid-v1.png] Adding the Grid to the Index page
 
   So, how is this implemented?  Primarily, its accomplished by the
-  {{{../tapestry-core/ref/org/apache/tapestry/corelib/components/Grid.html}Grid}} component.
+  {{{../tapestry-core/ref/org/apache/tapestry5/corelib/components/Grid.html}Grid}} component.
 
   The Grid component is based on the same concepts as the BeanEditForm component; it can pull apart
   a bean into columns. The columns are sortable, and when there are more entries than will fit on a single
@@ -423,7 +423,7 @@ Showing Addresses
 
   And all we have to do is supply the addresses property in the Java code:
 
-  <<src/main/java/org/apache/tapestry/tutorial/pages/Index.java (partial):>>
+  <<src/main/java/org/apache/tapestry5/tutorial/pages/Index.java (partial):>>
 
 ----
     @Inject

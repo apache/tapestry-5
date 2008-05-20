@@ -14,8 +14,8 @@
 
 package org.example.upload.services;
 
-import org.apache.tapestry.ioc.annotation.SubModule;
-import org.apache.tapestry.upload.services.UploadModule;
+import org.apache.tapestry5.ioc.annotations.SubModule;
+import org.apache.tapestry5.upload.services.UploadModule;
 
 /**
  * The SubModule is not normally needed, except that during tests of tapestry-upload, the necessary JAR Manifest does

@@ -17,7 +17,7 @@ Class to Logger
   The logger name for a page or component matches the fully qualified class name.  You can configure this in log4j.properties:
   
 ----
-log4j.category.org.apache.tapestry.integration.app1.pages.MerryChristmas=trace
+log4j.category.org.apache.tapestry5.integration.app1.pages.MerryChristmas=trace
 ----
   
 Injecting Loggers
@@ -37,7 +37,7 @@ public class MyPage
 
 @Log annotation
 
-  You may mark any component method with the {{{../../apidocs/org/apache/tapestry/annotation/Log.html}Log}} annotation.
+  You may mark any component method with the {{{../../apidocs/org/apache/tapestry5/annotations/Log.html}Log}} annotation.
   Method entry, exit (and any thrown exceptions) will be logged at DEBUG level. This is very convienient for
   debugging, especially when placed on event handler methods.
 
@@ -51,40 +51,40 @@ DEBUG Level
   
 ---
 [DEBUG] MerryChristmas Finished class transformation: InternalClassTransformation[
-public org.apache.tapestry.integration.app1.pages.MerryChristmas extends java.lang.Object
-  implements org.apache.tapestry.runtime.Component, org.apache.tapestry.runtime.RenderCommand
+public org.apache.tapestry5.integration.app1.pages.MerryChristmas extends java.lang.Object
+  implements org.apache.tapestry5.runtime.Component, org.apache.tapestry5.runtime.RenderCommand
 
 add default method: public void postRenderCleanup()
 <default>
 
-add default method: public void setupRender(org.apache.tapestry.MarkupWriter $1, org.apache.tapestry.runtime.Event $2)
+add default method: public void setupRender(org.apache.tapestry5.MarkupWriter $1, org.apache.tapestry5.runtime.Event $2)
 <default>
 
-add default method: public void beginRender(org.apache.tapestry.MarkupWriter $1, org.apache.tapestry.runtime.Event $2)
+add default method: public void beginRender(org.apache.tapestry5.MarkupWriter $1, org.apache.tapestry5.runtime.Event $2)
 <default>
 
-add default method: public void beforeRenderTemplate(org.apache.tapestry.MarkupWriter $1, org.apache.tapestry.runtime.Event $2)
+add default method: public void beforeRenderTemplate(org.apache.tapestry5.MarkupWriter $1, org.apache.tapestry5.runtime.Event $2)
 <default>
 
-add default method: public void afterRenderTemplate(org.apache.tapestry.MarkupWriter $1, org.apache.tapestry.runtime.Event $2)
+add default method: public void afterRenderTemplate(org.apache.tapestry5.MarkupWriter $1, org.apache.tapestry5.runtime.Event $2)
 <default>
 
-add default method: public void beforeRenderBody(org.apache.tapestry.MarkupWriter $1, org.apache.tapestry.runtime.Event $2)
+add default method: public void beforeRenderBody(org.apache.tapestry5.MarkupWriter $1, org.apache.tapestry5.runtime.Event $2)
 <default>
 
-add default method: public void afterRenderBody(org.apache.tapestry.MarkupWriter $1, org.apache.tapestry.runtime.Event $2)
+add default method: public void afterRenderBody(org.apache.tapestry5.MarkupWriter $1, org.apache.tapestry5.runtime.Event $2)
 <default>
 
-add default method: public void afterRender(org.apache.tapestry.MarkupWriter $1, org.apache.tapestry.runtime.Event $2)
+add default method: public void afterRender(org.apache.tapestry5.MarkupWriter $1, org.apache.tapestry5.runtime.Event $2)
 <default>
 
-add default method: public void cleanupRender(org.apache.tapestry.MarkupWriter $1, org.apache.tapestry.runtime.Event $2)
+add default method: public void cleanupRender(org.apache.tapestry5.MarkupWriter $1, org.apache.tapestry5.runtime.Event $2)
 <default>
 
-add default method: public boolean handleComponentEvent(org.apache.tapestry.runtime.ComponentEvent $1)
+add default method: public boolean handleComponentEvent(org.apache.tapestry5.runtime.ComponentEvent $1)
 <default>
 
-add default method: public org.apache.tapestry.ComponentResources getComponentResources()
+add default method: public org.apache.tapestry5.ComponentResources getComponentResources()
 <default>
 
 add default method: public void containingPageDidLoad()
@@ -96,20 +96,20 @@ add default method: public void containingPageDidDetach()
 add default method: public void containingPageDidAttach()
 <default>
 
-add field: protected final org.apache.tapestry.internal.InternalComponentResources _$resources;
+add field: protected final org.apache.tapestry5.internal.InternalComponentResources _$resources;
 
-replace method: public final org.apache.tapestry.ComponentResources getComponentResources()
+replace method: public final org.apache.tapestry5.ComponentResources getComponentResources()
 return _$resources;
 
-add default method: public void render(org.apache.tapestry.MarkupWriter $1, org.apache.tapestry.runtime.RenderQueue $2)
+add default method: public void render(org.apache.tapestry5.MarkupWriter $1, org.apache.tapestry5.runtime.RenderQueue $2)
 <default>
 
-replace method: public void render(org.apache.tapestry.MarkupWriter $1, org.apache.tapestry.runtime.RenderQueue $2)
+replace method: public void render(org.apache.tapestry5.MarkupWriter $1, org.apache.tapestry5.runtime.RenderQueue $2)
 _$resources.queueRender($2);
 
 convert default constructor: initializer();
 
-add constructor: org.apache.tapestry.integration.app1.pages.MerryChristmas(org.apache.tapestry.internal.InternalComponentResources $1)
+add constructor: org.apache.tapestry5.integration.app1.pages.MerryChristmas(org.apache.tapestry5.internal.InternalComponentResources $1)
 {
   _$resources = $1;
   initializer();

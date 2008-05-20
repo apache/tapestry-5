@@ -14,7 +14,7 @@
 
 package org.apache.tapestry5.services;
 
-import org.apache.tapestry.services.Context;
+import org.apache.tapestry5.services.Context;
 
 /**
  * Service interface for initializing Tapestry for the application.

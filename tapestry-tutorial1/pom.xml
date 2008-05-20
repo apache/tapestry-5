@@ -139,7 +139,7 @@ of testing facilities designed for use with TestNG (http://testng.org/), so it's
                 <artifactId>tapestry-component-report</artifactId>
                 <version>${project.version}</version>
                 <configuration>
-                    <rootPackage>org.apache.tapestry.tutorial</rootPackage>
+                    <rootPackage>org.apache.tapestry5.tutorial</rootPackage>
                 </configuration>
             </plugin>
         </plugins>

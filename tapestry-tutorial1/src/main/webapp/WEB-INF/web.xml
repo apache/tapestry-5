@@ -24,11 +24,11 @@
         <!-- The only significant configuration for Tapestry 5, this informs Tapestry
 of where to look for pages, components and mixins. -->
         <param-name>tapestry.app-package</param-name>
-        <param-value>org.apache.tapestry.tutorial</param-value>
+        <param-value>org.apache.tapestry5.tutorial</param-value>
     </context-param>
     <filter>
         <filter-name>app</filter-name>
-        <filter-class>org.apache.tapestry.TapestryFilter</filter-class>
+        <filter-class>org.apache.tapestry5.TapestryFilter</filter-class>
     </filter>
     <filter-mapping>
         <filter-name>app</filter-name>

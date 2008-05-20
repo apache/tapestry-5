@@ -33,7 +33,7 @@ Component Events
   
   Tapestry 5 introduces the concept of <event handler methods>, identified via a naming convention, or
   via the 
-  {{{../../apidocs/org/apache/tapestry/annotation/OnEvent.html}OnEvent annotation}}.  Event handler methods
+  {{{../../apidocs/org/apache/tapestry5/annotations/OnEvent.html}OnEvent annotation}}.  Event handler methods
   have any visibility, even private (normally they are given package private visibility, to support testing).
   
   Rather than configure a component to invoke a particular method, you identify one or more
@@ -165,8 +165,8 @@ Event Context
   
   When an event handler method is invoked, the strings are converted back into
   values, or even objects. A
-  {{{../../apidocs/org/apache/tapestry/ValueEncoder.html}ValueEncoder}} is used to convert between client-side strings
-  and server-side objects.  The {{{../../apidocs/org/apache/tapestry/services/ValueEncoderSource.html}ValueEncoderSource}} service
+  {{{../../apidocs/org/apache/tapestry5/ValueEncoder.html}ValueEncoder}} is used to convert between client-side strings
+  and server-side objects.  The {{{../../apidocs/org/apache/tapestry5/services/ValueEncoderSource.html}ValueEncoderSource}} service
   provides the necessary value encoders.
 
 * Method Matching
@@ -179,7 +179,7 @@ Event Context
 
   To designate that an event handler method should be invoked regardless of how many context parameters are available,
   change the method to accept a <single> parameter of type Object[], type List, or
-  {{{../../apidocs/org/apache/tapestry/EventContext.html}EventContext}}.  
+  {{{../../apidocs/org/apache/tapestry5/EventContext.html}EventContext}}.
 
 Event Bubbling
 
@@ -235,7 +235,7 @@ Intercepting Event Exceptions
 
   Tapestry fires a new event, of type "exception", passing the thrown exception as the context.  In fact,
   the exception is wrapped inside a
-  {{{../../apidocs/org/apache/tapestry/runtime/ComponentEventException.html}ComponentEventException}}, from which
+  {{{../../apidocs/org/apache/tapestry5/runtime/ComponentEventException.html}ComponentEventException}}, from which
   you may extract the event type and context.
 
   Thus:
@@ -259,5 +259,5 @@ Intercepting Event Exceptions
 
   If there is no exception event handler, or the exception event handler returns null (or is void), then
   then the exception will be passed to the
-  {{{../../apidocs/org/apache/tapestry/services/RequestExceptionHandler.html}RequestExceptionHandler}} service,
+  {{{../../apidocs/org/apache/tapestry5/services/RequestExceptionHandler.html}RequestExceptionHandler}} service,
   which (in default configuraton) will be render the exception page.

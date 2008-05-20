@@ -134,7 +134,7 @@ the hibernate JARs and dependencies inside the WAR. -->
                     <archive>
                         <manifestEntries>
                             <Tapestry-Module-Classes>
-                                org.apache.tapestry.hibernate.HibernateModule
+                                org.apache.tapestry5.hibernate.HibernateModule
                             </Tapestry-Module-Classes>
                         </manifestEntries>
                     </archive>
@@ -169,7 +169,7 @@ the hibernate JARs and dependencies inside the WAR. -->
             <artifactId>tapestry-component-report</artifactId>
             <version>5.0.2</version>
             <configuration>
-            <rootPackage>org.apache.tapestry.corelib</rootPackage>
+            <rootPackage>org.apache.tapestry5.corelib</rootPackage>
             </configuration>
             </plugin>-->
         </plugins>

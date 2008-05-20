@@ -73,7 +73,7 @@ Chapter 3: Implementing the Hi/Lo Guessing Game
   On the Java side, the Guess page needs to have a target property:
   
 ----
-package org.apache.tapestry.tutorial.pages;
+package org.apache.tapestry5.tutorial.pages;
 
 public class Guess
 {
@@ -101,14 +101,14 @@ public class Guess
   
   Let's start with the code, and break it down:
   
-  <<src/main/java/org/apache/tapestry/tutorial/pages/Index.java>>
+  <<src/main/java/org/apache/tapestry5/tutorial/pages/Index.java>>
 
 ----
-package org.apache.tapestry.tutorial.pages;
+package org.apache.tapestry5.tutorial.pages;
 
 import java.util.Random;
 
-import org.apache.tapestry.annotation.InjectPage;
+import org.apache.tapestry5.annotations.InjectPage;
 
 public class Start
 {
@@ -134,7 +134,7 @@ public class Start
   The Tapestry way is very object oriented: everything is done in terms of objects and methods and properties of those objects.
   
   This communication starts with the connection between the two pages:  in this case, the
-  {{{../apidocs/org/apache/tapestry/annotations/InjectPage.html}InjectPage}} annotation allows another page in the application
+  {{{../apidocs/org/apache/tapestry5/annotations/InjectPage.html}InjectPage}} annotation allows another page in the application
   to be injected into the Index page.
 
   Injection can be a somewhat nebulous concept.  In terms of Tapestry, it means that some cooperating object needed by one class is provided to it.  The other
@@ -249,7 +249,7 @@ public class Start
   at the end of that request, the value was lost, and in the subsequent render request for the Guess page,
   the value was zero.
   
-  Fortunately, it is very easy to transcend this behavior.  We'll use an annotation, {{{../apidocs/org/apache/tapestry/annotations/Persist.html}Persist}},
+  Fortunately, it is very easy to transcend this behavior.  We'll use an annotation, {{{../apidocs/org/apache/tapestry5/annotations/Persist.html}Persist}},
   on the instance variable:
   
 ----
@@ -393,10 +393,10 @@ public class Start
 </html>
 ---
 
-  <<src/main/java/org/apache/tapestry/tutorial/pages/GameOver.java:>>
+  <<src/main/java/org/apache/tapestry5/tutorial/pages/GameOver.java:>>
 
 ---
-package org.apache.tapestry.tutorial.pages;
+package org.apache.tapestry5.tutorial.pages;
 
 public class GameOver
 {
@@ -459,13 +459,13 @@ public class GameOver
   
   Lastly, we need to make some changes to the GameOver class.
   
-  <<src/main/java/org/apache/tapestry/tutorial/GameOver.java:>>
+  <<src/main/java/org/apache/tapestry5/tutorial/GameOver.java:>>
   
 ---
-package org.apache.tapestry.tutorial.pages;
+package org.apache.tapestry5.tutorial.pages;
 
-import org.apache.tapestry.annotation.Persist;
-import org.apache.tapestry.annotation.Property;
+import org.apache.tapestry5.annotations.Persist;
+import org.apache.tapestry5.annotations.Property;
 
 public class GameOver
 {

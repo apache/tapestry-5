@@ -16,15 +16,15 @@
 -->
 
 <suite name="Tapestry Hibernate" parallel="false" thread-count="10" annotations="1.5" verbose="2">
-  <parameter name="tapestry.integration-webapp" value="src/test/webapp"/>
-  <test name="Tapestry Hibernate Internal APIs">
-    <packages>
-      <package name="org.apache.tapestry.internal.hibernate"/>
-    </packages>
-  </test>
-  <test name="Tapestry Hibernate Integration Tests">
-    <packages>
-      <package name="org.apache.tapestry.hibernate.integration"/>
-    </packages>
-  </test>  
+    <parameter name="tapestry.integration-webapp" value="src/test/webapp"/>
+    <test name="Tapestry Hibernate Internal APIs">
+        <packages>
+            <package name="org.apache.tapestry5.internal.hibernate"/>
+        </packages>
+    </test>
+    <test name="Tapestry Hibernate Integration Tests">
+        <packages>
+            <package name="org.apache.tapestry5.hibernate.integration"/>
+        </packages>
+    </test>
 </suite>

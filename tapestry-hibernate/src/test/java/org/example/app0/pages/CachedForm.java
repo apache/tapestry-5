@@ -14,10 +14,10 @@
 
 package org.example.app0.pages;
 
-import org.apache.tapestry.annotation.Cached;
-import org.apache.tapestry.annotation.Property;
-import org.apache.tapestry.hibernate.HibernateSessionManager;
-import org.apache.tapestry.ioc.annotation.Inject;
+import org.apache.tapestry5.annotations.Cached;
+import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.hibernate.HibernateSessionManager;
+import org.apache.tapestry5.ioc.annotations.Inject;
 import org.example.app0.entities.User;
 import org.hibernate.Session;
 

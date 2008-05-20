@@ -19,10 +19,10 @@ New And Of Note
   * The Exception Report page now identifies the version of the Tapestry framework, and lists
     out System properties (including the Java classpath).
 
-  * The {{{ref/org/apache/tapestry/corelib/components/Grid.html}Grid}} component can now update itself in place,
+  * The {{{ref/org/apache/tapestry5/corelib/components/Grid.html}Grid}} component can now update itself in place,
     using Ajax, when paging or sorting links are clicked.
 
-  * Added a zone parameter to the  {{{ref/org/apache/tapestry/corelib/components/BeanEditForm.;html}BeanEditForm}}
+  * Added a zone parameter to the  {{{ref/org/apache/tapestry5/corelib/components/BeanEditForm.;html}BeanEditForm}}
     component, to support Ajax updates.
 
   * The @Cached annotation has been added to allowing the caching of method results.
@@ -35,9 +35,9 @@ New And Of Note
 
   * Tapestry pages may now be {{{guide/secure.html}secured for access only via HTTPS}}.
 
-  * Added the {{{ref/org/apache/tapestry/corelib/components/FormFragment.html}FormFragment}} component
+  * Added the {{{ref/org/apache/tapestry5/corelib/components/FormFragment.html}FormFragment}} component
     to allow for forms that are mutable on the client-side. In addition, the
-    {{{ref/org/apache/tapestry/corelib/components/Form.html}Form}} component may
+    {{{ref/org/apache/tapestry5/corelib/components/Form.html}Form}} component may
     now update a Zone.
 
   * Form components now trigger a "validateForm" event, not a "validate" event (so as to avoid conflict
@@ -60,7 +60,7 @@ New And Of Note
   * New Unless component (like an If component, but inverted).
 
   * Support for "password" and "longtext" data types (for use with the BeanEditor), and a new
-    {{{ref/org/apache/tapestry/corelib/components/TextOutput.html}TextOutput}} component.
+    {{{ref/org/apache/tapestry5/corelib/components/TextOutput.html}TextOutput}} component.
 
   * The new "var:" binding prefix allows for temporary, untyped storage
     of render-time values without having to define a new component property.

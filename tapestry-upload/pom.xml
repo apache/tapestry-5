@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0">
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.apache.tapestry</groupId>
     <artifactId>tapestry-upload</artifactId>
@@ -85,7 +86,7 @@
                     <archive>
                         <manifestEntries>
                             <Tapestry-Module-Classes>
-                                org.apache.tapestry.upload.services.UploadModule
+                                org.apache.tapestry5.upload.services.UploadModule
                             </Tapestry-Module-Classes>
                         </manifestEntries>
                     </archive>
@@ -117,7 +118,7 @@
                 <artifactId>tapestry-component-report</artifactId>
                 <version>${project.version}</version>
                 <configuration>
-                    <rootPackage>org.apache.tapestry.upload</rootPackage>
+                    <rootPackage>org.apache.tapestry5.upload</rootPackage>
                     <apidocs>../apidocs</apidocs>
                 </configuration>
             </plugin>

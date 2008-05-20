@@ -57,7 +57,7 @@ Service Decoration Methods
 +---------------------+
 package org.example.myapp.services;
 
-import org.apache.tapestry.ioc.services.LoggingDecorator;
+import org.apache.tapestry5.ioc.services.LoggingDecorator;
 import org.slf4j.Logger;
 
 public class MyAppModule
@@ -112,7 +112,7 @@ public class MyAppModule
 +---------------------+
 package org.example.myapp.services;
 
-import org.apache.tapestry.ioc.services.LoggingDecorator;
+import org.apache.tapestry5.ioc.services.LoggingDecorator;
 import org.slf4j.Logger;
 
 public class MyAppModule
@@ -131,7 +131,7 @@ public class MyAppModule
 Targetting Multiple Services
 
   By using the
-  {{{../apidocs/org/apache/tapestry/ioc/annotations/Match.html}@Match annnotation}},
+  {{{../apidocs/org/apache/tapestry5/ioc/annotations/Match.html}@Match annnotation}},
   you may identify which services are to be decorated.
   
   The value specified in the Match annotation is one or more patterns. These patterns
@@ -176,7 +176,7 @@ Ordering of Decorators
 
    In cases where multiple decorators will apply to a single service, you can control
    the order in which decorators are applied using  an additional annotation:
-   {{{../apidocs/org/apache/tapestry/ioc/annotations/Order.html}@Order}}.
+   {{{../apidocs/org/apache/tapestry5/ioc/annotations/Order.html}@Order}}.
    
    This annotation allows any number of {{{order.html}ordering constraints}}
    to be specified for the decorator, to order it relative to
@@ -214,9 +214,9 @@ Creating your own Decorators
   the service (because these interceptors can get chained, we talk about the "delegate" and not the "service").
 
   Each method of the interceptor will take <advice>.  Advice
-  is provided by a {{{../apidocs/org/apache/tapestry/ioc/MethodAdvice.html}MethodAdvice}} instance.
+  is provided by a {{{../apidocs/org/apache/tapestry5/ioc/MethodAdvice.html}MethodAdvice}} instance.
   The sole method, <<<advise()>>>, recieves an
-   {{{../apidocs/org/apache/tapestry/ioc/Invocation.html}Invocation}}.
+   {{{../apidocs/org/apache/tapestry5/ioc/Invocation.html}Invocation}}.
   MethodAdvice gives you a chance to see what the method invocation <is>; you can query
   the name of the method, and the types and values of the parameters.
 
@@ -237,7 +237,7 @@ Creating your own Decorators
   query or even replace the return value.
 
   The
-  {{{../apidocs/org/apache/tapestry/ioc/services/AspectDecorator.html}AspectDecorator}} service
+  {{{../apidocs/org/apache/tapestry5/ioc/services/AspectDecorator.html}AspectDecorator}} service
   is how you put your MethodAdvise into action.
 
   By way of an example, we'll show an implementation of the LoggingDecorator service:

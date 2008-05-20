@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.mojo;
+package org.apache.tapestry5.mojo;
 
 import nu.xom.*;
 import org.apache.commons.lang.StringUtils;
@@ -23,10 +23,10 @@ import org.apache.maven.model.Resource;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.AbstractMavenReport;
 import org.apache.maven.reporting.MavenReportException;
-import org.apache.tapestry.ioc.internal.util.CollectionFactory;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
-import org.apache.tapestry.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newList;
+import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newMap;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.codehaus.doxia.sink.Sink;
 import org.codehaus.doxia.site.renderer.SiteRenderer;
 import org.codehaus.plexus.util.cli.CommandLineException;
@@ -51,8 +51,8 @@ public class ComponentReport extends AbstractMavenReport
      */
     private static final String REFERENCE_DIR = "ref";
 
-    private final static String[] PARAMETER_HEADERS = {"Name", "Type", "Flags", "Default", "Default Prefix",
-            "Description"};
+    private final static String[] PARAMETER_HEADERS = { "Name", "Type", "Flags", "Default", "Default Prefix",
+            "Description" };
 
 
     /**
@@ -526,7 +526,7 @@ public class ComponentReport extends AbstractMavenReport
 
         String parametersPath = workDirectory + File.separator + "component-parameters.xml";
 
-        String[] arguments = {"-private", "-o", parametersPath,
+        String[] arguments = { "-private", "-o", parametersPath,
 
                 "-subpackages", rootPackage,
 
@@ -536,7 +536,7 @@ public class ComponentReport extends AbstractMavenReport
 
                 "-sourcepath", sourcePath(),
 
-                "-classpath", classPath()};
+                "-classpath", classPath() };
 
         command.addArguments(arguments);
 

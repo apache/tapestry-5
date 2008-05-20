@@ -94,7 +94,7 @@ public class EditPerson
   onSuccess() has the @CommitAfter annotation.
 
   Behind the scenes, the @CommitAfter annotation causes the
-  {{{../apidocs/org/apache/tapestry/hibernate/HibernateSessionManager.html}HibernateSessionManager}}'s commit() method to be
+  {{{../apidocs/org/apache/tapestry5/hibernate/HibernateSessionManager.html}HibernateSessionManager}}'s commit() method to be
   executed before the method returns.
 
   The transaction will be committed when the method completes normally.
