@@ -19,6 +19,7 @@ import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.services.ThreadLocale;
 import org.apache.tapestry5.services.PersistentLocale;
+import org.apache.tapestry5.SymbolConstants;
 
 import java.util.Locale;
 import java.util.Map;
@@ -42,7 +43,7 @@ public class LocalizationSetterImpl implements LocalizationSetter
 
     public LocalizationSetterImpl(PersistentLocale persistentLocale, ThreadLocale threadLocale,
                                   @Inject
-                                  @Symbol("tapestry.supported-locales")
+                                  @Symbol(SymbolConstants.SUPPORTED_LOCALES)
                                   String acceptedLocaleNames)
     {
         this.persistentLocale = persistentLocale;

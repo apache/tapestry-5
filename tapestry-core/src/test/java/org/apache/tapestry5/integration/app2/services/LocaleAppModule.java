@@ -22,12 +22,13 @@ import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.services.ClassTransformation;
 import org.apache.tapestry5.services.ComponentClassTransformWorker;
 import org.apache.tapestry5.services.TransformMethodSignature;
+import org.apache.tapestry5.SymbolConstants;
 
 public class LocaleAppModule
 {
     public static void contributeApplicationDefaults(MappedConfiguration<String, String> configuration)
     {
-        configuration.add("tapestry.supported-locales", "en,fr,de");
+        configuration.add(SymbolConstants.SUPPORTED_LOCALES, "en,fr,de");
     }
 
     public static void contributeComponentClassTransformWorker(
