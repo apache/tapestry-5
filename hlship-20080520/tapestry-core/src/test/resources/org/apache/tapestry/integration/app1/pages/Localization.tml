@@ -1,0 +1,25 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+    <h1>Localization</h1>
+
+
+    <p>Demonstrates a few ways that component message catalogs can be accessed in code and in the
+        template.
+    </p>
+
+
+    <p>Via injected Messages property: [${injectedMessage}]</p>
+
+    <p>Via message: binding prefix: [${message:via-prefix}]</p>
+
+    <p>From Application Message Catalog: [${message:app-catalog-status}]</p>
+
+    <p>Page locale: [${locale}]</p>
+
+    <p>Request locale: [${request.locale}]</p>
+
+    <a t:type="ActionLink" t:id="french">French</a>
+
+    <a t:type="ActionLink" t:id="english">English</a>
+
+
+</html>

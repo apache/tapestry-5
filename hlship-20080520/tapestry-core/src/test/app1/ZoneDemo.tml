@@ -1,0 +1,38 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd" xml:space="default">
+    <h1>Zone/Ajax Demo</h1>
+
+
+    <t:zone t:id="output" style="float:right; width: 800px;" update="slidedown">
+        No name has been selected.
+
+        <t:block id="showName">
+            Selected: ${name}
+        </t:block>
+
+    </t:zone>
+
+    <t:block id="registrationForm">
+
+
+        <t:beaneditform t:id="form" object="registration" zone="output"/>
+
+        <t:actionlink t:id="clear" zone="output">clear</t:actionlink>
+
+    </t:block>
+
+    <t:block id="registrationOutput">
+        <t:beandisplay object="registration"/>
+    </t:block>
+
+
+    <ul>
+        <li t:type="loop" source="names" value="name">
+            <t:actionlink t:id="select" context="name" zone="output">Select "${name}"</t:actionlink>
+        </li>
+        <li>
+            <t:actionlink t:id="JSON" zone="output">Direct JSON response</t:actionlink>
+        </li>
+    </ul>
+
+
+</html>

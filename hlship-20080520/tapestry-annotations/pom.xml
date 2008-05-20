@@ -1,0 +1,58 @@
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.apache.tapestry</groupId>
+    <!-- We've been lucky on T4/T5 name mismatches elsewhere, but T4 has a tapestry-annotation artifact. -->
+    <artifactId>tapestry5-annotations</artifactId>
+    <packaging>jar</packaging>
+    <!-- This should change to tapestry-project -->
+    <parent>
+        <groupId>org.apache.tapestry</groupId>
+        <artifactId>tapestry-project</artifactId>
+        <version>5.0.12-SNAPSHOT</version>
+    </parent>
+    <name>Tapestry Annotations</name>
+    <description>
+        Annotations used with Tapestry applications.
+    </description>
+    <inceptionYear>2007</inceptionYear>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <version>5.7</version>
+            <classifier>jdk15</classifier>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-project-info-reports-plugin</artifactId>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>summary</report>
+                            <report>dependencies</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+        </plugins>
+    </reporting>
+</project>
