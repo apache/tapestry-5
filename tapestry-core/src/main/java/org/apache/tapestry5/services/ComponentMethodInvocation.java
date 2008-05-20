@@ -12,14 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.services;
+package org.apache.tapestry5.services;
 
-import org.apache.tapestry.ComponentResources;
-import org.apache.tapestry.ioc.Invocation;
+import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.ioc.Invocation;
 
 /**
  * Encapsulates the parameters, thrown exceptions, and result of a method invocation, allowing a {@link
- * org.apache.tapestry.services.ComponentMethodAdvice} to encapsulate the invocation.
+ * org.apache.tapestry5.services.ComponentMethodAdvice} to encapsulate the invocation.
  */
 public interface ComponentMethodInvocation extends Invocation
 {

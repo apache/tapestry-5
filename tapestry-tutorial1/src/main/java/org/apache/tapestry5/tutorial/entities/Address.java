@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.tutorial.entities;
+package org.apache.tapestry5.tutorial.entities;
 
-import org.apache.tapestry.beaneditor.NonVisual;
-import org.apache.tapestry.beaneditor.Validate;
-import org.apache.tapestry.tutorial.data.Honorific;
+import org.apache.tapestry5.beaneditor.NonVisual;
+import org.apache.tapestry5.beaneditor.Validate;
+import org.apache.tapestry5.tutorial.data.Honorific;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;

@@ -12,14 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry.ComponentResources;
-import org.apache.tapestry.ContentType;
-import org.apache.tapestry.MetaDataConstants;
-import org.apache.tapestry.internal.InternalConstants;
-import org.apache.tapestry.internal.structure.Page;
-import org.apache.tapestry.services.MetaDataLocator;
+import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.ContentType;
+import org.apache.tapestry5.MetaDataConstants;
+import org.apache.tapestry5.internal.InternalConstants;
+import org.apache.tapestry5.internal.structure.Page;
+import org.apache.tapestry5.services.MetaDataLocator;
 
 public class PageContentTypeAnalyzerImpl implements PageContentTypeAnalyzer
 {

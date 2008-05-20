@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.util;
+package org.apache.tapestry5.internal.util;
 
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
+import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newMap;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -84,7 +84,7 @@ public class Base64Tests extends Assert
     @Test
     public void checks_for_eof() throws Exception
     {
-        String[] values = {"fred", "barney", "wilma"};
+        String[] values = { "fred", "barney", "wilma" };
 
         Base64ObjectOutputStream os = new Base64ObjectOutputStream();
 

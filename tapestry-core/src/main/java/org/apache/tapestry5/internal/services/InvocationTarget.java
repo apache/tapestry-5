@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
 /**
- * It represents target for a {@link org.apache.tapestry.internal.services.ComponentInvocation}. For example, it may be
+ * It represents target for a {@link org.apache.tapestry5.internal.services.ComponentInvocation}. For example, it may be
  * a page or an action for a component within a page.
  */
 public interface InvocationTarget

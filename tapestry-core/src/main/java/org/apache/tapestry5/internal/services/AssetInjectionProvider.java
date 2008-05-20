@@ -12,16 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry.annotation.Path;
-import org.apache.tapestry.ioc.ObjectLocator;
-import org.apache.tapestry.ioc.Resource;
-import org.apache.tapestry.ioc.services.SymbolSource;
-import org.apache.tapestry.model.MutableComponentModel;
-import org.apache.tapestry.services.AssetSource;
-import org.apache.tapestry.services.ClassTransformation;
-import org.apache.tapestry.services.InjectionProvider;
+import org.apache.tapestry5.annotations.Path;
+import org.apache.tapestry5.ioc.ObjectLocator;
+import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.ioc.services.SymbolSource;
+import org.apache.tapestry5.model.MutableComponentModel;
+import org.apache.tapestry5.services.AssetSource;
+import org.apache.tapestry5.services.ClassTransformation;
+import org.apache.tapestry5.services.InjectionProvider;
 
 import static java.lang.String.format;
 

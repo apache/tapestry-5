@@ -12,14 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.services;
+package org.apache.tapestry5.services;
 
-import org.apache.tapestry.NullFieldStrategy;
+import org.apache.tapestry5.NullFieldStrategy;
 
 /**
- * A source for {@link org.apache.tapestry.NullFieldStrategy} instances based on a logical name.
+ * A source for {@link org.apache.tapestry5.NullFieldStrategy} instances based on a logical name.
  *
- * @see TapestryModule#contributeNullFieldStrategySource(org.apache.tapestry.ioc.MappedConfiguration)
+ * @see TapestryModule#contributeNullFieldStrategySource(org.apache.tapestry5.ioc.MappedConfiguration)
  */
 public interface NullFieldStrategySource
 {

@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.annotation;
+package org.apache.tapestry5.annotations;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -22,9 +22,9 @@ import java.lang.annotation.Target;
 
 /**
  * Marker annotation for methods that should be executed during the SetupRender phase. Such methods may optionally take
- * a {@link org.apache.tapestry.MarkupWriter} parameter, and may return void or boolean. Returning true or void will
- * advance to the {@link org.apache.tapestry.annotation.BeginRender} phase. Return false to skip the BeginRender phase
- * and procede directly to the {@link org.apache.tapestry.annotation.CleanupRender} phase.
+ * a {@link org.apache.tapestry5.MarkupWriter} parameter, and may return void or boolean. Returning true or void will
+ * advance to the {@link org.apache.tapestry5.annotations.BeginRender} phase. Return false to skip the BeginRender phase
+ * and procede directly to the {@link org.apache.tapestry5.annotations.CleanupRender} phase.
  */
 @Target(ElementType.METHOD)
 @Retention(RUNTIME)

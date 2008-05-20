@@ -12,18 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry.ComponentResources;
-import org.apache.tapestry.Link;
-import org.apache.tapestry.MetaDataConstants;
-import org.apache.tapestry.internal.structure.Page;
-import org.apache.tapestry.internal.test.InternalBaseTestCase;
-import org.apache.tapestry.runtime.Component;
-import org.apache.tapestry.services.BaseURLSource;
-import org.apache.tapestry.services.MetaDataLocator;
-import org.apache.tapestry.services.Request;
-import org.apache.tapestry.services.Response;
+import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.Link;
+import org.apache.tapestry5.MetaDataConstants;
+import org.apache.tapestry5.internal.structure.Page;
+import org.apache.tapestry5.internal.test.InternalBaseTestCase;
+import org.apache.tapestry5.runtime.Component;
+import org.apache.tapestry5.services.BaseURLSource;
+import org.apache.tapestry5.services.MetaDataLocator;
+import org.apache.tapestry5.services.Request;
+import org.apache.tapestry5.services.Response;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 

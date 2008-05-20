@@ -12,17 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.bindings;
+package org.apache.tapestry5.internal.bindings;
 
-import org.apache.tapestry.Asset;
-import org.apache.tapestry.Binding;
-import org.apache.tapestry.ComponentResources;
-import org.apache.tapestry.SymbolConstants;
-import org.apache.tapestry.ioc.Location;
-import org.apache.tapestry.ioc.Resource;
-import org.apache.tapestry.ioc.annotation.Symbol;
-import org.apache.tapestry.services.AssetSource;
-import org.apache.tapestry.services.BindingFactory;
+import org.apache.tapestry5.Asset;
+import org.apache.tapestry5.Binding;
+import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.SymbolConstants;
+import org.apache.tapestry5.ioc.Location;
+import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.ioc.annotations.Symbol;
+import org.apache.tapestry5.services.AssetSource;
+import org.apache.tapestry5.services.BindingFactory;
 
 /**
  * Binding factory where the expression is a reference to an asset.
@@ -58,7 +58,7 @@ public class AssetBindingFactory implements BindingFactory
          * Asset bindings are invariant only if full URIs are being used.  This is complicated ... basically, if the
          * Asset is invariant, then any value coerced from the Asset is also invariant (such as a String version of an
          * Asset's path).  Thus, the invariant String gets cached inside component parameter fields.  However, when the
-         * path is dynamic (i.e., because of {@link org.apache.tapestry.internal.services.RequestPathOptimizer}), we
+         * path is dynamic (i.e., because of {@link org.apache.tapestry5.internal.services.RequestPathOptimizer}), we
          * need to ensure that the Assets aren't cached.
          *
          * @return true if full URIs are enabled, false otherwise

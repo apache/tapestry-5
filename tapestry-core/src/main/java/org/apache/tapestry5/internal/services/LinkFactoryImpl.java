@@ -12,23 +12,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry.ComponentEventCallback;
-import org.apache.tapestry.EventConstants;
-import org.apache.tapestry.Link;
-import org.apache.tapestry.internal.InternalConstants;
-import org.apache.tapestry.internal.TapestryInternalUtils;
-import org.apache.tapestry.internal.structure.ComponentPageElement;
-import org.apache.tapestry.internal.structure.Page;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.*;
-import static org.apache.tapestry.ioc.internal.util.Defense.notBlank;
-import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
-import org.apache.tapestry.ioc.internal.util.InternalUtils;
-import org.apache.tapestry.ioc.util.StrategyRegistry;
-import org.apache.tapestry.services.ContextValueEncoder;
-import org.apache.tapestry.services.Request;
-import org.apache.tapestry.services.Response;
+import org.apache.tapestry5.ComponentEventCallback;
+import org.apache.tapestry5.EventConstants;
+import org.apache.tapestry5.Link;
+import org.apache.tapestry5.internal.InternalConstants;
+import org.apache.tapestry5.internal.TapestryInternalUtils;
+import org.apache.tapestry5.internal.structure.ComponentPageElement;
+import org.apache.tapestry5.internal.structure.Page;
+import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.*;
+import static org.apache.tapestry5.ioc.internal.util.Defense.notBlank;
+import static org.apache.tapestry5.ioc.internal.util.Defense.notNull;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.ioc.util.StrategyRegistry;
+import org.apache.tapestry5.services.ContextValueEncoder;
+import org.apache.tapestry5.services.Request;
+import org.apache.tapestry5.services.Response;
 
 import java.util.Arrays;
 import java.util.Collection;

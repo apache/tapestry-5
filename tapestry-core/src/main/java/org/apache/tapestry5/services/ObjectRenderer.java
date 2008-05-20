@@ -12,13 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.services;
+package org.apache.tapestry5.services;
 
-import org.apache.tapestry.MarkupWriter;
+import org.apache.tapestry5.MarkupWriter;
 
 /**
  * A strategy interface used for converting an object into markup that describes that object. This is primarily used in
- * terms of an {@link org.apache.tapestry.services.ExceptionReporter} page.
+ * terms of an {@link org.apache.tapestry5.services.ExceptionReporter} page.
  */
 public interface ObjectRenderer<T>
 {

@@ -12,16 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal;
+package org.apache.tapestry5.internal;
 
-import org.apache.tapestry.ComponentResources;
-import org.apache.tapestry.internal.services.PersistentFieldManager;
-import org.apache.tapestry.internal.structure.Page;
-import org.apache.tapestry.runtime.RenderQueue;
+import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.internal.services.PersistentFieldManager;
+import org.apache.tapestry5.internal.structure.Page;
+import org.apache.tapestry5.runtime.RenderQueue;
 
 /**
- * An extension of {@link org.apache.tapestry.ComponentResources} that represents additional methods that are private to
- * the framework and not exposed in any public APIs.
+ * An extension of {@link org.apache.tapestry5.ComponentResources} that represents additional methods that are private
+ * to the framework and not exposed in any public APIs.
  */
 public interface InternalComponentResources extends ComponentResources, InternalComponentResourcesCommon
 {
@@ -40,13 +40,13 @@ public interface InternalComponentResources extends ComponentResources, Internal
 
     /**
      * Posts a change to a persistent field. If the component is still loading, then this change is ignored. Otherwise,
-     * it is propagated, via the {@link Page#persistFieldChange(org.apache.tapestry.ComponentResources, String, Object)
+     * it is propagated, via the {@link Page#persistFieldChange(org.apache.tapestry5.ComponentResources, String, Object)
      * page} to the {@link PersistentFieldManager}.
      */
     void persistFieldChange(String fieldName, Object newValue);
 
     /**
-     * Reads the value of a parameter, via the parameter's {@link org.apache.tapestry.Binding}.
+     * Reads the value of a parameter, via the parameter's {@link org.apache.tapestry5.Binding}.
      *
      * @param <T>
      * @param parameterName the name of the parameter to read
@@ -67,7 +67,7 @@ public interface InternalComponentResources extends ComponentResources, Internal
 
     /**
      * Updates a parameter. It is an error to update a parameter which is not bound. The parameter {@link
-     * org.apache.tapestry.Binding binding} may also not support updates.
+     * org.apache.tapestry5.Binding binding} may also not support updates.
      *
      * @param <T>
      * @param parameterName  of parameter to update
@@ -76,8 +76,8 @@ public interface InternalComponentResources extends ComponentResources, Internal
     <T> void writeParameter(String parameterName, T parameterValue);
 
     /**
-     * Returns true if the named parameter's {@link org.apache.tapestry.Binding} is invariant, false if otherwise, or if
-     * the parameter is not bound. Invariant bindings are cached more aggressively than variant bindings.
+     * Returns true if the named parameter's {@link org.apache.tapestry5.Binding} is invariant, false if otherwise, or
+     * if the parameter is not bound. Invariant bindings are cached more aggressively than variant bindings.
      *
      * @param parameterName the name of parameter to check for invariance
      * @return true if the binding is an invariant, false if the binding has no fixed value

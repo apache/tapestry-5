@@ -12,17 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry.*;
-import org.apache.tapestry.corelib.internal.InternalMessages;
-import org.apache.tapestry.internal.util.Holder;
-import org.apache.tapestry.ioc.Messages;
-import org.apache.tapestry.ioc.internal.util.Defense;
-import org.apache.tapestry.ioc.internal.util.InternalUtils;
-import org.apache.tapestry.ioc.services.TypeCoercer;
-import org.apache.tapestry.ioc.util.ExceptionUtils;
-import org.apache.tapestry.services.ValidationMessagesSource;
+import org.apache.tapestry5.*;
+import org.apache.tapestry5.corelib.internal.InternalMessages;
+import org.apache.tapestry5.internal.util.Holder;
+import org.apache.tapestry5.ioc.Messages;
+import org.apache.tapestry5.ioc.internal.util.Defense;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.ioc.services.TypeCoercer;
+import org.apache.tapestry5.ioc.util.ExceptionUtils;
+import org.apache.tapestry5.services.ValidationMessagesSource;
 
 public class FieldValidationSupportImpl implements FieldValidationSupport
 {
@@ -137,7 +137,7 @@ public class FieldValidationSupportImpl implements FieldValidationSupport
     }
 
     /**
-     * Checks for a {@link org.apache.tapestry.ValidationException} inside the outer exception and throws that,
+     * Checks for a {@link org.apache.tapestry5.ValidationException} inside the outer exception and throws that,
      * otherwise rethrows the runtime exception.
      *
      * @param outerException initially caught exception

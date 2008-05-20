@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.internal;
+package org.apache.tapestry5.ioc.internal;
 
 /**
  * Defines the three types of configurations a service may request.
@@ -21,15 +21,15 @@ public enum ConfigurationType
 {
 
     /**
-     * @see org.apache.tapestry.ioc.Configuration
+     * @see org.apache.tapestry5.ioc.Configuration
      */
     UNORDERED,
     /**
-     * @see org.apache.tapestry.ioc.OrderedConfiguration
+     * @see org.apache.tapestry5.ioc.OrderedConfiguration
      */
     ORDERED,
     /**
-     * @see org.apache.tapestry.ioc.MappedConfiguration
+     * @see org.apache.tapestry5.ioc.MappedConfiguration
      */
     MAPPED
 }

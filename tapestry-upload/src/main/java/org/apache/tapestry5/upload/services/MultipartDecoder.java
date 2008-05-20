@@ -12,13 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.upload.services;
+package org.apache.tapestry5.upload.services;
 
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * Responsible for detecting and processing file upload requests, using Jakarta Commons FileUpload.
- * Implementations of this service typically use the threaded service lifecycle model.
+ * Responsible for detecting and processing file upload requests, using Jakarta Commons FileUpload. Implementations of
+ * this service typically use the threaded service lifecycle model.
  */
 public interface MultipartDecoder
 {
@@ -30,9 +30,8 @@ public interface MultipartDecoder
     UploadedFile getFileUpload(String parameterName);
 
     /**
-     * Decodes the request, returning a new {@link javax.servlet.http.HttpServletRequest}
-     * implementation that will allow access to the form fields submitted in the request (but omits
-     * uploaded files).
+     * Decodes the request, returning a new {@link javax.servlet.http.HttpServletRequest} implementation that will allow
+     * access to the form fields submitted in the request (but omits uploaded files).
      *
      * @param request The incoming servlet request
      * @return decoded http request

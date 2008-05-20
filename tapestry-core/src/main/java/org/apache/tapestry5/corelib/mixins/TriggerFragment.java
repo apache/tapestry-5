@@ -12,22 +12,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.corelib.mixins;
+package org.apache.tapestry5.corelib.mixins;
 
-import org.apache.tapestry.BindingConstants;
-import org.apache.tapestry.ClientElement;
-import org.apache.tapestry.Field;
-import org.apache.tapestry.RenderSupport;
-import org.apache.tapestry.annotation.Environmental;
-import org.apache.tapestry.annotation.InjectContainer;
-import org.apache.tapestry.annotation.Parameter;
-import org.apache.tapestry.services.Heartbeat;
+import org.apache.tapestry5.BindingConstants;
+import org.apache.tapestry5.ClientElement;
+import org.apache.tapestry5.Field;
+import org.apache.tapestry5.RenderSupport;
+import org.apache.tapestry5.annotations.Environmental;
+import org.apache.tapestry5.annotations.InjectContainer;
+import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.json.JSONArray;
+import org.apache.tapestry5.services.Heartbeat;
 
 /**
- * A mixin that can be applied to a {@link org.apache.tapestry.corelib.components.Checkbox} or {@link
- * org.apache.tapestry.corelib.components.Radio} component that will link the input field and a {@link
- * org.apache.tapestry.corelib.components.FormFragment}, making the field control the client-side visibility of the
+ * A mixin that can be applied to a {@link org.apache.tapestry5.corelib.components.Checkbox} or {@link
+ * org.apache.tapestry5.corelib.components.Radio} component that will link the input field and a {@link
+ * org.apache.tapestry5.corelib.components.FormFragment}, making the field control the client-side visibility of the
  * FormFragment.
  */
 public class TriggerFragment
@@ -36,7 +36,7 @@ public class TriggerFragment
     private Field container;
 
     /**
-     * The {@link org.apache.tapestry.corelib.components.FormFragment} instance to make dynamically visible or hidden.
+     * The {@link org.apache.tapestry5.corelib.components.FormFragment} instance to make dynamically visible or hidden.
      */
     @Parameter(required = true, defaultPrefix = BindingConstants.COMPONENT)
     private ClientElement fragment;

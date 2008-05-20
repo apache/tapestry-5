@@ -12,24 +12,24 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.corelib.components;
+package org.apache.tapestry5.corelib.components;
 
-import org.apache.tapestry.*;
-import org.apache.tapestry.annotation.*;
-import org.apache.tapestry.beaneditor.BeanModel;
-import org.apache.tapestry.beaneditor.PropertyModel;
-import org.apache.tapestry.corelib.data.GridPagerPosition;
-import org.apache.tapestry.grid.*;
-import org.apache.tapestry.internal.TapestryInternalUtils;
-import org.apache.tapestry.internal.beaneditor.BeanModelUtils;
-import org.apache.tapestry.internal.bindings.AbstractBinding;
-import org.apache.tapestry.internal.services.ClientBehaviorSupport;
-import org.apache.tapestry.ioc.annotation.Inject;
-import org.apache.tapestry.ioc.internal.util.Defense;
-import org.apache.tapestry.services.BeanModelSource;
-import org.apache.tapestry.services.ComponentEventResultProcessor;
-import org.apache.tapestry.services.FormSupport;
-import org.apache.tapestry.services.Request;
+import org.apache.tapestry5.*;
+import org.apache.tapestry5.annotations.*;
+import org.apache.tapestry5.beaneditor.BeanModel;
+import org.apache.tapestry5.beaneditor.PropertyModel;
+import org.apache.tapestry5.corelib.data.GridPagerPosition;
+import org.apache.tapestry5.grid.*;
+import org.apache.tapestry5.internal.TapestryInternalUtils;
+import org.apache.tapestry5.internal.beaneditor.BeanModelUtils;
+import org.apache.tapestry5.internal.bindings.AbstractBinding;
+import org.apache.tapestry5.internal.services.ClientBehaviorSupport;
+import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.internal.util.Defense;
+import org.apache.tapestry5.services.BeanModelSource;
+import org.apache.tapestry5.services.ComponentEventResultProcessor;
+import org.apache.tapestry5.services.FormSupport;
+import org.apache.tapestry5.services.Request;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -39,15 +39,15 @@ import java.util.List;
  * A grid presents tabular data. It is a composite component, created in terms of several sub-components. The
  * sub-components are statically wired to the Grid, as it provides access to the data and other models that they need.
  * <p/>
- * A Grid may operate inside a {@link org.apache.tapestry.corelib.components.Form}. By overriding the cell renderers of
+ * A Grid may operate inside a {@link org.apache.tapestry5.corelib.components.Form}. By overriding the cell renderers of
  * properties, the default output-only behavior can be changed to produce a complex form with individual control for
  * editing properties of each row. This is currently workable but less than ideal -- if the order of rows provided by
  * the {@link GridDataSource} changes between render and form submission, then there's the possibility that data will be
  * applied to the wrong server-side objects.
  *
- * @see org.apache.tapestry.beaneditor.BeanModel
- * @see org.apache.tapestry.services.BeanModelSource
- * @see org.apache.tapestry.grid.GridDataSource
+ * @see org.apache.tapestry5.beaneditor.BeanModel
+ * @see org.apache.tapestry5.services.BeanModelSource
+ * @see org.apache.tapestry5.grid.GridDataSource
  */
 @SupportsInformalParameters
 public class Grid implements GridModel
@@ -107,14 +107,14 @@ public class Grid implements GridModel
     private GridSortModel sortModel;
 
     /**
-     * A comma-seperated list of property names to be added to the {@link org.apache.tapestry.beaneditor.BeanModel}.
+     * A comma-seperated list of property names to be added to the {@link org.apache.tapestry5.beaneditor.BeanModel}.
      * Cells for added columns will be blank unless a cell override is provided.
      */
     @Parameter(defaultPrefix = BindingConstants.LITERAL)
     private String add;
 
     /**
-     * A comma-separated list of property names to be retained from the {@link org.apache.tapestry.beaneditor.BeanModel}.
+     * A comma-separated list of property names to be retained from the {@link org.apache.tapestry5.beaneditor.BeanModel}.
      * Only these properties will be retained, and the properties will also be reordered. The names are
      * case-insensitive.
      */
@@ -123,7 +123,7 @@ public class Grid implements GridModel
     private String include;
 
     /**
-     * A comma-separated list of property names to be removed from the {@link org.apache.tapestry.beaneditor.BeanModel}.
+     * A comma-separated list of property names to be removed from the {@link org.apache.tapestry5.beaneditor.BeanModel}.
      * The names are case-insensitive.
      */
     @Parameter(defaultPrefix = BindingConstants.LITERAL)
@@ -181,7 +181,7 @@ public class Grid implements GridModel
 
     /**
      * If true, then the Grid will be wrapped in an element that acts like a {@link
-     * org.apache.tapestry.corelib.components.Zone}; all the paging and sorting links will
+     * org.apache.tapestry5.corelib.components.Zone}; all the paging and sorting links will
      */
     @Parameter
     private boolean inPlace;
@@ -508,7 +508,7 @@ public class Grid implements GridModel
 
     /**
      * Resets the Grid to inital settings; this sets the current page to one, and {@linkplain
-     * org.apache.tapestry.grid.GridSortModel#clear() clears the sort model}.
+     * org.apache.tapestry5.grid.GridSortModel#clear() clears the sort model}.
      */
     public void reset()
     {
@@ -519,7 +519,7 @@ public class Grid implements GridModel
     /**
      * Event handler for inplaceupdate event triggered from nested components when an Ajax update occurs. The event
      * context will carry the zone, which is recorded here, to allow the Grid and its sub-components to properly
-     * re-render themselves.  Invokes {@link org.apache.tapestry.services.ComponentEventResultProcessor#processResultValue(Object)}
+     * re-render themselves.  Invokes {@link org.apache.tapestry5.services.ComponentEventResultProcessor#processResultValue(Object)}
      * passing this (the Grid component) as the content provider for the update.
      */
     void onInPlaceUpdate(String zone) throws IOException

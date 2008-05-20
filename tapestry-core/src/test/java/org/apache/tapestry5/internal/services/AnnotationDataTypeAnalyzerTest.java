@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry.beaneditor.DataType;
-import org.apache.tapestry.ioc.services.PropertyAdapter;
-import org.apache.tapestry.services.DataTypeAnalyzer;
-import org.apache.tapestry.test.TapestryTestCase;
+import org.apache.tapestry5.beaneditor.DataType;
+import org.apache.tapestry5.ioc.services.PropertyAdapter;
+import org.apache.tapestry5.services.DataTypeAnalyzer;
+import org.apache.tapestry5.test.TapestryTestCase;
 import org.testng.annotations.Test;
 
 public class AnnotationDataTypeAnalyzerTest extends TapestryTestCase

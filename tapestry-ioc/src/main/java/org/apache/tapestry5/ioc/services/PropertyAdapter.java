@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.services;
+package org.apache.tapestry5.ioc.services;
 
-import org.apache.tapestry.ioc.AnnotationProvider;
+import org.apache.tapestry5.ioc.AnnotationProvider;
 
 import java.lang.reflect.Method;
 
@@ -22,7 +22,7 @@ import java.lang.reflect.Method;
  * Provides access to a single property within a class. Acts as an {@link AnnotationProvider}; when searching for
  * annotations, the read method (if present) is checked first, followed by the write method.
  *
- * @see org.apache.tapestry.ioc.services.ClassPropertyAdapter
+ * @see org.apache.tapestry5.ioc.services.ClassPropertyAdapter
  */
 public interface PropertyAdapter extends AnnotationProvider
 {

@@ -1,4 +1,4 @@
-package org.apache.tapestry;
+package org.apache.tapestry5;
 
 /**
  * Constants used when rendering a CSS class attribute.

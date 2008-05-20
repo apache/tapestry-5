@@ -12,16 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.corelib.internal;
+package org.apache.tapestry5.corelib.internal;
 
-import org.apache.tapestry.ComponentAction;
-import org.apache.tapestry.Field;
-import org.apache.tapestry.internal.services.ClientBehaviorSupport;
-import org.apache.tapestry.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry.ioc.internal.util.Defense;
-import org.apache.tapestry.ioc.internal.util.IdAllocator;
-import org.apache.tapestry.runtime.Component;
-import org.apache.tapestry.services.FormSupport;
+import org.apache.tapestry5.ComponentAction;
+import org.apache.tapestry5.Field;
+import org.apache.tapestry5.internal.services.ClientBehaviorSupport;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.internal.util.Defense;
+import org.apache.tapestry5.ioc.internal.util.IdAllocator;
+import org.apache.tapestry5.runtime.Component;
+import org.apache.tapestry5.services.FormSupport;
 
 import java.io.IOException;
 import java.io.ObjectOutputStream;

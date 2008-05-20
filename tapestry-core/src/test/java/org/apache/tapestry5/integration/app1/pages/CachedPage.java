@@ -1,6 +1,6 @@
-package org.apache.tapestry.integration.app1.pages;
+package org.apache.tapestry5.integration.app1.pages;
 
-import org.apache.tapestry.annotation.Cached;
+import org.apache.tapestry5.annotations.Cached;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry.ioc.internal.util.InternalUtils;
-import org.apache.tapestry.services.Request;
-import org.apache.tapestry.services.Session;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.services.Request;
+import org.apache.tapestry5.services.Session;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Locale;
 
 /**
- * Basic implementation of {@link org.apache.tapestry.services.Request} that wraps around an {@link
+ * Basic implementation of {@link org.apache.tapestry5.services.Request} that wraps around an {@link
  * javax.servlet.http.HttpServletRequest}.
  */
 public class RequestImpl implements Request

@@ -14,9 +14,9 @@
 
 package org.example.testapp.pages;
 
-import org.apache.tapestry.annotation.Retain;
-import org.apache.tapestry.ioc.annotation.Inject;
-import org.apache.tapestry.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.annotations.Retain;
+import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.example.testapp.services.Upcase;
 import org.springframework.web.context.WebApplicationContext;
 

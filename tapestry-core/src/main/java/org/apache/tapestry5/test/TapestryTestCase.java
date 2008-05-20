@@ -12,29 +12,29 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.test;
+package org.apache.tapestry5.test;
 
-import org.apache.tapestry.*;
-import org.apache.tapestry.annotation.Id;
-import org.apache.tapestry.annotation.Parameter;
-import org.apache.tapestry.annotation.Path;
-import org.apache.tapestry.beaneditor.BeanModel;
-import org.apache.tapestry.beaneditor.PropertyModel;
-import org.apache.tapestry.internal.services.MapMessages;
-import org.apache.tapestry.internal.services.MarkupWriterImpl;
-import static org.apache.tapestry.internal.test.CodeEq.codeEq;
-import org.apache.tapestry.ioc.*;
-import org.apache.tapestry.ioc.annotation.Inject;
-import org.apache.tapestry.ioc.internal.util.CollectionFactory;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
-import org.apache.tapestry.ioc.internal.util.InternalUtils;
-import org.apache.tapestry.ioc.test.IOCTestCase;
-import org.apache.tapestry.model.ComponentModel;
-import org.apache.tapestry.model.EmbeddedComponentModel;
-import org.apache.tapestry.model.MutableComponentModel;
-import org.apache.tapestry.model.ParameterModel;
-import org.apache.tapestry.runtime.Component;
-import org.apache.tapestry.services.*;
+import org.apache.tapestry5.*;
+import org.apache.tapestry5.annotations.Id;
+import org.apache.tapestry5.annotations.Parameter;
+import org.apache.tapestry5.annotations.Path;
+import org.apache.tapestry5.beaneditor.BeanModel;
+import org.apache.tapestry5.beaneditor.PropertyModel;
+import org.apache.tapestry5.internal.services.MapMessages;
+import org.apache.tapestry5.internal.services.MarkupWriterImpl;
+import static org.apache.tapestry5.internal.test.CodeEq.codeEq;
+import org.apache.tapestry5.ioc.*;
+import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newList;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.ioc.test.IOCTestCase;
+import org.apache.tapestry5.model.ComponentModel;
+import org.apache.tapestry5.model.EmbeddedComponentModel;
+import org.apache.tapestry5.model.MutableComponentModel;
+import org.apache.tapestry5.model.ParameterModel;
+import org.apache.tapestry5.runtime.Component;
+import org.apache.tapestry5.services.*;
 import org.easymock.EasyMock;
 import static org.easymock.EasyMock.eq;
 import org.easymock.IAnswer;

@@ -12,13 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.transform;
+package org.apache.tapestry5.internal.transform;
 
-import org.apache.tapestry.model.MutableComponentModel;
-import org.apache.tapestry.services.ClassTransformation;
-import org.apache.tapestry.services.ComponentClassTransformWorker;
-import static org.apache.tapestry.services.TransformConstants.CONTAINING_PAGE_DID_DETACH_SIGNATURE;
-import static org.apache.tapestry.services.TransformConstants.CONTAINING_PAGE_DID_LOAD_SIGNATURE;
+import org.apache.tapestry5.model.MutableComponentModel;
+import org.apache.tapestry5.services.ClassTransformation;
+import org.apache.tapestry5.services.ComponentClassTransformWorker;
+import static org.apache.tapestry5.services.TransformConstants.CONTAINING_PAGE_DID_DETACH_SIGNATURE;
+import static org.apache.tapestry5.services.TransformConstants.CONTAINING_PAGE_DID_LOAD_SIGNATURE;
 
 import java.lang.reflect.Modifier;
 import java.util.List;
@@ -26,7 +26,7 @@ import java.util.List;
 /**
  * Designed to be just about the last worker in the pipeline. Its job is to add cleanup code that restores transient
  * fields back to their initial (null) value. Fields that have been previously {@link
- * org.apache.tapestry.services.ClassTransformation#claimField(String, Object) claimed} are ignored, as are fields that
+ * org.apache.tapestry5.services.ClassTransformation#claimField(String, Object) claimed} are ignored, as are fields that
  * are final.
  */
 public final class UnclaimedFieldWorker implements ComponentClassTransformWorker

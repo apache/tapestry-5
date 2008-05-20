@@ -12,13 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.internal.services;
+package org.apache.tapestry5.ioc.internal.services;
 
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newCaseInsensitiveMap;
-import org.apache.tapestry.ioc.internal.util.GenericsUtils;
-import org.apache.tapestry.ioc.internal.util.InternalUtils;
-import org.apache.tapestry.ioc.services.ClassPropertyAdapter;
-import org.apache.tapestry.ioc.services.PropertyAdapter;
+import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newCaseInsensitiveMap;
+import org.apache.tapestry5.ioc.internal.util.GenericsUtils;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.ioc.services.ClassPropertyAdapter;
+import org.apache.tapestry5.ioc.services.PropertyAdapter;
 
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Method;

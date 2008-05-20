@@ -12,17 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.runtime;
+package org.apache.tapestry5.runtime;
 
-import org.apache.tapestry.ComponentResourcesCommon;
-import org.apache.tapestry.EventContext;
+import org.apache.tapestry5.ComponentResourcesCommon;
+import org.apache.tapestry5.EventContext;
 
 /**
  * An event that may originate in application logic, or as a result of a client interaction (a GET or POST from the
  * client).
  *
- * @see ComponentResourcesCommon#triggerEvent(String, Object[], org.apache.tapestry.ComponentEventCallback)
- * @see org.apache.tapestry.ComponentEventCallback
+ * @see ComponentResourcesCommon#triggerEvent(String, Object[], org.apache.tapestry5.ComponentEventCallback)
+ * @see org.apache.tapestry5.ComponentEventCallback
  */
 public interface ComponentEvent extends Event
 {
@@ -47,7 +47,7 @@ public interface ComponentEvent extends Event
     Object coerceContext(int index, String desiredTypeName);
 
     /**
-     * Returns the underlying {@link org.apache.tapestry.EventContext} as a (possibly empty) array.
+     * Returns the underlying {@link org.apache.tapestry5.EventContext} as a (possibly empty) array.
      */
     Object[] getContext();
 

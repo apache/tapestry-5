@@ -12,15 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.grid;
+package org.apache.tapestry5.internal.grid;
 
-import org.apache.tapestry.grid.GridDataSource;
-import org.apache.tapestry.grid.SortConstraint;
+import org.apache.tapestry5.grid.GridDataSource;
+import org.apache.tapestry5.grid.SortConstraint;
 
 import java.util.List;
 
 /**
- * An implementation of {@link org.apache.tapestry.grid.GridDataSource} used when the value null is provided as the
+ * An implementation of {@link org.apache.tapestry5.grid.GridDataSource} used when the value null is provided as the
  * source.
  */
 public class NullDataSource implements GridDataSource

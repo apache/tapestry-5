@@ -12,13 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.hibernate;
+package org.apache.tapestry5.hibernate;
 
 import java.util.Collection;
 
-/** Contains a set of contributed package names from which to load entities.
+/**
+ * Contains a set of contributed package names from which to load entities.
  */
-public interface HibernateEntityPackageManager {
-	/** Returns packages from which read entity classes */ 
-	Collection<String> getPackageNames();
+public interface HibernateEntityPackageManager
+{
+    /**
+     * Returns packages from which read entity classes
+     */
+    Collection<String> getPackageNames();
 }

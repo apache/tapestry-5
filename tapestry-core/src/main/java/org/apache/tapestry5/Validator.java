@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry;
+package org.apache.tapestry5;
 
-import org.apache.tapestry.ioc.MessageFormatter;
-import org.apache.tapestry.services.FormSupport;
-import org.apache.tapestry.services.ValidationMessagesSource;
+import org.apache.tapestry5.ioc.MessageFormatter;
+import org.apache.tapestry5.services.FormSupport;
+import org.apache.tapestry5.services.ValidationMessagesSource;
 
 /**
  * Used by a {@link Field} to enforce a <strong>constraint</strong> related to a form submission. Validators themselves
@@ -25,7 +25,7 @@ import org.apache.tapestry.services.ValidationMessagesSource;
  * Validators are usually encapsulated inside a {@link FieldValidator}.
  *
  * @see FieldValidationSupport
- * @see org.apache.tapestry.services.FieldValidatorDefaultSource
+ * @see org.apache.tapestry5.services.FieldValidatorDefaultSource
  */
 public interface Validator<C, T>
 {
@@ -53,7 +53,7 @@ public interface Validator<C, T>
     String getMessageKey();
 
     /**
-     * Invoked after the client-submitted value has been {@link org.apache.tapestry.Translator translated} to check that
+     * Invoked after the client-submitted value has been {@link org.apache.tapestry5.Translator translated} to check that
      * the value conforms to expectations (often, in terms of minimum or maximum value). If and only if the value is
      * approved by all Validators is the value applied by the field.
      *
@@ -68,7 +68,7 @@ public interface Validator<C, T>
     /**
      * Returns true if the validator should be invoked for null or blank (empty string) values. This is generally false,
      * but is true for validators that enforce that a non-blank value is required.  This is the basis of the {@link
-     * org.apache.tapestry.Field#isRequired()} property.
+     * org.apache.tapestry5.Field#isRequired()} property.
      */
     boolean isRequired();
 

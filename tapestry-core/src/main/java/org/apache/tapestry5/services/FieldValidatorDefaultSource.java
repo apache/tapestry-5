@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.services;
+package org.apache.tapestry5.services;
 
-import org.apache.tapestry.Field;
-import org.apache.tapestry.FieldValidator;
-import org.apache.tapestry.ioc.AnnotationProvider;
-import org.apache.tapestry.ioc.Messages;
+import org.apache.tapestry5.Field;
+import org.apache.tapestry5.FieldValidator;
+import org.apache.tapestry5.ioc.AnnotationProvider;
+import org.apache.tapestry5.ioc.Messages;
 
 import java.util.Locale;
 
@@ -29,7 +29,7 @@ public interface FieldValidatorDefaultSource
 {
     /**
      * Analyzes the property type and property annotations to determine the default set of validations for the property,
-     * which are wrapped to form a {@link org.apache.tapestry.FieldValidator} for a field.
+     * which are wrapped to form a {@link org.apache.tapestry5.FieldValidator} for a field.
      *
      * @param field               Field component for which a validator is being created
      * @param overrideId          the id of the component, used to locate related messages for labels and errors

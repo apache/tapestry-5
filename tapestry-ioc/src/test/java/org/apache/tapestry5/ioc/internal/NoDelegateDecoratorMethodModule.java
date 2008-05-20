@@ -12,16 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.internal;
+package org.apache.tapestry5.ioc.internal;
 
 /**
- * Used by {@link org.apache.tapestry.ioc.internal.DefaultModuleDefImplTest}.
+ * Used by {@link org.apache.tapestry5.ioc.internal.DefaultModuleDefImplTest}.
  */
 public class NoDelegateDecoratorMethodModule
 {
     /**
-     * Decorator methods need to define a parameter of type Object which is the delegate object.
-     * Typically, it is a parameterized type, but it has to be there.
+     * Decorator methods need to define a parameter of type Object which is the delegate object. Typically, it is a
+     * parameterized type, but it has to be there.
      */
     public Object decorateNoDelegate()
     {

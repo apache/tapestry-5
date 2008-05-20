@@ -12,25 +12,31 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.hibernate;
+package org.apache.tapestry5.internal.hibernate;
 
-import org.apache.tapestry.test.TapestryTestCase;
+import org.apache.tapestry5.test.TapestryTestCase;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.testng.annotations.Test;
 
 @Test
-public class EntityPersistentFieldStrategyTest extends TapestryTestCase {
-	public void not_an_entity() {
-		Session session = newMock(Session.class);
-		EntityPersistentFieldStrategy strategy = new EntityPersistentFieldStrategy(session, null, null);
-		
-		expect(session.getEntityName("foo")).andThrow(new HibernateException("error"));
-		replay();
-		try {
-			strategy.postChange(null, null, null, "foo");
-			fail("did not throw");
-		} catch (IllegalArgumentException e) { }
-		verify();		
-	}
+public class EntityPersistentFieldStrategyTest extends TapestryTestCase
+{
+    public void not_an_entity()
+    {
+        Session session = newMock(Session.class);
+        EntityPersistentFieldStrategy strategy = new EntityPersistentFieldStrategy(session, null, null);
+
+        expect(session.getEntityName("foo")).andThrow(new HibernateException("error"));
+        replay();
+        try
+        {
+            strategy.postChange(null, null, null, "foo");
+            fail("did not throw");
+        }
+        catch (IllegalArgumentException e)
+        {
+        }
+        verify();
+    }
 }

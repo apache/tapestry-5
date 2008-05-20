@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.services;
+package org.apache.tapestry5.services;
 
-import org.apache.tapestry.Asset;
-import org.apache.tapestry.ioc.Resource;
-import org.apache.tapestry.ioc.services.ThreadLocale;
+import org.apache.tapestry5.Asset;
+import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.ioc.services.ThreadLocale;
 
 import java.util.Locale;
 
@@ -27,7 +27,7 @@ import java.util.Locale;
  * (for files inside the web application context) and "classpath:" for files stored on the classpath (typically, inside
  * a JAR, such as a component library).
  *
- * @see org.apache.tapestry.services.TapestryModule#contributeAssetSource(org.apache.tapestry.ioc.MappedConfiguration,
+ * @see org.apache.tapestry5.services.TapestryModule#contributeAssetSource(org.apache.tapestry5.ioc.MappedConfiguration,
  *      AssetFactory, AssetFactory)
  */
 public interface AssetSource

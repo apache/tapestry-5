@@ -1,9 +1,9 @@
-package org.apache.tapestry;
+package org.apache.tapestry5;
 
 /**
  * Constants for persistent field strategies.
  *
- * @see org.apache.tapestry.annotation.Persist#value()
+ * @see org.apache.tapestry5.annotations.Persist#value()
  */
 public class PersistenceConstants
 {

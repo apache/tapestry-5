@@ -12,17 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.corelib.components;
+package org.apache.tapestry5.corelib.components;
 
-import org.apache.tapestry.MarkupWriter;
-import org.apache.tapestry.annotation.Mixin;
-import org.apache.tapestry.annotation.Parameter;
-import org.apache.tapestry.corelib.mixins.DiscardBody;
+import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.annotations.Mixin;
+import org.apache.tapestry5.annotations.Parameter;
+import org.apache.tapestry5.corelib.mixins.DiscardBody;
 
 import java.util.regex.Pattern;
 
 /**
- * Outputs paragraph oriented text, typically collected via a {@link org.apache.tapestry.corelib.components.TextArea}
+ * Outputs paragraph oriented text, typically collected via a {@link org.apache.tapestry5.corelib.components.TextArea}
  * component.  The TextArea is split into lines, and each line it output inside its own &lt;p&gt; element.
  */
 public class TextOutput

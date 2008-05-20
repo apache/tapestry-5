@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.annotation;
+package org.apache.tapestry5.annotations;
 
 import java.lang.annotation.*;
 
@@ -21,7 +21,7 @@ import java.lang.annotation.*;
  * Marker annotation for component methods to enable debug-level logging. Annotated methods will log method entry (with
  * parameters), method exit (with return value, for non-void methods) and any thrown exceptions.
  *
- * @see org.apache.tapestry.internal.transform.LogWorker
+ * @see org.apache.tapestry5.internal.transform.LogWorker
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)

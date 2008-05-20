@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.integration.app1.components;
+package org.apache.tapestry5.integration.app1.components;
 
-import org.apache.tapestry.BindingConstants;
-import org.apache.tapestry.annotation.Parameter;
+import org.apache.tapestry5.BindingConstants;
+import org.apache.tapestry5.annotations.Parameter;
 
 public class Outer
 {

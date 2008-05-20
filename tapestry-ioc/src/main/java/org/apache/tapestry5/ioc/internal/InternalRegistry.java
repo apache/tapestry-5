@@ -12,14 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.internal;
+package org.apache.tapestry5.ioc.internal;
 
-import org.apache.tapestry.ioc.Registry;
-import org.apache.tapestry.ioc.ServiceDecorator;
-import org.apache.tapestry.ioc.ServiceLifecycle;
-import org.apache.tapestry.ioc.def.ServiceDef;
-import org.apache.tapestry.ioc.services.ClassFab;
-import org.apache.tapestry.ioc.services.RegistryShutdownHub;
+import org.apache.tapestry5.ioc.Registry;
+import org.apache.tapestry5.ioc.ServiceDecorator;
+import org.apache.tapestry5.ioc.ServiceLifecycle;
+import org.apache.tapestry5.ioc.def.ServiceDef;
+import org.apache.tapestry5.ioc.services.ClassFab;
+import org.apache.tapestry5.ioc.services.RegistryShutdownHub;
 import org.slf4j.Logger;
 
 import java.util.Collection;
@@ -41,15 +41,14 @@ public interface InternalRegistry extends Registry, RegistryShutdownHub
     ServiceLifecycle getServiceLifecycle(String scope);
 
     /**
-     * Searches for decorators for a particular service. The resulting
-     * {@link org.apache.tapestry.ioc.def.DecoratorDef}s are ordered, then converted into
-     * {@link ServiceDecorator}s.
+     * Searches for decorators for a particular service. The resulting {@link org.apache.tapestry5.ioc.def.DecoratorDef}s
+     * are ordered, then converted into {@link ServiceDecorator}s.
      */
     List<ServiceDecorator> findDecoratorsForService(ServiceDef serviceDef);
 
     /**
-     * Builds up an unordered collection by invoking service contributor methods that target the
-     * service (from any module, unless the service is private).
+     * Builds up an unordered collection by invoking service contributor methods that target the service (from any
+     * module, unless the service is private).
      *
      * @param <T>
      * @param serviceDef defines the service for which configuration data is being assembled
@@ -59,10 +58,9 @@ public interface InternalRegistry extends Registry, RegistryShutdownHub
     <T> Collection<T> getUnorderedConfiguration(ServiceDef serviceDef, Class<T> valueType);
 
     /**
-     * Builds up an ordered collection by invoking service contributor methods that target the
-     * service (from any module, unless the service is private). Once all values have been added
-     * (each with an id, and pre/post constraints), the values are ordered, null values dropped, and
-     * the final sorted list is returned.
+     * Builds up an ordered collection by invoking service contributor methods that target the service (from any module,
+     * unless the service is private). Once all values have been added (each with an id, and pre/post constraints), the
+     * values are ordered, null values dropped, and the final sorted list is returned.
      *
      * @param <T>
      * @param serviceDef defines the service for which configuration data is being assembled
@@ -72,10 +70,9 @@ public interface InternalRegistry extends Registry, RegistryShutdownHub
     <T> List<T> getOrderedConfiguration(ServiceDef serviceDef, Class<T> valueType);
 
     /**
-     * Builds up a map of key/value pairs by invoking service contribution methods that tharget the
-     * service (from any module, unless the service is private). Values and keys may not be null.
-     * Invalid values (keys or values that are the wrong type, or duplicate keys) result in warnings
-     * and are ignored.
+     * Builds up a map of key/value pairs by invoking service contribution methods that tharget the service (from any
+     * module, unless the service is private). Values and keys may not be null. Invalid values (keys or values that are
+     * the wrong type, or duplicate keys) result in warnings and are ignored.
      *
      * @param <K,        V>
      * @param serviceDef defines the service for which configuration data is being assembled
@@ -87,16 +84,15 @@ public interface InternalRegistry extends Registry, RegistryShutdownHub
                                             Class<V> valueType);
 
     /**
-     * Convieience for creating a new {@link ClassFab} instance using a
-     * {@link org.apache.tapestry.ioc.services.ClassFactory}.
+     * Convieience for creating a new {@link ClassFab} instance using a {@link org.apache.tapestry5.ioc.services.ClassFactory}.
      *
      * @param serviceInterface the interface to be implemented by the provided class
      */
     ClassFab newClass(Class serviceInterface);
 
     /**
-     * Given an input string that <em>may</em> contain symbols, returns the string with any and
-     * all symbols fully expanded.
+     * Given an input string that <em>may</em> contain symbols, returns the string with any and all symbols fully
+     * expanded.
      *
      * @param input
      * @return expanded input
@@ -104,8 +100,8 @@ public interface InternalRegistry extends Registry, RegistryShutdownHub
     String expandSymbols(String input);
 
     /**
-     * Returns a logger for the service, which consists of the Module's
-     * {@link Module#getLoggerName() log name} suffixed with a period and the service id.
+     * Returns a logger for the service, which consists of the Module's {@link Module#getLoggerName() log name} suffixed
+     * with a period and the service id.
      *
      * @param serviceId
      * @return the logger for the service

@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.integration.app1.base;
+package org.apache.tapestry5.integration.app1.base;
 
-import org.apache.tapestry.annotation.ApplicationState;
-import org.apache.tapestry.annotation.Property;
-import org.apache.tapestry.integration.app1.data.IncidentData;
+import org.apache.tapestry5.annotations.ApplicationState;
+import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.integration.app1.data.IncidentData;
 
 public class BaseComponent
 {

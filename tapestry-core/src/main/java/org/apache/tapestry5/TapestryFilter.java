@@ -12,18 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry;
+package org.apache.tapestry5;
 
-import org.apache.tapestry.internal.ServletContextSymbolProvider;
-import org.apache.tapestry.internal.TapestryAppInitializer;
-import org.apache.tapestry.ioc.Registry;
-import org.apache.tapestry.ioc.def.ModuleDef;
-import org.apache.tapestry.ioc.services.ServiceActivity;
-import org.apache.tapestry.ioc.services.ServiceActivityScoreboard;
-import org.apache.tapestry.ioc.services.Status;
-import org.apache.tapestry.ioc.services.SymbolProvider;
-import org.apache.tapestry.services.HttpServletRequestHandler;
-import org.apache.tapestry.services.ServletApplicationInitializer;
+import org.apache.tapestry5.internal.ServletContextSymbolProvider;
+import org.apache.tapestry5.internal.TapestryAppInitializer;
+import org.apache.tapestry5.ioc.Registry;
+import org.apache.tapestry5.ioc.def.ModuleDef;
+import org.apache.tapestry5.ioc.services.ServiceActivity;
+import org.apache.tapestry5.ioc.services.ServiceActivityScoreboard;
+import org.apache.tapestry5.ioc.services.Status;
+import org.apache.tapestry5.ioc.services.SymbolProvider;
+import org.apache.tapestry5.services.HttpServletRequestHandler;
+import org.apache.tapestry5.services.ServletApplicationInitializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

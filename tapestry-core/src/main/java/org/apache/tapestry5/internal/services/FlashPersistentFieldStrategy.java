@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry.services.Request;
-import org.apache.tapestry.services.Session;
+import org.apache.tapestry5.services.Request;
+import org.apache.tapestry5.services.Session;
 
 /**
  * The "flash" strategy stores data inside the {@link Session session}, just like {@link

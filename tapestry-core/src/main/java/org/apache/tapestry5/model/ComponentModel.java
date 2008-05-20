@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.model;
+package org.apache.tapestry5.model;
 
-import org.apache.tapestry.annotation.MixinAfter;
-import org.apache.tapestry.annotation.Persist;
-import org.apache.tapestry.annotation.SupportsInformalParameters;
-import org.apache.tapestry.ioc.Resource;
+import org.apache.tapestry5.annotations.MixinAfter;
+import org.apache.tapestry5.annotations.Persist;
+import org.apache.tapestry5.annotations.SupportsInformalParameters;
+import org.apache.tapestry5.ioc.Resource;
 import org.slf4j.Logger;
 
 import java.util.List;
@@ -44,7 +44,7 @@ public interface ComponentModel
 
     /**
      * Returns the ids of all embedded components defined within the component class (via the {@link
-     * org.apache.tapestry.annotation.Component} annotation).
+     * org.apache.tapestry5.annotations.Component} annotation).
      */
     List<String> getEmbeddedComponentIds();
 

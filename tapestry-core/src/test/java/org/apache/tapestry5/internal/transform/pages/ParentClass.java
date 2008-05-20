@@ -12,14 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.transform.pages;
+package org.apache.tapestry5.internal.transform.pages;
 
-import org.apache.tapestry.annotation.Meta;
-import org.apache.tapestry.annotation.Retain;
-import org.apache.tapestry.internal.transform.InheritedAnnotation;
+import org.apache.tapestry5.annotations.Meta;
+import org.apache.tapestry5.annotations.Retain;
+import org.apache.tapestry5.internal.transform.InheritedAnnotation;
 
 /**
- * Test class used with {@link org.apache.tapestry.internal.services.InternalClassTransformationImplTest}
+ * Test class used with {@link org.apache.tapestry5.internal.services.InternalClassTransformationImplTest}
  */
 @Meta("foo=bar")
 @InheritedAnnotation

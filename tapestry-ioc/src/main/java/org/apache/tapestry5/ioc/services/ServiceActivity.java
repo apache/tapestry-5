@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.services;
+package org.apache.tapestry5.ioc.services;
 
-import org.apache.tapestry.ioc.def.ServiceDef;
+import org.apache.tapestry5.ioc.def.ServiceDef;
 
 /**
  * Provided by the {@link ServiceActivityScoreboard} to track a single service's state and activity.
@@ -29,8 +29,7 @@ public interface ServiceActivity
     String getServiceId();
 
     /**
-     * The interface implemented by the service (this may occasionally be a class, for non-proxied
-     * services).
+     * The interface implemented by the service (this may occasionally be a class, for non-proxied services).
      */
     Class getServiceInterface();
 

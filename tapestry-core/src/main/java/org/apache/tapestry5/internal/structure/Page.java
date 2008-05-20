@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.structure;
+package org.apache.tapestry5.internal.structure;
 
-import org.apache.tapestry.ComponentResources;
-import org.apache.tapestry.Link;
-import org.apache.tapestry.runtime.Component;
-import org.apache.tapestry.runtime.PageLifecycleListener;
+import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.Link;
+import org.apache.tapestry5.runtime.Component;
+import org.apache.tapestry5.runtime.PageLifecycleListener;
 import org.slf4j.Logger;
 
 import java.util.Locale;
@@ -72,7 +72,7 @@ public interface Page
      * The page pool should discard pages that are dirty, rather than store them into the pool.
      *
      * @return true if the page is "dirty", false otherwise
-     * @see org.apache.tapestry.runtime.PageLifecycleListener#containingPageDidDetach()
+     * @see org.apache.tapestry5.runtime.PageLifecycleListener#containingPageDidDetach()
      */
     boolean detached();
 
@@ -87,7 +87,7 @@ public interface Page
     /**
      * Inform the page that it is now completely loaded.
      *
-     * @see org.apache.tapestry.runtime.PageLifecycleListener#containingPageDidLoad()
+     * @see org.apache.tapestry5.runtime.PageLifecycleListener#containingPageDidLoad()
      */
 
     void loaded();
@@ -115,14 +115,14 @@ public interface Page
     /**
      * Creates a link that will trigger behavior in a component within the page.
      *
-     * @see org.apache.tapestry.ComponentResources#createActionLink(String, boolean, Object[])
+     * @see org.apache.tapestry5.ComponentResources#createActionLink(String, boolean, Object[])
      */
     Link createActionLink(String nestedId, String eventType, boolean forForm, Object... context);
 
     /**
      * Creates a link to the named page.
      *
-     * @see org.apache.tapestry.ComponentResources#createPageLink(String, boolean, Object[])
+     * @see org.apache.tapestry5.ComponentResources#createPageLink(String, boolean, Object[])
      */
     Link createPageLink(String pageName, boolean override, Object... context);
 
@@ -157,7 +157,7 @@ public interface Page
 
     /**
      * Discards all persistent field changes for the page containing the component.  Changes are eliminated from
-     * persistent storage (such as the {@link org.apache.tapestry.services.Session}) which will take effect in the
+     * persistent storage (such as the {@link org.apache.tapestry5.services.Session}) which will take effect in the
      * <em>next</em> request (the attached page instance is not affected).
      */
     void discardPersistentFieldChanges();

@@ -12,15 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.integration.app1.pages;
+package org.apache.tapestry5.integration.app1.pages;
 
-import org.apache.tapestry.Block;
-import org.apache.tapestry.annotation.ApplicationState;
-import org.apache.tapestry.annotation.Component;
-import org.apache.tapestry.annotation.Log;
-import org.apache.tapestry.corelib.components.BeanEditForm;
-import org.apache.tapestry.integration.app1.data.RegistrationData;
-import org.apache.tapestry.ioc.annotation.Inject;
+import org.apache.tapestry5.Block;
+import org.apache.tapestry5.annotations.ApplicationState;
+import org.apache.tapestry5.annotations.Component;
+import org.apache.tapestry5.annotations.Log;
+import org.apache.tapestry5.corelib.components.BeanEditForm;
+import org.apache.tapestry5.integration.app1.data.RegistrationData;
+import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.json.JSONObject;
 
 public class ZoneDemo

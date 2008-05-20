@@ -12,14 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal;
+package org.apache.tapestry5.internal;
 
-import org.apache.tapestry.EventContext;
-import org.apache.tapestry.services.ContextValueEncoder;
+import org.apache.tapestry5.EventContext;
+import org.apache.tapestry5.services.ContextValueEncoder;
 
 /**
  * Implementation based on values extracted from the URL (an event context, or a page activation context) that uses a
- * {@link org.apache.tapestry.services.ContextValueEncoder} to convert from string values to the desired values.
+ * {@link org.apache.tapestry5.services.ContextValueEncoder} to convert from string values to the desired values.
  */
 public class URLEventContext implements EventContext
 {

@@ -12,20 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc;
+package org.apache.tapestry5.ioc;
 
 /**
  * For Tapestry IoC, Aspects provide a limited amount of advise, i.e., advising method invocations. That's the only join
  * point available (method invocations of service interface methods); full AOP systems such as AspectJ can do much, much
  * such as advising field access and even object construction.
  *
- * @see org.apache.tapestry.ioc.services.AspectDecorator
+ * @see org.apache.tapestry5.ioc.services.AspectDecorator
  */
 public interface MethodAdvice
 {
     /**
      * Allows the Aspect to advise the invocation.  The Aspect is free to inspect and even replace parameters. Most
-     * Aspects will then invoke {@link org.apache.tapestry.ioc.Invocation#proceed()}.  The Aspect may then inspect and
+     * Aspects will then invoke {@link org.apache.tapestry5.ioc.Invocation#proceed()}.  The Aspect may then inspect and
      * replace any checked thrown exceptions. Some Aspects (for example, caching) may selectively decide to bypass the
      * invocation entirely, and instead invoke some other method or otherwise set a return value or thrown exception.
      *

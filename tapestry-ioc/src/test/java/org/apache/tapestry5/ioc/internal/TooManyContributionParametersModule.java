@@ -12,13 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.internal;
+package org.apache.tapestry5.ioc.internal;
 
-import org.apache.tapestry.ioc.Configuration;
-import org.apache.tapestry.ioc.OrderedConfiguration;
+import org.apache.tapestry5.ioc.Configuration;
+import org.apache.tapestry5.ioc.OrderedConfiguration;
 
 /**
- * Used by {@link org.apache.tapestry.ioc.internal.DefaultModuleDefImpl}.
+ * Used by {@link org.apache.tapestry5.ioc.internal.DefaultModuleDefImpl}.
  */
 public class TooManyContributionParametersModule
 {

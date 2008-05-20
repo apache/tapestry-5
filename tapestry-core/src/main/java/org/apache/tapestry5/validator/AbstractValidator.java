@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.validator;
+package org.apache.tapestry5.validator;
 
-import org.apache.tapestry.Validator;
+import org.apache.tapestry5.Validator;
 
 /**
- * Base class for constructing a {@link org.apache.tapestry.Validator}.
+ * Base class for constructing a {@link org.apache.tapestry5.Validator}.
  */
 public abstract class AbstractValidator<C, T> implements Validator<C, T>
 {

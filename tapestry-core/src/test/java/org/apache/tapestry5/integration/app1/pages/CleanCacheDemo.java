@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.integration.app1.pages;
+package org.apache.tapestry5.integration.app1.pages;
 
-import org.apache.tapestry.annotation.Cached;
-import org.apache.tapestry.annotation.Component;
-import org.apache.tapestry.corelib.components.Zone;
+import org.apache.tapestry5.annotations.Cached;
+import org.apache.tapestry5.annotations.Component;
+import org.apache.tapestry5.corelib.components.Zone;
 
 public class CleanCacheDemo
 {

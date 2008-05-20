@@ -12,15 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry.ValueEncoder;
-import org.apache.tapestry.ioc.services.TypeCoercer;
-import org.apache.tapestry.services.ValueEncoderFactory;
+import org.apache.tapestry5.ValueEncoder;
+import org.apache.tapestry5.ioc.services.TypeCoercer;
+import org.apache.tapestry5.services.ValueEncoderFactory;
 
 /**
- * Provides {@link org.apache.tapestry.ValueEncoder} instances that are backed by the {@link
- * org.apache.tapestry.ioc.services.TypeCoercer} service.
+ * Provides {@link org.apache.tapestry5.ValueEncoder} instances that are backed by the {@link
+ * org.apache.tapestry5.ioc.services.TypeCoercer} service.
  */
 public class TypeCoercedValueEncoderFactory implements ValueEncoderFactory<Object>
 {

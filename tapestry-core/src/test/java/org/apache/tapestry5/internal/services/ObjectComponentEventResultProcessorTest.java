@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry.ComponentResources;
-import org.apache.tapestry.runtime.Component;
-import org.apache.tapestry.services.ComponentEventResultProcessor;
-import org.apache.tapestry.test.TapestryTestCase;
+import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.runtime.Component;
+import org.apache.tapestry5.services.ComponentEventResultProcessor;
+import org.apache.tapestry5.test.TapestryTestCase;
 import org.testng.annotations.Test;
 
 import java.util.Arrays;

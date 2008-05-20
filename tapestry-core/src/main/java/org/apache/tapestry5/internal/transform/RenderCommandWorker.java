@@ -12,21 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.transform;
+package org.apache.tapestry5.internal.transform;
 
-import org.apache.tapestry.MarkupWriter;
-import org.apache.tapestry.model.MutableComponentModel;
-import org.apache.tapestry.runtime.RenderCommand;
-import org.apache.tapestry.runtime.RenderQueue;
-import org.apache.tapestry.services.ClassTransformation;
-import org.apache.tapestry.services.ComponentClassTransformWorker;
-import org.apache.tapestry.services.TransformMethodSignature;
+import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.model.MutableComponentModel;
+import org.apache.tapestry5.runtime.RenderCommand;
+import org.apache.tapestry5.runtime.RenderQueue;
+import org.apache.tapestry5.services.ClassTransformation;
+import org.apache.tapestry5.services.ComponentClassTransformWorker;
+import org.apache.tapestry5.services.TransformMethodSignature;
 
 import java.lang.reflect.Modifier;
 
 /**
  * Ensures that all components implement {@link RenderCommand} by delegating to {@link
- * org.apache.tapestry.internal.InternalComponentResources#queueRender(org.apache.tapestry.runtime.RenderQueue)}.
+ * org.apache.tapestry5.internal.InternalComponentResources#queueRender(org.apache.tapestry5.runtime.RenderQueue)}.
  */
 public class RenderCommandWorker implements ComponentClassTransformWorker
 {

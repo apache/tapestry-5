@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.corelib.components;
+package org.apache.tapestry5.corelib.components;
 
-import org.apache.tapestry.Field;
-import org.apache.tapestry.ValidationTracker;
-import org.apache.tapestry.test.TapestryTestCase;
+import org.apache.tapestry5.Field;
+import org.apache.tapestry5.ValidationTracker;
+import org.apache.tapestry5.test.TapestryTestCase;
 import org.testng.annotations.Test;
 
 public class FormTest extends TapestryTestCase

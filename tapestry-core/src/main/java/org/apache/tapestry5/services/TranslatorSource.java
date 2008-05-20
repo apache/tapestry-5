@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.services;
+package org.apache.tapestry5.services;
 
-import org.apache.tapestry.Translator;
+import org.apache.tapestry5.Translator;
 
 /**
  * A source for {@link Translator}s, either by name.
@@ -32,7 +32,7 @@ public interface TranslatorSource
 
     /**
      * Finds a {@link Translator} that is appropriate to the given type, which is usually obtained via {@link
-     * org.apache.tapestry.Binding#getBindingType()}. Performs an inheritanced-based search for the best match.
+     * org.apache.tapestry5.Binding#getBindingType()}. Performs an inheritanced-based search for the best match.
      *
      * @param valueType the type of value for which a default translator is needed
      * @return the matching translator, or null if no match can be found
@@ -41,7 +41,7 @@ public interface TranslatorSource
 
     /**
      * Finds a {@link Translator} that is appropriate to the given type, which is usually obtained via {@link
-     * org.apache.tapestry.Binding#getBindingType()}. Performs an inheritanced-based search for the best match.
+     * org.apache.tapestry5.Binding#getBindingType()}. Performs an inheritanced-based search for the best match.
      *
      * @param valueType the type of value for which a default translator is needed
      * @return the matching translator

@@ -12,17 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.transform;
+package org.apache.tapestry5.internal.transform;
 
-import org.apache.tapestry.MetaDataConstants;
-import org.apache.tapestry.annotation.ContentType;
-import org.apache.tapestry.model.MutableComponentModel;
-import org.apache.tapestry.services.ClassTransformation;
-import org.apache.tapestry.services.ComponentClassTransformWorker;
+import org.apache.tapestry5.MetaDataConstants;
+import org.apache.tapestry5.annotations.ContentType;
+import org.apache.tapestry5.model.MutableComponentModel;
+import org.apache.tapestry5.services.ClassTransformation;
+import org.apache.tapestry5.services.ComponentClassTransformWorker;
 
 /**
- * Checks for the {@link org.apache.tapestry.annotation.ContentType} annotation, adding a corresponding meta-data value
- * when found.
+ * Checks for the {@link org.apache.tapestry5.annotations.ContentType} annotation, adding a corresponding meta-data
+ * value when found.
  */
 public class ContentTypeWorker implements ComponentClassTransformWorker
 {

@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry.internal.InternalComponentResources;
-import org.apache.tapestry.model.ComponentModel;
-import org.apache.tapestry.runtime.Component;
+import org.apache.tapestry5.internal.InternalComponentResources;
+import org.apache.tapestry5.model.ComponentModel;
+import org.apache.tapestry5.runtime.Component;
 
 /**
  * An object that can instantiate a component. This is used with transformed classes, in which the normal no-arguments

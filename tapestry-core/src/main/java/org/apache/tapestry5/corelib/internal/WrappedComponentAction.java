@@ -12,18 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.corelib.internal;
+package org.apache.tapestry5.corelib.internal;
 
-import org.apache.tapestry.ComponentAction;
-import org.apache.tapestry.runtime.Component;
-import org.apache.tapestry.services.ComponentSource;
+import org.apache.tapestry5.ComponentAction;
+import org.apache.tapestry5.runtime.Component;
+import org.apache.tapestry5.services.ComponentSource;
 
 import java.io.Serializable;
 
 /**
- * A wrapper around a component id and a {@link org.apache.tapestry.ComponentAction}.
+ * A wrapper around a component id and a {@link org.apache.tapestry5.ComponentAction}.
  *
- * @see org.apache.tapestry.corelib.components.FormFragment
+ * @see org.apache.tapestry5.corelib.components.FormFragment
  */
 public class WrappedComponentAction implements Serializable
 {
@@ -37,7 +37,7 @@ public class WrappedComponentAction implements Serializable
     }
 
     /**
-     * @param componentId the component's complete id, suitable for use with {@link org.apache.tapestry.services.ComponentSource#getComponent(String)}.
+     * @param componentId the component's complete id, suitable for use with {@link org.apache.tapestry5.services.ComponentSource#getComponent(String)}.
      * @param action      the action associated with the component
      */
     public WrappedComponentAction(String componentId, ComponentAction action)

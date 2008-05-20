@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc;
+package org.apache.tapestry5.ioc;
 
-import org.apache.tapestry.ioc.test.IOCTestCase;
+import org.apache.tapestry5.ioc.test.IOCTestCase;
 import org.testng.annotations.Test;
 
 import java.util.Arrays;
@@ -62,7 +62,7 @@ public class RegistryBuilderTest extends IOCTestCase
         // This proves that the IOC works, the service builder method was invoked, that the
         // ClassFactory service was accessed and used.
 
-        assertEquals(service.toString(), "<Proxy for Square(org.apache.tapestry.ioc.Square)>");
+        assertEquals(service.toString(), "<Proxy for Square(org.apache.tapestry5.ioc.Square)>");
 
         registry.shutdown();
     }

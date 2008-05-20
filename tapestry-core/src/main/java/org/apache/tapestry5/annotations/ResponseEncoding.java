@@ -12,17 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.annotation;
+package org.apache.tapestry5.annotations;
 
 import java.lang.annotation.*;
 
 
 /**
  * An annotation on a page component used to identify the respones encoding (the character set of the text sent in the
- * response). An alternative to the {@link org.apache.tapestry.annotation.Meta} annotation with the {@link
- * org.apache.tapestry.MetaDataConstants#RESPONSE_ENCODING} key.
+ * response). An alternative to the {@link org.apache.tapestry5.annotations.Meta} annotation with the {@link
+ * org.apache.tapestry5.MetaDataConstants#RESPONSE_ENCODING} key.
  *
- * @see org.apache.tapestry.annotation.ContentType
+ * @see org.apache.tapestry5.annotations.ContentType
  */
 @Target({ ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)

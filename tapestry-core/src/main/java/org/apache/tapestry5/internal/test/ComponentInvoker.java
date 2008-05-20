@@ -12,13 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.test;
+package org.apache.tapestry5.internal.test;
 
-import org.apache.tapestry.dom.Document;
-import org.apache.tapestry.internal.services.ComponentInvocation;
+import org.apache.tapestry5.dom.Document;
+import org.apache.tapestry5.internal.services.ComponentInvocation;
 
 /**
- * Invokes a {@link org.apache.tapestry.internal.services.ComponentInvocation}.
+ * Invokes a {@link org.apache.tapestry5.internal.services.ComponentInvocation}.
  */
 public interface ComponentInvoker
 {

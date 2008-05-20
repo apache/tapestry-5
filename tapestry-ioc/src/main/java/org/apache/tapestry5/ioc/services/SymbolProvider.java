@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.services;
+package org.apache.tapestry5.ioc.services;
 
 /**
  * A provider of values for symbols.
@@ -20,8 +20,8 @@ package org.apache.tapestry.ioc.services;
 public interface SymbolProvider
 {
     /**
-     * Returns the value for the symbol, or null if this provider can not provide a value. The value
-     * itself may contain symbols that will be recursively expanded.
+     * Returns the value for the symbol, or null if this provider can not provide a value. The value itself may contain
+     * symbols that will be recursively expanded.
      *
      * @param symbolName
      * @return the value or null

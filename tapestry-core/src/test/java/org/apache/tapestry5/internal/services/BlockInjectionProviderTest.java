@@ -12,16 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry.Block;
-import org.apache.tapestry.annotation.Id;
-import org.apache.tapestry.ioc.ObjectLocator;
-import org.apache.tapestry.model.MutableComponentModel;
-import org.apache.tapestry.services.ClassTransformation;
-import org.apache.tapestry.services.InjectionProvider;
-import org.apache.tapestry.services.TransformConstants;
-import org.apache.tapestry.test.TapestryTestCase;
+import org.apache.tapestry5.Block;
+import org.apache.tapestry5.annotations.Id;
+import org.apache.tapestry5.ioc.ObjectLocator;
+import org.apache.tapestry5.model.MutableComponentModel;
+import org.apache.tapestry5.services.ClassTransformation;
+import org.apache.tapestry5.services.InjectionProvider;
+import org.apache.tapestry5.services.TransformConstants;
+import org.apache.tapestry5.test.TapestryTestCase;
 import org.testng.annotations.Test;
 
 public class BlockInjectionProviderTest extends TapestryTestCase

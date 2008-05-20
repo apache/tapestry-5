@@ -12,13 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.integration.app1.pages;
+package org.apache.tapestry5.integration.app1.pages;
 
-public class CachedPage2 extends CachedPage {
+public class CachedPage2 extends CachedPage
+{
 
-	@Override
-	public int getValue() {
-		return super.getValue()+1;
-	}
-	
+    @Override
+    public int getValue()
+    {
+        return super.getValue() + 1;
+    }
+
 }

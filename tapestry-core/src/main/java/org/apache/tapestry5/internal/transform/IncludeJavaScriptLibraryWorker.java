@@ -12,19 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.transform;
+package org.apache.tapestry5.internal.transform;
 
-import org.apache.tapestry.Asset;
-import org.apache.tapestry.RenderSupport;
-import org.apache.tapestry.annotation.IncludeJavaScriptLibrary;
-import org.apache.tapestry.ioc.services.SymbolSource;
-import org.apache.tapestry.model.MutableComponentModel;
-import org.apache.tapestry.services.AssetSource;
-import org.apache.tapestry.services.ClassTransformation;
+import org.apache.tapestry5.Asset;
+import org.apache.tapestry5.RenderSupport;
+import org.apache.tapestry5.annotations.IncludeJavaScriptLibrary;
+import org.apache.tapestry5.ioc.services.SymbolSource;
+import org.apache.tapestry5.model.MutableComponentModel;
+import org.apache.tapestry5.services.AssetSource;
+import org.apache.tapestry5.services.ClassTransformation;
 
 /**
- * Recognizes the {@link org.apache.tapestry.annotation.IncludeJavaScriptLibrary} annotation, and ensures that {@link
- * org.apache.tapestry.RenderSupport#addScriptLink(org.apache.tapestry.Asset[])} is invoked.
+ * Recognizes the {@link org.apache.tapestry5.annotations.IncludeJavaScriptLibrary} annotation, and ensures that {@link
+ * org.apache.tapestry5.RenderSupport#addScriptLink(org.apache.tapestry5.Asset[])} is invoked.
  */
 public class IncludeJavaScriptLibraryWorker extends AbstractIncludeAssetWorker
 {

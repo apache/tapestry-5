@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.transform.pages;
+package org.apache.tapestry5.internal.transform.pages;
 
-import org.apache.tapestry.annotation.OnEvent;
+import org.apache.tapestry5.annotations.OnEvent;
 
 public class EventHandlerTarget
 {

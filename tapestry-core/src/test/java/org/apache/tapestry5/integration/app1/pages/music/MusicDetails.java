@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.integration.app1.pages.music;
+package org.apache.tapestry5.integration.app1.pages.music;
 
-import org.apache.tapestry.integration.app1.data.Track;
+import org.apache.tapestry5.integration.app1.data.Track;
 
 public class MusicDetails
 {

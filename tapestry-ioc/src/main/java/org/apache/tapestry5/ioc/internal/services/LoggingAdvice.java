@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.internal.services;
+package org.apache.tapestry5.ioc.internal.services;
 
-import org.apache.tapestry.ioc.Invocation;
-import org.apache.tapestry.ioc.MethodAdvice;
-import org.apache.tapestry.ioc.services.ExceptionTracker;
+import org.apache.tapestry5.ioc.Invocation;
+import org.apache.tapestry5.ioc.MethodAdvice;
+import org.apache.tapestry5.ioc.services.ExceptionTracker;
 import org.slf4j.Logger;
 
 public class LoggingAdvice implements MethodAdvice

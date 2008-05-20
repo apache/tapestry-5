@@ -12,15 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.corelib.components;
+package org.apache.tapestry5.corelib.components;
 
-import org.apache.tapestry.ComponentResources;
-import org.apache.tapestry.corelib.internal.FormSupportImpl;
-import org.apache.tapestry.internal.services.HeartbeatImpl;
-import org.apache.tapestry.internal.test.InternalBaseTestCase;
-import org.apache.tapestry.services.FormSupport;
-import org.apache.tapestry.services.Heartbeat;
-import org.apache.tapestry.services.Request;
+import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.corelib.internal.FormSupportImpl;
+import org.apache.tapestry5.internal.services.HeartbeatImpl;
+import org.apache.tapestry5.internal.test.InternalBaseTestCase;
+import org.apache.tapestry5.services.FormSupport;
+import org.apache.tapestry5.services.Heartbeat;
+import org.apache.tapestry5.services.Request;
 import org.testng.annotations.Test;
 
 public class SubmitTest extends InternalBaseTestCase

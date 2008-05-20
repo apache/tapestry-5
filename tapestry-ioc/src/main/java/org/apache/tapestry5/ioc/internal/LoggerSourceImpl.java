@@ -12,16 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.internal;
+package org.apache.tapestry5.ioc.internal;
 
-import org.apache.tapestry.ioc.LoggerSource;
+import org.apache.tapestry5.ioc.LoggerSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Simple wrapper around SLF4J's LoggerFactory. The concept here is that Log implementations could
- * be provided that promote warnings or errors upto thrown exceptions, for people who like their IOC
- * container extra finicky. In addition, the extra layer makes things a lot easier to mock.
+ * Simple wrapper around SLF4J's LoggerFactory. The concept here is that Log implementations could be provided that
+ * promote warnings or errors upto thrown exceptions, for people who like their IOC container extra finicky. In
+ * addition, the extra layer makes things a lot easier to mock.
  */
 public class LoggerSourceImpl implements LoggerSource
 {

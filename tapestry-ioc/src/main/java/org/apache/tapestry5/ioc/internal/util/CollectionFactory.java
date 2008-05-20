@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.internal.util;
+package org.apache.tapestry5.ioc.internal.util;
 
-import org.apache.tapestry.ioc.util.CaseInsensitiveMap;
-import org.apache.tapestry.ioc.util.Stack;
+import org.apache.tapestry5.ioc.util.CaseInsensitiveMap;
+import org.apache.tapestry5.ioc.util.Stack;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;

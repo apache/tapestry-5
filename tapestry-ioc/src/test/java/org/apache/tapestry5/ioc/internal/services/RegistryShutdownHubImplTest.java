@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.internal.services;
+package org.apache.tapestry5.ioc.internal.services;
 
-import org.apache.tapestry.ioc.internal.IOCInternalTestCase;
-import org.apache.tapestry.ioc.services.RegistryShutdownListener;
+import org.apache.tapestry5.ioc.internal.IOCInternalTestCase;
+import org.apache.tapestry5.ioc.services.RegistryShutdownListener;
 import static org.easymock.EasyMock.contains;
 import static org.easymock.EasyMock.same;
 import org.slf4j.Logger;
@@ -47,8 +47,8 @@ public class RegistryShutdownHubImplTest extends IOCInternalTestCase
     }
 
     /**
-     * Shows that multiple listener will be notified, and that an error in one doesn't prevent
-     * others from being notified.
+     * Shows that multiple listener will be notified, and that an error in one doesn't prevent others from being
+     * notified.
      */
     @Test
     public void notification_error()

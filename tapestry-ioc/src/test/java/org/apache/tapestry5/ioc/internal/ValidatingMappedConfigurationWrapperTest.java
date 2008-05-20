@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.internal;
+package org.apache.tapestry5.ioc.internal;
 
-import org.apache.tapestry.ioc.MappedConfiguration;
-import org.apache.tapestry.ioc.def.ContributionDef;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
+import org.apache.tapestry5.ioc.MappedConfiguration;
+import org.apache.tapestry5.ioc.def.ContributionDef;
+import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newMap;
 import org.slf4j.Logger;
 import org.testng.annotations.Test;
 

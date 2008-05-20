@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.test;
+package org.apache.tapestry5.internal.test;
 
-import org.apache.tapestry.services.Request;
-import org.apache.tapestry.test.PageTester;
+import org.apache.tapestry5.services.Request;
+import org.apache.tapestry5.test.PageTester;
 
 import java.util.Map;
 

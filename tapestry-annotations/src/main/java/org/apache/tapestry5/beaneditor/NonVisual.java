@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.beaneditor;
+package org.apache.tapestry5.beaneditor;
 
 import java.lang.annotation.Documented;
 import static java.lang.annotation.ElementType.METHOD;
@@ -21,13 +21,13 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Target;
 
 /**
- * Marker annotation for properties which are non-visual, and so should not appear (by default)
- * inside a {@link BeanModel}. The annotation may be placed on either the getter or the setter
- * method.
+ * Marker annotation for properties which are non-visual, and so should not appear (by default) inside a {@link
+ * BeanModel}. The annotation may be placed on either the getter or the setter method.
  */
 @Target(METHOD)
 @Retention(RUNTIME)
 @Documented
-public @interface NonVisual {
+public @interface NonVisual
+{
 
 }

@@ -12,17 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.annotation;
+package org.apache.tapestry5.annotations;
 
 import java.lang.annotation.*;
 
 
 /**
  * An annotation on a page component used to identify the content type the page returns. An alternative to the {@link
- * org.apache.tapestry.annotation.Meta} annotation with the {@link org.apache.tapestry.MetaDataConstants#RESPONSE_CONTENT_TYPE}
+ * org.apache.tapestry5.annotations.Meta} annotation with the {@link org.apache.tapestry5.MetaDataConstants#RESPONSE_CONTENT_TYPE}
  * key.
  *
- * @see org.apache.tapestry.annotation.ResponseEncoding
+ * @see org.apache.tapestry5.annotations.ResponseEncoding
  */
 @Target({ ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)

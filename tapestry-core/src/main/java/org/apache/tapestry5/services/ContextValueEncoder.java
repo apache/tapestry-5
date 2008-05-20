@@ -12,13 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.services;
+package org.apache.tapestry5.services;
 
 /**
  * Used to convert values used in event contexts to client string representations and back.
  *
- * @See org.apache.tapestry.ValueEncoder
- * @see org.apache.tapestry.ioc.services.TypeCoercer
+ * @See org.apache.tapestry5.ValueEncoder
+ * @see org.apache.tapestry5.ioc.services.TypeCoercer
  */
 public interface ContextValueEncoder
 {
@@ -27,7 +27,7 @@ public interface ContextValueEncoder
      *
      * @param value to convert (may not be null)
      * @return string representation of the value
-     * @see org.apache.tapestry.ValueEncoder#toClient(Object)
+     * @see org.apache.tapestry5.ValueEncoder#toClient(Object)
      */
     String toClient(Object value);
 
@@ -37,7 +37,7 @@ public interface ContextValueEncoder
      * @param requiredType required type to convert the string to
      * @param clientValue  value obtained from context passed from client
      * @return the client value converted or coerced into a server value
-     * @see org.apache.tapestry.ValueEncoder#toValue(String)
+     * @see org.apache.tapestry5.ValueEncoder#toValue(String)
      */
     <T> T toValue(Class<T> requiredType, String clientValue);
 }

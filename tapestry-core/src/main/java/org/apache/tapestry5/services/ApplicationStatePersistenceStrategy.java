@@ -12,13 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.services;
+package org.apache.tapestry5.services;
 
 /**
  * Used by {@link ApplicationStateManager} to manage a specific kind of ASO persistence. The stategy is responsible for
  * managing ASO instances within its domain.
  *
- * @see org.apache.tapestry.services.ApplicationStatePersistenceStrategySource
+ * @see org.apache.tapestry5.services.ApplicationStatePersistenceStrategySource
  */
 public interface ApplicationStatePersistenceStrategy
 {

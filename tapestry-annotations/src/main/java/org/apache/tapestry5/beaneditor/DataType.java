@@ -12,14 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.beaneditor;
+package org.apache.tapestry5.beaneditor;
 
 import java.lang.annotation.*;
 
 /**
- * Used to explicitly set the data type used to select an editor (or display) block.  Normally, the data type
- * is determined from the type of the property (for example, property type java.lang.String would map to data
- * type "text").
+ * Used to explicitly set the data type used to select an editor (or display) block.  Normally, the data type is
+ * determined from the type of the property (for example, property type java.lang.String would map to data type
+ * "text").
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)

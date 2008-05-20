@@ -12,14 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.services;
+package org.apache.tapestry5.ioc.services;
 
 import org.slf4j.Logger;
 
 /**
- * Service that can create a logging interceptor that wraps around a service implementation (or
- * interceptor). The interceptor works with the service's log to log, at debug level, method entry
- * (with arguments), method exit (with return value, if any) as well as any thrown exceptions.
+ * Service that can create a logging interceptor that wraps around a service implementation (or interceptor). The
+ * interceptor works with the service's log to log, at debug level, method entry (with arguments), method exit (with
+ * return value, if any) as well as any thrown exceptions.
  */
 public interface LoggingDecorator
 {
@@ -31,8 +31,8 @@ public interface LoggingDecorator
      * @param delegate         existing object to be wrapped
      * @param serviceId        id of service
      * @param logger           log used for debug level logging messages by the interceptor
-     * @return a new object implementing the interface that can be used in place of the delegate,
-     *         providing logging behavior around each method call on the service interface
+     * @return a new object implementing the interface that can be used in place of the delegate, providing logging
+     *         behavior around each method call on the service interface
      */
     <T> T build(Class<T> serviceInterface, T delegate, String serviceId, Logger logger);
 }

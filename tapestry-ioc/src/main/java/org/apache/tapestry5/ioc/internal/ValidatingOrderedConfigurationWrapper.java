@@ -12,16 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.internal;
+package org.apache.tapestry5.ioc.internal;
 
-import org.apache.tapestry.ioc.OrderedConfiguration;
-import org.apache.tapestry.ioc.def.ContributionDef;
+import org.apache.tapestry5.ioc.OrderedConfiguration;
+import org.apache.tapestry5.ioc.def.ContributionDef;
 import org.slf4j.Logger;
 
 /**
- * Implements validation of values provided to an {@link org.apache.tapestry.ioc.OrderedConfiguration}. If you provide
+ * Implements validation of values provided to an {@link org.apache.tapestry5.ioc.OrderedConfiguration}. If you provide
  * an incorrect value type, the value is converted to null but added anyway. This ensures that incorrect values
- * contributed in don't screw up the {@link org.apache.tapestry.ioc.internal.util.Orderer} (and generate a bunch of
+ * contributed in don't screw up the {@link org.apache.tapestry5.ioc.internal.util.Orderer} (and generate a bunch of
  * error messages there).
  *
  * @param <T>

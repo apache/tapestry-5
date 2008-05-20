@@ -12,13 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.integration.app1.pages;
+package org.apache.tapestry5.integration.app1.pages;
 
-import org.apache.tapestry.ComponentResources;
-import org.apache.tapestry.annotation.InjectPage;
-import org.apache.tapestry.ioc.annotation.Inject;
-import org.apache.tapestry.services.ComponentEventResultProcessor;
-import org.apache.tapestry.util.TextStreamResponse;
+import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.annotations.InjectPage;
+import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.services.ComponentEventResultProcessor;
+import org.apache.tapestry5.util.TextStreamResponse;
 
 import java.net.MalformedURLException;
 import java.net.URL;

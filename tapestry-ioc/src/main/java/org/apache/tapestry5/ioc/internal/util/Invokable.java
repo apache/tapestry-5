@@ -12,15 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.internal.util;
+package org.apache.tapestry5.ioc.internal.util;
 
 
 /**
- * Similiar to {@link Runnable} execpt that it returns a value. Used by {@link ConcurrentBarrier} to
- * identify the block of code to execute with read/write lock protection.
+ * Similiar to {@link Runnable} execpt that it returns a value. Used by {@link ConcurrentBarrier} to identify the block
+ * of code to execute with read/write lock protection.
  *
- * @param <T>
- * the return value type
+ * @param <T> the return value type
  */
 public interface Invokable<T>
 {

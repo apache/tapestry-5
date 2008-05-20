@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.integration.app1.services;
+package org.apache.tapestry5.integration.app1.services;
 
-import org.apache.tapestry.model.MutableComponentModel;
-import org.apache.tapestry.services.*;
+import org.apache.tapestry5.model.MutableComponentModel;
+import org.apache.tapestry5.services.*;
 
 public class ReverseStringsWorker implements ComponentClassTransformWorker
 {

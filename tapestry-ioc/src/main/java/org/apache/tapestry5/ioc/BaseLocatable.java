@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc;
+package org.apache.tapestry5.ioc;
 
 /**
- * Base implementation of {@link org.apache.tapestry.ioc.Locatable}.
+ * Base implementation of {@link org.apache.tapestry5.ioc.Locatable}.
  */
 public class BaseLocatable implements Locatable
 {

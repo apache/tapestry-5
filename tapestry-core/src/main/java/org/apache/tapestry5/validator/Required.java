@@ -12,14 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.validator;
+package org.apache.tapestry5.validator;
 
-import org.apache.tapestry.Field;
-import org.apache.tapestry.MarkupWriter;
-import org.apache.tapestry.ValidationException;
-import org.apache.tapestry.ioc.MessageFormatter;
-import org.apache.tapestry.ioc.internal.util.InternalUtils;
-import org.apache.tapestry.services.FormSupport;
+import org.apache.tapestry5.Field;
+import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.ValidationException;
+import org.apache.tapestry5.ioc.MessageFormatter;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.services.FormSupport;
 
 /**
  * A validator that enforces that the value is not null and not the empty string. This validator is not configurable.

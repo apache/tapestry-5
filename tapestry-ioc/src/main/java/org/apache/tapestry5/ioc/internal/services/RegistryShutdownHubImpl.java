@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.internal.services;
+package org.apache.tapestry5.ioc.internal.services;
 
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newThreadSafeList;
-import org.apache.tapestry.ioc.internal.util.OneShotLock;
-import org.apache.tapestry.ioc.services.RegistryShutdownHub;
-import org.apache.tapestry.ioc.services.RegistryShutdownListener;
+import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newThreadSafeList;
+import org.apache.tapestry5.ioc.internal.util.OneShotLock;
+import org.apache.tapestry5.ioc.services.RegistryShutdownHub;
+import org.apache.tapestry5.ioc.services.RegistryShutdownListener;
 import org.slf4j.Logger;
 
 import java.util.List;

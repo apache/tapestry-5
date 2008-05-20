@@ -12,23 +12,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.corelib.components;
+package org.apache.tapestry5.corelib.components;
 
-import org.apache.tapestry.*;
-import org.apache.tapestry.annotation.BeforeRenderTemplate;
-import org.apache.tapestry.annotation.Environmental;
-import org.apache.tapestry.annotation.Mixin;
-import org.apache.tapestry.annotation.Parameter;
-import org.apache.tapestry.corelib.base.AbstractField;
-import org.apache.tapestry.corelib.data.BlankOption;
-import org.apache.tapestry.corelib.mixins.RenderDisabled;
-import org.apache.tapestry.internal.TapestryInternalUtils;
-import org.apache.tapestry.internal.util.SelectModelRenderer;
-import org.apache.tapestry.ioc.Messages;
-import org.apache.tapestry.ioc.annotation.Inject;
-import org.apache.tapestry.ioc.internal.util.InternalUtils;
-import org.apache.tapestry.services.*;
-import org.apache.tapestry.util.EnumSelectModel;
+import org.apache.tapestry5.*;
+import org.apache.tapestry5.annotations.BeforeRenderTemplate;
+import org.apache.tapestry5.annotations.Environmental;
+import org.apache.tapestry5.annotations.Mixin;
+import org.apache.tapestry5.annotations.Parameter;
+import org.apache.tapestry5.corelib.base.AbstractField;
+import org.apache.tapestry5.corelib.data.BlankOption;
+import org.apache.tapestry5.corelib.mixins.RenderDisabled;
+import org.apache.tapestry5.internal.TapestryInternalUtils;
+import org.apache.tapestry5.internal.util.SelectModelRenderer;
+import org.apache.tapestry5.ioc.Messages;
+import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.services.*;
+import org.apache.tapestry5.util.EnumSelectModel;
 
 import java.util.Locale;
 

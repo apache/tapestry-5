@@ -12,19 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.integration.app1.services;
+package org.apache.tapestry5.integration.app1.services;
 
-import org.apache.tapestry.SymbolConstants;
-import org.apache.tapestry.ValueEncoder;
-import org.apache.tapestry.integration.app1.data.Track;
-import org.apache.tapestry.internal.services.GenericValueEncoderFactory;
-import org.apache.tapestry.ioc.Configuration;
-import org.apache.tapestry.ioc.MappedConfiguration;
-import org.apache.tapestry.ioc.OrderedConfiguration;
-import org.apache.tapestry.ioc.annotation.Marker;
-import org.apache.tapestry.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry.services.*;
-import org.apache.tapestry.test.JettyRunner;
+import org.apache.tapestry5.SymbolConstants;
+import org.apache.tapestry5.ValueEncoder;
+import org.apache.tapestry5.integration.app1.data.Track;
+import org.apache.tapestry5.internal.services.GenericValueEncoderFactory;
+import org.apache.tapestry5.ioc.Configuration;
+import org.apache.tapestry5.ioc.MappedConfiguration;
+import org.apache.tapestry5.ioc.OrderedConfiguration;
+import org.apache.tapestry5.ioc.annotations.Marker;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.services.*;
+import org.apache.tapestry5.test.JettyRunner;
 import org.slf4j.Logger;
 
 import java.io.IOException;
@@ -107,7 +107,7 @@ public class AppModule
 
     public void contributeClasspathAssetAliasManager(MappedConfiguration<String, String> configuration)
     {
-        configuration.add("app1/", "org/apache/tapestry/integration/app1/");
+        configuration.add("app1/", "org/apache/tapestry5/integration/app1/");
     }
 
     public UserAuthenticator buildUserAuthenticator()

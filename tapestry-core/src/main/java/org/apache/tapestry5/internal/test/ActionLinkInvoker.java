@@ -12,20 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.test;
+package org.apache.tapestry5.internal.test;
 
-import org.apache.tapestry.Link;
-import org.apache.tapestry.dom.Document;
-import org.apache.tapestry.internal.URLEventContext;
-import org.apache.tapestry.internal.services.ActionLinkTarget;
-import org.apache.tapestry.internal.services.ComponentInvocation;
-import org.apache.tapestry.internal.services.ComponentInvocationMap;
-import org.apache.tapestry.internal.services.InvocationTarget;
-import org.apache.tapestry.ioc.Registry;
-import org.apache.tapestry.ioc.internal.util.Defense;
-import org.apache.tapestry.services.ComponentEventRequestHandler;
-import org.apache.tapestry.services.ComponentEventRequestParameters;
-import org.apache.tapestry.services.ContextValueEncoder;
+import org.apache.tapestry5.Link;
+import org.apache.tapestry5.dom.Document;
+import org.apache.tapestry5.internal.URLEventContext;
+import org.apache.tapestry5.internal.services.ActionLinkTarget;
+import org.apache.tapestry5.internal.services.ComponentInvocation;
+import org.apache.tapestry5.internal.services.ComponentInvocationMap;
+import org.apache.tapestry5.internal.services.InvocationTarget;
+import org.apache.tapestry5.ioc.Registry;
+import org.apache.tapestry5.ioc.internal.util.Defense;
+import org.apache.tapestry5.services.ComponentEventRequestHandler;
+import org.apache.tapestry5.services.ComponentEventRequestParameters;
+import org.apache.tapestry5.services.ContextValueEncoder;
 
 import java.io.IOException;
 

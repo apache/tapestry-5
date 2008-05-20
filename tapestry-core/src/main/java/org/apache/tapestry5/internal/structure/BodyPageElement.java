@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.structure;
+package org.apache.tapestry5.internal.structure;
 
-import org.apache.tapestry.internal.services.PageLoader;
+import org.apache.tapestry5.internal.services.PageLoader;
 
 /**
  * A type of {@link PageElement} that has a body that can be added to. This is part of the constuction phase that is

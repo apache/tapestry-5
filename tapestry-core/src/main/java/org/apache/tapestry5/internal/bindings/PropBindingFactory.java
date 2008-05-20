@@ -12,15 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.bindings;
+package org.apache.tapestry5.internal.bindings;
 
-import org.apache.tapestry.Binding;
-import org.apache.tapestry.ComponentResources;
-import org.apache.tapestry.PropertyConduit;
-import org.apache.tapestry.ioc.Location;
-import org.apache.tapestry.ioc.internal.util.TapestryException;
-import org.apache.tapestry.services.BindingFactory;
-import org.apache.tapestry.services.PropertyConduitSource;
+import org.apache.tapestry5.Binding;
+import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.PropertyConduit;
+import org.apache.tapestry5.ioc.Location;
+import org.apache.tapestry5.ioc.internal.util.TapestryException;
+import org.apache.tapestry5.services.BindingFactory;
+import org.apache.tapestry5.services.PropertyConduitSource;
 
 /**
  * Binding factory for reading and updating JavaBean properties.

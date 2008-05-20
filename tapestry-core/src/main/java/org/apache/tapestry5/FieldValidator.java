@@ -12,14 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry;
+package org.apache.tapestry5;
 
 /**
  * Responsible for validation of a single field.
  *
  * @param <T>
  * @see Validator
- * @see org.apache.tapestry.services.FieldValidatorDefaultSource
+ * @see org.apache.tapestry5.services.FieldValidatorDefaultSource
  */
 public interface FieldValidator<T>
 {
@@ -34,19 +34,19 @@ public interface FieldValidator<T>
     void validate(T value) throws ValidationException;
 
     /**
-     * Invokes {@link Validator#render(Field, Object, org.apache.tapestry.ioc.MessageFormatter, MarkupWriter,
-     * org.apache.tapestry.services.FormSupport)}. This is called at a point "inside" the tag, so that additional
-     * attributes may be added.  In many cases, the underlying {@link org.apache.tapestry.Validator} may write
+     * Invokes {@link Validator#render(Field, Object, org.apache.tapestry5.ioc.MessageFormatter, MarkupWriter,
+     * org.apache.tapestry5.services.FormSupport)}. This is called at a point "inside" the tag, so that additional
+     * attributes may be added.  In many cases, the underlying {@link org.apache.tapestry5.Validator} may write
      * client-side JavaScript to enforce the constraint as well.
      *
      * @param writer markup writer to direct output to.
-     * @see org.apache.tapestry.MarkupWriter#attributes(Object[])
+     * @see org.apache.tapestry5.MarkupWriter#attributes(Object[])
      */
     void render(MarkupWriter writer);
 
     /**
-     * Returns true if any underlying {@link org.apache.tapestry.Validator} returns true from {@link
-     * org.apache.tapestry.Validator#isRequired()}.
+     * Returns true if any underlying {@link org.apache.tapestry5.Validator} returns true from {@link
+     * org.apache.tapestry5.Validator#isRequired()}.
      *
      * @return true if the field is required   (a non-blank value is expected)
      */

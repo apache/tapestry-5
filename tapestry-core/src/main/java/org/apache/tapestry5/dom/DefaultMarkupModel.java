@@ -12,14 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.dom;
+package org.apache.tapestry5.dom;
 
-import org.apache.tapestry.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 
 import java.util.Set;
 
 /**
- * Default implementation of {@link org.apache.tapestry.dom.MarkupModel} that is appropriate for traditional HTML
+ * Default implementation of {@link org.apache.tapestry5.dom.MarkupModel} that is appropriate for traditional HTML
  * markup. This conforms to the SGML HTML definition, including some things that are not well formed XML-style markup.
  * Assumes that all tags are lower-case.
  */

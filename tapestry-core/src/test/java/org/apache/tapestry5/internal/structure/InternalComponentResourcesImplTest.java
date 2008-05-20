@@ -12,19 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.structure;
+package org.apache.tapestry5.internal.structure;
 
-import org.apache.tapestry.Binding;
-import org.apache.tapestry.ComponentResources;
-import org.apache.tapestry.MarkupWriter;
-import org.apache.tapestry.internal.InternalComponentResources;
-import org.apache.tapestry.internal.services.Instantiator;
-import org.apache.tapestry.internal.test.InternalBaseTestCase;
-import org.apache.tapestry.ioc.services.TypeCoercer;
-import org.apache.tapestry.model.ComponentModel;
-import org.apache.tapestry.model.ParameterModel;
-import org.apache.tapestry.runtime.Component;
-import org.apache.tapestry.runtime.PageLifecycleListener;
+import org.apache.tapestry5.Binding;
+import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.internal.InternalComponentResources;
+import org.apache.tapestry5.internal.services.Instantiator;
+import org.apache.tapestry5.internal.test.InternalBaseTestCase;
+import org.apache.tapestry5.ioc.services.TypeCoercer;
+import org.apache.tapestry5.model.ComponentModel;
+import org.apache.tapestry5.model.ParameterModel;
+import org.apache.tapestry5.runtime.Component;
+import org.apache.tapestry5.runtime.PageLifecycleListener;
 import org.testng.annotations.Test;
 
 public class InternalComponentResourcesImplTest extends InternalBaseTestCase

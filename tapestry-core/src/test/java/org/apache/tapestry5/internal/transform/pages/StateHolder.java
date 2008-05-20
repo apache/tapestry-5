@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.transform.pages;
+package org.apache.tapestry5.internal.transform.pages;
 
-import org.apache.tapestry.annotation.ApplicationState;
-import org.apache.tapestry.internal.services.SimpleASO;
+import org.apache.tapestry5.annotations.ApplicationState;
+import org.apache.tapestry5.internal.services.SimpleASO;
 
 public class StateHolder
 {

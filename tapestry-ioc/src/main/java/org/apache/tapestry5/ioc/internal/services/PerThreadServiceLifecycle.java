@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.internal.services;
+package org.apache.tapestry5.ioc.internal.services;
 
-import org.apache.tapestry.ioc.ObjectCreator;
-import org.apache.tapestry.ioc.ServiceLifecycle;
-import org.apache.tapestry.ioc.ServiceResources;
-import org.apache.tapestry.ioc.services.*;
+import org.apache.tapestry5.ioc.ObjectCreator;
+import org.apache.tapestry5.ioc.ServiceLifecycle;
+import org.apache.tapestry5.ioc.ServiceResources;
+import org.apache.tapestry5.ioc.services.*;
 
 import static java.lang.String.format;
 import java.lang.reflect.Constructor;
@@ -26,7 +26,7 @@ import java.lang.reflect.Modifier;
 
 /**
  * Allows a service to exist "per thread" (in each thread). This involves an inner proxy, which caches an object derived
- * from a {@link org.apache.tapestry.ioc.ObjectCreator} as a key in the {@link org.apache.tapestry.ioc.services.PerthreadManager}.
+ * from a {@link org.apache.tapestry5.ioc.ObjectCreator} as a key in the {@link org.apache.tapestry5.ioc.services.PerthreadManager}.
  * Method invocations are delegated to the per-thread service instance.
  * <p/>
  * This scheme ensures that, although the service builder method will be invoked many times over the life of the

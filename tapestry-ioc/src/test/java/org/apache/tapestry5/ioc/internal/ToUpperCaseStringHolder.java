@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.internal;
+package org.apache.tapestry5.ioc.internal;
 
-import org.apache.tapestry.ioc.StringHolder;
+import org.apache.tapestry5.ioc.StringHolder;
 
 public class ToUpperCaseStringHolder implements StringHolder
 {

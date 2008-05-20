@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.corelib.mixins;
+package org.apache.tapestry5.corelib.mixins;
 
-import org.apache.tapestry.annotation.BeforeRenderBody;
-import org.apache.tapestry.annotation.MixinAfter;
+import org.apache.tapestry5.annotations.BeforeRenderBody;
+import org.apache.tapestry5.annotations.MixinAfter;
 
 /**
  * Discards a component's body. Returns false from the {@link BeforeRenderBody} phase, which prevents the rendering of

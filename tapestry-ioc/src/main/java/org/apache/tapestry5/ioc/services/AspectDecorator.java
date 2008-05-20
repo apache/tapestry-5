@@ -12,14 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.services;
+package org.apache.tapestry5.ioc.services;
 
-import org.apache.tapestry.ioc.MethodAdvice;
+import org.apache.tapestry5.ioc.MethodAdvice;
 
 
 /**
  * A decorator used to create an interceptor that delegates each method's invocation to an {@link
- * org.apache.tapestry.ioc.MethodAdvice} for advice.  Advice can inspect or change method parameters, inspect or change
+ * org.apache.tapestry5.ioc.MethodAdvice} for advice.  Advice can inspect or change method parameters, inspect or change
  * the method's return value, and inspect and change thrown exceptions (checked and unchecked).
  */
 public interface AspectDecorator

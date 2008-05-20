@@ -12,17 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.corelib.components;
+package org.apache.tapestry5.corelib.components;
 
-import org.apache.tapestry.*;
-import org.apache.tapestry.annotation.Environmental;
-import org.apache.tapestry.annotation.Parameter;
-import org.apache.tapestry.dom.Element;
-import org.apache.tapestry.grid.GridDataSource;
-import org.apache.tapestry.internal.InternalConstants;
-import org.apache.tapestry.internal.services.ClientBehaviorSupport;
-import org.apache.tapestry.ioc.Messages;
-import org.apache.tapestry.ioc.annotation.Inject;
+import org.apache.tapestry5.*;
+import org.apache.tapestry5.annotations.Environmental;
+import org.apache.tapestry5.annotations.Parameter;
+import org.apache.tapestry5.dom.Element;
+import org.apache.tapestry5.grid.GridDataSource;
+import org.apache.tapestry5.internal.InternalConstants;
+import org.apache.tapestry5.internal.services.ClientBehaviorSupport;
+import org.apache.tapestry5.ioc.Messages;
+import org.apache.tapestry5.ioc.annotations.Inject;
 
 /**
  * Generates a series of links used to jump to a particular page index within the overall data set.

@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.test;
+package org.apache.tapestry5.internal.test;
 
-import org.apache.tapestry.services.Context;
-import org.apache.tapestry.test.TapestryTestConstants;
+import org.apache.tapestry5.services.Context;
+import org.apache.tapestry5.test.TapestryTestConstants;
 
 import java.io.File;
 import java.net.MalformedURLException;

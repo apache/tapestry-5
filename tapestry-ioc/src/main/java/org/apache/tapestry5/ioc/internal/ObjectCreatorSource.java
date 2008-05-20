@@ -12,22 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.internal;
+package org.apache.tapestry5.ioc.internal;
 
-import org.apache.tapestry.ioc.ObjectCreator;
-import org.apache.tapestry.ioc.ServiceBuilderResources;
+import org.apache.tapestry5.ioc.ObjectCreator;
+import org.apache.tapestry5.ioc.ServiceBuilderResources;
 
 /**
- * An object which can, when passed a {@link ServiceBuilderResources}, create a corresponding
- * {@link ObjectCreator}. A secondary responsibility is to provide a description of the creator,
- * which is usually based on the name of the method or constructor to be invoked, and is ultimately
- * used in some debugging or error output.
+ * An object which can, when passed a {@link ServiceBuilderResources}, create a corresponding {@link ObjectCreator}. A
+ * secondary responsibility is to provide a description of the creator, which is usually based on the name of the method
+ * or constructor to be invoked, and is ultimately used in some debugging or error output.
  */
 public interface ObjectCreatorSource
 {
     /**
-     * Provides an ObjectCreator that can be used to ultimately instantiate the core service
-     * implementation.
+     * Provides an ObjectCreator that can be used to ultimately instantiate the core service implementation.
      */
     ObjectCreator constructCreator(ServiceBuilderResources resources);
 

@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.corelib.components;
+package org.apache.tapestry5.corelib.components;
 
-import org.apache.tapestry.MarkupWriter;
-import org.apache.tapestry.corelib.base.AbstractPropertyOutput;
+import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.corelib.base.AbstractPropertyOutput;
 
 /**
  * Part of {@link Grid} that renders the markup inside a single data cell. GridCell is used inside a pair of loops; the

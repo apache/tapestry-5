@@ -12,21 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.transform;
+package org.apache.tapestry5.internal.transform;
 
-import org.apache.tapestry.annotation.Retain;
-import org.apache.tapestry.model.MutableComponentModel;
-import org.apache.tapestry.services.ClassTransformation;
-import org.apache.tapestry.services.ComponentClassTransformWorker;
+import org.apache.tapestry5.annotations.Retain;
+import org.apache.tapestry5.model.MutableComponentModel;
+import org.apache.tapestry5.services.ClassTransformation;
+import org.apache.tapestry5.services.ComponentClassTransformWorker;
 
 /**
- * Identifies fields with the {@link org.apache.tapestry.annotation.Retain} annotation, and "claims" them so that no
+ * Identifies fields with the {@link org.apache.tapestry5.annotations.Retain} annotation, and "claims" them so that no
  * special work will occur on them.
  */
 public final class RetainWorker implements ComponentClassTransformWorker
 {
     /**
-     * Claims each field with the {@link org.apache.tapestry.annotation.Retain} annotation, claiming it using the
+     * Claims each field with the {@link org.apache.tapestry5.annotations.Retain} annotation, claiming it using the
      * annotation as the tag.
      */
     public void transform(ClassTransformation transformation, MutableComponentModel model)

@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc;
+package org.apache.tapestry5.ioc;
 
 /**
- * Encapsulates a strategy for determining the size of an object. Different implementations are
- * mapped to different types.
+ * Encapsulates a strategy for determining the size of an object. Different implementations are mapped to different
+ * types.
  */
 public interface Sizer
 {

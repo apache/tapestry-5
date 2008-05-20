@@ -12,17 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.internal.util;
+package org.apache.tapestry5.ioc.internal.util;
 
-import org.apache.tapestry.ioc.AnnotationProvider;
-import org.apache.tapestry.ioc.Locatable;
-import org.apache.tapestry.ioc.Location;
-import org.apache.tapestry.ioc.ObjectLocator;
-import org.apache.tapestry.ioc.annotation.Inject;
-import org.apache.tapestry.ioc.annotation.InjectService;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
-import static org.apache.tapestry.ioc.internal.util.Defense.notBlank;
-import org.apache.tapestry.ioc.services.ClassFactory;
+import org.apache.tapestry5.ioc.AnnotationProvider;
+import org.apache.tapestry5.ioc.Locatable;
+import org.apache.tapestry5.ioc.Location;
+import org.apache.tapestry5.ioc.ObjectLocator;
+import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.annotations.InjectService;
+import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newList;
+import static org.apache.tapestry5.ioc.internal.util.Defense.notBlank;
+import org.apache.tapestry5.ioc.services.ClassFactory;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -450,7 +450,7 @@ public class InternalUtils
      * Searches a class for the "best" constructor, the public constructor with the most parameters. Returns null if
      * there are no public constructors. If there is more than one constructor with the maximum number of parameters, it
      * is not determined which will be returned (don't build a class like that!). In addition, if a constructor is
-     * annotated with {@link org.apache.tapestry.ioc.annotation.Inject}, it will be used (no check for multiple such
+     * annotated with {@link org.apache.tapestry5.ioc.annotations.Inject}, it will be used (no check for multiple such
      * constructors is made, only at most a single constructor should have the annotation).
      *
      * @param clazz to search for a constructor for

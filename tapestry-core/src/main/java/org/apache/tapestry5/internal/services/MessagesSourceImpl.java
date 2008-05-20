@@ -12,16 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry.internal.event.InvalidationEventHubImpl;
-import org.apache.tapestry.internal.util.MultiKey;
-import org.apache.tapestry.internal.util.URLChangeTracker;
-import org.apache.tapestry.ioc.Messages;
-import org.apache.tapestry.ioc.Resource;
-import org.apache.tapestry.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry.ioc.internal.util.InternalUtils;
-import org.apache.tapestry.ioc.internal.util.LocalizedNameGenerator;
+import org.apache.tapestry5.internal.event.InvalidationEventHubImpl;
+import org.apache.tapestry5.internal.util.MultiKey;
+import org.apache.tapestry5.internal.util.URLChangeTracker;
+import org.apache.tapestry5.ioc.Messages;
+import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.ioc.internal.util.LocalizedNameGenerator;
 
 import java.io.InputStream;
 import java.util.*;

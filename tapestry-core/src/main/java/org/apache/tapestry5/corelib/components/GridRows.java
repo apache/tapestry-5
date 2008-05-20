@@ -12,19 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.corelib.components;
+package org.apache.tapestry5.corelib.components;
 
-import org.apache.tapestry.ComponentAction;
-import org.apache.tapestry.annotation.Environmental;
-import org.apache.tapestry.annotation.Parameter;
-import org.apache.tapestry.annotation.Property;
-import org.apache.tapestry.beaneditor.PropertyModel;
-import org.apache.tapestry.grid.GridConstants;
-import org.apache.tapestry.grid.GridDataSource;
-import org.apache.tapestry.grid.GridModel;
-import org.apache.tapestry.internal.TapestryInternalUtils;
-import org.apache.tapestry.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry.services.FormSupport;
+import org.apache.tapestry5.ComponentAction;
+import org.apache.tapestry5.annotations.Environmental;
+import org.apache.tapestry5.annotations.Parameter;
+import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.beaneditor.PropertyModel;
+import org.apache.tapestry5.grid.GridConstants;
+import org.apache.tapestry5.grid.GridDataSource;
+import org.apache.tapestry5.grid.GridModel;
+import org.apache.tapestry5.internal.TapestryInternalUtils;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.services.FormSupport;
 
 import java.util.List;
 

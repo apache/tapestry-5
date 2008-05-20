@@ -12,19 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.corelib.pages;
+package org.apache.tapestry5.corelib.pages;
 
-import org.apache.tapestry.FieldValidator;
-import org.apache.tapestry.SelectModel;
-import org.apache.tapestry.ValueEncoder;
-import org.apache.tapestry.annotation.Component;
-import org.apache.tapestry.annotation.Environmental;
-import org.apache.tapestry.corelib.components.*;
-import org.apache.tapestry.services.BeanBlockContribution;
-import org.apache.tapestry.services.BeanBlockSource;
-import org.apache.tapestry.services.PropertyEditContext;
-import org.apache.tapestry.util.EnumSelectModel;
-import org.apache.tapestry.util.EnumValueEncoder;
+import org.apache.tapestry5.FieldValidator;
+import org.apache.tapestry5.SelectModel;
+import org.apache.tapestry5.ValueEncoder;
+import org.apache.tapestry5.annotations.Component;
+import org.apache.tapestry5.annotations.Environmental;
+import org.apache.tapestry5.corelib.components.*;
+import org.apache.tapestry5.services.BeanBlockContribution;
+import org.apache.tapestry5.services.BeanBlockSource;
+import org.apache.tapestry5.services.PropertyEditContext;
+import org.apache.tapestry5.util.EnumSelectModel;
+import org.apache.tapestry5.util.EnumValueEncoder;
 
 /**
  * A page that exists to contain blocks used to edit different types of properties. The blocks on this page are

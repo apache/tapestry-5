@@ -12,18 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry;
+package org.apache.tapestry5;
 
 import java.util.List;
 
 /**
  * Defines the possible options and option groups for a &lt;select&gt; [X]HTML element.
  * <p/>
- * Primarily used by the {@link org.apache.tapestry.corelib.components.Select} component, but potentially used by
+ * Primarily used by the {@link org.apache.tapestry5.corelib.components.Select} component, but potentially used by
  * anything similar, that needs to present a list of options to the user. Generally paired with a {@link
- * org.apache.tapestry.ValueEncoder} to create client-side representations of server-side values.
+ * org.apache.tapestry5.ValueEncoder} to create client-side representations of server-side values.
  *
- * @see org.apache.tapestry.corelib.components.Palette
+ * @see org.apache.tapestry5.corelib.components.Palette
  */
 public interface SelectModel
 {

@@ -12,19 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.corelib.components;
+package org.apache.tapestry5.corelib.components;
 
-import org.apache.tapestry.ComponentResources;
-import org.apache.tapestry.MarkupWriter;
-import org.apache.tapestry.annotation.Environmental;
-import org.apache.tapestry.annotation.Mixin;
-import org.apache.tapestry.annotation.Parameter;
-import org.apache.tapestry.corelib.base.AbstractField;
-import org.apache.tapestry.corelib.mixins.RenderDisabled;
-import org.apache.tapestry.ioc.annotation.Inject;
-import org.apache.tapestry.services.FormSupport;
-import org.apache.tapestry.services.Heartbeat;
-import org.apache.tapestry.services.Request;
+import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.annotations.Environmental;
+import org.apache.tapestry5.annotations.Mixin;
+import org.apache.tapestry5.annotations.Parameter;
+import org.apache.tapestry5.corelib.base.AbstractField;
+import org.apache.tapestry5.corelib.mixins.RenderDisabled;
+import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.services.FormSupport;
+import org.apache.tapestry5.services.Heartbeat;
+import org.apache.tapestry5.services.Request;
 
 /**
  * Corresponds to &lt;input type="submit"&gt;, a client-side element that can force the enclosing form to submit. The

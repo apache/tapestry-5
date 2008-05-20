@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.test;
+package org.apache.tapestry5.internal.test;
 
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
@@ -31,11 +31,11 @@ public class CodeEqTest extends Assert
     {
         return new Object[][]
                 {
-                        {"foo", "foo"},
-                        {" foo\n", "foo"},
-                        {"  foo \nbar\n\n  \tbaz", "foo bar baz"},
-                        {"{\n  bar();\n  baz();\n  if (gnip())\n  {\n    gnop();\n  }\n}\n",
-                         "{bar(); baz(); if (gnip()){gnop();}}"}};
+                        { "foo", "foo" },
+                        { " foo\n", "foo" },
+                        { "  foo \nbar\n\n  \tbaz", "foo bar baz" },
+                        { "{\n  bar();\n  baz();\n  if (gnip())\n  {\n    gnop();\n  }\n}\n",
+                                "{bar(); baz(); if (gnip()){gnop();}}" } };
     }
 
     @Test(enabled = false)
@@ -63,7 +63,7 @@ public class CodeEqTest extends Assert
     {
         return new Object[][]
                 {
-                        {"{ foo(); }", "{\n  foo();\n}", true},
-                        {" foo();", "foo ();", false},};
+                        { "{ foo(); }", "{\n  foo();\n}", true },
+                        { " foo();", "foo ();", false }, };
     }
 }

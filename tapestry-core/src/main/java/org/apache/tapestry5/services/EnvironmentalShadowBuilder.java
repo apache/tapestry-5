@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.services;
+package org.apache.tapestry5.services;
 
-import org.apache.tapestry.annotation.Environmental;
-import org.apache.tapestry.ioc.services.PropertyShadowBuilder;
+import org.apache.tapestry5.annotations.Environmental;
+import org.apache.tapestry5.ioc.services.PropertyShadowBuilder;
 
 /**
  * Much like {@link PropertyShadowBuilder}, except that instead of accessing a property of some other service, it

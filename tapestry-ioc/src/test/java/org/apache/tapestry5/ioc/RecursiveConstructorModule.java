@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc;
+package org.apache.tapestry5.ioc;
 
-import org.apache.tapestry.ioc.annotation.InjectService;
+import org.apache.tapestry5.ioc.annotations.InjectService;
 
 /**
- * Used by {@link org.apache.tapestry.ioc.IntegrationTest}.
+ * Used by {@link org.apache.tapestry5.ioc.IntegrationTest}.
  */
 public class RecursiveConstructorModule
 {

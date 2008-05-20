@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry.Link;
+import org.apache.tapestry5.Link;
 
 /**
  * Listener interface for objects that need to be notified about newly created links.

@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.translator;
+package org.apache.tapestry5.internal.translator;
 
-import org.apache.tapestry.Translator;
-import org.apache.tapestry.ValidationException;
-import org.apache.tapestry.ioc.Messages;
+import org.apache.tapestry5.Translator;
+import org.apache.tapestry5.ValidationException;
+import org.apache.tapestry5.ioc.Messages;
 
 public class StringTranslator implements Translator<String>
 {

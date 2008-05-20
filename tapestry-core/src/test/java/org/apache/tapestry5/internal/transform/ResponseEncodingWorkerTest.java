@@ -12,13 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.transform;
+package org.apache.tapestry5.internal.transform;
 
-import org.apache.tapestry.MetaDataConstants;
-import org.apache.tapestry.annotation.ResponseEncoding;
-import org.apache.tapestry.model.MutableComponentModel;
-import org.apache.tapestry.services.ClassTransformation;
-import org.apache.tapestry.test.TapestryTestCase;
+import org.apache.tapestry5.MetaDataConstants;
+import org.apache.tapestry5.annotations.ResponseEncoding;
+import org.apache.tapestry5.model.MutableComponentModel;
+import org.apache.tapestry5.services.ClassTransformation;
+import org.apache.tapestry5.test.TapestryTestCase;
 import org.testng.annotations.Test;
 
 public class ResponseEncodingWorkerTest extends TapestryTestCase

@@ -12,15 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.corelib.components;
+package org.apache.tapestry5.corelib.components;
 
-import org.apache.tapestry.*;
-import org.apache.tapestry.annotation.*;
-import org.apache.tapestry.ioc.annotation.Inject;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
-import org.apache.tapestry.services.ComponentDefaultProvider;
-import org.apache.tapestry.services.FormSupport;
-import org.apache.tapestry.services.Heartbeat;
+import org.apache.tapestry5.*;
+import org.apache.tapestry5.annotations.*;
+import org.apache.tapestry5.ioc.annotations.Inject;
+import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newList;
+import org.apache.tapestry5.services.ComponentDefaultProvider;
+import org.apache.tapestry5.services.FormSupport;
+import org.apache.tapestry5.services.Heartbeat;
 
 import java.io.Serializable;
 import java.util.Iterator;

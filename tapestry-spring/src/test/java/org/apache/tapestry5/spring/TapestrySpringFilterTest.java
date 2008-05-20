@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.spring;
+package org.apache.tapestry5.spring;
 
-import org.apache.tapestry.test.TapestryTestCase;
+import org.apache.tapestry5.test.TapestryTestCase;
 import org.springframework.web.context.WebApplicationContext;
 import org.testng.annotations.Test;
 

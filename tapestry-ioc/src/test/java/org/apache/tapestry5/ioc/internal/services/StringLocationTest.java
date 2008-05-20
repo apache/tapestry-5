@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.internal.services;
+package org.apache.tapestry5.ioc.internal.services;
 
-import org.apache.tapestry.ioc.Location;
+import org.apache.tapestry5.ioc.Location;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 

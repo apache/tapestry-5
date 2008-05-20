@@ -12,24 +12,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.hibernate;
+package org.apache.tapestry5.internal.hibernate;
 
 import static org.easymock.EasyMock.expect;
-import static org.easymock.classextension.EasyMock.createMock;
-import static org.easymock.classextension.EasyMock.replay;
-import static org.easymock.classextension.EasyMock.verify;
-
+import static org.easymock.classextension.EasyMock.*;
 import org.hibernate.cfg.Configuration;
 import org.testng.annotations.Test;
 
 @Test
-public class DefaultHibernateConfigurerFilterTest {
-	public void testConfigure() throws Exception {
-		Configuration config = createMock(Configuration.class);
-		expect(config.configure()).andReturn(config);
-		
-		replay(config);
-		new DefaultHibernateConfigurer().configure(config);
-		verify(config);
-	}
+public class DefaultHibernateConfigurerFilterTest
+{
+    public void testConfigure() throws Exception
+    {
+        Configuration config = createMock(Configuration.class);
+        expect(config.configure()).andReturn(config);
+
+        replay(config);
+        new DefaultHibernateConfigurer().configure(config);
+        verify(config);
+    }
 }

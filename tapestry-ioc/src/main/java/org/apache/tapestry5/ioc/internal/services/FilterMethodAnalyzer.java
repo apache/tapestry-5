@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.internal.services;
+package org.apache.tapestry5.ioc.internal.services;
 
-import org.apache.tapestry.ioc.services.MethodSignature;
+import org.apache.tapestry5.ioc.services.MethodSignature;
 
 /**
- * Used by {@link org.apache.tapestry.ioc.internal.services.PipelineBuilderImpl} to analyze service interface methods
+ * Used by {@link org.apache.tapestry5.ioc.internal.services.PipelineBuilderImpl} to analyze service interface methods
  * against filter interface methods to find the position of the extra service parameter (in the filter method).
  */
 public class FilterMethodAnalyzer

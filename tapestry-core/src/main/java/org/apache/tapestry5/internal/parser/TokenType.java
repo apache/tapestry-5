@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.parser;
+package org.apache.tapestry5.internal.parser;
 
 /**
- * Defines the different types of {@link org.apache.tapestry.internal.parser.TemplateToken}s. Each value maps to a
+ * Defines the different types of {@link org.apache.tapestry5.internal.parser.TemplateToken}s. Each value maps to a
  * particular subclass of TemplateToken.
  */
 public enum TokenType

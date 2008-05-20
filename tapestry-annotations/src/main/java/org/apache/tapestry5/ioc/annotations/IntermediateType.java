@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.annotation;
+package org.apache.tapestry5.ioc.annotations;
 
 import java.lang.annotation.*;
 
@@ -20,10 +20,10 @@ import java.lang.annotation.*;
 /**
  * Used to guide Tapestry when coercing from a raw type to a field or parameter type, by forcing Tapestry to coerce to
  * the intermediate type.  This was introduced to allow coercion from string to a time period (in milliseconds) via
- * {@link org.apache.tapestry.ioc.util.TimeInterval}.
+ * {@link org.apache.tapestry5.ioc.util.TimeInterval}.
  *
- * @see org.apache.tapestry.ioc.annotation.Value
- * @see org.apache.tapestry.ioc.annotation.Symbol
+ * @see org.apache.tapestry5.ioc.annotations.Value
+ * @see org.apache.tapestry5.ioc.annotations.Symbol
  */
 @Target({ ElementType.PARAMETER, ElementType.FIELD })
 @Retention(RetentionPolicy.RUNTIME)

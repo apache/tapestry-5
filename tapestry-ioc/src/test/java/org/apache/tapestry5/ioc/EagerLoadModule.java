@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc;
+package org.apache.tapestry5.ioc;
 
-import org.apache.tapestry.ioc.annotation.EagerLoad;
+import org.apache.tapestry5.ioc.annotations.EagerLoad;
 
 /**
  * Used to test service eager loading.

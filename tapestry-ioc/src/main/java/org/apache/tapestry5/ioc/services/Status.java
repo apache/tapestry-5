@@ -12,13 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.services;
+package org.apache.tapestry5.ioc.services;
 
-import org.apache.tapestry.ioc.Registry;
+import org.apache.tapestry5.ioc.Registry;
 
 /**
- * Used in {@link ServiceActivity} to identify the state of the service in terms of its overall
- * lifecycle.
+ * Used in {@link ServiceActivity} to identify the state of the service in terms of its overall lifecycle.
  */
 public enum Status
 {

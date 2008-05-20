@@ -39,7 +39,7 @@ Document Object Model
   the serial (or buffered) approach used in Tapestry 4.
   
   A new 
-  {{{../../apidocs/org/apache/tapestry/MarkupWriter.html}MarkupWriter}} interface
+  {{{../../apidocs/org/apache/tapestry5/MarkupWriter.html}MarkupWriter}} interface
   allows the majority of code to treat the generation of output as a stream. In fact,
   MarkupWriter is more like a cursor into the DOM tree.
   
@@ -59,7 +59,7 @@ DOM Classes
   DOM object includes methods that create new sub-objects.  This primarily applies to the Element
   class, which can be a container of text, comments and other elements.
   
-* {{{../../apidocs/org/apache/tapestry/dom/Document.html}Document}}
+* {{{../../apidocs/org/apache/tapestry5/dom/Document.html}Document}}
 
   The Document object represents the an entire document, which is to say, an entire response to be
   sent to the client.
@@ -69,7 +69,7 @@ DOM Classes
   
   <<TODO: Support for doctypes, content type, processing instructions, and top-level comments.>>
   
-* {{{../../apidocs/org/apache/tapestry/dom/Element.html}Element}}
+* {{{../../apidocs/org/apache/tapestry5/dom/Element.html}Element}}
 
   An element of the document. Elements may have attributes, and they may themselves contain other
   elements, as well as text and comments.
@@ -82,7 +82,7 @@ DOM Classes
   a few methods for re-parenting DOM nodes into new elements. In addition, some searching methods may be added.
   
   
-{{{../../apidocs/org/apache/tapestry/MarkupWriter.html}MarkupWriter}}
+{{{../../apidocs/org/apache/tapestry5/MarkupWriter.html}MarkupWriter}}
 
   The MarkupWriter interface allows the structure of the document to be built while maintaining a streaming metaphor.
   

@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.integration.app2;
+package org.apache.tapestry5.integration.app2;
 
 public class SimpleASO
 {

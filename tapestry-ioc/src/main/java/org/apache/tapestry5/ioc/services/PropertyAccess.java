@@ -12,11 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.services;
+package org.apache.tapestry5.ioc.services;
 
 /**
- * A wrapper around the JavaBean Introspector that allows more manageable access to JavaBean
- * properties of objects.
+ * A wrapper around the JavaBean Introspector that allows more manageable access to JavaBean properties of objects.
  * <p/>
  * <p/>
  * Only provides access to <em>simple</em> properties.  Indexed properties are ignored.
@@ -40,8 +39,7 @@ public interface PropertyAccess
     void set(Object instance, String propertyName, Object value);
 
     /**
-     * Returns the adapter for a particular object instance. A convienience over invoking
-     * {@link #getAdapter(Class)}.
+     * Returns the adapter for a particular object instance. A convienience over invoking {@link #getAdapter(Class)}.
      */
     ClassPropertyAdapter getAdapter(Object instance);
 

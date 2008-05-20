@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.services;
+package org.apache.tapestry5.services;
 
-import org.apache.tapestry.*;
+import org.apache.tapestry5.*;
 
 /**
  * A service that can be injected into a component to provide common defaults for various types of parameters.
@@ -46,7 +46,7 @@ public interface ComponentDefaultProvider
      * based on type.
      *
      * @param parameterName the name of the parameter whose type is used to locate a {@link
-     *                      org.apache.tapestry.services.ValueEncoderFactory}
+     *                      org.apache.tapestry5.services.ValueEncoderFactory}
      * @param resources     the resources of the component, from which parameter and its type are extracted
      * @return the value encoder, or null if the type of the parameter is not known
      */

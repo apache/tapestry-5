@@ -12,19 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.corelib.base;
+package org.apache.tapestry5.corelib.base;
 
-import org.apache.tapestry.Block;
-import org.apache.tapestry.ComponentResources;
-import org.apache.tapestry.MarkupWriter;
-import org.apache.tapestry.PropertyConduit;
-import org.apache.tapestry.annotation.Parameter;
-import org.apache.tapestry.beaneditor.PropertyModel;
-import org.apache.tapestry.ioc.Messages;
-import org.apache.tapestry.ioc.annotation.Inject;
-import org.apache.tapestry.services.BeanBlockSource;
-import org.apache.tapestry.services.Environment;
-import org.apache.tapestry.services.PropertyOutputContext;
+import org.apache.tapestry5.Block;
+import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.PropertyConduit;
+import org.apache.tapestry5.annotations.Parameter;
+import org.apache.tapestry5.beaneditor.PropertyModel;
+import org.apache.tapestry5.ioc.Messages;
+import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.services.BeanBlockSource;
+import org.apache.tapestry5.services.Environment;
+import org.apache.tapestry5.services.PropertyOutputContext;
 
 /**
  * Base class for components that output a property value using a {@link PropertyModel}. There's a relationship between
@@ -54,7 +54,7 @@ public abstract class AbstractPropertyOutput
 
     /**
      * Identifies the object being rendered. The component will extract a property from the object and render its value
-     * (or delegate to a {@link org.apache.tapestry.Block} that will do so).
+     * (or delegate to a {@link org.apache.tapestry5.Block} that will do so).
      */
     @Parameter(required = true)
     private Object object;

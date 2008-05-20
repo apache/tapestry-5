@@ -12,16 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.services;
+package org.apache.tapestry5.services;
 
-import org.apache.tapestry.MarkupWriter;
-import org.apache.tapestry.runtime.ComponentEvent;
-import org.apache.tapestry.runtime.Event;
+import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.runtime.ComponentEvent;
+import org.apache.tapestry5.runtime.Event;
 
 import java.lang.reflect.Modifier;
 
 /**
- * Constants used by implementations of {@link org.apache.tapestry.services.ComponentClassTransformWorker}.
+ * Constants used by implementations of {@link org.apache.tapestry5.services.ComponentClassTransformWorker}.
  */
 public final class TransformConstants
 {
@@ -31,94 +31,94 @@ public final class TransformConstants
             Event.class.getName() };
 
     /**
-     * Signature for {@link org.apache.tapestry.runtime.Component#dispatchComponentEvent(org.apache.tapestry.runtime.ComponentEvent)}.
+     * Signature for {@link org.apache.tapestry5.runtime.Component#dispatchComponentEvent(org.apache.tapestry5.runtime.ComponentEvent)}.
      *
-     * @see org.apache.tapestry.annotation.OnEvent
+     * @see org.apache.tapestry5.annotations.OnEvent
      */
     public static final TransformMethodSignature DISPATCH_COMPONENT_EVENT = new TransformMethodSignature(
             Modifier.PUBLIC, "boolean", "dispatchComponentEvent", new String[] { ComponentEvent.class.getName() },
             null);
 
     /**
-     * Signature for {@link org.apache.tapestry.runtime.PageLifecycleListener#containingPageDidLoad()}.
+     * Signature for {@link org.apache.tapestry5.runtime.PageLifecycleListener#containingPageDidLoad()}.
      */
     public static final TransformMethodSignature CONTAINING_PAGE_DID_LOAD_SIGNATURE = new TransformMethodSignature(
             "containingPageDidLoad");
 
     /**
-     * Signature for {@link org.apache.tapestry.runtime.Component#postRenderCleanup()}.
+     * Signature for {@link org.apache.tapestry5.runtime.Component#postRenderCleanup()}.
      */
     public static final TransformMethodSignature POST_RENDER_CLEANUP_SIGNATURE = new TransformMethodSignature(
             "postRenderCleanup");
 
     /**
-     * Signature for {@link org.apache.tapestry.runtime.PageLifecycleListener#containingPageDidDetach()}.
+     * Signature for {@link org.apache.tapestry5.runtime.PageLifecycleListener#containingPageDidDetach()}.
      */
     public static final TransformMethodSignature CONTAINING_PAGE_DID_DETACH_SIGNATURE = new TransformMethodSignature(
             "containingPageDidDetach");
 
     /**
-     * Signature for {@link org.apache.tapestry.runtime.PageLifecycleListener#containingPageDidAttach()}.
+     * Signature for {@link org.apache.tapestry5.runtime.PageLifecycleListener#containingPageDidAttach()}.
      */
     public static final TransformMethodSignature CONTAINING_PAGE_DID_ATTACH_SIGNATURE = new TransformMethodSignature(
             "containingPageDidAttach");
 
     /**
-     * Signature for {@link org.apache.tapestry.runtime.Component#setupRender(MarkupWriter, Event)}.
+     * Signature for {@link org.apache.tapestry5.runtime.Component#setupRender(MarkupWriter, Event)}.
      *
-     * @see org.apache.tapestry.annotation.SetupRender
+     * @see org.apache.tapestry5.annotations.SetupRender
      */
     public static final TransformMethodSignature SETUP_RENDER_SIGNATURE = renderPhaseSignature("setupRender");
 
     /**
-     * Signature for {@link org.apache.tapestry.runtime.Component#beginRender(MarkupWriter, Event)}.
+     * Signature for {@link org.apache.tapestry5.runtime.Component#beginRender(MarkupWriter, Event)}.
      *
-     * @see org.apache.tapestry.annotation.BeginRender
+     * @see org.apache.tapestry5.annotations.BeginRender
      */
     public static final TransformMethodSignature BEGIN_RENDER_SIGNATURE = renderPhaseSignature("beginRender");
 
     /**
-     * Signature for {@link org.apache.tapestry.runtime.Component#beforeRenderTemplate(MarkupWriter, Event)}.
+     * Signature for {@link org.apache.tapestry5.runtime.Component#beforeRenderTemplate(MarkupWriter, Event)}.
      *
-     * @see org.apache.tapestry.annotation.BeforeRenderTemplate
+     * @see org.apache.tapestry5.annotations.BeforeRenderTemplate
      */
     public static final TransformMethodSignature BEFORE_RENDER_TEMPLATE_SIGNATURE = renderPhaseSignature(
             "beforeRenderTemplate");
 
     /**
-     * Signature for {@link org.apache.tapestry.runtime.Component#afterRenderTemplate(MarkupWriter, Event)}.
+     * Signature for {@link org.apache.tapestry5.runtime.Component#afterRenderTemplate(MarkupWriter, Event)}.
      *
-     * @see org.apache.tapestry.annotation.BeforeRenderTemplate
+     * @see org.apache.tapestry5.annotations.BeforeRenderTemplate
      */
     public static final TransformMethodSignature AFTER_RENDER_TEMPLATE_SIGNATURE = renderPhaseSignature(
             "afterRenderTemplate");
 
     /**
-     * Signature for {@link org.apache.tapestry.runtime.Component#beforeRenderBody(MarkupWriter, Event)}.
+     * Signature for {@link org.apache.tapestry5.runtime.Component#beforeRenderBody(MarkupWriter, Event)}.
      *
-     * @see org.apache.tapestry.annotation.BeforeRenderBody
+     * @see org.apache.tapestry5.annotations.BeforeRenderBody
      */
     public static final TransformMethodSignature BEFORE_RENDER_BODY_SIGNATURE = renderPhaseSignature(
             "beforeRenderBody");
 
     /**
-     * Signature for {@link org.apache.tapestry.runtime.Component#afterRenderBody(MarkupWriter, Event)}.
+     * Signature for {@link org.apache.tapestry5.runtime.Component#afterRenderBody(MarkupWriter, Event)}.
      *
-     * @see org.apache.tapestry.annotation.AfterRenderBody
+     * @see org.apache.tapestry5.annotations.AfterRenderBody
      */
     public static final TransformMethodSignature AFTER_RENDER_BODY_SIGNATURE = renderPhaseSignature("afterRenderBody");
 
     /**
-     * Signature for {@link org.apache.tapestry.runtime.Component#afterRender(MarkupWriter, Event)}
+     * Signature for {@link org.apache.tapestry5.runtime.Component#afterRender(MarkupWriter, Event)}
      *
-     * @see org.apache.tapestry.annotation.AfterRender
+     * @see org.apache.tapestry5.annotations.AfterRender
      */
     public static final TransformMethodSignature AFTER_RENDER_SIGNATURE = renderPhaseSignature("afterRender");
 
     /**
-     * Signature for {@link org.apache.tapestry.runtime.Component#cleanupRender(MarkupWriter, Event)}.
+     * Signature for {@link org.apache.tapestry5.runtime.Component#cleanupRender(MarkupWriter, Event)}.
      *
-     * @see org.apache.tapestry.annotation.CleanupRender
+     * @see org.apache.tapestry5.annotations.CleanupRender
      */
     public static final TransformMethodSignature CLEANUP_RENDER_SIGNATURE = renderPhaseSignature("cleanupRender");
 

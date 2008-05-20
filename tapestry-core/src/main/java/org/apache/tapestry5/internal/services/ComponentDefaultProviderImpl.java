@@ -12,19 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry.*;
-import org.apache.tapestry.internal.TapestryInternalUtils;
-import org.apache.tapestry.ioc.Messages;
-import static org.apache.tapestry.ioc.internal.util.Defense.notBlank;
-import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
-import org.apache.tapestry.ioc.services.PropertyAccess;
-import org.apache.tapestry.runtime.Component;
-import org.apache.tapestry.services.BindingSource;
-import org.apache.tapestry.services.ComponentDefaultProvider;
-import org.apache.tapestry.services.TranslatorSource;
-import org.apache.tapestry.services.ValueEncoderSource;
+import org.apache.tapestry5.*;
+import org.apache.tapestry5.internal.TapestryInternalUtils;
+import org.apache.tapestry5.ioc.Messages;
+import static org.apache.tapestry5.ioc.internal.util.Defense.notBlank;
+import static org.apache.tapestry5.ioc.internal.util.Defense.notNull;
+import org.apache.tapestry5.ioc.services.PropertyAccess;
+import org.apache.tapestry5.runtime.Component;
+import org.apache.tapestry5.services.BindingSource;
+import org.apache.tapestry5.services.ComponentDefaultProvider;
+import org.apache.tapestry5.services.TranslatorSource;
+import org.apache.tapestry5.services.ValueEncoderSource;
 
 public class ComponentDefaultProviderImpl implements ComponentDefaultProvider
 {

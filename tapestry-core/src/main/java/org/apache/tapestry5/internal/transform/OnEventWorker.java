@@ -12,20 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.transform;
+package org.apache.tapestry5.internal.transform;
 
-import org.apache.tapestry.EventContext;
-import org.apache.tapestry.annotation.OnEvent;
-import org.apache.tapestry.ioc.util.BodyBuilder;
-import org.apache.tapestry.model.MutableComponentModel;
-import org.apache.tapestry.services.*;
+import org.apache.tapestry5.EventContext;
+import org.apache.tapestry5.annotations.OnEvent;
+import org.apache.tapestry5.ioc.util.BodyBuilder;
+import org.apache.tapestry5.model.MutableComponentModel;
+import org.apache.tapestry5.services.*;
 
 import java.util.Arrays;
 import java.util.List;
 
 /**
- * Provides implementations of the {@link org.apache.tapestry.runtime.Component#dispatchComponentEvent(org.apache.tapestry.runtime.ComponentEvent)}
- * method, based on {@link org.apache.tapestry.annotation.OnEvent} annotations.
+ * Provides implementations of the {@link org.apache.tapestry5.runtime.Component#dispatchComponentEvent(org.apache.tapestry5.runtime.ComponentEvent)}
+ * method, based on {@link org.apache.tapestry5.annotations.OnEvent} annotations.
  */
 public class OnEventWorker implements ComponentClassTransformWorker
 {

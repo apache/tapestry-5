@@ -15,7 +15,7 @@
 /**
  *
  */
-package org.apache.tapestry.ioc.internal;
+package org.apache.tapestry5.ioc.internal;
 
 enum MatchType
 {

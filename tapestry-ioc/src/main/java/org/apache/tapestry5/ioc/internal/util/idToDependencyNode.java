@@ -12,13 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.internal.util;
+package org.apache.tapestry5.ioc.internal.util;
 
-import org.apache.tapestry.ioc.IdMatcher;
-import org.apache.tapestry.ioc.Orderable;
-import org.apache.tapestry.ioc.internal.IdMatcherImpl;
-import org.apache.tapestry.ioc.internal.OrIdMatcher;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
+import org.apache.tapestry5.ioc.IdMatcher;
+import org.apache.tapestry5.ioc.Orderable;
+import org.apache.tapestry5.ioc.internal.IdMatcherImpl;
+import org.apache.tapestry5.ioc.internal.OrIdMatcher;
+import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newList;
 import org.slf4j.Logger;
 
 import java.util.Collection;
@@ -106,7 +106,7 @@ public class idToDependencyNode<T>
      * @param id          unique, qualified id for the target
      * @param target      the object to be ordered (or null as a placeholder)
      * @param constraints optional, variable constraints
-     * @see #add(org.apache.tapestry.ioc.Orderable)
+     * @see #add(org.apache.tapestry5.ioc.Orderable)
      */
 
     public void add(String id, T target, String... constraints)

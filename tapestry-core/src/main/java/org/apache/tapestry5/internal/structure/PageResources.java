@@ -12,20 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.structure;
+package org.apache.tapestry5.internal.structure;
 
-import org.apache.tapestry.ioc.Messages;
-import org.apache.tapestry.model.ComponentModel;
-import org.apache.tapestry.services.ContextValueEncoder;
+import org.apache.tapestry5.ioc.Messages;
+import org.apache.tapestry5.model.ComponentModel;
+import org.apache.tapestry5.services.ContextValueEncoder;
 
 /**
  * Provides access to common methods of various services, needed by implementations of {@link ComponentPageElement} and
- * {@link org.apache.tapestry.internal.InternalComponentResources}.
+ * {@link org.apache.tapestry5.internal.InternalComponentResources}.
  */
 public interface PageResources extends ContextValueEncoder
 {
     /**
-     * Used to obtain a {@link org.apache.tapestry.ioc.Messages} instance for a particular component. If the component
+     * Used to obtain a {@link org.apache.tapestry5.ioc.Messages} instance for a particular component. If the component
      * extends from another component, then its localized properties will merge with its parent's properties (with the
      * subclass overriding the super class on any conflicts).
      *
@@ -46,7 +46,7 @@ public interface PageResources extends ContextValueEncoder
      * @param input
      * @param targetType defines the target type
      * @return the coerced value
-     * @see org.apache.tapestry.ioc.services.TypeCoercer
+     * @see org.apache.tapestry5.ioc.services.TypeCoercer
      */
     <S, T> T coerce(S input, Class<T> targetType);
 
@@ -55,7 +55,7 @@ public interface PageResources extends ContextValueEncoder
      *
      * @param className fully qualified class name
      * @return the class instance
-     * @see org.apache.tapestry.internal.services.ComponentClassCache
+     * @see org.apache.tapestry5.internal.services.ComponentClassCache
      */
     Class toClass(String className);
 }

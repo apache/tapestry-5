@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.integration.app2.pages;
+package org.apache.tapestry5.integration.app2.pages;
 
-import org.apache.tapestry.annotation.ApplicationState;
-import org.apache.tapestry.integration.app2.SimpleASO;
+import org.apache.tapestry5.annotations.ApplicationState;
+import org.apache.tapestry5.integration.app2.SimpleASO;
 
 public class TestPageForASO
 {

@@ -12,14 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.transform;
+package org.apache.tapestry5.internal.transform;
 
-import org.apache.tapestry.annotation.Meta;
-import org.apache.tapestry.internal.KeyValue;
-import org.apache.tapestry.internal.TapestryInternalUtils;
-import org.apache.tapestry.model.MutableComponentModel;
-import org.apache.tapestry.services.ClassTransformation;
-import org.apache.tapestry.services.ComponentClassTransformWorker;
+import org.apache.tapestry5.annotations.Meta;
+import org.apache.tapestry5.internal.KeyValue;
+import org.apache.tapestry5.internal.TapestryInternalUtils;
+import org.apache.tapestry5.model.MutableComponentModel;
+import org.apache.tapestry5.services.ClassTransformation;
+import org.apache.tapestry5.services.ComponentClassTransformWorker;
 
 /**
  * Checks for the presence of a {@link Meta} annotation, and adds the data within to the component model.

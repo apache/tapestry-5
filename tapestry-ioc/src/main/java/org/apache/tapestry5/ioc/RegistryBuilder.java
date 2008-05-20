@@ -12,19 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc;
+package org.apache.tapestry5.ioc;
 
-import org.apache.tapestry.ioc.annotation.SubModule;
-import org.apache.tapestry.ioc.def.ModuleDef;
-import org.apache.tapestry.ioc.internal.DefaultModuleDefImpl;
-import org.apache.tapestry.ioc.internal.LoggerSourceImpl;
-import org.apache.tapestry.ioc.internal.RegistryImpl;
-import org.apache.tapestry.ioc.internal.RegistryWrapper;
-import org.apache.tapestry.ioc.internal.services.ClassFactoryImpl;
-import org.apache.tapestry.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry.ioc.internal.util.OneShotLock;
-import org.apache.tapestry.ioc.services.ClassFactory;
-import org.apache.tapestry.ioc.services.TapestryIOCModule;
+import org.apache.tapestry5.ioc.annotations.SubModule;
+import org.apache.tapestry5.ioc.def.ModuleDef;
+import org.apache.tapestry5.ioc.internal.DefaultModuleDefImpl;
+import org.apache.tapestry5.ioc.internal.LoggerSourceImpl;
+import org.apache.tapestry5.ioc.internal.RegistryImpl;
+import org.apache.tapestry5.ioc.internal.RegistryWrapper;
+import org.apache.tapestry5.ioc.internal.services.ClassFactoryImpl;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.internal.util.OneShotLock;
+import org.apache.tapestry5.ioc.services.ClassFactory;
+import org.apache.tapestry5.ioc.services.TapestryIOCModule;
 import org.slf4j.Logger;
 
 import java.lang.reflect.AnnotatedElement;
@@ -33,7 +33,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Used to construct the IoC {@link org.apache.tapestry.ioc.Registry}. This class is <em>not</em> thread-safe. The
+ * Used to construct the IoC {@link org.apache.tapestry5.ioc.Registry}. This class is <em>not</em> thread-safe. The
  * Registry, once created, <em>is</em> thread-safe.
  */
 public final class RegistryBuilder
@@ -100,7 +100,7 @@ public final class RegistryBuilder
     /**
      * Adds a number of modules (as module classes) to the registry, returning the builder for further configuration.
      *
-     * @see org.apache.tapestry.ioc.annotation.SubModule
+     * @see org.apache.tapestry5.ioc.annotations.SubModule
      */
     public RegistryBuilder add(Class... moduleBuilderClasses)
     {
@@ -135,7 +135,7 @@ public final class RegistryBuilder
      * Adds a number of module classes (specified by fully qualified class name) to the registry, returning the builder
      * for further configuration.
      *
-     * @see org.apache.tapestry.ioc.annotation.SubModule
+     * @see org.apache.tapestry5.ioc.annotations.SubModule
      */
     public RegistryBuilder add(String classname)
     {
@@ -157,7 +157,7 @@ public final class RegistryBuilder
 
     /**
      * Constructs and returns the registry; this may only be done once. The caller is responsible for invoking {@link
-     * org.apache.tapestry.ioc.Registry#performRegistryStartup()}.
+     * org.apache.tapestry5.ioc.Registry#performRegistryStartup()}.
      */
     public Registry build()
     {

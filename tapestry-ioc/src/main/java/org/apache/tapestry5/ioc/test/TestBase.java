@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.test;
+package org.apache.tapestry5.ioc.test;
 
 import org.easymock.EasyMock;
 import org.easymock.IExpectationSetters;

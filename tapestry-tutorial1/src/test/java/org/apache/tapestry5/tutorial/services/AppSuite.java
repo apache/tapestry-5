@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.tutorial.services;
+package org.apache.tapestry5.tutorial.services;
 
-import org.apache.tapestry.ioc.test.TestBase;
+import org.apache.tapestry5.ioc.test.TestBase;
 import org.testng.annotations.Test;
 
 public class AppSuite extends TestBase

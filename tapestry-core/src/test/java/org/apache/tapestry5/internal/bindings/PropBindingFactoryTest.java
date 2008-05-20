@@ -12,20 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.bindings;
+package org.apache.tapestry5.internal.bindings;
 
-import org.apache.tapestry.Binding;
-import org.apache.tapestry.ComponentResources;
-import org.apache.tapestry.annotation.BeforeRenderBody;
-import org.apache.tapestry.beaneditor.OrderAfter;
-import org.apache.tapestry.beaneditor.OrderBefore;
-import org.apache.tapestry.internal.test.InternalBaseTestCase;
-import org.apache.tapestry.internal.util.IntegerRange;
-import org.apache.tapestry.ioc.Location;
-import org.apache.tapestry.ioc.internal.util.InternalUtils;
-import org.apache.tapestry.ioc.internal.util.TapestryException;
-import org.apache.tapestry.runtime.Component;
-import org.apache.tapestry.services.BindingFactory;
+import org.apache.tapestry5.Binding;
+import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.annotations.BeforeRenderBody;
+import org.apache.tapestry5.beaneditor.OrderAfter;
+import org.apache.tapestry5.beaneditor.OrderBefore;
+import org.apache.tapestry5.internal.test.InternalBaseTestCase;
+import org.apache.tapestry5.internal.util.IntegerRange;
+import org.apache.tapestry5.ioc.Location;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.ioc.internal.util.TapestryException;
+import org.apache.tapestry5.runtime.Component;
+import org.apache.tapestry5.services.BindingFactory;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
@@ -265,7 +265,7 @@ public class PropBindingFactoryTest extends InternalBaseTestCase
         {
             assertEquals(
                     ex.getMessage(),
-                    "Expression stringHolderMethod().stringValue() for class org.apache.tapestry.internal.bindings.TargetBean is read-only.");
+                    "Expression stringHolderMethod().stringValue() for class org.apache.tapestry5.internal.bindings.TargetBean is read-only.");
             assertSame(ex.getLocation(), l);
         }
 
@@ -293,7 +293,7 @@ public class PropBindingFactoryTest extends InternalBaseTestCase
         {
             assertEquals(
                     ex.getMessage(),
-                    "No public method \'isThatRealBlood()\' in class org.apache.tapestry.internal.bindings.TargetBean (within property expression \'isThatRealBlood().value\').");
+                    "No public method \'isThatRealBlood()\' in class org.apache.tapestry5.internal.bindings.TargetBean (within property expression \'isThatRealBlood().value\').");
         }
 
         verify();
@@ -324,7 +324,7 @@ public class PropBindingFactoryTest extends InternalBaseTestCase
         {
             assertEquals(
                     ex.getMessage(),
-                    "No public method \'isThatRealBlood()\' in class org.apache.tapestry.internal.bindings.StringHolder (within property expression \'stringHolder.isThatRealBlood()\').");
+                    "No public method \'isThatRealBlood()\' in class org.apache.tapestry5.internal.bindings.StringHolder (within property expression \'stringHolder.isThatRealBlood()\').");
         }
 
         verify();
@@ -350,7 +350,7 @@ public class PropBindingFactoryTest extends InternalBaseTestCase
         {
             assertEquals(
                     ex.getMessage(),
-                    "Method \'voidMethod()\' returns void (in class org.apache.tapestry.internal.bindings.TargetBean, within property expression \'voidMethod().value\').");
+                    "Method \'voidMethod()\' returns void (in class org.apache.tapestry5.internal.bindings.TargetBean, within property expression \'voidMethod().value\').");
         }
 
         verify();
@@ -376,7 +376,7 @@ public class PropBindingFactoryTest extends InternalBaseTestCase
         {
             assertEquals(
                     ex.getMessage(),
-                    "Method \'voidMethod()\' returns void (in class org.apache.tapestry.internal.bindings.StringHolder, within property expression \'stringHolder.voidMethod()\').");
+                    "Method \'voidMethod()\' returns void (in class org.apache.tapestry5.internal.bindings.StringHolder, within property expression \'stringHolder.voidMethod()\').");
         }
 
         verify();
@@ -404,7 +404,7 @@ public class PropBindingFactoryTest extends InternalBaseTestCase
         {
             assertEquals(
                     ex.getMessage(),
-                    "Class org.apache.tapestry.internal.bindings.StringHolder does not contain a property named \'missingProperty\' "
+                    "Class org.apache.tapestry5.internal.bindings.StringHolder does not contain a property named \'missingProperty\' "
                             + "(within property expression \'stringHolder.missingProperty.terminalProperty\').  Available properties: value.");
             assertSame(ex.getLocation(), l);
         }
@@ -434,7 +434,7 @@ public class PropBindingFactoryTest extends InternalBaseTestCase
         {
             assertEquals(
                     ex.getMessage(),
-                    "Property \'writeOnly\' of class org.apache.tapestry.internal.bindings.TargetBean (within property expression \'writeOnly.terminalProperty\') is not readable (it has no read accessor method).");
+                    "Property \'writeOnly\' of class org.apache.tapestry5.internal.bindings.TargetBean (within property expression \'writeOnly.terminalProperty\') is not readable (it has no read accessor method).");
             assertSame(ex.getLocation(), l);
         }
 
@@ -488,7 +488,7 @@ public class PropBindingFactoryTest extends InternalBaseTestCase
         {
             assertEquals(
                     ex.getMessage(),
-                    "Expression readOnly for class org.apache.tapestry.internal.bindings.TargetBean is read-only.");
+                    "Expression readOnly for class org.apache.tapestry5.internal.bindings.TargetBean is read-only.");
             assertEquals(ex.getLocation(), l);
         }
 
@@ -519,7 +519,7 @@ public class PropBindingFactoryTest extends InternalBaseTestCase
         {
             assertEquals(
                     ex.getMessage(),
-                    "Expression writeOnly for class org.apache.tapestry.internal.bindings.TargetBean is write-only.");
+                    "Expression writeOnly for class org.apache.tapestry5.internal.bindings.TargetBean is write-only.");
             assertEquals(ex.getLocation(), l);
         }
 
@@ -546,7 +546,7 @@ public class PropBindingFactoryTest extends InternalBaseTestCase
         {
             assertEquals(
                     ex.getMessage(),
-                    "Class org.apache.tapestry.internal.bindings.TargetBean does not contain a property named \'missingProperty\' "
+                    "Class org.apache.tapestry5.internal.bindings.TargetBean does not contain a property named \'missingProperty\' "
                             + "(within property expression \'missingProperty\').  "
                             + "Available properties: class, componentResources, intValue, objectValue, readOnly, stringHolder, writeOnly.");
             assertSame(ex.getLocation(), l);

@@ -12,18 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry;
+package org.apache.tapestry5;
 
 /**
  * Used to convert server side values to client-side strings.  This is used when generating a {@link
- * org.apache.tapestry.EventContext} as part of a URL, or when components (such as {@link
- * org.apache.tapestry.corelib.components.Select}) generated other client-side strings.
+ * org.apache.tapestry5.EventContext} as part of a URL, or when components (such as {@link
+ * org.apache.tapestry5.corelib.components.Select}) generated other client-side strings.
  * <p/>
  * Often a custom implementation is needed for entity type objects, where the {@link #toClient(Object)} method extracts
  * a primary key, and the {@link #toValue(String)} re-acquires the corresponding entity object.
  *
  * @see SelectModel
- * @see org.apache.tapestry.services.ValueEncoderSource
+ * @see org.apache.tapestry5.services.ValueEncoderSource
  * @see PrimaryKeyEncoder
  */
 public interface ValueEncoder<V>

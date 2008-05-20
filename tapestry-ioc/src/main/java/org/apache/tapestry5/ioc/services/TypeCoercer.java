@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.services;
+package org.apache.tapestry5.ioc.services;
 
 /**
  * Makes use of {@link Coercion}s (via {@link CoercionTuple}s) to convert between an input value (of some specific type)

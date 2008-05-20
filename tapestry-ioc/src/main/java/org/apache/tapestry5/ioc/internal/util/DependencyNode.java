@@ -12,17 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.internal.util;
+package org.apache.tapestry5.ioc.internal.util;
 
-import org.apache.tapestry.ioc.Orderable;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
+import org.apache.tapestry5.ioc.Orderable;
+import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newList;
 import org.slf4j.Logger;
 
 import java.util.List;
 
 /**
- * Used by {@link org.apache.tapestry.ioc.internal.util.Orderer} to establish backward dependencies for {@link
- * org.apache.tapestry.ioc.Orderable} objects.
+ * Used by {@link org.apache.tapestry5.ioc.internal.util.Orderer} to establish backward dependencies for {@link
+ * org.apache.tapestry5.ioc.Orderable} objects.
  *
  * @param <T>
  */

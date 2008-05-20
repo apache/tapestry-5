@@ -10,15 +10,15 @@
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
-// limitations under the License.package org.apache.tapestry.integration.app1.pages;
+// limitations under the License.package org.apache.tapestry5.integration.app1.pages;
 
-package org.apache.tapestry.integration.app1.pages;
+package org.apache.tapestry5.integration.app1.pages;
 
 public class PrimitiveArrayParameterDemo
 {
 
     public int[] getValues()
     {
-        return new int[]{1, 3, 5, 7, 9};
+        return new int[] { 1, 3, 5, 7, 9 };
     }
 }

@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry.Link;
-import org.apache.tapestry.ioc.internal.util.Defense;
-import static org.apache.tapestry.ioc.internal.util.Defense.notBlank;
-import org.apache.tapestry.services.Response;
+import org.apache.tapestry5.Link;
+import org.apache.tapestry5.ioc.internal.util.Defense;
+import static org.apache.tapestry5.ioc.internal.util.Defense.notBlank;
+import org.apache.tapestry5.services.Response;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;

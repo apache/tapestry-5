@@ -12,16 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.corelib.components;
+package org.apache.tapestry5.corelib.components;
 
-import org.apache.tapestry.MarkupWriter;
-import org.apache.tapestry.corelib.base.AbstractTextField;
+import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.corelib.base.AbstractTextField;
 
 /**
  * A version of {@link TextField}, but rendered out as an &lt;input type="password"&gt; element. Further, the output
  * value for a PasswordField is always blank.
  * <p/>
- * Includes the <code>size</code> attribute, if a {@link org.apache.tapestry.beaneditor.Width} annotation is present on
+ * Includes the <code>size</code> attribute, if a {@link org.apache.tapestry5.beaneditor.Width} annotation is present on
  * the property bound to the value parameter.
  */
 public class PasswordField extends AbstractTextField

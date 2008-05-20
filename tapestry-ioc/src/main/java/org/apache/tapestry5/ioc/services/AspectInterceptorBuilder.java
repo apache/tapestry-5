@@ -12,14 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.services;
+package org.apache.tapestry5.ioc.services;
 
-import org.apache.tapestry.ioc.MethodAdvice;
+import org.apache.tapestry5.ioc.MethodAdvice;
 
 import java.lang.reflect.Method;
 
 /**
- * A builder may be obtained from the {@link org.apache.tapestry.ioc.services.AspectDecorator} and allows more
+ * A builder may be obtained from the {@link org.apache.tapestry5.ioc.services.AspectDecorator} and allows more
  * controlled creation of the created interceptor; it allows different methods to be given different advice, and allows
  * methods to be omitted (in which case the method invocation passes through without advice).
  */

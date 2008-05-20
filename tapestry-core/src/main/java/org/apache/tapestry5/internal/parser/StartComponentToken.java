@@ -12,14 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.parser;
+package org.apache.tapestry5.internal.parser;
 
-import org.apache.tapestry.ioc.Location;
+import org.apache.tapestry5.ioc.Location;
 
 /**
  * The start element of a component within the template. Will be followed by a series of {@link
- * org.apache.tapestry.internal.parser.AttributeToken}s for any attributes (outside of id and type), and eventually will
- * be balanced by an {@link org.apache.tapestry.internal.parser.EndElementToken}.
+ * org.apache.tapestry5.internal.parser.AttributeToken}s for any attributes (outside of id and type), and eventually
+ * will be balanced by an {@link org.apache.tapestry5.internal.parser.EndElementToken}.
  */
 public class StartComponentToken extends TemplateToken
 {

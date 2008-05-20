@@ -12,21 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.test;
+package org.apache.tapestry5.internal.test;
 
-import org.apache.tapestry.SymbolConstants;
-import org.apache.tapestry.internal.services.ComponentInvocationMap;
-import org.apache.tapestry.internal.services.CookieSink;
-import org.apache.tapestry.internal.services.CookieSource;
-import org.apache.tapestry.ioc.Configuration;
-import org.apache.tapestry.ioc.MappedConfiguration;
-import org.apache.tapestry.ioc.ObjectLocator;
-import org.apache.tapestry.ioc.ServiceBinder;
-import org.apache.tapestry.services.AliasContribution;
-import org.apache.tapestry.services.MarkupWriterFactory;
-import org.apache.tapestry.services.Request;
-import org.apache.tapestry.services.Response;
-import org.apache.tapestry.test.PageTester;
+import org.apache.tapestry5.SymbolConstants;
+import org.apache.tapestry5.internal.services.ComponentInvocationMap;
+import org.apache.tapestry5.internal.services.CookieSink;
+import org.apache.tapestry5.internal.services.CookieSource;
+import org.apache.tapestry5.ioc.Configuration;
+import org.apache.tapestry5.ioc.MappedConfiguration;
+import org.apache.tapestry5.ioc.ObjectLocator;
+import org.apache.tapestry5.ioc.ServiceBinder;
+import org.apache.tapestry5.services.AliasContribution;
+import org.apache.tapestry5.services.MarkupWriterFactory;
+import org.apache.tapestry5.services.Request;
+import org.apache.tapestry5.services.Response;
+import org.apache.tapestry5.test.PageTester;
 
 /**
  * Used in conjuction with {@link PageTester} to mock up and/or stub out portions of Tapestry that need to be handled

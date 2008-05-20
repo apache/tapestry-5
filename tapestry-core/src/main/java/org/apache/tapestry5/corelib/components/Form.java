@@ -12,28 +12,28 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.corelib.components;
+package org.apache.tapestry5.corelib.components;
 
-import org.apache.tapestry.*;
-import org.apache.tapestry.annotation.Environmental;
-import org.apache.tapestry.annotation.Mixin;
-import org.apache.tapestry.annotation.Parameter;
-import org.apache.tapestry.annotation.Persist;
-import org.apache.tapestry.corelib.internal.FormSupportImpl;
-import org.apache.tapestry.corelib.mixins.RenderInformals;
-import org.apache.tapestry.dom.Element;
-import org.apache.tapestry.internal.services.ClientBehaviorSupport;
-import org.apache.tapestry.internal.services.ComponentInvocationMap;
-import org.apache.tapestry.internal.services.ComponentResultProcessorWrapper;
-import org.apache.tapestry.internal.services.HeartbeatImpl;
-import org.apache.tapestry.internal.util.Base64ObjectInputStream;
-import org.apache.tapestry.internal.util.Base64ObjectOutputStream;
-import org.apache.tapestry.ioc.Location;
-import org.apache.tapestry.ioc.annotation.Inject;
-import org.apache.tapestry.ioc.internal.util.InternalUtils;
-import org.apache.tapestry.ioc.internal.util.TapestryException;
-import org.apache.tapestry.runtime.Component;
-import org.apache.tapestry.services.*;
+import org.apache.tapestry5.*;
+import org.apache.tapestry5.annotations.Environmental;
+import org.apache.tapestry5.annotations.Mixin;
+import org.apache.tapestry5.annotations.Parameter;
+import org.apache.tapestry5.annotations.Persist;
+import org.apache.tapestry5.corelib.internal.FormSupportImpl;
+import org.apache.tapestry5.corelib.mixins.RenderInformals;
+import org.apache.tapestry5.dom.Element;
+import org.apache.tapestry5.internal.services.ClientBehaviorSupport;
+import org.apache.tapestry5.internal.services.ComponentInvocationMap;
+import org.apache.tapestry5.internal.services.ComponentResultProcessorWrapper;
+import org.apache.tapestry5.internal.services.HeartbeatImpl;
+import org.apache.tapestry5.internal.util.Base64ObjectInputStream;
+import org.apache.tapestry5.internal.util.Base64ObjectOutputStream;
+import org.apache.tapestry5.ioc.Location;
+import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.ioc.internal.util.TapestryException;
+import org.apache.tapestry5.runtime.Component;
+import org.apache.tapestry5.services.*;
 
 import java.io.EOFException;
 import java.io.IOException;

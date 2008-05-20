@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry.internal.structure.Page;
-import org.apache.tapestry.internal.test.InternalBaseTestCase;
-import org.apache.tapestry.ioc.services.ThreadLocale;
-import org.apache.tapestry.services.ComponentClassResolver;
+import org.apache.tapestry5.internal.structure.Page;
+import org.apache.tapestry5.internal.test.InternalBaseTestCase;
+import org.apache.tapestry5.ioc.services.ThreadLocale;
+import org.apache.tapestry5.services.ComponentClassResolver;
 import static org.easymock.EasyMock.contains;
 import org.slf4j.Logger;
 import org.testng.annotations.Test;

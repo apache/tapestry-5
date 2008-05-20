@@ -12,18 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry.ComponentResources;
-import org.apache.tapestry.ioc.ObjectLocator;
-import org.apache.tapestry.model.MutableComponentModel;
-import org.apache.tapestry.services.ClassTransformation;
-import org.apache.tapestry.services.InjectionProvider;
+import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.ioc.ObjectLocator;
+import org.apache.tapestry5.model.MutableComponentModel;
+import org.apache.tapestry5.services.ClassTransformation;
+import org.apache.tapestry5.services.InjectionProvider;
 
 import static java.lang.String.format;
 
 /**
- * Allows for the injection of the component's {@link org.apache.tapestry.ComponentResources}.
+ * Allows for the injection of the component's {@link org.apache.tapestry5.ComponentResources}.
  */
 public class ComponentResourcesInjectionProvider implements InjectionProvider
 {

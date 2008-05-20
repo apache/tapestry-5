@@ -12,13 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc;
+package org.apache.tapestry5.ioc;
 
 import java.lang.annotation.Annotation;
 
 /**
- * A source of annotations. This interface is used to mask where the annotations come from (for
- * example, from a Method, a Class, or some other source).
+ * A source of annotations. This interface is used to mask where the annotations come from (for example, from a Method,
+ * a Class, or some other source).
  */
 public interface AnnotationProvider
 {

@@ -11,8 +11,8 @@ Symbols
   name is segmented with periods.
   
   These symbols are used inside the 
-  {{{../apidocs/org/apache/tapestry/ioc/annoations/Value.html}Value}} and
-  {{{../apidocs/org/apache/tapestry/ioc/annoations/InjectService.html}InjectService}}
+  {{{../apidocs/org/apache/tapestry5/ioc/annoations/Value.html}Value}} and
+  {{{../apidocs/org/apache/tapestry5/ioc/annoations/InjectService.html}InjectService}}
   annotations.
   
   For example:
@@ -34,9 +34,9 @@ Symbols
 Symbol Resolution
 
   Symbols are resolved by the
-  {{{../apidocs/org/apache/tapestry/ioc/services/SymbolSource.html}SymbolSource}} service.  The SymbolSource
+  {{{../apidocs/org/apache/tapestry5/ioc/services/SymbolSource.html}SymbolSource}} service.  The SymbolSource
   checks against an ordered list of
-  {{{../apidocs/org/apache/tapestry/ioc/services/SymbolProvider.html}SymbolProvider}} objects.
+  {{{../apidocs/org/apache/tapestry5/ioc/services/SymbolProvider.html}SymbolProvider}} objects.
 
   Additional symbol providers may be employed by contributing to the tapestry.ioc.SymbolSource service configuration,
   which is an ordered list of SymbolProviders.

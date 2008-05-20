@@ -12,24 +12,24 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
 import javassist.*;
-import org.apache.tapestry.ComponentResources;
-import org.apache.tapestry.ioc.internal.services.CtClassSource;
-import org.apache.tapestry.ioc.services.ClassFabUtils;
-import org.apache.tapestry.ioc.util.BodyBuilder;
-import org.apache.tapestry.services.ComponentMethodAdvice;
-import org.apache.tapestry.services.TransformMethodSignature;
+import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.ioc.internal.services.CtClassSource;
+import org.apache.tapestry5.ioc.services.ClassFabUtils;
+import org.apache.tapestry5.ioc.util.BodyBuilder;
+import org.apache.tapestry5.services.ComponentMethodAdvice;
+import org.apache.tapestry5.services.TransformMethodSignature;
 
 import java.lang.reflect.Modifier;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
- * Used by {@link org.apache.tapestry.internal.services.InternalClassTransformationImpl} to manage adding method
+ * Used by {@link org.apache.tapestry5.internal.services.InternalClassTransformationImpl} to manage adding method
  * invocation advice to arbitrary component methods.
  *
- * @see org.apache.tapestry.ioc.MethodAdvice
+ * @see org.apache.tapestry5.ioc.MethodAdvice
  */
 class InvocationBuilder
 {

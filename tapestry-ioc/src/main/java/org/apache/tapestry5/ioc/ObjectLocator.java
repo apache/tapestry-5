@@ -12,15 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc;
+package org.apache.tapestry5.ioc;
 
-import org.apache.tapestry.ioc.services.MasterObjectProvider;
+import org.apache.tapestry5.ioc.services.MasterObjectProvider;
 
 /**
- * Defines an object which can provide access to services defined within a {@link org.apache.tapestry.ioc.Registry}, or
+ * Defines an object which can provide access to services defined within a {@link org.apache.tapestry5.ioc.Registry}, or
  * to objects or object instances available by other means. Services are accessed via service id, or (when appropriate)
  * by just service interface. The Registry itself implements this interface, as does {@link
- * org.apache.tapestry.ioc.ServiceResources}.
+ * org.apache.tapestry5.ioc.ServiceResources}.
  */
 public interface ObjectLocator
 {
@@ -54,8 +54,8 @@ public interface ObjectLocator
     <T> T getService(Class<T> serviceInterface);
 
     /**
-     * Obtains an object indirectly, using an {@link org.apache.tapestry.ioc.ObjectProvider} identified by the prefix of
-     * the reference.
+     * Obtains an object indirectly, using an {@link org.apache.tapestry5.ioc.ObjectProvider} identified by the prefix
+     * of the reference.
      *
      * @param objectType         the type of object to be returned
      * @param annotationProvider provides access to annotations on the field or parameter for which a value is to be
@@ -84,7 +84,7 @@ public interface ObjectLocator
      * Creates a proxy. The proxy will defer invocation of {@link #autobuild(Class)} until just-in-time (that is, first
      * method invocation). In a limited number of cases, it is necessary to use such a proxy to prevent service
      * construction cycles, particularly when contributing (directly or indirectly) to the {@link
-     * org.apache.tapestry.ioc.services.MasterObjectProvider} (which is itself at the heart of autobuilding).
+     * org.apache.tapestry5.ioc.services.MasterObjectProvider} (which is itself at the heart of autobuilding).
      *
      * @param <T>
      * @param interfaceClass      the interface implemented by the proxy

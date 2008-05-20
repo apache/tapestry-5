@@ -12,17 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry.internal.InternalConstants;
-import org.apache.tapestry.internal.structure.Page;
-import org.apache.tapestry.ioc.internal.util.Defense;
-import org.apache.tapestry.services.Request;
+import org.apache.tapestry5.internal.InternalConstants;
+import org.apache.tapestry5.internal.structure.Page;
+import org.apache.tapestry5.ioc.internal.util.Defense;
+import org.apache.tapestry5.services.Request;
 
 import java.io.IOException;
 
 /**
- * Alternative implementation, used when {@link org.apache.tapestry.SymbolConstants#SUPPRESS_REDIRECT_FROM_ACTION_REQUESTS}
+ * Alternative implementation, used when {@link org.apache.tapestry5.SymbolConstants#SUPPRESS_REDIRECT_FROM_ACTION_REQUESTS}
  * is set to true.
  */
 public class ImmediateActionRenderResponseGenerator implements ActionRenderResponseGenerator

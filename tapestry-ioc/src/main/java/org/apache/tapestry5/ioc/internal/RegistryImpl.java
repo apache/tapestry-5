@@ -12,22 +12,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.internal;
+package org.apache.tapestry5.ioc.internal;
 
-import org.apache.tapestry.ioc.*;
-import org.apache.tapestry.ioc.def.ContributionDef;
-import org.apache.tapestry.ioc.def.DecoratorDef;
-import org.apache.tapestry.ioc.def.ModuleDef;
-import org.apache.tapestry.ioc.def.ServiceDef;
-import org.apache.tapestry.ioc.internal.services.PerthreadManagerImpl;
-import org.apache.tapestry.ioc.internal.services.RegistryShutdownHubImpl;
-import org.apache.tapestry.ioc.internal.util.CollectionFactory;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.*;
-import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
-import org.apache.tapestry.ioc.internal.util.InternalUtils;
-import org.apache.tapestry.ioc.internal.util.OneShotLock;
-import org.apache.tapestry.ioc.internal.util.Orderer;
-import org.apache.tapestry.ioc.services.*;
+import org.apache.tapestry5.ioc.*;
+import org.apache.tapestry5.ioc.def.ContributionDef;
+import org.apache.tapestry5.ioc.def.DecoratorDef;
+import org.apache.tapestry5.ioc.def.ModuleDef;
+import org.apache.tapestry5.ioc.def.ServiceDef;
+import org.apache.tapestry5.ioc.internal.services.PerthreadManagerImpl;
+import org.apache.tapestry5.ioc.internal.services.RegistryShutdownHubImpl;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.*;
+import static org.apache.tapestry5.ioc.internal.util.Defense.notNull;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.ioc.internal.util.OneShotLock;
+import org.apache.tapestry5.ioc.internal.util.Orderer;
+import org.apache.tapestry5.ioc.services.*;
 import org.slf4j.Logger;
 
 import java.lang.reflect.Constructor;
@@ -55,7 +55,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
     }
 
     /**
-     * Used to obtain the {@link org.apache.tapestry.ioc.services.ClassFactory} service, which is crucial when creating
+     * Used to obtain the {@link org.apache.tapestry5.ioc.services.ClassFactory} service, which is crucial when creating
      * runtime classes for proxies and the like.
      */
     static final String CLASS_FACTORY_SERVICE_ID = "ClassFactory";

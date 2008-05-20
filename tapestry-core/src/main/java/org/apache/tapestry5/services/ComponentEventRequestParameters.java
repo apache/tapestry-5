@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.services;
+package org.apache.tapestry5.services;
 
-import org.apache.tapestry.EventContext;
-import org.apache.tapestry.ioc.internal.util.Defense;
+import org.apache.tapestry5.EventContext;
+import org.apache.tapestry5.ioc.internal.util.Defense;
 
 /**
  * Encapsulates all the information that may be provided in a component event request URL.
@@ -92,7 +92,7 @@ public final class ComponentEventRequestParameters
 
     /**
      * The name of the page containing the component that was triggered. Usually this is the same as the active page,
-     * but because of {@link org.apache.tapestry.Block} and similar constructs, a component from other than the active
+     * but because of {@link org.apache.tapestry5.Block} and similar constructs, a component from other than the active
      * page may be rendered with the active page.
      */
     public String getContainingPageName()
@@ -111,7 +111,7 @@ public final class ComponentEventRequestParameters
 
     /**
      * The type of event.  When not specified in the URL, a default type of "action" ({@link
-     * org.apache.tapestry.EventConstants#ACTION}) is provided.
+     * org.apache.tapestry5.EventConstants#ACTION}) is provided.
      */
     public String getEventType()
     {
@@ -121,8 +121,8 @@ public final class ComponentEventRequestParameters
     /**
      * The activation context for the <em>active page</em>, possibly empty (but not null).
      *
-     * @see org.apache.tapestry.ComponentResourcesCommon#triggerContextEvent(String, org.apache.tapestry.EventContext,
-     *      org.apache.tapestry.ComponentEventCallback)
+     * @see org.apache.tapestry5.ComponentResourcesCommon#triggerContextEvent(String, org.apache.tapestry5.EventContext,
+     *      org.apache.tapestry5.ComponentEventCallback)
      */
     public EventContext getPageActivationContext()
     {
@@ -132,8 +132,8 @@ public final class ComponentEventRequestParameters
     /**
      * The event context information passed in the URL.  Possibly empty (not not null).
      *
-     * @see org.apache.tapestry.ComponentResourcesCommon#triggerContextEvent(String, org.apache.tapestry.EventContext,
-     *      org.apache.tapestry.ComponentEventCallback)
+     * @see org.apache.tapestry5.ComponentResourcesCommon#triggerContextEvent(String, org.apache.tapestry5.EventContext,
+     *      org.apache.tapestry5.ComponentEventCallback)
      */
     public EventContext getEventContext()
     {

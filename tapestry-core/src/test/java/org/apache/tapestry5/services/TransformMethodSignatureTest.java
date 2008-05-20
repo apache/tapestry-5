@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.services;
+package org.apache.tapestry5.services;
 
-import org.apache.tapestry.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -31,8 +31,8 @@ public class TransformMethodSignatureTest extends Assert
     {
         TransformMethodSignature sig = new TransformMethodSignature(Modifier.PUBLIC, "int", "doSomething",
                                                                     new String[]
-                                                                            {"java.lang.String", "int"}, new String[]
-                {"java.lang.RuntimeException", "org.foo.FredException"});
+                                                                            { "java.lang.String", "int" }, new String[]
+                { "java.lang.RuntimeException", "org.foo.FredException" });
 
         assertEquals(
                 sig.toString(),
@@ -49,8 +49,8 @@ public class TransformMethodSignatureTest extends Assert
     {
         TransformMethodSignature sig = new TransformMethodSignature(Modifier.PUBLIC, "int", "doSomething",
                                                                     new String[]
-                                                                            {"java.lang.String", "int"}, new String[]
-                {"java.lang.RuntimeException", "org.foo.FredException"});
+                                                                            { "java.lang.String", "int" }, new String[]
+                { "java.lang.RuntimeException", "org.foo.FredException" });
 
         assertEquals(sig.getMediumDescription(), "doSomething(java.lang.String, int)");
     }
@@ -79,16 +79,16 @@ public class TransformMethodSignatureTest extends Assert
     {
         TransformMethodSignature sig = new TransformMethodSignature(Modifier.PUBLIC, "int", "doSomething",
                                                                     new String[]
-                                                                            {"java.lang.String", "int"}, new String[]
-                {"java.lang.RuntimeException", "org.foo.FredException"});
+                                                                            { "java.lang.String", "int" }, new String[]
+                { "java.lang.RuntimeException", "org.foo.FredException" });
 
         assertEquals(sig.getModifiers(), Modifier.PUBLIC);
         assertEquals(sig.getReturnType(), "int");
         assertEquals(sig.getMethodName(), "doSomething");
         assertEquals(sig.getParameterTypes(), new String[]
-                {"java.lang.String", "int"});
+                { "java.lang.String", "int" });
         assertEquals(sig.getExceptionTypes(), new String[]
-                {"java.lang.RuntimeException", "org.foo.FredException"});
+                { "java.lang.RuntimeException", "org.foo.FredException" });
     }
 
     @Test
@@ -98,7 +98,7 @@ public class TransformMethodSignatureTest extends Assert
         TransformMethodSignature bar = new TransformMethodSignature(Modifier.PUBLIC, "void", "bar", null, null);
         TransformMethodSignature baz0 = new TransformMethodSignature(Modifier.PUBLIC, "void", "baz", null, null);
         TransformMethodSignature baz1 = new TransformMethodSignature(Modifier.PUBLIC, "void", "baz", new String[]
-                {"int"}, null);
+                { "int" }, null);
 
         List<TransformMethodSignature> list = CollectionFactory.newList(Arrays.asList(foo, bar, baz0, baz1));
 
@@ -112,8 +112,8 @@ public class TransformMethodSignatureTest extends Assert
     {
         TransformMethodSignature sig1 = new TransformMethodSignature(Modifier.PUBLIC, "int", "doSomething",
                                                                      new String[]
-                                                                             {"int"}, new String[]
-                {"org.foo.BarException"});
+                                                                             { "int" }, new String[]
+                { "org.foo.BarException" });
         int hashCode1 = sig1.hashCode();
 
         // Check that same value returned each time.
@@ -122,8 +122,8 @@ public class TransformMethodSignatureTest extends Assert
 
         TransformMethodSignature sig2 = new TransformMethodSignature(Modifier.PUBLIC, "int", "doSomething",
                                                                      new String[]
-                                                                             {"int"}, new String[]
-                {"org.foo.BarException"});
+                                                                             { "int" }, new String[]
+                { "org.foo.BarException" });
 
         assertEquals(sig2.hashCode(), hashCode1);
         assertEquals(sig2, sig1);
@@ -131,35 +131,35 @@ public class TransformMethodSignatureTest extends Assert
         // Now work through the different properties, changing each one.
 
         sig2 = new TransformMethodSignature(Modifier.PRIVATE, "int", "doSomething", new String[]
-                {"int"}, new String[]
-                {"org.foo.BarException"});
+                { "int" }, new String[]
+                { "org.foo.BarException" });
 
         assertFalse(sig2.hashCode() == hashCode1);
         assertFalse(sig2.equals(sig1));
 
         sig2 = new TransformMethodSignature(Modifier.PUBLIC, "long", "doSomething", new String[]
-                {"int"}, new String[]
-                {"org.foo.BarException"});
+                { "int" }, new String[]
+                { "org.foo.BarException" });
 
         assertFalse(sig2.hashCode() == hashCode1);
         assertFalse(sig2.equals(sig1));
 
         sig2 = new TransformMethodSignature(Modifier.PUBLIC, "int", "doSomethingElse", new String[]
-                {"int"}, new String[]
-                {"org.foo.BarException"});
+                { "int" }, new String[]
+                { "org.foo.BarException" });
 
         assertFalse(sig2.hashCode() == hashCode1);
         assertFalse(sig2.equals(sig1));
 
         sig2 = new TransformMethodSignature(Modifier.PUBLIC, "int", "doSomething", new String[]
-                {"long"}, new String[]
-                {"org.foo.BarException"});
+                { "long" }, new String[]
+                { "org.foo.BarException" });
 
         assertFalse(sig2.hashCode() == hashCode1);
         assertFalse(sig2.equals(sig1));
 
         sig2 = new TransformMethodSignature(Modifier.PUBLIC, "int", "doSomething", new String[]
-                {"int"}, new String[0]);
+                { "int" }, new String[0]);
 
         assertFalse(sig2.hashCode() == hashCode1);
         assertFalse(sig2.equals(sig1));

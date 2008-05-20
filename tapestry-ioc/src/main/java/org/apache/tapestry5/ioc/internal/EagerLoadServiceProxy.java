@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.internal;
+package org.apache.tapestry5.ioc.internal;
 
 /**
- * Interface implemented by all service proxies. Service proxies are always
- * {@link org.apache.tapestry.ioc.services.RegistryShutdownListener}s, they also can be eager-load
+ * Interface implemented by all service proxies. Service proxies are always {@link
+ * org.apache.tapestry5.ioc.services.RegistryShutdownListener}s, they also can be eager-load
  */
 public interface EagerLoadServiceProxy
 {

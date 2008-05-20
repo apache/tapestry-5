@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.services;
+package org.apache.tapestry5.ioc.services;
 
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
+import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newList;
+import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newMap;
 
 import java.lang.reflect.Method;
 import java.util.*;
@@ -25,7 +25,7 @@ import java.util.*;
  * some complications that can occur when a class inherits the same method from multiple interfaces and with slightly
  * different signatures (due to the fact that declared thrown exceptions can vary slightly for the "same" method).
  *
- * @see org.apache.tapestry.ioc.services.MethodSignature#isOverridingSignatureOf(MethodSignature)
+ * @see org.apache.tapestry5.ioc.services.MethodSignature#isOverridingSignatureOf(MethodSignature)
  */
 public class MethodIterator
 {

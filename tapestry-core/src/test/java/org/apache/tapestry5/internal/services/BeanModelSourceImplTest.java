@@ -12,17 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry.ComponentResources;
-import org.apache.tapestry.PropertyConduit;
-import org.apache.tapestry.beaneditor.BeanModel;
-import org.apache.tapestry.beaneditor.PropertyModel;
-import org.apache.tapestry.beaneditor.RelativePosition;
-import org.apache.tapestry.internal.test.InternalBaseTestCase;
-import org.apache.tapestry.internal.transform.pages.ReadOnlyBean;
-import org.apache.tapestry.ioc.Messages;
-import org.apache.tapestry.services.BeanModelSource;
+import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.PropertyConduit;
+import org.apache.tapestry5.beaneditor.BeanModel;
+import org.apache.tapestry5.beaneditor.PropertyModel;
+import org.apache.tapestry5.beaneditor.RelativePosition;
+import org.apache.tapestry5.internal.test.InternalBaseTestCase;
+import org.apache.tapestry5.internal.transform.pages.ReadOnlyBean;
+import org.apache.tapestry5.ioc.Messages;
+import org.apache.tapestry5.services.BeanModelSource;
 import org.easymock.EasyMock;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -66,7 +66,7 @@ public class BeanModelSourceImplTest extends InternalBaseTestCase
         assertEquals(model.getPropertyNames(), Arrays.asList("firstName", "lastName", "age"));
 
         assertEquals(model.toString(),
-                     "BeanModel[org.apache.tapestry.internal.services.SimpleBean properties:firstName, lastName, age]");
+                     "BeanModel[org.apache.tapestry5.internal.services.SimpleBean properties:firstName, lastName, age]");
 
         PropertyModel age = model.get("age");
 
@@ -314,7 +314,7 @@ public class BeanModelSourceImplTest extends InternalBaseTestCase
         catch (RuntimeException ex)
         {
             assertEquals(ex.getMessage(),
-                         "Bean editor model for org.apache.tapestry.internal.services.SimpleBean already contains a property model for property \'age\'.");
+                         "Bean editor model for org.apache.tapestry5.internal.services.SimpleBean already contains a property model for property \'age\'.");
         }
 
         verify();
@@ -341,7 +341,7 @@ public class BeanModelSourceImplTest extends InternalBaseTestCase
         catch (RuntimeException ex)
         {
             assertEquals(ex.getMessage(),
-                         "Bean editor model for org.apache.tapestry.internal.services.SimpleBean does not contain a property named \'frobozz\'.  " + "Available properties: age, firstName, lastName.");
+                         "Bean editor model for org.apache.tapestry5.internal.services.SimpleBean does not contain a property named \'frobozz\'.  " + "Available properties: age, firstName, lastName.");
         }
 
         verify();
@@ -370,7 +370,7 @@ public class BeanModelSourceImplTest extends InternalBaseTestCase
         catch (RuntimeException ex)
         {
             assertEquals(ex.getMessage(),
-                         "Bean editor model for org.apache.tapestry.internal.services.SimpleBean does not contain a property with id \'frobozz\'.  "
+                         "Bean editor model for org.apache.tapestry5.internal.services.SimpleBean does not contain a property with id \'frobozz\'.  "
                                  + "Available property ids: age, firstName, lastName, shrubfoo.");
         }
 

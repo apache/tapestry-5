@@ -12,21 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
 import javassist.*;
-import org.apache.tapestry.internal.*;
-import org.apache.tapestry.internal.test.InternalBaseTestCase;
-import org.apache.tapestry.internal.transform.pages.BasicComponent;
-import org.apache.tapestry.internal.transform.pages.BasicSubComponent;
-import org.apache.tapestry.ioc.Registry;
-import org.apache.tapestry.ioc.RegistryBuilder;
-import org.apache.tapestry.ioc.def.ContributionDef;
-import org.apache.tapestry.ioc.def.ModuleDef;
-import org.apache.tapestry.ioc.services.PropertyAccess;
-import org.apache.tapestry.ioc.services.SymbolProvider;
-import org.apache.tapestry.runtime.Component;
-import org.apache.tapestry.services.TapestryModule;
+import org.apache.tapestry5.internal.*;
+import org.apache.tapestry5.internal.test.InternalBaseTestCase;
+import org.apache.tapestry5.internal.transform.pages.BasicComponent;
+import org.apache.tapestry5.internal.transform.pages.BasicSubComponent;
+import org.apache.tapestry5.ioc.Registry;
+import org.apache.tapestry5.ioc.RegistryBuilder;
+import org.apache.tapestry5.ioc.def.ContributionDef;
+import org.apache.tapestry5.ioc.def.ModuleDef;
+import org.apache.tapestry5.ioc.services.PropertyAccess;
+import org.apache.tapestry5.ioc.services.SymbolProvider;
+import org.apache.tapestry5.runtime.Component;
+import org.apache.tapestry5.services.TapestryModule;
 import org.slf4j.Logger;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -40,14 +40,14 @@ import java.net.URLConnection;
 import java.util.UUID;
 
 /**
- * Tests for {@link org.apache.tapestry.internal.services.ComponentInstantiatorSourceImpl}. Several of these tests are
+ * Tests for {@link org.apache.tapestry5.internal.services.ComponentInstantiatorSourceImpl}. Several of these tests are
  * more of the form of integration tests that instantiate the Tapestry IoC Registry.
  */
 public class ComponentInstantiatorSourceImplTest extends InternalBaseTestCase
 {
     private static final ClassLoader contextLoader = Thread.currentThread().getContextClassLoader();
 
-    private static final String SYNTH_COMPONENT_CLASSNAME = "org.apache.tapestry.internal.transform.pages.SynthComponent";
+    private static final String SYNTH_COMPONENT_CLASSNAME = "org.apache.tapestry5.internal.transform.pages.SynthComponent";
 
     private File extraClasspath;
 
@@ -279,7 +279,7 @@ public class ComponentInstantiatorSourceImplTest extends InternalBaseTestCase
         source = registry.getService(ComponentInstantiatorSource.class);
         access = registry.getService(PropertyAccess.class);
 
-        source.addPackage("org.apache.tapestry.internal.transform.pages");
+        source.addPackage("org.apache.tapestry5.internal.transform.pages");
     }
 
     @AfterClass

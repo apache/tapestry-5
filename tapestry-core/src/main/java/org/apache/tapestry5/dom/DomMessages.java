@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.dom;
+package org.apache.tapestry5.dom;
 
-import org.apache.tapestry.ioc.Messages;
-import org.apache.tapestry.ioc.internal.util.MessagesImpl;
+import org.apache.tapestry5.ioc.Messages;
+import org.apache.tapestry5.ioc.internal.util.MessagesImpl;
 
 final class DomMessages
 {

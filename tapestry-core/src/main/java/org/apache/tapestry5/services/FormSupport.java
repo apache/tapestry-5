@@ -12,17 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.services;
+package org.apache.tapestry5.services;
 
-import org.apache.tapestry.ClientElement;
-import org.apache.tapestry.ComponentAction;
-import org.apache.tapestry.Field;
+import org.apache.tapestry5.ClientElement;
+import org.apache.tapestry5.ComponentAction;
+import org.apache.tapestry5.Field;
 
 /**
  * Services provided by an enclosing Form control component to the various form element components it encloses.
- * Implements {@link org.apache.tapestry.ClientElement}, to share the id of the enclosing form.
+ * Implements {@link org.apache.tapestry5.ClientElement}, to share the id of the enclosing form.
  *
- * @see org.apache.tapestry.Field
+ * @see org.apache.tapestry5.Field
  */
 public interface FormSupport extends ClientElement
 {
@@ -41,7 +41,7 @@ public interface FormSupport extends ClientElement
     <T> void store(T component, ComponentAction<T> action);
 
     /**
-     * As with {@link #store(Object, org.apache.tapestry.ComponentAction)}}, but the action is also invoked immediately.
+     * As with {@link #store(Object, org.apache.tapestry5.ComponentAction)}}, but the action is also invoked immediately.
      * This is useful for defining an action that should occur symmetrically in both the render request and the form
      * submission's action request.
      *

@@ -12,16 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.services;
+package org.apache.tapestry5.services;
 
 import java.io.IOException;
 
 /**
- * Filter interface for {@link org.apache.tapestry.services.RequestHandler}. Implementations of this interface may be
+ * Filter interface for {@link org.apache.tapestry5.services.RequestHandler}. Implementations of this interface may be
  * contributed into the RequestHandler service configuration.
  *
- * @see org.apache.tapestry.services.TapestryModule#contributeRequestHandler(org.apache.tapestry.ioc.OrderedConfiguration,
- *      Context, RequestExceptionHandler, long, long, org.apache.tapestry.internal.services.LocalizationSetter,
+ * @see org.apache.tapestry5.services.TapestryModule#contributeRequestHandler(org.apache.tapestry5.ioc.OrderedConfiguration,
+ *      Context, RequestExceptionHandler, long, long, org.apache.tapestry5.internal.services.LocalizationSetter,
  *      RequestFilter)
  */
 public interface RequestFilter

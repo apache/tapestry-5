@@ -12,16 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry.ContentType;
-import org.apache.tapestry.internal.structure.Page;
+import org.apache.tapestry5.ContentType;
+import org.apache.tapestry5.internal.structure.Page;
 
 public interface PageContentTypeAnalyzer
 {
     /**
-     * Analyzes the meta-data for the page and identifies the correct {@link org.apache.tapestry.ContentType} (including
-     * encoding).
+     * Analyzes the meta-data for the page and identifies the correct {@link org.apache.tapestry5.ContentType}
+     * (including encoding).
      *
      * @param page to be rendered
      * @return the content type

@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry.ValueEncoder;
-import org.apache.tapestry.services.ValueEncoderFactory;
+import org.apache.tapestry5.ValueEncoder;
+import org.apache.tapestry5.services.ValueEncoderFactory;
 
 /**
  * An implementation of {@link ValueEncoderFactory} that returns a pre-wired instance of {@link ValueEncoder}. This is

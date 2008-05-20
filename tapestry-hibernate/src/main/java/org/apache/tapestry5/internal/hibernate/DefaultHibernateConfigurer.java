@@ -12,16 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.hibernate;
+package org.apache.tapestry5.internal.hibernate;
 
-import org.apache.tapestry.hibernate.HibernateConfigurer;
+import org.apache.tapestry5.hibernate.HibernateConfigurer;
 import org.hibernate.cfg.Configuration;
 
-/** Simply calls configure() to do the default Hibernate configuration.
+/**
+ * Simply calls configure() to do the default Hibernate configuration.
  */
-public final class DefaultHibernateConfigurer implements HibernateConfigurer {
+public final class DefaultHibernateConfigurer implements HibernateConfigurer
+{
 
-	public void configure(Configuration configuration) {
-		configuration.configure();
-	}
+    public void configure(Configuration configuration)
+    {
+        configuration.configure();
+    }
 }

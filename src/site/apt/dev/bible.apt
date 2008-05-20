@@ -104,10 +104,10 @@ Public vs. Private/Internal
   to change it.  As soon as code is public, we become handcuffed to backwards compatibility.
 
   <<Interfaces are public, implementations are private>>.  You can see this is the bulk of the code, where
-  org.apache.tapestry.services is almost all interfaces and the implementations are
-  in org.apache.tapestry.internal.services.
+  org.apache.tapestry5.services is almost all interfaces and the implementations are
+  in org.apache.tapestry5.internal.services.
 
-  Many more services have both the interface and the implementation in org.apache.tapestry.internal.services.
+  Many more services have both the interface and the implementation in org.apache.tapestry5.internal.services.
 
   We absolutely <<do not>> want to make Page or ComponentPageElement public.  You will often see
   public service facades that take a page name as a method parameter,

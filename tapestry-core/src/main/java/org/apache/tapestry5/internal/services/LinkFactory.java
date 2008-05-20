@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry.Link;
-import org.apache.tapestry.internal.structure.Page;
+import org.apache.tapestry5.Link;
+import org.apache.tapestry5.internal.structure.Page;
 
 /**
  * A source for {@link Link} objects.
@@ -34,7 +34,7 @@ public interface LinkFactory
      * @param forForm   true if the link is for a form, false otherwise
      * @param context   Additional path data, each value will be converted to a string and appended to the URI @return a
      *                  link
-     * @see org.apache.tapestry.ComponentResources#createActionLink(String, boolean, Object[])
+     * @see org.apache.tapestry5.ComponentResources#createActionLink(String, boolean, Object[])
      */
     Link createActionLink(Page page, String nestedId, String eventType, boolean forForm, Object... context);
 
@@ -51,7 +51,7 @@ public interface LinkFactory
      * @param override          if true, then the provided activation context is always used even if empty
      * @param activationContext the activation context for the page
      * @return a link
-     * @see org.apache.tapestry.ComponentResources#createPageLink(String, boolean, Object[])
+     * @see org.apache.tapestry5.ComponentResources#createPageLink(String, boolean, Object[])
      */
     Link createPageLink(Page page, boolean override, Object... activationContext);
 

@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.beaneditor;
+package org.apache.tapestry5.beaneditor;
 
-import org.apache.tapestry.PropertyConduit;
+import org.apache.tapestry5.PropertyConduit;
 
 import java.util.List;
 
@@ -24,11 +24,11 @@ import java.util.List;
  * <p/>
  * BeanModels are not thread-safe, they are also not serializable.
  * <p/>
- * Here, and in {@link org.apache.tapestry.beaneditor.PropertyModel}, the term "propertyName" is used for simplicitly.
- * However, a full {@linkplain org.apache.tapestry.services.PropertyConduitSource#create(Class, String) property
+ * Here, and in {@link org.apache.tapestry5.beaneditor.PropertyModel}, the term "propertyName" is used for simplicitly.
+ * However, a full {@linkplain org.apache.tapestry5.services.PropertyConduitSource#create(Class, String) property
  * expression} may be utilized when {@linkplain #add(String) adding new properties to an existing BeanModel}.
  *
- * @see org.apache.tapestry.services.BeanModelSource
+ * @see org.apache.tapestry5.services.BeanModelSource
  */
 public interface BeanModel<T>
 {
@@ -39,8 +39,8 @@ public interface BeanModel<T>
 
 
     /**
-     * Creates a new bean instance.  This is based on {@link org.apache.tapestry.ioc.ObjectLocator#autobuild(Class)}, so
-     * a public constructor will be used, and dependencies injected.
+     * Creates a new bean instance.  This is based on {@link org.apache.tapestry5.ioc.ObjectLocator#autobuild(Class)},
+     * so a public constructor will be used, and dependencies injected.
      *
      * @return new instance of the bean
      */
@@ -63,7 +63,7 @@ public interface BeanModel<T>
     /**
      * Returns the identified model.  Property ids are a stripped version of the property name. Case is ignored.
      *
-     * @param propertyId matched caselessly against {@link org.apache.tapestry.beaneditor.PropertyModel#getId()}
+     * @param propertyId matched caselessly against {@link org.apache.tapestry5.beaneditor.PropertyModel#getId()}
      * @throws RuntimeException if the bean editor model does not have a property model with the indicated id
      */
     PropertyModel getById(String propertyId);

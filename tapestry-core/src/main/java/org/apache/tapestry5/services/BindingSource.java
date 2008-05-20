@@ -12,18 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.services;
+package org.apache.tapestry5.services;
 
-import org.apache.tapestry.Binding;
-import org.apache.tapestry.ComponentResources;
-import org.apache.tapestry.ioc.Location;
+import org.apache.tapestry5.Binding;
+import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.ioc.Location;
 
 /**
  * Used to acquire bindings for component parameters. The BindingSource service strips off the binding prefix to locate
- * a {@link org.apache.tapestry.services.BindingFactory}.
+ * a {@link org.apache.tapestry5.services.BindingFactory}.
  *
- * @see org.apache.tapestry.services.TapestryModule#contributeBindingSource(org.apache.tapestry.ioc.MappedConfiguration,
- *      AssetSource, BindingFactory, FieldValidatorSource, TranslatorSource, org.apache.tapestry.ioc.ObjectLocator)
+ * @see org.apache.tapestry5.services.TapestryModule#contributeBindingSource(org.apache.tapestry5.ioc.MappedConfiguration,
+ *      AssetSource, BindingFactory, FieldValidatorSource, TranslatorSource, org.apache.tapestry5.ioc.ObjectLocator)
  */
 public interface BindingSource
 {

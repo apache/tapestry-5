@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry.internal.InternalConstants;
-import org.apache.tapestry.services.ComponentEventResultProcessor;
-import org.apache.tapestry.services.Response;
+import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.json.JSONObject;
+import org.apache.tapestry5.services.ComponentEventResultProcessor;
+import org.apache.tapestry5.services.Response;
 
 import java.io.IOException;
 import java.io.PrintWriter;

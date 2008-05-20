@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry;
+package org.apache.tapestry5;
 
 /**
- * Callback interface for a {@linkplain org.apache.tapestry.runtime.Event render phase event) or {@link
- * org.apache.tapestry.runtime.ComponentEvent}, notified when a non-null value is returned from some event handler
+ * Callback interface for a {@linkplain org.apache.tapestry5.runtime.Event render phase event) or {@link
+ * org.apache.tapestry5.runtime.ComponentEvent}, notified when a non-null value is returned from some event handler
  * method.
  */
 public interface ComponentEventCallback<T>
@@ -28,7 +28,7 @@ public interface ComponentEventCallback<T>
      * <p/>
      * Boolean values are <em>not</em> passed to the handler.  Booleans are used to indicate that the event has been
      * handled (true) or that a further search for handlers should continue (true).  If a component event method returns
-     * true, then {@link org.apache.tapestry.runtime.Event#isAborted()} will return true.
+     * true, then {@link org.apache.tapestry5.runtime.Event#isAborted()} will return true.
      *
      * @param result the result value return from the event handler method
      * @return true if the event is aborted, false if the event may continue

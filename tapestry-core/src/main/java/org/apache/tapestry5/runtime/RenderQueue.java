@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.runtime;
+package org.apache.tapestry5.runtime;
 
-import org.apache.tapestry.ComponentResources;
+import org.apache.tapestry5.ComponentResources;
 
 /**
  * A stateful object that manages the process of rendering a page. Rending a page in Tapestry is based on a command

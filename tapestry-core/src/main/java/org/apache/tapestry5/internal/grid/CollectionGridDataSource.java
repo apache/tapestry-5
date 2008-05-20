@@ -12,14 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.grid;
+package org.apache.tapestry5.internal.grid;
 
-import org.apache.tapestry.PropertyConduit;
-import org.apache.tapestry.grid.ColumnSort;
-import org.apache.tapestry.grid.GridDataSource;
-import org.apache.tapestry.grid.SortConstraint;
-import org.apache.tapestry.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry.ioc.internal.util.Defense;
+import org.apache.tapestry5.PropertyConduit;
+import org.apache.tapestry5.grid.ColumnSort;
+import org.apache.tapestry5.grid.GridDataSource;
+import org.apache.tapestry5.grid.SortConstraint;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.internal.util.Defense;
 
 import java.util.Collection;
 import java.util.Collections;

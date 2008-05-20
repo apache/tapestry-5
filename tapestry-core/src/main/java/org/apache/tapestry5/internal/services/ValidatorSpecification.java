@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry.internal.TapestryInternalUtils;
+import org.apache.tapestry5.internal.TapestryInternalUtils;
 
 /**
  * Validator type and constraint values parsed from a validator specification.

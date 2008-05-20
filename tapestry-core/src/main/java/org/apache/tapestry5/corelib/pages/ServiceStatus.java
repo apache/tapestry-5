@@ -12,17 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.corelib.pages;
+package org.apache.tapestry5.corelib.pages;
 
-import org.apache.tapestry.ComponentResources;
-import org.apache.tapestry.annotation.Meta;
-import org.apache.tapestry.annotation.Property;
-import org.apache.tapestry.beaneditor.BeanModel;
-import org.apache.tapestry.ioc.Registry;
-import org.apache.tapestry.ioc.annotation.Inject;
-import org.apache.tapestry.ioc.services.ServiceActivity;
-import org.apache.tapestry.ioc.services.ServiceActivityScoreboard;
-import org.apache.tapestry.services.BeanModelSource;
+import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.annotations.Meta;
+import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.beaneditor.BeanModel;
+import org.apache.tapestry5.ioc.Registry;
+import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.services.ServiceActivity;
+import org.apache.tapestry5.ioc.services.ServiceActivityScoreboard;
+import org.apache.tapestry5.services.BeanModelSource;
 
 import java.util.List;
 

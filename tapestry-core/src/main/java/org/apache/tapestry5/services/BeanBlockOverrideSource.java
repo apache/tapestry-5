@@ -12,13 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.services;
+package org.apache.tapestry5.services;
 
-import org.apache.tapestry.Block;
+import org.apache.tapestry5.Block;
 
 /**
- * Used to override the default {@link org.apache.tapestry.services.BeanBlockSource} for a particular data type.  The
- * service accepts the same configuration of {@link org.apache.tapestry.services.BeanBlockContribution}s as the main
+ * Used to override the default {@link org.apache.tapestry5.services.BeanBlockSource} for a particular data type.  The
+ * service accepts the same configuration of {@link org.apache.tapestry5.services.BeanBlockContribution}s as the main
  * service.
  */
 public interface BeanBlockOverrideSource

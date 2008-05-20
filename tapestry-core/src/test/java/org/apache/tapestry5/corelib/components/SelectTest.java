@@ -12,19 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.corelib.components;
+package org.apache.tapestry5.corelib.components;
 
-import org.apache.tapestry.*;
-import org.apache.tapestry.corelib.data.BlankOption;
-import org.apache.tapestry.dom.XMLMarkupModel;
-import org.apache.tapestry.internal.OptionGroupModelImpl;
-import org.apache.tapestry.internal.OptionModelImpl;
-import org.apache.tapestry.internal.SelectModelImpl;
-import org.apache.tapestry.internal.TapestryInternalUtils;
-import org.apache.tapestry.internal.services.MarkupWriterImpl;
-import org.apache.tapestry.internal.services.StringValueEncoder;
-import org.apache.tapestry.internal.test.InternalBaseTestCase;
-import org.apache.tapestry.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.*;
+import org.apache.tapestry5.corelib.data.BlankOption;
+import org.apache.tapestry5.dom.XMLMarkupModel;
+import org.apache.tapestry5.internal.OptionGroupModelImpl;
+import org.apache.tapestry5.internal.OptionModelImpl;
+import org.apache.tapestry5.internal.SelectModelImpl;
+import org.apache.tapestry5.internal.TapestryInternalUtils;
+import org.apache.tapestry5.internal.services.MarkupWriterImpl;
+import org.apache.tapestry5.internal.services.StringValueEncoder;
+import org.apache.tapestry5.internal.test.InternalBaseTestCase;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.testng.annotations.Test;
 
 import java.io.BufferedInputStream;

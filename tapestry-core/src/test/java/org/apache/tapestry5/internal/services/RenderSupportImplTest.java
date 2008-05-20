@@ -12,20 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry.Asset;
-import org.apache.tapestry.RenderSupport;
-import org.apache.tapestry.internal.test.InternalBaseTestCase;
-import org.apache.tapestry.ioc.services.SymbolSource;
-import org.apache.tapestry.services.AssetSource;
+import org.apache.tapestry5.Asset;
+import org.apache.tapestry5.RenderSupport;
+import org.apache.tapestry5.internal.test.InternalBaseTestCase;
+import org.apache.tapestry5.ioc.services.SymbolSource;
+import org.apache.tapestry5.services.AssetSource;
 import org.testng.annotations.Test;
 
 public class RenderSupportImplTest extends InternalBaseTestCase
 {
     private static final String CORE_ASSET_PATH_UNEXPANDED = "${core}";
 
-    private static final String CORE_ASSET_PATH = "/org/apache/tapestry/core/core.png";
+    private static final String CORE_ASSET_PATH = "/org/apache/tapestry5/core/core.png";
 
     private static final String CORE_ASSET_URL = "/assets/core/core.png";
 
@@ -99,7 +99,7 @@ public class RenderSupportImplTest extends InternalBaseTestCase
     public void add_classpath_script_link()
     {
         String path = "${root}/foo/bar.pdf";
-        String expanded = "org/apache/tapestry/foo/bar.pdf";
+        String expanded = "org/apache/tapestry5/foo/bar.pdf";
 
         DocumentLinker linker = mockDocumentLinker();
         Asset asset = mockAsset();

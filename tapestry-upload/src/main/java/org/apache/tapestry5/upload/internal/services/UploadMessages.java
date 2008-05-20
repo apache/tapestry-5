@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.upload.internal.services;
+package org.apache.tapestry5.upload.internal.services;
 
-import org.apache.tapestry.ioc.Messages;
-import org.apache.tapestry.ioc.internal.util.MessagesImpl;
-import org.apache.tapestry.upload.services.UploadedFile;
+import org.apache.tapestry5.ioc.Messages;
+import org.apache.tapestry5.ioc.internal.util.MessagesImpl;
+import org.apache.tapestry5.upload.services.UploadedFile;
 
 import java.io.File;
 

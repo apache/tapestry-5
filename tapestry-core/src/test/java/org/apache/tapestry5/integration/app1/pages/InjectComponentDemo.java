@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.integration.app1.pages;
+package org.apache.tapestry5.integration.app1.pages;
 
-import org.apache.tapestry.annotation.InjectComponent;
-import org.apache.tapestry.corelib.components.Form;
+import org.apache.tapestry5.annotations.InjectComponent;
+import org.apache.tapestry5.corelib.components.Form;
 
 public class InjectComponentDemo
 {

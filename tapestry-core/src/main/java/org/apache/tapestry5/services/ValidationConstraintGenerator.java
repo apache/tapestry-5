@@ -12,25 +12,25 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.services;
+package org.apache.tapestry5.services;
 
-import org.apache.tapestry.FieldValidator;
-import org.apache.tapestry.ioc.AnnotationProvider;
+import org.apache.tapestry5.FieldValidator;
+import org.apache.tapestry5.ioc.AnnotationProvider;
 
 import java.util.List;
 
 /**
  * Invoked to generate a list of validation constraint strings for a property. This typically involves scanning the
  * property for annotations or naming conventions that confer the desired validation. The constraint strings are
- * ultimately handed to {@link FieldValidatorSource#createValidator(org.apache.tapestry.Field, String, String, String,
- * org.apache.tapestry.ioc.Messages, java.util.Locale)}.
+ * ultimately handed to {@link FieldValidatorSource#createValidator(org.apache.tapestry5.Field, String, String, String,
+ * org.apache.tapestry5.ioc.Messages, java.util.Locale)}.
  */
 public interface ValidationConstraintGenerator
 {
     /**
      * For a given property, identify all the approprite validation constraints. Each returned value is the name of a
      * validator (i.e., "required") or a validator name and configuration (i.e., "minlength=5"). These contraints are
-     * exactly the individual terms in a {@link FieldValidatorSource#createValidators(org.apache.tapestry.Field, String)
+     * exactly the individual terms in a {@link FieldValidatorSource#createValidators(org.apache.tapestry5.Field, String)
      * validate specification}. These will ultimately be used to create {@link FieldValidator}s for the field that edits
      * the property.
      *

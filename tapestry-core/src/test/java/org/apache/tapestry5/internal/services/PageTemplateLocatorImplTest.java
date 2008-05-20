@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry.internal.test.InternalBaseTestCase;
-import org.apache.tapestry.ioc.Resource;
-import org.apache.tapestry.model.ComponentModel;
-import org.apache.tapestry.services.ComponentClassResolver;
+import org.apache.tapestry5.internal.test.InternalBaseTestCase;
+import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.model.ComponentModel;
+import org.apache.tapestry5.services.ComponentClassResolver;
 import org.testng.annotations.Test;
 
 import java.util.Locale;
@@ -71,8 +71,8 @@ public class PageTemplateLocatorImplTest extends InternalBaseTestCase
     }
 
     /**
-     * Because of how Tapestry maps class names to logical page names, part of the name may be have
-     * been stripped off and we want to make sure we get it back.
+     * Because of how Tapestry maps class names to logical page names, part of the name may be have been stripped off
+     * and we want to make sure we get it back.
      */
     @Test
     public void uses_simple_class_name_in_folders()

@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.corelib.internal;
+package org.apache.tapestry5.corelib.internal;
 
-import org.apache.tapestry.Field;
-import org.apache.tapestry.internal.services.ClientBehaviorSupport;
-import org.apache.tapestry.internal.test.InternalBaseTestCase;
+import org.apache.tapestry5.Field;
+import org.apache.tapestry5.internal.services.ClientBehaviorSupport;
+import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.testng.annotations.Test;
 
 public class FormSupportImplTest extends InternalBaseTestCase

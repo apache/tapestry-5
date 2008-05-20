@@ -12,16 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry.MarkupWriter;
-import org.apache.tapestry.internal.structure.Page;
-import org.apache.tapestry.runtime.RenderCommand;
+import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.internal.structure.Page;
 import org.apache.tapestry5.json.JSONObject;
+import org.apache.tapestry5.runtime.RenderCommand;
 
 
 /**
- * A wrapper around {@link org.apache.tapestry.runtime.RenderQueue}, but referencable as a (per-thread) service. This
+ * A wrapper around {@link org.apache.tapestry5.runtime.RenderQueue}, but referencable as a (per-thread) service. This
  * service is scoped so that we can tell it what to render in one method, then have it do the render in another. Part of
  * an elaborate scheme to keep certain interfaces public and other closely related ones private.
  */
@@ -48,7 +48,7 @@ public interface PageRenderQueue
     void initializeForPartialPageRender(RenderCommand rootCommand);
 
     /**
-     * Obtains the value previously supplied to {@link #initializeForPartialPageRender(org.apache.tapestry.runtime.RenderCommand)}.
+     * Obtains the value previously supplied to {@link #initializeForPartialPageRender(org.apache.tapestry5.runtime.RenderCommand)}.
      * This allows the "natural" renderer to be substituted or otherwise manipulated.
      *
      * @return the root renderer
@@ -56,7 +56,7 @@ public interface PageRenderQueue
     RenderCommand getRootRenderCommand();
 
     /**
-     * Returns true if {@link #initializeForPartialPageRender(org.apache.tapestry.runtime.RenderCommand)} has been
+     * Returns true if {@link #initializeForPartialPageRender(org.apache.tapestry5.runtime.RenderCommand)} has been
      * invoked.
      */
     boolean isPartialRenderInitialized();
@@ -69,7 +69,7 @@ public interface PageRenderQueue
     void render(MarkupWriter writer);
 
     /**
-     * Performs a partial markup render, as configured via {@link #initializeForPartialPageRender(org.apache.tapestry.runtime.RenderCommand)}.
+     * Performs a partial markup render, as configured via {@link #initializeForPartialPageRender(org.apache.tapestry5.runtime.RenderCommand)}.
      *
      * @param writer to which markup should be written
      * @param reply  JSONObject which will contain the partial response

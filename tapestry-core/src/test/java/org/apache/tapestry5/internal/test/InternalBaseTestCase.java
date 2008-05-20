@@ -12,38 +12,38 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.test;
+package org.apache.tapestry5.internal.test;
 
-import org.apache.tapestry.*;
-import org.apache.tapestry.internal.*;
-import org.apache.tapestry.internal.events.InvalidationListener;
-import org.apache.tapestry.internal.parser.ComponentTemplate;
-import org.apache.tapestry.internal.parser.TemplateToken;
-import org.apache.tapestry.internal.services.*;
-import org.apache.tapestry.internal.structure.ComponentPageElement;
-import org.apache.tapestry.internal.structure.Page;
-import org.apache.tapestry.internal.structure.PageElement;
-import org.apache.tapestry.internal.structure.PageResources;
-import org.apache.tapestry.ioc.*;
-import org.apache.tapestry.ioc.def.ContributionDef;
-import org.apache.tapestry.ioc.def.ModuleDef;
-import org.apache.tapestry.ioc.internal.InternalRegistry;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newSet;
-import org.apache.tapestry.ioc.internal.util.MessagesImpl;
-import org.apache.tapestry.ioc.services.ClassPropertyAdapter;
-import org.apache.tapestry.ioc.services.PropertyAccess;
-import org.apache.tapestry.ioc.services.PropertyAdapter;
-import org.apache.tapestry.ioc.services.SymbolProvider;
-import org.apache.tapestry.model.ComponentModel;
-import org.apache.tapestry.model.EmbeddedComponentModel;
-import org.apache.tapestry.model.MutableComponentModel;
-import org.apache.tapestry.runtime.Component;
-import org.apache.tapestry.runtime.RenderQueue;
-import org.apache.tapestry.services.ComponentClassResolver;
-import org.apache.tapestry.services.Request;
-import org.apache.tapestry.services.TapestryModule;
-import org.apache.tapestry.services.TranslatorSource;
-import org.apache.tapestry.test.TapestryTestCase;
+import org.apache.tapestry5.*;
+import org.apache.tapestry5.internal.*;
+import org.apache.tapestry5.internal.events.InvalidationListener;
+import org.apache.tapestry5.internal.parser.ComponentTemplate;
+import org.apache.tapestry5.internal.parser.TemplateToken;
+import org.apache.tapestry5.internal.services.*;
+import org.apache.tapestry5.internal.structure.ComponentPageElement;
+import org.apache.tapestry5.internal.structure.Page;
+import org.apache.tapestry5.internal.structure.PageElement;
+import org.apache.tapestry5.internal.structure.PageResources;
+import org.apache.tapestry5.ioc.*;
+import org.apache.tapestry5.ioc.def.ContributionDef;
+import org.apache.tapestry5.ioc.def.ModuleDef;
+import org.apache.tapestry5.ioc.internal.InternalRegistry;
+import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newSet;
+import org.apache.tapestry5.ioc.internal.util.MessagesImpl;
+import org.apache.tapestry5.ioc.services.ClassPropertyAdapter;
+import org.apache.tapestry5.ioc.services.PropertyAccess;
+import org.apache.tapestry5.ioc.services.PropertyAdapter;
+import org.apache.tapestry5.ioc.services.SymbolProvider;
+import org.apache.tapestry5.model.ComponentModel;
+import org.apache.tapestry5.model.EmbeddedComponentModel;
+import org.apache.tapestry5.model.MutableComponentModel;
+import org.apache.tapestry5.runtime.Component;
+import org.apache.tapestry5.runtime.RenderQueue;
+import org.apache.tapestry5.services.ComponentClassResolver;
+import org.apache.tapestry5.services.Request;
+import org.apache.tapestry5.services.TapestryModule;
+import org.apache.tapestry5.services.TranslatorSource;
+import org.apache.tapestry5.test.TapestryTestCase;
 import org.easymock.EasyMock;
 import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.isA;
@@ -419,7 +419,7 @@ public class InternalBaseTestCase extends TapestryTestCase implements Registry
         if (validationMessages == null)
         {
             ResourceBundle bundle = ResourceBundle
-                    .getBundle("org.apache.tapestry.internal.ValidationMessages");
+                    .getBundle("org.apache.tapestry5.internal.ValidationMessages");
 
             validationMessages = new MessagesImpl(Locale.ENGLISH, bundle);
         }

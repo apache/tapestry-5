@@ -12,16 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry.Link;
-import org.apache.tapestry.ioc.internal.util.InternalUtils;
-import org.apache.tapestry.services.Response;
+import org.apache.tapestry5.Link;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.services.Response;
 
 import java.util.List;
 
 /**
- * Default implementation of {@link org.apache.tapestry.Link}.
+ * Default implementation of {@link org.apache.tapestry5.Link}.
  */
 public class LinkImpl implements Link
 {
@@ -59,8 +59,8 @@ public class LinkImpl implements Link
      * @param response    used to encode the response when necessary
      * @param optimizer   optimizes complete URLs to appropriate relative URLs
      * @param baseURL     base URL prefix (before the context path), used when switching between secure and non-secure
-     * @param contextPath path for the context {@link org.apache.tapestry.services.Request#getContextPath()}
-     * @param invocation  abstraction around the type of link (needed by {@link org.apache.tapestry.test.PageTester})
+     * @param contextPath path for the context {@link org.apache.tapestry5.services.Request#getContextPath()}
+     * @param invocation  abstraction around the type of link (needed by {@link org.apache.tapestry5.test.PageTester})
      * @param forForm     if true, then a Form has requested the Link, in which case, the link should not generated
      */
     public LinkImpl(Response response, RequestPathOptimizer optimizer, String baseURL, String contextPath,

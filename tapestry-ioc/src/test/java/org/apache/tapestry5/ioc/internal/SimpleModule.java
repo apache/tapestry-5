@@ -12,14 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.internal;
+package org.apache.tapestry5.ioc.internal;
 
-import org.apache.tapestry.ioc.Configuration;
-import org.apache.tapestry.ioc.annotation.EagerLoad;
-import org.apache.tapestry.ioc.annotation.Scope;
+import org.apache.tapestry5.ioc.Configuration;
+import org.apache.tapestry5.ioc.annotations.EagerLoad;
+import org.apache.tapestry5.ioc.annotations.Scope;
 
 /**
- * Used by {@link org.apache.tapestry.ioc.internal.DefaultModuleDefImplTest}.
+ * Used by {@link org.apache.tapestry5.ioc.internal.DefaultModuleDefImplTest}.
  */
 public class SimpleModule
 {

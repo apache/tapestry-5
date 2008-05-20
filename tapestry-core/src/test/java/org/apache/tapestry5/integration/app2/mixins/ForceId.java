@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.integration.app2.mixins;
+package org.apache.tapestry5.integration.app2.mixins;
 
-import org.apache.tapestry.ClientElement;
-import org.apache.tapestry.annotation.InjectContainer;
+import org.apache.tapestry5.ClientElement;
+import org.apache.tapestry5.annotations.InjectContainer;
 
 public class ForceId
 {

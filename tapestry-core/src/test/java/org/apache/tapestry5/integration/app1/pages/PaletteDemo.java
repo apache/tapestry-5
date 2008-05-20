@@ -12,16 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.integration.app1.pages;
+package org.apache.tapestry5.integration.app1.pages;
 
-import org.apache.tapestry.ComponentResources;
-import org.apache.tapestry.SelectModel;
-import org.apache.tapestry.ValueEncoder;
-import org.apache.tapestry.annotation.Persist;
-import org.apache.tapestry.integration.app1.data.ProgrammingLanguage;
-import org.apache.tapestry.ioc.annotation.Inject;
-import org.apache.tapestry.util.EnumSelectModel;
-import org.apache.tapestry.util.EnumValueEncoder;
+import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.SelectModel;
+import org.apache.tapestry5.ValueEncoder;
+import org.apache.tapestry5.annotations.Persist;
+import org.apache.tapestry5.integration.app1.data.ProgrammingLanguage;
+import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.util.EnumSelectModel;
+import org.apache.tapestry5.util.EnumValueEncoder;
 
 import java.util.List;
 

@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.corelib.internal;
+package org.apache.tapestry5.corelib.internal;
 
-import org.apache.tapestry.ioc.Messages;
-import org.apache.tapestry.ioc.internal.util.MessagesImpl;
-import org.apache.tapestry.ioc.services.ClassFabUtils;
+import org.apache.tapestry5.ioc.Messages;
+import org.apache.tapestry5.ioc.internal.util.MessagesImpl;
+import org.apache.tapestry5.ioc.services.ClassFabUtils;
 
 public final class InternalMessages
 {

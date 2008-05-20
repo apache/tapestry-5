@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.services;
+package org.apache.tapestry5.ioc.services;
 
 import java.util.List;
 
 /**
- * Organizes all {@link org.apache.tapestry.ioc.services.PropertyAdapter}s for a particular class.
+ * Organizes all {@link org.apache.tapestry5.ioc.services.PropertyAdapter}s for a particular class.
  * <p/>
  * Only provides access to <em>simple</em> properties. Indexed properties are ignored.
  * <p/>

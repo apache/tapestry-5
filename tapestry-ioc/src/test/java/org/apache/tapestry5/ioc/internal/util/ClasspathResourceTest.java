@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.internal.util;
+package org.apache.tapestry5.ioc.internal.util;
 
-import org.apache.tapestry.ioc.Resource;
+import org.apache.tapestry5.ioc.Resource;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -29,7 +29,7 @@ public class ClasspathResourceTest extends Assert
 {
     private static final String RESOURCE_TXT_CONTENT = "content from resource.txt";
 
-    private static final String FOLDER = "org/apache/tapestry/ioc/internal/util";
+    private static final String FOLDER = "org/apache/tapestry5/ioc/internal/util";
 
     private static final String PATH = FOLDER + "/resource.txt";
 

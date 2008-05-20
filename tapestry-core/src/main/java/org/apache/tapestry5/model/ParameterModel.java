@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.model;
+package org.apache.tapestry5.model;
 
-import org.apache.tapestry.annotation.Parameter;
+import org.apache.tapestry5.annotations.Parameter;
 
 /**
  * Model for a <em>formal</em> parameter of a component.

@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.util;
+package org.apache.tapestry5.ioc.util;
 
-import org.apache.tapestry.ioc.internal.util.CollectionFactory;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newCaseInsensitiveMap;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newCaseInsensitiveMap;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -103,8 +103,7 @@ public class CaseInsensitiveMapTest extends Assert
     }
 
     /**
-     * Add a large number of keys which should stress the code that adds and expands values into the
-     * map.
+     * Add a large number of keys which should stress the code that adds and expands values into the map.
      */
     @Test
     public void expansion_of_internal_entry_array()
@@ -150,7 +149,7 @@ public class CaseInsensitiveMapTest extends Assert
     }
 
     @Test(expectedExceptions =
-            {ConcurrentModificationException.class})
+            { ConcurrentModificationException.class })
     public void iterator_fail_fast_after_remove()
     {
         Map<String, String> map = newCaseInsensitiveMap();
@@ -170,7 +169,7 @@ public class CaseInsensitiveMapTest extends Assert
     }
 
     @Test(expectedExceptions =
-            {ConcurrentModificationException.class})
+            { ConcurrentModificationException.class })
     public void iterator_fail_fast_on_next()
     {
         Map<String, String> map = newCaseInsensitiveMap();
@@ -271,7 +270,7 @@ public class CaseInsensitiveMapTest extends Assert
     }
 
     @Test(expectedExceptions =
-            {NoSuchElementException.class})
+            { NoSuchElementException.class })
     public void next_after_last_entry_is_failure()
     {
         Map<String, String> map = newCaseInsensitiveMap();

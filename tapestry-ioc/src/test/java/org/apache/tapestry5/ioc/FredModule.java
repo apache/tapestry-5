@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc;
+package org.apache.tapestry5.ioc;
 
-import org.apache.tapestry.ioc.annotation.Match;
-import org.apache.tapestry.ioc.annotation.Order;
-import org.apache.tapestry.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.annotations.Match;
+import org.apache.tapestry5.ioc.annotations.Order;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 
 import java.util.Collection;
 import java.util.Collections;

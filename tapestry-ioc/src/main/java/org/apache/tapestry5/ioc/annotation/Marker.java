@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.annotation;
+package org.apache.tapestry5.ioc.annotations;
 
-import org.apache.tapestry.ioc.def.ServiceDef;
+import org.apache.tapestry5.ioc.def.ServiceDef;
 
 import java.lang.annotation.Documented;
 import static java.lang.annotation.ElementType.METHOD;
@@ -30,7 +30,7 @@ import java.lang.annotation.Target;
  * <p/>
  * When applied to a module class, this sets the default markers for all services within the module.  Markers are
  * additive, so a Marker annotation on the implementation class and/or specified with {@link
- * org.apache.tapestry.ioc.ServiceBindingOptions#withMarker(Class[])} will accumulate; a service may have any number of
+ * org.apache.tapestry5.ioc.ServiceBindingOptions#withMarker(Class[])} will accumulate; a service may have any number of
  * markers.  Generally one or two is enough.
  */
 @Target(

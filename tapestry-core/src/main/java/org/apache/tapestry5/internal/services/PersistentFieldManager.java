@@ -12,17 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry.ComponentResources;
-import org.apache.tapestry.services.PersistentFieldBundle;
+import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.services.PersistentFieldBundle;
 
 /**
- * Handle persistent property changes. Primarily, delegates to a number of {@link org.apache.tapestry.services.PersistentFieldStrategy}
+ * Handle persistent property changes. Primarily, delegates to a number of {@link org.apache.tapestry5.services.PersistentFieldStrategy}
  * instances.
  *
- * @see org.apache.tapestry.services.TapestryModule#contributePersistentFieldManager(org.apache.tapestry.ioc.MappedConfiguration,
- *      org.apache.tapestry.services.Request , org.apache.tapestry.services.PersistentFieldStrategy)
+ * @see org.apache.tapestry5.services.TapestryModule#contributePersistentFieldManager(org.apache.tapestry5.ioc.MappedConfiguration,
+ *      org.apache.tapestry5.services.Request , org.apache.tapestry5.services.PersistentFieldStrategy)
  */
 public interface PersistentFieldManager
 {

@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.annotation;
+package org.apache.tapestry5.annotations;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -22,9 +22,9 @@ import java.lang.annotation.Target;
 
 /**
  * Marker annotation for component methods associated with the terminal phase for the component rendering state machine.
- * Methods may optionally take a {@link org.apache.tapestry.MarkupWriter} annotation. Generally, methods marked with
+ * Methods may optionally take a {@link org.apache.tapestry5.MarkupWriter} annotation. Generally, methods marked with
  * this annotation are used to perform post-render cleanup. In addition, a method may return false to return to the
- * {@link org.apache.tapestry.annotation.SetupRender} phase. Returning void or true (the default), is the normal
+ * {@link org.apache.tapestry5.annotations.SetupRender} phase. Returning void or true (the default), is the normal
  * course.
  */
 @Target(ElementType.METHOD)

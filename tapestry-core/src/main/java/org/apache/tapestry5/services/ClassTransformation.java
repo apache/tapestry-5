@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.services;
+package org.apache.tapestry5.services;
 
 import javassist.CtBehavior;
-import org.apache.tapestry.ioc.AnnotationProvider;
+import org.apache.tapestry5.ioc.AnnotationProvider;
 import org.slf4j.Logger;
 
 import java.lang.annotation.Annotation;
@@ -24,7 +24,7 @@ import java.util.List;
 /**
  * Contains class-specific information used when transforming a raw component class into an executable component class.
  * An executable class is one that has been transformed to work within Tapestry.  This includes adding interfaces
- * ({@link org.apache.tapestry.runtime.Component}) but also transforming access to fields, based on annotations and
+ * ({@link org.apache.tapestry5.runtime.Component}) but also transforming access to fields, based on annotations and
  * naming conventions.  Most of the changes are provided by different implementations of {@link
  * ComponentClassTransformWorker}.
  * <p/>
@@ -44,9 +44,9 @@ import java.util.List;
  * The majority of methods concern the <em>declared</em> members (field and methods) of a specific class, rather than
  * any fields or methods inherited from a base class.
  *
- * @see org.apache.tapestry.services.TapestryModule#contributeComponentClassTransformWorker(org.apache.tapestry.ioc.OrderedConfiguration,
- *      org.apache.tapestry.ioc.ObjectLocator, InjectionProvider, Environment, ComponentClassResolver,
- *      org.apache.tapestry.internal.services.RequestPageCache, BindingSource)
+ * @see org.apache.tapestry5.services.TapestryModule#contributeComponentClassTransformWorker(org.apache.tapestry5.ioc.OrderedConfiguration,
+ *      org.apache.tapestry5.ioc.ObjectLocator, InjectionProvider, Environment, ComponentClassResolver,
+ *      org.apache.tapestry5.internal.services.RequestPageCache, BindingSource)
  */
 public interface ClassTransformation extends AnnotationProvider
 {
@@ -237,7 +237,7 @@ public interface ClassTransformation extends AnnotationProvider
      *
      * @param methodSignature the signature of the method to extend
      * @param methodBody      the body of code
-     * @throws org.apache.tapestry.internal.services.MethodCompileException
+     * @throws org.apache.tapestry5.internal.services.MethodCompileException
      *          if the provided Javassist method body can not be compiled
      * @see #extendExistingMethod(TransformMethodSignature, String)
      */
@@ -249,7 +249,7 @@ public interface ClassTransformation extends AnnotationProvider
      *
      * @param methodSignature signature of the method to extend
      * @param methodBody      the body of code
-     * @throws org.apache.tapestry.internal.services.MethodCompileException
+     * @throws org.apache.tapestry5.internal.services.MethodCompileException
      *          if the provided method body can not be compiled
      * @see #prefixMethod(TransformMethodSignature, String)
      */
@@ -268,13 +268,13 @@ public interface ClassTransformation extends AnnotationProvider
      *
      * @param methodSignature
      * @param methodBody
-     * @throws org.apache.tapestry.internal.services.MethodCompileException
+     * @throws org.apache.tapestry5.internal.services.MethodCompileException
      *          if the provided method body can not be compiled
      */
     void prefixMethod(TransformMethodSignature methodSignature, String methodBody);
 
     /**
-     * Returns the name of a field that provides the {@link org.apache.tapestry.ComponentResources} for the transformed
+     * Returns the name of a field that provides the {@link org.apache.tapestry5.ComponentResources} for the transformed
      * component. This will be a protected field, accessible to the class and subclasses.
      *
      * @return name of field

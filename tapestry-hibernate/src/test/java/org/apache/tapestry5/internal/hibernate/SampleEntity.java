@@ -12,13 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.hibernate;
+package org.apache.tapestry5.internal.hibernate;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
 /**
- * Fake entity used by {@link org.apache.tapestry.internal.hibernate.HibernateEntityValueEncoderTest}.
+ * Fake entity used by {@link org.apache.tapestry5.internal.hibernate.HibernateEntityValueEncoderTest}.
  */
 @Entity
 public class SampleEntity

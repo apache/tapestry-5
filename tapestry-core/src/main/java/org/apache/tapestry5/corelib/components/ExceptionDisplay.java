@@ -12,24 +12,24 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.corelib.components;
+package org.apache.tapestry5.corelib.components;
 
-import org.apache.tapestry.annotation.Parameter;
-import org.apache.tapestry.annotation.Property;
-import org.apache.tapestry.internal.InternalConstants;
-import org.apache.tapestry.ioc.annotation.Inject;
-import org.apache.tapestry.ioc.annotation.Symbol;
-import org.apache.tapestry.ioc.services.ExceptionAnalysis;
-import org.apache.tapestry.ioc.services.ExceptionAnalyzer;
-import org.apache.tapestry.ioc.services.ExceptionInfo;
+import org.apache.tapestry5.annotations.Parameter;
+import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.internal.InternalConstants;
+import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.annotations.Symbol;
+import org.apache.tapestry5.ioc.services.ExceptionAnalysis;
+import org.apache.tapestry5.ioc.services.ExceptionAnalyzer;
+import org.apache.tapestry5.ioc.services.ExceptionInfo;
 
 import java.util.List;
 
 /**
- * Integral part of the default {@link org.apache.tapestry.corelib.pages.ExceptionReport} page used to break apart and
+ * Integral part of the default {@link org.apache.tapestry5.corelib.pages.ExceptionReport} page used to break apart and
  * display the properties of the exception.
  *
- * @see org.apache.tapestry.ioc.services.ExceptionAnalyzer
+ * @see org.apache.tapestry5.ioc.services.ExceptionAnalyzer
  */
 public class ExceptionDisplay
 {

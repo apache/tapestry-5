@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.internal.services;
+package org.apache.tapestry5.ioc.internal.services;
 
 /**
- * Used by {@link org.apache.tapestry.ioc.internal.services.ClassFabImplTest}.
+ * Used by {@link org.apache.tapestry5.ioc.internal.services.ClassFabImplTest}.
  */
 public interface SimpleService
 {

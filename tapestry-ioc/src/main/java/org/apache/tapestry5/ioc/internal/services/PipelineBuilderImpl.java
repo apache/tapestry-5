@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.internal.services;
+package org.apache.tapestry5.ioc.internal.services;
 
-import org.apache.tapestry.ioc.services.Builtin;
-import org.apache.tapestry.ioc.services.ClassFactory;
-import org.apache.tapestry.ioc.services.DefaultImplementationBuilder;
-import org.apache.tapestry.ioc.services.PipelineBuilder;
+import org.apache.tapestry5.ioc.services.Builtin;
+import org.apache.tapestry5.ioc.services.ClassFactory;
+import org.apache.tapestry5.ioc.services.DefaultImplementationBuilder;
+import org.apache.tapestry5.ioc.services.PipelineBuilder;
 import org.slf4j.Logger;
 
 import java.util.List;

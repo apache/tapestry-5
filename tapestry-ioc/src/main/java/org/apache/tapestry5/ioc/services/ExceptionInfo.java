@@ -12,14 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.services;
+package org.apache.tapestry5.ioc.services;
 
 import java.util.List;
 
 /**
  * Contains information about an analyzed exception.
  *
- * @see {@link org.apache.tapestry.ioc.services.ExceptionAnalysis}
+ * @see {@link org.apache.tapestry5.ioc.services.ExceptionAnalysis}
  */
 public interface ExceptionInfo
 {
@@ -44,8 +44,7 @@ public interface ExceptionInfo
     Object getProperty(String name);
 
     /**
-     * Returns the stack trace elements. Generally this is an empty list except for the deepest
-     * exception.
+     * Returns the stack trace elements. Generally this is an empty list except for the deepest exception.
      */
     List<StackTraceElement> getStackTrace();
 }

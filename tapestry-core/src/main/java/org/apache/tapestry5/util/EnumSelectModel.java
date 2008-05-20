@@ -12,15 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.util;
+package org.apache.tapestry5.util;
 
-import org.apache.tapestry.OptionGroupModel;
-import org.apache.tapestry.OptionModel;
-import org.apache.tapestry.internal.OptionModelImpl;
-import org.apache.tapestry.internal.TapestryInternalUtils;
-import org.apache.tapestry.ioc.Messages;
-import org.apache.tapestry.ioc.internal.util.CollectionFactory;
-import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
+import org.apache.tapestry5.OptionGroupModel;
+import org.apache.tapestry5.OptionModel;
+import org.apache.tapestry5.internal.OptionModelImpl;
+import org.apache.tapestry5.internal.TapestryInternalUtils;
+import org.apache.tapestry5.ioc.Messages;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import static org.apache.tapestry5.ioc.internal.util.Defense.notNull;
 
 import java.io.Serializable;
 import java.util.List;

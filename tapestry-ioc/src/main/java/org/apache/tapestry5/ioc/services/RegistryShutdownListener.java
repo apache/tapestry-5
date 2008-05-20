@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.services;
+package org.apache.tapestry5.ioc.services;
 
 import java.util.EventListener;
 
@@ -22,9 +22,9 @@ import java.util.EventListener;
 public interface RegistryShutdownListener extends EventListener
 {
     /**
-     * Invoked when the registry shuts down, giving services a chance to perform any final
-     * operations. Service implementations should not attempt to invoke methods on other services
-     * (via proxies) as the service proxies may themselves be shutdown.
+     * Invoked when the registry shuts down, giving services a chance to perform any final operations. Service
+     * implementations should not attempt to invoke methods on other services (via proxies) as the service proxies may
+     * themselves be shutdown.
      */
     void registryDidShutdown();
 }

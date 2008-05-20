@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.annotation;
+package org.apache.tapestry5.ioc.annotations;
 
 import java.lang.annotation.Documented;
 import static java.lang.annotation.ElementType.FIELD;
@@ -23,8 +23,8 @@ import java.lang.annotation.Target;
 
 /**
  * Used to inject a symbol value, via a symbol name. This is used much like {@link
- * org.apache.tapestry.ioc.annotation.Value} annotation, except that symbols are not expanded ... the entire value is a
- * symbol name. This allows the annotation to reference a public constant variable.
+ * org.apache.tapestry5.ioc.annotations.Value} annotation, except that symbols are not expanded ... the entire value is
+ * a symbol name. This allows the annotation to reference a public constant variable.
  */
 @Target(
         { PARAMETER, FIELD })

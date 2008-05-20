@@ -12,14 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.integration;
+package org.apache.tapestry5.integration;
 
-import org.apache.tapestry.corelib.components.Form;
-import org.apache.tapestry.corelib.mixins.RenderDisabled;
-import org.apache.tapestry.integration.app1.pages.RenderErrorDemo;
-import org.apache.tapestry.ioc.Resource;
-import org.apache.tapestry.ioc.internal.util.ClasspathResource;
-import org.apache.tapestry.test.AbstractIntegrationTestSuite;
+import org.apache.tapestry5.corelib.components.Form;
+import org.apache.tapestry5.corelib.mixins.RenderDisabled;
+import org.apache.tapestry5.integration.app1.pages.RenderErrorDemo;
+import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.ioc.internal.util.ClasspathResource;
+import org.apache.tapestry5.test.AbstractIntegrationTestSuite;
 import org.testng.annotations.Test;
 
 import java.io.BufferedInputStream;
@@ -64,7 +64,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         byte[] downloaded = readContent(url);
 
         Resource classpathResource = new ClasspathResource(
-                "org/apache/tapestry/integration/app1/pages/nested/tapestry-button.png");
+                "org/apache/tapestry5/integration/app1/pages/nested/tapestry-button.png");
 
         byte[] actual = readContent(classpathResource.toURL());
 
@@ -111,7 +111,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         assertTextPresent("regexp:\\s+5\\s+4\\s+3\\s+2\\s+1\\s+");
 
-        assertTextPresent("Brought to you by the org.apache.tapestry.integration.app1.components.Count");
+        assertTextPresent("Brought to you by the org.apache.tapestry5.integration.app1.components.Count");
     }
 
     @Test
@@ -133,8 +133,8 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     {
         start("BadTemplate Page");
 
-        assertTextPresent("org.apache.tapestry.ioc.internal.util.TapestryException",
-                          "Failure parsing template classpath:org/apache/tapestry/integration/app1/pages/BadTemplate.tml, line 7, column 15",
+        assertTextPresent("org.apache.tapestry5.ioc.internal.util.TapestryException",
+                          "Failure parsing template classpath:org/apache/tapestry5/integration/app1/pages/BadTemplate.tml, line 7, column 15",
                           "<t:foobar>content from template</t:foobar>",
                           "Element <t:foobar> is in the Tapestry namespace, but is not a recognized Tapestry template element.");
     }
@@ -148,9 +148,9 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     }
 
     /**
-     * {@link org.apache.tapestry.internal.transform.InjectContainerWorker} is largely tested by the forms tests ({@link
-     * RenderDisabled} is built on it). test is for the failure case, where a mixin class is used with the wrong type of
-     * component.
+     * {@link org.apache.tapestry5.internal.transform.InjectContainerWorker} is largely tested by the forms tests
+     * ({@link RenderDisabled} is built on it). test is for the failure case, where a mixin class is used with the wrong
+     * type of component.
      */
     @Test
     public void inject_container_failure() throws Exception
@@ -160,7 +160,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         // And exception message:
 
         assertTextPresent(
-                "Component InjectContainerMismatch is not assignable to field org.apache.tapestry.corelib.mixins.RenderDisabled.field (of type org.apache.tapestry.Field).");
+                "Component InjectContainerMismatch is not assignable to field org.apache.tapestry5.corelib.mixins.RenderDisabled.field (of type org.apache.tapestry5.Field).");
     }
 
     @Test
@@ -169,7 +169,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         start("InjectComponentMismatch");
 
         assertTextPresent(
-                "Unable to inject component 'form' into field form of component InjectComponentMismatch. Class org.apache.tapestry.corelib.components.BeanEditForm is not assignable to a field of type org.apache.tapestry.corelib.components.Form.",
+                "Unable to inject component 'form' into field form of component InjectComponentMismatch. Class org.apache.tapestry5.corelib.components.BeanEditForm is not assignable to a field of type org.apache.tapestry5.corelib.components.Form.",
                 "ClassCastException");
     }
 
@@ -179,13 +179,13 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         start("Inject Demo");
 
         // is a test for a named @Inject:
-        assertTextPresent("<Proxy for Request(org.apache.tapestry.services.Request)>");
+        assertTextPresent("<Proxy for Request(org.apache.tapestry5.services.Request)>");
 
         // is a test for an anonymous @Inject and ComponentResourcesInjectionProvider
         assertTextPresent("ComponentResources[InjectDemo]");
 
         // Another test, DefaultInjectionProvider
-        assertTextPresent("<Proxy for BindingSource(org.apache.tapestry.services.BindingSource)>");
+        assertTextPresent("<Proxy for BindingSource(org.apache.tapestry5.services.BindingSource)>");
 
         // Prove that injection using a marker annotation (to match against a marked service) works.
 
@@ -863,7 +863,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         start("Recursive Demo");
 
         assertTextPresent("An unexpected application exception has occurred.",
-                          "The template for component org.apache.tapestry.integration.app1.components.Recursive is recursive (contains another direct or indirect reference to component org.apache.tapestry.integration.app1.components.Recursive). is not supported (components may not contain themselves).",
+                          "The template for component org.apache.tapestry5.integration.app1.components.Recursive is recursive (contains another direct or indirect reference to component org.apache.tapestry5.integration.app1.components.Recursive). is not supported (components may not contain themselves).",
                           "component is <t:recursive>recursive</t:recursive>, so we\'ll see a failure.");
     }
 
@@ -1038,7 +1038,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         clickAndWait("link=bad");
         assertTextPresent("An unexpected application exception has occurred.",
-                          "An event handler for component org.apache.tapestry.integration.app1.pages.Start returned the value 20 (from method org.apache.tapestry.integration.app1.pages.Start.onActionFromBadReturnType() (at Start.java:34)). Return type java.lang.Integer can not be handled.");
+                          "An event handler for component org.apache.tapestry5.integration.app1.pages.Start returned the value 20 (from method org.apache.tapestry5.integration.app1.pages.Start.onActionFromBadReturnType() (at Start.java:34)). Return type java.lang.Integer can not be handled.");
 
     }
 
@@ -1293,7 +1293,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         open(BASE_URL + "invalidsuperclass");
 
         assertTextPresent(
-                "Base class org.apache.tapestry.integration.app1.WrongPackageForBaseClass (super class of org.apache.tapestry.integration.app1.pages.InvalidSuperClass) is not in a controlled package and is therefore not valid. You should try moving the class to package org.apache.tapestry.integration.app1.base.");
+                "Base class org.apache.tapestry5.integration.app1.WrongPackageForBaseClass (super class of org.apache.tapestry5.integration.app1.pages.InvalidSuperClass) is not in a controlled package and is therefore not valid. You should try moving the class to package org.apache.tapestry5.integration.app1.base.");
     }
 
     @Test
@@ -1535,12 +1535,12 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         start("Exception Event Demo", "enable", "force invalid activation context");
 
         assertTextPresent(
-                "Exception: Exception in method org.apache.tapestry.integration.app1.pages.ExceptionEventDemo.onActivate(float)");
+                "Exception: Exception in method org.apache.tapestry5.integration.app1.pages.ExceptionEventDemo.onActivate(float)");
 
         clickAndWait("link=force invalid event context");
 
         assertTextPresent(
-                "Exception: Exception in method org.apache.tapestry.integration.app1.pages.ExceptionEventDemo.onActionFromFail(float)");
+                "Exception: Exception in method org.apache.tapestry5.integration.app1.pages.ExceptionEventDemo.onActionFromFail(float)");
 
         // Revert to normal handling: return null from the onException() event handler method.
 
@@ -1549,7 +1549,8 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         clickAndWait("link=force invalid event context");
 
         assertTextPresent("An unexpected application exception has occurred.",
-                          "org.apache.tapestry.ioc.internal.util.TapestryException", "java.lang.NumberFormatException");
+                          "org.apache.tapestry5.ioc.internal.util.TapestryException",
+                          "java.lang.NumberFormatException");
 
     }
 
@@ -1576,7 +1577,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     {
         start("Generic Page Class Demo");
 
-        assertTextPresent("Editor for org.apache.tapestry.integration.app1.data.Track");
+        assertTextPresent("Editor for org.apache.tapestry5.integration.app1.data.Track");
 
         assertSourcePresent("<label for=\"title\" id=\"title:label\">Title</label>");
     }
@@ -1883,7 +1884,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         start("Protected Fields Demo", "Trigger the Exception");
 
         assertTextPresent("An unexpected application exception has occurred.",
-                          "Class org.apache.tapestry.integration.app1.pages.ProtectedFields contains field(s) (_field) that are not private. You should change these fields to private, and add accessor methods if needed.");
+                          "Class org.apache.tapestry5.integration.app1.pages.ProtectedFields contains field(s) (_field) that are not private. You should change these fields to private, and add accessor methods if needed.");
     }
 
 
@@ -1896,7 +1897,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         start("Class Transformation Exception Demo");
 
         assertTextPresent(
-                "Class org.apache.tapestry.integration.app1.pages.Datum contains field(s) (_value) that are not private. You should change these fields to private, and add accessor methods if needed.");
+                "Class org.apache.tapestry5.integration.app1.pages.Datum contains field(s) (_value) that are not private. You should change these fields to private, and add accessor methods if needed.");
     }
 
     /**
@@ -2020,7 +2021,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         // @ReverseStrings filtered the checked exception to a string result
         assertText("cranky",
-                   "Invocation of method getCranky() failed with org.apache.tapestry.integration.app1.services.DearGodWhyMeException.");
+                   "Invocation of method getCranky() failed with org.apache.tapestry5.integration.app1.services.DearGodWhyMeException.");
 
         // Now to check advice on a setter that manipulates parameters
 

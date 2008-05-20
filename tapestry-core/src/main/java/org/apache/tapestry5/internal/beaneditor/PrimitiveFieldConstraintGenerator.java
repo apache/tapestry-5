@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.beaneditor;
+package org.apache.tapestry5.internal.beaneditor;
 
-import org.apache.tapestry.ioc.AnnotationProvider;
-import org.apache.tapestry.services.ValidationConstraintGenerator;
+import org.apache.tapestry5.ioc.AnnotationProvider;
+import org.apache.tapestry5.services.ValidationConstraintGenerator;
 
 import java.util.Arrays;
 import java.util.List;

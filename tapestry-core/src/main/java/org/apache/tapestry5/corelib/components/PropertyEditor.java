@@ -12,17 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.corelib.components;
+package org.apache.tapestry5.corelib.components;
 
-import org.apache.tapestry.*;
-import org.apache.tapestry.annotation.Environmental;
-import org.apache.tapestry.annotation.Parameter;
-import org.apache.tapestry.beaneditor.BeanModel;
-import org.apache.tapestry.beaneditor.PropertyModel;
-import org.apache.tapestry.ioc.Messages;
-import org.apache.tapestry.ioc.annotation.Inject;
-import org.apache.tapestry.ioc.internal.util.TapestryException;
-import org.apache.tapestry.services.*;
+import org.apache.tapestry5.*;
+import org.apache.tapestry5.annotations.Environmental;
+import org.apache.tapestry5.annotations.Parameter;
+import org.apache.tapestry5.beaneditor.BeanModel;
+import org.apache.tapestry5.beaneditor.PropertyModel;
+import org.apache.tapestry5.ioc.Messages;
+import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.internal.util.TapestryException;
+import org.apache.tapestry5.services.*;
 
 import java.lang.annotation.Annotation;
 import java.util.Locale;
@@ -118,8 +118,8 @@ public class PropertyEditor
     private TranslatorSource translatorSource;
 
     /**
-     * Creates a {@link org.apache.tapestry.services.PropertyEditContext} and pushes it onto the {@link
-     * org.apache.tapestry.services.Environment} stack.
+     * Creates a {@link org.apache.tapestry5.services.PropertyEditContext} and pushes it onto the {@link
+     * org.apache.tapestry5.services.Environment} stack.
      */
     void setupEnvironment(final String propertyName)
     {

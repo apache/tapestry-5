@@ -12,17 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.corelib.components;
+package org.apache.tapestry5.corelib.components;
 
-import org.apache.tapestry.MarkupWriter;
-import org.apache.tapestry.corelib.base.AbstractTextField;
+import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.corelib.base.AbstractTextField;
 
 /**
  * TextField component corresponds to &lt;input type="text"&gt; element. The value parameter will be editted. TextField
  * is generally used with string values, but other values are acceptible, as long as they can be freely converted back
  * and forth to strings.
  * <p/>
- * Includes the <code>size</code> attribute, if a {@link org.apache.tapestry.beaneditor.Width} annotation is present on
+ * Includes the <code>size</code> attribute, if a {@link org.apache.tapestry5.beaneditor.Width} annotation is present on
  * the property bound to the value parameter.
  */
 public final class TextField extends AbstractTextField

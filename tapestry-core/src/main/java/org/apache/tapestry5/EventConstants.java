@@ -1,4 +1,4 @@
-package org.apache.tapestry;
+package org.apache.tapestry5;
 
 /**
  * Constant values for common event names fired by Tapestry components.

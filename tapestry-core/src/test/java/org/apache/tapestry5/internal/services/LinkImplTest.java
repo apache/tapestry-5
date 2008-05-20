@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry.Link;
-import org.apache.tapestry.internal.test.InternalBaseTestCase;
-import org.apache.tapestry.services.Response;
+import org.apache.tapestry5.Link;
+import org.apache.tapestry5.internal.test.InternalBaseTestCase;
+import org.apache.tapestry5.services.Response;
 import org.testng.annotations.Test;
 
 import java.util.Arrays;

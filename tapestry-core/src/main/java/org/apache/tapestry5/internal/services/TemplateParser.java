@@ -12,13 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry.internal.parser.ComponentTemplate;
-import org.apache.tapestry.ioc.Resource;
+import org.apache.tapestry5.internal.parser.ComponentTemplate;
+import org.apache.tapestry5.ioc.Resource;
 
 /**
- * Parses a resource into a {@link org.apache.tapestry.internal.parser.ComponentTemplate}.
+ * Parses a resource into a {@link org.apache.tapestry5.internal.parser.ComponentTemplate}.
  *
  * @see PageLoader
  */

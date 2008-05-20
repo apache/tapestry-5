@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry;
+package org.apache.tapestry5;
 
 /**
- * Base interface for objects that can render markup output using a {@link org.apache.tapestry.MarkupWriter}.
+ * Base interface for objects that can render markup output using a {@link org.apache.tapestry5.MarkupWriter}.
  */
 public interface Renderable
 {

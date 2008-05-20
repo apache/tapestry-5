@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.annotation;
+package org.apache.tapestry5.annotations;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -22,10 +22,10 @@ import java.lang.annotation.Target;
 
 /**
  * Marker annotation for methods associated with the AfterRender phase. This corresponds closely to {@link
- * org.apache.tapestry.annotation.BeginRender}, but occurs after the template and body of the component have been
+ * org.apache.tapestry5.annotations.BeginRender}, but occurs after the template and body of the component have been
  * rendered. Often, this is used to render a close tag. Return void or true (the default) to advance to the {@link
- * org.apache.tapestry.annotation.CleanupRender} phase. Return false to return to the {@link
- * org.apache.tapestry.annotation.BeginRender} phase.
+ * org.apache.tapestry5.annotations.CleanupRender} phase. Return false to return to the {@link
+ * org.apache.tapestry5.annotations.BeginRender} phase.
  */
 @Target(ElementType.METHOD)
 @Retention(RUNTIME)

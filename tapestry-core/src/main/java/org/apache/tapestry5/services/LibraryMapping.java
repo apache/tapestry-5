@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.services;
+package org.apache.tapestry5.services;
 
 /**
  * Used to configure the {@link ComponentClassResolver}, to allow it to map prefixes to library root packages (the
@@ -24,7 +24,7 @@ package org.apache.tapestry.services;
  * <dt>components</dt> <dd>contains components</dd> <dt>mixins</dt> <dd>contains component mixins</dd> <dt>base</dt>
  * <dd>contains base classes</dd> </dl>
  *
- * @see org.apache.tapestry.services.TapestryModule#contributeComponentClassResolver(org.apache.tapestry.ioc.Configuration)
+ * @see org.apache.tapestry5.services.TapestryModule#contributeComponentClassResolver(org.apache.tapestry5.ioc.Configuration)
  */
 public final class LibraryMapping
 {

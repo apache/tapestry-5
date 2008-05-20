@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.services;
+package org.apache.tapestry5.ioc.services;
 
-import org.apache.tapestry.ioc.ObjectCreator;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
+import org.apache.tapestry5.ioc.ObjectCreator;
+import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newMap;
 
 import static java.lang.String.format;
 import java.lang.reflect.Method;
@@ -24,7 +24,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
- * Handy method useful when creating new classes using {@link org.apache.tapestry.ioc.services.ClassFab}.
+ * Handy method useful when creating new classes using {@link org.apache.tapestry5.ioc.services.ClassFab}.
  */
 public final class ClassFabUtils
 {
@@ -228,7 +228,7 @@ public final class ClassFabUtils
     }
 
     /**
-     * Creates a proxy for a given service interface around an {@link org.apache.tapestry.ioc.ObjectCreator} that can
+     * Creates a proxy for a given service interface around an {@link org.apache.tapestry5.ioc.ObjectCreator} that can
      * provide (on demand) an object (implementing the service interface) to delegate to. The ObjectCreator will be
      * invoked on every method invocation (if it is caching, that should be internal to its implementation).
      *

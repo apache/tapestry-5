@@ -255,7 +255,7 @@ Public vs. Internal
   
   With the clean slate of Tapestry 5, we are being much more ruthless about internal vs. external.
   
-  First of all, anything inside the org.apache.tapestry.internal package
+  First of all, anything inside the org.apache.tapestry5.internal package
   is <<internal>>.  It is part of the implementation of Tapestry.  It is the man behind the curtain.
   You should not ever need to directly use this code.  It is a <<bad idea>> to do so, because
   internal code may <<change from one release to the next>> without concern for backwards

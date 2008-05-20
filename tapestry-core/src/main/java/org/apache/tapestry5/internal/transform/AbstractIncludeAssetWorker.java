@@ -12,25 +12,25 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.transform;
+package org.apache.tapestry5.internal.transform;
 
-import org.apache.tapestry.Asset;
-import org.apache.tapestry.ComponentResources;
-import org.apache.tapestry.internal.services.ComponentResourcesOperation;
-import org.apache.tapestry.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry.ioc.services.SymbolSource;
-import org.apache.tapestry.model.MutableComponentModel;
-import org.apache.tapestry.services.AssetSource;
-import org.apache.tapestry.services.ClassTransformation;
-import org.apache.tapestry.services.ComponentClassTransformWorker;
-import org.apache.tapestry.services.TransformConstants;
+import org.apache.tapestry5.Asset;
+import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.internal.services.ComponentResourcesOperation;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.services.SymbolSource;
+import org.apache.tapestry5.model.MutableComponentModel;
+import org.apache.tapestry5.services.AssetSource;
+import org.apache.tapestry5.services.ClassTransformation;
+import org.apache.tapestry5.services.ComponentClassTransformWorker;
+import org.apache.tapestry5.services.TransformConstants;
 
 import java.util.List;
 import java.util.Locale;
 
 /**
  * Base class for workers that automatically inlcude assets in the page (via methods on {@link
- * org.apache.tapestry.RenderSupport}).
+ * org.apache.tapestry5.RenderSupport}).
  */
 public abstract class AbstractIncludeAssetWorker implements ComponentClassTransformWorker
 {
@@ -46,7 +46,7 @@ public abstract class AbstractIncludeAssetWorker implements ComponentClassTransf
 
     /**
      * Expands symbols in the path, then adds an operation into the setup render phase of the component. Ultimately,
-     * {@link #handleAsset(org.apache.tapestry.Asset)} will be invoked for each asset (dervied from assetPaths).
+     * {@link #handleAsset(org.apache.tapestry5.Asset)} will be invoked for each asset (dervied from assetPaths).
      *
      * @param transformation transformation process for component
      * @param model          component model for component
@@ -98,7 +98,7 @@ public abstract class AbstractIncludeAssetWorker implements ComponentClassTransf
 
     /**
      * Invoked, from the component's setup render phase, for each asset. This method must be threadsafe.  Most
-     * implementation pass the asset to a particular method of {@link org.apache.tapestry.RenderSupport}.
+     * implementation pass the asset to a particular method of {@link org.apache.tapestry5.RenderSupport}.
      *
      * @param asset to be processed
      */

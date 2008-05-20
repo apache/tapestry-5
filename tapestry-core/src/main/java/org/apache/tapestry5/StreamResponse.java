@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry;
+package org.apache.tapestry5;
 
-import org.apache.tapestry.services.Response;
+import org.apache.tapestry5.services.Response;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;

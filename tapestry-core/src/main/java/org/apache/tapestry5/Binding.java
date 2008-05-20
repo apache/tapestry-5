@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry;
+package org.apache.tapestry5;
 
-import org.apache.tapestry.ioc.AnnotationProvider;
+import org.apache.tapestry5.ioc.AnnotationProvider;
 
 /**
  * A binding is a connection between a component and its container (another component), that allows the embedded

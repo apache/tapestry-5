@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -32,7 +32,7 @@ public class ComponentInvocationTest extends Assert
     public void context()
     {
         ComponentInvocation invocation = new ComponentInvocationImpl(new OpaqueConstantTarget("abc"),
-                                                                     new String[]{"x", "123"}, null);
+                                                                     new String[] { "x", "123" }, null);
         assertEquals(invocation.buildURI(false), "abc/x/123");
         assertEquals(invocation.buildURI(true), "abc/x/123");
     }
@@ -41,7 +41,7 @@ public class ComponentInvocationTest extends Assert
     public void parameters()
     {
         ComponentInvocation invocation = new ComponentInvocationImpl(new OpaqueConstantTarget("abc"),
-                                                                     new String[]{"x", "123"}, null);
+                                                                     new String[] { "x", "123" }, null);
         invocation.addParameter("p1", "foo");
         invocation.addParameter("p2", "bar");
         assertEquals(invocation.buildURI(false), "abc/x/123?p1=foo&p2=bar");

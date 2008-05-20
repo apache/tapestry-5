@@ -12,14 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.services;
+package org.apache.tapestry5.services;
 
-import org.apache.tapestry.PropertyConduit;
+import org.apache.tapestry5.PropertyConduit;
 
 /**
- * A source for {@link org.apache.tapestry.PropertyConduit}s, which can be thought of as a compiled property path
+ * A source for {@link org.apache.tapestry5.PropertyConduit}s, which can be thought of as a compiled property path
  * expression. PropertyConduits are the basis of the "prop:" binding factory, thus this service defines the expression
- * format used by the {@link org.apache.tapestry.internal.bindings.PropBindingFactory}.
+ * format used by the {@link org.apache.tapestry5.internal.bindings.PropBindingFactory}.
  * <p/>
  * The expression consist of one or more terms, seperated by periods. Each term may be either the name of a JavaBean
  * property, or the name of a method (a method that takes no parameters). Method names are distinguished from property

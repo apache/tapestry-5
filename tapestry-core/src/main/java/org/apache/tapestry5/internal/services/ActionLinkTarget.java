@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry.EventConstants;
-import org.apache.tapestry.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.EventConstants;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 
 /**
  * It represents an invocation target for an action link.

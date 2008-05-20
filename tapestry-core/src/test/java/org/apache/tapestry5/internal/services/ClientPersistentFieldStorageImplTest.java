@@ -12,14 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry.Link;
-import org.apache.tapestry.internal.util.Holder;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
-import org.apache.tapestry.services.PersistentFieldChange;
-import org.apache.tapestry.services.Request;
-import org.apache.tapestry.test.TapestryTestCase;
+import org.apache.tapestry5.Link;
+import org.apache.tapestry5.internal.util.Holder;
+import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newList;
+import org.apache.tapestry5.services.PersistentFieldChange;
+import org.apache.tapestry5.services.Request;
+import org.apache.tapestry5.test.TapestryTestCase;
 import org.easymock.EasyMock;
 import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.isA;

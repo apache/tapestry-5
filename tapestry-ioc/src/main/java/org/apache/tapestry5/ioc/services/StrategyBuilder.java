@@ -12,16 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.services;
+package org.apache.tapestry5.ioc.services;
 
-import org.apache.tapestry.ioc.util.StrategyRegistry;
+import org.apache.tapestry5.ioc.util.StrategyRegistry;
 
 /**
- * A service implementation builder that operates around a {@link StrategyRegistry}, implementing a
- * version of the Gang of Four Strategy pattern.
+ * A service implementation builder that operates around a {@link StrategyRegistry}, implementing a version of the Gang
+ * of Four Strategy pattern.
  * <p/>
- * The constructed service is configured with a number of adapters (that implement the same service
- * interface). Method invocations on the service are routed to one of the adapters.
+ * The constructed service is configured with a number of adapters (that implement the same service interface). Method
+ * invocations on the service are routed to one of the adapters.
  * <p/>
  * The first parameter of each method is used to select the appropriate adapter.
  * <p/>
@@ -30,9 +30,8 @@ import org.apache.tapestry.ioc.util.StrategyRegistry;
 public interface StrategyBuilder
 {
     /**
-     * Given a number of adapters implementing the service interface, builds a "dispatcher"
-     * implementations that delegates to the one of the adapters. It is an error if any of the
-     * methods takes no parameters.
+     * Given a number of adapters implementing the service interface, builds a "dispatcher" implementations that
+     * delegates to the one of the adapters. It is an error if any of the methods takes no parameters.
      *
      * @param <S>      the service interface type
      * @param registry defines the adapters based on parameter type (of the first parameter)

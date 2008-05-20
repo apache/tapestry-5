@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.util;
+package org.apache.tapestry5.ioc.util;
 
-import org.apache.tapestry.ioc.services.MethodSignature;
+import org.apache.tapestry5.ioc.services.MethodSignature;
 
 import java.util.Formatter;
 
@@ -152,8 +152,8 @@ public final class BodyBuilder
 
     /**
      * Returns the current contents of the buffer. This value is often passed to methods such as {@link
-     * org.apache.tapestry.ioc.services.ClassFab#addConstructor(Class[], Class[], String)} or {@link
-     * org.apache.tapestry.ioc.services.ClassFab#addMethod(int, MethodSignature, String)}.
+     * org.apache.tapestry5.ioc.services.ClassFab#addConstructor(Class[], Class[], String)} or {@link
+     * org.apache.tapestry5.ioc.services.ClassFab#addMethod(int, MethodSignature, String)}.
      * <p/>
      * A BodyBuilder can be used again after invoking toString(), typically by invoking {@link #clear()}.
      */

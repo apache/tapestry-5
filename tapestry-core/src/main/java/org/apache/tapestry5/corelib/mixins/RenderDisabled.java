@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.corelib.mixins;
+package org.apache.tapestry5.corelib.mixins;
 
-import org.apache.tapestry.Field;
-import org.apache.tapestry.MarkupWriter;
-import org.apache.tapestry.annotation.InjectContainer;
-import org.apache.tapestry.annotation.MixinAfter;
+import org.apache.tapestry5.Field;
+import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.annotations.InjectContainer;
+import org.apache.tapestry5.annotations.MixinAfter;
 
 /**
  * Renders an "disabled" attribute if the containing {@link Field#isDisabled() is disabled}.

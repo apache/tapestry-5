@@ -12,17 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry.ComponentResources;
-import org.apache.tapestry.internal.test.InternalBaseTestCase;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
-import org.apache.tapestry.model.ComponentModel;
-import org.apache.tapestry.services.MetaDataLocator;
-import org.apache.tapestry.services.PersistentFieldBundle;
-import org.apache.tapestry.services.PersistentFieldChange;
-import org.apache.tapestry.services.PersistentFieldStrategy;
+import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.internal.test.InternalBaseTestCase;
+import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newList;
+import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newMap;
+import org.apache.tapestry5.model.ComponentModel;
+import org.apache.tapestry5.services.MetaDataLocator;
+import org.apache.tapestry5.services.PersistentFieldBundle;
+import org.apache.tapestry5.services.PersistentFieldChange;
+import org.apache.tapestry5.services.PersistentFieldStrategy;
 import org.testng.annotations.Test;
 
 import java.util.Collection;

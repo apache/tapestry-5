@@ -12,13 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.internal.services;
+package org.apache.tapestry5.ioc.internal.services;
 
-import org.apache.tapestry.ioc.ObjectCreator;
-import org.apache.tapestry.ioc.internal.EagerLoadServiceProxy;
-import org.apache.tapestry.ioc.internal.ServiceActivityTracker;
-import org.apache.tapestry.ioc.services.RegistryShutdownListener;
-import org.apache.tapestry.ioc.services.Status;
+import org.apache.tapestry5.ioc.ObjectCreator;
+import org.apache.tapestry5.ioc.internal.EagerLoadServiceProxy;
+import org.apache.tapestry5.ioc.internal.ServiceActivityTracker;
+import org.apache.tapestry5.ioc.services.RegistryShutdownListener;
+import org.apache.tapestry5.ioc.services.Status;
 
 /**
  * Invoked from a fabricated service delegate to get or realize (instantiate and configure) the service implementation.

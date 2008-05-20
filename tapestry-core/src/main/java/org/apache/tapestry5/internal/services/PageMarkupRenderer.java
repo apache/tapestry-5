@@ -12,19 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry.MarkupWriter;
-import org.apache.tapestry.internal.structure.Page;
+import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.internal.structure.Page;
 
 /**
  * Service used to render page markup using a MarkupWriter.  This is  used when rendering a complete page as part of a
- * {@linkplain org.apache.tapestry.internal.services.PageRenderRequestHandlerImpl page render request},
+ * {@linkplain org.apache.tapestry5.internal.services.PageRenderRequestHandlerImpl page render request},
  */
 public interface PageMarkupRenderer
 {
     /**
-     * Initializes the rendering using the {@link org.apache.tapestry.services.MarkupRenderer} pipeline.
+     * Initializes the rendering using the {@link org.apache.tapestry5.services.MarkupRenderer} pipeline.
      *
      * @param page   page to render
      * @param writer receives the markup

@@ -1,6 +1,6 @@
 package org.example.app0.pages;
 
-import org.apache.tapestry.hibernate.annotations.CommitAfter;
+import org.apache.tapestry5.hibernate.annotations.CommitAfter;
 import org.example.app0.entities.User;
 
 import java.sql.SQLException;

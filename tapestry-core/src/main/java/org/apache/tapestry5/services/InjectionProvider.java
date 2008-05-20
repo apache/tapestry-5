@@ -12,17 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.services;
+package org.apache.tapestry5.services;
 
-import org.apache.tapestry.ioc.ObjectLocator;
-import org.apache.tapestry.model.MutableComponentModel;
+import org.apache.tapestry5.ioc.ObjectLocator;
+import org.apache.tapestry5.model.MutableComponentModel;
 
 /**
- * Provides some form of injection when the value for an {@link org.apache.tapestry.ioc.annotation.Inject} annotation is
+ * Provides some form of injection when the value for an {@link org.apache.tapestry5.ioc.annotations.Inject} annotation is
  * present. In this case, the provider is responsible for determining the value to be injected from the field name and
  * field type.
  * <p/>
- * This interface will be used as part of a {@link org.apache.tapestry.ioc.services.ChainBuilder chain of command}.
+ * This interface will be used as part of a {@link org.apache.tapestry5.ioc.services.ChainBuilder chain of command}.
  */
 public interface InjectionProvider
 {

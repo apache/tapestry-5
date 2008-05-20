@@ -12,27 +12,28 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.transform;
+package org.apache.tapestry5.internal.transform;
 
-import org.apache.tapestry.annotation.Component;
-import org.apache.tapestry.annotation.MixinClasses;
-import org.apache.tapestry.annotation.Mixins;
-import org.apache.tapestry.internal.KeyValue;
-import org.apache.tapestry.internal.TapestryInternalUtils;
-import org.apache.tapestry.ioc.Location;
-import org.apache.tapestry.ioc.internal.services.StringLocation;
-import org.apache.tapestry.ioc.internal.util.InternalUtils;
-import org.apache.tapestry.model.ComponentModel;
-import org.apache.tapestry.model.MutableComponentModel;
-import org.apache.tapestry.model.MutableEmbeddedComponentModel;
-import org.apache.tapestry.services.ClassTransformation;
-import org.apache.tapestry.services.ComponentClassResolver;
-import org.apache.tapestry.services.ComponentClassTransformWorker;
-import org.apache.tapestry.services.TransformConstants;
+import org.apache.tapestry5.annotations.Component;
+import org.apache.tapestry5.annotations.MixinClasses;
+import org.apache.tapestry5.annotations.Mixins;
+import org.apache.tapestry5.internal.KeyValue;
+import org.apache.tapestry5.internal.TapestryInternalUtils;
+import org.apache.tapestry5.ioc.Location;
+import org.apache.tapestry5.ioc.internal.services.StringLocation;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.model.ComponentModel;
+import org.apache.tapestry5.model.MutableComponentModel;
+import org.apache.tapestry5.model.MutableEmbeddedComponentModel;
+import org.apache.tapestry5.services.ClassTransformation;
+import org.apache.tapestry5.services.ComponentClassResolver;
+import org.apache.tapestry5.services.ComponentClassTransformWorker;
+import org.apache.tapestry5.services.TransformConstants;
 
 /**
- * Finds fields with the {@link org.apache.tapestry.annotation.Component} annotation and updates the model. Also checks
- * for the {@link Mixins} and {@link MixinClasses} annotations and uses them to update the {@link ComponentModel}.
+ * Finds fields with the {@link org.apache.tapestry5.annotations.Component} annotation and updates the model. Also
+ * checks for the {@link Mixins} and {@link MixinClasses} annotations and uses them to update the {@link
+ * ComponentModel}.
  */
 public class ComponentWorker implements ComponentClassTransformWorker
 {

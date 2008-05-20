@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.beaneditor;
+package org.apache.tapestry5.internal.beaneditor;
 
-import org.apache.tapestry.beaneditor.BeanModel;
+import org.apache.tapestry5.beaneditor.BeanModel;
 
 /**
  * Utilities used in a few places to modify an existing {@link BeanModel}.
@@ -23,7 +23,7 @@ public final class BeanModelUtils
 {
 
     /**
-     * Performs standard set of modifications to a {@link org.apache.tapestry.beaneditor.BeanModel}. First new
+     * Performs standard set of modifications to a {@link org.apache.tapestry5.beaneditor.BeanModel}. First new
      * properties may be added, then properties removed, then properties reordered.
      *
      * @param model                to modifiy
@@ -47,7 +47,7 @@ public final class BeanModelUtils
 
     /**
      * Adds empty properties to the bean model.  New properties are added with a <em>null</em> {@link
-     * org.apache.tapestry.PropertyConduit}.
+     * org.apache.tapestry5.PropertyConduit}.
      *
      * @param model         to be modified
      * @param propertyNames comma-separated list of property names

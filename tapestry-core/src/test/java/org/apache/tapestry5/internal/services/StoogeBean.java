@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry.beaneditor.OrderAfter;
-import org.apache.tapestry.beaneditor.OrderBefore;
+import org.apache.tapestry5.beaneditor.OrderAfter;
+import org.apache.tapestry5.beaneditor.OrderBefore;
 
 public class StoogeBean
 {

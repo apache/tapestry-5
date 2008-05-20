@@ -12,19 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.upload.services;
+package org.apache.tapestry5.upload.services;
 
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.io.FileCleaner;
-import org.apache.tapestry.ioc.*;
-import org.apache.tapestry.ioc.annotation.Scope;
-import org.apache.tapestry.ioc.services.PerthreadManager;
-import org.apache.tapestry.ioc.services.RegistryShutdownHub;
-import org.apache.tapestry.ioc.services.RegistryShutdownListener;
-import org.apache.tapestry.services.HttpServletRequestFilter;
-import org.apache.tapestry.services.LibraryMapping;
-import org.apache.tapestry.upload.internal.services.MultipartDecoderImpl;
-import org.apache.tapestry.upload.internal.services.MultipartServletRequestFilter;
+import org.apache.tapestry5.ioc.*;
+import org.apache.tapestry5.ioc.annotations.Scope;
+import org.apache.tapestry5.ioc.services.PerthreadManager;
+import org.apache.tapestry5.ioc.services.RegistryShutdownHub;
+import org.apache.tapestry5.ioc.services.RegistryShutdownListener;
+import org.apache.tapestry5.services.HttpServletRequestFilter;
+import org.apache.tapestry5.services.LibraryMapping;
+import org.apache.tapestry5.upload.internal.services.MultipartDecoderImpl;
+import org.apache.tapestry5.upload.internal.services.MultipartServletRequestFilter;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -37,7 +37,7 @@ public class UploadModule
     {
         // Add the component to the "core" library.
 
-        configuration.add(new LibraryMapping("core", "org.apache.tapestry.upload"));
+        configuration.add(new LibraryMapping("core", "org.apache.tapestry5.upload"));
     }
 
     @Scope(IOCConstants.PERTHREAD_SCOPE)

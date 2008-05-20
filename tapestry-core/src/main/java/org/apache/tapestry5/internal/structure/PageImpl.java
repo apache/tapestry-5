@@ -12,18 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.structure;
+package org.apache.tapestry5.internal.structure;
 
-import org.apache.tapestry.ComponentResources;
-import org.apache.tapestry.Link;
-import org.apache.tapestry.internal.services.LinkFactory;
-import org.apache.tapestry.internal.services.PersistentFieldManager;
-import org.apache.tapestry.ioc.internal.util.CollectionFactory;
-import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
-import org.apache.tapestry.ioc.internal.util.InternalUtils;
-import org.apache.tapestry.runtime.Component;
-import org.apache.tapestry.runtime.PageLifecycleListener;
-import org.apache.tapestry.services.PersistentFieldBundle;
+import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.Link;
+import org.apache.tapestry5.internal.services.LinkFactory;
+import org.apache.tapestry5.internal.services.PersistentFieldManager;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import static org.apache.tapestry5.ioc.internal.util.Defense.notNull;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.runtime.Component;
+import org.apache.tapestry5.runtime.PageLifecycleListener;
+import org.apache.tapestry5.services.PersistentFieldBundle;
 import org.slf4j.Logger;
 
 import java.util.List;
@@ -46,7 +46,7 @@ public class PageImpl implements Page
     private int dirtyCount;
 
     /**
-     * Obtained from the {@link org.apache.tapestry.internal.services.PersistentFieldManager} when first needed,
+     * Obtained from the {@link org.apache.tapestry5.internal.services.PersistentFieldManager} when first needed,
      * discarded at the end of the request.
      */
     private PersistentFieldBundle fieldBundle;

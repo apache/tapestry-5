@@ -12,13 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.bindings;
+package org.apache.tapestry5.internal.bindings;
 
-import org.apache.tapestry.ComponentResources;
-import org.apache.tapestry.MarkupWriter;
-import org.apache.tapestry.runtime.Component;
-import org.apache.tapestry.runtime.ComponentEvent;
-import org.apache.tapestry.runtime.Event;
+import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.runtime.Component;
+import org.apache.tapestry5.runtime.ComponentEvent;
+import org.apache.tapestry5.runtime.Event;
 
 /**
  * For use in places where we don't want to have to transform a class just for testing purposes.

@@ -14,8 +14,8 @@
 
 package org.apache.tapestry5.services;
 
-import org.apache.tapestry.services.Request;
-import org.apache.tapestry.services.Response;
+import org.apache.tapestry5.services.Request;
+import org.apache.tapestry5.services.Response;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

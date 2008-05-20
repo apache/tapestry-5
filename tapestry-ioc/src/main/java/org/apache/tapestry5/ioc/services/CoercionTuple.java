@@ -12,15 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.services;
+package org.apache.tapestry5.ioc.services;
 
-import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
+import static org.apache.tapestry5.ioc.internal.util.Defense.notNull;
 
 /**
  * An immutable object that represents a mapping from one type to another. This is also the contribution type when
- * building the {@link org.apache.tapestry.ioc.services.TypeCoercer} service. Wraps a {@link
- * org.apache.tapestry.ioc.services.Coercion} object that performs the work with additional properties that describe the
- * input and output types of the coercion, needed when searching for an appropriate coercion (or sequence of
+ * building the {@link org.apache.tapestry5.ioc.services.TypeCoercer} service. Wraps a {@link
+ * org.apache.tapestry5.ioc.services.Coercion} object that performs the work with additional properties that describe
+ * the input and output types of the coercion, needed when searching for an appropriate coercion (or sequence of
  * coercions).
  *
  * @param <S> source (input) type

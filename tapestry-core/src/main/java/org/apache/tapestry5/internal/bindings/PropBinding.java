@@ -12,16 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.bindings;
+package org.apache.tapestry5.internal.bindings;
 
-import org.apache.tapestry.PropertyConduit;
-import org.apache.tapestry.ioc.Location;
-import org.apache.tapestry.ioc.internal.util.TapestryException;
+import org.apache.tapestry5.PropertyConduit;
+import org.apache.tapestry5.ioc.Location;
+import org.apache.tapestry5.ioc.internal.util.TapestryException;
 
 import java.lang.annotation.Annotation;
 
 /**
- * Base class for bindings created by the {@link org.apache.tapestry.internal.bindings.PropBindingFactory}. A subclass
+ * Base class for bindings created by the {@link org.apache.tapestry5.internal.bindings.PropBindingFactory}. A subclass
  * of this is created at runtime.
  */
 public class PropBinding extends AbstractBinding

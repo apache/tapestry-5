@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.integration.app1.services;
+package org.apache.tapestry5.integration.app1.services;
 
-import org.apache.tapestry.integration.app1.data.Track;
-import org.apache.tapestry.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry.ioc.util.Stack;
+import org.apache.tapestry5.integration.app1.data.Track;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.util.Stack;
 import org.slf4j.Logger;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
@@ -32,7 +32,7 @@ import java.net.URL;
 import java.util.List;
 
 /**
- * Reads an iTunes music library file into a list of {@link org.apache.tapestry.integration.app1.data.Track} elements.
+ * Reads an iTunes music library file into a list of {@link org.apache.tapestry5.integration.app1.data.Track} elements.
  */
 public class MusicLibraryParser
 {

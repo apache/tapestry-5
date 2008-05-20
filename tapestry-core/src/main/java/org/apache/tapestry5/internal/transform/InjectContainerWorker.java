@@ -12,20 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.transform;
+package org.apache.tapestry5.internal.transform;
 
-import org.apache.tapestry.annotation.InjectContainer;
-import org.apache.tapestry.ioc.util.BodyBuilder;
-import org.apache.tapestry.model.MutableComponentModel;
-import org.apache.tapestry.runtime.Component;
-import org.apache.tapestry.services.ClassTransformation;
-import org.apache.tapestry.services.ComponentClassTransformWorker;
-import org.apache.tapestry.services.TransformConstants;
+import org.apache.tapestry5.annotations.InjectContainer;
+import org.apache.tapestry5.ioc.util.BodyBuilder;
+import org.apache.tapestry5.model.MutableComponentModel;
+import org.apache.tapestry5.runtime.Component;
+import org.apache.tapestry5.services.ClassTransformation;
+import org.apache.tapestry5.services.ComponentClassTransformWorker;
+import org.apache.tapestry5.services.TransformConstants;
 
 import java.util.List;
 
 /**
- * Identifies the {@link org.apache.tapestry.annotation.InjectContainer} annotation and adds code to initialize it to
+ * Identifies the {@link org.apache.tapestry5.annotations.InjectContainer} annotation and adds code to initialize it to
  * the core component.
  */
 public class InjectContainerWorker implements ComponentClassTransformWorker

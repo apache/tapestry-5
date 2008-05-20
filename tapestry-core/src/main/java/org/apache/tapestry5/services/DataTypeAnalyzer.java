@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.services;
+package org.apache.tapestry5.services;
 
-import org.apache.tapestry.corelib.components.BeanEditForm;
-import org.apache.tapestry.corelib.components.Grid;
-import org.apache.tapestry.ioc.services.PropertyAdapter;
+import org.apache.tapestry5.corelib.components.BeanEditForm;
+import org.apache.tapestry5.corelib.components.Grid;
+import org.apache.tapestry5.ioc.services.PropertyAdapter;
 
 /**
  * Used by {@link BeanModelSource} to identify the type of data associated with a particular property (represented as a
@@ -30,7 +30,7 @@ import org.apache.tapestry.ioc.services.PropertyAdapter;
  * @see Grid
  * @see BeanEditForm
  * @see BeanBlockSource
- * @see org.apache.tapestry.services.TapestryModule#contributeDataTypeAnalyzer(org.apache.tapestry.ioc.OrderedConfiguration,
+ * @see org.apache.tapestry5.services.TapestryModule#contributeDataTypeAnalyzer(org.apache.tapestry5.ioc.OrderedConfiguration,
  *      DataTypeAnalyzer)
  */
 public interface DataTypeAnalyzer

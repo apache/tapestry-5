@@ -12,15 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.test;
+package org.apache.tapestry5.ioc.test;
 
-import org.apache.tapestry.ioc.*;
-import org.apache.tapestry.ioc.annotation.IntermediateType;
-import org.apache.tapestry.ioc.def.ContributionDef;
-import org.apache.tapestry.ioc.def.DecoratorDef;
-import org.apache.tapestry.ioc.def.ModuleDef;
-import org.apache.tapestry.ioc.def.ServiceDef;
-import org.apache.tapestry.ioc.services.*;
+import org.apache.tapestry5.ioc.*;
+import org.apache.tapestry5.ioc.annotations.IntermediateType;
+import org.apache.tapestry5.ioc.def.ContributionDef;
+import org.apache.tapestry5.ioc.def.DecoratorDef;
+import org.apache.tapestry5.ioc.def.ModuleDef;
+import org.apache.tapestry5.ioc.def.ServiceDef;
+import org.apache.tapestry5.ioc.services.*;
 import static org.easymock.EasyMock.isA;
 import org.slf4j.Logger;
 

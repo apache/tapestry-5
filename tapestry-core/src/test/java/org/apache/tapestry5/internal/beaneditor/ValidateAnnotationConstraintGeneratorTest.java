@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.beaneditor;
+package org.apache.tapestry5.internal.beaneditor;
 
-import org.apache.tapestry.PropertyConduit;
-import org.apache.tapestry.beaneditor.Validate;
-import org.apache.tapestry.internal.test.InternalBaseTestCase;
-import org.apache.tapestry.services.ValidationConstraintGenerator;
+import org.apache.tapestry5.PropertyConduit;
+import org.apache.tapestry5.beaneditor.Validate;
+import org.apache.tapestry5.internal.test.InternalBaseTestCase;
+import org.apache.tapestry5.services.ValidationConstraintGenerator;
 import org.testng.annotations.Test;
 
 import java.util.Arrays;

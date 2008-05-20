@@ -12,27 +12,27 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.corelib.components;
+package org.apache.tapestry5.corelib.components;
 
-import org.apache.tapestry.Binding;
-import org.apache.tapestry.BindingConstants;
-import org.apache.tapestry.ComponentResources;
-import org.apache.tapestry.annotation.Parameter;
-import org.apache.tapestry.annotation.Property;
-import org.apache.tapestry.annotation.SupportsInformalParameters;
-import org.apache.tapestry.beaneditor.BeanModel;
-import org.apache.tapestry.beaneditor.PropertyModel;
-import org.apache.tapestry.internal.beaneditor.BeanModelUtils;
-import org.apache.tapestry.ioc.annotation.Inject;
-import org.apache.tapestry.services.BeanModelSource;
-import org.apache.tapestry.services.ComponentDefaultProvider;
+import org.apache.tapestry5.Binding;
+import org.apache.tapestry5.BindingConstants;
+import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.annotations.Parameter;
+import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.annotations.SupportsInformalParameters;
+import org.apache.tapestry5.beaneditor.BeanModel;
+import org.apache.tapestry5.beaneditor.PropertyModel;
+import org.apache.tapestry5.internal.beaneditor.BeanModelUtils;
+import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.services.BeanModelSource;
+import org.apache.tapestry5.services.ComponentDefaultProvider;
 
 /**
  * Used to display the properties of a bean, using an underlying {@link BeanModel}. The output is a series of
  * &lt;div&gt; elements for the property names and property values.   Only properties that have a known data type are
  * displayed.
  *
- * @see org.apache.tapestry.beaneditor.DataType
+ * @see org.apache.tapestry5.beaneditor.DataType
  * @see BeanModel
  */
 @SupportsInformalParameters
@@ -63,7 +63,7 @@ public class BeanDisplay
     private BeanModel model;
 
     /**
-     * A comma-separated list of property names to be retained from the {@link org.apache.tapestry.beaneditor.BeanModel}.
+     * A comma-separated list of property names to be retained from the {@link org.apache.tapestry5.beaneditor.BeanModel}.
      * Only these properties will be retained, and the properties will also be reordered. The names are
      * case-insensitive.
      */

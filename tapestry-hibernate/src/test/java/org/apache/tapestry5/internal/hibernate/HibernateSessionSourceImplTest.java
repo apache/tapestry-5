@@ -12,14 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.hibernate;
+package org.apache.tapestry5.internal.hibernate;
 
-import org.apache.tapestry.hibernate.HibernateConfigurer;
-import org.apache.tapestry.hibernate.HibernateEntityPackageManager;
-import org.apache.tapestry.hibernate.HibernateSessionSource;
-import org.apache.tapestry.ioc.internal.services.ClassNameLocatorImpl;
-import org.apache.tapestry.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry.test.TapestryTestCase;
+import org.apache.tapestry5.hibernate.HibernateConfigurer;
+import org.apache.tapestry5.hibernate.HibernateEntityPackageManager;
+import org.apache.tapestry5.hibernate.HibernateSessionSource;
+import org.apache.tapestry5.ioc.internal.services.ClassNameLocatorImpl;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.test.TapestryTestCase;
 import org.example.app0.entities.User;
 import org.hibernate.Session;
 import org.hibernate.cfg.Configuration;

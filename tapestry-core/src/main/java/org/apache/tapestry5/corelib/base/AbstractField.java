@@ -12,16 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.corelib.base;
+package org.apache.tapestry5.corelib.base;
 
-import org.apache.tapestry.*;
-import org.apache.tapestry.annotation.*;
-import org.apache.tapestry.corelib.mixins.DiscardBody;
-import org.apache.tapestry.corelib.mixins.RenderDisabled;
-import org.apache.tapestry.corelib.mixins.RenderInformals;
-import org.apache.tapestry.ioc.annotation.Inject;
-import org.apache.tapestry.services.ComponentDefaultProvider;
-import org.apache.tapestry.services.FormSupport;
+import org.apache.tapestry5.*;
+import org.apache.tapestry5.annotations.*;
+import org.apache.tapestry5.corelib.mixins.DiscardBody;
+import org.apache.tapestry5.corelib.mixins.RenderDisabled;
+import org.apache.tapestry5.corelib.mixins.RenderInformals;
+import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.services.ComponentDefaultProvider;
+import org.apache.tapestry5.services.FormSupport;
 
 import java.io.Serializable;
 

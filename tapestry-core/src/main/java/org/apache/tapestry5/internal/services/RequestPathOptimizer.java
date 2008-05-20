@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
 /**
  * Used to optimize a path for inclusion in the rendered output of the page. When using lots of libraries, nested
@@ -20,15 +20,15 @@ package org.apache.tapestry.internal.services;
  * URL.  Of course, you need to make sure that's turned off inside an Ajax request since the base URL of the client it
  * totally unknown in that situation.
  *
- * @see org.apache.tapestry.SymbolConstants#FORCE_ABSOLUTE_URIS
+ * @see org.apache.tapestry5.SymbolConstants#FORCE_ABSOLUTE_URIS
  */
 public interface RequestPathOptimizer
 {
     /**
      * Optimizes the provided path, returning a new path that is shorter but (combined with the current requests' base
      * URL) will result in the same request URI.  In many cases, this will return the provided path unchanged. During
-     * {@linkplain org.apache.tapestry.services.Request#isXHR() XHR} requests, this will always return the provided path
-     * (no optimization takes place, since the base URI of the client is unknown).
+     * {@linkplain org.apache.tapestry5.services.Request#isXHR() XHR} requests, this will always return the provided
+     * path (no optimization takes place, since the base URI of the client is unknown).
      *
      * @param path to be optimized
      * @return the same path, or a new path that is equivalent, relative to the current request's URL

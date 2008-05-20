@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.internal;
+package org.apache.tapestry5.ioc.internal;
 
-import org.apache.tapestry.ioc.IdMatcher;
+import org.apache.tapestry5.ioc.IdMatcher;
 
 /**
  * A wrapper around a {@link GlobPatternMatcher} used to glob-match service ids.

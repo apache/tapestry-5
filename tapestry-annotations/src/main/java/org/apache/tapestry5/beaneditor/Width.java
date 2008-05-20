@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.beaneditor;
+package org.apache.tapestry5.beaneditor;
 
 import java.lang.annotation.Documented;
 import static java.lang.annotation.ElementType.METHOD;
@@ -21,9 +21,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Defines the desired width of the field used to edit the property.  Note that width (generally equivalent to the
- * size attribute of an HTML &lt;input&gt; element) is only used for presentation; validation must be used to
- * actually enforce a maximum input length.
+ * Defines the desired width of the field used to edit the property.  Note that width (generally equivalent to the size
+ * attribute of an HTML &lt;input&gt; element) is only used for presentation; validation must be used to actually
+ * enforce a maximum input length.
  */
 @Target(METHOD)
 @Retention(RetentionPolicy.RUNTIME)

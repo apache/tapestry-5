@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.internal;
+package org.apache.tapestry5.ioc.internal;
 
-import org.apache.tapestry.ioc.Pingable;
-import org.apache.tapestry.ioc.ServiceBinder;
+import org.apache.tapestry5.ioc.Pingable;
+import org.apache.tapestry5.ioc.ServiceBinder;
 
 public class ExceptionInConstructorModule
 {

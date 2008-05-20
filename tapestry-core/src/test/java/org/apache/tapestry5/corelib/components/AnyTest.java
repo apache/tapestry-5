@@ -12,14 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.corelib.components;
+package org.apache.tapestry5.corelib.components;
 
-import org.apache.tapestry.ComponentResources;
-import org.apache.tapestry.MarkupWriter;
-import org.apache.tapestry.RenderSupport;
-import org.apache.tapestry.dom.DefaultMarkupModel;
-import org.apache.tapestry.internal.services.MarkupWriterImpl;
-import org.apache.tapestry.test.TapestryTestCase;
+import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.RenderSupport;
+import org.apache.tapestry5.dom.DefaultMarkupModel;
+import org.apache.tapestry5.internal.services.MarkupWriterImpl;
+import org.apache.tapestry5.test.TapestryTestCase;
 import org.testng.annotations.Test;
 
 public class AnyTest extends TapestryTestCase

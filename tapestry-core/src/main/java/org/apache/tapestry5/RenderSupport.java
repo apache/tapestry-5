@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry;
+package org.apache.tapestry5;
 
-import org.apache.tapestry.ioc.services.SymbolSource;
-import org.apache.tapestry.services.AssetSource;
+import org.apache.tapestry5.ioc.services.SymbolSource;
+import org.apache.tapestry5.services.AssetSource;
 import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
 
@@ -32,7 +32,7 @@ public interface RenderSupport
      *
      * @param id the component id from which a unique id will be generated
      * @return a unique id for this rendering of the page
-     * @see org.apache.tapestry.ioc.internal.util.IdAllocator
+     * @see org.apache.tapestry5.ioc.internal.util.IdAllocator
      */
     String allocateClientId(String id);
 

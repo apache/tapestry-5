@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.services;
+package org.apache.tapestry5.services;
 
 import java.util.Map;
 
 /**
- * A thin wrapper around a set of {@link org.apache.tapestry.services.AliasContribution}s.
+ * A thin wrapper around a set of {@link org.apache.tapestry5.services.AliasContribution}s.
  */
 public interface AliasManager
 {

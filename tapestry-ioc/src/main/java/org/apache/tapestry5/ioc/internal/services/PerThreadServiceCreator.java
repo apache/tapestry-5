@@ -15,10 +15,10 @@
 /**
  *
  */
-package org.apache.tapestry.ioc.internal.services;
+package org.apache.tapestry5.ioc.internal.services;
 
-import org.apache.tapestry.ioc.ObjectCreator;
-import org.apache.tapestry.ioc.services.PerthreadManager;
+import org.apache.tapestry5.ioc.ObjectCreator;
+import org.apache.tapestry5.ioc.services.PerthreadManager;
 
 /**
  * Provides per-thread implementations of services.
@@ -36,9 +36,9 @@ public class PerThreadServiceCreator implements ObjectCreator
     }
 
     /**
-     * For each thread, the first call will use the delegate {@link org.apache.tapestry.ioc.ObjectCreator} to create an
+     * For each thread, the first call will use the delegate {@link org.apache.tapestry5.ioc.ObjectCreator} to create an
      * instance, and later calls will reuse the same per-thread instance. The instance is stored in the {@link
-     * org.apache.tapestry.ioc.services.PerthreadManager} and will be released at the end of the request.
+     * org.apache.tapestry5.ioc.services.PerthreadManager} and will be released at the end of the request.
      */
     public Object createObject()
     {

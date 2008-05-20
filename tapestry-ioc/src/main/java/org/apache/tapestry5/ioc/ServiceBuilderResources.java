@@ -12,16 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc;
+package org.apache.tapestry5.ioc;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
 /**
- * Extends {@link org.apache.tapestry.ioc.ServiceResources} with additional methods needed only by
- * the service builder method, related to accessing a service's configuration. Services may have a
- * <em>single</em> configuration in one of three flavors: unordered, ordered or mapped.
+ * Extends {@link org.apache.tapestry5.ioc.ServiceResources} with additional methods needed only by the service builder
+ * method, related to accessing a service's configuration. Services may have a <em>single</em> configuration in one of
+ * three flavors: unordered, ordered or mapped.
  */
 public interface ServiceBuilderResources extends ServiceResources, ModuleBuilderSource
 {

@@ -12,21 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry.Binding;
-import org.apache.tapestry.BindingConstants;
-import org.apache.tapestry.ComponentResources;
-import org.apache.tapestry.Translator;
-import org.apache.tapestry.internal.test.InternalBaseTestCase;
-import org.apache.tapestry.ioc.Messages;
-import org.apache.tapestry.ioc.services.ClassPropertyAdapter;
-import org.apache.tapestry.ioc.services.PropertyAccess;
-import org.apache.tapestry.ioc.services.PropertyAdapter;
-import org.apache.tapestry.runtime.Component;
-import org.apache.tapestry.services.BindingSource;
-import org.apache.tapestry.services.ComponentDefaultProvider;
-import org.apache.tapestry.services.TranslatorSource;
+import org.apache.tapestry5.Binding;
+import org.apache.tapestry5.BindingConstants;
+import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.Translator;
+import org.apache.tapestry5.internal.test.InternalBaseTestCase;
+import org.apache.tapestry5.ioc.Messages;
+import org.apache.tapestry5.ioc.services.ClassPropertyAdapter;
+import org.apache.tapestry5.ioc.services.PropertyAccess;
+import org.apache.tapestry5.ioc.services.PropertyAdapter;
+import org.apache.tapestry5.runtime.Component;
+import org.apache.tapestry5.services.BindingSource;
+import org.apache.tapestry5.services.ComponentDefaultProvider;
+import org.apache.tapestry5.services.TranslatorSource;
 import org.testng.annotations.Test;
 
 public class ComponentDefaultProviderImplTest extends InternalBaseTestCase

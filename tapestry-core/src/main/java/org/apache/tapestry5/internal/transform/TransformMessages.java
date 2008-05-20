@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.transform;
+package org.apache.tapestry5.internal.transform;
 
-import org.apache.tapestry.ioc.Messages;
-import org.apache.tapestry.ioc.internal.util.MessagesImpl;
-import org.apache.tapestry.runtime.Component;
-import org.apache.tapestry.services.TransformMethodSignature;
+import org.apache.tapestry5.ioc.Messages;
+import org.apache.tapestry5.ioc.internal.util.MessagesImpl;
+import org.apache.tapestry5.runtime.Component;
+import org.apache.tapestry5.services.TransformMethodSignature;
 
 class TransformMessages
 {
@@ -34,11 +34,13 @@ class TransformMessages
                 .getComponentResources().getCompleteId(), fieldName, fieldType);
     }
 
-    static String cachedMethodMustHaveReturnValue(TransformMethodSignature method) {
+    static String cachedMethodMustHaveReturnValue(TransformMethodSignature method)
+    {
         return MESSAGES.format("cached-no-return-value", method);
     }
-    
-    static String cachedMethodsHaveNoParameters(TransformMethodSignature method) {
+
+    static String cachedMethodsHaveNoParameters(TransformMethodSignature method)
+    {
         return MESSAGES.format("cached-no-parameters", method);
     }
 }

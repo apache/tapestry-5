@@ -12,20 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.corelib.base;
+package org.apache.tapestry5.corelib.base;
 
-import org.apache.tapestry.BindingConstants;
-import org.apache.tapestry.Link;
-import org.apache.tapestry.MarkupWriter;
-import org.apache.tapestry.annotation.Environmental;
-import org.apache.tapestry.annotation.Parameter;
-import org.apache.tapestry.internal.services.ClientBehaviorSupport;
+import org.apache.tapestry5.BindingConstants;
+import org.apache.tapestry5.Link;
+import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.annotations.Environmental;
+import org.apache.tapestry5.annotations.Parameter;
+import org.apache.tapestry5.internal.services.ClientBehaviorSupport;
 
 import java.util.List;
 
 /**
  * Base class for link-generating components that are based on a component event request. Such events have an event
- * context and may also update a {@link org.apache.tapestry.corelib.components.Zone}.
+ * context and may also update a {@link org.apache.tapestry5.corelib.components.Zone}.
  */
 public abstract class AbstractComponentEventLink extends AbstractLink
 {

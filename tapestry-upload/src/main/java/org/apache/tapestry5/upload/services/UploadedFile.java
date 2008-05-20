@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.upload.services;
+package org.apache.tapestry5.upload.services;
 
-import org.apache.tapestry.upload.components.Upload;
+import org.apache.tapestry5.upload.components.Upload;
 
 import java.io.File;
 import java.io.InputStream;

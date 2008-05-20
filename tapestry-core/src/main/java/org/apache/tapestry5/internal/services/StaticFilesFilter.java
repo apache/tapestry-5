@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry.internal.InternalConstants;
-import org.apache.tapestry.services.*;
+import org.apache.tapestry5.internal.InternalConstants;
+import org.apache.tapestry5.services.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;

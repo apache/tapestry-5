@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.integration.app2.pages;
+package org.apache.tapestry5.integration.app2.pages;
 
-import org.apache.tapestry.annotation.InjectPage;
-import org.apache.tapestry.annotation.OnEvent;
+import org.apache.tapestry5.annotations.InjectPage;
+import org.apache.tapestry5.annotations.OnEvent;
 
 public class TestPageForActionLink
 {

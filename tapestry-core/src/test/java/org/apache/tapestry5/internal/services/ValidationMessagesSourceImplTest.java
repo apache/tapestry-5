@@ -12,13 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry.ioc.MessageFormatter;
-import org.apache.tapestry.ioc.Messages;
-import org.apache.tapestry.ioc.Resource;
-import org.apache.tapestry.ioc.internal.util.ClasspathResource;
-import org.apache.tapestry.services.ValidationMessagesSource;
+import org.apache.tapestry5.ioc.MessageFormatter;
+import org.apache.tapestry5.ioc.Messages;
+import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.ioc.internal.util.ClasspathResource;
+import org.apache.tapestry5.services.ValidationMessagesSource;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -35,8 +35,8 @@ public class ValidationMessagesSourceImplTest extends Assert
     {
         Resource rootResource = new ClasspathResource("/");
         source = new ValidationMessagesSourceImpl(Arrays.asList(
-                "org/apache/tapestry/internal/ValidationMessages",
-                "org/apache/tapestry/internal/ValidationTestMessages"), rootResource);
+                "org/apache/tapestry5/internal/ValidationMessages",
+                "org/apache/tapestry5/internal/ValidationTestMessages"), rootResource);
     }
 
     @Test

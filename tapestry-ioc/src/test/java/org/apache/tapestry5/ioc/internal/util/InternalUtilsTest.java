@@ -12,14 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.internal.util;
+package org.apache.tapestry5.ioc.internal.util;
 
-import org.apache.tapestry.ioc.Locatable;
-import org.apache.tapestry.ioc.Location;
-import org.apache.tapestry.ioc.annotation.Inject;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
-import static org.apache.tapestry.ioc.internal.util.InternalUtils.toList;
-import org.apache.tapestry.ioc.test.IOCTestCase;
+import org.apache.tapestry5.ioc.Locatable;
+import org.apache.tapestry5.ioc.Location;
+import org.apache.tapestry5.ioc.annotations.Inject;
+import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newMap;
+import static org.apache.tapestry5.ioc.internal.util.InternalUtils.toList;
+import org.apache.tapestry5.ioc.test.IOCTestCase;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -324,7 +324,7 @@ public class InternalUtilsTest extends IOCTestCase
         catch (IllegalArgumentException ex)
         {
             assertEquals(ex.getMessage(),
-                         "Marker annotation class org.apache.tapestry.ioc.internal.util.NotRetainedRuntime is not valid because it is not visible at runtime. Add a @RetentionPolicy(RUNTIME) to the class.");
+                         "Marker annotation class org.apache.tapestry5.ioc.internal.util.NotRetainedRuntime is not valid because it is not visible at runtime. Add a @RetentionPolicy(RUNTIME) to the class.");
         }
     }
 

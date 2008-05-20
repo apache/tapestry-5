@@ -12,15 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.grid;
+package org.apache.tapestry5.grid;
 
-import org.apache.tapestry.beaneditor.BeanModel;
+import org.apache.tapestry5.beaneditor.BeanModel;
 
 /**
- * A provider of model data to the sub-components of the {@link org.apache.tapestry.corelib.components.Grid} component.
+ * A provider of model data to the sub-components of the {@link org.apache.tapestry5.corelib.components.Grid} component.
  * The primary implementor of this component is the Grid component itself. This is effectively a way to package three
- * values as a single parameter to components such as {@link org.apache.tapestry.corelib.components.GridColumns} and
- * {@link org.apache.tapestry.corelib.components.GridRows}.
+ * values as a single parameter to components such as {@link org.apache.tapestry5.corelib.components.GridColumns} and
+ * {@link org.apache.tapestry5.corelib.components.GridRows}.
  */
 public interface GridModel
 {

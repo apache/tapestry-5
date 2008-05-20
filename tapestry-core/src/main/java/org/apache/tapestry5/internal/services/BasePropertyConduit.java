@@ -12,17 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry.PropertyConduit;
-import org.apache.tapestry.ioc.AnnotationProvider;
-import org.apache.tapestry.ioc.internal.util.Defense;
+import org.apache.tapestry5.PropertyConduit;
+import org.apache.tapestry5.ioc.AnnotationProvider;
+import org.apache.tapestry5.ioc.internal.util.Defense;
 
 import java.lang.annotation.Annotation;
 
 /**
- * Base class for {@link org.apache.tapestry.PropertyConduit} instances created by the {@link
- * org.apache.tapestry.services.PropertyConduitSource}.
+ * Base class for {@link org.apache.tapestry5.PropertyConduit} instances created by the {@link
+ * org.apache.tapestry5.services.PropertyConduitSource}.
  */
 public abstract class BasePropertyConduit implements PropertyConduit
 {

@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry.ComponentEventCallback;
-import org.apache.tapestry.EventContext;
-import org.apache.tapestry.internal.structure.PageResources;
-import org.apache.tapestry.runtime.ComponentEvent;
+import org.apache.tapestry5.ComponentEventCallback;
+import org.apache.tapestry5.EventContext;
+import org.apache.tapestry5.internal.structure.PageResources;
+import org.apache.tapestry5.runtime.ComponentEvent;
 
 public class ComponentEventImpl extends EventImpl implements ComponentEvent
 {

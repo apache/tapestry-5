@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.runtime;
+package org.apache.tapestry5.runtime;
 
-import org.apache.tapestry.MarkupWriter;
+import org.apache.tapestry5.MarkupWriter;
 
 /**
  * A command used during rendering of a page.

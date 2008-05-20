@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.test;
+package org.apache.tapestry5.test;
 
 import java.io.File;
 
@@ -23,10 +23,9 @@ public class TapestryTestConstants
      */
     public static final String CURRENT_DIR_PATH = System.getProperty("user.dir");
     /**
-     * The Surefire plugin sets basedir but DOES NOT change the current working directory.
-     * When building across modules, basedir changes for each module, but user.dir does not.
-     * This value should be used when referecing local files.  Outside of surefire, the
-     * "basedir" property will not be set, and the current working directory will be the
+     * The Surefire plugin sets basedir but DOES NOT change the current working directory. When building across modules,
+     * basedir changes for each module, but user.dir does not. This value should be used when referecing local files.
+     * Outside of surefire, the "basedir" property will not be set, and the current working directory will be the
      * default.
      */
     public static final String MODULE_BASE_DIR_PATH = System.getProperty("basedir", CURRENT_DIR_PATH);

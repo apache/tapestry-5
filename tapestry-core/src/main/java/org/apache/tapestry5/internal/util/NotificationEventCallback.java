@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.util;
+package org.apache.tapestry5.internal.util;
 
-import org.apache.tapestry.ComponentEventCallback;
+import org.apache.tapestry5.ComponentEventCallback;
 
 /**
- * A {@link org.apache.tapestry.ComponentEventCallback} used for notification events. Event handler methods may return
+ * A {@link org.apache.tapestry5.ComponentEventCallback} used for notification events. Event handler methods may return
  * true (to abort the event) or false (to allow the event to continue bubbling up), but all other values are forbidden.
  */
 public class NotificationEventCallback implements ComponentEventCallback

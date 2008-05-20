@@ -12,18 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry.ioc.annotation.IntermediateType;
-import org.apache.tapestry.ioc.annotation.Symbol;
-import org.apache.tapestry.ioc.util.TimeInterval;
-import org.apache.tapestry.services.Cookies;
-import org.apache.tapestry.services.Request;
+import org.apache.tapestry5.ioc.annotations.IntermediateType;
+import org.apache.tapestry5.ioc.annotations.Symbol;
+import org.apache.tapestry5.ioc.util.TimeInterval;
+import org.apache.tapestry5.services.Cookies;
+import org.apache.tapestry5.services.Request;
 
 import javax.servlet.http.Cookie;
 
 /**
- * Implementation of the {@link org.apache.tapestry.services.Cookies} service interface.
+ * Implementation of the {@link org.apache.tapestry5.services.Cookies} service interface.
  */
 public class CookiesImpl implements Cookies
 {

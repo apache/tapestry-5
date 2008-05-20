@@ -12,14 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.dom;
+package org.apache.tapestry5.dom;
 
-import org.apache.tapestry.internal.test.InternalBaseTestCase;
+import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.testng.annotations.Test;
 
 /**
- * Tests for a number of DOM node classes, including {@link org.apache.tapestry.dom.Element} and
- * {@link org.apache.tapestry.dom.Document}.
+ * Tests for a number of DOM node classes, including {@link org.apache.tapestry5.dom.Element} and {@link
+ * org.apache.tapestry5.dom.Document}.
  */
 public class DOMTest extends InternalBaseTestCase
 {

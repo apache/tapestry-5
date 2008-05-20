@@ -12,14 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.services;
+package org.apache.tapestry5.services;
 
 import java.lang.annotation.*;
 
 
 /**
  * Marker annotation for services related to processing an Ajax request (rather than a {@linkplain
- * org.apache.tapestry.services.Traditional traditional request}).
+ * org.apache.tapestry5.services.Traditional traditional request}).
  *
  * @see ComponentEventRequestHandler
  */

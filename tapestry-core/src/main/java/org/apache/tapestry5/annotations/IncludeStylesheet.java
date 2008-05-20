@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.annotation;
+package org.apache.tapestry5.annotations;
 
 import java.lang.annotation.*;
 
@@ -25,11 +25,11 @@ import java.lang.annotation.*;
  * This saves the work of injecting the asset into a field and injecting the PageRenderSupport environmental service,
  * and invoking the method.
  * <p/>
- * Does not support setting a media type; if that is required. use {@link org.apache.tapestry.RenderSupport#addStylesheetLink(org.apache.tapestry.Asset,
+ * Does not support setting a media type; if that is required. use {@link org.apache.tapestry5.RenderSupport#addStylesheetLink(org.apache.tapestry5.Asset,
  * String)} directly.
  *
- * @see org.apache.tapestry.annotation.Path
- * @see org.apache.tapestry.annotation.IncludeJavaScriptLibrary
+ * @see org.apache.tapestry5.annotations.Path
+ * @see org.apache.tapestry5.annotations.IncludeJavaScriptLibrary
  */
 @Target({ ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)

@@ -12,15 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.services;
+package org.apache.tapestry5.services;
 
-import org.apache.tapestry.corelib.components.Grid;
-import org.apache.tapestry.ioc.Messages;
+import org.apache.tapestry5.corelib.components.Grid;
+import org.apache.tapestry5.ioc.Messages;
 
 /**
  * Provides context information needed when displaying a value. This interface is an integral part of the {@link Grid}
  * and similar output components.    It is made available to components via an {@link
- * org.apache.tapestry.annotation.Environmental} annotation.
+ * org.apache.tapestry5.annotations.Environmental} annotation.
  */
 public interface PropertyOutputContext
 {

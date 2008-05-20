@@ -12,13 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.services;
+package org.apache.tapestry5.ioc.services;
 
 import java.util.List;
 
 /**
- * Provides access to the runtime details about services in the
- * {@link org.apache.tapestry.ioc.Registry}.
+ * Provides access to the runtime details about services in the {@link org.apache.tapestry5.ioc.Registry}.
  */
 public interface ServiceActivityScoreboard
 {

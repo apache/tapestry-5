@@ -12,18 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.corelib.components;
+package org.apache.tapestry5.corelib.components;
 
-import org.apache.tapestry.*;
-import org.apache.tapestry.annotation.Component;
-import org.apache.tapestry.annotation.Parameter;
-import org.apache.tapestry.annotation.Property;
-import org.apache.tapestry.annotation.SupportsInformalParameters;
-import org.apache.tapestry.beaneditor.BeanModel;
-import org.apache.tapestry.internal.beaneditor.BeanModelUtils;
-import org.apache.tapestry.ioc.annotation.Inject;
-import org.apache.tapestry.services.BeanModelSource;
-import org.apache.tapestry.services.ComponentDefaultProvider;
+import org.apache.tapestry5.*;
+import org.apache.tapestry5.annotations.Component;
+import org.apache.tapestry5.annotations.Parameter;
+import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.annotations.SupportsInformalParameters;
+import org.apache.tapestry5.beaneditor.BeanModel;
+import org.apache.tapestry5.internal.beaneditor.BeanModelUtils;
+import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.services.BeanModelSource;
+import org.apache.tapestry5.services.ComponentDefaultProvider;
 
 /**
  * A component that creates an entire form editing the properties of a particular bean. Inspired by <a
@@ -63,7 +63,7 @@ public class BeanEditForm implements ClientElement, FormValidationControl
     private Object object;
 
     /**
-     * A comma-separated list of property names to be retained from the {@link org.apache.tapestry.beaneditor.BeanModel}.
+     * A comma-separated list of property names to be retained from the {@link org.apache.tapestry5.beaneditor.BeanModel}.
      * Only these properties will be retained, and the properties will also be reordered. The names are
      * case-insensitive.
      */
@@ -72,7 +72,7 @@ public class BeanEditForm implements ClientElement, FormValidationControl
     private String include;
 
     /**
-     * A comma-separated list of property names to be removed from the {@link org.apache.tapestry.beaneditor.BeanModel}.
+     * A comma-separated list of property names to be removed from the {@link org.apache.tapestry5.beaneditor.BeanModel}.
      * The names are case-insensitive.
      */
     @SuppressWarnings("unused")

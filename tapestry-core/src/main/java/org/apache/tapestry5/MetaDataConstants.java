@@ -1,9 +1,9 @@
-package org.apache.tapestry;
+package org.apache.tapestry5;
 
 /**
  * Meta-data keys that are applied to components and pages.
  *
- * @see org.apache.tapestry.services.MetaDataLocator
+ * @see org.apache.tapestry5.services.MetaDataLocator
  */
 public class MetaDataConstants
 {

@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.services;
+package org.apache.tapestry5.services;
 
 import java.lang.annotation.Documented;
 import static java.lang.annotation.ElementType.FIELD;
@@ -24,8 +24,8 @@ import java.lang.annotation.Target;
 /**
  * Marker annotation used to identify a service from the component layer that conflicts, in terms of service interface,
  * with a service from elsewhere. In particular, this is used to disambiguate {@link
- * org.apache.tapestry.ioc.services.ClassFactory} which has one implementation (marked with {@link
- * org.apache.tapestry.ioc.services.Builtin} and another with this annotation.
+ * org.apache.tapestry5.ioc.services.ClassFactory} which has one implementation (marked with {@link
+ * org.apache.tapestry5.ioc.services.Builtin} and another with this annotation.
  */
 @Target(
         { PARAMETER, FIELD })

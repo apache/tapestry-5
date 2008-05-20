@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.integration.app1.pages.nested;
+package org.apache.tapestry5.integration.app1.pages.nested;
 
-import org.apache.tapestry.annotation.OnEvent;
-import org.apache.tapestry.annotation.Property;
+import org.apache.tapestry5.annotations.OnEvent;
+import org.apache.tapestry5.annotations.Property;
 
 public class ActionDemo
 {

@@ -12,21 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry.ComponentResources;
-import org.apache.tapestry.MarkupWriter;
-import org.apache.tapestry.dom.MarkupModel;
-import org.apache.tapestry.dom.XMLMarkupModel;
-import org.apache.tapestry.internal.parser.AttributeToken;
-import org.apache.tapestry.internal.structure.PageElement;
-import org.apache.tapestry.internal.test.InternalBaseTestCase;
-import org.apache.tapestry.ioc.Location;
-import org.apache.tapestry.ioc.internal.util.TapestryException;
-import org.apache.tapestry.ioc.services.TypeCoercer;
-import org.apache.tapestry.runtime.RenderQueue;
-import org.apache.tapestry.services.BindingSource;
-import org.apache.tapestry.services.ComponentClassResolver;
+import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.dom.MarkupModel;
+import org.apache.tapestry5.dom.XMLMarkupModel;
+import org.apache.tapestry5.internal.parser.AttributeToken;
+import org.apache.tapestry5.internal.structure.PageElement;
+import org.apache.tapestry5.internal.test.InternalBaseTestCase;
+import org.apache.tapestry5.ioc.Location;
+import org.apache.tapestry5.ioc.internal.util.TapestryException;
+import org.apache.tapestry5.ioc.services.TypeCoercer;
+import org.apache.tapestry5.runtime.RenderQueue;
+import org.apache.tapestry5.services.BindingSource;
+import org.apache.tapestry5.services.ComponentClassResolver;
 import org.apache.tapestry5.services.ComponentMessagesSource;
 import org.testng.annotations.Test;
 

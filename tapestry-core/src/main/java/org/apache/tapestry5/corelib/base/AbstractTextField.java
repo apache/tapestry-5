@@ -12,17 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.corelib.base;
+package org.apache.tapestry5.corelib.base;
 
-import org.apache.tapestry.*;
-import org.apache.tapestry.annotation.*;
-import org.apache.tapestry.beaneditor.Width;
-import org.apache.tapestry.corelib.mixins.RenderDisabled;
-import org.apache.tapestry.ioc.AnnotationProvider;
-import org.apache.tapestry.ioc.annotation.Inject;
-import org.apache.tapestry.services.ComponentDefaultProvider;
-import org.apache.tapestry.services.FieldValidatorDefaultSource;
-import org.apache.tapestry.services.Request;
+import org.apache.tapestry5.*;
+import org.apache.tapestry5.annotations.*;
+import org.apache.tapestry5.beaneditor.Width;
+import org.apache.tapestry5.corelib.mixins.RenderDisabled;
+import org.apache.tapestry5.ioc.AnnotationProvider;
+import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.services.ComponentDefaultProvider;
+import org.apache.tapestry5.services.FieldValidatorDefaultSource;
+import org.apache.tapestry5.services.Request;
 
 import java.lang.annotation.Annotation;
 import java.util.Locale;
@@ -41,7 +41,7 @@ import java.util.Locale;
  * <p/>
  * Likewise, on a form submit, the "parseclient" event handler method will be passed the string provided by the client,
  * and may provide a non-null value as the parsed value.  Returning null allows the normal translator to operate.  The
- * event handler may also throw {@link org.apache.tapestry.ValidationException}.
+ * event handler may also throw {@link org.apache.tapestry5.ValidationException}.
  */
 public abstract class AbstractTextField extends AbstractField
 {
@@ -73,7 +73,7 @@ public abstract class AbstractTextField extends AbstractField
      * Provider of annotations used for some defaults.  Annotation are usually provided in terms of the value parameter
      * (i.e., from the getter and/or setter bound to the value parameter).
      *
-     * @see org.apache.tapestry.beaneditor.Width
+     * @see org.apache.tapestry5.beaneditor.Width
      */
     @Parameter
     private AnnotationProvider annotationProvider;
@@ -112,8 +112,8 @@ public abstract class AbstractTextField extends AbstractField
     private ComponentDefaultProvider defaultProvider;
 
     /**
-     * Computes a default value for the "translate" parameter using {@link org.apache.tapestry.services.ComponentDefaultProvider#defaultTranslator(String,
-     * org.apache.tapestry.ComponentResources)}.
+     * Computes a default value for the "translate" parameter using {@link org.apache.tapestry5.services.ComponentDefaultProvider#defaultTranslator(String,
+     * org.apache.tapestry5.ComponentResources)}.
      */
     final Translator defaultTranslate()
     {
@@ -132,7 +132,7 @@ public abstract class AbstractTextField extends AbstractField
     }
 
     /**
-     * Computes a default value for the "validate" parameter using {@link org.apache.tapestry.services.FieldValidatorDefaultSource}.
+     * Computes a default value for the "validate" parameter using {@link org.apache.tapestry5.services.FieldValidatorDefaultSource}.
      */
     final FieldValidator defaultValidate()
     {
@@ -223,7 +223,7 @@ public abstract class AbstractTextField extends AbstractField
     }
 
     /**
-     * Looks for a {@link org.apache.tapestry.beaneditor.Width} annotation and, if present, returns its value as a
+     * Looks for a {@link org.apache.tapestry5.beaneditor.Width} annotation and, if present, returns its value as a
      * string.
      *
      * @return the indicated width, or null if the annotation is not present

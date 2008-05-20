@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.util;
+package org.apache.tapestry5.internal.util;
 
-import org.apache.tapestry.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry.services.ClassTransformation;
-import org.apache.tapestry.services.TransformMethodSignature;
-import org.apache.tapestry.services.TransformUtils;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.services.ClassTransformation;
+import org.apache.tapestry5.services.TransformMethodSignature;
+import org.apache.tapestry5.services.TransformUtils;
 
 import java.util.Map;
 

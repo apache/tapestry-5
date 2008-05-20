@@ -12,15 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.services;
+package org.apache.tapestry5.ioc.services;
 
-import org.apache.tapestry.ioc.Registry;
+import org.apache.tapestry5.ioc.Registry;
 
 import java.util.Locale;
 
 /**
- * Stores the locale <em>for the current thread</em>. This value persists until
- * {@link Registry#cleanupThread()} is invoked.
+ * Stores the locale <em>for the current thread</em>. This value persists until {@link Registry#cleanupThread()} is
+ * invoked.
  */
 public interface ThreadLocale
 {
@@ -32,8 +32,8 @@ public interface ThreadLocale
     void setLocale(Locale locale);
 
     /**
-     * Returns the thread's locale, which will be the JVM's default locale, until
-     * {@link #setLocale(Locale)} is invoked.
+     * Returns the thread's locale, which will be the JVM's default locale, until {@link #setLocale(Locale)} is
+     * invoked.
      *
      * @return the thread's locale
      */

@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry.services.PersistentFieldBundle;
-import org.apache.tapestry.services.PersistentFieldChange;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.services.PersistentFieldBundle;
+import org.apache.tapestry5.services.PersistentFieldChange;
 
 import java.util.Collection;
 import java.util.Map;

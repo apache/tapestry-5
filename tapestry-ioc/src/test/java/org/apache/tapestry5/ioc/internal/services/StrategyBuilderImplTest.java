@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.internal.services;
+package org.apache.tapestry5.ioc.internal.services;
 
-import org.apache.tapestry.ioc.internal.IOCInternalTestCase;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
-import org.apache.tapestry.ioc.services.StrategyBuilder;
-import org.apache.tapestry.ioc.util.StrategyRegistry;
+import org.apache.tapestry5.ioc.internal.IOCInternalTestCase;
+import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newMap;
+import org.apache.tapestry5.ioc.services.StrategyBuilder;
+import org.apache.tapestry5.ioc.util.StrategyRegistry;
 import org.testng.annotations.Test;
 
 import java.util.Collections;
@@ -54,7 +54,7 @@ public class StrategyBuilderImplTest extends IOCInternalTestCase
         assertEquals(service.kindOf(Collections.EMPTY_MAP), "MAP");
         assertEquals(service.kindOf(Collections.EMPTY_LIST), "LIST");
 
-        assertEquals(service.toString(), "<Strategy for org.apache.tapestry.ioc.internal.services.KindOf>");
+        assertEquals(service.toString(), "<Strategy for org.apache.tapestry5.ioc.internal.services.KindOf>");
 
         try
         {
@@ -64,7 +64,7 @@ public class StrategyBuilderImplTest extends IOCInternalTestCase
         catch (RuntimeException ex)
         {
             assertEquals(ex.getMessage(),
-                         "No adapter from type void to type org.apache.tapestry.ioc.internal.services.KindOf is available (registered types are java.util.List, java.util.Map).");
+                         "No adapter from type void to type org.apache.tapestry5.ioc.internal.services.KindOf is available (registered types are java.util.List, java.util.Map).");
         }
     }
 

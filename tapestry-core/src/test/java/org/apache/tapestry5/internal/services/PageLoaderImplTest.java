@@ -12,20 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry.internal.InternalComponentResources;
-import org.apache.tapestry.internal.parser.ComponentTemplate;
-import org.apache.tapestry.internal.parser.EndElementToken;
-import org.apache.tapestry.internal.parser.StartComponentToken;
-import org.apache.tapestry.internal.structure.ComponentPageElement;
-import org.apache.tapestry.internal.structure.Page;
-import org.apache.tapestry.internal.structure.PageElement;
-import org.apache.tapestry.internal.test.InternalBaseTestCase;
-import org.apache.tapestry.ioc.Location;
-import org.apache.tapestry.model.ComponentModel;
-import org.apache.tapestry.model.EmbeddedComponentModel;
-import org.apache.tapestry.services.ComponentClassResolver;
+import org.apache.tapestry5.internal.InternalComponentResources;
+import org.apache.tapestry5.internal.parser.ComponentTemplate;
+import org.apache.tapestry5.internal.parser.EndElementToken;
+import org.apache.tapestry5.internal.parser.StartComponentToken;
+import org.apache.tapestry5.internal.structure.ComponentPageElement;
+import org.apache.tapestry5.internal.structure.Page;
+import org.apache.tapestry5.internal.structure.PageElement;
+import org.apache.tapestry5.internal.test.InternalBaseTestCase;
+import org.apache.tapestry5.ioc.Location;
+import org.apache.tapestry5.model.ComponentModel;
+import org.apache.tapestry5.model.EmbeddedComponentModel;
+import org.apache.tapestry5.services.ComponentClassResolver;
 import org.easymock.EasyMock;
 import org.slf4j.Logger;
 import org.testng.annotations.Test;

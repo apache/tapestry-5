@@ -12,18 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.internal.services;
+package org.apache.tapestry5.ioc.internal.services;
 
-import org.apache.tapestry.ioc.Invocation;
-import org.apache.tapestry.ioc.MethodAdvice;
-import org.apache.tapestry.ioc.internal.IOCInternalTestCase;
-import org.apache.tapestry.ioc.services.AspectDecorator;
-import org.apache.tapestry.ioc.services.AspectInterceptorBuilder;
+import org.apache.tapestry5.ioc.Invocation;
+import org.apache.tapestry5.ioc.MethodAdvice;
+import org.apache.tapestry5.ioc.internal.IOCInternalTestCase;
+import org.apache.tapestry5.ioc.services.AspectDecorator;
+import org.apache.tapestry5.ioc.services.AspectInterceptorBuilder;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 /**
- * Tests a few edge and error cases not covered by {@link org.apache.tapestry.ioc.internal.services.LoggingDecoratorImplTest}.
+ * Tests a few edge and error cases not covered by {@link org.apache.tapestry5.ioc.internal.services.LoggingDecoratorImplTest}.
  */
 public class AspectInterceptorBuilderImplTest extends IOCInternalTestCase
 {
@@ -96,7 +96,7 @@ public class AspectInterceptorBuilderImplTest extends IOCInternalTestCase
         catch (IllegalArgumentException ex)
         {
             assertEquals(ex.getMessage(),
-                         "Method public abstract void java.lang.Runnable.run() is not defined for interface interface org.apache.tapestry.ioc.internal.services.AspectInterceptorBuilderImplTest$Subject.");
+                         "Method public abstract void java.lang.Runnable.run() is not defined for interface interface org.apache.tapestry5.ioc.internal.services.AspectInterceptorBuilderImplTest$Subject.");
         }
 
 
@@ -128,7 +128,7 @@ public class AspectInterceptorBuilderImplTest extends IOCInternalTestCase
         catch (IllegalArgumentException ex)
         {
             assertEquals(ex.getMessage(),
-                         "Method public abstract void org.apache.tapestry.ioc.internal.services.AspectInterceptorBuilderImplTest$Subject.advised() has already been advised.");
+                         "Method public abstract void org.apache.tapestry5.ioc.internal.services.AspectInterceptorBuilderImplTest$Subject.advised() has already been advised.");
         }
 
         verify();

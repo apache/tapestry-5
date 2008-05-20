@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.hibernate;
+package org.apache.tapestry5.hibernate;
 
 import org.hibernate.cfg.Configuration;
 

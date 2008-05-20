@@ -12,18 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.test;
+package org.apache.tapestry5.internal.test;
 
-import org.apache.tapestry.EventContext;
-import org.apache.tapestry.dom.Document;
-import org.apache.tapestry.internal.URLEventContext;
-import org.apache.tapestry.internal.services.ComponentInvocation;
-import org.apache.tapestry.internal.services.InvocationTarget;
-import org.apache.tapestry.internal.services.PageLinkTarget;
-import org.apache.tapestry.ioc.Registry;
-import org.apache.tapestry.services.ContextValueEncoder;
-import org.apache.tapestry.services.PageRenderRequestHandler;
-import org.apache.tapestry.services.PageRenderRequestParameters;
+import org.apache.tapestry5.EventContext;
+import org.apache.tapestry5.dom.Document;
+import org.apache.tapestry5.internal.URLEventContext;
+import org.apache.tapestry5.internal.services.ComponentInvocation;
+import org.apache.tapestry5.internal.services.InvocationTarget;
+import org.apache.tapestry5.internal.services.PageLinkTarget;
+import org.apache.tapestry5.ioc.Registry;
+import org.apache.tapestry5.services.ContextValueEncoder;
+import org.apache.tapestry5.services.PageRenderRequestHandler;
+import org.apache.tapestry5.services.PageRenderRequestParameters;
 
 import java.io.IOException;
 

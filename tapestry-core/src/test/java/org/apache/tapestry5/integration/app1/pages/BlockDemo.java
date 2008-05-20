@@ -12,13 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.integration.app1.pages;
+package org.apache.tapestry5.integration.app1.pages;
 
-import org.apache.tapestry.Block;
-import org.apache.tapestry.annotation.Persist;
-import org.apache.tapestry.annotation.Retain;
-import org.apache.tapestry.ioc.annotation.Inject;
-import org.apache.tapestry.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.Block;
+import org.apache.tapestry5.annotations.Persist;
+import org.apache.tapestry5.annotations.Retain;
+import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 
 import java.util.Map;
 

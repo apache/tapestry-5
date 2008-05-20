@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal;
+package org.apache.tapestry5.internal;
 
-import org.apache.tapestry.*;
-import org.apache.tapestry.dom.Element;
-import org.apache.tapestry.ioc.Messages;
-import org.apache.tapestry.services.Environment;
+import org.apache.tapestry5.*;
+import org.apache.tapestry5.dom.Element;
+import org.apache.tapestry5.ioc.Messages;
+import org.apache.tapestry5.services.Environment;
 
 /**
  * Default implementation that writes an attribute into fields or labels that are in error.
@@ -34,7 +34,7 @@ public final class DefaultValidationDecorator extends BaseValidationDecorator
 
     /**
      * @param environment        used to locate objects and services during the render
-     * @param validationMessages obtained from {@link org.apache.tapestry.services.ValidationMessagesSource}, used to
+     * @param validationMessages obtained from {@link org.apache.tapestry5.services.ValidationMessagesSource}, used to
      *                           obtain the label for the icon
      * @param iconAsset          asset for an icon that will be displayed after each field (marked with the
      * @param markupWriter

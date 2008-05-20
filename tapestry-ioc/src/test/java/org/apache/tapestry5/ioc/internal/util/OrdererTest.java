@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.internal.util;
+package org.apache.tapestry5.ioc.internal.util;
 
-import org.apache.tapestry.ioc.Orderable;
-import org.apache.tapestry.ioc.internal.IOCInternalTestCase;
+import org.apache.tapestry5.ioc.Orderable;
+import org.apache.tapestry5.ioc.internal.IOCInternalTestCase;
 import org.slf4j.Logger;
 import org.testng.annotations.Test;
 

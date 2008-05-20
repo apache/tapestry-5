@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
 import javassist.CtClass;
 
 /**
- * Encapsulates all the work performed by the {@link org.apache.tapestry.internal.services.ComponentInstantiatorSource}
+ * Encapsulates all the work performed by the {@link org.apache.tapestry5.internal.services.ComponentInstantiatorSource}
  * when it loads and transforms a class.
  */
 public interface ComponentClassTransformer

@@ -12,22 +12,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.corelib.components;
+package org.apache.tapestry5.corelib.components;
 
-import org.apache.tapestry.Asset;
-import org.apache.tapestry.Block;
-import org.apache.tapestry.ComponentResources;
-import org.apache.tapestry.annotation.*;
-import org.apache.tapestry.beaneditor.PropertyModel;
-import org.apache.tapestry.grid.ColumnSort;
-import org.apache.tapestry.grid.GridConstants;
-import org.apache.tapestry.grid.GridModel;
-import org.apache.tapestry.grid.GridSortModel;
-import org.apache.tapestry.internal.InternalConstants;
-import org.apache.tapestry.internal.TapestryInternalUtils;
-import org.apache.tapestry.ioc.Messages;
-import org.apache.tapestry.ioc.annotation.Inject;
-import org.apache.tapestry.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.Asset;
+import org.apache.tapestry5.Block;
+import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.annotations.*;
+import org.apache.tapestry5.beaneditor.PropertyModel;
+import org.apache.tapestry5.grid.ColumnSort;
+import org.apache.tapestry5.grid.GridConstants;
+import org.apache.tapestry5.grid.GridModel;
+import org.apache.tapestry5.grid.GridSortModel;
+import org.apache.tapestry5.internal.InternalConstants;
+import org.apache.tapestry5.internal.TapestryInternalUtils;
+import org.apache.tapestry5.ioc.Messages;
+import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 
 import java.util.List;
 

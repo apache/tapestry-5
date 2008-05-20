@@ -12,11 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc;
+package org.apache.tapestry5.ioc;
 
 /**
- * Interface implemented by objects which carry a location tag. Defines a readable property,
- * location.
+ * Interface implemented by objects which carry a location tag. Defines a readable property, location.
  */
 public interface Locatable
 {

@@ -12,16 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry.internal.event.InvalidationEventHub;
-import org.apache.tapestry.internal.parser.ComponentTemplate;
-import org.apache.tapestry.model.ComponentModel;
+import org.apache.tapestry5.internal.event.InvalidationEventHub;
+import org.apache.tapestry5.internal.parser.ComponentTemplate;
+import org.apache.tapestry5.model.ComponentModel;
 
 import java.util.Locale;
 
 /**
- * Provides access to cached {@link org.apache.tapestry.internal.parser.ComponentTemplate}s. The source acts as a
+ * Provides access to cached {@link org.apache.tapestry5.internal.parser.ComponentTemplate}s. The source acts as a
  * invalidation event hub, and will broadcast invalidation events when any loaded template resource changes. The
  * listener for these invalidation events is the page source, which stores cached page instances.
  * <p/>

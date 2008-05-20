@@ -12,13 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.model;
+package org.apache.tapestry5.internal.model;
 
-import org.apache.tapestry.ioc.BaseLocatable;
-import org.apache.tapestry.ioc.Location;
-import org.apache.tapestry.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry.ioc.internal.util.InternalUtils;
-import org.apache.tapestry.model.MutableEmbeddedComponentModel;
+import org.apache.tapestry5.ioc.BaseLocatable;
+import org.apache.tapestry5.ioc.Location;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.model.MutableEmbeddedComponentModel;
 
 import java.util.Collections;
 import java.util.List;

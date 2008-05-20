@@ -42,7 +42,7 @@ Usage
   <filter>
     <filter-name>app</filter-name>
     <!-- Special filter that adds in a T5 IoC module derived from the Spring WebApplicationContext. -->
-    <filter-class>org.apache.tapestry.spring.TapestrySpringFilter</filter-class>
+    <filter-class>org.apache.tapestry5.spring.TapestrySpringFilter</filter-class>
   </filter>
 +---+  
  
@@ -68,7 +68,7 @@ Usage
 * Injecting beans
 
   Inside your component classes, you may use the 
-  {{{http://tapestry.apache.org/tapestry5/tapestry-core/apidocs/org/apache/tapestry/ioc/annotations/Inject.html}Inject}} annotation.  Typically, just the field 
+  {{{http://tapestry.apache.org/tapestry5/tapestry-core/apidocs/org/apache/tapestry5/ioc/annotations/Inject.html}Inject}} annotation.  Typically, just the field
   type is sufficient to identify the Spring bean to inject:
   
 +----+
@@ -78,7 +78,7 @@ Usage
 
   If you have multiple beans that implement the same interface (for instance, if you have wrapped your bean using a transaction interceptor), you must disambiguate.  The easiest way
   to accomplish this is to add a 
-  {{{http://tapestry.apache.org/tapestry5/tapestry-core/apidocs/org/apache/tapestry/annotations/Service.html}Service}}
+  {{{http://tapestry.apache.org/tapestry5/tapestry-core/apidocs/org/apache/tapestry5/annotations/Service.html}Service}}
   annotation to identify the name of the
   Spring bean:
   

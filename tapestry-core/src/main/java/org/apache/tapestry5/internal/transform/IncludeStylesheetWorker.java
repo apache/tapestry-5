@@ -12,19 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.transform;
+package org.apache.tapestry5.internal.transform;
 
-import org.apache.tapestry.Asset;
-import org.apache.tapestry.RenderSupport;
-import org.apache.tapestry.annotation.IncludeStylesheet;
-import org.apache.tapestry.ioc.services.SymbolSource;
-import org.apache.tapestry.model.MutableComponentModel;
-import org.apache.tapestry.services.AssetSource;
-import org.apache.tapestry.services.ClassTransformation;
+import org.apache.tapestry5.Asset;
+import org.apache.tapestry5.RenderSupport;
+import org.apache.tapestry5.annotations.IncludeStylesheet;
+import org.apache.tapestry5.ioc.services.SymbolSource;
+import org.apache.tapestry5.model.MutableComponentModel;
+import org.apache.tapestry5.services.AssetSource;
+import org.apache.tapestry5.services.ClassTransformation;
 
 /**
- * Recognizes the {@link org.apache.tapestry.annotation.IncludeStylesheet} annotation and ensures that {@link
- * org.apache.tapestry.RenderSupport#addStylesheetLink(org.apache.tapestry.Asset, String)} is invoked.
+ * Recognizes the {@link org.apache.tapestry5.annotations.IncludeStylesheet} annotation and ensures that {@link
+ * org.apache.tapestry5.RenderSupport#addStylesheetLink(org.apache.tapestry5.Asset, String)} is invoked.
  */
 public class IncludeStylesheetWorker extends AbstractIncludeAssetWorker
 {

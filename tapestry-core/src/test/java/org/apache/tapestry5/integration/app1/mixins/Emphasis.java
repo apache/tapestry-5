@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.integration.app1.mixins;
+package org.apache.tapestry5.integration.app1.mixins;
 
-import org.apache.tapestry.MarkupWriter;
-import org.apache.tapestry.annotation.AfterRender;
-import org.apache.tapestry.annotation.BeginRender;
-import org.apache.tapestry.annotation.Parameter;
+import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.annotations.AfterRender;
+import org.apache.tapestry5.annotations.BeginRender;
+import org.apache.tapestry5.annotations.Parameter;
 
 /**
  * Mixin that adds emphasis to a component if a test is true.

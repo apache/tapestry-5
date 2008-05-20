@@ -12,13 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc;
+package org.apache.tapestry5.ioc;
 
 import org.slf4j.Logger;
 
 /**
- * A wrapper around SLF4J's LoggerFactory that exists to allow particular projects to "hook" the
- * creation of Logger instances.
+ * A wrapper around SLF4J's LoggerFactory that exists to allow particular projects to "hook" the creation of Logger
+ * instances.
  */
 public interface LoggerSource
 {

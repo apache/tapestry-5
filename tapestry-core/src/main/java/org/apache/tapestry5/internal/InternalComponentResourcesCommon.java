@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal;
+package org.apache.tapestry5.internal;
 
-import org.apache.tapestry.Binding;
-import org.apache.tapestry.internal.structure.ComponentPageElement;
-import org.apache.tapestry.runtime.Component;
+import org.apache.tapestry5.Binding;
+import org.apache.tapestry5.internal.structure.ComponentPageElement;
+import org.apache.tapestry5.runtime.Component;
 
 import java.util.Map;
 
@@ -29,7 +29,7 @@ public interface InternalComponentResourcesCommon
     /**
      * Returns true if the component has finished loading. Initially, this value will be false.
      *
-     * @see org.apache.tapestry.runtime.PageLifecycleListener#containingPageDidLoad()
+     * @see org.apache.tapestry5.runtime.PageLifecycleListener#containingPageDidLoad()
      */
     boolean isLoaded();
 

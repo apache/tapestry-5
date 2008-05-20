@@ -12,15 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.services;
+package org.apache.tapestry5.services;
 
-import org.apache.tapestry.Binding;
-import org.apache.tapestry.ComponentResources;
-import org.apache.tapestry.ioc.Location;
+import org.apache.tapestry5.Binding;
+import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.ioc.Location;
 
 /**
  * Creates a binding of a particular type.  This is usually invoked from the {@link
- * org.apache.tapestry.services.BindingSource} service.
+ * org.apache.tapestry5.services.BindingSource} service.
  */
 public interface BindingFactory
 {

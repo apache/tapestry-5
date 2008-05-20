@@ -12,7 +12,7 @@ Component Parameters
   a specific Java type (which may be a primitive value), and may be <optional> or <required>.
   
   Parameters are defined by placing a
-  {{{../../apidocs/org/apache/tapestry/annotation/Parameter.html}Parameter}} annotation
+  {{{../../apidocs/org/apache/tapestry5/annotations/Parameter.html}Parameter}} annotation
   onto a private field.
   
   The component listed below is a looping component; it renders its body
@@ -23,9 +23,9 @@ Component Parameters
 +---+
 package org.example.app.components;
 
-import org.apache.tapestry.annotation.AfterRender;
-import org.apache.tapestry.annotation.Parameter;
-import org.apache.tapestry.annotation.SetupRender;
+import org.apache.tapestry5.annotations.AfterRender;
+import org.apache.tapestry5.annotations.Parameter;
+import org.apache.tapestry5.annotations.SetupRender;
 
 public class Count
 {
@@ -123,7 +123,7 @@ Binding Expressions
 *------------+----------------------------------------------------------------------------------+
 | literal    | A literal string.                                                                |
 *------------+----------------------------------------------------------------------------------+
-| nullfieldstrategy | Used to locate a pre-defined {{{../../apidocs/org/apache/tapestry/NullFieldStrategy.html}NullFieldStrategy}}|
+| nullfieldstrategy | Used to locate a pre-defined {{{../../apidocs/org/apache/tapestry5/NullFieldStrategy.html}NullFieldStrategy}}|
 *------------+----------------------------------------------------------------------------------+
 | message    | Retrieves a value from the component's {{{localization.html}message catalog}}.   |
 *------------+----------------------------------------------------------------------------------+
@@ -242,30 +242,30 @@ Validate Bindings
 Translate Bindings
 
   The "translate:" binding prefix is also related to input validator. It is the name
-  of a configured {{{../../apidocs/org/apache/tapestry/Translator.html}Translator}}, responsible
+  of a configured {{{../../apidocs/org/apache/tapestry5/Translator.html}Translator}}, responsible
   for converting between server-side and client-side representations of data (for instance, between
   client-side strings and server-side numeric values).
   
   The list of available translators is configured by the
-  {{{../../apidocs/org/apache/tapestry/services/TranslatorSource.html}TranslatorSource}} service.  
+  {{{../../apidocs/org/apache/tapestry5/services/TranslatorSource.html}TranslatorSource}} service.
   
 Informal Parameters
 
   Some components support <informal parameters>, additional parameters beyond the formally defined parameters.
   Informal parameters will be rendered into the output as additional attributes on the tag rendered by
   the component.  Generally speaking, components that have a 1:1 relationship with a particular HTML tag
-  (such as {{{../ref/org/apache/tapestry/corelib/components/TextField.html}TextField}} and 
+  (such as {{{../ref/org/apache/tapestry5/corelib/components/TextField.html}TextField}} and
   \<input\> will support informal parameters.
 
   Only components whose class is annotated with
-  {{{../apidocs/org/apache/tapestry/annotation/SupportsInformalParameters.html}SupportsInformalParameters}}
+  {{{../apidocs/org/apache/tapestry5/annotations/SupportsInformalParameters.html}SupportsInformalParameters}}
   will support informal parameters.
 
   Informal parameters are often used to set the CSS class of an element, or to specify client-side event handlers.
   
   The default binding prefix for informal parameters depends on <where> the parameter binding is specified.
   If the parameter is bound inside a Java class, within the 
-  {{{../../apidocs/org/apache/tapestry/annotation/Component.html}Component}} annotation, then the default binding
+  {{{../../apidocs/org/apache/tapestry5/annotations/Component.html}Component}} annotation, then the default binding
   prefix is "prop:".  If the parameter is bound inside the component template, then the default binding
   prefix is "literal:".  This reflects the fact that a parameter specified in the Java class, using the annotation, is most likely
   a computed value, whereas a value in the template should simply be copied, as is, into the result HTML stream.
@@ -273,12 +273,12 @@ Informal Parameters
 Supporting Informal Parameters
 
     <<Only>> components which area annotated with
-    {{{../apidocs/org/apache/tapestry/annotation/SupportsInformalParameters.html}SupportsInformalParameters}}
+    {{{../apidocs/org/apache/tapestry5/annotations/SupportsInformalParameters.html}SupportsInformalParameters}}
     may have informal parameters. Tapestry silently drops informal parameters that are specified for components
     that do not have this annotation.
 
     To render informal parameters, inject the
-    {{{../apidocs/org/apache/tapestry/ComponentResources.html}ComponentResources}} for your component
+    {{{../apidocs/org/apache/tapestry5/ComponentResources.html}ComponentResources}} for your component
     and invoke the <<<renderInformalParameters()>>> method.
 
     
@@ -369,7 +369,7 @@ Computed Parameter Binding Defaults
   In <rare> cases, you may want to compute the binding to be used as a parameter default. In this case, you will provide
   a <default binding method>, a method that takes no parameters.  The returned value is used to bind the parameter.  The return value may
   be a
-  {{{../../apidocs/org/apache/tapestry/Binding.html}Binding}} instance, or it may be a simple value (which is more often the case).  
+  {{{../../apidocs/org/apache/tapestry5/Binding.html}Binding}} instance, or it may be a simple value (which is more often the case).
   
   The method name is "default" plus the capitalized name
   of the parameter.
@@ -469,7 +469,7 @@ Determining if Bound
   In rare cases, you may want to take different behaviors based on whether a parameter is bound
   or not. This can be accomplished by querying the component's resources, which can be 
   {{{inject.html}injected}}  into the component using the
-  {{{../../apidocs/org/apache/tapestry/ioc/annotation/Inject.html}Inject}} annotation:
+  {{{../../apidocs/org/apache/tapestry5/ioc/annotations/Inject.html}Inject}} annotation:
   
 +---+
 public class MyComponent
@@ -495,7 +495,7 @@ public class MyComponent
   it is hard to distinguish between no binding, and binding explicitly to the value 0.
   
   The Inject annotation will inject the
-  {{{../../apidocs/org/apache/tapestry/ComponentResources.html}ComponentResources}} for the component.
+  {{{../../apidocs/org/apache/tapestry5/ComponentResources.html}ComponentResources}} for the component.
   These resources are the linkage between the Java class you provide, and the infrastructure Tapestry
   builds around your class.  In any case, once the resources are injected,
   they can be queried.

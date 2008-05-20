@@ -1,9 +1,9 @@
-package org.apache.tapestry;
+package org.apache.tapestry5;
 
 /**
  * Defines the names of symbols used to configure Tapestry.
  *
- * @see org.apache.tapestry.ioc.services.SymbolSource
+ * @see org.apache.tapestry5.ioc.services.SymbolSource
  */
 public class SymbolConstants
 {

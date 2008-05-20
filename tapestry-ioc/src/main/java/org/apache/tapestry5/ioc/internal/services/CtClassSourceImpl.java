@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.internal.services;
+package org.apache.tapestry5.ioc.internal.services;
 
 import javassist.CtClass;
 import javassist.NotFoundException;
-import org.apache.tapestry.ioc.services.ClassFabUtils;
+import org.apache.tapestry5.ioc.services.ClassFabUtils;
 
 import java.security.ProtectionDomain;
 

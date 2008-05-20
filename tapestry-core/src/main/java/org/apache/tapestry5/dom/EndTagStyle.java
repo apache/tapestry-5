@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.dom;
+package org.apache.tapestry5.dom;
 
 /**
  * Part of a {@link MarkupModel}, used to define how end tags are handled when the {@link Document} in rendered out as a

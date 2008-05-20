@@ -12,17 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry.ioc.services.ClassFabUtils;
-import org.apache.tapestry.services.ComponentMethodAdvice;
-import org.apache.tapestry.services.TransformMethodSignature;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.services.ClassFabUtils;
+import org.apache.tapestry5.services.ComponentMethodAdvice;
+import org.apache.tapestry5.services.TransformMethodSignature;
 
 import java.util.List;
 
 /**
- * A companion to {@link org.apache.tapestry.internal.services.AbstractComponentMethodInvocation} that stores most of
+ * A companion to {@link org.apache.tapestry5.internal.services.AbstractComponentMethodInvocation} that stores most of
  * the method and advice information needed.
  */
 public class MethodInvocationInfo

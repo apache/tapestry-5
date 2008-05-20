@@ -12,21 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry.internal.test.InternalBaseTestCase;
-import org.apache.tapestry.services.PersistentFieldChange;
-import org.apache.tapestry.services.PersistentFieldStrategy;
-import org.apache.tapestry.services.Request;
-import org.apache.tapestry.services.Session;
+import org.apache.tapestry5.internal.test.InternalBaseTestCase;
+import org.apache.tapestry5.services.PersistentFieldChange;
+import org.apache.tapestry5.services.PersistentFieldStrategy;
+import org.apache.tapestry5.services.Request;
+import org.apache.tapestry5.services.Session;
 import org.testng.annotations.Test;
 
 import java.util.Collection;
 import java.util.Iterator;
 
 /**
- * A more minimal test, since common behavior is already tested by
- * {@link SessionPersistentFieldStrategyTest}.
+ * A more minimal test, since common behavior is already tested by {@link SessionPersistentFieldStrategyTest}.
  */
 public class FlashPersistentFieldStrategyTest extends InternalBaseTestCase
 {

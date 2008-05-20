@@ -12,31 +12,30 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc;
+package org.apache.tapestry5.ioc;
 
 /**
- * Object providers represent an alternate way to locate an object provided somewhere in the
- * {@link org.apache.tapestry.ioc.Registry}. Instead of using a just the service id to gain access
- * to a service within the Registry, object providers in different flavors are capable of vending,
- * or even creating, objects of disparate types from disparate sources.
+ * Object providers represent an alternate way to locate an object provided somewhere in the {@link
+ * org.apache.tapestry5.ioc.Registry}. Instead of using a just the service id to gain access to a service within the
+ * Registry, object providers in different flavors are capable of vending, or even creating, objects of disparate types
+ * from disparate sources.
  * <p/>
  * Object providers are consulted in a strict order, and the first non-null result is taken.
  * <p/>
- * In many cases, an object provider searches for additional annotations on the element (usually a
- * parameter, or perhaps a field) for which a value is required.
+ * In many cases, an object provider searches for additional annotations on the element (usually a parameter, or perhaps
+ * a field) for which a value is required.
  */
 public interface ObjectProvider
 {
     /**
-     * Provides an object based on an expression. The process of providing objects occurs within a
-     * particular <em>context</em>, which will typically be a service builder method, service
-     * contributor method, or service decorator method. The locator parameter provides access to the
-     * services visible <em>to that context</em>.
+     * Provides an object based on an expression. The process of providing objects occurs within a particular
+     * <em>context</em>, which will typically be a service builder method, service contributor method, or service
+     * decorator method. The locator parameter provides access to the services visible <em>to that context</em>.
      *
      * @param objectType         the expected object type
      * @param annotationProvider provides access to annotations (typically, the field or parameter to which an
-     *                           injection-related annotation is attached); annotations on the field or parameter
-     *                           may also be used when resolving the desired object
+     *                           injection-related annotation is attached); annotations on the field or parameter may
+     *                           also be used when resolving the desired object
      * @param locator            locator for the <em>context</em> in which the provider is being used
      * @param <T>
      * @return the requested object, or null if this object provider can not supply an object

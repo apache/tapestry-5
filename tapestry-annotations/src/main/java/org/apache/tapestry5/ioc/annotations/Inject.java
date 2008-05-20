@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.annotation;
+package org.apache.tapestry5.ioc.annotations;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -31,8 +31,8 @@ import java.lang.annotation.Target;
  * <p/>
  * In terms of the IoC container; normally, resources take precedence over annotations when injecting. The Inject
  * annotation overrides this default, forcing the resolution of the parameters value via the master {@link
- * org.apache.tapestry.ioc.ObjectProvider}, even when the parameter's type matches a type that is normally a resource.
- * This is most often used in conjunction with {@link org.apache.tapestry.ioc.annotation.Value} annotation when
+ * org.apache.tapestry5.ioc.ObjectProvider}, even when the parameter's type matches a type that is normally a resource.
+ * This is most often used in conjunction with {@link org.apache.tapestry5.ioc.annotations.Value} annotation when
  * injecting a string, as normally, the String would be matched as the service id.
  * <p/>
  * In terms of the IoC container, the Inject annotation is only used on parameters to service builder methods (and
@@ -43,7 +43,7 @@ import java.lang.annotation.Target;
  * Finally, on a constructor, this is used to indicate <em>which</em> constructor should be used when more than one is
  * available.
  *
- * @see org.apache.tapestry.ioc.ObjectProvider
+ * @see org.apache.tapestry5.ioc.ObjectProvider
  */
 @Target(
         { PARAMETER, FIELD, ElementType.CONSTRUCTOR })

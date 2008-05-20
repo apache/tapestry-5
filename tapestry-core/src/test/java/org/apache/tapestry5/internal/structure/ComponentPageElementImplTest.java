@@ -12,21 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.structure;
+package org.apache.tapestry5.internal.structure;
 
-import org.apache.tapestry.Binding;
-import org.apache.tapestry.Block;
-import org.apache.tapestry.BlockNotFoundException;
-import org.apache.tapestry.ComponentResources;
-import org.apache.tapestry.internal.InternalComponentResources;
-import org.apache.tapestry.internal.services.Instantiator;
-import org.apache.tapestry.internal.test.InternalBaseTestCase;
-import org.apache.tapestry.ioc.Location;
-import org.apache.tapestry.ioc.internal.util.TapestryException;
-import org.apache.tapestry.ioc.services.TypeCoercer;
-import org.apache.tapestry.model.ComponentModel;
-import org.apache.tapestry.model.ParameterModel;
-import org.apache.tapestry.runtime.Component;
+import org.apache.tapestry5.Binding;
+import org.apache.tapestry5.Block;
+import org.apache.tapestry5.BlockNotFoundException;
+import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.internal.InternalComponentResources;
+import org.apache.tapestry5.internal.services.Instantiator;
+import org.apache.tapestry5.internal.test.InternalBaseTestCase;
+import org.apache.tapestry5.ioc.Location;
+import org.apache.tapestry5.ioc.internal.util.TapestryException;
+import org.apache.tapestry5.ioc.services.TypeCoercer;
+import org.apache.tapestry5.model.ComponentModel;
+import org.apache.tapestry5.model.ParameterModel;
+import org.apache.tapestry5.runtime.Component;
 import org.easymock.EasyMock;
 import org.testng.annotations.Test;
 

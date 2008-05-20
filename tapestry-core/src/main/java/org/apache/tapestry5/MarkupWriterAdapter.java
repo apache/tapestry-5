@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry;
+package org.apache.tapestry5;
 
-import org.apache.tapestry.dom.Element;
+import org.apache.tapestry5.dom.Element;
 
 /**
- * Default, empty implementation of {@link org.apache.tapestry.MarkupWriterListener}.
+ * Default, empty implementation of {@link org.apache.tapestry5.MarkupWriterListener}.
  */
 public class MarkupWriterAdapter implements MarkupWriterListener
 {

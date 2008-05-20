@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.beaneditor;
+package org.apache.tapestry5.beaneditor;
 
 import java.lang.annotation.Documented;
 import static java.lang.annotation.ElementType.METHOD;
@@ -21,15 +21,15 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Target;
 
 /**
- * Used to attach validation constraints directly to a property (either the getter or the setter
- * method). The annotation value is a comma separated list of <em>validation constraints</em>,
- * each one identifying a validator type (such as "required", "minlength") and optionally, a
- * constraint value. Most validators need a constraint value, which is separated from the type by an
- * equals size (i.e., "maxlength=30").
+ * Used to attach validation constraints directly to a property (either the getter or the setter method). The annotation
+ * value is a comma separated list of <em>validation constraints</em>, each one identifying a validator type (such as
+ * "required", "minlength") and optionally, a constraint value. Most validators need a constraint value, which is
+ * separated from the type by an equals size (i.e., "maxlength=30").
  */
 @Target(METHOD)
 @Retention(RUNTIME)
 @Documented
-public @interface Validate {
+public @interface Validate
+{
     String value();
 }

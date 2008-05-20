@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.bindings;
+package org.apache.tapestry5.internal.bindings;
 
-import org.apache.tapestry.ComponentResources;
-import org.apache.tapestry.ioc.Location;
+import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.ioc.Location;
 
 public class ComponentBinding extends AbstractBinding
 {

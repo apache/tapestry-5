@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry.ioc.Location;
-import org.apache.tapestry.runtime.Component;
-import org.apache.tapestry.services.Environment;
-import org.apache.tapestry.test.TapestryTestCase;
+import org.apache.tapestry5.ioc.Location;
+import org.apache.tapestry5.runtime.Component;
+import org.apache.tapestry5.services.Environment;
+import org.apache.tapestry5.test.TapestryTestCase;
 import org.testng.annotations.Test;
 
 import java.util.List;
@@ -128,7 +128,7 @@ public class EnvironmentImplTest extends TapestryTestCase
         {
             assertEquals(
                     ex.getMessage(),
-                    "No object of type java.util.List is available from the Environment.  Available types are org.apache.tapestry.ioc.Location, org.apache.tapestry.runtime.Component.");
+                    "No object of type java.util.List is available from the Environment.  Available types are org.apache.tapestry5.ioc.Location, org.apache.tapestry5.runtime.Component.");
         }
 
         verify();

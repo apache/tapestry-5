@@ -12,15 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry5.internal.services;
 
 /**
  * An implementation  of {@link Messages} that is based on a map.
  *
  */
 
-import org.apache.tapestry.ioc.Messages;
-import org.apache.tapestry.ioc.util.AbstractMessages;
+import org.apache.tapestry5.ioc.Messages;
+import org.apache.tapestry5.ioc.util.AbstractMessages;
 
 import java.util.Locale;
 import java.util.Map;

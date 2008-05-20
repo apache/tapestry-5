@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc;
+package org.apache.tapestry5.ioc;
 
 /**
- * Provides access to a messages catalog, a set of properties files that provide localized messages
- * for a particular locale. The message catalog consists of keys and values and follows the
- * semantics of a Java {@link java.util.ResourceBundle} with some changes.
+ * Provides access to a messages catalog, a set of properties files that provide localized messages for a particular
+ * locale. The message catalog consists of keys and values and follows the semantics of a Java {@link
+ * java.util.ResourceBundle} with some changes.
  */
 public interface Messages
 {
@@ -27,8 +27,8 @@ public interface Messages
     boolean contains(String key);
 
     /**
-     * Returns the localized message for the given key. If catalog does not contain such a key, then
-     * a modified version of the key is returned (converted to upper case and enclosed in brackets).
+     * Returns the localized message for the given key. If catalog does not contain such a key, then a modified version
+     * of the key is returned (converted to upper case and enclosed in brackets).
      *
      * @param key
      * @return localized message for key, or placeholder
@@ -36,8 +36,8 @@ public interface Messages
     String get(String key);
 
     /**
-     * Returns a formatter for the message, which can be used to substitute arguments (as per
-     * {@link java.util.Formatter}).
+     * Returns a formatter for the message, which can be used to substitute arguments (as per {@link
+     * java.util.Formatter}).
      *
      * @param key
      * @return formattable object

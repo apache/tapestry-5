@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.annotation;
+package org.apache.tapestry5.annotations;
 
-import org.apache.tapestry.EventConstants;
+import org.apache.tapestry5.EventConstants;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -29,7 +29,7 @@ import java.lang.annotation.Target;
  * <p/>
  * Client events include a <em>context</em> of one or more values. These context values are included in the action URI.
  * The values are optionally supplied to the handler method as parameters. Automatic {@linkplain
- * org.apache.tapestry.ValueEncoder conversion} from string to the type of the actual parameter occur.
+ * org.apache.tapestry5.ValueEncoder conversion} from string to the type of the actual parameter occur.
  * <p/>
  * Handlers may return a value. Returning a non-null value will abort the handling of the event, and will usually
  * control the response sent to the client web browser. The details are somewhat specific to the type of event and the
@@ -53,7 +53,7 @@ public @interface OnEvent
      * The event type to match. The handler will only be invoked if the client event type matches the value. The default
      * value is "action".  Matching is case-insensitive.
      *
-     * @see org.apache.tapestry.EventConstants
+     * @see org.apache.tapestry5.EventConstants
      */
     String value() default EventConstants.ACTION;
 
