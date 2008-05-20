@@ -2,15 +2,15 @@ package ${packageName}.services;
 
 import java.io.IOException;
 
-import org.apache.tapestry.*;
-import org.apache.tapestry.ioc.MappedConfiguration;
-import org.apache.tapestry.ioc.OrderedConfiguration;
-import org.apache.tapestry.ioc.ServiceBinder;
-import org.apache.tapestry.ioc.annotations.InjectService;
-import org.apache.tapestry.services.Request;
-import org.apache.tapestry.services.RequestFilter;
-import org.apache.tapestry.services.RequestHandler;
-import org.apache.tapestry.services.Response;
+import org.apache.tapestry5.*;
+import org.apache.tapestry5.ioc.MappedConfiguration;
+import org.apache.tapestry5.ioc.OrderedConfiguration;
+import org.apache.tapestry5.ioc.ServiceBinder;
+import org.apache.tapestry5.ioc.annotations.InjectService;
+import org.apache.tapestry5.services.Request;
+import org.apache.tapestry5.services.RequestFilter;
+import org.apache.tapestry5.services.RequestHandler;
+import org.apache.tapestry5.services.Response;
 import org.slf4j.Logger;
 
 /**

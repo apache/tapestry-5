@@ -24,10 +24,10 @@ Simple Services
   The simplest services don't have any special configuration or dependencies.  They are defined as services so that
   they can be shared.
 
-  For example, the {{{../../apidocs/org/apache/tapestry/ioc/services/PropertyAccess.html}PropertyAccess}} service 
+  For example, the {{{../../apidocs/org/apache/tapestry5/ioc/services/PropertyAccess.html}PropertyAccess}} service
   is used in multiple places around the framework to access properties of objects (its a wrapper around
   the Java Beans Introspector and a bit of reflection).  This is defined in the
-  {{{../../apidocs/org/apache/tapestry/ioc/services/TapestryIOCModule.html}TapestryIOCModule}}.
+  {{{../../apidocs/org/apache/tapestry5/ioc/services/TapestryIOCModule.html}TapestryIOCModule}}.
 
   It's useful to share PropertyAccess, because it does a lot of useful caching internally.
 
@@ -43,7 +43,7 @@ Simple Services
   }
 +----+
   
-  This example includes {{{../../apidocs/org/apache/tapestry/ioc/services/ExceptionAnalyzer.html}ExceptionAnalyzer}}, 
+  This example includes {{{../../apidocs/org/apache/tapestry5/ioc/services/ExceptionAnalyzer.html}ExceptionAnalyzer}},
   because it has a dependency on PropertyAccess:
 
 +----+
@@ -83,14 +83,14 @@ Service Disambiguation
   dependency injection occurs on the parameters of the service builder method.
 
   The Tapestry web framework includes the concept of an "asset": a resource that may be inside a web application, or packaged
-  inside a JAR.  Assets are represented as the type {{{../../apidcos/org/apache/tapestry/Asset.html}Asset}}.
+  inside a JAR.  Assets are represented as the type {{{../../apidcos/org/apache/tapestry5/Asset.html}Asset}}.
 
   In fact, there are different implementations of this class: one for context resources (part of the web application), the other
   for classpath resources (packaged inside a JAR).  The Asset instances are created via
   {{{../../apidocs/org/apache/tapesty/services/AssetFactory.html}AssetFactory}} services.
 
   Tapestry defines two such services, in the
-  {{{../../apidocs/org/apache/tapestry/services/TapestryModule.html}TapestryModule}}.
+  {{{../../apidocs/org/apache/tapestry5/services/TapestryModule.html}TapestryModule}}.
 
 +---+
   @Marker(ClasspathProvider.class)
@@ -119,7 +119,7 @@ Service Disambiguation
   What's important is that the services are differentiated not just in terms of their id (which is defined by the name of the method,
   after stripping off "build"), but in terms of their <marker annotation>.
 
-  The {{{../../apidocs/org/apache/tapestry/ioc/annotations/Marker.html}Marker}} annotation provides the discriminator.  When
+  The {{{../../apidocs/org/apache/tapestry5/ioc/annotations/Marker.html}Marker}} annotation provides the discriminator.  When
   the service type is supplemented with the ClasspathProvider annotation, the ClasspathAssetFactory is injected.  When the
   service type is supplemented with the ContextProvider annotation, the ContextAssetFactory is injected.
 

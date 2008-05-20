@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.mojo;
+package org.apache.tapestry5.mojo;
 
 public class ParameterDescription
 {

@@ -12,7 +12,7 @@ Chapter 2: Your First Tapestry Application
   
   Maven uses the group id and artifact id to provide a unique identity for the application, and Tapestry needs to have a base package name so it knows where to look for pages and components.
   
-  For this example, we'll use the group id <<org.apache.tapestry>> and the artifact id <<tapestry-tutorial1>>, and we'll use <<org.apache.tapestry.tutorial>> as the base package.
+  For this example, we'll use the group id <<org.apache.tapestry>> and the artifact id <<tapestry-tutorial1>>, and we'll use <<org.apache.tapestry5.tutorial>> as the base package.
   
   Our final command line is thus:
 
@@ -22,7 +22,7 @@ mvn archetype:create
   -DarchetypeArtifactId=quickstart
   -DgroupId=org.apache.tapestry
   -DartifactId=tutorial1
-  -DpackageName=org.apache.tapestry.tutorial
+  -DpackageName=org.apache.tapestry5.tutorial
 ----
 
   We've shown this as several lines, but it would normally be entered as a single long line.
@@ -126,11 +126,11 @@ mvn jetty:run
               <!-- The only significant configuration for Tapestry 5, this informs Tapestry
                    of where to look for pages, components and mixins. -->
               <param-name>tapestry.app-package</param-name>
-              <param-value>org.apache.tapestry.tutorial</param-value>
+              <param-value>org.apache.tapestry5.tutorial</param-value>
           </context-param>
           <filter>
               <filter-name>app</filter-name>
-              <filter-class>org.apache.tapestry.TapestryFilter</filter-class>
+              <filter-class>org.apache.tapestry5.TapestryFilter</filter-class>
           </filter>
           <filter-mapping>
               <filter-name>app</filter-name>
@@ -216,12 +216,12 @@ mvn jetty:run
   re-used to generate the HTML sent to the browser, which results in the updated time showing up in the web browser.
   
   The final piece of the puzzle is the Java class for the page.  Tapestry has very specific rules for where page classes go.  Remember the package name (configured inside web.xml)?  Tapestry adds a
-  sub-package, "pages", to it and the Java class goes there. Thus the full Java class name is org.apache.tapestry.tutorial.pages.Index.
+  sub-package, "pages", to it and the Java class goes there. Thus the full Java class name is org.apache.tapestry5.tutorial.pages.Index.
   
-  <<src/main/java/org/apache/tapestry/tutorial/pages/Index.java>>
+  <<src/main/java/org/apache/tapestry5/tutorial/pages/Index.java>>
 
 ---
-package org.apache.tapestry.tutorial.pages;
+package org.apache.tapestry5.tutorial.pages;
 
 import java.util.Date;
 
@@ -240,7 +240,7 @@ public class Index
   That's pretty darn simple: No classes to extend, no interfaces to implement, just a very pure POJO (Plain Old Java Object). You do have to meet the Tapestry framework
   halfway:
   
-  * You need to put the Java class in the expected package, org.apache.tapestry.tutorial.pages
+  * You need to put the Java class in the expected package, org.apache.tapestry5.tutorial.pages
   
   * The class must be public
   

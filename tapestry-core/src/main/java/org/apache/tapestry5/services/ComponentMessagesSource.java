@@ -14,9 +14,9 @@
 
 package org.apache.tapestry5.services;
 
-import org.apache.tapestry.internal.event.InvalidationEventHub;
-import org.apache.tapestry.ioc.Messages;
-import org.apache.tapestry.model.ComponentModel;
+import org.apache.tapestry5.internal.event.InvalidationEventHub;
+import org.apache.tapestry5.ioc.Messages;
+import org.apache.tapestry5.model.ComponentModel;
 
 import java.util.Locale;
 

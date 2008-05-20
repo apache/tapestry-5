@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.mojo;
+package org.apache.tapestry5.mojo;
 
 import com.sun.javadoc.*;
 import com.sun.javadoc.AnnotationDesc.ElementValuePair;
@@ -124,7 +124,8 @@ public class ParametersDoclet extends Doclet
         {
             for (AnnotationDesc annotation : fd.annotations())
             {
-                if (annotation.annotationType().qualifiedTypeName().equals("org.apache.tapestry.annotation.Parameter"))
+                if (annotation.annotationType().qualifiedTypeName().equals(
+                        "org.apache.tapestry5.annotations.Parameter"))
                 {
                     Map<String, String> result = new HashMap<String, String>();
 

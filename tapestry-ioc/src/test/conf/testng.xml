@@ -18,16 +18,16 @@
 <suite name="Tapestry IOC" thread-count="10" annotations="1.5" verbose="2" parallel="tests">
     <test name="Public APIs">
         <packages>
-            <package name="org.apache.tapestry.ioc"/>
-            <package name="org.apache.tapestry.ioc.services"/>
-            <package name="org.apache.tapestry.ioc.util"/>
+            <package name="org.apache.tapestry5.ioc"/>
+            <package name="org.apache.tapestry5.ioc.services"/>
+            <package name="org.apache.tapestry5.ioc.util"/>
         </packages>
     </test>
     <test name="Internals">
         <packages>
-            <package name="org.apache.tapestry.ioc.internal"/>
-            <package name="org.apache.tapestry.ioc.internal.services"/>
-            <package name="org.apache.tapestry.ioc.internal.util"/>
+            <package name="org.apache.tapestry5.ioc.internal"/>
+            <package name="org.apache.tapestry5.ioc.internal.services"/>
+            <package name="org.apache.tapestry5.ioc.internal.util"/>
         </packages>
     </test>
 </suite>

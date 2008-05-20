@@ -4,7 +4,7 @@
 
 Object Providers
 
-  When you don't provide the {{{../apidocs/org/apache/tapestry/ioc/annotations/InjectService.html}InjectService}} annotation
+  When you don't provide the {{{../apidocs/org/apache/tapestry5/ioc/annotations/InjectService.html}InjectService}} annotation
   on a parameter (to a service builder method or constructor), Tapestry will
   resolve the parameter automatically.
   
@@ -12,13 +12,13 @@ Object Providers
   be injected is not necessarily a service; it may be some arbitrary object.
   
   If this sounds vague, its because there is not just one
-  {{{../apidocs/org/apache/tapestry/ioc/ObjectProvider.html}ObjectProvider}}; there's a whole set of them,
+  {{{../apidocs/org/apache/tapestry5/ioc/ObjectProvider.html}ObjectProvider}}; there's a whole set of them,
   forming a {{{command.html}chain of command}}.  The commands in the chain may provide an object
   based on the parameter type, or based on additional annotations on the parameter.
   
   There are two built-in object providers:
   
-  * Check for {{{../apidocs/org/apache/tapestry/ioc/annotations/Value.html}Value}} annotation
+  * Check for {{{../apidocs/org/apache/tapestry5/ioc/annotations/Value.html}Value}} annotation
   
   * Check for a <unique> service in the Registry whose service interface matches the parameter type
   

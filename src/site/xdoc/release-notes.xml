@@ -1100,7 +1100,7 @@
             </li>
             <li>
                 [<a href="https://issues.apache.org/jira/browse/TAPESTRY-1443">TAPESTRY-1443</a>] -
-                org.apache.tapestry.annotation.Service annotation is
+                org.apache.tapestry5.annotations.Service annotation is
                 ignored
             </li>
             <li>

@@ -48,7 +48,7 @@ Basic JavaScript
   the JavaScript libraries.
 
   Most of this is accomplished via the
-  {{{../../apidocs/org/apache/tapestry/RenderSupport.html}RenderSupport}} object.
+  {{{../../apidocs/org/apache/tapestry5/RenderSupport.html}RenderSupport}} object.
 
   RenderSupport include a number of methods that will be used by components, or event by
   services that are called from components.
@@ -111,7 +111,7 @@ Basic JavaScript
 * Injecting RenderSupport
 
   RenderSupport is an <environmental> object, so you will normally inject it via the
-  {{{../../apidocs/org/apache/tapestry/annotation/Environmental.html}Environmental}} annotation:
+  {{{../../apidocs/org/apache/tapestry5/annotations/Environmental.html}Environmental}} annotation:
 
 +---+
   @Environmental
@@ -142,7 +142,7 @@ Basic JavaScript
 IncludeJavaScriptLibrary Annotation
 
   The
-  {{{../../apidocs/org/apache/tapestry/annotation/IncludeJavaScriptLibrary.html}IncludeJavaScriptLibrary}} annotation
+  {{{../../apidocs/org/apache/tapestry5/annotations/IncludeJavaScriptLibrary.html}IncludeJavaScriptLibrary}} annotation
   is the easy way to include one or more JavaScript libraries.
 
   The previous example could be re-written as:
@@ -163,7 +163,7 @@ Ajax Components and Mixins
 * Autocomplete Mixin
 
   The
-  {{{../../apidocs/org/apache/tapestry/corelib/mixins/Autocomplete.html}Autocomplete}}
+  {{{../../apidocs/org/apache/tapestry5/corelib/mixins/Autocomplete.html}Autocomplete}}
    mixin exists to allow a text field to query the server for completions for a partially
   entered phrase.  It is often used in situations where the field exists to select a single value from
   a large set, too large to succesfully download to the client as a drop down list; for example, when the
@@ -261,7 +261,7 @@ Ajax Components and Mixins
   or page class.
 
   This is accomplished by injecting the
-  {{{../../apidocs/org/apache/tapestry/services/Request.html}Request}} object, and invoking the isXHR() method.
+  {{{../../apidocs/org/apache/tapestry5/services/Request.html}Request}} object, and invoking the isXHR() method.
   This value will be true for Ajax requests, and false for traditional request.
 
 ** Zone Functions
@@ -321,9 +321,9 @@ Your own Ajax Components
   * A Block or Component to render as the response.  The response will be a JSON hash, with a "content" key
     whose value is the rendered markup.  This is the basis for updates with the Zone component.
 
-  * A {{{../../apidocs/org/apache/tapestry/json/JSONObject.html}JSONObject}}, which will be sent as the response.
+  * A {{{../../apidocs/org/apache/tapestry5/json/JSONObject.html}JSONObject}}, which will be sent as the response.
 
-  * A {{{../../apidocs/org/apache/tapestry/StreamResponse.html}StreamResponse}}, which will be sent as the response.
+  * A {{{../../apidocs/org/apache/tapestry5/StreamResponse.html}StreamResponse}}, which will be sent as the response.
 
   []
 
