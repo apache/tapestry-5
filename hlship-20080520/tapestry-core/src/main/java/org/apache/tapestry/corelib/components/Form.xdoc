@@ -1,0 +1,179 @@
+<document>
+    <body>
+
+        <section name="Related Components">
+
+            <ul>
+                <li>
+                    <a href="BeanEditForm.html">BeanEditForm</a>
+                </li>
+                <li>
+                    <a href="Errors.html">Errors</a>
+                </li>
+                <li>
+                    <a href="FormFragment.html">FormFragment</a>
+                </li>
+                <li>
+                    <a href="Label.html">Label</a>
+                </li>
+            </ul>
+        </section>
+
+        <section name="Form Control Element Components">
+
+            <p>
+                The following components are Tapestry wrappers around client-side HTML form elements:
+            </p>
+
+            <ul>
+                <li>
+                    <a href="CheckBox.html">CheckBox</a>
+                </li>
+                <li>
+                    <a href="DateField.html">DateField</a>
+                </li>
+                <li>
+                    <a href="Palette.html">Palette</a>
+                </li>
+                <li>
+                    <a href="PasswordField.html">PasswordField</a>
+                </li>
+                <li>
+                    <a href="Radio.html">Radio</a>
+                    and
+                    <a href="RadioGroup.html">RadioGroup</a>
+                </li>
+                <li>
+                    <a href="Select.html">Select</a>
+                </li>
+                <li>
+                    <a href="Submit.html">Submit</a>
+                </li>
+                <li>
+                    <a href="TextArea.html">TextArea</a>
+                </li>
+                <li>
+                    <a href="TextField.html">TextField</a>
+                </li>
+            </ul>
+
+        </section>
+
+
+        <section name="Examples">
+
+            <p>
+                Examples of the Form component are provided in the many
+                other pages that discuss specific form control element components,
+                such as
+                <a href="Radio.html">Radio</a>
+                and<a href="TextField.html">TextField</a>.
+            </p>
+
+        </section>
+
+        <section name="Notes">
+
+            <p>
+                The Form component generates a seemingly bewildering number of
+                events, designed to address a wide range of needs. The goal
+                is to give you as the developer the tools necessary to
+                effeciently manage state.
+            </p>
+
+            <p>
+                All of the events that are triggered will pass along
+                the values defined by the context parameter. Most often,
+                there is no context, or the context is a single value
+                (a primary key used to identify the object being updated
+                by the form).
+            </p>
+
+
+            <subsection name="Render Events">
+
+                <p>
+                    Render event handler methods should
+                    <em>not</em>
+                    return a value, doing
+                    so will be an error. The methods are intended to allow
+                    the page to convert a primary key stored in the context
+                    back into an object ready to have its properties updated
+                    by the Form.
+                </p>
+
+                <p>
+                    The context passed to component event handler methods is provided by reading the context parameter.
+                </p>
+
+                <ul>
+                    <li>prepareForRender</li>
+                    <li>prepare</li>
+                </ul>
+
+
+            </subsection>
+
+            <subsection name="Submit Events">
+
+                <p>
+                    Submit events may return a navigational value, which will
+                    abort any remaining processing of the form submission.
+                </p>
+
+                <p>
+                    The context provided to component event handler methods
+                    originates in the form submission (it is stored in hidden form fields); the
+                    context parameter is
+                    <em>not</em>
+                    read during a form submission.
+                </p>
+
+                <ul>
+                    <li>prepareForSubmit</li>
+                    <li>prepare</li>
+                    <li>validateForm</li>
+                    <li>failure
+                        <em>or</em>
+                        success
+                    </li>
+                    <li>submit</li>
+                </ul>
+
+                <p>
+                    The validateForm event is to allow the page to
+                    perform cross-field validation. The failure or success
+                    event is fired based on whether there are or are not any
+                    validation errors.
+                </p>
+
+            </subsection>
+
+
+            <subsection name="Form Ids">
+
+                <p>
+                    It is considered a best practice to give explicit ids to
+                    Form components, and form control element components.
+                    These ids propogate down to the client side as
+                    element names and/or ids, and eventually show up
+                    as query parameters when the form is submitted.
+                </p>
+
+                <p>
+                    To achieve a more RESTful URL scheme, give the form component
+                    an id based on what it does rather than what data it updates, thus
+                    <code><![CDATA[<t:form t:id="search"/>]]></code>
+                    rather than
+                    <code><![CDATA[<t:form t:id="searchData"/>]]></code>
+                    or
+                    <code><![CDATA[<t:form t:id="searchForm"/>]]></code>.
+
+                </p>
+
+
+            </subsection>
+
+        </section>
+    </body>
+</document>

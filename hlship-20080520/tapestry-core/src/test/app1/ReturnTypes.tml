@@ -1,0 +1,55 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+    <h1>Return Type Tests</h1>
+
+    <p>
+        Test
+        <a t:type="ActionLink" t:id="NullReturnValue">null</a>
+        return values.
+    </p>
+
+    <p>
+        Test
+        <a t:type="ActionLink" t:id="StringReturnValue">string</a>
+        return values.
+    </p>
+
+    <p>
+        Test
+        <a t:type="ActionLink" t:id="ClassReturnValue">class</a>
+        return values.
+    </p>
+
+    <p>
+        Test
+        <a t:type="ActionLink" t:id="PageReturnValue">page</a>
+        return values.
+    </p>
+
+    <p>
+        Test
+        <a t:type="ActionLink" t:id="LinkReturnValue">link</a>
+        return values.
+    </p>
+
+    <p>
+        Test
+        <a t:type="ActionLink" t:id="StreamReturnValue">stream</a>
+        return values.
+    </p>
+
+    <p>
+        Test
+        <t:actionlink t:id="url">URL</t:actionlink>
+        return values.
+    </p>
+
+
+    <p>
+        Test
+        <a t:type="ActionLink" t:id="BadReturnValue">bad</a>
+        return values.
+    </p>
+
+
+</html>

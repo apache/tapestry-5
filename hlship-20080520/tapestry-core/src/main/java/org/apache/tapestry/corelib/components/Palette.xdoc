@@ -1,0 +1,148 @@
+<document>
+    <body>
+
+        <section name="Related Components">
+            <ul>
+                <li>
+                    <a href="Form.html">Form</a>
+                </li>
+                <li>
+                    <a href="Select.html">Select</a>
+                </li>
+            </ul>
+        </section>
+
+        <section name="Examples">
+
+            <p>
+                For this example, we'll implement a page from an e-commerce order wizard; the page collects information
+                about special handling for the order:
+            </p>
+
+            <p>
+                <br/>
+                <img src="palette_ref.png"/>
+            </p>
+
+            <p>
+                This single screen shot doesn't capture the full richness of the user experience provided
+                by the Palette component. The buttons enable and disable
+                themselves based on what's selected. You can move items by double clicking, and you can move multiple
+                items by selecting
+                them and and then clicking the button.
+            </p>
+
+            <p>
+                This is a far better experience than using &lt;select&gt; with multiple enabled, as its very difficult
+                to navigate
+                a large list when using a traditional &lt;select&gt; and very easy to accidentally lose your selection.
+                The price of this
+                is the requirement for JavaScript on the client side.
+            </p>
+
+            <subsection name="SpecialHandling.java">
+                <source><![CDATA[
+public enum SpecialHandling
+{
+    EXPRESS_SERVICE, GIFT_WRAP, GIFT_BASKET, CUSTOM_ENGRAVING, SHIPPING_INSURANCE,
+    EXTENDED_WARRANTY
+}]]>        </source>
+
+                <p>
+                    In this contrived example, the possible types of special handling are defined using
+                    an enum. It's more likely, in the real world, that this would be defined in terms
+                    of a database entity.
+                </p>
+            </subsection>
+
+            <subsection name="OrderHandling.tml">
+                <source><![CDATA[
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+    <body>
+        <h1>Special Handling</h1>
+
+        <t:form>
+
+            <t:palette t:id="handling" encoder="encoder" model="model"/>
+
+            <br/>
+
+            <input type="submit" value="Continue"/>
+
+        </t:form>
+
+    </body>
+</html>]]></source>
+
+                <p>
+                    Here we are able to omit the selected parameter (the list of selected items) because the Palette
+                    component's id matches a property of the page.
+                </p>
+
+                <p>
+                    The model parameter will define the available options that can be selected. The encoder parameter
+                    will define how to translate server side values (the enum values) into client side strings and back.
+                </p>
+
+            </subsection>
+
+            <subsection name="OrderHandling.java">
+                <source><![CDATA[
+public class OrderHandling
+{
+    @Persist
+    private List<SpecialHandling> _handling;
+
+    @Inject
+    private Messages _messages;
+
+    private final ValueEncoder<SpecialHandling> _encoder = new EnumValueEncoder(SpecialHandling.class);
+
+    private final SelectModel _model = new EnumSelectModel(SpecialHandling.class, _messages);
+
+    public List<SpecialHandling> getHandling()
+    {
+        return _handling;
+    }
+
+    public void setHandling(List<SpecialHandling> handling)
+    {
+        _handling = handling;
+    }
+
+    public ValueEncoder<SpecialHandling> getEncoder() { return _encoder; }
+
+    public SelectModel getModel() { return _model; }
+}]]></source>
+
+                <p>
+                    Tapestry has built-in public classes that help convert enum types into value encoders
+                    and select models.
+                </p>
+
+                <p>
+                    Injecting a Messages object gives a component access to its own message catalog.
+                </p>
+
+                <p>
+                    The Palette component will read the handling property when rendering (it's ok for it to be null).
+                    When the form is submitted, it will create a new List and update the handling property.
+                </p>
+
+            </subsection>
+        </section>
+
+        <section name="Notes">
+            <p>
+                The Palette can also be used to order, not just select, items, by binding the reorder
+                parameter to true. In that case, additional buttons are added that allow selected items to
+                be moved up or down the list.
+            </p>
+
+            <p>
+                The Palette can be further customized through a mix of CSS and by replacing the images
+                used for its various buttons.
+            </p>
+        </section>
+    </body>
+</document>

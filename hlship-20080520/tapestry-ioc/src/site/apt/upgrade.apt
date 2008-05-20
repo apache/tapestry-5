@@ -1,0 +1,24 @@
+ ----
+ Upgrade Notes
+ ----
+
+Upgrade Notes
+
+  This is a quick guide to changes between releases of Tapestry.  This is meant to provide information
+  on any additions or changes that developers will face after upgrading to the latest version of Tapestry.
+
+  It is always advised to perform a full and complete build after upgrading.
+
+  You should also check the {{{../release-notes.html}project-wide release notes}} for information
+  about bugs fixes and other improvements.
+
+Release 5.0.12
+
+  Several methods of {{{../apidocs/org/apache/tapestry/ioc/services/ClassFabUtils.html}ClassFabUtils}}
+  have been removed.  The new method {{{castReference()}}} is an improved replacement for the removed
+  methods. These methods were largely used when decorating services, and the new 
+  {{{../apidocs/org/apache/tapestry/ioc/services/AspectDecorator.html}AspectDecorator}} is even easier.
+
+  For {{{https://issues.apache.org/jira/browse/TAPESTRY-2421}TAPESTRY-2421}} (compatibility between
+  Tapestry 4 and Tapestry 5), the org.apache.tapestry.ioc.annotations package was renamed
+  to org.apache.tapestry.ioc.annotation.
