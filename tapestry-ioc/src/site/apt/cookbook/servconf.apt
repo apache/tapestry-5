@@ -178,9 +178,9 @@ Mapped Configurations
 +----+
   public static void contributeFactoryDefaults(MappedConfiguration<String, String> configuration)
   {
-    configuration.add("tapestry.file-check-interval", "1000"); // 1 second
-    configuration.add("tapestry.file-check-update-timeout", "50"); // 50 milliseconds
-    configuration.add("tapestry.supported-locales", "en");
+    configuration.add(SymbolConstants.FILE_CHECK_INTERVAL, "1000"); // 1 second
+    configuration.add(SymbolConstants.FILE_CHECK_UPDATE_TIMEOUT, "50"); // 50 milliseconds
+    configuration.add(SymbolConstants.SUPPORTED_LOCALES, "en");
     configuration.add("tapestry.default-cookie-max-age", "604800"); // One week
     configuration.add("tapestry.start-page-name", "start");
     configuration.add("tapestry.scriptaculous", "classpath:${tapestry.scriptaculous.path}");
