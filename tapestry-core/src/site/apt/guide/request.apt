@@ -133,7 +133,7 @@ RequestGlobals Service
 Request Service
 
   The Request service is a 
-  {{{http://tapestry.apache.org/tapestry5/tapestry-ioc/shadow.html}shadow}}
+  {{{../../tapestry-ioc/shadow.html}shadow}}
   of the RequestGlobals services' request property. That is, any methods invoked
   on this service are delegated to the request object stored inside the RequestGlobals.
    

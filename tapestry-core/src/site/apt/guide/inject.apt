@@ -5,7 +5,7 @@
 Injection with Components
 
   A key concept in Tapestry is the use of <injection>. The
-  {{{http://tapestry.apache.org/tapestry5/tapestry-ioc/index.html}Tapestry IoC container}} makes use of one form
+  {{{../../tapestry-ioc/index.html}Tapestry IoC container}} makes use of one form
   of injection, via parameters to service builder methods.
   
   For components, Tapestry takes a completely different tack: injection directly into
@@ -130,6 +130,6 @@ Defining New Injection Logic
   Annonymous injection is controlled by the 
   {{{../../apidocs/org/apache/tapestry5/services/InjectionProvider.html}InjectionProvider}}
   service. The configuration for this service is a 
-  {{{http://tapestry.apache.org/tapestry5/tapestry-ioc/command.html}chain of command}} for handling component injections.
+  {{{../../tapestry-ioc/command.html}chain of command}} for handling component injections.
 
   

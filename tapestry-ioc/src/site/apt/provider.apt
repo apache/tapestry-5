@@ -57,9 +57,9 @@ Service Provider
   
 Alias Object Provider
 
-  The {{{http://tapestry.apache.org/tapestry5/tapestry-core/}tapestry-core}} module
+  The {{{../tapestry-core/}tapestry-core}} module
   defines the 
-  {{{http://tapestry.apache.org/tapestry5/tapestry-core/guide/alias.html}Alias object provider}},
+  {{{../tapestry-core/guide/alias.html}Alias object provider}},
    which is used as a way to override services or
   disambiguate services (when multiple services implement the same interface).  
     
