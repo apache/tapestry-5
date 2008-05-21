@@ -31,29 +31,28 @@
     </test>
     <test name="Public APIs">
         <packages>
-            <package name="org.apache.tapestry"/>
+            <package name="org.apache.tapestry5"/>
             <package name="org.apache.tapestry5.dom"/>
             <package name="org.apache.tapestry5.json"/>
+            <package name="org.apache.tapestry5.runtime"/>
             <package name="org.apache.tapestry5.services"/>
             <package name="org.apache.tapestry5.util"/>
-            <package name="org.apache.tapestry5.runtime"/>
             <package name="org.apache.tapestry5.validator"/>
         </packages>
     </test>
     <test name="Internal APIs">
         <packages>
-            <package name="org.apache.internal"/>
             <package name="org.apache.tapestry5.internal"/>
             <package name="org.apache.tapestry5.internal.beaneditor"/>
+            <package name="org.apache.tapestry5.internal.bindings"/>
             <package name="org.apache.tapestry5.internal.grid"/>
+            <package name="org.apache.tapestry5.internal.model"/>
             <package name="org.apache.tapestry5.internal.services"/>
             <package name="org.apache.tapestry5.internal.structure"/>
-            <package name="org.apache.tapestry5.internal.util"/>
-            <package name="org.apache.tapestry5.internal.bindings"/>
-            <package name="org.apache.tapestry5.internal.model"/>
             <package name="org.apache.tapestry5.internal.test"/>
             <package name="org.apache.tapestry5.internal.transform"/>
             <package name="org.apache.tapestry5.internal.translator"/>
+            <package name="org.apache.tapestry5.internal.util"/>
         </packages>
     </test>
 </suite>
