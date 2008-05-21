@@ -52,7 +52,7 @@ Relative Assets
   
 Symbols For Assets
 
-  {{{http://tapestry.apache.org/tapestry5/tapestry-ioc/symbols.html}Symbols}} inside the annotation value are
+  {{{../../tapestry-ioc/symbols.html}Symbols}} inside the annotation value are
   expanded. This allows you to define a symbol and reference it as part of the path.  For example, you could contribute
   a symbol named "skin.root" as "context:/skins/basic" and then reference an asset from within it:
   

@@ -14,7 +14,7 @@ Deployment Notes: Tomcat
   classes and resource files in
   WEB-INF/classes, they are instead placed inside an additional JAR inside WEB-INF/lib.  This keeps Tapestry happy at runtime.
 
-  The {{{http://tapestry.apache.org/tapestry5/tapestry-simple}tapestry-simple archetype}} configures your project's Maven pom.xml file to make use of this
+  The {{{quickstart/}quickstart archetype}} configures your project's Maven pom.xml file to make use of this
   option.
      
   Tapestry 5 has been tested with Tomcat 5.5.20.
