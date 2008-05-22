@@ -19,11 +19,12 @@ import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.corelib.data.InsertPosition;
+import org.apache.tapestry5.corelib.internal.ComponentActionSink;
 import org.apache.tapestry5.corelib.internal.FormSupportImpl;
+import org.apache.tapestry5.corelib.internal.HiddenFieldPositioner;
 import org.apache.tapestry5.internal.services.ClientBehaviorSupport;
 import org.apache.tapestry5.internal.services.ComponentResultProcessorWrapper;
 import org.apache.tapestry5.internal.services.PageRenderQueue;
-import org.apache.tapestry5.internal.util.Base64ObjectOutputStream;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.internal.util.IdAllocator;
 import org.apache.tapestry5.runtime.RenderCommand;
@@ -139,6 +140,15 @@ public class FormInjector implements ClientElement
     }
 
     /**
+     * Used during Ajax partial rendering to identify the hidden field that will hold the form data (component actions,
+     * used when processing the form submission) for the injection.
+     */
+    private HiddenFieldPositioner hiddenFieldPositioner;
+
+    @Inject
+    private HiddenFieldLocationRules rules;
+
+    /**
      * Invoked via an Ajax request.  Triggers an action event and captures the return value. The return value from the
      * event notification is what will ultimately render (typically, its a Block).  However, we do a <em>lot</em> of
      * tricks to provide the desired FormSupport around the what renders.
@@ -158,41 +168,33 @@ public class FormInjector implements ClientElement
 
         final String formId = request.getParameter(FORMID_PARAMETER);
 
-        final Base64ObjectOutputStream actions = new Base64ObjectOutputStream();
+        final ComponentActionSink actionSink = new ComponentActionSink();
 
         final RenderCommand cleanup = new RenderCommand()
         {
             public void render(MarkupWriter writer, RenderQueue queue)
             {
-                try
-                {
-                    actions.close();
-                }
-                catch (IOException ex)
-                {
-                    throw new RuntimeException(ex);
-                }
-
                 environment.pop(ValidationTracker.class);
 
                 FormSupportImpl formSupport = (FormSupportImpl) environment.pop(FormSupport.class);
 
                 formSupport.executeDeferred();
 
-                writer.element("input",
+                hiddenFieldPositioner.getElement().attributes(
+                        "type", "hidden",
 
-                               "type", "hidden",
+                        "name", Form.FORM_DATA,
 
-                               "name", Form.FORM_DATA,
-
-                               "value", actions.toBase64());
+                        "value", actionSink.toBase64());
             }
         };
 
         final RenderCommand setup = new RenderCommand()
         {
-            public void render(MarkupWriter writer, RenderQueue queue)
+            public void render(final MarkupWriter writer, RenderQueue queue)
             {
+                hiddenFieldPositioner = new HiddenFieldPositioner(writer, rules);
+
                 // Kind of ugly, but the only way to ensure we don't have name collisions on the
                 // client side is to force a unique id into each name (as well as each id, but that's
                 // RenderSupport's job).  It would be nice if we could agree on the uid, but
@@ -202,11 +204,10 @@ public class FormInjector implements ClientElement
 
                 IdAllocator idAllocator = new IdAllocator(":" + uid);
 
-                FormSupportImpl formSupport = new FormSupportImpl(formId, actions, clientBehaviorSupport, true,
+                FormSupportImpl formSupport = new FormSupportImpl(formId, actionSink, clientBehaviorSupport, true,
                                                                   idAllocator);
+
                 environment.push(FormSupport.class, formSupport);
-
-
                 environment.push(ValidationTracker.class, new ValidationTrackerImpl());
 
                 // Queue up the root render command to execute first, and the cleanup

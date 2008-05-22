@@ -20,11 +20,8 @@ import org.apache.tapestry5.internal.services.ClientBehaviorSupport;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.ioc.internal.util.IdAllocator;
-import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.services.FormSupport;
 
-import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.util.List;
 
 /**
@@ -43,7 +40,7 @@ public class FormSupportImpl implements FormSupport
 
     private final String clientId;
 
-    private final ObjectOutputStream actions;
+    private final ComponentActionSink actionSink;
 
     private List<Runnable> commands;
 
@@ -60,20 +57,20 @@ public class FormSupportImpl implements FormSupport
     /**
      * Constructor used when rendering.
      */
-    public FormSupportImpl(String clientId, ObjectOutputStream actions, ClientBehaviorSupport clientBehaviorSupport,
+    public FormSupportImpl(String clientId, ComponentActionSink actionSink, ClientBehaviorSupport clientBehaviorSupport,
                            boolean clientValidationEnabled)
     {
-        this(clientId, actions, clientBehaviorSupport, clientValidationEnabled, new IdAllocator());
+        this(clientId, actionSink, clientBehaviorSupport, clientValidationEnabled, new IdAllocator());
     }
 
     /**
      * Full constructor.
      */
-    public FormSupportImpl(String clientId, ObjectOutputStream actions, ClientBehaviorSupport clientBehaviorSupport,
+    public FormSupportImpl(String clientId, ComponentActionSink actionSink, ClientBehaviorSupport clientBehaviorSupport,
                            boolean clientValidationEnabled, IdAllocator idAllocator)
     {
         this.clientId = clientId;
-        this.actions = actions;
+        this.actionSink = actionSink;
         this.clientBehaviorSupport = clientBehaviorSupport;
         this.clientValidationEnabled = clientValidationEnabled;
         this.idAllocator = idAllocator;
@@ -91,27 +88,12 @@ public class FormSupportImpl implements FormSupport
 
     public <T> void store(T component, ComponentAction<T> action)
     {
-        Component castComponent = Defense.cast(component, Component.class, "component");
-        Defense.notNull(action, "action");
-
-        String completeId = castComponent.getComponentResources().getCompleteId();
-
-        try
-        {
-            // Writing the complete id is not very efficient, but the GZip filter
-            // should help out there.
-            actions.writeUTF(completeId);
-            actions.writeObject(action);
-        }
-        catch (IOException ex)
-        {
-            throw new RuntimeException(InternalMessages.componentActionNotSerializable(completeId, ex), ex);
-        }
+        actionSink.store(component, action);
     }
 
     public <T> void storeAndExecute(T component, ComponentAction<T> action)
     {
-        store(component, action);
+        actionSink.store(component, action);
 
         action.execute(component);
     }

@@ -19,6 +19,7 @@ import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.Mixin;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.Persist;
+import org.apache.tapestry5.corelib.internal.ComponentActionSink;
 import org.apache.tapestry5.corelib.internal.FormSupportImpl;
 import org.apache.tapestry5.corelib.mixins.RenderInformals;
 import org.apache.tapestry5.dom.Element;
@@ -27,7 +28,6 @@ import org.apache.tapestry5.internal.services.ComponentInvocationMap;
 import org.apache.tapestry5.internal.services.ComponentResultProcessorWrapper;
 import org.apache.tapestry5.internal.services.HeartbeatImpl;
 import org.apache.tapestry5.internal.util.Base64ObjectInputStream;
-import org.apache.tapestry5.internal.util.Base64ObjectOutputStream;
 import org.apache.tapestry5.ioc.Location;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
@@ -166,7 +166,7 @@ public class Form implements ClientElement, FormValidationControl
     // Collects a stream of component actions. Each action goes in as a UTF string (the component
     // component id), followed by a ComponentAction
 
-    private Base64ObjectOutputStream actions;
+    private ComponentActionSink actionSink;
 
     @SuppressWarnings("unused")
     @Mixin
@@ -198,18 +198,11 @@ public class Form implements ClientElement, FormValidationControl
     void beginRender(MarkupWriter writer)
     {
 
-        try
-        {
-            actions = new Base64ObjectOutputStream();
-        }
-        catch (IOException ex)
-        {
-            throw new RuntimeException(ex);
-        }
+        actionSink = new ComponentActionSink();
 
         name = renderSupport.allocateClientId(resources);
 
-        formSupport = new FormSupportImpl(name, actions, clientBehaviorSupport, clientValidation);
+        formSupport = new FormSupportImpl(name, actionSink, clientBehaviorSupport, clientValidation);
 
         if (zone != null) clientBehaviorSupport.linkZone(name, zone);
 
@@ -267,24 +260,13 @@ public class Form implements ClientElement, FormValidationControl
 
         writer.end(); // form
 
-        // Now, inject into the div the remaining hidden field (the list of actions).
-
-        try
-        {
-            actions.close();
-        }
-        catch (IOException ex)
-        {
-            throw new RuntimeException(ex);
-        }
-
         div.element("input",
 
                     "type", "hidden",
 
                     "name", FORM_DATA,
 
-                    "value", actions.toBase64());
+                    "value", actionSink.toBase64());
     }
 
     void cleanupRender()
