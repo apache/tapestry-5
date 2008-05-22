@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
 package org.apache.tapestry5.beaneditor;
 
 import java.lang.annotation.Documented;
-import static java.lang.annotation.ElementType.METHOD;
+import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Target;
@@ -25,8 +25,10 @@ import java.lang.annotation.Target;
  * value is a comma separated list of <em>validation constraints</em>, each one identifying a validator type (such as
  * "required", "minlength") and optionally, a constraint value. Most validators need a constraint value, which is
  * separated from the type by an equals size (i.e., "maxlength=30").
+ * <p/>
+ * May be placed on an getter or setter method, or on the matching field.
  */
-@Target(METHOD)
+@Target({ ElementType.FIELD, ElementType.METHOD })
 @Retention(RUNTIME)
 @Documented
 public @interface Validate

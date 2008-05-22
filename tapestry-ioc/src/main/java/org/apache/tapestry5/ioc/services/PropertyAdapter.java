@@ -19,8 +19,9 @@ import org.apache.tapestry5.ioc.AnnotationProvider;
 import java.lang.reflect.Method;
 
 /**
- * Provides access to a single property within a class. Acts as an {@link AnnotationProvider}; when searching for
- * annotations, the read method (if present) is checked first, followed by the write method.
+ * Provides access to a single property within a class. Acts as an {@link org.apache.tapestry5.ioc.AnnotationProvider};
+ * when searching for annotations, the read method (if present) is checked first, followed by the write method, followed
+ * by the underlying field (when the property name matches the field name).
  *
  * @see org.apache.tapestry5.ioc.services.ClassPropertyAdapter
  */

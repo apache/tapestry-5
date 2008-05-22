@@ -17,8 +17,10 @@ package org.apache.tapestry5.internal.services;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.beaneditor.BeanModel;
 import org.apache.tapestry5.beaneditor.NonVisual;
-import org.apache.tapestry5.internal.TapestryInternalUtils;
+import org.apache.tapestry5.beaneditor.ReorderProperties;
 import org.apache.tapestry5.internal.beaneditor.BeanModelImpl;
+import org.apache.tapestry5.internal.beaneditor.BeanModelUtils;
+import org.apache.tapestry5.ioc.Location;
 import org.apache.tapestry5.ioc.LoggerSource;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.ObjectLocator;
@@ -31,8 +33,9 @@ import org.apache.tapestry5.services.ComponentLayer;
 import org.apache.tapestry5.services.DataTypeAnalyzer;
 import org.apache.tapestry5.services.PropertyConduitSource;
 
+import java.lang.reflect.Method;
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 public class BeanModelSourceImpl implements BeanModelSource
 {
@@ -49,6 +52,81 @@ public class BeanModelSourceImpl implements BeanModelSource
     private final DataTypeAnalyzer dataTypeAnalyzer;
 
     private final ObjectLocator locator;
+
+
+    private static class PropertyOrder implements Comparable<PropertyOrder>
+    {
+        final String propertyName;
+
+        final int classDepth;
+
+        final int sortKey;
+
+        public PropertyOrder(final String propertyName, int classDepth, int sortKey)
+        {
+            this.propertyName = propertyName;
+            this.classDepth = classDepth;
+            this.sortKey = sortKey;
+        }
+
+        public int compareTo(PropertyOrder o)
+        {
+            int result = classDepth - o.classDepth;
+
+            if (result == 0) result = sortKey - o.sortKey;
+
+            if (result == 0) result = propertyName.compareTo(o.propertyName);
+
+            return result;
+        }
+    }
+
+    /**
+     * @param classAdapter  defines the bean that contains the properties
+     * @param propertyNames the initial set of property names, which will be rebuilt in the correct order
+     */
+    private void orderProperties(ClassPropertyAdapter classAdapter, List<String> propertyNames)
+    {
+        List<PropertyOrder> properties = CollectionFactory.newList();
+
+        for (String name : propertyNames)
+        {
+            PropertyAdapter pa = classAdapter.getPropertyAdapter(name);
+            List<String> propertyConstraints = CollectionFactory.newList();
+
+            Method readMethod = pa.getReadMethod();
+
+            Location location = classFactory.getMethodLocation(readMethod);
+
+            properties.add(new PropertyOrder(name, computeDepth(readMethod), location.getLine()));
+        }
+
+        Collections.sort(properties);
+
+        propertyNames.clear();
+
+        for (PropertyOrder po : properties)
+        {
+            propertyNames.add(po.propertyName);
+        }
+
+    }
+
+    private static int computeDepth(Method method)
+    {
+        int depth = 0;
+        Class c = method.getDeclaringClass();
+
+        // When the method originates in an interface, the parent may be null, not Object.
+
+        while (c != null && c != Object.class)
+        {
+            depth++;
+            c = c.getSuperclass();
+        }
+
+        return depth;
+    }
 
     public BeanModelSourceImpl(LoggerSource loggerSource, TypeCoercer typeCoercer, PropertyAccess propertyAccess,
                                PropertyConduitSource propertyConduitSource, @ComponentLayer ClassFactory classFactory,
@@ -72,12 +150,8 @@ public class BeanModelSourceImpl implements BeanModelSource
 
         ClassPropertyAdapter adapter = propertyAccess.getAdapter(beanClass);
 
-        final BeanModel<T> model = new BeanModelImpl<T>(beanClass, propertyConduitSource, typeCoercer, messages,
-                                                        locator);
-
-        List<String> propertyNames = CollectionFactory.newList();
-
-        Map<String, Runnable> worksheet = CollectionFactory.newMap();
+        BeanModel<T> model = new BeanModelImpl<T>(beanClass, propertyConduitSource, typeCoercer, messages,
+                                                  locator);
 
         for (final String propertyName : adapter.getPropertyNames())
         {
@@ -95,37 +169,27 @@ public class BeanModelSourceImpl implements BeanModelSource
 
             if (dataType == null) continue;
 
-            propertyNames.add(propertyName);
-
-            // We need to defer execution of this; we want to add them in proper order, not
-            // alphabetical order.
-
-            Runnable worker = new Runnable()
-            {
-                public void run()
-                {
-                    model.add(propertyName).dataType(dataType);
-                }
-            };
-
-            worksheet.put(propertyName, worker);
+            model.add(propertyName).dataType(dataType);
         }
 
-        // Determine the correct order to add the properties.
+        // First, order the properties based on the location of the getter method
+        // within the class.
 
-        List<String> orderedNames = TapestryInternalUtils.orderProperties(loggerSource
-                .getLogger(beanClass), adapter, classFactory, propertyNames);
+        List<String> propertyNames = model.getPropertyNames();
 
-        for (String propertyName : orderedNames)
+        orderProperties(adapter, propertyNames);
+
+        model.reorder(propertyNames.toArray(new String[propertyNames.size()]));
+
+        // Next, check for an annotation with specific ordering information.
+
+        ReorderProperties reorderAnnotation = beanClass.getAnnotation(ReorderProperties.class);
+
+        if (reorderAnnotation != null)
         {
-            Runnable r = worksheet.get(propertyName);
-
-            // This actually adds the property to the model, but we're doing it
-            // in orderedNames order, not propertyNames order (which is alphabetical).
-            // The default ordering comes from method ordering within the class.
-
-            r.run();
+            BeanModelUtils.reorder(model, reorderAnnotation.value());
         }
+
 
         return model;
     }

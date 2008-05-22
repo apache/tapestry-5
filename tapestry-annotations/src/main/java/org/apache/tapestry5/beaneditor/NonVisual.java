@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,16 +15,16 @@
 package org.apache.tapestry5.beaneditor;
 
 import java.lang.annotation.Documented;
-import static java.lang.annotation.ElementType.METHOD;
+import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Target;
 
 /**
  * Marker annotation for properties which are non-visual, and so should not appear (by default) inside a {@link
- * BeanModel}. The annotation may be placed on either the getter or the setter method.
+ * BeanModel}. The annotation may be placed on either the getter or the setter method or on the field.
  */
-@Target(METHOD)
+@Target({ ElementType.FIELD, ElementType.METHOD })
 @Retention(RUNTIME)
 @Documented
 public @interface NonVisual

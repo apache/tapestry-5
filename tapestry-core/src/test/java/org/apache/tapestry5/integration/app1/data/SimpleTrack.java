@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,14 +14,13 @@
 
 package org.apache.tapestry5.integration.app1.data;
 
-import org.apache.tapestry5.beaneditor.OrderBefore;
+import org.apache.tapestry5.beaneditor.ReorderProperties;
 
+@ReorderProperties("title,album")
 public interface SimpleTrack
 {
-    @OrderBefore("album")
     String getTitle();
 
-    @OrderBefore("rating")
     String getAlbum();
 
     int getRating();

@@ -19,6 +19,7 @@ import org.apache.tapestry5.PropertyConduit;
 import org.apache.tapestry5.beaneditor.BeanModel;
 import org.apache.tapestry5.beaneditor.PropertyModel;
 import org.apache.tapestry5.beaneditor.RelativePosition;
+import org.apache.tapestry5.internal.PropertyOrderBean;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.internal.transform.pages.ReadOnlyBean;
 import org.apache.tapestry5.ioc.Messages;
@@ -677,6 +678,24 @@ public class BeanModelSourceImplTest extends InternalBaseTestCase
         model.reorder("lastname", "AGE");
 
         assertEquals(model.getPropertyNames(), Arrays.asList("lastName", "age", "firstName"));
+
+        verify();
+    }
+
+    @Test
+    public void reoder_from_annotation()
+    {
+        ComponentResources resources = mockComponentResources();
+        Messages messages = mockMessages();
+
+        train_getMessages(resources, messages);
+        stub_contains(messages, false);
+
+        replay();
+
+        BeanModel model = source.create(PropertyOrderBean.class, true, resources);
+
+        assertEquals(model.getPropertyNames(), Arrays.asList("third", "first", "second"));
 
         verify();
     }
