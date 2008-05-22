@@ -14,6 +14,8 @@
 
 package org.apache.tapestry5.ioc.internal.services;
 
+import org.apache.tapestry5.beaneditor.DataType;
+import org.apache.tapestry5.beaneditor.Validate;
 import org.apache.tapestry5.ioc.Registry;
 import org.apache.tapestry5.ioc.annotations.Scope;
 import org.apache.tapestry5.ioc.internal.IOCInternalTestCase;
@@ -39,8 +41,11 @@ public class PropertyAccessImplTest extends IOCInternalTestCase
 
     public static class Bean
     {
+        @DataType("fred")
+        @Validate("field-value-overridden")
         private int value;
 
+        @Validate("getter-value-overrides")
         public int getValue()
         {
             return value;
@@ -450,6 +455,25 @@ public class PropertyAccessImplTest extends IOCInternalTestCase
         PropertyAdapter pa = access.getAdapter(AnnotatedBean.class).getPropertyAdapter("readOnly");
 
         assertNull(pa.getAnnotation(Scope.class));
+    }
+
+    @Test
+    public void get_annotation_will_read_field()
+    {
+        PropertyAdapter pa = access.getAdapter(Bean.class).getPropertyAdapter("value");
+
+        DataType dt = pa.getAnnotation(DataType.class);
+
+        assertNotNull(dt);
+        assertEquals(dt.value(), "fred");
+    }
+
+    @Test
+    public void field_annotation_overridden_by_getter_annotation()
+    {
+        PropertyAdapter pa = access.getAdapter(Bean.class).getPropertyAdapter("value");
+
+        assertEquals(pa.getAnnotation(Validate.class).value(), "getter-value-overrides");
     }
 
     @Test

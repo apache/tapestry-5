@@ -14,6 +14,13 @@ Upgrade Notes
 
 Release 5.0.12
 
+* ReorderProperties annotation
+
+  A new annotation,
+  {{{../apidocs/org/apache/tapestry5/beaneditor/ReorderProperties.html}ReorderProperties}}
+  (which is placed on a type) has replaced the OrderAfter and OrderBefore annotations
+  (which were placed on accessor methods).
+
 * {{{https://issues.apache.org/jira/browse/TAPESTRY-2421}TAPESTRY-2421}}
 
   To enable deployment compatibility between Tapestry 4 and Tapestry 5, a

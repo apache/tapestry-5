@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,23 +14,20 @@
 
 package org.apache.tapestry5.beaneditor;
 
-import java.lang.annotation.Documented;
-import static java.lang.annotation.ElementType.METHOD;
-import java.lang.annotation.Retention;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
+
 
 /**
- * Placed on either a property getter or a property setter method to control the order in which the properties are
- * presented to the user.
+ * An annotation that may be placed on a JavaBean to re-order the properties.
  */
-@Target(METHOD)
-@Retention(RUNTIME)
+@Target(ElementType.TYPE)
+@Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface OrderAfter
+public @interface ReorderProperties
 {
     /**
-     * The name of the other property. This property will be ordered before the other property.
+     * A comma-separated list of property names.  Properties will be re-ordered as specified, with any unmentioned
+     * property names ordered to the end of the list.
      */
     String value();
 }

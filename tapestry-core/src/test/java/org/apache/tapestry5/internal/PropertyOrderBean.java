@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,8 +14,9 @@
 
 package org.apache.tapestry5.internal;
 
-import org.apache.tapestry5.beaneditor.OrderBefore;
+import org.apache.tapestry5.beaneditor.ReorderProperties;
 
+@ReorderProperties("third")
 public class PropertyOrderBean
 {
     private String first;
@@ -34,7 +35,6 @@ public class PropertyOrderBean
         return second;
     }
 
-    @OrderBefore("first")
     public String getThird()
     {
         return third;

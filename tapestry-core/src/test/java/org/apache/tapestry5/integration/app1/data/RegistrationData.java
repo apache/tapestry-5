@@ -14,8 +14,12 @@
 
 package org.apache.tapestry5.integration.app1.data;
 
-import org.apache.tapestry5.beaneditor.*;
+import org.apache.tapestry5.beaneditor.DataType;
+import org.apache.tapestry5.beaneditor.ReorderProperties;
+import org.apache.tapestry5.beaneditor.Validate;
+import org.apache.tapestry5.beaneditor.Width;
 
+@ReorderProperties("firstname,lastname,birthyear,sex")
 public class RegistrationData
 {
     private String lastName;
@@ -32,7 +36,6 @@ public class RegistrationData
 
     private String notes;
 
-    @OrderAfter("lastName")
     @Validate("min=1900,max=2007")
     @Width(4)
     public int getBirthYear()
@@ -40,13 +43,11 @@ public class RegistrationData
         return birthYear;
     }
 
-    @OrderAfter("lastname,birthyear")
     public Sex getSex()
     {
         return sex;
     }
 
-    @OrderBefore("lastname")
     public String getFirstName()
     {
         return firstName;

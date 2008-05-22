@@ -16,11 +16,10 @@ package org.apache.tapestry5.services;
 
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.beaneditor.BeanModel;
-import org.apache.tapestry5.beaneditor.OrderBefore;
 
 /**
- * Used by a component to create a default {@link BeanModel} for a particular bean class. Also provides support to the
- * model by generating validation information for individual fields.
+ * Used by a component to create a default {@link org.apache.tapestry5.beaneditor.BeanModel} for a particular bean
+ * class. Also provides support to the model by generating validation information for individual fields.
  * <p/>
  * BeanModels are the basis for the {@link org.apache.tapestry5.corelib.components.BeanEditor} and {@link
  * org.apache.tapestry5.corelib.components.Grid} comopnents.
@@ -31,9 +30,10 @@ public interface BeanModelSource
 {
     /**
      * Creates a new model used for editing the indicated bean class. The model will represent all read/write properties
-     * of the bean. The order of the properties is defined by the {@link OrderBefore} annotation on the getter or setter
-     * methods. The labels for the properties are derived from the property names, but if the component's message
-     * catalog has keys of the form <code>propertyName-label</code>, then those will be used instead.
+     * of the bean. The order of properties is determined from the order of the getter methods in the code, and can be
+     * overridden with the {@link org.apache.tapestry5.beaneditor.ReorderProperties} annotation. The labels for the
+     * properties are derived from the property names, but if the component's message catalog has keys of the form
+     * <code>propertyName-label</code>, then those will be used instead.
      * <p/>
      * Models are <em>mutable</em>, so they are not cached, a fresh instance is created each time.
      *

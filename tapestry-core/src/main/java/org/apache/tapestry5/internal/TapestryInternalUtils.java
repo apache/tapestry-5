@@ -18,24 +18,14 @@ import org.apache.commons.codec.EncoderException;
 import org.apache.commons.codec.net.URLCodec;
 import org.apache.tapestry5.OptionModel;
 import org.apache.tapestry5.SelectModel;
-import org.apache.tapestry5.beaneditor.OrderAfter;
-import org.apache.tapestry5.beaneditor.OrderBefore;
-import org.apache.tapestry5.ioc.Location;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newList;
 import org.apache.tapestry5.ioc.internal.util.Defense;
 import static org.apache.tapestry5.ioc.internal.util.Defense.notNull;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.ioc.internal.util.Orderer;
-import org.apache.tapestry5.ioc.services.ClassFactory;
-import org.apache.tapestry5.ioc.services.ClassPropertyAdapter;
-import org.apache.tapestry5.ioc.services.PropertyAdapter;
-import org.slf4j.Logger;
 
-import java.lang.reflect.Method;
 import java.util.BitSet;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -342,124 +332,6 @@ public class TapestryInternalUtils
         return InternalUtils.join(classes, " ");
     }
 
-    private static class PropertyOrder implements Comparable<PropertyOrder>
-    {
-        final String propertyName;
-
-        final int classDepth;
-
-        final int sortKey;
-
-        public PropertyOrder(final String propertyName, int classDepth, int sortKey)
-        {
-            this.propertyName = propertyName;
-            this.classDepth = classDepth;
-            this.sortKey = sortKey;
-        }
-
-        public int compareTo(PropertyOrder o)
-        {
-            int result = classDepth - o.classDepth;
-
-            if (result == 0) result = sortKey - o.sortKey;
-
-            if (result == 0) result = propertyName.compareTo(o.propertyName);
-
-            return result;
-        }
-    }
-
-    /**
-     * Sorts the property names into presentation order. Filters out any properties that have an explicit {@link
-     * OrderBefore}, leaving the remainder. Estimates each propertie's position based on the relative position of the
-     * property's getter. The code assumes that all methods are readable (have a getter method).
-     *
-     * @param classAdapter  defines the bean that contains the properties
-     * @param classFactory  used to access method line number information
-     * @param propertyNames the initial set of property names
-     * @return propertyNames filtered and sorted
-     */
-    public static List<String> orderProperties(Logger logger, ClassPropertyAdapter classAdapter,
-                                               ClassFactory classFactory, List<String> propertyNames)
-    {
-
-        // Property name to a list of constraints.
-        Map<String, List<String>> constraints = CollectionFactory.newMap();
-
-        List<PropertyOrder> properties = newList();
-
-        for (String name : propertyNames)
-        {
-
-            PropertyAdapter pa = classAdapter.getPropertyAdapter(name);
-            List<String> propertyConstraints = CollectionFactory.newList();
-
-            OrderBefore beforeAnnotation = pa.getAnnotation(OrderBefore.class);
-
-            if (beforeAnnotation != null) propertyConstraints.add("before:" + beforeAnnotation.value());
-
-            OrderAfter afterAnnotation = pa.getAnnotation(OrderAfter.class);
-
-            if (afterAnnotation != null) propertyConstraints.add("after:" + afterAnnotation.value());
-
-            if (!propertyConstraints.isEmpty()) constraints.put(name, propertyConstraints);
-
-            Method readMethod = pa.getReadMethod();
-
-            Location location = classFactory.getMethodLocation(readMethod);
-
-            properties.add(new PropertyOrder(name, computeDepth(readMethod), location.getLine()));
-        }
-
-        Collections.sort(properties);
-
-        Orderer<String> orderer = new Orderer<String>(logger);
-        String prev = null;
-
-        for (PropertyOrder po : properties)
-        {
-            String name = po.propertyName;
-
-            List<String> propertyConstraints = constraints.get(name);
-
-            if (propertyConstraints != null)
-            {
-
-                String[] asArray = propertyConstraints.toArray(new String[propertyConstraints
-                        .size()]);
-
-                orderer.add(name, name, asArray);
-
-                prev = name;
-
-                continue;
-            }
-
-            if (prev == null) orderer.add(name, name);
-            else orderer.add(name, name, "after:" + prev);
-
-            prev = name;
-        }
-
-        return orderer.getOrdered();
-
-    }
-
-    private static int computeDepth(Method method)
-    {
-        int depth = 0;
-        Class c = method.getDeclaringClass();
-
-        // When the method originates in an interface, the parent may be null, not Object.
-
-        while (c != null && c != Object.class)
-        {
-            depth++;
-            c = c.getSuperclass();
-        }
-
-        return depth;
-    }
 
     /**
      * Converts an enum to a label string, allowing for overrides from a message catalog.

@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,9 +14,9 @@
 
 package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry5.beaneditor.OrderAfter;
-import org.apache.tapestry5.beaneditor.OrderBefore;
+import org.apache.tapestry5.beaneditor.ReorderProperties;
 
+@ReorderProperties("larry,moe,shemp,curly")
 public class StoogeBean
 {
     private int moe, larry, curly, shemp;
@@ -26,13 +26,11 @@ public class StoogeBean
         return moe;
     }
 
-    @OrderAfter("shemp")
     public int getCurly()
     {
         return curly;
     }
 
-    @OrderBefore("moe")
     public int getLarry()
     {
         return larry;

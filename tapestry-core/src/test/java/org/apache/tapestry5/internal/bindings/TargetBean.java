@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,9 +15,10 @@
 package org.apache.tapestry5.internal.bindings;
 
 import org.apache.tapestry5.annotations.BeforeRenderBody;
-import org.apache.tapestry5.beaneditor.OrderAfter;
-import org.apache.tapestry5.beaneditor.OrderBefore;
+import org.apache.tapestry5.beaneditor.ReorderProperties;
+import org.apache.tapestry5.beaneditor.Validate;
 
+@ReorderProperties("readonly,foobar,writeonly,objectvalue")
 public class TargetBean extends DefaultComponent
 {
     private String objectValue;
@@ -54,25 +55,25 @@ public class TargetBean extends DefaultComponent
         this.intValue = intValue;
     }
 
-    @OrderAfter("readOnly")
+    @Validate("getObjectValue")
     public String getObjectValue()
     {
         return objectValue;
     }
 
-    @OrderAfter("writeOnly")
+    @Validate("setObjectValue")
     public void setObjectValue(String objectValue)
     {
         this.objectValue = objectValue;
     }
 
-    @OrderAfter("foobar")
+    @Validate("writeonly")
     public void setWriteOnly(String value)
     {
         writeOnly = value;
     }
 
-    @OrderBefore("writeOnly")
+    @Validate("readonly")
     public String getReadOnly()
     {
         return "ReadOnly";

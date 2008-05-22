@@ -21,10 +21,10 @@ import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.services.ClassFactory;
-import org.apache.tapestry5.ioc.services.ClassPropertyAdapter;
 import org.apache.tapestry5.ioc.services.PropertyAccess;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.runtime.ComponentResourcesAware;
+import org.apache.tapestry5.services.BeanModelSource;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
@@ -39,11 +39,14 @@ public class TapestryInternalUtilsTest extends InternalBaseTestCase
 
     private PropertyAccess access;
 
+    private BeanModelSource beanModelSource;
+
     @BeforeClass
     public void setup()
     {
         classFactory = getService("ClassFactory", ClassFactory.class);
         access = getService("PropertyAccess", PropertyAccess.class);
+        beanModelSource = getService(BeanModelSource.class);
     }
 
     @AfterClass
@@ -51,6 +54,7 @@ public class TapestryInternalUtilsTest extends InternalBaseTestCase
     {
         access = null;
         classFactory = null;
+        beanModelSource = null;
     }
 
 
@@ -292,52 +296,6 @@ public class TapestryInternalUtilsTest extends InternalBaseTestCase
         assertEquals(TapestryInternalUtils.defaultLabel("foobarbazbiff", messages, "foo.bar().baz.biff()"), "Biff");
 
         verify();
-    }
-
-    @Test
-    public void property_order_basic()
-    {
-        ClassPropertyAdapter adapter = access.getAdapter(DataBean.class);
-
-        List<String> names = adapter.getPropertyNames();
-
-        names.remove("class");
-
-        List<String> sorted = TapestryInternalUtils.orderProperties(null, adapter, classFactory, names);
-
-        assertEquals(sorted, Arrays.asList("firstName", "lastName", "age"));
-    }
-
-    @Test
-    public void property_order_on_subclass()
-    {
-        ClassPropertyAdapter adapter = access.getAdapter(DataBeanSubclass.class);
-
-        List<String> names = adapter.getPropertyNames();
-
-        names.remove("class");
-
-        List<String> sorted = TapestryInternalUtils.orderProperties(null, adapter, classFactory, names);
-
-        // Subclass properties listed after superclass properties, as desired.
-
-        assertEquals(sorted, Arrays.asList("firstName", "lastName", "age", "street", "city", "state", "zip"));
-    }
-
-    @Test
-    public void properties_with_order_annotation_filtered()
-    {
-        ClassPropertyAdapter adapter = access.getAdapter(PropertyOrderBean.class);
-
-        List<String> names = adapter.getPropertyNames();
-
-        names.remove("class");
-
-        List<String> sorted = TapestryInternalUtils.orderProperties(null, adapter, classFactory, names);
-
-        // Property third has an explicit @OrderBefore
-
-        assertEquals(sorted, Arrays.asList("third", "first", "second"));
     }
 
     @Test
