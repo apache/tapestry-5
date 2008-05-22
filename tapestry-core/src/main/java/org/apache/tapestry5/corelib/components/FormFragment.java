@@ -18,18 +18,14 @@ import org.apache.tapestry5.*;
 import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.SupportsInformalParameters;
+import org.apache.tapestry5.corelib.internal.ComponentActionSink;
 import org.apache.tapestry5.corelib.internal.FormSupportAdapter;
+import org.apache.tapestry5.corelib.internal.HiddenFieldPositioner;
 import org.apache.tapestry5.corelib.internal.WrappedComponentAction;
 import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.internal.services.ClientBehaviorSupport;
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.internal.util.Defense;
-import org.apache.tapestry5.runtime.Component;
-import org.apache.tapestry5.services.ComponentSource;
-import org.apache.tapestry5.services.Environment;
-import org.apache.tapestry5.services.FormSupport;
-import org.apache.tapestry5.services.Request;
+import org.apache.tapestry5.services.*;
 
 import java.util.List;
 
@@ -38,6 +34,11 @@ import java.util.List;
  * automatically bypass validation when the fragment is invisible.  The trick is to also bypass server-side form
  * processing for such fields when the form is submitted; the fragment uses a hidden field to track its client-side
  * visibility and will bypass field component submission logic for the components it encloses.
+ * <p/>
+ * <p/>
+ * In addition, should the client-side element for a Form fragment be removed before the enclosing form is submitted,
+ * then none of the fields inside the fragment will be processed (this can be considered an extension of the "if not
+ * visible, don't process" option above).
  *
  * @see org.apache.tapestry5.corelib.mixins.TriggerFragment
  */
@@ -73,7 +74,6 @@ public class FormFragment implements ClientElement
     @Environmental
     private RenderSupport renderSupport;
 
-
     @Inject
     private ComponentSource componentSource;
 
@@ -85,31 +85,15 @@ public class FormFragment implements ClientElement
 
     private String clientId;
 
-    private String controlName;
-
-    private List<WrappedComponentAction> componentActions;
+    private ComponentActionSink componentActions;
 
     @Inject
     private Request request;
 
-    static class HandleSubmission implements ComponentAction<FormFragment>
-    {
-        private final String controlName;
+    @Inject
+    private HiddenFieldLocationRules rules;
 
-        private final List<WrappedComponentAction> actions;
-
-        public HandleSubmission(String controlName, List<WrappedComponentAction> actions)
-        {
-            this.controlName = controlName;
-            this.actions = actions;
-        }
-
-        public void execute(FormFragment component)
-        {
-            component.handleSubmission(controlName, actions);
-        }
-    }
-
+    private HiddenFieldPositioner hiddenFieldPositioner;
 
     private void handleSubmission(String elementName, List<WrappedComponentAction> actions)
     {
@@ -137,8 +121,9 @@ public class FormFragment implements ClientElement
 
         String id = resources.getId();
 
-        controlName = formSupport.allocateControlName(id);
         clientId = renderSupport.allocateClientId(id);
+
+        hiddenFieldPositioner = new HiddenFieldPositioner(writer, rules);
 
         Element element = writer.element("div", "id", clientId);
 
@@ -148,21 +133,9 @@ public class FormFragment implements ClientElement
             element.addClassName(CSSClassConstants.INVISIBLE);
 
 
-        writer.element("input",
-
-                       "type", "hidden",
-
-                       "name", controlName,
-
-                       "id", clientId + ":hidden",
-
-                       "value", String.valueOf(visible));
-        writer.end();
-
-
         clientBehaviorSupport.addFormFragment(clientId, show, hide);
 
-        componentActions = CollectionFactory.newList();
+        componentActions = new ComponentActionSink();
 
         // Here's the magic of environmentals ... we can create a wrapper around
         // the normal FormSupport environmental that intercepts some of the behavior.
@@ -174,15 +147,13 @@ public class FormFragment implements ClientElement
             @Override
             public <T> void store(T component, ComponentAction<T> action)
             {
-                Component asComponent = Defense.cast(component, Component.class, "component");
-
-                componentActions.add(new WrappedComponentAction(asComponent, action));
+                componentActions.store(component, action);
             }
 
             @Override
             public <T> void storeAndExecute(T component, ComponentAction<T> action)
             {
-                store(component, action);
+                componentActions.store(component, action);
 
                 action.execute(component);
             }
@@ -203,11 +174,20 @@ public class FormFragment implements ClientElement
      */
     void afterRender(MarkupWriter writer)
     {
+
+        hiddenFieldPositioner.getElement().attributes(
+                "type", "hidden",
+
+                "name", Form.FORM_DATA,
+
+                "id", clientId + ":hidden",
+
+                "value", componentActions.toBase64()
+        );
+
         writer.end(); // div
 
         environment.pop(FormSupport.class);
-
-        environment.peek(FormSupport.class).store(this, new HandleSubmission(controlName, componentActions));
     }
 
     public String getClientId()

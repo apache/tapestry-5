@@ -22,6 +22,7 @@ import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 
 import java.io.PrintWriter;
+import java.util.Collection;
 import java.util.List;
 
 public class MarkupWriterImpl implements MarkupWriter
@@ -32,7 +33,7 @@ public class MarkupWriterImpl implements MarkupWriter
 
     private Text currentText;
 
-    private final List<MarkupWriterListener> listeners = CollectionFactory.newList();
+    private List<MarkupWriterListener> listeners;
 
     public MarkupWriterImpl()
     {
@@ -200,7 +201,6 @@ public class MarkupWriterImpl implements MarkupWriter
 
         currentText = null;
 
-
         fireElementDidStart();
 
         return current;
@@ -210,25 +210,37 @@ public class MarkupWriterImpl implements MarkupWriter
     {
         Defense.notNull(listener, "listener");
 
+        if (listeners == null) listeners = CollectionFactory.newList();
+
         listeners.add(listener);
     }
 
     public void removeListener(MarkupWriterListener listener)
     {
-        listeners.remove(listener);
+        if (listeners != null)
+            listeners.remove(listener);
     }
 
     private void fireElementDidStart()
     {
-        for (MarkupWriterListener l : listeners)
+        if (isEmpty(listeners)) return;
+
+        for (MarkupWriterListener l : CollectionFactory.newList(listeners))
         {
             l.elementDidStart(current);
         }
     }
 
+    private static boolean isEmpty(Collection<?> collection)
+    {
+        return collection == null || collection.isEmpty();
+    }
+
     private void fireElementDidEnd()
     {
-        for (MarkupWriterListener l : listeners)
+        if (isEmpty(listeners)) return;
+
+        for (MarkupWriterListener l : CollectionFactory.newList(listeners))
         {
             l.elementDidEnd(current);
         }

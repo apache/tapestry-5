@@ -40,13 +40,12 @@ import org.apache.tapestry5.ioc.internal.util.IdAllocator;
 import org.apache.tapestry5.ioc.services.*;
 import org.apache.tapestry5.ioc.util.StrategyRegistry;
 import org.apache.tapestry5.ioc.util.TimeInterval;
+import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.runtime.ComponentResourcesAware;
 import org.apache.tapestry5.runtime.RenderCommand;
 import org.apache.tapestry5.util.StringToEnumCoercion;
 import org.apache.tapestry5.validator.*;
-import org.apache.tapestry5.json.JSONObject;
-import org.apache.tapestry5.services.*;
 import org.slf4j.Logger;
 
 import javax.servlet.ServletContext;
@@ -153,8 +152,6 @@ public final class TapestryModule
 
     public static void bind(ServiceBinder binder)
     {
-        // Public Services
-
         binder.bind(ClasspathAssetAliasManager.class, ClasspathAssetAliasManagerImpl.class);
         binder.bind(PersistentLocale.class, PersistentLocaleImpl.class);
         binder.bind(ApplicationStateManager.class, ApplicationStateManagerImpl.class);
@@ -187,8 +184,8 @@ public final class TapestryModule
         binder.bind(ContextValueEncoder.class, ContextValueEncoderImpl.class);
         binder.bind(BaseURLSource.class, BaseURLSourceImpl.class);
         binder.bind(BeanBlockOverrideSource.class, BeanBlockOverrideSourceImpl.class);
-
         binder.bind(AliasManager.class, AliasManagerImpl.class).withId("AliasOverrides");
+        binder.bind(HiddenFieldLocationRules.class, HiddenFieldLocationRulesImpl.class);
     }
 
     // ========================================================================
@@ -277,11 +274,11 @@ public final class TapestryModule
      * their values between requests</dd> <dt>Persist </dt> <dd>Allows fields to store their their value persistently
      * between requests</dd> <dt>Parameter </dt> <dd>Identifies parameters based on the {@link
      * org.apache.tapestry5.annotations.Parameter} annotation</dd> <dt>Component </dt> <dd>Defines embedded components
-     * based on the {@link org.apache.tapestry5.annotations.Component} annotation</dd> <dt>Mixin </dt> <dd>Adds a mixin as
-     * part of a component's implementation</dd> <dt>Environment </dt> <dd>Allows fields to contain values extracted
+     * based on the {@link org.apache.tapestry5.annotations.Component} annotation</dd> <dt>Mixin </dt> <dd>Adds a mixin
+     * as part of a component's implementation</dd> <dt>Environment </dt> <dd>Allows fields to contain values extracted
      * from the {@link org.apache.tapestry5.services.Environment} service</dd> <dt>Inject </dt> <dd>Used with the {@link
-     * org.apache.tapestry5.ioc.annotations.Inject} annotation, when a value is supplied</dd> <dt>InjectPage</dt> <dd>Adds
-     * code to allow access to other pages via the {@link org.apache.tapestry5.annotations.InjectPage} field
+     * org.apache.tapestry5.ioc.annotations.Inject} annotation, when a value is supplied</dd> <dt>InjectPage</dt>
+     * <dd>Adds code to allow access to other pages via the {@link org.apache.tapestry5.annotations.InjectPage} field
      * annotation</dd> <dt>InjectBlock </dt> <dd>Allows a block from the template to be injected into a field</dd>
      * <dt>IncludeStylesheet </dt> <dd>Supports the {@link org.apache.tapestry5.annotations.IncludeStylesheet}
      * annotation</dd> <dt>IncludeJavaScriptLibrary </dt> <dd>Supports the {@link org.apache.tapestry5.annotations.IncludeJavaScriptLibrary}
@@ -289,9 +286,9 @@ public final class TapestryModule
      * for meta data and adds it to the component model</dd> <dt>ApplicationState </dt> <dd>Converts fields that
      * reference application state objects <dt>UnclaimedField </dt> <dd>Identifies unclaimed fields and resets them to
      * null/0/false at the end of the request</dd> <dt>RenderCommand </dt> <dd>Ensures all components also implement
-     * {@link org.apache.tapestry5.runtime.RenderCommand}</dd> <dt>SetupRender, BeginRender, etc. </dt> <dd>Correspond to
-     * component render phases and annotations</dd> <dt>InvokePostRenderCleanupOnResources </dt> <dd>Makes sure {@link
-     * org.apache.tapestry5.internal.InternalComponentResources#postRenderCleanup()} is invoked after a component
+     * {@link org.apache.tapestry5.runtime.RenderCommand}</dd> <dt>SetupRender, BeginRender, etc. </dt> <dd>Correspond
+     * to component render phases and annotations</dd> <dt>InvokePostRenderCleanupOnResources </dt> <dd>Makes sure
+     * {@link org.apache.tapestry5.internal.InternalComponentResources#postRenderCleanup()} is invoked after a component
      * finishes rendering</dd> <dt>Secure</dt> <dd>Checks for the {@link org.apache.tapestry5.annotations.Secure}
      * annotation</dd> <dt>ContentType</dt> <dd>Checks for {@link org.apache.tapestry5.annotations.ContentType}
      * annotation</dd> <dt>ResponseEncoding</dt> <dd>Checks for the {@link org.apache.tapestry5.annotations.ResponseEncoding}
@@ -621,9 +618,10 @@ public final class TapestryModule
      * Adds coercions: <ul> <li>String to {@link org.apache.tapestry5.SelectModel} <li>String to {@link
      * org.apache.tapestry5.corelib.data.InsertPosition} <li>Map to {@link org.apache.tapestry5.SelectModel}
      * <li>Collection to {@link GridDataSource} <li>null to {@link org.apache.tapestry5.grid.GridDataSource} <li>String
-     * to {@link org.apache.tapestry5.corelib.data.GridPagerPosition} <li>List to {@link org.apache.tapestry5.SelectModel}
-     * <li>{@link org.apache.tapestry5.runtime.ComponentResourcesAware} (typically, a component) to {@link
-     * org.apache.tapestry5.ComponentResources} <li>String to {@link org.apache.tapestry5.corelib.data.BlankOption} </ul>
+     * to {@link org.apache.tapestry5.corelib.data.GridPagerPosition} <li>List to {@link
+     * org.apache.tapestry5.SelectModel} <li>{@link org.apache.tapestry5.runtime.ComponentResourcesAware} (typically, a
+     * component) to {@link org.apache.tapestry5.ComponentResources} <li>String to {@link
+     * org.apache.tapestry5.corelib.data.BlankOption} </ul>
      */
     public static void contributeTypeCoercer(Configuration<CoercionTuple> configuration)
     {
@@ -1293,9 +1291,9 @@ public final class TapestryModule
      * The MasterDispatcher is a chain-of-command of individual Dispatchers, each handling (like a servlet) a particular
      * kind of incoming request. <dl> <dt>RootPath</dt> <dd>Renders the start page for the "/" request</dd>
      * <dt>Asset</dt> <dd>Provides access to classpath assets</dd> <dt>PageRender</dt> <dd>Identifies the {@link
-     * org.apache.tapestry5.services.PageRenderRequestParameters} and forwards onto {@link PageRenderRequestHandler}</dd>
-     * <dt>ComponentEvent</dt> <dd>Identifies the {@link ComponentEventRequestParameters} and forwards onto the {@link
-     * ComponentEventRequestHandler}</dd> </dl>
+     * org.apache.tapestry5.services.PageRenderRequestParameters} and forwards onto {@link
+     * PageRenderRequestHandler}</dd> <dt>ComponentEvent</dt> <dd>Identifies the {@link ComponentEventRequestParameters}
+     * and forwards onto the {@link ComponentEventRequestHandler}</dd> </dl>
      */
     public void contributeMasterDispatcher(OrderedConfiguration<Dispatcher> configuration,
                                            ObjectLocator locator)
@@ -1367,8 +1365,8 @@ public final class TapestryModule
 
 
     /**
-     * Adds page render filters, each of which provides an {@link org.apache.tapestry5.annotations.Environmental} service.
-     * Filters often provide {@link Environmental} services needed by components as they render. <dl>
+     * Adds page render filters, each of which provides an {@link org.apache.tapestry5.annotations.Environmental}
+     * service. Filters often provide {@link Environmental} services needed by components as they render. <dl>
      * <dt>PageRenderSupport</dt>  <dd>Provides {@link org.apache.tapestry5.RenderSupport}</dd>
      * <dt>ClientBehaviorSupport</dt> <dd>Provides {@link org.apache.tapestry5.internal.services.ClientBehaviorSupport}</dd>
      * <dt>Heartbeat</dt> <dd>Provides {@link org.apache.tapestry5.services.Heartbeat}</dd>
@@ -1488,8 +1486,8 @@ public final class TapestryModule
     /**
      * Contributes {@link PartialMarkupRendererFilter}s used when rendering a partial Ajax response.  This is an analog
      * to {@link #contributeMarkupRenderer(org.apache.tapestry5.ioc.OrderedConfiguration, org.apache.tapestry5.Asset,
-     * org.apache.tapestry5.Asset, ValidationMessagesSource, org.apache.tapestry5.ioc.services.SymbolSource, AssetSource)}
-     * } and overlaps it to some degree. <dl> <dt>   PageRenderSupport     </dt> <dd>Provides {@link
+     * org.apache.tapestry5.Asset, ValidationMessagesSource, org.apache.tapestry5.ioc.services.SymbolSource,
+     * AssetSource)} } and overlaps it to some degree. <dl> <dt>   PageRenderSupport     </dt> <dd>Provides {@link
      * org.apache.tapestry5.RenderSupport}</dd> <dt>ClientBehaviorSupport</dt> <dd>Provides {@link
      * org.apache.tapestry5.internal.services.ClientBehaviorSupport}</dd> <dt>Heartbeat</dt> <dd>Provides {@link
      * org.apache.tapestry5.services.Heartbeat}</dd> <dt>DefaultValidationDecorator</dt> <dd>Provides {@link
@@ -2010,4 +2008,26 @@ public final class TapestryModule
         configuration.add("zero", new ZeroNullFieldStrategy());
     }
 
+
+    /**
+     * Determines positioning of hidden fields relative to other elements (this is needed by {@link
+     * org.apache.tapestry5.corelib.components.FormFragment} and others.
+     * <p/>
+     * For elements input, select, textarea and label the hidden field is positioned after.
+     * <p/>
+     * For elements p, div, li and td, the hidden field is positioned inside.
+     */
+    public static void contributeHiddenFieldLocationRules(
+            MappedConfiguration<String, RelativeElementPosition> configuration)
+    {
+        configuration.add("input", RelativeElementPosition.AFTER);
+        configuration.add("select", RelativeElementPosition.AFTER);
+        configuration.add("textarea", RelativeElementPosition.AFTER);
+        configuration.add("label", RelativeElementPosition.AFTER);
+
+        configuration.add("p", RelativeElementPosition.INSIDE);
+        configuration.add("div", RelativeElementPosition.INSIDE);
+        configuration.add("td", RelativeElementPosition.INSIDE);
+        configuration.add("li", RelativeElementPosition.INSIDE);
+    }
 }

@@ -886,7 +886,11 @@ Tapestry.FormFragment.prototype = {
 
         $(this.hidden.form).observe(Tapestry.FORM_PREPARE_FOR_SUBMIT_EVENT, function()
         {
-            this.hidden.value = Tapestry.isDeepVisible(this.element);
+            // On a submission, if the fragment is not visible, then wipe out its
+            // form submission data, so that no processing or validation occurs on the server.
+
+            if (! Tapestry.isDeepVisible(this.element))
+                this.hidden.value = "";
         }.bind(this));
     },
 
