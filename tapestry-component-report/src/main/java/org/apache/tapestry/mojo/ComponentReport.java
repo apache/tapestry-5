@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.mojo;
+package org.apache.tapestry.mojo;
 
 import nu.xom.*;
 import org.apache.commons.lang.StringUtils;
@@ -44,6 +44,7 @@ import java.util.*;
  * @requiresDependencyResolution compile
  * @execute phase="generate-sources"
  */
+@SuppressWarnings({ "unchecked" })
 public class ComponentReport extends AbstractMavenReport
 {
     /**
