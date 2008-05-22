@@ -219,6 +219,29 @@ var Tapestry = {
         if (manager == undefined) manager = new Tapestry.FieldEventManager(field);
 
         return manager;
+    },
+
+    /**
+     * Used with validation to see if an element is visible: i.e., it and all of its containers, up to the
+     * containing form, are all visible. Only deeply visible elements are subject to validation.
+     */
+    isDeepVisible : function(element)
+    {
+        // This started as a recursively defined method attach to Element, but was converted
+        // to a stand-alone as part of TAPESTRY-2424.
+
+        var current = $(element);
+
+        while (true)
+        {
+            if (! current.visible()) return false;
+
+            if (current.tagName == "FORM") break;
+
+            current = $(current.parentNode)
+        }
+
+        return true;
     }
 };
 
@@ -369,22 +392,6 @@ Tapestry.ElementAdditions = {
     removeDecorations : function(element)
     {
         Tapestry.getFieldEventManager(element).removeDecorations();
-    },
-
-    // Checks to see if an element is truly visible, meaning the receiver and all
-    // its anscestors (up to the containing form), are visible.
-
-    isDeepVisible : function(element)
-    {
-        element = $(element);
-
-        if (! element.visible()) return false;
-
-        // Stop at a form, which is sufficient for validation purposes.
-
-        if (element.tagName == "FORM") return true;
-
-        return $(element.parentNode).isDeepVisible();
     }
 };
 
@@ -755,7 +762,7 @@ Tapestry.FieldEventManager.prototype = {
     {
         if (this.field.disabled) return;
 
-        if (! this.field.isDeepVisible()) return;
+        if (! Tapestry.isDeepVisible(this.field)) return;
 
         var value = $F(event.field);
         var isBlank = (value == '');
@@ -879,7 +886,7 @@ Tapestry.FormFragment.prototype = {
 
         $(this.hidden.form).observe(Tapestry.FORM_PREPARE_FOR_SUBMIT_EVENT, function()
         {
-            this.hidden.value = this.element.isDeepVisible();
+            this.hidden.value = Tapestry.isDeepVisible(this.element);
         }.bind(this));
     },
 

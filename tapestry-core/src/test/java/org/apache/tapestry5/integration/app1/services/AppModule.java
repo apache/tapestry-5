@@ -82,7 +82,7 @@ public class AppModule
         {
             public boolean service(Request request, Response response, RequestHandler handler) throws IOException
             {
-                long startTime = System.currentTimeMillis();
+                long startTime = System.nanoTime();
 
                 try
                 {
@@ -90,9 +90,9 @@ public class AppModule
                 }
                 finally
                 {
-                    long elapsed = System.currentTimeMillis() - startTime;
+                    long elapsed = System.nanoTime() - startTime;
 
-                    log.info(String.format("Request time: %d ms", elapsed));
+                    log.info(String.format("Request time: %5.2f s (%s)", elapsed * 10E-9d, request.getPath()));
                 }
             }
         };
