@@ -10,7 +10,7 @@
     <parent>
         <groupId>org.apache.tapestry</groupId>
         <artifactId>tapestry-project</artifactId>
-        <version>5.0.13-SNAPSHOT</version>
+        <version>5.0.12</version>
     </parent>
 
     <dependencies>
