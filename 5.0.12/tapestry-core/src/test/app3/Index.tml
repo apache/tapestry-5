@@ -1,0 +1,13 @@
+<html>
+    <head>
+        <title>Index</title>
+    </head>
+    <body>
+        <h1>Index</h1>
+
+        <p>
+            Message:
+            <span id="message">${message}</span>
+        </p>
+    </body>
+</html>

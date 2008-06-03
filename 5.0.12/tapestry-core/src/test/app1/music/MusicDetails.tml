@@ -1,0 +1,11 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+    <h1>Track Details</h1>
+
+    <t:beandisplay object="track"/>
+
+    <p>
+        <t:pagelink page="music">Back to music library</t:pagelink>
+    </p>
+
+</html>

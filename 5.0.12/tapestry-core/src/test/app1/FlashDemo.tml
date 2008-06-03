@@ -1,0 +1,18 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+    <h1>Flash Demo</h1>
+
+    <p>
+        The message: [${message}]
+    </p>
+
+    <p>
+        <a t:type="ActionLink" t:id="show">show the message</a>
+    </p>
+
+    <p>
+        <a t:id="refresh" t:type="PageLink" page="FlashDemo">refresh the page</a>
+    </p>
+
+
+</html>

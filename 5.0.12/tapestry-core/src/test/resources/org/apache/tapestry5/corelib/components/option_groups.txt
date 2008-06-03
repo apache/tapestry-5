@@ -1,0 +1,2 @@
+<?xml version="1.0"?>
+<select><optgroup label="Husbands"><option selected="selected" value="Fred">Fred</option><option value="Barney">Barney</option></optgroup><optgroup disabled="disabled" label="Wives"><option value="Wilma">Wilma</option><option value="Betty">Betty</option></optgroup></select>

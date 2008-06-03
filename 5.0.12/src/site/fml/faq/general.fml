@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<faqs title="Frequently Asked Questions">
+
+    <part id="MavenIsAFuckingPieceOfShit">
+
+        <faq id="jetty-is-trace-enabled">
+            <question>Why do I get an error about org.apache.log4j.Logger.isTraceEnabled()Z when launching an
+                application in Jetty?
+            </question>
+            <answer>
+                <p>Tapestry is dependent on a particular version of Log4J, one that adds the isTraceEnabled() method.
+                </p>
+                <p>You need to get a copy of Log4J 1.2.14 and copy it into the Jetty
+                    <code>ext</code>
+                    directory. You should
+                    delete the existing log4j.jar file.
+                </p>
+            </answer>
+        </faq>
+
+
+       <faq id="classcastexception">
+            <question>Why do I get a ClassCastException when I pass a page or component to a service?</question>
+            <answer>
+                <p>
+                    Tapestry uses a special class loader for component classes. This includes pages, components, mixins
+                    and base classes (each in their own sub package).
+                </p>
+
+                <p>
+                    As Tapestry loads the class, it transforms the class. This is to support the Tapestry page
+                    lifecycle, including pooling of pages. It also accounts for other things, such as
+                    persistent fields and parameters. This is also how Tapestry is able to
+                    invoke non-public event handler methods.
+                </p>
+
+                <p>
+                    This means there are
+                    <em>two</em>
+                    versions of each class: the vanilla version and the Tapestry-tranformed version.
+                    Inside a component,
+                    <code>this</code>
+                    refers to the transformed instance and the
+                    transformed class. To the service layer, the type is the vanilla version. Same class name, different
+                    java.lang.Class, and thus a ClassCastException.
+                </p>
+
+                <p>
+                    The established technique is to define an interface that the component can implement.
+                    The parameter to the service layer method is the interface, not the component class.
+                </p>
+            </answer>
+        </faq>
+
+        <faq id="why-not-spring-guice">
+            <question>Why Tapestry IoC?  Why not use Spring or Guice?</question>
+            <answer>
+                <p>
+                    This comes up too frequently. Spring and Guice are very good containers, but are
+                    targetted at defining services for <em>applications</em>, not <em>frameworks</em>.
+    Tapestry has certain specific needs that are pervasive in the IoC layer, chief among them
+                    extensibility.  It must be possible to override internal services on a spot basis.
+                    It must be possible to extend the configuration of an existing service.
+                </p>
+
+                <p>
+                    These simply aren't concepts present in Spring and Guice. Spring can autowire by type
+                    or by explicit name. To support Tapestry's level of extensibility, each new Tapestry
+                    project would require a copy of a large Spring configuration file that would need to
+                    be customized. Adding an additional layer, such as tapestry-hibernate, would
+                    add additional configuration into the configuration file.  This simply isn't the Tapestry way,
+                    where things <em>Just Work</em> (and where we avoid XML).
+                </p>
+
+                <p>
+                    Guice is very similar; there's no XML, but there are marker annotations used to select a specific
+                    implementaton from a pool of objects with the same interface. This means that Java code would have to be
+                    replaced in some cases, to slip overrides into place.
+                </p>
+
+                <p>
+                    Tapestry's service configuration concept is simply not present in other containers.
+                    The ability to extend existing service behavior by providing additional configuration
+                    is part of the light touch of Tapestry. Examples are elsewhere in this documentation.
+                </p>
+            </answer>
+        </faq>
+
+        <faq id="page-lifecycle-and-new">
+
+            <question>
+                Why do I have to inject a page?  Why can't I just create one using <code>new</code>?
+            </question>
+
+            <answer>
+                <p>
+                    As explained elsewhere, Tapestry tranforms your class at runtime.  It tends to build
+                    a large constructor for the class instance.  Further, an instance of the
+                    class is useless by itself, it must be wired together with its template
+                    and its sub-components.
+                </p>
+            </answer>
+
+        </faq>
+
+        <faq id="why-pool-pages">
+            <question>
+                Why is it necessary to pool pages?  Couldn't they just be created fresh?  Or stored in the HttpSession?
+            </question>
+
+            <answer>
+                <p>
+                    Tapestry pages tend to be quite large collections of objects. In the largely invisible structure
+                    around a page will be template objects, binding objects (the active parts of a component parameter),
+                    many injected services, and a lot of other structure besides.
+                </p>
+
+                <p>
+                    Many of those objects are not serializable, and therefore, should not go into
+                    the HttpSession.  In addition, many of the objects are shared between page instances, but
+                    serialization is like a deep copy and would create duplicates of such objects.
+                </p>
+
+                <p>
+                    Finally, a relatively small number of page instances can support a much larger number
+                    of concurrent clients, as each page is only needed for a few milliseconds of work time. Even with
+                    users clicking buttons as fast as humanly possible, the majority of thier time is
+                    "think time" and there's no need to keep entire page instances waiting in the wings while
+                    they think.
+                </p>
+
+                <p>
+                    It takes an appreciable amount of time to construct a working page instance, as all
+                    those objects need to be instantiated, looked up, organized and wired together. It's barely
+                    noticable to a single developer, but a real site with real traffic, would find it unnacceptible
+                    to create a new page instance for each request.
+                </p>
+
+                <p>
+                    Further, Tapestry's structure allows for a lot of optimizations and caching. This means that the
+                    <em>second</em> use of a page tends to be more efficient than the first, as most
+                    cacheable values have been cached.
+                </p>
+            </answer>
+        </faq>
+
+        <faq id="event-method-duplication">
+
+            <question>
+                Why are my methods getting invoked multiple times?
+            </question>
+
+            <answer>
+                <p>
+                   There are some odd edge cases involving inheritance and
+                    render phase methods.  Here's an example:
+                </p>
+
+<source><![CDATA[
+
+public class BasePage
+{
+    void beginRender()
+    {
+        System.out.println("BasePage -- beginRender()");
+    }
+}
+
+public class ChildPage
+{
+    void beginRender()
+    {
+        System.out.println("ChildPage -- beginRender()");
+    }
+}
+
+]]>  (sorry about the CDATA, it's a typical Maven bug, please ignore)</source>
+
+                <p>
+                 Because there is a beginRender() method in the BasePage class, it will be invoked as part
+                    of the BeginRender phase. However, it is overridden by an identical ChildPage method.
+                    So the ChildPage method gets invoked once.
+                </p>
+
+                <p>
+                    However, ChildPage also provides a beginRender() (an override of the parent class), so
+                    this method also gets invoked ... for a second time.
+                </p>
+
+                <p>
+                    You can't turn off base class method invocations; what you can and should do is
+                    make your event handler methods in a base class <code>final</code>.
+                </p>
+
+
+
+            </answer>
+
+        </faq>
+
+    </part>
+
+
+    <!--
+<part id="General">
+ <faq id="dead-doo-dad">
+   <question>My doo-dad is dead. How can I regenerate it?</question>
+   <answer>
+     <p>
+       Doo-dad generation happens at system boot. Therefore, the simplest
+       answer is to restart the hello-world-doodad service.
+     </p>
+     <p>
+       If your doodad service is widget-enabled, you can also regenerate
+       dead doo-dads using the /widgets/reincarnate.doodad address and the
+       following message data:
+     </p>
+     <source>
+       <reincarnation>
+         <id>1</id>
+         <password>ThisShouldBeEncrypted</password>
+       </reincarnation>
+     </source>
+   </answer>
+ </faq>
+ <faq id="what-is-a-doo-dad">
+   <question>What the h@!! is a doo-dad anyway?</question>
+   <answer>
+     <p>
+       Doo-dads are components of the hello-world system used to obfuscate
+       the misdirection server. It is critical to system health that the
+       doo-dad pool have an appropriate threshold and that it be culled
+       regularly.
+     </p>
+   </answer>
+ </faq>
+</part>     -->
+</faqs>
