@@ -86,5 +86,5 @@ public interface PageRenderQueue
      *
      * @param filter to add to the pipeline
      */
-    void addPartialFilter(PartialMarkupRendererFilter filter);
+    void addPartialMarkupRendererFilter(PartialMarkupRendererFilter filter);
 }

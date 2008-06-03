@@ -108,7 +108,7 @@ public class PageRenderQueueImpl implements PageRenderQueue
         queue.run(writer);
     }
 
-    public void addPartialFilter(PartialMarkupRendererFilter filter)
+    public void addPartialMarkupRendererFilter(PartialMarkupRendererFilter filter)
     {
         Defense.notNull(filter, "filter");
 

@@ -14,9 +14,16 @@
 
 var Tapestry = {
 
-    FORM_VALIDATE_EVENT : "form:validate",
+    /** Event, triggered on a Form element, to spur fields within the form to validate thier input. */
+    FORM_VALIDATE_EVENT : "tapestry:formvalidate",
 
-    FORM_PREPARE_FOR_SUBMIT_EVENT : "form:prepareforsubmit",
+    /** Event, triggered on a Form element, to allow callbacks to perpare for a form submission (this
+     * occurs after validation).
+     */
+    FORM_PREPARE_FOR_SUBMIT_EVENT : "tapestry:formprepareforsubmit",
+
+    /** Event, triggered on the document object, which identifies the current focus element. */
+    FOCUS_CHANGE_EVENT : "tapestry:focuschange",
 
     DEBUG_ENABLED : false,
 
@@ -36,10 +43,6 @@ var Tapestry = {
     FormInjector : Class.create(),
 
     ErrorPopup : Class.create(),
-
-    // An array of Tapestry.ErrorPopup instances that have been created for fields within the page.
-
-    errorPopups : [],
 
     // Adds a callback function that will be invoked when the DOM is loaded (which
     // occurs *before* window.onload, which has to wait for images and such to load
@@ -76,12 +79,7 @@ var Tapestry = {
             {
                 element.observe("focus", function()
                 {
-                    Tapestry.focusedElement = element;
-
-                    $(Tapestry.errorPopups).each(function(popup)
-                    {
-                        popup.handleFocusChange(element);
-                    });
+                    document.fire(Tapestry.FOCUS_CHANGE_EVENT, element);
                 });
 
                 element.isObservingFocusChange = true;
@@ -242,6 +240,27 @@ var Tapestry = {
         }
 
         return true;
+    },
+
+    /**
+     * Default function for handling Ajax-related failures.
+     */
+    ajaxFailureHandler : function()
+    {
+        Tapestry.error("Communication with the server failed.");
+    },
+
+    /**
+     * Processes a typical Ajax request for a URL invoking the provided handler on success.
+     * On failure, error() is invoked to inform the user.
+     *
+     * @param url of Ajax request
+     * @param successHandler to invoke on success
+     * @return the Ajax.Request object
+     */
+    ajaxRequest : function(url, successHandler)
+    {
+        return new Ajax.Request(url, { onSuccess: successHandler, onFailure: Tapestry.ajaxFailureHandler })
     }
 };
 
@@ -283,16 +302,17 @@ Tapestry.Initializer = {
                 {
                     var effect = Tapestry.ElementEffect.fade(container);
 
-                    effect.afterFinish = function()
+                    effect.options.afterFinish = function()
                     {
                         container.remove();
                     };
                 }
             }
 
-            new Ajax.Request(spec.url, { onSuccess : successHandler });
+            Tapestry.ajaxRequest(spec.url, successHandler);
         });
     },
+
 
     /**
      * Convert a form or link into a trigger of an Ajax update that
@@ -343,7 +363,7 @@ Tapestry.Initializer = {
 
         var handler = function(event)
         {
-            new Ajax.Request(element.href, { onSuccess : successHandler });
+            Tapestry.ajaxRequest(element.href, successHandler);
 
             return false;
         };
@@ -516,7 +536,6 @@ Tapestry.FormEvent.prototype = {
     {
         this.form = $(form);
         this.result = true;
-        this.firstError = true;
     },
 
     // Invoked by a validator function (which is passed the event) to record an error
@@ -527,11 +546,8 @@ Tapestry.FormEvent.prototype = {
 
     recordError : function(message)
     {
-        if (this.firstError)
-        {
-            this.field.activate();
-            this.firstError = false;
-        }
+        if (this.focusField == undefined)
+            this.focusField = this.field;
 
         this.field.decorateForValidationError(message);
 
@@ -544,7 +560,7 @@ Tapestry.ErrorPopup.prototype = {
 
     BUBBLE_VERT_OFFSET : -34,
 
-    BUBBLE_HORIZONTAL_OFFSET : -5,
+    BUBBLE_HORIZONTAL_OFFSET : -20,
 
     BUBBLE_WIDTH: "auto",
 
@@ -574,17 +590,31 @@ Tapestry.ErrorPopup.prototype = {
             Event.stop(event);  // Should be domevent.stop(), but that fails under IE
         }.bindAsEventListener(this));
 
-        Tapestry.errorPopups.push(this);
-
-        this.state = "hidden";
-
         this.queue = { position: 'end', scope: this.field.id };
 
         Event.observe(window, "resize", this.repositionBubble.bind(this));
+
+        document.observe(Tapestry.FOCUS_CHANGE_EVENT, function(event)
+        {
+            // Tapestry.debug("Focus change: #{memo} for #{field}", { memo: event.memo.id, field: this.field.id });
+
+            var focused = event.memo;
+
+            if (focused == this.field)
+            {
+                this.fadeIn();
+            }
+            else
+            {
+                this.fadeOut();
+            }
+        }.bind(this));
     },
 
     showMessage : function(message)
     {
+        // Tapestry.debug("Show message: #{message} for #{field}", { message: message, field: this.field.id });
+
         this.stopAnimation();
 
         this.innerSpan.update(message);
@@ -607,14 +637,19 @@ Tapestry.ErrorPopup.prototype = {
 
     fadeIn : function()
     {
+        // Tapestry.debug("fadeIn: " + this.field.id);
+
+        if (! this.hasMessage) return;
+
         this.repositionBubble();
 
-        if (this.state == "hidden")
-        {
-            this.state = "visible";
+        if (this.status == "fadeIn") return;
 
-            this.animation = new Effect.Appear(this.outerDiv, { afterFinish : this.afterFadeIn.bind(this), queue: this.queue });
-        }
+        if (this.outerDiv.visible()) return;
+
+        this.animation = new Effect.Appear(this.outerDiv, { queue: this.queue });
+
+        this.status = "fadeIn";
     },
 
     stopAnimation : function()
@@ -622,18 +657,18 @@ Tapestry.ErrorPopup.prototype = {
         if (this.animation) this.animation.cancel();
 
         this.animation = null;
+        this.status = null;
     },
 
     fadeOut : function ()
     {
-        this.stopAnimation();
+        // Tapestry.debug("fadeOut: " + this.field.id);
 
-        if (this.state == "visible")
-        {
-            this.state = "hidden";
+        if (this.status == "fadeOut") return;
 
-            this.animation = new Effect.Fade(this.outerDiv, { queue : this.queue });
-        }
+        this.animation = new Effect.Fade(this.outerDiv, { queue : this.queue });
+
+        this.status = "fadeOut";
     },
 
     hide : function()
@@ -643,34 +678,6 @@ Tapestry.ErrorPopup.prototype = {
         this.stopAnimation();
 
         this.outerDiv.hide();
-
-        this.state = "hidden";
-    },
-
-    afterFadeIn : function()
-    {
-        this.animation = null;
-
-        if (this.field != Tapestry.focusedElement) this.fadeOut();
-    },
-
-    handleFocusChange : function(element)
-    {
-        if (element == this.field)
-        {
-            if (this.hasMessage) this.fadeIn();
-            return;
-        }
-
-        if (this.animation == null)
-        {
-            this.fadeOut();
-            return;
-        }
-
-        // Must be fading in, let it finish, then fade it back out.
-
-        this.animation = new Effect.Fade(this.outerDiv, { queue : this.queue });
     }
 };
 
@@ -707,9 +714,14 @@ Tapestry.FormEventManager.prototype = {
 
         this.form.fire(Tapestry.FORM_VALIDATE_EVENT, event);
 
-
         if (! event.result)
         {
+            // Calling focus() does not trigger this event, so we do it manually.
+            // Defer it long enough for the animations to start.
+
+            event.focusField.activate();
+            // document.fire(Tapestry.FOCUS_CHANGE_EVENT, event.focusField);
+
             Event.stop(domevent); // Should be domevent.stop(), but that fails under IE
         }
         else
@@ -739,8 +751,8 @@ Tapestry.FieldEventManager.prototype = {
         {
             var event = new Tapestry.FormEvent(this.field.form);
 
-     // This prevents the field from taking focus if there is an error.
-            event.firstError = false;
+            // This prevents the field from taking focus if there is an error.
+            event.focusField = this.field;
 
             event.field = this.field;
 
@@ -951,10 +963,10 @@ Tapestry.FormFragment.prototype = {
     {
         var effect = this.hideFunc(this.element);
 
-        effect.afterFinish = function()
+        effect.options.afterFinish = function()
         {
             this.element.remove();
-        };
+        }.bind(this);
     },
 
     show : function()
@@ -1017,6 +1029,8 @@ Tapestry.FormInjector.prototype = {
 
                 newElement.update(reply.content);
 
+                newElement.id = reply.elementId;
+
                 // Handle any scripting issues.
 
                 Tapestry.processScriptInReply(reply);
@@ -1027,7 +1041,7 @@ Tapestry.FormInjector.prototype = {
 
             }.bind(this);
 
-            new Ajax.Request(this.url, { onSuccess : successHandler });
+            Tapestry.ajaxRequest(this.url, successHandler);
 
             return false;
         }.bind(this);
