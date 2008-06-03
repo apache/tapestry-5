@@ -48,6 +48,12 @@ public class Loop
         {
             component.resetIndex();
         }
+
+        @Override
+        public String toString()
+        {
+            return "Loop.ResetIndex";
+        }
     };
 
     /**
@@ -63,6 +69,11 @@ public class Loop
             component.setupForVolatile();
         }
 
+        @Override
+        public String toString()
+        {
+            return "Loop.SetupForVolatile";
+        }
     };
 
     /**
@@ -76,6 +87,12 @@ public class Loop
         public void execute(Loop component)
         {
             component.advanceVolatile();
+        }
+
+        @Override
+        public String toString()
+        {
+            return "Loop.AdvanceVolatile";
         }
     };
 
@@ -92,6 +109,11 @@ public class Loop
             component.endHeartbeat();
         }
 
+        @Override
+        public String toString()
+        {
+            return "Loop.EndHeartbeat";
+        }
     };
 
     /**
@@ -112,6 +134,12 @@ public class Loop
         {
             component.restoreState(storedValue);
         }
+
+        @Override
+        public String toString()
+        {
+            return String.format("Loop.RestoreState[%s]", storedValue);
+        }
     }
 
     /**
@@ -131,6 +159,12 @@ public class Loop
         public void execute(Loop component)
         {
             component.restoreStateViaEncodedPrimaryKey(primaryKey);
+        }
+
+        @Override
+        public String toString()
+        {
+            return String.format("Loop.RestoreStateViaEncodedPrimaryKey[%s]", primaryKey);
         }
     }
 
@@ -154,6 +188,12 @@ public class Loop
         public void execute(Loop component)
         {
             component.prepareForKeys(keys);
+        }
+
+        @Override
+        public String toString()
+        {
+            return "Loop.PrepareForKeys" + keys;
         }
     }
 
@@ -185,7 +225,7 @@ public class Loop
      * The element to render. If not null, then the loop will render the indicated element around its body (on each pass
      * through the loop). The default is derived from the component template.
      */
-    @Parameter(value = "prop:componentResources.elementName", defaultPrefix = BindingConstants.LITERAL)
+    @Parameter(defaultPrefix = BindingConstants.LITERAL)
     private String element;
 
     /**
@@ -216,6 +256,11 @@ public class Loop
     Binding defaultSource()
     {
         return componentDefaultProvider.defaultBinding("source", resources);
+    }
+
+    String defaultElement()
+    {
+        return resources.getElementName();
     }
 
     @SetupRender

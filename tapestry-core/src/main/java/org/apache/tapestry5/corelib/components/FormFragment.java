@@ -26,6 +26,7 @@ import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.internal.services.ClientBehaviorSupport;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.*;
+import org.slf4j.Logger;
 
 import java.util.List;
 
@@ -34,7 +35,6 @@ import java.util.List;
  * automatically bypass validation when the fragment is invisible.  The trick is to also bypass server-side form
  * processing for such fields when the form is submitted; the fragment uses a hidden field to track its client-side
  * visibility and will bypass field component submission logic for the components it encloses.
- * <p/>
  * <p/>
  * In addition, should the client-side element for a Form fragment be removed before the enclosing form is submitted,
  * then none of the fields inside the fragment will be processed (this can be considered an extension of the "if not
@@ -53,7 +53,6 @@ public class FormFragment implements ClientElement
     @Parameter
     private boolean visible;
 
-
     /**
      * Name of a function on the client-side Tapestry.ElementEffect object that is invoked to make the fragment visible.
      * If not specified, then the default "slidedown" function is used.
@@ -67,6 +66,14 @@ public class FormFragment implements ClientElement
      */
     @Parameter(defaultPrefix = BindingConstants.LITERAL)
     private String hide;
+
+    /**
+     * The element to render for each iteration of the loop. The default comes from the template, or "div" if the
+     * template did not specific an element.
+     */
+    @Parameter(defaultPrefix = BindingConstants.LITERAL)
+    private String element;
+
 
     @Inject
     private Environment environment;
@@ -91,9 +98,17 @@ public class FormFragment implements ClientElement
     private Request request;
 
     @Inject
+    private Logger logger;
+
+    @Inject
     private HiddenFieldLocationRules rules;
 
     private HiddenFieldPositioner hiddenFieldPositioner;
+
+    String defaultElement()
+    {
+        return resources.getElementName("div");
+    }
 
     private void handleSubmission(String elementName, List<WrappedComponentAction> actions)
     {
@@ -125,7 +140,7 @@ public class FormFragment implements ClientElement
 
         hiddenFieldPositioner = new HiddenFieldPositioner(writer, rules);
 
-        Element element = writer.element("div", "id", clientId);
+        Element element = writer.element(this.element, "id", clientId);
 
         resources.renderInformalParameters(writer);
 
@@ -135,7 +150,7 @@ public class FormFragment implements ClientElement
 
         clientBehaviorSupport.addFormFragment(clientId, show, hide);
 
-        componentActions = new ComponentActionSink();
+        componentActions = new ComponentActionSink(logger);
 
         // Here's the magic of environmentals ... we can create a wrapper around
         // the normal FormSupport environmental that intercepts some of the behavior.

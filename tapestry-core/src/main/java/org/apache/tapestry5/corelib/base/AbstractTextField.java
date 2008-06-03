@@ -62,7 +62,7 @@ public abstract class AbstractTextField extends AbstractField
     private Translator<Object> translate;
 
     /**
-     * The object that will perform input validation (which occurs after translation). The translate binding prefix is
+     * The object that will perform input validation (which occurs after translation). The validate binding prefix is
      * generally used to provide this object in a declarative fashion.
      */
     @Parameter(defaultPrefix = BindingConstants.VALIDATE)

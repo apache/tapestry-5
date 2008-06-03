@@ -18,6 +18,7 @@ import org.apache.tapestry5.ComponentAction;
 import org.apache.tapestry5.internal.util.Base64ObjectOutputStream;
 import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.runtime.Component;
+import org.slf4j.Logger;
 
 import java.io.IOException;
 
@@ -27,10 +28,14 @@ import java.io.IOException;
  */
 public class ComponentActionSink
 {
+    private final Logger logger;
+
     private final Base64ObjectOutputStream stream;
 
-    public ComponentActionSink()
+    public ComponentActionSink(Logger logger)
     {
+        this.logger = logger;
+
         try
         {
             stream = new Base64ObjectOutputStream();
@@ -47,6 +52,9 @@ public class ComponentActionSink
         Defense.notNull(action, "action");
 
         String completeId = castComponent.getComponentResources().getCompleteId();
+
+        if (logger.isDebugEnabled())
+            logger.debug(String.format("Storing action: %s %s", completeId, action));
 
         try
         {

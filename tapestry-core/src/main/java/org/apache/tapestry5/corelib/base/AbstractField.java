@@ -71,13 +71,13 @@ public abstract class AbstractField implements Field
         }
     };
 
-    static class SetupAction implements ComponentAction<AbstractField>, Serializable
+    static class Setup implements ComponentAction<AbstractField>, Serializable
     {
         private static final long serialVersionUID = 2690270808212097020L;
 
         private final String controlName;
 
-        public SetupAction(String controlName)
+        public Setup(String controlName)
         {
             this.controlName = controlName;
         }
@@ -86,9 +86,15 @@ public abstract class AbstractField implements Field
         {
             component.setupControlName(controlName);
         }
+
+        @Override
+        public String toString()
+        {
+            return String.format("AbstractField.Setup[%s]", controlName);
+        }
     }
 
-    static class ProcessSubmissionAction implements ComponentAction<AbstractField>, Serializable
+    static class ProcessSubmission implements ComponentAction<AbstractField>, Serializable
     {
         private static final long serialVersionUID = -4346426414137434418L;
 
@@ -96,12 +102,18 @@ public abstract class AbstractField implements Field
         {
             component.processSubmission();
         }
+
+        @Override
+        public String toString()
+        {
+            return "AbstractField.ProcessSubmission";
+        }
     }
 
     /**
      * Used a shared instance for all types of fields, for efficiency.
      */
-    private static final ProcessSubmissionAction PROCESS_SUBMISSION_ACTION = new ProcessSubmissionAction();
+    private static final ProcessSubmission PROCESS_SUBMISSION_ACTION = new ProcessSubmission();
 
     /**
      * The id used to generate a page-unique client-side identifier for the component. If a component renders multiple
@@ -152,7 +164,7 @@ public abstract class AbstractField implements Field
         assignedClientId = renderSupport.allocateClientId(id);
         String controlName = formSupport.allocateControlName(id);
 
-        formSupport.storeAndExecute(this, new SetupAction(controlName));
+        formSupport.storeAndExecute(this, new Setup(controlName));
         formSupport.store(this, PROCESS_SUBMISSION_ACTION);
     }
 

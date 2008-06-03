@@ -14,6 +14,7 @@
 
 package org.apache.tapestry5.internal.transform.components;
 
+import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.annotations.Parameter;
 
 /**
@@ -24,7 +25,7 @@ public class ParameterComponent
     @Parameter
     private String object;
 
-    @Parameter(cache = false, name = "uncached", defaultPrefix = "literal")
+    @Parameter(cache = false, name = "uncached", defaultPrefix = BindingConstants.LITERAL)
     private String uncachedObject;
 
     @Parameter(required = true)

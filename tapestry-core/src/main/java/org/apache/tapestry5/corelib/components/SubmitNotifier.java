@@ -41,6 +41,12 @@ public class SubmitNotifier
         {
             component.trigger(eventType);
         }
+
+        @Override
+        public String toString()
+        {
+            return String.format("SubmitNotifier.TriggerEvent[%s]", eventType);
+        }
     }
 
 

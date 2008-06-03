@@ -219,7 +219,8 @@ public class Grid implements GridModel
 
     @SuppressWarnings("unused")
     @Component(
-            parameters = { "rowClass=rowClass", "rowsPerPage=rowsPerPage", "currentPage=currentPage", "row=row", "volatile=inherit:volatile", "lean=inherit:lean" })
+            parameters = { "rowClass=rowClass", "rowsPerPage=rowsPerPage", "currentPage=currentPage", "row=row",
+                    "volatile=inherit:volatile", "lean=inherit:lean" })
     private GridRows rows;
 
     @Component(parameters = { "source=dataSource", "rowsPerPage=rowsPerPage", "currentPage=currentPage", "zone=zone" })
@@ -387,6 +388,12 @@ public class Grid implements GridModel
         public void execute(Grid component)
         {
             component.setupDataSource();
+        }
+
+        @Override
+        public String toString()
+        {
+            return "Grid.SetupDataSource";
         }
     };
 

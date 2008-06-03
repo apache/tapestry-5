@@ -91,7 +91,7 @@ var Tapestry = {
 
     // Generalized initialize function for Tapestry, used to help minimize the amount of JavaScript
     // for the page by removing redundancies such as repeated Object and method names. The spec
-    // is a hash whose keys are the names of methods of the Tapestry object.
+    // is a hash whose keys are the names of methods of the Tapestry.Initializer object.
     // The value is an array of arrays.  The outer arrays represent invocations
     // of the method.  The inner array are the parameters for each invocation.
     // As an optimization, the inner value may not be an array but instead
@@ -247,6 +247,52 @@ var Tapestry = {
 
 /** Container of functions that may be invoked by the Tapestry.init() function. */
 Tapestry.Initializer = {
+
+    ajaxFormLoop : function(spec)
+    {
+        var rowInjector = $(spec.rowInjector);
+
+        $(spec.addRowTriggers).each(function(triggerId)
+        {
+            $(triggerId).observe("click", function(event)
+            {
+                $(rowInjector).trigger();
+
+                Event.stop(event);
+            })
+        });
+    },
+
+    formLoopRemoveLink : function(spec)
+    {
+        var link = $(spec.link);
+
+        link.observe("click", function(event)
+        {
+            Event.stop(event);
+
+            var successHandler = function(transport)
+            {
+                var container = $(spec.fragment);
+
+                if (container.formFragment != undefined)
+                {
+                    container.formFragment.hideAndRemove();
+                }
+                else
+                {
+                    var effect = Tapestry.ElementEffect.fade(container);
+
+                    effect.afterFinish = function()
+                    {
+                        container.remove();
+                    };
+                }
+            }
+
+            new Ajax.Request(spec.url, { onSuccess : successHandler });
+        });
+    },
 
     /**
      * Convert a form or link into a trigger of an Ajax update that
@@ -790,34 +836,35 @@ Tapestry.FieldEventManager.prototype = {
     }
 };
 
-// Wrappers around Prototype and Scriptaculous effects, invoked from Tapestry.Zone.show().
-// All the functions of this object should have all-lowercase names. 
+// Wrappers around Prototype and Scriptaculous effects.
+// All the functions of this object should have all-lowercase names.
+// The methods all return the Effect object they create.
 
 Tapestry.ElementEffect = {
 
     show : function(element)
     {
-        element.show();
+        return new Effect.Appear(element);
     },
 
     highlight : function(element)
     {
-        new Effect.Highlight(element);
+        return new Effect.Highlight(element);
     },
 
     slidedown : function (element)
     {
-        new Effect.SlideDown(element);
+        return new Effect.SlideDown(element);
     },
 
     slideup : function(element)
     {
-        new Effect.SlideUp(element);
+        return new Effect.SlideUp(element);
     },
 
     fade : function(element)
     {
-        new Effect.Fade(element);
+        return new Effect.Fade(element);
     }
 };
 
@@ -900,6 +947,16 @@ Tapestry.FormFragment.prototype = {
             this.hideFunc(this.element);
     },
 
+    hideAndRemove : function()
+    {
+        var effect = this.hideFunc(this.element);
+
+        effect.afterFinish = function()
+        {
+            this.element.remove();
+        };
+    },
+
     show : function()
     {
         if (! this.element.visible())
@@ -945,7 +1002,7 @@ Tapestry.FormInjector.prototype = {
                 // before or after the FormInjector's element.
 
                 var newElement = new Element(this.element.tagName, { 'class' : this.element.className });
-
+                
                 // Insert the new element before or after the existing element.
 
                 var param = { };

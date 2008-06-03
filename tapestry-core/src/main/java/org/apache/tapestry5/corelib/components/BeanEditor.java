@@ -46,6 +46,12 @@ public class BeanEditor
         {
             component.doPrepare();
         }
+
+        @Override
+        public String toString()
+        {
+            return "BeanEditor.Prepare";
+        }
     }
 
     /**

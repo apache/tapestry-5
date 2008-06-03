@@ -112,7 +112,7 @@ public final class Select extends AbstractField
     /**
      * Performs input validation on the value supplied by the user in the form submission.
      */
-    @Parameter(defaultPrefix = "validate")
+    @Parameter(defaultPrefix = BindingConstants.VALIDATE)
     @SuppressWarnings("unchecked")
     private FieldValidator<Object> validate = NOOP_VALIDATOR;
 

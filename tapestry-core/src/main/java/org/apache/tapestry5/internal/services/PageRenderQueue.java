@@ -18,6 +18,7 @@ import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.internal.structure.Page;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.runtime.RenderCommand;
+import org.apache.tapestry5.services.PartialMarkupRendererFilter;
 
 
 /**
@@ -75,4 +76,15 @@ public interface PageRenderQueue
      * @param reply  JSONObject which will contain the partial response
      */
     void renderPartial(MarkupWriter writer, JSONObject reply);
+
+    /**
+     * Adds an optional filter to the rendering.  Optional filters are <em>temporary</em>, used just during the current
+     * partial render (as opposed to filters contributed to the {@link org.apache.tapestry5.services.PartialMarkupRenderer}
+     * service which are permanent, shared and stateless.
+     * <p/>
+     * Filters are added to the <em>end</em> of the pipeline (after all permanent contributions).
+     *
+     * @param filter to add to the pipeline
+     */
+    void addPartialFilter(PartialMarkupRendererFilter filter);
 }
