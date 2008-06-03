@@ -12,30 +12,35 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.integration.app1.components;
+package org.apache.tapestry5.integration.app1.data;
 
-import org.apache.tapestry5.BindingConstants;
-import org.apache.tapestry5.MarkupWriter;
-import org.apache.tapestry5.annotations.Parameter;
-import org.apache.tapestry5.corelib.components.ActionLink;
-
-public class ActionLinkIndirect
+/**
+ * Used for tests involving {@link org.apache.tapestry5.corelib.components.AjaxFormLoop} (and indirectly, {@link
+ * org.apache.tapestry5.corelib.components.FormInjector}).
+ */
+public class DoubleItem
 {
-    /**
-     * The component to be rendered.
-     */
-    @Parameter(required = true, defaultPrefix = BindingConstants.COMPONENT)
-    private ActionLink component;
+    private long id;
 
-    Object beginRender(MarkupWriter writer)
+    private double value;
+
+    public long getId()
     {
-        writer.element("p");
-
-        return component;
+        return id;
     }
 
-    void afterRender(MarkupWriter writer)
+    public void setId(long id)
     {
-        writer.end(); // p
+        this.id = id;
+    }
+
+    public double getValue()
+    {
+        return value;
+    }
+
+    public void setValue(double value)
+    {
+        this.value = value;
     }
 }

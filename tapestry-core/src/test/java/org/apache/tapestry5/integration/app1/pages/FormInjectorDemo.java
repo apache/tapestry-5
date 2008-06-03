@@ -14,42 +14,83 @@
 
 package org.apache.tapestry5.integration.app1.pages;
 
-import org.apache.tapestry5.Block;
-import org.apache.tapestry5.RenderSupport;
-import org.apache.tapestry5.annotations.Component;
+import org.apache.tapestry5.PrimaryKeyEncoder;
+import org.apache.tapestry5.annotations.Log;
 import org.apache.tapestry5.annotations.Persist;
-import org.apache.tapestry5.corelib.components.FormInjector;
-import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.integration.app1.data.DoubleItem;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class FormInjectorDemo
 {
+    @Property
+    private DoubleItem item;
+
     @Persist
+    @Property(write = false)
     private double sum;
 
-    private double value;
+    private static final Map<Long, DoubleItem> DB = CollectionFactory.newConcurrentMap();
 
-    @Inject
-    private Block newRow;
+    private static final AtomicLong ID_ALLOCATOR = new AtomicLong(System.currentTimeMillis());
 
-    @Inject
-    private RenderSupport renderSupport;
-
-    @Component
-    private FormInjector formInjector;
-
-    public double getSum()
+    private static class DoubleItemComparator implements Comparator<DoubleItem>
     {
-        return sum;
+        public int compare(DoubleItem o1, DoubleItem o2)
+        {
+            return (int) (o1.getId() - o2.getId());
+        }
     }
 
-    public double getValue()
+    public PrimaryKeyEncoder getEncoder()
     {
-        return value;
+        return new PrimaryKeyEncoder<Long, DoubleItem>()
+        {
+            public Long toKey(DoubleItem value)
+            {
+                return value.getId();
+            }
+
+            public void prepareForKeys(List<Long> keys)
+            {
+            }
+
+            public DoubleItem toValue(Long key)
+            {
+                return DB.get(key);
+            }
+        };
     }
 
-    public void setValue(double value)
+    @Log
+    public List<DoubleItem> getDoubleItems()
     {
-        this.value = value;
+        List<DoubleItem> items = CollectionFactory.newList(DB.values());
+
+        Collections.sort(items, new DoubleItemComparator());
+
+        return items;
+    }
+
+    Object onAddRow()
+    {
+        DoubleItem item = new DoubleItem();
+        item.setId(ID_ALLOCATOR.incrementAndGet());
+
+        DB.put(item.getId(), item);
+
+        return item;
+    }
+
+    void onRemoveRow(DoubleItem item)
+    {
+        DB.remove(item.getId());
     }
 
     void onPrepareForSubmit()
@@ -59,19 +100,12 @@ public class FormInjectorDemo
 
     void onAfterSubmit()
     {
-        sum += value;
+        sum += item.getValue();
     }
 
 
-    void afterRender()
+    void onActionFromReset()
     {
-        renderSupport.addScript(
-                "$('addnewrow').observe('click', function() { $('%s').trigger(); return false; });",
-                formInjector.getClientId());
-    }
-
-    Object onActionFromFormInjector()
-    {
-        return newRow;
+        DB.clear();
     }
 }

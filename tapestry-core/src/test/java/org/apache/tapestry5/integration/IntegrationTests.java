@@ -1873,6 +1873,14 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         clickAndWait(SUBMIT);
 
         assertText("sum", "5.1");
+
+        click("link=remove");
+
+        sleep(2000);
+
+        clickAndWait(SUBMIT);
+
+        assertText("sum", "0.0");
     }
 
     /**

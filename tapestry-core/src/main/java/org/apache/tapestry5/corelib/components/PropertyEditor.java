@@ -51,6 +51,12 @@ public class PropertyEditor
         {
             component.setupEnvironment(property);
         }
+
+        @Override
+        public String toString()
+        {
+            return String.format("PropertyEditor.SetupEnvironment[%s]", property);
+        }
     }
 
     static class CleanupEnvironment implements ComponentAction<PropertyEditor>

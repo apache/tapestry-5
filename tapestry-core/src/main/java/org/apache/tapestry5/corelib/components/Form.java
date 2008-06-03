@@ -15,10 +15,7 @@
 package org.apache.tapestry5.corelib.components;
 
 import org.apache.tapestry5.*;
-import org.apache.tapestry5.annotations.Environmental;
-import org.apache.tapestry5.annotations.Mixin;
-import org.apache.tapestry5.annotations.Parameter;
-import org.apache.tapestry5.annotations.Persist;
+import org.apache.tapestry5.annotations.*;
 import org.apache.tapestry5.corelib.internal.ComponentActionSink;
 import org.apache.tapestry5.corelib.internal.FormSupportImpl;
 import org.apache.tapestry5.corelib.mixins.RenderInformals;
@@ -34,6 +31,7 @@ import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.TapestryException;
 import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.services.*;
+import org.slf4j.Logger;
 
 import java.io.EOFException;
 import java.io.IOException;
@@ -137,6 +135,9 @@ public class Form implements ClientElement, FormValidationControl
     private String zone;
 
     @Inject
+    private Logger logger;
+
+    @Inject
     private Environment environment;
 
     @Inject
@@ -198,7 +199,7 @@ public class Form implements ClientElement, FormValidationControl
     void beginRender(MarkupWriter writer)
     {
 
-        actionSink = new ComponentActionSink();
+        actionSink = new ComponentActionSink(logger);
 
         name = renderSupport.allocateClientId(resources);
 
@@ -281,6 +282,7 @@ public class Form implements ClientElement, FormValidationControl
     }
 
     @SuppressWarnings({ "unchecked", "InfiniteLoopStatement" })
+    @Log
     Object onAction(EventContext context) throws IOException
     {
         tracker.clear();
@@ -369,6 +371,9 @@ public class Form implements ClientElement, FormValidationControl
 
         for (String actionsBase64 : values)
         {
+            if (logger.isDebugEnabled())
+                logger.debug(String.format("Processing actions: %s", actionsBase64));
+
             ObjectInputStream ois = null;
 
             Component component = null;
@@ -383,6 +388,10 @@ public class Form implements ClientElement, FormValidationControl
                     ComponentAction action = (ComponentAction) ois.readObject();
 
                     component = source.getComponent(componentId);
+
+                    if (logger.isDebugEnabled())
+                        logger.debug(String.format("Processing: %s  %s", componentId, action));
+
 
                     action.execute(component);
 

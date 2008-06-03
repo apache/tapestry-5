@@ -1,21 +1,18 @@
 <html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
 
+    <h1>FormInjector Demo (now including AjaxFormLoop)</h1>
 
     <t:form>
 
-        <t:block id="newRow">
-
-            <div class="t-beaneditor-row">
-                <t:submitnotifier>
-                    <t:textfield t:id="value"/>
-                </t:submitnotifier>
-            </div>
-
-        </t:block>
-
         <ul>
-            <li t:id="forminjector" class="t-beaneditor-row">
-                <a href="#" id="addnewrow">Add a row</a>
+            <li t:id="loop" t:type="AjaxFormLoop" source="doubleItems" value="item" encoder="encoder">
+                <t:submitnotifier>
+                    <t:textfield t:id="value" value="item.value"/>
+                    <t:removerowlink>remove</t:removerowlink>
+                </t:submitnotifier>
+                <t:parameter name="addRow">
+                    <t:addrowlink>Add a row</t:addrowlink>
+                </t:parameter>
             </li>
         </ul>
 
@@ -29,6 +26,10 @@
         Current sum:
         <span id="sum">${sum}</span>
     </p>
+
+    <h2>Data</h2>
+
+    <t:grid source="doubleItems"/>
 
 
 </html>

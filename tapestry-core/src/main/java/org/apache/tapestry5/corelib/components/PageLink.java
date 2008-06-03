@@ -14,6 +14,7 @@
 
 package org.apache.tapestry5.corelib.components;
 
+import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.Link;
 import org.apache.tapestry5.MarkupWriter;
@@ -36,7 +37,7 @@ public class PageLink extends AbstractLink
     /**
      * The logical name of the page to link to.
      */
-    @Parameter(required = true, defaultPrefix = "literal")
+    @Parameter(required = true, defaultPrefix = BindingConstants.LITERAL)
     private String page;
 
     @Inject

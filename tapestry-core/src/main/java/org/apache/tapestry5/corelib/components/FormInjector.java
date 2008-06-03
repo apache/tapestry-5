@@ -22,6 +22,7 @@ import org.apache.tapestry5.corelib.data.InsertPosition;
 import org.apache.tapestry5.corelib.internal.ComponentActionSink;
 import org.apache.tapestry5.corelib.internal.FormSupportImpl;
 import org.apache.tapestry5.corelib.internal.HiddenFieldPositioner;
+import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.internal.services.ClientBehaviorSupport;
 import org.apache.tapestry5.internal.services.ComponentResultProcessorWrapper;
 import org.apache.tapestry5.internal.services.PageRenderQueue;
@@ -30,6 +31,7 @@ import org.apache.tapestry5.ioc.internal.util.IdAllocator;
 import org.apache.tapestry5.runtime.RenderCommand;
 import org.apache.tapestry5.runtime.RenderQueue;
 import org.apache.tapestry5.services.*;
+import org.slf4j.Logger;
 
 import java.io.IOException;
 import java.util.List;
@@ -100,6 +102,11 @@ public class FormInjector implements ClientElement
     @Inject
     private Environment environment;
 
+    @Inject
+    private Logger logger;
+
+    private Element clientElement;
+
     String defaultElement()
     {
         return resources.getElementName("div");
@@ -109,9 +116,9 @@ public class FormInjector implements ClientElement
     {
         clientId = renderSupport.allocateClientId(resources);
 
-        writer.element(element,
+        clientElement = writer.element(element,
 
-                       "id", clientId);
+                                       "id", clientId);
 
         resources.renderInformalParameters(writer);
 
@@ -128,6 +135,11 @@ public class FormInjector implements ClientElement
     void afterRender(MarkupWriter writer)
     {
         writer.end();
+
+        // Add the class name to the rendered client element. This allows nested elements to locate
+        // the containing FormInjector element.
+
+        clientElement.addClassName("t-forminjector");
     }
 
 
@@ -168,7 +180,7 @@ public class FormInjector implements ClientElement
 
         final String formId = request.getParameter(FORMID_PARAMETER);
 
-        final ComponentActionSink actionSink = new ComponentActionSink();
+        final ComponentActionSink actionSink = new ComponentActionSink(logger);
 
         final RenderCommand cleanup = new RenderCommand()
         {

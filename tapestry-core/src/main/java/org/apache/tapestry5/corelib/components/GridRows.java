@@ -55,6 +55,12 @@ public class GridRows
         {
             component.setupForRow(rowIndex);
         }
+
+        @Override
+        public String toString()
+        {
+            return String.format("GridRows.SetupForRow[%d]", rowIndex);
+        }
     }
 
     /**

@@ -52,7 +52,7 @@ public class DateField extends AbstractField
      * The object that will perform input validation (which occurs after translation). The translate binding prefix is
      * generally used to provide this object in a declarative fashion.
      */
-    @Parameter(defaultPrefix = "validate")
+    @Parameter(defaultPrefix = BindingConstants.VALIDATE)
     @SuppressWarnings("unchecked")
     private FieldValidator<Object> validate = NOOP_VALIDATOR;
 

@@ -103,6 +103,12 @@ public class RadioGroup implements Field
         {
             component.setup(controlName);
         }
+
+        @Override
+        public String toString()
+        {
+            return String.format("RadioGroup.Setup[%s]", controlName);
+        }
     }
 
     private static final ComponentAction<RadioGroup> PROCESS_SUBMISSION = new ComponentAction<RadioGroup>()
@@ -112,6 +118,12 @@ public class RadioGroup implements Field
         public void execute(RadioGroup component)
         {
             component.processSubmission();
+        }
+
+        @Override
+        public String toString()
+        {
+            return "RadioGroup.ProcessSubmission";
         }
     };
 

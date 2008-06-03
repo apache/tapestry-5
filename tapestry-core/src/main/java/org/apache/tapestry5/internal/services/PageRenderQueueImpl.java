@@ -19,9 +19,13 @@ import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.internal.structure.Page;
 import static org.apache.tapestry5.ioc.IOCConstants.PERTHREAD_SCOPE;
 import org.apache.tapestry5.ioc.annotations.Scope;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.Defense;
+import org.apache.tapestry5.ioc.util.Stack;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.runtime.RenderCommand;
+import org.apache.tapestry5.services.PartialMarkupRenderer;
+import org.apache.tapestry5.services.PartialMarkupRendererFilter;
 
 /**
  * This services keeps track of the page being rendered and the root command for the partial render, it is therefore
@@ -34,6 +38,26 @@ public class PageRenderQueueImpl implements PageRenderQueue
     private Page page;
 
     private RenderCommand rootCommand;
+
+    private final Stack<PartialMarkupRendererFilter> filters = CollectionFactory.newStack();
+
+    private static class Bridge implements PartialMarkupRenderer
+    {
+        private final PartialMarkupRendererFilter filter;
+
+        private final PartialMarkupRenderer delegate;
+
+        private Bridge(PartialMarkupRendererFilter filter, PartialMarkupRenderer delegate)
+        {
+            this.filter = filter;
+            this.delegate = delegate;
+        }
+
+        public void renderMarkup(MarkupWriter writer, JSONObject reply)
+        {
+            filter.renderMarkup(writer, reply, delegate);
+        }
+    }
 
     public void initializeForCompletePage(Page page)
     {
@@ -84,8 +108,34 @@ public class PageRenderQueueImpl implements PageRenderQueue
         queue.run(writer);
     }
 
+    public void addPartialFilter(PartialMarkupRendererFilter filter)
+    {
+        Defense.notNull(filter, "filter");
+
+        filters.push(filter);
+    }
+
     public void renderPartial(MarkupWriter writer, JSONObject reply)
     {
+        PartialMarkupRenderer terminator = new PartialMarkupRenderer()
+        {
+            public void renderMarkup(MarkupWriter writer, JSONObject reply)
+            {
+                render(writer);
+            }
+        };
+
+        PartialMarkupRenderer delegate = terminator;
+
+        while (!filters.isEmpty())
+        {
+            PartialMarkupRendererFilter filter = filters.pop();
+
+            PartialMarkupRenderer bridge = new Bridge(filter, delegate);
+
+            delegate = bridge;
+        }
+
         // The partial will quite often contain multiple elements (or just a block of plain text),
         // so those must be enclosed in a root element.
 
@@ -93,7 +143,7 @@ public class PageRenderQueueImpl implements PageRenderQueue
 
         // The initialize methods will already have been invoked.
 
-        render(writer);
+        delegate.renderMarkup(writer, reply);
 
         writer.end();
 

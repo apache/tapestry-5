@@ -14,10 +14,7 @@
 
 package org.apache.tapestry5.corelib.components;
 
-import org.apache.tapestry5.ComponentResources;
-import org.apache.tapestry5.Field;
-import org.apache.tapestry5.MarkupWriter;
-import org.apache.tapestry5.ValidationDecorator;
+import org.apache.tapestry5.*;
 import org.apache.tapestry5.annotations.*;
 import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.ioc.annotations.Inject;
@@ -39,7 +36,7 @@ public class Label
      * The for parameter is used to identify the {@link Field} linked to this label (it is named this way because it
      * results in the for attribute of the label element).
      */
-    @Parameter(name = "for", required = true, defaultPrefix = "component")
+    @Parameter(name = "for", required = true, defaultPrefix = BindingConstants.COMPONENT)
     private Field field;
 
     @Environmental
