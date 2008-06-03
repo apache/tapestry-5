@@ -91,6 +91,8 @@ Third Party Libraries, Tutorials and Resources
 *--+--+--+
 | {{{http://code.google.com/p/shams/}Shams Examples, Components}} |  Mohammad H. Shamsi |   A set of Tapestry 5 Examples, Tutorials, Components, and Documents for beginners. |
 *--+--+--+
+| {{{http://www.infoq.com/articles/tapestry5-intro}Tapestry for Nonbelievers}} |      Renat Zubairov & Igor Drobiazko | Simple introduction to using Tapestry and creating components |
+*--+--+--+
 | {{{http://code.google.com/p/tapestry5-components/}T5Components}} | Sven Homburg | Ajax-enabled components based on Prototype and Scriptaculous. |
 *--+--+--+
 | {{{http://tacos.sourceforge.net/tacos5/tacos-seam/}tacos-seam}} | Igor Drobiazko | Intregrates with {{{http://www.jboss.com/products/seam}JBoss Seam}}. |
