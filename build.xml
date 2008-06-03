@@ -15,7 +15,7 @@
    limitations under the License.
 -->
 
-<project default="generate" xmlns:mvn="urn:maven-artifact-ant">
+<project default="assemble" xmlns:mvn="urn:maven-artifact-ant">
 
     <!-- Requires Ant 1.7.0 to execute! -->
 
@@ -184,27 +184,5 @@
         <delete dir="${binimage.dir}" quiet="true"/>
     </target>
 
-    <target name="generate" description="Generate and deploy the build.">
-        <macrodef name="maven">
-            <attribute name="args"/>
-
-            <sequential>
-                <echo><![CDATA[
-
-*** Executing mvn @{args} ***
-
-]]></echo>
-                <exec searchpath="true" executable="mvn">
-                    <arg line="@{args}"/>
-                </exec>
-            </sequential>
-        </macrodef>
-
-        <maven args="clean"/>
-        <maven args="install"/>
-        <maven args="site site:deploy -Pjavadoc"/>
-        <maven args="deploy -Pdeploy"/>
-        <antcall target="assemble"/>
-    </target>
 
 </project>
