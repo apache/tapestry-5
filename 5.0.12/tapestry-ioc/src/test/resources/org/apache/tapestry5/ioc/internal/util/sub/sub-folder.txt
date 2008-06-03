@@ -1,0 +1,1 @@
+content from sub-folder resource

@@ -1,0 +1,8 @@
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+<p>
+<t:loop source="1..3">abc</t:loop>
+</p>
+<p>
+<span id="1"><t:loop source="array" value="value">${value}</t:loop></span>
+</p>
+</html>

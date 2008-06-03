@@ -1,0 +1,12 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+    <p>
+        This template is not well formed.</p>
+    
+    <t:foobar>content from template</foobar>
+    
+    <p>
+        This page is used to test exception reporting.
+    </p>
+    
+</html>   

@@ -1,0 +1,22 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+  <h1>Render Component Demo</h1>
+
+  <p> This page demonstrates how a component may return a component instance from one of its render
+    phase methods to allow that object to render. </p>
+
+  <t:block id="optional"> <span>Optional Text</span> </t:block>
+
+  <t:form>
+    <input t:type="Checkbox" t:id="enabled" onchange="this.form.submit();"/>
+    <label t:type="Label" for="enabled">Enable optional text</label>
+  </t:form>
+
+  <t:if test="enabled"> Should now show up: <t:parameter name="else"> Should be blank:
+    </t:parameter>
+  </t:if>
+
+  <span id="container">[<t:render value="thing"/>]</span>
+
+
+</html>

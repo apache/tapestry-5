@@ -1,0 +1,17 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+    <h1>Page Context in Form</h1>
+
+    <h2>Activation Context</h2>
+    <t:if test="activationContext">
+        <ul>
+            <li t:type="loop" source="activationContext" value="object">${object}</li>
+        </ul>
+        <t:parameter name="else">No activation context.</t:parameter>
+    </t:if>
+
+    <t:form>
+        <input type="submit"/>
+    </t:form>
+
+</html>

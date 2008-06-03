@@ -1,0 +1,17 @@
+<div class="t-beandisplay" xml:space="default"
+     xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+
+    <div class="t-beandisplay-row" t:type="loop" t:source="model.propertyNames"
+         t:volatile="true" t:value="propertyName">
+
+        <div class="${labelClass}">${propertyModel.label}:</div>
+
+        <div class="${valueClass}">
+            <t:propertydisplay model="propertyModel" overrides="overrides" object="object"/>
+        </div>
+
+    </div>
+
+</div>
+
