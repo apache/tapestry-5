@@ -1,9 +1,7 @@
 <t:container xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
 
     <t:formfragment t:id="fragment" element="prop:element" visible="true">
-        <t:delegate to="beforeBody"/>
-        <t:body/>
-        <t:delegate to="afterBody"/>
+        <t:delegate to="block:ajaxResponse"/>
     </t:formfragment>
 
     <t:block id="tail">

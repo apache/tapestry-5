@@ -28,8 +28,8 @@ import org.apache.tapestry5.internal.services.ComponentResultProcessorWrapper;
 import org.apache.tapestry5.internal.services.PageRenderQueue;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.internal.util.IdAllocator;
+import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.runtime.RenderCommand;
-import org.apache.tapestry5.runtime.RenderQueue;
 import org.apache.tapestry5.services.*;
 import org.slf4j.Logger;
 
@@ -40,6 +40,10 @@ import java.util.List;
  * A way to add new content to an existing Form. The FormInjector emulates its tag from the template (or uses a
  * &lt;div&gt;). When triggered, new content is obtained from the application and is injected before or after the
  * element.
+ * <p/>
+ * On the client side, a new function, trigger(), is added to the element. Invoking this client-side function will
+ * trigger the FormInjector; a request is sent to the server, new content is generated, and the new content is placed
+ * before or after (per configuration) the existing FormInjector element.
  */
 @SupportsInformalParameters
 public class FormInjector implements ClientElement
@@ -165,14 +169,14 @@ public class FormInjector implements ClientElement
      * event notification is what will ultimately render (typically, its a Block).  However, we do a <em>lot</em> of
      * tricks to provide the desired FormSupport around the what renders.
      */
-    Object onInject(EventContext context) throws IOException
+    void onInject(EventContext context) throws IOException
     {
         ComponentResultProcessorWrapper callback = new ComponentResultProcessorWrapper(
                 componentEventResultProcessor);
 
         resources.triggerContextEvent(EventConstants.ACTION, context, callback);
 
-        if (!callback.isAborted()) return null;
+        if (!callback.isAborted()) return;
 
         // Here's where it gets very, very tricky.
 
@@ -182,28 +186,9 @@ public class FormInjector implements ClientElement
 
         final ComponentActionSink actionSink = new ComponentActionSink(logger);
 
-        final RenderCommand cleanup = new RenderCommand()
+        PartialMarkupRendererFilter filter = new PartialMarkupRendererFilter()
         {
-            public void render(MarkupWriter writer, RenderQueue queue)
-            {
-                environment.pop(ValidationTracker.class);
-
-                FormSupportImpl formSupport = (FormSupportImpl) environment.pop(FormSupport.class);
-
-                formSupport.executeDeferred();
-
-                hiddenFieldPositioner.getElement().attributes(
-                        "type", "hidden",
-
-                        "name", Form.FORM_DATA,
-
-                        "value", actionSink.toBase64());
-            }
-        };
-
-        final RenderCommand setup = new RenderCommand()
-        {
-            public void render(final MarkupWriter writer, RenderQueue queue)
+            public void renderMarkup(MarkupWriter writer, JSONObject reply, PartialMarkupRenderer renderer)
             {
                 hiddenFieldPositioner = new HiddenFieldPositioner(writer, rules);
 
@@ -216,20 +201,32 @@ public class FormInjector implements ClientElement
 
                 IdAllocator idAllocator = new IdAllocator(":" + uid);
 
+                clientId = renderSupport.allocateClientId(resources);
+
+                reply.put("elementId", clientId);
+
                 FormSupportImpl formSupport = new FormSupportImpl(formId, actionSink, clientBehaviorSupport, true,
                                                                   idAllocator);
 
                 environment.push(FormSupport.class, formSupport);
                 environment.push(ValidationTracker.class, new ValidationTrackerImpl());
 
-                // Queue up the root render command to execute first, and the cleanup
-                // to execute after it is done.
+                renderer.renderMarkup(writer, reply);
 
-                queue.push(cleanup);
-                queue.push(rootRenderCommand);
+                formSupport.executeDeferred();
+
+                environment.pop(ValidationTracker.class);
+                environment.pop(FormSupport.class);
+
+                hiddenFieldPositioner.getElement().attributes(
+                        "type", "hidden",
+
+                        "name", Form.FORM_DATA,
+
+                        "value", actionSink.toBase64());
             }
         };
 
-        return setup;
+        pageRenderQueue.addPartialMarkupRendererFilter(filter);
     }
 }

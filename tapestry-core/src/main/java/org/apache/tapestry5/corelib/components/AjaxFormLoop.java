@@ -384,7 +384,9 @@ public class AjaxFormLoop
             );
 
 
-        pageRenderQueue.addPartialFilter(new PartialMarkupRendererFilter()
+        renderingInjector = true;
+
+        pageRenderQueue.addPartialMarkupRendererFilter(new PartialMarkupRendererFilter()
         {
             public void renderMarkup(MarkupWriter writer, JSONObject reply, PartialMarkupRenderer renderer)
             {

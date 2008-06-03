@@ -21,24 +21,27 @@ import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.corelib.internal.ComponentActionSink;
 import org.apache.tapestry5.corelib.internal.FormSupportAdapter;
 import org.apache.tapestry5.corelib.internal.HiddenFieldPositioner;
-import org.apache.tapestry5.corelib.internal.WrappedComponentAction;
 import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.internal.services.ClientBehaviorSupport;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.*;
 import org.slf4j.Logger;
 
-import java.util.List;
-
 /**
- * A SubForm is a portion of a Form that may be selectively displayed.  Form elements inside a FormFragment will
+ * A FormFragment is a portion of a Form that may be selectively displayed.  Form elements inside a FormFragment will
  * automatically bypass validation when the fragment is invisible.  The trick is to also bypass server-side form
- * processing for such fields when the form is submitted; the fragment uses a hidden field to track its client-side
- * visibility and will bypass field component submission logic for the components it encloses.
+ * processing for such fields when the form is submitted; client-side logic "removes" the {@link
+ * org.apache.tapestry5.corelib.components.Form#FORM_DATA form data} for the fragment if it is invisible when the form
+ * is submitted; alternately, client-side logic can simply remove the form fragment element (including its visible and
+ * hidden fields) to prevent server-side processing.
  * <p/>
- * In addition, should the client-side element for a Form fragment be removed before the enclosing form is submitted,
- * then none of the fields inside the fragment will be processed (this can be considered an extension of the "if not
- * visible, don't process" option above).
+ * <p/>
+ * The client-side element has a new property, formFragment, added to it.  The formFragment object has new methods to
+ * control the client-side behavior of the fragment: <dl> <dt>hide()</dt> <dd>Hides the element, using the configured
+ * client-side animation effect.</dd> <dt>hideAndRemove()</dt> <dd>As with hide(), but the element is removed from the
+ * DOM after being hidden.</dd> <dt>show()</dt> <dd>Makes the element visible, using the configured client-side
+ * animation effect.</dd> <dt>toggle()</dt> <dd>Invokes hide() or show() as necessary.</dd> <dt>setVisible()</dt>
+ * <dd>Passed a boolean parameter, invokes hide() or show() as necessary.</dd> </dl>
  *
  * @see org.apache.tapestry5.corelib.mixins.TriggerFragment
  */
@@ -73,7 +76,6 @@ public class FormFragment implements ClientElement
      */
     @Parameter(defaultPrefix = BindingConstants.LITERAL)
     private String element;
-
 
     @Inject
     private Environment environment;
@@ -110,22 +112,6 @@ public class FormFragment implements ClientElement
         return resources.getElementName("div");
     }
 
-    private void handleSubmission(String elementName, List<WrappedComponentAction> actions)
-    {
-        String value = request.getParameter(elementName);
-
-        boolean visible = Boolean.parseBoolean(value);
-
-        if (!visible) return;
-
-        // Note that we DON'T update the visible parameter, it is read only.
-
-        for (WrappedComponentAction action : actions)
-        {
-            action.execute(componentSource);
-        }
-    }
-
     /**
      * Renders a &lt;div&gt; tag and provides an override of the {@link org.apache.tapestry5.services.FormSupport}
      * environmental.
@@ -146,7 +132,6 @@ public class FormFragment implements ClientElement
 
         if (!visible)
             element.addClassName(CSSClassConstants.INVISIBLE);
-
 
         clientBehaviorSupport.addFormFragment(clientId, show, hide);
 
@@ -189,7 +174,6 @@ public class FormFragment implements ClientElement
      */
     void afterRender(MarkupWriter writer)
     {
-
         hiddenFieldPositioner.getElement().attributes(
                 "type", "hidden",
 
