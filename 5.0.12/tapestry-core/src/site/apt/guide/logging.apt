@@ -1,0 +1,154 @@
+ ----
+  Logging
+ ----
+ 
+Logging of Tapestry Components and Pages
+
+  Tapestry makes extensive use of
+  {{{http://www.slf4j.org/}SLF4J}} to log details about the creation and operation of your page and component classes.
+  
+  The default configuration for logging uses 
+  {{{http://logging.apache.org/log4j/}Log4J}} as the logging toolkit, though
+  {{{../../tapestry-ioc/logging.html}this can be changed}}.
+  
+  
+Class to Logger
+
+  The logger name for a page or component matches the fully qualified class name.  You can configure this in log4j.properties:
+  
+----
+log4j.category.org.apache.tapestry5.integration.app1.pages.MerryChristmas=trace
+----
+  
+Injecting Loggers
+
+  You may mark a field of type 
+  {{{http://www.slf4j.org/api/org/slf4j/Logger.html}Logger}} with the @Inject annotation.  The proper Logger for your
+  page or component will be injected.
+  
+---
+public class MyPage
+{
+  @Inject
+  private Logger logger;
+  
+  . . .
+---
+
+@Log annotation
+
+  You may mark any component method with the {{{../../apidocs/org/apache/tapestry5/annotations/Log.html}Log}} annotation.
+  Method entry, exit (and any thrown exceptions) will be logged at DEBUG level. This is very convienient for
+  debugging, especially when placed on event handler methods.
+
+
+DEBUG Level
+
+  When a component's logger is configured at the DEBUG level, you will also see added output when the class is first
+  accessed identifying how Tapestry is modifying the bytecode of the class.  
+  
+  Example:
+  
+---
+[DEBUG] MerryChristmas Finished class transformation: InternalClassTransformation[
+public org.apache.tapestry5.integration.app1.pages.MerryChristmas extends java.lang.Object
+  implements org.apache.tapestry5.runtime.Component, org.apache.tapestry5.runtime.RenderCommand
+
+add default method: public void postRenderCleanup()
+<default>
+
+add default method: public void setupRender(org.apache.tapestry5.MarkupWriter $1, org.apache.tapestry5.runtime.Event $2)
+<default>
+
+add default method: public void beginRender(org.apache.tapestry5.MarkupWriter $1, org.apache.tapestry5.runtime.Event $2)
+<default>
+
+add default method: public void beforeRenderTemplate(org.apache.tapestry5.MarkupWriter $1, org.apache.tapestry5.runtime.Event $2)
+<default>
+
+add default method: public void afterRenderTemplate(org.apache.tapestry5.MarkupWriter $1, org.apache.tapestry5.runtime.Event $2)
+<default>
+
+add default method: public void beforeRenderBody(org.apache.tapestry5.MarkupWriter $1, org.apache.tapestry5.runtime.Event $2)
+<default>
+
+add default method: public void afterRenderBody(org.apache.tapestry5.MarkupWriter $1, org.apache.tapestry5.runtime.Event $2)
+<default>
+
+add default method: public void afterRender(org.apache.tapestry5.MarkupWriter $1, org.apache.tapestry5.runtime.Event $2)
+<default>
+
+add default method: public void cleanupRender(org.apache.tapestry5.MarkupWriter $1, org.apache.tapestry5.runtime.Event $2)
+<default>
+
+add default method: public boolean handleComponentEvent(org.apache.tapestry5.runtime.ComponentEvent $1)
+<default>
+
+add default method: public org.apache.tapestry5.ComponentResources getComponentResources()
+<default>
+
+add default method: public void containingPageDidLoad()
+<default>
+
+add default method: public void containingPageDidDetach()
+<default>
+
+add default method: public void containingPageDidAttach()
+<default>
+
+add field: protected final org.apache.tapestry5.internal.InternalComponentResources _$resources;
+
+replace method: public final org.apache.tapestry5.ComponentResources getComponentResources()
+return _$resources;
+
+add default method: public void render(org.apache.tapestry5.MarkupWriter $1, org.apache.tapestry5.runtime.RenderQueue $2)
+<default>
+
+replace method: public void render(org.apache.tapestry5.MarkupWriter $1, org.apache.tapestry5.runtime.RenderQueue $2)
+_$resources.queueRender($2);
+
+convert default constructor: initializer();
+
+add constructor: org.apache.tapestry5.integration.app1.pages.MerryChristmas(org.apache.tapestry5.internal.InternalComponentResources $1)
+{
+  _$resources = $1;
+  initializer();
+
+}
+
+]
+----
+
+  Is this helpful?  Probably only if you are developing your own code that integrates into the component class transformation chain; for example,
+  to support your own field and method annotations.
+  
+TRACE Level
+
+  Enabling the TRACE level <for pages> results in extremely verbose logging of every activity that drives the rendering of output, such as each component
+  working its way through the {{{rendering.html}rendering stage machine}}.  Example:
+  
+----
+[TRACE] MerryChristmas Executing: ComponentPageElement[MerryChristmas]
+[TRACE] MerryChristmas Executing: SetupRender[MerryChristmas]
+[TRACE] MerryChristmas Executing: BeginRender[MerryChristmas]
+[TRACE] MerryChristmas Executing: BeforeRenderTemplate[MerryChristmas]
+[TRACE] MerryChristmas Executing: ComponentPageElement[MerryChristmas:border]
+[TRACE] MerryChristmas Executing: SetupRender[MerryChristmas:border]
+[TRACE] MerryChristmas Executing: BeginRender[MerryChristmas:border]
+[TRACE] MerryChristmas Executing: BeforeRenderTemplate[MerryChristmas:border]
+[TRACE] MerryChristmas Executing: Start[html]
+[TRACE] MerryChristmas Executing: Text[
+    ]
+[TRACE] MerryChristmas Executing: Start[head]
+[TRACE] MerryChristmas Executing: Text[
+        ]
+[TRACE] MerryChristmas Executing: Start[title]
+[TRACE] MerryChristmas Executing: Text[Tapestry Integration Test Application #1]
+
+  . . .
+----
+
+  Is this helpful?  Only if you are writing your own components and get an exception about unbalanced elements. This output gives
+  you a detailed view into what has rendered and when, so you can track it down.
+    
+  

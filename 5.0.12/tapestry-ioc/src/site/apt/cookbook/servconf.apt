@@ -1,0 +1,205 @@
+ ----
+ Service Configurations
+ ----
+
+Service Configurations
+
+  This is an area of Tapestry IoC that is often least well understood.  Tapestry services often must have some configuration to fine tune
+  exactly what they do.  One of the interactions between modules is that these service configurations are shared: they may
+  be contributed into by any module.
+
+  Let's start with the most basic kind, the unordered configuration.
+
+Unordered Service Configurations
+
+  One of Tapestry's features is the ability to package assets (images, style sheets, javascript libraries, etc.) inside JAR files
+  and expose those to the client.  For example, an application URL /assets/org/example/mylib/mylib.js would refer to
+  a file, myllib.js, stored on the classpath in the /org/example/mylib folder.
+
+  That's fine for most cases, but for certain file extensions, we don't want to allow a client browser to "troll" for the files, as the
+  contents could compromise security.  For example, downloading a .class file is bad: a clever client might download one that contains
+  a hardcoded user name or password.
+
+  Thus, for certain file extensions, Tapestry guards the resource by attaching an MD5 digest for the resource to the URL. 
+  The checksum is derived from the file contents; thus it can't be spoofed from the client unless the client already has the file contents.
+
+  This is controlled by the 
+  {{{../../apidocs/org/apache/tapestry5/services/ResourceDigestGenerator.html}ResourceDigestGenerator}} service, which uses its
+  configuration to determine which file extensions require an MD5 digest.
+
+* Contributing to a Service
+
+  The Tapestry module makes a contribution into the service configuration:
+
++-----+
+  public static void contributeResourceDigestGenerator(Configuration<String> configuration)
+  {
+    configuration.add("class");
+    configuration.add("tml");
+  }
++----+
+
+  This is a <service contribution method>, a method that is invoked to provide values for a configuration.  We'll see how the
+  service receives these contributions shortly.  The 
+  {{{../../apidocs/org/apache/tapestry5/ioc/Configuration.html}Configuration}} object is how
+  values are added to the service's configuration. Other parameters to a service configuration method are injected
+  much as with a service's constructor, or a service builder method.
+
+  How does Tapestry know which service configuration to update?  It's from the name of the method, anything
+  after the "contribute" prefix is the id of the service to contribute to (the match against service id is  
+  case insensitive).
+
+  Here, the configuration receives two values:  "class" (a compiled Java class) and "tml" (a Tapestry component template).
+
+  Say your application stored a file on the classpath needed by your application; for illustrative purposes, perhaps it
+  is a PGP private key.  You don't want any client to able to download a .pgp file, no matter how unlikely that
+  would be.  Thus:
+
++----+
+public class MyAppModule
+{
+ public static void contributeResourceDigestGenerator(Configuration<String> configuration)
+ {
+   configuration.add("pgp");
+ }
+}
++----+
+
+  The contribution in MyAppModule doesn't <replace> the normal contribution, it is <combined>.  The end result is that
+  .class, .tml and .pgp files would <all> be protected.
+
+* Receiving the Configuration
+
+  A service receives the configuration as an injected parameter ... not of type Configuration (that's used for <making> contributions), but
+  instead is  of type Collection:
+
++----+
+public class ResourceDigestGeneratorImpl implements ResourceDigestGenerator
+{
+  private final Set<String> digestExtensions;
+
+  public ResourceDigestGeneratorImpl(Collection<String> configuration)
+  {
+      digestExtensions = new HashSet<String>(configuration);
+  }
+
+  . . .
+}
++---+
+
+  In many cases, the configuration is simply stored into an instance variable; in this example, the value is transformed
+  from a Collection to a Set.
+
+  These kinds of unordered configurations are surprisingly rare in Tapestry (the only other notable one is for the
+  {{{../coerce.html}TypeCoercer}} service).  However, as you can see, setting up such a configuration is quite easy.
+
+Ordered Configurations
+
+  Ordered configurations are very similar to unordered configurations ... the difference is that the configuration
+  is provided to the service as a parameter of type List.  This is used when the order of operations counts.  Often
+  these configurations are related to a design pattern such as
+  {{{../command.html}Chain of Command}} or
+  {{{../pipeline.html}Pipeline}}.
+
+  Here, the example is the
+  {{{../../apidocs/org/apache/tapestry5/services/Dispatcher.html}Dispatcher}} interface; a Dispatcher inside Tapestry
+  is roughly equivalent to a servlet, though a touch more active.  It is passed a Request and decides if the URL
+  for the Request is something it can handle; if so it will process the request, send a response, and return true.
+
+  Alternately, if the Request can't be handled, the Dispatcher returns false.
+
++----+
+public void contributeMasterDispatcher(OrderedConfiguration<Dispatcher> configuration, . . .)
+{
+  // Looks for the root path and renders the start page
+
+  configuration.add("RootPath", new RootPathDispatcher(. . .), "before:Asset");
+
+  // This goes first because an asset to be streamed may have an file extension, such as
+  // ".html", that will confuse the later dispatchers.
+
+  configuration.add(
+          "Asset",
+          new AssetDispatcher(. . .),
+          "before:PageRender");
+
+  configuration.add("PageRender", new PageRenderDispatcher(. . .));
+
+  configuration.add("ComponentAction", new ComponentActionDispatcher(. . .), "after:PageRender");
+}
++---+
+
+  With an {{{../../apidcos/org/apache/tapestry5/ioc/OrderedConfiguration.html}OrderedConfiguration}},
+  each contribution gets a name, which must be unique.  Here the names are RootPath, Asset, PageRender and ComponentAction.
+
+  The add() method takes a name, the contributed object for that name, and then zero or more optional constraints.
+  The constraints control the ordering.  The "after:" constraint ensures that the contribution is ordered after
+  the other named contribution, the "before:" contribution is the opposite.
+
+  The ordering occurs on the complete set of contributions, from all modules. 
+
+  Here, we need a specific order, used to make sure that the Dispatchers don't get confused about which URLs
+  are appropriate ... for example, an asset URL might be /assets/tapestry5/tapestry.js.  This looks just like
+  a component action URL (for page "assets/tapestry5/tapestry" and component "js"). Given that software is totally lacking
+  in basic common-sense, we instead use careful ordering of the Dipstachers to ensure that AssetDispatcher is checked <before> 
+  the ComponentAction dispatcher.
+
+* Receiving the Configuration
+
+  The configuration, once assembled and ordered, is provided as a List.
+
+  The MasterDispatcher service configuration defines a {{{../command.apt}Chain of Command}} and we can
+  provide the implementation using virtually no code:
+
++----+
+  public static Dispatcher buildMasterDispatcher(List<Dispatcher> configuration, ChainBuilder chainBuilder)
+  {
+    return chainBuilder.build(Dispatcher.class, configuration);
+  }
++----+
+
+  {{{../../apidocs/org/apache/tapestry5/ioc/services/ChainBuilder.html}ChainBuilder}} is a service that
+  <builds other services>.  Here it creates an object of type Dispatcher in terms of the list of Dispatchers.
+  This is one of the most common uses of service builder methods ... for when the service implementation
+  doesn't exist, but can be constructed at runtime.
+
+Mapped Configurations
+
+  The last type of service configuration is
+  the mapped service configuration.  Here we relate a key, often a string, to some value.  The contributions
+  are ultimately combined to form a Map.
+
+  Tapestry IoC's {{{../symbols.html}symbols}} mechanism allows configuration values to be defined and perhaps overridden, then
+  provided to services via injection, using
+  the  {{{../../apidocs/org/apache/tapestry5/ioc/annotations/Value.html}Value}} annotation.
+
+  The first step is to contribute values.
+
++----+
+  public static void contributeFactoryDefaults(MappedConfiguration<String, String> configuration)
+  {
+    configuration.add(SymbolConstants.FILE_CHECK_INTERVAL, "1000"); // 1 second
+    configuration.add(SymbolConstants.FILE_CHECK_UPDATE_TIMEOUT, "50"); // 50 milliseconds
+    configuration.add(SymbolConstants.SUPPORTED_LOCALES, "en");
+    configuration.add("tapestry.default-cookie-max-age", "604800"); // One week
+    configuration.add("tapestry.start-page-name", "start");
+    configuration.add("tapestry.scriptaculous", "classpath:${tapestry.scriptaculous.path}");
+    configuration.add(
+            "tapestry.scriptaculous.path",
+            "org/apache/tapestry5/scriptaculous_1_7_1_beta_3");
+    configuration.add("tapestry.jscalendar.path", "org/apache/tapestry5/jscalendar-1.0");
+    configuration.add("tapestry.jscalendar", "classpath:${tapestry.jscalendar.path}");
+  }
++---+
+
+  These contribution set up a number of defaults used to configure various Tapestry services. As you can see, you
+  can even define symbol values in terms of other symbol values.
+
+  Mapped configurations don't have to be keyed on Strings (enums or Class are other common key types).  When a mapped
+  configuration <is> keyed on String, then a case-insensitive map is used.
+
+
+
+
+
+  

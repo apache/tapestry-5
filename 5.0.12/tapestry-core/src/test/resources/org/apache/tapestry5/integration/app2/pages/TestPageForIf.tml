@@ -1,0 +1,26 @@
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+  <t:if test="true">
+    <p id="1">abc.</p>
+  </t:if>
+  <t:if test="false">
+    <p id="2">def.</p>
+  </t:if>
+  <t:if test="property1">
+    <p id="3">111.</p>
+  </t:if>
+  <t:if test="property2">
+    <p id="4">222.</p>
+  </t:if>
+  <t:if test="true">
+      <p id="5">blah.</p>
+      <t:parameter name="else">
+          <p id="6">hey.</p>
+      </t:parameter>
+  </t:if>
+  <t:if test="false">
+      <p id="7">blah.</p>
+      <t:parameter name="else">
+          <p id="8">hey.</p>
+      </t:parameter>
+  </t:if>
+</html>

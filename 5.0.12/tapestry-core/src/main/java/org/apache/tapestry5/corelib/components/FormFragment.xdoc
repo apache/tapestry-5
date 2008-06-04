@@ -1,0 +1,181 @@
+<document>
+    <body>
+        <section name="Related Components">
+
+            <ul>
+                <li>
+                    <a href="Form.html">Form</a>
+                </li>
+                <li>
+                    <a href="../mixins/TriggerFragment.html">TriggerFragment</a>
+                </li>
+            </ul>
+        </section>
+
+        <section name="Examples">
+
+            <p>
+                This example will collect a billing address for an order and, optionally, a separate
+                shipping address. Initially, the form will render just the billing address fields:
+            </p>
+
+            <p>
+                <img src="formfragment_ref_1.png"/>
+            </p>
+
+
+            <p>
+                Clicking the checkbox will trigger an animation that slides down the
+                remainder of the form.
+            </p>
+
+            <p>
+                <img src="formfragment_ref_2.png"/>
+            </p>
+
+
+            <p>
+                The FormFragment component ensures that client-side validation is only enabled for fields
+                that are actually visible to the user. In addition, for fields that are enclosed within the
+                FormFragment,
+                server-side validation and processing only occurs if the fields were visible to the user when the
+                client-side
+                form was submitted.
+            </p>
+
+            <subsection name="OrderAddress.tml">
+                <source><![CDATA[
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+    <body>
+        <h1>Order Address</h1>
+
+        <t:form>
+
+            <t:errors/>
+
+            <div class="t-beaneditor">
+
+                <h2>Billing Address</h2>
+
+                <t:beaneditor t:id="billingAddress"/>
+
+                <t:checkbox t:id="separateShipTo" t:mixins="triggerfragment" fragment="seperateShippingAddress"/>
+                <t:label for="separateShipTo">Separate Ship To?</t:label>
+
+                <t:formfragment t:id="seperateShippingAddress" visible="separateShipTo">
+
+                    <h2>Shipping Address</h2>
+
+                    <t:beaneditor t:id="shippingAddress"/>
+
+                </t:formfragment>
+
+
+                <div class="t-beaneditor-row">
+                    <input type="submit" value="Continue"/>
+                </div>
+            </div>
+
+        </t:form>
+
+    </body>
+</html>]]></source>
+
+                <p>
+                    The separateShipTo property is initially null, so the FormFragment is initially invisible. The
+                    BeanEditor
+                    and all of the individual fields are rendered, but the &lt;div&gt; for the FormFragment is simply
+                    invisible.
+                </p>
+
+                <p>
+                    The
+                    <a href="../mixins/TriggerFragment.html">TriggerFragment</a>
+                    mixin adds a client-side trigger that
+                    will show or hide the fragment as the checkbox is clicked by the user.
+                </p>
+
+
+            </subsection>
+
+            <subsection name="OrderAddress.java">
+                <source><![CDATA[
+public class OrderAddress
+{
+    @Persist
+    private ShippingAddress _billingAddress;
+
+    @Persist
+    private ShippingAddress _shippingAddress;
+
+    @Persist
+    private boolean _separateShipTo;
+
+    public ShippingAddress getBillingAddress()
+    {
+        return _billingAddress;
+    }
+
+    public void setBillingAddress(ShippingAddress billingAddress)
+    {
+        _billingAddress = billingAddress;
+    }
+
+    public ShippingAddress getShippingAddress()
+    {
+        return _shippingAddress;
+    }
+
+    public void setShippingAddress(ShippingAddress shippingAddress)
+    {
+        _shippingAddress = shippingAddress;
+    }
+
+    public boolean isSeparateShipTo()
+    {
+        return _separateShipTo;
+    }
+
+    public void setSeparateShipTo(boolean separateShipTo)
+    {
+        _separateShipTo = separateShipTo;
+    }
+}]]></source>
+            </subsection>
+
+            <p>
+                The OrderAddress page is largely just a holder of the properties (for simplicity in this example,
+                there is no event handler for the success event, nor are we going into other details that would
+                be reflected in a real application).
+            </p>
+
+            <p>
+                The BeanEditor component will create default instances of billingAddress and shippingAddress.
+                If the user does not choose to use a seperate ship-to, the shippingAddress property will contain
+                an empty ShippingAddress object. The application will need to query the separateShipTo property
+                to determine how to proceed once the form is succesfully submitted.
+            </p>
+
+        </section>
+
+        <section name="Notes">
+
+            <p>
+                FormFragments are nestable, which can lead to complex (and perhaps, confusing) interfaces.
+            </p>
+
+            <p>
+                The FormFragment doesn't just prevent server-side input validation when invisible; it prevents
+                <em>any</em>
+                server-side processing
+                for the components it encloses, as if the components were entirely absent.
+            </p>
+
+            <p>
+                If JavaScript is disabled on the client, the application will still operate, though the user
+                will have to submit the form to have the fragment(s) update.
+            </p>
+
+        </section>
+    </body>
+</document>

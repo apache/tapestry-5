@@ -1,0 +1,22 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+
+    <t:if test="message">
+        <p>
+            <strong>
+                <span id="message">${message}</span>
+            </strong>
+        </p>
+    </t:if>
+
+    <p>
+        Update the message:
+
+        <ul>
+            <li>
+                <a href="${actionURL}">via explicit Link creation</a>
+            </li>
+        </ul>
+    </p>
+
+</html>
