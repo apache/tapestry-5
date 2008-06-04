@@ -14,8 +14,6 @@
 
 package org.apache.tapestry5.ioc.annotations;
 
-import org.apache.tapestry5.ioc.ServiceBinder;
-
 import java.lang.annotation.Documented;
 import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.ElementType.TYPE;
@@ -29,7 +27,7 @@ import java.lang.annotation.Target;
  * decorators to the service.
  * <p/>
  * This annotation may also be placed directly on a service implementation class, when using autobuilding via the {@link
- * ServiceBinder}.
+ * org.apache.tapestry5.ioc.ServiceBinder}.
  */
 @Target(
         { TYPE, METHOD })
