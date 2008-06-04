@@ -1,0 +1,11 @@
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+    <head>
+        <title>BeanDisplay Global Override Demo</title>
+    </head>
+    <body>
+        <h1>BeanDisplay Global Override Demo</h1>
+
+        <t:beandisplay object="this"/>
+
+    </body>
+</html>

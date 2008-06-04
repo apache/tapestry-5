@@ -1,0 +1,50 @@
+ ----
+ Parameter Type Coercions
+ ----
+ 
+Parameter Type Coercions
+
+  Tapestry automatically handles type coercions for parameters.
+  
+  Type coercions occur when a value passed into a parameter (as bound in template or
+  in an annoation) does not match the type of the parameter.
+  
+  For example, consider the Count component:
+  
++---+
+public class Count
+{
+    @Parameter
+    private int start = 1;
+
+    @Parameter(required = true)
+    private int end;
+
+    @Parameter
+    private int value;
+    
+    . . .
++---+
+
+  Here, the type of all three parameters is int.
+  
+  However, it is likely that the component will be used as so:
+  
++---+
+  Merry Christmas: <t:count end="3"> Ho! </t:count>
++---+
+
+  A bare whole number is interpreted by the prop binding prefix as a long. So this is the <long> value 3.
+  
+  Tapestry will automatically coerce the bound value, a long, to the parameter's type, int. This may be a lossy coercion (if the long represents a number larger
+  than can be stored in an int).
+  
+TypeCoercer Service
+
+  The TypeCoercer service is responsible for this type coercion. This service is part of the tapestry-ioc module, and 
+  is {{{../../tapestry-ioc/coerce.html}documented there}}.  The service
+  is quite extensible, allowing for new types and coercions to be added easily.  The TapestryModule contributes a few additional
+  coercions into the TypeCoercer service.
+  
+  
+                

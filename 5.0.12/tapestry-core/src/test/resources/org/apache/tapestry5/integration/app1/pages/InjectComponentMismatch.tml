@@ -1,0 +1,5 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+    <t:beaneditform t:id="form" object="this"/>
+
+</html>

@@ -1,0 +1,111 @@
+<document>
+    <body>
+
+        <section name="Examples">
+
+            <p>
+                The Delegate component allows us to be very flexible in how and what gets rendered, and
+                in what order. In some cases, the object to be rendered may come from an entirely
+                different page.
+            </p>
+
+            <p>
+                This example is simpler, and could easily be accomplished using an If component. We'll create
+                a page that can be used for viewing or editting an object.
+            </p>
+
+            <subsection name="ViewAccount.tml">
+
+                <source><![CDATA[
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+    <body>
+        <h1>View Account</h1>
+
+        <t:delegate to="activeBlock"/>
+
+        <t:block id="view">
+            <t:beandisplay object="account"/>
+
+            <p><t:actionlink t:id="edit">Edit this account</t:actionlink></p>
+        </t:block>
+
+        <t:block id="edit">
+            <t:beaneditform t:id="account"/>
+        </t:block>
+    </body>
+</html>]]></source>
+
+                <p>
+                    So we end up with a display of the Account's properties, and a link to activate edit mode.
+                    In edit mode, we use the other block and show a BeanEditForm.
+                </p>
+
+            </subsection>
+
+            <subsection name="ViewAccount.java">
+                <source><![CDATA[
+public class ViewAccount
+{
+    @Persist
+    private Account _account;
+
+    @Persist
+    private boolean _editMode;
+
+    @Inject
+    private Block _view;
+
+    @Inject
+    private Block _edit;
+
+    @Inject
+    private AccountDAO _accountDAO;
+
+    public Account getAccount()
+    {
+        return _account;
+    }
+
+    public void setAccount(Account account)
+    {
+        _account = account;
+        _editMode = false;
+    }
+
+    void onSuccess()
+    {
+         _accountDAO.update(_account);
+
+        _editMode = false;
+    }
+
+    void onActionFromEdit()
+    {
+        _editMode = true;
+    }
+
+    public Object getActiveBlock()
+    {
+        return _editMode ? _edit : _view;
+    }
+}]]></source>
+
+                <p>
+                    The use of the @Inject annotation on a field of type Block is used to access a
+                    <code><![CDATA[<t:block>]]></code>
+                    element from the template. The field name,
+                    stripped of leading underscores, is matched against the block's id.
+                </p>
+
+                <p>
+                    The rest is concerned with handling the form submission, turning on edit mode,
+                    and determining which block will be the one to render.
+                </p>
+
+
+            </subsection>
+
+        </section>
+
+    </body>
+</document>

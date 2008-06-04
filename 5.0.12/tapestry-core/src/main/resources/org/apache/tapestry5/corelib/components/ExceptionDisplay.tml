@@ -1,0 +1,34 @@
+<div xml:space="default" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd" class="t-exception-report">
+    <ul>
+        <t:loop source="stack" value="info">
+            <li>
+                <span class="t-exception-class-name">${info.className}</span>
+
+                <t:if test="info.message">
+                    <div class="t-exception-message">${info.message}</div>
+                </t:if>
+
+                <t:if test="showPropertyList">
+                    <dl>
+                        <t:loop source="info.propertyNames" value="propertyName">
+                            <dt>${propertyName}</dt>
+                            <dd>
+                                <t:renderobject object="propertyValue"/>
+                            </dd>
+                        </t:loop>
+                        <t:if test="info.stackTrace">
+                            <dt>Stack trace</dt>
+                            <dd>
+                                <ul class="t-stack-trace">
+                                    <t:loop source="info.stackTrace" value="frame">
+                                        <li class="${frameClass}">${frame}</li>
+                                    </t:loop>
+                                </ul>
+                            </dd>
+                        </t:if>
+                    </dl>
+                </t:if>
+            </li>
+        </t:loop>
+    </ul>
+</div>

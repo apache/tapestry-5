@@ -1,0 +1,65 @@
+ ---
+ Tutorial: Introduction
+ ---
+
+Tapestry Tutorial: Introduction
+
+* What is Tapestry?
+
+  Welcome to Tapestry! 
+
+  This is a tutorial for people who will be creating Tapestry 5 applications.  It doesn't matter whether you have experience with Tapestry 4 (or Tapestry 3, for that matter) or whether you are completely new to Tapestry.  
+  In fact, in some ways, the less you know about web development in general, and Tapestry in particular, the better off you may be ... that much less to unlearn!
+
+  You do need to have a reasonable understanding of HTML, a smattering of XML, and a good understanding of basic Java language features, and a few newer things such as Java Annotations.
+  
+  If you're used to developing web applications using servlets and JSPs, or with Struts, you are simply used to a lot of pain. So much pain, you may not even understand the dire situation you are in! 
+  These are environments with no safety net; Struts and the Servlet API has no idea how your application is structured, or how the different pieces fit together.  
+  Any URL can be an action and any action can forward to any view (usually a JSP) to provide an HTML response to the web browser.  
+  The pain is the unending series of small, yet important, decisions you have to make as a developer (and communicate to the rest of your team).  
+  What are the naming conventions for actions, for pages, for attributes stored in the HttpSession or HttpServletRequest? 
+
+  The traditional approaches thrust something most unwanted in your face: multithreaded coding. Remember back to Object Oriented Programming 101 where an object was defined as a bundle of data and operations on that data?
+  You have to unlearn that lesson as soon as you build a web application, because web applications are multi-threaded. 
+  An application server could be handling dozens or hundreds of requests from individual users, each in their own thread, and each sharing the exact same objects.  
+  Suddenly, you can't store data inside an object (a servlet or a Struts Action) because whatever data you store for one user will be instantly overwritten by some other user.
+
+  Worse, your objects each have one operation: doGet() or doPost().
+
+  Meanwhile, most of your day-to-day work involves deciding how to package up some data already inside a particular Java object and squeeze that data into a URL's query parameters,
+  so that you can write more code to convert it back if the user clicks that particular link.  And don't forget editing a bunch of XML files to keep the servlet container, or the Struts framework, aware of these decisions.  
+
+  Just for laughs, remember that you have to rebuild, redeploy and restart your application after virtually any change.  Is any of this familiar?  Then perhaps you'd appreciate something a little <less> familiar: Tapestry.
+
+  Tapestry uses a very different model: a structured, organized world of pages, and components within pages. Everything has a very specific name (that you provide). 
+  Once you know the name of a page, you know the location of the Java class for that page, the location of the template for that page, and the total structure of the page. 
+  Tapestry knows all this as well, and can make things <<just work>>.
+
+  As well see in the following chapters, Tapestry lets you code in terms of your objects. You'll barely see any Tapestry classes, outside of a few Java annotations. 
+  If you have information to store, store it as fields of your classes, not inside the HttpServletRequest or HttpSession. 
+  If you need some code to execute, its just a simple annotation or method naming convention to get Tapestry to invoke that method, at the right time, 
+  with the right data. The methods don't even have to be public!
+
+  Tapestry also shields you from the multi-threaded aspects of web application development. 
+  Tapestry manages the life-cycles of your page and components objects, reserving particular objects to particular threads so 
+  that you never have to think twice about threading issues.
+
+  Tapestry began in January 2000, and now represents over seven years of experience: not just my experience, or that of the other 
+  Tapestry committers, but the experience of the entire Tapestry community. Tapestry brings to the table all that experience about the best ways to 
+  build scalable, maintainable, robust, internationalized (and more recently) Ajax-enabled applications. Tapestry 5 represents a completely new 
+  code base designed to simplify  the Tapestry coding model while at the same time, extending the power of Tapestry and improving performance.
+
+* About Releases and Documentation
+
+  If you are reading this documentation online, be aware that the online documentation generally represents the very latest version of the code, termed "the snapshot". The documentation is <written> as if the 
+  next release is available, but may reference version numbers, or even features, that are only available by building the latest Tapestry source.
+
+*  About the Author
+
+  Howard Lewis Ship is the creator of Tapestry, and the Chair of the  Tapestry Project Management Committee at Apache. 
+  Howard is the Director of Open Source Technology at {{{http://formos.com}Formos Software Development}}.
+  Howard lives in Portland, Oregon with his wife Suzanne, a novelist.
+
+====
+  
+  {{{env.html}Continue on to Chapter 1: Setting Up Your Environment}}
