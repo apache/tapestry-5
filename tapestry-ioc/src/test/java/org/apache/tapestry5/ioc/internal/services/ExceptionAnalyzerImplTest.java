@@ -160,4 +160,23 @@ public class ExceptionAnalyzerImplTest extends IOCInternalTestCase
         verify();
     }
 
+    /**
+     * TAPESTRY-2422
+     */
+    @Test
+    public void exception_with_write_only_property()
+    {
+        WriteOnlyPropertyException ex = new WriteOnlyPropertyException();
+
+        ex.setFaultCode(99);
+
+        ExceptionAnalysis ea = analyzer.analyze(ex);
+
+        ExceptionInfo ei = ea.getExceptionInfos().get(0);
+
+        assertEquals(ei.getPropertyNames().size(), 1);
+
+        assertEquals(ei.getProperty("code"), "0099");
+    }
+
 }
