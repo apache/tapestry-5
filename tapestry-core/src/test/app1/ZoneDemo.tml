@@ -2,6 +2,9 @@
     <h1>Zone/Ajax Demo</h1>
 
 
+    <h2>Last update: ${currentTime}</h2>
+
+
     <t:zone t:id="output" style="float:right; width: 800px;" update="slidedown">
         No name has been selected.
 

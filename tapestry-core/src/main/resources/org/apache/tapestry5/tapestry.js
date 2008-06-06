@@ -22,8 +22,14 @@ var Tapestry = {
      */
     FORM_PREPARE_FOR_SUBMIT_EVENT : "tapestry:formprepareforsubmit",
 
+    /**
+     * Form event fired after prepare.
+     */
+    FORM_PROCESS_SUBMIT_EVENT : "tapestry:formprocesssubmit",
+
     /** Event, triggered on the document object, which identifies the current focus element. */
     FOCUS_CHANGE_EVENT : "tapestry:focuschange",
+
 
     DEBUG_ENABLED : false,
 
@@ -321,40 +327,30 @@ Tapestry.Initializer = {
     linkZone : function(element, zoneDiv)
     {
         element = $(element);
-        var zone = $(zoneDiv).zone;
 
         var successHandler = function(transport)
         {
             var reply = transport.responseJSON;
 
-            zone.show(reply.content);
+            $(zoneDiv).zone.show(reply.content);
 
             Tapestry.processScriptInReply(reply);
         };
 
         if (element.tagName == "FORM")
         {
-            // The existing handler, if present, will be responsible for form validations, which must
-            // come before submitting the form via XHR.
+            // Turn normal form submission off.
 
-            var existingHandler = element.onsubmit;
+            Tapestry.getFormEventManager(element).preventSubmission = true;
 
-            var handler = function(event)
+            // After the form is validated and prepared, this code will
+            // process the form submission via an Ajax call.  The original submit event
+            // will have been cancelled.
+
+            element.observe(Tapestry.FORM_PROCESS_SUBMIT_EVENT, function()
             {
-                if (existingHandler != undefined)
-                {
-                    var existingResult = existingHandler.call(element, event);
-                    if (! existingResult) return false;
-                }
-
-                element.request({ onSuccess : successHandler });
-
-                Event.stop(event); // Should be domevent.stop(), but that fails under IE
-
-                return false;
-            };
-
-            element.onsubmit = handler;
+                element.request({ onSuccess : successHandler, onFailure: Tapestry.ajaxFailureHandler });
+            });
 
             return;
         }
@@ -365,10 +361,10 @@ Tapestry.Initializer = {
         {
             Tapestry.ajaxRequest(element.href, successHandler);
 
-            return false;
+            Event.stop(event);
         };
 
-        element.onclick = handler;
+        element.observe("click", handler);
     },
 
     validate : function (field, specs)
@@ -686,6 +682,7 @@ Tapestry.FormEventManager.prototype = {
     initialize : function(form)
     {
         this.form = $(form);
+        this.form.eventManager = this;
 
         this.form.onsubmit = this.handleSubmit.bindAsEventListener(this);
     },
@@ -720,16 +717,30 @@ Tapestry.FormEventManager.prototype = {
             // Defer it long enough for the animations to start.
 
             event.focusField.activate();
-            // document.fire(Tapestry.FOCUS_CHANGE_EVENT, event.focusField);
 
             Event.stop(domevent); // Should be domevent.stop(), but that fails under IE
-        }
-        else
-        {
-            this.form.fire(Tapestry.FORM_PREPARE_FOR_SUBMIT_EVENT);
+
+            return;
         }
 
-        return event.result;
+        this.form.fire(Tapestry.FORM_PREPARE_FOR_SUBMIT_EVENT);
+
+        // This flag can be set to prevent the form from submitting normally.
+        // This is used for some Ajax cases where the form submission must
+        // run via Ajax.Request.
+
+        if (this.preventSubmission)
+        {
+            // Prevent the normal submission.
+
+            Event.stop(domevent);
+
+            // Instead ...
+
+            this.form.fire(Tapestry.FORM_PROCESS_SUBMIT_EVENT);
+
+            return false;
+        }
     }
 };
 

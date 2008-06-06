@@ -23,6 +23,8 @@ import org.apache.tapestry5.integration.app1.data.RegistrationData;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.json.JSONObject;
 
+import java.util.Date;
+
 public class ZoneDemo
 {
     @Component
@@ -95,5 +97,10 @@ public class ZoneDemo
         response.put("content", "Directly coded JSON content");
 
         return response;
+    }
+
+    public Date getCurrentTime()
+    {
+        return new Date();
     }
 }
