@@ -57,7 +57,7 @@ Re-configuring the Project
 * Updating the Dependencies
 
   First, we must update the POM to list a new set of dependencies, that includes Hibernate,
-  the Tapestry/Hibernate integration library, and the MySQL JDBC driver.
+  the Tapestry/Hibernate integration library, and the MySQL JDBC driver:
 
   <<src/pom.xml (partial):>>
 
@@ -70,58 +70,15 @@ Re-configuring the Project
         </dependency>
 
         <dependency>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-jta_1.0.1B_spec</artifactId>
-            <version>1.1.1</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate</artifactId>
-            <version>3.2.2.ga</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>javax.transaction</groupId>
-                    <artifactId>jta</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-annotations</artifactId>
-            <version>3.2.1.ga</version>
-        </dependency>
-
-        <dependency>
-            <groupId>javax.persistence</groupId>
-            <artifactId>persistence-api</artifactId>
-            <version>1.0</version>
-        </dependency>
-
-        <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
             <version>5.1.5</version>
         </dependency>
 
-        <dependency>
-            <groupId>org.testng</groupId>
-            <artifactId>testng</artifactId>
-            <version>5.1</version>
-            <classifier>jdk15</classifier>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.easymock</groupId>
-            <artifactId>easymock</artifactId>
-            <version>2.3</version>
-            <scope>test</scope>
-        </dependency>
-
     </dependencies>
 ----
+
+  The tapestry-hibernate library includes, as transitive dependencies, Hibernate and tapestry-core.
 
 * Hibernate Configuration
 

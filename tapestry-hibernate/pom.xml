@@ -51,9 +51,6 @@
             <scope>test</scope>
         </dependency>
 
-
-        <!-- Provided -->
-
         <!-- The Hibernate dependencies are provided; which gives the final application
 the ability to choose the appropriate version.  Further, in many cases
 (such as JBoss deployment), they are, in fact, provided by the
@@ -63,7 +60,6 @@ the hibernate JARs and dependencies inside the WAR. -->
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate</artifactId>
             <version>3.2.2.ga</version>
-            <scope>provided</scope>
             <exclusions>
                 <exclusion>
                     <groupId>javax.transaction</groupId>
@@ -76,7 +72,6 @@ the hibernate JARs and dependencies inside the WAR. -->
             <groupId>geronimo-spec</groupId>
             <artifactId>geronimo-spec-jta</artifactId>
             <version>1.0-M1</version>
-            <scope>test</scope>
         </dependency>
 
         <!-- The annotation should be compatible with the 3.2.2.ga release of the
@@ -85,14 +80,12 @@ the hibernate JARs and dependencies inside the WAR. -->
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-annotations</artifactId>
             <version>3.2.1.ga</version>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>c3p0</groupId>
             <artifactId>c3p0</artifactId>
             <version>0.9.1</version>
-            <scope>provided</scope>
         </dependency>
 
     </dependencies>
@@ -163,15 +156,6 @@ the hibernate JARs and dependencies inside the WAR. -->
                     </reportSet>
                 </reportSets>
             </plugin>
-
-            <!--      <plugin>
-            <groupId>org.apache.tapestry</groupId>
-            <artifactId>tapestry-component-report</artifactId>
-            <version>5.0.2</version>
-            <configuration>
-            <rootPackage>org.apache.tapestry5.corelib</rootPackage>
-            </configuration>
-            </plugin>-->
         </plugins>
     </reporting>
 </project>
