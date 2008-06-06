@@ -15,7 +15,8 @@
 package org.apache.tapestry5.ioc.internal.services;
 
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.*;
+import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newList;
+import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newSet;
 import org.apache.tapestry5.ioc.services.*;
 
 import java.util.Collections;
@@ -94,13 +95,15 @@ public class ExceptionAnalyzerImpl implements ExceptionAnalyzer
 
     private ExceptionInfo extractInfo(Throwable t)
     {
-        Map<String, Object> properties = newMap();
+        Map<String, Object> properties = CollectionFactory.newMap();
 
         ClassPropertyAdapter adapter = propertyAccess.getAdapter(t);
 
         for (String name : adapter.getPropertyNames())
         {
             if (throwableProperties.contains(name)) continue;
+
+            if (!adapter.getPropertyAdapter(name).isRead()) continue;
 
             Object value = adapter.get(t, name);
 
