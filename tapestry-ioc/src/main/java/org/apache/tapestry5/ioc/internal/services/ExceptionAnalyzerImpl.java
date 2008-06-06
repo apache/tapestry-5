@@ -15,8 +15,6 @@
 package org.apache.tapestry5.ioc.internal.services;
 
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newList;
-import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newSet;
 import org.apache.tapestry5.ioc.services.*;
 
 import java.util.Collections;
@@ -34,7 +32,7 @@ public class ExceptionAnalyzerImpl implements ExceptionAnalyzer
     {
         this.propertyAccess = propertyAccess;
 
-        throwableProperties = newSet(this.propertyAccess.getAdapter(Throwable.class)
+        throwableProperties = CollectionFactory.newSet(this.propertyAccess.getAdapter(Throwable.class)
                 .getPropertyNames());
     }
 
@@ -126,7 +124,7 @@ public class ExceptionAnalyzerImpl implements ExceptionAnalyzer
 
     private List<StackTraceElement> extractStackTrace(Throwable t)
     {
-        List<StackTraceElement> trace = newList();
+        List<StackTraceElement> trace = CollectionFactory.newList();
 
         for (StackTraceElement e : t.getStackTrace())
         {
