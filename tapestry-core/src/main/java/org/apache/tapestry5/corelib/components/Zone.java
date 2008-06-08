@@ -32,7 +32,6 @@ import org.apache.tapestry5.json.JSONObject;
  * Often, Zone's are initially invisible, in which case the visible parameter may be set to false (it defaults to
  * false).
  * <p/>
- * <p/>
  * When a user clicks an {@link org.apache.tapestry5.corelib.components.ActionLink} whose zone parameter is set, the
  * corresponding client-side Tapestry.Zone object is located. It will update the content of the Zone's &lt;div&gt; and
  * then invoke either a show method (if the div is not visible) or an update method (if the div is visible).  The show
@@ -58,6 +57,11 @@ public class Zone implements ClientElement
     @Parameter(defaultPrefix = BindingConstants.LITERAL)
     private String update;
 
+    /**
+     * If bound, then the id attribute of the rendered element will be this exact value. If not bound, then a unique id
+     * is generated for the element.
+     */
+    @Parameter(name = "id", defaultPrefix = BindingConstants.LITERAL)
     private String clientId;
 
     @Environmental
@@ -78,7 +82,8 @@ public class Zone implements ClientElement
 
     void beginRender(MarkupWriter writer)
     {
-        clientId = renderSupport.allocateClientId(resources);
+        if (!resources.isBound("id"))
+            clientId = renderSupport.allocateClientId(resources);
 
         Element e = writer.element("div", "id", clientId);
 
