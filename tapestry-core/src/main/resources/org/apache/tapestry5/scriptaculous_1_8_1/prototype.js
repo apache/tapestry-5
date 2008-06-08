@@ -987,7 +987,7 @@ function $A(iterable)
 {
     if (!iterable) return [];
     if (iterable.toArray) return iterable.toArray();
-    var length = iterable.length, results = new Array(length);
+    var length = iterable.length || 0, results = new Array(length);
     while (length--) results[length] = iterable[length];
     return results;
 }
@@ -999,7 +999,7 @@ if (Prototype.Browser.WebKit)
         if (!iterable) return [];
         if (!(Object.isFunction(iterable) && iterable == '[object NodeList]') &&
             iterable.toArray) return iterable.toArray();
-        var length = iterable.length, results = new Array(length);
+        var length = iterable.length || 0, results = new Array(length);
         while (length--) results[length] = iterable[length];
         return results;
     }
@@ -1628,7 +1628,7 @@ Ajax.Request = Class.create(Ajax.Base, {
     {
         try
         {
-            return this.transport.getResponseHeader(name);
+            return this.transport.getResponseHeader(name) || null;
         }
         catch (e)
         {
@@ -1982,26 +1982,30 @@ Element.Methods = {
             Object.isElement(insertions) || (insertions && (insertions.toElement || insertions.toHTML)))
             insertions = {bottom:insertions};
 
-        var content, t, range;
+        var content, insert, tagName, childNodes;
 
         for (position in insertions)
         {
             content = insertions[position];
             position = position.toLowerCase();
-            t = Element._insertionTranslations[position];
+            insert = Element._insertionTranslations[position];
 
             if (content && content.toElement) content = content.toElement();
             if (Object.isElement(content))
             {
-                t.insert(element, content);
+                insert(element, content);
                 continue;
             }
 
             content = Object.toHTML(content);
 
-            range = element.ownerDocument.createRange();
-            t.initializeRange(element, range);
-            t.insert(element, range.createContextualFragment(content.stripScripts()));
+            tagName = ((position == 'before' || position == 'after')
+                    ? element.parentNode : element).tagName.toUpperCase();
+
+            childNodes = Element._getContentFromAnonymousElement(tagName, content.stripScripts());
+
+            if (position == 'top' || position == 'after') childNodes.reverse();
+            childNodes.each(insert.curry(element));
 
             content.evalScripts.bind(content).defer();
         }
@@ -2098,17 +2102,16 @@ Element.Methods = {
         element = $(element);
         if (arguments.length == 1) return $(element.parentNode);
         var ancestors = element.ancestors();
-        return expression ? Selector.findElement(ancestors, expression, index) :
-               ancestors[index || 0];
+        return Object.isNumber(expression) ? ancestors[expression] :
+               Selector.findElement(ancestors, expression, index);
     },
 
     down: function(element, expression, index)
     {
         element = $(element);
         if (arguments.length == 1) return element.firstDescendant();
-        var descendants = element.descendants();
-        return expression ? Selector.findElement(descendants, expression, index) :
-               descendants[index || 0];
+        return Object.isNumber(expression) ? element.descendants()[expression] :
+               element.select(expression)[index || 0];
     },
 
     previous: function(element, expression, index)
@@ -2116,8 +2119,8 @@ Element.Methods = {
         element = $(element);
         if (arguments.length == 1) return $(Selector.handlers.previousElementSibling(element));
         var previousSiblings = element.previousSiblings();
-        return expression ? Selector.findElement(previousSiblings, expression, index) :
-               previousSiblings[index || 0];
+        return Object.isNumber(expression) ? previousSiblings[expression] :
+               Selector.findElement(previousSiblings, expression, index);
     },
 
     next: function(element, expression, index)
@@ -2125,8 +2128,8 @@ Element.Methods = {
         element = $(element);
         if (arguments.length == 1) return $(Selector.handlers.nextElementSibling(element));
         var nextSiblings = element.nextSiblings();
-        return expression ? Selector.findElement(nextSiblings, expression, index) :
-               nextSiblings[index || 0];
+        return Object.isNumber(expression) ? nextSiblings[expression] :
+               Selector.findElement(nextSiblings, expression, index);
     },
 
     select: function()
@@ -2597,51 +2600,6 @@ Element._attributeTranslations = {
     }
 };
 
-
-if (!document.createRange || Prototype.Browser.Opera)
-{
-    Element.Methods.insert = function(element, insertions)
-    {
-        element = $(element);
-
-        if (Object.isString(insertions) || Object.isNumber(insertions) ||
-            Object.isElement(insertions) || (insertions && (insertions.toElement || insertions.toHTML)))
-            insertions = { bottom: insertions };
-
-        var t = Element._insertionTranslations, content, position, pos, tagName;
-
-        for (position in insertions)
-        {
-            content = insertions[position];
-            position = position.toLowerCase();
-            pos = t[position];
-
-            if (content && content.toElement) content = content.toElement();
-            if (Object.isElement(content))
-            {
-                pos.insert(element, content);
-                continue;
-            }
-
-            content = Object.toHTML(content);
-            tagName = ((position == 'before' || position == 'after')
-                    ? element.parentNode : element).tagName.toUpperCase();
-
-            if (t.tags[tagName])
-            {
-                var fragments = Element._getContentFromAnonymousElement(tagName, content.stripScripts());
-                if (position == 'top' || position == 'after') fragments.reverse();
-                fragments.each(pos.insert.curry(element));
-            }
-            else element.insertAdjacentHTML(pos.adjacency, content.stripScripts());
-
-            content.evalScripts.bind(content).defer();
-        }
-
-        return element;
-    };
-}
-
 if (Prototype.Browser.Opera)
 {
     Element.Methods.getStyle = Element.Methods.getStyle.wrap(
@@ -2991,55 +2949,34 @@ Element._returnOffset = function(l, t)
 Element._getContentFromAnonymousElement = function(tagName, html)
 {
     var div = new Element('div'), t = Element._insertionTranslations.tags[tagName];
-    div.innerHTML = t[0] + html + t[1];
-    t[2].times(function()
+    if (t)
     {
-        div = div.firstChild
-    });
+        div.innerHTML = t[0] + html + t[1];
+        t[2].times(function()
+        {
+            div = div.firstChild
+        });
+    }
+    else div.innerHTML = html;
     return $A(div.childNodes);
 };
 
 Element._insertionTranslations = {
-    before: {
-        adjacency: 'beforeBegin',
-        insert: function(element, node)
-        {
-            element.parentNode.insertBefore(node, element);
-        },
-        initializeRange: function(element, range)
-        {
-            range.setStartBefore(element);
-        }
+    before: function(element, node)
+    {
+        element.parentNode.insertBefore(node, element);
     },
-    top: {
-        adjacency: 'afterBegin',
-        insert: function(element, node)
-        {
-            element.insertBefore(node, element.firstChild);
-        },
-        initializeRange: function(element, range)
-        {
-            range.selectNodeContents(element);
-            range.collapse(true);
-        }
+    top: function(element, node)
+    {
+        element.insertBefore(node, element.firstChild);
     },
-    bottom: {
-        adjacency: 'beforeEnd',
-        insert: function(element, node)
-        {
-            element.appendChild(node);
-        }
+    bottom: function(element, node)
+    {
+        element.appendChild(node);
     },
-    after: {
-        adjacency: 'afterEnd',
-        insert: function(element, node)
-        {
-            element.parentNode.insertBefore(node, element.nextSibling);
-        },
-        initializeRange: function(element, range)
-        {
-            range.setStartAfter(element);
-        }
+    after: function(element, node)
+    {
+        element.parentNode.insertBefore(node, element.nextSibling);
     },
     tags: {
         TABLE:  ['<table>',                '</table>',                   1],
@@ -3052,7 +2989,6 @@ Element._insertionTranslations = {
 
 (function()
 {
-    this.bottom.initializeRange = this.top.initializeRange;
     Object.extend(this.tags, {
         THEAD: this.tags.TBODY,
         TFOOT: this.tags.TBODY,
@@ -3260,7 +3196,7 @@ document.viewport = {
                 window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop);
     }
 };
-/* Portions of the Selector class are derived from Jack Slocumâ€™s DomQuery,
+/* Portions of the Selector class are derived from Jack Slocum’s DomQuery,
  * part of YUI-Ext version 0.40, distributed under the terms of an MIT-style
  * license.  Please see http://www.yui-ext.com/ for more information. */
 
@@ -3581,7 +3517,8 @@ Object.extend(Selector, {
         tagName:      /^\s*(\*|[\w\-]+)(\b|$)?/,
         id:           /^#([\w\-\*]+)(\b|$)/,
         className:    /^\.([\w\-\*]+)(\b|$)/,
-        pseudo:       /^:((first|last|nth|nth-last|only)(-child|-of-type)|empty|checked|(en|dis)abled|not)(\((.*?)\))?(\b|$|(?=\s)|(?=:))/,
+        pseudo:
+                /^:((first|last|nth|nth-last|only)(-child|-of-type)|empty|checked|(en|dis)abled|not)(\((.*?)\))?(\b|$|(?=\s|[:+~>]))/,
         attrPresence: /^\[([\w]+)\]/,
         attr:         /\[((?:[\w-]*:)?[\w-]+)\s*(?:([!^$*~|]?=)\s*((['"])([^\4]*?)\4|([^'"][^\]]*?)))?\]/
     },
@@ -3730,7 +3667,7 @@ Object.extend(Selector, {
         // TOKEN FUNCTIONS
         tagName: function(nodes, root, tagName, combinator)
         {
-            tagName = tagName.toUpperCase();
+            var uTagName = tagName.toUpperCase();
             var results = [], h = Selector.handlers;
             if (nodes)
             {
@@ -3747,7 +3684,7 @@ Object.extend(Selector, {
                     if (tagName == "*") return nodes;
                 }
                 for (var i = 0, node; node = nodes[i]; i++)
-                    if (node.tagName.toUpperCase() == tagName) results.push(node);
+                    if (node.tagName.toUpperCase() === uTagName) results.push(node);
                 return results;
             }
             else return root.getElementsByTagName(tagName);
@@ -4695,7 +4632,7 @@ Object.extend(Event, (function()
                 return false;
 
             Event.extend(event);
-            handler.call(element, event)
+            handler.call(element, event);
         };
 
         wrapper.handler = handler;
@@ -4798,14 +4735,15 @@ Object.extend(Event, (function()
             if (element == document && document.createEvent && !element.dispatchEvent)
                 element = document.documentElement;
 
+            var event;
             if (document.createEvent)
             {
-                var event = document.createEvent("HTMLEvents");
+                event = document.createEvent("HTMLEvents");
                 event.initEvent("dataavailable", true, true);
             }
             else
             {
-                var event = document.createEventObject();
+                event = document.createEventObject();
                 event.eventType = "ondataavailable";
             }
 
@@ -4837,7 +4775,8 @@ Element.addMethods({
 Object.extend(document, {
     fire:          Element.Methods.fire.methodize(),
     observe:       Element.Methods.observe.methodize(),
-    stopObserving: Element.Methods.stopObserving.methodize()
+    stopObserving: Element.Methods.stopObserving.methodize(),
+    loaded:        false
 });
 
 (function()
@@ -4845,20 +4784,19 @@ Object.extend(document, {
     /* Support for the DOMContentLoaded event is based on work by Dan Webb,
 Matthias Miller, Dean Edwards and John Resig. */
 
-    var timer, fired = false;
+    var timer;
 
     function fireContentLoadedEvent()
     {
-        if (fired) return;
+        if (document.loaded) return;
         if (timer) window.clearInterval(timer);
         document.fire("dom:loaded");
-        fired = true;
+        document.loaded = true;
     }
 
     if (document.addEventListener)
     {
-        // Note: patch from http://dev.rubyonrails.org/ticket/10532
-        if (Prototype.Browser.WebKit || navigator.userAgent.include('KHTML'))
+        if (Prototype.Browser.WebKit)
         {
             timer = window.setInterval(function()
             {
