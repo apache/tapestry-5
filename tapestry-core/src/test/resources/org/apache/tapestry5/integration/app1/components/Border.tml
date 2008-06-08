@@ -32,14 +32,16 @@
                             </li>
                         </ul>
 
-                        <h4>Fabricated classes:</h4>
+                        <h4>Infrastructure</h4>
 
                         <dl>
-                            <dt>IOC Layer: ${iocClassFactory.createdClassCount}</dt>
+                            <dt>IOC Layer: ${iocClassFactory.createdClassCount} classes</dt>
                             <dd>Service proxies and interceptors</dd>
 
-                            <dt>Component Layer: ${componentClassFactory.createdClassCount}</dt>
+                            <dt>Component Layer: ${componentClassFactory.createdClassCount} classes</dt>
                             <dd>For the most part, this is going to be prop: bindings</dd>
+                            <dt>Locale:</dt>
+                            <dd>${componentResources.locale}</dd>
                         </dl>
 
                     </div>
