@@ -1766,7 +1766,7 @@ public final class TapestryModule
         // contribution based on the path.
 
         configuration.add("tapestry.scriptaculous", "classpath:${tapestry.scriptaculous.path}");
-        configuration.add("tapestry.scriptaculous.path", "org/apache/tapestry5/scriptaculous_1_8");
+        configuration.add("tapestry.scriptaculous.path", "org/apache/tapestry5/scriptaculous_1_8_1");
 
         // Likewise for WebFX DatePicker, currently version 1.0.6
 
