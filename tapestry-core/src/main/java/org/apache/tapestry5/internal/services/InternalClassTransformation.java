@@ -15,7 +15,6 @@
 package org.apache.tapestry5.internal.services;
 
 import javassist.CtClass;
-import org.apache.tapestry5.internal.util.MultiKey;
 import org.apache.tapestry5.ioc.internal.util.IdAllocator;
 import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.services.ClassTransformation;
@@ -53,7 +52,7 @@ public interface InternalClassTransformation extends ClassTransformation
     /**
      * Returns a copy of the list of constructor arguments for this class.
      */
-    List<InternalClassTransformationImpl.ConstructorArg> getConstructorArgs();
+    List<ConstructorArg> getConstructorArgs();
 
     /**
      * Searchs for an existing injection of an object, returning the name of the protected field into which the value
@@ -62,9 +61,14 @@ public interface InternalClassTransformation extends ClassTransformation
      * TODO: Howard sayz: Uggh! At least define a real key (MultiKey is intended for internal use, never part of an
      * API). Is this necessary?  The cost of re-injection is tiny.
      */
-    String searchForPreviousInjection(MultiKey key);
+    String searchForPreviousInjection(InjectionKey key);
 
     InternalClassTransformation createChildTransformation(CtClass childClass, MutableComponentModel childModel);
+
+    /**
+     * Returns the parent transformation, or null for a root class.
+     */
+    InternalClassTransformation getParentTransformation();
 
     /**
      * Creates a new method by copying the body of an existing method.  This is part of the scheme for providing method
@@ -75,4 +79,12 @@ public interface InternalClassTransformation extends ClassTransformation
      * @param newMethodName name of new method to create
      */
     void copyMethod(TransformMethodSignature sourceMethod, int modifiers, String newMethodName);
+
+    /**
+     * Returns true if the provided signature is a method implemented by the transformed class.
+     *
+     * @param signature
+     * @return true if implemented
+     */
+    boolean isMethod(TransformMethodSignature signature);
 }

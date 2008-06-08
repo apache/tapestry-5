@@ -734,7 +734,7 @@ public final class TapestryModule
 
         String name = annotationClass.getSimpleName();
 
-        configuration.add(name, new ComponentLifecycleMethodWorker(signature, annotationClass, reverse));
+        configuration.add(name, new RenderPhaseMethodWorker(signature, annotationClass, reverse));
     }
 
     // ========================================================================

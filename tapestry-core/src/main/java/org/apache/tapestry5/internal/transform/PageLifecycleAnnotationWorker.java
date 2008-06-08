@@ -24,8 +24,8 @@ import org.apache.tapestry5.services.TransformMethodSignature;
 import java.lang.annotation.Annotation;
 
 /**
- * Similar to {@link ComponentLifecycleMethodWorker} but applies to annotations/methods related to the overall page
- * lifecycle.
+ * Similar to {@link org.apache.tapestry5.internal.transform.RenderPhaseMethodWorker} but applies to annotations/methods
+ * related to the overall page lifecycle.
  */
 public class PageLifecycleAnnotationWorker implements ComponentClassTransformWorker
 {

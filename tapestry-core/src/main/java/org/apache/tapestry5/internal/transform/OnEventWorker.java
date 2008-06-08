@@ -43,8 +43,18 @@ public class OnEventWorker implements ComponentClassTransformWorker
         {
             public boolean accept(TransformMethodSignature signature)
             {
-                return signature.getMethodName().startsWith("on") || transformation.getMethodAnnotation(signature,
-                                                                                                        OnEvent.class) != null;
+                return (hasCorrectPrefix(signature) || hasAnnotation(signature)) &&
+                        !transformation.isMethodOverride(signature);
+            }
+
+            private boolean hasCorrectPrefix(TransformMethodSignature signature)
+            {
+                return signature.getMethodName().startsWith("on");
+            }
+
+            private boolean hasAnnotation(TransformMethodSignature signature)
+            {
+                return transformation.getMethodAnnotation(signature, OnEvent.class) != null;
             }
         };
 
@@ -79,6 +89,7 @@ public class OnEventWorker implements ComponentClassTransformWorker
 
         transformation.extendMethod(TransformConstants.DISPATCH_COMPONENT_EVENT, builder.toString());
     }
+
 
     private void addCodeForMethod(BodyBuilder builder, TransformMethodSignature method,
                                   ClassTransformation transformation)

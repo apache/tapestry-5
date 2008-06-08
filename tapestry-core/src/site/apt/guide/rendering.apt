@@ -299,7 +299,12 @@ Method Conflicts and Ordering
 
   Ordering is always parent-first.  Methods defined in the parent class are always invoked
   before methods defined in the child class.
-  
+
+  When a sub-class overrides an render phase method of a base class, the
+  method is only invoked once, along with
+  any other base class methods. The subclass can change the <implementation> of the base class method via an override, but
+  can't change the <timing> of when that method is invoked. See   {{{https://issues.apache.org/jira/browse/TAPESTRY-2311}TAPESTRY-2311}}.
+    
 * Reverse Ordering for AfterXXX and CleanupRender
 
   The After<XXX> phases exists to balance the Begin<XXX> and Before<XXX> phases.  Often elements will

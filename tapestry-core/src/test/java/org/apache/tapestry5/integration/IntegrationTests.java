@@ -885,25 +885,26 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         clickAndWait(clear);
 
         clickAndWait("link=No Context");
-        assertTextPresent(
-                "[parent.eventHandlerZero(), parent.onAction(), child.eventHandlerZeroChild(), child.onAction()]");
+        assertText("methodNames",
+                   "[parent.eventHandlerZero(), parent.onAction(), child.eventHandlerZeroChild()]");
 
         clickAndWait(clear);
         clickAndWait("link=Single context value");
 
-        assertTextPresent(
-                "[parent.eventHandlerOne(String), parent.eventHandlerZero(), parent.onAction(String), parent.onAction(), child.eventHandlerOneChild(), child.eventHandlerZeroChild(), child.onAction(String), child.onAction()]");
+        assertText("methodNames",
+                   "[parent.eventHandlerOne(String), parent.eventHandlerZero(), parent.onAction(String), parent.onAction(), child.eventHandlerOneChild(), child.eventHandlerZeroChild()]");
 
         clickAndWait(clear);
         clickAndWait("link=Two value context");
-        assertTextPresent(
-                "[parent.eventHandlerOne(String), parent.eventHandlerZero(), parent.onAction(String), parent.onAction(), child.eventHandlerOneChild(), child.eventHandlerZeroChild(), child.onAction(String), child.onAction()]");
+
+        assertText("methodNames",
+                   "[parent.eventHandlerOne(String), parent.eventHandlerZero(), parent.onAction(String), parent.onAction(), child.eventHandlerOneChild(), child.eventHandlerZeroChild()]");
 
         clickAndWait(clear);
         clickAndWait("link=Two value context (from fred)");
 
-        assertTextPresent(
-                "[parent.eventHandlerOne(String), parent.eventHandlerZero(), parent.onAction(String), parent.onAction(), child.eventHandlerForFred(), child.eventHandlerOneChild(), child.eventHandlerZeroChild(), child.onAction(String), child.onAction(), child.onActionFromFred(String), child.onActionFromFred()]");
+        assertText("methodNames",
+                   "[parent.eventHandlerOne(String), parent.eventHandlerZero(), parent.onAction(String), parent.onAction(), child.eventHandlerForFred(), child.eventHandlerOneChild(), child.eventHandlerZeroChild(), child.onActionFromFred(String), child.onActionFromFred()]");
     }
 
     @Test
