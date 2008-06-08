@@ -12,6 +12,12 @@ Upgrade Notes
   You should also check the {{{../release-notes.html}project-wide release notes}} for information
   about bugs fixes and other improvements.
 
+Release 5.0.13
+
+  As part of {{{https://issues.apache.org/jira/browse/TAPESTRY-2311}TAPESTRY-2311}}, there have been
+  subtle changes to how event handler and render phase methods are invoked, when the methods are
+  overrides of base class methods.
+
 Release 5.0.12
 
 * ReorderProperties annotation
@@ -23,9 +29,11 @@ Release 5.0.12
 
 * {{{https://issues.apache.org/jira/browse/TAPESTRY-2421}TAPESTRY-2421}}
 
-  To enable deployment compatibility between Tapestry 4 and Tapestry 5, a
-  small number of classes
-  had to be renamed or refactored.
+  The root package for all Tapestry code was changed from
+  org.apache.tapestry to org.apache.tapestry<<5>>.  This will make it reasonable to deploy Tapestry 3 or Tapestry 4
+  applications side-by-side with a Tapestry 5 application.
+
+  In addition, a number of classes were refactored.
 
   PageRenderSupport has been renamed to just
   {{{../apidocs/org/apache/tapestry5/RenderSupport.html}RenderSupport}}.
@@ -36,18 +44,6 @@ Release 5.0.12
   Likewise, TapestryUtils has been split into
   {{{../apidocs/org/apache/tapestry5/MarkupUtils.html}MarkupUtils}} and
   {{{../apidocs/org/apache/tapestry5/VersionUtils.html}VersionUtils}}.
-
-  Because of naming conflicts, several classes and interfaces were moved under an
-  org.apache.tapestry5 package:
-
-  * {{{../apidocs/org/apache/tapestry5/services/ApplicationInitializer.html}ApplicationInitializer}} and
-    {{{../apidocs/org/apache/tapestry5/services/ApplicationInitializerFilter.html}ApplicationInitializerFilter}}.
-
-  * {{{../apidocs/org/apache/tapestry5/services/ComponentMessagesSource.html}ComponentMessagesSource}}.
-
-  * {{{../apidocs/org/apache/tapestry5/services/RequestGlobals.html}RequestGlobals}}.
-
-  * {{{../apidocs/org/apache/tapestry5/json/JSONObject.html}JSONObject}} (and the other JSON classes).
 
   []
 
@@ -74,7 +70,7 @@ Release 5.0.12
 
 * Loop element parameter
 
-  The Loop components' elementName parameter was renamed to simply element (to be consistent
+  The Loop component's elementName parameter was renamed to simply element (to be consistent
   with element parameters added to the Any and FormInjector components).
 
 Release 5.0.11

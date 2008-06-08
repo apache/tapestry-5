@@ -34,7 +34,7 @@ Component Events
   Tapestry 5 introduces the concept of <event handler methods>, identified via a naming convention, or
   via the 
   {{{../../apidocs/org/apache/tapestry5/annotations/OnEvent.html}OnEvent annotation}}.  Event handler methods
-  have any visibility, even private (normally they are given package private visibility, to support testing).
+  may have any visibility, even private.  Normally they are given package private visibility, to support testing.
   
   Rather than configure a component to invoke a particular method, you identify one or more
   methods to listen for events from that component. A single event handler method may receive notifications from
@@ -63,11 +63,12 @@ Component Events
   When there are additional context values, they are appended to the path.
   
   This demonstrates a critical difference between Tapestry and a more traditional, action oriented framework.
-  This URL doesn't say what happens when the link is clicked, it identifies <which component is responsible>.
+  This URL doesn't say what happens when the link is clicked, it identifies <which component is responsible>
+  when the link is clicked.
 
   There's no simple mapping from URL to a piece of code; instead the component sends notifications, in the form
-  of invocations of event handler methods, and Tapestry ensures that the correct bit of code, that you supply,
-  gts invoked.
+  of invocations of event handler methods, and Tapestry ensures that the correct bit of code, code that you supply,
+  gets invoked.
   
    
   A Java method can be invoked when the link for the component is clicked by the user:
@@ -89,7 +90,7 @@ Component Events
   []
   
   In the above example, the valueChosen() method will be invoked on the default event, "action", that originates
-  in component <<<choose>>> (and has at least one context value).
+  in component <<<select>>> (and has at least one context value).
   
   Some components can emit more than one type of event, in which case you will want to be more specific:
   
@@ -118,7 +119,7 @@ Event Handler Method Convention Names
   they were annotated.  
   
   This style of event handler methods start with the prefix "on", followed by the name of the action.  You may then continue by adding "From" and
-  a capitalized component id.
+  a capitalized component id (remember that Tapestry is case insensitive about event names and component ids).
   
   The previous example may be rewritten as:
   
@@ -133,7 +134,8 @@ Event Handler Method Convention Names
   
 Event Handler Method Return Values
   
-  For page navigation events, the value returned from an event handler method {{{pagenav.html}determines how Tapestry will render a response}}.
+  For page navigation events (originating in components such as ActionLink and Form),
+  the value returned from an event handler method {{{pagenav.html}determines how Tapestry will render a response}}.
 
 Multiple Method Matches
 
@@ -150,6 +152,10 @@ Multiple Method Matches
  []
 
  There's only rare cases where it makes sense for more than one method to handle an event.
+
+ When a sub-class overrides an event handler method of a base class, the event handler method is only invoked once, along with
+ any other base class methods. The subclass can change the <implementation> of the base class method via an override, but
+ can't change the <timing> of when that method is invoked. See   {{{https://issues.apache.org/jira/browse/TAPESTRY-2311}TAPESTRY-2311}}.
 
 Event Context
 
@@ -178,7 +184,7 @@ Event Context
 * Collections
 
   To designate that an event handler method should be invoked regardless of how many context parameters are available,
-  change the method to accept a <single> parameter of type Object[], type List, or
+  change the method to accept a <single> parameter of type Object[], type List, or   type
   {{{../../apidocs/org/apache/tapestry5/EventContext.html}EventContext}}.
 
 Event Bubbling

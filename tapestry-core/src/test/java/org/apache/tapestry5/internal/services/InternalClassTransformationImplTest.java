@@ -171,9 +171,14 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
     {
         CtClass ctClass = findCtClass(targetClass);
 
-        MutableComponentModel model = new MutableComponentModelImpl("unknown-class", logger, null, null);
+        MutableComponentModel model = stubMutableComponentModel(logger);
 
         return new InternalClassTransformationImpl(classFactory, ctClass, null, model, null);
+    }
+
+    private MutableComponentModel stubMutableComponentModel(Logger logger)
+    {
+        return new MutableComponentModelImpl("unknown-class", logger, null, null);
     }
 
     @Test
@@ -1167,6 +1172,85 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
                      "org.apache.tapestry5.internal.transform.pages.MethodIdentifier.makeWaves(java.lang.String, int[]) (at MethodIdentifier.java:24)");
 
         verify();
+    }
+
+    @Test
+    public void base_class_methods_are_never_overridden() throws Exception
+    {
+        Logger logger = mockLogger();
+
+        replay();
+
+        MethodFilter filter = new MethodFilter()
+        {
+            public boolean accept(TransformMethodSignature signature)
+            {
+                return true;
+            }
+        };
+
+        ClassTransformation ct = createClassTransformation(SimpleBean.class, logger);
+
+        List<TransformMethodSignature> methods = ct.findMethods(filter);
+
+        assertFalse(methods.isEmpty());
+
+        for (TransformMethodSignature sig : methods)
+        {
+            assertFalse(ct.isMethodOverride(sig));
+        }
+
+
+        verify();
+    }
+
+    @Test
+    public void check_for_method_override_on_non_declared_method() throws Exception
+    {
+        Logger logger = mockLogger();
+
+        replay();
+
+        ClassTransformation ct = createClassTransformation(SimpleBean.class, logger);
+
+        TransformMethodSignature sig = new TransformMethodSignature("methodDoesNotExist");
+
+        try
+        {
+            ct.isMethodOverride(sig);
+            unreachable();
+        }
+        catch (IllegalArgumentException ex)
+        {
+            assertEquals(ex.getMessage(),
+                         "Method public void methodDoesNotExist() is not implemented by transformed class org.apache.tapestry5.internal.services.SimpleBean.");
+        }
+
+        verify();
+
+    }
+
+    @Test
+    public void check_for_overridden_methods() throws Exception
+    {
+        Logger logger = mockLogger();
+
+        replay();
+
+        InternalClassTransformation parentTransform = createClassTransformation(SimpleBean.class, logger);
+
+        parentTransform.finish();
+
+        CtClass childClass = findCtClass(SimpleBeanSubclass.class);
+
+        ClassTransformation childTransform = parentTransform.createChildTransformation(childClass,
+                                                                                       stubMutableComponentModel(
+                                                                                               logger));
+
+        assertFalse(childTransform.isMethodOverride(new TransformMethodSignature("notOverridden")));
+
+        assertTrue(childTransform.isMethodOverride(
+                new TransformMethodSignature(Modifier.PUBLIC, "void", "setAge", new String[] { "int" }, null)));
     }
 
 

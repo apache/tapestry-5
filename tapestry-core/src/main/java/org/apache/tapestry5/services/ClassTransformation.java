@@ -45,8 +45,7 @@ import java.util.List;
  * any fields or methods inherited from a base class.
  *
  * @see org.apache.tapestry5.services.TapestryModule#contributeComponentClassTransformWorker(org.apache.tapestry5.ioc.OrderedConfiguration,
- *      org.apache.tapestry5.ioc.ObjectLocator, InjectionProvider, Environment, ComponentClassResolver,
- *      org.apache.tapestry5.internal.services.RequestPageCache, BindingSource)
+ *      org.apache.tapestry5.ioc.ObjectLocator, InjectionProvider, ComponentClassResolver)
  */
 public interface ClassTransformation extends AnnotationProvider
 {
@@ -376,4 +375,12 @@ public interface ClassTransformation extends AnnotationProvider
      * Adds method advice for the indicated method.
      */
     void advise(TransformMethodSignature methodSignature, ComponentMethodAdvice advice);
+
+    /**
+     * Returns true if the method is an override of a method from the parent class.
+     *
+     * @param methodSignature signature of method to check
+     * @return true if the parent class contains a method with the name signature
+     */
+    boolean isMethodOverride(TransformMethodSignature methodSignature);
 }
