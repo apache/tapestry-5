@@ -47,7 +47,7 @@ public class ClassPropertyAdapterImpl implements ClassPropertyAdapter
             Class propertyType = readMethod == null ? pd.getPropertyType() : GenericsUtils.extractGenericReturnType(
                     beanType, readMethod);
 
-            PropertyAdapter pa = new PropertyAdapterImpl(beanType, pd.getName(), propertyType, readMethod,
+            PropertyAdapter pa = new PropertyAdapterImpl(this, pd.getName(), propertyType, readMethod,
                                                          pd.getWriteMethod());
 
             adapters.put(pa.getName(), pa);

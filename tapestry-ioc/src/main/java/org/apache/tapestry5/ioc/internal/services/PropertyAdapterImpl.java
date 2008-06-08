@@ -14,8 +14,7 @@
 
 package org.apache.tapestry5.ioc.internal.services;
 
-import static org.apache.tapestry5.ioc.internal.util.Defense.notBlank;
-import static org.apache.tapestry5.ioc.internal.util.Defense.notNull;
+import org.apache.tapestry5.ioc.services.ClassPropertyAdapter;
 import org.apache.tapestry5.ioc.services.PropertyAdapter;
 
 import java.lang.annotation.Annotation;
@@ -25,7 +24,7 @@ import java.lang.reflect.Method;
 
 public class PropertyAdapterImpl implements PropertyAdapter
 {
-    private final Class beanType;
+    private final ClassPropertyAdapter classAdapter;
 
     private final String name;
 
@@ -47,11 +46,12 @@ public class PropertyAdapterImpl implements PropertyAdapter
      */
     private Field field;
 
-    public PropertyAdapterImpl(Class beanType, String name, Class type, Method readMethod, Method writeMethod)
+    PropertyAdapterImpl(ClassPropertyAdapter classAdapter, String name, Class type, Method readMethod,
+                        Method writeMethod)
     {
-        this.beanType = notNull(beanType, "beanType");
-        this.name = notBlank(name, "name");
-        this.type = notNull(type, "type");
+        this.classAdapter = classAdapter;
+        this.name = name;
+        this.type = type;
 
         this.readMethod = readMethod;
         this.writeMethod = writeMethod;
@@ -165,7 +165,7 @@ public class PropertyAdapterImpl implements PropertyAdapter
             // are in the same class (i.e., that we don't have a getter exposing a protected field inherted
             // from a base class, or some other oddity).
 
-            for (Field f : beanType.getDeclaredFields())
+            for (Field f : getBeanType().getDeclaredFields())
             {
                 if (f.getName().equalsIgnoreCase(name))
                 {
@@ -183,5 +183,15 @@ public class PropertyAdapterImpl implements PropertyAdapter
     public boolean isCastRequired()
     {
         return castRequired;
+    }
+
+    public ClassPropertyAdapter getClassAdapter()
+    {
+        return classAdapter;
+    }
+
+    public Class getBeanType()
+    {
+        return classAdapter.getBeanType();
     }
 }

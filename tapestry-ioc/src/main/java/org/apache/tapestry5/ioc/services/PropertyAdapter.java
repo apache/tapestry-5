@@ -81,4 +81,17 @@ public interface PropertyAdapter extends AnnotationProvider
      * is something more specific. This method is primarily used when generating runtime code related to the property.
      */
     boolean isCastRequired();
+
+
+    /**
+     * Returns the {@link org.apache.tapestry5.ioc.services.ClassPropertyAdapter} that provides access to other
+     * properties defined by the same class.
+     */
+    ClassPropertyAdapter getClassAdapter();
+
+    /**
+     * Returns the type of bean to which this property belongs.  This is the same as {@link
+     * org.apache.tapestry5.ioc.services.ClassPropertyAdapter#getBeanType()}.
+     */
+    Class getBeanType();
 }
