@@ -459,6 +459,26 @@ Tapestry.ElementAdditions = {
 
 Element.addMethods(Tapestry.ElementAdditions);
 
+// Look for the Firebug console API and rewrite the Tapestry.error|warn|debug methods around it.
+
+if (window.console)
+{
+    var createlog = function (log)
+    {
+        return function(message, substitutions)
+        {
+            if (substitutions != undefined)
+                message = message.interpolate(substitutions);
+
+            log.call(this, message);
+        };
+    };
+
+    Tapestry.error = createlog(window.console.error);
+    Tapestry.warn = createlog(window.console.warn);
+    Tapestry.debug = createlog(window.console.debug);
+}
+
 // Collection of field based functions related to validation. Each
 // function takes a field, a message and an optional constraint value.
 
