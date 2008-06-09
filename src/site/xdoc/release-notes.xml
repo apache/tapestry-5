@@ -21,7 +21,73 @@
     <body>
 
 
+        <h1>Release Notes - Tapestry - Version 5.0.13</h1>
+
+        <h2>Bug
+        </h2>
+        <ul>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-2096'>TAPESTRY-2096</a>] - Confusing exception
+                when autobuilding a class fails due to class visibility
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-2311'>TAPESTRY-2311</a>] - &quot;Parents before
+                Child&quot; concept for Component Rendering does not allow different rendering in subclasses
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-2341'>TAPESTRY-2341</a>] - AJAX Zone updating
+                doesn't work correctly in IE
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-2349'>TAPESTRY-2349</a>] - FormFragment should
+                be tied to the 'click' event of the associated checkbox
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-2360'>TAPESTRY-2360</a>] - Forms in zones in
+                loops have wrong zone id after update
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-2418'>TAPESTRY-2418</a>] - Form onsubmit event
+                handler for Zone component handling is ignored if any fields on the form have validation configured.
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-2422'>TAPESTRY-2422</a>] - The Exception report
+                will itself throw an exception if the exception being reported contains a write-only property
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-2436'>TAPESTRY-2436</a>] - New FormInjectorDemo
+                using AjaxFormLoop fails if a row is added and then removed without a form submission in between
+            </li>
+        </ul>
+
+        <h2>Improvement
+        </h2>
+        <ul>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-2100'>TAPESTRY-2100</a>] - Validation and Error
+                messages for Portuguese locale
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-2281'>TAPESTRY-2281</a>] - Update tutorial1 to
+                correctly indicate how and why to replace Jetty 5 log4j.jar
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-2347'>TAPESTRY-2347</a>] - Add a &quot;resources&quot;
+                section to T5 home page
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-2393'>TAPESTRY-2393</a>] - The FormFragment
+                component should isolate its action stream (t:formdata hidden field) such that the entire client-side
+                element may be removed
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-2428'>TAPESTRY-2428</a>] - tapestry-hibernate
+                should include as a dependency a default version of Hibernate with docs for how to override
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-2439'>TAPESTRY-2439</a>] - The PropertyAdapter
+                interface should include a property to identify the containing class
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-2440'>TAPESTRY-2440</a>] - The quickstart
+                archetype should enable debug logging (by default) for the new application
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-2441'>TAPESTRY-2441</a>] - Upgrade to
+                Scriptaculous 1.8.1
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-2442'>TAPESTRY-2442</a>] - When Tapestry is
+                operating inside FireFox with Firebug enabled, it should use the Firebug logging API
+            </li>
+        </ul>
+
+
         <h1>Release Notes - Tapestry - Version 5.0.12</h1>
+
 
         <h2>Bug
         </h2>
