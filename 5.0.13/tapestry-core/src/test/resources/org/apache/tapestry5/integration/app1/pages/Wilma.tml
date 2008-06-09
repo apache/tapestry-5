@@ -1,0 +1,14 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+    
+    <p>
+        You clicked Wilma.
+    </p>
+    
+    <p>
+        In this case the component event handler method returned the name of the page to activate, as a String.
+    </p>
+    
+    <p>
+        [<a t:type="PageLink" t:page="InjectDemo">Back</a>]
+    </p>
+</html>

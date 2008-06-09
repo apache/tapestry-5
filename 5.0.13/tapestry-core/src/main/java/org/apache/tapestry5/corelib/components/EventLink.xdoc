@@ -1,0 +1,81 @@
+<document>
+    <body>
+        <section name="Examples">
+
+            <p>
+                This example is from Tapestry itself, from the GridColumns component that displays the columns
+                titles across to the top of a Grid. We've simplified the example somewhat to focus in on
+                the use of the EventLink component.
+            </p>
+
+            <subsection name="GridColumns.tml">
+                <source><![CDATA[
+<thead xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+    <tr>
+        <th t:type="Loop" source="columnNames" value="columnName">
+            <a t:id="sort">${columnModel.label}</a>
+            <a t:id="sort2">
+                <img src="${icon}" id="${columnModel.id}:sort" class="t-sort-icon" alt="${iconLabel}"/>
+            </a>
+        </th>
+    </tr>
+</thead>]]></source>
+
+            </subsection>
+
+            <subsection name="GridColumns.java (partial)">
+                <source><![CDATA[
+public class GridColumns
+{
+    . . .
+
+    @Component(parameters = {"event=sort", "context=columnModel.id"})
+    private EventLink _sort, _sort2;
+
+    void onSort(String columnId)
+    {
+        if (columnId.equals(_sortColumnId))
+        {
+            _sortAscending = !_sortAscending;
+        }
+        else
+        {
+            _sortColumnId = columnId;
+            _sortAscending = true;
+        }
+    }
+
+}]]></source>
+
+                <p>
+                    The advantage of the EventLink component is that instead of having two identical event handler
+                    methods,
+                    onActionFromSort() and onActionFromSort2(), we have a single event handler method,
+                    onSort(), that covers events triggered by either component. In addition, the URLs for the two
+                    components
+                    will be identical, whereas if using ActionLink components, the URLs would be slightly different, to
+                    reflect to two different component ids.
+                </p>
+
+                <p>
+                    This example also shows the advantages of defining the component in the Java class,
+                    using the
+                    @Component annotation, rather than in the template (as we do in most examples). We can
+                    simply define two fields with the same configuration.
+                </p>
+
+
+            </subsection>
+
+        </section>
+
+        <section name="Notes">
+
+            <p>
+                The event parameter is often omitted; it defaults to the component's id ... you will often specify
+                the component id, or a specific event name, but not both.
+            </p>
+
+        </section>
+    </body>
+</document>
