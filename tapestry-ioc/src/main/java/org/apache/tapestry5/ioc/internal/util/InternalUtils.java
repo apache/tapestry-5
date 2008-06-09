@@ -562,4 +562,20 @@ public class InternalUtils
 
         return exception.getClass().getName();
     }
+
+    public static void validateConstructorForAutobuild(Constructor constructor)
+    {
+        Class clazz = constructor.getDeclaringClass();
+
+        if (!Modifier.isPublic(clazz.getModifiers()))
+            throw new IllegalArgumentException(
+                    String.format("Class %s is not a public class and may not be autobuilt.", clazz.getName()));
+
+        if (!Modifier.isPublic(constructor.getModifiers()))
+            throw new IllegalArgumentException(String.format(
+                    "Constructor %s is not public and may not be used for autobuilding an instance of the class. " +
+                            "You should make the constructor public, or mark an alternate public constructor with the @Inject annotation.",
+                    constructor));
+
+    }
 }

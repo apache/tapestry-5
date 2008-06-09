@@ -725,6 +725,8 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
         try
         {
+            InternalUtils.validateConstructorForAutobuild(constructor);
+
             Object[] parameters = InternalUtils.calculateParametersForConstructor(constructor, this, empty);
 
             return clazz.cast(constructor.newInstance(parameters));
