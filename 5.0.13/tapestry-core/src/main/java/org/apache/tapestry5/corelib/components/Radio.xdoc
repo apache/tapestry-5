@@ -1,0 +1,158 @@
+<document>
+    <body>
+
+        <section name="Related Components">
+
+            <ul>
+                <li>
+                    <a href="RadioGroup.html">RadioGroup</a>
+                </li>
+                <li>
+                    <a href="Form.html">Form</a>
+                </li>
+                <li>
+                    <a href="Select.html">Select</a>
+                </li>
+            </ul>
+
+        </section>
+
+        <section name="Examples">
+            <p>
+                Radio components are always used in conjunction with
+                a RadioGroup component. The RadioGroup defines the property
+                that will be read and updated, and the individual Radio
+                components determine what value will be assigned to the property.
+            </p>
+
+            <p>
+                Our example will be part of a page that collects credit card information.
+                We'll just be showing the portions related to
+                a set of radio buttons for choosing the type of credit card.
+            </p>
+
+            <p>
+                <img src="radio_ref.png"/>
+            </p>
+
+            <subsection name="CardType.java">
+
+                <source><![CDATA[
+public enum CardType
+{
+    MASTER_CARD, VISA, AMERICAN_EXPRESS, DINERS_CLUB, DISCOVER
+}
+]]></source>
+
+            </subsection>
+
+            <subsection name="Payment.tml">
+
+                <source><![CDATA[
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+    <body>
+        <h1>Order Payment</h1>
+
+        <t:form>
+            <t:label for="cardNumber"/>:
+
+            <t:textfield t:id="cardNumber" size="16"/>
+
+            <br/>
+
+            <t:label for="type"/>:
+
+            <t:radiogroup t:id="type">
+                <t:radio t:id="masterCard"/>
+                <t:label for="masterCard"/>
+                <t:radio t:id="visa"/>
+                <t:label for="visa"/>
+                <t:radio t:id="amex"/>
+                <t:label for="amex"/>
+                <t:radio t:id="dinersClub"/>
+                <t:label for="dinersClub"/>
+                <t:radio t:id="discover"/>
+                <t:label for="discover"/>
+            </t:radiogroup>
+
+        </t:form>
+
+    </body>
+</html>]]></source>
+
+                <p>
+                    The advantage of using radio buttons here, rather than a drop down list,
+                    is that we could extend the labels to use a small image of each
+                    type of supported card.
+                </p>
+
+                <p>
+                    We're once again using the trick of matching the component's id
+                    to a property of the containing page. The RadioGroup's value parameter
+                    will be bound to the page's type property. Likewise, each of the
+                    Radio components will be matched to a property of the page.
+                </p>
+
+            </subsection>
+
+            <subsection name="Payment.java (partial)">
+
+                <source><![CDATA[
+
+public class Payment
+{
+    . . .
+
+    @Persist
+    private CardType _type;
+
+    public CardType getType() { return _type; }
+
+    public void setType(CardType type) { _type = type; }
+
+    public CardType getMasterCard() { return CardType.MASTER_CARD; }
+
+    public CardType getVisa() { return CardType.VISA; }
+
+    public CardType getAmex() { return CardType.AMERICAN_EXPRESS; }
+
+    public CardType getDinersClub() { return CardType.DINERS_CLUB; }
+
+    public CardType getDiscover() { return CardType.DISCOVER; }
+
+    . . .
+}]]></source>
+
+
+                <p>
+                    We use a number of read-only properties to provide
+                    each Radio component with its corresponding enum value, that will
+                    ultimately be assigned to the page's type property
+                    (if that corresponding Radio component is selected by the user).
+                </p>
+
+                <p>
+                    This is far from the only pattern of usage; it is much more likely
+                    that you will use a Loop component around a single Radio component
+                    than you will use a whole array of Radio components as in this example.
+                </p>
+
+            </subsection>
+
+            <subsection name="Payment.properties">
+
+                <p>
+                    We override the default generated labels for a few fields and enum values:
+                </p>
+
+                <source><![CDATA[
+cardnumber-label=Credit Card Number
+type-label=Credit Card Type
+dinersclub-label=Diner's Club]]></source>
+            </subsection>
+
+        </section>
+
+
+    </body>
+</document>
