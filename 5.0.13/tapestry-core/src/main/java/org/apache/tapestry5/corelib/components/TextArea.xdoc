@@ -1,0 +1,26 @@
+<document>
+    <body>
+        <section name="Related Components">
+            <ul>
+                <li>
+                    <a href="Form.html">Form</a>
+                </li>
+                <li>
+                    <a href="TextOutput.html">TextOutput</a>
+                </li>
+                <li>
+                    <a href="TextField.html">TextField</a>
+                </li>
+            </ul>
+        </section>
+
+        <section name="Notes">
+
+            <p>
+                The TextArea component accepts informal parameters, which can be used to set the standard
+                rows and cols attributes.
+            </p>
+        </section>
+
+    </body>
+</document>

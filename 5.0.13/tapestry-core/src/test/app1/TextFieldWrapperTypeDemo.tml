@@ -1,0 +1,35 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+    <h1>TextField Wrapper Types Demo</h1>
+
+    <p>
+        Demonstrates the use of wrapper types (i.e. java.lang.Integer) with a TextField.
+    </p>
+
+    <t:form>
+        <t:errors/>
+
+        <t:textfield t:id="count" nulls="default"/>
+
+        <br/>
+
+        <input type="submit" value="Continue"/>
+
+    </t:form>
+
+    <hr/>
+
+    <p>
+        Count:
+        <t:if test="countNull">
+            <em id="value">null</em>
+            <t:parameter name="else">
+                <span id="value">${count}</span>
+            </t:parameter>
+        </t:if>
+
+        [<t:actionlink t:id="clear">clear</t:actionlink>]
+
+    </p>
+
+</html>

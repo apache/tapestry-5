@@ -1,0 +1,24 @@
+ ----
+ Deployment Notes: WebSphere
+ ----
+
+Deployment Notes: WebSphere
+
+  WebSphere <<6.1>> can work with Tapestry ... if configured correctly.  WebSphere doesn't quite
+  conform to the Servlet API specification.
+
+  This can be addressed by installing fixpack 9:
+
+  * {{{http://www-1.ibm.com/support/docview.wss?rs=180&uid=swg1PK31377}http://www-1.ibm.com/support/docview.wss?rs=180&uid=swg1PK31377}}
+
+  * {{{http://www-1.ibm.com/support/docview.wss?rs=180&uid=swg1PK33090}http://www-1.ibm.com/support/docview.wss?rs=180&uid=swg1PK33090}}
+
+  []
+
+  In addition, you must configure the setting <<<com.ibm.ws.webcontainer.invokeFiltersCompatibility>>> to <<<true>>>.  With
+  all of that in place (plus some additional code inside Tapestry that patches around WebSphere's odd behavior), you
+  should be ready to deploy with WebSphere.
+
+* Logging
+
+  TODO: Discuss logging configuration for WebSphere.
