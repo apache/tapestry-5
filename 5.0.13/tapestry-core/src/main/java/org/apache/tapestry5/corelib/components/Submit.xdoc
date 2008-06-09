@@ -1,0 +1,69 @@
+<document>
+    <body>
+        <section name="Examples">
+
+            <p>
+                The thing to remember is that the Submit component will trigger its "selected" event in the
+                <em>middle</em>
+                of the form submission, before the form triggers its "validate", "success" (or "failure") and "submit"
+                events.
+                Thus the best thing to do is to store in a temporary field what should be done inside the "success"
+                event handler.
+            </p>
+
+            <subsection name="EditUser.tml">
+                <source><![CDATA[
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+    <body>
+
+        <h1>Edit User</h1>
+
+        <t:form>
+
+            <t:errors/>
+
+            <t:beaneditor t:id="user"/>
+
+            <p>
+                <input type="submit" value="Update User"/>
+                <t:submit t:id="delete" value="Delete User"/>
+            </p>
+
+        </t:form>
+</html>]]></source>
+            </subsection>
+
+
+            <subsection name="EditUser.java">
+                <source><![CDATA[
+public class EditUser
+{
+    @Inject
+    private UserDAO _userDAO;
+
+    @Persist
+    private User _user;
+
+    private boolean _deleteUser;
+
+    void onSelectedFromDelete() { _deleteUser = true; }
+
+    Object onSuccess()
+    {
+        if (_deleteUser)
+            _userDAO.delete(user.getId());
+        else
+            _userDAO.update(user);
+
+        return UserList.class;
+    }
+
+    public void setUser(User user) { _user = user; }
+
+    public User getUser() { return _user; }
+}]]></source>
+            </subsection>
+
+        </section>
+    </body>
+</document>

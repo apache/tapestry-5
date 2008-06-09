@@ -1,0 +1,9 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+    <t:beandisplay object="holder"/>
+
+    <p>
+        <t:pagelink page="numberbeaneditordemo">Back to form</t:pagelink>
+    </p>
+
+</html>

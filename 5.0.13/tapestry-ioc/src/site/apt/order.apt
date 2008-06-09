@@ -1,0 +1,59 @@
+ ----
+ Ordering by Constraints
+ ----
+ 
+Ordering by Constraints
+
+  Tapestry IoC has two specific areas where it must put some form of contribution into
+  a specific order:
+  
+  * {{{configuration.html#Ordered List}Ordered Configurations}}, where different modules
+    may contribute into a service's configuration
+    
+  * {{{decorator.html}Service Decorators}} which must be applied to services from 
+    a number of modules.
+    
+  []
+  
+  In both these cases, objects (either contributions to a configuration, or decorators)
+  are assigning qualified ids, simple ids qualified with the containing/contributing
+  module's id.
+  
+  Because the contributions can come from different modules, and there isn't a specific
+  order in which the service contribution methods are invoked, there is no
+  natural ordering of the contributed objects.
+  
+  Instead, <constraints> are applied to each contribution.  These constraints
+  control what other objects must come before a contribution, or come after.
+  
+  The constraints are specified using the
+  {{{../apidocs/org/apache/tapestry5/ioc/annotations/Order.html}Order}} annotation (for
+  service decorator methods), or as variable arguments at the end of the add() method
+  for ordered configurations.
+  
+  Often a single contribution will have more than one constraint.
+  
+Constraint Types
+  
+  Each constraint string begins with a prefix, "before:" or "after:", used to
+  identify  the type of constraint.
+  
+  The remainder of the constraint string is a comma-separated list of <patterns>. The
+  contributed object will be ordered before or after the contributions identified by
+  the patterns.
+  
+Constraint {Match Patterns}
+
+  A constraint match pattern is used to select one or more objects by their id.
+  
+  Match patterns support a very simple kind of wildcard matching.  A "*" may
+  appear at the start, or end, or both of the pattern, and will match zero or more
+  characters there.  Thus you can have patterns such as "Data*" or "*Logic" or even "*User*".
+
+  Matching is case insensitive.
+
+  
+  
+  
+  
+  

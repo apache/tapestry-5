@@ -1,0 +1,9 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+    <h1>Render Error Demo</h1>
+
+    <p>This page will not completely render, it gets an exception.</p>
+
+    <t:Echo value="value"/>
+
+</html>

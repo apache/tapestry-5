@@ -1,0 +1,13 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+    <h1>Override Validation Decorator</h1>
+
+    <p>
+        Demonstrates how to override the default Validation Decorator for a page or a component (this is often
+        done inside a layout component). In addition, used to verify that the Label component
+        invokes Validation Decorator methods at the correct time.
+    </p>
+
+    <t:beaneditform t:id="form" object="this"/>
+
+</html>
