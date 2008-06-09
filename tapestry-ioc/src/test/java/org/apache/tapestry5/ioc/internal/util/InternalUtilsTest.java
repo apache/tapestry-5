@@ -31,6 +31,21 @@ import java.util.*;
 
 public class InternalUtilsTest extends IOCTestCase
 {
+
+    private static class PrivateInnerClass
+    {
+        public PrivateInnerClass()
+        {
+        }
+    }
+
+    public static class PublicInnerClass
+    {
+        protected PublicInnerClass()
+        {
+        }
+    }
+
     @Test
     public void method_as_string_no_args() throws Exception
     {
@@ -384,4 +399,40 @@ public class InternalUtilsTest extends IOCTestCase
         assertEquals(c.getParameterTypes()[0], String.class);
     }
 
+    @Test
+    public void validate_constructor_class_not_public()
+    {
+        Class clazz = PrivateInnerClass.class;
+        Constructor cons = clazz.getConstructors()[0];
+
+        try
+        {
+            InternalUtils.validateConstructorForAutobuild(cons);
+            unreachable();
+        }
+        catch (IllegalArgumentException ex)
+        {
+            assertEquals(ex.getMessage(),
+                         "Class org.apache.tapestry5.ioc.internal.util.InternalUtilsTest$PrivateInnerClass is not a public class and may not be autobuilt.");
+        }
+    }
+
+    @Test
+    public void validate_constructor_check_for_public()
+    {
+        Class clazz = PublicInnerClass.class;
+        Constructor cons = clazz.getDeclaredConstructors()[0];
+
+        try
+        {
+            InternalUtils.validateConstructorForAutobuild(cons);
+            unreachable();
+        }
+        catch (IllegalArgumentException ex)
+        {
+            assertMessageContains(ex,
+                                  "Constructor protected org.apache.tapestry5.ioc.internal.util.InternalUtilsTest$PublicInnerClass() is not public and may not be used for autobuilding an instance of the class.");
+
+        }
+    }
 }
