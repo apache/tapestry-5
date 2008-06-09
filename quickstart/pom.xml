@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.apache.tapestry</groupId>
         <artifactId>tapestry-project</artifactId>
-        <version>5.0.13</version>
+        <version>5.0.14-SNAPSHOT</version>
     </parent>
     <name>Tapestry 5 Quickstart Archetype</name>
     <inceptionYear>2007</inceptionYear>
