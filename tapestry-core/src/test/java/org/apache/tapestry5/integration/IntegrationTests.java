@@ -1823,6 +1823,25 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         assertText("activePageName", "music/Details");
     }
+    
+    /**
+     * TAPESTRY-2235
+     */
+    @Test
+    public void generated_activation_context_handlers()
+    {
+        start("Music Page", "69");
+
+        assertText("activePageName", "Music");
+
+        clickAndWait("link=Wake Me Up (Copy)");
+
+        assertText("activePageName", "music/Details2");
+        
+        assertText("//div[@class='t-beandisplay-value title']", "Wake Me Up");
+        
+        assertText("//div[@class='t-beandisplay-value artist']", "Norah Jones");
+    }
 
     /**
      * TAPESTRY-1869
