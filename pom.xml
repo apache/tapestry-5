@@ -78,6 +78,15 @@
             </roles>
             <timezone>+1</timezone>
         </developer>
+        <developer>
+            <id>drobiazko</id>
+            <name>Igor Drobiazko</name>
+            <email>drobiazko@apache.org</email>
+            <roles>
+                <role>Developer</role>
+            </roles>
+            <timezone>+1</timezone>
+        </developer>
     </developers>
 
     <ciManagement>
