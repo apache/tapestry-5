@@ -36,6 +36,23 @@ public class ViewPerson
 
   Accessing the page as <</viewperson/152>> would load the Person entity with id 152 and use that as the page context.
 
+Using @PageActivationContext
+
+  If you prefer to use annotations, you may let Tapestry generate the page activation context handlers for you.
+  Relying on an existing ValueEncoder for the corresponding property you can use the @PageActivationContext annotation.
+  The disadvantage is that you can't access the handlers in a unit test.
+  
+  
++----+
+public class ViewPerson
+{
+  @Property
+  @PageActivationContext
+  private Person person;
+  
+}
++----+ 
+
 Using @Persist with entities
 
   If you wish to persist an entity in the session, you may use the "entity" persistence strategy:

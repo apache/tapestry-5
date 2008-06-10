@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,26 +14,24 @@
 
 package org.apache.tapestry5.annotations;
 
-
 import java.lang.annotation.Documented;
 import static java.lang.annotation.ElementType.FIELD;
-import static java.lang.annotation.ElementType.PARAMETER;
 import java.lang.annotation.Retention;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Target;
 
 /**
- * Used in conjunction with the {@link Inject} annotation to inject an {@link Asset} based on a path.
+ * Annotation for a field for which the page activation context handlers (onActivate and onPassivate) should be created.
+ * In order to use this annotation you must contribute a {@link ValueEncoder} for the class of the annotated property.
  */
-@Target(
-        { FIELD, PARAMETER })
+@Target(FIELD)
 @Documented
 @Retention(RUNTIME)
-public @interface Path
+public @interface PageActivationContext
 {
-    /**
-     * The path to the resource; if prefixed (say with "classpath:") then its a complete path within the identified
-     * namespace; otherwise it's a relative path from the class containing the annotation. Symbols will be expanded.
-     */
-    String value();
+    /** Whether to create an activate event handler.  */
+    boolean activate() default true;
+
+    /** Whether to create a passivate event handler  */
+    boolean passivate() default true;
 }

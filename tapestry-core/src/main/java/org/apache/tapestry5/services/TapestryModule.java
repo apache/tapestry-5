@@ -380,6 +380,8 @@ public final class TapestryModule
         // be converted to clear out at the end of the request.
 
         configuration.add("UnclaimedField", new UnclaimedFieldWorker(), "after:*");
+        
+        configuration.add("PageActivationContext", new PageActivationContextWorker(), "before:*");
     }
 
     /**

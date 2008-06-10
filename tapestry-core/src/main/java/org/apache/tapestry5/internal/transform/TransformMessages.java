@@ -14,7 +14,10 @@
 
 package org.apache.tapestry5.internal.transform;
 
+import java.util.List;
+
 import org.apache.tapestry5.ioc.Messages;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.MessagesImpl;
 import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.services.TransformMethodSignature;
@@ -42,5 +45,10 @@ class TransformMessages
     static String cachedMethodsHaveNoParameters(TransformMethodSignature method)
     {
         return MESSAGES.format("cached-no-parameters", method);
+    }
+
+    static String illegalNumberOfPageActivationContextHandlers(List<String> fields)
+    {
+        return MESSAGES.format("illegal-number-of-page-activation-context-handlers", InternalUtils.joinSorted(fields));
     }
 }
