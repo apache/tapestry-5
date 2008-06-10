@@ -165,14 +165,23 @@ public class PropertyAdapterImpl implements PropertyAdapter
             // are in the same class (i.e., that we don't have a getter exposing a protected field inherted
             // from a base class, or some other oddity).
 
-            for (Field f : getBeanType().getDeclaredFields())
+            Class cursor = getBeanType();
+
+            out:
+            while (cursor != null)
             {
-                if (f.getName().equalsIgnoreCase(name))
+                for (Field f : cursor.getDeclaredFields())
                 {
-                    field = f;
-                    break;
+                    if (f.getName().equalsIgnoreCase(name))
+                    {
+                        field = f;
+                        break out;
+                    }
                 }
+
+                cursor = cursor.getSuperclass();
             }
+
 
             fieldCheckedFor = true;
         }

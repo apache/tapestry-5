@@ -72,6 +72,11 @@ public class PropertyAccessImplTest extends IOCInternalTestCase
         }
     }
 
+    public static class BeanSubclass extends Bean
+    {
+
+    }
+
     public static class ExceptionBean
     {
         public boolean getFailure()
@@ -466,6 +471,21 @@ public class PropertyAccessImplTest extends IOCInternalTestCase
 
         assertNotNull(dt);
         assertEquals(dt.value(), "fred");
+    }
+
+    /**
+     * TAPESTRY-2448
+     */
+    @Test
+    public void get_annotation_will_read_inherited_field()
+    {
+        PropertyAdapter pa = access.getAdapter(BeanSubclass.class).getPropertyAdapter("value");
+
+        DataType dt = pa.getAnnotation(DataType.class);
+
+        assertNotNull(dt);
+        assertEquals(dt.value(), "fred");
+
     }
 
     @Test
