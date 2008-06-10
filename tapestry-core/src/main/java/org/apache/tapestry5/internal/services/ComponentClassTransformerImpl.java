@@ -131,7 +131,10 @@ public class ComponentClassTransformerImpl implements ComponentClassTransformer,
         InternalClassTransformation parentTransformation = nameToClassTransformation
                 .get(parentClassname);
 
-        if (parentTransformation == null && !parentClassname.equals(Object.class.getName()))
+        // TAPESTRY-2449: Ignore the base class that Groovy can inject
+
+        if (parentTransformation == null && !(parentClassname.equals("java.lang.Object") || parentClassname.equals(
+                "groovy.lang.GroovyObjectSupport")))
         {
             String suggestedPackageName = buildSuggestedPackageName(classname);
 
