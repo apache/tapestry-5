@@ -30,19 +30,24 @@ public class HibernateSessionManagerImpl implements HibernateSessionManager, Thr
     {
         session = source.create();
 
+        startNewTransaction();
+    }
+
+    private void startNewTransaction()
+    {
         transaction = session.beginTransaction();
     }
 
     public void abort()
     {
         transaction.rollback();
-        transaction.begin();
+        startNewTransaction();
     }
 
     public void commit()
     {
         transaction.commit();
-        transaction.begin();
+        startNewTransaction();
     }
 
     public Session getSession()
