@@ -14,6 +14,8 @@
 
 package org.apache.tapestry5.ioc.internal.services;
 
+import org.apache.tapestry5.ioc.AnnotationProvider;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.services.ClassPropertyAdapter;
 import org.apache.tapestry5.ioc.services.PropertyAdapter;
 
@@ -21,6 +23,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.List;
 
 public class PropertyAdapterImpl implements PropertyAdapter
 {
@@ -36,15 +39,7 @@ public class PropertyAdapterImpl implements PropertyAdapter
 
     private final boolean castRequired;
 
-    /**
-     * Have we tried to resolve from the property name to the field yet?
-     */
-    private boolean fieldCheckedFor;
-    /**
-     * The field from the containing type that matches this property name (may be null if not found, or not checked for
-     * yet).
-     */
-    private Field field;
+    private AnnotationProvider annotationProvider;
 
     PropertyAdapterImpl(ClassPropertyAdapter classAdapter, String name, Class type, Method readMethod,
                         Method writeMethod)
@@ -139,27 +134,24 @@ public class PropertyAdapterImpl implements PropertyAdapter
 
     public <T extends Annotation> T getAnnotation(Class<T> annotationClass)
     {
-        T result = readMethod != null ? readMethod.getAnnotation(annotationClass) : null;
-
-        if (result == null && writeMethod != null) result = writeMethod.getAnnotation(annotationClass);
-
-        if (result == null) result = getAnnotationFromField(annotationClass);
-
-        return result;
+        return getAnnnotationProvider().getAnnotation(annotationClass);
     }
 
-    private <T extends Annotation> T getAnnotationFromField(Class<T> annotationClass)
+    /**
+     * Creates (as needed) the annotation provider for this property.
+     */
+    private synchronized AnnotationProvider getAnnnotationProvider()
     {
-        Field field = getField();
-
-        return field == null ? null : field.getAnnotation(annotationClass);
-    }
-
-
-    private synchronized Field getField()
-    {
-        if (!fieldCheckedFor)
+        if (annotationProvider == null)
         {
+            List<AnnotationProvider> providers = CollectionFactory.newList();
+
+            if (readMethod != null)
+                providers.add(new AccessableObjectAnnotationProvider(readMethod));
+
+            if (writeMethod != null)
+                providers.add(new AccessableObjectAnnotationProvider(writeMethod));
+
             // There's an assumption here, that the fields match the property name (we ignore case
             // which leads to a manageable ambiguity) and that the field and the getter/setter
             // are in the same class (i.e., that we don't have a getter exposing a protected field inherted
@@ -174,7 +166,8 @@ public class PropertyAdapterImpl implements PropertyAdapter
                 {
                     if (f.getName().equalsIgnoreCase(name))
                     {
-                        field = f;
+                        providers.add(new AccessableObjectAnnotationProvider(f));
+
                         break out;
                     }
                 }
@@ -182,11 +175,10 @@ public class PropertyAdapterImpl implements PropertyAdapter
                 cursor = cursor.getSuperclass();
             }
 
-
-            fieldCheckedFor = true;
+            annotationProvider = AnnotationProviderChain.create(providers);
         }
 
-        return field;
+        return annotationProvider;
     }
 
     public boolean isCastRequired()

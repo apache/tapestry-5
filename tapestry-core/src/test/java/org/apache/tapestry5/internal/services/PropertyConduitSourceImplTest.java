@@ -15,6 +15,7 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.PropertyConduit;
+import org.apache.tapestry5.beaneditor.Validate;
 import org.apache.tapestry5.internal.bindings.PropBindingFactoryTest;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.ioc.internal.services.ClassFactoryImpl;
@@ -188,6 +189,18 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
         bean.getSimple().setFirstName(null);
 
         assertNull(conduit.get(bean));
+    }
+
+    @Test
+    public void field_annotations_are_visible()
+    {
+        PropertyConduit conduit = source.create(CompositeBean.class, "simple.firstName");
+
+        Validate annotation = conduit.getAnnotation(Validate.class);
+
+        assertNotNull(annotation);
+
+        assertEquals(annotation.value(), "required");
     }
 
 }
