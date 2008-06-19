@@ -25,14 +25,17 @@ public class ClassDescription
     private final String className;
 
     private final String description;
+    
+    private final boolean supportsInformalParameters;
 
     private final Map<String, ParameterDescription> parameters = newMap();
 
-    public ClassDescription(String className, String superClassName, String description)
+    public ClassDescription(String className, String superClassName, String description, boolean supportsInformalParameters)
     {
         this.className = className;
         this.superClassName = superClassName;
         this.description = description;
+        this.supportsInformalParameters = supportsInformalParameters;
     }
 
     public String getClassName()
@@ -54,5 +57,10 @@ public class ClassDescription
     {
         return superClassName;
     }
+
+	public boolean isSupportsInformalParameters()
+	{
+		return supportsInformalParameters;
+	}
 
 }

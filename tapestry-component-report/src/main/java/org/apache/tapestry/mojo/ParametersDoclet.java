@@ -78,9 +78,11 @@ public class ParametersDoclet extends Doclet
             }
 
             if (!found) return;
+            
+            Map<String, String> annotationValues = findAnnotation(classDoc, "SupportsInformalParameters");
 
-            println("<class name=\"%s\" super-class=\"%s\">", classDoc.qualifiedTypeName(),
-                    classDoc.superclass().qualifiedTypeName());
+            println("<class name=\"%s\" super-class=\"%s\"  supports-informal-parameters=\"%s\">", classDoc.qualifiedTypeName(),
+                    classDoc.superclass().qualifiedTypeName(), annotationValues!=null);
             print("<description>");
             printDescription(classDoc);
             println("</description>", classDoc.commentText());
@@ -91,7 +93,7 @@ public class ParametersDoclet extends Doclet
 
                 if (!fd.isPrivate()) continue;
 
-                Map<String, String> annotationValues = findParameterAnnotation(fd);
+                annotationValues = findAnnotation(fd, "Parameter");
 
                 if (annotationValues == null) continue;
 
@@ -120,12 +122,12 @@ public class ParametersDoclet extends Doclet
             return defaultValue;
         }
 
-        private Map<String, String> findParameterAnnotation(FieldDoc fd)
+        private Map<String, String> findAnnotation(ProgramElementDoc doc, String name)
         {
-            for (AnnotationDesc annotation : fd.annotations())
+        	for (AnnotationDesc annotation : doc.annotations())
             {
                 if (annotation.annotationType().qualifiedTypeName().equals(
-                        "org.apache.tapestry5.annotations.Parameter"))
+                        "org.apache.tapestry5.annotations."+name))
                 {
                     Map<String, String> result = new HashMap<String, String>();
 

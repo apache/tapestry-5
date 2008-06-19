@@ -403,7 +403,9 @@ public class ComponentReport extends AbstractMavenReport
                 addChild(row, "td", pd.getDescription());
             }
         }
-
+        
+        if(cd.isSupportsInformalParameters())
+        	addChild(section, "p", "Informal parameters: supported");
 
         addExternalDocumentation(body, docSearchPath, className);
 
@@ -740,8 +742,9 @@ public class ComponentReport extends AbstractMavenReport
 
             String className = element.getAttributeValue("name");
             String superClassName = element.getAttributeValue("super-class");
+            String supportsInformalParameters = element.getAttributeValue("supports-informal-parameters");
 
-            ClassDescription cd = new ClassDescription(className, superClassName, description);
+            ClassDescription cd = new ClassDescription(className, superClassName, description, Boolean.valueOf(supportsInformalParameters));
 
             result.put(className, cd);
 
