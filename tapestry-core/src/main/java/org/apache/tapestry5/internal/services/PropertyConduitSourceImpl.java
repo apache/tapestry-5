@@ -18,9 +18,8 @@ import org.apache.tapestry5.PropertyConduit;
 import org.apache.tapestry5.internal.events.InvalidationListener;
 import org.apache.tapestry5.internal.util.MultiKey;
 import org.apache.tapestry5.ioc.AnnotationProvider;
-import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newConcurrentMap;
-import static org.apache.tapestry5.ioc.internal.util.Defense.notBlank;
-import static org.apache.tapestry5.ioc.internal.util.Defense.notNull;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.ioc.internal.util.GenericsUtils;
 import org.apache.tapestry5.ioc.services.*;
 import org.apache.tapestry5.ioc.util.BodyBuilder;
@@ -35,12 +34,17 @@ import java.util.regex.Pattern;
 
 public class PropertyConduitSourceImpl implements PropertyConduitSource, InvalidationListener
 {
-    private interface ReadInfo extends AnnotationProvider
+    private interface ExpressionTermInfo extends AnnotationProvider
     {
         /**
-         * The name of the method to invoke.
+         * The name of the method to invoke to read the property value, or null.
          */
-        String getMethodName();
+        String getReadMethodName();
+
+        /**
+         * The name of the method to invoke to write the property value, or null.
+         */
+        String getWriteMethodName();
 
         /**
          * The return type of the method, or the type of the property.
@@ -54,40 +58,18 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
     }
 
 
-    /**
-     * Result from writing the property navigation portion of the expression.  For getter methods, the navigation is all
-     * terms in the expression; for setter methods, the navigation is all but the last term.
-     */
-    private interface PropertyNavigationResult
-    {
-        /**
-         * The name of the variable holding the final step in the expression.
-         */
-        String getFinalStepVariable();
-
-        /**
-         * The type of the final step variable.
-         */
-        Class getFinalStepType();
-
-        /**
-         * The method read information for the final term in the navigation portion of the expression.
-         */
-        ReadInfo getFinalReadInfo();
-    }
-
     private static final String PARENS = "()";
 
     private final PropertyAccess access;
 
     private final ClassFactory classFactory;
 
-    private final Map<Class, Class> classToEffectiveClass = newConcurrentMap();
+    private final Map<Class, Class> classToEffectiveClass = CollectionFactory.newConcurrentMap();
 
     /**
      * Keyed on combination of root class and expression.
      */
-    private final Map<MultiKey, PropertyConduit> cache = newConcurrentMap();
+    private final Map<MultiKey, PropertyConduit> cache = CollectionFactory.newConcurrentMap();
 
     private static final MethodSignature GET_SIGNATURE = new MethodSignature(Object.class, "get",
                                                                              new Class[] { Object.class }, null);
@@ -106,8 +88,8 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
     public PropertyConduit create(Class rootClass, String expression)
     {
-        notNull(rootClass, "rootClass");
-        notBlank(expression, "expression");
+        Defense.notNull(rootClass, "rootClass");
+        Defense.notBlank(expression, "expression");
 
         Class effectiveClass = toEffectiveClass(rootClass);
 
@@ -171,85 +153,123 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
         String[] terms = SPLIT_AT_DOTS.split(expression);
 
-        final ReadInfo readInfo = buildGetter(rootClass, classFab, expression, terms);
-        final Method writeMethod = buildSetter(rootClass, classFab, expression, terms);
+        MethodSignature navigate = createNavigationMethod(rootClass, classFab, expression, terms);
 
-        // A conduit is either readable or writable, otherwise there will already have been
-        // an error about unknown method name or property name.
+        String lastTerm = terms[terms.length - 1];
 
-        Class propertyType = readInfo != null ? readInfo.getType() : writeMethod
-                .getParameterTypes()[0];
+        ExpressionTermInfo termInfo = infoForTerm(navigate.getReturnType(), expression, lastTerm);
+
+        createAccessors(rootClass, expression, classFab, navigate, termInfo);
 
         String description = String.format("PropertyConduit[%s %s]", rootClass.getName(), expression);
 
         Class conduitClass = classFab.createClass();
 
-        AnnotationProvider provider = new AnnotationProvider()
-        {
-            public <T extends Annotation> T getAnnotation(Class<T> annotationClass)
-            {
-                T result = readInfo == null ? null : readInfo.getAnnotation(annotationClass);
-
-                if (result == null && writeMethod != null) result = writeMethod.getAnnotation(annotationClass);
-
-                return result;
-            }
-
-        };
-
         try
         {
-            return (PropertyConduit) conduitClass.getConstructors()[0].newInstance(propertyType, provider, description);
+            return (PropertyConduit) conduitClass.getConstructors()[0].newInstance(termInfo.getType(), termInfo,
+                                                                                   description);
         }
         catch (Exception ex)
         {
             throw new RuntimeException(ex);
         }
-
     }
 
-    private ReadInfo buildGetter(Class rootClass, ClassFab classFab, String expression, String[] terms)
+    private void createAccessors(Class rootClass, String expression, ClassFab classFab, MethodSignature navigateMethod,
+                                 ExpressionTermInfo termInfo)
     {
-        BodyBuilder builder = new BodyBuilder();
+        createGetter(rootClass, expression, classFab, navigateMethod, termInfo);
+        createSetter(rootClass, expression, classFab, navigateMethod, termInfo);
+    }
 
-        builder.begin();
+    private void createSetter(Class rootClass, String expression, ClassFab classFab, MethodSignature navigateMethod,
+                              ExpressionTermInfo termInfo)
+    {
+        String methodName = termInfo.getWriteMethodName();
 
-        PropertyNavigationResult result = writePropertyNavigationCode(builder, rootClass, expression, terms, false);
-
-
-        if (result == null)
+        if (methodName == null)
         {
-            builder.clear();
-            builder
-                    .addln("throw new RuntimeException(\"Expression %s for class %s is write-only.\");", expression,
-                           rootClass.getName());
+            createNoOp(classFab, SET_SIGNATURE, "Expression %s for class %s is read-only.", expression,
+                       rootClass.getName());
+            return;
         }
-        else
-        {
-            builder.addln("return %s;", result.getFinalStepVariable());
 
-            builder.end();
+        BodyBuilder builder = new BodyBuilder().begin();
+
+        builder.addln("%s target = %s($1);",
+                      ClassFabUtils.toJavaClassName(navigateMethod.getReturnType()),
+                      navigateMethod.getName());
+
+        // I.e. due to ?. operator
+
+        builder.addln("if (target == null) return;");
+
+        String propertyTypeName = ClassFabUtils.toJavaClassName(termInfo.getType());
+
+        builder.addln("target.%s(%s);", methodName, ClassFabUtils.castReference("$2", propertyTypeName));
+
+        builder.end();
+
+        classFab.addMethod(Modifier.PUBLIC, SET_SIGNATURE, builder.toString());
+    }
+
+    private void createGetter(Class rootClass, String expression, ClassFab classFab, MethodSignature navigateMethod,
+                              ExpressionTermInfo termInfo)
+    {
+        String methodName = termInfo.getReadMethodName();
+
+        if (methodName == null)
+        {
+            createNoOp(classFab, GET_SIGNATURE, "Expression %s for class %s is write-only.", expression,
+                       rootClass.getName());
+            return;
         }
+
+        BodyBuilder builder = new BodyBuilder().begin();
+
+        builder.addln("%s target = %s($1);", ClassFabUtils.toJavaClassName(navigateMethod.getReturnType()),
+                      navigateMethod.getName());
+
+        // I.e. due to ?. operator
+
+        builder.addln("if (target == null) return null;");
+
+        builder.addln("return ($w) target.%s();", methodName);
+
+        builder.end();
 
         classFab.addMethod(Modifier.PUBLIC, GET_SIGNATURE, builder.toString());
-
-
-        return result == null ? null : result.getFinalReadInfo();
     }
 
-    /**
-     * Writes the code for navigation
-     *
-     * @param builder
-     * @param rootClass
-     * @param expression
-     * @param terms
-     * @param forSetter  if true, then the last term is not read since it will be updated
-     * @return
-     */
-    private PropertyNavigationResult writePropertyNavigationCode(BodyBuilder builder, Class rootClass,
-                                                                 String expression, String[] terms, boolean forSetter)
+
+    private void createNoOp(ClassFab classFab, MethodSignature signature, String format, Object... values)
     {
+        String message = String.format(format, values);
+
+        String body = String.format("throw new RuntimeException(\"%s\");", message);
+
+        classFab.addMethod(Modifier.PUBLIC, signature, body);
+    }
+
+
+    /**
+     * Builds a method that navigates from the root object upto, but not including, the final property. For simple
+     * properties, the generated method is effectively a big cast.  Otherwise, the generated method returns the object
+     * that contains the final property (the final term).       The generated method may return null if an intermediate
+     * term is null (and evaluated using the "?." safe dereferencing operator).
+     *
+     * @param rootClass
+     * @param classFab
+     * @param expression
+     * @param terms      the expression divided into individual terms
+     * @return signature of the added method
+     */
+    private MethodSignature createNavigationMethod(Class rootClass, ClassFab classFab, String expression,
+                                                   String[] terms)
+    {
+        BodyBuilder builder = new BodyBuilder().begin();
+
         builder.addln("%s root = (%<s) $1;", ClassFabUtils.toJavaClassName(rootClass));
         String previousStep = "root";
 
@@ -258,37 +278,27 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
                 expression);
 
         Class activeType = rootClass;
-        ReadInfo readInfo = null;
+        ExpressionTermInfo expressionTermInfo = null;
 
-        // For a setter method, the navigation stops with  the penultimate
-        // term in the expression (the final term is what gets updated).
-
-        int lastIndex = forSetter ? terms.length - 1 : terms.length;
-
-        for (int i = 0; i < lastIndex; i++)
+        for (int i = 0; i < terms.length - 1; i++)
         {
             String thisStep = "step" + (i + 1);
             String term = terms[i];
 
             boolean nullable = term.endsWith("?");
+
             if (nullable) term = term.substring(0, term.length() - 1);
 
-            // All the navigation terms in the expression must be readable properties.
-            // The only exception is the final term in a reader method.
+            expressionTermInfo = infoForTerm(activeType, expression, term);
 
-            boolean mustExist = forSetter || i < terms.length - 1;
+            String methodName = expressionTermInfo.getReadMethodName();
 
-            readInfo = readInfoForTerm(activeType, expression, term, mustExist);
-
-            // Means the property for this step exists but is write only, which is a problem!
-            // This can only happen for getter methods, we return null to indicate that
-            // the expression is write-only.
-
-            if (readInfo == null) return null;
+            if (methodName == null)
+                throw new RuntimeException(ServicesMessages.writeOnlyProperty(term, activeType, expression));
 
             // If a primitive type, convert to wrapper type
 
-            Class termType = readInfo.getType();
+            Class termType = expressionTermInfo.getType();
             Class wrappedType = ClassFabUtils.getWrapperType(termType);
 
             String termJavaName = ClassFabUtils.toJavaClassName(wrappedType);
@@ -301,113 +311,41 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
             {
                 builder.add(" ($w) ");
             }
-            else if (readInfo.isCastRequired())
+            else if (expressionTermInfo.isCastRequired())
             {
                 builder.add(" (%s) ", termJavaName);
             }
 
-            builder.addln("%s.%s();", previousStep, readInfo.getMethodName());
+            builder.addln("%s.%s();", previousStep, expressionTermInfo.getReadMethodName());
 
             if (nullable)
             {
-                builder.add("if (%s == null) return", thisStep);
-
-                if (!forSetter) builder.add(" null");
-
-                builder.addln(";");
+                builder.add("if (%s == null) return null;", thisStep);
             }
             else
             {
                 // Perform a null check on intermediate terms.
-                if (i < lastIndex - 1)
-                {
-                    builder.addln("if (%s == null) throw new NullPointerException(%s.nullTerm(\"%s\", \"%s\", root));",
-                                  thisStep, getClass().getName(), term, expression);
-                }
+                builder.addln("if (%s == null) %s.nullTerm(\"%s\", \"%s\", root);",
+                              thisStep, getClass().getName(), term, expression);
             }
 
             activeType = wrappedType;
             previousStep = thisStep;
         }
 
-        final String finalStepVariable = previousStep;
-        final Class finalStepType = activeType;
-        final ReadInfo finalReadInfo = readInfo;
-
-        return new PropertyNavigationResult()
-        {
-            public String getFinalStepVariable()
-            {
-                return finalStepVariable;
-            }
-
-            public Class getFinalStepType()
-            {
-                return finalStepType;
-            }
-
-            public ReadInfo getFinalReadInfo()
-            {
-                return finalReadInfo;
-            }
-        };
-    }
-
-    private Method buildSetter(Class rootClass, ClassFab classFab, String expression, String[] terms)
-    {
-        BodyBuilder builder = new BodyBuilder();
-        builder.begin();
-
-        PropertyNavigationResult result = writePropertyNavigationCode(builder, rootClass, expression, terms, true);
-
-        // Because we pass true for the forSetter parameter, we know that the expression for the leading
-        // terms is a chain of readable expressions.  But is the final term writable?
-
-        Method writeMethod = writeMethodForTerm(result.getFinalStepType(), expression, terms[terms.length - 1]);
-
-        if (writeMethod == null)
-        {
-            builder.clear();
-            builder
-                    .addln("throw new RuntimeException(\"Expression %s for class %s is read-only.\");", expression,
-                           rootClass.getName());
-            classFab.addMethod(Modifier.PUBLIC, SET_SIGNATURE, builder.toString());
-
-            return null;
-        }
-
-        Class propertyType = writeMethod.getParameterTypes()[0];
-        String propertyTypeName = ClassFabUtils.toJavaClassName(propertyType);
-
-        // Cast the parameter from Object to the expected type for the method.
-
-        builder.addln("%s value = %s;", propertyTypeName, ClassFabUtils.castReference("$2", propertyTypeName));
-
-        // Invoke the method.
-
-        builder.addln("%s.%s(value);", result.getFinalStepVariable(), writeMethod.getName());
+        builder.addln("return %s;", previousStep);
 
         builder.end();
 
-        classFab.addMethod(Modifier.PUBLIC, SET_SIGNATURE, builder.toString());
+        MethodSignature sig = new MethodSignature(activeType, "navigate", new Class[] { Object.class }, null);
 
-        return writeMethod;
+        classFab.addMethod(Modifier.PRIVATE, sig, builder.toString());
+
+        return sig;
     }
 
-    private Method writeMethodForTerm(Class activeType, String expression, String term)
-    {
-        if (term.endsWith(PARENS)) return null;
 
-        ClassPropertyAdapter classAdapter = access.getAdapter(activeType);
-        PropertyAdapter adapter = classAdapter.getPropertyAdapter(term);
-
-        if (adapter == null) throw new RuntimeException(
-                ServicesMessages.noSuchProperty(activeType, term, expression, classAdapter.getPropertyNames()));
-
-        return adapter.getWriteMethod();
-    }
-
-    private ReadInfo readInfoForTerm(Class activeType, String expression, String term, boolean mustExist)
+    private ExpressionTermInfo infoForTerm(Class activeType, String expression, String term)
     {
         if (term.endsWith(PARENS))
         {
@@ -420,14 +358,18 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
                 if (method.getReturnType().equals(void.class))
                     throw new RuntimeException(ServicesMessages.methodIsVoid(term, activeType, expression));
 
-
                 final Class genericType = GenericsUtils.extractGenericReturnType(activeType, method);
 
-                return new ReadInfo()
+                return new ExpressionTermInfo()
                 {
-                    public String getMethodName()
+                    public String getReadMethodName()
                     {
                         return method.getName();
+                    }
+
+                    public String getWriteMethodName()
+                    {
+                        return null;
                     }
 
                     public Class getType()
@@ -462,18 +404,21 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
         if (adapter == null) throw new RuntimeException(
                 ServicesMessages.noSuchProperty(activeType, term, expression, classAdapter.getPropertyNames()));
 
-        if (!adapter.isRead())
+        return new ExpressionTermInfo()
         {
-            if (mustExist) throw new RuntimeException(ServicesMessages.writeOnlyProperty(term, activeType, expression));
-
-            return null;
-        }
-
-        return new ReadInfo()
-        {
-            public String getMethodName()
+            public String getReadMethodName()
             {
-                return adapter.getReadMethod().getName();
+                return name(adapter.getReadMethod());
+            }
+
+            public String getWriteMethodName()
+            {
+                return name(adapter.getWriteMethod());
+            }
+
+            private String name(Method m)
+            {
+                return m == null ? null : m.getName();
             }
 
             public Class getType()
@@ -505,9 +450,14 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
         throw new NoSuchMethodException(ServicesMessages.noSuchMethod(activeType, methodName));
     }
 
-    public static String nullTerm(String term, String expression, Object root)
+    /**
+     * May be invoked from the fabricated PropertyConduit instances.
+     */
+    public static void nullTerm(String term, String expression, Object root)
     {
-        return String.format("Property '%s' (within property expression '%s', of %s) is null.",
-                             term, expression, root);
+        String message = String.format("Property '%s' (within property expression '%s', of %s) is null.",
+                                       term, expression, root);
+
+        throw new NullPointerException(message);
     }
 }
