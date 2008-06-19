@@ -24,4 +24,14 @@ public class MusicDetails2
     @Property
     @PageActivationContext
     private Track track;
+    
+    void onActivate(Track track)
+    {
+        throw new RuntimeException("onActivate invoked unexpectedly");
+    }
+    
+    Object onPassivate()
+    {
+        throw new RuntimeException("onPassivate invoked unexpectedly");
+    }
 }
