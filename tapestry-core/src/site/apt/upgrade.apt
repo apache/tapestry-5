@@ -12,6 +12,8 @@ Upgrade Notes
   You should also check the {{{../release-notes.html}project-wide release notes}} for information
   about bugs fixes and other improvements.
 
+Release 5.0.14
+
 Release 5.0.13
 
   As part of {{{https://issues.apache.org/jira/browse/TAPESTRY-2311}TAPESTRY-2311}}, there have been
@@ -19,6 +21,17 @@ Release 5.0.13
   overrides of base class methods.
 
 Release 5.0.12
+
+* JavaScript Changes
+
+  Tapestry now organizes JavaScript a bit differently; all JavaScript is at the bottom of the page, just
+  before the \</body\> tag.  This applies to both externally loaded scripts, and to per-page dynamically
+  generated JavaScript.
+
+  This can cause some pages to break, those that included inline \<script\> blocks in their templates.
+  You should inject the
+  {{{../apidocs/org/apache/tapestry5/RenderSupport.html}RenderSupport}} environmental and use it
+  to include JavaScript properly.
 
 * ReorderProperties annotation
 
