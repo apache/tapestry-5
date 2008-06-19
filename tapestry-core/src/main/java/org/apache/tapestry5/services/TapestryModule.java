@@ -381,7 +381,7 @@ public final class TapestryModule
 
         configuration.add("UnclaimedField", new UnclaimedFieldWorker(), "after:*");
         
-        configuration.add("PageActivationContext", new PageActivationContextWorker(), "before:*");
+        configuration.add("PageActivationContext", new PageActivationContextWorker(), "before:OnEvent");
     }
 
     /**
