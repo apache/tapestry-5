@@ -72,8 +72,19 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
             super(parent, classPool);
         }
 
+        /**
+         * Determines if the class name represents a component class from a controlled package.  If so,
+         * super.findClass() will load it and transform it. Returns null if not in a controlled package, allowing the
+         * parent class loader to do the work.
+         * <p/>
+         * This method is synchronized to <em>attempt</em> to address TAPESTRY-2468.
+         *
+         * @param className
+         * @return the loaded transformed Class, or null to force a load of the class from the parent class loader
+         * @throws ClassNotFoundException
+         */
         @Override
-        protected Class findClass(String className) throws ClassNotFoundException
+        protected synchronized Class findClass(String className) throws ClassNotFoundException
         {
             if (inControlledPackage(className)) return super.findClass(className);
 
