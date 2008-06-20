@@ -325,11 +325,11 @@ public class Form implements ClientElement, FormValidationControl
 
             this.tracker = tracker;
 
+            formSupport.executeDeferred();
+
             resources.triggerContextEvent(VALIDATE_FORM, context, callback);
 
             if (callback.isAborted()) return true;
-
-            formSupport.executeDeferred();
 
             // Let the listeners know about overall success or failure. Most listeners fall into
             // one of those two camps.
