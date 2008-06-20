@@ -262,29 +262,14 @@ public class AbstractIntegrationTestSuite extends Assert implements Selenium
         selenium.start();
     }
 
-    public void addSelection(String locator, String optionLocator)
+    public void start()
     {
-        selenium.addSelection(locator, optionLocator);
+        selenium.start();
     }
 
-    public void answerOnNextPrompt(String answer)
+    public void stop()
     {
-        selenium.answerOnNextPrompt(answer);
-    }
-
-    public void check(String locator)
-    {
-        selenium.check(locator);
-    }
-
-    public void chooseCancelOnNextConfirmation()
-    {
-        selenium.chooseCancelOnNextConfirmation();
-    }
-
-    public void chooseOkOnNextConfirmation()
-    {
-        selenium.chooseOkOnNextConfirmation();
+        selenium.stop();
     }
 
     public void click(String locator)
@@ -297,6 +282,11 @@ public class AbstractIntegrationTestSuite extends Assert implements Selenium
         selenium.doubleClick(locator);
     }
 
+    public void contextMenu(String locator)
+    {
+        selenium.contextMenu(locator);
+    }
+
     public void clickAt(String locator, String coordString)
     {
         selenium.clickAt(locator, coordString);
@@ -307,9 +297,9 @@ public class AbstractIntegrationTestSuite extends Assert implements Selenium
         selenium.doubleClickAt(locator, coordString);
     }
 
-    public void close()
+    public void contextMenuAt(String locator, String coordString)
     {
-        selenium.close();
+        selenium.contextMenuAt(locator, coordString);
     }
 
     public void fireEvent(String locator, String eventName)
@@ -317,14 +307,392 @@ public class AbstractIntegrationTestSuite extends Assert implements Selenium
         selenium.fireEvent(locator, eventName);
     }
 
+    public void focus(String locator)
+    {
+        selenium.focus(locator);
+    }
+
+    public void keyPress(String locator, String keySequence)
+    {
+        selenium.keyPress(locator, keySequence);
+    }
+
+    public void shiftKeyDown()
+    {
+        selenium.shiftKeyDown();
+    }
+
+    public void shiftKeyUp()
+    {
+        selenium.shiftKeyUp();
+    }
+
+    public void metaKeyDown()
+    {
+        selenium.metaKeyDown();
+    }
+
+    public void metaKeyUp()
+    {
+        selenium.metaKeyUp();
+    }
+
+    public void altKeyDown()
+    {
+        selenium.altKeyDown();
+    }
+
+    public void altKeyUp()
+    {
+        selenium.altKeyUp();
+    }
+
+    public void controlKeyDown()
+    {
+        selenium.controlKeyDown();
+    }
+
+    public void controlKeyUp()
+    {
+        selenium.controlKeyUp();
+    }
+
+    public void keyDown(String locator, String keySequence)
+    {
+        selenium.keyDown(locator, keySequence);
+    }
+
+    public void keyUp(String locator, String keySequence)
+    {
+        selenium.keyUp(locator, keySequence);
+    }
+
+    public void mouseOver(String locator)
+    {
+        selenium.mouseOver(locator);
+    }
+
+    public void mouseOut(String locator)
+    {
+        selenium.mouseOut(locator);
+    }
+
+    public void mouseDown(String locator)
+    {
+        selenium.mouseDown(locator);
+    }
+
+    public void mouseDownAt(String locator, String coordString)
+    {
+        selenium.mouseDownAt(locator, coordString);
+    }
+
+    public void mouseUp(String locator)
+    {
+        selenium.mouseUp(locator);
+    }
+
+    public void mouseUpAt(String locator, String coordString)
+    {
+        selenium.mouseUpAt(locator, coordString);
+    }
+
+    public void mouseMove(String locator)
+    {
+        selenium.mouseMove(locator);
+    }
+
+    public void mouseMoveAt(String locator, String coordString)
+    {
+        selenium.mouseMoveAt(locator, coordString);
+    }
+
+    public void type(String locator, String value)
+    {
+        selenium.type(locator, value);
+    }
+
+    public void typeKeys(String locator, String value)
+    {
+        selenium.typeKeys(locator, value);
+    }
+
+    public void setSpeed(String value)
+    {
+        selenium.setSpeed(value);
+    }
+
+    public String getSpeed()
+    {
+        return selenium.getSpeed();
+    }
+
+    public void check(String locator)
+    {
+        selenium.check(locator);
+    }
+
+    public void uncheck(String locator)
+    {
+        selenium.uncheck(locator);
+    }
+
+    public void select(String selectLocator, String optionLocator)
+    {
+        selenium.select(selectLocator, optionLocator);
+    }
+
+    public void addSelection(String locator, String optionLocator)
+    {
+        selenium.addSelection(locator, optionLocator);
+    }
+
+    public void removeSelection(String locator, String optionLocator)
+    {
+        selenium.removeSelection(locator, optionLocator);
+    }
+
+    public void removeAllSelections(String locator)
+    {
+        selenium.removeAllSelections(locator);
+    }
+
+    public void submit(String formLocator)
+    {
+        selenium.submit(formLocator);
+    }
+
+    public void open(String url)
+    {
+        selenium.open(url);
+    }
+
+    public void openWindow(String url, String windowID)
+    {
+        selenium.openWindow(url, windowID);
+    }
+
+    public void selectWindow(String windowID)
+    {
+        selenium.selectWindow(windowID);
+    }
+
+    public void selectFrame(String locator)
+    {
+        selenium.selectFrame(locator);
+    }
+
+    public boolean getWhetherThisFrameMatchFrameExpression(String currentFrameString, String target)
+    {
+        return selenium.getWhetherThisFrameMatchFrameExpression(currentFrameString, target);
+    }
+
+    public boolean getWhetherThisWindowMatchWindowExpression(String currentWindowString, String target)
+    {
+        return selenium.getWhetherThisWindowMatchWindowExpression(currentWindowString, target);
+    }
+
+    /**
+     * Waits the default time for the page to load.
+     */
+    public void waitForPageToLoad()
+    {
+        waitForPageToLoad(PAGE_LOAD_TIMEOUT);
+    }
+
+    public void waitForPopUp(String windowID, String timeout)
+    {
+        selenium.waitForPopUp(windowID, timeout);
+    }
+
+    public void chooseCancelOnNextConfirmation()
+    {
+        selenium.chooseCancelOnNextConfirmation();
+    }
+
+    public void chooseOkOnNextConfirmation()
+    {
+        selenium.chooseOkOnNextConfirmation();
+    }
+
+    public void answerOnNextPrompt(String answer)
+    {
+        selenium.answerOnNextPrompt(answer);
+    }
+
+    public void goBack()
+    {
+        selenium.goBack();
+    }
+
+    public void refresh()
+    {
+        selenium.refresh();
+    }
+
+    public void close()
+    {
+        selenium.close();
+    }
+
+    public boolean isAlertPresent()
+    {
+        return selenium.isAlertPresent();
+    }
+
+    public boolean isPromptPresent()
+    {
+        return selenium.isPromptPresent();
+    }
+
+    public boolean isConfirmationPresent()
+    {
+        return selenium.isConfirmationPresent();
+    }
+
     public String getAlert()
     {
         return selenium.getAlert();
     }
 
+    public String getConfirmation()
+    {
+        return selenium.getConfirmation();
+    }
+
+    public String getPrompt()
+    {
+        return selenium.getPrompt();
+    }
+
+    public String getLocation()
+    {
+        return selenium.getLocation();
+    }
+
+    public String getTitle()
+    {
+        return selenium.getTitle();
+    }
+
+    public String getBodyText()
+    {
+        return selenium.getBodyText();
+    }
+
+    public String getValue(String locator)
+    {
+        return selenium.getValue(locator);
+    }
+
+    public String getText(String locator)
+    {
+        return selenium.getText(locator);
+    }
+
+    public void highlight(String locator)
+    {
+        selenium.highlight(locator);
+    }
+
+    public String getEval(String script)
+    {
+        return selenium.getEval(script);
+    }
+
+    public boolean isChecked(String locator)
+    {
+        return selenium.isChecked(locator);
+    }
+
+    public String getTable(String tableCellAddress)
+    {
+        return selenium.getTable(tableCellAddress);
+    }
+
+    public String[] getSelectedLabels(String selectLocator)
+    {
+        return selenium.getSelectedLabels(selectLocator);
+    }
+
+    public String getSelectedLabel(String selectLocator)
+    {
+        return selenium.getSelectedLabel(selectLocator);
+    }
+
+    public String[] getSelectedValues(String selectLocator)
+    {
+        return selenium.getSelectedValues(selectLocator);
+    }
+
+    public String getSelectedValue(String selectLocator)
+    {
+        return selenium.getSelectedValue(selectLocator);
+    }
+
+    public String[] getSelectedIndexes(String selectLocator)
+    {
+        return selenium.getSelectedIndexes(selectLocator);
+    }
+
+    public String getSelectedIndex(String selectLocator)
+    {
+        return selenium.getSelectedIndex(selectLocator);
+    }
+
+    public String[] getSelectedIds(String selectLocator)
+    {
+        return selenium.getSelectedIds(selectLocator);
+    }
+
+    public String getSelectedId(String selectLocator)
+    {
+        return selenium.getSelectedId(selectLocator);
+    }
+
+    public boolean isSomethingSelected(String selectLocator)
+    {
+        return selenium.isSomethingSelected(selectLocator);
+    }
+
+    public String[] getSelectOptions(String selectLocator)
+    {
+        return selenium.getSelectOptions(selectLocator);
+    }
+
+    public String getAttribute(String attributeLocator)
+    {
+        return selenium.getAttribute(attributeLocator);
+    }
+
+    public boolean isTextPresent(String pattern)
+    {
+        return selenium.isTextPresent(pattern);
+    }
+
+    public boolean isElementPresent(String locator)
+    {
+        return selenium.isElementPresent(locator);
+    }
+
+    public boolean isVisible(String locator)
+    {
+        return selenium.isVisible(locator);
+    }
+
+    public boolean isEditable(String locator)
+    {
+        return selenium.isEditable(locator);
+    }
+
     public String[] getAllButtons()
     {
         return selenium.getAllButtons();
+    }
+
+    public String[] getAllLinks()
+    {
+        return selenium.getAllLinks();
     }
 
     public String[] getAllFields()
@@ -387,336 +755,9 @@ public class AbstractIntegrationTestSuite extends Assert implements Selenium
         return selenium.getAllWindowTitles();
     }
 
-    public String[] getAllLinks()
-    {
-        return selenium.getAllLinks();
-    }
-
-    public String getAttribute(String attributeLocator)
-    {
-        return selenium.getAttribute(attributeLocator);
-    }
-
-    public String getBodyText()
-    {
-        return selenium.getBodyText();
-    }
-
-    public String getConfirmation()
-    {
-        return selenium.getConfirmation();
-    }
-
-    public Number getCursorPosition(String locator)
-    {
-        return selenium.getCursorPosition(locator);
-    }
-
-    public String getEval(String script)
-    {
-        return selenium.getEval(script);
-    }
-
-    public String getExpression(String expression)
-    {
-        return selenium.getExpression(expression);
-    }
-
-    public Number getXpathCount(String xpath)
-    {
-        return selenium.getXpathCount(xpath);
-    }
-
-    public void assignId(String locator, String identifier)
-    {
-        selenium.assignId(locator, identifier);
-    }
-
-    public void allowNativeXpath(String allow)
-    {
-        selenium.allowNativeXpath(allow);
-    }
-
     public String getHtmlSource()
     {
         return selenium.getHtmlSource();
-    }
-
-    public String getLocation()
-    {
-        return selenium.getLocation();
-    }
-
-    public String getPrompt()
-    {
-        return selenium.getPrompt();
-    }
-
-    public String getSelectedId(String selectLocator)
-    {
-        return selenium.getSelectedId(selectLocator);
-    }
-
-    public String[] getSelectedIds(String selectLocator)
-    {
-        return selenium.getSelectedIds(selectLocator);
-    }
-
-    public String getSelectedIndex(String selectLocator)
-    {
-        return selenium.getSelectedIndex(selectLocator);
-    }
-
-    public String[] getSelectedIndexes(String selectLocator)
-    {
-        return selenium.getSelectedIndexes(selectLocator);
-    }
-
-    public String getSelectedLabel(String selectLocator)
-    {
-        return selenium.getSelectedLabel(selectLocator);
-    }
-
-    public String[] getSelectedLabels(String selectLocator)
-    {
-        return selenium.getSelectedLabels(selectLocator);
-    }
-
-    public String getSelectedValue(String selectLocator)
-    {
-        return selenium.getSelectedValue(selectLocator);
-    }
-
-    public String[] getSelectedValues(String selectLocator)
-    {
-        return selenium.getSelectedValues(selectLocator);
-    }
-
-    public String[] getSelectOptions(String selectLocator)
-    {
-        return selenium.getSelectOptions(selectLocator);
-    }
-
-    public String getTable(String tableCellAddress)
-    {
-        return selenium.getTable(tableCellAddress);
-    }
-
-    public String getText(String locator)
-    {
-        return selenium.getText(locator);
-    }
-
-    public void highlight(String locator)
-    {
-        selenium.highlight(locator);
-    }
-
-    public String getTitle()
-    {
-        return selenium.getTitle();
-    }
-
-    public String getValue(String locator)
-    {
-        return selenium.getValue(locator);
-    }
-
-    public void goBack()
-    {
-        selenium.goBack();
-    }
-
-    public boolean isAlertPresent()
-    {
-        return selenium.isAlertPresent();
-    }
-
-    public boolean isChecked(String locator)
-    {
-        return selenium.isChecked(locator);
-    }
-
-    public boolean isConfirmationPresent()
-    {
-        return selenium.isConfirmationPresent();
-    }
-
-    public boolean isEditable(String locator)
-    {
-        return selenium.isEditable(locator);
-    }
-
-    public boolean isElementPresent(String locator)
-    {
-        return selenium.isElementPresent(locator);
-    }
-
-    public boolean isPromptPresent()
-    {
-        return selenium.isPromptPresent();
-    }
-
-    public boolean isSomethingSelected(String selectLocator)
-    {
-        return selenium.isSomethingSelected(selectLocator);
-    }
-
-    public boolean isTextPresent(String pattern)
-    {
-        return selenium.isTextPresent(pattern);
-    }
-
-    public boolean isVisible(String locator)
-    {
-        return selenium.isVisible(locator);
-    }
-
-    public void keyDown(String locator, String keycode)
-    {
-        selenium.keyDown(locator, keycode);
-    }
-
-    public void keyPress(String locator, String keycode)
-    {
-        selenium.keyPress(locator, keycode);
-    }
-
-    public void shiftKeyDown()
-    {
-        selenium.shiftKeyDown();
-    }
-
-    public void shiftKeyUp()
-    {
-        selenium.shiftKeyUp();
-    }
-
-    public void metaKeyDown()
-    {
-        selenium.metaKeyDown();
-    }
-
-    public void metaKeyUp()
-    {
-        selenium.metaKeyUp();
-    }
-
-    public void altKeyDown()
-    {
-        selenium.altKeyDown();
-    }
-
-    public void altKeyUp()
-    {
-        selenium.altKeyUp();
-    }
-
-    public void controlKeyDown()
-    {
-        selenium.controlKeyDown();
-    }
-
-    public void controlKeyUp()
-    {
-        selenium.controlKeyUp();
-    }
-
-    public void keyUp(String locator, String keycode)
-    {
-        selenium.keyUp(locator, keycode);
-    }
-
-    public void mouseDown(String locator)
-    {
-        selenium.mouseDown(locator);
-    }
-
-    public void mouseDownAt(String locator, String coordString)
-    {
-        selenium.mouseDownAt(locator, coordString);
-    }
-
-    public void mouseUp(String locator)
-    {
-        selenium.mouseUp(locator);
-    }
-
-    public void mouseUpAt(String locator, String coordString)
-    {
-        selenium.mouseUpAt(locator, coordString);
-    }
-
-    public void mouseMove(String locator)
-    {
-        selenium.mouseMove(locator);
-    }
-
-    public void mouseMoveAt(String locator, String coordString)
-    {
-        selenium.mouseMoveAt(locator, coordString);
-    }
-
-    public void mouseOver(String locator)
-    {
-        selenium.mouseOver(locator);
-    }
-
-    public void mouseOut(String locator)
-    {
-        selenium.mouseOut(locator);
-    }
-
-    public void open(String url)
-    {
-        selenium.open(url);
-
-        waitForPageToLoad(PAGE_LOAD_TIMEOUT);
-    }
-
-    public void openWindow(String url, String windowID)
-    {
-        selenium.openWindow(url, windowID);
-    }
-
-    public void refresh()
-    {
-        selenium.refresh();
-    }
-
-    public void removeSelection(String locator, String optionLocator)
-    {
-        selenium.removeSelection(locator, optionLocator);
-    }
-
-    public void removeAllSelections(String locator)
-    {
-        selenium.removeAllSelections(locator);
-    }
-
-    public void select(String selectLocator, String optionLocator)
-    {
-        selenium.select(selectLocator, optionLocator);
-    }
-
-    public void selectWindow(String windowID)
-    {
-        selenium.selectWindow(windowID);
-    }
-
-    public void selectFrame(String locator)
-    {
-        selenium.selectFrame(locator);
-    }
-
-    public boolean getWhetherThisFrameMatchFrameExpression(String currentFrameString, String target)
-    {
-        return selenium.getWhetherThisFrameMatchFrameExpression(currentFrameString, target);
-    }
-
-    public boolean getWhetherThisWindowMatchWindowExpression(String currentWindowString, String target)
-    {
-        return selenium.getWhetherThisWindowMatchWindowExpression(currentWindowString, target);
     }
 
     public void setCursorPosition(String locator, String position)
@@ -754,54 +795,44 @@ public class AbstractIntegrationTestSuite extends Assert implements Selenium
         return selenium.getElementHeight(locator);
     }
 
-    public void setTimeout(String timeout)
+    public Number getCursorPosition(String locator)
     {
-        selenium.setTimeout(timeout);
+        return selenium.getCursorPosition(locator);
     }
 
-    public void start()
+    public String getExpression(String expression)
     {
-        selenium.start();
+        return selenium.getExpression(expression);
     }
 
-    public void stop()
+    public Number getXpathCount(String xpath)
     {
-        selenium.stop();
+        return selenium.getXpathCount(xpath);
     }
 
-    public void submit(String formLocator)
+    public void assignId(String locator, String identifier)
     {
-        selenium.submit(formLocator);
+        selenium.assignId(locator, identifier);
     }
 
-    public void type(String locator, String value)
+    public void allowNativeXpath(String allow)
     {
-        selenium.type(locator, value);
+        selenium.allowNativeXpath(allow);
     }
 
-    public void typeKeys(String locator, String value)
+    public void ignoreAttributesWithoutValue(String ignore)
     {
-        selenium.typeKeys(locator, value);
-    }
-
-    public void setSpeed(String value)
-    {
-        selenium.setSpeed(value);
-    }
-
-    public void getSpeed()
-    {
-        selenium.getSpeed();
-    }
-
-    public void uncheck(String locator)
-    {
-        selenium.uncheck(locator);
+        selenium.ignoreAttributesWithoutValue(ignore);
     }
 
     public void waitForCondition(String script, String timeout)
     {
         selenium.waitForCondition(script, timeout);
+    }
+
+    public void setTimeout(String timeout)
+    {
+        selenium.setTimeout(timeout);
     }
 
     public void waitForPageToLoad(String timeout)
@@ -819,14 +850,29 @@ public class AbstractIntegrationTestSuite extends Assert implements Selenium
         return selenium.getCookie();
     }
 
+    public String getCookieByName(String name)
+    {
+        return selenium.getCookieByName(name);
+    }
+
+    public boolean isCookiePresent(String name)
+    {
+        return selenium.isCookiePresent(name);
+    }
+
     public void createCookie(String nameValuePair, String optionsString)
     {
         selenium.createCookie(nameValuePair, optionsString);
     }
 
-    public void deleteCookie(String name, String path)
+    public void deleteCookie(String name, String optionsString)
     {
-        selenium.deleteCookie(name, path);
+        selenium.deleteCookie(name, optionsString);
+    }
+
+    public void deleteAllVisibleCookies()
+    {
+        selenium.deleteAllVisibleCookies();
     }
 
     public void setBrowserLogLevel(String logLevel)
@@ -844,9 +890,19 @@ public class AbstractIntegrationTestSuite extends Assert implements Selenium
         selenium.addLocationStrategy(strategyName, functionDefinition);
     }
 
+    public void captureEntirePageScreenshot(String filename)
+    {
+        selenium.captureEntirePageScreenshot(filename);
+    }
+
     public void setContext(String context)
     {
         selenium.setContext(context);
+    }
+
+    public void attachFile(String fieldLocator, String fileLocator)
+    {
+        selenium.attachFile(fieldLocator, fileLocator);
     }
 
     public void captureScreenshot(String filename)
@@ -854,18 +910,24 @@ public class AbstractIntegrationTestSuite extends Assert implements Selenium
         selenium.captureScreenshot(filename);
     }
 
-
-    /**
-     * Waits the default time for the page to load.
-     */
-    public void waitForPageToLoad()
+    public void shutDownSeleniumServer()
     {
-        waitForPageToLoad(PAGE_LOAD_TIMEOUT);
+        selenium.shutDownSeleniumServer();
     }
 
-    public void waitForPopUp(String windowID, String timeout)
+    public void keyDownNative(String keycode)
     {
-        selenium.waitForPopUp(windowID, timeout);
+        selenium.keyDownNative(keycode);
+    }
+
+    public void keyUpNative(String keycode)
+    {
+        selenium.keyUpNative(keycode);
+    }
+
+    public void keyPressNative(String keycode)
+    {
+        selenium.keyPressNative(keycode);
     }
 
     /**
