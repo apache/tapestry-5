@@ -14,54 +14,45 @@
 
 package org.example.app0.pages;
 
-import org.apache.tapestry5.annotations.Cached;
-import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.grid.GridDataSource;
+import org.apache.tapestry5.hibernate.HibernateGridDataSource;
 import org.apache.tapestry5.hibernate.annotations.CommitAfter;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.example.app0.entities.User;
 import org.example.app0.services.UserDAO;
 import org.hibernate.Session;
 
-import java.util.List;
-
-@SuppressWarnings("unused")
-public class CachedForm
+public class GridDemo
 {
-    @Property
-    private String name;
-
-    @Property
-    private User user;
-
-    @Property
-    private int index;
-
     @Inject
     private Session session;
 
     @Inject
     private UserDAO userDAO;
 
+    public GridDataSource getSource()
+    {
+        return new HibernateGridDataSource(session, User.class);
+    }
+
     @CommitAfter
-    void onSuccess()
-    {
-        User user = new User();
-        user.setFirstName(name);
-
-        session.save(user);
-    }
-
-    @SuppressWarnings("unchecked")
-    @Cached
-    public List<User> getUsers()
-    {
-        return session.createQuery("from User").list();
-    }
-
     void onActionFromSetup()
     {
         userDAO.deleteAll();
+
+        for (int i = 1; i <= 20; i++)
+        {
+            User user = new User();
+
+            String suffix = String.valueOf(i);
+
+            user.setFirstName("Joe_" + suffix);
+            user.setLastName("User");
+            user.setEncodedPassword("####");
+            user.setEmail("joe" + suffix + "@null.com");
+
+            session.persist(user);
+        }
+
     }
-
-
 }

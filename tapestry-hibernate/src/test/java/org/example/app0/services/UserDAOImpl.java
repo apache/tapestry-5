@@ -43,4 +43,12 @@ public class UserDAOImpl implements UserDAO
     {
         for (User user : users) session.delete(user);
     }
+
+    public void deleteAll()
+    {
+        for (User u : findAll())
+        {
+            session.delete(u);
+        }
+    }
 }
