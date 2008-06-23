@@ -7,7 +7,7 @@ Tapestry/Hibernate Integration Library
   This library integrates into Tapestry 5 to provide out-of-the-box support for using Hibernate 3 as the backend for
   normal CRUD style applications.
   
-  For at least, the first pass, this will represent access to the native Hibernate interfaces, exposed in a
+  For at least the first pass, this will represent access to the native Hibernate interfaces, exposed in a
   thread-safe manner, within a <session-per-request> strategy.
   
   A number of more esoteric ideas in Hibernate are not supported, including nested transactions and supporting multiple
@@ -32,3 +32,6 @@ What's New?
 
   * The new @CommitAfter annotation for component and service methods can now commit the transaction
     automatically after the method is invoked.
+
+  * {{{../apidocs/org/apache/tapestry5/hibernate/HibernateGridDataSource.html}HibernateGridDataSource}} can be used
+    with the Grid component to support optimized queries against large data sets.
