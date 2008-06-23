@@ -28,4 +28,7 @@ public interface UserDAO
 
     @CommitAfter
     void delete(User... users);
+
+    @CommitAfter
+    void deleteAll();
 }

@@ -72,7 +72,7 @@ public class TapestryHibernateIntegrationTests extends AbstractIntegrationTestSu
      */
     public void using_cached_with_form()
     {
-        open("/cachedform");
+        start("Cached Form", "setup");
         assertTextSeries("name_%d", 0);
 
         type("name", "name1");
@@ -86,9 +86,7 @@ public class TapestryHibernateIntegrationTests extends AbstractIntegrationTestSu
 
     public void commit_after_on_component_methods()
     {
-        open("/");
-
-        clickAndWait("link=CommitAfter Demo");
+        start("CommitAfter Demo");
 
         assertText("name", "Diane");
 
@@ -104,6 +102,20 @@ public class TapestryHibernateIntegrationTests extends AbstractIntegrationTestSu
 
         assertText("name", "Troy");
 
+    }
+
+
+    public void grid()
+    {
+        start("Grid Demo", "setup");
+
+        clickAndWait("link=First Name");
+
+        assertText("//td[@class='firstName t-sort-column-ascending']", "Joe_1");
+
+        clickAndWait("link=First Name");
+
+        assertText("//td[@class='firstName t-sort-column-descending']", "Joe_9");
     }
 
 

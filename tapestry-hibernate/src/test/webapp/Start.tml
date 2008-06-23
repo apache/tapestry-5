@@ -9,6 +9,12 @@
             <li>
                 <t:actionlink t:id="commitAfter">CommitAfter Demo</t:actionlink>
             </li>
+            <li>
+                <t:pagelink page="GridDemo">Grid Demo</t:pagelink>
+            </li>
+            <li>
+                <t:pagelink page="CachedForm">Cached Form</t:pagelink>
+            </li>
         </ul>
     </body>
 </html>
