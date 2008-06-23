@@ -61,13 +61,21 @@ public class ConcurrentBarrier
      */
     public <T> T withRead(Invokable<T> invokable)
     {
-        boolean readLockedAtEntry = threadHasReadLock.get();
+        boolean readLockedAtEntry;
+
+        synchronized (threadHasReadLock)
+        {
+            readLockedAtEntry = threadHasReadLock.get();
+        }
 
         if (!readLockedAtEntry)
         {
             lock.readLock().lock();
 
-            threadHasReadLock.set(true);
+            synchronized (threadHasReadLock)
+            {
+                threadHasReadLock.set(true);
+            }
         }
 
         try
@@ -80,7 +88,10 @@ public class ConcurrentBarrier
             {
                 lock.readLock().unlock();
 
-                threadHasReadLock.remove();
+                synchronized (threadHasReadLock)
+                {
+                    threadHasReadLock.remove();
+                }
             }
         }
     }
@@ -135,14 +146,23 @@ public class ConcurrentBarrier
 
     private boolean releaseReadLock()
     {
-        boolean readLockedAtEntry = threadHasReadLock.get();
+        boolean readLockedAtEntry;
+
+        synchronized (threadHasReadLock)
+        {
+            readLockedAtEntry = threadHasReadLock.get();
+        }
 
         if (readLockedAtEntry)
         {
             lock.readLock().unlock();
 
-            threadHasReadLock.set(false);
+            synchronized (threadHasReadLock)
+            {
+                threadHasReadLock.set(false);
+            }
         }
+
         return readLockedAtEntry;
     }
 
@@ -152,11 +172,17 @@ public class ConcurrentBarrier
         {
             lock.readLock().lock();
 
-            threadHasReadLock.set(true);
+            synchronized (threadHasReadLock)
+            {
+                threadHasReadLock.set(true);
+            }
         }
         else
         {
-            threadHasReadLock.remove();
+            synchronized (threadHasReadLock)
+            {
+                threadHasReadLock.remove();
+            }
         }
     }
 
