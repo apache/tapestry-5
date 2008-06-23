@@ -18,6 +18,7 @@ import org.apache.tapestry5.ComponentEventCallback;
 import org.apache.tapestry5.EventContext;
 import org.apache.tapestry5.internal.structure.PageResources;
 import org.apache.tapestry5.runtime.ComponentEvent;
+import org.slf4j.Logger;
 
 public class ComponentEventImpl extends EventImpl implements ComponentEvent
 {
@@ -31,21 +32,29 @@ public class ComponentEventImpl extends EventImpl implements ComponentEvent
 
     /**
      * @param eventType              non blank string used to identify the type of event that was triggered
-     * @param originatingComponentId the id of the component that triggered the event (this will likely need to change
-     *                               somewhat)
+     * @param originatingComponentId the id of the component that triggered the event
      * @param context                provides access to parameter values
      * @param handler                invoked when a non-null return value is obtained from an event handler method
      * @param pageResources          provides access to common resources and services
+     * @param logger                 used to log method invocations
      */
     public ComponentEventImpl(String eventType, String originatingComponentId, EventContext context,
-                              ComponentEventCallback handler, PageResources pageResources)
+                              ComponentEventCallback handler, PageResources pageResources, Logger logger)
     {
-        super(handler);
+        super(handler, logger);
 
         this.eventType = eventType;
         this.originatingComponentId = originatingComponentId;
         this.pageResources = pageResources;
         this.context = context;
+    }
+
+
+    @Override
+    public String toString()
+    {
+        return String.format("ComponentEvent[%s from %s]", eventType,
+                             originatingComponentId.length() == 0 ? "(self)" : originatingComponentId);
     }
 
     public boolean matches(String eventType, String componentId, int parameterCount)

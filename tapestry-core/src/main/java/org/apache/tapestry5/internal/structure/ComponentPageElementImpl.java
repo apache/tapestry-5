@@ -176,7 +176,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
         public void render(final MarkupWriter writer, RenderQueue queue)
         {
             RenderPhaseEventHandler handler = new RenderPhaseEventHandler();
-            final Event event = new EventImpl(handler);
+            final Event event = new EventImpl(handler, logger);
 
             ComponentCallback callback = new ComponentCallback()
             {
@@ -205,7 +205,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
         public void render(final MarkupWriter writer, RenderQueue queue)
         {
             RenderPhaseEventHandler handler = new RenderPhaseEventHandler();
-            final Event event = new EventImpl(handler);
+            final Event event = new EventImpl(handler, logger);
 
             ComponentCallback callback = new ComponentCallback()
             {
@@ -234,7 +234,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
         public void render(final MarkupWriter writer, final RenderQueue queue)
         {
             RenderPhaseEventHandler handler = new RenderPhaseEventHandler();
-            final Event event = new EventImpl(handler);
+            final Event event = new EventImpl(handler, logger);
 
             ComponentCallback callback = new ComponentCallback()
             {
@@ -263,7 +263,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
         public void render(final MarkupWriter writer, RenderQueue queue)
         {
             RenderPhaseEventHandler handler = new RenderPhaseEventHandler();
-            final Event event = new EventImpl(handler);
+            final Event event = new EventImpl(handler, logger);
 
             ComponentCallback callback = new ComponentCallback()
             {
@@ -294,7 +294,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
         public void render(final MarkupWriter writer, final RenderQueue queue)
         {
             final RenderPhaseEventHandler handler = new RenderPhaseEventHandler();
-            final Event event = new EventImpl(handler);
+            final Event event = new EventImpl(handler, logger);
 
             ComponentCallback callback = new ComponentCallback()
             {
@@ -325,7 +325,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
         public void render(final MarkupWriter writer, final RenderQueue queue)
         {
             RenderPhaseEventHandler handler = new RenderPhaseEventHandler();
-            final Event event = new EventImpl(handler);
+            final Event event = new EventImpl(handler, logger);
 
             ComponentCallback callback = new ComponentCallback()
             {
@@ -365,12 +365,14 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
 
     private final PageResources pageResources;
 
+    private final Logger logger;
+
     private final RenderCommand cleanupRender = new RenderCommand()
     {
         public void render(final MarkupWriter writer, RenderQueue queue)
         {
             RenderPhaseEventHandler handler = new RenderPhaseEventHandler();
-            final Event event = new EventImpl(handler);
+            final Event event = new EventImpl(handler, logger);
 
             ComponentCallback callback = new ComponentCallback()
             {
@@ -466,7 +468,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
             elementAtSetup = writer.getElement();
 
             RenderPhaseEventHandler handler = new RenderPhaseEventHandler();
-            final Event event = new EventImpl(handler);
+            final Event event = new EventImpl(handler, logger);
 
             ComponentCallback callback = new ComponentCallback()
             {
@@ -570,6 +572,8 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
                                                            completeId, nestedId, instantiator);
 
         coreComponent = coreResources.getComponent();
+
+        logger = coreResources.getLogger();
     }
 
     /**
@@ -1019,8 +1023,13 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
         {
             try
             {
+                Logger logger = component.getLogger();
+
                 ComponentEvent event = new ComponentEventImpl(currentEventType, componentId, currentContext, wrapped,
-                                                              pageResources);
+                                                              pageResources, logger);
+
+                if (logger.isDebugEnabled())
+                    logger.debug("Dispatch event: " + event);
 
                 result |= component.dispatchEvent(event);
 

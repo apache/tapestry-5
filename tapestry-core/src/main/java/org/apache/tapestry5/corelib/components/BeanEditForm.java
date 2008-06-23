@@ -29,17 +29,19 @@ import org.apache.tapestry5.services.ComponentDefaultProvider;
  * A component that creates an entire form editing the properties of a particular bean. Inspired by <a
  * href="http://www.trailsframework.org/">Trails</a> and <a href="http://beanform.sourceforge.net/">BeanForm</a> (both
  * for Tapestry 4). Generates a simple UI for editing the properties of a JavaBean, with the flavor of UI for each
- * property (text field, checkbox, drop down list) determined from the property type, and the order and validation for
- * the properties determined from annotations on the property's getter and setter methods.
+ * property (text field, checkbox, drop down list) determined from the property type (or by other means, such as an
+ * annotation), and the order and validation for the properties determined from annotations on the property's getter and
+ * setter methods.
  * <p/>
  * You may add &lt;t:parameter&gt;s to the component; when the name matches (case insensitive) the name of a property,
  * then the corresponding Block is renderered, rather than any of the built in property editor blocks. This allows you
  * to override specific properties with your own customized UI, for cases where the default UI is insufficient, or no
  * built-in editor type is appropriate.
  *
- * @see BeanModel
- * @see BeanModelSource
- * @see PropertyEditor
+ * @see org.apache.tapestry5.beaneditor.BeanModel
+ * @see org.apache.tapestry5.services.BeanModelSource
+ * @see org.apache.tapestry5.corelib.components.PropertyEditor
+ * @see org.apache.tapestry5.beaneditor.DataType
  */
 @SupportsInformalParameters
 public class BeanEditForm implements ClientElement, FormValidationControl
@@ -70,6 +72,12 @@ public class BeanEditForm implements ClientElement, FormValidationControl
     @SuppressWarnings("unused")
     @Parameter(defaultPrefix = BindingConstants.LITERAL)
     private String include;
+
+    /**
+     * A comma-separated list of property names to be added to the {@link org.apache.tapestry5.beaneditor.BeanModel}.
+     */
+    @Parameter(defaultPrefix = BindingConstants.LITERAL)
+    private String add;
 
     /**
      * A comma-separated list of property names to be removed from the {@link org.apache.tapestry5.beaneditor.BeanModel}.
@@ -142,7 +150,7 @@ public class BeanEditForm implements ClientElement, FormValidationControl
             model = beanModelSource.create(beanType, true, resources.getContainerResources());
         }
 
-        BeanModelUtils.modify(model, null, include, exclude, reorder);
+        BeanModelUtils.modify(model, add, include, exclude, reorder);
     }
 
 

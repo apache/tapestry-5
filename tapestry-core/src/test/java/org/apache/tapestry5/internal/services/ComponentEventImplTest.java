@@ -20,6 +20,7 @@ import org.apache.tapestry5.internal.structure.PageResources;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.runtime.ComponentEvent;
+import org.slf4j.Logger;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -50,7 +51,7 @@ public class ComponentEventImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentEvent event = new ComponentEventImpl("eventType", "someId", context, handler, null);
+        ComponentEvent event = new ComponentEventImpl("eventType", "someId", context, handler, null, null);
 
         assertTrue(event.matches("eventType", "someId", 0));
         assertFalse(event.matches("foo", "someId", 0));
@@ -68,7 +69,7 @@ public class ComponentEventImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentEvent event = new ComponentEventImpl("eventType", "someId", context, handler, null);
+        ComponentEvent event = new ComponentEventImpl("eventType", "someId", context, handler, null, null);
 
         assertTrue(event.matches("EVENTTYPE", "someid", 0));
 
@@ -85,7 +86,7 @@ public class ComponentEventImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentEvent event = new ComponentEventImpl("eventType", "someId", context, handler, null);
+        ComponentEvent event = new ComponentEventImpl("eventType", "someId", context, handler, null, null);
 
         assertTrue(event.matches("eventType", "someId", 0));
 
@@ -104,7 +105,7 @@ public class ComponentEventImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentEvent event = new ComponentEventImpl("eventType", "someId", context, handler, null);
+        ComponentEvent event = new ComponentEventImpl("eventType", "someId", context, handler, null, null);
 
         assertTrue(event.matches("eventtype", "SOMEID", 0));
 
@@ -126,7 +127,7 @@ public class ComponentEventImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentEvent event = new ComponentEventImpl("eventType", "someId", context, handler, resources);
+        ComponentEvent event = new ComponentEventImpl("eventType", "someId", context, handler, resources, null);
 
         assertSame(event.coerceContext(0, "java.lang.Integer"), value);
 
@@ -138,12 +139,15 @@ public class ComponentEventImplTest extends InternalBaseTestCase
     {
         ComponentEventCallback handler = mockComponentEventHandler();
         EventContext context = mockEventContext();
+        Logger logger = mockLogger();
+
+        train_isDebugEnabled(logger, false);
 
         train_getCount(context, 0);
 
         replay();
 
-        ComponentEvent event = new ComponentEventImpl("eventType", "someId", context, handler, null);
+        ComponentEvent event = new ComponentEventImpl("eventType", "someId", context, handler, null, logger);
 
         event.setMethodDescription("foo.Bar.baz()");
 
@@ -166,6 +170,9 @@ public class ComponentEventImplTest extends InternalBaseTestCase
         ComponentEventCallback handler = mockComponentEventHandler();
         EventContext context = mockEventContext();
         PageResources resources = mockPageResources();
+        Logger logger = mockLogger();
+
+        train_isDebugEnabled(logger, false);
 
         train_toClass(resources, Integer.class.getName(), Integer.class);
 
@@ -175,7 +182,7 @@ public class ComponentEventImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentEvent event = new ComponentEventImpl("eventType", "someId", context, handler, resources);
+        ComponentEvent event = new ComponentEventImpl("eventType", "someId", context, handler, resources, logger);
 
         event.setMethodDescription("foo.Bar.baz()");
 
@@ -200,6 +207,9 @@ public class ComponentEventImplTest extends InternalBaseTestCase
     {
         Object result = new Object();
         String methodDescription = "foo.Bar.baz()";
+        Logger logger = mockLogger();
+
+        train_isDebugEnabled(logger, false);
 
         ComponentEventCallback handler = mockComponentEventHandler();
 
@@ -207,7 +217,7 @@ public class ComponentEventImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentEvent event = new ComponentEventImpl("eventType", "someId", null, handler, null);
+        ComponentEvent event = new ComponentEventImpl("eventType", "someId", null, handler, null, logger);
 
         event.setMethodDescription(methodDescription);
 
@@ -226,12 +236,15 @@ public class ComponentEventImplTest extends InternalBaseTestCase
         Object result = new Object();
         String methodDescription = "foo.Bar.baz()";
         ComponentEventCallback handler = mockComponentEventHandler();
+        Logger logger = mockLogger();
+
+        train_isDebugEnabled(logger, false);
 
         train_handleResult(handler, result, false);
 
         replay();
 
-        ComponentEvent event = new ComponentEventImpl("eventType", "someId", null, handler, null);
+        ComponentEvent event = new ComponentEventImpl("eventType", "someId", null, handler, null, logger);
 
         event.setMethodDescription(methodDescription);
 
@@ -246,10 +259,13 @@ public class ComponentEventImplTest extends InternalBaseTestCase
     public void store_null_result_does_not_abort_or_invoke_handler()
     {
         ComponentEventCallback handler = mockComponentEventHandler();
+        Logger logger = mockLogger();
+
+        train_isDebugEnabled(logger, false);
 
         replay();
 
-        ComponentEvent event = new ComponentEventImpl("eventType", "someId", null, handler, null);
+        ComponentEvent event = new ComponentEventImpl("eventType", "someId", null, handler, null, logger);
 
         event.setMethodDescription("foo.Bar.baz()");
 
@@ -266,12 +282,15 @@ public class ComponentEventImplTest extends InternalBaseTestCase
     {
         Object result = new Object();
         ComponentEventCallback handler = mockComponentEventHandler();
+        Logger logger = mockLogger();
+
+        expect(logger.isDebugEnabled()).andStubReturn(false);
 
         expect(handler.handleResult(result)).andReturn(true);
 
         replay();
 
-        ComponentEvent event = new ComponentEventImpl("eventType", "someId", null, handler, null);
+        ComponentEvent event = new ComponentEventImpl("eventType", "someId", null, handler, null, logger);
 
         event.setMethodDescription("foo.Bar.baz()");
         event.storeResult(result);

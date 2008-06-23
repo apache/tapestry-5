@@ -96,6 +96,13 @@ public class BeanDisplay
     @Property(write = false)
     private ComponentResources overrides;
 
+    /**
+     * A comma-separated list of property names to be added to the {@link org.apache.tapestry5.beaneditor.BeanModel}.
+     */
+    @Parameter(defaultPrefix = BindingConstants.LITERAL)
+    private String add;
+
+
     @Inject
     private ComponentDefaultProvider defaultProvider;
 
@@ -121,7 +128,7 @@ public class BeanDisplay
         if (model == null) model = modelSource.create(object.getClass(), false, overrides
                 .getContainerResources());
 
-        BeanModelUtils.modify(model, null, include, exclude, reorder);
+        BeanModelUtils.modify(model, add, include, exclude, reorder);
     }
 
     /**

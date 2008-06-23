@@ -61,6 +61,10 @@ public class Start
     }
 
     private static final List<Item> ITEMS = CollectionFactory.newList(
+
+            new Item("nestedbeaneditor", "Nested BeanEditor",
+                     "BeanEditor as override for property editor in BeanEditForm"),
+
             new Item("actionpage", "Action Page", "tests fixture for ActionLink component"),
 
             new Item("cleancachedemo", "Clean Cache Demo", "cache cleared properly during Ajax calls"),

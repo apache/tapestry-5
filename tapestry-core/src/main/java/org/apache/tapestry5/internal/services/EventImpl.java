@@ -17,6 +17,7 @@ package org.apache.tapestry5.internal.services;
 import org.apache.tapestry5.ComponentEventCallback;
 import static org.apache.tapestry5.ioc.internal.util.Defense.notNull;
 import org.apache.tapestry5.runtime.Event;
+import org.slf4j.Logger;
 
 public class EventImpl implements Event
 {
@@ -26,9 +27,16 @@ public class EventImpl implements Event
 
     private final ComponentEventCallback handler;
 
-    public EventImpl(ComponentEventCallback handler)
+    private final Logger logger;
+
+    /**
+     * @param handler informed of return values from methods, deems when the event is aborted
+     * @param logger  used to log method invocations
+     */
+    public EventImpl(ComponentEventCallback handler, Logger logger)
     {
         this.handler = notNull(handler, "handler");
+        this.logger = logger;
     }
 
     public boolean isAborted()
@@ -38,6 +46,9 @@ public class EventImpl implements Event
 
     public void setMethodDescription(String methodDescription)
     {
+        if (logger.isDebugEnabled())
+            logger.debug("Invoking: " + methodDescription);
+
         this.methodDescription = methodDescription;
     }
 

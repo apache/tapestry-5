@@ -67,7 +67,6 @@ public class BeanEditor
      * Only these properties will be retained, and the properties will also be reordered. The names are
      * case-insensitive.
      */
-    @SuppressWarnings("unused")
     @Parameter(defaultPrefix = BindingConstants.LITERAL)
     private String include;
 
@@ -85,6 +84,13 @@ public class BeanEditor
      */
     @Parameter(defaultPrefix = BindingConstants.LITERAL)
     private String reorder;
+
+    /**
+     * A comma-separated list of property names to be added to the {@link org.apache.tapestry5.beaneditor.BeanModel}.
+     */
+    @Parameter(defaultPrefix = BindingConstants.LITERAL)
+    private String add;
+
 
     /**
      * The model that identifies the parameters to be edited, their order, and every other aspect. If not specified, a
@@ -149,7 +155,7 @@ public class BeanEditor
             model = modelSource.create(type, true, overrides.getContainerResources());
         }
 
-        BeanModelUtils.modify(model, null, include, exclude, reorder);
+        BeanModelUtils.modify(model, add, include, exclude, reorder);
 
         // The only problem here is that if the bound property is backed by a persistent field, it
         // is assigned (and stored to the session, and propagated around the cluster) first,
