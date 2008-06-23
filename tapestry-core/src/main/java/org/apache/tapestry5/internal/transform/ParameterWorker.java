@@ -111,8 +111,7 @@ public class ParameterWorker implements ComponentClassTransformWorker
 
         String invariantFieldName = transformation.addField(Modifier.PRIVATE, "boolean", fieldName + "_invariant");
 
-        BodyBuilder builder = new BodyBuilder();
-        builder.begin();
+        BodyBuilder builder = new BodyBuilder().begin();
 
         addDefaultBindingSetup(parameterName, defaultPrefix, defaultBinding, resourcesFieldName, transformation,
                                builder);
@@ -143,8 +142,15 @@ public class ParameterWorker implements ComponentClassTransformWorker
             builder.addln("%s = false;", cachedFieldName);
             builder.end();
 
-            transformation.extendMethod(TransformConstants.POST_RENDER_CLEANUP_SIGNATURE, builder
-                    .toString());
+            // Clean up after the component renders.
+
+            String body = builder.toString();
+
+            transformation.extendMethod(TransformConstants.POST_RENDER_CLEANUP_SIGNATURE, body);
+
+            // And again, when the page is detached (TAPESTRY-2460)
+
+            transformation.extendMethod(TransformConstants.CONTAINING_PAGE_DID_DETACH_SIGNATURE, builder.toString());
         }
 
         return invariantFieldName;

@@ -67,7 +67,15 @@ public class PropertyEditor
         {
             component.cleanupEnvironment();
         }
+
+        @Override
+        public String toString()
+        {
+            return "PropertyEditor.CleanupEnvironment";
+        }
     }
+
+    private static final ComponentAction CLEANUP_ENVIRONMENT = new CleanupEnvironment();
 
     /**
      * The object to be edited by the BeanEditor. This will be read when the component renders and updated when the form
@@ -213,7 +221,7 @@ public class PropertyEditor
         // Removes the PropertyEditContext after this component (including the editor block)
         // has rendered.
 
-        formSupport.storeAndExecute(this, new CleanupEnvironment());
+        formSupport.storeAndExecute(this, CLEANUP_ENVIRONMENT);
     }
 
     /**
@@ -231,8 +239,14 @@ public class PropertyEditor
 
         String dataType = propertyModel.getDataType();
 
+        if (dataType == null)
+            throw new RuntimeException(
+                    String.format("The data type for property '%s' of %s is null.", propertyModel.getPropertyName(),
+                                  object));
+
         try
         {
+
             return beanBlockSource.getEditBlock(dataType);
         }
         catch (RuntimeException ex)

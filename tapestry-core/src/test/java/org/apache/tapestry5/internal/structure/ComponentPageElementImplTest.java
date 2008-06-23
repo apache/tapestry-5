@@ -28,6 +28,7 @@ import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.model.ParameterModel;
 import org.apache.tapestry5.runtime.Component;
 import org.easymock.EasyMock;
+import org.slf4j.Logger;
 import org.testng.annotations.Test;
 
 public class ComponentPageElementImplTest extends InternalBaseTestCase
@@ -50,10 +51,14 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
         Component component = mockComponent();
         ComponentModel model = mockComponentModel();
         TypeCoercer coercer = mockTypeCoercer();
+        Logger logger = mockLogger();
+
+        train_getLogger(model, logger);
 
         Instantiator ins = newInstantiator(component, model);
 
         replay();
+
 
         ComponentPageElement cpe = new ComponentPageElementImpl(page, ins, null);
 
@@ -80,8 +85,11 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
         ComponentModel model = mockComponentModel();
         TypeCoercer coercer = mockTypeCoercer();
         Block block = mockBlock();
+        Logger logger = mockLogger();
 
         Instantiator ins = newInstantiator(component, model);
+
+        train_getLogger(model, logger);
 
         replay();
 
@@ -106,8 +114,11 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
         ComponentModel model = mockComponentModel();
         Binding binding = mockBinding();
         TypeCoercer coercer = mockTypeCoercer();
+        Logger logger = mockLogger();
 
         Instantiator ins = newInstantiator(component, model);
+
+        train_getLogger(model, logger);
 
         train_getParameterModel(model, "barney", null);
 
@@ -137,6 +148,9 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
         TypeCoercer coercer = mockTypeCoercer();
         Block block1 = mockBlock();
         Block block2 = mockBlock();
+        Logger logger = mockLogger();
+
+        train_getLogger(model, logger);
 
         Instantiator ins = newInstantiator(component, model);
 
@@ -169,6 +183,9 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
         Binding binding = mockBinding();
         TypeCoercer coercer = mockTypeCoercer();
         ParameterModel pmodel = mockParameterModel();
+        Logger logger = mockLogger();
+
+        train_getLogger(model, logger);
 
         Instantiator ins = newInstantiator(component, model);
 
@@ -196,6 +213,9 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
         ComponentModel model = mockComponentModel();
         ParameterModel pmodel = mockParameterModel();
         TypeCoercer coercer = mockTypeCoercer();
+        Logger logger = mockLogger();
+
+        train_getLogger(model, logger);
 
         Instantiator ins = newInstantiator(component, model);
 
@@ -225,6 +245,9 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
         ParameterModel pmodel = mockParameterModel();
         Location l = mockLocation();
         TypeCoercer coercer = mockTypeCoercer();
+        Logger logger = mockLogger();
+
+        train_getLogger(model, logger);
 
         Instantiator ins = newInstantiator(component, model);
 
@@ -276,6 +299,9 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
         Binding binding = mockBinding();
         TypeCoercer coercer = mockTypeCoercer();
         ParameterModel pmodel = mockParameterModel();
+        Logger logger = mockLogger();
+
+        train_getLogger(model, logger);
 
         Instantiator ins = newInstantiator(component, model);
 
@@ -305,6 +331,9 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
         ComponentModel model = mockComponentModel();
         Binding binding = mockBinding();
         PageResources resources = mockPageResources();
+        Logger logger = mockLogger();
+
+        train_getLogger(model, logger);
 
         train_getSupportsInformalParameters(model, true);
 
@@ -338,6 +367,9 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
         ComponentModel model = mockComponentModel();
         PageResources resources = mockPageResources();
         Binding binding = mockBinding();
+        Logger logger = mockLogger();
+
+        train_getLogger(model, logger);
 
         Instantiator ins = newInstantiator(component, model);
 
@@ -369,6 +401,9 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
         Component component = mockComponent();
         ComponentModel model = mockComponentModel();
         TypeCoercer coercer = mockTypeCoercer();
+        Logger logger = mockLogger();
+
+        train_getLogger(model, logger);
 
         Instantiator ins = newInstantiator(component, model);
         Instantiator ins2 = newInstantiator(component, model);
@@ -401,6 +436,9 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
         ComponentPageElement childElement = mockComponentPageElement();
         Component childComponent = mockComponent();
         TypeCoercer coercer = mockTypeCoercer();
+        Logger logger = mockLogger();
+
+        train_getLogger(model, logger);
 
         Instantiator ins = newInstantiator(component, model);
 
@@ -432,6 +470,9 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
         ComponentPageElement child2 = mockComponentPageElement();
         TypeCoercer coercer = mockTypeCoercer();
         Location l = mockLocation();
+        Logger logger = mockLogger();
+
+        train_getLogger(model, logger);
 
         Instantiator ins = newInstantiator(pageComponent, model);
 
@@ -470,6 +511,9 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
         final String mixinClassName = "foo.Bar";
         Component mixin = mockComponent();
         ComponentModel mixinModel = mockComponentModel();
+        Logger logger = mockLogger();
+
+        train_getLogger(model, logger);
 
         Instantiator ins = newInstantiator(component, model);
         Instantiator mixinIns = newInstantiator(mixin, mixinModel);
@@ -496,6 +540,9 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
         TypeCoercer coercer = mockTypeCoercer();
         Component mixin = mockComponent();
         ComponentModel mixinModel = mockComponentModel();
+        Logger logger = mockLogger();
+
+        train_getLogger(model, logger);
 
         Instantiator ins = newInstantiator(component, model);
         Instantiator mixinIns = newInstantiator(mixin, mixinModel);
@@ -532,6 +579,9 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
         Component mixin = mockComponent();
         TypeCoercer coercer = mockTypeCoercer();
         Binding binding = mockBinding();
+        Logger logger = mockLogger();
+
+        train_getLogger(model, logger);
 
         Instantiator ins = newInstantiator(component, model);
         Instantiator mixinInstantiator = newInstantiator(mixin, mixinModel);

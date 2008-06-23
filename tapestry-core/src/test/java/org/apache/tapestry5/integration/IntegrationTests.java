@@ -1823,7 +1823,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         assertText("activePageName", "music/Details");
     }
-    
+
     /**
      * TAPESTRY-2235
      */
@@ -1837,9 +1837,9 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         clickAndWait("link=Wake Me Up (Copy)");
 
         assertText("activePageName", "music/Details2");
-        
+
         assertText("//div[@class='t-beandisplay-value title']", "Wake Me Up");
-        
+
         assertText("//div[@class='t-beandisplay-value artist']", "Norah Jones");
     }
 
@@ -2057,5 +2057,26 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         clickAndWait(SUBMIT);
 
         assertText("output-text", "yrtsepaT");
+    }
+
+    // TAPESTRY-2460
+
+    @Test
+    public void nested_bean_editor_and_bean_display()
+    {
+        start("Nested BeanEditor");
+
+        type("name", "Parent");
+        type("age", "60");
+
+        type("name_0", "Child");
+        type("age_0", "40");
+
+        clickAndWait(SUBMIT);
+
+        assertText("//div[@id='content']//h1", "Nested BeanDisplay");
+
+        // As usual, Selenium is fighting me in terms of extracting data, so the above check just ensures
+        // we made it past the form submit without error.
     }
 }
