@@ -252,10 +252,16 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
     private void preloadMemberNames()
     {
+        verifyFields();
+
         addMemberNames(ctClass.getDeclaredFields());
         addMemberNames(ctClass.getDeclaredMethods());
     }
 
+    /**
+     * Invoked during instance construction to check that all fields are either: <ul> <li>private</li> <li>static</li>
+     * <li>groovy.lang.MetaClass (for Groovy compatiblility)</li> </li>
+     */
     void verifyFields()
     {
         List<String> names = CollectionFactory.newList();
@@ -263,8 +269,6 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         for (CtField field : ctClass.getDeclaredFields())
         {
             String name = field.getName();
-
-            if (addedFieldNames.contains(name)) continue;
 
             int modifiers = field.getModifiers();
 
@@ -1042,8 +1046,6 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
             if (skipped.contains(name)) continue;
 
-            // May need to add a filter to edit out explicitly added fields.
-
             names.add(name);
         }
 
@@ -1298,8 +1300,6 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         performFieldTransformations();
 
         addConstructor();
-
-        verifyFields();
 
         freeze();
     }
