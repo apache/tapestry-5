@@ -36,7 +36,7 @@ public class ExceptionDisplay
     /**
      * Exception to report.
      */
-    @Parameter(required = true)
+    @Parameter(required = true, allowNull = false)
     private Throwable exception;
 
     @Inject

@@ -59,7 +59,6 @@ public class BeanEditForm implements ClientElement, FormValidationControl
      * value is ready to be read or updated. Often, the BeanEditForm can create the object as needed (assuming a public,
      * no arguments constructor).  The object property defaults to a property with the same name as the component id.
      */
-    @SuppressWarnings("unused")
     @Parameter(required = true)
     @Property
     private Object object;

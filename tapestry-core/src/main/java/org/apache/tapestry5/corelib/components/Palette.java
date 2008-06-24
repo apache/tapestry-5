@@ -166,13 +166,13 @@ public class Palette extends AbstractField
     /**
      * Encoder used to translate between server-side objects and client-side strings.
      */
-    @Parameter(required = true)
+    @Parameter(required = true, allowNull = false)
     private ValueEncoder<Object> encoder;
 
     /**
      * Model used to define the values and labels used when rendering.
      */
-    @Parameter(required = true)
+    @Parameter(required = true, allowNull = false)
     private SelectModel model;
 
     /**
@@ -211,9 +211,9 @@ public class Palette extends AbstractField
     private Asset select;
 
     /**
-     * The list of selected values from the {@link SelectModel}. This will be updated when the form is submitted. If the
-     * value for the parameter is null, a new list will be created, otherwise the existing list will be cleared. If
-     * unbound, defaults to a property of the container matching this component's id.
+     * The list of selected values from the {@link org.apache.tapestry5.SelectModel}. This will be updated when the form
+     * is submitted. If the value for the parameter is null, a new list will be created, otherwise the existing list
+     * will be cleared. If unbound, defaults to a property of the container matching this component's id.
      */
     @Parameter(required = true)
     private List<Object> selected;

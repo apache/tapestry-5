@@ -36,7 +36,7 @@ public class Label
      * The for parameter is used to identify the {@link Field} linked to this label (it is named this way because it
      * results in the for attribute of the label element).
      */
-    @Parameter(name = "for", required = true, defaultPrefix = BindingConstants.COMPONENT)
+    @Parameter(name = "for", required = true, allowNull = false, defaultPrefix = BindingConstants.COMPONENT)
     private Field field;
 
     @Environmental

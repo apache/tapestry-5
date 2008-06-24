@@ -199,7 +199,7 @@ public class Loop
 
     /**
      * Defines the collection of values for the loop to iterate over. If not specified, defaults to a property of the
-     * container whose name
+     * container whose name matches the Loop cmponent's id.
      */
     @Parameter(required = true, principal = true)
     private Iterable<?> source;

@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -32,6 +32,11 @@ public interface ParameterModel
      * If true, the parameter is required.
      */
     boolean isRequired();
+
+    /**
+     * If true, then no check is needed. If false, then the bound value must not be null.
+     */
+    boolean isAllowNull();
 
     /**
      * The default binding prefix for the parameter, usually "prop".

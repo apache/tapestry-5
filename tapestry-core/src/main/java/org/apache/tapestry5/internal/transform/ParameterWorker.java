@@ -78,7 +78,7 @@ public class ParameterWorker implements ComponentClassTransformWorker
 
         String parameterName = getParameterName(name, annotation.name());
 
-        model.addParameter(parameterName, annotation.required(), annotation.defaultPrefix());
+        model.addParameter(parameterName, annotation.required(), annotation.allowNull(), annotation.defaultPrefix());
 
         String type = transformation.getFieldType(name);
 

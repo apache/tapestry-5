@@ -41,7 +41,7 @@ public class Output
     /**
      * The format to be applied to the object.
      */
-    @Parameter(required = true)
+    @Parameter(required = true, allowNull = false)
     private Format format;
 
     /**

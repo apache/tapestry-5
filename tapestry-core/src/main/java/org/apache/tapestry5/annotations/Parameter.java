@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
 package org.apache.tapestry5.annotations;
 
 import org.apache.tapestry5.BindingConstants;
-import org.apache.tapestry5.services.BindingFactory;
 
 import java.lang.annotation.Documented;
 import static java.lang.annotation.ElementType.FIELD;
@@ -46,6 +45,13 @@ public @interface Parameter
     boolean required() default false;
 
     /**
+     * If true, and the parameter <em>is</em> bound, then the value for the parameter must not be null. The default is
+     * to allow nulls. This is different than required, in that the parameter may be bound, but bound to a null value.
+     */
+
+    boolean allowNull() default true;
+
+    /**
      * If true (the default), then the value for the parameter is cached while the component is, itself, rendering.
      * Values from invariant bindings (such as literal strings) are always cached, regardless of this setting. Set this
      * attribute to false to force the parameter to be {@link org.apache.tapestry5.Binding#get() re-read} every time the
@@ -62,8 +68,8 @@ public @interface Parameter
     /**
      * The default binding prefix for the parameter, if no specific binding prefix is provided with the binding. There
      * is <em>rarely</em> a reason to override this. Typically, non-standard default binding prefixes are paired with
-     * specific {@link BindingFactory} implementations, and used with parameters whose name reflects the binding
-     * prefix.
+     * specific {@link org.apache.tapestry5.services.BindingFactory} implementations, and used with parameters whose
+     * name reflects the binding prefix.
      *
      * @see org.apache.tapestry5.BindingConstants
      */

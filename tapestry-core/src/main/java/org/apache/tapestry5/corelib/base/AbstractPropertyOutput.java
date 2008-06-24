@@ -42,14 +42,14 @@ public abstract class AbstractPropertyOutput
     /**
      * Model for property displayed by the cell.
      */
-    @Parameter(required = true)
+    @Parameter(required = true, allowNull = false)
     private PropertyModel model;
 
     /**
      * Resources used to search for block parameter overrides (this is normally the enclosing Grid component's
      * resources).
      */
-    @Parameter(required = true)
+    @Parameter(required = true, allowNull = false)
     private ComponentResources overrides;
 
     /**

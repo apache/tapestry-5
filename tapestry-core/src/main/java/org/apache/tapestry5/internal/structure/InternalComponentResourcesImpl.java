@@ -26,6 +26,7 @@ import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.TapestryException;
 import org.apache.tapestry5.model.ComponentModel;
+import org.apache.tapestry5.model.ParameterModel;
 import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.runtime.PageLifecycleListener;
 import org.apache.tapestry5.runtime.RenderQueue;
@@ -228,6 +229,7 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
     public <T> T readParameter(String parameterName, Class<T> expectedType)
     {
         Binding b = getBinding(parameterName);
+        T result;
 
         try
         {
@@ -236,14 +238,30 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
 
             Object boundValue = b.get();
 
-            return pageResources.coerce(boundValue, expectedType);
+            result = pageResources.coerce(boundValue, expectedType);
         }
         catch (Exception ex)
         {
             throw new TapestryException(StructureMessages.getParameterFailure(parameterName, getCompleteId(), ex), b,
                                         ex);
         }
+
+        if (result == null && !isAllowNull(parameterName))
+            throw new TapestryException(String.format(
+                    "Parameter '%s' of component %s is bound to null. This parameter is not allowed to be null.",
+                    parameterName,
+                    getCompleteId()), b, null);
+
+        return result;
     }
+
+    private boolean isAllowNull(String parameterName)
+    {
+        ParameterModel parameterModel = getComponentModel().getParameterModel(parameterName);
+
+        return parameterModel == null ? true : parameterModel.isAllowNull();
+    }
+
 
     public Object readParameter(String parameterName, String desiredTypeName)
     {

@@ -30,11 +30,12 @@ public interface MutableComponentModel extends ComponentModel
      *
      * @param name                 new, unique name for the parameter
      * @param required             if true, the parameter must be bound
-     * @param defaultBindingPrefix the default binding prefix for this parameter
-     * @throws IllegalArgumentException if a parameter with the given name has already been defined for this model
+     * @param allowNull            if true, then parameter may be bound to null, if false a null check will be added
+     * @param defaultBindingPrefix the default binding prefix for this parameter @throws IllegalArgumentException if a
+     *                             parameter with the given name has already been defined for this model
      * @see Parameter
      */
-    void addParameter(String name, boolean required, String defaultBindingPrefix);
+    void addParameter(String name, boolean required, boolean allowNull, String defaultBindingPrefix);
 
     /**
      * Defines a new embedded component.
