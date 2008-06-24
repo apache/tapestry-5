@@ -916,15 +916,12 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
     {
         Logger logger = mockLogger();
 
-
         replay();
-
-        InternalClassTransformation ct = createClassTransformation(VisibilityBean.class, logger);
 
         try
         {
 
-            ct.finish();
+            InternalClassTransformation ct = createClassTransformation(VisibilityBean.class, logger);
 
             unreachable();
         }
