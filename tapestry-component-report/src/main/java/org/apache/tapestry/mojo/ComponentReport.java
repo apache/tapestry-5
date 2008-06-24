@@ -392,6 +392,8 @@ public class ComponentReport extends AbstractMavenReport
 
                 if (!pd.getCache()) flags.add("NOT Cached");
 
+                if (!pd.getAllowNull()) flags.add("NOT Allow Null");
+
                 Element row = new Element("tr");
                 table.appendChild(row);
 
@@ -403,9 +405,9 @@ public class ComponentReport extends AbstractMavenReport
                 addChild(row, "td", pd.getDescription());
             }
         }
-        
-        if(cd.isSupportsInformalParameters())
-        	addChild(section, "p", "Informal parameters: supported");
+
+        if (cd.isSupportsInformalParameters())
+            addChild(section, "p", "Informal parameters: supported");
 
         addExternalDocumentation(body, docSearchPath, className);
 
@@ -433,7 +435,6 @@ public class ComponentReport extends AbstractMavenReport
             throws ParsingException, IOException
     {
         String classNamePath = toPath(className);
-
 
         String pathExtension = classNamePath + ".xdoc";
 
@@ -744,7 +745,8 @@ public class ComponentReport extends AbstractMavenReport
             String superClassName = element.getAttributeValue("super-class");
             String supportsInformalParameters = element.getAttributeValue("supports-informal-parameters");
 
-            ClassDescription cd = new ClassDescription(className, superClassName, description, Boolean.valueOf(supportsInformalParameters));
+            ClassDescription cd = new ClassDescription(className, superClassName, description,
+                                                       Boolean.valueOf(supportsInformalParameters));
 
             result.put(className, cd);
 
@@ -771,11 +773,12 @@ public class ComponentReport extends AbstractMavenReport
             String defaultValue = node.getAttributeValue("default");
             boolean required = Boolean.parseBoolean(node.getAttributeValue("required"));
             boolean cache = Boolean.parseBoolean(node.getAttributeValue("cache"));
+            boolean allowNull = Boolean.parseBoolean(node.getAttributeValue("allowNull"));
             String defaultPrefix = node.getAttributeValue("default-prefix");
             String description = node.getValue();
 
-            ParameterDescription pd = new ParameterDescription(name, type, defaultValue, defaultPrefix, required, cache,
-                                                               description);
+            ParameterDescription pd = new ParameterDescription(name, type, defaultValue, defaultPrefix, required,
+                                                               allowNull, cache, description);
 
             cd.getParameters().put(name, pd);
         }

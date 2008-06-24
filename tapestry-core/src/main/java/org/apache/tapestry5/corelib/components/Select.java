@@ -82,7 +82,7 @@ public final class Select extends AbstractField
      * The model used to identify the option groups and options to be presented to the user. This can be generated
      * automatically for Enum types.
      */
-    @Parameter(required = true)
+    @Parameter(required = true, allowNull = false)
     private SelectModel model;
 
     /**

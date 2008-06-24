@@ -58,7 +58,7 @@ public abstract class AbstractTextField extends AbstractField
      * The object which will perform translation between server-side and client-side representations. If not specified,
      * a value will usually be generated based on the type of the value parameter.
      */
-    @Parameter(required = true)
+    @Parameter(required = true, allowNull = false)
     private Translator<Object> translate;
 
     /**

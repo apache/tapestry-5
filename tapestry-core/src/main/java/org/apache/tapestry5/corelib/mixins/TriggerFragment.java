@@ -38,7 +38,7 @@ public class TriggerFragment
     /**
      * The {@link org.apache.tapestry5.corelib.components.FormFragment} instance to make dynamically visible or hidden.
      */
-    @Parameter(required = true, defaultPrefix = BindingConstants.COMPONENT)
+    @Parameter(required = true, defaultPrefix = BindingConstants.COMPONENT, allowNull = false)
     private ClientElement fragment;
 
     @Environmental

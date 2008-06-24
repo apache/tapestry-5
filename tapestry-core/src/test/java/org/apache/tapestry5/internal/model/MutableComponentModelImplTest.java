@@ -70,7 +70,7 @@ public class MutableComponentModelImplTest extends InternalBaseTestCase
 
         String parameterName = "value";
 
-        model.addParameter(parameterName, true, BindingConstants.PROP);
+        model.addParameter(parameterName, true, true, BindingConstants.PROP);
 
         ParameterModel pm = model.getParameterModel(parameterName);
 
@@ -82,7 +82,7 @@ public class MutableComponentModelImplTest extends InternalBaseTestCase
 
         // Verify that the binding prefix is actually stored:
 
-        model.addParameter("fred", true, "flint");
+        model.addParameter("fred", true, true, "flint");
 
         // Checks that parameter names are case insensitive
 
@@ -101,9 +101,9 @@ public class MutableComponentModelImplTest extends InternalBaseTestCase
 
         MutableComponentModel model = new MutableComponentModelImpl(CLASS_NAME, logger, r, null);
 
-        model.addParameter("fred", true, BindingConstants.PROP);
-        model.addParameter("wilma", true, BindingConstants.PROP);
-        model.addParameter("barney", true, BindingConstants.PROP);
+        model.addParameter("fred", true, true, BindingConstants.PROP);
+        model.addParameter("wilma", true, true, BindingConstants.PROP);
+        model.addParameter("barney", true, true, BindingConstants.PROP);
 
         assertEquals(model.getDeclaredParameterNames(), Arrays.asList("barney", "fred", "wilma"));
 
@@ -124,9 +124,9 @@ public class MutableComponentModelImplTest extends InternalBaseTestCase
 
         MutableComponentModel model = new MutableComponentModelImpl(CLASS_NAME, logger, r, parent);
 
-        model.addParameter("fred", true, BindingConstants.PROP);
-        model.addParameter("wilma", true, BindingConstants.PROP);
-        model.addParameter("barney", true, BindingConstants.PROP);
+        model.addParameter("fred", true, true, BindingConstants.PROP);
+        model.addParameter("wilma", true, true, BindingConstants.PROP);
+        model.addParameter("barney", true, true, BindingConstants.PROP);
 
         assertEquals(model.getDeclaredParameterNames(), Arrays.asList("barney", "fred", "wilma"));
         assertEquals(model.getParameterNames(), Arrays.asList("barney", "betty", "fred", "wilma"));
@@ -144,13 +144,13 @@ public class MutableComponentModelImplTest extends InternalBaseTestCase
 
         MutableComponentModel model = new MutableComponentModelImpl(CLASS_NAME, logger, r, null);
 
-        model.addParameter("fred", true, BindingConstants.PROP);
+        model.addParameter("fred", true, true, BindingConstants.PROP);
 
         try
         {
             // This also helps check that the comparison is caseless!
 
-            model.addParameter("Fred", true, BindingConstants.PROP);
+            model.addParameter("Fred", true, true, BindingConstants.PROP);
             unreachable();
         }
         catch (IllegalArgumentException ex)
@@ -186,7 +186,7 @@ public class MutableComponentModelImplTest extends InternalBaseTestCase
         replay();
 
         MutableComponentModel model = new MutableComponentModelImpl(CLASS_NAME, logger, r, null);
-        model.addParameter("fred", true, BindingConstants.PROP);
+        model.addParameter("fred", true, true, BindingConstants.PROP);
 
         assertNull(model.getParameterModel("barney"));
 

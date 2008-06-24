@@ -75,7 +75,7 @@ public class AjaxFormLoop
     /**
      * Required parameter used to convert server-side objects (provided from the source) into client-side ids and back.
      */
-    @Parameter(required = true)
+    @Parameter(required = true, allowNull = false)
     private PrimaryKeyEncoder encoder;
 
     @InjectComponent

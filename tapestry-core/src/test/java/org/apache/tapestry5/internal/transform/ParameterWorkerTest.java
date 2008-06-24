@@ -466,7 +466,7 @@ public class ParameterWorkerTest extends InternalBaseTestCase
 
         MutableComponentModel model = mockMutableComponentModel(logger);
 
-        model.addParameter("value", false, BindingConstants.PROP);
+        model.addParameter("value", false, true, BindingConstants.PROP);
 
         Runnable phaseTwoTraining = new Runnable()
         {
@@ -511,7 +511,7 @@ public class ParameterWorkerTest extends InternalBaseTestCase
 
         MutableComponentModel model = mockMutableComponentModel(logger);
 
-        model.addParameter("value", false, BindingConstants.PROP);
+        model.addParameter("value", false, true, BindingConstants.PROP);
 
         Runnable phaseTwoTraining = new Runnable()
         {
@@ -563,11 +563,11 @@ public class ParameterWorkerTest extends InternalBaseTestCase
         final Logger logger = mockLogger();
         MutableComponentModel model = mockMutableComponentModel(logger);
 
-        model.addParameter("invariantObject", false, BindingConstants.PROP);
-        model.addParameter("invariantPrimitive", false, BindingConstants.PROP);
-        model.addParameter("object", false, BindingConstants.PROP);
-        model.addParameter("primitive", true, BindingConstants.PROP);
-        model.addParameter("uncached", false, BindingConstants.LITERAL);
+        model.addParameter("invariantObject", false, true, BindingConstants.PROP);
+        model.addParameter("invariantPrimitive", false, true, BindingConstants.PROP);
+        model.addParameter("object", false, true, BindingConstants.PROP);
+        model.addParameter("primitive", true, true, BindingConstants.PROP);
+        model.addParameter("uncached", false, true, BindingConstants.LITERAL);
 
 
         Runnable phaseTwoTraining = new Runnable()

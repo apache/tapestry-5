@@ -19,7 +19,10 @@ import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.services.*;
+import org.apache.tapestry5.services.ComponentDefaultProvider;
+import org.apache.tapestry5.services.Environment;
+import org.apache.tapestry5.services.FormSupport;
+import org.apache.tapestry5.services.Request;
 
 public class RadioGroup implements Field
 {
@@ -45,12 +48,10 @@ public class RadioGroup implements Field
     private String label;
 
     /**
-     * Allows a specific implementation of {@link ValueEncoder} to be supplied. This is used to create client-side
-     * string values for the different radio button values.
-     *
-     * @see ValueEncoderSource
+     * Allows a specific implementation of {@link org.apache.tapestry5.ValueEncoder} to be supplied. This is used to
+     * create client-side string values for the different radio button values.
      */
-    @Parameter(required = true)
+    @Parameter(required = true, allowNull = false)
     private ValueEncoder encoder;
 
     @Inject

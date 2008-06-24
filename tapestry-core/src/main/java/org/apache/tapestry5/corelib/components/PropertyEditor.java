@@ -82,7 +82,7 @@ public class PropertyEditor
      * for the component is submitted. Typically, the container will listen for a "prepare" event, in order to ensure
      * that a non-null value is ready to be read or updated.
      */
-    @Parameter(required = true)
+    @Parameter(required = true, allowNull = false)
     private Object object;
 
     /**
@@ -102,7 +102,7 @@ public class PropertyEditor
     /**
      * The model that identifies the parameters to be edited, their order, and every other aspect.
      */
-    @Parameter(required = true)
+    @Parameter(required = true, allowNull = false)
     private BeanModel model;
 
     @Inject

@@ -37,7 +37,7 @@ public class PageLink extends AbstractLink
     /**
      * The logical name of the page to link to.
      */
-    @Parameter(required = true, defaultPrefix = BindingConstants.LITERAL)
+    @Parameter(required = true, allowNull = false, defaultPrefix = BindingConstants.LITERAL)
     private String page;
 
     @Inject

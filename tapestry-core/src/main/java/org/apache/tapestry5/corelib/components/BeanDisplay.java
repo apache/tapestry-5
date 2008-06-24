@@ -43,7 +43,7 @@ public class BeanDisplay
      * The object to be rendered; if not explicitly bound, a default binding to a property whose name matches this
      * component's id will be used.
      */
-    @Parameter(required = true)
+    @Parameter(required = true, allowNull = false)
     @Property(write = false)
     private Object object;
 

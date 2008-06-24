@@ -2079,4 +2079,17 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         // As usual, Selenium is fighting me in terms of extracting data, so the above check just ensures
         // we made it past the form submit without error.
     }
+
+    /**
+     * TAPESTRY-2476
+     */
+    @Test
+    public void null_parameter_when_not_allowed()
+    {
+        start("Null Parameter Demo");
+
+        assertTextPresent(
+                "Parameter 'object' of component NullParameterDemo:beandisplay is bound to null.");
+    }
+
 }

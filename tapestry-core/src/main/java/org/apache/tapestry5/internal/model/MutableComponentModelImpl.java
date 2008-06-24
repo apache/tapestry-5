@@ -99,21 +99,20 @@ public final class MutableComponentModelImpl implements MutableComponentModel
         return componentClassName;
     }
 
-    public void addParameter(String name, boolean required, String defaultBindingPrefix)
+    public void addParameter(String name, boolean required, boolean allowNull, String defaultBindingPrefix)
     {
         Defense.notBlank(name, "name");
         Defense.notBlank(defaultBindingPrefix, "defaultBindingPrefix");
 
         // TODO: Check for conflict with base model
 
-        if (parameters == null) parameters = CollectionFactory.newCaseInsensitiveMap();
-        else
-        {
-            if (parameters.containsKey(name))
-                throw new IllegalArgumentException(ModelMessages.duplicateParameter(name, componentClassName));
-        }
+        if (parameters == null)
+            parameters = CollectionFactory.newCaseInsensitiveMap();
 
-        parameters.put(name, new ParameterModelImpl(name, required, defaultBindingPrefix));
+        if (parameters.containsKey(name))
+            throw new IllegalArgumentException(ModelMessages.duplicateParameter(name, componentClassName));
+
+        parameters.put(name, new ParameterModelImpl(name, required, allowNull, defaultBindingPrefix));
     }
 
     public ParameterModel getParameterModel(String parameterName)

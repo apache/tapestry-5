@@ -62,6 +62,8 @@ public class Start
 
     private static final List<Item> ITEMS = CollectionFactory.newList(
 
+            new Item("NullParameterDemo", "Null Parameter Demo", "Binding a not-null parameter to null."),
+
             new Item("nestedbeaneditor", "Nested BeanEditor",
                      "BeanEditor as override for property editor in BeanEditForm"),
 

@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -26,18 +26,22 @@ public class ParameterDescription
 
     private final boolean required;
 
+    private final boolean allowNull;
+
     private final boolean cache;
 
     private final String description;
 
     public ParameterDescription(String name, String type, String defaultValue,
-                                String defaultPrefix, boolean required, boolean cache, String description)
+                                String defaultPrefix, boolean required, boolean allowNull, boolean cache,
+                                String description)
     {
         this.name = name;
         this.type = type;
         this.defaultValue = defaultValue;
         this.defaultPrefix = defaultPrefix;
         this.required = required;
+        this.allowNull = allowNull;
         this.cache = cache;
         this.description = description;
     }
@@ -77,4 +81,8 @@ public class ParameterDescription
         return type;
     }
 
+    public boolean getAllowNull()
+    {
+        return allowNull;
+    }
 }
