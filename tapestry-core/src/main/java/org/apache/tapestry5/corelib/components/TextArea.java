@@ -26,7 +26,7 @@ import org.apache.tapestry5.corelib.base.AbstractTextField;
  *
  * @see org.apache.tapestry5.corelib.components.TextOutput
  */
-public final class TextArea extends AbstractTextField
+public class TextArea extends AbstractTextField
 {
     private String value;
 

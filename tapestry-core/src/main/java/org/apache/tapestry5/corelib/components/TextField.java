@@ -25,10 +25,10 @@ import org.apache.tapestry5.corelib.base.AbstractTextField;
  * Includes the <code>size</code> attribute, if a {@link org.apache.tapestry5.beaneditor.Width} annotation is present on
  * the property bound to the value parameter.
  */
-public final class TextField extends AbstractTextField
+public class TextField extends AbstractTextField
 {
     @Override
-    protected final void writeFieldTag(MarkupWriter writer, String value)
+    protected void writeFieldTag(MarkupWriter writer, String value)
     {
         writer.element("input",
 
