@@ -36,6 +36,7 @@ import org.apache.tapestry5.services.*;
 import org.slf4j.Logger;
 
 import java.lang.annotation.Annotation;
+import java.lang.annotation.Inherited;
 import java.lang.reflect.Modifier;
 import java.util.*;
 
@@ -387,7 +388,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         {
             List<Annotation> result = CollectionFactory.newList();
 
-            addAnnotationsToList(result, member.getAnnotations());
+            addAnnotationsToList(result, member.getAnnotations(), false);
 
             return result;
         }
@@ -397,11 +398,24 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         }
     }
 
-    private void addAnnotationsToList(List<Annotation> list, Object[] annotations)
+    private void addAnnotationsToList(List<Annotation> list, Object[] annotations, boolean filterNonInherited)
     {
         for (Object o : annotations)
         {
             Annotation a = (Annotation) o;
+
+            // When assembling class annotations from a base class, you want to ignore any
+            // that are not @Inherited.
+
+            if (filterNonInherited)
+            {
+                Class<? extends Annotation> annotationType = a.annotationType();
+
+                Inherited inherited = annotationType.getAnnotation(Inherited.class);
+
+                if (inherited == null) continue;
+            }
+
             list.add(a);
         }
     }
@@ -1498,11 +1512,17 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
     {
         classAnnotations = CollectionFactory.newList();
 
+        boolean filter = false;
+
         try
         {
             for (CtClass current = ctClass; current != null; current = current.getSuperclass())
             {
-                addAnnotationsToList(classAnnotations, current.getAnnotations());
+                addAnnotationsToList(classAnnotations, current.getAnnotations(), filter);
+
+                // Super-class annotations are filtered
+
+                filter = true;
             }
         }
         catch (NotFoundException ex)
