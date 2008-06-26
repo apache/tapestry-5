@@ -42,7 +42,7 @@ import java.util.Locale;
  * can be overriden by binding the encoder parameter, or extended by contributing a {@link ValueEncoderFactory} into the
  * service's configuration.
  */
-public final class Select extends AbstractField
+public class Select extends AbstractField
 {
     private class Renderer extends SelectModelRenderer
     {

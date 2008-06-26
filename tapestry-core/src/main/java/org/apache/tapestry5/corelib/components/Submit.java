@@ -31,7 +31,7 @@ import org.apache.tapestry5.services.Request;
  * submit responsible for the form submission will post a notification that allows the application to know that it was
  * the responsible entity. The notification is named "selected" and has no context.
  */
-public final class Submit extends AbstractField
+public class Submit extends AbstractField
 {
     static final String SELECTED_EVENT = "selected";
 
