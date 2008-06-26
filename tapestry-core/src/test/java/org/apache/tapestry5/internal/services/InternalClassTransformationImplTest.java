@@ -416,6 +416,23 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
         verify();
     }
 
+    // TAPESTRY-2481
+    @Test
+    public void ensure_only_inherited_annotations_from_parent_class_are_visible() throws Exception
+    {
+        Logger logger = mockLogger();
+
+        replay();
+
+        ClassTransformation ct = createClassTransformation(ChildClassInheritsAnnotation.class, logger);
+
+        Meta meta = ct.getAnnotation(Meta.class);
+
+        assertNull(meta);
+
+        verify();
+    }
+
     /**
      * These tests are really to assert my understanding of Javassist's API. I guess we should keep them around to make
      * sure that future versions of Javassist work the same as our expectations.
