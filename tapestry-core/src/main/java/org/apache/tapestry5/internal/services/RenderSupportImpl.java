@@ -120,6 +120,11 @@ public class RenderSupportImpl implements RenderSupport
         linker.addScriptLink(asset.toClientURL());
     }
 
+    public void addScript(String script)
+    {
+        linker.addScript(script);
+    }
+
     public void addScript(String format, Object... arguments)
     {
         notNull(format, "format");
