@@ -95,6 +95,26 @@ public class RenderSupportImplTest extends InternalBaseTestCase
         verify();
     }
 
+    // TAPESTRY-2483
+
+    @Test
+    public void add_script_no_formatting()
+    {
+        DocumentLinker linker = mockDocumentLinker();
+
+        String script = "foo('%');";
+
+        linker.addScript(script);
+
+        replay();
+
+        RenderSupport support = new RenderSupportImpl(linker, null, null);
+
+        support.addScript(script);
+
+        verify();
+    }
+
     @Test
     public void add_classpath_script_link()
     {

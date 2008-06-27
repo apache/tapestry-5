@@ -15,14 +15,17 @@
 package org.apache.tapestry5;
 
 import org.apache.tapestry5.ioc.services.SymbolSource;
-import org.apache.tapestry5.services.AssetSource;
 import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
+import org.apache.tapestry5.services.AssetSource;
 
 /**
  * Provides support to all components that render. This is primarily about generating unique client-side ids (very
  * important for JavaScript generation) as well as accumulating JavaScript to be sent to the client. PageRenderSupport
  * also allows for the incremental addition of stylesheets.
+ * <p/>
+ * When rendering, a &lt;script&gt; block will be added to the bottom of the page (just before the &lt;/body&gt; tag).
+ * The scripting statements added to this block will be executed, on the client, only once the page has fully loaded.
  */
 public interface RenderSupport
 {
@@ -74,8 +77,15 @@ public interface RenderSupport
     void addStylesheetLink(Asset stylesheet, String media);
 
     /**
-     * Adds a script statement to the page's script block (which appears at the end of the page, just before the
-     * &lt/body&gt; tag).
+     * Adds a script statement to the page's script block. A newline will be added after the script statement.
+     *
+     * @param script text to be added to the script block
+     */
+    void addScript(String script);
+
+    /**
+     * Adds a script statement to the page's script block.  The parameters are passed to {@link String#format(String,
+     * Object[])} before being added to the script block.  A newline will be added after the formatted statement.
      *
      * @param format    base string format, to be passed through String.format
      * @param arguments additional arguments formatted to form the final script
