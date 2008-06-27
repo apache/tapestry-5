@@ -108,11 +108,15 @@ Tapestry.Palette.prototype = {
     selectClicked : function(event)
     {
         this.transferOptions(this.avail, this.selected, this.reorder);
+
+        Event.stop(event);
     },
 
     deselectClicked : function(event)
     {
         this.transferOptions(this.selected, this.avail, false);
+
+        Event.stop(event);
     },
 
     transferOptions : function (from, to, atEnd)
