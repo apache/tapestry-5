@@ -521,10 +521,7 @@ Tapestry.ElementAdditions = {
 
 Element.addMethods(Tapestry.ElementAdditions);
 
-// Look for the Firebug console API and rewrite the Tapestry.error|warn|debug methods around it.
-// This seems to be broken under FireFox 3. It has been disabled until we deterimine what is broken.
-
-if (false && window.console)
+if (window.console)
 {
     var createlog = function (log)
     {
