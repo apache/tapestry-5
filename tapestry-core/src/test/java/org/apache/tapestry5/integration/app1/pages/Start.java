@@ -138,7 +138,7 @@ public class Start
             new Item("MissingTemplate", "Missing Template Demo",
                      "Demo for what happens when a template is not found for a page"),
 
-            new Item("zonedemo", "Zone Demo", "dynamic updates within a page"),
+            new Item("nested/zonedemo", "Zone Demo", "dynamic updates within a page"),
 
             new Item("todolist", "ToDo List", "Loops and Submit inside Form using primary key encoder"),
 

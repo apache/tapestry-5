@@ -18,6 +18,9 @@ import org.apache.tapestry5.beaneditor.DataType;
 import org.apache.tapestry5.beaneditor.ReorderProperties;
 import org.apache.tapestry5.beaneditor.Validate;
 import org.apache.tapestry5.beaneditor.Width;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+
+import java.util.List;
 
 @ReorderProperties("firstname,lastname,birthyear,sex")
 public class RegistrationData
@@ -35,6 +38,8 @@ public class RegistrationData
     private String password;
 
     private String notes;
+
+    private List<String> roles = CollectionFactory.newList();
 
     @Validate("min=1900,max=2007")
     @Width(4)
@@ -112,5 +117,15 @@ public class RegistrationData
     public void setNotes(String notes)
     {
         this.notes = notes;
+    }
+
+    public List<String> getRoles()
+    {
+        return roles;
+    }
+
+    public void setRoles(List<String> roles)
+    {
+        this.roles = roles;
     }
 }
