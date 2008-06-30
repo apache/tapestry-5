@@ -30,11 +30,11 @@ var Tapestry = {
     /** Event, triggered on the document object, which identifies the current focus element. */
     FOCUS_CHANGE_EVENT : "tapestry:focuschange",
 
-
+    /** When false, the default, the Tapestry.debug() function will be a no-op. */
     DEBUG_ENABLED : false,
 
     /** Time, in seconds, that console messages are visible. */
-    CONSOLE_DURATION : 10,
+    CONSOLE_DURATION : 60,
 
     FormEvent : Class.create(),
 
@@ -49,6 +49,8 @@ var Tapestry = {
     FormInjector : Class.create(),
 
     ErrorPopup : Class.create(),
+
+    DependentExecutor : Class.create(),
 
     // Adds a callback function that will be invoked when the DOM is loaded (which
     // occurs *before* window.onload, which has to wait for images and such to load
@@ -66,6 +68,8 @@ var Tapestry = {
      */
     onDomLoadedCallback : function()
     {
+        Tapestry.ScriptManager.initialize();
+
         $$(".t-invisible").each(function(element)
         {
             element.hide();
@@ -191,13 +195,18 @@ var Tapestry = {
 
     /**
      * Passed the JSON content of a Tapestry partial markup response, extracts
-     * the script key (if present) and evals it, then uses the DOM loaded callback
-     * to hide invisible fields and add notifications for any form elements.
+     * the script and stylesheet information.  JavaScript libraries and stylesheets are loaded,
+     * then any script code is evaluated.  All three keys are optional:
+     * <dl>
+     * <dt>scripts</dt><dd>Array of strings (URIs of scripts)</dd>
+     * <dt>stylesheets</dt><dd>Array of hashes, each hash has key href and optional key media</dd>
+     * <dt>script</dt> <dd>JavaScript to be executed once all scripts are loaded</dd></dl>
      */
     processScriptInReply : function(reply)
     {
-        if (reply.script != undefined)
-            eval(reply.script);
+        Tapestry.ScriptManager.addScripts(reply.scripts, reply.script);
+
+        Tapestry.ScriptManager.addStylesheets(reply.stylesheets);
 
         Tapestry.onDomLoadedCallback();
     },
@@ -267,7 +276,60 @@ var Tapestry = {
     ajaxRequest : function(url, successHandler)
     {
         return new Ajax.Request(url, { onSuccess: successHandler, onFailure: Tapestry.ajaxFailureHandler })
+    },
+
+
+    /**
+     * Used to reconstruct a complete URL from a path that is (or may be) relative to window.location.
+     * This is used when determining if a JavaScript library or CSS stylesheet has already been loaded.
+     * Recognizes complete URLs (which are returned unchanged) and absolute paths (which are prefixed
+     * with the window.location protocol and host).  Otherwise the correct path is built.  The
+     * path may be prefixed with "./" and "../", which will be resolved correctly.
+     *
+     * @param path
+     * @return complete URL as string
+     */
+    rebuildURL : function(path)
+    {
+        if (path.match(/^https?:/))
+        {
+            return path;
+        }
+
+        if (path.startsWith("/"))
+        {
+            var l = window.location;
+            return l.protocol + "//" + l.host + path;
+        }
+
+        var rootPath = this.stripToLastSlash(window.location.href);
+
+        while (true)
+        {
+            if (path.startsWith("../"))
+            {
+                rootPath = this.stripToLastSlash(rootPath.substr(0, rootPath.length - 1));
+                path = path.substring(3);
+                continue;
+            }
+
+            if (path.startsWith("./"))
+            {
+                path = path.substr(2);
+                continue;
+            }
+
+            return rootPath + path;
+        }
+    },
+
+    stripToLastSlash : function(URL)
+    {
+        var slashx = URL.lastIndexOf("/");
+
+        return URL.substring(0, slashx + 1);
     }
+
 };
 
 /** Container of functions that may be invoked by the Tapestry.init() function. */
@@ -460,8 +522,9 @@ Tapestry.ElementAdditions = {
 Element.addMethods(Tapestry.ElementAdditions);
 
 // Look for the Firebug console API and rewrite the Tapestry.error|warn|debug methods around it.
+// This seems to be broken under FireFox 3. It has been disabled until we deterimine what is broken.
 
-if (window.console)
+if (false && window.console)
 {
     var createlog = function (log)
     {
@@ -1076,6 +1139,176 @@ Tapestry.FormInjector.prototype = {
 
             return false;
         }.bind(this);
+    }
+};
+
+/**
+ * Coordinates the execution of JavaScript code blocks (via eval) with the loading
+ * of an array of <script> elements.
+ */
+Tapestry.DependentExecutor.prototype = {
+
+    initialize : function(prereqs, dependent)
+    {
+        this.dependent = dependent;
+        this.loaded = 0;
+        this.toload = prereqs.length;
+
+        var executor = this;
+
+        prereqs.each(function (scriptElement)
+        {
+            if (Prototype.Browser.IE)
+            {
+                var loaded = false;
+
+                scriptElement.onreadystatechange = function ()
+                {
+                    Tapestry.debug("State #{state} for #{script} (loaded is #{loaded})", { state:this.readyState, script:scriptElement.src, loaded:loaded });
+
+                    // IE may fire either loaded or complete, or perhaps even both.
+                    if (! loaded && (this.readyState == 'loaded' || this.readyState == 'complete'))
+                    {
+                        loaded = true;
+                        executor.loadComplete(scriptElement);
+                    }
+                };
+            }
+            else
+            {
+                // Much simpler in FF, Safari, etc.
+                scriptElement.onload = executor.loadComplete.bindAsEventListener(executor, scriptElement);
+            }
+        });
+    },
+
+    loadComplete : function(element)
+    {
+        this.loaded++;
+
+        Tapestry.debug("Script #{loaded} of #{toload} loaded", this);
+
+        // Evaluated the dependent script only once all the elements have loaded.
+
+        if (this.loaded == this.toload)
+            eval(this.dependent);
+    }
+};
+
+Tapestry.ScriptManager = {
+
+    initialize : function()
+    {
+
+        // Check to see if document.script is supported; if not (for example, FireFox),
+        // we can fake it.
+
+        this.emulated = false;
+
+        if (! document.scripts)
+        {
+            this.emulated = true;
+
+            document.scripts = new Array();
+
+            $$('script').each(function (s)
+            {
+                document.scripts.push(s);
+            });
+        }
+    },
+
+    /**
+     * Checks to see if the given collection (of <script> or <style> elements) contains the given asset URL.
+     * @param collection
+     * @param prop      property to check ('src' for script, 'href' to style).
+     * @param assetURL        complete URL (i.e., with protocol, host and port) to the asset
+     */
+    contains : function (collection, prop, assetURL)
+    {
+        Tapestry.debug("Checking previously loaded for: " + assetURL);
+
+        return $A(collection).any(function (element)
+        {
+            var existing = element[prop];
+
+            if (existing.blank()) return false;
+
+            var complete =
+                    Prototype.Browser.IE ? Tapestry.rebuildURL(existing) : existing;
+
+            Tapestry.debug("Previously loaded: " + complete);
+
+            return complete == assetURL;
+        });
+
+        return false;
+    },
+
+    addScripts: function(scripts, dependent)
+    {
+        var added = new Array();
+
+        if (scripts)
+        {
+            var emulated = this.emulated;
+            // Looks like IE really needs the new <script> tag to be
+            // in the <head>. FF doesn't seem to care.
+            // See http://unixpapa.com/js/dyna.html
+            var head = $$("head").first();
+
+            scripts.each(function(s)
+            {
+                var assetURL = Tapestry.rebuildURL(s);
+
+                if (Tapestry.ScriptManager.contains(document.scripts, "src", assetURL)) return; // continue to next script
+
+                Tapestry.debug("Loading script: " + assetURL);
+
+                var element = new Element('script', { src: assetURL, type: 'text/javascript' });
+
+                head.insert({bottom:element});
+
+                added.push(element);
+
+                if (emulated) document.scripts.push(element);
+            });
+
+        }
+
+        if (!dependent) return;
+
+        if (added.length)
+        {
+            new Tapestry.DependentExecutor(added, dependent);
+            return;
+        }
+
+        eval(dependent);
+    },
+
+    addStylesheets : function(stylesheets)
+    {
+        if (!stylesheets) return;
+
+        var head = $$('head').first();
+
+        $(stylesheets).each(function(s)
+        {
+            var assetURL = Tapestry.rebuildURL(s);
+
+            if (Tapestry.ScriptManager.contains(document.styleSheets, 'href', assetURL)) return; // continue
+
+            var element = new Element('link', { type: 'text/css', rel: 'stylesheet', href: assetURL });
+
+            // Careful about media types, some browser will break if it ends up as 'null'.
+
+            if (s.media != undefined)
+                element.writeAttribute('media', s.media);
+
+            head.insert({bottom: element});
+
+        });
     }
 };
 

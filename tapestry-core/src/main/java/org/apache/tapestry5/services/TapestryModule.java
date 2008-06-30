@@ -380,7 +380,7 @@ public final class TapestryModule
         // be converted to clear out at the end of the request.
 
         configuration.add("UnclaimedField", new UnclaimedFieldWorker(), "after:*");
-        
+
         configuration.add("PageActivationContext", new PageActivationContextWorker(), "before:OnEvent");
     }
 
@@ -1515,29 +1515,11 @@ public final class TapestryModule
 
                 String namespace = ":" + uid;
 
-                final StringBuilder buffer = new StringBuilder(1000);
-
                 IdAllocator idAllocator = new IdAllocator(namespace);
 
-                DocumentLinker builder = new DocumentLinker()
-                {
-                    public void addScriptLink(String scriptURL)
-                    {
-                    }
+                PartialMarkupDocumentLinker linker = new PartialMarkupDocumentLinker();
 
-                    public void addStylesheetLink(String styleURL, String media)
-                    {
-                    }
-
-                    public void addScript(String script)
-                    {
-                        buffer.append(script);
-                        buffer.append("\n");
-                    }
-                };
-
-
-                RenderSupportImpl support = new RenderSupportImpl(builder, symbolSource, assetSource,
+                RenderSupportImpl support = new RenderSupportImpl(linker, symbolSource, assetSource,
                                                                   idAllocator);
 
                 environment.push(RenderSupport.class, support);
@@ -1548,8 +1530,7 @@ public final class TapestryModule
 
                 environment.pop(RenderSupport.class);
 
-                if (buffer.length() > 0)
-                    reply.put("script", buffer.toString());
+                linker.commit(reply);
             }
         };
 

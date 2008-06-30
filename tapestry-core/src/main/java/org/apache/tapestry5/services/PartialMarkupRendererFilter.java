@@ -24,8 +24,8 @@ import org.apache.tapestry5.json.JSONObject;
  * pages and components that render.
  *
  * @see org.apache.tapestry5.services.TapestryModule#contributePartialMarkupRenderer(org.apache.tapestry5.ioc.OrderedConfiguration,
- *      org.apache.tapestry5.Asset, ValidationMessagesSource, org.apache.tapestry5.ioc.services.SymbolSource,
- *      AssetSource)
+ *      org.apache.tapestry5.Asset, org.apache.tapestry5.ioc.services.SymbolSource, AssetSource,
+ *      ValidationMessagesSource)
  */
 public interface PartialMarkupRendererFilter
 {
