@@ -25,10 +25,10 @@
         </dependency>
 
         <dependency>
-            <groupId>jboss</groupId>
+            <groupId>org.jboss</groupId>
             <artifactId>javassist</artifactId>
+            <version>3.8.0.GA</version>
         </dependency>
-
 
         <dependency>
             <groupId>org.slf4j</groupId>
