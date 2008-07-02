@@ -112,9 +112,26 @@ public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
         return result;
     }
 
-    public <T> ServiceBindingOptions bind(Class<T> implementationClass)
+    public <T> ServiceBindingOptions bind(Class<T> serviceClass)
     {
-        return bind(implementationClass, implementationClass);
+        if(serviceClass.isInterface())
+        {
+            try
+            {
+                Class<T> implementationClass = (Class<T>) Class.forName(serviceClass.getName()+"Impl");
+                
+                if(!implementationClass.isInterface() && serviceClass.isAssignableFrom(implementationClass))
+                {
+                    return bind(serviceClass, implementationClass);
+                }
+                throw new RuntimeException(IOCMessages.noServiceMatchesType(serviceClass));
+            }
+            catch (ClassNotFoundException ex)
+            {
+                throw new RuntimeException(IOCMessages.noConventionServiceImplementationFound(serviceClass));
+            }
+        }
+        return bind(serviceClass, serviceClass);
     }
 
     public <T> ServiceBindingOptions bind(Class<T> serviceInterface, Class<? extends T> serviceImplementation)

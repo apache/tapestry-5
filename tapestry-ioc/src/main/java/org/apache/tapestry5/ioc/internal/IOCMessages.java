@@ -306,4 +306,9 @@ final class IOCMessages
     {
         return MESSAGES.format("no-proxy-provider", serviceId);
     }
+
+    static String noConventionServiceImplementationFound(Class clazz)
+    {
+        return MESSAGES.format("no-convention-service-implementation-found", clazz.getName(), clazz.getName());
+    }
 }

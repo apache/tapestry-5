@@ -401,6 +401,47 @@ public class IntegrationTest extends IOCInternalTestCase
 
         r.shutdown();
     }
+    
+    @Test
+    public void convention_over_configuration_service()
+    {
+        Registry r = buildRegistry(ConventionModule.class);
+
+
+        StringHolder holder = r.getService(StringHolder.class);
+        
+        holder.setValue("Bar");
+
+        assertEquals(holder.getValue(), "Bar");
+
+        r.shutdown();
+    }
+    
+    @Test
+    public void convention_over_configuration_service_impl_not_found()
+    {
+        try
+        {
+            buildRegistry(ConventionModuleImplementationNotFound.class);
+            unreachable();
+        }catch (RuntimeException ex) {
+            assertMessageContains(ex,
+            "No service implements the interface "+StringTransformer.class.getName()+". Please provide");
+        }
+    }
+    
+    @Test
+    public void convention_over_configuration_service_wrong_impl_found()
+    {
+        try
+        {
+            buildRegistry(ConventionFailureModule.class);
+            unreachable();
+        }catch (RuntimeException ex) {
+            assertMessageContains(ex,
+            "No service implements the interface "+Pingable.class.getName());
+        }
+    }
 
     @Test
     public void service_builder_method_uses_autobuild()
