@@ -107,6 +107,25 @@ public class MyAppModule
 
   In terms of the evolution of the framework, service builder methods came first, and autobuilding was a later
   addition, inspired by the terseness of the {{{http://code.google.com/p/google-guice/}Guice}} IoC container.
+
+
+  Following the convention over configuration principle the autobuilding of services can be done even less verbose.
+  If a service interface is passed as a single argument to the bind() method Tapestry will try to find an implementation in the
+  same package whose name matches the name of the service interface followed by the suffix <Impl>.
+  
++------+
+package org.example.myapp.services;
+
+import org.apache.tapestry5.ioc.ServiceBinder;
+
+public class MyAppModule
+{
+  public static void bind(ServiceBinder binder)
+  {
+    binder.bind(Indexer.class);
+  }
+}
++----+
     
 Service Ids
 
