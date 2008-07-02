@@ -21,6 +21,7 @@ import static org.apache.tapestry5.ioc.IOCConstants.PERTHREAD_SCOPE;
 import org.apache.tapestry5.ioc.ObjectLocator;
 import org.apache.tapestry5.ioc.ServiceBinder;
 import org.apache.tapestry5.ioc.ServiceResources;
+import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Marker;
 import org.apache.tapestry5.ioc.annotations.Scope;
 import org.apache.tapestry5.ioc.annotations.Symbol;
@@ -101,6 +102,7 @@ public class InternalModule
         return locator.autobuild(ActionRenderResponseGeneratorImpl.class);
     }
 
+
     @Scope(PERTHREAD_SCOPE)
     public static RequestPageCache buildRequestPageCache(PagePool pagePool, PerthreadManager perthreadManager)
     {
@@ -118,6 +120,22 @@ public class InternalModule
         return new PageTemplateLocatorImpl(contextAssetFactory.getRootResource(), componentClassResolver);
     }
 
+
+    public ComponentMessagesSource buildComponentMessagesSource(
+            @ContextProvider
+            AssetFactory contextAssetFactory,
+
+            @Inject
+            @Symbol(SymbolConstants.APPLICATION_CATALOG)
+            String appCatalog)
+    {
+        ComponentMessagesSourceImpl service = new ComponentMessagesSourceImpl(contextAssetFactory
+                .getRootResource(), appCatalog);
+
+        updateListenerHub.addUpdateListener(service);
+
+        return service;
+    }
 
     public ComponentInstantiatorSource buildComponentInstantiatorSource(@Builtin ClassFactory classFactory,
 

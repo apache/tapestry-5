@@ -27,7 +27,6 @@ import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.runtime.RenderQueue;
 import org.apache.tapestry5.services.BindingSource;
 import org.apache.tapestry5.services.ComponentClassResolver;
-import org.apache.tapestry5.services.ComponentMessagesSource;
 import org.testng.annotations.Test;
 
 public class PageElementFactoryImplTest extends InternalBaseTestCase

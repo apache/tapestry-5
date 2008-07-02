@@ -15,10 +15,10 @@
 package org.apache.tapestry5.internal.structure;
 
 import org.apache.tapestry5.internal.services.ComponentClassCache;
+import org.apache.tapestry5.internal.services.ComponentMessagesSource;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.model.ComponentModel;
-import org.apache.tapestry5.services.ComponentMessagesSource;
 import org.apache.tapestry5.services.ContextValueEncoder;
 
 import java.util.Locale;
