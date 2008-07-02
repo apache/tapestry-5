@@ -13,8 +13,6 @@
 // limitations under the License.
 package org.apache.tapestry5.internal.transform;
 
-import java.lang.reflect.Modifier;
-
 import org.apache.tapestry5.annotations.PageActivationContext;
 import org.apache.tapestry5.integration.app1.data.Track;
 import org.apache.tapestry5.model.MutableComponentModel;
@@ -24,90 +22,96 @@ import org.apache.tapestry5.services.TransformMethodSignature;
 import org.apache.tapestry5.test.TapestryTestCase;
 import org.testng.annotations.Test;
 
-public class PageActivationContextWorkerTest extends TapestryTestCase {
+import java.lang.reflect.Modifier;
 
-	private static final String CLASS_NAME = Track.class.getName();
+public class PageActivationContextWorkerTest extends TapestryTestCase
+{
 
-	@Test
-	public void activate_dafault_passivate_false() {
-		ClassTransformation ct = mockClassTransformation();
-		MutableComponentModel model = mockMutableComponentModel();
-		PageActivationContext annotation = newMock(PageActivationContext.class);
-		ComponentClassTransformWorker worker = new PageActivationContextWorker();
+    private static final String CLASS_NAME = Track.class.getName();
 
-		train_findFieldsWithAnnotation(ct, PageActivationContext.class,
-				"myfield");
-		train_getFieldAnnotation(ct, "myfield", PageActivationContext.class,
-				annotation);
-		train_getFieldType(ct, "myfield", CLASS_NAME);
-		expect(annotation.activate()).andReturn(true);
+    @Test
+    public void activate_dafault_passivate_false()
+    {
+        ClassTransformation ct = mockClassTransformation();
+        MutableComponentModel model = mockMutableComponentModel();
+        PageActivationContext annotation = newMock(PageActivationContext.class);
+        ComponentClassTransformWorker worker = new PageActivationContextWorker();
 
-		TransformMethodSignature sig = new TransformMethodSignature(
-				Modifier.PROTECTED | Modifier.FINAL, "void", "onActivate",
-				new String[] { CLASS_NAME }, null);
+        train_findFieldsWithAnnotation(ct, PageActivationContext.class,
+                                       "myfield");
+        train_getFieldAnnotation(ct, "myfield", PageActivationContext.class,
+                                 annotation);
+        train_getFieldType(ct, "myfield", CLASS_NAME);
+        expect(annotation.activate()).andReturn(true);
 
-		ct.addTransformedMethod(sig, "myfield = $1;");
-		
-		expect(annotation.passivate()).andReturn(false);
+        TransformMethodSignature sig = new TransformMethodSignature(
+                Modifier.PROTECTED | Modifier.FINAL, "void", "onActivate",
+                new String[]{CLASS_NAME}, null);
 
-		replay();
+        ct.addTransformedMethod(sig, "myfield = $1;");
 
-		worker.transform(ct, model);
+        expect(annotation.passivate()).andReturn(false);
 
-		verify();
-	}
+        replay();
 
-	@Test
-	public void activate_false_passivate_default() {
-		ClassTransformation ct = mockClassTransformation();
-		MutableComponentModel model = mockMutableComponentModel();
-		PageActivationContext annotation = newMock(PageActivationContext.class);
-		ComponentClassTransformWorker worker = new PageActivationContextWorker();
+        worker.transform(ct, model);
 
-		train_findFieldsWithAnnotation(ct, PageActivationContext.class,
-				"myfield");
-		train_getFieldAnnotation(ct, "myfield", PageActivationContext.class,
-				annotation);
-		train_getFieldType(ct, "myfield", CLASS_NAME);
-		expect(annotation.activate()).andReturn(false);
+        verify();
+    }
 
-		expect(annotation.passivate()).andReturn(true);
+    @Test
+    public void activate_false_passivate_default()
+    {
+        ClassTransformation ct = mockClassTransformation();
+        MutableComponentModel model = mockMutableComponentModel();
+        PageActivationContext annotation = newMock(PageActivationContext.class);
+        ComponentClassTransformWorker worker = new PageActivationContextWorker();
 
-		TransformMethodSignature sig = new TransformMethodSignature(
-				Modifier.PROTECTED | Modifier.FINAL, "java.lang.Object",
-				"onPassivate", null, null);
+        train_findFieldsWithAnnotation(ct, PageActivationContext.class,
+                                       "myfield");
+        train_getFieldAnnotation(ct, "myfield", PageActivationContext.class,
+                                 annotation);
+        train_getFieldType(ct, "myfield", CLASS_NAME);
+        expect(annotation.activate()).andReturn(false);
 
-		ct.addTransformedMethod(sig, "return myfield;");
+        expect(annotation.passivate()).andReturn(true);
 
-		replay();
+        TransformMethodSignature sig = new TransformMethodSignature(
+                Modifier.PROTECTED | Modifier.FINAL, "java.lang.Object",
+                "onPassivate", null, null);
 
-		worker.transform(ct, model);
+        ct.addTransformedMethod(sig, "return ($w) myfield;");
 
-		verify();
-	}
-	
-	@Test
-	public void activate_false_passivate_false() {
-		ClassTransformation ct = mockClassTransformation();
-		MutableComponentModel model = mockMutableComponentModel();
-		PageActivationContext annotation = newMock(PageActivationContext.class);
-		ComponentClassTransformWorker worker = new PageActivationContextWorker();
+        replay();
 
-		train_findFieldsWithAnnotation(ct, PageActivationContext.class,
-				"myfield");
-		train_getFieldAnnotation(ct, "myfield", PageActivationContext.class,
-				annotation);
-		train_getFieldType(ct, "myfield", CLASS_NAME);
-		expect(annotation.activate()).andReturn(false);
+        worker.transform(ct, model);
 
-		expect(annotation.passivate()).andReturn(false);
+        verify();
+    }
 
-		replay();
+    @Test
+    public void activate_false_passivate_false()
+    {
+        ClassTransformation ct = mockClassTransformation();
+        MutableComponentModel model = mockMutableComponentModel();
+        PageActivationContext annotation = newMock(PageActivationContext.class);
+        ComponentClassTransformWorker worker = new PageActivationContextWorker();
 
-		worker.transform(ct, model);
+        train_findFieldsWithAnnotation(ct, PageActivationContext.class,
+                                       "myfield");
+        train_getFieldAnnotation(ct, "myfield", PageActivationContext.class,
+                                 annotation);
+        train_getFieldType(ct, "myfield", CLASS_NAME);
+        expect(annotation.activate()).andReturn(false);
 
-		verify();
-	}
+        expect(annotation.passivate()).andReturn(false);
+
+        replay();
+
+        worker.transform(ct, model);
+
+        verify();
+    }
 
     @Test
     public void illegal_number_of_page_activation_context_handlers()
@@ -117,21 +121,22 @@ public class PageActivationContextWorkerTest extends TapestryTestCase {
         ComponentClassTransformWorker worker = new PageActivationContextWorker();
 
         train_findFieldsWithAnnotation(ct, PageActivationContext.class,
-                "myfield", "myfield2");
-        
+                                       "myfield", "myfield2");
+
         replay();
-        
+
         try
         {
             worker.transform(ct, model);
             fail("did not throw");
-        }catch(RuntimeException e)
+        }
+        catch (RuntimeException e)
         {
             e.printStackTrace();
         }
 
         verify();
     }
-	
-	
+
+
 }
