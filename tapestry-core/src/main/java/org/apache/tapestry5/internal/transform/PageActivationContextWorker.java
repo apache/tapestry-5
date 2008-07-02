@@ -14,14 +14,14 @@
 
 package org.apache.tapestry5.internal.transform;
 
-import java.lang.reflect.Modifier;
-import java.util.List;
-
 import org.apache.tapestry5.annotations.PageActivationContext;
 import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.services.ClassTransformation;
 import org.apache.tapestry5.services.ComponentClassTransformWorker;
 import org.apache.tapestry5.services.TransformMethodSignature;
+
+import java.lang.reflect.Modifier;
+import java.util.List;
 
 /**
  * Provides the page activation context handlers.
@@ -33,13 +33,14 @@ public class PageActivationContextWorker implements ComponentClassTransformWorke
     public void transform(ClassTransformation transformation, MutableComponentModel model)
     {
         List<String> fields = transformation.findFieldsWithAnnotation(PageActivationContext.class);
-        
-        if(fields.size()>1)
+
+        if (fields.size() > 1)
             throw new RuntimeException(TransformMessages.illegalNumberOfPageActivationContextHandlers(fields));
-        
+
         for (String fieldName : fields)
         {
-            PageActivationContext annotation = transformation.getFieldAnnotation(fieldName, PageActivationContext.class);
+            PageActivationContext annotation = transformation.getFieldAnnotation(fieldName,
+                                                                                 PageActivationContext.class);
 
             String fieldType = transformation.getFieldType(fieldName);
 
@@ -48,16 +49,17 @@ public class PageActivationContextWorker implements ComponentClassTransformWorke
                 TransformMethodSignature activate
                         = new TransformMethodSignature(Modifier.PROTECTED | Modifier.FINAL, "void",
                                                        "onActivate",
-                                                       new String[] { fieldType }, null);
+                                                       new String[]{fieldType}, null);
                 transformation.addTransformedMethod(activate, fieldName + " = $1;");
             }
 
             if (annotation.passivate())
             {
                 TransformMethodSignature passivate
-                        = new TransformMethodSignature(Modifier.PROTECTED | Modifier.FINAL, "java.lang.Object", "onPassivate",
-                        			null, null);
-                transformation.addTransformedMethod(passivate, "return "+fieldName + ";");
+                        = new TransformMethodSignature(Modifier.PROTECTED | Modifier.FINAL, "java.lang.Object",
+                                                       "onPassivate",
+                                                       null, null);
+                transformation.addTransformedMethod(passivate, "return ($w) " + fieldName + ";");
             }
         }
 
