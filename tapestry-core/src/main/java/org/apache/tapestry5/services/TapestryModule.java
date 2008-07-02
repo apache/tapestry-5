@@ -61,7 +61,7 @@ import java.util.regex.Pattern;
 /**
  * The root module for Tapestry.
  */
-@SuppressWarnings({ "JavaDoc" })
+@SuppressWarnings({"JavaDoc"})
 @Marker(Core.class)
 @SubModule(InternalModule.class)
 public final class TapestryModule
@@ -79,8 +79,6 @@ public final class TapestryModule
     private final PropertyAccess propertyAccess;
 
     private final ComponentInstantiatorSource componentInstantiatorSource;
-
-    private final UpdateListenerHub updateListenerHub;
 
     private final ChainBuilder chainBuilder;
 
@@ -121,8 +119,6 @@ public final class TapestryModule
 
                           PropertyAccess propertyAccess,
 
-                          UpdateListenerHub updateListenerHub,
-
                           Request request,
 
                           Response response,
@@ -142,7 +138,6 @@ public final class TapestryModule
         this.strategyBuilder = strategyBuilder;
         this.componentInstantiatorSource = componentInstantiatorSource;
         this.propertyAccess = propertyAccess;
-        this.updateListenerHub = updateListenerHub;
         this.request = request;
         this.response = response;
         this.threadLocale = threadLocale;
@@ -573,6 +568,8 @@ public final class TapestryModule
                                          @IntermediateType(TimeInterval.class)
                                          long updateTimeout,
 
+                                         UpdateListenerHub updateListenerHub,
+
                                          LocalizationSetter localizationSetter,
 
                                          ObjectLocator locator)
@@ -801,11 +798,12 @@ public final class TapestryModule
      */
     public ValidationMessagesSource buildValidationMessagesSource(Collection<String> configuration,
 
+                                                                  UpdateListenerHub updateListenerHub,
+
                                                                   @ClasspathProvider AssetFactory classpathAssetFactory)
     {
         ValidationMessagesSourceImpl service = new ValidationMessagesSourceImpl(configuration,
                                                                                 classpathAssetFactory.getRootResource());
-
         updateListenerHub.addUpdateListener(service);
 
         return service;
@@ -969,7 +967,7 @@ public final class TapestryModule
     /**
      * The component event result processor used for normal component requests.
      */
-    @Marker({ Primary.class, Traditional.class })
+    @Marker({Primary.class, Traditional.class})
     public ComponentEventResultProcessor buildComponentEventResultProcessor(
             Map<Class, ComponentEventResultProcessor> configuration)
     {
@@ -1032,21 +1030,6 @@ public final class TapestryModule
         return strategyBuilder.build(registry);
     }
 
-    public ComponentMessagesSource buildComponentMessagesSource(
-            @ContextProvider
-            AssetFactory contextAssetFactory,
-
-            @Inject
-            @Value("WEB-INF/${tapestry.app-name}.properties")
-            String appCatalog)
-    {
-        ComponentMessagesSourceImpl service = new ComponentMessagesSourceImpl(contextAssetFactory
-                .getRootResource(), appCatalog);
-
-        updateListenerHub.addUpdateListener(service);
-
-        return service;
-    }
 
     /**
      * Returns a {@link org.apache.tapestry5.ioc.services.ClassFactory} that can be used to create extra classes around
@@ -1702,7 +1685,8 @@ public final class TapestryModule
     /**
      * Contributes factory defaults that map be overridden.
      *
-     * @see TapestryModule#contributeClasspathAssetAliasManager(MappedConfiguration, String, String)
+     * @see TapestryModule#contributeClasspathAssetAliasManager(org.apache.tapestry5.ioc.MappedConfiguration, String,
+     *      String, String)
      */
     public static void contributeFactoryDefaults(MappedConfiguration<String, String> configuration)
     {
@@ -1760,6 +1744,8 @@ public final class TapestryModule
 
         configuration.add(MetaDataConstants.RESPONSE_CONTENT_TYPE, "text/html");
         configuration.add(MetaDataConstants.RESPONSE_ENCODING, "UTF-8");
+
+        configuration.add(SymbolConstants.APPLICATION_CATALOG, "WEB-INF/${tapestry.app-name}.properties");
     }
 
 
@@ -1767,7 +1753,7 @@ public final class TapestryModule
      * Adds content types for "css" and "js" file extensions. <dl> <dt>css</dt> <dd>test/css</dd> <dt>js</dt>
      * <dd>text/javascript</dd> </dl>
      */
-    @SuppressWarnings({ "JavaDoc" })
+    @SuppressWarnings({"JavaDoc"})
     public void contributeResourceStreamer(MappedConfiguration<String, String> configuration)
     {
         configuration.add("css", "text/css");
