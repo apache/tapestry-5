@@ -79,8 +79,9 @@ public class HibernateGridDataSource implements GridDataSource
         // We just assume that the property names in the SortContraint match the Hibernate
         // properties.
 
-        Criteria crit = session.createCriteria(entityType).setFirstResult(startIndex).setFetchSize(
-                endIndex - startIndex + 1);
+        Criteria crit = session.createCriteria(entityType);
+
+        crit.setFirstResult(startIndex).setMaxResults(endIndex - startIndex + 1);
 
         for (SortConstraint constraint : sortConstraints)
         {
@@ -103,10 +104,20 @@ public class HibernateGridDataSource implements GridDataSource
             }
         }
 
+        applyAdditionalConstraints(crit);
 
         this.startIndex = startIndex;
 
         preparedResults = crit.list();
+    }
+
+    /**
+     * Invoked after the main criteria has been set up (firstResult, maxResults and any sort contraints). This gives
+     * subclasses a chance to apply additional constraints before the list of results is obtained from the criteria.
+     * This implementation does nothing and may be overridden.
+     */
+    protected void applyAdditionalConstraints(Criteria crit)
+    {
     }
 
     /**
