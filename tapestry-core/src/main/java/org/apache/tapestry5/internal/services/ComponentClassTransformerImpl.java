@@ -57,10 +57,10 @@ public class ComponentClassTransformerImpl implements ComponentClassTransformer,
 
     private final ComponentClassCache componentClassCache;
 
-    private final String[] SUBPACKAGES = { "." + InternalConstants.PAGES_SUBPACKAGE + ".",
+    private final String[] SUBPACKAGES = {"." + InternalConstants.PAGES_SUBPACKAGE + ".",
             "." + InternalConstants.COMPONENTS_SUBPACKAGE + ".",
             "." + InternalConstants.MIXINS_SUBPACKAGE + ".",
-            "." + InternalConstants.BASE_SUBPACKAGE + "." };
+            "." + InternalConstants.BASE_SUBPACKAGE + "."};
 
     /**
      * @param workerChain         the ordered list of class transform works as a chain of command instance
@@ -109,6 +109,13 @@ public class ComponentClassTransformerImpl implements ComponentClassTransformer,
         {
             return;
         }
+
+        // Is it an inner class (does the class name contain a '$')?
+        // Inner classes are loaded by the same class loader as the component, but are
+        // not components and are not transformed.
+
+
+        if (ctClass.getName().contains("$")) return;
 
         // Force the creation of the parent class.
 

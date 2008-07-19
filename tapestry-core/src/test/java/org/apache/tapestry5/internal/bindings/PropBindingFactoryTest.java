@@ -399,13 +399,12 @@ public class PropBindingFactoryTest extends InternalBaseTestCase
             factory.newBinding("test binding", resources, null, propertyPath, l);
             unreachable();
         }
-        catch (TapestryException ex)
+        catch (RuntimeException ex)
         {
             assertEquals(
                     ex.getMessage(),
                     "Class org.apache.tapestry5.internal.bindings.StringHolder does not contain a property named \'missingProperty\' "
                             + "(within property expression \'stringHolder.missingProperty.terminalProperty\').  Available properties: value.");
-            assertSame(ex.getLocation(), l);
         }
 
         verify();
@@ -429,12 +428,11 @@ public class PropBindingFactoryTest extends InternalBaseTestCase
             factory.newBinding("test binding", resources, null, propertyPath, l);
             unreachable();
         }
-        catch (TapestryException ex)
+        catch (RuntimeException ex)
         {
             assertEquals(
                     ex.getMessage(),
                     "Property \'writeOnly\' of class org.apache.tapestry5.internal.bindings.TargetBean (within property expression \'writeOnly.terminalProperty\') is not readable (it has no read accessor method).");
-            assertSame(ex.getLocation(), l);
         }
 
         verify();
@@ -541,14 +539,13 @@ public class PropBindingFactoryTest extends InternalBaseTestCase
             factory.newBinding("test binding", resources, null, "missingProperty", l);
             unreachable();
         }
-        catch (TapestryException ex)
+        catch (RuntimeException ex)
         {
             assertEquals(
                     ex.getMessage(),
                     "Class org.apache.tapestry5.internal.bindings.TargetBean does not contain a property named \'missingProperty\' "
                             + "(within property expression \'missingProperty\').  "
                             + "Available properties: class, componentResources, intValue, objectValue, readOnly, stringHolder, writeOnly.");
-            assertSame(ex.getLocation(), l);
         }
 
         verify();
@@ -594,26 +591,26 @@ public class PropBindingFactoryTest extends InternalBaseTestCase
     {
         return new Object[][]
                 {
-                        { "true", true, },
-                        { "True", true, },
-                        { " true ", true, },
-                        { "false", false },
-                        { "null", null },
-                        { "3", 3l },
-                        { " 37 ", 37l },
-                        { " -227", -227l },
-                        { " 5.", 5d },
-                        { " -100.", -100d },
-                        { " -0.0 ", -0d },
-                        { "1..10", new IntegerRange(1, 10) },
-                        { " -20 .. -30 ", new IntegerRange(-20, -30) },
-                        { "0.", 0d },
-                        { " 227.75", 227.75d },
-                        { " -10123.67", -10123.67d },
-                        { "'Hello World'", "Hello World" },
-                        { " 'Whitespace Ignored' ", "Whitespace Ignored" },
-                        { " ' Inside ' ", " Inside " },
-                        { " 'Nested ' Quotes ' Inside'", "Nested ' Quotes ' Inside" },
-                        { "'''", "'" } };
+                        {"true", true,},
+                        {"True", true,},
+                        {" true ", true,},
+                        {"false", false},
+                        {"null", null},
+                        {"3", 3l},
+                        {" 37 ", 37l},
+                        {" -227", -227l},
+                        {" 5.", 5d},
+                        {" -100.", -100d},
+                        {" -0.0 ", -0d},
+                        {"1..10", new IntegerRange(1, 10)},
+                        {" -20 .. -30 ", new IntegerRange(-20, -30)},
+                        {"0.", 0d},
+                        {" 227.75", 227.75d},
+                        {" -10123.67", -10123.67d},
+                        {"'Hello World'", "Hello World"},
+                        {" 'Whitespace Ignored' ", "Whitespace Ignored"},
+                        {" ' Inside ' ", " Inside "},
+                        {" 'Nested ' Quotes ' Inside'", "Nested ' Quotes ' Inside"},
+                        {"'''", "'"}};
     }
 }

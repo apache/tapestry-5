@@ -125,8 +125,8 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
      * Signature for newInstance() method of Instantiator.
      */
     private static final MethodSignature NEW_INSTANCE_SIGNATURE = new MethodSignature(Component.class, "newInstance",
-                                                                                      new Class[] {
-                                                                                              InternalComponentResources.class },
+                                                                                      new Class[]{
+                                                                                              InternalComponentResources.class},
                                                                                       null);
 
     /**
@@ -1329,6 +1329,14 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
             CtMethod initializerMethod = defaultConstructor.toMethod(initializer, ctClass);
 
             ctClass.addMethod(initializerMethod);
+
+            // Replace the constructor body with one that fails.  This leaves, as an open question,
+            // what to do about any other constructors.
+
+            String body = String.format("throw new RuntimeException(\"%s\");",
+                                        ServicesMessages.forbidInstantiateComponentClass(getClassName()));
+
+            defaultConstructor.setBody(body);
         }
         catch (Exception ex)
         {
@@ -1576,7 +1584,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         String fieldType = getFieldType(fieldName);
 
         TransformMethodSignature sig = new TransformMethodSignature(Modifier.PRIVATE, "void", methodName,
-                                                                    new String[] { fieldType }, null);
+                                                                    new String[]{fieldType}, null);
 
         String message = ServicesMessages.readOnlyField(ctClass.getName(), fieldName);
 
