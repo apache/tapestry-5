@@ -23,7 +23,7 @@ import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.LocalizedNameGenerator;
 
-import java.io.InputStream;
+import java.io.*;
 import java.util.*;
 
 /**
@@ -31,6 +31,13 @@ import java.util.*;
  * them, in accordance with extension rules and locale. This represents code that was refactored out of {@link
  * ComponentMessagesSourceImpl}. This class can be used as a base class, though the existing code base uses it as a
  * utility. Composition trumps inheritance!
+ * <p/>
+ * The message catalog for a component is the combination of all appropriate properties files for the component, plus
+ * any keys inherited form base components and, ultimately, the application global message catalog. At some point we
+ * should add support for per-library message catalogs.
+ * <p/>
+ * Message catalogs are read using the utf-8 character set. This is tricky in JDK 1.5; we read the file into memory then
+ * feed that bytestream to Properties.load().
  */
 public class MessagesSourceImpl extends InvalidationEventHubImpl implements MessagesSource
 {
@@ -53,6 +60,16 @@ public class MessagesSourceImpl extends InvalidationEventHubImpl implements Mess
     private final Map<Resource, Map<String, String>> rawProperties = CollectionFactory.newConcurrentMap();
 
     private final Map<String, String> emptyMap = Collections.emptyMap();
+
+    /**
+     * Charset used when reading a properties file.
+     */
+    private static final String CHARSET = "UTF-8";
+
+    /**
+     * Buffer size used when reading a properties file.
+     */
+    private static final int BUFFER_SIZE = 2000;
 
     public MessagesSourceImpl(URLChangeTracker tracker)
     {
@@ -200,6 +217,10 @@ public class MessagesSourceImpl extends InvalidationEventHubImpl implements Mess
         {
             is = resource.openStream();
 
+            is = readStreamAsUTF8(is);
+
+            // Ok, now we have the content read into memory as UTF-8, not ASCII.
+
             p.load(is);
 
             is.close();
@@ -225,5 +246,28 @@ public class MessagesSourceImpl extends InvalidationEventHubImpl implements Mess
         }
 
         return result;
+    }
+
+    private InputStream readStreamAsUTF8(InputStream is) throws IOException
+    {
+        Reader reader = new InputStreamReader(is, CHARSET);
+
+        StringBuilder builder = new StringBuilder(BUFFER_SIZE);
+        char[] buffer = new char[BUFFER_SIZE];
+
+        while (true)
+        {
+            int length = reader.read(buffer);
+
+            if (length < 0) break;
+
+            builder.append(buffer, 0, length);
+        }
+
+        reader.close();
+
+        byte[] resourceContent = builder.toString().getBytes(CHARSET);
+
+        return new ByteArrayInputStream(resourceContent);
     }
 }
