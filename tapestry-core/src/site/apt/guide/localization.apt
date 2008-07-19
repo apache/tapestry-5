@@ -13,7 +13,8 @@ Localization
 Component Message Catalogs
 
   Each component class may have a component message catalog. A component message catalog is a set of files with the extension ".properties".
-  These property files are the same format used by java.util.ResourceBundle, just lines of <<<key=value>>>.  These files are packaged with the component's HTML template.
+  These property files are the same format used by java.util.ResourceBundle, just lines of <<<key=value>>>.
+  These files are stored on the classpath, in the same package folder as the page or component's compiled Java class.
   
   So for a class named org.example.myapp.pages.MyPage, you would have a main properties file as <<<org/example/myapp/pages/MyPage.properties>>>.
   
@@ -22,10 +23,16 @@ Component Message Catalogs
   you could create a file <<<MyPage_fr.properties>>>.
   
   Any values in the more language specific file will <override> values from the main properties file.  If you had an even more specific
-  localization for just French as spoken in France, you could create <<<MyPage_fr_FR.properties>>> (thats a language code plus a country code, you can even go further
+  localization for just French as spoken in France, you could create <<<MyPage_fr_FR.properties>>> (thats a language code plus a country code,
+  you can even go further
   and add variants ... but its unlikely that you'll ever need to go beyond just language codes in practice).
   
   The messages in the catalog are accessed by keys.  Tapestry ignores the case of the keys when accessing messages in the catalog.
+
+Properties File Charset
+
+  Tapestry uses the <<<UTF-8>>> charset when reading the properties files in a message catalog. This means that you don't have to use the Java
+  <<<native2ascii>>> tool.
   
 Message Catalog Inheritance
 
@@ -38,7 +45,8 @@ Message Catalog Inheritance
 Application Message Catalog
 
   If the file <<<WEB-INF/>>><AppName><<<.properties>>> exists in the context, it will be used as an application-wide message catalog.  The <AppName>
-  is derived from the name of the filter inside the web.xml file.  The search for the file is case sensitive. The properties file may be localized.
+  is derived from the name of the filter inside the web.xml file; this is most often just "app", thus <<<WEB-INF/app.properties>>>.
+  The search for the file is case sensitive. The properties file may be localized.
   
   Individual pages and components
   can override the values defined in this message catalog.
