@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@ import org.apache.tapestry5.Binding;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.PropertyConduit;
 import org.apache.tapestry5.ioc.Location;
-import org.apache.tapestry5.ioc.internal.util.TapestryException;
 import org.apache.tapestry5.services.BindingFactory;
 import org.apache.tapestry5.services.PropertyConduitSource;
 
@@ -43,18 +42,11 @@ public class PropBindingFactory implements BindingFactory
         Object target = container.getComponent();
         Class targetClass = target.getClass();
 
-        try
-        {
-            PropertyConduit conduit = source.create(targetClass, expression);
+        PropertyConduit conduit = source.create(targetClass, expression);
 
-            String toString = String.format("PropBinding[%s %s(%s)]", description, container
-                    .getCompleteId(), expression);
+        String toString = String.format("PropBinding[%s %s(%s)]", description, container
+                .getCompleteId(), expression);
 
-            return new PropBinding(target, conduit, toString, location);
-        }
-        catch (Throwable ex)
-        {
-            throw new TapestryException(ex.getMessage(), location, ex);
-        }
+        return new PropBinding(target, conduit, toString, location);
     }
 }

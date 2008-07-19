@@ -226,8 +226,11 @@ public class Form implements ClientElement, FormValidationControl
 
         // Save the form element for later, in case we want to write an encoding type attribute.
 
-        form = writer
-                .element("form", "name", name, "id", name, "method", "post", "action", link);
+        form = writer.element("form",
+                              "name", name,
+                              "id", name,
+                              "method", "post",
+                              "action", link);
 
         componentInvocationMap.store(form, link);
 
@@ -239,7 +242,10 @@ public class Form implements ClientElement, FormValidationControl
         {
             String value = link.getParameterValue(parameterName);
 
-            writer.element("input", "type", "hidden", "name", parameterName, "value", value);
+            writer.element("input",
+                           "type", "hidden",
+                           "name", parameterName,
+                           "value", value);
             writer.end();
         }
 
@@ -262,11 +268,8 @@ public class Form implements ClientElement, FormValidationControl
         writer.end(); // form
 
         div.element("input",
-
                     "type", "hidden",
-
                     "name", FORM_DATA,
-
                     "value", actionSink.toBase64());
     }
 
@@ -281,7 +284,7 @@ public class Form implements ClientElement, FormValidationControl
         tracker = environment.pop(ValidationTracker.class);
     }
 
-    @SuppressWarnings({ "unchecked", "InfiniteLoopStatement" })
+    @SuppressWarnings({"unchecked", "InfiniteLoopStatement"})
     @Log
     Object onAction(EventContext context) throws IOException
     {
@@ -300,7 +303,6 @@ public class Form implements ClientElement, FormValidationControl
 
         try
         {
-
             ComponentResultProcessorWrapper callback = new ComponentResultProcessorWrapper(
                     componentEventResultProcessor);
 

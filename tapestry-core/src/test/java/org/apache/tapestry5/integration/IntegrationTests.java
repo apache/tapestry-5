@@ -31,7 +31,7 @@ import java.net.URL;
  * Note: If these tests fail with BindException when starting Jetty, it could be Skype. At least on my system, Skype is
  * listening on localhost:80.
  */
-@Test(timeOut = 50000, sequential = true, groups = { "integration" })
+@Test(timeOut = 50000, sequential = true, groups = {"integration"})
 public class IntegrationTests extends AbstractIntegrationTestSuite
 {
     public IntegrationTests()
@@ -197,7 +197,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     {
         start("InstanceMixin");
 
-        final String[] dates = { "Jun 13, 1999", "Jul 15, 2001", "Dec 4, 2005" };
+        final String[] dates = {"Jun 13, 1999", "Jul 15, 2001", "Dec 4, 2005"};
 
         for (String date : dates)
         {
@@ -1339,7 +1339,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     {
         start("Disabled Fields");
 
-        String[] paths = new String[] { "//input[@id='textfield']",
+        String[] paths = new String[]{"//input[@id='textfield']",
 
                 "//input[@id='passwordfield']",
 
@@ -1363,7 +1363,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
                 "//select[@id='palette']",
 
-                "//input[@id='submit']" };
+                "//input[@id='submit']"};
 
         for (String path : paths)
         {
@@ -2092,4 +2092,13 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
                 "Parameter 'object' of component NullParameterDemo:beandisplay is bound to null.");
     }
 
+
+    @Test
+    public void component_classes_may_not_be_directly_instantiated()
+    {
+        start("Instantiate Page");
+
+        assertTextPresent(
+                "Component class org.apache.tapestry5.integration.app1.pages.Music may not be instantiated directly.");
+    }
 }

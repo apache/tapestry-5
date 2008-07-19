@@ -304,4 +304,10 @@ public class Start
     {
         return Arrays.asList(1, 2, 3);
     }
+
+    /* This will fail, because component classes are not instantiable. */
+    public Object onActionFromInstantiatePage()
+    {
+        return new Music();
+    }
 }
