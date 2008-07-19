@@ -52,11 +52,6 @@
             <item name="Download" href="http://tapestry.apache.org/download.html"/>
         </menu>
 
-        <menu name="Upgrade Notes">
-            <item name="From Tapestry 5" href="upgrade.html"/>
-            <item name="From Tapestry 4" href="upgrade4.html"/>
-        </menu>
-
         <menu name="User Guide">
             <item name="Project Layout" href="guide/project-layout.html"/>
             <item name="Component Classes" href="guide/component-classes.html"/>
