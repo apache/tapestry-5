@@ -46,6 +46,11 @@
             <item name="FAQ" href="faq/general.html"/>
         </menu>
 
+        <menu name="Upgrade Notes">
+            <item name="From Tapestry 5" href="upgrade.html"/>
+            <item name="From Tapestry 4" href="upgrade4.html"/>
+        </menu>
+
         <menu name="Tapestry 5 Modules">
             <item name="tapestry-annotations" href="tapestry-annotations/"/>
             <item name="tapestry-core" href="tapestry-core/"/>
@@ -58,6 +63,12 @@
 
         <menu name="Tapestry Tutorials">
             <item name="Tutorial #1" href="tutorial1/"/>
+        </menu>
+
+        <menu name="Tapestry Cookbook">
+            <item name="Introduction" href="cookbook/"/>
+            <item name="Supporting Informal Parameters" href="cookbook/informals.html"/>
+            <item name="Default Parameter" href="cookbook/defaultparameter.html"/>
         </menu>
 
         <menu name="Tapestry 5 Maven Support">
