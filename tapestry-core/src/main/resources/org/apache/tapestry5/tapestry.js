@@ -390,11 +390,19 @@ Tapestry.Initializer = {
     {
         element = $(element);
 
+        // Update the element with the id of zone div. This may be changed dynamically on the client
+        // side.
+
+        element.zone = zoneDiv;
+
         var successHandler = function(transport)
         {
             var reply = transport.responseJSON;
 
-            $(zoneDiv).zone.show(reply.content);
+            // Find the zone id for the element, and from there, the Tapestry.Zone object
+            // responsible for the zone.
+
+            $(element.zone).zone.show(reply.content);
 
             Tapestry.processScriptInReply(reply);
         };
@@ -634,6 +642,9 @@ Tapestry.FormEvent.prototype = {
 
 Tapestry.ErrorPopup.prototype = {
 
+    // If the images associated with the error popup are overridden (by overriding Tapestry's default.css stylesheet),
+    // then some of these values may also need to be adjusted.
+
     BUBBLE_VERT_OFFSET : -34,
 
     BUBBLE_HORIZONTAL_OFFSET : -20,
@@ -657,6 +668,8 @@ Tapestry.ErrorPopup.prototype = {
 
         this.outerDiv.observe("click", function(event)
         {
+            this.ignoreNextFocus = true;
+
             this.stopAnimation();
 
             this.outerDiv.hide();
@@ -672,6 +685,12 @@ Tapestry.ErrorPopup.prototype = {
 
         document.observe(Tapestry.FOCUS_CHANGE_EVENT, function(event)
         {
+            if (this.ignoreNextFocus)
+            {
+                this.ignoreNextFocus = false;
+                return;
+            }
+
             // Tapestry.debug("Focus change: #{memo} for #{field}", { memo: event.memo.id, field: this.field.id });
 
             var focused = event.memo;
