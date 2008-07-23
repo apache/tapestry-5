@@ -15,6 +15,7 @@
 package org.apache.tapestry5.ioc.test;
 
 import org.easymock.EasyMock;
+import org.easymock.IAnswer;
 import org.easymock.IExpectationSetters;
 import org.easymock.IMocksControl;
 import org.testng.Assert;
@@ -114,6 +115,16 @@ public class TestBase extends Assert
     protected final void setThrowable(Throwable throwable)
     {
         EasyMock.expectLastCall().andThrow(throwable);
+    }
+
+    /**
+     * Convienience for {@link EasyMock#expectLastCall()} with {@link IExpectationSetters#andAnswer(org.easymock.IAnswer)}.
+     *
+     * @param answer callback for the most recent method invocation
+     */
+    protected final void setAnswer(IAnswer answer)
+    {
+        EasyMock.expectLastCall().andAnswer(answer);
     }
 
     /**

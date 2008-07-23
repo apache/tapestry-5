@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -63,7 +63,7 @@ public class ClientPersistentFieldStorageImplTest extends TapestryTestCase
         // Use an IAnswer to capture the value.
 
         link.addParameter(eq(ClientPersistentFieldStorageImpl.PARAMETER_NAME), isA(String.class));
-        getMocksControl().andAnswer(new IAnswer<Void>()
+        setAnswer(new IAnswer<Void>()
         {
             public Void answer() throws Throwable
             {

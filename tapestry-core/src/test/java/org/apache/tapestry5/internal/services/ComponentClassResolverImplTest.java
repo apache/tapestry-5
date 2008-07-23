@@ -54,7 +54,7 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
 
         logger.info(EasyMock.isA(String.class));
 
-        getMocksControl().atLeastOnce();
+        EasyMock.expectLastCall().atLeastOnce();
 
         return logger;
     }

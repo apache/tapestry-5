@@ -801,7 +801,7 @@ public abstract class TapestryTestCase extends IOCTestCase
             }
         };
 
-        getMocksControl().andAnswer(answer);
+        setAnswer(answer);
     }
 
     protected final void train_requiresDigest(ResourceDigestGenerator generator, String path, boolean requiresDigest)

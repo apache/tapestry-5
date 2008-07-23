@@ -74,8 +74,7 @@ public class RegistryStartupTest extends IOCTestCase
         getMocksControl().checkOrder(true);
 
         r1.run();
-
-        getMocksControl().andThrow(t);
+        setThrowable(t);
 
         logger.error(ServiceMessages.startupFailure(t));
 
