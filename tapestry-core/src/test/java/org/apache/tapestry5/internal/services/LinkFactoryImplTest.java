@@ -207,7 +207,7 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
         IAnswer<Void> createdPageLinkAnswer = newAnswerForCreatedLink(holder);
 
         listener.createdPageLink(isA(Link.class));
-        getMocksControl().andAnswer(createdPageLinkAnswer);
+        setAnswer(createdPageLinkAnswer);
 
         train_getBaseURL(securityManager, page, null);
 
@@ -255,7 +255,7 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
         IAnswer<Void> createdPageLinkAnswer = newAnswerForCreatedLink(holder);
 
         listener.createdPageLink(isA(Link.class));
-        getMocksControl().andAnswer(createdPageLinkAnswer);
+        setAnswer(createdPageLinkAnswer);
 
         train_getBaseURL(securityManager, page, null);
 
@@ -451,7 +451,7 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
                                         isA(ComponentEventCallback.class))).andAnswer(triggerEventAnswer);
 
         listener.createdPageLink(isA(Link.class));
-        getMocksControl().andAnswer(createdPageLinkAnswer);
+        setAnswer(createdPageLinkAnswer);
     }
 
     @SuppressWarnings("unchecked")
@@ -469,7 +469,7 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
                                         isA(ComponentEventCallback.class))).andAnswer(triggerEventAnswer);
 
         listener.createdActionLink(isA(Link.class));
-        getMocksControl().andAnswer(createdPageLinkAnswer);
+        setAnswer(createdPageLinkAnswer);
     }
 
     private IAnswer<Void> newAnswerForCreatedLink(final Holder<Link> holder)
@@ -497,7 +497,7 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
                 ComponentEventCallback handler = (ComponentEventCallback) EasyMock
                         .getCurrentArguments()[2];
 
-                handler.handleResult(new Object[] { "foo", "bar" });
+                handler.handleResult(new Object[]{"foo", "bar"});
 
                 return true;
             }

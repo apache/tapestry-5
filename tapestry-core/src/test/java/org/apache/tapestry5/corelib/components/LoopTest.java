@@ -16,6 +16,7 @@ package org.apache.tapestry5.corelib.components;
 
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.services.Heartbeat;
+import org.easymock.EasyMock;
 import org.testng.annotations.Test;
 
 import java.util.Arrays;
@@ -32,10 +33,10 @@ public class LoopTest extends InternalBaseTestCase
         // be "proven" by integration tests.
 
         hb.begin();
-        getMocksControl().times(3);
+        EasyMock.expectLastCall().times(3);
 
         hb.end();
-        getMocksControl().times(3);
+        EasyMock.expectLastCall().times(3);
 
         replay();
 

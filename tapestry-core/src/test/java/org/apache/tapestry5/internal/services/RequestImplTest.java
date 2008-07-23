@@ -87,7 +87,7 @@ public class RequestImplTest extends InternalBaseTestCase
         UnsupportedEncodingException exception = new UnsupportedEncodingException("Oops.");
 
         sr.setCharacterEncoding(encoding);
-        getMocksControl().andThrow(exception);
+        setThrowable(exception);
 
         replay();
 
@@ -123,8 +123,8 @@ public class RequestImplTest extends InternalBaseTestCase
     @DataProvider(name = "xhr_inputs")
     public Object[][] xhr_inputs()
     {
-        return new Object[][] { { null, false }, { "", false }, { "some other value", false },
-                { "XMLHttpRequest", true } };
+        return new Object[][]{{null, false}, {"", false}, {"some other value", false},
+                {"XMLHttpRequest", true}};
     }
 
     @Test
