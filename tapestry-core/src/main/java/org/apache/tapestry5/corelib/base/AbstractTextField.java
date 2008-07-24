@@ -58,7 +58,7 @@ public abstract class AbstractTextField extends AbstractField
      * The object which will perform translation between server-side and client-side representations. If not specified,
      * a value will usually be generated based on the type of the value parameter.
      */
-    @Parameter(required = true, allowNull = false)
+    @Parameter(required = true, allowNull = false, defaultPrefix = BindingConstants.TRANSLATE)
     private Translator<Object> translate;
 
     /**
@@ -154,7 +154,7 @@ public abstract class AbstractTextField extends AbstractField
         return createDefaultParameterBinding("value");
     }
 
-    @SuppressWarnings({ "unchecked" })
+    @SuppressWarnings({"unchecked"})
     @BeginRender
     final void begin(MarkupWriter writer)
     {
@@ -194,7 +194,7 @@ public abstract class AbstractTextField extends AbstractField
      */
     protected abstract void writeFieldTag(MarkupWriter writer, String value);
 
-    @SuppressWarnings({ "unchecked" })
+    @SuppressWarnings({"unchecked"})
     @Override
     protected final void processSubmission(String elementName)
     {
