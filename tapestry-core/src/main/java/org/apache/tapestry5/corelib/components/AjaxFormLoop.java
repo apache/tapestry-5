@@ -29,6 +29,7 @@ import org.apache.tapestry5.services.*;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * A special form of the {@link org.apache.tapestry5.corelib.components.Loop} component that adds a lot of Ajax support
@@ -56,6 +57,16 @@ public class AjaxFormLoop
      */
     @Parameter(required = true)
     private Object value;
+
+
+    /**
+     * The context for the form loop (optional parameter). This list of values will be converted into strings and
+     * included in the URI. The strings will be coerced back to whatever their values are and made available to event
+     * handler methods.
+     */
+    @Parameter
+    private List<?> context;
+
 
     /**
      * A block to render after the loop as the body of the {@link org.apache.tapestry5.corelib.components.FormInjector}.
@@ -120,7 +131,7 @@ public class AjaxFormLoop
 
     private boolean renderingInjector;
 
-    private final AjaxFormLoopContext context = new AjaxFormLoopContext()
+    private final AjaxFormLoopContext formLoopContext = new AjaxFormLoopContext()
     {
         public void addAddRowTrigger(String clientId)
         {
@@ -256,7 +267,7 @@ public class AjaxFormLoop
         }
     };
 
-    @SuppressWarnings({ "unchecked" })
+    @SuppressWarnings({"unchecked"})
     @Log
     private void syncValue(Serializable id)
     {
@@ -291,7 +302,7 @@ public class AjaxFormLoop
     /**
      * Uses the {@link org.apache.tapestry5.PrimaryKeyEncoder} to convert the current row value to an id.
      */
-    @SuppressWarnings({ "unchecked" })
+    @SuppressWarnings({"unchecked"})
     private Serializable idForCurrentValue()
     {
         return encoder.toKey(value);
@@ -313,7 +324,7 @@ public class AjaxFormLoop
 
     private void pushContext()
     {
-        environment.push(AjaxFormLoopContext.class, context);
+        environment.push(AjaxFormLoopContext.class, formLoopContext);
     }
 
     boolean beginRender(MarkupWriter writer)
@@ -363,7 +374,7 @@ public class AjaxFormLoop
      * a new row, and to return that new entity for rendering.
      */
     @Log
-    Object onActionFromRowInjector()
+    Object onActionFromRowInjector(EventContext context)
     {
         ComponentEventCallback callback = new ComponentEventCallback()
         {
@@ -375,7 +386,7 @@ public class AjaxFormLoop
             }
         };
 
-        resources.triggerEvent("addRow", null, callback);
+        resources.triggerContextEvent("addRow", context, callback);
 
         if (value == null)
             throw new IllegalArgumentException(
@@ -410,7 +421,7 @@ public class AjaxFormLoop
 
         Object value = encoder.toValue(coerced);
 
-        resources.triggerEvent("removeRow", new Object[] { value }, null);
+        resources.triggerEvent("removeRow", new Object[]{value}, null);
 
         return new JSONObject();
     }
