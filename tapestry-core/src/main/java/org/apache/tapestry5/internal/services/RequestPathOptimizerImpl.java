@@ -58,11 +58,16 @@ public class RequestPathOptimizerImpl implements RequestPathOptimizer
 
         String[] requestTerms = SLASH_PATTERN.split(requestURI);
 
+        int questionx = absolutePath.indexOf('?');
+
+        String path = questionx < 0 ? absolutePath : absolutePath.substring(0, questionx);
+        String suffix = questionx < 0 ? "" : absolutePath.substring(questionx);
+
         // Degenerate case when getting the root application
 
         if (requestPath.endsWith("/") || requestPath.equals("")) requestTerms = add(requestTerms, "");
 
-        String[] pathTerms = SLASH_PATTERN.split(absolutePath);
+        String[] pathTerms = SLASH_PATTERN.split(path);
 
         builder.setLength(0);
 
@@ -112,7 +117,13 @@ public class RequestPathOptimizerImpl implements RequestPathOptimizer
             if (slashx < 0 || slashx > firstColon) builder.insert(0, "./");
         }
 
-        if (builder.length() < absolutePath.length()) return builder.toString();
+        if (builder.length() < path.length())
+        {
+            // Restore the query parameter portion of the URL path
+            builder.append(suffix);
+
+            return builder.toString();
+        }
 
         // The absolute path is actually shorter than the relative path, so just return the absolute
         // path.
