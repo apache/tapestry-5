@@ -16,6 +16,8 @@ package org.apache.tapestry5.internal.renderers;
 
 import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.internal.InternalConstants;
+import org.apache.tapestry5.ioc.annotations.Primary;
+import org.apache.tapestry5.services.Context;
 import org.apache.tapestry5.services.ObjectRenderer;
 import org.apache.tapestry5.services.Request;
 
@@ -23,6 +25,16 @@ import java.util.List;
 
 public class RequestRenderer implements ObjectRenderer<Request>
 {
+    private final Context context;
+
+    private final ObjectRenderer masterObjectRenderer;
+
+    public RequestRenderer(@Primary ObjectRenderer masterObjectRenderer, Context context)
+    {
+        this.masterObjectRenderer = masterObjectRenderer;
+        this.context = context;
+    }
+
     public void render(Request request, MarkupWriter writer)
     {
         writer.element("dl");
@@ -61,6 +73,31 @@ public class RequestRenderer implements ObjectRenderer<Request>
 
         parameters(request, writer);
         headers(request, writer);
+        context(request, writer);
+    }
+
+    private void context(Request request, MarkupWriter writer)
+    {
+        List<String> attributeNames = context.getAttributeNames();
+
+        if (attributeNames.isEmpty()) return;
+
+        section(writer, "Context Attributes");
+
+        writer.element("dl");
+
+        for (String name : attributeNames)
+        {
+            dt(writer, name);
+
+            writer.element("dd");
+
+            masterObjectRenderer.render(context.getAttribute(name), writer);
+
+            writer.end(); // dd
+        }
+
+        writer.end(); // dl
     }
 
     private void parameters(Request request, MarkupWriter writer)
