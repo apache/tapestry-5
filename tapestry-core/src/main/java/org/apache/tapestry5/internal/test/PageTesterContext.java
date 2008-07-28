@@ -20,6 +20,7 @@ import org.apache.tapestry5.test.TapestryTestConstants;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Collections;
 import java.util.List;
 
 public class PageTesterContext implements Context
@@ -62,6 +63,11 @@ public class PageTesterContext implements Context
     public Object getAttribute(String name)
     {
         throw new UnsupportedOperationException("getAttribute() is not supported for ContextForPageTester.");
+    }
+
+    public List<String> getAttributeNames()
+    {
+        return Collections.emptyList();
     }
 
     /**

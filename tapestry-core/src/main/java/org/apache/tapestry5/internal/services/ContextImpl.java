@@ -15,6 +15,7 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.util.Stack;
 import org.apache.tapestry5.services.Context;
 
@@ -96,6 +97,11 @@ public class ContextImpl implements Context
     public Object getAttribute(String name)
     {
         return servletContext.getAttribute(name);
+    }
+
+    public List<String> getAttributeNames()
+    {
+        return InternalUtils.toList(servletContext.getAttributeNames());
     }
 
 }

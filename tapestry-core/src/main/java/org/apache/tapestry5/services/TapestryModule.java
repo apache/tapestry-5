@@ -1326,7 +1326,7 @@ public final class TapestryModule
             }
         });
 
-        configuration.add(Request.class, new RequestRenderer());
+        configuration.add(Request.class, locator.autobuild(RequestRenderer.class));
 
         configuration.add(Location.class, locationRenderer);
 

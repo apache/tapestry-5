@@ -21,12 +21,7 @@ import org.apache.tapestry5.ioc.def.ModuleDef;
 import org.apache.tapestry5.ioc.def.ServiceDef;
 import org.apache.tapestry5.ioc.internal.services.PerthreadManagerImpl;
 import org.apache.tapestry5.ioc.internal.services.RegistryShutdownHubImpl;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.*;
-import static org.apache.tapestry5.ioc.internal.util.Defense.notNull;
-import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.ioc.internal.util.OneShotLock;
-import org.apache.tapestry5.ioc.internal.util.Orderer;
+import org.apache.tapestry5.ioc.internal.util.*;
 import org.apache.tapestry5.ioc.services.*;
 import org.slf4j.Logger;
 
@@ -66,9 +61,9 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
     private final OneShotLock eagerLoadLock = new OneShotLock();
 
-    private final Map<String, Object> builtinServices = newCaseInsensitiveMap();
+    private final Map<String, Object> builtinServices = CollectionFactory.newCaseInsensitiveMap();
 
-    private final Map<String, Class> builtinTypes = newCaseInsensitiveMap();
+    private final Map<String, Class> builtinTypes = CollectionFactory.newCaseInsensitiveMap();
 
     private final RegistryShutdownHubImpl registryShutdownHub;
 
@@ -77,9 +72,9 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
     /**
      * Map from service id to the Module that contains the service.
      */
-    private final Map<String, Module> serviceIdToModule = newCaseInsensitiveMap();
+    private final Map<String, Module> serviceIdToModule = CollectionFactory.newCaseInsensitiveMap();
 
-    private final Map<String, ServiceLifecycle> lifecycles = newCaseInsensitiveMap();
+    private final Map<String, ServiceLifecycle> lifecycles = CollectionFactory.newCaseInsensitiveMap();
 
     private final PerthreadManager perthreadManager;
 
@@ -89,12 +84,12 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
     private SymbolSource symbolSource;
 
-    private final List<Module> modules = newList();
+    private final List<Module> modules = CollectionFactory.newList();
 
     /**
      * From marker type to a list of marked service instances.
      */
-    private final Map<Class, List<ServiceDef>> markerToServiceDef = newMap();
+    private final Map<Class, List<ServiceDef>> markerToServiceDef = CollectionFactory.newMap();
 
 
     public static final class OrderedConfigurationToOrdererAdaptor<T> implements OrderedConfiguration<T>
@@ -337,7 +332,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
     {
         lock.check();
 
-        final Collection<T> result = newList();
+        final Collection<T> result = CollectionFactory.newList();
 
         Configuration<T> configuration = new Configuration<T>()
         {
@@ -421,12 +416,12 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
     {
         if (keyType.equals(String.class))
         {
-            Map<String, K> result = newCaseInsensitiveMap();
+            Map<String, K> result = CollectionFactory.newCaseInsensitiveMap();
 
             return (Map<K, V>) result;
         }
 
-        return newMap();
+        return CollectionFactory.newMap();
     }
 
     private <K, V> void addToMappedConfiguration(MappedConfiguration<K, V> configuration,
@@ -538,7 +533,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
     private List<String> findServiceIdsForInterface(Class serviceInterface)
     {
-        List<String> result = newList();
+        List<String> result = CollectionFactory.newList();
 
         for (Module module : modules)
             result.addAll(module.findServiceIdsForInterface(serviceInterface));
@@ -636,7 +631,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         {
             if (provider.getAnnotation(marker) == null) continue;
 
-            List<ServiceDef> matches = newList();
+            List<ServiceDef> matches = CollectionFactory.newList();
 
             for (ServiceDef def : markerToServiceDef.get(marker))
             {
@@ -711,7 +706,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
     public <T> T autobuild(Class<T> clazz)
     {
-        notNull(clazz, "clazz");
+        Defense.notNull(clazz, "clazz");
 
         Constructor constructor = InternalUtils.findAutobuildConstructor(clazz);
 
@@ -747,8 +742,8 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
     public <T> T proxy(Class<T> interfaceClass, final Class<? extends T> implementationClass)
     {
-        notNull(interfaceClass, "interfaceClass");
-        notNull(implementationClass, "implementationClass");
+        Defense.notNull(interfaceClass, "interfaceClass");
+        Defense.notNull(implementationClass, "implementationClass");
 
         // TODO: Check really an interface
         // TODO: Check impl class extends interfaceClass and is concrete

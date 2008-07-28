@@ -64,4 +64,9 @@ public interface Context
      * @return the attribute, or null if not found
      */
     Object getAttribute(String name);
+
+    /**
+     * Returns the names of all attributes of the context, sorted alphabetically.
+     */
+    List<String> getAttributeNames();
 }

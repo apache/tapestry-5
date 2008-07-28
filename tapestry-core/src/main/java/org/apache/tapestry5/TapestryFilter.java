@@ -56,6 +56,13 @@ public class TapestryFilter implements Filter
     private HttpServletRequestHandler handler;
 
     /**
+     * Key under which that Tapestry IoC {@link org.apache.tapestry5.ioc.Registry} is stored in the ServletContext. This
+     * allows other code, beyond Tapestry, to obtain the Registry and, from it, any Tapestry services. Such code should
+     * be careful about invoking {@link org.apache.tapestry5.ioc.Registry#cleanupThread()} appopriately.
+     */
+    public static final String REGISTRY_CONTEXT_NAME = "org.apache.tapestry5.application-registry";
+
+    /**
      * Initializes the filter using the {@link TapestryAppInitializer}. The application name is the capitalization of
      * the filter name (as specified in web.xml).
      */
@@ -74,6 +81,8 @@ public class TapestryFilter implements Filter
         appInitializer.addModules(provideExtraModuleDefs(context));
 
         registry = appInitializer.getRegistry();
+
+        context.setAttribute(REGISTRY_CONTEXT_NAME, registry);
 
         long start = appInitializer.getStartTime();
 
@@ -176,13 +185,16 @@ public class TapestryFilter implements Filter
     }
 
     /**
-     * Shuts down and discards the registry.
+     * Shuts down and discards the registry.  Invokes {@link #destroy(org.apache.tapestry5.ioc.Registry)} to allow
+     * subclasses to peform any shutdown logic, then shuts down the registry, and removes it from the ServletContext.
      */
     public final void destroy()
     {
         destroy(registry);
 
         registry.shutdown();
+
+        config.getServletContext().removeAttribute(REGISTRY_CONTEXT_NAME);
 
         registry = null;
         config = null;
