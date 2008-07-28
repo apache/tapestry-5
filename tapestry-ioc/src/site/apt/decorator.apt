@@ -232,13 +232,13 @@ Creating your own Decorators
   In the normal success case, you can ask for the return value and even override it before
   returning from the advise() method.
 
-  In other words, you have total control.  Your MethodAdvise can query or change parameters, decide whether
+  In other words, you have total control.  Your MethodAdvice can query or change parameters, decide whether
   it proceed into the original code, it can intercept exceptions that are thrown and replace them, and can
   query or even replace the return value.
 
   The
   {{{../apidocs/org/apache/tapestry5/ioc/services/AspectDecorator.html}AspectDecorator}} service
-  is how you put your MethodAdvise into action.
+  is how you put your MethodAdvice into action.
 
   By way of an example, we'll show an implementation of the LoggingDecorator service:
 

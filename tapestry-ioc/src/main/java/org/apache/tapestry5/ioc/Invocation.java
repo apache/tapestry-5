@@ -15,7 +15,7 @@
 package org.apache.tapestry5.ioc;
 
 /**
- * A method invocation passed to an {@link org.apache.tapestry5.ioc.MethodAdvice}.
+ * A method invocation passed to a {@link org.apache.tapestry5.ioc.MethodAdvice}.
  */
 public interface Invocation
 {
@@ -54,7 +54,8 @@ public interface Invocation
     void override(int index, Object newParameter);
 
     /**
-     * Processed with the invocation.  If the invocation results in a <em>runtime</em> exception, that is thrown.
+     * Proceed with the invocation of the advised method.  If the invocation results in a <em>runtime</em> exception,
+     * that is thrown. A checked exception is detected by invoking {@link #isFail()}.
      */
     void proceed();
 
@@ -69,7 +70,7 @@ public interface Invocation
      *
      * @param throwableClass the type of exception to match
      * @return the exception, if the proceeded invocation threw a checked exception, and the exception is assignable to
-     *         the provided type.
+     *         the provided type.  In other cases, null is returned.
      */
     <T extends Throwable> T getThrown(Class<T> throwableClass);
 

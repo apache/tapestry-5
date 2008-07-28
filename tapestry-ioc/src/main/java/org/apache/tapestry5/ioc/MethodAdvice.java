@@ -17,7 +17,7 @@ package org.apache.tapestry5.ioc;
 /**
  * For Tapestry IoC, Aspects provide a limited amount of advise, i.e., advising method invocations. That's the only join
  * point available (method invocations of service interface methods); full AOP systems such as AspectJ can do much, much
- * such as advising field access and even object construction.
+ * more, such as advising field access and even object construction.
  *
  * @see org.apache.tapestry5.ioc.services.AspectDecorator
  */
