@@ -5,7 +5,8 @@
     <t:form>
 
         <ul>
-            <li t:id="loop" t:type="AjaxFormLoop" source="doubleItems" value="item" encoder="encoder">
+            <li t:id="loop" t:type="AjaxFormLoop" source="doubleItems" value="item" encoder="encoder"
+                context="demoContextValue">
                 <t:submitnotifier>
                     <t:textfield t:id="value" value="item.value"/>
                     <t:removerowlink>remove</t:removerowlink>

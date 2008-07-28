@@ -20,6 +20,7 @@ import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.integration.app1.data.DoubleItem;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.testng.Assert;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -29,6 +30,8 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public class FormInjectorDemo
 {
+    private static final long DEMO_CONTEXT_VALUE = System.currentTimeMillis();
+
     @Property
     private DoubleItem item;
 
@@ -68,6 +71,11 @@ public class FormInjectorDemo
         };
     }
 
+    public long getDemoContextValue()
+    {
+        return DEMO_CONTEXT_VALUE;
+    }
+
     @Log
     public List<DoubleItem> getDoubleItems()
     {
@@ -78,8 +86,11 @@ public class FormInjectorDemo
         return items;
     }
 
-    Object onAddRow()
+    Object onAddRow(long context)
     {
+        Assert.assertEquals(context, DEMO_CONTEXT_VALUE,
+                            "Context value provided to AjaxFormLoop must be provided to the event handler method.");
+
         DoubleItem item = new DoubleItem();
         item.setId(ID_ALLOCATOR.incrementAndGet());
 
