@@ -82,8 +82,6 @@ public class MultipartDecoderImplTest extends TapestryTestCase
     {
         HttpServletRequest request = mockHttpServletRequest();
 
-        train_getCharacterEncoding(request, "UTF-8");
-
         MultipartDecoderImpl decoder = new MultipartDecoderImpl("/tmp", 888, -1, -1, CHARSET);
         List<FileItem> fileItems = Arrays.asList(createValueItem("one", "first"), createValueItem("two", "second"));
 
@@ -103,8 +101,6 @@ public class MultipartDecoderImplTest extends TapestryTestCase
     public void non_file_items_with_null_request_encoding() throws Exception
     {
         HttpServletRequest request = mockHttpServletRequest();
-
-        train_getCharacterEncoding(request, null);
 
         MultipartDecoderImpl decoder = new MultipartDecoderImpl("/tmp", 888, -1, -1, CHARSET);
 
@@ -130,8 +126,6 @@ public class MultipartDecoderImplTest extends TapestryTestCase
         List<FileItem> fileItems = Arrays.asList(createFileItem("one", "first.txt"),
                                                  createFileItem("two", "second.txt"));
 
-        train_getCharacterEncoding(request, null);
-
         replay();
 
         HttpServletRequest decodedRequest = decoder.processFileItems(request, fileItems);
@@ -151,8 +145,6 @@ public class MultipartDecoderImplTest extends TapestryTestCase
         MultipartDecoderImpl decoder = new MultipartDecoderImpl("/tmp", 888, -1, -1, CHARSET);
         List<FileItem> fileItems = Arrays.asList(createFileItem("one", "first.txt"),
                                                  createFileItem("two", "second.txt"));
-
-        train_getCharacterEncoding(request, null);
 
         replay();
 
@@ -175,8 +167,6 @@ public class MultipartDecoderImplTest extends TapestryTestCase
         firstItem.setFormField(false);
         StubFileItem secondItem = new StubFileItem("two");
         secondItem.setFormField(false);
-
-        train_getCharacterEncoding(request, null);
 
         List<FileItem> fileItems = new ArrayList<FileItem>();
         fileItems.add(firstItem);
@@ -216,8 +206,4 @@ public class MultipartDecoderImplTest extends TapestryTestCase
         return item;
     }
 
-    protected final void train_getCharacterEncoding(HttpServletRequest request, String encoding)
-    {
-        expect(request.getCharacterEncoding()).andReturn(encoding).atLeastOnce();
-    }
 }
