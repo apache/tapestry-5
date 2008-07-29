@@ -20,6 +20,13 @@ Release 5.0.14
   Properties files in message catalogs are now already read using the UTF-8 charset.  Unlike traditional
   Java ResourceBundles, it is <not> necessary to use Java's <<<native2ascii>>> tool.
 
+* {{{https://issues.apache.org/jira/browse/TAPESTRY-2543}TAPESTRY-2543}}
+
+  TAPESTRY-2543 simplifies Tapestry's approach to localization, as it pertains to
+  output and request character encodings. Previously, each page could be configured with a different character
+  encoding, which causes a number of problems related to Ajax and file upload requests.  A single
+  application-wide character encoding is now used, by default UTF-8.
+
 Release 5.0.13
 
   As part of {{{https://issues.apache.org/jira/browse/TAPESTRY-2311}TAPESTRY-2311}}, there have been
