@@ -27,12 +27,19 @@ import java.util.Collection;
 import java.util.Enumeration;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.regex.Pattern;
 
 public class ClassNameLocatorImpl implements ClassNameLocator
 {
     private static final String CLASS_SUFFIX = ".class";
 
     private final ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
+
+    // This matches normal class files but not inner class files (which contain a '$'.
+
+    private final Pattern CLASS_NAME_PATTERN = Pattern.compile("^[_a-z][a-z0-9_]*\\.class$", Pattern.CASE_INSENSITIVE);
+
+    private final Pattern FOLDER_NAME_PATTERN = Pattern.compile("^[_a-z][a-z0-9_]*$", Pattern.CASE_INSENSITIVE);
 
     static class Queued
     {
@@ -186,9 +193,7 @@ public class ClassNameLocatorImpl implements ClassNameLocator
 
                 if (line == null) break;
 
-                if (line.contains("$")) continue;
-
-                if (line.endsWith(CLASS_SUFFIX))
+                if (CLASS_NAME_PATTERN.matcher(line).matches())
                 {
                     if (packageName == null) packageName = packagePath.replace('/', '.');
 
@@ -201,16 +206,16 @@ public class ClassNameLocatorImpl implements ClassNameLocator
                     continue;
                 }
 
-                // Either a file or a hidden directory (such as .svn)
+                // This should match just directories.  It may also match files that have no extension;
+                // when we read those, none of the lines should look like class files.
 
-                if (line.contains(".")) continue;
+                if (FOLDER_NAME_PATTERN.matcher(line).matches())
+                {
+                    URL newURL = new URL(packageURL.toExternalForm() + line + "/");
+                    String newPackagePath = packagePath + line + "/";
 
-                // The name of a subdirectory.
-
-                URL newURL = new URL(packageURL.toExternalForm() + line + "/");
-                String newPackagePath = packagePath + line + "/";
-
-                queue.push(new Queued(newURL, newPackagePath));
+                    queue.push(new Queued(newURL, newPackagePath));
+                }
             }
 
             lineReader.close();
