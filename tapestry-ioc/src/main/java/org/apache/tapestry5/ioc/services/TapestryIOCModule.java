@@ -55,6 +55,7 @@ public final class TapestryIOCModule
         binder.bind(MasterObjectProvider.class, MasterObjectProviderImpl.class);
         binder.bind(ClassNameLocator.class, ClassNameLocatorImpl.class);
         binder.bind(AspectDecorator.class, AspectDecoratorImpl.class);
+        binder.bind(ClasspathURLConverter.class, ClasspathURLConverterImpl.class);
     }
 
     /**

@@ -18,6 +18,8 @@ import java.util.Collection;
 
 /**
  * Scans the classpath for top-level classes within particular packages.
+ *
+ * @see org.apache.tapestry5.ioc.services.ClasspathURLConverter
  */
 public interface ClassNameLocator
 {

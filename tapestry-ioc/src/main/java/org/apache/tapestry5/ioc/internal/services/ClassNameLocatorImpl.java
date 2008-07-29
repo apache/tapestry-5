@@ -17,6 +17,7 @@ package org.apache.tapestry5.ioc.internal.services;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.ClassNameLocator;
+import org.apache.tapestry5.ioc.services.ClasspathURLConverter;
 import org.apache.tapestry5.ioc.util.Stack;
 
 import java.io.*;
@@ -35,6 +36,8 @@ public class ClassNameLocatorImpl implements ClassNameLocator
 
     private final ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
 
+    private final ClasspathURLConverter converter;
+
     // This matches normal class files but not inner class files (which contain a '$'.
 
     private final Pattern CLASS_NAME_PATTERN = Pattern.compile("^[_a-z][a-z0-9_]*\\.class$", Pattern.CASE_INSENSITIVE);
@@ -52,6 +55,11 @@ public class ClassNameLocatorImpl implements ClassNameLocator
             this.packageURL = packageURL;
             this.packagePath = packagePath;
         }
+    }
+
+    public ClassNameLocatorImpl(ClasspathURLConverter converter)
+    {
+        this.converter = converter;
     }
 
     /**
@@ -83,7 +91,9 @@ public class ClassNameLocatorImpl implements ClassNameLocator
         {
             URL url = urls.nextElement();
 
-            scanURL(packagePath, result, url);
+            URL converted = converter.convert(url);
+
+            scanURL(packagePath, result, converted);
         }
 
         return result;

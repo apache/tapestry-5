@@ -18,6 +18,7 @@ import org.apache.tapestry5.hibernate.HibernateConfigurer;
 import org.apache.tapestry5.hibernate.HibernateEntityPackageManager;
 import org.apache.tapestry5.hibernate.HibernateSessionSource;
 import org.apache.tapestry5.ioc.internal.services.ClassNameLocatorImpl;
+import org.apache.tapestry5.ioc.internal.services.ClasspathURLConverterImpl;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.test.TapestryTestCase;
 import org.example.app0.entities.User;
@@ -48,7 +49,8 @@ public class HibernateSessionSourceImplTest extends TapestryTestCase
 
         List<HibernateConfigurer> filters = Arrays.asList(
                 new DefaultHibernateConfigurer(),
-                new PackageNameHibernateConfigurer(packageManager, new ClassNameLocatorImpl()));
+                new PackageNameHibernateConfigurer(packageManager,
+                                                   new ClassNameLocatorImpl(new ClasspathURLConverterImpl())));
 
         replay();
         HibernateSessionSource source = new HibernateSessionSourceImpl(log, filters);

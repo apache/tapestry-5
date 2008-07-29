@@ -17,6 +17,7 @@ package org.apache.tapestry5.ioc.internal.services;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.ClassNameLocator;
+import org.apache.tapestry5.ioc.services.ClasspathURLConverter;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -29,6 +30,8 @@ import java.util.Set;
  */
 public class ClassNameLocatorImplTest extends Assert
 {
+    private final ClasspathURLConverter converter = new ClasspathURLConverterImpl();
+
     /**
      * Use various packages in javassist to test this, as those don't change unexpectedly(-ish) and we know they are in
      * a JAR on the classpath.
@@ -36,7 +39,7 @@ public class ClassNameLocatorImplTest extends Assert
     @Test
     public void classes_in_jar_file()
     {
-        ClassNameLocator locator = new ClassNameLocatorImpl();
+        ClassNameLocator locator = new ClassNameLocatorImpl(converter);
 
         Collection<String> names = locator
                 .locateClassNames("javassist.util");
@@ -55,7 +58,7 @@ public class ClassNameLocatorImplTest extends Assert
     @Test
     public void classes_in_subpackage_in_jar_file()
     {
-        ClassNameLocator locator = new ClassNameLocatorImpl();
+        ClassNameLocator locator = new ClassNameLocatorImpl(converter);
 
         Collection<String> names = locator.locateClassNames("javassist.util");
 
@@ -74,7 +77,7 @@ public class ClassNameLocatorImplTest extends Assert
     @Test
     public void classes_in_local_folders()
     {
-        ClassNameLocator locator = new ClassNameLocatorImpl();
+        ClassNameLocator locator = new ClassNameLocatorImpl(converter);
 
         Collection<String> names = locator
                 .locateClassNames("org.apache.tapestry5.ioc.services");
@@ -87,7 +90,7 @@ public class ClassNameLocatorImplTest extends Assert
     @Test
     public void classes_in_subpackages_in_local_folders()
     {
-        ClassNameLocator locator = new ClassNameLocatorImpl();
+        ClassNameLocator locator = new ClassNameLocatorImpl(converter);
 
         Collection<String> names = locator.locateClassNames("org.apache.tapestry5");
 
