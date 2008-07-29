@@ -19,6 +19,7 @@ import org.apache.commons.fileupload.FileItemFactory;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
@@ -48,6 +49,8 @@ public class MultipartDecoderImpl implements MultipartDecoder, ThreadCleanupList
 
     private final long maxFileSize;
 
+    private final String requestEncoding;
+
     public MultipartDecoderImpl(
 
             @Inject @Symbol(UploadSymbols.REPOSITORY_LOCATION)
@@ -60,12 +63,16 @@ public class MultipartDecoderImpl implements MultipartDecoder, ThreadCleanupList
             long maxRequestSize,
 
             @Symbol(UploadSymbols.FILESIZE_MAX)
-            long maxFileSize)
+            long maxFileSize,
+
+            @Inject @Symbol(SymbolConstants.CHARSET)
+            String requestEncoding)
     {
         this.repositoryLocation = repositoryLocation;
         this.repositoryThreshold = repositoryThreshold;
         this.maxRequestSize = maxRequestSize;
         this.maxFileSize = maxFileSize;
+        this.requestEncoding = requestEncoding;
     }
 
     public UploadedFile getFileUpload(String parameterName)
@@ -75,6 +82,15 @@ public class MultipartDecoderImpl implements MultipartDecoder, ThreadCleanupList
 
     public HttpServletRequest decode(HttpServletRequest request)
     {
+        try
+        {
+            request.setCharacterEncoding(requestEncoding);
+        }
+        catch (UnsupportedEncodingException ex)
+        {
+            throw new RuntimeException(ex);
+        }
+
         List<FileItem> fileItems = parseRequest(request);
 
         return processFileItems(request, fileItems);
@@ -122,8 +138,6 @@ public class MultipartDecoderImpl implements MultipartDecoder, ThreadCleanupList
 
         ParametersServletRequestWrapper wrapper = new ParametersServletRequestWrapper(request);
 
-        String encoding = request.getCharacterEncoding();
-
         for (FileItem item : fileItems)
         {
             if (item.isFormField())
@@ -133,12 +147,11 @@ public class MultipartDecoderImpl implements MultipartDecoder, ThreadCleanupList
                 try
                 {
 
-                    fieldValue = encoding == null ? item.getString() : item.getString(encoding);
+                    fieldValue = item.getString(requestEncoding);
                 }
-                catch (UnsupportedEncodingException e)
+                catch (UnsupportedEncodingException ex)
                 {
-                    // TODO maybe log exception with level warn
-                    fieldValue = item.getString();
+                    throw new RuntimeException(ex);
                 }
 
                 wrapper.addParameter(item.getFieldName(), fieldValue);

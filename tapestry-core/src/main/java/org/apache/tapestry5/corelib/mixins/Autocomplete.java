@@ -188,7 +188,7 @@ public class Autocomplete
             }
         };
 
-        resources.triggerEvent("providecompletions", new Object[] { input }, callback);
+        resources.triggerEvent("providecompletions", new Object[]{input}, callback);
 
         ContentType contentType = responseRenderer.findContentType(this);
 
@@ -196,7 +196,7 @@ public class Autocomplete
 
         generateResponseMarkup(writer, matchesHolder.get());
 
-        return new TextStreamResponse(contentType.getMimeType(), writer.toString());
+        return new TextStreamResponse(contentType.toString(), writer.toString());
     }
 
     /**

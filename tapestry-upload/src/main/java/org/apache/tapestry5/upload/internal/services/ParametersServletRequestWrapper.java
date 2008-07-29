@@ -15,7 +15,6 @@
 package org.apache.tapestry5.upload.internal.services;
 
 import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newMap;
-import org.apache.tapestry5.services.Dispatcher;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
@@ -92,9 +91,10 @@ public class ParametersServletRequestWrapper extends HttpServletRequestWrapper
     }
 
     /**
-     * Ignores any attempt to set the character encoding. Tapestry attempts to set the encoding <em>after</em> the page
-     * name has been identified by the correct {@link Dispatcher}, and that's too late from the perspective of the
-     * Servlet API as HttpServlet.getInputStream() will already have been called.
+     * Ignores any attempt to set the character encoding, as it already has been set before the request content was
+     * parsed.
+     *
+     * @see org.apache.tapestry5.SymbolConstants#CHARSET
      */
     @Override
     public void setCharacterEncoding(String enc) throws UnsupportedEncodingException

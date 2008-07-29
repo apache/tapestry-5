@@ -17,17 +17,25 @@ package org.apache.tapestry5.internal.services;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.ContentType;
 import org.apache.tapestry5.MetaDataConstants;
-import org.apache.tapestry5.internal.InternalConstants;
+import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.internal.structure.Page;
+import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.MetaDataLocator;
 
 public class PageContentTypeAnalyzerImpl implements PageContentTypeAnalyzer
 {
     private final MetaDataLocator metaDataLocator;
 
-    public PageContentTypeAnalyzerImpl(MetaDataLocator metaDataLocator)
+    private final String outputCharset;
+
+    public PageContentTypeAnalyzerImpl(MetaDataLocator metaDataLocator,
+
+                                       @Inject @Symbol(SymbolConstants.CHARSET)
+                                       String outputCharset)
     {
         this.metaDataLocator = metaDataLocator;
+        this.outputCharset = outputCharset;
     }
 
     public ContentType findContentType(Page page)
@@ -36,19 +44,9 @@ public class PageContentTypeAnalyzerImpl implements PageContentTypeAnalyzer
 
         String contentTypeString = metaDataLocator.findMeta(MetaDataConstants.RESPONSE_CONTENT_TYPE, pageResources,
                                                             String.class);
-        ContentType contentType = new ContentType(contentTypeString);
 
-        // Make sure thre's always a charset specified.
+        // Draconian but necessary: overwrite the content type they selected with the application-wide output charset.
 
-        String encoding = contentType.getParameter(InternalConstants.CHARSET_CONTENT_TYPE_PARAMETER);
-
-        if (encoding == null)
-        {
-            encoding = metaDataLocator
-                    .findMeta(MetaDataConstants.RESPONSE_ENCODING, pageResources, String.class);
-            contentType.setParameter(InternalConstants.CHARSET_CONTENT_TYPE_PARAMETER, encoding);
-        }
-
-        return contentType;
+        return new ContentType(contentTypeString, outputCharset);
     }
 }

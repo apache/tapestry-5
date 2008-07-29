@@ -23,9 +23,12 @@ import org.testng.annotations.Test;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.UnsupportedEncodingException;
+import java.util.Collections;
 
 public class RequestImplTest extends InternalBaseTestCase
 {
+    public static final String CHARSET = "UTF-8";
+
     @Test
     public void get_session_doesnt_exist()
     {
@@ -35,7 +38,7 @@ public class RequestImplTest extends InternalBaseTestCase
 
         replay();
 
-        Request request = new RequestImpl(sr);
+        Request request = new RequestImpl(sr, CHARSET);
 
         assertNull(request.getSession(false));
 
@@ -54,7 +57,7 @@ public class RequestImplTest extends InternalBaseTestCase
 
         replay();
 
-        Request request = new RequestImpl(sr);
+        Request request = new RequestImpl(sr, CHARSET);
         Session session = request.getSession(true);
 
         assertEquals(session.getAttribute("foo"), "bar");
@@ -71,9 +74,11 @@ public class RequestImplTest extends InternalBaseTestCase
 
         sr.setCharacterEncoding(encoding);
 
+        expect(sr.getParameterNames()).andReturn(Collections.enumeration(Collections.EMPTY_LIST));
+
         replay();
 
-        new RequestImpl(sr).setEncoding(encoding);
+        new RequestImpl(sr, encoding).getParameterNames();
 
         verify();
     }
@@ -93,7 +98,7 @@ public class RequestImplTest extends InternalBaseTestCase
 
         try
         {
-            new RequestImpl(sr).setEncoding(encoding);
+            new RequestImpl(sr, encoding).getParameterNames();
             unreachable();
         }
         catch (RuntimeException ex)
@@ -113,7 +118,7 @@ public class RequestImplTest extends InternalBaseTestCase
 
         replay();
 
-        Request request = new RequestImpl(sr);
+        Request request = new RequestImpl(sr, CHARSET);
 
         assertEquals(request.isXHR(), expected);
 
@@ -139,7 +144,7 @@ public class RequestImplTest extends InternalBaseTestCase
 
         replay();
 
-        Request request = new RequestImpl(sr);
+        Request request = new RequestImpl(sr, CHARSET);
 
         assertEquals(request.getPath(), path);
 
@@ -160,7 +165,7 @@ public class RequestImplTest extends InternalBaseTestCase
 
         replay();
 
-        Request request = new RequestImpl(sr);
+        Request request = new RequestImpl(sr, CHARSET);
 
         assertEquals(request.getPath(), path);
 
@@ -178,7 +183,7 @@ public class RequestImplTest extends InternalBaseTestCase
 
         replay();
 
-        Request request = new RequestImpl(sr);
+        Request request = new RequestImpl(sr, CHARSET);
 
         assertEquals(request.getPath(), "/");
 

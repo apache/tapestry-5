@@ -117,6 +117,9 @@ public class ClientPersistentFieldStorageImpl implements ClientPersistentFieldSt
 
     public ClientPersistentFieldStorageImpl(Request request)
     {
+        // This, here, is the problem of TAPESTRY-2501; this call can predate
+        // the check to set the character set based on meta data of the page.
+
         String value = request.getParameter(PARAMETER_NAME);
 
         // MIME can encode to a '+' character; the browser converts that to a space; we convert it

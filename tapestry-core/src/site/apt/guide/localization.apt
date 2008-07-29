@@ -46,10 +46,9 @@ Application Message Catalog
 
   If the file <<<WEB-INF/>>><AppName><<<.properties>>> exists in the context, it will be used as an application-wide message catalog.  The <AppName>
   is derived from the name of the filter inside the web.xml file; this is most often just "app", thus <<<WEB-INF/app.properties>>>.
-  The search for the file is case sensitive. The properties file may be localized.
+  The search for the file is case sensitive. The properties files may be localized.
   
-  Individual pages and components
-  can override the values defined in this message catalog.
+  Individual pages and components can override the values defined in the message catalog.
   
 Localized Component Templates
 
@@ -169,10 +168,16 @@ Output Content Type and Charset
   This information is obtained from meta data on the page itself.  Meta data is specified using the
   {{{../../apidocs/org/apache/tapestry5/annotations/Meta.html}Meta}} annotation.
   
-  First, the response content type is obtained via meta-data key "tapestry.response-content-type".  This value defaults to "text/html".
+  The response content type is obtained via meta-data key "tapestry.response-content-type".  This value defaults to "text/html".
+
+  As a convienence, the {{{../../apidocs/org/apache/tapestry5/annotations/ContentType.html}ContentType}} annotation can be used to specify the response
+  content type.  The value attribute of the annotation is the content type.
   
-  Next, the encoding is obtained via meta-data key "tapestry.response-encoding".  This value defaults to "UTF-8".  This is only necessary if
-  the content type does not provide a charset parameter (i.e., "text/html;charset=ISO-8559-1").  The encoding becomes the charset.
+  The character set for all outgoing markup and all incoming requests is "UTF-8".  UTF-8 is a version of Unicode where individual characters are encoded as one
+  or more bytes.  Most western language characters (that is, typical ASCII characters) are encoded in a single byte.  Accented characters or
+  non-western characters (such as Japanese, Arabic, etc.) may be encoded as two or more bytes.
+
+  
   
   
   

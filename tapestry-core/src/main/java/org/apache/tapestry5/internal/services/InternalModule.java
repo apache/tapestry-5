@@ -76,7 +76,6 @@ public class InternalModule
         binder.bind(PageElementFactory.class, PageElementFactoryImpl.class);
         binder.bind(ResourceStreamer.class, ResourceStreamerImpl.class);
         binder.bind(ClientPersistentFieldStorage.class, ClientPersistentFieldStorageImpl.class);
-        binder.bind(RequestEncodingInitializer.class, RequestEncodingInitializerImpl.class);
         binder.bind(PageRenderQueue.class, PageRenderQueueImpl.class);
         binder.bind(AjaxPartialResponseRenderer.class, AjaxPartialResponseRendererImpl.class);
         binder.bind(PageContentTypeAnalyzer.class, PageContentTypeAnalyzerImpl.class);

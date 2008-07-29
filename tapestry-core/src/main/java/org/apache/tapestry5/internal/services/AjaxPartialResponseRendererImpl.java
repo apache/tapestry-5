@@ -16,7 +16,10 @@ package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.ContentType;
 import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.internal.InternalConstants;
+import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.MarkupWriterFactory;
 import org.apache.tapestry5.services.PartialMarkupRenderer;
@@ -36,13 +39,24 @@ public class AjaxPartialResponseRendererImpl implements AjaxPartialResponseRende
 
     private final PartialMarkupRenderer partialMarkupRenderer;
 
-    public AjaxPartialResponseRendererImpl(MarkupWriterFactory factory, Request request,
-                                           Response response, PartialMarkupRenderer partialMarkupRenderer)
+    private final String outputEncoding;
+
+    public AjaxPartialResponseRendererImpl(MarkupWriterFactory factory,
+
+                                           Request request,
+
+                                           Response response,
+
+                                           PartialMarkupRenderer partialMarkupRenderer,
+
+                                           @Inject @Symbol(SymbolConstants.CHARSET)
+                                           String outputEncoding)
     {
         this.factory = factory;
         this.request = request;
         this.response = response;
         this.partialMarkupRenderer = partialMarkupRenderer;
+        this.outputEncoding = outputEncoding;
     }
 
     public void renderPartialPageMarkup() throws IOException
@@ -51,12 +65,10 @@ public class AjaxPartialResponseRendererImpl implements AjaxPartialResponseRende
         // seperated, and trying to keep stateless and stateful (i.e., perthread scope) services
         // seperated. So we inform the stateful queue service what it needs to do here ...
 
-        ContentType pageContentType = (ContentType) request.getAttribute(
-                InternalConstants.CONTENT_TYPE_ATTRIBUTE_NAME);
-        String charset = pageContentType.getParameter(InternalConstants.CHARSET_CONTENT_TYPE_PARAMETER);
+        ContentType pageContentType =
+                (ContentType) request.getAttribute(InternalConstants.CONTENT_TYPE_ATTRIBUTE_NAME);
 
-        ContentType contentType = new ContentType(InternalConstants.JSON_MIME_TYPE);
-        contentType.setParameter(InternalConstants.CHARSET_CONTENT_TYPE_PARAMETER, charset);
+        ContentType contentType = new ContentType(InternalConstants.JSON_MIME_TYPE, outputEncoding);
 
         MarkupWriter writer = factory.newMarkupWriter(pageContentType);
 

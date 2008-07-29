@@ -14,6 +14,7 @@
 
 package org.apache.tapestry5;
 
+import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
@@ -51,6 +52,17 @@ public final class ContentType
     {
         parse(contentType);
     }
+
+    /**
+     * Creates a new content type with the given MIME type and charset
+     */
+    public ContentType(String contentType, String charset)
+    {
+        this(contentType);
+
+        setParameter(InternalConstants.CHARSET_CONTENT_TYPE_PARAMETER, charset);
+    }
+
 
     /**
      * Returns true only if the other object is another instance of ContentType, and has the ssame baseType, subType and

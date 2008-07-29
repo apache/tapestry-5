@@ -93,13 +93,6 @@ public interface Request
     String getHeader(String name);
 
     /**
-     * Sets the encoding of the request, which must occur before any parameters for the request are read.
-     *
-     * @param requestEncoding charset used when parsing parameters
-     */
-    void setEncoding(String requestEncoding);
-
-    /**
      * Returns true if the request originated on the client using XmlHttpRequest (the core of any Ajax behavior). Ajax
      * action requests may behave quite differently than ordinary, page-based requests.  This implementation currently
      * depends on the client side setting a header: <strong>X-Requested-With=XMLHttpRequest</strong> (this is what
