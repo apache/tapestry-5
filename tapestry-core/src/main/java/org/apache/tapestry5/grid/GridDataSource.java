@@ -39,7 +39,10 @@ public interface GridDataSource
     void prepare(int startIndex, int endIndex, List<SortConstraint> sortConstraints);
 
     /**
-     * Returns the row value at the provided index. This method will be invoked in sequential order.
+     * Returns the row value at the provided index. This method will be invoked in sequential order. In rare instances,
+     * {@link #getAvailableRows()} may return a different number of rows than are actually available (i.e., the database
+     * was changed between calls to {@link #getAvailableRows()} and the call to {@link #prepare(int, int,
+     * java.util.List)}).  In that case, this method should return null for any out-of-range indexes.
      */
     Object getRowValue(int index);
 

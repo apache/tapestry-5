@@ -2101,4 +2101,25 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         assertTextPresent(
                 "Component class org.apache.tapestry5.integration.app1.pages.Music may not be instantiated directly.");
     }
+
+    /**
+     * TAPESTRY-2502
+     */
+    @Test
+    public void short_grid()
+    {
+        start("Short Grid");
+
+        for (int i = 0; i < 6; i++)
+        {
+            String locator = String.format("grid.%d.0", i + 1);
+            String expected = String.format("Index #%d", i);
+
+            assertEquals(getTable(locator), expected);
+        }
+
+        String count = getEval("window.document.getElementById('grid').rows.length");
+
+        assertEquals(count, "7", "Expected seven rows: the header and six data rows.");
+    }
 }
