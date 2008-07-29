@@ -36,13 +36,20 @@ public class RequestImpl implements Request
 
     private final HttpServletRequest request;
 
-    public RequestImpl(HttpServletRequest request)
+    private final String requestEncoding;
+
+    private boolean encodingSet;
+
+    public RequestImpl(HttpServletRequest request, String requestEncoding)
     {
         this.request = request;
+        this.requestEncoding = requestEncoding;
     }
 
     public List<String> getParameterNames()
     {
+        setupEncoding();
+
         return InternalUtils.toList(request.getParameterNames());
     }
 
@@ -53,11 +60,15 @@ public class RequestImpl implements Request
 
     public String getParameter(String name)
     {
+        setupEncoding();
+
         return request.getParameter(name);
     }
 
     public String[] getParameters(String name)
     {
+        setupEncoding();
+
         return request.getParameterValues(name);
     }
 
@@ -100,8 +111,10 @@ public class RequestImpl implements Request
         return request.getDateHeader(name);
     }
 
-    public void setEncoding(String requestEncoding)
+    private void setupEncoding()
     {
+        if (encodingSet) return;
+
         try
         {
             request.setCharacterEncoding(requestEncoding);
@@ -110,7 +123,10 @@ public class RequestImpl implements Request
         {
             throw new RuntimeException(ex);
         }
+
+        encodingSet = true;
     }
+
 
     public boolean isXHR()
     {
@@ -141,4 +157,5 @@ public class RequestImpl implements Request
     {
         return request.getServerName();
     }
+
 }

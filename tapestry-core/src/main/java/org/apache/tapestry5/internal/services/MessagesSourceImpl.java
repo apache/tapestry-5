@@ -36,7 +36,7 @@ import java.util.*;
  * any keys inherited form base components and, ultimately, the application global message catalog. At some point we
  * should add support for per-library message catalogs.
  * <p/>
- * Message catalogs are read using the utf-8 character set. This is tricky in JDK 1.5; we read the file into memory then
+ * Message catalogs are read using the UTF-8 character set. This is tricky in JDK 1.5; we read the file into memory then
  * feed that bytestream to Properties.load().
  */
 public class MessagesSourceImpl extends InvalidationEventHubImpl implements MessagesSource
@@ -215,9 +215,7 @@ public class MessagesSourceImpl extends InvalidationEventHubImpl implements Mess
 
         try
         {
-            is = resource.openStream();
-
-            is = readStreamAsUTF8(is);
+            is = readStreamAsUTF8(resource.openStream());
 
             // Ok, now we have the content read into memory as UTF-8, not ASCII.
 

@@ -14,7 +14,11 @@
 
 package org.apache.tapestry5.internal.services;
 
+import org.apache.tapestry5.ContentType;
+import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.internal.InternalConstants;
+import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.ComponentEventResultProcessor;
 import org.apache.tapestry5.services.Response;
@@ -32,14 +36,22 @@ public class JSONObjectEventResultProcessor implements ComponentEventResultProce
 {
     private final Response response;
 
-    public JSONObjectEventResultProcessor(Response response)
+    private final String outputEncoding;
+
+    public JSONObjectEventResultProcessor(Response response,
+
+                                          @Inject @Symbol(SymbolConstants.CHARSET)
+                                          String outputEncoding)
     {
         this.response = response;
+        this.outputEncoding = outputEncoding;
     }
 
     public void processResultValue(JSONObject value) throws IOException
     {
-        PrintWriter pw = response.getPrintWriter(InternalConstants.JSON_MIME_TYPE);
+        ContentType contentType = new ContentType(InternalConstants.JSON_MIME_TYPE, outputEncoding);
+
+        PrintWriter pw = response.getPrintWriter(contentType.toString());
 
         pw.print(value.toString());
 

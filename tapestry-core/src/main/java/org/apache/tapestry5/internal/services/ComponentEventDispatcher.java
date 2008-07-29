@@ -51,19 +51,19 @@ public class ComponentEventDispatcher implements Dispatcher
 
     private final ContextValueEncoder contextValueEncoder;
 
-    private final RequestEncodingInitializer requestEncodingInitializer;
-
     private final EventContext emptyContext = new EmptyEventContext();
 
-    public ComponentEventDispatcher(@Traditional ComponentEventRequestHandler componentEventRequestHandler,
-                                    ComponentClassResolver componentClassResolver,
-                                    ContextValueEncoder contextValueEncoder,
-                                    RequestEncodingInitializer requestEncodingInitializer)
+    public ComponentEventDispatcher(
+            @Traditional
+            ComponentEventRequestHandler componentEventRequestHandler,
+
+            ComponentClassResolver componentClassResolver,
+
+            ContextValueEncoder contextValueEncoder)
     {
         this.componentEventRequestHandler = componentEventRequestHandler;
         this.componentClassResolver = componentClassResolver;
         this.contextValueEncoder = contextValueEncoder;
-        this.requestEncodingInitializer = requestEncodingInitializer;
     }
 
     // A beast that recognizes all the elements of a path in a single go.
@@ -108,11 +108,6 @@ public class ComponentEventDispatcher implements Dispatcher
         if (!componentClassResolver.isPageName(activePageName)) return false;
 
         EventContext eventContext = decodeContext(matcher.group(CONTEXT));
-
-        // Initialize the request encoding BEFORE accessing any query parameters
-        // (TAPESTRY-1605)
-
-        requestEncodingInitializer.initializeRequestEncoding(activePageName);
 
         EventContext activationContext = decodeContext(request.getParameter(InternalConstants.PAGE_CONTEXT_NAME));
 

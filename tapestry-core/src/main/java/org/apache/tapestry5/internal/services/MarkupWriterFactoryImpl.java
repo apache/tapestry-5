@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.dom.DefaultMarkupModel;
 import org.apache.tapestry5.dom.MarkupModel;
 import org.apache.tapestry5.dom.XMLMarkupModel;
+import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.services.MarkupWriterFactory;
 
 public class MarkupWriterFactoryImpl implements MarkupWriterFactory
@@ -36,7 +37,7 @@ public class MarkupWriterFactoryImpl implements MarkupWriterFactory
         // The charset parameter sets the encoding attribute of the XML declaration, if
         // not null and if using the XML model.
 
-        return new MarkupWriterImpl(model, contentType.getParameter("charset"));
+        return new MarkupWriterImpl(model, contentType.getParameter(InternalConstants.CHARSET_CONTENT_TYPE_PARAMETER));
     }
 
 }

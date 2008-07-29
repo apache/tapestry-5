@@ -286,8 +286,7 @@ public final class TapestryModule
      * {@link org.apache.tapestry5.internal.InternalComponentResources#postRenderCleanup()} is invoked after a component
      * finishes rendering</dd> <dt>Secure</dt> <dd>Checks for the {@link org.apache.tapestry5.annotations.Secure}
      * annotation</dd> <dt>ContentType</dt> <dd>Checks for {@link org.apache.tapestry5.annotations.ContentType}
-     * annotation</dd> <dt>ResponseEncoding</dt> <dd>Checks for the {@link org.apache.tapestry5.annotations.ResponseEncoding}
-     * annotation</dd> <dt>GenerateAccessors</dt> <dd>Generates accessor methods if {@link
+     * annotation</dd>  <dt>GenerateAccessors</dt> <dd>Generates accessor methods if {@link
      * org.apache.tapestry5.annotations.Property} annotation is present </dd> <dt>Cached</dt> <dd>Checks for the {@link
      * org.apache.tapestry5.annotations.Cached} annotation</dd><dt>Log</dt> <dd>Checks for the {@link
      * org.apache.tapestry5.annotations.Log} annotation</dd></dl>
@@ -360,7 +359,6 @@ public final class TapestryModule
         configuration.add("InvokePostRenderCleanupOnResources", new InvokePostRenderCleanupOnResourcesWorker());
 
         configuration.add("ContentType", new ContentTypeWorker());
-        configuration.add("ResponseEncoding", new ResponseEncodingWorker());
 
         configuration.add("Property", new PropertyWorker());
 
@@ -898,10 +896,14 @@ public final class TapestryModule
     }
 
     public HttpServletRequestHandler buildHttpServletRequestHandler(Logger logger,
+
                                                                     List<HttpServletRequestFilter> configuration,
 
                                                                     @Primary
-                                                                    final RequestHandler handler)
+                                                                    final RequestHandler handler,
+
+                                                                    @Inject @Symbol(SymbolConstants.CHARSET)
+                                                                    final String applicationCharset)
     {
         HttpServletRequestHandler terminator = new HttpServletRequestHandler()
         {
@@ -910,7 +912,7 @@ public final class TapestryModule
             {
                 requestGlobals.storeServletRequestResponse(servletRequest, servletResponse);
 
-                Request request = new RequestImpl(servletRequest);
+                Request request = new RequestImpl(servletRequest, applicationCharset);
                 Response response = new ResponseImpl(servletResponse);
 
                 // Transition from the Servlet API-based pipeline, to the Tapestry-based pipeline.
@@ -1268,7 +1270,7 @@ public final class TapestryModule
     {
         configuration.add(RenderCommand.class, locator.autobuild(RenderCommandComponentEventResultProcessor.class));
         configuration.add(Component.class, locator.autobuild(AjaxComponentInstanceEventResultProcessor.class));
-        configuration.add(JSONObject.class, new JSONObjectEventResultProcessor(response));
+        configuration.add(JSONObject.class, locator.autobuild(JSONObjectEventResultProcessor.class));
         configuration.add(StreamResponse.class, new StreamResponseResultProcessor(response));
     }
 
@@ -1743,7 +1745,8 @@ public final class TapestryModule
         configuration.add(PersistentFieldManagerImpl.META_KEY, PersistentFieldManagerImpl.DEFAULT_STRATEGY);
 
         configuration.add(MetaDataConstants.RESPONSE_CONTENT_TYPE, "text/html");
-        configuration.add(MetaDataConstants.RESPONSE_ENCODING, "UTF-8");
+
+        configuration.add(SymbolConstants.CHARSET, "UTF-8");
 
         configuration.add(SymbolConstants.APPLICATION_CATALOG, "WEB-INF/${tapestry.app-name}.properties");
     }

@@ -41,22 +41,16 @@ public class ComponentEventDispatcherTest extends InternalBaseTestCase
         ComponentEventRequestHandler handler = newComponentEventRequestHandler();
         Request request = mockRequest();
         Response response = mockResponse();
-        RequestEncodingInitializer requestEncodingInitializer = mockRequestEncodingInitializer();
 
         train_getPath(request, "/foo/bar/baz");
 
         replay();
 
-        Dispatcher dispatcher = new ComponentEventDispatcher(handler, null, null, requestEncodingInitializer);
+        Dispatcher dispatcher = new ComponentEventDispatcher(handler, null, null);
 
         assertFalse(dispatcher.dispatch(request, response));
 
         verify();
-    }
-
-    protected final RequestEncodingInitializer mockRequestEncodingInitializer()
-    {
-        return newMock(RequestEncodingInitializer.class);
     }
 
     protected final ComponentEventRequestHandler newComponentEventRequestHandler()
@@ -138,16 +132,14 @@ public class ComponentEventDispatcherTest extends InternalBaseTestCase
         Request request = mockRequest();
         Response response = mockResponse();
         ComponentClassResolver resolver = mockComponentClassResolver();
-        RequestEncodingInitializer requestEncodingInitializer = mockRequestEncodingInitializer();
-
 
         ComponentEventRequestParameters expectedParameters = new ComponentEventRequestParameters("mypage", "mypage", "",
                                                                                                  "eventname",
                                                                                                  new URLEventContext(
                                                                                                          contextValueEncoder,
-                                                                                                         new String[] {
+                                                                                                         new String[]{
                                                                                                                  "alpha",
-                                                                                                                 "beta" }),
+                                                                                                                 "beta"}),
                                                                                                  new EmptyEventContext());
 
         train_getPath(request, "/mypage:eventname");
@@ -158,14 +150,12 @@ public class ComponentEventDispatcherTest extends InternalBaseTestCase
 
         train_getParameter(request, InternalConstants.CONTAINER_PAGE_NAME, null);
 
-        requestEncodingInitializer.initializeRequestEncoding("mypage");
-
         handler.handle(expectedParameters);
 
         replay();
 
-        Dispatcher dispatcher = new ComponentEventDispatcher(handler, resolver, contextValueEncoder,
-                                                             requestEncodingInitializer);
+        Dispatcher dispatcher = new ComponentEventDispatcher(handler, resolver, contextValueEncoder
+        );
 
         assertTrue(dispatcher.dispatch(request, response));
 
@@ -179,7 +169,6 @@ public class ComponentEventDispatcherTest extends InternalBaseTestCase
         Request request = mockRequest();
         Response response = mockResponse();
         ComponentClassResolver resolver = mockComponentClassResolver();
-        RequestEncodingInitializer requestEncodingInitializer = mockRequestEncodingInitializer();
 
         ComponentEventRequestParameters expectedParameters = new ComponentEventRequestParameters("activepage", "mypage",
                                                                                                  "", "eventname",
@@ -190,8 +179,6 @@ public class ComponentEventDispatcherTest extends InternalBaseTestCase
 
         train_isPageName(resolver, "activepage", true);
 
-        requestEncodingInitializer.initializeRequestEncoding("activepage");
-
         train_getParameter(request, InternalConstants.PAGE_CONTEXT_NAME, null);
 
         train_getParameter(request, InternalConstants.CONTAINER_PAGE_NAME, "mypage");
@@ -200,8 +187,8 @@ public class ComponentEventDispatcherTest extends InternalBaseTestCase
 
         replay();
 
-        Dispatcher dispatcher = new ComponentEventDispatcher(handler, resolver, contextValueEncoder,
-                                                             requestEncodingInitializer);
+        Dispatcher dispatcher = new ComponentEventDispatcher(handler, resolver, contextValueEncoder
+        );
 
         assertTrue(dispatcher.dispatch(request, response));
 
@@ -215,7 +202,6 @@ public class ComponentEventDispatcherTest extends InternalBaseTestCase
         Request request = mockRequest();
         Response response = mockResponse();
         ComponentClassResolver resolver = mockComponentClassResolver();
-        RequestEncodingInitializer requestEncodingInitializer = mockRequestEncodingInitializer();
 
         train_getPath(request, "/mypage.foo");
 
@@ -223,7 +209,7 @@ public class ComponentEventDispatcherTest extends InternalBaseTestCase
 
         replay();
 
-        Dispatcher dispatcher = new ComponentEventDispatcher(handler, resolver, null, requestEncodingInitializer);
+        Dispatcher dispatcher = new ComponentEventDispatcher(handler, resolver, null);
 
         assertFalse(dispatcher.dispatch(request, response));
 
@@ -237,7 +223,6 @@ public class ComponentEventDispatcherTest extends InternalBaseTestCase
         Request request = mockRequest();
         Response response = mockResponse();
         ComponentClassResolver resolver = mockComponentClassResolver();
-        RequestEncodingInitializer requestEncodingInitializer = mockRequestEncodingInitializer();
 
         ComponentEventRequestParameters expectedParameters = new ComponentEventRequestParameters(containerPageName,
                                                                                                  containerPageName,
@@ -256,14 +241,12 @@ public class ComponentEventDispatcherTest extends InternalBaseTestCase
 
         train_getParameter(request, InternalConstants.CONTAINER_PAGE_NAME, null);
 
-        requestEncodingInitializer.initializeRequestEncoding(containerPageName);
-
         handler.handle(expectedParameters);
 
         replay();
 
-        Dispatcher dispatcher = new ComponentEventDispatcher(handler, resolver, contextValueEncoder,
-                                                             requestEncodingInitializer);
+        Dispatcher dispatcher = new ComponentEventDispatcher(handler, resolver, contextValueEncoder
+        );
 
         assertTrue(dispatcher.dispatch(request, response));
 

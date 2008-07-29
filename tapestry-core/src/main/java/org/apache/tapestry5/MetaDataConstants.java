@@ -1,3 +1,17 @@
+// Copyright 2008 The Apache Software Foundation
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 package org.apache.tapestry5;
 
 /**
@@ -12,14 +26,9 @@ public class MetaDataConstants
      * "text/html" when not overridden.
      */
     public static final String RESPONSE_CONTENT_TYPE = "tapestry.response-content-type";
+
     /**
      * Meta data key applied to pages that may only be accessed via secure methods (HTTPS).
      */
     public static final String SECURE_PAGE = "tapestry.secure-page";
-    /**
-     * Meta data key applied to pages that sets the response encoding. A factory default provides the value "UTF-8" when
-     * not overriden. Content type may also be specified in the {@link #RESPONSE_CONTENT_TYPE content type} as parameter
-     * "charset", i.e., "text/html;charset=UTF-8".
-     */
-    public static final String RESPONSE_ENCODING = "tapestry.response-encoding";
 }
