@@ -11,6 +11,19 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+// Copyright 2007, 2008 The Apache Software Foundation
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 package org.apache.tapestry5.corelib.components;
 
@@ -199,7 +212,7 @@ public class GridRows
 
     }
 
-    void beginRender()
+    boolean beginRender()
     {
         // When needed, store a callback used when the form is submitted.
 
@@ -208,13 +221,22 @@ public class GridRows
         // And do it now for the render.
 
         setupForRow(rowIndex);
+
+        // If the row is null, it's because the rowIndex is too large (see the notes
+        // on GridDataSource).  When row is null, return false to not render anything for this iteration
+        // of the loop.
+
+        return row != null;
     }
 
     boolean afterRender()
     {
         rowIndex++;
 
-        return rowIndex > endRow;
+        // Abort the loop when we hit a null row, or when we've exhausted the range we need to
+        // display.
+
+        return row == null || rowIndex > endRow;
     }
 
     public List<String> getPropertyNames()
