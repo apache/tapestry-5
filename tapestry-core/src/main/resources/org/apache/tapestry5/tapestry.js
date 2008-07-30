@@ -1311,7 +1311,7 @@ Tapestry.ScriptManager = {
 
         $(stylesheets).each(function(s)
         {
-            var assetURL = Tapestry.rebuildURL(s);
+            var assetURL = Tapestry.rebuildURL(s.href);
 
             if (Tapestry.ScriptManager.contains(document.styleSheets, 'href', assetURL)) return; // continue
 

@@ -39,7 +39,7 @@ import java.util.Locale;
  */
 // TODO: More testing; see https://issues.apache.org/jira/browse/TAPESTRY-1844
 @IncludeStylesheet("${tapestry.datepicker}/css/datepicker.css")
-@IncludeJavaScriptLibrary({ "${tapestry.datepicker}/js/datepicker.js", "datefield.js" })
+@IncludeJavaScriptLibrary({"${tapestry.datepicker}/js/datepicker.js", "datefield.js"})
 public class DateField extends AbstractField
 {
     /**
@@ -157,15 +157,11 @@ public class DateField extends AbstractField
                        "alt", "[Show]");
         writer.end(); // img
 
-        // The setup parameters passed to Calendar.setup():
-
         JSONObject setup = new JSONObject();
 
         setup.put("field", clientId);
 
-        // TODO: consolodate DatePicker initialization across the page.
-
-        support.addScript("new Tapestry.DateField(%s);", setup);
+        support.addInit("dateField", setup);
     }
 
     private void writeDisabled(MarkupWriter writer)
