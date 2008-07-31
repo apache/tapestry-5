@@ -11,7 +11,10 @@
 
         <ul>
             <li>
-                 <t:pagelink page="beandisplayoverridedemo">BeanDisplay Override Demo</t:pagelink>
+                <t:pagelink page="beandisplayoverridedemo">BeanDisplay Override Demo</t:pagelink>
+            </li>
+            <li>
+                <t:pagelink page="renderpagedemo">PageDocumentGenerator demo</t:pagelink>
             </li>
         </ul>
 

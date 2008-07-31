@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,9 +15,11 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.internal.structure.Page;
 import org.apache.tapestry5.services.Environment;
 import org.apache.tapestry5.services.MarkupRenderer;
+import org.apache.tapestry5.services.Request;
 
 public class PageMarkupRendererImpl implements PageMarkupRenderer
 {
@@ -27,8 +29,10 @@ public class PageMarkupRendererImpl implements PageMarkupRenderer
 
     private final MarkupRenderer markupRendererPipeline;
 
+    private final Request request;
+
     public PageMarkupRendererImpl(MarkupRenderer markupRendererPipeline, PageRenderQueue pageRenderQueue,
-                                  Environment environment)
+                                  Environment environment, Request request)
     {
         // We have to go through some awkward tricks here:
         // - MarkupRenderer and MarkupRendererFilter are PUBLIC
@@ -40,11 +44,16 @@ public class PageMarkupRendererImpl implements PageMarkupRenderer
         this.environment = environment;
 
         this.markupRendererPipeline = markupRendererPipeline;
+        this.request = request;
     }
 
     public void renderPageMarkup(Page page, MarkupWriter writer)
     {
-        environment.clear();
+        // Don't clear the environment when rendering a page to a document as we may be doing so when in the middle
+        // of another render.
+
+        if (request.getAttribute(InternalConstants.GENERATING_RENDERED_PAGE) == null)
+            environment.clear();
 
         // This is why the PRQ is scope perthread; we tell it what to render here ...
 

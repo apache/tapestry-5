@@ -14,6 +14,7 @@
 
 package org.apache.tapestry5.internal.services;
 
+import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.services.Request;
 import org.testng.annotations.DataProvider;
@@ -110,6 +111,7 @@ public class RequestPathOptimizerImplTest extends InternalBaseTestCase
 
         train_isXHR(request, false);
 
+        train_getAttribute(request, InternalConstants.GENERATING_RENDERED_PAGE, null);
         train_getContextPath(request, contextPath);
         train_getPath(request, requestPath);
 
@@ -123,12 +125,45 @@ public class RequestPathOptimizerImplTest extends InternalBaseTestCase
     }
 
     @Test
-    public void force_absolute_is_a_pass_through()
+    public void xhr_forces_absolute()
     {
         Request request = mockRequest();
         String path = "/some/path";
 
         train_isXHR(request, true);
+
+        replay();
+
+        RequestPathOptimizer optimizer = new RequestPathOptimizerImpl(request, false);
+
+        assertSame(optimizer.optimizePath(path), path);
+
+        verify();
+    }
+
+    @Test
+    public void force_absolute_is_enforced()
+    {
+        Request request = mockRequest();
+        String path = "/some/path";
+
+        replay();
+
+        RequestPathOptimizer optimizer = new RequestPathOptimizerImpl(request, true);
+
+        assertSame(optimizer.optimizePath(path), path);
+
+        verify();
+    }
+
+    @Test
+    public void generating_to_document_forces_non_optimized()
+    {
+        Request request = mockRequest();
+        String path = "/some/path";
+
+        train_isXHR(request, false);
+        train_getAttribute(request, InternalConstants.GENERATING_RENDERED_PAGE, true);
 
         replay();
 

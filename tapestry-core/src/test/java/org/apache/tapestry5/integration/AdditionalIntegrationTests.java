@@ -20,7 +20,7 @@ import org.testng.annotations.Test;
 /**
  * Additional integration tests that do not fit with the main group due to the need for special configuration.
  */
-@Test(timeOut = 50000, sequential = true, groups = { "integration" })
+@Test(timeOut = 50000, sequential = true, groups = {"integration"})
 public class AdditionalIntegrationTests extends AbstractIntegrationTestSuite
 {
 
@@ -63,6 +63,22 @@ public class AdditionalIntegrationTests extends AbstractIntegrationTestSuite
         assertText("//h1", "Index");
 
         assertText("message", "it worked");
+    }
+
+    /**
+     * TAPESTR-2217
+     */
+    @Test
+    public void page_document_generator()
+    {
+        start("PageDocumentGenerator demo");
+
+        // In generated document: not optimized
+        assertAttribute("//a[1]/@href", "/login");
+
+        // In normal render: optimized
+        // Fuckin Selenium
+        // assertAttribute("//a[2]/@href", "login");
     }
 
 }
