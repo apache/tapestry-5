@@ -208,6 +208,18 @@ public class MessagesSourceImpl extends InvalidationEventHubImpl implements Mess
 
         tracker.add(resource.toURL());
 
+        try
+        {
+            return readPropertiesFromStream(resource.openStream());
+        }
+        catch (Exception ex)
+        {
+            throw new RuntimeException(ServicesMessages.failureReadingMessages(resource, ex), ex);
+        }
+    }
+
+    static Map<String, String> readPropertiesFromStream(InputStream propertiesFileStream) throws IOException
+    {
         Map<String, String> result = CollectionFactory.newCaseInsensitiveMap();
 
         Properties p = new Properties();
@@ -215,7 +227,8 @@ public class MessagesSourceImpl extends InvalidationEventHubImpl implements Mess
 
         try
         {
-            is = readStreamAsUTF8(resource.openStream());
+
+            is = readUTFStreamToEscapedASCII(propertiesFileStream);
 
             // Ok, now we have the content read into memory as UTF-8, not ASCII.
 
@@ -224,10 +237,6 @@ public class MessagesSourceImpl extends InvalidationEventHubImpl implements Mess
             is.close();
 
             is = null;
-        }
-        catch (Exception ex)
-        {
-            throw new RuntimeException(ServicesMessages.failureReadingMessages(resource, ex), ex);
         }
         finally
         {
@@ -246,7 +255,13 @@ public class MessagesSourceImpl extends InvalidationEventHubImpl implements Mess
         return result;
     }
 
-    private InputStream readStreamAsUTF8(InputStream is) throws IOException
+
+    /**
+     * Reads a UTF-8 stream, performing a conversion to ASCII (i.e., ISO8859-1 encoding). Characters outside the normal
+     * range for ISO8859-1 are converted to unicode escapes. In effect, Tapestry is performing native2ascii on the
+     * files, on the fly.
+     */
+    private static InputStream readUTFStreamToEscapedASCII(InputStream is) throws IOException
     {
         Reader reader = new InputStreamReader(is, CHARSET);
 
@@ -259,12 +274,23 @@ public class MessagesSourceImpl extends InvalidationEventHubImpl implements Mess
 
             if (length < 0) break;
 
-            builder.append(buffer, 0, length);
+            for (int i = 0; i < length; i++)
+            {
+                char ch = buffer[i];
+
+                if (ch <= '\u007f')
+                {
+                    builder.append(ch);
+                    continue;
+                }
+
+                builder.append(String.format("\\u%04x", (int) ch));
+            }
         }
 
         reader.close();
 
-        byte[] resourceContent = builder.toString().getBytes(CHARSET);
+        byte[] resourceContent = builder.toString().getBytes();
 
         return new ByteArrayInputStream(resourceContent);
     }
