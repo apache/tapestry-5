@@ -181,6 +181,7 @@ public final class TapestryModule
         binder.bind(BeanBlockOverrideSource.class, BeanBlockOverrideSourceImpl.class);
         binder.bind(AliasManager.class, AliasManagerImpl.class).withId("AliasOverrides");
         binder.bind(HiddenFieldLocationRules.class, HiddenFieldLocationRulesImpl.class);
+        binder.bind(PageDocumentGenerator.class, PageDocumentGeneratorImpl.class);
     }
 
     // ========================================================================

@@ -15,6 +15,7 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.SymbolConstants;
+import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.Request;
 
@@ -27,7 +28,7 @@ public class RequestPathOptimizerImpl implements RequestPathOptimizer
     private final boolean forceAbsolute;
 
     /**
-     * Used to split a URI up into individual folder/file names. Any number of consecutive slashes is treated as a
+     * Used to split a URI up into individual folder/file names. Any number of consecutive slashes are treated as a
      * single slash.
      */
     private final Pattern SLASH_PATTERN = Pattern.compile("/+");
@@ -38,13 +39,17 @@ public class RequestPathOptimizerImpl implements RequestPathOptimizer
                                     boolean forceAbsolute)
     {
         this.request = request;
-
         this.forceAbsolute = forceAbsolute;
     }
 
     public String optimizePath(String absolutePath)
     {
-        if (forceAbsolute || request.isXHR()) return absolutePath;
+        if (forceAbsolute ||
+                request.isXHR() ||
+                request.getAttribute(InternalConstants.GENERATING_RENDERED_PAGE) != null)
+        {
+            return absolutePath;
+        }
 
         String requestPath = request.getPath();
 

@@ -1059,4 +1059,9 @@ public abstract class TapestryTestCase extends IOCTestCase
     {
         return newMock(BaseURLSource.class);
     }
+
+    protected final void train_getAttribute(Request request, String attibuteName, Object value)
+    {
+        expect(request.getAttribute(attibuteName)).andReturn(value);
+    }
 }
