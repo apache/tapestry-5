@@ -20,13 +20,24 @@ import org.apache.tapestry5.dom.DefaultMarkupModel;
 import org.apache.tapestry5.dom.MarkupModel;
 import org.apache.tapestry5.dom.XMLMarkupModel;
 import org.apache.tapestry5.internal.InternalConstants;
+import org.apache.tapestry5.internal.structure.Page;
 import org.apache.tapestry5.services.MarkupWriterFactory;
 
 public class MarkupWriterFactoryImpl implements MarkupWriterFactory
 {
+    private final PageContentTypeAnalyzer analyzer;
+
+    private final RequestPageCache cache;
+
     private final MarkupModel htmlModel = new DefaultMarkupModel();
 
     private final MarkupModel xmlModel = new XMLMarkupModel();
+
+    public MarkupWriterFactoryImpl(PageContentTypeAnalyzer analyzer, RequestPageCache cache)
+    {
+        this.analyzer = analyzer;
+        this.cache = cache;
+    }
 
     public MarkupWriter newMarkupWriter(ContentType contentType)
     {
@@ -38,6 +49,15 @@ public class MarkupWriterFactoryImpl implements MarkupWriterFactory
         // not null and if using the XML model.
 
         return new MarkupWriterImpl(model, contentType.getParameter(InternalConstants.CHARSET_CONTENT_TYPE_PARAMETER));
+    }
+
+    public MarkupWriter newMarkupWriter(String pageName)
+    {
+        Page page = cache.get(pageName);
+
+        ContentType contentType = analyzer.findContentType(page);
+
+        return newMarkupWriter(contentType);
     }
 
 }

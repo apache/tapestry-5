@@ -401,7 +401,7 @@ public class IntegrationTest extends IOCInternalTestCase
 
         r.shutdown();
     }
-    
+
     @Test
     public void convention_over_configuration_service()
     {
@@ -409,14 +409,14 @@ public class IntegrationTest extends IOCInternalTestCase
 
 
         StringHolder holder = r.getService(StringHolder.class);
-        
+
         holder.setValue("Bar");
 
         assertEquals(holder.getValue(), "Bar");
 
         r.shutdown();
     }
-    
+
     @Test
     public void convention_over_configuration_service_impl_not_found()
     {
@@ -424,12 +424,14 @@ public class IntegrationTest extends IOCInternalTestCase
         {
             buildRegistry(ConventionModuleImplementationNotFound.class);
             unreachable();
-        }catch (RuntimeException ex) {
+        }
+        catch (RuntimeException ex)
+        {
             assertMessageContains(ex,
-            "No service implements the interface "+StringTransformer.class.getName()+". Please provide");
+                                  "No service implements the interface " + StringTransformer.class.getName() + ". Please provide");
         }
     }
-    
+
     @Test
     public void convention_over_configuration_service_wrong_impl_found()
     {
@@ -437,9 +439,11 @@ public class IntegrationTest extends IOCInternalTestCase
         {
             buildRegistry(ConventionFailureModule.class);
             unreachable();
-        }catch (RuntimeException ex) {
+        }
+        catch (RuntimeException ex)
+        {
             assertMessageContains(ex,
-            "No service implements the interface "+Pingable.class.getName());
+                                  "No service implements the interface " + Pingable.class.getName());
         }
     }
 
@@ -821,5 +825,39 @@ public class IntegrationTest extends IOCInternalTestCase
         assertNotSame(helter, skelter);
 
         r.shutdown();
+    }
+
+    @Test
+    public void bind_to_service_builder()
+    {
+        Registry r = buildRegistry(ServiceBuilderModule.class);
+
+        Greeter g = r.getService("Greeter", Greeter.class);
+
+        assertEquals(g.getGreeting(), "Greetings from service Greeter.");
+
+        r.shutdown();
+    }
+
+    @Test
+    public void bind_to_service_binder_that_throws_exception()
+    {
+        Registry r = buildRegistry(ServiceBuilderModule.class);
+
+        Greeter g = r.getService("BrokenGreeter", Greeter.class);
+
+        try
+        {
+            g.getGreeting();
+            unreachable();
+        }
+        catch (Exception ex)
+        {
+            assertEquals(ex.getMessage(),
+                         "Exception constructing service 'BrokenGreeter': Failure inside ServiceBuilder callback.");
+        }
+
+        r.shutdown();
+
     }
 }

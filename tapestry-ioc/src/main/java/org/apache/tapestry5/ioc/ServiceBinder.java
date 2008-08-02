@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -31,10 +31,20 @@ public interface ServiceBinder
      * fully on first reference (ignoring its scope, if any) and will not be decorated.
      *
      * @param <T>
-     * @param implementationClass
-     * @return
+     * @param implementationClass class to instantiate as the service
+     * @return binding options, used to specify additional details about the service
      */
     <T> ServiceBindingOptions bind(Class<T> implementationClass);
+
+    /**
+     * Alternative implementation that supports a callback to build the service, rather than instantiating a particular
+     * class.
+     *
+     * @param serviceInterface interface implemented by the service
+     * @param builder          constructs the core service implementation
+     * @return binding options, used to specify additional details about the service
+     */
+    <T> ServiceBindingOptions bind(Class<T> serviceInterface, ServiceBuilder<T> builder);
 
     /**
      * Binds the service interface to a service implementation class. The default service name is the unqualified name
@@ -44,7 +54,7 @@ public interface ServiceBinder
      * @param <T>
      * @param serviceInterface      service interface (used when locating services, and when building proxies)
      * @param serviceImplementation implementation class that implements the service interface
-     * @return binding options, used to specify additional details about the service.
+     * @return binding options, used to specify additional details about the service
      */
     <T> ServiceBindingOptions bind(Class<T> serviceInterface,
                                    Class<? extends T> serviceImplementation);

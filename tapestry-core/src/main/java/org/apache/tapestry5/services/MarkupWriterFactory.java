@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -30,4 +30,12 @@ public interface MarkupWriterFactory
      *                    the backs the markup writer.
      */
     MarkupWriter newMarkupWriter(ContentType contentType);
+
+    /**
+     * Obtains a markup writer that will render the content for the provided logical page name.
+     *
+     * @param pageName logical page name
+     * @return writer configured for the page
+     */
+    MarkupWriter newMarkupWriter(String pageName);
 }

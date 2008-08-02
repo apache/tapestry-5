@@ -247,7 +247,7 @@ public class DefaultModuleDefImpl implements ModuleDef, ServiceDefAccumulator
 
         // TODO: Validate constraints here?
 
-        String[] patterns = match == null ? new String[] { decoratorId } : match.value();
+        String[] patterns = match == null ? new String[]{decoratorId} : match.value();
 
         DecoratorDef def = new DecoratorDefImpl(decoratorId, method, patterns, constraints, classFactory);
 
@@ -385,7 +385,7 @@ public class DefaultModuleDefImpl implements ModuleDef, ServiceDefAccumulator
                 return;
             }
 
-            ServiceBinderImpl binder = new ServiceBinderImpl(this, classFactory, defaultMarkers);
+            ServiceBinderImpl binder = new ServiceBinderImpl(this, bindMethod, classFactory, defaultMarkers);
 
             bindMethod.invoke(null, binder);
 
