@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -43,10 +43,20 @@ public class TestableMarkupWriterFactoryImpl implements TestableMarkupWriterFact
 
     public MarkupWriter newMarkupWriter(ContentType contentType)
     {
-        MarkupWriter result = delegate.newMarkupWriter(contentType);
-
-        lastCreated = result;
-
-        return result;
+        return save(delegate.newMarkupWriter(contentType));
     }
+
+    public MarkupWriter newMarkupWriter(String pageName)
+    {
+        return save(delegate.newMarkupWriter(pageName));
+    }
+
+    private MarkupWriter save(MarkupWriter writer)
+    {
+        lastCreated = writer;
+
+        return writer;
+    }
+
+
 }

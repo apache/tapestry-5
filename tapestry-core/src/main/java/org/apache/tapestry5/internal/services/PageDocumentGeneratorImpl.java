@@ -14,7 +14,6 @@
 
 package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry5.ContentType;
 import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.dom.Document;
 import org.apache.tapestry5.internal.InternalConstants;
@@ -31,17 +30,14 @@ public class PageDocumentGeneratorImpl implements PageDocumentGenerator
 
     private final MarkupWriterFactory markupWriterFactory;
 
-    private final PageContentTypeAnalyzer pageContentTypeAnalyzer;
-
     private final Request request;
 
     public PageDocumentGeneratorImpl(RequestPageCache pageCache, PageMarkupRenderer markupRenderer,
                                      MarkupWriterFactory markupWriterFactory,
-                                     PageContentTypeAnalyzer pageContentTypeAnalyzer, Request request)
+                                     Request request)
     {
         this.markupRenderer = markupRenderer;
         this.markupWriterFactory = markupWriterFactory;
-        this.pageContentTypeAnalyzer = pageContentTypeAnalyzer;
         this.pageCache = pageCache;
         this.request = request;
     }
@@ -50,9 +46,7 @@ public class PageDocumentGeneratorImpl implements PageDocumentGenerator
     {
         Page page = pageCache.get(logicalPageName);
 
-        ContentType contentType = pageContentTypeAnalyzer.findContentType(page);
-
-        MarkupWriter writer = markupWriterFactory.newMarkupWriter(contentType);
+        MarkupWriter writer = markupWriterFactory.newMarkupWriter(logicalPageName);
 
         // value will almost certainly be null, unless a page that is being rendered to a document
         // itself decides to render another page to a document.

@@ -109,8 +109,8 @@ public class MyAppModule
   addition, inspired by the terseness of the {{{http://code.google.com/p/google-guice/}Guice}} IoC container.
 
 
-  Following the convention over configuration principle the autobuilding of services can be done even less verbose.
-  If a service interface is passed as a single argument to the bind() method Tapestry will try to find an implementation in the
+  Following the convention over configuration principle, the autobuilding of services can be even less verbose.
+  If a service interface is passed as a single argument to the bind() method, Tapestry will try to find an implementation in the
   same package whose name matches the name of the service interface followed by the suffix <Impl>.
   
 +------+
@@ -590,7 +590,15 @@ Injecting Resources
   
   Here, the alertEmail parameter will recieve the configured alerts email (see
   {{{symbols.html}the symbols documentation}} for more about this syntax) rather than the service id.
-  
+
+Binding ServiceBuilders
+
+  Yet another option is available: instead of binding an interface to a implemention class,
+  you can bind a service to a
+  {{{../apidocs/org/apache/tapestry5/ioc/ServiceBuilder.html}ServiceBuilder}}, a callback used
+  to create the service implementation.  This is very useful in very rare circumstances.
+
+
 Builtin Services
 
   A few services within the Tapestry IOC Module are "builtin"; there is no 

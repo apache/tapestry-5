@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import org.apache.tapestry5.ioc.annotations.Marker;
 import org.apache.tapestry5.ioc.annotations.Scope;
 import org.apache.tapestry5.ioc.def.ServiceDef;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.internal.util.Defense;
 import static org.apache.tapestry5.ioc.internal.util.Defense.notBlank;
 import static org.apache.tapestry5.ioc.internal.util.Defense.notNull;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
@@ -28,6 +29,7 @@ import org.apache.tapestry5.ioc.services.ClassFactory;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Set;
 
@@ -35,15 +37,20 @@ public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
 {
     private final OneShotLock lock = new OneShotLock();
 
+    private final Method bindMethod;
+
     private final ServiceDefAccumulator accumulator;
 
     private final ClassFactory classFactory;
 
     private final Set<Class> defaultMarkers;
 
-    public ServiceBinderImpl(ServiceDefAccumulator accumulator, ClassFactory classFactory, Set<Class> defaultMarkers)
+    public ServiceBinderImpl(ServiceDefAccumulator accumulator, Method bindMethod,
+                             ClassFactory classFactory,
+                             Set<Class> defaultMarkers)
     {
         this.accumulator = accumulator;
+        this.bindMethod = bindMethod;
         this.classFactory = classFactory;
         this.defaultMarkers = defaultMarkers;
     }
@@ -52,9 +59,11 @@ public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
 
     private Class serviceInterface;
 
+    private Class serviceImplementation;
+
     private final Set<Class> markers = CollectionFactory.newSet();
 
-    private Class serviceImplementation;
+    private ObjectCreatorSource source;
 
     private boolean eagerLoad;
 
@@ -71,20 +80,11 @@ public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
     {
         if (serviceInterface == null) return;
 
-        final Constructor constructor = findConstructor();
+        // source will be null when the implementation class is provided; non-null when using
+        // a ServiceBuilder callback
 
-        ObjectCreatorSource source = new ObjectCreatorSource()
-        {
-            public ObjectCreator constructCreator(ServiceBuilderResources resources)
-            {
-                return new ConstructorServiceCreator(resources, getDescription(), constructor);
-            }
-
-            public String getDescription()
-            {
-                return classFactory.getConstructorLocation(constructor).toString();
-            }
-        };
+        if (source == null)
+            source = createObjectCreatorSourceFromImplementationClass();
 
         // Combine service-specific markers with those inherited form the module.
         Set<Class> markers = CollectionFactory.newSet(defaultMarkers);
@@ -96,31 +96,43 @@ public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
 
         serviceId = null;
         serviceInterface = null;
-        this.markers.clear();
         serviceImplementation = null;
+        source = null;
+        this.markers.clear();
         eagerLoad = false;
         scope = null;
     }
 
-    private Constructor findConstructor()
+    private ObjectCreatorSource createObjectCreatorSourceFromImplementationClass()
     {
-        Constructor result = InternalUtils.findAutobuildConstructor(serviceImplementation);
+        final Constructor constructor = InternalUtils.findAutobuildConstructor(serviceImplementation);
 
-        if (result == null) throw new RuntimeException(IOCMessages
-                .noConstructor(serviceImplementation, serviceId));
+        if (constructor == null)
+            throw new RuntimeException(IOCMessages.noConstructor(serviceImplementation, serviceId));
 
-        return result;
+        return new ObjectCreatorSource()
+        {
+            public ObjectCreator constructCreator(ServiceBuilderResources resources)
+            {
+                return new ConstructorServiceCreator(resources, getDescription(), constructor);
+            }
+
+            public String getDescription()
+            {
+                return classFactory.getConstructorLocation(constructor).toString();
+            }
+        };
     }
 
     public <T> ServiceBindingOptions bind(Class<T> serviceClass)
     {
-        if(serviceClass.isInterface())
+        if (serviceClass.isInterface())
         {
             try
             {
-                Class<T> implementationClass = (Class<T>) Class.forName(serviceClass.getName()+"Impl");
-                
-                if(!implementationClass.isInterface() && serviceClass.isAssignableFrom(implementationClass))
+                Class<T> implementationClass = (Class<T>) Class.forName(serviceClass.getName() + "Impl");
+
+                if (!implementationClass.isInterface() && serviceClass.isAssignableFrom(implementationClass))
                 {
                     return bind(serviceClass, implementationClass);
                 }
@@ -131,7 +143,44 @@ public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
                 throw new RuntimeException(IOCMessages.noConventionServiceImplementationFound(serviceClass));
             }
         }
+
         return bind(serviceClass, serviceClass);
+    }
+
+    public <T> ServiceBindingOptions bind(Class<T> serviceInterface, final ServiceBuilder<T> builder)
+    {
+        Defense.notNull(serviceInterface, "serviceInterface");
+        Defense.notNull(builder, "builder");
+
+        lock.check();
+
+        flush();
+
+        this.serviceInterface = serviceInterface;
+        this.scope = IOCConstants.DEFAULT_SCOPE;
+
+        serviceId = serviceInterface.getSimpleName();
+
+        this.source = new ObjectCreatorSource()
+        {
+            public ObjectCreator constructCreator(final ServiceBuilderResources resources)
+            {
+                return new ObjectCreator()
+                {
+                    public Object createObject()
+                    {
+                        return builder.buildService(resources);
+                    }
+                };
+            }
+
+            public String getDescription()
+            {
+                return classFactory.getMethodLocation(bindMethod).toString();
+            }
+        };
+
+        return this;
     }
 
     public <T> ServiceBindingOptions bind(Class<T> serviceInterface, Class<? extends T> serviceImplementation)
@@ -144,6 +193,7 @@ public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
         flush();
 
         this.serviceInterface = serviceInterface;
+
         this.serviceImplementation = serviceImplementation;
 
         // Set defaults for the other properties.
