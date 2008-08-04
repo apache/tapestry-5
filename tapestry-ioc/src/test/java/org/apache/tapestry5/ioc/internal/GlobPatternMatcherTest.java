@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,67 +14,72 @@
 
 package org.apache.tapestry5.ioc.internal;
 
-import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertTrue;
+import org.testng.Assert;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-/**
- *
- */
-public class GlobPatternMatcherTest
+public class GlobPatternMatcherTest extends Assert
 {
     private boolean globMatch(String input, String pattern)
     {
         return new GlobPatternMatcher(pattern).matches(input);
     }
 
-    @Test
-    public void glob_match_exact()
+    @DataProvider(name = "matches")
+    public Object[][] matches()
     {
-        assertTrue(globMatch("fred", "fred"));
-        assertTrue(globMatch("fred", "FRED"));
-        assertFalse(globMatch("xfred", "fred"));
-        assertFalse(globMatch("fredx", "fred"));
-        assertFalse(globMatch("fred", "xfred"));
-        assertFalse(globMatch("fred", "fredx"));
+        return new Object[][]
+                {
+                        {"fred", "fred"},
+                        {"fred", "FRED"},
+                        {"fred", "*"},
+                        {"", "*"},
+                        {"fred.Barney", "*Barney"},
+                        {"fred.Barney", "*BARNEY"},
+                        {"fred.Barney", "fred*"},
+                        {"fred.Barney", "FRED*"},
+                        {"fredBarney", "*dB*"},
+                        {"fredBarney", "*DB*"},
+                        {"fred.Barney", "*Barney*"},
+                        {"fred.Barney", "*fred*"},
+                        {"fred.Barney", "*FRED*"},
+                        {"MyEntityDAO", ".*dao"},
+                        {"FredDAO", "(fred|barney)dao"}
+                };
     }
 
-    @Test
-    public void glob_match_wild()
+    @Test(dataProvider = "matches")
+    public void successful_glob_match(String input, String pattern)
     {
-        assertTrue(globMatch("fred", "*"));
-        assertTrue(globMatch("", "*"));
+        assertTrue(globMatch(input, pattern));
     }
 
-    @Test
-    public void glob_match_prefix()
+
+    @DataProvider(name = "mismatches")
+    public Object[][] mismatches()
     {
-        assertTrue(globMatch("fred.Barney", "*Barney"));
-        assertTrue(globMatch("fred.Barney", "*BARNEY"));
-        assertFalse(globMatch("fred.Barneyx", "*Barney"));
-        assertFalse(globMatch("fred.Barney", "*Barneyx"));
-        assertFalse(globMatch("fred.Barney", "*xBarney"));
+        return new Object[][]
+                {
+                        {"xfred", "fred"},
+                        {"fredx", "fred"},
+                        {"fred", "xfred"},
+                        {"fred", "fredx"},
+                        {"fred.Barneyx", "*Barney"},
+                        {"fred.Barney", "*Barneyx"},
+                        {"fred.Barney", "*xBarney"},
+                        {"xfred.Barney", "fred*"},
+                        {"fred.Barney", "fredx*"},
+                        {"fred.Barney", "xfred*"},
+                        {"fred.Barney", "*flint*"},
+                        {"MyEntityDAL", ".*dao"},
+                        {"WilmaDAO", "(fred|barney)dao"}
+                };
     }
 
-    @Test
-    public void glob_match_suffix()
-    {
-        assertTrue(globMatch("fred.Barney", "fred*"));
-        assertTrue(globMatch("fred.Barney", "FRED*"));
-        assertFalse(globMatch("xfred.Barney", "fred*"));
-        assertFalse(globMatch("fred.Barney", "fredx*"));
-        assertFalse(globMatch("fred.Barney", "xfred*"));
-    }
 
-    @Test
-    public void glob_match_infix()
+    @Test(dataProvider = "mismatches")
+    public void unsuccessful_glob_match(String input, String pattern)
     {
-        assertTrue(globMatch("fred.Barney", "*d.B*"));
-        assertTrue(globMatch("fred.Barney", "*D.B*"));
-        assertTrue(globMatch("fred.Barney", "*Barney*"));
-        assertTrue(globMatch("fred.Barney", "*fred*"));
-        assertTrue(globMatch("fred.Barney", "*FRED*"));
-        assertFalse(globMatch("fred.Barney", "*flint*"));
+        assertFalse(globMatch(input, pattern));
     }
-
 }
