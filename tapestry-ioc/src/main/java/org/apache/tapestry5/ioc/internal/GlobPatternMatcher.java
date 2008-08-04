@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,82 +14,41 @@
 
 package org.apache.tapestry5.ioc.internal;
 
-import static org.apache.tapestry5.ioc.internal.MatchType.*;
+import java.util.regex.Pattern;
 
+/**
+ * Used when matching identifiers.  In the early days of T5 IoC, matching was based on shell-style glob matches (a '*'
+ * could represent zero or more characters).  But that was limiting so now we check to see if the provided pattern looks
+ * like a glob (just characters and asterisks, for compatibility with older code) and, if not, we assume it is a regular
+ * expression.
+ */
 public class GlobPatternMatcher
 {
-    private String substring;
+    private final Pattern pattern;
 
-    private MatchType type;
+    private final static Pattern oldStyleGlob =
+            Pattern.compile("[a-z\\*]+", Pattern.CASE_INSENSITIVE);
 
     public GlobPatternMatcher(String pattern)
     {
-        analyze(pattern);
+        this.pattern = compilePattern(pattern);
     }
 
-    private void analyze(String pattern)
+    private static Pattern compilePattern(String pattern)
     {
-        if (pattern.equals("*"))
-        {
-            type = ANY;
-            return;
-        }
-
-        boolean globPrefix = pattern.startsWith("*");
-        boolean globSuffix = pattern.endsWith("*");
-
-        if (globPrefix && globSuffix)
-        {
-            substring = pattern.substring(1, pattern.length() - 1);
-            type = INFIX;
-            return;
-        }
-
-        if (globPrefix)
-        {
-            substring = pattern.substring(1);
-            type = SUFFIX;
-            return;
-        }
-
-        if (globSuffix)
-        {
-            substring = pattern.substring(0, pattern.length() - 1);
-            type = PREFIX;
-            return;
-        }
-
-        type = MatchType.EXACT;
-        substring = pattern;
+        return Pattern.compile(createRegexpFromGlob(pattern), Pattern.CASE_INSENSITIVE);
     }
+
+    private static String createRegexpFromGlob(String pattern)
+    {
+        return oldStyleGlob.matcher(pattern).matches()
+               ? pattern.replace("*", ".*")
+               : pattern;
+    }
+
 
     public boolean matches(String input)
     {
-        switch (type)
-        {
-            case ANY:
-                return true;
-
-            case EXACT:
-
-                return input.equalsIgnoreCase(substring);
-
-            case INFIX:
-
-                return input.toLowerCase().contains(substring.toLowerCase());
-
-            case PREFIX:
-
-                return input.regionMatches(true, 0, substring, 0, substring.length());
-
-            default:
-
-                return input.regionMatches(
-                        true,
-                        input.length() - substring.length(),
-                        substring,
-                        0,
-                        substring.length());
-        }
+        return pattern.matcher(input).matches();
     }
 }
