@@ -15,7 +15,7 @@ Upgrade Notes
 Release 5.0.14
 
   The signature of the
-  {{{../apidocs/org/apache/tapestry5/services/BeanModelSource.html}BeanModelSource}}.create()
+  {{{apidocs/org/apache/tapestry5/services/BeanModelSource.html}BeanModelSource}}.create()
   method has changed; the last parameter is now Messages, not ComponentResources.
 
   The Grid, PropertyDisplay, PropertyEditor and BeanEditor components have had their override
@@ -46,10 +46,10 @@ Release 5.0.12
 
 * ClassFabUtils
 
-  Several methods of {{{../apidocs/org/apache/tapestry5/ioc/services/ClassFabUtils.html}ClassFabUtils}}
+  Several methods of {{{apidocs/org/apache/tapestry5/ioc/services/ClassFabUtils.html}ClassFabUtils}}
   have been removed.  The new method {{{castReference()}}} is an improved replacement for the removed
   methods. These methods were largely used when decorating services, and the new
-  {{{../apidocs/org/apache/tapestry5/ioc/services/AspectDecorator.html}AspectDecorator}} is even easier.
+  {{{apidocs/org/apache/tapestry5/ioc/services/AspectDecorator.html}AspectDecorator}} is even easier.
 
 * JavaScript Changes
 
