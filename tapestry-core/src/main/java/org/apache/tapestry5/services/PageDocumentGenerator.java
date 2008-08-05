@@ -17,7 +17,7 @@ package org.apache.tapestry5.services;
 import org.apache.tapestry5.dom.Document;
 
 /**
- * Interface used to programattically render a page, forming a {@link org.apache.tapestry5.dom.Document} which can then
+ * Interface used to programatically render a page, forming a {@link org.apache.tapestry5.dom.Document} which can then
  * be manipulated or {@link org.apache.tapestry5.dom.Document#toMarkup(java.io.PrintWriter) streamed to a PrintWriter}.
  */
 public interface PageDocumentGenerator

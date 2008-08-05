@@ -1838,9 +1838,9 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         assertText("activePageName", "music/Details2");
 
-        assertText("//div[@class='t-beandisplay-value title']", "Wake Me Up");
+        assertText("//dd[@class='title']", "Wake Me Up");
 
-        assertText("//div[@class='t-beandisplay-value artist']", "Norah Jones");
+        assertText("//dd[@class='artist']", "Norah Jones");
     }
 
     /**
@@ -1861,7 +1861,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         clickAndWait(SUBMIT);
 
-        assertText("//div[@class='t-beandisplay-value value']", "237");
+        assertText("//dd[@class='value']", "237");
     }
 
     /**

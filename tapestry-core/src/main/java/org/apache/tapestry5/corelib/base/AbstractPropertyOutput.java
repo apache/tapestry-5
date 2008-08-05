@@ -15,9 +15,9 @@
 package org.apache.tapestry5.corelib.base;
 
 import org.apache.tapestry5.Block;
-import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.PropertyConduit;
+import org.apache.tapestry5.PropertyOverrides;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.beaneditor.PropertyModel;
 import org.apache.tapestry5.ioc.Messages;
@@ -46,11 +46,10 @@ public abstract class AbstractPropertyOutput
     private PropertyModel model;
 
     /**
-     * Resources used to search for block parameter overrides (this is normally the enclosing Grid component's
-     * resources).
+     * Used to search for block parameter overrides (this is normally the enclosing Grid component's resources).
      */
     @Parameter(required = true, allowNull = false)
-    private ComponentResources overrides;
+    private PropertyOverrides overrides;
 
     /**
      * Identifies the object being rendered. The component will extract a property from the object and render its value
@@ -78,7 +77,7 @@ public abstract class AbstractPropertyOutput
      */
     protected Object renderPropertyValue(MarkupWriter writer, String overrideBlockId)
     {
-        Block override = overrides.getBlockParameter(overrideBlockId);
+        Block override = overrides.getOverrideBlock(overrideBlockId);
 
         if (override != null) return override;
 
@@ -90,7 +89,7 @@ public abstract class AbstractPropertyOutput
             {
                 public Messages getMessages()
                 {
-                    return getOverrideMessages();
+                    return overrides.getOverrideMessages();
                 }
 
                 public Object getPropertyValue()
@@ -142,11 +141,6 @@ public abstract class AbstractPropertyOutput
         {
             throw new NullPointerException(BaseMessages.nullValueInPath(model.getPropertyName()));
         }
-    }
-
-    private Messages getOverrideMessages()
-    {
-        return overrides.getContainerMessages();
     }
 
     /**

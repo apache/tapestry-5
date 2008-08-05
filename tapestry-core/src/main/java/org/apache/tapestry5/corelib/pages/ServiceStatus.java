@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,10 +14,10 @@
 
 package org.apache.tapestry5.corelib.pages;
 
-import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.annotations.Meta;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.beaneditor.BeanModel;
+import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.Registry;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.services.ServiceActivity;
@@ -52,10 +52,10 @@ public class ServiceStatus
     private final BeanModel model;
 
     @Inject
-    private ComponentResources resources;
+    private Messages messages;
 
     {
-        model = source.create(ServiceActivity.class, false, resources);
+        model = source.create(ServiceActivity.class, false, messages);
 
         model.add("serviceInterface", null);
 

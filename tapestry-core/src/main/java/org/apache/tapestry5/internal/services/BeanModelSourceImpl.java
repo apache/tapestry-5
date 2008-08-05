@@ -14,7 +14,6 @@
 
 package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.beaneditor.BeanModel;
 import org.apache.tapestry5.beaneditor.NonVisual;
 import org.apache.tapestry5.beaneditor.ReorderProperties;
@@ -141,12 +140,10 @@ public class BeanModelSourceImpl implements BeanModelSource
         this.locator = locator;
     }
 
-    public <T> BeanModel<T> create(Class<T> beanClass, boolean filterReadOnlyProperties, ComponentResources resources)
+    public <T> BeanModel<T> create(Class<T> beanClass, boolean filterReadOnlyProperties, Messages messages)
     {
         Defense.notNull(beanClass, "beanClass");
-        Defense.notNull(resources, "resources");
-
-        Messages messages = resources.getMessages();
+        Defense.notNull(messages, "messages");
 
         ClassPropertyAdapter adapter = propertyAccess.getAdapter(beanClass);
 

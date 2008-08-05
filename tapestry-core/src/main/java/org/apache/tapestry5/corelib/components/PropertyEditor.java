@@ -88,10 +88,10 @@ public class PropertyEditor
     /**
      * Where to search for local overrides of property editing blocks as block parameters. This is normally the
      * containing component of the PropertyEditor, but when the component is used within a BeanEditor, it will be the
-     * BeanEditForm's block parameters that will be searched.
+     * BeanEditor's block parameters that will be searched.
      */
-    @Parameter(value = "componentResources")
-    private ComponentResources overrides;
+    @Parameter(value = "this", allowNull = false)
+    private PropertyOverrides overrides;
 
     /**
      * Identifies the property to be edited by the editor.
@@ -143,7 +143,7 @@ public class PropertyEditor
         {
             public Messages getContainerMessages()
             {
-                return overrides.getContainerMessages();
+                return overrides.getOverrideMessages();
             }
 
             public String getLabel()
@@ -174,7 +174,7 @@ public class PropertyEditor
             public FieldValidator getValidator(Field field)
             {
                 return fieldValidatorDefaultSource.createDefaultValidator(field, propertyName,
-                                                                          overrides.getContainerMessages(), locale,
+                                                                          overrides.getOverrideMessages(), locale,
                                                                           propertyModel.getPropertyType(),
                                                                           propertyModel.getConduit());
             }
@@ -230,7 +230,7 @@ public class PropertyEditor
      */
     Block beginRender()
     {
-        Block override = overrides.getBlockParameter(propertyModel.getId());
+        Block override = overrides.getOverrideBlock(propertyModel.getId());
 
         if (override != null)
         {
@@ -269,7 +269,7 @@ public class PropertyEditor
     /**
      * Used for testing.
      */
-    void inject(ComponentResources resources, ComponentResources overrides, PropertyModel propertyModel,
+    void inject(ComponentResources resources, PropertyOverrides overrides, PropertyModel propertyModel,
                 BeanBlockSource beanBlockSource, Messages messages, Object object)
     {
         this.resources = resources;

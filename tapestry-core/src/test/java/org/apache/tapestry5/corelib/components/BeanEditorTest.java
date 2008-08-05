@@ -15,9 +15,11 @@
 package org.apache.tapestry5.corelib.components;
 
 import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.PropertyOverrides;
 import org.apache.tapestry5.beaneditor.BeanModel;
 import org.apache.tapestry5.integration.app1.data.RegistrationData;
 import org.apache.tapestry5.ioc.Location;
+import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.internal.util.TapestryException;
 import org.apache.tapestry5.services.BeanModelSource;
 import org.apache.tapestry5.test.TapestryTestCase;
@@ -29,17 +31,17 @@ public class BeanEditorTest extends TapestryTestCase
     public void object_created_as_needed()
     {
         ComponentResources resources = mockComponentResources();
-        ComponentResources overrides = mockComponentResources();
-        ComponentResources containerResources = mockComponentResources();
         BeanModelSource source = mockBeanModelSource();
         BeanModel model = mockBeanModel();
         RegistrationData data = new RegistrationData();
+        Messages messages = mockMessages();
+        PropertyOverrides overrides = mockPropertyOverrides();
 
         train_getBoundType(resources, "object", RegistrationData.class);
 
-        train_getContainerResources(overrides, containerResources);
+        train_create(source, RegistrationData.class, true, messages, model);
 
-        train_create(source, RegistrationData.class, true, containerResources, model);
+        train_getOverrideMessages(overrides, messages);
 
         expect(model.newInstance()).andReturn(data);
 
@@ -61,18 +63,18 @@ public class BeanEditorTest extends TapestryTestCase
     public void object_can_not_be_instantiated()
     {
         ComponentResources resources = mockComponentResources();
-        ComponentResources overrides = mockComponentResources();
-        ComponentResources containerResources = mockComponentResources();
         BeanModelSource source = mockBeanModelSource();
         BeanModel model = mockBeanModel();
         Location l = mockLocation();
         Throwable exception = new RuntimeException("Fall down go boom.");
+        PropertyOverrides overrides = mockPropertyOverrides();
+        Messages messages = mockMessages();
+
+        train_getOverrideMessages(overrides, messages);
 
         train_getBoundType(resources, "object", Runnable.class);
 
-        train_getContainerResources(overrides, containerResources);
-
-        train_create(source, Runnable.class, true, containerResources, model);
+        train_create(source, Runnable.class, true, messages, model);
 
         expect(model.newInstance()).andThrow(exception);
 

@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
 package org.apache.tapestry5.corelib.components;
 
 import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.PropertyOverrides;
 import org.apache.tapestry5.beaneditor.PropertyModel;
 import org.apache.tapestry5.ioc.Location;
 import org.apache.tapestry5.ioc.Messages;
@@ -33,7 +34,7 @@ public class PropertyEditorTest extends TapestryTestCase
     public void no_editor_block_available()
     {
         PropertyModel model = mockPropertyModel();
-        ComponentResources overrides = mockComponentResources();
+        PropertyOverrides overrides = mockPropertyOverrides();
         ComponentResources resources = mockComponentResources();
         BeanBlockSource source = newMock(BeanBlockSource.class);
         RuntimeException exception = new RuntimeException("Simulated failure.");
@@ -48,7 +49,7 @@ public class PropertyEditorTest extends TapestryTestCase
 
         expect(model.getId()).andReturn(propertyId);
 
-        expect(overrides.getBlockParameter(propertyId)).andReturn(null);
+        train_getOverrideBlock(overrides, propertyId, null);
 
         expect(model.getDataType()).andReturn(dataType);
 
@@ -78,4 +79,5 @@ public class PropertyEditorTest extends TapestryTestCase
         }
 
     }
+
 }

@@ -14,10 +14,19 @@ Upgrade Notes
 
 Release 5.0.14
 
-  Attempting to instantiate a component class will now result in a runtime exception (this is a common
-  beginner's mistake, pages and components should be injected, not instantiated).
+  The signature of the
+  {{{../apidocs/org/apache/tapestry5/services/BeanModelSource.html}BeanModelSource}}.create()
+  method has changed; the last parameter is now Messages, not ComponentResources.
 
-  Properties files in message catalogs are now already read using the UTF-8 charset.  Unlike traditional
+  The Grid, PropertyDisplay, PropertyEditor and BeanEditor components have had their override
+  parameter changed from ComponentResources to
+  the new {{{apidocs/org/apache/tapestry5/PropertyOverrides.html}PropertyOverrides}} interface.
+  No changes should be necessary, as Tapestry can coerce ComponentResources to PropertyOverrides.
+
+  Attempting to instantiate a component class will now result in a runtime exception (this is a common
+  beginner's mistake; pages and components should be injected, not instantiated).
+
+  Properties files in message catalogs are now automatically read using the UTF-8 charset.  Unlike traditional
   Java ResourceBundles, it is <not> necessary to use Java's <<<native2ascii>>> tool.
 
 * {{{https://issues.apache.org/jira/browse/TAPESTRY-2543}TAPESTRY-2543}}

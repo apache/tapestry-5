@@ -18,6 +18,7 @@ import org.apache.tapestry5.ContentType;
 import org.apache.tapestry5.internal.structure.Page;
 import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.runtime.Component;
+import org.apache.tapestry5.services.ResponseRenderer;
 
 import java.io.IOException;
 

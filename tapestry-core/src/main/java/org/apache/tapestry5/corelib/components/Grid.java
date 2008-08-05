@@ -214,16 +214,29 @@ public class Grid implements GridModel
 
     @SuppressWarnings("unused")
     @Component(
-            parameters = { "lean=inherit:lean", "overrides=componentResources", "zone=zone" })
+            parameters = {
+                    "lean=inherit:lean",
+                    "overrides=overrides",
+                    "zone=zone"})
     private GridColumns columns;
 
     @SuppressWarnings("unused")
     @Component(
-            parameters = { "rowClass=rowClass", "rowsPerPage=rowsPerPage", "currentPage=currentPage", "row=row",
-                    "volatile=inherit:volatile", "lean=inherit:lean" })
+            parameters = {
+                    "rowClass=rowClass",
+                    "rowsPerPage=rowsPerPage",
+                    "currentPage=currentPage",
+                    "row=row",
+                    "overrides=overrides",
+                    "volatile=inherit:volatile",
+                    "lean=inherit:lean"})
     private GridRows rows;
 
-    @Component(parameters = { "source=dataSource", "rowsPerPage=rowsPerPage", "currentPage=currentPage", "zone=zone" })
+    @Component(parameters = {
+            "source=dataSource",
+            "rowsPerPage=rowsPerPage",
+            "currentPage=currentPage",
+            "zone=zone"})
     private GridPager pager;
 
     @SuppressWarnings("unused")
@@ -246,6 +259,14 @@ public class Grid implements GridModel
 
     @Environmental
     private RenderSupport renderSupport;
+
+    /**
+     * Defines where block and label overrides are obtained from. By default, the Grid component provides block
+     * overrides (from its block parameters).
+     */
+    @Parameter(value = "this", allowNull = false)
+    @Property(write = false)
+    private PropertyOverrides overrides;
 
     /**
      * Set up via the traditional or Ajax component event request handler
@@ -364,7 +385,7 @@ public class Grid implements GridModel
 
                 // Properties do not have to be read/write
 
-                return modelSource.create(rowType, false, containerResources);
+                return modelSource.create(rowType, false, overrides.getOverrideMessages());
             }
 
             /**

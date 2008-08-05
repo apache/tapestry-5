@@ -84,6 +84,9 @@ Configuring Tapestry
   {{{../../apidocs/org/apache/tapestry5/ioc/util/TimeInterval.html}particular format}}.
 
 
+  Many of these symbols have an associated constant in the class
+  {{{../../apidocs/org/apache/tapestry5/SymbolConstants.html}SymbolConstants}}.
+
   [tapestry.compress-whitespace]
     A flag (true or false).  When true (the default) whitespace in component templates is compressed by default
     (this can be fine-tuned using the standard xml:space attribute on an element in the template).
@@ -105,7 +108,11 @@ Configuring Tapestry
     rather than overriding selected rules within it, entails some risk.
 
     The default is org/apache/tapestry5/default.css, stored on the classpath.
-  
+
+  [tapestry.exception-report-page]
+
+    The name of the page used to report exceptions.  This defaults to "ExceptionReport".
+
   [tapestry.file-check-interval]
     Time interval between file system checks. During a file system check, only a single thread is active (all others
     are blocked) and any files loaded are checked for changes (this is part of {{{reload.html}automatic component reloading}}).
@@ -157,7 +164,7 @@ Configuring Tapestry
     is made available.  It will then create a new page instance (unless the hard limit has been reached).
 
     The default is 5 page instances.    Remember that page pooling is done seperately for each
-    page (and localization of the page).  
+    page (and localization of the page).
 
   [tapestry.page-pool.soft-wait]
     The time interval that Tapestry will wait for a page instance to become available before deciding whether to create
@@ -169,11 +176,12 @@ Configuring Tapestry
 
   [tapestry.scriptaculous]
     The path to the embedded copy of {{{http://script.aculo.us/}script.aculo.us}} packaged with Tapestry. This value may be overridden
-    to use a different version of the script.aculo.us library. Tapestry's default version is 1.8.0
-    (including Prototype 1.6.0).
+    to use a different version of the script.aculo.us library. Tapestry's default version is 1.8.1
+    (including Prototype 1.6.0.1).
 
   [tapestry.start-page-name]
-    The logical name of the start page, the page that is rendered for the <root URL>.  This is normally "start".    
+    The logical name of the start page, the page that is rendered for the <root URL>.  This is normally "start".
+    This functionality is vestigal: it has been superceded by the use of Index pages.
 
   [tapestry.supported-locales]
     A comma-separated list of supported locales.  Incoming requests as "narrowed" to one of these locales, based on closest match.
@@ -220,6 +228,6 @@ Ignored Paths
 
   The regular expression matches any path that begins with "/dwr/".
 
-  The regular expressions provided in the configuration are always compiled with case insensetivity enabled.
+  The regular expressions provided in the configuration are always compiled with case insensitivity enabled.
 
   Also note that actual files in your web application (images, stylesheets, etc.) are always ignored by Tapestry.

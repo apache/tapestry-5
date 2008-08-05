@@ -14,7 +14,6 @@
 
 package org.apache.tapestry5.internal.grid;
 
-import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.beaneditor.BeanModel;
 import org.apache.tapestry5.beaneditor.PropertyModel;
 import org.apache.tapestry5.grid.ColumnSort;
@@ -56,15 +55,13 @@ public class CollectionGridDataSourceTest extends InternalBaseTestCase
     {
         BeanModelSource source = getService(BeanModelSource.class);
 
-        ComponentResources resources = mockComponentResources();
         Messages messages = mockMessages();
 
-        train_getMessages(resources, messages);
         stub_contains(messages, false);
 
         replay();
 
-        model = source.create(Datum.class, false, resources);
+        model = source.create(Datum.class, false, messages);
 
         verify();
     }

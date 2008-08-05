@@ -127,18 +127,12 @@ TABLE.t-data-table TD {
     margin: 0px;
 }
 
-DIV.t-beaneditor, DIV.t-beandisplay {
+DIV.t-beaneditor {
     display: block;
     background: #ffc;
     border: 2px outset brown;
     padding: 2px;
     font-family: "Trebuchet MS", Arial, sans-serif;
-}
-
-DIV.t-beandisplay {
-    background: #CCBE99;
-    border: 2px outset black;
-    width: auto;
 }
 
 DIV.t-beaneditor-row {
@@ -149,11 +143,30 @@ DIV.t-beaneditor-row LABEL:after {
     content: ":";
 }
 
-DIV.t-beandisplay-row {
-    clear: both;
+DL.t-beandisplay {
+    display: block;
+    padding: 2px;
+    font-family: "Trebuchet MS", Arial, sans-serif;
+    background: #CCBE99;
+    border: 2px outset black;
+    width: auto;
 }
 
-DIV.t-beaneditor-row LABEL, DIV.t-beandisplay DIV.t-beandisplay-label {
+DL.t-beandisplay DT {
+    width: 250px;
+    display: inline;
+    float: left;
+    text-align: right;
+    clear: left;
+    padding-right: 3px;
+    vertical-align: middle;
+}
+
+DL.t-beandisplay DT:after {
+    content: ":";
+}
+
+DIV.t-beaneditor-row LABEL {
     width: 250px;
     display: block;
     float: left;

@@ -30,30 +30,30 @@
                 <source><![CDATA[
 public class User
 {
-    private long _id;
-    
-    private String _firstName;
-
-    private String _lastName;
-
-    private int _age;
-
-    public long getId() { return _id; }
-
     @NonVisual
-    public void setId(long id) { _id = id; }
+    private long id;
+    
+    private String firstName;
 
-    public String getFirstName() { return _firstName; }
+    private String lastName;
 
-    public void setFirstName(String firstName) { _firstName = firstName; }
+    private int age;
 
-    public String getLastName() { return _lastName; }
+    public long getId() { return id; }
 
-    public void setLastName(String lastName) { _lastName = lastName; }
+     public void setId(long id) { this.id = id; }
 
-    public int getAge() { return _age; }
+    public String getFirstName() { return firstName; }
 
-    public void setAge(int age) { _age = age; }
+    public void setFirstName(String firstName) { this.firstName = firstName; }
+
+    public String getLastName() { return lastName; }
+
+    public void setLastName(String lastName) { this.lastName = lastName; }
+
+    public int getAge() { return age; }
+
+    public void setAge(int age) { this.age = age; }
 }]]></source>
 
                 <p>The @NonVisual annotation prevents the id property from being displayed.</p>
@@ -65,16 +65,16 @@ public class User
 public class ViewUser
 {
     @Persist
-    private User _user;
+    private User user;
 
     public User getUser()
     {
-        return _user;
+        return user;
     }
 
     public void setUser(User user)
     {
-        _user = user;
+        this.user = user;
     }
 }]]></source>
 
@@ -117,6 +117,30 @@ public class ViewUser
             </subsection>
         </section>
 
+        <section name="CSS Customization">
+
+            <p>
+                The content is rendered as a &lt;dl&gt; (definition list) element, containing &lt;dt&gt; (term) and
+                &lt;dd&gt; (definition) elements.
+            </p>
+
+            <p>
+                The &lt;dt&gt; will have the CSS class "t-beandisplay".
+            </p>
+
+            <p>
+                The &lt;dt&gt; and &lt;dd&gt; elements will have the property id as the CSS class name (i.e.,
+                "firstName", "lastName", etc.). This allows individual properties of the bean to have specific CSS rules
+                applied.
+            </p>
+
+            <p>
+                The ":" after the property label is supplied via CSS.
+            </p>
+
+
+        </section>
+
         <section name="Notes">
 
             <p>
@@ -127,7 +151,7 @@ public class ViewUser
 
             <p>
                 You can accomplish the same thing by changing the order of the
-                getter methods in the bean class.  The default order for properties is not alphabetical,
+                getter methods in the bean class. The default order for properties is not alphabetical,
                 it is the order of the getter methods.
             </p>
 
@@ -154,7 +178,7 @@ public class ViewUser
             <p>
                 Please refer to the
                 <a href="PageLink.html">PageLink</a>
-                component documentation for an alternate way to manage the _user field.
+                component documentation for an alternate way to manage the user field.
             </p>
 
         </section>

@@ -14,12 +14,12 @@
 
 package org.apache.tapestry5.integration.app1.pages;
 
-import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.annotations.Component;
 import org.apache.tapestry5.beaneditor.BeanModel;
 import org.apache.tapestry5.corelib.components.Grid;
 import org.apache.tapestry5.integration.app1.data.Track;
 import org.apache.tapestry5.integration.app1.services.MusicLibrary;
+import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.BeanModelSource;
 
@@ -27,7 +27,7 @@ import java.util.List;
 
 public class AddedGridColumnsDemo
 {
-    @Component(parameters = { "source=tracks", "row=track", "model=model" })
+    @Component(parameters = {"source=tracks", "row=track", "model=model"})
     private Grid grid;
 
     @Inject
@@ -41,10 +41,10 @@ public class AddedGridColumnsDemo
     private final BeanModel model;
 
     @Inject
-    private ComponentResources resources;
+    private Messages messages;
 
     {
-        model = source.create(Track.class, true, resources);
+        model = source.create(Track.class, true, messages);
 
         model.exclude("album", "artist", "genre", "playcount", "rating");
 

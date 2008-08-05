@@ -17,6 +17,7 @@ package org.apache.tapestry5.corelib.components;
 import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.Block;
 import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.PropertyOverrides;
 import org.apache.tapestry5.annotations.*;
 import org.apache.tapestry5.beaneditor.PropertyModel;
 import org.apache.tapestry5.grid.ColumnSort;
@@ -55,8 +56,8 @@ public class GridColumns
      * Where to look for informal parameter Blocks used to override column headers.  The default is to look for such
      * overrides in the GridColumns component itself, but this is usually overridden.
      */
-    @Parameter("componentResources")
-    private ComponentResources overrides;
+    @Parameter("this")
+    private PropertyOverrides overrides;
 
 
     /**
@@ -67,7 +68,7 @@ public class GridColumns
 
     @SuppressWarnings("unused")
     @Component(
-            parameters = { "event=sort", "disabled=sortDisabled", "context=columnContext", "class=sortLinkClass", "zone=inherit:zone" })
+            parameters = {"event=sort", "disabled=sortDisabled", "context=columnContext", "class=sortLinkClass", "zone=inherit:zone"})
     private EventLink sort, sort2;
 
     @Inject
@@ -171,7 +172,7 @@ public class GridColumns
     {
         onSort(columnId);
 
-        resources.triggerEvent(InternalConstants.GRID_INPLACE_UPDATE, new Object[] { zone }, null);
+        resources.triggerEvent(InternalConstants.GRID_INPLACE_UPDATE, new Object[]{zone}, null);
 
         // Event is handled, don't trigger further event handler methods.
 
@@ -197,7 +198,7 @@ public class GridColumns
     {
         if (zone == null) return columnModel.getId();
 
-        return new Object[] { columnModel.getId(), zone };
+        return new Object[]{columnModel.getId(), zone};
     }
 
     public String getIconLabel()
@@ -227,7 +228,7 @@ public class GridColumns
 
     public Block getBlockForColumn()
     {
-        Block override = overrides.getBlockParameter(columnModel.getId() + "Header");
+        Block override = overrides.getOverrideBlock(columnModel.getId() + "Header");
 
         if (override != null) return override;
 

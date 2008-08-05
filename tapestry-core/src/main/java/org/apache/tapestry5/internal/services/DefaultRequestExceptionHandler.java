@@ -14,7 +14,10 @@
 
 package org.apache.tapestry5.internal.services;
 
+import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.internal.structure.Page;
+import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.ExceptionReporter;
 import org.apache.tapestry5.services.RequestExceptionHandler;
 import org.slf4j.Logger;
@@ -33,18 +36,24 @@ public class DefaultRequestExceptionHandler implements RequestExceptionHandler
 
     private final Logger logger;
 
-    public DefaultRequestExceptionHandler(RequestPageCache pageCache, PageResponseRenderer renderer, Logger logger)
+    private final String pageName;
+
+    public DefaultRequestExceptionHandler(RequestPageCache pageCache, PageResponseRenderer renderer, Logger logger,
+
+                                          @Inject @Symbol(SymbolConstants.EXCEPTION_REPORT_PAGE)
+                                          String pageName)
     {
         this.pageCache = pageCache;
         this.renderer = renderer;
         this.logger = logger;
+        this.pageName = pageName;
     }
 
     public void handleRequestException(Throwable exception) throws IOException
     {
         logger.error(ServicesMessages.requestException(exception), exception);
 
-        Page page = pageCache.get("ExceptionReport");
+        Page page = pageCache.get(pageName);
 
         ExceptionReporter rootComponent = (ExceptionReporter) page.getRootComponent();
 
