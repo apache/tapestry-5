@@ -14,7 +14,7 @@ Application State
   With an ASO, the value is automatically stored outside the page; with the default storage strategy, it is stored in the session. 
   
   A field holding an ASO is marked with the
-  {{{../../apidocs/org/apache/tapestry5/annotations/ApplicationState.html}ApplicationState}} annotation.
+  {{{../apidocs/org/apache/tapestry5/annotations/ApplicationState.html}ApplicationState}} annotation.
   
   Example:
   
@@ -79,7 +79,7 @@ Configuring ASOs
   
   Alternately, you will configure an ASO so that you can control how it is instantiated.  You may need to inject some values into the ASO
   when it is first created, or otherwise initialize it.  In this second case, you may provide an
-  {{{../../apidocs/org/apache/tapestry5/services/ApplicationStateCreator.html}ApplicationStateCreator}} object, which will be called upon to create the ASO
+  {{{../apidocs/org/apache/tapestry5/services/ApplicationStateCreator.html}ApplicationStateCreator}} object, which will be called upon to create the ASO
   as necessary.  This is also the technique to use when you want your ASO to be represented by an <interface> rather than a <class>: you need to provide
   a creator that knows about the class that implements the interface.
   
@@ -107,5 +107,5 @@ Configuring ASOs
   example.
   
   Finally, we create an 
-  {{{../../apidocs/org/apache/tapestry5/services/ApplicationStateContribution.html}ApplicationStateContribution}}
+  {{{../apidocs/org/apache/tapestry5/services/ApplicationStateContribution.html}ApplicationStateContribution}}
   identifying the strategy name and the creator, and give that to the configuration.

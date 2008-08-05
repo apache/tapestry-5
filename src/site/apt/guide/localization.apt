@@ -166,11 +166,11 @@ Output Content Type and Charset
   When Tapestry renders a page, the very first step is to determine the output content type and charset.  
   
   This information is obtained from meta data on the page itself.  Meta data is specified using the
-  {{{../../apidocs/org/apache/tapestry5/annotations/Meta.html}Meta}} annotation.
+  {{{../apidocs/org/apache/tapestry5/annotations/Meta.html}Meta}} annotation.
   
   The response content type is obtained via meta-data key "tapestry.response-content-type".  This value defaults to "text/html".
 
-  As a convienence, the {{{../../apidocs/org/apache/tapestry5/annotations/ContentType.html}ContentType}} annotation can be used to specify the response
+  As a convienence, the {{{../apidocs/org/apache/tapestry5/annotations/ContentType.html}ContentType}} annotation can be used to specify the response
   content type.  The value attribute of the annotation is the content type.
   
   The character set for all outgoing markup and all incoming requests is "UTF-8".  UTF-8 is a version of Unicode where individual characters are encoded as one

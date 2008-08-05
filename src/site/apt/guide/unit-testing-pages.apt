@@ -1,0 +1,139 @@
+ ----
+  Unit testing pages or components
+ ----
+
+Unit testing pages or components
+
+  You can easily unit test a certain page or a component. Follow the simple 
+  tasks below.
+ 
+* Setting up a driving environment
+
+  In order to unit test a page, you'll need to create an instance of 
+  {{{../apidocs/org/apache/tapestry5/test/pagelevel/PageTester.html}PageTester}}.
+  It acts as both the browser and the servlet container so that you can
+  use it to drive your page. As it is not a real servlet container, you need 
+  to tell it the same information as you would in web.xml:
+  
+  [[1]] Your application package.
+
+  [[2]] Your filter name. This is used to load your Tapestry IoC module only.
+  If you have none, you can pass an empty string or anything to it.
+  
+  [[3]] The folder acting as your context root. This is used to locate your
+  templates (if they're put there).
+
+  Here is an example (using TestNG, but you're free to use JUnit or anything else):
+
++---+
+public class MyTest extends Assert
+{
+    @Test
+    public void test1()
+    {
+        String appPackage = "org.example.app";
+        String appName = "App1"; // App1Module.java has configured some services.
+        PageTester tester = new PageTester(appPackage, appName, "src/main/webapp");
+    }
+}
++---+
+
+* Testing the rendering of a page
+
+  To test if a page renders properly (optionally with context), you can tell
+  the PageTester to render it and then assert against the 
+   {{{../apidocs/org/apache/tapestry5/dom/Document.html}DOM Document}} returned.
+  
+  Here is an example. Let's assuming the page being tested is named "MyPage"
+  and it should return a page containing an HTML element whose id is "id1" 
+  and whose text content should be "hello":
+  
++---+
+public class MyTest extends Assert
+{
+    @Test
+    public void test1()
+    {
+        String appPackage = "org.example.app";
+        String appName = "LocaleApp";
+        PageTester tester = new PageTester(appPackage, appName, "src/main/webapp");
+        Document doc = tester.renderPage("MyPage");
+        assertEquals(doc.getElementById("id1").getChildText(), "hello");
+    }
+}
++---+
+
+  If the page requires a context, you can pass it this way:
+  
++---+
+public class MyTest extends Assert
+{
+    @Test
+    public void test1()
+    {
+        String appPackage = "org.example.app";
+        String appName = "LocaleApp";
+        PageTester tester = new PageTester(appPackage, appName, "src/main/webapp");
+        Object[] context = new Object[]{ "abc", 123 };
+        Document doc = tester.invoke(new ComponentInvocation(new PageLinkTarget("MyPage"), context));
+        assertEquals(doc.getElementById("id1").getChildText(), "hello");
+    }
+}
++---+
+
+* Testing an action link
+
+  After rendering a page, you may want to "click" on an action link and then
+  assert against the resulting page. You can do it this way:
+
++---+
+public class MyTest extends Assert
+{
+    @Test
+    public void test1()
+    {
+        String appPackage = "org.example.app";
+        String appName = "LocaleApp";
+        PageTester tester = new PageTester(appPackage, appName, "src/main/webapp");
+        Document doc = tester.renderPage("MyPage");
+        Element link = doc.getElementById("link1");
+        doc = tester.clickLink(link);
+        assertTrue(doc.toString().contains("abc"));
+    }
+}
++---+
+
+* Testing a form submission
+
+  After rendering a page, you may want to fill out a form, submit it and
+  then inspect the resulting page. You can do it this way:
+
++---+
+public class MyTest extends Assert
+{
+    @Test
+    public void test1()
+    {
+        String appPackage = "org.example.app";
+        String appName = "LocaleApp";
+        PageTester tester = new PageTester(appPackage, appName, "src/main/webapp");
+        Document doc = tester.renderPage("MyPage");
+        Element form = doc.getElementById("form1");
+        Map<String, String> fieldValues = new HashMap<String, String>();
+        fieldValues.put("field1", "hello");
+        fieldValues.put("field2", "100");
+        doc = tester.submitForm(form, fieldValues);
+        assertTrue(doc.toString().contains("abc"));
+    }
+}
++---+
+
+  To submit a form by clicking a submit button, call the
+  {{{../apidocs/org/apache/tapestry5/test/pagelevel/PageTester.html#clickSubmit(org.apache.tapestry5.dom.Element, java.util.Map)}clickSubmit()}}
+  method instead.
+
+* Unit testing a component
+
+  To unit test a component, just create a test page containing that component. Then 
+  unit test that page.
+
