@@ -28,9 +28,15 @@ import org.apache.tapestry5.services.BeanModelSource;
 import org.apache.tapestry5.services.ComponentDefaultProvider;
 
 /**
- * Used to display the properties of a bean, using an underlying {@link BeanModel}. The output is a series of
- * &lt;div&gt; elements for the property names and property values.   Only properties that have a known data type are
- * displayed.
+ * Used to display the properties of a bean, using an underlying {@link BeanModel}. The output definition list: a
+ * &lt;dl&gt; element containing a series of &lt;dt&gt;/&lt;dd&gt; pairs.  The property label is used as the &lt;dt&gt;
+ * and the property value (formatted as per the datatype) is the &lt;dd&gt;. Only properties that have a known data type
+ * are displayed.
+ * <p/>
+ * The property id is used as the class attribute of the &lt;dt&gt; and &lt;dd&gt; element, allowing CSS customization
+ * per property.  This does not occur when lean is bound to true.
+ * <p/>
+ * The outer &lt;dl&gt; element has the CSS class "t-beandisplay".
  *
  * @see org.apache.tapestry5.beaneditor.DataType
  * @see BeanModel
@@ -48,8 +54,7 @@ public class BeanDisplay
     private Object object;
 
     /**
-     * If true, then &lt;span&gt; tags around each output property will be omitted. If false, then a span tag (to
-     * identify the id of each property as the CSS class attribute) will be included.
+     * If true, then the CSS class attribute on the &lt;dt&gt; and &lt;dd&gt; elements will be ommitted.
      */
     @Parameter(value = "false")
     private boolean lean;
@@ -125,8 +130,8 @@ public class BeanDisplay
 
     void setupRender()
     {
-        if (model == null) model = modelSource.create(object.getClass(), false, overrides
-                .getContainerResources());
+        if (model == null) model = modelSource.create(object.getClass(), false,
+                                                      overrides.getContainerMessages());
 
         BeanModelUtils.modify(model, add, include, exclude, reorder);
     }
@@ -139,21 +144,9 @@ public class BeanDisplay
         return model.get(propertyName);
     }
 
-    public String getLabelClass()
+
+    public String getPropertyClass()
     {
-        return generateClassValue("t-beandisplay-label");
+        return lean ? null : getPropertyModel().getId();
     }
-
-    private String generateClassValue(String className)
-    {
-        if (lean) return className;
-
-        return className + " " + getPropertyModel().getId();
-    }
-
-    public String getValueClass()
-    {
-        return generateClassValue("t-beandisplay-value");
-    }
-
 }

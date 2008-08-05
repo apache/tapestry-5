@@ -48,8 +48,8 @@ public class AdditionalIntegrationTests extends AbstractIntegrationTestSuite
     {
         start("BeanDisplay Override Demo");
 
-        assertText("//div[@class='t-beandisplay-value no']", "Nay");
-        assertText("//div[@class='t-beandisplay-value yes']", "Yea");
+        assertText("//dd[@class='no']", "Nay");
+        assertText("//dd[@class='yes']", "Yea");
     }
 
     /**

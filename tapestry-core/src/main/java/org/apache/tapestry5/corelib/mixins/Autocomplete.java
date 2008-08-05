@@ -17,13 +17,13 @@ package org.apache.tapestry5.corelib.mixins;
 import org.apache.tapestry5.*;
 import org.apache.tapestry5.ContentType;
 import org.apache.tapestry5.annotations.*;
-import org.apache.tapestry5.internal.services.ResponseRenderer;
 import org.apache.tapestry5.internal.util.Holder;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.MarkupWriterFactory;
 import org.apache.tapestry5.services.Request;
+import org.apache.tapestry5.services.ResponseRenderer;
 import org.apache.tapestry5.util.TextStreamResponse;
 
 import java.util.Collections;

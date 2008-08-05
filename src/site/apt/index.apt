@@ -32,28 +32,6 @@ What is Tapestry?
 
  Tapestry is released under the Apache Software Licence 2.0.
 
-Where To Go
-
- You are currently reading the Tapestry 5 project site.  Tapestry itself is broken into several modules:
- 
-*---+---+
-| {{{tapestry-annotations/index.html}tapestry-annotations}} | A few Tapestry annotations that may be used with non-component classes. |
-*---+---+
-| {{{tapestry-core/index.html}tapestry-core}} | The core implementation of the Tapestry framework, including all the primary built-in components. |
-*---+---+
-| {{{tapestry-hibernate/index.html}tapestry-hibernate}} |  Integration with the {{{http://hibernate.org}Hibernate}} Object/Relational Mapping framework. |
-*---+---+
-| {{{tapestry-ioc/index.html}tapestry-ioc}} |  The Tapestry Inversion of Control Container. |
-*---+---+
-| {{{tapestry-spring/index.html}tapestry-spring}} |  Integration with {{{http://springframework.org}Spring}}. |
-*---+---+
-| {{{tapestry-test/index.html}tapestry-test}} |  Tapestry test utilities. |
-*---+---+
-| {{{tapestry-upload/index.html}tapestry-upload}} |  Tapestry file upload component. |
-*---+---+
- 
-  Or, you can start with the {{{screencast.html}screencasts}}, which give you a better idea about how Tapestry fits together.
-
 Roadmap
 
   Tapestry is, of course, an open-source project, with all the work coming from unpaid volunteers.  That being said, our rough timeline is as follows:
@@ -68,8 +46,10 @@ Roadmap
     is increasingly stable.  Further "stable" with Tapestry usually refers to names of interfaces and methods, not to code quality,
     which is always very, very high.
 
-  * We are now edging towards a release candidate, with most work being documentation, minor bug fixes and modest
-    enhancements.
+  * We are now finally edging towards a release candidate, with most work being documentation, minor bug fixes and modest
+    enhancements. Note that Tapestry team members have been using Tapestry 5 to build production applications, and those
+    experiences are being applied back to the framework to improve its quality: we're finding rough edges and we're
+    smoothing them out.
      
   []
 
@@ -102,6 +82,29 @@ Third Party Libraries, Tutorials and Resources
 | {{{http://code.google.com/p/tapestry5-treegrid/}tapestry5-treegrid}} | Gabriel Landais |  Combination tree navigation and data grid, based on sstree. |
 *--+--+--+
 
+New And Of Note
+
+  * Work has started on a {{{cookbook}Tapestry Cookbook}}, showing how to tackle common scenarios. 
+
+  * Component methods may be marked with the @Log annotation, to enable debug logging of
+    method entry (with parameters) and exit (with return value, or thrown exception).
+
+  * It is now possible to provide method invocation advice to component methods. This opens up
+    a very powerful Aspect Oriented Programming approach to Tapestry components.
+
+  * The Exception Report page now identifies the version of the Tapestry framework, and lists
+    out System properties (including the Java classpath).
+
+  * The {{{tapestry-core/ref/org/apache/tapestry5/corelib/components/Grid.html}Grid}} component can now update itself in place,
+    using Ajax, when paging or sorting links are clicked.
+
+  * Added a zone parameter to the  {{{tapestry-core/ref/org/apache/tapestry5/corelib/components/BeanEditForm.html}BeanEditForm}}
+    component, to support Ajax updates.
+
+  * The @Cached annotation has been added to allowing the caching of method results.
+
+  []
+
 
 What's changed since Tapestry 4?
 
@@ -113,8 +116,7 @@ What's changed since Tapestry 4?
   * Components no longer extend from base classes.
   
   * {{{tapestry-core/guide/component-classes.html}Components classes are no longer <abstract>}}.  
-     Components are pure, simple POJOs (<plain old Java
-    objects>).
+     Components are pure, simple POJOs (<plain old Java objects>).
   
   * Tapestry no longer uses XML page and component specification files. Information that used to
     be supplied in such files is now supplied directly in the Java class, using Java annotations and naming conventions.
@@ -129,56 +131,88 @@ What's changed since Tapestry 4?
     
   []
   
-New and Noteworthy
 
-  * In order to support Tapestry 4 applications co-existing with Tapestry 5 applications within the same WAR,
-    a small number of Tapestry 5 classes and packages have been renamed or refactored.  For more information,
-    see the upgrade notes for
-    {{{tapestry-ioc/upgrade.html}tapestry-ioc}} and
-    {{{tapestry-core/upgrade.html}tapestry-core}}.
+Adaptive API
 
-  * A {{{faq/general.html}FAQ (Frequently Asked Questions) page}} has been added.
+  A key feature of Tapestry 5 is <adaptive API>.
 
-  * An {{{tapestry-ioc/overview.html}overview}} and {{{tapestry-ioc/cookbook/}cookbook}} for Tapestry IoC has been written.
+  In traditional Java frameworks, including Tapestry 4, user code is expected to
+  conform to the framework.  You create classes that extend from framework-provided
+  base classes, or implement framework-provided interfaces.
 
-  * The nightly build on the {{{http://tapestry.formos.com/bamboo}Bamboo CI server}} now creates 
-    {{{http://tapestry.formos.com/nightly/tapestry5/}full documentation}}.
+  This works well until you upgrade to the next release of the framework: with
+  the new features of the upgrade, you will more often than not experience breaks
+  in backwards compatibility. Interfaces or base classes will have changed and your
+  existing code will need to be changed to match.
 
-  * There is now a RegistryStartup service, allowing you to provide logic that executes when the Registry is first created.
+  In Tapestry 5, the framework <adapts to your code>.  You have control over the
+  names of the methods, the parameters they take, and the value that is returned. This
+  is driven by annotations, which tell Tapestry under what circumstances your
+  methods are to be invoked.
 
-  * Logging in Tapestry is now implemented on top of {{{http://www.slf4j.org/docs.html}Simple Logging Facade for Java}}.
- 
-  * A file upload form component has been added, in a new library: {{{tapestry-upload/}tapestry-upload}}. 
- 
-  * The {{{tapestry-spring/}tapestry-spring}} module has also been simplified, to make
-  Spring beans look like Tapestry IoC services. It's all now quite seamless.
+  For example, you may have a login form and have a method that gets invoked
+  when the form is submitted:
 
-  * The {{{tapestry-ioc/}tapestry-ioc}} module has been simplified, removing the concept
-  of module ids and namespaces, as well as private services, and borrowing a lot of cool
-  ideas from {{{http://code.google.com/p/google-guice/}Guice}}. The goal is to make the container
-  all but invisible.
++----+
+public class Login
+{
+  @Persist
+  @Property
+  private String userId;
 
-  * Work has been started on {{{http://hibernate.org}Hibernate}} integration in the
-  new {{{tapestry-hibernate/}tapestry-hibernate}} module.
+  @Property
+  private String password;
 
-  * A few simple utility classes for building integration tests (on top of 
-  {{{http://www.openqa.org/selenium/}Selenium}}) have been split out as a new module: 
-  {{{tapestry-test/}tapestry-test}}.
-    
-  * A  module for integrating Tapestry 5 with {{{http://springframework.org/}Spring}} has been
-  added: {{{tapestry-spring/}tapestry-spring}}.
+  @Component
+  private Form form;
 
-  * A Maven plugin to generate documentation about components and parameters has been added:
-  {{{tapestry-component-report/}tapestry-component-report}}.
- 
-  * {{{http://www.formos.com}Formos}} has donated hardware and bandwidth to support the Tapestry project, starting
-  with a {{{http://tapestry.formos.com/bamboo}continuous integration site}} running on
-  {{{http://www.atlassian.com/software/bamboo/}Bamboo}}.  And thanks to Atlassian for donating
-  the Bamboo license.
+  @Inject
+  private LoginAuthenticator authenticator;
 
-  * Howard Lewis Ship has begun work on a {{{tutorial1/}Tapestry 5 Tutorial}}. 
-  
-  [] 
+  void onValidateForm()
+  {
+    if (! authenticator.isValidLogin(userId, password))
+    {
+      form.recordError("Invalid user name or password.");
+    }
+  }
+
+  Object onSuccess()
+  {
+    return PostLogin.class;
+  }
+
+}
++----+
+
+  This short snippet demonstrates a bit about how Tapestry operates.  Pages and services
+  within the application are injected with the @Inject annotation. The method names, onValidateForm()
+  and onSuccess(),
+  inform Tapestry about when the method is to be invoked.  The two events <validateForm> and <success> occur
+  when a form is submitted; "validateForm" is triggered to perform cross-field validations, and "success" is
+  only triggered when there are no validation errors. The onSuccess() method's
+  return value directs Tapestry on what to do next: jump to another page within the application
+  (here identified as the class for the page, but many other options exist).  When there are exceptions,
+  the page will be redisplayed to the user.
+
+  This also represents a distinct change from Tapestry 4. In earlier versions of Tapestry,
+  the Form component's listener parameter would be bound to the method to invoke, by name.  Further,
+  the listener method had to be public.
+  This new approach not only support multiple listeners, but provides an improved separation of
+  view concerns (inside the page's HTML template) and logic concerns, inside the Java class.
+
+  In many cases, additional information about the event is available, and can be passed
+  into the method by adding parameters to the method. Again, Tapestry will adapt
+  to your parameters, in whatever order you supply them.
+
+  Tapestry also saves you effort:  the @Property annotation marks a field as readable and writable;
+  Tapestry will provide the accessor methods automatically.
+
+  Finally, Tapestry 5 explicitly separates actions (requests that change things) and rendering (requests that
+  render pages) into two separate requests.  Performing an action, such as clicking a link or submitting a form,
+  results in a <client side redirect> to the new page. This is often called "redirect after post". This helps ensure
+  that URLs in the browser are book-markable ... but also requires that a bit more information be stored in the session
+  between requests (using the @Persist annotation).
     
 About Snapshots and Releases
 
@@ -211,7 +245,7 @@ Principle 1 -- Static Structure, Dynamic Behavior
 
   Tapestry is designed to be extremely scalable in several dimensions:
   
-  * Tapestry applications may contain many pages and many custom components.
+  * Tapestry applications may contain large numbers of pages and many custom components.
   
   * Tapestry applications may contain very complex functionality.
   

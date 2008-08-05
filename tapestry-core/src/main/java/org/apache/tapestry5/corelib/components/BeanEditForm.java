@@ -108,7 +108,7 @@ public class BeanEditForm implements ClientElement, FormValidationControl
     @Parameter(defaultPrefix = BindingConstants.LITERAL)
     private String zone;
 
-    @Component(parameters = { "clientValidation=inherit:clientValidation", "zone=inherit:zone" })
+    @Component(parameters = {"clientValidation=inherit:clientValidation", "zone=inherit:zone"})
     private Form form;
 
     /**
@@ -146,7 +146,7 @@ public class BeanEditForm implements ClientElement, FormValidationControl
         {
             Class beanType = resources.getBoundType("object");
 
-            model = beanModelSource.create(beanType, true, resources.getContainerResources());
+            model = beanModelSource.create(beanType, true, resources.getContainerMessages());
         }
 
         BeanModelUtils.modify(model, add, include, exclude, reorder);

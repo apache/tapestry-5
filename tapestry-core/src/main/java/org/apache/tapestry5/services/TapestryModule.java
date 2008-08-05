@@ -182,6 +182,7 @@ public final class TapestryModule
         binder.bind(AliasManager.class, AliasManagerImpl.class).withId("AliasOverrides");
         binder.bind(HiddenFieldLocationRules.class, HiddenFieldLocationRulesImpl.class);
         binder.bind(PageDocumentGenerator.class, PageDocumentGeneratorImpl.class);
+        binder.bind(ResponseRenderer.class, ResponseRendererImpl.class);
     }
 
     // ========================================================================
@@ -619,10 +620,20 @@ public final class TapestryModule
      * to {@link org.apache.tapestry5.corelib.data.GridPagerPosition} <li>List to {@link
      * org.apache.tapestry5.SelectModel} <li>{@link org.apache.tapestry5.runtime.ComponentResourcesAware} (typically, a
      * component) to {@link org.apache.tapestry5.ComponentResources} <li>String to {@link
-     * org.apache.tapestry5.corelib.data.BlankOption} </ul>
+     * org.apache.tapestry5.corelib.data.BlankOption} <li> {@link org.apache.tapestry5.ComponentResources} to {@link
+     * org.apache.tapestry5.PropertyOverrides} </ul>
      */
     public static void contributeTypeCoercer(Configuration<CoercionTuple> configuration)
     {
+        add(configuration, ComponentResources.class, PropertyOverrides.class,
+            new Coercion<ComponentResources, PropertyOverrides>()
+            {
+                public PropertyOverrides coerce(ComponentResources input)
+                {
+                    return new PropertyOverridesImpl(input);
+                }
+            });
+
         add(configuration, String.class, SelectModel.class, new Coercion<String, SelectModel>()
         {
             public SelectModel coerce(String input)
@@ -1750,6 +1761,8 @@ public final class TapestryModule
         configuration.add(SymbolConstants.CHARSET, "UTF-8");
 
         configuration.add(SymbolConstants.APPLICATION_CATALOG, "WEB-INF/${tapestry.app-name}.properties");
+
+        configuration.add(SymbolConstants.EXCEPTION_REPORT_PAGE, "ExceptionReport");
     }
 
 

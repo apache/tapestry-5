@@ -14,10 +14,7 @@
 
 package org.apache.tapestry5.corelib.components;
 
-import org.apache.tapestry5.Binding;
-import org.apache.tapestry5.BindingConstants;
-import org.apache.tapestry5.ComponentAction;
-import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.*;
 import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.Property;
@@ -106,9 +103,9 @@ public class BeanEditor
      * itself, but when the component is used within a BeanEditForm, it will be the BeanEditForm's resources that will
      * be searched.
      */
-    @Parameter(value = "componentResources")
+    @Parameter(value = "this", allowNull = false)
     @Property(write = false)
-    private ComponentResources overrides;
+    private PropertyOverrides overrides;
 
     @Inject
     private BeanModelSource modelSource;
@@ -152,7 +149,7 @@ public class BeanEditor
         if (model == null)
         {
             Class type = resources.getBoundType("object");
-            model = modelSource.create(type, true, overrides.getContainerResources());
+            model = modelSource.create(type, true, overrides.getOverrideMessages());
         }
 
         BeanModelUtils.modify(model, add, include, exclude, reorder);
@@ -179,7 +176,7 @@ public class BeanEditor
     }
 
     // For testing
-    void inject(ComponentResources resources, ComponentResources overrides, BeanModelSource source)
+    void inject(ComponentResources resources, PropertyOverrides overrides, BeanModelSource source)
     {
         this.resources = resources;
         this.overrides = overrides;

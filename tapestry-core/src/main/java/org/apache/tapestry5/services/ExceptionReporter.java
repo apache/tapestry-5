@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2007 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,14 +17,14 @@ package org.apache.tapestry5.services;
 /**
  * Interface implemented by a page used for reporting exceptions.
  *
- * @see RequestExceptionHandler
+ * @see org.apache.tapestry5.services.RequestExceptionHandler
  */
 public interface ExceptionReporter
 {
     /**
      * Used to communicate to the page what exception is to be reported.
      *
-     * @param exception
+     * @param exception runtime exception thrown during processing of the request
      */
     void reportException(Throwable exception);
 }

@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,11 +14,11 @@
 
 package org.apache.tapestry5.integration.app1.pages;
 
-import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.beaneditor.BeanModel;
 import org.apache.tapestry5.integration.app1.data.SimpleTrack;
 import org.apache.tapestry5.integration.app1.data.Track;
 import org.apache.tapestry5.integration.app1.services.MusicLibrary;
+import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.BeanModelSource;
 
@@ -33,7 +33,7 @@ public class SimpleTrackGridDemo
     private BeanModelSource beanModelSource;
 
     @Inject
-    private ComponentResources resources;
+    private Messages messages;
 
     private SimpleTrack track;
 
@@ -54,6 +54,6 @@ public class SimpleTrackGridDemo
 
     public BeanModel getSimpleTrackModel()
     {
-        return beanModelSource.create(SimpleTrack.class, false, resources);
+        return beanModelSource.create(SimpleTrack.class, false, messages);
     }
 }

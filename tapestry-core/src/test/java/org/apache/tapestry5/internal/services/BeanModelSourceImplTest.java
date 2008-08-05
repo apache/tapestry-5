@@ -14,7 +14,6 @@
 
 package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.PropertyConduit;
 import org.apache.tapestry5.beaneditor.BeanModel;
 import org.apache.tapestry5.beaneditor.PropertyModel;
@@ -50,15 +49,13 @@ public class BeanModelSourceImplTest extends InternalBaseTestCase
     @Test
     public void default_model_for_bean()
     {
-        ComponentResources resources = mockComponentResources();
         Messages messages = mockMessages();
 
-        train_getMessages(resources, messages);
         stub_contains(messages, false);
 
         replay();
 
-        BeanModel model = source.create(SimpleBean.class, true, resources);
+        BeanModel model = source.create(SimpleBean.class, true, messages);
 
         assertSame(model.getBeanType(), SimpleBean.class);
 
@@ -107,15 +104,13 @@ public class BeanModelSourceImplTest extends InternalBaseTestCase
     @Test
     public void include_properties()
     {
-        ComponentResources resources = mockComponentResources();
         Messages messages = mockMessages();
 
-        train_getMessages(resources, messages);
         stub_contains(messages, false);
 
         replay();
 
-        BeanModel model = source.create(SimpleBean.class, true, resources);
+        BeanModel model = source.create(SimpleBean.class, true, messages);
 
         assertSame(model.getBeanType(), SimpleBean.class);
 
@@ -131,13 +126,11 @@ public class BeanModelSourceImplTest extends InternalBaseTestCase
     @Test
     public void add_before()
     {
-        ComponentResources resources = mockComponentResources();
         Messages messages = mockMessages();
         PropertyConduit conduit = mockPropertyConduit();
 
         Class propertyType = String.class;
 
-        train_getMessages(resources, messages);
         stub_contains(messages, false);
 
         expect(conduit.getPropertyType()).andReturn(propertyType).atLeastOnce();
@@ -145,7 +138,7 @@ public class BeanModelSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        BeanModel model = source.create(SimpleBean.class, true, resources);
+        BeanModel model = source.create(SimpleBean.class, true, messages);
 
         assertEquals(model.getPropertyNames(), Arrays.asList("firstName", "lastName", "age"));
 
@@ -168,15 +161,13 @@ public class BeanModelSourceImplTest extends InternalBaseTestCase
     @Test
     public void new_instance()
     {
-        ComponentResources resources = mockComponentResources();
         Messages messages = mockMessages();
 
-        train_getMessages(resources, messages);
         stub_contains(messages, false);
 
         replay();
 
-        BeanModel<SimpleBean> model = source.create(SimpleBean.class, true, resources);
+        BeanModel<SimpleBean> model = source.create(SimpleBean.class, true, messages);
 
         SimpleBean s1 = model.newInstance();
 
@@ -193,15 +184,13 @@ public class BeanModelSourceImplTest extends InternalBaseTestCase
     @Test
     public void add_before_using_default_conduit()
     {
-        ComponentResources resources = mockComponentResources();
         Messages messages = mockMessages();
 
-        train_getMessages(resources, messages);
         stub_contains(messages, false);
 
         replay();
 
-        BeanModel model = source.create(SimpleBean.class, true, resources);
+        BeanModel model = source.create(SimpleBean.class, true, messages);
 
         model.exclude("firstname");
 
@@ -222,13 +211,11 @@ public class BeanModelSourceImplTest extends InternalBaseTestCase
     @Test
     public void add_after()
     {
-        ComponentResources resources = mockComponentResources();
         Messages messages = mockMessages();
         PropertyConduit conduit = mockPropertyConduit();
 
         Class propertyType = String.class;
 
-        train_getMessages(resources, messages);
         stub_contains(messages, false);
 
         expect(conduit.getPropertyType()).andReturn(propertyType).atLeastOnce();
@@ -237,7 +224,7 @@ public class BeanModelSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        BeanModel model = source.create(SimpleBean.class, true, resources);
+        BeanModel model = source.create(SimpleBean.class, true, messages);
 
         assertEquals(model.getPropertyNames(), Arrays.asList("firstName", "lastName", "age"));
 
@@ -255,19 +242,17 @@ public class BeanModelSourceImplTest extends InternalBaseTestCase
     @Test
     public void filtering_out_read_only_properties()
     {
-        ComponentResources resources = mockComponentResources();
         Messages messages = mockMessages();
 
-        train_getMessages(resources, messages);
         stub_contains(messages, false);
 
         replay();
 
-        BeanModel model = source.create(ReadOnlyBean.class, true, resources);
+        BeanModel model = source.create(ReadOnlyBean.class, true, messages);
 
         assertEquals(model.getPropertyNames(), Arrays.asList("value"));
 
-        model = source.create(ReadOnlyBean.class, false, resources);
+        model = source.create(ReadOnlyBean.class, false, messages);
 
         assertEquals(model.getPropertyNames(), Arrays.asList("value", "readOnly"));
 
@@ -277,15 +262,13 @@ public class BeanModelSourceImplTest extends InternalBaseTestCase
     @Test
     public void non_text_property()
     {
-        ComponentResources resources = mockComponentResources();
         Messages messages = mockMessages();
 
-        train_getMessages(resources, messages);
         stub_contains(messages, false);
 
         replay();
 
-        BeanModel model = source.create(EnumBean.class, true, resources);
+        BeanModel model = source.create(EnumBean.class, true, messages);
 
         assertEquals(model.getPropertyNames(), Arrays.asList("token"));
 
@@ -297,15 +280,13 @@ public class BeanModelSourceImplTest extends InternalBaseTestCase
     @Test
     public void add_duplicate_property_name_is_failure()
     {
-        ComponentResources resources = mockComponentResources();
         Messages messages = mockMessages();
 
-        train_getMessages(resources, messages);
         stub_contains(messages, false);
 
         replay();
 
-        BeanModel model = source.create(SimpleBean.class, true, resources);
+        BeanModel model = source.create(SimpleBean.class, true, messages);
 
         try
         {
@@ -324,15 +305,13 @@ public class BeanModelSourceImplTest extends InternalBaseTestCase
     @Test
     public void unknown_property_name()
     {
-        ComponentResources resources = mockComponentResources();
         Messages messages = mockMessages();
 
-        train_getMessages(resources, messages);
         stub_contains(messages, false);
 
         replay();
 
-        BeanModel model = source.create(SimpleBean.class, true, resources);
+        BeanModel model = source.create(SimpleBean.class, true, messages);
 
         try
         {
@@ -351,15 +330,13 @@ public class BeanModelSourceImplTest extends InternalBaseTestCase
     @Test
     public void unknown_property_id()
     {
-        ComponentResources resources = mockComponentResources();
         Messages messages = mockMessages();
 
-        train_getMessages(resources, messages);
         stub_contains(messages, false);
 
         replay();
 
-        BeanModel model = source.create(SimpleBean.class, true, resources);
+        BeanModel model = source.create(SimpleBean.class, true, messages);
 
         model.add("shrub.foo()", null);
 
@@ -381,15 +358,13 @@ public class BeanModelSourceImplTest extends InternalBaseTestCase
     @Test
     public void get_added_property_by_name()
     {
-        ComponentResources resources = mockComponentResources();
         Messages messages = mockMessages();
 
-        train_getMessages(resources, messages);
         stub_contains(messages, false);
 
         replay();
 
-        BeanModel model = source.create(SimpleBean.class, true, resources);
+        BeanModel model = source.create(SimpleBean.class, true, messages);
 
         PropertyModel pm = model.add("shrub.foo()", null);
 
@@ -401,15 +376,13 @@ public class BeanModelSourceImplTest extends InternalBaseTestCase
     @Test
     public void get_added_property_by_id()
     {
-        ComponentResources resources = mockComponentResources();
         Messages messages = mockMessages();
 
-        train_getMessages(resources, messages);
         stub_contains(messages, false);
 
         replay();
 
-        BeanModel model = source.create(SimpleBean.class, true, resources);
+        BeanModel model = source.create(SimpleBean.class, true, messages);
 
         PropertyModel pm = model.add("shrub.foo()", null);
 
@@ -422,15 +395,13 @@ public class BeanModelSourceImplTest extends InternalBaseTestCase
     @Test
     public void order_via_annotation()
     {
-        ComponentResources resources = mockComponentResources();
         Messages messages = mockMessages();
 
-        train_getMessages(resources, messages);
         stub_contains(messages, false);
 
         replay();
 
-        BeanModel model = source.create(StoogeBean.class, true, resources);
+        BeanModel model = source.create(StoogeBean.class, true, messages);
 
         assertEquals(model.getPropertyNames(), Arrays.asList("larry", "moe", "shemp", "curly"));
 
@@ -440,15 +411,13 @@ public class BeanModelSourceImplTest extends InternalBaseTestCase
     @Test
     public void edit_property_label()
     {
-        ComponentResources resources = mockComponentResources();
         Messages messages = mockMessages();
 
-        train_getMessages(resources, messages);
         stub_contains(messages, false);
 
         replay();
 
-        BeanModel model = source.create(SimpleBean.class, true, resources).get("age").label("Decrepitude").model();
+        BeanModel model = source.create(SimpleBean.class, true, messages).get("age").label("Decrepitude").model();
 
         assertEquals(model.get("age").getLabel(), "Decrepitude");
 
@@ -458,10 +427,8 @@ public class BeanModelSourceImplTest extends InternalBaseTestCase
     @Test
     public void label_from_component_messages()
     {
-        ComponentResources resources = mockComponentResources();
         Messages messages = mockMessages();
 
-        train_getMessages(resources, messages);
         stub_contains(messages, false);
 
         train_contains(messages, "age-label", true);
@@ -469,7 +436,7 @@ public class BeanModelSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        BeanModel model = source.create(SimpleBean.class, true, resources);
+        BeanModel model = source.create(SimpleBean.class, true, messages);
 
         assertEquals(model.get("age").getLabel(), "Decrepitude");
 
@@ -479,15 +446,13 @@ public class BeanModelSourceImplTest extends InternalBaseTestCase
     @Test
     public void array_type_bean()
     {
-        ComponentResources resources = mockComponentResources();
         Messages messages = mockMessages();
 
-        train_getMessages(resources, messages);
         stub_contains(messages, false);
 
         replay();
 
-        BeanModel model = source.create(StringArrayBean.class, true, resources);
+        BeanModel model = source.create(StringArrayBean.class, true, messages);
 
         // There's not editor for string arrays yet, so it won't show up normally.
 
@@ -495,7 +460,7 @@ public class BeanModelSourceImplTest extends InternalBaseTestCase
 
         assertSame(propertyModel.getPropertyType(), String[].class);
 
-        String[] value = { "foo", "bar" };
+        String[] value = {"foo", "bar"};
 
         StringArrayBean bean = new StringArrayBean();
 
@@ -513,10 +478,8 @@ public class BeanModelSourceImplTest extends InternalBaseTestCase
     @Test
     public void composite_bean()
     {
-        ComponentResources resources = mockComponentResources();
         Messages messages = mockMessages();
 
-        train_getMessages(resources, messages);
         stub_contains(messages, false);
 
         train_contains(messages, "simpleage-label", true);
@@ -524,7 +487,7 @@ public class BeanModelSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        BeanModel model = source.create(CompositeBean.class, true, resources);
+        BeanModel model = source.create(CompositeBean.class, true, messages);
 
         // No editor for CompositeBean, so this will be empty.
 
@@ -557,15 +520,13 @@ public class BeanModelSourceImplTest extends InternalBaseTestCase
     @Test
     public void default_properties_exclude_write_only()
     {
-        ComponentResources resources = mockComponentResources();
         Messages messages = mockMessages();
 
-        train_getMessages(resources, messages);
         stub_contains(messages, false);
 
         replay();
 
-        BeanModel model = source.create(WriteOnlyBean.class, false, resources);
+        BeanModel model = source.create(WriteOnlyBean.class, false, messages);
 
         assertEquals(model.getPropertyNames(), Arrays.asList("readOnly", "readWrite"));
 
@@ -575,15 +536,13 @@ public class BeanModelSourceImplTest extends InternalBaseTestCase
     @Test
     public void add_synthetic_property()
     {
-        ComponentResources resources = mockComponentResources();
         Messages messages = mockMessages();
 
-        train_getMessages(resources, messages);
         stub_contains(messages, false);
 
         replay();
 
-        BeanModel model = source.create(SimpleBean.class, true, resources);
+        BeanModel model = source.create(SimpleBean.class, true, messages);
 
         PropertyModel property = model.add("placeholder", null);
 
@@ -597,15 +556,13 @@ public class BeanModelSourceImplTest extends InternalBaseTestCase
     @Test
     public void exclude_property()
     {
-        ComponentResources resources = mockComponentResources();
         Messages messages = mockMessages();
 
-        train_getMessages(resources, messages);
         stub_contains(messages, false);
 
         replay();
 
-        BeanModel model = source.create(SimpleBean.class, true, resources);
+        BeanModel model = source.create(SimpleBean.class, true, messages);
 
         assertSame(model.exclude("age"), model);
 
@@ -617,15 +574,13 @@ public class BeanModelSourceImplTest extends InternalBaseTestCase
     @Test
     public void exclude_unknown_property_is_noop()
     {
-        ComponentResources resources = mockComponentResources();
         Messages messages = mockMessages();
 
-        train_getMessages(resources, messages);
         stub_contains(messages, false);
 
         replay();
 
-        BeanModel model = source.create(SimpleBean.class, true, resources);
+        BeanModel model = source.create(SimpleBean.class, true, messages);
 
         assertSame(model.exclude("frobozz"), model);
 
@@ -637,15 +592,13 @@ public class BeanModelSourceImplTest extends InternalBaseTestCase
     @Test
     public void nonvisual_properties_are_excluded()
     {
-        ComponentResources resources = mockComponentResources();
         Messages messages = mockMessages();
 
-        train_getMessages(resources, messages);
         stub_contains(messages, false);
 
         replay();
 
-        BeanModel model = source.create(NonVisualBean.class, true, resources);
+        BeanModel model = source.create(NonVisualBean.class, true, messages);
 
         assertEquals(model.getPropertyNames(), Arrays.asList("name"));
 
@@ -655,15 +608,13 @@ public class BeanModelSourceImplTest extends InternalBaseTestCase
     @Test
     public void reorder()
     {
-        ComponentResources resources = mockComponentResources();
         Messages messages = mockMessages();
 
-        train_getMessages(resources, messages);
         stub_contains(messages, false);
 
         replay();
 
-        BeanModel model = source.create(SimpleBean.class, true, resources);
+        BeanModel model = source.create(SimpleBean.class, true, messages);
 
         assertSame(model.getBeanType(), SimpleBean.class);
 
@@ -685,15 +636,13 @@ public class BeanModelSourceImplTest extends InternalBaseTestCase
     @Test
     public void reoder_from_annotation()
     {
-        ComponentResources resources = mockComponentResources();
         Messages messages = mockMessages();
 
-        train_getMessages(resources, messages);
         stub_contains(messages, false);
 
         replay();
 
-        BeanModel model = source.create(PropertyOrderBean.class, true, resources);
+        BeanModel model = source.create(PropertyOrderBean.class, true, messages);
 
         assertEquals(model.getPropertyNames(), Arrays.asList("third", "first", "second"));
 

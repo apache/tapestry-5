@@ -28,6 +28,7 @@
 package org.apache.tapestry5.corelib.components;
 
 import org.apache.tapestry5.ComponentAction;
+import org.apache.tapestry5.PropertyOverrides;
 import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.Property;
@@ -88,6 +89,13 @@ public class GridRows
      */
     @Parameter(value = "componentResources.container")
     private GridModel gridModel;
+
+    /**
+     * Where to search for property override blocks.
+     */
+    @Parameter(required = true, allowNull = false)
+    @Property
+    private PropertyOverrides overrides;
 
     /**
      * Number of rows displayed on each page. Long result sets are split across multiple pages.

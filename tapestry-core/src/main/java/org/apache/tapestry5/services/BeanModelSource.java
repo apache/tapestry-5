@@ -14,8 +14,8 @@
 
 package org.apache.tapestry5.services;
 
-import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.beaneditor.BeanModel;
+import org.apache.tapestry5.ioc.Messages;
 
 /**
  * Used by a component to create a default {@link org.apache.tapestry5.beaneditor.BeanModel} for a particular bean
@@ -43,9 +43,8 @@ public interface BeanModelSource
      *                                 etc.). If false, then both read-only and read-write properties will be included
      *                                 (appropriate for {@link org.apache.tapestry5.corelib.components.Grid} or {@link
      *                                 org.apache.tapestry5.corelib.components.BeanDisplay}).
-     * @param resources                used when resolving resources, especially component messages (used to access
-     *                                 labels)
+     * @param messages                 Used to find explicit overrides of
      * @return a model
      */
-    <T> BeanModel<T> create(Class<T> beanClass, boolean filterReadOnlyProperties, ComponentResources resources);
+    <T> BeanModel<T> create(Class<T> beanClass, boolean filterReadOnlyProperties, Messages messages);
 }

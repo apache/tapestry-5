@@ -20,6 +20,7 @@ import org.apache.tapestry5.internal.structure.Page;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.services.Response;
+import org.apache.tapestry5.services.ResponseRenderer;
 import org.testng.annotations.Test;
 
 public class ResponseRendererImplTest extends InternalBaseTestCase

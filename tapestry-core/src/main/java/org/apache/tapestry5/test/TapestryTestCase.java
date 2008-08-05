@@ -866,9 +866,9 @@ public abstract class TapestryTestCase extends IOCTestCase
     }
 
     protected final void train_create(BeanModelSource source, Class beanClass, boolean filterReadOnly,
-                                      ComponentResources containerResources, BeanModel model)
+                                      Messages messages, BeanModel model)
     {
-        expect(source.create(beanClass, filterReadOnly, containerResources)).andReturn(model);
+        expect(source.create(beanClass, filterReadOnly, messages)).andReturn(model);
     }
 
     protected final void train_getBoundType(ComponentResources resources, String parameterName, Class type)
@@ -1063,5 +1063,25 @@ public abstract class TapestryTestCase extends IOCTestCase
     protected final void train_getAttribute(Request request, String attibuteName, Object value)
     {
         expect(request.getAttribute(attibuteName)).andReturn(value);
+    }
+
+    protected final void train_getBlockParameter(ComponentResources resources, String name, Block block)
+    {
+        expect(resources.getBlockParameter(name)).andReturn(block).atLeastOnce();
+    }
+
+    protected final PropertyOverrides mockPropertyOverrides()
+    {
+        return newMock(PropertyOverrides.class);
+    }
+
+    protected void train_getOverrideBlock(PropertyOverrides overrides, String name, Block block)
+    {
+        expect(overrides.getOverrideBlock(name)).andReturn(block).atLeastOnce();
+    }
+
+    protected final void train_getOverrideMessages(PropertyOverrides overrides, Messages messages)
+    {
+        expect(overrides.getOverrideMessages()).andReturn(messages);
     }
 }

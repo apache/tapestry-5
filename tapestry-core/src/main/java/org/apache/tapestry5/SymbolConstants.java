@@ -78,4 +78,10 @@ public class SymbolConstants
      * incoming requests. The default is "UTF-8".
      */
     public static final String CHARSET = "tapestry.charset";
+
+    /**
+     * Name of page used to report exceptions; the page must implement {@link org.apache.tapestry5.services.ExceptionReporter}.
+     * This is used by the default exception report handler service.
+     */
+    public static final String EXCEPTION_REPORT_PAGE = "ExceptionReport";
 }
