@@ -28,6 +28,7 @@ import org.apache.tapestry5.internal.services.ComponentResultProcessorWrapper;
 import org.apache.tapestry5.internal.services.PageRenderQueue;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.internal.util.IdAllocator;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.runtime.RenderCommand;
 import org.apache.tapestry5.services.*;
@@ -183,6 +184,11 @@ public class FormInjector implements ClientElement
         final RenderCommand rootRenderCommand = pageRenderQueue.getRootRenderCommand();
 
         final String formId = request.getParameter(FORMID_PARAMETER);
+
+        if (InternalUtils.isBlank(formId))
+            throw new RuntimeException(String.format(
+                    "Query parameter '%s' was blank, but should have been specified in the request.",
+                    FORMID_PARAMETER));
 
         final ComponentActionSink actionSink = new ComponentActionSink(logger);
 

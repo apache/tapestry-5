@@ -119,4 +119,15 @@ public class FormInjectorDemo
     {
         DB.clear();
     }
+
+    Object onPassivate()
+    {
+        return "FakePageActivationContextValue";
+    }
+
+    void onActivate(String context)
+    {
+        Assert.assertEquals(context, "FakePageActivationContextValue",
+                            "Page activation context was not passed through correctly.");
+    }
 }
