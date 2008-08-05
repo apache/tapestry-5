@@ -270,7 +270,9 @@ public class Start
 
             new Item("inplacegriddemo", "In-Place Grid Demo", "Grid that updates in-place using Ajax"),
 
-            new Item("methodadvicedemo", "Method Advice Demo", "Advising component methods.")
+            new Item("methodadvicedemo", "Method Advice Demo", "Advising component methods."),
+
+            new Item("HasBodyDemo", "Has Body Demo", "Verify the hasBody() method of ComponentResources")
     );
 
     static

@@ -2122,4 +2122,15 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         assertEquals(count, "7", "Expected seven rows: the header and six data rows.");
     }
+
+    /**
+     * TAPESTRY-2542
+     */
+    public void has_body()
+    {
+        start("Has Body Demo");
+
+        assertText("nobody", "false");
+        assertText("somebody", "true");
+    }
 }

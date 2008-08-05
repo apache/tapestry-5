@@ -144,6 +144,11 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
         return getElementName(null);
     }
 
+    public boolean hasBody()
+    {
+        return element.hasBody();
+    }
+
     public String getCompleteId()
     {
         return completeId;
