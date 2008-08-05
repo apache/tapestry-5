@@ -8,3 +8,8 @@ Tapestry Core
   
   tapestry-core is built upon the {{{../tapestry-ioc/index.html}Tapestry IoC Container}}.
 
+
+* Documentation Has Moved
+
+  Most documentation that used to live at this level has {{{../}moved up to the main Tapestry project}}.
+  
