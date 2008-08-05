@@ -187,7 +187,7 @@ Configuring Tapestry
     A comma-separated list of supported locales.  Incoming requests as "narrowed" to one of these locales, based on closest match.
     If no match can be found, the first locale in the list is treated as the default.
 
-    The default is (currently) "en,it,zn_CH".  As the community contributes new localizations of the necessary messages files,
+    The default is (currently) "en,it,zh_CN,pt_PT,de_DE".  As the community contributes new localizations of the necessary messages files,
     this list will expand.  Note that the Tapestry quickstart archetype overrides the factory default, forcing the
     application to be localized only for "en".
 

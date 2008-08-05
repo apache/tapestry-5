@@ -20,7 +20,6 @@ import org.apache.tapestry5.annotations.IncludeJavaScriptLibrary;
 import org.apache.tapestry5.annotations.IncludeStylesheet;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.corelib.base.AbstractField;
-import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.json.JSONObject;
@@ -67,9 +66,6 @@ public class DateField extends AbstractField
 
     @Inject
     private ComponentResources resources;
-
-    @Inject
-    private Messages messages;
 
     @Inject
     private Request request;
@@ -214,11 +210,6 @@ public class DateField extends AbstractField
     void injectResources(ComponentResources resources)
     {
         this.resources = resources;
-    }
-
-    void injectMessages(Messages messages)
-    {
-        this.messages = messages;
     }
 
     @Override
