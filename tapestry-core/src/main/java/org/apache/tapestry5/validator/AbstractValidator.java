@@ -44,11 +44,15 @@ public abstract class AbstractValidator<C, T> implements Validator<C, T>
         return valueType;
     }
 
-    public String getMessageKey()
+    public final String getMessageKey()
     {
         return messageKey;
     }
 
+    /**
+     * Return false, which is correct for the vast majority of validators. {@link org.apache.tapestry5.validator.Required}
+     * overrides this to true.F
+     */
     public boolean isRequired()
     {
         return false;

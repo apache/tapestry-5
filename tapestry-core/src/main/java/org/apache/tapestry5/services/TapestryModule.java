@@ -466,6 +466,7 @@ public final class TapestryModule
         configuration.add("min", new Min());
         configuration.add("max", new Max());
         configuration.add("regexp", new Regexp());
+        configuration.add("email", new Email());
     }
 
     /**
