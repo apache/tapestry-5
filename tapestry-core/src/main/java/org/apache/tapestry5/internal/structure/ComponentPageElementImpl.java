@@ -943,8 +943,11 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
 
         queue.startComponent(coreResources);
 
+        // POP_COMPONENT_ID will remove the component we just started.
+
         queue.push(POP_COMPONENT_ID);
 
+        // This is the start of the real state machine for the component.
         queue.push(setupRender);
     }
 
@@ -1171,6 +1174,11 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
     public String getPageName()
     {
         return page.getLogicalName();
+    }
+
+    public boolean hasBody()
+    {
+        return body != null;
     }
 
     public Map<String, Binding> getInformalParameterBindings()

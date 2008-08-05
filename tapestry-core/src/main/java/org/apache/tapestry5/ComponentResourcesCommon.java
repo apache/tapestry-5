@@ -142,4 +142,11 @@ public interface ComponentResourcesCommon extends Locatable
      * @return the logical name of the page which contains this component
      */
     String getPageName();
+
+
+    /**
+     * Returns true if the element has a body and false otherwise.  Only components may have a body; pages and mixins
+     * will return false.
+     */
+    boolean hasBody();
 }
