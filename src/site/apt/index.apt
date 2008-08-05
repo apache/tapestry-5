@@ -84,6 +84,8 @@ Third Party Libraries, Tutorials and Resources
 
 New And Of Note
 
+  * Most general documentation has been moved from the tapestry-core module up to the project level.
+  
   * Work has started on a {{{cookbook}Tapestry Cookbook}}, showing how to tackle common scenarios. 
 
   * Component methods may be marked with the @Log annotation, to enable debug logging of
