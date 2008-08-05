@@ -170,6 +170,19 @@ public class MarkupWriterImplTest extends InternalBaseTestCase
     }
 
     @Test
+    public void entities_inside_comment_not_converted()
+    {
+        MarkupWriter w = new MarkupWriterImpl();
+
+        w.element("root");
+        w.comment("<&>");
+        w.end();
+
+        assertEquals(w.toString(), "<root><!-- <&> --></root>");
+
+    }
+
+    @Test
     public void new_text_node_after_comment_node()
     {
         MarkupWriter w = new MarkupWriterImpl();

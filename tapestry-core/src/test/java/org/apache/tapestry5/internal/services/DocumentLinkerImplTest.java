@@ -186,4 +186,21 @@ public class DocumentLinkerImplTest extends InternalBaseTestCase
 
         check(document, "no_body_element.txt");
     }
+
+    @Test
+    public void script_written_raw() throws Exception
+    {
+        Document document = new Document();
+
+        document.newRootElement("html").element("body").element("p").text("Ready to be updated with scripts.");
+
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(true);
+
+        linker.addScript("for (var i = 0; i < 5; i++)  { doIt(i); }");
+
+        linker.updateDocument(document);
+
+        assertEquals(document.toString(), readFile("script_written_raw.txt").trim());
+
+    }
 }

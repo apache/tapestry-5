@@ -140,13 +140,13 @@ public class DocumentLinkerImpl implements DocumentLinker
             e.raw("\n<!--\n");
 
             if (developmentMode)
-                e.text("Tapestry.DEBUG_ENABLED = true;\n");
+                e.raw("Tapestry.DEBUG_ENABLED = true;\n");
 
-            e.text("Tapestry.onDOMLoaded(function() {\n");
+            e.raw("Tapestry.onDOMLoaded(function() {\n");
 
-            e.text(scriptBlock.toString());
+            e.raw(scriptBlock.toString());
 
-            e.text("});\n");
+            e.raw("});\n");
 
             e.raw("// -->\n");
         }
