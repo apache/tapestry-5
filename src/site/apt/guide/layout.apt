@@ -1,0 +1,106 @@
+ ----
+ Layout Component
+ ----
+
+Layout Component
+
+  You may see frequent reference to a Layout Component, but you won't find it
+  in the {{{../tapestry-core/ref/index.html}component reference}}.  Layout isn't a component, it's
+  a component <pattern>.
+
+  A Layout component exists to provide common content across all pages in your application.
+  In traditional servlet development, you may be familiar with
+  the use of a JSP include to include a banner across the top of your page and a copyright
+  message across the bottom.
+
+  Tapestry doesn't have a mechanism for such includes, nor does it have the need.
+
+  Instead, you can create a component that acts like a template for your pages.
+
+* Layout.tml
+
+----
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+    <head>
+        <title>My Nifty Web Application</title>
+    </head>
+    <body>
+        <div class="nav-top">
+            Nifty Web Application
+        </div>
+    
+        <t:body/>
+
+        <div class="nav-bottom">
+            (C) 2008 NiftyWebCo, Inc.
+        </div>
+    </body>
+</html>
+----
+
+  Layout is a standard component, with a standard component template.  Like all component
+  templates, it will be stored on the classpath (i.e., under src/main/resources).
+
+  The magic is in the \<t:body/\> element in the center; this will be replaced
+  by the <page's content>, whatever that is.
+
+  The two \<div\> elements above and below the \<t:body\> are, in this example, placeholders for
+  the typical content you'll see in a web application: banners (and banner ads!),
+  menus, login forms and so forth.
+
+  Often these get very complex ... in fact, in most applications, the Layout component grows
+  to be more complex than almost any page in the application.
+
+  Remember that if you include a link to a resource such as an image or a stylesheet, you
+  must use an absolute URL. The same component will be used for pages in many different folders,
+  or with many different activation contexts, meaning that relative URLs are not only
+  different for different pages, but may shift unexpectedly.
+
+* Layout.java
+
+----
+@IncludeStylesheet("context:css/site.css")
+public class Layout
+{
+}
+----
+
+  Components must always have a Java class. In this trivial example, the Layout component
+  does not have much logic.  We can save ourselves some typing using the
+  {{{../apidocs/org/apache/tapestry5/annotations/IncludeStylesheet.html}@IncludeStylesheet}}
+  annotation (as opposed to directly adding the
+  \<link\> element to the template.
+
+
+* Start.tml
+
+----
+<html t:type="layout" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+   <h1>Welcome to the Nifty Web Application!</h1>
+
+   <p>
+        Would you like to <t:pagelink page="login">Log In</t:pagelink>?
+   </p>
+</html>
+----
+
+  This is an example of using the Layout component.  To keep our Start.tml template
+  relatively previewable, we are using an \<html\> element and the t:type
+  attribute to specify that it is a component.
+
+  The \<html\> tag will be removed, and replaced with the content from
+  the Layout.tml template (which convieniently starts with an \<html\> element).
+  The \<t:body\> in Layout.tml will be replaced
+  with the page specific content here: the \<h1\> and \<p\> tags.
+
+  Any page in the application that follows this pattern, using the Layout component,
+  will have the same look and feel.
+
+  You may find that your application has more than one look and feel: perhaps
+  user registration pages have one look, while administrative pages have another.
+  This can be accomplished by having multiple Layout components and using different
+  layout types for different pages.
+
+
+

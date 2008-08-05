@@ -42,7 +42,7 @@ Adding your own CSS
 Using the IncludeStylesheet Annotation
 
  Another approach to adding a stylesheet is to include an
- {{{../../apidocs/org/apache/tapestry5/annotations/IncludeStylesheet.html}IncludeStylesheet}} annotation on your component class:
+ {{{../apidocs/org/apache/tapestry5/annotations/IncludeStylesheet.html}IncludeStylesheet}} annotation on your component class:
 
 +---+
 @IncludeStylesheet("context:css/myapp.css")
