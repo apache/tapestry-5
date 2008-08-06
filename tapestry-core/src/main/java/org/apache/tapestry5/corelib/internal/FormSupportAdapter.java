@@ -65,4 +65,9 @@ public class FormSupportAdapter implements FormSupport
     {
         return delegate.getClientId();
     }
+
+    public boolean isClientValidationEnabled()
+    {
+        return delegate.isClientValidationEnabled();
+    }
 }

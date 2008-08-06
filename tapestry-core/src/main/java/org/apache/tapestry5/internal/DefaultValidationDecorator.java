@@ -18,6 +18,7 @@ import org.apache.tapestry5.*;
 import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.services.Environment;
+import org.apache.tapestry5.services.FormSupport;
 
 /**
  * Default implementation that writes an attribute into fields or labels that are in error.
@@ -65,20 +66,28 @@ public final class DefaultValidationDecorator extends BaseValidationDecorator
     @Override
     public void afterField(Field field)
     {
-        String iconId = field.getClientId() + ":icon";
+        boolean inError = inError(field);
 
-        String cssClass = inError(field) ? "t-error-icon" : "t-error-icon t-invisible";
+        boolean clientValidationEnabled = environment.peekRequired(FormSupport.class).isClientValidationEnabled();
 
-        markupWriter.element("img",
+        if (inError || clientValidationEnabled)
+        {
+            String iconId = field.getClientId() + ":icon";
 
-                             "src", iconAsset.toClientURL(),
+            String cssClass = inError ? "t-error-icon" : "t-error-icon t-invisible";
 
-                             "alt", validationMessages.get("icon-label"),
+            markupWriter.element("img",
 
-                             "class", cssClass,
+                                 "src", iconAsset.toClientURL(),
 
-                             "id", iconId);
-        markupWriter.end();
+                                 "alt", "",
+
+                                 "class", cssClass,
+
+                                 "id", iconId);
+            markupWriter.end();
+        }
+
     }
 
     private boolean inError(Field field)
