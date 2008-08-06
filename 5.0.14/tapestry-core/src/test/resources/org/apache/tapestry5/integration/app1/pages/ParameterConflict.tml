@@ -1,0 +1,8 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd" xml:space="preserve">
+    <p>This component demonstrates that template values are overriden by
+        bindings inside the @Component annotation, in the component class.
+    </p>
+
+    Output:
+    <span t:id="echo" value="literal:TemplateValue"/>
+</html>

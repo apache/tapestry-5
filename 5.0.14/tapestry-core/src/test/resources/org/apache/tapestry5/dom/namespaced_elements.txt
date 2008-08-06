@@ -1,0 +1,2 @@
+<?xml version="1.0"?>
+<f:root xmlns:b="barneyns" xmlns:f="fredns"><f:nested><b:deepest/></f:nested></f:root>

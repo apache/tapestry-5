@@ -1,0 +1,52 @@
+ ---
+ Default Parameter
+ ---
+
+Default Parameter
+
+ Many of components provided with Tapestry share a common behavior:  if the component's
+ id matches a property of the container, then some parameter of the component (usually <<<value>>>)
+ defaults to that property.
+
+ This is desirable, in terms of not having to specify the component's id and then specify the
+ same value as some other parameter.
+
+ Making this work involves two concepts: default parameter methods (methods that can
+ compute a default value for a parameter), and
+ a service,
+ {{{../apidocs/org/apache/tapestry5/services/ComponentDefaultProvider.html}ComponentDefaultProvider}}.
+
+ Let's say you have a component, OutputGadget, whose job is to output some information about
+ an entity type, Gadget.
+
+---
+public class OutputGadget
+{
+  @Parameter(required=true, principal=true)
+  private Gadget gadget;
+
+  @Inject
+  private ComponentDefaultProvider defaultProvider;
+
+  @Inject
+  private ComponentResources resources;
+
+  Binding defaultGadget()
+  {
+    return defaultProvider.defaultBinding("gadget", resources);
+  }
+}
+---
+
+  This can now be used as \<t:outputgadget t:id="currentGadget"/\>, assuming currentGadget is a property
+  of the container.
+
+  If there is no matching property, then the defaultGadget() method will return null, and a runtime exception
+  will be thrown because the gadget parameter is required and not bound.
+
+  The principal attribute on the Parameter annotation is not needed in the specific case; in some cases,
+  a default for some other parameter may be based on the bound type of another parameter, the principal
+  attribute forces the paarameter to be resolved first.  In many Tapestry form components, the value
+  parameter is principal, so that the validate and translate parameters can computer
+  defaults, based on the
+  type and annotations bound to the value parameter.

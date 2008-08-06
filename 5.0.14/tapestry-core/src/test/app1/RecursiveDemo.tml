@@ -1,0 +1,5 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+  This page contains a <t:recursive>Recursive component</t:recursive>, so it will never be able to render itself.
+  
+</html>

@@ -1,0 +1,12 @@
+<html t:type="Border"
+      xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+    <h1>List Event Context</h1>
+
+
+    <ul id="eventcontext">
+        <li t:type="loop" source="eventContext" value="var:value">${var:value}</li>
+    </ul>
+
+
+</html>

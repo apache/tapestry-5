@@ -1,0 +1,186 @@
+#!/usr/bin/ruby
+
+# This script is used to update the Eclipse .classpath file for the master project; it is used when
+# a module is added or removed, or when a src folder is added or removed from a module.
+#
+# It assumes the layout of each module conforms to the normal Maven structure.
+#
+# This script must be executed from the root project directory (the directory containing the master pom.xml, and containing
+# the directories for the modules).
+
+# TODO: Generated IDEA control files as well
+
+require 'optparse'
+
+# Rub gems:  Think of it as Maven for Ruby but not brain-damaged. See http://www.rubygems.org/read/book/1
+
+require 'rubygems'
+
+# This script requires the Ruby gem hpricot ("gem install hpricot"). It was built with version 0.6.
+# http://code.whytheluckystiff.net/hpricot
+
+require 'hpricot'
+
+CLASSPATH_HEADER = [
+  %Q{<?xml version="1.0" encoding="UTF-8"?>},
+  %Q{<classpath>}
+].freeze
+
+CLASSPATH_TRAILER = [
+  %Q{  <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>},
+  %Q{  <classpathentry kind="con" path="org.maven.ide.eclipse.MAVEN2_CLASSPATH_CONTAINER/noworkspace"/>},
+  %Q{  <classpathentry kind="output" path="bin"/>},
+  %Q{</classpath>}
+].freeze
+
+# These may be overridden based on command line options
+
+$project_only = false
+$dryrun = false
+
+$opts = OptionParser.new do |opts|
+    opts.banner = "Usage: update-eclipse [options]"
+  
+    opts.on("-d", "--dry-run", "Show the generated POM but don't write anything") do
+        $dryrun = true
+    end
+    
+    opts.on("-p", "--project-only", "Update only the project control files, not the individual modules") do
+      $project_only = true
+    end
+    
+    opts.on("-h", "--help", "Help for this command") do
+        puts opts
+        exit
+    end
+    
+end
+
+def fail(message)
+    puts "Error: #{message}"
+    puts $opts
+end
+
+begin
+    $opts.parse!
+rescue OptionParser::InvalidOption
+    fail $!
+end
+
+def exist(mod_name, folder)
+  path = "#{mod_name}/#{folder}"
+
+  if File.directory?(path) 
+    yield path
+  end
+end
+
+def add_source_folder(mod_name, folder, output_dir)
+  exist(mod_name, folder) do |path|
+    $project_classpath << %Q{  <classpathentry kind="src" output="#{output_dir}" path="#{path}"/>}
+    $module_classpath <<  %Q{  <classpathentry kind="src" output="#{output_dir}"  path="#{folder}"/>}
+  end
+end
+
+def add_class_folder(mod_name, folder)
+  exist(mod_name, folder) do |path|
+    $project_classpath <<    %Q{  <classpathentry kind="lib" path="#{path}"/>}
+    $module_classpath << %Q{  <classpathentry kind="lib" path="#{folder}"/> }
+  end
+end
+
+def process_module(mod_name)
+  
+  # quickstart, being an archetype, is the odd man out
+  
+  return if mod_name == "quickstart"
+  
+  $module_classpath = []
+  
+  add_source_folder(mod_name, "src/main/java", "bin");
+  add_source_folder(mod_name, "src/test/java", "bin-test")
+  
+  add_class_folder(mod_name, "src/main/resources") 
+  add_class_folder(mod_name, "src/test/resources") 
+  
+  write_control_files(mod_name, mod_name, $module_classpath) unless $project_only
+  
+end
+
+def write_control_files(folder,  project_name, classpath)
+  
+  lines = CLASSPATH_HEADER.dup.concat(classpath).concat(CLASSPATH_TRAILER)
+  
+  write_lines("#{folder}/.classpath", lines)
+  
+  lines = [ 
+"<projectDescription>",
+"  <name>#{project_name}</name>",
+"  <comment></comment>",
+"  <projects>",
+"  </projects>",
+"  <buildSpec>",
+"    <buildCommand>",
+"      <name>org.eclipse.jdt.core.javabuilder</name>",
+"      <arguments>",
+"      </arguments>",
+"    </buildCommand>",
+"    <buildCommand>",
+"      <name>org.maven.ide.eclipse.maven2Builder</name>",
+"      <arguments>",
+"      </arguments>",
+"     </buildCommand>",
+"  </buildSpec>",
+"  <natures>",
+"    <nature>org.eclipse.jdt.core.javanature</nature>",
+"    <nature>org.maven.ide.eclipse.maven2Nature</nature>",
+"  </natures>",
+"</projectDescription>"
+]
+  
+  write_lines("#{folder}/.project", lines)
+  
+end
+
+def write_lines(file, lines)
+  if $dryrun
+    puts "Generated #{file}:\n"
+    lines.each { |s| puts s }
+    puts
+    return
+  end
+  
+  puts "Writing #{file} ..."
+  
+  File.open(file, "w") do |file|
+   lines.each do |line| 
+      file.print line 
+      file.print "\n"
+    end
+  end
+  
+end
+
+$master_pom = open("pom.xml") do |f|
+    Hpricot.XML(f)
+end
+
+
+# We're going to build up the project classpath a line at a time.  This part is always the same:
+
+$project_classpath = []
+
+$modules = []
+
+($master_pom/"project/modules/module").each { |elem| $modules << elem.inner_html }
+
+# Add entries for each module
+
+$modules.sort.each { |mod_name| process_module(mod_name) }
+
+# Write out the updated .classpath
+
+write_control_files(".", "datatech",  $project_classpath)
+
+puts "Updated .classpath across project."
+
