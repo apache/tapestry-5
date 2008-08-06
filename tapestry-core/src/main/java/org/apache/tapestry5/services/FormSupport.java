@@ -41,9 +41,9 @@ public interface FormSupport extends ClientElement
     <T> void store(T component, ComponentAction<T> action);
 
     /**
-     * As with {@link #store(Object, org.apache.tapestry5.ComponentAction)}}, but the action is also invoked immediately.
-     * This is useful for defining an action that should occur symmetrically in both the render request and the form
-     * submission's action request.
+     * As with {@link #store(Object, org.apache.tapestry5.ComponentAction)}}, but the action is also invoked
+     * immediately. This is useful for defining an action that should occur symmetrically in both the render request and
+     * the form submission's action request.
      *
      * @param component component against which to trigger the action
      * @param action    the action that will be triggered (and passed the component)
@@ -77,4 +77,9 @@ public interface FormSupport extends ClientElement
      * @param constraint     additional constraint value, or null for validations that don't require a constraint
      */
     void addValidation(Field field, String validationName, String message, Object constraint);
+
+    /**
+     * Return true if client validation is enabled for this form, false otherwise.
+     */
+    boolean isClientValidationEnabled();
 }

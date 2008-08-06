@@ -141,5 +141,8 @@ public class FormSupportImpl implements FormSupport
             clientBehaviorSupport.addValidation(field, validationName, message, constraint);
     }
 
-
+    public boolean isClientValidationEnabled()
+    {
+        return clientValidationEnabled;
+    }
 }
