@@ -19,7 +19,8 @@ import org.apache.tapestry5.ioc.ObjectLocator;
 import org.apache.tapestry5.ioc.ObjectProvider;
 
 /**
- * Rolls up a number of {@link ObjectProvider}, but allows for the case where no object may be provided.
+ * Rolls up a number of {@link org.apache.tapestry5.ioc.ObjectProvider}, but allows for the case where no object may be
+ * provided.
  */
 public interface MasterObjectProvider
 {

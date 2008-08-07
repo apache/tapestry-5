@@ -16,6 +16,7 @@ package org.apache.tapestry5.ioc.internal.services;
 
 import javassist.CtClass;
 import javassist.NotFoundException;
+import org.apache.tapestry5.ioc.internal.InternalConstants;
 import org.apache.tapestry5.ioc.services.ClassFabUtils;
 
 import java.security.ProtectionDomain;
@@ -87,17 +88,20 @@ public class CtClassSourceImpl implements CtClassSource
     {
         if (WRITE_DIR != null) writeClass(ctClass);
 
-        try
+        synchronized (InternalConstants.GLOBAL_CLASS_CREATION_MUTEX)
         {
-            Class result = pool.toClass(ctClass, loader, domain);
+            try
+            {
+                Class result = pool.toClass(ctClass, loader, domain);
 
-            createdClassCount++;
+                createdClassCount++;
 
-            return result;
-        }
-        catch (Throwable ex)
-        {
-            throw new RuntimeException(ServiceMessages.unableToWriteClass(ctClass, ex), ex);
+                return result;
+            }
+            catch (Throwable ex)
+            {
+                throw new RuntimeException(ServiceMessages.unableToWriteClass(ctClass, ex), ex);
+            }
         }
     }
 

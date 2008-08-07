@@ -18,6 +18,7 @@ import javassist.*;
 import org.apache.tapestry5.internal.event.InvalidationEventHubImpl;
 import org.apache.tapestry5.internal.events.UpdateListener;
 import org.apache.tapestry5.internal.util.URLChangeTracker;
+import org.apache.tapestry5.ioc.internal.InternalConstants;
 import org.apache.tapestry5.ioc.internal.services.ClassFactoryClassPool;
 import org.apache.tapestry5.ioc.internal.services.ClassFactoryImpl;
 import org.apache.tapestry5.ioc.internal.services.CtClassSource;
@@ -76,17 +77,24 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
          * Determines if the class name represents a component class from a controlled package.  If so,
          * super.findClass() will load it and transform it. Returns null if not in a controlled package, allowing the
          * parent class loader to do the work.
-         * <p/>
-         * This method is synchronized to <em>attempt</em> to address TAPESTRY-2468.
          *
          * @param className
          * @return the loaded transformed Class, or null to force a load of the class from the parent class loader
          * @throws ClassNotFoundException
          */
         @Override
-        protected synchronized Class findClass(String className) throws ClassNotFoundException
+        protected Class findClass(String className) throws ClassNotFoundException
         {
-            if (inControlledPackage(className)) return super.findClass(className);
+            if (inControlledPackage(className))
+            {
+                // TAPESTRY-2561: Prevent other threads from creating new classes in either
+                // the component class loader or in the context class loader (which is used for
+                // IoC proxies and the like). This is draconian, but the deadlock issue remains.                
+                synchronized (InternalConstants.GLOBAL_CLASS_CREATION_MUTEX)
+                {
+                    return super.findClass(className);
+                }
+            }
 
             // Returning null forces delegation to the parent class loader.
 

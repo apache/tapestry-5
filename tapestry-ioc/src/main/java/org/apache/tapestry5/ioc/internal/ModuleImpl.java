@@ -20,9 +20,8 @@ import org.apache.tapestry5.ioc.def.DecoratorDef;
 import org.apache.tapestry5.ioc.def.ModuleDef;
 import org.apache.tapestry5.ioc.def.ServiceDef;
 import org.apache.tapestry5.ioc.internal.services.JustInTimeObjectCreator;
-import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.*;
-import static org.apache.tapestry5.ioc.internal.util.Defense.notBlank;
-import static org.apache.tapestry5.ioc.internal.util.Defense.notNull;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.*;
 import org.slf4j.Logger;
@@ -47,25 +46,18 @@ public class ModuleImpl implements Module
 
     private final Logger logger;
 
-    // Guarded by MUTEX
+    // Guarded by InternalConstants.GLOBAL_CLASS_CREATION_MUTEX
     private Object moduleBuilder;
-
-    /**
-     * A single mutex, shared by all modules, that serializes creation of services across all threads. This is a bit
-     * draconian, but appears to be necessary. Fortunately, service creation is a very tiny part of any individual
-     * service's lifecycle.
-     */
-    private static final Object MUTEX = new Object();
 
     // Set to true when invoking the module constructor. Used to
     // detect endless loops caused by irresponsible dependencies in
-    // the constructor. Guarded by MUTEX.
+    // the constructor. Guarded by InternalConstants.GLOBAL_CLASS_CREATION_MUTEX.
     private boolean insideConstructor;
 
     /**
      * Keyed on fully qualified service id; values are instantiated services (proxies).
      */
-    private final Map<String, Object> services = newCaseInsensitiveMap();
+    private final Map<String, Object> services = CollectionFactory.newCaseInsensitiveMap();
 
     public ModuleImpl(InternalRegistry registry, ServiceActivityTracker tracker, ModuleDef moduleDef,
                       ClassFactory classFactory, Logger logger)
@@ -79,8 +71,8 @@ public class ModuleImpl implements Module
 
     public <T> T getService(String serviceId, Class<T> serviceInterface)
     {
-        notBlank(serviceId, "serviceId");
-        notNull(serviceInterface, "serviceInterface");
+        Defense.notBlank(serviceId, "serviceId");
+        Defense.notNull(serviceInterface, "serviceInterface");
         // module may be null.
 
         ServiceDef def = moduleDef.getServiceDef(serviceId);
@@ -107,7 +99,7 @@ public class ModuleImpl implements Module
 
     public Set<DecoratorDef> findMatchingDecoratorDefs(ServiceDef serviceDef)
     {
-        Set<DecoratorDef> result = newSet();
+        Set<DecoratorDef> result = CollectionFactory.newSet();
 
         for (DecoratorDef def : moduleDef.getDecoratorDefs())
         {
@@ -127,9 +119,9 @@ public class ModuleImpl implements Module
     @SuppressWarnings("unchecked")
     public Collection<String> findServiceIdsForInterface(Class serviceInterface)
     {
-        notNull(serviceInterface, "serviceInterface");
+        Defense.notNull(serviceInterface, "serviceInterface");
 
-        Collection<String> result = newList();
+        Collection<String> result = CollectionFactory.newList();
 
         for (String id : moduleDef.getServiceIds())
         {
@@ -144,15 +136,15 @@ public class ModuleImpl implements Module
     /**
      * Locates the service proxy for a particular service (from the service definition).
      * <p/>
-     * Access is synchronized via {@link #MUTEX}.
+     * Access is synchronized via {@link InternalConstants#GLOBAL_CLASS_CREATION_MUTEX}.
      *
      * @param def              defines the service
-     * @param eagerLoadProxies TODO
+     * @param eagerLoadProxies collection into which proxies for eager loaded services are added (or null)
      * @return the service proxy
      */
     private Object findOrCreate(ServiceDef def, Collection<EagerLoadServiceProxy> eagerLoadProxies)
     {
-        synchronized (MUTEX)
+        synchronized (InternalConstants.GLOBAL_CLASS_CREATION_MUTEX)
         {
             String key = def.getServiceId();
 
@@ -170,7 +162,7 @@ public class ModuleImpl implements Module
 
     public void collectEagerLoadServices(Collection<EagerLoadServiceProxy> proxies)
     {
-        synchronized (MUTEX)
+        synchronized (InternalConstants.GLOBAL_CLASS_CREATION_MUTEX)
         {
             for (String serviceId : moduleDef.getServiceIds())
             {
@@ -182,7 +174,8 @@ public class ModuleImpl implements Module
     }
 
     /**
-     * Creates the service and updates the cache of created services. Access is synchronized via {@link #MUTEX}.
+     * Creates the service and updates the cache of created services. Access is synchronized via {@link
+     * InternalConstants#GLOBAL_CLASS_CREATION_MUTEX}.
      *
      * @param eagerLoadProxies a list into which any eager loaded proxies should be added
      */
@@ -248,7 +241,7 @@ public class ModuleImpl implements Module
 
     public Object getModuleBuilder()
     {
-        synchronized (MUTEX)
+        synchronized (InternalConstants.GLOBAL_CLASS_CREATION_MUTEX)
         {
             if (moduleBuilder == null) moduleBuilder = instantiateModuleBuilder();
 
@@ -292,7 +285,7 @@ public class ModuleImpl implements Module
             throw new RuntimeException(IOCMessages.recursiveModuleConstructor(builderClass, constructor));
 
         ObjectLocator locator = new ObjectLocatorImpl(registry, this);
-        Map<Class, Object> parameterDefaults = newMap();
+        Map<Class, Object> parameterDefaults = CollectionFactory.newMap();
 
         parameterDefaults.put(Logger.class, logger);
         parameterDefaults.put(ObjectLocator.class, locator);
@@ -342,11 +335,11 @@ public class ModuleImpl implements Module
 
         ClassFab classFab = registry.newClass(serviceInterface);
 
-        classFab.addField("_creator", Modifier.PRIVATE | Modifier.FINAL, ObjectCreator.class);
-        classFab.addField("_token", Modifier.PRIVATE | Modifier.FINAL, ServiceProxyToken.class);
+        classFab.addField("creator", Modifier.PRIVATE | Modifier.FINAL, ObjectCreator.class);
+        classFab.addField("token", Modifier.PRIVATE | Modifier.FINAL, ServiceProxyToken.class);
 
-        classFab.addConstructor(new Class[] { ObjectCreator.class, ServiceProxyToken.class }, null,
-                                "{ _creator = $1; _token = $2; }");
+        classFab.addConstructor(new Class[]{ObjectCreator.class, ServiceProxyToken.class}, null,
+                                "{ creator = $1; token = $2; }");
 
         // Make proxies serializable by writing the token to the stream.
 
@@ -355,19 +348,19 @@ public class ModuleImpl implements Module
         // This is the "magic" signature that allows an object to substitute some other
         // object for itself.
         MethodSignature writeReplaceSig = new MethodSignature(Object.class, "writeReplace", null,
-                                                              new Class[] { ObjectStreamException.class });
+                                                              new Class[]{ObjectStreamException.class});
 
-        classFab.addMethod(Modifier.PRIVATE, writeReplaceSig, "return _token;");
+        classFab.addMethod(Modifier.PRIVATE, writeReplaceSig, "return token;");
 
         // Now delegate all the methods.
 
-        String body = format("return (%s) _creator.createObject();", serviceInterface.getName());
+        String body = format("return (%s) creator.createObject();", serviceInterface.getName());
 
-        MethodSignature sig = new MethodSignature(serviceInterface, "_delegate", null, null);
+        MethodSignature sig = new MethodSignature(serviceInterface, "delegate", null, null);
 
         classFab.addMethod(Modifier.PRIVATE, sig, body);
 
-        classFab.proxyMethodsToDelegate(serviceInterface, "_delegate()", description);
+        classFab.proxyMethodsToDelegate(serviceInterface, "delegate()", description);
 
         Class proxyClass = classFab.createClass();
 
@@ -385,7 +378,7 @@ public class ModuleImpl implements Module
 
     public Set<ContributionDef> getContributorDefsForService(String serviceId)
     {
-        Set<ContributionDef> result = newSet();
+        Set<ContributionDef> result = CollectionFactory.newSet();
 
         for (ContributionDef def : moduleDef.getContributionDefs())
         {
