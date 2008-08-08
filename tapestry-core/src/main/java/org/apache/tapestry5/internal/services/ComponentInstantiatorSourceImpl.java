@@ -90,10 +90,10 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
                 // TAPESTRY-2561: Prevent other threads from creating new classes in either
                 // the component class loader or in the context class loader (which is used for
                 // IoC proxies and the like). This is draconian, but the deadlock issue remains.                
-                synchronized (InternalConstants.GLOBAL_CLASS_CREATION_MUTEX)
-                {
-                    return super.findClass(className);
-                }
+                //  synchronized (InternalConstants.GLOBAL_CLASS_CREATION_MUTEX)
+                // {
+                return super.findClass(className);
+                // }
             }
 
             // Returning null forces delegation to the parent class loader.
@@ -179,17 +179,20 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
 
         try
         {
-            CtClass ctClass = pool.get(classname);
+            synchronized (InternalConstants.GLOBAL_CLASS_CREATION_MUTEX)
+            {
+                CtClass ctClass = pool.get(classname);
 
-            // Force the creation of the super-class before the target class.
+                // Force the creation of the super-class before the target class.
 
-            forceSuperclassTransform(ctClass);
+                forceSuperclassTransform(ctClass);
 
-            // Do the transformations here
+                // Do the transformations here
 
-            transformer.transformComponentClass(ctClass, loader);
+                transformer.transformComponentClass(ctClass, loader);
 
-            writeClassToFileSystemForHardCoreDebuggingPurposesOnly(ctClass);
+                writeClassToFileSystemForHardCoreDebuggingPurposesOnly(ctClass);
+            }
 
             diag = "END";
         }

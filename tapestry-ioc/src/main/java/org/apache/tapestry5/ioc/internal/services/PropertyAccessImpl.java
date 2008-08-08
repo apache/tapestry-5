@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,6 +14,7 @@
 
 package org.apache.tapestry5.ioc.internal.services;
 
+import org.apache.tapestry5.ioc.internal.InternalConstants;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.services.ClassPropertyAdapter;
 import org.apache.tapestry5.ioc.services.PropertyAccess;
@@ -74,22 +75,25 @@ public class PropertyAccessImpl implements PropertyAccess
      * serializes access to the Java Beans Introspector, which is not thread safe. In addition, handles the case where
      * the class in question is an interface, accumulating properties inherited from super-classes.
      */
-    private synchronized ClassPropertyAdapter buildAdapter(Class forClass)
+    private ClassPropertyAdapter buildAdapter(Class forClass)
     {
         // In some race conditions, we may hit this method for the same class multiple times.
         // We just let it happen, replacing the old ClassPropertyAdapter with a new one.
 
         try
         {
-            BeanInfo info = Introspector.getBeanInfo(forClass);
+            synchronized (InternalConstants.GLOBAL_CLASS_CREATION_MUTEX)
+            {
+                BeanInfo info = Introspector.getBeanInfo(forClass);
 
-            List<PropertyDescriptor> descriptors = CollectionFactory.newList();
+                List<PropertyDescriptor> descriptors = CollectionFactory.newList();
 
-            addAll(descriptors, info.getPropertyDescriptors());
+                addAll(descriptors, info.getPropertyDescriptors());
 
-            if (forClass.isInterface()) addPropertiesFromExtendedInterfaces(forClass, descriptors);
+                if (forClass.isInterface()) addPropertiesFromExtendedInterfaces(forClass, descriptors);
 
-            return new ClassPropertyAdapterImpl(forClass, descriptors);
+                return new ClassPropertyAdapterImpl(forClass, descriptors);
+            }
         }
         catch (Throwable ex)
         {
