@@ -14,12 +14,14 @@
 
 package org.apache.tapestry5.corelib.pages;
 
-import org.apache.tapestry5.annotations.Meta;
+import org.apache.tapestry5.SymbolConstants;
+import org.apache.tapestry5.annotations.ContentType;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.beaneditor.BeanModel;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.Registry;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.services.ServiceActivity;
 import org.apache.tapestry5.ioc.services.ServiceActivityScoreboard;
 import org.apache.tapestry5.services.BeanModelSource;
@@ -29,11 +31,9 @@ import java.util.List;
 /**
  * Page used to see the status of all services defined by the {@link Registry}.
  * <p/>
- * TODO: Add filters to control which services are displayed.
- * <p/>
- * TODO: Disable this page if in production mode (or not, as it does no harm).
+ * TODO: Add filters to control which services are displayed
  */
-@Meta("tapestry.response-content-type=text/html")
+@ContentType("text/html")
 public class ServiceStatus
 {
     @Inject
@@ -53,6 +53,11 @@ public class ServiceStatus
 
     @Inject
     private Messages messages;
+
+    @Property
+    @Inject
+    @Symbol(SymbolConstants.PRODUCTION_MODE)
+    private boolean productionMode;
 
     {
         model = source.create(ServiceActivity.class, false, messages);

@@ -23,3 +23,5 @@ IoC Services Status
   
   Real services have had methods invoked, this forces the <realization> of the service which includes
   instantiating the service, injecting dependencies, and decorating with any applicable interceptors.
+
+  <The Service Status page does not display service information when the application is in production mode.>
