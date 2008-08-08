@@ -176,6 +176,24 @@ public class Palette extends AbstractField
     private SelectModel model;
 
     /**
+     * Allows the title text for the available column (on the left) to be modified. As this is a Block, it can contain
+     * conditionals and components. The default is the text "Available".
+     */
+    @Property(write = false)
+    @Parameter(required = true, allowNull = false, value = "message:available-label",
+               defaultPrefix = BindingConstants.LITERAL)
+    private Block availableLabel;
+
+    /**
+     * Allows the title text for the selected column (on the right) to be modified. As this is a Block, it can contain
+     * conditionals and components. The default is the text "Available".
+     */
+    @Property(write = false)
+    @Parameter(required = true, allowNull = false, value = "message:selected-label",
+               defaultPrefix = BindingConstants.LITERAL)
+    private Block selectedLabel;
+
+    /**
      * The image to use for the move down button (the default is a downward pointing arrow).
      */
     @Parameter(value = "asset:move_down.png")

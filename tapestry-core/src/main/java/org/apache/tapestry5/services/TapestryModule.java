@@ -33,6 +33,8 @@ import org.apache.tapestry5.internal.services.*;
 import org.apache.tapestry5.internal.transform.*;
 import org.apache.tapestry5.internal.translator.*;
 import org.apache.tapestry5.internal.util.IntegerRange;
+import org.apache.tapestry5.internal.util.RenderableAsBlock;
+import org.apache.tapestry5.internal.util.StringRenderable;
 import org.apache.tapestry5.ioc.*;
 import org.apache.tapestry5.ioc.annotations.*;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
@@ -623,7 +625,8 @@ public final class TapestryModule
      * org.apache.tapestry5.SelectModel} <li>{@link org.apache.tapestry5.runtime.ComponentResourcesAware} (typically, a
      * component) to {@link org.apache.tapestry5.ComponentResources} <li>String to {@link
      * org.apache.tapestry5.corelib.data.BlankOption} <li> {@link org.apache.tapestry5.ComponentResources} to {@link
-     * org.apache.tapestry5.PropertyOverrides} </ul>
+     * org.apache.tapestry5.PropertyOverrides} <li>String to {@link org.apache.tapestry5.Renderable} <li>{@link
+     * org.apache.tapestry5.Renderable} to {@link org.apache.tapestry5.Block}</ul>
      */
     public static void contributeTypeCoercer(Configuration<CoercionTuple> configuration)
     {
@@ -704,6 +707,22 @@ public final class TapestryModule
                     return input.getComponentResources();
                 }
             });
+
+        add(configuration, String.class, Renderable.class, new Coercion<String, Renderable>()
+        {
+            public Renderable coerce(String input)
+            {
+                return new StringRenderable(input);
+            }
+        });
+
+        add(configuration, Renderable.class, Block.class, new Coercion<Renderable, Block>()
+        {
+            public Block coerce(Renderable input)
+            {
+                return new RenderableAsBlock(input);
+            }
+        });
     }
 
     /**
