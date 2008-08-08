@@ -67,43 +67,43 @@
         </menu>
 
         <menu name="User Guide">
-            <item name="Project Layout" href="guide/project-layout.html"/>
-            <item name="Component Classes" href="guide/component-classes.html"/>
-            <item name="Component Templates" href="guide/templates.html"/>
-            <item name="Component Parameters" href="guide/parameters.html"/>
-            <item name="Page Navigation" href="guide/pagenav.html"/>
-            <item name="Input Validation" href="guide/validation.html"/>
-            <item name="BeanEditForm Guide" href="guide/beaneditform.html"/>
-            <item name="Component Events" href="guide/event.html"/>
-            <item name="Environmental Services" href="guide/env.html"/>
-            <item name="Layout Component" href="guide/layout.html"/>
-            <item name="CSS" href="guide/css.html"/>
             <item name="Ajax" href="guide/ajax.html"/>
-            <item name="Page Lifecycle" href="guide/lifecycle.html"/>
-            <item name="Component Mixins" href="guide/mixins.html"/>
-            <item name="Localization" href="guide/localization.html"/>
-            <item name="Assets" href="guide/assets.html"/>
-            <item name="Type Coercion" href="guide/coercion.html"/>
-            <item name="Component Rendering" href="guide/rendering.html"/>
-            <item name="Persistent Data" href="guide/persist.html"/>
-            <item name="Application State" href="guide/appstate.html"/>
-            <item name="Injection" href="guide/inject.html"/>
             <item name="Aliases" href="guide/alias.html"/>
-            <item name="Configuration" href="guide/conf.html"/>
-            <item name="Request Processing" href="guide/request.html"/>
-            <item name="DOM" href="guide/dom.html"/>
+            <item name="Application State" href="guide/appstate.html"/>
+            <item name="Assets" href="guide/assets.html"/>
+            <item name="BeanEditForm Guide" href="guide/beaneditform.html"/>
             <item name="Class Reloading" href="guide/reload.html"/>
-            <item name="Unit testing pages/components" href="guide/unit-testing-pages.html"/>
-            <item name="Logging" href="guide/logging.html"/>
-            <item name="Service Status" href="guide/servicestatus.html"/>
+            <item name="Component Classes" href="guide/component-classes.html"/>
+            <item name="Component Events" href="guide/event.html"/>
+            <item name="Component Mixins" href="guide/mixins.html"/>
+            <item name="Component Parameters" href="guide/parameters.html"/>
+            <item name="Component Rendering" href="guide/rendering.html"/>
+            <item name="Component Templates" href="guide/templates.html"/>
+            <item name="Configuration" href="guide/conf.html"/>
+            <item name="CSS" href="guide/css.html"/>
+            <item name="DOM" href="guide/dom.html"/>
+            <item name="Environmental Services" href="guide/env.html"/>
             <item name="HTTPS" href="guide/secure.html"/>
+            <item name="Injection" href="guide/inject.html"/>
+            <item name="Input Validation" href="guide/validation.html"/>
+            <item name="Layout Component" href="guide/layout.html"/>
+            <item name="Localization" href="guide/localization.html"/>
+            <item name="Logging" href="guide/logging.html"/>
+            <item name="Page Lifecycle" href="guide/lifecycle.html"/>
+            <item name="Page Navigation" href="guide/pagenav.html"/>
+            <item name="Persistent Data" href="guide/persist.html"/>
+            <item name="Project Layout" href="guide/project-layout.html"/>
+            <item name="Request Processing" href="guide/request.html"/>
+            <item name="Service Status" href="guide/servicestatus.html"/>
+            <item name="Type Coercion" href="guide/coercion.html"/>
+            <item name="Unit testing pages/components" href="guide/unit-testing-pages.html"/>
         </menu>
 
         <menu name="Tapestry Cookbook">
             <item name="Introduction" href="cookbook/"/>
-            <item name="Supporting Informal Parameters" href="cookbook/informals.html"/>
             <item name="Default Parameter" href="cookbook/defaultparameter.html"/>
             <item name="Exception Reporting" href="cookbook/exceptions.html"/>
+            <item name="Supporting Informal Parameters" href="cookbook/informals.html"/>
         </menu>
 
         <menu name="Tapestry 5 Maven Support">

@@ -110,7 +110,6 @@ Configuring Tapestry
     The default is org/apache/tapestry5/default.css, stored on the classpath.
 
   [tapestry.exception-report-page]
-
     The name of the page used to report exceptions.  This defaults to "ExceptionReport".
 
   [tapestry.file-check-interval]
