@@ -72,7 +72,7 @@ public class Any implements ClientElement
         if (uniqueId == null)
         {
             uniqueId = renderSupport.allocateClientId(clientId);
-            anyElement.forceAttributes("id", clientId);
+            anyElement.forceAttributes("id", uniqueId);
         }
 
         return uniqueId;

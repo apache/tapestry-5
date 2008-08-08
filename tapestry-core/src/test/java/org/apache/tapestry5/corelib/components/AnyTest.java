@@ -76,7 +76,7 @@ public class AnyTest extends TapestryTestCase
 
         assertEquals(component.getClientId(), uniqueId);
 
-        assertEquals(writer.toString(), "<div id=\"bar\">content</div>");
+        assertEquals(writer.toString(), "<div id=\"bar_0\">content</div>");
 
         assertEquals(component.getClientId(), uniqueId);
 
