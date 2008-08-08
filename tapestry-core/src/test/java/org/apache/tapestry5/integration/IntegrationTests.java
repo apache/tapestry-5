@@ -979,7 +979,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         check("reorder");
         clickAndWait(SUBMIT);
 
-        assertText("//div[@class='t-palette-selected']/div[@class='t-palette-title']", "Selected/Ranked Languages");
+        assertText("//div[@class='t-palette-selected']/div[@class='t-palette-title']", "Selected / Ranked Languages");
 
         addSelection("languages", "label=Ruby");
 
