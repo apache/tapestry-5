@@ -948,6 +948,9 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     {
         start("Palette Demo", "reset");
 
+        assertText("//div[@class='t-palette-available']/div[@class='t-palette-title']", "Languages Offered");
+        assertText("//div[@class='t-palette-selected']/div[@class='t-palette-title']", "Selected Languages");
+
         addSelection("languages:avail", "label=Haskell");
         addSelection("languages:avail", "label=Javascript");
         click("languages:select");
@@ -975,6 +978,8 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         check("reorder");
         clickAndWait(SUBMIT);
+
+        assertText("//div[@class='t-palette-selected']/div[@class='t-palette-title']", "Selected/Ranked Languages");
 
         addSelection("languages", "label=Ruby");
 

@@ -1,6 +1,8 @@
 <div class="t-palette" xml:space="default" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
     <div class="t-palette-available">
-        <div class="t-palette-title">${message:available-label}</div>
+        <div class="t-palette-title">
+            <t:delegate to="availableLabel"/>
+        </div>
         <t:delegate to="availableRenderer"/>
     </div>
     <div class="t-palette-controls">
@@ -20,7 +22,9 @@
         </t:if>
     </div>
     <div class="t-palette-selected">
-        <div class="t-palette-title">${message:selected-label}</div>
+        <div class="t-palette-title">
+            <t:delegate to="selectedLabel"/>
+        </div>
         <t:delegate to="selectedRenderer"/>
     </div>
     <div class="t-palette-spacer"/>
