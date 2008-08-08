@@ -153,6 +153,11 @@ public class RequestImpl implements Request
         request.setAttribute(name, value);
     }
 
+    public String getMethod()
+    {
+        return request.getMethod();
+    }
+
     public String getServerName()
     {
         return request.getServerName();

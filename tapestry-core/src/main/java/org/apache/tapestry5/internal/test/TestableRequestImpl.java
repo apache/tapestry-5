@@ -93,7 +93,7 @@ public class TestableRequestImpl implements TestableRequest
     {
         String value = getParameter(name);
 
-        return value == null ? null : new String[] { value };
+        return value == null ? null : new String[] {value};
     }
 
     public String getPath()
@@ -158,5 +158,13 @@ public class TestableRequestImpl implements TestableRequest
     public String getServerName()
     {
         return nyi("getServerName");
+    }
+
+    /**
+     * Always returns POST, to keep the Form component happy.
+     */
+    public String getMethod()
+    {
+        return "POST";
     }
 }

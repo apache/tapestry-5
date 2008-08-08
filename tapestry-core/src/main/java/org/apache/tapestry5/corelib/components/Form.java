@@ -26,6 +26,7 @@ import org.apache.tapestry5.internal.services.ComponentResultProcessorWrapper;
 import org.apache.tapestry5.internal.services.HeartbeatImpl;
 import org.apache.tapestry5.internal.util.Base64ObjectInputStream;
 import org.apache.tapestry5.ioc.Location;
+import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.TapestryException;
@@ -142,6 +143,9 @@ public class Form implements ClientElement, FormValidationControl
 
     @Inject
     private ComponentResources resources;
+
+    @Inject
+    private Messages messages;
 
     @Environmental
     private RenderSupport renderSupport;
@@ -367,7 +371,8 @@ public class Form implements ClientElement, FormValidationControl
     {
         String[] values = request.getParameters(FORM_DATA);
 
-        if (values == null) return;
+        if (!request.getMethod().equals("POST") || values == null)
+            throw new RuntimeException(messages.format("invalid-request", FORM_DATA));
 
         // Due to Ajax (FormInjector) there may be multiple values here, so handle each one individually.
 
