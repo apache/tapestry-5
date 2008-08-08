@@ -1344,7 +1344,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     {
         start("Disabled Fields");
 
-        String[] paths = new String[]{"//input[@id='textfield']",
+        String[] paths = new String[] {"//input[@id='textfield']",
 
                 "//input[@id='passwordfield']",
 
@@ -2137,5 +2137,16 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         assertText("nobody", "false");
         assertText("somebody", "true");
+    }
+
+    /**
+     * TAPESTRY-2563
+     */
+    public void form_action_via_get()
+    {
+        open(BASE_URL + "validform.form");
+
+        assertTextPresent(
+                "Forms require that the request method be POST and that the t:formdata query parameter have values.");
     }
 }

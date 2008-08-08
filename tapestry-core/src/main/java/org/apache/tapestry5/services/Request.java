@@ -145,4 +145,11 @@ public interface Request
      * @param value the <code>Object</code> to be stored, or null to remove the attribute
      */
     void setAttribute(String name, Object value);
+
+    /**
+     * Returns the name of the HTTP method with which this request was made, for example, GET, POST, or PUT.
+     *
+     * @return a string specifying the name of the method with which this request was made
+     */
+    public String getMethod();
 }
