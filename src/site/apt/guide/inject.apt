@@ -83,8 +83,9 @@ private ComponentResources resources;
   [java.util.Locale]
     The locale for the component (all components within a page use the same locale).
     
-  [org.apache.commons.logging.Log]
-    A Log instance configured for the component, based on the component's class name.
+  [org.slf4j.Logger]
+    A Logger instance configured for the component, based on the component's class name.
+    {{{http://www.slf4j.org/}SLF4J}} is a wrapper around Log4J or other logging toolkits.
   
   [org.apache.tapestry5.ComponentResources]
   	The resources for the component, often used to generate links related to the component.
