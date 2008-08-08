@@ -101,19 +101,21 @@ public class TranslatorSourceImplTest extends InternalBaseTestCase
     @DataProvider(name = "to_client_data")
     public Object[][] to_client_data()
     {
-        return new Object[][] {
+        return new Object[][]{
 
-                { Byte.class, (byte) 65, "65" },
+                {Byte.class, (byte) 65, "65"},
 
-                { Integer.class, 997, "997" },
+                {Integer.class, 997, "997"},
 
-                { Long.class, 12345l, "12345" },
+                {Long.class, 12345l, "12345"},
 
-                { Double.class, 123.45d, "123.45" },
+                {Double.class, 123.45d, "123.45"},
 
-                { String.class, "abcd", "abcd" },
+                {String.class, "abcd", "abcd"},
 
-                { Float.class, (float) -22.7, "-22.7" }
+                {Short.class, (short) 95, "95"},
+
+                {Float.class, (float) -22.7, "-22.7"}
 
         };
     }
@@ -131,19 +133,21 @@ public class TranslatorSourceImplTest extends InternalBaseTestCase
     @DataProvider(name = "parse_client_success_data")
     public Object[][] parse_client_success_data()
     {
-        return new Object[][] {
+        return new Object[][]{
 
-                { Byte.class, " 23 ", (byte) 23 },
+                {Byte.class, " 23 ", (byte) 23},
 
-                { Integer.class, " 123 ", 123 },
+                {Short.class, " -121 ", (short) -121},
 
-                { Long.class, "  -1234567 ", -1234567l },
+                {Integer.class, " 123 ", 123},
 
-                { Double.class, " 3.14 ", 3.14d },
+                {Long.class, "  -1234567 ", -1234567l},
 
-                { String.class, " abcdef ", " abcdef " },
+                {Double.class, " 3.14 ", 3.14d},
 
-                { Float.class, " 28.95 ", (float) 28.95 },
+                {String.class, " abcdef ", " abcdef "},
+
+                {Float.class, " 28.95 ", (float) 28.95},
 
         };
     }
@@ -161,18 +165,22 @@ public class TranslatorSourceImplTest extends InternalBaseTestCase
     @DataProvider(name = "parse_client_failure_data")
     public Object[][] parse_client_failure_data()
     {
-        return new Object[][] {
+        String intError = "The input value 'fred' is not parseable as an integer value.";
+        String floatError = "The input value 'fred' is not parseable as a numeric value.";
 
-                { Byte.class, "fred", "The input value 'fred' is not parseable as an integer value." },
+        return new Object[][]{
 
-                { Integer.class, "fred", "The input value 'fred' is not parseable as an integer value." },
+                {Byte.class, "fred", intError},
 
-                { Long.class, "fred", "The input value 'fred' is not parseable as an integer value." },
+                {Integer.class, "fred", intError},
 
-                { Double.class, "fred", "The input value 'fred' is not parseable as a numeric value." },
+                {Long.class, "fred", intError},
 
-                { Float.class, "fred", "The input value 'fred' is not parseable as a numeric value." }
+                {Double.class, "fred", floatError},
 
+                {Float.class, "fred", floatError},
+
+                {Short.class, "fred", intError}
         };
     }
 

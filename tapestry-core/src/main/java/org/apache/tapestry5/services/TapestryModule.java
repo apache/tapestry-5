@@ -601,7 +601,7 @@ public final class TapestryModule
 
     /**
      * Contributes the basic set of named translators: <ul>  <li>string</li>  <li>byte</li> <li>integer</li>
-     * <li>long</li> <li>float</li> <li>double</li> </ul>
+     * <li>long</li> <li>float</li> <li>double</li> <li>short</li> </ul>
      */
     public static void contributeTranslatorSource(MappedConfiguration<String, Translator> configuration)
     {
@@ -612,6 +612,7 @@ public final class TapestryModule
         configuration.add("long", new LongTranslator());
         configuration.add("float", new FloatTranslator());
         configuration.add("double", new DoubleTranslator());
+        configuration.add("short", new ShortTranslator());
     }
 
     /**
