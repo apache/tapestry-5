@@ -21,6 +21,9 @@ import org.easymock.EasyMock;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import java.io.File;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.sql.PreparedStatement;
 import java.util.*;
 
@@ -858,6 +861,32 @@ public class IntegrationTest extends IOCInternalTestCase
         }
 
         r.shutdown();
+    }
 
+    @Test
+    public void invalid_class_in_manifest() throws Exception
+    {
+        File fakejar = new File("src/test/fakejar");
+
+        assertTrue(fakejar.exists() && fakejar.isDirectory(), "src/test/fakejar must be an existing directory");
+
+        URL url = fakejar.toURL();
+
+        URLClassLoader loader = new URLClassLoader(new URL[] {url}, Thread.currentThread().getContextClassLoader());
+
+        RegistryBuilder builder = new RegistryBuilder(loader);
+
+        try
+        {
+            IOCUtilities.addDefaultModules(builder);
+            unreachable();
+        }
+        catch (RuntimeException ex)
+        {
+            assertMessageContains(ex,
+                                  "Exception loading module(s) from manifest",
+                                  "Failure loading Tapestry IoC module class does.not.exist.Module"
+            );
+        }
     }
 }

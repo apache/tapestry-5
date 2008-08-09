@@ -22,6 +22,7 @@ import org.apache.tapestry5.ioc.internal.RegistryImpl;
 import org.apache.tapestry5.ioc.internal.RegistryWrapper;
 import org.apache.tapestry5.ioc.internal.services.ClassFactoryImpl;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.OneShotLock;
 import org.apache.tapestry5.ioc.services.ClassFactory;
 import org.apache.tapestry5.ioc.services.TapestryIOCModule;
@@ -147,9 +148,10 @@ public final class RegistryBuilder
 
             add(builderClass);
         }
-        catch (ClassNotFoundException ex)
+        catch (Exception ex)
         {
-            throw new IllegalArgumentException(ex);
+            throw new RuntimeException(String.format("Failure loading Tapestry IoC module class %s: %s",
+                                                     classname, InternalUtils.toMessage(ex), ex));
         }
 
         return this;

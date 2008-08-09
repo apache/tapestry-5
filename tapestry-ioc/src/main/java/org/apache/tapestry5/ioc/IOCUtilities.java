@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@ package org.apache.tapestry5.ioc;
 
 import static org.apache.tapestry5.ioc.IOCConstants.MODULE_BUILDER_MANIFEST_ENTRY_NAME;
 import org.apache.tapestry5.ioc.annotations.SubModule;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -79,15 +80,17 @@ public final class IOCUtilities
             addModulesInList(builder, System.getProperty("tapestry.modules"));
 
         }
-        catch (Exception ex)
+        catch (IOException ex)
         {
             throw new RuntimeException(ex.getMessage(), ex);
         }
     }
 
-    private static void addModulesInManifest(RegistryBuilder builder, URL url) throws IOException
+    private static void addModulesInManifest(RegistryBuilder builder, URL url)
     {
         InputStream in = null;
+
+        Throwable fail = null;
 
         try
         {
@@ -103,10 +106,24 @@ public final class IOCUtilities
 
             addModulesInList(builder, list);
         }
+        catch (RuntimeException ex)
+        {
+            fail = ex;
+        }
+        catch (IOException ex)
+        {
+            fail = ex;
+        }
         finally
         {
             close(in);
         }
+
+        if (fail != null)
+            throw new RuntimeException(String.format("Exception loading module(s) from manifest %s: %s",
+                                                     url.toString(),
+                                                     InternalUtils.toMessage(fail)), fail);
+
     }
 
     static void addModulesInList(RegistryBuilder builder, String list)
