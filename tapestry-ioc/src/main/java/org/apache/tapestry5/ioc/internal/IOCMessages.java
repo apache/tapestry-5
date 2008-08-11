@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ package org.apache.tapestry5.ioc.internal;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.def.ContributionDef;
 import org.apache.tapestry5.ioc.def.ServiceDef;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import static org.apache.tapestry5.ioc.internal.util.InternalUtils.asString;
 import org.apache.tapestry5.ioc.internal.util.MessagesImpl;
@@ -279,17 +280,32 @@ final class IOCMessages
         return MESSAGES.format("autobuild-constructor-error", constructorDescription, cause);
     }
 
-    static String noServicesMatchMarker(Class objectType, Class marker)
+    private static String toJavaClassNames(List<Class> classes)
     {
-        return MESSAGES.format("no-services-match-marker", ClassFabUtils
-                .toJavaClassName(objectType), ClassFabUtils.toJavaClassName(marker));
+        List<String> names = CollectionFactory.newList();
+
+        for (Class<?> clazz : classes)
+        {
+            names.add(ClassFabUtils.toJavaClassName(clazz));
+        }
+
+        return InternalUtils.joinSorted(names);
     }
 
-    static String manyServicesMatchMarker(Class objectType, Class marker, Collection<ServiceDef> matchingServices)
+    static String noServicesMatchMarker(Class objectType, List<Class> markers)
     {
-        return MESSAGES.format("many-services-match-marker", ClassFabUtils
-                .toJavaClassName(objectType), ClassFabUtils.toJavaClassName(marker), InternalUtils
-                .joinSorted(matchingServices));
+        return MESSAGES.format("no-services-match-marker",
+                               ClassFabUtils.toJavaClassName(objectType),
+                               toJavaClassNames(markers));
+    }
+
+    static String manyServicesMatchMarker(Class objectType, List<Class> markers,
+                                          Collection<ServiceDef> matchingServices)
+    {
+        return MESSAGES.format("many-services-match-marker",
+                               ClassFabUtils.toJavaClassName(objectType),
+                               toJavaClassNames(markers),
+                               InternalUtils.joinSorted(matchingServices));
     }
 
     static String overlappingServiceProxyProviders()

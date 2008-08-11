@@ -78,7 +78,10 @@ Re-configuring the Project
     </dependencies>
 ----
 
-  The tapestry-hibernate library includes, as transitive dependencies, Hibernate and tapestry-core.
+  The tapestry-hibernate library includes, as transitive dependencies, Hibernate and tapestry-core.  This means
+  that you can simply replace "tapestry-core" with "tapestry-hibernate" inside the \<artifactId\> element.
+
+  Since Hibernate can work with so many different databases, we must explicitly add in the correct driver.
 
 * Hibernate Configuration
 
@@ -119,9 +122,7 @@ Adding Hibernate Annotations
 
   For an entity class to be used with Hibernate, some Hibernate annotations must be added to the class.
 
-  Below is the updated Address class, with the Hibernate annotations (as well as the Tapestry ones).  Hibernate
-  annotations can be applied to fields or to accessor methods, but the Tapestry annotations we use below
-  are for methods only.
+  Below is the updated Address class, with the Hibernate annotations (as well as the Tapestry ones).  
 
   <<src/main/java/org/apache/tapestry5/tutorial/entities/Address.java:>>
 
@@ -142,29 +143,34 @@ public class Address
 {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @NonVisual
     private Long id;
 
     private Honorific honorific;
 
+    @Validate("required")
     private String firstName;
 
+    @Validate("required")
     private String lastName;
 
     private String street1;
 
     private String street2;
 
+    @Validate("required")
     private String city;
 
+    @Validate("required")
     private String state;
 
+    @Validate("required,regexp")
     private String zip;
 
     private String email;
 
     private String phone;
 
-    @NonVisual
     public Long getId()
     {
         return id;
@@ -180,7 +186,6 @@ public class Address
         return honorific;
     }
 
-    @Validate("required")
     public String getFirstName()
     {
         return firstName;
@@ -191,7 +196,6 @@ public class Address
         return lastName;
     }
 
-    @Validate("required")
     public String getStreet1()
     {
         return street1;
@@ -202,19 +206,16 @@ public class Address
         return street2;
     }
 
-    @Validate("required")
     public String getCity()
     {
         return city;
     }
 
-    @Validate("required")
     public String getState()
     {
         return state;
     }
 
-    @Validate("required,regexp")
     public String getZip()
     {
         return zip;
@@ -281,6 +282,16 @@ public class Address
     }
 }
 ----
+
+  The Tapestry annotations, @NonVisual and @Validate, may be placed on the setter or getter method or on
+  the field (as we have done here).  As with the Hibernate annotations, putting the annotation on the field
+  requires that the field name match the corresponding property name.
+
+  [@NonVisual]
+    This annotation indicates a field, such as a primary key, that should not be made visible to the user.
+
+  [@Validate]
+    This annotations identifies the validations associated with a field.
 
 Updating the Database
 

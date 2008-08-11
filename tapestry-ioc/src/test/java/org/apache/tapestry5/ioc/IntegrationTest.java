@@ -685,7 +685,7 @@ public class IntegrationTest extends IOCInternalTestCase
         catch (RuntimeException ex)
         {
             assertMessageContains(ex, "Error invoking service builder method",
-                                  "Unable to locate a single service assignable to type org.apache.tapestry5.ioc.Greeter with marker annotation org.apache.tapestry5.ioc.RedMarker",
+                                  "Unable to locate a single service assignable to type org.apache.tapestry5.ioc.Greeter with marker annotation(s) org.apache.tapestry5.ioc.RedMarker",
                                   "org.apache.tapestry5.ioc.GreeterModule.buildRedGreeter1()",
                                   "org.apache.tapestry5.ioc.GreeterModule.buildRedGreeter2()");
         }
@@ -708,7 +708,7 @@ public class IntegrationTest extends IOCInternalTestCase
         catch (RuntimeException ex)
         {
             assertMessageContains(ex, "Error invoking service builder method",
-                                  " Unable to locate any service assignable to type org.apache.tapestry5.ioc.Greeter with marker annotation org.apache.tapestry5.ioc.YellowMarker.");
+                                  " Unable to locate any service assignable to type org.apache.tapestry5.ioc.Greeter with marker annotation(s) org.apache.tapestry5.ioc.YellowMarker.");
         }
 
         r.shutdown();
@@ -888,5 +888,19 @@ public class IntegrationTest extends IOCInternalTestCase
                                   "Failure loading Tapestry IoC module class does.not.exist.Module"
             );
         }
+    }
+
+    @Test
+    public void local_annotation()
+    {
+        Registry r = buildRegistry(GreeterModule.class, LocalModule.class);
+
+        StringHolder g = r.getService("LocalGreeterHolder", StringHolder.class);
+
+        // Comes from the @Local DrawlGreeter, even though there are many other Greeter services available.
+
+        assertEquals(g.getValue(), "Hello, y'all!");
+
+        r.shutdown();
     }
 }

@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,6 +14,7 @@
 
 package org.apache.tapestry5.ioc.internal;
 
+import org.apache.tapestry5.ioc.AnnotationProvider;
 import org.apache.tapestry5.ioc.Registry;
 import org.apache.tapestry5.ioc.ServiceDecorator;
 import org.apache.tapestry5.ioc.ServiceLifecycle;
@@ -31,6 +32,17 @@ import java.util.Map;
  */
 public interface InternalRegistry extends Registry, RegistryShutdownHub
 {
+    /**
+     * As with {@link org.apache.tapestry5.ioc.Registry#getObject(Class, org.apache.tapestry5.ioc.AnnotationProvider)},
+     * but handles the {@link org.apache.tapestry5.ioc.annotations.Local} annotation.
+     *
+     * @param objectType         type of object o be injected
+     * @param annotationProvider access to annotations at point of injection
+     * @param localModule        module to limit services to, if Local annotaton present
+     * @return the service or object
+     */
+    <T> T getObject(Class<T> objectType, AnnotationProvider annotationProvider, Module localModule);
+
     /**
      * Returns a service lifecycle by service scope name.
      *
@@ -84,7 +96,8 @@ public interface InternalRegistry extends Registry, RegistryShutdownHub
                                             Class<V> valueType);
 
     /**
-     * Convieience for creating a new {@link ClassFab} instance using a {@link org.apache.tapestry5.ioc.services.ClassFactory}.
+     * Convieience for creating a new {@link org.apache.tapestry5.ioc.services.ClassFab} instance using a {@link
+     * org.apache.tapestry5.ioc.services.ClassFactory}.
      *
      * @param serviceInterface the interface to be implemented by the provided class
      */

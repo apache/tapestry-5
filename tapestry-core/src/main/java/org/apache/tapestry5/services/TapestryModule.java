@@ -194,15 +194,15 @@ public final class TapestryModule
     // ========================================================================
 
 
-    public static Alias build(Logger logger,
+    public static Alias buildAlias(Logger logger,
 
-                              @Inject @Symbol(InternalConstants.TAPESTRY_ALIAS_MODE_SYMBOL)
-                              String mode,
+                                   @Inject @Symbol(InternalConstants.TAPESTRY_ALIAS_MODE_SYMBOL)
+                                   String mode,
 
-                              @InjectService("AliasOverrides")
-                              AliasManager overridesManager,
+                                   @InjectService("AliasOverrides")
+                                   AliasManager overridesManager,
 
-                              Collection<AliasContribution> configuration)
+                                   Collection<AliasContribution> configuration)
     {
         AliasManager manager = new AliasManagerImpl(logger, configuration);
 
@@ -515,7 +515,7 @@ public final class TapestryModule
      */
     public static void contributeMasterObjectProvider(OrderedConfiguration<ObjectProvider> configuration,
 
-                                                      @InjectService("Alias")
+                                                      @Local
                                                       final Alias alias,
 
                                                       @InjectService("AssetObjectProvider")
@@ -523,7 +523,10 @@ public final class TapestryModule
     {
         // There's a nasty web of dependencies related to Alias; this wrapper class lets us
         // defer instantiating the Alias service implementation just long enough to defuse those
-        // dependencies.
+        // dependencies. The @Local annotation prevents a recursive call through the
+        // MasterObjectProvider to resolve the Alias service itself; that is MasterObjectProvider
+        // gets built using this proxy, then the proxy will trigger the construction of AliasImpl
+        // (which itself needs MasterObjectProvider to resolve some dependencies).
 
         ObjectProvider wrapper = new ObjectProvider()
         {
@@ -533,7 +536,7 @@ public final class TapestryModule
             }
         };
 
-        configuration.add("Alias", wrapper, "after:Value");
+        configuration.add("Alias", wrapper, "after:Value,Symbol");
 
         configuration.add("Asset", assetObjectProvider, "before:Alias");
 

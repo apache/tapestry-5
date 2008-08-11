@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -46,7 +46,7 @@ public class ObjectLocatorImpl implements ObjectLocator
 
     public <T> T getObject(Class<T> objectType, AnnotationProvider annotationProvider)
     {
-        return registry.getObject(objectType, annotationProvider);
+        return registry.getObject(objectType, annotationProvider, module);
     }
 
     protected InternalRegistry getRegistry()

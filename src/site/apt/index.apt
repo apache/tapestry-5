@@ -36,7 +36,7 @@ Roadmap
 
   Tapestry is, of course, an open-source project, with all the work coming from unpaid volunteers.  That being said, our rough timeline is as follows:
   
-  * 5.0 Release Candidate in Q1 2008
+  * 5.0 Release Candidate in Q1 2008    ((<Ooops!)>
 
   * 5.0 Final Release shortly thereafter
 
@@ -83,6 +83,9 @@ Third Party Libraries, Tutorials and Resources
 *--+--+--+
 
 New And Of Note
+
+  * The new {{{apidocs/org/apache/tapestry5/ioc/annotations/Local.html}@Local}}
+    annotation makes it easier to reference services within the same module when injecting.  
 
   * Most general documentation has been moved from the tapestry-core module up to the project level.
   
