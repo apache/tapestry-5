@@ -15,6 +15,7 @@
 package org.apache.tapestry5.ioc.internal;
 
 import org.apache.tapestry5.ioc.*;
+import org.apache.tapestry5.ioc.annotations.Local;
 import org.apache.tapestry5.ioc.def.ContributionDef;
 import org.apache.tapestry5.ioc.def.DecoratorDef;
 import org.apache.tapestry5.ioc.def.ModuleDef;
@@ -84,12 +85,14 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
     private SymbolSource symbolSource;
 
-    private final List<Module> modules = CollectionFactory.newList();
+    private final Map<Module, Set<ServiceDef>> moduleToServiceDefs = CollectionFactory.newMap();
 
     /**
      * From marker type to a list of marked service instances.
      */
     private final Map<Class, List<ServiceDef>> markerToServiceDef = CollectionFactory.newMap();
+
+    private final Set<ServiceDef> allServiceDefs = CollectionFactory.newSet();
 
 
     public static final class OrderedConfigurationToOrdererAdaptor<T> implements OrderedConfiguration<T>
@@ -122,25 +125,17 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
         tracker = scoreboardAndTracker;
 
-        addBuiltin(SERVICE_ACTIVITY_SCOREBOARD_SERVICE_ID, ServiceActivityScoreboard.class, scoreboardAndTracker);
-
-        addBuiltin(LOGGER_SOURCE_SERVICE_ID, LoggerSource.class, this.loggerSource);
-
         this.classFactory = classFactory;
-
-        addBuiltin(CLASS_FACTORY_SERVICE_ID, ClassFactory.class, this.classFactory);
 
         Logger logger = loggerForBuiltinService(PERTHREAD_MANAGER_SERVICE_ID);
 
         perthreadManager = new PerthreadManagerImpl(logger);
 
-        addBuiltin(PERTHREAD_MANAGER_SERVICE_ID, PerthreadManager.class, perthreadManager);
 
         logger = loggerForBuiltinService(REGISTRY_SHUTDOWN_HUB_SERVICE_ID);
 
         registryShutdownHub = new RegistryShutdownHubImpl(logger);
 
-        addBuiltin(REGISTRY_SHUTDOWN_HUB_SERVICE_ID, RegistryShutdownHub.class, registryShutdownHub);
 
         lifecycles.put("singleton", new SingletonServiceLifecycle());
 
@@ -158,11 +153,14 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
             Module module = new ModuleImpl(this, tracker, def, classFactory, logger);
 
-            modules.add(module);
+            Set<ServiceDef> moduleServiceDefs = CollectionFactory.newSet();
 
             for (String serviceId : def.getServiceIds())
             {
                 ServiceDef serviceDef = module.getServiceDef(serviceId);
+
+                moduleServiceDefs.add(serviceDef);
+                allServiceDefs.add(serviceDef);
 
                 Module existing = serviceIdToModule.get(serviceId);
 
@@ -178,7 +176,15 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
                     InternalUtils.addToMapList(markerToServiceDef, marker, serviceDef);
 
             }
+
+            moduleToServiceDefs.put(module, moduleServiceDefs);
         }
+
+        addBuiltin(SERVICE_ACTIVITY_SCOREBOARD_SERVICE_ID, ServiceActivityScoreboard.class, scoreboardAndTracker);
+        addBuiltin(LOGGER_SOURCE_SERVICE_ID, LoggerSource.class, this.loggerSource);
+        addBuiltin(CLASS_FACTORY_SERVICE_ID, ClassFactory.class, this.classFactory);
+        addBuiltin(PERTHREAD_MANAGER_SERVICE_ID, PerthreadManager.class, perthreadManager);
+        addBuiltin(REGISTRY_SHUTDOWN_HUB_SERVICE_ID, RegistryShutdownHub.class, registryShutdownHub);
 
         scoreboardAndTracker.startup();
 
@@ -196,7 +202,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
         List<EagerLoadServiceProxy> proxies = CollectionFactory.newList();
 
-        for (Module m : modules)
+        for (Module m : moduleToServiceDefs.keySet())
             m.collectEagerLoadServices(proxies);
 
         // TAPESTRY-2267: Gather up all the proxies before instantiating any of them.
@@ -265,7 +271,10 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         };
 
         for (Class marker : serviceDef.getMarkers())
+        {
             InternalUtils.addToMapList(markerToServiceDef, marker, serviceDef);
+            allServiceDefs.add(serviceDef);
+        }
 
         tracker.define(serviceDef, Status.BUILTIN);
     }
@@ -342,9 +351,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
             }
         };
 
-        Collection<Module> modules = this.modules;
-
-        for (Module m : modules)
+        for (Module m : moduleToServiceDefs.keySet())
             addToUnorderedConfiguration(configuration, objectType, serviceDef, m);
 
         return result;
@@ -362,9 +369,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
         OrderedConfiguration<T> configuration = new OrderedConfigurationToOrdererAdaptor<T>(orderer);
 
-        Collection<Module> modules = this.modules;
-
-        for (Module m : modules)
+        for (Module m : moduleToServiceDefs.keySet())
             addToOrderedConfiguration(configuration, objectType, serviceDef, m);
 
         // An ugly hack ... perhaps we should introduce a new builtin service so that this can be
@@ -376,7 +381,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
             {
                 public <T> T provide(Class<T> objectType, AnnotationProvider annotationProvider, ObjectLocator locator)
                 {
-                    return findServiceByMarkerAndType(objectType, annotationProvider);
+                    return findServiceByMarkerAndType(objectType, annotationProvider, null);
                 }
             };
 
@@ -403,9 +408,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
             }
         };
 
-        Collection<Module> modules = this.modules;
-
-        for (Module m : modules)
+        for (Module m : moduleToServiceDefs.keySet())
             addToMappedConfiguration(configuration, keyToContribution, keyType, objectType, serviceDef, m);
 
         return result;
@@ -535,7 +538,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
     {
         List<String> result = CollectionFactory.newList();
 
-        for (Module module : modules)
+        for (Module module : moduleToServiceDefs.keySet())
             result.addAll(module.findServiceIdsForInterface(serviceInterface));
 
         for (Map.Entry<String, Object> entry : builtinServices.entrySet())
@@ -575,7 +578,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
         Orderer<ServiceDecorator> orderer = new Orderer<ServiceDecorator>(logger);
 
-        for (Module module : modules)
+        for (Module module : moduleToServiceDefs.keySet())
         {
             Set<DecoratorDef> decorators = module.findMatchingDecoratorDefs(serviceDef);
 
@@ -601,7 +604,8 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         return classFactory.newClass(serviceInterface);
     }
 
-    private <T> T getObject(Class<T> objectType, AnnotationProvider annotationProvider, ObjectLocator locator)
+    private <T> T getObject(Class<T> objectType, AnnotationProvider annotationProvider, ObjectLocator locator,
+                            Module localModule)
     {
         lock.check();
 
@@ -612,7 +616,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         // to inject into a contribution method that contributes to MasterObjectProvider.
         // We also force a contribution into MasterObjectProvider to accomplish the same thing.
 
-        T result = findServiceByMarkerAndType(objectType, annotationProvider);
+        T result = findServiceByMarkerAndType(objectType, annotationProvider, localModule);
 
         if (result != null) return result;
 
@@ -622,58 +626,111 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         return masterProvider.provide(objectType, effectiveProvider, locator, true);
     }
 
+    private Collection<ServiceDef> filterByType(Class<?> objectType, Collection<ServiceDef> serviceDefs)
+    {
+        Collection<ServiceDef> result = CollectionFactory.newSet();
+
+        for (ServiceDef sd : serviceDefs)
+        {
+            if (objectType.isAssignableFrom(sd.getServiceInterface()))
+            {
+                result.add(sd);
+            }
+        }
+
+        return result;
+    }
+
     @SuppressWarnings("unchecked")
-    private <T> T findServiceByMarkerAndType(Class<T> objectType, AnnotationProvider provider)
+    private <T> T findServiceByMarkerAndType(Class<T> objectType, AnnotationProvider provider, Module localModule)
     {
         if (provider == null) return null;
+
+        boolean localOnly = localModule != null && provider.getAnnotation(Local.class) != null;
+
+
+        Set<ServiceDef> matches = CollectionFactory.newSet();
+
+        matches.addAll(filterByType(objectType, localOnly
+                                                ? moduleToServiceDefs.get(localModule)
+                                                : allServiceDefs
+        ));
+
+        List<Class> markers = CollectionFactory.newList();
+
+        if (localOnly) markers.add(Local.class);
 
         for (Class marker : markerToServiceDef.keySet())
         {
             if (provider.getAnnotation(marker) == null) continue;
 
-            List<ServiceDef> matches = CollectionFactory.newList();
+            markers.add(marker);
 
-            for (ServiceDef def : markerToServiceDef.get(marker))
-            {
-                if (objectType.isAssignableFrom(def.getServiceInterface())) matches.add(def);
-            }
-
-            switch (matches.size())
-            {
-
-                case 1:
-
-                    ServiceDef def = matches.get(0);
-
-                    return getService(def.getServiceId(), objectType);
-
-                case 0:
-
-                    // It's no accident that the user put the marker annotation at the injection
-                    // point, since it matches a known marker annotation, it better be there for
-                    // a reason. So if we don't get a match, we have to assume the user expected
-                    // one, and that is an error.
-
-                    // This doesn't help when the user places an annotation they *think* is a marker
-                    // but isn't really a marker (because no service is marked by the annotation).
-
-                    throw new RuntimeException(IOCMessages
-                            .noServicesMatchMarker(objectType, marker));
-
-                default:
-                    throw new RuntimeException(IOCMessages.manyServicesMatchMarker(objectType, marker, matches));
-            }
-
+            matches = intersection(matches, markerToServiceDef.get(marker));
         }
 
-        return null;
+        // If didn't see @Local or any recognized marker annotation, then don't try to filter that way.
+        // Continue on, eventually to the MasterObjectProvider service.
+
+        if (markers.isEmpty()) return null;
+
+        switch (matches.size())
+        {
+
+            case 1:
+
+                ServiceDef def = matches.iterator().next();
+
+                return getService(def.getServiceId(), objectType);
+
+            case 0:
+
+                // It's no accident that the user put the marker annotation at the injection
+                // point, since it matches a known marker annotation, it better be there for
+                // a reason. So if we don't get a match, we have to assume the user expected
+                // one, and that is an error.
+
+                // This doesn't help when the user places an annotation they *think* is a marker
+                // but isn't really a marker (because no service is marked by the annotation).
+
+                throw new RuntimeException(IOCMessages.noServicesMatchMarker(objectType, markers));
+
+            default:
+                throw new RuntimeException(IOCMessages.manyServicesMatchMarker(objectType, markers, matches));
+        }
     }
+
+    /**
+     * Filters the set into a new set, containing only elements shared between the set and the filter collection.
+     *
+     * @param set    to be filtered
+     * @param filter values to keep from the set
+     * @return a new set containing only the shared values
+     */
+    private static <T> Set<T> intersection(Set<T> set, Collection<T> filter)
+    {
+        if (set.isEmpty()) return Collections.emptySet();
+
+        Set<T> result = CollectionFactory.newSet();
+
+        for (T elem : filter)
+        {
+            if (set.contains(elem)) result.add(elem);
+        }
+
+        return result;
+    }
+
 
     public <T> T getObject(Class<T> objectType, AnnotationProvider annotationProvider)
     {
-        lock.check();
+        return getObject(objectType, annotationProvider, this, null);
+    }
 
-        return getObject(objectType, annotationProvider, this);
+
+    public <T> T getObject(Class<T> objectType, AnnotationProvider annotationProvider, Module localModule)
+    {
+        return getObject(objectType, annotationProvider, this, localModule);
     }
 
     public void addRegistryShutdownListener(RegistryShutdownListener listener)

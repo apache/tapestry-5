@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+//  Copyright 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,21 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+package org.apache.tapestry5.ioc.annotations;
+
+import java.lang.annotation.*;
+
+
 /**
- *
+ * A special marker annotation which limits the search for possible services to just the <em>same</em> module containing
+ * the service being injected.  Other marker annotations may also be applied.
  */
-package org.apache.tapestry5.tutorial.services;
-
-import java.lang.annotation.Documented;
-import static java.lang.annotation.ElementType.FIELD;
-import static java.lang.annotation.ElementType.PARAMETER;
-import java.lang.annotation.Retention;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-import java.lang.annotation.Target;
-
-@Target(
-        { PARAMETER, FIELD })
-@Retention(RUNTIME)
+@Target({ElementType.PARAMETER, ElementType.FIELD})
+@Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface Local
 {

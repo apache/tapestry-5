@@ -6,7 +6,7 @@ import org.apache.tapestry5.*;
 import org.apache.tapestry5.ioc.MappedConfiguration;
 import org.apache.tapestry5.ioc.OrderedConfiguration;
 import org.apache.tapestry5.ioc.ServiceBinder;
-import org.apache.tapestry5.ioc.annotations.InjectService;
+import org.apache.tapestry5.ioc.annotations.Local;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.RequestFilter;
 import org.apache.tapestry5.services.RequestHandler;
@@ -52,7 +52,7 @@ public class AppModule
      * This is a service definition, the service will be named "TimingFilter". The interface,
      * RequestFilter, is used within the RequestHandler service pipeline, which is built from the
      * RequestHandler service configuration. Tapestry IoC is responsible for passing in an
-     * appropriate Log instance. Requests for static resources are handled at a higher level, so
+     * appropriate Logger instance. Requests for static resources are handled at a higher level, so
      * this filter will only be invoked for Tapestry related requests.
      * 
      * <p>
@@ -96,10 +96,12 @@ public class AppModule
     /**
      * This is a contribution to the RequestHandler service configuration. This is how we extend
      * Tapestry using the timing filter. A common use for this kind of filter is transaction
-     * management or security.
+     * management or security. The @Local annotation selects the desired service by type, but only
+     * from the same module.  Without @Local, there would be an error due to the other service(s)
+     * that implement RequestFilter (defined in other modules).
      */
     public void contributeRequestHandler(OrderedConfiguration<RequestFilter> configuration,
-            @InjectService("TimingFilter")
+            @Local
             RequestFilter filter)
     {
         // Each contribution to an ordered configuration has a name, When necessary, you may

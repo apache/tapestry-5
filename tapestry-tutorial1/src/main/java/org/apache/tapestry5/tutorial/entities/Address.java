@@ -28,29 +28,34 @@ public class Address
 {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @NonVisual
     private Long id;
 
     private Honorific honorific;
 
+    @Validate("required")
     private String firstName;
 
+    @Validate("required")
     private String lastName;
 
     private String street1;
 
     private String street2;
 
+    @Validate("required")
     private String city;
 
+    @Validate("required")
     private String state;
 
+    @Validate("required,regexp")
     private String zip;
 
     private String email;
 
     private String phone;
 
-    @NonVisual
     public Long getId()
     {
         return id;
@@ -66,7 +71,6 @@ public class Address
         return honorific;
     }
 
-    @Validate("required")
     public String getFirstName()
     {
         return firstName;
@@ -77,7 +81,6 @@ public class Address
         return lastName;
     }
 
-    @Validate("required")
     public String getStreet1()
     {
         return street1;
@@ -88,19 +91,16 @@ public class Address
         return street2;
     }
 
-    @Validate("required")
     public String getCity()
     {
         return city;
     }
 
-    @Validate("required")
     public String getState()
     {
         return state;
     }
 
-    @Validate("required,regexp")
     public String getZip()
     {
         return zip;

@@ -194,7 +194,7 @@ public class InternalUtils
         }
 
         // In the absence of @InjectService, try some autowiring. First, does the
-        // parameter type match on of the resources (the parameter defaults)?
+        // parameter type match one of the resources (the parameter defaults)?
 
         if (provider.getAnnotation(Inject.class) == null)
         {

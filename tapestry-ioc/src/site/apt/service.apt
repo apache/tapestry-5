@@ -310,6 +310,18 @@ public class MyServiceImpl implements MyService
   The @Marker annotation may also be placed on an implementation class, which means that you may omit
   the call to withMarker() inside the bind() method.
 
+  Finally, the point of injection may have multiple marker annotations; only services that are marked
+  with <all> those markers will be considered for injection. Each marker annotation creates an increasingly narrow
+  subset from the set of all possible services (compatible with the indicated dependency type).
+
+Local Dependencies
+
+  A special marker interface,
+  {{{../apidocs/org/apache/tapestry5/ioc/annotations/Local.html}@Local}},
+  indicates a dependency that should only be resolved using services from within <the same module>.   
+
+  @Local can also be combined with other marker annotations.
+
 Injecting Dependencies for Autobuilt Services
 
   With autobuilt services, there's no service builder method in which to specify injections.

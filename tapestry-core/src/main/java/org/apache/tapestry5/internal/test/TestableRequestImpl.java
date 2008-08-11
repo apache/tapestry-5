@@ -16,6 +16,7 @@ package org.apache.tapestry5.internal.test;
 
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.Session;
 
 import java.util.List;
@@ -32,6 +33,7 @@ public class TestableRequestImpl implements TestableRequest
 
     private Session session;
 
+    @Inject
     public TestableRequestImpl()
     {
         this("/foo");
