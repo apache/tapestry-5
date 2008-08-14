@@ -84,10 +84,14 @@ public @interface Parameter
      * have more than a single principal parameter.
      */
     boolean principal() default false;
-    
+
     /**
-     * Used to create a binding to be used as a parameter default without to provide a default binding method.
-     * If true, then the container's property matching the component id is used to bind the parameter.
+     * Used to create a default binding, connecting the parameter to a property of the container whose property name
+     * matches the id of the component. This is frequently used for form element components.  This default binding is
+     * only used parameter is not bound.
+     *
+     * @see org.apache.tapestry5.services.ComponentDefaultProvider#defaultBinding(String,
+     *      org.apache.tapestry5.ComponentResources)
      */
     boolean autoconnect() default false;
 }
