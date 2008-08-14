@@ -35,6 +35,7 @@ import org.apache.tapestry5.ioc.services.PropertyAccess;
 import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.services.BindingSource;
+import org.apache.tapestry5.services.ComponentDefaultProvider;
 import org.slf4j.Logger;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.Test;
@@ -461,6 +462,7 @@ public class ParameterWorkerTest extends InternalBaseTestCase
         final BindingSource source = mockBindingSource();
         final InternalComponentResources resources = mockInternalComponentResources();
         final Binding binding = mockBinding();
+        ComponentDefaultProvider defaultProvider = newMock(ComponentDefaultProvider.class);
         String boundValue = "howdy!";
         final Logger logger = mockLogger();
 
@@ -486,7 +488,7 @@ public class ParameterWorkerTest extends InternalBaseTestCase
         };
 
         Component component = setupForIntegrationTest(resources, logger, DefaultParameterComponent.class.getName(),
-                                                      model, source, phaseTwoTraining);
+                                                      model, source, phaseTwoTraining, defaultProvider);
 
         train_isLoaded(resources, true);
         train_isBound(resources, "value", true);
@@ -505,6 +507,7 @@ public class ParameterWorkerTest extends InternalBaseTestCase
     {
         BindingSource source = mockBindingSource();
         final InternalComponentResources resources = mockInternalComponentResources();
+        ComponentDefaultProvider defaultProvider = newMock(ComponentDefaultProvider.class);
         _binding = mockBinding();
         String boundValue = "yowza!";
         final Logger logger = mockLogger();
@@ -531,7 +534,7 @@ public class ParameterWorkerTest extends InternalBaseTestCase
 
         Component component = setupForIntegrationTest(resources, logger,
                                                       DefaultParameterBindingMethodComponent.class.getName(), model,
-                                                      source, phaseTwoTraining);
+                                                      source, phaseTwoTraining, defaultProvider);
 
         train_isLoaded(resources, true);
         train_isBound(resources, "value", true);
@@ -562,6 +565,7 @@ public class ParameterWorkerTest extends InternalBaseTestCase
     {
         final Logger logger = mockLogger();
         MutableComponentModel model = mockMutableComponentModel(logger);
+        ComponentDefaultProvider defaultProvider = newMock(ComponentDefaultProvider.class);
 
         model.addParameter("invariantObject", false, true, BindingConstants.PROP);
         model.addParameter("invariantPrimitive", false, true, BindingConstants.PROP);
@@ -583,12 +587,12 @@ public class ParameterWorkerTest extends InternalBaseTestCase
         stub_isDebugEnabled(logger, false);
 
         return setupForIntegrationTest(resources, logger, ParameterComponent.class.getName(), model,
-                                       mockBindingSource(), phaseTwoTraining);
+                                       mockBindingSource(), phaseTwoTraining, defaultProvider);
     }
 
     private Component setupForIntegrationTest(InternalComponentResources resources, Logger logger,
                                               String componentClassName, MutableComponentModel model,
-                                              BindingSource source, Runnable phaseTwoTraining) throws Exception
+                                              BindingSource source, Runnable phaseTwoTraining, ComponentDefaultProvider defaultProvider) throws Exception
     {
         ClassFactoryClassPool pool = new ClassFactoryClassPool(contextClassLoader);
 
@@ -605,7 +609,7 @@ public class ParameterWorkerTest extends InternalBaseTestCase
         InternalClassTransformation transformation = new InternalClassTransformationImpl(cf, ctClass, null, model,
                                                                                          null);
 
-        new ParameterWorker(source).transform(transformation, model);
+        new ParameterWorker(source, defaultProvider).transform(transformation, model);
 
         verify();
 

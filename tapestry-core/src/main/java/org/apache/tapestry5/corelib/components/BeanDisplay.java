@@ -14,7 +14,6 @@
 
 package org.apache.tapestry5.corelib.components;
 
-import org.apache.tapestry5.Binding;
 import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.annotations.Parameter;
@@ -25,7 +24,6 @@ import org.apache.tapestry5.beaneditor.PropertyModel;
 import org.apache.tapestry5.internal.beaneditor.BeanModelUtils;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.BeanModelSource;
-import org.apache.tapestry5.services.ComponentDefaultProvider;
 
 /**
  * Used to display the properties of a bean, using an underlying {@link BeanModel}. The output definition list: a
@@ -49,7 +47,7 @@ public class BeanDisplay
      * The object to be rendered; if not explicitly bound, a default binding to a property whose name matches this
      * component's id will be used.
      */
-    @Parameter(required = true, allowNull = false)
+    @Parameter(required = true, allowNull = false, autoconnect = true)
     @Property(write = false)
     private Object object;
 
@@ -107,10 +105,6 @@ public class BeanDisplay
     @Parameter(defaultPrefix = BindingConstants.LITERAL)
     private String add;
 
-
-    @Inject
-    private ComponentDefaultProvider defaultProvider;
-
     @Inject
     private ComponentResources resources;
 
@@ -119,14 +113,6 @@ public class BeanDisplay
 
     @Property
     private String propertyName;
-
-    /**
-     * Defaults the object parameter to a property of the container matching the BeanEditForm's id.
-     */
-    Binding defaultObject()
-    {
-        return defaultProvider.defaultBinding("object", resources);
-    }
 
     void setupRender()
     {

@@ -18,7 +18,6 @@ import org.apache.tapestry5.*;
 import org.apache.tapestry5.annotations.*;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newList;
-import org.apache.tapestry5.services.ComponentDefaultProvider;
 import org.apache.tapestry5.services.FormSupport;
 import org.apache.tapestry5.services.Heartbeat;
 
@@ -201,7 +200,7 @@ public class Loop
      * Defines the collection of values for the loop to iterate over. If not specified, defaults to a property of the
      * container whose name matches the Loop cmponent's id.
      */
-    @Parameter(required = true, principal = true)
+    @Parameter(required = true, principal = true, autoconnect = true)
     private Iterable<?> source;
 
     /**
@@ -250,13 +249,6 @@ public class Loop
     @Inject
     private ComponentResources resources;
 
-    @Inject
-    private ComponentDefaultProvider componentDefaultProvider;
-
-    Binding defaultSource()
-    {
-        return componentDefaultProvider.defaultBinding("source", resources);
-    }
 
     String defaultElement()
     {

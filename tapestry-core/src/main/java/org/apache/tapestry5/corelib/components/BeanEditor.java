@@ -25,7 +25,6 @@ import org.apache.tapestry5.internal.beaneditor.BeanModelUtils;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.internal.util.TapestryException;
 import org.apache.tapestry5.services.BeanModelSource;
-import org.apache.tapestry5.services.ComponentDefaultProvider;
 import org.apache.tapestry5.services.FormSupport;
 
 /**
@@ -56,7 +55,7 @@ public class BeanEditor
      * for the component is submitted. Typically, the container will listen for a "prepare" event, in order to ensure
      * that a non-null value is ready to be read or updated.
      */
-    @Parameter
+    @Parameter(autoconnect = true)
     private Object object;
 
     /**
@@ -111,9 +110,6 @@ public class BeanEditor
     private BeanModelSource modelSource;
 
     @Inject
-    private ComponentDefaultProvider defaultProvider;
-
-    @Inject
     private ComponentResources resources;
 
     @Environmental
@@ -123,14 +119,6 @@ public class BeanEditor
 
     @Property
     private String propertyName;
-
-    /**
-     * Defaults the object parameter to a property of the container matching the BeanEditForm's id.
-     */
-    Binding defaultObject()
-    {
-        return defaultProvider.defaultBinding("object", resources);
-    }
 
     // Needed for testing as well
 

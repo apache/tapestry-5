@@ -49,7 +49,7 @@ public class AjaxFormLoop
     /**
      * The objects to iterate over (passed to the internal Loop component).
      */
-    @Parameter(required = true)
+    @Parameter(required = true, autoconnect = true)
     private Iterable source;
 
     /**
@@ -123,8 +123,6 @@ public class AjaxFormLoop
     @Inject
     private ComponentClassCache componentClassCache;
 
-    @Inject
-    private ComponentDefaultProvider componentDefaultProvider;
 
     @Inject
     private PageRenderQueue pageRenderQueue;
@@ -165,11 +163,6 @@ public class AjaxFormLoop
             renderSupport.addInit("formLoopRemoveLink", spec);
         }
     };
-
-    Binding defaultSource()
-    {
-        return componentDefaultProvider.defaultBinding("source", resources);
-    }
 
 
     String defaultElement()

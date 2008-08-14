@@ -14,14 +14,12 @@
 
 package org.apache.tapestry5.corelib.components;
 
-import org.apache.tapestry5.Binding;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.services.ComponentDefaultProvider;
 
 import java.text.Format;
 
@@ -35,7 +33,7 @@ public class Output
     /**
      * The value to be output (before formatting). If the formatted value is blank, no output is produced.
      */
-    @Parameter(required = true)
+    @Parameter(required = true, autoconnect = true)
     private Object value;
 
     /**
@@ -59,15 +57,8 @@ public class Output
     private String elementName;
 
     @Inject
-    private ComponentDefaultProvider defaultProvider;
-
-    @Inject
     private ComponentResources resources;
 
-    Binding defaultValue()
-    {
-        return defaultProvider.defaultBinding("value", resources);
-    }
 
     boolean beginRender(MarkupWriter writer)
     {

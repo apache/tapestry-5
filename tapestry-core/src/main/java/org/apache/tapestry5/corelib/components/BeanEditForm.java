@@ -23,7 +23,6 @@ import org.apache.tapestry5.beaneditor.BeanModel;
 import org.apache.tapestry5.internal.beaneditor.BeanModelUtils;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.BeanModelSource;
-import org.apache.tapestry5.services.ComponentDefaultProvider;
 
 /**
  * A component that creates an entire form editing the properties of a particular bean. Inspired by <a
@@ -59,7 +58,7 @@ public class BeanEditForm implements ClientElement, FormValidationControl
      * value is ready to be read or updated. Often, the BeanEditForm can create the object as needed (assuming a public,
      * no arguments constructor).  The object property defaults to a property with the same name as the component id.
      */
-    @Parameter(required = true)
+    @Parameter(required = true, autoconnect = true)
     @Property
     private Object object;
 
@@ -121,21 +120,10 @@ public class BeanEditForm implements ClientElement, FormValidationControl
     private BeanModel model;
 
     @Inject
-    private ComponentDefaultProvider defaultProvider;
-
-    @Inject
     private ComponentResources resources;
 
     @Inject
     private BeanModelSource beanModelSource;
-
-    /**
-     * Defaults the object parameter to a property of the container matching the BeanEditForm's id.
-     */
-    Binding defaultObject()
-    {
-        return defaultProvider.defaultBinding("object", resources);
-    }
 
 
     void onPrepareFromForm()

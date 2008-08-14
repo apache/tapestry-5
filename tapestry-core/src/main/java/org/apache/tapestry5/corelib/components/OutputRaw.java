@@ -14,12 +14,10 @@
 
 package org.apache.tapestry5.corelib.components;
 
-import org.apache.tapestry5.Binding;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.services.ComponentDefaultProvider;
 
 /**
  * Used to output raw markup to the client. Unlike, say, an expansion, the output from OutputRaw is unfiltered, with any
@@ -34,19 +32,11 @@ public class OutputRaw
      * The value to to render. If unbound, and a property of the container matches the component's id, then that
      * property will be the source of the value.
      */
-    @Parameter(required = true)
+    @Parameter(required = true, autoconnect = true)
     private String value;
 
     @Inject
-    private ComponentDefaultProvider defaultProvider;
-
-    @Inject
     private ComponentResources resources;
-
-    Binding defaultValue()
-    {
-        return defaultProvider.defaultBinding("value", resources);
-    }
 
     boolean beginRender(MarkupWriter writer)
     {

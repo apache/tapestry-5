@@ -35,10 +35,13 @@ public class ParameterWorker implements ComponentClassTransformWorker
     private static final String BIND_METHOD_NAME = ParameterWorker.class.getName() + ".bind";
 
     private final BindingSource bindingSource;
+    
+    private ComponentDefaultProvider defaultProvider;
 
-    public ParameterWorker(BindingSource bindingSource)
+    public ParameterWorker(BindingSource bindingSource, ComponentDefaultProvider defaultProvider)
     {
         this.bindingSource = bindingSource;
+        this.defaultProvider = defaultProvider;
     }
 
     public void transform(final ClassTransformation transformation, MutableComponentModel model)
@@ -90,7 +93,7 @@ public class ParameterWorker implements ComponentClassTransformWorker
 
         String invariantFieldName = addParameterSetup(name, annotation.defaultPrefix(), annotation.value(),
                                                       parameterName, cachedFieldName, cache, type, resourcesFieldName,
-                                                      transformation);
+                                                      transformation, annotation.autoconnect());
 
         addReaderMethod(name, cachedFieldName, invariantFieldName, cache, parameterName, type, resourcesFieldName,
                         transformation);
@@ -105,7 +108,7 @@ public class ParameterWorker implements ComponentClassTransformWorker
      */
     private String addParameterSetup(String fieldName, String defaultPrefix, String defaultBinding,
                                      String parameterName, String cachedFieldName, boolean cache, String fieldType,
-                                     String resourcesFieldName, ClassTransformation transformation)
+                                     String resourcesFieldName, ClassTransformation transformation, boolean autoconnect)
     {
         String defaultFieldName = transformation.addField(Modifier.PRIVATE, fieldType, fieldName + "_default");
 
@@ -114,7 +117,7 @@ public class ParameterWorker implements ComponentClassTransformWorker
         BodyBuilder builder = new BodyBuilder().begin();
 
         addDefaultBindingSetup(parameterName, defaultPrefix, defaultBinding, resourcesFieldName, transformation,
-                               builder);
+                               builder, autoconnect);
 
         builder.addln("%s = %s.isInvariant(\"%s\");", invariantFieldName, resourcesFieldName, parameterName);
 
@@ -158,7 +161,7 @@ public class ParameterWorker implements ComponentClassTransformWorker
 
     private void addDefaultBindingSetup(String parameterName, String defaultPrefix, String defaultBinding,
                                         String resourcesFieldName, ClassTransformation transformation,
-                                        BodyBuilder builder)
+                                        BodyBuilder builder, boolean autoconnect)
     {
         if (InternalUtils.isNonBlank(defaultBinding))
         {
@@ -173,6 +176,18 @@ public class ParameterWorker implements ComponentClassTransformWorker
 
             return;
 
+        }
+        
+        if(autoconnect)
+        {
+            String defaultProviderFieldName = transformation.addInjectedField(ComponentDefaultProvider.class,
+                    "defaultProvider", defaultProvider);
+            
+            builder.addln("if (! %s.isBound(\"%s\"))", resourcesFieldName, parameterName);
+            
+            builder.addln("  %s.bindParameter(\"%s\", %s.defaultBinding(\"%s\", %s));", resourcesFieldName,
+                            parameterName, defaultProviderFieldName, parameterName, resourcesFieldName);
+            return;
         }
 
         // If no default binding expression provided in the annotation, then look for a default

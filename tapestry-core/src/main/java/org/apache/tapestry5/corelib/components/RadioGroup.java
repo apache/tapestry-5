@@ -29,7 +29,7 @@ public class RadioGroup implements Field
     /**
      * The property read and updated by the group as a whole.
      */
-    @Parameter(required = true, principal = true)
+    @Parameter(required = true, principal = true, autoconnect = true)
     private Object value;
 
     /**
@@ -73,11 +73,6 @@ public class RadioGroup implements Field
     private ValidationTracker tracker;
 
     private String controlName;
-
-    final Binding defaultValue()
-    {
-        return defaultProvider.defaultBinding("value", resources);
-    }
 
     String defaultLabel()
     {
