@@ -48,7 +48,7 @@ public class Radio implements Field
      * The value associated with this radio button. This is used to determine which radio button will be selected when
      * the page is rendered, and also becomes the value assigned when the form is submitted.
      */
-    @Parameter(required = true, principal = true)
+    @Parameter(required = true, principal = true, autoconnect = true)
     private Object value;
 
     @Inject
@@ -86,11 +86,6 @@ public class Radio implements Field
     String defaultLabel()
     {
         return defaultProvider.defaultLabel(resources);
-    }
-
-    Binding defaultValue()
-    {
-        return defaultProvider.defaultBinding("value", resources);
     }
 
     /**

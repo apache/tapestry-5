@@ -84,4 +84,10 @@ public @interface Parameter
      * have more than a single principal parameter.
      */
     boolean principal() default false;
+    
+    /**
+     * Used to create a binding to be used as a parameter default without to provide a default binding method.
+     * If true, then the container's property matching the component id is used to bind the parameter.
+     */
+    boolean autoconnect() default false;
 }
