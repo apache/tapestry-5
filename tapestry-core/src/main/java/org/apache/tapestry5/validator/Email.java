@@ -38,7 +38,7 @@ public class Email extends AbstractValidator<Void, String>
 
     public Email()
     {
-        super(Void.class, String.class, "invalid-email");
+        super(null, String.class, "invalid-email");
     }
 
     public void render(Field field, Void constraintValue, MessageFormatter formatter, MarkupWriter markupWriter,
