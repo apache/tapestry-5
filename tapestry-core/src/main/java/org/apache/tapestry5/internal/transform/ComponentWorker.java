@@ -50,6 +50,8 @@ public class ComponentWorker implements ComponentClassTransformWorker
         {
             Component annotation = transformation.getFieldAnnotation(fieldName, Component.class);
 
+            transformation.claimField(fieldName, annotation);
+
             String id = annotation.id();
 
             if (InternalUtils.isBlank(id)) id = InternalUtils.stripMemberPrefix(fieldName);
@@ -74,8 +76,6 @@ public class ComponentWorker implements ComponentClassTransformWorker
 
             addMixinClasses(fieldName, transformation, embedded);
             addMixinTypes(fieldName, transformation, embedded);
-
-            transformation.claimField(fieldName, annotation);
         }
     }
 

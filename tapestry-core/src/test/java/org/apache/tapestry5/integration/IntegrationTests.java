@@ -2149,4 +2149,15 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         assertTextPresent(
                 "Forms require that the request method be POST and that the t:formdata query parameter have values.");
     }
+
+    /**
+     * TAPESTRY-2567
+     */
+    public void field_annotation_conflict()
+    {
+        start("Field Annotation Conflict");
+
+        assertTextPresent(
+                "Field flashDemo of class org.apache.tapestry5.integration.app1.pages.FieldAnnotationConflict is already claimed by @org.apache.tapestry5.annotations.InjectPage and can not be claimed by @org.apache.tapestry5.annotations.Parameter.");
+    }
 }

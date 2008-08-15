@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -49,6 +49,8 @@ public class PersistWorker implements ComponentClassTransformWorker
         String fieldType = transformation.getFieldType(fieldName);
         Persist annotation = transformation.getFieldAnnotation(fieldName, Persist.class);
 
+        transformation.claimField(fieldName, annotation);
+        
         // Record the type of persistence, until needed later.
 
         String logicalFieldName = model.setFieldPersistenceStrategy(fieldName, annotation.value());
@@ -117,6 +119,5 @@ public class PersistWorker implements ComponentClassTransformWorker
                 TransformConstants.CONTAINING_PAGE_DID_ATTACH_SIGNATURE,
                 builder.toString());
 
-        transformation.claimField(fieldName, annotation);
     }
 }

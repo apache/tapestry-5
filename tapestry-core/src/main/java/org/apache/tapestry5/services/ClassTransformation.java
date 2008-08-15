@@ -75,15 +75,9 @@ public interface ClassTransformation extends AnnotationProvider
 
     /**
      * Generates a list of the names of declared instance fields that have the indicated annotation. Non-private and
-     * static fields are ignored. Only the names of private instance fields are returned. Any {@link #claimField(String,
-     * Object) claimed} fields are excluded.
+     * static fields are ignored. Only the names of private instance fields are returned.
      */
     List<String> findFieldsWithAnnotation(Class<? extends Annotation> annotationClass);
-
-    /**
-     * As with {@link #findFieldsWithAnnotation(Class)}, but finds fields even if they are claimed.
-     */
-    List<String> findAllFieldsWithAnnotation(Class<? extends Annotation> annotationClass);
 
     /**
      * Finds all methods defined in the class that are marked with the provided annotation.
@@ -104,7 +98,7 @@ public interface ClassTransformation extends AnnotationProvider
     List<TransformMethodSignature> findMethods(MethodFilter filter);
 
     /**
-     * Finds all unclaimed fields matched by the provided filter. Only considers unclaimed, private, instance fields.
+     * Finds all unclaimed fields matched by the provided filter. Only considers private instance fields.
      *
      * @param filter passed each field name and field type
      * @return the names of all matched fields, in ascending order
@@ -135,8 +129,9 @@ public interface ClassTransformation extends AnnotationProvider
 
     /**
      * Claims a field so as to ensure that only a single annotation is applied to any single field. When a
-     * transformation occurs (driven by a field annotation), the first thing that occurs is to claim the field, on
-     * behalf of the annotation.
+     * transformation occurs (driven by a field annotation), the field is claimed (using the annotation object
+     * as the tag).  If a field has multiple conflicting annotations, this will be discovered
+     * when the code attempts to claim the field a second time.
      *
      * @param fieldName the name of the field that is being claimed
      * @param tag       a non-null object that represents why the field is being tagged (this is typically a specific

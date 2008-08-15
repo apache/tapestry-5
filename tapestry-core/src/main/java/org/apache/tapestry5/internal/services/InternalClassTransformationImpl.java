@@ -125,7 +125,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
      * Signature for newInstance() method of Instantiator.
      */
     private static final MethodSignature NEW_INSTANCE_SIGNATURE = new MethodSignature(Component.class, "newInstance",
-                                                                                      new Class[]{
+                                                                                      new Class[] {
                                                                                               InternalComponentResources.class},
                                                                                       null);
 
@@ -906,18 +906,6 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
     public List<String> findFieldsWithAnnotation(final Class<? extends Annotation> annotationClass)
     {
-        return searchFieldsWithAnnotation(annotationClass, true);
-    }
-
-
-    public List<String> findAllFieldsWithAnnotation(Class<? extends Annotation> annotationClass)
-    {
-        return searchFieldsWithAnnotation(annotationClass, false);
-    }
-
-    private List<String> searchFieldsWithAnnotation(final Class<? extends Annotation> annotationClass,
-                                                    boolean skipClaimedFields)
-    {
         FieldFilter filter = new FieldFilter()
         {
             public boolean accept(String fieldName, String fieldType)
@@ -926,15 +914,11 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
             }
         };
 
-        return searchFieldsAndFilter(filter, skipClaimedFields);
+        return findFields(filter);
     }
+
 
     public List<String> findFields(FieldFilter filter)
-    {
-        return searchFieldsAndFilter(filter, true);
-    }
-
-    private List<String> searchFieldsAndFilter(FieldFilter filter, boolean skipClaimedFields)
     {
         failIfFrozen();
 
@@ -947,8 +931,6 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
                 if (!isInstanceField(field)) continue;
 
                 String fieldName = field.getName();
-
-                if (skipClaimedFields && claimedFields.containsKey(fieldName)) continue;
 
                 if (filter.accept(fieldName, field.getType().getName())) result.add(fieldName);
 
@@ -964,7 +946,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         return result;
     }
 
-    public List<TransformMethodSignature> findMethodsWithAnnotation(Class<? extends Annotation> annotationClass)
+    public List<TransformMethodSignature> findMethodsWithAnnotation(final Class<? extends Annotation> annotationClass)
     {
         failIfFrozen();
 
@@ -1584,7 +1566,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         String fieldType = getFieldType(fieldName);
 
         TransformMethodSignature sig = new TransformMethodSignature(Modifier.PRIVATE, "void", methodName,
-                                                                    new String[]{fieldType}, null);
+                                                                    new String[] {fieldType}, null);
 
         String message = ServicesMessages.readOnlyField(ctClass.getName(), fieldName);
 

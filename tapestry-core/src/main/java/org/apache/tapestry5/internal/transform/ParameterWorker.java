@@ -24,6 +24,7 @@ import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.services.*;
 
 import java.lang.reflect.Modifier;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -35,7 +36,7 @@ public class ParameterWorker implements ComponentClassTransformWorker
     private static final String BIND_METHOD_NAME = ParameterWorker.class.getName() + ".bind";
 
     private final BindingSource bindingSource;
-    
+
     private ComponentDefaultProvider defaultProvider;
 
     public ParameterWorker(BindingSource bindingSource, ComponentDefaultProvider defaultProvider)
@@ -46,38 +47,39 @@ public class ParameterWorker implements ComponentClassTransformWorker
 
     public void transform(final ClassTransformation transformation, MutableComponentModel model)
     {
-        FieldFilter filter = new FieldFilter()
-        {
-            public boolean accept(String fieldName, String fieldType)
-            {
-                Parameter annotation = transformation
-                        .getFieldAnnotation(fieldName, Parameter.class);
-
-                return annotation != null && annotation.principal();
-            }
-        };
-
-        List<String> principleFieldNames = transformation.findFields(filter);
-
-        convertFieldsIntoParameters(transformation, model, principleFieldNames);
-
-        // Now convert the rest.
-
         List<String> fieldNames = transformation.findFieldsWithAnnotation(Parameter.class);
 
-        convertFieldsIntoParameters(transformation, model, fieldNames);
+        for (int pass = 0; pass < 2; pass++)
+        {
+            Iterator<String> i = fieldNames.iterator();
+
+            while (i.hasNext())
+            {
+                String fieldName = i.next();
+
+                Parameter annotation = transformation.getFieldAnnotation(fieldName, Parameter.class);
+
+                // Process the principal annotations on the first pass, handle the others
+                // on the second pass.
+
+                boolean process = pass == 0
+                                  ? annotation.principal()
+                                  : true;
+
+                if (process)
+                {
+                    convertFieldIntoParameter(fieldName, annotation, transformation, model);
+
+                    i.remove();
+                }
+            }
+        }
     }
 
-    private void convertFieldsIntoParameters(ClassTransformation transformation, MutableComponentModel model,
-                                             List<String> fieldNames)
+    private void convertFieldIntoParameter(String name, Parameter annotation, ClassTransformation transformation,
+                                           MutableComponentModel model)
     {
-        for (String name : fieldNames)
-            convertFieldIntoParameter(name, transformation, model);
-    }
-
-    private void convertFieldIntoParameter(String name, ClassTransformation transformation, MutableComponentModel model)
-    {
-        Parameter annotation = transformation.getFieldAnnotation(name, Parameter.class);
+        transformation.claimField(name, annotation);
 
         String parameterName = getParameterName(name, annotation.name());
 
@@ -99,8 +101,6 @@ public class ParameterWorker implements ComponentClassTransformWorker
                         transformation);
 
         addWriterMethod(name, cachedFieldName, cache, parameterName, type, resourcesFieldName, transformation);
-
-        transformation.claimField(name, annotation);
     }
 
     /**
@@ -177,16 +177,16 @@ public class ParameterWorker implements ComponentClassTransformWorker
             return;
 
         }
-        
-        if(autoconnect)
+
+        if (autoconnect)
         {
             String defaultProviderFieldName = transformation.addInjectedField(ComponentDefaultProvider.class,
-                    "defaultProvider", defaultProvider);
-            
+                                                                              "defaultProvider", defaultProvider);
+
             builder.addln("if (! %s.isBound(\"%s\"))", resourcesFieldName, parameterName);
-            
+
             builder.addln("  %s.bindParameter(\"%s\", %s.defaultBinding(\"%s\", %s));", resourcesFieldName,
-                            parameterName, defaultProviderFieldName, parameterName, resourcesFieldName);
+                          parameterName, defaultProviderFieldName, parameterName, resourcesFieldName);
             return;
         }
 
@@ -246,7 +246,7 @@ public class ParameterWorker implements ComponentClassTransformWorker
         String methodName = transformation.newMemberName("update_parameter", parameterName);
 
         TransformMethodSignature signature = new TransformMethodSignature(Modifier.PRIVATE, "void", methodName,
-                                                                          new String[] { fieldType }, null);
+                                                                          new String[] {fieldType}, null);
 
         transformation.addMethod(signature, builder.toString());
 

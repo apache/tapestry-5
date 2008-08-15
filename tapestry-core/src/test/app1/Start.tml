@@ -67,6 +67,10 @@
             --
             attempt to instantiate (and return) a page instance
         </li>
+        <li>
+            <a href="fieldannotationconflict">Field Annotation Conflict</a>
+            -- demo failure behavior when a field contains conflicting annotations
+        </li>
 
     </ul>
 

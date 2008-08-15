@@ -34,7 +34,7 @@ public class PropertyWorker implements ComponentClassTransformWorker
 {
     public void transform(ClassTransformation transformation, MutableComponentModel model)
     {
-        for (String fieldName : transformation.findAllFieldsWithAnnotation(Property.class))
+        for (String fieldName : transformation.findFieldsWithAnnotation(Property.class))
         {
             Property annotation = transformation.getFieldAnnotation(fieldName, Property.class);
 
