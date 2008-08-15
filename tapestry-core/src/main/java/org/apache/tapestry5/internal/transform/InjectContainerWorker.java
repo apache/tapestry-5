@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -53,6 +53,8 @@ public class InjectContainerWorker implements ComponentClassTransformWorker
                     fieldName,
                     InjectContainer.class);
 
+            transformation.claimField(fieldName, annotation);
+            
             String fieldType = transformation.getFieldType(fieldName);
 
             builder.addln("try");
@@ -71,7 +73,6 @@ public class InjectContainerWorker implements ComponentClassTransformWorker
             builder.end();
 
             transformation.makeReadOnly(fieldName);
-            transformation.claimField(fieldName, annotation);
         }
 
         builder.end();

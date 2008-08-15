@@ -284,24 +284,6 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
     }
 
     @Test
-    public void find_fields_with_annotation_excludes_claimed_files() throws Exception
-    {
-        Logger logger = mockLogger();
-
-        replay();
-
-        ClassTransformation ct = createClassTransformation(ParentClass.class, logger);
-
-        ct.claimField("_annotatedField", this);
-
-        List<String> fields = ct.findFieldsWithAnnotation(Retain.class);
-
-        assertTrue(fields.isEmpty());
-
-        verify();
-    }
-
-    @Test
     public void no_fields_contain_requested_annotation() throws Exception
     {
         Logger logger = mockLogger();

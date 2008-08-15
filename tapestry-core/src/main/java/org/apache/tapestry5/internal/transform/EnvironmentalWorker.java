@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -56,6 +56,8 @@ public class EnvironmentalWorker implements ComponentClassTransformWorker
         for (String name : names)
         {
             Environmental annotation = transformation.getFieldAnnotation(name, Environmental.class);
+            
+            transformation.claimField(name, annotation);
 
             String type = transformation.getFieldType(name);
 
@@ -78,8 +80,6 @@ public class EnvironmentalWorker implements ComponentClassTransformWorker
             transformation.replaceReadAccess(name, methodName);
             transformation.makeReadOnly(name);
             transformation.removeField(name);
-
-            transformation.claimField(name, annotation);
         }
     }
 

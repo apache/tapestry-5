@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -58,6 +58,8 @@ public class InjectPageWorker implements ComponentClassTransformWorker
     private void addInjectedPage(ClassTransformation transformation, String fieldName, String componentSource)
     {
         InjectPage annotation = transformation.getFieldAnnotation(fieldName, InjectPage.class);
+        
+        transformation.claimField(fieldName, annotation);
 
         String pageName = annotation.value();
 
@@ -81,7 +83,5 @@ public class InjectPageWorker implements ComponentClassTransformWorker
         transformation.replaceReadAccess(fieldName, methodName);
         transformation.makeReadOnly(fieldName);
         transformation.removeField(fieldName);
-
-        transformation.claimField(fieldName, annotation);
     }
 }

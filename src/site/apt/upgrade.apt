@@ -12,6 +12,15 @@ Upgrade Notes
   You should also check the {{{release-notes.html}project-wide release notes}} for information
   about bugs fixes and other improvements.
 
+Release 5.0.15
+
+* {{{https://issues.apache.org/jira/browse/TAPESTRY-2567}TAPESTRY-2567}}
+
+  The methods findFields() and findFieldsWithAnnotation() of
+  {{{apidocs/org/apache/tapestry5/services/ClassTransformation.html}ClassTransformation}}
+  have been changed to return all fields (regardless of whether they have been claimed).  The
+  method findAllFieldsWithAnnotation() has been removed.
+
 Release 5.0.14
 
   The signature of the

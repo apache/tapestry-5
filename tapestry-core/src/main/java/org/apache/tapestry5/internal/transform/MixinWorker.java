@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -46,6 +46,8 @@ public class MixinWorker implements ComponentClassTransformWorker
         {
             Mixin annotation = transformation.getFieldAnnotation(fieldName, Mixin.class);
 
+            transformation.claimField(fieldName, annotation);
+            
             String mixinType = annotation.value();
 
             String fieldType = transformation.getFieldType(fieldName);
@@ -62,8 +64,6 @@ public class MixinWorker implements ComponentClassTransformWorker
 
             transformation
                     .extendMethod(TransformConstants.CONTAINING_PAGE_DID_LOAD_SIGNATURE, body);
-
-            transformation.claimField(fieldName, annotation);
         }
     }
 }
