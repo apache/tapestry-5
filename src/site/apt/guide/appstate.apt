@@ -46,7 +46,7 @@ Check for Creation
   Scalable web applications do not create the server-side session needlessly. If you can avoid creating the session, especially on first
   access to your web application, you will be able to handle an order of magnitude more users. So, if you can avoid creating the ASO, you should do so.
   
-  But how to avoid creating it?  Simply checking ("_myState != null") will force the creation of the ASO and the session to store it in.
+  But how to avoid creating it?  Simply checking ("myState != null") will force the creation of the ASO and the session to store it in.
   
   Instead, create a second field:
   
@@ -71,6 +71,23 @@ Persistence Strategies
 
   Each ASO is managed according to a persistence strategy. The default persistence strategy, "session", stores the ASOs inside the session.
   The session is created as needed.
+
+* Clustering Issue
+
+  Application State Objects are, by design, mutable objects.  This means that, once read from the session, they are often modified.
+  This poses a problem <in a cluster>, because the modified version of the ASO should be propogated to the other server(s) in the cluster.
+
+  Tapestry handles this automatically; at the end of a request, every ASO that has been accessed from the session will be restored
+  into the session.  This will trigger the application server to synchronize the new state of the ASO around the the cluster.
+
+  This can be optimized: the interface
+  {{{../apidocs/org/apache/tapestry5/OptimizedApplicationStateObject.html}OptimizedApplicationStateObject}}  can be
+  implemented by   your ASO.  This provides control over whether the ASO is "dirty" and needs to be stored.  Thus, in the majority of
+  requests where the internal state of the ASO is not changed, it will not be restored into the session.
+
+  The easiest way to take advantage of this is to extend from the
+  {{{../apidocs/org/apache/tapestry5/BaseOptimizedApplicationStateObject.html}BaseOptimizedApplicationStateObject}}, and
+  invoke markDirty() from the setter methods.
   
 Configuring ASOs
 

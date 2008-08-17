@@ -83,6 +83,7 @@ public class InternalModule
         binder.bind(PageResourcesSource.class, PageResourcesSourceImpl.class);
         binder.bind(RequestSecurityManager.class, RequestSecurityManagerImpl.class);
         binder.bind(InternalRequestGlobals.class, InternalRequestGlobalsImpl.class);
+        binder.bind(EndOfRequestListenerHub.class);
     }
 
     /**
