@@ -84,6 +84,9 @@ Third Party Libraries, Tutorials and Resources
 
 New And Of Note
 
+  * Application State Objects are now automatically saved back to the session at the end of the request,
+    which ensures that ASO data is properly replicated across at cluster.
+
   * The new {{{apidocs/org/apache/tapestry5/ioc/annotations/Local.html}@Local}}
     annotation makes it easier to reference services within the same module when injecting.  
 
@@ -114,7 +117,7 @@ New And Of Note
 What's changed since Tapestry 4?
 
   Tapestry 5 is an all new code base, written from the ground up to take Java web
-  component development to new levels of productivity.
+  application development to new levels of productivity.
   
   This new release removes many limitations of Tapestry 4:
   

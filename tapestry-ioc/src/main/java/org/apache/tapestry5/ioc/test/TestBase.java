@@ -14,10 +14,7 @@
 
 package org.apache.tapestry5.ioc.test;
 
-import org.easymock.EasyMock;
-import org.easymock.IAnswer;
-import org.easymock.IExpectationSetters;
-import org.easymock.IMocksControl;
+import org.easymock.*;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 
@@ -47,7 +44,6 @@ import java.util.List;
  */
 public class TestBase extends Assert
 {
-
     private static class ThreadLocalControl extends ThreadLocal<IMocksControl>
     {
         @Override
@@ -112,7 +108,7 @@ public class TestBase extends Assert
      *
      * @param throwable the exception to be thrown by the most recent method call on any mock
      */
-    protected final void setThrowable(Throwable throwable)
+    protected static final void setThrowable(Throwable throwable)
     {
         EasyMock.expectLastCall().andThrow(throwable);
     }
@@ -122,7 +118,7 @@ public class TestBase extends Assert
      *
      * @param answer callback for the most recent method invocation
      */
-    protected final void setAnswer(IAnswer answer)
+    protected static final void setAnswer(IAnswer answer)
     {
         EasyMock.expectLastCall().andAnswer(answer);
     }
@@ -132,7 +128,7 @@ public class TestBase extends Assert
      * method that is expected to throw an exception.
      */
 
-    protected final void unreachable()
+    protected static final void unreachable()
     {
         fail("This code should not be reachable.");
     }
@@ -145,7 +141,7 @@ public class TestBase extends Assert
      * @return expectation setter, for setting return value, etc.
      */
     @SuppressWarnings("unchecked")
-    protected final <T> IExpectationSetters<T> expect(T value)
+    protected static final <T> IExpectationSetters<T> expect(T value)
     {
         return EasyMock.expect(value);
     }
@@ -156,7 +152,7 @@ public class TestBase extends Assert
      * @param t          throwable to check
      * @param substrings some number of expected substrings
      */
-    protected final void assertMessageContains(Throwable t, String... substrings)
+    protected static final void assertMessageContains(Throwable t, String... substrings)
     {
         String message = t.getMessage();
 
@@ -174,7 +170,7 @@ public class TestBase extends Assert
      * @param actual   actual values to check
      * @param expected expected values
      */
-    protected final <T> void assertListsEquals(List<T> actual, List<T> expected)
+    protected static final <T> void assertListsEquals(List<T> actual, List<T> expected)
     {
         int count = Math.min(actual.size(), expected.size());
 
@@ -189,11 +185,11 @@ public class TestBase extends Assert
     /**
      * Convenience for {@link #assertListsEquals(List, List)}.
      *
-     * @param <T>      tyoe of objects to compare
+     * @param <T>      type of objects to compare
      * @param actual   actual values to check
      * @param expected expected values
      */
-    protected final <T> void assertListsEquals(List<T> actual, T... expected)
+    protected static final <T> void assertListsEquals(List<T> actual, T... expected)
     {
         assertListsEquals(actual, Arrays.asList(expected));
     }
@@ -201,12 +197,20 @@ public class TestBase extends Assert
     /**
      * Convenience for {@link #assertListsEquals(List, List)}.
      *
-     * @param <T>      tyoe of objects to compare
+     * @param <T>      type of objects to compare
      * @param actual   actual values to check
      * @param expected expected values
      */
-    protected final <T> void assertArraysEqual(T[] actual, T... expected)
+    protected static final <T> void assertArraysEqual(T[] actual, T... expected)
     {
         assertListsEquals(Arrays.asList(actual), expected);
+    }
+
+    /**
+     * A factory method to create EasyMock Capture objects.
+     */
+    protected static final <T> Capture<T> newCapture()
+    {
+        return new Capture<T>();
     }
 }

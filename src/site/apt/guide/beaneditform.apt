@@ -23,7 +23,9 @@ Using the BeanEditForm Component
   * Enum: as a drop-down list
   
   * Boolean: as a checkbox
-  
+
+  * Date: as a JavaScript calendar
+
   []
   
   Resolving a property type to an editor type involves a search up the inheritance hierarchy: thus the super-type of Integer, Long, BigDecimal, etc. is

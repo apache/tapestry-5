@@ -22,6 +22,7 @@ Default Parameter
 ---
 public class OutputGadget
 {
+  @Property
   @Parameter(required=true, principal=true)
   private Gadget gadget;
 
@@ -50,13 +51,18 @@ public class OutputGadget
   parameter is principal, so that the validate and translate parameters can computer
   defaults, based on the
   type and annotations bound to the value parameter.
-  
-  Using the autoconnect attribute you can also let Tapestry generate the defaultGadget() method for you. In this case 
+
+* autoconnect attribute
+
+  Because this is such a common idiom, it has been made simpler for you.  Rather than writing the code above,
+  you can simple use the autoconnect attribute of the Parameter annotation.  This, effectively, creates
+  the defaultGadget() method for you. In this case
   the code of component OutputGadget can be reduced to:
   
 ---
 public class OutputGadget
 {
+  @Property
   @Parameter(required=true, principal=true, autoconnect = true)
   private Gadget gadget;
 

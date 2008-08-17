@@ -578,6 +578,8 @@ public final class TapestryModule
 
                                          LocalizationSetter localizationSetter,
 
+                                         final EndOfRequestListenerHub endOfRequestListenerHub,
+
                                          ObjectLocator locator)
     {
         RequestFilter staticFilesFilter = new StaticFilesFilter(context);
@@ -592,6 +594,21 @@ public final class TapestryModule
             }
         };
 
+        RequestFilter fireEndOfRequestEvent = new RequestFilter()
+        {
+            public boolean service(Request request, Response response, RequestHandler handler) throws IOException
+            {
+                try
+                {
+                    return handler.service(request, response);
+                }
+                finally
+                {
+                    endOfRequestListenerHub.fire(request);
+                }
+            }
+        };
+
         configuration.add("CheckForUpdates",
                           new CheckForUpdatesFilter(updateListenerHub, checkInterval, updateTimeout), "before:*");
 
@@ -599,7 +616,9 @@ public final class TapestryModule
 
         configuration.add("ErrorFilter", locator.autobuild(RequestErrorFilter.class));
 
-        configuration.add("StoreIntoGlobals", storeIntoGlobals);
+        configuration.add("StoreIntoGlobals", storeIntoGlobals, "after:StaticFiles", "before:ErrorFilter");
+
+        configuration.add("EndOfRequest", fireEndOfRequestEvent, "after:StoreIntoGlobals", "before:ErrorFilter");
 
         configuration.add("Localization", new LocalizationFilter(localizationSetter), "after:ErrorFilter");
     }
@@ -1230,9 +1249,15 @@ public final class TapestryModule
     public void contributeApplicationStatePersistenceStrategySource(
             MappedConfiguration<String, ApplicationStatePersistenceStrategy> configuration,
 
-            Request request)
+            @Local
+            ApplicationStatePersistenceStrategy sessionStategy)
     {
-        configuration.add("session", new SessionApplicationStatePersistenceStrategy(request));
+        configuration.add("session", sessionStategy);
+    }
+
+    public ApplicationStatePersistenceStrategy buildSessionApplicationStatePersistenceStrategy(ObjectLocator locator)
+    {
+        return locator.autobuild(SessionApplicationStatePersistenceStrategy.class);
     }
 
     public void contributeAssetSource(MappedConfiguration<String, AssetFactory> configuration,

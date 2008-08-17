@@ -14,8 +14,6 @@
 
 package org.apache.tapestry5.annotations;
 
-import org.apache.tapestry5.services.ApplicationStateManager;
-
 import java.lang.annotation.Documented;
 import static java.lang.annotation.ElementType.FIELD;
 import java.lang.annotation.Retention;
@@ -24,13 +22,13 @@ import java.lang.annotation.Target;
 
 /**
  * Marker annotation for a field that is an <em>application state object</em> as controlled by the {@link
- * ApplicationStateManager}.
+ * org.apache.tapestry5.services.ApplicationStateManager}.
  * <p/>
  * An ASO file may have a companion field, of type boolean, used to see if the ASO has been created yet. If another
- * field exists with the same name, suffixed with "Exists" (i.e., "_aso" for the ASO field, and "_asoExists" for the
+ * field exists with the same name, suffixed with "Exists" (i.e., "aso" for the ASO field, and "asoExists" for the
  * companion field) and the type of that field is boolean, then access to the field will determine whether the ASO has
- * already been created. This is necessary because even a null check ("_aso != null") will force the ASO to be created.
- * Instead, check the companion boolean field ("_asoExists").
+ * already been created. This is necessary because even a null check ("aso != null") may force the ASO to be created.
+ * Instead, check the companion boolean field ("asoExists").
  */
 @Target(FIELD)
 @Documented

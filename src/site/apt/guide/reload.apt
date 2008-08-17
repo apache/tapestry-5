@@ -16,16 +16,13 @@ Live Class and Template Reloading
 
   When a template changes, all page instances (as well as the hiearchy of components below them) are discarded and
   reconstructed with the new template. However, classes are not reloaded in this case.
-  
-  A future version of Tapestry may be more selective, removing only page instances that are affected by the changed
-  file(s).
-  
+
 * Class Reloading
 
-  On a change to <any> class inside a controlled package (or any sub-package of a controlled package), Tapestry will
-  discard all page instances, and discard the class loader.
+  On a change to <any> loaded class from inside a controlled package (or any sub-package of a controlled package), Tapestry will
+  discard all page instances, and discard the class loader. 
   
-  {{{persist.html}Persistent data}} on the pages will usually not be affected (as it is stored separately, in the session).
+  {{{persist.html}Persistent field data}} on the pages will usually not be affected (as it is stored separately, in the session).
   This allows you to make fairly significant changes to a component class even while the application continues to run.
   
 Page and Component Packages
@@ -33,6 +30,19 @@ Page and Component Packages
   Only page and component classes are subject to reload.
   
   Reloading is based on package name; the packages that are reloaded are derived from the {{{conf.html}application configuration}}.
+
+  If your root package is <code>org.example.myapp</code>, then only classes in the following packages will be
+  scanned for automatic reloads:
+
+  * org.example.myapp.pages
+
+  * org.example.myapp.components
+
+  * org.example.myapp.mixins
+
+  * org.example.myapp.base
+
+  []
   
 File System Only
 

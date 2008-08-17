@@ -190,7 +190,7 @@ public class Index implements ExceptionReporter
     public void contributeAlias(
             Configuration<AliasContribution> configuration,
 
-            @InjectService("AppRequestExceptionHandler")
+            @Local
             RequestExceptionHandler handler)
     {
         configuration.add(AliasContribution.create(RequestExceptionHandler.class, handler));
@@ -210,11 +210,15 @@ public class Index implements ExceptionReporter
   in this module, "AppRequestExceptionHandler").  Without a little more work, Tapestry will be unable to determine
   which one to use when an exception does occur.
 
+  We'll use the {{{../guide/alias.html}Alias service}} to remove this ambiguity.
+
   The contributeAlias() method makes a contribution to the Alias service's configuration.  The Alias service
   is used to disambiguate injections when just a service interface is given; one service will become the "Alias", hiding the
   existence of the others.
 
   Here we inject the AppRequestExceptionHandler service and contribute it as the alias for type RequestExceptionHandler.
+  The @Local annotation is used to select the RequestHandler service defined by this module, AppModule.  Once contributed
+  into Alias, it becomes the default service injected through the framework.
     
   This finally brings us to the point where we can see the result:
 
