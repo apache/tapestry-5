@@ -42,7 +42,7 @@ of testing facilities designed for use with TestNG (http://testng.org/), so it's
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
-            <version>5.1</version>
+            <version>5.7</version>
             <classifier>jdk15</classifier>
             <scope>test</scope>
         </dependency>
@@ -50,7 +50,7 @@ of testing facilities designed for use with TestNG (http://testng.org/), so it's
         <dependency>
             <groupId>org.easymock</groupId>
             <artifactId>easymock</artifactId>
-            <version>2.3</version>
+            <version>2.4</version>
             <scope>test</scope>
         </dependency>
 
