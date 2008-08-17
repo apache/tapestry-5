@@ -12,7 +12,11 @@ Application State
   Instead, you want to use an <Application State Object> (an ASO).
   
   With an ASO, the value is automatically stored outside the page; with the default storage strategy, it is stored in the session. 
-  
+
+  <Note: Tapestry's naming convention here is in conflict with naming conventions of the Servlet API.  Do not be confused: ASOs are
+   stored (by default) in the session, not the servlet context. They are unique to an individual user, not shared between users. >
+
+
   A field holding an ASO is marked with the
   {{{../apidocs/org/apache/tapestry5/annotations/ApplicationState.html}ApplicationState}} annotation.
   
