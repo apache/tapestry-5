@@ -124,7 +124,7 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
 
         factory.addListener(listener);
 
-        Link link = factory.createPageLink(page, false);
+        Link link = factory.createPageRenderLink(page, false);
 
         assertEquals(link.toRedirectURI(), ENCODED);
 
@@ -176,7 +176,7 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
 
         factory.addListener(listener);
 
-        Link link = factory.createPageLink(page, false);
+        Link link = factory.createPageRenderLink(page, false);
 
         assertEquals(link.toRedirectURI(), ENCODED);
 
@@ -206,7 +206,7 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
 
         IAnswer<Void> createdPageLinkAnswer = newAnswerForCreatedLink(holder);
 
-        listener.createdPageLink(isA(Link.class));
+        listener.createdPageRenderLink(isA(Link.class));
         setAnswer(createdPageLinkAnswer);
 
         train_getBaseURL(securityManager, page, null);
@@ -224,7 +224,7 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
                                                   securityManager);
         factory.addListener(listener);
 
-        Link link = factory.createPageLink(page, false, "biff", "bazz");
+        Link link = factory.createPageRenderLink(page, false, "biff", "bazz");
 
         assertEquals(link.toRedirectURI(), ENCODED);
 
@@ -254,7 +254,7 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
 
         IAnswer<Void> createdPageLinkAnswer = newAnswerForCreatedLink(holder);
 
-        listener.createdPageLink(isA(Link.class));
+        listener.createdPageRenderLink(isA(Link.class));
         setAnswer(createdPageLinkAnswer);
 
         train_getBaseURL(securityManager, page, null);
@@ -271,7 +271,7 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
                                                   securityManager);
         factory.addListener(listener);
 
-        Link link = factory.createPageLink(page, true);
+        Link link = factory.createPageRenderLink(page, true);
 
         assertEquals(link.toRedirectURI(), ENCODED);
 
@@ -450,7 +450,7 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
         expect(rootElement.triggerEvent(eq(EventConstants.PASSIVATE), (Object[]) isNull(),
                                         isA(ComponentEventCallback.class))).andAnswer(triggerEventAnswer);
 
-        listener.createdPageLink(isA(Link.class));
+        listener.createdPageRenderLink(isA(Link.class));
         setAnswer(createdPageLinkAnswer);
     }
 
@@ -468,7 +468,7 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
         expect(rootElement.triggerEvent(eq(EventConstants.PASSIVATE), (Object[]) isNull(),
                                         isA(ComponentEventCallback.class))).andAnswer(triggerEventAnswer);
 
-        listener.createdActionLink(isA(Link.class));
+        listener.createComponentEventLink(isA(Link.class));
         setAnswer(createdPageLinkAnswer);
     }
 
@@ -497,7 +497,7 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
                 ComponentEventCallback handler = (ComponentEventCallback) EasyMock
                         .getCurrentArguments()[2];
 
-                handler.handleResult(new Object[]{"foo", "bar"});
+                handler.handleResult(new Object[] {"foo", "bar"});
 
                 return true;
             }
@@ -546,7 +546,7 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
                                                   contextValueEncoder, securityManager);
         factory.addListener(listener);
 
-        Link link = factory.createActionLink(page, null, "myaction", false, "1.2.3", "4.5.6");
+        Link link = factory.createComponentEventLink(page, null, "myaction", false, "1.2.3", "4.5.6");
 
         assertEquals(link.toURI(), ENCODED);
         assertSame(link, holder.get());
@@ -599,7 +599,7 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
                                                   contextValueEncoder, securityManager);
         factory.addListener(listener);
 
-        Link link = factory.createActionLink(containingPage, null, "myaction", false);
+        Link link = factory.createComponentEventLink(containingPage, null, "myaction", false);
 
         assertEquals(link.toURI(), ENCODED);
         assertSame(link, holder.get());
@@ -654,7 +654,7 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
                                                   contextValueEncoder, securityManager);
         factory.addListener(listener);
 
-        Link link = factory.createActionLink(page, nestedId, eventName, false, context);
+        Link link = factory.createComponentEventLink(page, nestedId, eventName, false, context);
 
         assertEquals(link.toURI(), ENCODED);
         assertSame(link, holder.get());

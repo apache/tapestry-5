@@ -151,12 +151,12 @@ public class PageImpl implements Page
         return rootElement.getLogger();
     }
 
-    public Link createActionLink(String nestedId, String eventType, boolean forForm, Object... context)
+    public Link createComponentEventLink(String nestedId, String eventType, boolean forForm, Object... context)
     {
-        return linkFactory.createActionLink(this, nestedId, eventType, forForm, context);
+        return linkFactory.createComponentEventLink(this, nestedId, eventType, forForm, context);
     }
 
-    public Link createPageLink(String pageName, boolean override, Object... context)
+    public Link createPageRenderLink(String pageName, boolean override, Object... context)
     {
         return linkFactory.createPageLink(pageName, override, context);
     }

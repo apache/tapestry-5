@@ -119,19 +119,29 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
     }
 
     /**
-     * Delegates to the {@link Page#createActionLink(String, String, boolean, Object[])} on the containing page. Uses
-     * the element's nested id (i.e., a mixin can generate a link, but the link targets the component, not the mixin
-     * itself). Why the extra layer? Trying to avoid some unwanted injection (of LinkFactory, into every component page
-     * element).
+     * Delegates to the {@link Page#createComponentEventLink(String, String, boolean, Object[])} on the containing page.
+     * Uses the element's nested id (i.e., a mixin can generate a link, but the link targets the component, not the
+     * mixin itself). Why the extra layer? Trying to avoid some unwanted injection (of LinkFactory, into every component
+     * page element).
      */
-    public Link createActionLink(String action, boolean forForm, Object... context)
+    public Link createActionLink(String eventType, boolean forForm, Object... context)
     {
-        return page.createActionLink(element.getNestedId(), action, forForm, context);
+        return page.createComponentEventLink(element.getNestedId(), eventType, forForm, context);
+    }
+
+    public Link createEventLink(String eventType, Object... context)
+    {
+        return page.createComponentEventLink(element.getNestedId(), eventType, false, context);
+    }
+
+    public Link createFormEventLink(String eventType, Object... context)
+    {
+        return page.createComponentEventLink(element.getNestedId(), eventType, true, context);
     }
 
     public Link createPageLink(String pageName, boolean override, Object... context)
     {
-        return page.createPageLink(pageName, override, context);
+        return page.createPageRenderLink(pageName, override, context);
     }
 
     public void discardPersistentFieldChanges()

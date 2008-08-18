@@ -98,7 +98,7 @@ public class RequestSecurityManagerImplTest extends InternalBaseTestCase
 
         train_isSecure(locator, page, true);
 
-        train_createPageLink(linkFactory, page, link);
+        train_createPageRenderLink(linkFactory, page, link);
 
         response.sendRedirect(link);
 
@@ -116,10 +116,10 @@ public class RequestSecurityManagerImplTest extends InternalBaseTestCase
     public Object[][] base_URL_data()
     {
         return new Object[][] {
-                { true, true, null },
-                { false, false, null },
-                { true, false, "http://example.org" },
-                { false, true, "https://example.org" }
+                {true, true, null},
+                {false, false, null},
+                {true, false, "http://example.org"},
+                {false, true, "https://example.org"}
         };
     }
 

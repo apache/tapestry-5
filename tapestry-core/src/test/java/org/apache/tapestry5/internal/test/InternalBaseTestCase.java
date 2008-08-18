@@ -442,9 +442,9 @@ public class InternalBaseTestCase extends TapestryTestCase implements Registry
         return newMock(LinkFactory.class);
     }
 
-    protected final void train_createPageLink(LinkFactory factory, Page page, Link link)
+    protected final void train_createPageRenderLink(LinkFactory factory, Page page, Link link)
     {
-        expect(factory.createPageLink(page, false)).andReturn(link);
+        expect(factory.createPageRenderLink(page, false)).andReturn(link);
     }
 
     protected final void train_isLoaded(InternalComponentResources resources, boolean isLoaded)

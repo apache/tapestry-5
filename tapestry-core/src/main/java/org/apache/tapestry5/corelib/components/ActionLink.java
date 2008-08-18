@@ -30,7 +30,7 @@ public class ActionLink extends AbstractComponentEventLink
 
     protected Link createLink(Object[] contextArray)
     {
-        return resources.createActionLink(EventConstants.ACTION, false, contextArray);
+        return resources.createEventLink(EventConstants.ACTION, contextArray);
     }
 
 }

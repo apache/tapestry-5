@@ -41,7 +41,8 @@ import java.util.regex.Pattern;
  * isn't the concern of this code, since {@link org.apache.tapestry5.services.Request#getPath()} will already have
  * stripped that off.  We can act as if the context is always "/" (the path always starts with a slash).
  *
- * @see LinkFactory#createActionLink(org.apache.tapestry5.internal.structure.Page, String, String,boolean, Object...)
+ * @see LinkFactory#createComponentEventLink(org.apache.tapestry5.internal.structure.Page, String, String,boolean,
+ *      Object...)
  */
 public class ComponentEventDispatcher implements Dispatcher
 {

@@ -151,7 +151,7 @@ public class AjaxFormLoop
 
             String idType = id.getClass().getName();
 
-            Link link = resources.createActionLink("triggerRemoveRow", false, id, idType);
+            Link link = resources.createEventLink("triggerRemoveRow", id, idType);
 
             String asURI = link.toAbsoluteURI();
 
@@ -414,7 +414,7 @@ public class AjaxFormLoop
 
         Object value = encoder.toValue(coerced);
 
-        resources.triggerEvent("removeRow", new Object[]{value}, null);
+        resources.triggerEvent("removeRow", new Object[] {value}, null);
 
         return new JSONObject();
     }

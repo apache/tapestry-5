@@ -161,7 +161,7 @@ public interface ComponentResources extends ComponentResourcesCommon
 
 
     /**
-     * Creates a component action request link as a callback for this component. The event type and context (as well as
+     * Creates a component event request link as a callback for this component. The event type and context (as well as
      * the page name and nested component id) will be encoded into a URL. A request for the URL will {@linkplain
      * #triggerEvent(String, Object[], ComponentEventCallback)}  trigger} the named event on the component.
      *
@@ -172,11 +172,39 @@ public interface ComponentResources extends ComponentResourcesCommon
      * @param context   additional objects to be encoded into the path portion of the link; each is converted to a
      *                  string and URI encoded
      * @return link object for the callback
+     * @deprecated Use {@link #createEventLink(String, Object[])} instead
      */
     Link createActionLink(String eventType, boolean forForm, Object... context);
 
     /**
-     * Creates a render request link to a specific page.
+     * Creates a component event request link as a callback for this component. The event type and context (as well as
+     * the page name and nested component id) will be encoded into a URL. A request for the URL will {@linkplain
+     * #triggerEvent(String, Object[], ComponentEventCallback)}  trigger} the named event on the component.
+     *
+     * @param eventType the type of event to be triggered.  Event types should be Java identifiers (contain only
+     *                  letters, numbers and the underscore).
+     * @param context   additional objects to be encoded into the path portion of the link; each is converted to a
+     *                  string and URI encoded
+     * @return link object for the callback
+     */
+    Link createEventLink(String eventType, Object... context);
+
+    /**
+     * Creates a component event request link as a callback for this component. The event type and context (as well as
+     * the page name and nested component id) will be encoded into a URL. A request for the URL will {@linkplain
+     * #triggerEvent(String, Object[], ComponentEventCallback)}  trigger} the named event on the component. This is only
+     * used for form submission events, as extra data may be encoded in the form as hidden fields.
+     *
+     * @param eventType the type of event to be triggered.  Event types should be Java identifiers (contain only
+     *                  letters, numbers and the underscore).
+     * @param context   additional objects to be encoded into the path portion of the link; each is converted to a
+     *                  string and URI encoded
+     * @return link object for the callback
+     */
+    Link createFormEventLink(String eventType, Object... context);
+
+    /**
+     * Creates a page render request link to render a specific page.
      *
      * @param pageName the logical name of the page to link to
      * @param override if true, the context is used even if empty (normally, the target page is allowed to passivate,

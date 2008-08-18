@@ -119,7 +119,8 @@ public class LinkFactoryImpl implements LinkFactory
         listeners.add(listener);
     }
 
-    public Link createActionLink(Page page, String nestedId, String eventType, boolean forForm, Object... context)
+    public Link createComponentEventLink(Page page, String nestedId, String eventType, boolean forForm,
+                                         Object... context)
     {
         notNull(page, "page");
         notBlank(eventType, "action");
@@ -154,7 +155,7 @@ public class LinkFactoryImpl implements LinkFactory
         componentInvocationMap.store(link, invocation);
 
         for (LinkFactoryListener listener : listeners)
-            listener.createdActionLink(link);
+            listener.createComponentEventLink(link);
 
         return link;
     }
@@ -177,7 +178,7 @@ public class LinkFactoryImpl implements LinkFactory
         link.addParameter(InternalConstants.PAGE_CONTEXT_NAME, builder.toString());
     }
 
-    public Link createPageLink(Page page, boolean override, Object... activationContext)
+    public Link createPageRenderLink(Page page, boolean override, Object... activationContext)
     {
         notNull(page, "page");
 
@@ -212,7 +213,7 @@ public class LinkFactoryImpl implements LinkFactory
         componentInvocationMap.store(link, invocation);
 
         for (LinkFactoryListener listener : listeners)
-            listener.createdPageLink(link);
+            listener.createdPageRenderLink(link);
 
         return link;
     }
@@ -272,6 +273,6 @@ public class LinkFactoryImpl implements LinkFactory
         // This verifies that the page name is valid.
         Page page = pageCache.get(logicalPageName);
 
-        return createPageLink(page, override, context);
+        return createPageRenderLink(page, override, context);
     }
 }

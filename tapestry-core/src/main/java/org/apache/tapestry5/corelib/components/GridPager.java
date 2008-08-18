@@ -137,10 +137,10 @@ public class GridPager
         }
 
         Object[] context = zone == null
-                           ? new Object[] { pageIndex }
-                           : new Object[] { pageIndex, zone };
+                           ? new Object[] {pageIndex}
+                           : new Object[] {pageIndex, zone};
 
-        Link link = resources.createActionLink(EventConstants.ACTION, false, context);
+        Link link = resources.createEventLink(EventConstants.ACTION, context);
 
         Element element = writer.element("a", "href", link, "title", messages.format("goto-page", pageIndex));
 
@@ -174,7 +174,7 @@ public class GridPager
     {
         onAction(newPage);
 
-        resources.triggerEvent(InternalConstants.GRID_INPLACE_UPDATE, new Object[] { zone }, null);
+        resources.triggerEvent(InternalConstants.GRID_INPLACE_UPDATE, new Object[] {zone}, null);
 
         return true; // abort event
     }

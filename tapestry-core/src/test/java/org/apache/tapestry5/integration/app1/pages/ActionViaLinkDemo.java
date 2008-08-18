@@ -30,7 +30,7 @@ public class ActionViaLinkDemo
     Object[]
     onPassivate()
     {
-        return new Object[] { };
+        return new Object[] {};
     }
 
     public String getMessage()
@@ -47,6 +47,9 @@ public class ActionViaLinkDemo
 
     public String getActionURL()
     {
+        // This could be shifted to createEventLink(), but leaving it alone verifys backwards
+        // compatibility to 5.0.14.
+
         Link link = resources.createActionLink("UpdateMessage", false, "from getActionURL()");
 
         return link.toURI();

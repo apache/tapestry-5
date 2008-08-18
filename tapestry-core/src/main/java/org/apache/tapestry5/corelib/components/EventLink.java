@@ -53,6 +53,6 @@ public class EventLink extends AbstractComponentEventLink
     {
         ComponentResources containerResources = resources.getContainerResources();
 
-        return containerResources.createActionLink(event, false, eventContext);
+        return containerResources.createEventLink(event, eventContext);
     }
 }
