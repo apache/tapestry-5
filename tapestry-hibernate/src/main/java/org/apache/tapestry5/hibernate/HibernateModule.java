@@ -20,11 +20,9 @@ import org.apache.tapestry5.internal.hibernate.*;
 import org.apache.tapestry5.ioc.*;
 import static org.apache.tapestry5.ioc.IOCConstants.PERTHREAD_SCOPE;
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.ioc.annotations.InjectService;
 import org.apache.tapestry5.ioc.annotations.Scope;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.services.*;
-import org.apache.tapestry5.services.AliasContribution;
 import org.apache.tapestry5.services.ComponentClassTransformWorker;
 import org.apache.tapestry5.services.PersistentFieldStrategy;
 import org.apache.tapestry5.services.ValueEncoderFactory;
@@ -36,15 +34,27 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-@SuppressWarnings({ "JavaDoc" })
+@SuppressWarnings({"JavaDoc"})
 public class HibernateModule
 {
+    /**
+     * If true (the default), then {@link org.apache.tapestry5.ValueEncoder}s are automatically created for each entity.
+     * Override to "false" to handle entity value encoding explicitly.
+     */
+    public static final String PROVIDE_ENTITY_VALUE_ENCODERS_SYMBOL = "tapestry.hibernate.provide-entity-value-encoders";
+
     public static void bind(ServiceBinder binder)
     {
         binder.bind(HibernateTransactionDecorator.class, HibernateTransactionDecoratorImpl.class);
     }
 
-    public static HibernateEntityPackageManager build(final Collection<String> packageNames)
+    public static void contributeFactoryDefaults(MappedConfiguration<String, String> configuration)
+    {
+        configuration.add(PROVIDE_ENTITY_VALUE_ENCODERS_SYMBOL, "true");
+    }
+
+    public static HibernateEntityPackageManager buildHibernateEntityPackageManager(
+            final Collection<String> packageNames)
     {
         return new HibernateEntityPackageManager()
         {
@@ -73,7 +83,8 @@ public class HibernateModule
      * created initially, and is committed at the end of the request.
      */
     @Scope(PERTHREAD_SCOPE)
-    public static HibernateSessionManager build(HibernateSessionSource sessionSource, PerthreadManager perthreadManager)
+    public static HibernateSessionManager buildHibernateSessionManager(HibernateSessionSource sessionSource,
+                                                                       PerthreadManager perthreadManager)
     {
         HibernateSessionManagerImpl service = new HibernateSessionManagerImpl(sessionSource);
 
@@ -82,8 +93,8 @@ public class HibernateModule
         return service;
     }
 
-    public static Session build(HibernateSessionManager sessionManager,
-                                PropertyShadowBuilder propertyShadowBuilder)
+    public static Session buildSession(HibernateSessionManager sessionManager,
+                                       PropertyShadowBuilder propertyShadowBuilder)
     {
         // Here's the thing: the tapestry.hibernate.Session class doesn't have to be per-thread,
         // since
@@ -100,19 +111,8 @@ public class HibernateModule
         return propertyShadowBuilder.build(sessionManager, "session", Session.class);
     }
 
-    /**
-     * Contributes the {@link #build(HibernateSessionManager, PropertyShadowBuilder) Session} service.
-     */
-    public static void contributeAlias(Configuration<AliasContribution> configuration,
-
-                                       @InjectService("Session")
-                                       Session session)
-    {
-        configuration.add(AliasContribution.create(Session.class, session));
-    }
-
-    public static HibernateSessionSource build(Logger logger, List<HibernateConfigurer> config,
-                                               RegistryShutdownHub hub)
+    public static HibernateSessionSource buildHibernateSessionSource(Logger logger, List<HibernateConfigurer> config,
+                                                                     RegistryShutdownHub hub)
     {
         HibernateSessionSourceImpl hss = new HibernateSessionSourceImpl(logger, config);
 
@@ -140,12 +140,16 @@ public class HibernateModule
      */
     @SuppressWarnings("unchecked")
     public static void contributeValueEncoderSource(MappedConfiguration<Class, ValueEncoderFactory> configuration,
+                                                    @Symbol(PROVIDE_ENTITY_VALUE_ENCODERS_SYMBOL)
+                                                    boolean provideEncoders,
                                                     final HibernateSessionSource sessionSource,
                                                     final Session session,
                                                     final TypeCoercer typeCoercer,
                                                     final PropertyAccess propertyAccess,
                                                     final LoggerSource loggerSource)
     {
+        if (!provideEncoders) return;
+
         org.hibernate.cfg.Configuration config = sessionSource.getConfiguration();
         Iterator<PersistentClass> mappings = config.getClassMappings();
         while (mappings.hasNext())
