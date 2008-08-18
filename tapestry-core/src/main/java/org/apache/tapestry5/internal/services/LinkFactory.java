@@ -36,7 +36,7 @@ public interface LinkFactory
      *                  link
      * @see org.apache.tapestry5.ComponentResources#createActionLink(String, boolean, Object[])
      */
-    Link createActionLink(Page page, String nestedId, String eventType, boolean forForm, Object... context);
+    Link createComponentEventLink(Page page, String nestedId, String eventType, boolean forForm, Object... context);
 
     /**
      * Creates a render link for the page. If an activation context is supplied then that context is built into the URI.
@@ -53,11 +53,11 @@ public interface LinkFactory
      * @return a link
      * @see org.apache.tapestry5.ComponentResources#createPageLink(String, boolean, Object[])
      */
-    Link createPageLink(Page page, boolean override, Object... activationContext);
+    Link createPageRenderLink(Page page, boolean override, Object... activationContext);
 
     /**
-     * As with {@link #createPageLink(Page, boolean, Object[])}, but the page is specified by logical name, rather than
-     * as an instance.
+     * As with {@link #createPageRenderLink(Page, boolean, Object[])}, but the page is specified by logical name, rather
+     * than as an instance.
      *
      * @param logicalPageName the logical name of the page to generate a link to
      * @param override        if true, then the provided activation context is always used even if empty

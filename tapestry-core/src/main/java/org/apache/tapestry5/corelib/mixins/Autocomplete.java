@@ -140,7 +140,7 @@ public class Autocomplete
                        "class", "t-autocomplete-menu");
         writer.end();
 
-        Link link = resources.createActionLink(EVENT_NAME, false);
+        Link link = resources.createEventLink(EVENT_NAME);
 
 
         JSONObject config = new JSONObject();
@@ -188,7 +188,7 @@ public class Autocomplete
             }
         };
 
-        resources.triggerEvent("providecompletions", new Object[]{input}, callback);
+        resources.triggerEvent("providecompletions", new Object[] {input}, callback);
 
         ContentType contentType = responseRenderer.findContentType(this);
 

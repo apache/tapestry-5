@@ -226,7 +226,7 @@ public class Form implements ClientElement, FormValidationControl
 
         resources.triggerEvent(PREPARE, contextArray, null);
 
-        Link link = resources.createActionLink(EventConstants.ACTION, true, contextArray);
+        Link link = resources.createFormEventLink(EventConstants.ACTION, contextArray);
 
         // Save the form element for later, in case we want to write an encoding type attribute.
 

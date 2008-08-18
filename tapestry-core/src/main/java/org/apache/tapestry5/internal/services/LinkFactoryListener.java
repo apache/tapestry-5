@@ -27,7 +27,7 @@ public interface LinkFactoryListener
      *
      * @param link the newly created link
      */
-    void createdPageLink(Link link);
+    void createdPageRenderLink(Link link);
 
     /**
      * Invoked when an action link (a link that asks a component to perform an action) is created. The listener may
@@ -35,5 +35,5 @@ public interface LinkFactoryListener
      *
      * @param link the newly created link
      */
-    void createdActionLink(Link link);
+    void createComponentEventLink(Link link);
 }

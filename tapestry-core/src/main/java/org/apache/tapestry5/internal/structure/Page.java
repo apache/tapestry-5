@@ -115,16 +115,16 @@ public interface Page
     /**
      * Creates a link that will trigger behavior in a component within the page.
      *
-     * @see org.apache.tapestry5.ComponentResources#createActionLink(String, boolean, Object[])
+     * @see org.apache.tapestry5.ComponentResources#createEventLink(String, Object[])
      */
-    Link createActionLink(String nestedId, String eventType, boolean forForm, Object... context);
+    Link createComponentEventLink(String nestedId, String eventType, boolean forForm, Object... context);
 
     /**
      * Creates a link to the named page.
      *
      * @see org.apache.tapestry5.ComponentResources#createPageLink(String, boolean, Object[])
      */
-    Link createPageLink(String pageName, boolean override, Object... context);
+    Link createPageRenderLink(String pageName, boolean override, Object... context);
 
     /**
      * Posts a change to a persistent field.

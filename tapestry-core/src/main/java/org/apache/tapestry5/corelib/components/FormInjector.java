@@ -129,8 +129,8 @@ public class FormInjector implements ClientElement
 
         // Now work on the JavaScript side of things.
 
-        Link link = resources.createActionLink(INJECT_EVENT, false,
-                                               context == null ? new Object[0] : context.toArray());
+        Link link = resources.createEventLink(INJECT_EVENT,
+                                              context == null ? new Object[0] : context.toArray());
 
         link.addParameter(FORMID_PARAMETER, formSupport.getClientId());
 

@@ -62,7 +62,7 @@ public class RequestSecurityManagerImpl implements RequestSecurityManager
 
         // Page is secure but request is not, so redirect.
 
-        Link link = linkFactory.createPageLink(page, false);
+        Link link = linkFactory.createPageRenderLink(page, false);
 
         response.sendRedirect(link);
 

@@ -44,12 +44,12 @@ public class ClientPersistentFieldStrategy implements PersistentFieldStrategy, L
         storage.postChange(pageName, componentId, fieldName, newValue);
     }
 
-    public void createdActionLink(Link link)
+    public void createComponentEventLink(Link link)
     {
         storage.updateLink(link);
     }
 
-    public void createdPageLink(Link link)
+    public void createdPageRenderLink(Link link)
     {
         storage.updateLink(link);
     }
