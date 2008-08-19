@@ -210,7 +210,7 @@ public interface ComponentResources extends ComponentResourcesCommon
      * @param override if true, the context is used even if empty (normally, the target page is allowed to passivate,
      *                 providing a context, when the provided context is empty)
      * @param context  the activation context for the page. If omitted, the activation context is obtained from the
-     *                 target paget
+     *                 target page
      */
     Link createPageLink(String pageName, boolean override, Object... context);
 

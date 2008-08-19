@@ -15,6 +15,13 @@
 
 package org.apache.tapestry5.integration.app1.pages;
 
+import org.apache.tapestry5.annotations.Property;
+
 public class LeanGridDemo extends GridDemo
 {
+    @Property
+    private int rowIndex;
+
+    @Property
+    private int columnIndex;
 }

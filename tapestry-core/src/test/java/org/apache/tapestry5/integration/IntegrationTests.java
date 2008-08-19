@@ -1415,6 +1415,21 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         // assertText("//th[1]/@class", "");
     }
 
+    /**
+     * TAPESTRY-1310
+     */
+    @Test
+    public void grid_row_and_column_indexes()
+    {
+        start("Lean Grid Demo", "2");
+
+        // Use page 2 to ensure that the row index is the row in the Grid, not the row index of the data
+
+        assertText("//th[7]", "Indexes (6)");
+        assertText("//tr[1]/td[7]", "0,6");
+        assertText("//tr[2]/td[7]", "1,6");
+    }
+
     @Test
     public void unless_component()
     {
