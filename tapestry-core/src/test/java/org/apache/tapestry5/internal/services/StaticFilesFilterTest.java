@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -145,6 +145,30 @@ public class StaticFilesFilterTest extends InternalBaseTestCase
         Context context = mockContext();
 
         train_getResource(context, path, null);
+        train_service(handler, request, response, true);
+
+        replay();
+
+        RequestFilter filter = new StaticFilesFilter(context);
+
+        assertTrue(filter.service(request, response, handler));
+
+        verify();
+    }
+
+    /**
+     * TAPESTRY-2606
+     */
+    @Test
+    public void colon_in_path_prevents_static_file_check() throws Exception
+    {
+        String path = "/start.update:anevent";
+
+        Request request = newRequest(path);
+        Response response = mockResponse();
+        RequestHandler handler = mockRequestHandler();
+        Context context = mockContext();
+
         train_service(handler, request, response, true);
 
         replay();
