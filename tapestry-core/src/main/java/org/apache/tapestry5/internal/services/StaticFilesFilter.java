@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -45,34 +45,40 @@ public class StaticFilesFilter implements RequestFilter
 
         if (path.equals("/favicon.ico")) return false;
 
-        // We are making the questionable assumption that all files to be vended out will contain
-        // an extension (with a dot separator). Without this, the filter tends to match against
-        // folder names when we don't want it to (especially for the root context path).
+        // TAPESTRY-2606: A colon in the path is frequently the case for Tapestry event URLs,
+        // but gives Windows fits.
 
-        int dotx = path.lastIndexOf(".");
-
-        if (dotx > 0)
+        if (!path.contains(":"))
         {
-            URL url = context.getResource(path);
+            // We are making the questionable assumption that all files to be vended out will contain
+            // an extension (with a dot separator). Without this, the filter tends to match against
+            // folder names when we don't want it to (especially for the root context path).
 
-            if (url != null)
+            int dotx = path.lastIndexOf(".");
+
+            if (dotx > 0)
             {
-                String suffix = path.substring(dotx + 1);
+                URL url = context.getResource(path);
 
-                // We never allow access to Tapestry component templates, even if they exist.
-                // It is considered a security risk, like seeing a raw JSP. Earlier alpha versions
-                // of Tapestry required that the templates be stored in WEB-INF.
-
-                if (suffix.equalsIgnoreCase(InternalConstants.TEMPLATE_EXTENSION))
+                if (url != null)
                 {
+                    String suffix = path.substring(dotx + 1);
 
-                    response.sendError(HttpServletResponse.SC_FORBIDDEN, ServicesMessages
-                            .resourcesAccessForbidden(path));
+                    // We never allow access to Tapestry component templates, even if they exist.
+                    // It is considered a security risk, like seeing a raw JSP. Earlier alpha versions
+                    // of Tapestry required that the templates be stored in WEB-INF.
 
-                    return true;
+                    if (suffix.equalsIgnoreCase(InternalConstants.TEMPLATE_EXTENSION))
+                    {
+
+                        response.sendError(HttpServletResponse.SC_FORBIDDEN, ServicesMessages
+                                .resourcesAccessForbidden(path));
+
+                        return true;
+                    }
+
+                    return false;
                 }
-
-                return false;
             }
         }
 
