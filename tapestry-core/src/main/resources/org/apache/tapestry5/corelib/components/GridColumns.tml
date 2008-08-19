@@ -1,7 +1,7 @@
 <thead xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd" xml:space="default">
     <tr>
         <th t:type="Loop" source="columnNames" value="columnName" volatile="true" class="prop:headerClass"
-            index="columnIndex">
+            index="index">
             <t:delegate to="blockForColumn"/>
             <t:block id="standardHeader">
                 <a t:id="sort">${columnModel.label}</a>

@@ -132,6 +132,22 @@ public class GridRows
     @Parameter(name = "volatile")
     private boolean volatileState;
 
+    /**
+     * Optional output parameter (only set during rendering) that identifies the current row index. This is the index on
+     * the page (i.e., always numbered from zero) as opposed to the row index inside the {@link
+     * org.apache.tapestry5.grid.GridDataSource}.
+     */
+    @Parameter
+    private int rowIndex;
+
+    /**
+     * Optional output parameter that stores the current column index.
+     */
+    @Parameter
+    @Property
+    private int columnIndex;
+
+
     @Environmental(false)
     private FormSupport formSupport;
 
@@ -139,7 +155,10 @@ public class GridRows
 
     private int endRow;
 
-    private int rowIndex;
+    /**
+     * Index into the {@link org.apache.tapestry5.grid.GridDataSource}.
+     */
+    private int dataRowIndex;
 
     private String propertyName;
 
@@ -156,9 +175,9 @@ public class GridRows
 
         if (rc != null) classes.add(rc);
 
-        if (rowIndex == startRow) classes.add(GridConstants.FIRST_CLASS);
+        if (dataRowIndex == startRow) classes.add(GridConstants.FIRST_CLASS);
 
-        if (rowIndex == endRow) classes.add(GridConstants.LAST_CLASS);
+        if (dataRowIndex == endRow) classes.add(GridConstants.LAST_CLASS);
 
         return TapestryInternalUtils.toClassAttributeValue(classes);
     }
@@ -206,7 +225,7 @@ public class GridRows
         startRow = (currentPage - 1) * rowsPerPage;
         endRow = Math.min(availableRows - 1, startRow + rowsPerPage - 1);
 
-        rowIndex = startRow;
+        dataRowIndex = startRow;
 
         recordingStateInsideForm = !volatileState && formSupport != null;
     }
@@ -217,18 +236,20 @@ public class GridRows
     void setupForRow(int rowIndex)
     {
         row = gridModel.getDataSource().getRowValue(rowIndex);
-
     }
 
     boolean beginRender()
     {
         // When needed, store a callback used when the form is submitted.
 
-        if (recordingStateInsideForm) formSupport.store(this, new SetupForRow(rowIndex));
+        if (recordingStateInsideForm) formSupport.store(this, new SetupForRow(dataRowIndex));
 
         // And do it now for the render.
 
-        setupForRow(rowIndex);
+        setupForRow(dataRowIndex);
+
+        // Update the index parameter (which starts from zero).
+        rowIndex = dataRowIndex - startRow;
 
         // If the row is null, it's because the rowIndex is too large (see the notes
         // on GridDataSource).  When row is null, return false to not render anything for this iteration
@@ -239,12 +260,12 @@ public class GridRows
 
     boolean afterRender()
     {
-        rowIndex++;
+        dataRowIndex++;
 
         // Abort the loop when we hit a null row, or when we've exhausted the range we need to
         // display.
 
-        return row == null || rowIndex > endRow;
+        return row == null || dataRowIndex > endRow;
     }
 
     public List<String> getPropertyNames()

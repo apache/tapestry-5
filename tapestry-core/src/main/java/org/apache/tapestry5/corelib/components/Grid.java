@@ -90,6 +90,18 @@ public class Grid implements GridModel
     private Object row;
 
     /**
+     * Optional output parameter used to identify the index (from zero) of the row being rendered.
+     */
+    @Parameter
+    private int rowIndex;
+
+    /**
+     * Optional output parmater used to identify the index of the column being rendered.
+     */
+    @Parameter
+    private int columnIndex;
+
+    /**
      * The model used to identify the properties to be presented and the order of presentation. The model may be
      * omitted, in which case a default model is generated from the first object in the data source (this implies that
      * the objects provided by the source are uniform). The model may be explicitly specified to override the default
@@ -168,7 +180,6 @@ public class Grid implements GridModel
      * between CSS values (for the "zebra effect"). If null or not bound, then no particular CSS class value is used.
      */
     @Parameter(cache = false)
-    @Property(write = false)
     private String rowClass;
 
     /**
@@ -215,6 +226,7 @@ public class Grid implements GridModel
     @SuppressWarnings("unused")
     @Component(
             parameters = {
+                    "index=inherit:columnIndex",
                     "lean=inherit:lean",
                     "overrides=overrides",
                     "zone=zone"})
@@ -223,7 +235,9 @@ public class Grid implements GridModel
     @SuppressWarnings("unused")
     @Component(
             parameters = {
-                    "rowClass=rowClass",
+                    "rowIndex=inherit:rowIndex",
+                    "columnIndex=inherit:columnIndex",
+                    "rowClass=inherit:rowClass",
                     "rowsPerPage=rowsPerPage",
                     "currentPage=currentPage",
                     "row=row",

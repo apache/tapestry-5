@@ -59,7 +59,6 @@ public class GridColumns
     @Parameter("this")
     private PropertyOverrides overrides;
 
-
     /**
      * If not null, then each link is output as a link to update the specified zone.
      */
@@ -68,7 +67,8 @@ public class GridColumns
 
     @SuppressWarnings("unused")
     @Component(
-            parameters = {"event=sort", "disabled=sortDisabled", "context=columnContext", "class=sortLinkClass", "zone=inherit:zone"})
+            parameters = {"event=sort", "disabled=sortDisabled", "context=columnContext", "class=sortLinkClass",
+                    "zone=inherit:zone"})
     private EventLink sort, sort2;
 
     @Inject
@@ -89,9 +89,16 @@ public class GridColumns
     @Inject
     private Block standardHeader;
 
+    /**
+     * Optional output parameter that stores the current column index.
+     */
+    @Parameter
     @Property
-    private int columnIndex;
+    private int index;
 
+    /**
+     * Caches the index of the last column.
+     */
     private int lastColumnIndex;
 
     @Property(write = false)
@@ -144,9 +151,9 @@ public class GridColumns
 
         if (sort != null) classes.add(sort);
 
-        if (columnIndex == 0) classes.add(GridConstants.FIRST_CLASS);
+        if (index == 0) classes.add(GridConstants.FIRST_CLASS);
 
-        if (columnIndex == lastColumnIndex) classes.add(GridConstants.LAST_CLASS);
+        if (index == lastColumnIndex) classes.add(GridConstants.LAST_CLASS);
 
         return TapestryInternalUtils.toClassAttributeValue(classes);
     }
@@ -172,7 +179,7 @@ public class GridColumns
     {
         onSort(columnId);
 
-        resources.triggerEvent(InternalConstants.GRID_INPLACE_UPDATE, new Object[]{zone}, null);
+        resources.triggerEvent(InternalConstants.GRID_INPLACE_UPDATE, new Object[] {zone}, null);
 
         // Event is handled, don't trigger further event handler methods.
 
@@ -198,7 +205,7 @@ public class GridColumns
     {
         if (zone == null) return columnModel.getId();
 
-        return new Object[]{columnModel.getId(), zone};
+        return new Object[] {columnModel.getId(), zone};
     }
 
     public String getIconLabel()
