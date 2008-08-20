@@ -721,7 +721,7 @@ Tapestry.ErrorPopup.prototype = {
 
     repositionBubble : function()
     {
-        var fieldPos = this.field.positionedOffset();
+        var fieldPos = this.field.cumulativeOffset();
 
         this.outerDiv.setStyle({
             top: (fieldPos[1] + this.BUBBLE_VERT_OFFSET) + "px",
@@ -947,7 +947,7 @@ Tapestry.FieldEventManager.prototype = {
 
                 validator(value, event);
 
-     // event.error is set by Tapestry.FormEvent.recordError().
+                // event.error is set by Tapestry.FormEvent.recordError().
 
                 if (event.error) throw $break;
             }
@@ -1124,7 +1124,7 @@ Tapestry.FormInjector.prototype = {
                 // before or after the FormInjector's element.
 
                 var newElement = new Element(this.element.tagName, { 'class' : this.element.className });
-                
+
                 // Insert the new element before or after the existing element.
 
                 var param = { };

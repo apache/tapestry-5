@@ -80,8 +80,8 @@ public class Autocomplete
     private MarkupWriterFactory factory;
 
     @Inject
-    @Path("classpath:org/apache/tapestry5/ajax-loader.gif")
-    private Asset loader;
+    @Path("${tapestry.spacer-image}")
+    private Asset spacerImage;
 
     /**
      * Overwrites the default minimum characters to trigger a server round trip (the default is 1).
@@ -120,15 +120,14 @@ public class Autocomplete
         String menuId = id + ":menu";
         String loaderId = id + ":loader";
 
-        // This image is made visible while the request is being processed.
-        // To be honest, I think Prototype hides it too soon, it should wait
-        // until the <div> is fully positioned and updated.
+        // The spacer image is used as a placeholder, allowing CSS to determine what image
+        // is actually displayed.
 
         writer.element("img",
 
-                       "src", loader.toClientURL(),
+                       "src", spacerImage.toClientURL(),
 
-                       "class", CSSClassConstants.INVISIBLE,
+                       "class", "t-autoloader-icon " + CSSClassConstants.INVISIBLE,
 
                        "id", loaderId);
         writer.end();

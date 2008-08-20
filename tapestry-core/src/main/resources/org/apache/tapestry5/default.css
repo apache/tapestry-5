@@ -44,6 +44,16 @@ INPUT.t-error, TEXTAREA.t-error {
 
 IMG.t-error-icon {
     margin-left: 4px;
+    width: 16px;
+    height: 16px;
+    background: url( field-error-marker.gif );
+}
+
+IMG.t-autoloader-icon {
+    margin-left: 4px;
+    width: 16px;
+    heigth: 16px;
+    background: url( ajax-loader.gif );
 }
 
 IMG.t-sort-icon {

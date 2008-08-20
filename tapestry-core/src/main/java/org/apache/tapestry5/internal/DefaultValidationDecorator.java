@@ -27,7 +27,7 @@ public final class DefaultValidationDecorator extends BaseValidationDecorator
 {
     private final Environment environment;
 
-    private final Asset iconAsset;
+    private final Asset spacerAsset;
 
     private final Messages validationMessages;
 
@@ -37,15 +37,15 @@ public final class DefaultValidationDecorator extends BaseValidationDecorator
      * @param environment        used to locate objects and services during the render
      * @param validationMessages obtained from {@link org.apache.tapestry5.services.ValidationMessagesSource}, used to
      *                           obtain the label for the icon
-     * @param iconAsset          asset for an icon that will be displayed after each field (marked with the
+     * @param spacerAsset        asset for a one-pixel spacer image used as a placeholder for the error marker icon
      * @param markupWriter
      */
-    public DefaultValidationDecorator(Environment environment, Messages validationMessages, Asset iconAsset,
+    public DefaultValidationDecorator(Environment environment, Messages validationMessages, Asset spacerAsset,
                                       MarkupWriter markupWriter)
     {
         this.environment = environment;
         this.validationMessages = validationMessages;
-        this.iconAsset = iconAsset;
+        this.spacerAsset = spacerAsset;
         this.markupWriter = markupWriter;
     }
 
@@ -63,12 +63,21 @@ public final class DefaultValidationDecorator extends BaseValidationDecorator
         if (inError(field)) element.addClassName(CSSClassConstants.ERROR);
     }
 
+    /**
+     * Writes an icon for field after the field.  The icon has the same id as the field, with ":icon" appended. This is
+     * expected by the default client-side JavaScript.  The icon's src is a blank spacer image (this is to allow the
+     * image displayed to be overridden via CSS).     The icon's CSS class is "t-error-icon", with "t-invisible" added
+     * if the field is not in error when rendered.  If client validation is not enabled for the form containing the
+     * field and the field is not in error, then the error icon itself is not rendered.
+     *
+     * @param field which just completed rendering itself
+     */
     @Override
     public void afterField(Field field)
     {
         boolean inError = inError(field);
 
-        boolean clientValidationEnabled = environment.peekRequired(FormSupport.class).isClientValidationEnabled();
+        boolean clientValidationEnabled = getFormSupport().isClientValidationEnabled();
 
         if (inError || clientValidationEnabled)
         {
@@ -78,7 +87,7 @@ public final class DefaultValidationDecorator extends BaseValidationDecorator
 
             markupWriter.element("img",
 
-                                 "src", iconAsset.toClientURL(),
+                                 "src", spacerAsset.toClientURL(),
 
                                  "alt", "",
 
@@ -88,6 +97,11 @@ public final class DefaultValidationDecorator extends BaseValidationDecorator
             markupWriter.end();
         }
 
+    }
+
+    private FormSupport getFormSupport()
+    {
+        return environment.peekRequired(FormSupport.class);
     }
 
     private boolean inError(Field field)

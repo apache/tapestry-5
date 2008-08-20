@@ -7,7 +7,7 @@
         <div class="t-beaneditor">
             <div class="t-beaneditor-row">
                 <t:label for="title"/>
-                <t:textfield t:id="title" t:mixins="autocomplete" tokens=",;" size="100"/>
+                <t:textfield t:id="title" t:mixins="autocomplete" tokens=",;" size="60"/>
             </div>
 
             <div class="t-beaneditor-row">
