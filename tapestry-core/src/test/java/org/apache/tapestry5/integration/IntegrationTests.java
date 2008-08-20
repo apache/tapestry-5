@@ -16,6 +16,7 @@ package org.apache.tapestry5.integration;
 
 import org.apache.tapestry5.corelib.components.Form;
 import org.apache.tapestry5.corelib.mixins.RenderDisabled;
+import org.apache.tapestry5.integration.app1.data.RegistrationData;
 import org.apache.tapestry5.integration.app1.pages.RenderErrorDemo;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.internal.util.ClasspathResource;
@@ -2174,5 +2175,14 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         assertTextPresent(
                 "Field flashDemo of class org.apache.tapestry5.integration.app1.pages.FieldAnnotationConflict is already claimed by @org.apache.tapestry5.annotations.InjectPage and can not be claimed by @org.apache.tapestry5.annotations.Parameter.");
+    }
+
+    /**
+     * TAPESTRY-2592
+     */
+    public void bean_editor_pushes_bean_edit_context()
+    {
+        start("BeanEditor BeanEditContext");
+        assertTextPresent("Bean class from context is: " + RegistrationData.class.getName());
     }
 }
