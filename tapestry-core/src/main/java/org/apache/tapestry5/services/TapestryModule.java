@@ -1429,8 +1429,8 @@ public final class TapestryModule
                                          @Path("${tapestry.default-stylesheet}")
                                          final Asset stylesheetAsset,
 
-                                         @Path("${tapestry.field-error-marker}")
-                                         final Asset fieldErrorIcon,
+                                         @Path("${tapestry.spacer-image}")
+                                         final Asset spacerImage,
 
                                          final ValidationMessagesSource validationMessagesSource,
 
@@ -1512,7 +1512,7 @@ public final class TapestryModule
             {
                 Messages messages = validationMessagesSource.getValidationMessages(threadLocale.getLocale());
 
-                ValidationDecorator decorator = new DefaultValidationDecorator(environment, messages, fieldErrorIcon,
+                ValidationDecorator decorator = new DefaultValidationDecorator(environment, messages, spacerImage,
                                                                                writer);
 
                 environment.push(ValidationDecorator.class, decorator);
@@ -1544,8 +1544,8 @@ public final class TapestryModule
      */
     public void contributePartialMarkupRenderer(OrderedConfiguration<PartialMarkupRendererFilter> configuration,
 
-                                                @Path("${tapestry.field-error-marker}")
-                                                final Asset fieldErrorIcon,
+                                                @Path("${tapestry.spacer-image}")
+                                                final Asset spacerImage,
 
                                                 final SymbolSource symbolSource,
 
@@ -1622,7 +1622,7 @@ public final class TapestryModule
             {
                 Messages messages = validationMessagesSource.getValidationMessages(threadLocale.getLocale());
 
-                ValidationDecorator decorator = new DefaultValidationDecorator(environment, messages, fieldErrorIcon,
+                ValidationDecorator decorator = new DefaultValidationDecorator(environment, messages, spacerImage,
                                                                                writer);
 
                 environment.push(ValidationDecorator.class, decorator);
@@ -1770,8 +1770,8 @@ public final class TapestryModule
 
         configuration.add("tapestry.start-page-name", "start");
 
-        configuration.add("tapestry.default-stylesheet", "org/apache/tapestry5/default.css");
-        configuration.add("tapestry.field-error-marker", "org/apache/tapestry5/field-error-marker.gif");
+        configuration.add("tapestry.default-stylesheet", "classpath:/org/apache/tapestry5/default.css");
+        configuration.add("tapestry.spacer-image", "classpath:/org/apache/tapestry5/spacer.gif");
 
         configuration.add("tapestry.page-pool.soft-limit", "5");
         configuration.add("tapestry.page-pool.soft-wait", "10 ms");
