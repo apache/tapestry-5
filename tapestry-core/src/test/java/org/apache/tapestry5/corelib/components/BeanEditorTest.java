@@ -14,6 +14,8 @@
 
 package org.apache.tapestry5.corelib.components;
 
+import java.lang.annotation.Annotation;
+
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.PropertyOverrides;
 import org.apache.tapestry5.beaneditor.BeanModel;
@@ -21,8 +23,12 @@ import org.apache.tapestry5.integration.app1.data.RegistrationData;
 import org.apache.tapestry5.ioc.Location;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.internal.util.TapestryException;
+import org.apache.tapestry5.services.BeanEditContext;
 import org.apache.tapestry5.services.BeanModelSource;
+import org.apache.tapestry5.services.Environment;
 import org.apache.tapestry5.test.TapestryTestCase;
+import org.easymock.EasyMock;
+import org.easymock.IArgumentMatcher;
 import org.testng.annotations.Test;
 
 public class BeanEditorTest extends TapestryTestCase
@@ -36,6 +42,7 @@ public class BeanEditorTest extends TapestryTestCase
         RegistrationData data = new RegistrationData();
         Messages messages = mockMessages();
         PropertyOverrides overrides = mockPropertyOverrides();
+        Environment env = EasyMock.createNiceMock(Environment.class);
 
         train_getBoundType(resources, "object", RegistrationData.class);
 
@@ -46,10 +53,11 @@ public class BeanEditorTest extends TapestryTestCase
         expect(model.newInstance()).andReturn(data);
 
         replay();
+        EasyMock.replay(env);
 
         BeanEditor component = new BeanEditor();
 
-        component.inject(resources, overrides, source);
+        component.inject(resources, overrides, source,env);
 
         component.doPrepare();
 
@@ -69,6 +77,7 @@ public class BeanEditorTest extends TapestryTestCase
         Throwable exception = new RuntimeException("Fall down go boom.");
         PropertyOverrides overrides = mockPropertyOverrides();
         Messages messages = mockMessages();
+        Environment env = EasyMock.createNiceMock(Environment.class);
 
         train_getOverrideMessages(overrides, messages);
 
@@ -85,10 +94,11 @@ public class BeanEditorTest extends TapestryTestCase
         expect(model.getBeanType()).andReturn(Runnable.class);
 
         replay();
+        EasyMock.replay(env);
 
         BeanEditor component = new BeanEditor();
 
-        component.inject(resources, overrides, source);
+        component.inject(resources, overrides, source,env);
 
         try
         {
@@ -103,6 +113,91 @@ public class BeanEditorTest extends TapestryTestCase
 
             assertSame(ex.getLocation(), l);
         }
+
+        verify();
+    }
+
+    private static BeanEditContext contextEq()
+    {
+        EasyMock.reportMatcher(new IArgumentMatcher() 
+        {
+            public void appendTo(StringBuffer buf)
+            {
+                buf.append("BeanEditContextEq(RegistrationData.class)");
+            }
+
+            public boolean matches(Object argument)
+            {
+                return (argument instanceof BeanEditContext) &&
+                       ((BeanEditContext)argument).getBeanClass() == RegistrationData.class;
+            }
+        });
+
+        return null;
+    }
+
+    @Test
+    public void beaneditcontext_pushed_to_environment() 
+    {
+        ComponentResources resources = mockComponentResources();
+        BeanModelSource source = mockBeanModelSource();
+        BeanModel model = mockBeanModel();
+        Environment env = mockEnvironment();
+        RegistrationData data = new RegistrationData();
+        Messages messages = mockMessages();
+        PropertyOverrides overrides = mockPropertyOverrides();
+
+        train_getBoundType(resources, "object", RegistrationData.class);
+
+        train_create(source, RegistrationData.class, true, messages, model);
+
+        train_getOverrideMessages(overrides, messages);
+        
+        expect(model.newInstance()).andReturn(data);
+        expect(model.getBeanType()).andReturn(RegistrationData.class);
+
+        BeanEditContext ctxt = new BeanEditContext()
+        {
+            public Class<?> getBeanClass()
+            {
+                return RegistrationData.class;
+            }
+
+            public <T extends Annotation> T getAnnotation(Class<T> type)
+            {
+                return null;
+            }
+        };
+
+        expect(env.push(EasyMock.eq(BeanEditContext.class), contextEq())).andReturn(ctxt);
+        replay();
+
+        BeanEditor component = new BeanEditor();
+
+        component.inject(resources, overrides, source,env);
+
+        component.doPrepare();
+
+        verify();
+    }
+    
+    @Test
+    public void beaneditcontext_popped_from_environment() 
+    {
+        ComponentResources resources = mockComponentResources();
+        BeanModelSource source = mockBeanModelSource();
+        Environment env = mockEnvironment();
+        PropertyOverrides overrides = mockPropertyOverrides();
+
+        expect(env.pop(BeanEditContext.class)).andReturn(null);
+        
+        replay();
+
+        BeanEditor component = new BeanEditor();
+
+        component.inject(resources, overrides, source,env);
+
+        component.cleanupEnvironment();
 
         verify();
     }

@@ -272,7 +272,9 @@ public class Start
 
             new Item("methodadvicedemo", "Method Advice Demo", "Advising component methods."),
 
-            new Item("HasBodyDemo", "Has Body Demo", "Verify the hasBody() method of ComponentResources")
+            new Item("HasBodyDemo", "Has Body Demo", "Verify the hasBody() method of ComponentResources"),
+            new Item("BeanEditorBeanEditContext", "BeanEditor BeanEditContext",
+                     "BeanEditContext is pushed into enviroment by BeanEditor.")
     );
 
     static

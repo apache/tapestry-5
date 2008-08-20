@@ -14,6 +14,7 @@
 
 package org.apache.tapestry5.corelib.components;
 
+import java.lang.annotation.Annotation;
 import org.apache.tapestry5.*;
 import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.Parameter;
@@ -24,12 +25,15 @@ import org.apache.tapestry5.corelib.internal.InternalMessages;
 import org.apache.tapestry5.internal.beaneditor.BeanModelUtils;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.internal.util.TapestryException;
+import org.apache.tapestry5.services.BeanEditContext;
 import org.apache.tapestry5.services.BeanModelSource;
+import org.apache.tapestry5.services.Environment;
 import org.apache.tapestry5.services.FormSupport;
 
 /**
  * A component that generates a user interface for editing the properties of a bean. This is the central component of
  * the {@link BeanEditForm}, and utilizes a {@link PropertyEditor} for much of its functionality.
+ * This component places a {@link BeanEditContext} into the environment.
  */
 @SupportsInformalParameters
 public class BeanEditor
@@ -49,6 +53,24 @@ public class BeanEditor
             return "BeanEditor.Prepare";
         }
     }
+
+    static class CleanupEnvironment implements ComponentAction<BeanEditor>
+    {
+        private static final long serialVersionUID = 6867226962459227016L;
+
+        public void execute(BeanEditor component)
+        {
+            component.cleanupEnvironment();
+        }
+        
+        @Override
+        public String toString()
+        {
+            return "BeanEditor.CleanupEnvironment";
+        }
+    }
+
+    private static final ComponentAction<BeanEditor> CLEANUP_ENVIRONMENT = new CleanupEnvironment();
 
     /**
      * The object to be edited by the BeanEditor. This will be read when the component renders and updated when the form
@@ -112,6 +134,9 @@ public class BeanEditor
     @Inject
     private ComponentResources resources;
 
+    @Inject
+    private Environment environment;
+
     @Environmental
     private FormSupport formSupport;
 
@@ -131,7 +156,16 @@ public class BeanEditor
     {
         formSupport.storeAndExecute(this, new Prepare());
     }
+    
+    void cleanupRender()
+    {
+        formSupport.storeAndExecute(this, CLEANUP_ENVIRONMENT);
+    }
 
+    /**
+     * Used to initialize the model if necessary, to instantiate the object being edited if necessary,
+     * and to push the BeanEditContext into the environment.
+     */
     void doPrepare()
     {
         if (model == null)
@@ -161,13 +195,33 @@ public class BeanEditor
             }
         }
 
+        BeanEditContext context = new BeanEditContext() 
+        {
+            public Class<?> getBeanClass()
+            {
+                return model.getBeanType();
+            }
+
+            public <T extends Annotation> T getAnnotation(Class<T> type) 
+            {
+                return getBeanClass().getAnnotation(type);
+            }
+        };
+        
+        environment.push(BeanEditContext.class, context);
+    }
+
+    void cleanupEnvironment()
+    {
+        environment.pop(BeanEditContext.class);
     }
 
     // For testing
-    void inject(ComponentResources resources, PropertyOverrides overrides, BeanModelSource source)
+    void inject(ComponentResources resources, PropertyOverrides overrides, BeanModelSource source, Environment environment)
     {
         this.resources = resources;
         this.overrides = overrides;
+        this.environment = environment;
         modelSource = source;
     }
 }
