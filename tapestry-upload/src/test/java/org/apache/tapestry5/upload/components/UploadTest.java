@@ -61,7 +61,6 @@ public class UploadTest extends TapestryTestCase
         // assertEquals(element.getAttribute("id"),null);
 
         verify();
-
     }
 
     @Test
@@ -91,11 +90,6 @@ public class UploadTest extends TapestryTestCase
         component.beginRender(writer);
 
         verify();
-    }
-
-    private ValidationDecorator mockValidationDecorator()
-    {
-        return newMock(ValidationDecorator.class);
     }
 
     @SuppressWarnings("unchecked")
@@ -142,10 +136,9 @@ public class UploadTest extends TapestryTestCase
         component.afterRender(writer);
 
         verify();
-
     }
 
-    @SuppressWarnings({ "unchecked" })
+    @SuppressWarnings({"unchecked"})
     @Test
     public void process_submission_extracts_value_from_decoder() throws Exception
     {
@@ -171,7 +164,7 @@ public class UploadTest extends TapestryTestCase
         assertSame(component.getValue(), uploadedFile);
     }
 
-    @SuppressWarnings({ "unchecked" })
+    @SuppressWarnings({"unchecked"})
     @Test
     public void process_submission_ignores_null_value() throws Exception
     {
@@ -222,7 +215,7 @@ public class UploadTest extends TapestryTestCase
         verify();
     }
 
-    @SuppressWarnings({ "unchecked", "ThrowableInstanceNeverThrown" })
+    @SuppressWarnings({"unchecked", "ThrowableInstanceNeverThrown"})
     @Test
     public void process_submission_tracks_validator_errors() throws Exception
     {
