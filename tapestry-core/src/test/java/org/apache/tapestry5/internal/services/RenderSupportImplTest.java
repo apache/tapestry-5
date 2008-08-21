@@ -15,6 +15,7 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.Asset;
+import org.apache.tapestry5.FieldFocusPriority;
 import org.apache.tapestry5.RenderSupport;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.ioc.services.SymbolSource;
@@ -192,6 +193,62 @@ public class RenderSupportImplTest extends InternalBaseTestCase
         RenderSupportImpl support = new RenderSupportImpl(linker, null, null);
 
         support.addInit("foo", "fred", "barney");
+
+        support.commit();
+
+        verify();
+    }
+
+    @Test
+    public void field_focus()
+    {
+        DocumentLinker linker = mockDocumentLinker();
+
+        linker.addScript("Tapestry.focus('foo');");
+
+        replay();
+
+        RenderSupportImpl support = new RenderSupportImpl(linker, null, null);
+
+        support.autofocus(FieldFocusPriority.OPTIONAL, "foo");
+
+        support.commit();
+
+        verify();
+    }
+
+    @Test
+    public void first_focus_field_at_priority_wins()
+    {
+        DocumentLinker linker = mockDocumentLinker();
+
+        linker.addScript("Tapestry.focus('foo');");
+
+        replay();
+
+        RenderSupportImpl support = new RenderSupportImpl(linker, null, null);
+
+        support.autofocus(FieldFocusPriority.OPTIONAL, "foo");
+        support.autofocus(FieldFocusPriority.OPTIONAL, "bar");
+
+        support.commit();
+
+        verify();
+    }
+
+    @Test
+    public void higher_priority_wins_focus()
+    {
+        DocumentLinker linker = mockDocumentLinker();
+
+        linker.addScript("Tapestry.focus('bar');");
+
+        replay();
+
+        RenderSupportImpl support = new RenderSupportImpl(linker, null, null);
+
+        support.autofocus(FieldFocusPriority.OPTIONAL, "foo");
+        support.autofocus(FieldFocusPriority.REQUIRED, "bar");
 
         support.commit();
 

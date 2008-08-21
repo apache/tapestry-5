@@ -257,6 +257,16 @@ var Tapestry = {
         return true;
     },
 
+    /** Focuses on a field, selecting its text. */
+    focus : function (field)
+    {
+        field = $(field);
+
+        if (field.focus) field.focus();
+
+        if (field.select) field.select();
+    },
+
     /**
      * Default function for handling Ajax-related failures.
      */
@@ -674,7 +684,7 @@ Tapestry.ErrorPopup.prototype = {
 
             this.outerDiv.hide();
 
-            this.field.focus();
+            Tapestry.focus(this.field);
 
             Event.stop(event);  // Should be domevent.stop(), but that fails under IE
         }.bindAsEventListener(this));

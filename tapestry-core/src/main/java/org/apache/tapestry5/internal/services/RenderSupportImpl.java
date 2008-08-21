@@ -16,6 +16,7 @@ package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.FieldFocusPriority;
 import org.apache.tapestry5.RenderSupport;
 import org.apache.tapestry5.ioc.internal.util.Defense;
 import static org.apache.tapestry5.ioc.internal.util.Defense.notNull;
@@ -44,6 +45,10 @@ public class RenderSupportImpl implements RenderSupport
     private boolean coreAssetsAdded;
 
     private final JSONObject init = new JSONObject();
+
+    private FieldFocusPriority focusPriority;
+
+    private String focusFieldId;
 
     /**
      * @param linker       Used to assemble JavaScript includes and snippets
@@ -164,6 +169,18 @@ public class RenderSupportImpl implements RenderSupport
         addInitFunctionInvocation(functionName, array);
     }
 
+    public void autofocus(FieldFocusPriority priority, String fieldId)
+    {
+        Defense.notNull(priority, "priority");
+        Defense.notBlank(fieldId, "fieldId");
+
+        if (focusFieldId == null || priority.compareTo(focusPriority) > 0)
+        {
+            this.focusPriority = priority;
+            focusFieldId = fieldId;
+        }
+    }
+
     private void addInitFunctionInvocation(String functionName, Object parameters)
     {
         Defense.notBlank(functionName, "functionName");
@@ -185,6 +202,11 @@ public class RenderSupportImpl implements RenderSupport
      */
     public void commit()
     {
+        if (focusFieldId != null)
+        {
+            addScript("Tapestry.focus('%s');", focusFieldId);
+        }
+
         if (init.length() > 0)
         {
             addScript("Tapestry.init(%s);", init);
