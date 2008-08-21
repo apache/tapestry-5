@@ -119,4 +119,13 @@ public interface RenderSupport
      * @param parameters
      */
     void addInit(String functionName, String... parameters);
+
+    /**
+     * Invoked to set focus on a rendered field. Takes into account priority, meaning that a field with errors will take
+     * precendence over a merely required field, and over a field that is optional.
+     *
+     * @param priority focus is set only if the provided priority is greater than the current priority
+     * @param fieldId  id of client-side element to take focus
+     */
+    void autofocus(FieldFocusPriority priority, String fieldId);
 }

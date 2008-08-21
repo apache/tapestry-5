@@ -24,6 +24,7 @@ import org.apache.tapestry5.internal.services.ClientBehaviorSupport;
 import org.apache.tapestry5.internal.services.ComponentInvocationMap;
 import org.apache.tapestry5.internal.services.ComponentResultProcessorWrapper;
 import org.apache.tapestry5.internal.services.HeartbeatImpl;
+import org.apache.tapestry5.internal.util.AutofocusValidationDecorator;
 import org.apache.tapestry5.internal.util.Base64ObjectInputStream;
 import org.apache.tapestry5.ioc.Location;
 import org.apache.tapestry5.ioc.Messages;
@@ -135,6 +136,13 @@ public class Form implements ClientElement, FormValidationControl
     @Parameter(defaultPrefix = BindingConstants.LITERAL)
     private String zone;
 
+    /**
+     * If true (the default), then the JavaScript will be added to position the cursor into the form. The field to
+     * receive focus is the first rendered field that is in error, or required, or present (in that order of priority).
+     */
+    @Parameter
+    private boolean autofocus = true;
+
     @Inject
     private Logger logger;
 
@@ -217,6 +225,13 @@ public class Form implements ClientElement, FormValidationControl
         environment.push(FormSupport.class, formSupport);
         environment.push(ValidationTracker.class, tracker);
 
+        if (autofocus)
+        {
+            ValidationDecorator autofocusDecorator = new AutofocusValidationDecorator(environment.peek(
+                    ValidationDecorator.class), tracker, renderSupport);
+            environment.push(ValidationDecorator.class, autofocusDecorator);
+        }
+
         // Now that the environment is setup, inform the component or other listeners that the form
         // is about to render.  
 
@@ -275,6 +290,9 @@ public class Form implements ClientElement, FormValidationControl
                     "type", "hidden",
                     "name", FORM_DATA,
                     "value", actionSink.toBase64());
+
+        if (autofocus)
+            environment.pop(ValidationDecorator.class);
     }
 
     void cleanupRender()
