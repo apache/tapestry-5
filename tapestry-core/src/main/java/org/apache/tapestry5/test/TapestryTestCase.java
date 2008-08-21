@@ -1084,4 +1084,25 @@ public abstract class TapestryTestCase extends IOCTestCase
     {
         expect(overrides.getOverrideMessages()).andReturn(messages);
     }
+
+    protected final void train_isDisabled(Field field, boolean disabled)
+    {
+        expect(field.isDisabled()).andReturn(disabled);
+    }
+
+    protected final ValidationDecorator mockValidationDecorator()
+    {
+        return newMock(ValidationDecorator.class);
+    }
+
+    protected final void train_isRequired(Field field, boolean required)
+    {
+        expect(field.isRequired()).andReturn(required);
+
+    }
+
+    protected final void train_getClientId(ClientElement element, String clientId)
+    {
+        expect(element.getClientId()).andReturn(clientId);
+    }
 }
