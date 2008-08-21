@@ -22,6 +22,7 @@ import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.beaneditor.PropertyModel;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.services.BeanBlockSource;
 import org.apache.tapestry5.services.Environment;
 import org.apache.tapestry5.services.PropertyOutputContext;
@@ -116,13 +117,18 @@ public abstract class AbstractPropertyOutput
 
         Object value = readPropertyForObject();
 
-        if (value == null)
+        // TAPESTRY-2578: Write &nbsp; for null or merely blank.
+
+        String text = value == null ? "" : value.toString();
+
+        if (InternalUtils.isBlank(text))
         {
             writer.writeRaw("&nbsp;");
-            return false;
         }
-
-        writer.write(value.toString());
+        else
+        {
+            writer.write(text);
+        }
 
         // Don't render anything else
 
@@ -137,7 +143,7 @@ public abstract class AbstractPropertyOutput
         {
             return conduit == null ? null : conduit.get(object);
         }
-        catch (final NullPointerException ex)
+        catch (NullPointerException ex)
         {
             throw new NullPointerException(BaseMessages.nullValueInPath(model.getPropertyName()));
         }
