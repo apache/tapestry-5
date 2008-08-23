@@ -119,7 +119,7 @@ public class Select extends AbstractField
     /**
      * The value to read or update.
      */
-    @Parameter(required = true, principal = true)
+    @Parameter(required = true, principal = true, autoconnect = true)
     private Object value;
 
     @Inject
@@ -136,7 +136,7 @@ public class Select extends AbstractField
         return TapestryInternalUtils.isEqual(clientValue, selectedClientValue);
     }
 
-    @SuppressWarnings({ "unchecked" })
+    @SuppressWarnings({"unchecked"})
     @Override
     protected void processSubmission(String elementName)
     {
@@ -207,11 +207,6 @@ public class Select extends AbstractField
         return fieldValidatorDefaultSource.createDefaultValidator(this, resources.getId(),
                                                                   resources.getContainerMessages(), locale, type,
                                                                   resources.getAnnotationProvider("value"));
-    }
-
-    Binding defaultValue()
-    {
-        return createDefaultParameterBinding("value");
     }
 
     Object defaultBlankLabel()
@@ -301,6 +296,4 @@ public class Select extends AbstractField
         blankOption = option;
         blankLabel = label;
     }
-
-
 }

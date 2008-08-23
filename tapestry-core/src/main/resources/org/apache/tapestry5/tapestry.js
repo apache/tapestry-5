@@ -193,6 +193,11 @@ var Tapestry = {
         return manager;
     },
 
+    fieldError : function(field, message)
+    {
+        this.getFieldEventManager(field).addDecorations(message);
+    },
+
     /**
      * Passed the JSON content of a Tapestry partial markup response, extracts
      * the script and stylesheet information.  JavaScript libraries and stylesheets are loaded,
@@ -287,7 +292,6 @@ var Tapestry = {
     {
         return new Ajax.Request(url, { onSuccess: successHandler, onFailure: Tapestry.ajaxFailureHandler })
     },
-
 
     /**
      * Used to reconstruct a complete URL from a path that is (or may be) relative to window.location.

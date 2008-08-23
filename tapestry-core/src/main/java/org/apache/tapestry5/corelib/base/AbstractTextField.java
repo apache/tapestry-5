@@ -148,6 +148,9 @@ public abstract class AbstractTextField extends AbstractField
     /**
      * The default value is a property of the container whose name matches the component's id. May return null if the
      * container does not have a matching property.
+     *
+     * @deprecated Likely to be removed in the future, use {@link org.apache.tapestry5.annotations.Parameter#autoconnect()}
+     *             instead
      */
     final Binding defaultValue()
     {

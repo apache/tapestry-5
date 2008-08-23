@@ -19,6 +19,12 @@
             </p>
 
             <p>
+                <em>Note: these screenshots are out of date, and reflect an earlier version of Tapestry and a different
+                    third-party JavaScript calendar than is currently available.
+                </em>
+            </p>
+
+            <p>
                 <img src="datefield_ref1.png"/>
             </p>
 

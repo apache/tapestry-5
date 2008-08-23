@@ -56,6 +56,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.net.URL;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -256,11 +258,11 @@ public final class TapestryModule
         // For scriptaculous, etc., this version is not the version of the library, but the version
         // bundled with Tapestry.
 
-        configuration.add("tapestry/" + version, "org/apache/tapestry5");
+        configuration.add(version + "/tapestry", "org/apache/tapestry5");
 
-        configuration.add("scriptaculous/" + version, scriptaculousPath);
+        configuration.add(version + "/scriptaculous", scriptaculousPath);
 
-        configuration.add("datepicker/" + version, datepickerPath);
+        configuration.add(version + "/datepicker", datepickerPath);
     }
 
     public static void contributeComponentClassResolver(Configuration<LibraryMapping> configuration)
@@ -431,7 +433,6 @@ public final class TapestryModule
         // Password and long text have special output needs.
         addDisplayBlock(configuration, "password");
         addDisplayBlock(configuration, "longtext");
-
     }
 
     private static void addEditBlock(Configuration<BeanBlockContribution> configuration, String dataType)
@@ -648,7 +649,8 @@ public final class TapestryModule
      * component) to {@link org.apache.tapestry5.ComponentResources} <li>String to {@link
      * org.apache.tapestry5.corelib.data.BlankOption} <li> {@link org.apache.tapestry5.ComponentResources} to {@link
      * org.apache.tapestry5.PropertyOverrides} <li>String to {@link org.apache.tapestry5.Renderable} <li>{@link
-     * org.apache.tapestry5.Renderable} to {@link org.apache.tapestry5.Block}</ul>
+     * org.apache.tapestry5.Renderable} to {@link org.apache.tapestry5.Block} <li>String to {@link
+     * java.text.DateFormat}</ul>
      */
     public static void contributeTypeCoercer(Configuration<CoercionTuple> configuration)
     {
@@ -743,6 +745,14 @@ public final class TapestryModule
             public Block coerce(Renderable input)
             {
                 return new RenderableAsBlock(input);
+            }
+        });
+
+        add(configuration, String.class, DateFormat.class, new Coercion<String, DateFormat>()
+        {
+            public DateFormat coerce(String input)
+            {
+                return new SimpleDateFormat(input);
             }
         });
     }
@@ -1039,7 +1049,6 @@ public final class TapestryModule
             Map<Class, ComponentEventResultProcessor> configuration)
     {
         return constructComponentEventResultProcessor(configuration);
-
     }
 
     private ComponentEventResultProcessor constructComponentEventResultProcessor(
