@@ -233,7 +233,7 @@ public class Palette extends AbstractField
      * is submitted. If the value for the parameter is null, a new list will be created, otherwise the existing list
      * will be cleared. If unbound, defaults to a property of the container matching this component's id.
      */
-    @Parameter(required = true)
+    @Parameter(required = true, autoconnect = true)
     private List<Object> selected;
 
     /**
@@ -261,14 +261,6 @@ public class Palette extends AbstractField
      * The natural order of elements, in terms of their client ids.
      */
     private List<String> naturalOrder;
-
-    /**
-     * Defaults the selected parameter to a container property whose name matches this component's id.
-     */
-    final Binding defaultSelected()
-    {
-        return createDefaultParameterBinding("selected");
-    }
 
     public Renderable getAvailableRenderer()
     {
@@ -393,7 +385,6 @@ public class Palette extends AbstractField
 
                 availableOptions.add(new RenderOption(optionModel));
             }
-
         };
 
         model.visit(visitor);

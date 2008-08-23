@@ -34,18 +34,32 @@ import java.util.Locale;
 
 /**
  * A component used to collect a provided date from the user using a client-side JavaScript calendar. Non-JavaScript
- * clients can simply type into a text field..
+ * clients can simply type into a text field.
+ * <p/>
+ * One wierd aspect here is that, because client-side JavaScript formatting and parsing is so limited, we (currently)
+ * use Ajax to send the user's input to the server for parsing (before raising the popup) and formatting (after closing
+ * the popup).  Wierd and inefficient, but easier than writing client-side JavaScript for that purpose.
  */
 // TODO: More testing; see https://issues.apache.org/jira/browse/TAPESTRY-1844
 @IncludeStylesheet("${tapestry.datepicker}/css/datepicker.css")
-@IncludeJavaScriptLibrary({"${tapestry.datepicker}/js/datepicker.js", "datefield.js"})
+@IncludeJavaScriptLibrary({"${tapestry.datepicker}/js/datepicker.js",
+        "datefield.js"
+        })
 public class DateField extends AbstractField
 {
     /**
      * The value parameter of a DateField must be a {@link Date}.
      */
-    @Parameter(required = true, principal = true)
+    @Parameter(required = true, principal = true, autoconnect = true)
     private Date value;
+
+    /**
+     * The format used to format <em>and parse</em> dates. This is typically specified as a string which is coerced to a
+     * DateFormat. You should be aware that using a date format with a two digit year is problematic: Java (not
+     * Tapestry) may get confused about the century.
+     */
+    @Parameter(required = true, allowNull = false, defaultPrefix = BindingConstants.LITERAL)
+    private DateFormat format;
 
     /**
      * The object that will perform input validation (which occurs after translation). The translate binding prefix is
@@ -82,21 +96,29 @@ public class DateField extends AbstractField
     /**
      * For output, format nicely and unambiguously as four digits.
      */
-    private final DateFormat outputFormat = new SimpleDateFormat("MM/dd/yyyy");
+    private final DateFormat popupFormat = new SimpleDateFormat("MM/dd/yyyy");
 
-    /**
-     * When the user types a value, they may only type two digits for the year; SimpleDateFormat will do something
-     * reasonable.  If they use the popup, it will be unambiguously 4 digits.
-     */
-    private final DateFormat inputFormat = new SimpleDateFormat("MM/dd/yy");
+    private static final String RESULT = "result";
 
-    /**
-     * The default value is a property of the container whose name matches the component's id. May return null if the
-     * container does not have a matching property.
-     */
-    final Binding defaultValue()
+    private static final String ERROR = "error";
+    private static final String INPUT_PARAMETER = "input";
+
+    DateFormat defaultFormat()
     {
-        return createDefaultParameterBinding("value");
+        DateFormat shortDateFormat = DateFormat.getDateInstance(DateFormat.SHORT, locale);
+
+        if (shortDateFormat instanceof SimpleDateFormat)
+        {
+            SimpleDateFormat simpleDateFormat = (SimpleDateFormat) shortDateFormat;
+
+            String pattern = simpleDateFormat.toPattern();
+
+            String revised = pattern.replaceAll("([^y])yy$", "$1yyyy");
+
+            return new SimpleDateFormat(revised);
+        }
+
+        return shortDateFormat;
     }
 
     /**
@@ -104,11 +126,59 @@ public class DateField extends AbstractField
      */
     final FieldValidator defaultValidate()
     {
-
         return fieldValidatorDefaultSource.createDefaultValidator(this, resources.getId(),
                                                                   resources.getContainerMessages(), locale,
                                                                   Date.class,
                                                                   resources.getAnnotationProvider("value"));
+    }
+
+    /**
+     * Ajax event handler, used when initiating the popup. The client sends the input value form the field to the server
+     * to parse it according to the server-side format. The response contains a "result" key of the formatted date in a
+     * format acceptable to the JavaScript Date() constructor.  Alternately, an "error" key indicates the the input was
+     * not formatted correct.
+     */
+    JSONObject onParse()
+    {
+        String input = request.getParameter(INPUT_PARAMETER);
+        JSONObject response = new JSONObject();
+
+        try
+        {
+            Date date = format.parse(input);
+
+            response.put(RESULT, date.toString());
+        }
+        catch (ParseException ex)
+        {
+            response.put(ERROR, ex.getMessage());
+        }
+
+        return response;
+    }
+
+    /**
+     * Ajax event handler, used after the popup completes.  The client sends the date, formatted as "MM/dd/yyyy" to the
+     * server, which reformats it according to the server side format and returns the result.
+     */
+    JSONObject onFormat()
+    {
+        String input = request.getParameter(INPUT_PARAMETER);
+
+        JSONObject response = new JSONObject();
+
+        try
+        {
+            Date date = popupFormat.parse(input);
+
+            response.put(RESULT, format.format(date));
+        }
+        catch (ParseException ex)
+        {
+            response.put(ERROR, ex.getMessage());
+        }
+
+        return response;
     }
 
     void beginRender(MarkupWriter writer)
@@ -120,7 +190,7 @@ public class DateField extends AbstractField
         String clientId = getClientId();
         String triggerId = clientId + ":trigger";
 
-        writer.element("input",
+        writer.element(INPUT_PARAMETER,
 
                        "type", "text",
 
@@ -156,6 +226,8 @@ public class DateField extends AbstractField
         JSONObject setup = new JSONObject();
 
         setup.put("field", clientId);
+        setup.put("parseURL", resources.createEventLink("parse").toAbsoluteURI());
+        setup.put("formatURL", resources.createEventLink("format").toAbsoluteURI());
 
         support.addInit("dateField", setup);
     }
@@ -170,7 +242,7 @@ public class DateField extends AbstractField
     {
         if (value == null) return "";
 
-        return outputFormat.format(value);
+        return format.format(value);
     }
 
     @Override
@@ -185,9 +257,7 @@ public class DateField extends AbstractField
         try
         {
             if (InternalUtils.isNonBlank(value))
-                parsedValue =
-                        inputFormat.parse(value);
-
+                parsedValue = format.parse(value);
         }
         catch (ParseException ex)
         {

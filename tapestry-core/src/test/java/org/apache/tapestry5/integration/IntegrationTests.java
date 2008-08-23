@@ -573,7 +573,6 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         assertTextPresent("Howard", "Lewis Ship", "1966", "Martian", "U. S. Citizen", "***********", "line1", "line2",
                           "line3");
-
     }
 
     @Test
@@ -658,7 +657,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         // The lack of a leading slash indicates that the path was optimized, see TAPESTRY-1502
 
-        assertAttribute("//img[@id='title:sort']/@src", "assets/tapestry/UNKNOWN/corelib/components/sort-asc.png");
+        assertAttribute("//img[@id='title:sort']/@src", "assets/UNKNOWN/tapestry/corelib/components/sort-asc.png");
         assertAttribute("//img[@id='title:sort']/@alt", "[Asc]");
 
         clickAndWait("link=1");
@@ -667,7 +666,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         clickAndWait("link=Title");
 
-        assertAttribute("//img[@id='title:sort']/@src", "assets/tapestry/UNKNOWN/corelib/components/sort-desc.png");
+        assertAttribute("//img[@id='title:sort']/@src", "assets/UNKNOWN/tapestry/corelib/components/sort-desc.png");
         assertAttribute("//img[@id='title:sort']/@alt", "[Desc]");
 
         clickAndWait("link=reset the Grid");
@@ -828,8 +827,8 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         // The lack of a leading slash indicates that the path was optimized, see TAPESTRY-1502
 
-        assertAttributeSeries("//script[%d]/@src", 1, "assets/scriptaculous/UNKNOWN/prototype.js",
-                              "assets/scriptaculous/UNKNOWN/scriptaculous.js");
+        assertAttributeSeries("//script[%d]/@src", 1, "assets/UNKNOWN/scriptaculous/prototype.js",
+                              "assets/UNKNOWN/scriptaculous/scriptaculous.js");
 
         clickAndWait("link=Clear Data");
 
@@ -1046,7 +1045,6 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         clickAndWait("link=bad");
         assertTextPresent("An unexpected application exception has occurred.",
                           "An event handler for component org.apache.tapestry5.integration.app1.pages.Start returned the value 20 (from method org.apache.tapestry5.integration.app1.pages.Start.onActionFromBadReturnType() (at Start.java:34)). Return type java.lang.Integer can not be handled.");
-
     }
 
     @Test
@@ -1177,7 +1175,9 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     {
         start("DateField Demo");
 
-        type("birthday", "12/24/66");
+        // TODO: Check to see if we need to explicitly set the locale for this test to work properly.
+
+        type("birthday", "24 dec 1966");
         type("asteroidImpact", "05/28/2046");
 
         clickAndWait(SUBMIT);
@@ -1185,8 +1185,8 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         assertTextPresent("Birthday: [12/24/1966]");
         assertTextPresent("Impact: [05/28/2046]");
 
-        assertFieldValue("birthday", "12/24/1966");
-        assertFieldValue("asteroidImpact", "05/28/2046");
+        assertFieldValue("birthday", "24 Dec 1966");
+        assertFieldValue("asteroidImpact", "5/28/2046");
     }
 
     /**
@@ -1573,7 +1573,6 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         assertTextPresent("An unexpected application exception has occurred.",
                           "org.apache.tapestry5.ioc.internal.util.TapestryException",
                           "java.lang.NumberFormatException");
-
     }
 
     /**
@@ -1976,7 +1975,6 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         assertText("//span[@class='watch'][1]", "0");
         assertText("//span[@class='watch'][2]", "0");
         assertText("//span[@class='watch'][3]", "1");
-
     }
 
     /**
@@ -2037,7 +2035,6 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         assertFalse(time2_1.equals(time1_1),
                     "After update the nanoseconds time did not change, meaning @Cache was broken.");
-
     }
 
     @Test

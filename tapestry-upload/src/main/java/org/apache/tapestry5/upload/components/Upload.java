@@ -31,7 +31,7 @@ import java.util.Locale;
 /**
  * A component to upload a file.
  */
-@SuppressWarnings({ "UnusedDeclaration" })
+@SuppressWarnings({"UnusedDeclaration"})
 public class Upload extends AbstractField
 {
     public static final String MULTIPART_ENCTYPE = "multipart/form-data";
@@ -40,7 +40,7 @@ public class Upload extends AbstractField
      * The uploaded file. Note: This is only guaranteed to be valid while processing the form submission. Subsequently
      * the content may have been cleaned up.
      */
-    @Parameter(required = true, principal = true)
+    @Parameter(required = true, principal = true, autoconnect = true)
     private UploadedFile value;
 
     /**
@@ -106,7 +106,7 @@ public class Upload extends AbstractField
         this.fieldValidationSupport = fieldValidationSupport;
     }
 
-    @SuppressWarnings({ "unchecked" })
+    @SuppressWarnings({"unchecked"})
     @Override
     protected void processSubmission(String elementName)
     {
@@ -155,11 +155,6 @@ public class Upload extends AbstractField
     public UploadedFile getValue()
     {
         return value;
-    }
-
-    Binding defaultValue()
-    {
-        return createDefaultParameterBinding("value");
     }
 
     void injectDecorator(ValidationDecorator decorator)

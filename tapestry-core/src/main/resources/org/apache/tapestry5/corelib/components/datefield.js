@@ -22,6 +22,8 @@ Tapestry.DateField.prototype = {
     {
         this.field = $(spec.field);
         this.trigger = $(spec.field + ":trigger");
+        this.parseURL = spec.parseURL;
+        this.formatURL = spec.formatURL;
 
         this.trigger.observe("click", this.triggerClicked.bind(this));
 
@@ -52,46 +54,58 @@ Tapestry.DateField.prototype = {
         if (value == "")
         {
             this.datePicker.setDate(null);
+
+            this.positionPopup();
+
+            this.revealPopup();
+
+            return;
         }
-        else
+
+        var resultHandler = function(result)
         {
+            var date = new Date(result);
 
-            // TODO: This is limited and americanized (not localized) to MM/DD/YYYY
-            var re = /^\s*(\d+)\/(\d+)\/(\d{2,4})\s*$/;
-            var matches = re.exec(value);
+            this.datePicker.setDate(date);
 
+            this.positionPopup();
 
-            // If the RE is bad, raise the date picker anyway, showing
-            // the last valid date, or showing no date.
+            this.revealPopup();
+        };
 
-            if (matches != null)
+        var errorHandler = function(message)
+        {
+            Tapestry.fieldError(this.field, message);
+            Tapestry.focus(this.field);
+        };
+
+        this.sendServerRequest(this.parseURL, value, resultHandler, errorHandler);
+    },
+
+    sendServerRequest : function (url, input, resultHandler, errorHandler)
+    {
+        var successHandler = function(response)
+        {
+            var json = response.responseJSON;
+
+            var result = json.result;
+
+            if (result)
             {
-
-                var month = Number(matches[1]);
-                var day = Number(matches[2])
-                var year = Number(matches[3]);
-
-            // For two digits, guestamate which century they want.
-
-                if (year < 100)
-                {
-                    if (year >= 60) year += 1900
-                    else year += 2000;
-                }
-
-                var date = new Date(value);
-
-                date.setMonth(month - 1);
-                date.setDate(day);
-                date.setFullYear(year);
-
-                this.datePicker.setDate(date);
+                resultHandler.call(this, result);
+                return;
             }
-        }
 
-        this.positionPopup();
+            errorHandler.call(this, json.error);
+        }.bind(this);
 
-        this.revealPopup();
+        new Ajax.Request(url,
+        {
+            method: 'get',
+            parameters: { input: input },
+            onSuccess: successHandler,
+            onFailure: Tapestry.ajaxFailureHandler
+        });
     },
 
     createPopup : function()
@@ -106,12 +120,25 @@ Tapestry.DateField.prototype = {
 
         this.datePicker.onselect = function()
         {
-            this.field.value = this.formatDate(this.datePicker.getDate());
+            var input = this.formatDate(this.datePicker.getDate());
 
-            this.hidePopup();
+            var resultHandler = function(result)
+            {
+                this.field.value = result;
 
-            new Effect.Highlight(this.field);
+                this.hidePopup();
 
+                new Effect.Highlight(this.field);
+            };
+
+            var errorHandler = function(message)
+            {
+                Tapestry.fieldError(this.field, message);
+                Tapestry.focus(this.field);
+                this.hidePopup();
+            }
+
+            this.sendServerRequest(this.formatURL, input, resultHandler, errorHandler);
         }.bind(this);
     },
 
@@ -119,7 +146,7 @@ Tapestry.DateField.prototype = {
     {
         if (date == null) return "";
 
-        // TODO: This needs to localize; currently its Americanized (MM/DD/YYYY).
+        // Americanized format is simply transfer format.  Localization occurs on the server.
         return (date.getMonth() + 1) + "/" + date.getDate() + "/" + date.getFullYear();
     },
 
@@ -134,7 +161,6 @@ Tapestry.DateField.prototype = {
 
     hidePopup : function()
     {
-
         new Effect.Fade(this.popup, { duration: this.FADE_DURATION });
     },
 

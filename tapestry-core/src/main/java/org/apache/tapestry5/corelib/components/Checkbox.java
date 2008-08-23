@@ -14,7 +14,6 @@
 
 package org.apache.tapestry5.corelib.components;
 
-import org.apache.tapestry5.Binding;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.ValidationTracker;
@@ -33,7 +32,7 @@ public class Checkbox extends AbstractField
      * The value to be read or updated. If not bound, the Checkbox will attempt to edit a property of its container
      * whose name matches the component's id.
      */
-    @Parameter(required = true)
+    @Parameter(required = true, autoconnect = true)
     private boolean value;
 
     @Inject
@@ -48,11 +47,6 @@ public class Checkbox extends AbstractField
 
     @Environmental
     private ValidationTracker tracker;
-
-    Binding defaultValue()
-    {
-        return createDefaultParameterBinding("value");
-    }
 
     @BeginRender
     void begin(MarkupWriter writer)
@@ -91,5 +85,4 @@ public class Checkbox extends AbstractField
 
         value = postedValue != null;
     }
-
 }
