@@ -20,9 +20,11 @@ import org.apache.tapestry5.internal.hibernate.*;
 import org.apache.tapestry5.ioc.*;
 import static org.apache.tapestry5.ioc.IOCConstants.PERTHREAD_SCOPE;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.annotations.Local;
 import org.apache.tapestry5.ioc.annotations.Scope;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.services.*;
+import org.apache.tapestry5.services.AliasContribution;
 import org.apache.tapestry5.services.ComponentClassTransformWorker;
 import org.apache.tapestry5.services.PersistentFieldStrategy;
 import org.apache.tapestry5.services.ValueEncoderFactory;
@@ -111,6 +113,11 @@ public class HibernateModule
         return propertyShadowBuilder.build(sessionManager, "session", Session.class);
     }
 
+    public static void contributeAlias(Configuration<AliasContribution> configuration, @Local Session session)
+    {
+        configuration.add(AliasContribution.create(Session.class, session));
+    }
+
     public static HibernateSessionSource buildHibernateSessionSource(Logger logger, List<HibernateConfigurer> config,
                                                                      RegistryShutdownHub hub)
     {
@@ -193,5 +200,4 @@ public class HibernateModule
 
         configuration.add("CommitAfter", locator.autobuild(CommitAfterWorker.class), "after:Log");
     }
-
 }
