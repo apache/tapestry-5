@@ -21,6 +21,19 @@ Release 5.0.15
   have been changed to return all fields (regardless of whether they have been claimed).  The
   method findAllFieldsWithAnnotation() has been removed.
 
+* tapestry.js
+
+  Some significant overhauling of Tapestry's client-side validation support has
+  occurred. If you have created your own validations, or have overriden
+  how Tapestry decorates fields and presents error messages, you will need
+  to make some changes to your code.
+
+* {{{https://issues.apache.org/jira/browse/TAPESTRY-2352}TAPESTRY-2352}}
+
+  Several API changes related to
+  {{{../apidocs/org/apache/tapestry5/Translator.html}Translator}} have occured, to support
+  client-side validation of user input.
+
 Release 5.0.14
 
   The signature of the

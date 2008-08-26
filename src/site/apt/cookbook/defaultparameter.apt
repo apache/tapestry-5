@@ -23,7 +23,7 @@ Default Parameter
 public class OutputGadget
 {
   @Property
-  @Parameter(required=true, principal=true)
+  @Parameter(required=true)
   private Gadget gadget;
 
   @Inject
@@ -55,7 +55,7 @@ public class OutputGadget
 * autoconnect attribute
 
   Because this is such a common idiom, it has been made simpler for you.  Rather than writing the code above,
-  you can simple use the autoconnect attribute of the Parameter annotation.  This, effectively, creates
+  you can just use the autoconnect attribute of the Parameter annotation.  This, effectively, creates
   the defaultGadget() method for you. In this case
   the code of component OutputGadget can be reduced to:
   
@@ -63,7 +63,7 @@ public class OutputGadget
 public class OutputGadget
 {
   @Property
-  @Parameter(required=true, principal=true, autoconnect = true)
+  @Parameter(required=true, autoconnect = true)
   private Gadget gadget;
 
 }

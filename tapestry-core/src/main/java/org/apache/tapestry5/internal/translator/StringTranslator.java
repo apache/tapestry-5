@@ -14,31 +14,39 @@
 
 package org.apache.tapestry5.internal.translator;
 
-import org.apache.tapestry5.Translator;
+import org.apache.tapestry5.Field;
+import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.ValidationException;
-import org.apache.tapestry5.ioc.Messages;
+import org.apache.tapestry5.services.FormSupport;
 
-public class StringTranslator implements Translator<String>
+public class StringTranslator extends AbstractTranslator<String>
 {
-    public Class<String> getType()
+    public StringTranslator()
     {
-        return String.class;
+        super("string", String.class, "a-string-is-a-string");
     }
 
     /**
-     * Returns the client value (or null, if the client value is blank).
+     * Does nothing.
      */
-    public String parseClient(String clientValue, Messages messages) throws ValidationException
+    public void render(Field field, String message, MarkupWriter writer, FormSupport formSupport)
+    {
+    }
+
+    /**
+     * Passes the clientValue through unchanged.
+     */
+    public String parseClient(Field field, String clientValue, String message)
+            throws ValidationException
     {
         return clientValue;
     }
 
     /**
-     * Returns the value.
+     * Passes the value through unchanged.
      */
     public String toClient(String value)
     {
         return value;
     }
-
 }

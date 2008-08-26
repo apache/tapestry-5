@@ -14,15 +14,14 @@
 
 package org.apache.tapestry5.internal.translator;
 
-import org.apache.tapestry5.Translator;
+import org.apache.tapestry5.Field;
 import org.apache.tapestry5.ValidationException;
-import org.apache.tapestry5.ioc.Messages;
 
-public class FloatTranslator implements Translator<Float>
+public class FloatTranslator extends DecimalNumberTranslator<Float>
 {
-    public Class<Float> getType()
+    public FloatTranslator()
     {
-        return Float.class;
+        super("float", Float.class);
     }
 
     public String toClient(Float value)
@@ -30,7 +29,8 @@ public class FloatTranslator implements Translator<Float>
         return value.toString();
     }
 
-    public Float parseClient(String clientValue, Messages messages) throws ValidationException
+    public Float parseClient(Field field, String clientValue, String message)
+            throws ValidationException
     {
         try
         {
@@ -38,7 +38,7 @@ public class FloatTranslator implements Translator<Float>
         }
         catch (NumberFormatException ex)
         {
-            throw new ValidationException(messages.format("number-format-exception", clientValue));
+            throw new ValidationException(message);
         }
     }
 }

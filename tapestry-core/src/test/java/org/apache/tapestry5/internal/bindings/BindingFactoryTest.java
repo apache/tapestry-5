@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,13 +16,13 @@ package org.apache.tapestry5.internal.bindings;
 
 import org.apache.tapestry5.Binding;
 import org.apache.tapestry5.ComponentResources;
-import org.apache.tapestry5.Translator;
+import org.apache.tapestry5.FieldTranslator;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.ioc.Location;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.TapestryException;
 import org.apache.tapestry5.services.BindingFactory;
-import org.apache.tapestry5.services.TranslatorSource;
+import org.apache.tapestry5.services.FieldTranslatorSource;
 import org.testng.annotations.Test;
 
 /**
@@ -65,15 +65,15 @@ public class BindingFactoryTest extends InternalBaseTestCase
     @Test
     public void translate_binding()
     {
-        Translator translator = mockTranslator();
-        TranslatorSource source = newMock(TranslatorSource.class);
+        FieldTranslator translator = mockFieldTranslator();
+        FieldTranslatorSource source = newMock(FieldTranslatorSource.class);
         ComponentResources resources = mockComponentResources();
         Location l = mockLocation();
 
         String description = "foo bar";
         String expression = "mock";
 
-        expect(source.get(expression)).andReturn(translator);
+        expect(source.createTranslator(resources, expression)).andReturn(translator);
 
         replay();
 

@@ -17,7 +17,9 @@ package org.apache.tapestry5.services;
 import org.apache.tapestry5.Translator;
 
 /**
- * A source for {@link Translator}s, either by name.
+ * A source for {@link Translator}s, either by name or by property type.
+ * <p/>
+ * The configuration for the service is an unordered collection of {@link org.apache.tapestry5.Translator}.
  */
 public interface TranslatorSource
 {

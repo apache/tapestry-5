@@ -21,7 +21,6 @@ import org.apache.tapestry5.corelib.mixins.RenderDisabled;
 import org.apache.tapestry5.ioc.AnnotationProvider;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.ComponentDefaultProvider;
-import org.apache.tapestry5.services.FieldValidatorDefaultSource;
 import org.apache.tapestry5.services.Request;
 
 import java.lang.annotation.Annotation;
@@ -59,7 +58,7 @@ public abstract class AbstractTextField extends AbstractField
      * a value will usually be generated based on the type of the value parameter.
      */
     @Parameter(required = true, allowNull = false, defaultPrefix = BindingConstants.TRANSLATE)
-    private Translator<Object> translate;
+    private FieldTranslator<Object> translate;
 
     /**
      * The object that will perform input validation (which occurs after translation). The validate binding prefix is
@@ -90,9 +89,6 @@ public abstract class AbstractTextField extends AbstractField
     private ValidationTracker tracker;
 
     @Inject
-    private FieldValidatorDefaultSource fieldValidatorDefaultSource;
-
-    @Inject
     private ComponentResources resources;
 
     @Inject
@@ -115,7 +111,7 @@ public abstract class AbstractTextField extends AbstractField
      * Computes a default value for the "translate" parameter using {@link org.apache.tapestry5.services.ComponentDefaultProvider#defaultTranslator(String,
      * org.apache.tapestry5.ComponentResources)}.
      */
-    final Translator defaultTranslate()
+    final FieldTranslator defaultTranslate()
     {
         return defaultProvider.defaultTranslator("value", resources);
     }
@@ -136,13 +132,7 @@ public abstract class AbstractTextField extends AbstractField
      */
     final FieldValidator defaultValidate()
     {
-        Class type = resources.getBoundType("value");
-
-        if (type == null) return NOOP_VALIDATOR;
-
-        return fieldValidatorDefaultSource.createDefaultValidator(this, resources.getId(),
-                                                                  resources.getContainerMessages(), locale, type,
-                                                                  resources.getAnnotationProvider("value"));
+        return defaultProvider.defaultValidator("value", resources);
     }
 
     /**
@@ -177,6 +167,7 @@ public abstract class AbstractTextField extends AbstractField
 
         writeFieldTag(writer, value);
 
+        translate.render(writer);
         validate.render(writer);
 
         resources.renderInformalParameters(writer);

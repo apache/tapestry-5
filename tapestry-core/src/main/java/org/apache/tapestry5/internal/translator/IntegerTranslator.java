@@ -14,26 +14,21 @@
 
 package org.apache.tapestry5.internal.translator;
 
-import org.apache.tapestry5.Translator;
+import org.apache.tapestry5.Field;
 import org.apache.tapestry5.ValidationException;
-import org.apache.tapestry5.ioc.Messages;
 
 /**
  * A translator for type integer.
  */
-public final class IntegerTranslator implements Translator<Integer>
+public final class IntegerTranslator extends IntegerNumberTranslator<Integer>
 {
-    public Class<Integer> getType()
+    public IntegerTranslator()
     {
-        return Integer.class;
+        super("integer", Integer.class);
     }
 
-    /**
-     * Parses blank values to null, otherwise parses the client value to an integer.
-     *
-     * @throws ValidationException if the clientValue can not be parsed as an integer
-     */
-    public Integer parseClient(String clientValue, Messages messages) throws ValidationException
+    public Integer parseClient(Field field, String clientValue, String message)
+            throws ValidationException
     {
 
         try
@@ -42,16 +37,12 @@ public final class IntegerTranslator implements Translator<Integer>
         }
         catch (NumberFormatException ex)
         {
-            throw new ValidationException(messages.format("integer-format-exception", clientValue));
+            throw new ValidationException(message);
         }
     }
 
-    /**
-     * Converts null to the blank string, non-null to a string representation.
-     */
     public String toClient(Integer value)
     {
         return value.toString();
     }
-
 }

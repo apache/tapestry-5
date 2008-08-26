@@ -16,23 +16,18 @@ package org.apache.tapestry5.internal.bindings;
 
 import org.apache.tapestry5.Binding;
 import org.apache.tapestry5.ComponentResources;
-import org.apache.tapestry5.Field;
+import org.apache.tapestry5.FieldComponent;
 import org.apache.tapestry5.FieldValidator;
+import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.ioc.Location;
 import org.apache.tapestry5.ioc.internal.util.TapestryException;
 import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.services.BindingFactory;
 import org.apache.tapestry5.services.FieldValidatorSource;
-import org.apache.tapestry5.test.TapestryTestCase;
 import org.testng.annotations.Test;
 
-public class ValidateBindingFactoryTest extends TapestryTestCase
+public class ValidateBindingFactoryTest extends InternalBaseTestCase
 {
-    private interface FieldComponent extends Field, Component
-    {
-    }
-
-    ;
 
     @Test
     public void not_a_field()
@@ -72,7 +67,7 @@ public class ValidateBindingFactoryTest extends TapestryTestCase
         FieldValidatorSource source = mockFieldValidatorSource();
         ComponentResources container = mockComponentResources();
         ComponentResources component = mockComponentResources();
-        FieldComponent instance = newMock(FieldComponent.class);
+        FieldComponent instance = mockFieldComponent();
         Location l = mockLocation();
         FieldValidator validator = mockFieldValidator();
 

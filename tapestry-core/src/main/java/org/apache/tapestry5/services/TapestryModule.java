@@ -187,6 +187,7 @@ public final class TapestryModule
         binder.bind(HiddenFieldLocationRules.class, HiddenFieldLocationRulesImpl.class);
         binder.bind(PageDocumentGenerator.class, PageDocumentGeneratorImpl.class);
         binder.bind(ResponseRenderer.class, ResponseRendererImpl.class);
+        binder.bind(FieldTranslatorSource.class, FieldTranslatorSourceImpl.class);
     }
 
     // ========================================================================
@@ -628,16 +629,16 @@ public final class TapestryModule
      * Contributes the basic set of named translators: <ul>  <li>string</li>  <li>byte</li> <li>integer</li>
      * <li>long</li> <li>float</li> <li>double</li> <li>short</li> </ul>
      */
-    public static void contributeTranslatorSource(MappedConfiguration<String, Translator> configuration)
+    public static void contributeTranslatorSource(Configuration<Translator> configuration)
     {
 
-        configuration.add("string", new StringTranslator());
-        configuration.add("byte", new ByteTranslator());
-        configuration.add("integer", new IntegerTranslator());
-        configuration.add("long", new LongTranslator());
-        configuration.add("float", new FloatTranslator());
-        configuration.add("double", new DoubleTranslator());
-        configuration.add("short", new ShortTranslator());
+        configuration.add(new StringTranslator());
+        configuration.add(new ByteTranslator());
+        configuration.add(new IntegerTranslator());
+        configuration.add(new LongTranslator());
+        configuration.add(new FloatTranslator());
+        configuration.add(new DoubleTranslator());
+        configuration.add(new ShortTranslator());
     }
 
     /**

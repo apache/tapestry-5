@@ -59,6 +59,15 @@ public interface ComponentDefaultProvider
      * @param resources
      * @return the translator, or null
      */
-    Translator defaultTranslator(String parameterName, ComponentResources resources);
+    FieldTranslator defaultTranslator(String parameterName, ComponentResources resources);
 
+    /**
+     * Provides a validator based on the bound parameter type.  If the property type of the parameter is not known, then
+     * a no-op validator is returned.
+     *
+     * @param parameterName
+     * @param resources
+     * @return the validator, possibly a no-op validator
+     */
+    FieldValidator defaultValidator(String parameterName, ComponentResources resources);
 }

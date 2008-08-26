@@ -62,6 +62,8 @@ public class Start
 
     private static final List<Item> ITEMS = CollectionFactory.newList(
 
+            new Item("ClientFormatDemo", "Client Format Validation", "Client-side input format validation"),
+
             new Item("ShortGrid", "Short Grid",
                      "Grid where the number of claimed rows is less than the number of actual rows"),
 

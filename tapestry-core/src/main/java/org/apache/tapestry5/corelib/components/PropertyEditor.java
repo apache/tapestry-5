@@ -123,13 +123,13 @@ public class PropertyEditor
     @Inject
     private ComponentResources resources;
 
+    @Inject
+    private FieldTranslatorSource fieldTranslatorSource;
+
     @Environmental
     private FormSupport formSupport;
 
     private PropertyModel propertyModel;
-
-    @Inject
-    private TranslatorSource translatorSource;
 
     /**
      * Creates a {@link org.apache.tapestry5.services.PropertyEditContext} and pushes it onto the {@link
@@ -166,9 +166,12 @@ public class PropertyEditor
                 return propertyModel.getConduit().get(object);
             }
 
-            public Translator getTranslator()
+            public FieldTranslator getTranslator(Field field)
             {
-                return translatorSource.getByType(propertyModel.getPropertyType());
+                return fieldTranslatorSource.createDefaultTranslator(field, propertyName,
+                                                                     overrides.getOverrideMessages(), locale,
+                                                                     propertyModel.getPropertyType(),
+                                                                     propertyModel.getConduit());
             }
 
             public FieldValidator getValidator(Field field)
@@ -255,7 +258,6 @@ public class PropertyEditor
 
             throw new TapestryException(message, resources.getLocation(), ex);
         }
-
     }
 
     /**

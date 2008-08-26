@@ -21,10 +21,7 @@ import static org.apache.tapestry5.ioc.internal.util.Defense.notBlank;
 import static org.apache.tapestry5.ioc.internal.util.Defense.notNull;
 import org.apache.tapestry5.ioc.services.PropertyAccess;
 import org.apache.tapestry5.runtime.Component;
-import org.apache.tapestry5.services.BindingSource;
-import org.apache.tapestry5.services.ComponentDefaultProvider;
-import org.apache.tapestry5.services.TranslatorSource;
-import org.apache.tapestry5.services.ValueEncoderSource;
+import org.apache.tapestry5.services.*;
 
 public class ComponentDefaultProviderImpl implements ComponentDefaultProvider
 {
@@ -34,15 +31,37 @@ public class ComponentDefaultProviderImpl implements ComponentDefaultProvider
 
     private final ValueEncoderSource valueEncoderSource;
 
-    private final TranslatorSource translatorSource;
+    private final FieldTranslatorSource fieldTranslatorSource;
+
+    private final FieldValidatorDefaultSource fieldValidatorDefaultSource;
+
+    static final FieldValidator NOOP_VALIDATOR = new FieldValidator()
+    {
+        public void validate(Object value) throws ValidationException
+        {
+            // Do nothing
+        }
+
+        public void render(MarkupWriter writer)
+        {
+        }
+
+        public boolean isRequired()
+        {
+            return false;
+        }
+    };
 
     public ComponentDefaultProviderImpl(PropertyAccess propertyAccess, BindingSource bindingSource,
-                                        ValueEncoderSource valueEncoderSource, TranslatorSource translatorSource)
+                                        ValueEncoderSource valueEncoderSource,
+                                        FieldTranslatorSource fieldTranslatorSource,
+                                        FieldValidatorDefaultSource fieldValidatorDefaultSource)
     {
         this.propertyAccess = propertyAccess;
         this.bindingSource = bindingSource;
         this.valueEncoderSource = valueEncoderSource;
-        this.translatorSource = translatorSource;
+        this.fieldTranslatorSource = fieldTranslatorSource;
+        this.fieldValidatorDefaultSource = fieldValidatorDefaultSource;
     }
 
     public String defaultLabel(ComponentResources resources)
@@ -96,15 +115,15 @@ public class ComponentDefaultProviderImpl implements ComponentDefaultProvider
         return valueEncoderSource.getValueEncoder(parameterType);
     }
 
-    public Translator defaultTranslator(String parameterName, ComponentResources resources)
+    public FieldTranslator defaultTranslator(String parameterName, ComponentResources resources)
     {
-        notBlank(parameterName, "parameterName");
-        notNull(resources, "resources");
+        return fieldTranslatorSource.createDefaultTranslator(resources, parameterName);
+    }
 
-        Class type = resources.getBoundType(parameterName);
+    public FieldValidator defaultValidator(String parameterName, ComponentResources resources)
+    {
+        FieldValidator result = fieldValidatorDefaultSource.createDefaultValidator(resources, parameterName);
 
-        if (type == null) return null;
-
-        return translatorSource.findByType(type);
+        return result == null ? NOOP_VALIDATOR : result;
     }
 }

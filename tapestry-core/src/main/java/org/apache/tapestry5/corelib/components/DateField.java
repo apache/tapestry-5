@@ -23,6 +23,7 @@ import org.apache.tapestry5.corelib.base.AbstractField;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.json.JSONObject;
+import org.apache.tapestry5.services.ComponentDefaultProvider;
 import org.apache.tapestry5.services.FieldValidatorDefaultSource;
 import org.apache.tapestry5.services.Request;
 
@@ -67,7 +68,7 @@ public class DateField extends AbstractField
      */
     @Parameter(defaultPrefix = BindingConstants.VALIDATE)
     @SuppressWarnings("unchecked")
-    private FieldValidator<Object> validate = NOOP_VALIDATOR;
+    private FieldValidator<Object> validate;
 
     @Parameter(defaultPrefix = BindingConstants.ASSET, value = "datefield.gif")
     private Asset icon;
@@ -88,7 +89,7 @@ public class DateField extends AbstractField
     private Locale locale;
 
     @Inject
-    private FieldValidatorDefaultSource fieldValidatorDefaultSource;
+    private ComponentDefaultProvider defaultProvider;
 
     @Inject
     private FieldValidationSupport fieldValidationSupport;
@@ -126,10 +127,7 @@ public class DateField extends AbstractField
      */
     final FieldValidator defaultValidate()
     {
-        return fieldValidatorDefaultSource.createDefaultValidator(this, resources.getId(),
-                                                                  resources.getContainerMessages(), locale,
-                                                                  Date.class,
-                                                                  resources.getAnnotationProvider("value"));
+        return defaultProvider.defaultValidator("value", resources);
     }
 
     /**

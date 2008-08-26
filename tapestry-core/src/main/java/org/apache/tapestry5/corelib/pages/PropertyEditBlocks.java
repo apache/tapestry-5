@@ -14,6 +14,7 @@
 
 package org.apache.tapestry5.corelib.pages;
 
+import org.apache.tapestry5.FieldTranslator;
 import org.apache.tapestry5.FieldValidator;
 import org.apache.tapestry5.SelectModel;
 import org.apache.tapestry5.ValueEncoder;
@@ -39,34 +40,47 @@ public class PropertyEditBlocks
     private PropertyEditContext context;
 
     @Component(
-            parameters = { "value=context.propertyValue", "label=prop:context.label", "translate=prop:context.translator", "validate=prop:textFieldValidator", "clientId=prop:context.propertyId", "annotationProvider=context" })
+            parameters = {"value=context.propertyValue", "label=prop:context.label",
+                    "translate=prop:textFieldTranslator", "validate=prop:textFieldValidator",
+                    "clientId=prop:context.propertyId", "annotationProvider=context"})
     private TextField textField;
 
     @Component(
-            parameters = { "value=context.propertyValue", "label=prop:context.label", "translate=prop:context.translator", "validate=prop:numberFieldValidator", "clientId=prop:context.propertyId", "annotationProvider=context" })
+            parameters = {"value=context.propertyValue", "label=prop:context.label",
+                    "translate=prop:numberFieldTranslator", "validate=prop:numberFieldValidator",
+                    "clientId=prop:context.propertyId", "annotationProvider=context"})
     private TextField numberField;
 
 
     @Component(
-            parameters = { "value=context.propertyValue", "label=prop:context.label", "encoder=valueEncoderForProperty", "model=selectModelForProperty", "validate=prop:selectValidator", "clientId=prop:context.propertyId" })
+            parameters = {"value=context.propertyValue", "label=prop:context.label", "encoder=valueEncoderForProperty",
+                    "model=selectModelForProperty", "validate=prop:selectValidator",
+                    "clientId=prop:context.propertyId"})
     private Select select;
 
     @SuppressWarnings("unused")
     @Component(
-            parameters = { "value=context.propertyValue", "label=prop:context.label", "clientId=prop:context.propertyId" })
+            parameters = {"value=context.propertyValue", "label=prop:context.label",
+                    "clientId=prop:context.propertyId"})
     private Checkbox checkboxField;
 
     @SuppressWarnings("unused")
     @Component(
-            parameters = { "value=context.propertyValue", "label=prop:context.label", "clientId=prop:context.propertyid", "validate=prop:dateFieldValidator" })
+            parameters = {"value=context.propertyValue", "label=prop:context.label", "clientId=prop:context.propertyid",
+                    "validate=prop:dateFieldValidator"})
     private DateField dateField;
 
     @Component(
-            parameters = { "value=context.propertyValue", "label=prop:context.label", "translate=prop:context.translator", "validate=prop:passwordFieldValidator", "clientId=prop:context.propertyId", "annotationProvider=context" })
+            parameters = {"value=context.propertyValue", "label=prop:context.label",
+                    "translate=prop:passwordFieldTranslator", "validate=prop:passwordFieldValidator",
+                    "clientId=prop:context.propertyId", "annotationProvider=context"})
     private PasswordField passwordField;
 
     @Component(
-            parameters = { "value=context.propertyValue", "label=prop:context.label", "translate=prop:context.translator", "validate=prop:textAreaValidator", "clientId=prop:context.propertyId", "annotationProvider=context" })
+            parameters = {"value=context.propertyValue", "label=prop:context.label",
+                    "translate=prop:textAreaTranslator",
+                    "validate=prop:textAreaValidator", "clientId=prop:context.propertyId",
+                    "annotationProvider=context"})
     private TextArea textArea;
 
 
@@ -76,9 +90,19 @@ public class PropertyEditBlocks
     }
 
 
+    public FieldTranslator getTextFieldTranslator()
+    {
+        return context.getTranslator(textField);
+    }
+
     public FieldValidator getTextFieldValidator()
     {
         return context.getValidator(textField);
+    }
+
+    public FieldTranslator getNumberFieldTranslator()
+    {
+        return context.getTranslator(numberField);
     }
 
     public FieldValidator getNumberFieldValidator()
@@ -86,11 +110,20 @@ public class PropertyEditBlocks
         return context.getValidator(numberField);
     }
 
+    public FieldTranslator getPasswordFieldTranslator()
+    {
+        return context.getTranslator(passwordField);
+    }
+
     public FieldValidator getPasswordFieldValidator()
     {
         return context.getValidator(passwordField);
     }
 
+    public FieldTranslator getTextAreaTranslator()
+    {
+        return context.getTranslator(textArea);
+    }
 
     public FieldValidator getTextAreaValidator()
     {

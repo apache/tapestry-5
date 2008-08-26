@@ -52,5 +52,5 @@ public class MyComponent
 }
 +---+
 
- As with  {{{ajax.html}included JavaScript libraries}}, the stylesheet will only be added once,
+ As with  {{{ajax.html}included JavaScript libraries}}, each stylesheet will only be added once,
  regardless of the number of components that include it via the annotation.

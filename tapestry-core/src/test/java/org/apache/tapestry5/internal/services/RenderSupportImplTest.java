@@ -204,7 +204,7 @@ public class RenderSupportImplTest extends InternalBaseTestCase
     {
         DocumentLinker linker = mockDocumentLinker();
 
-        linker.addScript("Tapestry.focus('foo');");
+        linker.addScript("$('foo').activate();");
 
         replay();
 
@@ -222,7 +222,7 @@ public class RenderSupportImplTest extends InternalBaseTestCase
     {
         DocumentLinker linker = mockDocumentLinker();
 
-        linker.addScript("Tapestry.focus('foo');");
+        linker.addScript("$('foo').activate();");
 
         replay();
 
@@ -241,7 +241,7 @@ public class RenderSupportImplTest extends InternalBaseTestCase
     {
         DocumentLinker linker = mockDocumentLinker();
 
-        linker.addScript("Tapestry.focus('bar');");
+        linker.addScript("$('bar').activate();");
 
         replay();
 

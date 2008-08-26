@@ -1,4 +1,4 @@
-// Copyright 2008 The Apache Software Foundation
+//  Copyright 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,32 +14,33 @@
 
 package org.apache.tapestry5.internal.translator;
 
-import org.apache.tapestry5.Field;
-import org.apache.tapestry5.ValidationException;
+import org.apache.tapestry5.Translator;
 
-public class ByteTranslator extends IntegerNumberTranslator<Byte>
+public abstract class AbstractTranslator<T> implements Translator<T>
 {
-    public ByteTranslator()
+    private final String name;
+    private final Class<T> type;
+    private final String messageKey;
+
+    protected AbstractTranslator(String name, Class<T> type, String messageKey)
     {
-        super("byte", Byte.class);
+        this.name = name;
+        this.type = type;
+        this.messageKey = messageKey;
     }
 
-    public String toClient(Byte value)
+    public String getMessageKey()
     {
-        return value.toString();
+        return messageKey;
     }
 
-
-    public Byte parseClient(Field field, String clientValue, String message)
-            throws ValidationException
+    public Class<T> getType()
     {
-        try
-        {
-            return new Byte(clientValue.trim());
-        }
-        catch (NumberFormatException ex)
-        {
-            throw new ValidationException(message);
-        }
+        return type;
+    }
+
+    public String getName()
+    {
+        return name;
     }
 }

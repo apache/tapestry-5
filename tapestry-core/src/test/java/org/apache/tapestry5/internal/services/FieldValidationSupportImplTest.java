@@ -17,15 +17,13 @@ package org.apache.tapestry5.internal.services;
 import org.apache.tapestry5.*;
 import org.apache.tapestry5.corelib.internal.InternalMessages;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
-import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.services.ValidationMessagesSource;
 import org.easymock.EasyMock;
+import static org.easymock.EasyMock.eq;
 import org.easymock.IAnswer;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-
-import java.util.Locale;
 
 public class FieldValidationSupportImplTest extends InternalBaseTestCase
 {
@@ -38,20 +36,19 @@ public class FieldValidationSupportImplTest extends InternalBaseTestCase
     }
 
 
-    @SuppressWarnings({ "unchecked" })
+    @SuppressWarnings({"unchecked"})
     @Test
     public void parse_client_via_event() throws ValidationException
     {
         ComponentResources resources = mockComponentResources();
-        Translator translator = mockTranslator();
-        ValidationMessagesSource source = mockValidationMessagesSource();
+        FieldTranslator translator = mockFieldTranslator();
         NullFieldStrategy nullFieldStrategy = mockNullFieldStrategy();
 
         String clientValue = "abracadabra";
 
         IAnswer answer = new IAnswer()
         {
-            @SuppressWarnings({ "unchecked" })
+            @SuppressWarnings({"unchecked"})
             public Object answer() throws Throwable
             {
                 Object[] args = EasyMock.getCurrentArguments();
@@ -72,7 +69,7 @@ public class FieldValidationSupportImplTest extends InternalBaseTestCase
         replay();
 
 
-        FieldValidationSupport support = new FieldValidationSupportImpl(source, typeCoercer);
+        FieldValidationSupport support = new FieldValidationSupportImpl(typeCoercer);
 
         Object actual = support.parseClient(clientValue, resources, translator, nullFieldStrategy);
 
@@ -84,11 +81,8 @@ public class FieldValidationSupportImplTest extends InternalBaseTestCase
     @Test
     public void parse_client_for_null_value_returns_null_and_bypasses_events_and_translator() throws Exception
     {
-        Messages messages = mockMessages();
         ComponentResources resources = mockComponentResources();
-        Translator translator = mockTranslator();
-        ValidationMessagesSource source = mockValidationMessagesSource();
-        Locale locale = Locale.GERMAN;
+        FieldTranslator translator = mockFieldTranslator();
         NullFieldStrategy nullFieldStrategy = mockNullFieldStrategy();
 
         String clientValue = "";
@@ -97,15 +91,11 @@ public class FieldValidationSupportImplTest extends InternalBaseTestCase
 
         ignoreEvent(resources, FieldValidationSupportImpl.PARSE_CLIENT_EVENT, clientValue);
 
-        train_getLocale(resources, locale);
-
-        train_getValidationMessages(source, locale, messages);
-
-        expect(translator.parseClient(clientValue, messages)).andReturn("");
+        expect(translator.parse(clientValue)).andReturn("");
 
         replay();
 
-        FieldValidationSupport support = new FieldValidationSupportImpl(source, typeCoercer);
+        FieldValidationSupport support = new FieldValidationSupportImpl(typeCoercer);
 
         Object actual = support.parseClient(clientValue, resources, translator, nullFieldStrategy);
 
@@ -126,14 +116,13 @@ public class FieldValidationSupportImplTest extends InternalBaseTestCase
         expect(nullFieldStrategy.replaceFromClient()).andReturn(value).atLeastOnce();
     }
 
-    @SuppressWarnings({ "ThrowableInstanceNeverThrown" })
+    @SuppressWarnings({"ThrowableInstanceNeverThrown"})
     @Test
     public void parse_client_event_handler_throws_validation_exception() throws Exception
     {
         ComponentResources resources = mockComponentResources();
-        Translator translator = mockTranslator();
+        FieldTranslator translator = mockFieldTranslator();
         ValidationException ve = new ValidationException("Just didn't feel right.");
-        ValidationMessagesSource source = mockValidationMessagesSource();
         NullFieldStrategy nullFieldStrategy = mockNullFieldStrategy();
 
         String clientValue = "abracadabra";
@@ -146,7 +135,7 @@ public class FieldValidationSupportImplTest extends InternalBaseTestCase
 
         replay();
 
-        FieldValidationSupport support = new FieldValidationSupportImpl(source, typeCoercer);
+        FieldValidationSupport support = new FieldValidationSupportImpl(typeCoercer);
 
         try
         {
@@ -163,14 +152,13 @@ public class FieldValidationSupportImplTest extends InternalBaseTestCase
         verify();
     }
 
-    @SuppressWarnings({ "ThrowableInstanceNeverThrown" })
+    @SuppressWarnings({"ThrowableInstanceNeverThrown"})
     @Test
     public void parse_client_event_handler_fails_with_other_exception() throws Exception
     {
         ComponentResources resources = mockComponentResources();
-        Translator translator = mockTranslator();
+        FieldTranslator translator = mockFieldTranslator();
         RuntimeException re = new RuntimeException("Just didn't feel right.");
-        ValidationMessagesSource source = mockValidationMessagesSource();
         NullFieldStrategy nullFieldStrategy = mockNullFieldStrategy();
 
         String clientValue = "abracadabra";
@@ -183,7 +171,7 @@ public class FieldValidationSupportImplTest extends InternalBaseTestCase
 
         replay();
 
-        FieldValidationSupport support = new FieldValidationSupportImpl(source, typeCoercer);
+        FieldValidationSupport support = new FieldValidationSupportImpl(typeCoercer);
 
         try
         {
@@ -203,26 +191,20 @@ public class FieldValidationSupportImplTest extends InternalBaseTestCase
     @Test
     public void parse_client_via_translator() throws ValidationException
     {
-        Messages messages = mockMessages();
         ComponentResources resources = mockComponentResources();
-        Translator translator = mockTranslator();
+        FieldTranslator translator = mockFieldTranslator();
         ValidationMessagesSource source = mockValidationMessagesSource();
-        Locale locale = Locale.GERMAN;
         NullFieldStrategy nullFieldStrategy = mockNullFieldStrategy();
 
         String clientValue = "abracadabra";
 
         ignoreEvent(resources, FieldValidationSupportImpl.PARSE_CLIENT_EVENT, clientValue);
 
-        train_getLocale(resources, locale);
-
-        train_getValidationMessages(source, locale, messages);
-
-        expect(translator.parseClient(clientValue, messages)).andReturn("foobar");
+        expect(translator.parse(clientValue)).andReturn("foobar");
 
         replay();
 
-        FieldValidationSupport support = new FieldValidationSupportImpl(source, typeCoercer);
+        FieldValidationSupport support = new FieldValidationSupportImpl(typeCoercer);
 
         Object actual = support.parseClient(clientValue, resources, translator, nullFieldStrategy);
 
@@ -231,14 +213,13 @@ public class FieldValidationSupportImplTest extends InternalBaseTestCase
         verify();
     }
 
-    @SuppressWarnings({ "unchecked" })
+    @SuppressWarnings({"unchecked"})
     @Test
     public void to_client_via_translator()
     {
         Object value = new Integer(99);
         ComponentResources resources = mockComponentResources();
-        Translator translator = mockTranslator();
-        ValidationMessagesSource source = mockValidationMessagesSource();
+        FieldTranslator translator = mockFieldTranslator();
         NullFieldStrategy nullFieldStrategy = mockNullFieldStrategy();
 
         expect(translator.getType()).andReturn(Integer.class);
@@ -246,14 +227,14 @@ public class FieldValidationSupportImplTest extends InternalBaseTestCase
         String clientValue = "abracadabra";
 
         EasyMock.expect(resources.triggerEvent(EasyMock.eq(FieldValidationSupportImpl.TO_CLIENT_EVENT),
-                                               EasyMock.aryEq(new Object[] { value }),
+                                               EasyMock.aryEq(new Object[] {value}),
                                                EasyMock.isA(ComponentEventCallback.class))).andReturn(false);
 
         expect(translator.toClient(value)).andReturn(clientValue);
 
         replay();
 
-        FieldValidationSupport support = new FieldValidationSupportImpl(source, typeCoercer);
+        FieldValidationSupport support = new FieldValidationSupportImpl(typeCoercer);
 
         String actual = support.toClient(value, resources, translator, nullFieldStrategy);
 
@@ -262,21 +243,20 @@ public class FieldValidationSupportImplTest extends InternalBaseTestCase
         verify();
     }
 
-    @SuppressWarnings({ "unchecked" })
+    @SuppressWarnings({"unchecked"})
     @Test
     public void to_client_via_event_handler() throws Exception
     {
         Object value = new Object();
         ComponentResources resources = mockComponentResources();
-        Translator translator = mockTranslator();
-        ValidationMessagesSource source = mockValidationMessagesSource();
+        FieldTranslator translator = mockFieldTranslator();
         NullFieldStrategy nullFieldStrategy = mockNullFieldStrategy();
 
         final String clientValue = "abracadabra";
 
         IAnswer answer = new IAnswer()
         {
-            @SuppressWarnings({ "unchecked" })
+            @SuppressWarnings({"unchecked"})
             public Object answer() throws Throwable
             {
                 Object[] args = EasyMock.getCurrentArguments();
@@ -287,13 +267,13 @@ public class FieldValidationSupportImplTest extends InternalBaseTestCase
         };
 
         EasyMock.expect(resources.triggerEvent(EasyMock.eq(FieldValidationSupportImpl.TO_CLIENT_EVENT),
-                                               EasyMock.aryEq(new Object[] { value }),
+                                               EasyMock.aryEq(new Object[] {value}),
                                                EasyMock.isA(ComponentEventCallback.class))).andAnswer(answer);
 
 
         replay();
 
-        FieldValidationSupport support = new FieldValidationSupportImpl(source, null);
+        FieldValidationSupport support = new FieldValidationSupportImpl(null);
 
         String actual = support.toClient(value, resources, translator, nullFieldStrategy);
 
@@ -302,17 +282,16 @@ public class FieldValidationSupportImplTest extends InternalBaseTestCase
         verify();
     }
 
-    @SuppressWarnings({ "unchecked" })
+    @SuppressWarnings({"unchecked"})
     public void to_client_via_event_handler_returns_non_string() throws Exception
     {
         Object value = new Object();
         ComponentResources resources = mockComponentResources();
-        Translator translator = mockTranslator();
-        ValidationMessagesSource source = mockValidationMessagesSource();
+        FieldTranslator translator = mockFieldTranslator();
 
         IAnswer answer = new IAnswer()
         {
-            @SuppressWarnings({ "unchecked" })
+            @SuppressWarnings({"unchecked"})
             public Object answer() throws Throwable
             {
                 Object[] args = EasyMock.getCurrentArguments();
@@ -325,13 +304,13 @@ public class FieldValidationSupportImplTest extends InternalBaseTestCase
         };
 
         EasyMock.expect(resources.triggerEvent(EasyMock.eq(FieldValidationSupportImpl.TO_CLIENT_EVENT),
-                                               EasyMock.aryEq(new Object[] { value }),
+                                               EasyMock.aryEq(new Object[] {value}),
                                                EasyMock.isA(ComponentEventCallback.class))).andAnswer(answer);
 
 
         replay();
 
-        FieldValidationSupport support = new FieldValidationSupportImpl(source, null);
+        FieldValidationSupport support = new FieldValidationSupportImpl(null);
 
         try
         {
@@ -348,7 +327,7 @@ public class FieldValidationSupportImplTest extends InternalBaseTestCase
         verify();
     }
 
-    @SuppressWarnings({ "unchecked" })
+    @SuppressWarnings({"unchecked"})
     @Test
     public void event_triggered_after_delegate_invoked() throws Exception
     {
@@ -356,7 +335,6 @@ public class FieldValidationSupportImplTest extends InternalBaseTestCase
 
         ComponentResources resources = mockComponentResources();
         FieldValidator fv = mockFieldValidator();
-        ValidationMessagesSource source = mockValidationMessagesSource();
 
         Object value = new Object();
 
@@ -365,25 +343,24 @@ public class FieldValidationSupportImplTest extends InternalBaseTestCase
         ComponentEventCallback handler = null;
 
         expect(resources.triggerEvent(EasyMock.eq(FieldValidationSupportImpl.VALIDATE_EVENT),
-                                      EasyMock.aryEq(new Object[] { value }), EasyMock.eq(handler))).andReturn(true);
+                                      EasyMock.aryEq(new Object[] {value}), EasyMock.eq(handler))).andReturn(true);
 
 
         replay();
 
-        FieldValidationSupport support = new FieldValidationSupportImpl(source, typeCoercer);
+        FieldValidationSupport support = new FieldValidationSupportImpl(typeCoercer);
 
         support.validate(value, resources, fv);
 
         verify();
     }
 
-    @SuppressWarnings({ "unchecked", "ThrowableInstanceNeverThrown" })
+    @SuppressWarnings({"unchecked", "ThrowableInstanceNeverThrown"})
     @Test
     public void event_trigger_throws_validation_exception() throws Exception
     {
         ComponentResources resources = mockComponentResources();
         FieldValidator fv = mockFieldValidator();
-        ValidationMessagesSource source = mockValidationMessagesSource();
 
         Object value = new Object();
 
@@ -394,13 +371,13 @@ public class FieldValidationSupportImplTest extends InternalBaseTestCase
 
         fv.validate(value);
 
-        expect(resources.triggerEvent(EasyMock.eq(FieldValidationSupportImpl.VALIDATE_EVENT),
-                                      EasyMock.aryEq(new Object[] { value }), EasyMock.eq(handler))).andThrow(re);
+        expect(resources.triggerEvent(eq(FieldValidationSupportImpl.VALIDATE_EVENT),
+                                      EasyMock.aryEq(new Object[] {value}), eq(handler))).andThrow(re);
 
 
         replay();
 
-        FieldValidationSupport support = new FieldValidationSupportImpl(source, typeCoercer);
+        FieldValidationSupport support = new FieldValidationSupportImpl(typeCoercer);
 
 
         try

@@ -33,13 +33,13 @@ public interface FieldValidationSupport
      * @return the translated value  or null if the value is null
      * @see org.apache.tapestry5.Translator#toClient(Object)
      */
-    String toClient(Object value, ComponentResources componentResources, Translator translator,
+    String toClient(Object value, ComponentResources componentResources, FieldTranslator<Object> translator,
                     NullFieldStrategy nullFieldStrategy);
 
     /**
-     * A wrapper around {@link org.apache.tapestry5.Translator#parseClient(String, org.apache.tapestry5.ioc.Messages)}.
-     * First a "parseclient" event is fired; the translator is only invoked if that returns null (typically because
-     * there is not handler for the event).
+     * A wrapper around {@link Translator#parseClient(Field, String, String)}. First a "parseclient" event is fired; the
+     * translator is only invoked if that returns null (typically because there is no event handler method for the
+     * event).
      *
      * @param clientValue        the value provided by the client (not null)
      * @param componentResources used to trigger events
@@ -48,9 +48,9 @@ public interface FieldValidationSupport
      * @return the input parsed to an object
      * @throws org.apache.tapestry5.ValidationException
      *          if the value can't be parsed
-     * @see org.apache.tapestry5.Translator#parseClient(String, org.apache.tapestry5.ioc.Messages)
+     * @see Translator#parseClient(Field, String, String)
      */
-    Object parseClient(String clientValue, ComponentResources componentResources, Translator translator,
+    Object parseClient(String clientValue, ComponentResources componentResources, FieldTranslator<Object> translator,
                        NullFieldStrategy nullFieldStrategy)
             throws ValidationException;
 
