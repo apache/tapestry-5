@@ -1263,7 +1263,7 @@ Tapestry.DependentExecutor.prototype = {
 
                 scriptElement.onreadystatechange = function ()
                 {
-                    Tapestry.debug("State #{state} for #{script} (loaded is #{loaded})", { state:this.readyState, script:scriptElement.src, loaded:loaded });
+                    // Tapestry.debug("State #{state} for #{script} (loaded is #{loaded})", { state:this.readyState, script:scriptElement.src, loaded:loaded });
 
                     // IE may fire either loaded or complete, or perhaps even both.
                     if (! loaded && (this.readyState == 'loaded' || this.readyState == 'complete'))
@@ -1285,7 +1285,7 @@ Tapestry.DependentExecutor.prototype = {
     {
         this.loaded++;
 
-        Tapestry.debug("Script #{loaded} of #{toload} loaded", this);
+        // Tapestry.debug("Script #{loaded} of #{toload} loaded", this);
 
         // Evaluated the dependent script only once all the elements have loaded.
 
@@ -1325,7 +1325,7 @@ Tapestry.ScriptManager = {
      */
     contains : function (collection, prop, assetURL)
     {
-        Tapestry.debug("Checking previously loaded for: " + assetURL);
+        // Tapestry.debug("Checking previously loaded for: " + assetURL);
 
         return $A(collection).any(function (element)
         {
@@ -1336,7 +1336,7 @@ Tapestry.ScriptManager = {
             var complete =
                     Prototype.Browser.IE ? Tapestry.rebuildURL(existing) : existing;
 
-            Tapestry.debug("Previously loaded: " + complete);
+            // Tapestry.debug("Previously loaded: " + complete);
 
             return complete == assetURL;
         });
@@ -1362,7 +1362,7 @@ Tapestry.ScriptManager = {
 
                 if (Tapestry.ScriptManager.contains(document.scripts, "src", assetURL)) return; // continue to next script
 
-                Tapestry.debug("Loading script: " + assetURL);
+                // Tapestry.debug("Loading script: " + assetURL);
 
                 var element = new Element('script', { src: assetURL, type: 'text/javascript' });
 
