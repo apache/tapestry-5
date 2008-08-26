@@ -54,22 +54,6 @@ public abstract class AbstractField implements Field
     @Environmental
     private ValidationDecorator decorator;
 
-    protected static final FieldValidator NOOP_VALIDATOR = new FieldValidator()
-    {
-        public void validate(Object value) throws ValidationException
-        {
-            // Do nothing
-        }
-
-        public void render(MarkupWriter writer)
-        {
-        }
-
-        public boolean isRequired()
-        {
-            return false;
-        }
-    };
 
     static class Setup implements ComponentAction<AbstractField>, Serializable
     {

@@ -21,23 +21,23 @@ import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.util.StrategyRegistry;
 import org.apache.tapestry5.services.TranslatorSource;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
 public class TranslatorSourceImpl implements TranslatorSource, InvalidationListener
 {
-    private final Map<String, Translator> translators;
+    private final Map<String, Translator> translators = CollectionFactory.newMap();
 
     private final StrategyRegistry<Translator> registry;
 
-    public TranslatorSourceImpl(Map<String, Translator> translators)
+    public TranslatorSourceImpl(Collection<Translator> configuration)
     {
-        this.translators = translators;
-
         Map<Class, Translator> typeToTranslator = CollectionFactory.newMap();
 
-        for (Translator t : translators.values())
+        for (Translator t : configuration)
         {
+            translators.put(t.getName(), t);
             typeToTranslator.put(t.getType(), t);
         }
 

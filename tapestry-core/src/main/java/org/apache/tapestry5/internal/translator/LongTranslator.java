@@ -14,26 +14,21 @@
 
 package org.apache.tapestry5.internal.translator;
 
-import org.apache.tapestry5.Translator;
+import org.apache.tapestry5.Field;
 import org.apache.tapestry5.ValidationException;
-import org.apache.tapestry5.ioc.Messages;
 
 /**
  * A translator for type long.
  */
-public class LongTranslator implements Translator<Long>
+public class LongTranslator extends IntegerNumberTranslator<Long>
 {
-    public Class<Long> getType()
+    public LongTranslator()
     {
-        return Long.class;
+        super("long", Long.class);
     }
 
-    /**
-     * Parses blank values to null, otherwise parses the client value to a long
-     *
-     * @throws ValidationException if the clientValue can not be parsed
-     */
-    public Long parseClient(String clientValue, Messages messages) throws ValidationException
+    public Long parseClient(Field field, String clientValue, String message)
+            throws ValidationException
     {
 
         try
@@ -42,13 +37,10 @@ public class LongTranslator implements Translator<Long>
         }
         catch (NumberFormatException ex)
         {
-            throw new ValidationException(messages.format("integer-format-exception", clientValue));
+            throw new ValidationException(message);
         }
     }
 
-    /**
-     * Converts null to the blank string, non-null to a string representation.
-     */
     public String toClient(Long value)
     {
         return value.toString();

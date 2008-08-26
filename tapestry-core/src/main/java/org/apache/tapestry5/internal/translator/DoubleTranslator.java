@@ -14,18 +14,18 @@
 
 package org.apache.tapestry5.internal.translator;
 
-import org.apache.tapestry5.Translator;
+import org.apache.tapestry5.Field;
 import org.apache.tapestry5.ValidationException;
-import org.apache.tapestry5.ioc.Messages;
 
-public class DoubleTranslator implements Translator<Double>
+public class DoubleTranslator extends DecimalNumberTranslator<Double>
 {
-    /**
-     * Parses blank values to null, otherwise parses the client value to a double
-     *
-     * @throws ValidationException if the clientValue can not be parsed
-     */
-    public Double parseClient(String clientValue, Messages messages) throws ValidationException
+    public DoubleTranslator()
+    {
+        super("double", Double.class);
+    }
+
+    public Double parseClient(Field field, String clientValue, String message)
+            throws ValidationException
     {
         try
         {
@@ -33,20 +33,12 @@ public class DoubleTranslator implements Translator<Double>
         }
         catch (NumberFormatException ex)
         {
-            throw new ValidationException(messages.format("number-format-exception", clientValue));
+            throw new ValidationException(message);
         }
     }
 
-    /**
-     * Converts null to the blank string, non-null to a string representation.
-     */
     public String toClient(Double value)
     {
         return value.toString();
-    }
-
-    public Class<Double> getType()
-    {
-        return Double.class;
     }
 }

@@ -42,7 +42,6 @@ import org.apache.tapestry5.runtime.RenderQueue;
 import org.apache.tapestry5.services.ComponentClassResolver;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.TapestryModule;
-import org.apache.tapestry5.services.TranslatorSource;
 import org.apache.tapestry5.test.TapestryTestCase;
 import org.easymock.EasyMock;
 import static org.easymock.EasyMock.eq;
@@ -153,7 +152,6 @@ public class InternalBaseTestCase extends TapestryTestCase implements Registry
                                               T service)
     {
         expect(registry.getService(serviceId, serviceInterface)).andReturn(service);
-
     }
 
     protected final ComponentInstantiatorSource mockComponentInstantiatorSource()
@@ -613,11 +611,6 @@ public class InternalBaseTestCase extends TapestryTestCase implements Registry
         expect(context.getCount()).andReturn(count).atLeastOnce();
     }
 
-    protected final TranslatorSource mockTranslatorSource()
-    {
-        return newMock(TranslatorSource.class);
-    }
-
     protected final void train_getPropertyAdapter(ClassPropertyAdapter classPropertyAdapter,
                                                   String propertyName, PropertyAdapter propertyAdapter)
     {
@@ -652,5 +645,10 @@ public class InternalBaseTestCase extends TapestryTestCase implements Registry
         train_getLogger(model, logger);
 
         return model;
+    }
+
+    protected final FieldComponent mockFieldComponent()
+    {
+        return newMock(FieldComponent.class);
     }
 }

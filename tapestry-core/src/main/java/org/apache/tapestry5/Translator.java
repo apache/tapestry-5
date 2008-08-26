@@ -14,22 +14,30 @@
 
 package org.apache.tapestry5;
 
-import org.apache.tapestry5.ioc.Messages;
-import org.apache.tapestry5.services.ValidationMessagesSource;
+import org.apache.tapestry5.services.FormSupport;
 
 /**
  * Translates between client-side and server-side values. Client-side values are always strings.
  *
  * @param <T>
  * @see org.apache.tapestry5.services.TranslatorSource
- * @see FieldValidationSupport
+ * @see org.apache.tapestry5.FieldValidationSupport
+ * @see org.apache.tapestry5.FieldTranslator
  */
 public interface Translator<T>
 {
     /**
+     * Returns a unique name for the translator. This is used to identify the translator by name, but is also used when
+     * locating override messages for the translator.
+     *
+     * @return unique name for the translator
+     */
+    String getName();
+
+    /**
      * Converts a server-side value to a client-side string. This allows for formatting of the value in a way
-     * appropriate to the end user. The output client value should be parsable by {@link #parseClient(String,
-     * Messages)}.
+     * appropriate to the end user. The output client value should be parsable by {@link #parseClient(Field, String,
+     * String)}.
      *
      * @param value the server side value (which will not be null)
      * @return client-side value to present to the user
@@ -44,12 +52,36 @@ public interface Translator<T>
     Class<T> getType();
 
     /**
+     * Returns the message key, within the validation messages, normally used by this validator. This is used to provide
+     * the formatted message to {@link #parseClient(Field, String, String)} or {@link #render(Field, String,
+     * MarkupWriter, org.apache.tapestry5.services.FormSupport)}.
+     *
+     * @return a message key
+     * @see org.apache.tapestry5.services.ValidationMessagesSource
+     */
+    String getMessageKey();
+
+    /**
      * Converts a submitted request value into an appropriate server side value.
      *
+     * @param field       for which a value is being parsed
      * @param clientValue to convert to a server value; this will not be null, but may be blank
-     * @param messages    validator messages assembled by {@link ValidationMessagesSource}
+     * @param message     formatted validation message, either from validation messages, or from an override
      * @return equivalent server-side value (possibly null)
      * @throws ValidationException if the value can not be parsed
      */
-    T parseClient(String clientValue, Messages messages) throws ValidationException;
+    T parseClient(Field field, String clientValue, String message) throws ValidationException;
+
+    /**
+     * Hook used by components to allow the validator to contribute additional attributes or (more often) client-side
+     * JavaScript (via the {@link org.apache.tapestry5.services.FormSupport#addValidation(Field, String, String,
+     * Object)}).
+     *
+     * @param field       the field which is currently being rendered
+     * @param message     formatted validation message, either from validation messages, or from an override
+     * @param writer      markup writer, allowing additional attributes to be written into the active element
+     * @param formSupport used to add JavaScript
+     */
+    void render(Field field, String message, MarkupWriter writer,
+                FormSupport formSupport);
 }

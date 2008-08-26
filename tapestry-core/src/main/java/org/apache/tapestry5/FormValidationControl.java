@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,30 +20,29 @@ package org.apache.tapestry5;
 public interface FormValidationControl
 {
     /**
-     * A convienience for invoking {@link ValidationTracker#recordError(String)}.
+     * A convienience for invoking {@link org.apache.tapestry5.ValidationTracker#recordError(String)}.
      */
-    public abstract void recordError(String errorMessage);
+    void recordError(String errorMessage);
 
     /**
-     * A convienience for invoking {@link ValidationTracker#recordError(Field, String)}.
+     * A convienience for invoking {@link org.apache.tapestry5.ValidationTracker#recordError(Field, String)}.
      */
-    public abstract void recordError(Field field, String errorMessage);
+    void recordError(Field field, String errorMessage);
 
     /**
-     * Returns true if the form's {@link ValidationTracker} contains any {@link ValidationTracker#getHasErrors()
+     * Returns true if the form's {@link ValidationTracker} contains any {@link org.apache.tapestry5.ValidationTracker#getHasErrors()
      * errors}.
      */
-    public abstract boolean getHasErrors();
+    boolean getHasErrors();
 
     /**
-     * Returns true if the form's {@link ValidationTracker} does not contain any {@link ValidationTracker#getHasErrors()
-     * errors}.
+     * Returns true if the form's {@link org.apache.tapestry5.ValidationTracker} does not contain any {@link
+     * org.apache.tapestry5.ValidationTracker#getHasErrors() errors}.
      */
-    public abstract boolean isValid();
+    boolean isValid();
 
     /**
-     * Invokes {@link ValidationTracker#clear()}.
+     * Invokes {@link org.apache.tapestry5.ValidationTracker#clear()}.
      */
-    public abstract void clearErrors();
-
+    void clearErrors();
 }

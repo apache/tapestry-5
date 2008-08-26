@@ -75,8 +75,8 @@ Tapestry.DateField.prototype = {
 
         var errorHandler = function(message)
         {
-            Tapestry.fieldError(this.field, message);
-            Tapestry.focus(this.field);
+            this.field.showValidationMessage(message);
+            this.field.activate();
         };
 
         this.sendServerRequest(this.parseURL, value, resultHandler, errorHandler);
@@ -120,7 +120,7 @@ Tapestry.DateField.prototype = {
 
         this.datePicker.onselect = function()
         {
-            var input = this.formatDate(this.datePicker.getDate());
+            var input = this.canonicalizeDate(this.datePicker.getDate());
 
             var resultHandler = function(result)
             {
@@ -133,16 +133,21 @@ Tapestry.DateField.prototype = {
 
             var errorHandler = function(message)
             {
-                Tapestry.fieldError(this.field, message);
-                Tapestry.focus(this.field);
+                this.field.showValidationMessage(message);
+                this.field.activate();
+
                 this.hidePopup();
-            }
+            };
 
             this.sendServerRequest(this.formatURL, input, resultHandler, errorHandler);
         }.bind(this);
     },
 
-    formatDate : function(date)
+    /**
+     * Reformats the date into a canoncialized format accepted on the server. The format
+     * is equivalent to M/d/yyyy. This format is used regardless of localization.
+     */
+    canonicalizeDate : function(date)
     {
         if (date == null) return "";
 
@@ -155,7 +160,7 @@ Tapestry.DateField.prototype = {
         this.popup.clonePosition(this.field, { offsetTop: this.field.getHeight() + 2 }).setStyle({ width: "", height: "" });
     },
 
-    /** Duration used when fading the popup in or out. */
+    /** Duration, in seconds, used when fading the popup in or out. */
 
     FADE_DURATION : .20,
 

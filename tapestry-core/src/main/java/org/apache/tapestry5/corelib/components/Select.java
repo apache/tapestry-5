@@ -72,9 +72,6 @@ public class Select extends AbstractField
     private ComponentDefaultProvider defaultProvider;
 
     @Inject
-    private FieldValidatorDefaultSource fieldValidatorDefaultSource;
-
-    @Inject
     private Locale locale;
 
     // Maybe this should default to property "<componentId>Model"?
@@ -114,7 +111,7 @@ public class Select extends AbstractField
      */
     @Parameter(defaultPrefix = BindingConstants.VALIDATE)
     @SuppressWarnings("unchecked")
-    private FieldValidator<Object> validate = NOOP_VALIDATOR;
+    private FieldValidator<Object> validate;
 
     /**
      * The value to read or update.
@@ -200,13 +197,7 @@ public class Select extends AbstractField
      */
     FieldValidator defaultValidate()
     {
-        Class type = resources.getBoundType("value");
-
-        if (type == null) return null;
-
-        return fieldValidatorDefaultSource.createDefaultValidator(this, resources.getId(),
-                                                                  resources.getContainerMessages(), locale, type,
-                                                                  resources.getAnnotationProvider("value"));
+        return defaultProvider.defaultValidator("value", resources);
     }
 
     Object defaultBlankLabel()

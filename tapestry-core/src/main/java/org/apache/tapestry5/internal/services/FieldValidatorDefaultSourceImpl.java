@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,6 +14,7 @@
 
 package org.apache.tapestry5.internal.services;
 
+import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.Field;
 import org.apache.tapestry5.FieldValidator;
 import org.apache.tapestry5.ioc.AnnotationProvider;
@@ -67,5 +68,17 @@ public class FieldValidatorDefaultSourceImpl implements FieldValidatorDefaultSou
         }
 
         return validators.size() == 1 ? validators.get(0) : new CompositeFieldValidator(validators);
+    }
+
+    public FieldValidator createDefaultValidator(ComponentResources resources, String parameterName)
+    {
+        Class propertyType = resources.getBoundType(parameterName);
+
+        if (propertyType == null) return null;
+
+        Field field = (Field) resources.getComponent();
+
+        return createDefaultValidator(field, resources.getId(), resources.getContainerMessages(), resources.getLocale(),
+                                      propertyType, resources.getAnnotationProvider(parameterName));
     }
 }

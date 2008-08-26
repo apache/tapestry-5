@@ -17,7 +17,7 @@ package org.apache.tapestry5.internal.services;
 import org.apache.tapestry5.Binding;
 import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.ComponentResources;
-import org.apache.tapestry5.Translator;
+import org.apache.tapestry5.FieldTranslator;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.services.ClassPropertyAdapter;
@@ -26,7 +26,7 @@ import org.apache.tapestry5.ioc.services.PropertyAdapter;
 import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.services.BindingSource;
 import org.apache.tapestry5.services.ComponentDefaultProvider;
-import org.apache.tapestry5.services.TranslatorSource;
+import org.apache.tapestry5.services.FieldTranslatorSource;
 import org.testng.annotations.Test;
 
 public class ComponentDefaultProviderImplTest extends InternalBaseTestCase
@@ -50,7 +50,7 @@ public class ComponentDefaultProviderImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentDefaultProvider provider = new ComponentDefaultProviderImpl(null, null, null, null);
+        ComponentDefaultProvider provider = new ComponentDefaultProviderImpl(null, null, null, null, null);
 
         assertSame(provider.defaultLabel(resources), message);
 
@@ -74,7 +74,7 @@ public class ComponentDefaultProviderImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentDefaultProvider provider = new ComponentDefaultProviderImpl(null, null, null, null);
+        ComponentDefaultProvider provider = new ComponentDefaultProviderImpl(null, null, null, null, null);
 
         assertEquals(provider.defaultLabel(resources), "My Field");
 
@@ -103,7 +103,7 @@ public class ComponentDefaultProviderImplTest extends InternalBaseTestCase
         replay();
 
         ComponentDefaultProvider source = new ComponentDefaultProviderImpl(access, bindingSource, null,
-                                                                           null);
+                                                                           null, null);
 
         assertNull(source.defaultBinding(parameterName, resources));
 
@@ -145,7 +145,7 @@ public class ComponentDefaultProviderImplTest extends InternalBaseTestCase
         replay();
 
         ComponentDefaultProvider source = new ComponentDefaultProviderImpl(access, bindingSource, null,
-                                                                           null);
+                                                                           null, null);
 
         assertSame(source.defaultBinding(parameterName, resources), binding);
 
@@ -155,14 +155,14 @@ public class ComponentDefaultProviderImplTest extends InternalBaseTestCase
     @Test
     public void default_translator_property_type_is_null()
     {
-        TranslatorSource source = mockTranslatorSource();
         ComponentResources resources = mockComponentResources();
+        FieldTranslatorSource source = newMock(FieldTranslatorSource.class);
 
-        train_getBoundType(resources, "object", null);
+        train_createDefaultTranslator(source, resources, "object", null);
 
         replay();
 
-        ComponentDefaultProvider provider = new ComponentDefaultProviderImpl(null, null, null, source);
+        ComponentDefaultProvider provider = new ComponentDefaultProviderImpl(null, null, null, source, null);
 
         assertNull(provider.defaultTranslator("object", resources));
 
@@ -172,21 +172,18 @@ public class ComponentDefaultProviderImplTest extends InternalBaseTestCase
     @Test
     public void default_translator()
     {
-        TranslatorSource source = mockTranslatorSource();
         ComponentResources resources = mockComponentResources();
-        Translator translator = mockTranslator();
+        FieldTranslator translator = mockFieldTranslator();
+        FieldTranslatorSource source = newMock(FieldTranslatorSource.class);
 
-        train_getBoundType(resources, "object", Integer.class);
-
-        expect(source.findByType(Integer.class)).andReturn(translator);
+        train_createDefaultTranslator(source, resources, "object", translator);
 
         replay();
 
-        ComponentDefaultProvider provider = new ComponentDefaultProviderImpl(null, null, null, source);
+        ComponentDefaultProvider provider = new ComponentDefaultProviderImpl(null, null, null, source, null);
 
         assertSame(provider.defaultTranslator("object", resources), translator);
 
         verify();
     }
-
 }

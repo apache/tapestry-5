@@ -204,7 +204,7 @@ public class RenderSupportImpl implements RenderSupport
     {
         if (focusFieldId != null)
         {
-            addScript("Tapestry.focus('%s');", focusFieldId);
+            addScript("$('%s').activate();", focusFieldId);
         }
 
         if (init.length() > 0)

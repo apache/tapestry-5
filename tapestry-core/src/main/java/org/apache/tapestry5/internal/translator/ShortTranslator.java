@@ -14,23 +14,23 @@
 
 package org.apache.tapestry5.internal.translator;
 
-import org.apache.tapestry5.Translator;
+import org.apache.tapestry5.Field;
 import org.apache.tapestry5.ValidationException;
-import org.apache.tapestry5.ioc.Messages;
 
-public class ShortTranslator implements Translator<Short>
+public class ShortTranslator extends IntegerNumberTranslator<Short>
 {
+    public ShortTranslator()
+    {
+        super("short", Short.class);
+    }
+
     public String toClient(Short value)
     {
         return value.toString();
     }
 
-    public Class<Short> getType()
-    {
-        return Short.class;
-    }
-
-    public Short parseClient(String clientValue, Messages messages) throws ValidationException
+    public Short parseClient(Field field, String clientValue, String message)
+            throws ValidationException
     {
         try
         {
@@ -38,7 +38,7 @@ public class ShortTranslator implements Translator<Short>
         }
         catch (NumberFormatException ex)
         {
-            throw new ValidationException(messages.format("integer-format-exception", clientValue));
+            throw new ValidationException(message);
         }
     }
 }

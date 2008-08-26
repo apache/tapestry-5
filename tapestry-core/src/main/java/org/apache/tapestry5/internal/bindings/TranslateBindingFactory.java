@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,29 +16,39 @@ package org.apache.tapestry5.internal.bindings;
 
 import org.apache.tapestry5.Binding;
 import org.apache.tapestry5.ComponentResources;
-import org.apache.tapestry5.Translator;
+import org.apache.tapestry5.FieldTranslator;
 import org.apache.tapestry5.ioc.Location;
 import org.apache.tapestry5.services.BindingFactory;
-import org.apache.tapestry5.services.TranslatorSource;
+import org.apache.tapestry5.services.FieldTranslatorSource;
 
 /**
- * Interprets the binding expression as the name of a {@link Translator} provided by the {@link TranslatorSource}.
+ * Interprets the binding expression as the name of a {@link org.apache.tapestry5.Translator} provided by the {@link
+ * org.apache.tapestry5.services.TranslatorSource}.
  */
 public class TranslateBindingFactory implements BindingFactory
 {
-    private final TranslatorSource source;
+    private final FieldTranslatorSource source;
 
-    public TranslateBindingFactory(TranslatorSource source)
+    public TranslateBindingFactory(FieldTranslatorSource source)
     {
         this.source = source;
     }
 
     public Binding newBinding(String description, ComponentResources container,
-                              ComponentResources component, String expression, Location location)
+                              final ComponentResources component, final String expression, Location location)
     {
-        Translator translator = source.get(expression);
+        return new AbstractBinding(location)
+        {
+            public Object get()
+            {
+                return source.createTranslator(component, expression);
+            }
 
-        return new LiteralBinding(description, translator, location);
+            @Override
+            public Class getBindingType()
+            {
+                return FieldTranslator.class;
+            }
+        };
     }
-
 }

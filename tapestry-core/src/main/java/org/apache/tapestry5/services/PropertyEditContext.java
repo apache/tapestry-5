@@ -15,8 +15,8 @@
 package org.apache.tapestry5.services;
 
 import org.apache.tapestry5.Field;
+import org.apache.tapestry5.FieldTranslator;
 import org.apache.tapestry5.FieldValidator;
-import org.apache.tapestry5.Translator;
 import org.apache.tapestry5.ioc.AnnotationProvider;
 import org.apache.tapestry5.ioc.Messages;
 
@@ -50,9 +50,10 @@ public interface PropertyEditContext extends AnnotationProvider
     /**
      * Returns the translator appropriate for the field (this is based on the property type).
      *
-     * @see TranslatorDefaultSource
+     * @param field
+     * @see org.apache.tapestry5.services.TranslatorSource
      */
-    Translator getTranslator();
+    FieldTranslator getTranslator(Field field);
 
     /**
      * Returns the FieldValidator for the field.

@@ -434,7 +434,6 @@ public abstract class TapestryTestCase extends IOCTestCase
 
                 return result;
             }
-
         };
 
         expect(transformation.findMethods(EasyMock.isA(MethodFilter.class))).andAnswer(answer);
@@ -575,7 +574,6 @@ public abstract class TapestryTestCase extends IOCTestCase
     protected final void train_getFieldType(ClassTransformation transformation, String fieldName, String type)
     {
         expect(transformation.getFieldType(fieldName)).andReturn(type).atLeastOnce();
-
     }
 
     protected final void train_getId(ComponentResources resources, String id)
@@ -1098,11 +1096,62 @@ public abstract class TapestryTestCase extends IOCTestCase
     protected final void train_isRequired(Field field, boolean required)
     {
         expect(field.isRequired()).andReturn(required);
-
     }
 
     protected final void train_getClientId(ClientElement element, String clientId)
     {
         expect(element.getClientId()).andReturn(clientId);
+    }
+
+    protected final FieldTranslator mockFieldTranslator()
+    {
+        return newMock(FieldTranslator.class);
+    }
+
+
+    protected final Translator mockTranslator(String name, Class type)
+    {
+        Translator translator = mockTranslator();
+
+        train_getName(translator, name);
+        train_getType(translator, type);
+
+        return translator;
+    }
+
+    protected final void train_getName(Translator translator, String name)
+    {
+        expect(translator.getName()).andReturn(name).atLeastOnce();
+    }
+
+    protected final void train_getType(Translator translator, Class type)
+    {
+        expect(translator.getType()).andReturn(type).atLeastOnce();
+    }
+
+    protected final void train_createDefaultTranslator(FieldTranslatorSource source, ComponentResources resources,
+                                                       String parameterName, FieldTranslator translator)
+    {
+        expect(source.createDefaultTranslator(resources, parameterName)).andReturn(translator);
+    }
+
+    protected final TranslatorSource mockTranslatorSource()
+    {
+        return newMock(TranslatorSource.class);
+    }
+
+    protected final void train_get(TranslatorSource translatorSource, String name, Translator translator)
+    {
+        expect(translatorSource.get(name)).andReturn(translator).atLeastOnce();
+    }
+
+    protected final void train_getMessageKey(Translator translator, String messageKey)
+    {
+        expect(translator.getMessageKey()).andReturn(messageKey).atLeastOnce();
+    }
+
+    protected final void train_findByType(TranslatorSource ts, Class propertyType, Translator translator)
+    {
+        expect(ts.findByType(propertyType)).andReturn(translator);
     }
 }

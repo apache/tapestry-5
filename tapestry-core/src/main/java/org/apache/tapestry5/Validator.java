@@ -16,7 +16,6 @@ package org.apache.tapestry5;
 
 import org.apache.tapestry5.ioc.MessageFormatter;
 import org.apache.tapestry5.services.FormSupport;
-import org.apache.tapestry5.services.ValidationMessagesSource;
 
 /**
  * Used by a {@link Field} to enforce a <strong>constraint</strong> related to a form submission. Validators themselves
@@ -43,19 +42,19 @@ public interface Validator<C, T>
     Class<T> getValueType();
 
     /**
-     * Returns the message key, within the validiation messages, normally used by this validator. This is used to
-     * provide the {@link MessageFormatter} passed to {@link #validate(Field, Object, MessageFormatter, Object)} (unless
+     * Returns the message key, within the validation messages, normally used by this validator. This is used to provide
+     * the {@link MessageFormatter} passed to {@link #validate(Field, Object, MessageFormatter, Object)} (unless
      * overridden).
      *
      * @return a message key
-     * @see ValidationMessagesSource
+     * @see org.apache.tapestry5.services.ValidationMessagesSource
      */
     String getMessageKey();
 
     /**
-     * Invoked after the client-submitted value has been {@link org.apache.tapestry5.Translator translated} to check that
-     * the value conforms to expectations (often, in terms of minimum or maximum value). If and only if the value is
-     * approved by all Validators is the value applied by the field.
+     * Invoked after the client-submitted value has been {@link org.apache.tapestry5.Translator translated} to check
+     * that the value conforms to expectations (often, in terms of minimum or maximum value). If and only if the value
+     * is approved by all Validators is the value applied by the field.
      *
      * @param field           the field for which a client submitted value is being validated
      * @param constraintValue the value used to constrain
@@ -73,14 +72,14 @@ public interface Validator<C, T>
     boolean isRequired();
 
     /**
-     * Hook used by components to allow the validator to contribute additional attribute or (more often) client-side
-     * JavaScript (via the {@link RenderSupport}).
+     * Hook used by components to allow the validator to contribute additional attributes or (more often) client-side
+     * JavaScript (via the {@link FormSupport#addValidation(Field, String, String, Object)}).
      *
      * @param field           the field which is currently being rendered
      * @param constraintValue the value used to constrain input
      * @param formatter       validation message, in the appropriate locale
      * @param writer          markup writer, allowing additional attributes to be written into the active element
-     * @param formSupport
+     * @param formSupport     used to add JavaScript
      */
     void render(Field field, C constraintValue, MessageFormatter formatter, MarkupWriter writer,
                 FormSupport formSupport);

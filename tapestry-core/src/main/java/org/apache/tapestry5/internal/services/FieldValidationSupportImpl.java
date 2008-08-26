@@ -17,12 +17,10 @@ package org.apache.tapestry5.internal.services;
 import org.apache.tapestry5.*;
 import org.apache.tapestry5.corelib.internal.InternalMessages;
 import org.apache.tapestry5.internal.util.Holder;
-import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.ioc.util.ExceptionUtils;
-import org.apache.tapestry5.services.ValidationMessagesSource;
 
 public class FieldValidationSupportImpl implements FieldValidationSupport
 {
@@ -30,18 +28,15 @@ public class FieldValidationSupportImpl implements FieldValidationSupport
     static final String TO_CLIENT_EVENT = "toClient";
     static final String VALIDATE_EVENT = "validate";
 
-    private final ValidationMessagesSource messagesSource;
-
     private final TypeCoercer typeCoercer;
 
-    public FieldValidationSupportImpl(ValidationMessagesSource messagesSource, TypeCoercer typeCoercer)
+    public FieldValidationSupportImpl(TypeCoercer typeCoercer)
     {
-        this.messagesSource = messagesSource;
         this.typeCoercer = typeCoercer;
     }
 
-    @SuppressWarnings({ "unchecked" })
-    public String toClient(Object value, ComponentResources componentResources, Translator translator,
+    @SuppressWarnings({"unchecked"})
+    public String toClient(Object value, ComponentResources componentResources, FieldTranslator<Object> translator,
                            NullFieldStrategy nullFieldStrategy)
     {
         Defense.notNull(componentResources, "componentResources");
@@ -66,7 +61,7 @@ public class FieldValidationSupportImpl implements FieldValidationSupport
             }
         };
 
-        componentResources.triggerEvent(TO_CLIENT_EVENT, new Object[] { value }, callback);
+        componentResources.triggerEvent(TO_CLIENT_EVENT, new Object[] {value}, callback);
 
         if (resultHolder.hasValue()) return resultHolder.get();
 
@@ -87,10 +82,10 @@ public class FieldValidationSupportImpl implements FieldValidationSupport
         Object coerced = typeCoercer.coerce(effectiveValue, translator.getType());
 
         return translator.toClient(coerced);
-
     }
 
-    public Object parseClient(String clientValue, ComponentResources componentResources, Translator translator,
+    public Object parseClient(String clientValue, ComponentResources componentResources,
+                              FieldTranslator<Object> translator,
                               NullFieldStrategy nullFieldStrategy)
             throws ValidationException
     {
@@ -120,7 +115,7 @@ public class FieldValidationSupportImpl implements FieldValidationSupport
 
         try
         {
-            componentResources.triggerEvent(PARSE_CLIENT_EVENT, new Object[] { effectiveValue }, callback);
+            componentResources.triggerEvent(PARSE_CLIENT_EVENT, new Object[] {effectiveValue}, callback);
         }
         catch (RuntimeException ex)
         {
@@ -129,11 +124,7 @@ public class FieldValidationSupportImpl implements FieldValidationSupport
 
         if (resultHolder.hasValue()) return resultHolder.get();
 
-        // Otherwise, let the normal translator do the job.
-
-        Messages messages = messagesSource.getValidationMessages(componentResources.getLocale());
-
-        return translator.parseClient(effectiveValue, messages);
+        return translator.parse(effectiveValue);
     }
 
     /**
@@ -152,7 +143,7 @@ public class FieldValidationSupportImpl implements FieldValidationSupport
         throw outerException;
     }
 
-    @SuppressWarnings({ "unchecked" })
+    @SuppressWarnings({"unchecked"})
     public void validate(Object value, ComponentResources componentResources, FieldValidator validator)
             throws ValidationException
     {
@@ -163,7 +154,7 @@ public class FieldValidationSupportImpl implements FieldValidationSupport
 
         try
         {
-            componentResources.triggerEvent(VALIDATE_EVENT, new Object[] { value }, null);
+            componentResources.triggerEvent(VALIDATE_EVENT, new Object[] {value}, null);
         }
         catch (RuntimeException ex)
         {

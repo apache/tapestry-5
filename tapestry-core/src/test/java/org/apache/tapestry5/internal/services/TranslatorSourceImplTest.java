@@ -14,6 +14,7 @@
 
 package org.apache.tapestry5.internal.services;
 
+import org.apache.tapestry5.Field;
 import org.apache.tapestry5.Translator;
 import org.apache.tapestry5.ValidationException;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
@@ -24,9 +25,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-import java.util.Collections;
-import java.util.Locale;
-import java.util.Map;
+import java.util.Collection;
 
 public class TranslatorSourceImplTest extends InternalBaseTestCase
 {
@@ -45,11 +44,9 @@ public class TranslatorSourceImplTest extends InternalBaseTestCase
     @Test
     public void found_translator_by_name()
     {
-        Translator translator = mockTranslator();
+        Translator translator = mockTranslator("mock", String.class);
 
-        train_getType(translator, String.class);
-
-        Map<String, Translator> configuration = Collections.singletonMap("mock", translator);
+        Collection<Translator> configuration = CollectionFactory.newList(translator);
 
         replay();
 
@@ -60,24 +57,13 @@ public class TranslatorSourceImplTest extends InternalBaseTestCase
         verify();
     }
 
-    protected final void train_getType(Translator translator, Class type)
-    {
-        expect(translator.getType()).andReturn(type).atLeastOnce();
-    }
-
     @Test
     public void unknown_translator_is_failure()
     {
-        Translator fred = mockTranslator();
-        Translator barney = mockTranslator();
+        Translator fred = mockTranslator("fred", String.class);
+        Translator barney = mockTranslator("barney", Long.class);
 
-        train_getType(fred, Long.class);
-        train_getType(barney, String.class);
-
-        Map<String, Translator> configuration = CollectionFactory.newMap();
-
-        configuration.put("fred", fred);
-        configuration.put("barney", barney);
+        Collection<Translator> configuration = CollectionFactory.newList(fred, barney);
 
         replay();
 
@@ -94,14 +80,13 @@ public class TranslatorSourceImplTest extends InternalBaseTestCase
                     ex.getMessage(),
                     "Unknown translator type 'wilma'.  Configured translators are barney, fred.");
         }
-
     }
 
 
     @DataProvider(name = "to_client_data")
     public Object[][] to_client_data()
     {
-        return new Object[][]{
+        return new Object[][] {
 
                 {Byte.class, (byte) 65, "65"},
 
@@ -116,7 +101,6 @@ public class TranslatorSourceImplTest extends InternalBaseTestCase
                 {Short.class, (short) 95, "95"},
 
                 {Float.class, (float) -22.7, "-22.7"}
-
         };
     }
 
@@ -133,7 +117,7 @@ public class TranslatorSourceImplTest extends InternalBaseTestCase
     @DataProvider(name = "parse_client_success_data")
     public Object[][] parse_client_success_data()
     {
-        return new Object[][]{
+        return new Object[][] {
 
                 {Byte.class, " 23 ", (byte) 23},
 
@@ -148,7 +132,6 @@ public class TranslatorSourceImplTest extends InternalBaseTestCase
                 {String.class, " abcdef ", " abcdef "},
 
                 {Float.class, " 28.95 ", (float) 28.95},
-
         };
     }
 
@@ -157,7 +140,7 @@ public class TranslatorSourceImplTest extends InternalBaseTestCase
     {
         Translator t = source.getByType(type);
 
-        Object actual = t.parseClient(input, messagesSource.getValidationMessages(Locale.ENGLISH));
+        Object actual = t.parseClient(null, input, null);
 
         assertEquals(actual, expected);
     }
@@ -165,10 +148,10 @@ public class TranslatorSourceImplTest extends InternalBaseTestCase
     @DataProvider(name = "parse_client_failure_data")
     public Object[][] parse_client_failure_data()
     {
-        String intError = "The input value 'fred' is not parseable as an integer value.";
-        String floatError = "The input value 'fred' is not parseable as a numeric value.";
+        String intError = "You must provide an integer value for Fred.";
+        String floatError = "You must provide a numeric value for Fred.";
 
-        return new Object[][]{
+        return new Object[][] {
 
                 {Byte.class, "fred", intError},
 
@@ -187,29 +170,29 @@ public class TranslatorSourceImplTest extends InternalBaseTestCase
     @Test(dataProvider = "parse_client_failure_data")
     public void parse_client_failure(Class type, String input, String expectedMessage)
     {
-
         Translator t = source.getByType(type);
+        Field field = mockField();
+
+        replay();
 
         try
         {
-            t.parseClient(input, messagesSource.getValidationMessages(Locale.ENGLISH));
+            t.parseClient(field, input, expectedMessage);
             unreachable();
         }
         catch (ValidationException ex)
         {
             assertEquals(ex.getMessage(), expectedMessage);
         }
+
+        verify();
     }
 
     @Test
     public void find_by_type()
     {
-        Translator t = mockTranslator();
-        Map<String, Translator> configuration = CollectionFactory.newMap();
-
-        configuration.put("string", t);
-
-        train_getType(t, String.class);
+        Translator t = mockTranslator("string", String.class);
+        Collection<Translator> configuration = CollectionFactory.newList(t);
 
         replay();
 
@@ -225,16 +208,10 @@ public class TranslatorSourceImplTest extends InternalBaseTestCase
     @Test
     public void get_by_type_not_found()
     {
-        Translator string = mockTranslator();
-        Translator bool = mockTranslator();
+        Translator string = mockTranslator("string", String.class);
+        Translator bool = mockTranslator("bool", Boolean.class);
 
-        Map<String, Translator> configuration = CollectionFactory.newMap();
-
-        configuration.put("string", string);
-        configuration.put("boolean", bool);
-
-        train_getType(string, String.class);
-        train_getType(bool, Boolean.class);
+        Collection<Translator> configuration = CollectionFactory.newList(string, bool);
 
         replay();
 

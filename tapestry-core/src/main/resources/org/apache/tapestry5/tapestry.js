@@ -14,18 +14,36 @@
 
 var Tapestry = {
 
-    /** Event, triggered on a Form element, to spur fields within the form to validate thier input. */
+    /** Event that allows observers to perform cross-form validation after individual
+     *  fields have performed their validation. The form element is passed as the
+     *  event memo. Observers may set the form's validationError property to true (which
+     *  will prevent form submission).
+     */
     FORM_VALIDATE_EVENT : "tapestry:formvalidate",
 
-    /** Event, triggered on a Form element, to allow callbacks to perpare for a form submission (this
-     * occurs after validation).
+    /** Event fired just before the form submits, to allow observers to make
+     *  final preparations for the submission, such as updating hidden form fields.
+     *  The form element is passed as the event memo. 
      */
     FORM_PREPARE_FOR_SUBMIT_EVENT : "tapestry:formprepareforsubmit",
 
     /**
-     * Form event fired after prepare.
+     *  Form event fired after prepare.
      */
     FORM_PROCESS_SUBMIT_EVENT : "tapestry:formprocesssubmit",
+
+    /** Event, triggered on a field element, to cause observers validate the format of the input, and potentially
+     *  reformat it. The field will be passed to observers as the event memo.  This event will be followed by
+     *  FIELD_VALIDATE_EVENT, if the field's value is non-blank. Observers may invoke Element.showValidationMessage()
+     *  to identify that the field is in error (and decorate the field and show a popup error message).
+     */
+    FIELD_FORMAT_EVENT : "tapestry:fieldformat",
+
+    /** Event, triggered on a field element, to cause observers to validate the input. The field will be passed
+     * to observers as the event memo.    Observers may invoke Element.showValidationMessage()
+     *  to identify that the field is in error (and decorate the field and show a popup error message).
+     */
+    FIELD_VALIDATE_EVENT : "tapestry:fieldvalidate",
 
     /** Event, triggered on the document object, which identifies the current focus element. */
     FOCUS_CHANGE_EVENT : "tapestry:focuschange",
@@ -35,8 +53,6 @@ var Tapestry = {
 
     /** Time, in seconds, that console messages are visible. */
     CONSOLE_DURATION : 60,
-
-    FormEvent : Class.create(),
 
     FormEventManager : Class.create(),
 
@@ -64,7 +80,7 @@ var Tapestry = {
     /** Find all elements marked with the "t-invisible" CSS class and hide()s them, so that
      * Prototype's visible() method operates correctly. This is invoked when the
      * DOM is first loaded, and AGAIN whenever dynamic content is loaded via the Zone
-     * mechanism.     In addition, adds a focus listener for each form element.
+     * mechanism. In addition, adds a focus listener for each form element.
      */
     onDomLoadedCallback : function()
     {
@@ -97,14 +113,14 @@ var Tapestry = {
         });
     },
 
-    // Generalized initialize function for Tapestry, used to help minimize the amount of JavaScript
-    // for the page by removing redundancies such as repeated Object and method names. The spec
-    // is a hash whose keys are the names of methods of the Tapestry.Initializer object.
-    // The value is an array of arrays.  The outer arrays represent invocations
-    // of the method.  The inner array are the parameters for each invocation.
-    // As an optimization, the inner value may not be an array but instead
-    // a single value.
-
+    /* Generalized initialize function for Tapestry, used to help minimize the amount of JavaScript
+     * for the page by removing redundancies such as repeated Object and method names. The spec
+     * is a hash whose keys are the names of methods of the Tapestry.Initializer object.
+     * The value is an array of arrays.  The outer arrays represent invocations
+     * of the method.  The inner array are the parameters for each invocation.
+     * As an optimization, the inner value may not be an array but instead
+     * a single value.
+     */
     init : function(spec)
     {
         $H(spec).each(function(pair)
@@ -133,22 +149,38 @@ var Tapestry = {
         });
     },
 
+    /** Formats and displays an error message on the console. */
     error : function (message, substitutions)
     {
         Tapestry.updateConsole("t-err", message, substitutions);
     },
 
+    /** Formats and displays a warning on the console. */
     warn : function (message, substitutions)
     {
         Tapestry.updateConsole("t-warn", message, substitutions);
     },
 
+    /** Formats and displays a debug message on the console, if Tapestry.DEBUG_ENABLED is true. */
     debug : function (message, substitutions)
     {
         if (Tapestry.DEBUG_ENABLED)
             Tapestry.updateConsole("t-debug", message, substitutions);
     },
 
+    /** Formats a message and updates the console. The console is virtual
+     *  when FireBug is not present, the messages float in the upper-left corner
+     *  of the page and fade out after a short period.  The background color identifies
+     *  the severity of the message (red for error, yellow for warnings, grey for debug).
+     *  Messages can be clicked, which removes the immediately.
+     *
+     * When FireBug is present, the error(), warn() and debug() methods do not invoke
+     * this; instead those functions are rewritten to write entries into the FireBug console.
+     *
+     * @param className to use for the div element in the console
+     * @param message message template
+     * @param substitutions interpolated into the message (if provided)
+     */
     updateConsole : function (className, message, substitutions)
     {
         if (substitutions != undefined)
@@ -181,23 +213,6 @@ var Tapestry = {
 
     },
 
-    getFormEventManager : function(form)
-    {
-        form = $(form);
-
-        var manager = form.eventManager;
-
-        if (manager == undefined)
-            manager = new Tapestry.FormEventManager(form);
-
-        return manager;
-    },
-
-    fieldError : function(field, message)
-    {
-        this.getFieldEventManager(field).addDecorations(message);
-    },
-
     /**
      * Passed the JSON content of a Tapestry partial markup response, extracts
      * the script and stylesheet information.  JavaScript libraries and stylesheets are loaded,
@@ -214,62 +229,6 @@ var Tapestry = {
         Tapestry.ScriptManager.addStylesheets(reply.stylesheets);
 
         Tapestry.onDomLoadedCallback();
-    },
-
-    // Adds a validator for a field.  A FieldEventManager is added, if necessary.
-    // The validator will be called only for non-blank values, unless acceptBlank is
-    // true (in most cases, acceptBlank is flase). The validator is a function
-    // that accepts the current field value as its first parameter, and a
-    // Tapestry.FormEvent as its second.  It can invoke recordError() on the event
-    // if the input is not valid.
-
-    addValidator : function(field, acceptBlank, validator)
-    {
-        this.getFieldEventManager(field).addValidator(acceptBlank, validator);
-    },
-
-    getFieldEventManager : function(field)
-    {
-        field = $(field);
-
-        var manager = field.fieldEventManager;
-
-        if (manager == undefined) manager = new Tapestry.FieldEventManager(field);
-
-        return manager;
-    },
-
-    /**
-     * Used with validation to see if an element is visible: i.e., it and all of its containers, up to the
-     * containing form, are all visible. Only deeply visible elements are subject to validation.
-     */
-    isDeepVisible : function(element)
-    {
-        // This started as a recursively defined method attach to Element, but was converted
-        // to a stand-alone as part of TAPESTRY-2424.
-
-        var current = $(element);
-
-        while (true)
-        {
-            if (! current.visible()) return false;
-
-            if (current.tagName == "FORM") break;
-
-            current = $(current.parentNode)
-        }
-
-        return true;
-    },
-
-    /** Focuses on a field, selecting its text. */
-    focus : function (field)
-    {
-        field = $(field);
-
-        if (field.focus) field.focus();
-
-        if (field.select) field.select();
     },
 
     /**
@@ -345,6 +304,152 @@ var Tapestry = {
     }
 
 };
+
+Element.addMethods(
+{
+
+    /**
+     * Works upward from the element, checking to see if the element is visible. Returns false
+     * if it finds an invisible container. Returns true if it makes it as far as a (visible) FORM element.
+     *
+     * Note that this only applies to the CSS definition of visible; it doesn't check that the element
+     * is scolled into view.
+     * 
+     * @param element to search up from
+     * @return true if visible (and containers visible), false if it or container are not visible
+     */
+    isDeepVisible : function(element)
+    {
+        var current = $(element);
+
+        while (true)
+        {
+            if (! current.visible()) return false;
+
+            if (current.tagName == "FORM") break;
+
+            current = $(current.parentNode)
+        }
+
+        return true;
+    }
+});
+
+Element.addMethods('FORM',
+{
+    /**
+     * Gets or creates the Tapestry.FormEventManager for the form.
+     *
+     * @param form form element
+     */
+    getFormEventManager : function(form)
+    {
+        var manager = form.eventManager;
+
+        if (manager == undefined)
+            manager = new Tapestry.FormEventManager(form);
+
+        return manager;
+    }
+});
+
+Element.addMethods(['INPUT', 'SELECT', 'TEXTAREA'],
+{
+    /**
+     * Invoked on a form element (INPUT, SELECT, etc.), gets or creates the
+     * Tapestry.FieldEventManager for that field.
+     *
+     * @param field field element
+     */
+    getFieldEventManager : function(field)
+    {
+        field = $(field);
+
+        var manager = field.fieldEventManager;
+
+        if (manager == undefined) manager = new Tapestry.FieldEventManager(field);
+
+        return manager;
+    },
+
+    /**
+     * Obtains the Tapestry.FieldEventManager and asks it to show
+     * the validation message.   Sets the element's validationError property to true.
+     * @param element
+     * @param message to display
+     */
+    showValidationMessage : function(element, message)
+    {
+        element = $(element);
+
+        element.validationError = true;
+        element.form.validationError = true;
+
+        element.getFieldEventManager().showValidationMessage(message);
+
+        return element;
+    },
+
+    /**
+     * Removes any validation decorations on the field, and
+     * hides the error popup (if any) for the field.
+     */
+    removeDecorations : function(element)
+    {
+        $(element).getFieldEventManager().removeDecorations();
+
+        return element;
+    },
+
+    /** Utility method to add a validator function as an observer as an event.
+     *
+     * @param element element to observe events on
+     * @param eventName name of event to observe
+     * @param validator function passed the field's value
+     */
+    addValidatorAsObserver : function(element, eventName, validator)
+    {
+        element.observe(eventName, function(event)
+        {
+            try
+            {
+                validator.call(this, $F(element));
+            }
+            catch (message)
+            {
+                element.showValidationMessage(message);
+            }
+        });
+
+        return element;
+    },
+
+    /**
+     * Adds a standard validator for the element, an observer of
+     * Tapestry.FIELD_VALIDATE_EVENT. The validator function will be
+     * passed the current field value and should throw an error message if
+     * the field's value is not valid.
+     * @param element field element to validate
+     * @param validator function to be passed the field value
+     */
+    addValidator : function(element, validator)
+    {
+        return element.addValidatorAsObserver(Tapestry.FIELD_VALIDATE_EVENT, validator);
+    },
+
+    /**
+     * Adds a standard validator for the element, an observer of
+     * Tapestry.FIELD_FORMAT_EVENT. The validator function will be
+     * passed the current field value and should throw an error message if
+     * the field's value is not valid.
+     * @param element field element to validate
+     * @param validator function to be passed the field value
+     */
+    addFormatValidator : function(element, validator)
+    {
+        return element.addValidatorAsObserver(Tapestry.FIELD_FORMAT_EVENT, validator);
+    }
+});
 
 /** Container of functions that may be invoked by the Tapestry.init() function. */
 Tapestry.Initializer = {
@@ -425,7 +530,7 @@ Tapestry.Initializer = {
         {
             // Turn normal form submission off.
 
-            Tapestry.getFormEventManager(element).preventSubmission = true;
+            element.getFormEventManager().preventSubmission = true;
 
             // After the form is validated and prepared, this code will
             // process the form submission via an Ajax call.  The original submit event
@@ -441,21 +546,22 @@ Tapestry.Initializer = {
 
         // Otherwise, assume it's just an ordinary link.
 
-        var handler = function(event)
+        element.observe("click", function(event)
         {
             Tapestry.ajaxRequest(element.href, successHandler);
 
             Event.stop(event);
-        };
-
-        element.observe("click", handler);
+        });
     },
 
     validate : function (field, specs)
     {
         field = $(field);
 
-        Tapestry.getFormEventManager(field.form);
+        // Force the creation of the form and field event managers.
+
+        $(field.form).getFormEventManager();
+        $(field).getFieldEventManager();
 
         specs.each(function(spec)
         {
@@ -473,6 +579,10 @@ Tapestry.Initializer = {
                 Tapestry.error("Function Tapestry.Validator.#{name}() does not exist for field '#{fieldName}'.", {name:name, fieldName:pair.key});
                 return;
             }
+
+            // Pass the extend field, the provided message, and the constraint object
+            // to the Tapestry.Validator function, so that it can, typically, invoke
+            // field.addValidator().
 
             vfunc.call(this, field, message, constraint);
         });
@@ -524,25 +634,8 @@ Tapestry.Initializer = {
     }
 };
 
-// New methods added to Element.
-
-Tapestry.ElementAdditions = {
-    // This is added to all Elements, but really only applys to form control elements. This method is invoked
-    // when a validation error is associated with a field. This gives the field a chance to decorate itself, its label
-    // and its icon.
-    decorateForValidationError : function(element, message)
-    {
-        Tapestry.getFieldEventManager(element).addDecorations(message);
-    },
-
-    removeDecorations : function(element)
-    {
-        Tapestry.getFieldEventManager(element).removeDecorations();
-    }
-};
-
-Element.addMethods(Tapestry.ElementAdditions);
-
+// When FireBug is available, rewrite the error(), warn() and debug()
+// methods to make use of it.
 if (window.console)
 {
     var createlog = function (log)
@@ -563,50 +656,69 @@ if (window.console)
 
 // Collection of field based functions related to validation. Each
 // function takes a field, a message and an optional constraint value.
+// Some functions are related to Translators and work on the format event,
+// other's are from Validators and work on the validate event.
 
 Tapestry.Validator = {
+
+    INT_REGEXP : /^(\+|-)?\d+$/,
+
+    FLOAT_REGEXP : /^(\+|-)?((\.\d+)|(\d+(\.\d*)?))$/,
+
     required : function(field, message)
     {
-        Tapestry.addValidator(field, true, function(value, event)
+        field.addFormatValidator(function(value)
         {
-            if (value.strip() == '')
-                event.recordError(message);
+            if (value.strip() == '') throw message;
+        });
+    },
+
+    /** Validate that the input is a numeric integer. */
+    integernumber : function(field, message)
+    {
+        field.addFormatValidator(function(value)
+        {
+            if (value != '' && ! value.match(Tapestry.Validator.INT_REGEXP)) throw message;
+        });
+    },
+
+    decimalnumber : function(field, message)
+    {
+        field.addFormatValidator(function(value)
+        {
+            if (value != '' && ! value.match(Tapestry.Validator.FLOAT_REGEXP)) throw message;
         });
     },
 
     minlength : function(field, message, length)
     {
-        Tapestry.addValidator(field, false, function(value, event)
+        field.addValidator(function(value)
         {
-            if (value.length < length)
-                event.recordError(message);
+            if (value.length < length) throw message;
         });
     },
 
     maxlength : function(field, message, maxlength)
     {
-        Tapestry.addValidator(field, false, function(value, event)
+        field.addValidator(function(value)
         {
-            if (value.length > maxlength)
-                event.recordError(message);
+            if (value.length > maxlength) throw message;
         });
     },
 
     min : function(field, message, minValue)
     {
-        Tapestry.addValidator(field, false, function(value, event)
+        field.addValidator(function(value)
         {
-            if (value < minValue)
-                event.recordError(message);
+            if (value < minValue) throw message;
         });
     },
 
     max : function(field, message, maxValue)
     {
-        Tapestry.addValidator(field, false, function(value, event)
+        field.addValidator(function(value)
         {
-            if (value > maxValue)
-                event.recordError(message);
+            if (value > maxValue) throw message;
         });
     },
 
@@ -614,43 +726,10 @@ Tapestry.Validator = {
     {
         var regexp = new RegExp(pattern);
 
-        Tapestry.addValidator(field, false, function(value, event)
+        field.addValidator(function(value)
         {
-            if (! regexp.test(value))
-                event.recordError(message);
+            if (! regexp.test(value)) throw message;
         });
-    }
-};
-
-
-// A Tapestry.FormEvent is used when the form sends presubmit and submit events to
-// a FieldEventManager. It allows the associated handlers to indirectly invoke
-// the Form's invalidField() method, and it tracks a result flag (true for success ==
-// no field errors, false if any field errors).
-
-Tapestry.FormEvent.prototype = {
-
-    initialize : function(form)
-    {
-        this.form = $(form);
-        this.result = true;
-    },
-
-    // Invoked by a validator function (which is passed the event) to record an error
-    // for the associated field. The event knows the field and form and invoke's
-    // the (added) form method invalidField().  Sets the event's result field to false
-    // (i.e., don't allow the form to submit), and sets the event's error field to
-    // true.
-
-    recordError : function(message)
-    {
-        if (this.focusField == undefined)
-            this.focusField = this.field;
-
-        this.field.decorateForValidationError(message);
-
-        this.result = false;
-        this.error = true;
     }
 };
 
@@ -672,7 +751,9 @@ Tapestry.ErrorPopup.prototype = {
         this.field = $(field);
 
         this.innerSpan = new Element("span");
-        this.outerDiv = $(new Element("div", { 'class' : 't-error-popup' })).update(this.innerSpan).hide();
+        this.outerDiv = $(new Element("div", {
+            'id' : this.field.id + ":errorpopup",
+            'class' : 't-error-popup' })).update(this.innerSpan).hide();
 
         var body = $$('BODY').first();
 
@@ -688,7 +769,7 @@ Tapestry.ErrorPopup.prototype = {
 
             this.outerDiv.hide();
 
-            Tapestry.focus(this.field);
+            this.field.activate();
 
             Event.stop(event);  // Should be domevent.stop(), but that fails under IE
         }.bindAsEventListener(this));
@@ -802,41 +883,46 @@ Tapestry.FormEventManager.prototype = {
 
     handleSubmit : function(domevent)
     {
+        this.form.validationError = false;
+
+        var firstErrorField = null;
+
         // Locate elements that have an event manager (and therefore, validations)
         // and let those validations execute, which may result in calls to recordError().
 
-        var event = new Tapestry.FormEvent(this.form);
 
         this.form.getElements().each(function(element)
         {
             if (element.fieldEventManager != undefined)
             {
-                event.field = element;
-                element.fieldEventManager.validateInput(event);
+                // Ask the FEM to validate input for the field, which fires
+                // a number of events.
+                var error = element.fieldEventManager.validateInput();
 
-                if (event.abort) throw $break;
+                if (error && ! firstErrorField)
+                {
+                    firstErrorField = element;
+                }
             }
         });
 
         // Allow observers to validate the form as a whole.  The FormEvent will be visible
         // as event.memo.  The Form will not be submitted if event.result is set to false (it defaults
-        // to true).
+        // to true).  Still trying to figure out what should get focus from this
+        // kind of event.
 
-        this.form.fire(Tapestry.FORM_VALIDATE_EVENT, event);
+        this.form.fire(Tapestry.FORM_VALIDATE_EVENT, this.form);
 
-        if (! event.result)
+        if (this.form.validationError)
         {
-            // Calling focus() does not trigger this event, so we do it manually.
-            // Defer it long enough for the animations to start.
-
-            event.focusField.activate();
-
             Event.stop(domevent); // Should be domevent.stop(), but that fails under IE
+
+            if (firstErrorField) firstErrorField.activate();
 
             return;
         }
 
-        this.form.fire(Tapestry.FORM_PREPARE_FOR_SUBMIT_EVENT);
+        this.form.fire(Tapestry.FORM_PREPARE_FOR_SUBMIT_EVENT, this.form);
 
         // This flag can be set to prevent the form from submitting normally.
         // This is used for some Ajax cases where the form submission must
@@ -862,42 +948,22 @@ Tapestry.FieldEventManager.prototype = {
     initialize : function(field)
     {
         this.field = $(field);
+        this.field.fieldEventManager = this;
 
-        field.fieldEventManager = this;
-
-        this.validators = [ ];
-
-        var id = field.id;
+        var id = this.field.id;
         this.label = $(id + ':label');
         this.icon = $(id + ':icon');
 
         this.field.observe("blur", function()
         {
-            var event = new Tapestry.FormEvent(this.field.form);
-
-            // This prevents the field from taking focus if there is an error.
-            event.focusField = this.field;
-
-            event.field = this.field;
-
-            this.validateInput(event);
+            this.validateInput(false);
         }.bindAsEventListener(this));
     },
 
-    // Adds a validator.  acceptBlank is true if the validator should be invoked regardless of
-    // the value.  Usually acceptBlank is false, meaning that the validator will be skipped if
-    // the field's value is blank. The validator itself is a function that is passed the
-    // field's value and the Tapestry.FormEvent object.  When a validator invokes event.recordError(),
-    // any subsequent validators for that field are skipped.
 
-    addValidator : function(acceptBlank, validator)
-    {
-        this.validators.push([ acceptBlank, validator]);
-    },
-
-    // Removes decorations on the field and label (the "t-error" CSS class) and makes the icon
-    // invisible.  A field that has special decoration needs will override this method.
-
+    /** Removes validation decorations if present. Hides the ErrorPopup,
+     *  if it exists.
+     */
     removeDecorations : function()
     {
         this.field.removeClassName("t-error");
@@ -912,11 +978,14 @@ Tapestry.FieldEventManager.prototype = {
             this.errorPopup.hide();
     },
 
-    // Adds decorations to the field (including label and icon if present).
-    // event - the validation event
-    // message - error message
 
-    addDecorations : function(message)
+    /**
+     * Show a validation error message, which will add decorations to the
+     * field and it label, make the icon visible, and raise the
+     * field's Tapestry.ErrorPopup to show the message.
+     * @param message validation message to display
+     */
+    showValidationMessage : function(message)
     {
         this.field.addClassName("t-error");
 
@@ -935,40 +1004,41 @@ Tapestry.FieldEventManager.prototype = {
         this.errorPopup.showMessage(message);
     },
 
-
-    // Invoked from the Form's onsubmit event handler. Gets the fields value and invokes
-    // each validator (unless the value is blank) until a validator returns false. Validators
-    // should not modify the field's value.
-
-    validateInput : function(event)
+    /**
+     * Invoked when a form is submitted, or when leaving a field, to perform
+     * field validations. Field validations are skipped for disabled fields.
+     * If all validations are succesful, any decorations are removed. If any validation
+     * fails, an error popup is raised for the field, to display the validation
+     * error message.
+     *
+     * @return true if the field has a validation error
+     */
+    validateInput : function()
     {
         if (this.field.disabled) return;
 
-        if (! Tapestry.isDeepVisible(this.field)) return;
+        if (! this.field.isDeepVisible()) return;
 
-        var value = $F(event.field);
-        var isBlank = (value == '');
+        this.field.validationError = false;
 
-        event.error = false;
+        this.field.fire(Tapestry.FIELD_FORMAT_EVENT, this.field);
 
-        this.validators.each(function(tuple)
+        // If Format went ok, perhaps do the other validations.
+
+        if (! this.field.validationError)
         {
-            var acceptBlank = tuple[0];
-            var validator = tuple[1];
+            var value = $F(this.field);
 
-            if (acceptBlank || !isBlank)
-            {
+            if (value != '')
+                this.field.fire(Tapestry.FIELD_VALIDATE_EVENT, this.field);
+        }
 
-                validator(value, event);
+        // Lastly, if no validation errors were found, remove the decorations.
 
-                // event.error is set by Tapestry.FormEvent.recordError().
+        if (! this.field.validationError)
+            this.field.removeDecorations();
 
-                if (event.error) throw $break;
-            }
-        });
-
-        if (! event.error)
-            this.removeDecorations();
+        return this.field.validationError;
     }
 };
 
@@ -1072,7 +1142,7 @@ Tapestry.FormFragment.prototype = {
             // On a submission, if the fragment is not visible, then wipe out its
             // form submission data, so that no processing or validation occurs on the server.
 
-            if (! Tapestry.isDeepVisible(this.element))
+            if (! this.element.isDeepVisible())
                 this.hidden.value = "";
         }.bind(this));
     },
@@ -1115,7 +1185,6 @@ Tapestry.FormFragment.prototype = {
         this.hide();
     }
 };
-
 
 Tapestry.FormInjector.prototype = {
 

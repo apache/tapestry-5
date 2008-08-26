@@ -21,6 +21,7 @@ import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.corelib.base.AbstractField;
 import org.apache.tapestry5.corelib.mixins.RenderDisabled;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.services.ComponentDefaultProvider;
 import org.apache.tapestry5.services.FieldValidatorDefaultSource;
 import org.apache.tapestry5.services.FormSupport;
 import org.apache.tapestry5.upload.services.MultipartDecoder;
@@ -49,7 +50,7 @@ public class Upload extends AbstractField
      */
     @Parameter(defaultPrefix = BindingConstants.VALIDATE)
     @SuppressWarnings("unchecked")
-    private FieldValidator<Object> validate = NOOP_VALIDATOR;
+    private FieldValidator<Object> validate;
 
     @Environmental
     private ValidationTracker tracker;
@@ -61,7 +62,7 @@ public class Upload extends AbstractField
     private FormSupport formSupport;
 
     @Inject
-    private FieldValidatorDefaultSource fieldValidatorDefaultSource;
+    private ComponentDefaultProvider defaultProvider;
 
     @Inject
     private ComponentResources resources;
@@ -81,13 +82,7 @@ public class Upload extends AbstractField
      */
     final FieldValidator defaultValidate()
     {
-        Class type = resources.getBoundType("value");
-
-        if (type == null) return null;
-
-        return fieldValidatorDefaultSource.createDefaultValidator(this, resources.getId(),
-                                                                  resources.getContainerMessages(), locale, type,
-                                                                  resources.getAnnotationProvider("value"));
+        return defaultProvider.defaultValidator("value", resources);
     }
 
     public Upload()

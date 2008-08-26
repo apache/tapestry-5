@@ -340,7 +340,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         clickAndWait(SUBMIT);
 
         assertTextPresent("[false]");
-        assertTextPresent("The input value 'foo' is not parseable as an integer value.");
+        assertTextPresent("You must provide an integer value for Hours.");
 
         assertAttribute("//input[@id='hours']/@value", "foo");
 
@@ -2181,5 +2181,23 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     {
         start("BeanEditor BeanEditContext");
         assertTextPresent("Bean class from context is: " + RegistrationData.class.getName());
+    }
+
+    /**
+     * TAPESTRY-2352
+     */
+    public void client_field_format_validation()
+    {
+        start("Client Format Validation");
+
+        type("amount", "abc");
+        type("quantity", "abc");
+
+        click(SUBMIT);
+
+        waitForCondition("selenium.browserbot.getCurrentWindow().document.getElementById('amount:errorpopup')", "5000");
+
+        assertText("//div[@id='amount:errorpopup']/span", "You must provide a numeric value for Amount.");
+        assertText("//div[@id='quantity:errorpopup']/span", "Provide quantity as a number.");
     }
 }

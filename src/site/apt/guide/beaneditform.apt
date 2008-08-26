@@ -134,7 +134,8 @@ public class MyPage
   
   @Inject
   private ComponentResources resources;
-  
+
+  @Property(write=false)
   @Retain
   private BeanModel model;
 
@@ -146,9 +147,7 @@ public class MyPage
      
      // Make other changes to model here.
   }  
-  
 
-  public BeanModel getModel() { return model; }
 }
 +---+
 
@@ -185,6 +184,7 @@ public static void contributeDefaultDataTypeAnalyzer(MappedConfiguration<Class, 
 +---+
 public class AppPropertyEditBlocks
 {
+    @Property
     @Environmental
     private PropertyEditContext context;
   
@@ -193,20 +193,30 @@ public class AppPropertyEditBlocks
             "translate=prop:currencyTranslator", "validate=prop:currencyValidator",
             "clientId=prop:context.propertyId" })
     private TextField currency;
-    
-    public PropertyEditContext getContext() { return _context; }
+
+    @Inject
+    private ComponentResources resources;
+
+    @Inject
+    private FieldTranslatorSource fieldTranslatorSource;
     
     public FieldValidator getCurrencyValidator()
     {
-      return context.getValidator(_currency);
+      return context.getValidator(currency);
     }
     
-    public Translator getCurrencyTranslator()
+    public FieldTranslator getCurrencyTranslator()
     {
-      return ...;
+      Translator translator = ...;
+
+      return fieldTranslatorSource.createTranslator(currency, context.getPropertyId(), context.getContainerMessages(),
+        resources.getLocale(), context.getPropertyType(), context);
     }
 }
 +---+
+
+  The hard part is the translator; this is a piece of code that understands how to format and how to parse
+  a currency value.  It must be wrapped to create a FieldTranslator.
 
   The editor is a block inside the component template:
   

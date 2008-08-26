@@ -48,7 +48,7 @@ public class AppModule
      * interface.
      */
     @Target(
-            { PARAMETER, FIELD })
+            {PARAMETER, FIELD})
     @Retention(RUNTIME)
     @Documented
     public @interface Local
@@ -92,7 +92,7 @@ public class AppModule
                 {
                     long elapsed = System.nanoTime() - startTime;
 
-                    log.info(String.format("Request time: %5.2f s -- %s", elapsed * 10E-9d, request.getPath()));
+                    log.info(String.format("Request time: %5.2f s -- %s", elapsed * 10E-10d, request.getPath()));
                 }
             }
         };

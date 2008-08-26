@@ -73,8 +73,6 @@ public class Img
   {
      writer.element("img",
                     "src", src);
-
-     resources.renderInformalParameters(writer);
   }
 
   boolean beforeRenderBody(MarkupWriter writer)
