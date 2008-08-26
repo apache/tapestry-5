@@ -165,4 +165,9 @@ public class Upload extends AbstractField
         // As does AbstractField
         setFormSupport(formSupport);
     }
+
+    void injectFieldValidator(FieldValidator validator)
+    {
+        this.validate = validator;
+    }
 }

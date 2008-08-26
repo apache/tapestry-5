@@ -39,8 +39,11 @@ public class UploadTest extends TapestryTestCase
         writer.element("form");
         FormSupport formSupport = mockFormSupport();
         ComponentResources resources = mockComponentResources();
+        FieldValidator validator = mockFieldValidator();
 
         formSupport.setEncodingType(Upload.MULTIPART_ENCTYPE);
+
+        validator.render(writer);
 
         resources.renderInformalParameters(writer);
 
@@ -50,8 +53,10 @@ public class UploadTest extends TapestryTestCase
 
         component.injectDecorator(new BaseValidationDecorator());
         component.injectFormSupport(formSupport);
+        component.injectFieldValidator(validator);
 
         component.beginRender(writer);
+
 
         Element element = writer.getElement();
         assertNotNull(element);
@@ -72,6 +77,7 @@ public class UploadTest extends TapestryTestCase
         Upload component = new Upload(null, null, null, null, resources, null);
         MarkupWriter writer = createMarkupWriter();
         writer.element("form");
+        FieldValidator validator = mockFieldValidator();
 
         FormSupport formSupport = mockFormSupport();
         formSupport.setEncodingType(Upload.MULTIPART_ENCTYPE);
@@ -81,6 +87,9 @@ public class UploadTest extends TapestryTestCase
         ValidationDecorator decorator = mockValidationDecorator();
 
         component.injectDecorator(decorator);
+        component.injectFieldValidator(validator);
+
+        validator.render(writer);
 
         resources.renderInformalParameters(writer);
         decorator.insideField(component);
