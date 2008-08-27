@@ -19,6 +19,7 @@ import org.apache.tapestry5.EventConstants;
 import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.internal.structure.ComponentPageElement;
 import org.apache.tapestry5.internal.structure.Page;
+import org.apache.tapestry5.internal.util.Holder;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.*;
 
@@ -62,8 +63,20 @@ public class AjaxComponentEventRequestHandler implements ComponentEventRequestHa
     {
         Page activePage = cache.get(parameters.getActivePageName());
 
-        ComponentResultProcessorWrapper callback = new ComponentResultProcessorWrapper(resultProcessor);
+        final Holder<Boolean> resultProcessorInvoked = Holder.create();
+        resultProcessorInvoked.put(false);
 
+        ComponentEventResultProcessor interceptor = new ComponentEventResultProcessor()
+        {
+            public void processResultValue(Object value) throws IOException
+            {
+                resultProcessorInvoked.put(true);
+
+                resultProcessor.processResultValue(value);
+            }
+        };
+
+        ComponentResultProcessorWrapper callback = new ComponentResultProcessorWrapper(interceptor);
 
         activePage.getRootElement().triggerContextEvent(EventConstants.ACTIVATE,
                                                         parameters.getPageActivationContext(), callback);
@@ -86,8 +99,9 @@ public class AjaxComponentEventRequestHandler implements ComponentEventRequestHa
 
         // In many cases, the triggered element is a Form that needs to be able to
         // pass its event handler return values to the correct result processor.
+        // This is certainly the case for forms.
 
-        environment.push(ComponentEventResultProcessor.class, resultProcessor);
+        environment.push(ComponentEventResultProcessor.class, interceptor);
 
         element.triggerContextEvent(parameters.getEventType(), parameters.getEventContext(), callback);
 
@@ -99,13 +113,15 @@ public class AjaxComponentEventRequestHandler implements ComponentEventRequestHa
             return;
         }
 
-        if (callback.isAborted()) return;
+        // If  some other form of return value that's not a partial page render was send through to the
+        // Ajax ComponentEventResultProcessor, then there's nothing more to do.
+
+        if (resultProcessorInvoked.get()) return;
 
         // Send an empty JSON reply if no value was returned from the component event handler method.
 
         JSONObject reply = new JSONObject();
 
         resultProcessor.processResultValue(reply);
-
     }
 }
