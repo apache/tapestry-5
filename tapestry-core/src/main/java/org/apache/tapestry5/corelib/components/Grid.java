@@ -154,7 +154,7 @@ public class Grid implements GridModel
      * "There is no data to display". This parameter is used to customize that message, possibly including components to
      * allow the user to create new objects.
      */
-    @Parameter(value = "block:empty")
+    @Parameter(value = "block:empty", defaultPrefix = BindingConstants.LITERAL)
     private Block empty;
 
 
@@ -465,7 +465,6 @@ public class Grid implements GridModel
         int endIndex = Math.min(startIndex + rowsPerPage - 1, availableRows - 1);
 
         cachingSource.prepare(startIndex, endIndex, sortModel.getSortContraints());
-
     }
 
     Object beginRender(MarkupWriter writer)

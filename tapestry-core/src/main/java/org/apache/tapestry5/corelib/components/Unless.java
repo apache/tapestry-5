@@ -14,6 +14,7 @@
 
 package org.apache.tapestry5.corelib.components;
 
+import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.Block;
 import org.apache.tapestry5.annotations.Parameter;
 
@@ -33,7 +34,7 @@ public class Unless
      * An alternate {@link org.apache.tapestry5.Block} to render if the test parameter is false. The default, null,
      * means render nothing in that situation.
      */
-    @Parameter(name = "else")
+    @Parameter(name = "else", defaultPrefix = BindingConstants.LITERAL)
     private Block elseBlock;
 
     /**

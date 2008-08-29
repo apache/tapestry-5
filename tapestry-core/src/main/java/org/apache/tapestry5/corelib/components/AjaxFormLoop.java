@@ -72,7 +72,7 @@ public class AjaxFormLoop
      * A block to render after the loop as the body of the {@link org.apache.tapestry5.corelib.components.FormInjector}.
      * This typically contains a {@link org.apache.tapestry5.corelib.components.AddRowLink}.
      */
-    @Parameter("block:defaultAddRow")
+    @Parameter(value = "block:defaultAddRow", defaultPrefix = BindingConstants.LITERAL)
     @Property(write = false)
     private Block addRow;
 
@@ -428,5 +428,4 @@ public class AjaxFormLoop
     {
         heartbeat.end();
     }
-
 }
