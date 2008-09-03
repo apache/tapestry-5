@@ -111,6 +111,11 @@ public class Grid implements GridModel
     private BeanModel model;
 
     /**
+     * The model parameter after modification due to the add, include, exclude and reorder parameters.
+     */
+    private BeanModel dataModel;
+
+    /**
      * The model used to handle sorting of the Grid. This is generally not specified, and the built-in model supports
      * only single column sorting. The sort constraints (the column that is sorted, and ascending vs. descending) is
      * stored as persistent fields of the Grid component.
@@ -363,7 +368,7 @@ public class Grid implements GridModel
             if (sortColumnId == null)
                 return Collections.emptyList();
 
-            PropertyModel sortModel = model.getById(sortColumnId);
+            PropertyModel sortModel = dataModel.getById(sortColumnId);
 
             SortConstraint constraint = new SortConstraint(sortModel, getColumnSort());
 
@@ -451,7 +456,9 @@ public class Grid implements GridModel
 
         if (availableRows == 0) return;
 
-        BeanModelUtils.modify(model, add, include, exclude, reorder);
+        dataModel = model;
+
+        BeanModelUtils.modify(dataModel, add, include, exclude, reorder);
 
         int maxPage = ((availableRows - 1) / rowsPerPage) + 1;
 
@@ -499,7 +506,7 @@ public class Grid implements GridModel
 
     public BeanModel getDataModel()
     {
-        return model;
+        return dataModel;
     }
 
     public GridDataSource getDataSource()
