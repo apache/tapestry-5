@@ -321,7 +321,9 @@ Your own Ajax Components
   * A Block or Component to render as the response.  The response will be a JSON hash, with a "content" key
     whose value is the rendered markup.  This is the basis for updates with the Zone component.
 
-  * A {{{../apidocs/org/apache/tapestry5/json/JSONObject.html}JSONObject}}, which will be sent as the response.
+  * A {{{../apidocs/org/apache/tapestry5/json/JSONObject.html}JSONObject}} or 
+    {{{../apidocs/org/apache/tapestry5/json/JSONArray.html}JSONArray}}, 
+    which will be sent as the response.
 
   * A {{{../apidocs/org/apache/tapestry5/StreamResponse.html}StreamResponse}}, which will be sent as the response.
 
