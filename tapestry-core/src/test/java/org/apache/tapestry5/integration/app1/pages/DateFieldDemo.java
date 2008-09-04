@@ -16,10 +16,13 @@ package org.apache.tapestry5.integration.app1.pages;
 
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.beaneditor.Validate;
+import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.services.PersistentLocale;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 public class DateFieldDemo
 {
@@ -28,6 +31,9 @@ public class DateFieldDemo
 
     @Persist
     private Date asteroidImpact;
+
+    @Inject
+    private PersistentLocale persistentLocale;
 
     @Validate("required")
     public Date getBirthday()
@@ -55,4 +61,14 @@ public class DateFieldDemo
     {
         this.asteroidImpact = asteroidImpact;
     }
+
+    void onActionFromClear()
+    {
+        birthday = null;
+        asteroidImpact = null;
+    }
+
+    void onActionFromEnglish() { persistentLocale.set(Locale.ENGLISH); }
+
+    void onActionFromFrench() { persistentLocale.set(Locale.FRENCH); }
 }

@@ -26,6 +26,12 @@
         </div>
     </t:form>
 
+    <p>
+        <t:actionlink t:id="clear">clear</t:actionlink>
+        <t:actionlink t:id="english">english</t:actionlink>
+        <t:actionlink t:id="french">french</t:actionlink>
+    </p>
+
     <t:if test="birthday">
         <hr/>
         <p>

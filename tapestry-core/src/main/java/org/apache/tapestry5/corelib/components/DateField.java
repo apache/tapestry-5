@@ -22,14 +22,17 @@ import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.corelib.base.AbstractField;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.ComponentDefaultProvider;
 import org.apache.tapestry5.services.FieldValidatorDefaultSource;
 import org.apache.tapestry5.services.Request;
 
 import java.text.DateFormat;
+import java.text.DateFormatSymbols;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -53,6 +56,12 @@ public class DateField extends AbstractField
      */
     @Parameter(required = true, principal = true, autoconnect = true)
     private Date value;
+
+    /**
+     * Request attribute set to true if localization for the client-side DatePicker has been configured.  Used to ensure
+     * that this only occurs once, regardless of how many DateFields are on the page.
+     */
+    static final String LOCALIZATION_CONFIGURED_FLAG = "tapestry.DateField.localization-configured";
 
     /**
      * The format used to format <em>and parse</em> dates. This is typically specified as a string which is coerced to a
@@ -103,6 +112,7 @@ public class DateField extends AbstractField
 
     private static final String ERROR = "error";
     private static final String INPUT_PARAMETER = "input";
+
 
     DateFormat defaultFormat()
     {
@@ -226,6 +236,32 @@ public class DateField extends AbstractField
         setup.put("field", clientId);
         setup.put("parseURL", resources.createEventLink("parse").toAbsoluteURI());
         setup.put("formatURL", resources.createEventLink("format").toAbsoluteURI());
+
+        if (request.getAttribute(LOCALIZATION_CONFIGURED_FLAG) == null)
+        {
+            JSONObject spec = new JSONObject();
+
+            DateFormatSymbols symbols = new DateFormatSymbols(locale);
+
+            spec.put("months", new JSONArray(symbols.getMonths()));
+
+            StringBuilder days = new StringBuilder();
+
+            String[] weekdays = symbols.getWeekdays();
+
+            for (int i = Calendar.SUNDAY; i <= Calendar.SATURDAY; i++)
+            {
+                days.append(weekdays[i].substring(0, 1));
+            }
+
+            spec.put("days", days.toString().toLowerCase(locale));
+
+            // TODO: Skip localization if locale is English?
+
+            setup.put("localization", spec);
+
+            request.setAttribute(LOCALIZATION_CONFIGURED_FLAG, true);
+        }
 
         support.addInit("dateField", setup);
     }
