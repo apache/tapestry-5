@@ -1736,12 +1736,17 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         click("subscribeToEmail");
         click("on");
+
+        waitForCondition("selenium.browserbot.getCurrentWindow().$('code').isDeepVisible() == true", PAGE_LOAD_TIMEOUT);
+
         type("name", "Barney");
         type("email", "rubble@bedrock.gov");
         type("code", "ABC123");
 
         click("off");
-        sleep(1000);
+
+        waitForCondition("selenium.browserbot.getCurrentWindow().$('code').isDeepVisible() == false",
+                         PAGE_LOAD_TIMEOUT);
 
         clickAndWait(SUBMIT);
 
@@ -2195,9 +2200,19 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         click(SUBMIT);
 
-        waitForCondition("selenium.browserbot.getCurrentWindow().document.getElementById('amount:errorpopup')", "5000");
+        waitForElementToAppear("ammount:errorpopup");
+        waitForElementToAppear("quantity:errorpopup");
 
         assertText("//div[@id='amount:errorpopup']/span", "You must provide a numeric value for Amount.");
         assertText("//div[@id='quantity:errorpopup']/span", "Provide quantity as a number.");
+    }
+
+    private void waitForElementToAppear(String elementId)
+    {
+
+        String condition = String.format("selenium.browserbot.getCurrentWindow().document.getElementById('%s')",
+                                         elementId);
+
+        waitForCondition(condition, PAGE_LOAD_TIMEOUT);
     }
 }

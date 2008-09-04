@@ -12,9 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-Tapestry.DateField = Class.create();
-
-Tapestry.DateField.prototype = {
+Tapestry.DateField = Class.create({
 
     // Initializes a DateField from a JSON specification.
 
@@ -184,7 +182,7 @@ Tapestry.DateField.prototype = {
 
         Tapestry.DateField.activeDateField = this;
     }
-};
+});
 
 Tapestry.Initializer.dateField = function(spec)
 {
