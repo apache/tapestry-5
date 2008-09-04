@@ -374,10 +374,12 @@
                 <enabled>true</enabled>
             </snapshots>
         </repository>
+        <!--
         <repository>
             <id>codehaus.snapshots</id>
             <url>http://snapshots.repository.codehaus.org</url>
         </repository>
+        -->
         <!-- Pick up the selenium JARs. -->
         <repository>
             <id>OpenQA_Release</id>
