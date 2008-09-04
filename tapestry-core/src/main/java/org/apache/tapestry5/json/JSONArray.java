@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -93,6 +93,11 @@ public final class JSONArray
         JSONTokener tokener = new JSONTokener(text);
 
         parse(tokener);
+    }
+
+    public JSONArray(Object... values)
+    {
+        for (Object value : values) put(value);
     }
 
     /**
@@ -386,7 +391,6 @@ public final class JSONArray
             while (index != length()) list.add(JSONObject.NULL);
 
             list.add(value);
-
         }
 
         return this;

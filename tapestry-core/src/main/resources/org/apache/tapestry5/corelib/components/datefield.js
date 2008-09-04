@@ -26,6 +26,12 @@ Tapestry.DateField = Class.create({
         this.trigger.observe("click", this.triggerClicked.bind(this));
 
         this.popup = null;
+
+        if (spec.localization)
+        {
+            DatePicker.months = spec.localization.months;
+            DatePicker.days = spec.localization.days.toArray();
+        }
     },
 
     triggerClicked : function()
@@ -183,6 +189,8 @@ Tapestry.DateField = Class.create({
         Tapestry.DateField.activeDateField = this;
     }
 });
+
+Tapestry.DateField.localized = false;
 
 Tapestry.Initializer.dateField = function(spec)
 {

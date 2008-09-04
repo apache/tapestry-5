@@ -1173,7 +1173,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     @Test
     public void basic_datefield()
     {
-        start("DateField Demo");
+        start("DateField Demo", "clear", "english");
 
         // TODO: Check to see if we need to explicitly set the locale for this test to work properly.
 
@@ -1187,6 +1187,17 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         assertFieldValue("birthday", "24 Dec 1966");
         assertFieldValue("asteroidImpact", "5/28/2046");
+
+        clickAndWait("link=french");
+
+        click("birthday:trigger");
+
+        waitForCondition("selenium.browserbot.getCurrentWindow().$$('DIV.datePicker').first().isDeepVisible() == true",
+                         PAGE_LOAD_TIMEOUT);
+
+        assertText("//A[@class='topLabel']", "1966 décembre");
+
+        clickAndWait("link=english");
     }
 
     /**
@@ -2200,7 +2211,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         click(SUBMIT);
 
-        waitForElementToAppear("ammount:errorpopup");
+        waitForElementToAppear("amount:errorpopup");
         waitForElementToAppear("quantity:errorpopup");
 
         assertText("//div[@id='amount:errorpopup']/span", "You must provide a numeric value for Amount.");
