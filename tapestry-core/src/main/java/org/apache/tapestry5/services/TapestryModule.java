@@ -42,6 +42,7 @@ import org.apache.tapestry5.ioc.internal.util.IdAllocator;
 import org.apache.tapestry5.ioc.services.*;
 import org.apache.tapestry5.ioc.util.StrategyRegistry;
 import org.apache.tapestry5.ioc.util.TimeInterval;
+import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.runtime.ComponentResourcesAware;
@@ -1331,9 +1332,9 @@ public final class TapestryModule
      * Contributes handlers for the following types: <dl> <dt>Object</dt> <dd>Failure case, added to provide more useful
      * exception message</dd> <dt>{@link RenderCommand}</dt> <dd>Typically, a {@link org.apache.tapestry5.Block}</dd>
      * <dt>{@link Component}</dt> <dd>Renders the component and its body</dd> <dt>{@link
-     * org.apache.tapestry5.json.JSONObject}</dt> <dd>The JSONObject is returned as a text/javascript response</dd>
-     * <dt>{@link org.apache.tapestry5.StreamResponse}</dt> <dd>The stream response is sent as the actual response</dd>
-     * </dl>
+     * org.apache.tapestry5.json.JSONObject} or {@link org.apache.tapestry5.json.JSONArray}</dt> <dd>The JSONObject is
+     * returned as a text/javascript response</dd> <dt>{@link org.apache.tapestry5.StreamResponse}</dt> <dd>The stream
+     * response is sent as the actual response</dd> </dl>
      */
 
     public void contributeAjaxComponentEventResultProcessor(
@@ -1342,6 +1343,7 @@ public final class TapestryModule
         configuration.add(RenderCommand.class, locator.autobuild(RenderCommandComponentEventResultProcessor.class));
         configuration.add(Component.class, locator.autobuild(AjaxComponentInstanceEventResultProcessor.class));
         configuration.add(JSONObject.class, locator.autobuild(JSONObjectEventResultProcessor.class));
+        configuration.add(JSONArray.class, locator.autobuild(JSONArrayEventResultProcessor.class));
         configuration.add(StreamResponse.class, new StreamResponseResultProcessor(response));
     }
 
