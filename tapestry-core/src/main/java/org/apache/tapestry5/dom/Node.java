@@ -279,7 +279,7 @@ public abstract class Node
     }
 
 
-    private int indexOfNode(Node node)
+    int indexOfNode(Node node)
     {
         ensureChildren();
 
@@ -293,5 +293,29 @@ public abstract class Node
     void clearChildren()
     {
         children = null;
+    }
+
+    /**
+     * Wraps a node inside a new element.  The new element is created before the node, then the node is moved inside the
+     * new element.
+     *
+     * @param elementName    name of new element to create
+     * @param namesAndValues to set attributes of new element
+     * @return the created element
+     */
+    public Element wrap(String elementName, String... namesAndValues)
+    {
+        Element containerElement = container.asElement();
+
+        int index = containerElement.indexOfNode(this);
+
+        // Insert the new element just before this node.
+        Element element =
+                containerElement.elementAt(index, elementName, namesAndValues);
+
+        // Move this node inside the new element.
+        moveToTop(element);
+
+        return element;
     }
 }
