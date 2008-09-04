@@ -22,6 +22,7 @@ import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.runtime.PageLifecycleListener;
 
 import java.lang.annotation.Annotation;
+import java.util.List;
 
 /**
  * Provides a component instance with the resources provided by the framework. In many circumstances, the resources
@@ -227,4 +228,22 @@ public interface ComponentResources extends ComponentResourcesCommon
      * @return the element name or null
      */
     String getElementName();
+
+    /**
+     * Returns a list of the names of any informal parameters bound to this component.
+     *
+     * @return the name sorted alphabetically
+     * @see org.apache.tapestry5.annotations.SupportsInformalParameters
+     */
+    List<String> getInformalParameterNames();
+
+    /**
+     * Reads an informal parameter and {@linkplain org.apache.tapestry5.ioc.services.TypeCoercer coercers) the bound
+     * value to the indicated type.
+     *
+     * @param name name of informal parameter
+     * @param type output value type
+     * @return instance of type
+     */
+    <T> T getInformalParameter(String name, Class<T> type);
 }

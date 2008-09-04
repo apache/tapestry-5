@@ -2226,4 +2226,15 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         waitForCondition(condition, PAGE_LOAD_TIMEOUT);
     }
+
+    /**
+     * TAPESTRY-2610
+     */
+    public void access_to_informal_parameters()
+    {
+        start("Informal Parameters Demo");
+
+        assertTextSeries("//dl[@id='informals']/dt[%d]", 1, "barney", "fred", "pageName");
+        assertTextSeries("//dl[@id='informals']/dd[%d]", 1, "rubble", "flintstone", "InformalParametersDemo");
+    }
 }

@@ -33,6 +33,7 @@ import org.apache.tapestry5.runtime.RenderQueue;
 import org.slf4j.Logger;
 
 import java.lang.annotation.Annotation;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -152,6 +153,18 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
     public String getElementName()
     {
         return getElementName(null);
+    }
+
+    public List<String> getInformalParameterNames()
+    {
+        return InternalUtils.sortedKeys(getInformalParameterBindings());
+    }
+
+    public <T> T getInformalParameter(String name, Class<T> type)
+    {
+        if (getBinding(name) != null) return readParameter(name, type);
+
+        return null;
     }
 
     public boolean hasBody()
@@ -348,7 +361,7 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
 
             if (value == null) continue;
 
-            // Because Blocks can be passed in (right from the template, using <t:parameter>,
+            // Because Blocks can be passed in (right from the template, using <t:parameter>),
             // we want to skip those when rending informal parameters.
 
             if (value instanceof Block) continue;
@@ -405,12 +418,7 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
 
     public Block getBlockParameter(String parameterName)
     {
-        // Is allowed explicitly to not exist and be informal, otherwise the
-        // component in question would just use @Parameter.
-
-        if (getBinding(parameterName) != null) return readParameter(parameterName, Block.class);
-
-        return null;
+        return getInformalParameter(parameterName, Block.class);
     }
 
     public Block findBlock(String blockId)
