@@ -1195,7 +1195,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         waitForCondition("selenium.browserbot.getCurrentWindow().$$('DIV.datePicker').first().isDeepVisible() == true",
                          PAGE_LOAD_TIMEOUT);
 
-        assertText("//A[@class='topLabel']", "1966 décembre");
+        assertText("//A[@class='topLabel']", "1966 d\u00e9cembre");
 
         clickAndWait("link=english");
     }
