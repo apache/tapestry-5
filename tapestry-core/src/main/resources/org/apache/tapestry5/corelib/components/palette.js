@@ -1,6 +1,18 @@
-Tapestry.Palette = Class.create();
+// Copyright 2007, 2008 The Apache Software Foundation
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
-Tapestry.Palette.prototype = {
+Tapestry.Palette = Class.create({
 
     // id: of main select element
     // reorder: true to enable extra controls for changing selection order
@@ -8,14 +20,14 @@ Tapestry.Palette.prototype = {
     initialize : function(id, reorder, naturalOrder)
     {
         this.reorder = reorder;
-    // The SELECT elements
+        // The SELECT elements
 
         this.avail = $(id + ":avail");
         this.selected = $(id);
 
         this.hidden = $(id + ":values");
 
-	  // The BUTTON elements
+        // The BUTTON elements
         this.select = $(id + ":select");
         this.deselect = $(id + ":deselect");
 
@@ -98,7 +110,7 @@ Tapestry.Palette.prototype = {
     {
         var options = $A(this.selected.options);
 
-    // Make sure that all elements from the (first) selectedIndex to the end are also selected.
+        // Make sure that all elements from the (first) selectedIndex to the end are also selected.
         return options.slice(this.selected.selectedIndex).all(function(o)
         {
             return o.selected;
@@ -232,7 +244,7 @@ Tapestry.Palette.prototype = {
         var lastPos = lastSelected.index;
         var before = this.selected.options[lastPos + 2];
 
-    // TODO: needs to be "reorder options"
+        // TODO: needs to be "reorder options"
         this.reorderSelected(this.removeSelectedOptions(this.selected), before);
 
         Event.stop(event);
@@ -248,7 +260,7 @@ Tapestry.Palette.prototype = {
         this.updateHidden();
         this.updateButtons();
     }
-};
+});
 
 
 

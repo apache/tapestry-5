@@ -54,20 +54,6 @@ var Tapestry = {
     /** Time, in seconds, that console messages are visible. */
     CONSOLE_DURATION : 60,
 
-    FormEventManager : Class.create(),
-
-    FieldEventManager : Class.create(),
-
-    Zone : Class.create(),
-
-    FormFragment : Class.create(),
-
-    FormInjector : Class.create(),
-
-    ErrorPopup : Class.create(),
-
-    DependentExecutor : Class.create(),
-
     // Adds a callback function that will be invoked when the DOM is loaded (which
     // occurs *before* window.onload, which has to wait for images and such to load
     // first.  This simply observes the dom:loaded event on the document object (support for
@@ -733,7 +719,7 @@ Tapestry.Validator = {
     }
 };
 
-Tapestry.ErrorPopup.prototype = {
+Tapestry.ErrorPopup = Class.create({
 
     // If the images associated with the error popup are overridden (by overriding Tapestry's default.css stylesheet),
     // then some of these values may also need to be adjusted.
@@ -869,9 +855,9 @@ Tapestry.ErrorPopup.prototype = {
 
         this.outerDiv.hide();
     }
-};
+});
 
-Tapestry.FormEventManager.prototype = {
+Tapestry.FormEventManager = Class.create({
 
     initialize : function(form)
     {
@@ -941,9 +927,9 @@ Tapestry.FormEventManager.prototype = {
             return false;
         }
     }
-};
+});
 
-Tapestry.FieldEventManager.prototype = {
+Tapestry.FieldEventManager = Class.create({
 
     initialize : function(field)
     {
@@ -1040,7 +1026,7 @@ Tapestry.FieldEventManager.prototype = {
 
         return this.field.validationError;
     }
-};
+});
 
 // Wrappers around Prototype and Scriptaculous effects.
 // All the functions of this object should have all-lowercase names.
@@ -1075,7 +1061,7 @@ Tapestry.ElementEffect = {
 };
 
 
-Tapestry.Zone.prototype = {
+Tapestry.Zone = Class.create({
     // spec are the parameters for the Zone:
     // trigger: required -- name or instance of link.
     // element: required -- name or instance of div element to be shown, hidden and updated
@@ -1116,12 +1102,12 @@ Tapestry.Zone.prototype = {
 
         func.call(this, this.element);
     }
-};
+});
 
 // A class that managed an element (usually a <div>) that is conditionally visible and
 // part of the form when visible.
 
-Tapestry.FormFragment.prototype = {
+Tapestry.FormFragment = Class.create({
 
     initialize: function(spec)
     {
@@ -1184,9 +1170,9 @@ Tapestry.FormFragment.prototype = {
 
         this.hide();
     }
-};
+});
 
-Tapestry.FormInjector.prototype = {
+Tapestry.FormInjector = Class.create({
 
     initialize: function(spec)
     {
@@ -1239,13 +1225,13 @@ Tapestry.FormInjector.prototype = {
             return false;
         }.bind(this);
     }
-};
+});
 
 /**
  * Coordinates the execution of JavaScript code blocks (via eval) with the loading
  * of an array of <script> elements.
  */
-Tapestry.DependentExecutor.prototype = {
+Tapestry.DependentExecutor = Class.create({
 
     initialize : function(prereqs, dependent)
     {
@@ -1292,7 +1278,7 @@ Tapestry.DependentExecutor.prototype = {
         if (this.loaded == this.toload)
             eval(this.dependent);
     }
-};
+});
 
 Tapestry.ScriptManager = {
 
