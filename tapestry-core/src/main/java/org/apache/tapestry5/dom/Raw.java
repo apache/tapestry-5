@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -34,9 +34,8 @@ public final class Raw extends Node
      * Prints the text exactly as is, no translations, filtering, etc.
      */
     @Override
-    public void toMarkup(PrintWriter writer)
+    void toMarkup(Document document, PrintWriter writer)
     {
         writer.print(text);
     }
-
 }

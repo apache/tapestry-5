@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -35,6 +35,15 @@ public class DefaultMarkupModel implements MarkupModel
     public void encode(String content, StringBuilder buffer)
     {
         encode(content, false, buffer);
+    }
+
+    public String encode(String content)
+    {
+        StringBuilder buffer = new StringBuilder(content.length() * 2);
+
+        encode(content, false, buffer);
+
+        return buffer.toString();
     }
 
     public void encodeQuoted(String content, StringBuilder buffer)

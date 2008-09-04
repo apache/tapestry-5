@@ -43,9 +43,7 @@ Document Object Model
   allows the majority of code to treat the generation of output as a stream. In fact,
   MarkupWriter is more like a cursor into the DOM tree.
   
-  Once all rendering is complete, the DOM tree is streamed to the client.  Planned enhancements
-  will control output formatting, including pretty-printing and/or output compression (elimination
-  of all unnecessary whitespace).
+  Once all rendering is complete, the DOM tree is streamed to the client.
   
 DOM Classes
 
@@ -156,3 +154,14 @@ DOM Classes
   writer.comment("Start of JS Menu code");
   
 +----+
+
+DOM Manipulation
+
+  A powerful feature of Tapestry 5 is the ability to manipulate the DOM after it has been rendered.
+
+  Methods on Node allow an existing node to be moved relative to an Element.  Nodes may be moved before or after the Element,
+  or may be moved inside an Element at the top (the first child) or the bottom (the last child).
+
+  In addition, the children of an Element may be removed or a Node (and all of its children) removed entirely.
+
+  Finally, an Element may "pop": the Element is removed and replaced with its children.

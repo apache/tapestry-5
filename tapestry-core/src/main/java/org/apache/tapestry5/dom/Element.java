@@ -48,10 +48,6 @@ public final class Element extends Node
             this.value = value;
         }
 
-        public String getValue()
-        {
-            return value;
-        }
 
         void render(MarkupModel model, StringBuilder builder)
         {
@@ -105,12 +101,12 @@ public final class Element extends Node
         this.namespace = namespace;
         this.name = name;
 
-        document = parent.getDocument();
+        document = null;
     }
 
     public Document getDocument()
     {
-        return document;
+        return document != null ? document : super.getDocument();
     }
 
     /**
@@ -266,7 +262,7 @@ public final class Element extends Node
      */
     public Text text(String text)
     {
-        return newChild(new Text(this, document, text));
+        return newChild(new Text(this, text));
     }
 
     /**
@@ -277,7 +273,7 @@ public final class Element extends Node
      */
     public CData cdata(String content)
     {
-        return newChild(new CData(this, document, content));
+        return newChild(new CData(this, content));
     }
 
 
@@ -289,15 +285,16 @@ public final class Element extends Node
     }
 
     @Override
-    public void toMarkup(PrintWriter writer)
+    void toMarkup(Document document, PrintWriter writer)
     {
+        MarkupModel markupModel = document.getMarkupModel();
+
         StringBuilder builder = new StringBuilder();
 
         String prefixedElementName = toPrefixedName(namespace, name);
 
         builder.append("<").append(prefixedElementName);
 
-        MarkupModel markupModel = document.getMarkupModel();
 
         if (attributes != null)
         {
@@ -346,7 +343,7 @@ public final class Element extends Node
 
         writer.print(builder.toString());
 
-        if (hasChildren) writeChildMarkup(writer);
+        if (hasChildren) writeChildMarkup(document, writer);
 
         // Dangerous -- perhaps it should be an error for a tag of type OMIT to even have children!
         // We'll certainly be writing out unbalanced markup in that case.
@@ -446,7 +443,7 @@ public final class Element extends Node
     {
         Attribute attribute = InternalUtils.get(attributes, attributeName);
 
-        return attribute == null ? null : attribute.getValue();
+        return attribute == null ? null : attribute.value;
     }
 
     public String getName()
@@ -528,5 +525,35 @@ public final class Element extends Node
     public String getNamespace()
     {
         return namespace;
+    }
+
+    /**
+     * Removes an element; the element's children take the place of the node within its container.
+     */
+    public void pop()
+    {
+        // Have to be careful because we'll be  modifying the underlying list of children
+        // as we work, so we need a copy of the children.
+
+        List<Node> childrenCopy = CollectionFactory.newList(getChildren());
+
+        for (Node child : childrenCopy)
+        {
+            child.moveBefore(this);
+        }
+
+        remove();
+    }
+
+    /**
+     * Removes all children from this element.
+     *
+     * @return the element, for method chaining
+     */
+    public Element removeChildren()
+    {
+        clearChildren();
+
+        return this;
     }
 }

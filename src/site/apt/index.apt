@@ -84,6 +84,10 @@ Third Party Libraries, Tutorials and Resources
 
 New And Of Note
 
+  * New methods have been added to
+    {{{../apidocs/org/apache/tapestry5/dom/Node.html}Node}} to allow nodes to be moved about or otherwise
+    manipulated.
+
   * Application State Objects are now automatically saved back to the session at the end of the request,
     which ensures that ASO data is properly replicated across at cluster.
 
