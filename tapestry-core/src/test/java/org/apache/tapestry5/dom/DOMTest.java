@@ -624,4 +624,26 @@ public class DOMTest extends InternalBaseTestCase
             assertEquals(ex.getMessage(), "Unable to move a node relative to itself.");
         }
     }
+
+    @Test
+    public void wrap()
+    {
+        Document d = new Document();
+
+        Element root = d.newRootElement("doc");
+
+        Element target = root.element("target");
+        target.element("placeholder");
+        Element mobile = root.element("source").element("mobile");
+
+        Node text = mobile.text("On the move");
+
+        assertEquals(d.toString(),
+                     "<doc><target><placeholder></placeholder></target><source><mobile>On the move</mobile></source></doc>");
+
+        text.wrap("em", "class", "bold");
+
+        assertEquals(d.toString(),
+                     "<doc><target><placeholder></placeholder></target><source><mobile><em class=\"bold\">On the move</em></mobile></source></doc>");
+    }
 }

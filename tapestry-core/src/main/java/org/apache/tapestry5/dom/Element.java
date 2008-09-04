@@ -124,9 +124,9 @@ public final class Element extends Node
      * @param value the value for the attribute. A value of null is allowed, and no attribute will be added to the
      *              element.
      */
-    public void attribute(String name, String value)
+    public Element attribute(String name, String value)
     {
-        attribute(null, name, value);
+        return attribute(null, name, value);
     }
 
     /**
@@ -137,15 +137,17 @@ public final class Element extends Node
      * @param value     the value for the attribute. A value of null is allowed, and no attribute will be added to the
      *                  element.
      */
-    public void attribute(String namespace, String name, String value)
+    public Element attribute(String namespace, String name, String value)
     {
         notBlank(name, "name");
 
-        if (value == null) return;
+        if (value == null) return this;
 
         if (attributes == null) attributes = newMap();
 
         if (!attributes.containsKey(name)) attributes.put(name, new Attribute(namespace, name, value));
+
+        return this;
     }
 
 
@@ -154,7 +156,7 @@ public final class Element extends Node
      *
      * @param namesAndValues alternating attribute names and attribute values
      */
-    public void attributes(String... namesAndValues)
+    public Element attributes(String... namesAndValues)
     {
         int i = 0;
         while (i < namesAndValues.length)
@@ -164,12 +166,14 @@ public final class Element extends Node
 
             attribute(name, value);
         }
+
+        return this;
     }
 
     /**
      * Forces changes to a number of attributes. The new attributes <em>overwrite</em> previous values.
      */
-    public void forceAttributes(String... namesAndValues)
+    public Element forceAttributes(String... namesAndValues)
     {
         if (attributes == null) attributes = newMap();
 
@@ -188,6 +192,8 @@ public final class Element extends Node
 
             attributes.put(name, new Attribute(null, name, value));
         }
+
+        return this;
     }
 
     /**
