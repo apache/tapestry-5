@@ -149,7 +149,7 @@ public abstract class AbstractTextField extends AbstractField
 
     @SuppressWarnings({"unchecked"})
     @BeginRender
-    final void begin(MarkupWriter writer)
+    void begin(MarkupWriter writer)
     {
         String value = tracker.getInput(this);
 
@@ -190,7 +190,7 @@ public abstract class AbstractTextField extends AbstractField
 
     @SuppressWarnings({"unchecked"})
     @Override
-    protected final void processSubmission(String elementName)
+    protected void processSubmission(String elementName)
     {
         String rawValue = request.getParameter(elementName);
 
