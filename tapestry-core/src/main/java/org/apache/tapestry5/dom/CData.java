@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -24,18 +24,15 @@ public class CData extends Node
 {
     private final String content;
 
-    private final Document document;
-
-    public CData(Node container, Document document, String content)
+    public CData(Node container, String content)
     {
         super(container);
 
-        this.document = document;
         this.content = content;
     }
 
-
-    public void toMarkup(PrintWriter writer)
+    @Override
+    void toMarkup(Document document, PrintWriter writer)
     {
         MarkupModel model = document.getMarkupModel();
 
@@ -47,13 +44,8 @@ public class CData extends Node
             return;
         }
 
-        // CDATA not supported, so write it normally, with entities escaped.  Create a working
-        // buffer that's plenty big even if a lot of characters need escaping.
+        // CDATA not supported, so write it normally, with entities escaped.
 
-        StringBuilder builder = new StringBuilder(2 * content.length());
-
-        model.encode(content, builder);
-
-        writer.print(builder.toString());
+        writer.print(model.encode(content));
     }
 }

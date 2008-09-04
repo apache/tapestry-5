@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -464,5 +464,164 @@ public class DOMTest extends InternalBaseTestCase
         d.newRootElement("root");
 
         assertEquals(d.toString(), "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<root/>");
+    }
+
+    @Test
+    public void move_before()
+    {
+        Document d = new Document();
+
+        Element root = d.newRootElement("doc");
+
+        root.element("placeholder");
+
+        Element target = root.element("target");
+        Element mobile = root.element("source").element("mobile");
+
+        mobile.text("On the move");
+
+        assertEquals(d.toString(),
+                     "<doc><placeholder></placeholder><target></target><source><mobile>On the move</mobile></source></doc>");
+
+
+        mobile.moveBefore(target);
+
+        assertEquals(d.toString(),
+                     "<doc><placeholder></placeholder><mobile>On the move</mobile><target></target><source></source></doc>");
+    }
+
+    @Test
+    public void move_after()
+    {
+        Document d = new Document();
+
+        Element root = d.newRootElement("doc");
+        root.element("placeholder");
+
+        Element target = root.element("target");
+        Element mobile = root.element("source").element("mobile");
+
+        mobile.text("On the move");
+
+        assertEquals(d.toString(),
+                     "<doc><placeholder></placeholder><target></target><source><mobile>On the move</mobile></source></doc>");
+
+
+        mobile.moveAfter(target);
+
+        assertEquals(d.toString(),
+                     "<doc><placeholder></placeholder><target></target><mobile>On the move</mobile><source></source></doc>");
+    }
+
+    @Test
+    public void move_to_top()
+    {
+        Document d = new Document();
+
+        Element root = d.newRootElement("doc");
+
+        Element target = root.element("target");
+        target.element("placeholder");
+        Element mobile = root.element("source").element("mobile");
+
+        mobile.text("On the move");
+
+        assertEquals(d.toString(),
+                     "<doc><target><placeholder></placeholder></target><source><mobile>On the move</mobile></source></doc>");
+
+        mobile.moveToTop(target);
+
+        assertEquals(d.toString(),
+                     "<doc><target><mobile>On the move</mobile><placeholder></placeholder></target><source></source></doc>");
+    }
+
+    @Test
+    public void move_to_bottom()
+    {
+        Document d = new Document();
+
+        Element root = d.newRootElement("doc");
+
+        Element target = root.element("target");
+        target.element("placeholder");
+        Element mobile = root.element("source").element("mobile");
+
+        mobile.text("On the move");
+
+        assertEquals(d.toString(),
+                     "<doc><target><placeholder></placeholder></target><source><mobile>On the move</mobile></source></doc>");
+
+        mobile.moveToBottom(target);
+
+        assertEquals(d.toString(),
+                     "<doc><target><placeholder></placeholder><mobile>On the move</mobile></target><source></source></doc>");
+    }
+
+    @Test
+    public void remove_children()
+    {
+        Document d = new Document();
+
+        Element root = d.newRootElement("doc");
+
+        root.element("before");
+        Element source = root.element("source");
+        Element mobile = source.element("mobile");
+        source.element("grok");
+        root.element("after");
+
+        mobile.text("On the move");
+
+        assertEquals(d.toString(),
+                     "<doc><before></before><source><mobile>On the move</mobile><grok></grok></source><after></after></doc>");
+
+        source.removeChildren();
+
+        assertEquals(d.toString(),
+                     "<doc><before></before><source></source><after></after></doc>");
+    }
+
+    @Test
+    public void pop()
+    {
+        Document d = new Document();
+
+        Element root = d.newRootElement("doc");
+
+        Element source = root.element("source");
+        source.element("mobile").text("On the move");
+        source.element("grok");
+
+        assertEquals(d.toString(),
+                     "<doc><source><mobile>On the move</mobile><grok></grok></source></doc>");
+
+        source.pop();
+
+        assertEquals(d.toString(),
+                     "<doc><mobile>On the move</mobile><grok></grok></doc>");
+    }
+
+    @Test
+    public void move_an_node_into_itself()
+    {
+        Document d = new Document();
+
+        Element root = d.newRootElement("doc");
+
+        Element target = root.element("target");
+        target.element("placeholder");
+        Element mobile = root.element("source").element("mobile");
+        mobile.text("On the move");
+        Element inside = mobile.element("inside");
+
+        try
+        {
+            mobile.moveToTop(inside);
+            unreachable();
+        }
+        catch (IllegalArgumentException ex)
+        {
+            assertEquals(ex.getMessage(), "Unable to move a node relative to itself.");
+        }
     }
 }

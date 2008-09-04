@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -28,9 +28,9 @@ public interface MarkupModel
      * entities (such as &amp;lt;).
      *
      * @param content to be filtered
-     * @param buffer  to receive the filtered content
+     * @return the filtered content
      */
-    void encode(String content, StringBuilder buffer);
+    String encode(String content);
 
     /**
      * Encodes the characters into the buffer for use in a quoted value (that is, an attribute value), converting

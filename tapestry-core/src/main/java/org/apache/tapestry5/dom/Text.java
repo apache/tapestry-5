@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -23,13 +23,9 @@ public final class Text extends Node
 {
     private final StringBuilder buffer;
 
-    private final Document document;
-
-    Text(Node container, Document document, String text)
+    Text(Node container, String text)
     {
         super(container);
-
-        this.document = document;
 
         buffer = new StringBuilder(text.length());
 
@@ -41,7 +37,7 @@ public final class Text extends Node
      */
     public void write(String text)
     {
-        document.getMarkupModel().encode(text, buffer);
+        buffer.append(text);
     }
 
     public void writef(String format, Object... args)
@@ -50,9 +46,10 @@ public final class Text extends Node
     }
 
     @Override
-    public void toMarkup(PrintWriter writer)
+    void toMarkup(Document document, PrintWriter writer)
     {
-        writer.print(buffer.toString());
-    }
+        String encoded = document.getMarkupModel().encode(buffer.toString());
 
+        writer.print(encoded);
+    }
 }

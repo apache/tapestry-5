@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -44,7 +44,7 @@ public final class Document extends Node
         this.encoding = encoding;
     }
 
-    Document getDocument()
+    public Document getDocument()
     {
         return this;
     }
@@ -109,7 +109,7 @@ public final class Document extends Node
     }
 
     @Override
-    public void toMarkup(PrintWriter writer)
+    public void toMarkup(Document document, PrintWriter writer)
     {
         if (rootElement == null) throw new IllegalStateException(DomMessages.noRootElement());
 
@@ -129,7 +129,7 @@ public final class Document extends Node
             dtd.toMarkup(writer);
         }
 
-        rootElement.toMarkup(writer);
+        rootElement.toMarkup(document, writer);
     }
 
     @Override
