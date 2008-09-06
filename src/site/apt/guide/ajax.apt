@@ -19,8 +19,8 @@ Tapestry Ajax Support
 Changes to Prototype
 
   Tapestry currently uses
-  {{{http://www.thebungeebook.net/wp-content/uploads/2008/01/prototype-1601.js}Prototype 1.6.0.1}}.  Version 1.6.0.2
-  appears to have some issues supporting Internet Explorer.  Tapestry's version is slightly patched
+  {{{http://www.thebungeebook.net/wp-content/uploads/2008/01/prototype-1601.js}Prototype 1.6.0.2}}.
+  Tapestry's version is slightly patched
   for {{{https://issues.apache.org/jira/browse/TAPESTRY-2108}TAPESTRY-2108}}.
 
 Changes to Scriptaculous
@@ -65,7 +65,7 @@ Basic JavaScript
   ignored.  In this way, each component can add the assets it needs, without worrying about conflicts
   with other components.
 
-  Note that the Prototype, Scriptaculous main and effects libraries, and the base Tapestry library (which largely consists of
+  Note that the Prototype, Scriptaculous main and effects libraries, and the standard Tapestry library (which largely consists of
   support for form input validation) are included automatically.
 
   If you are need access to other Scriptaculous libraries, you can provide them as follows:
@@ -291,8 +291,6 @@ Ajax Components and Mixins
 
 ** Coming Soon
 
-  * zone parameter for Form components
-
   * Extending a Form with a Zone
 
   * Additional Tapestry.ElementEffect functions, plus documentation
@@ -330,3 +328,41 @@ Your own Ajax Components
   []
 
 
+The Standard Tapestry Library
+
+  Tapestry's client-side support, the standard Tapestry library, is the file tapestry.js,
+  which has dependencies on Prototype and on Scriptaculous Effects.     tapestry.js, along with
+  its dependencies, are automatically added to the page when your code adds any other JavaScript or JavaScript library.
+
+* Tapestry Namespace
+
+  Tapestry defines a number of object and classes inside the Tapestry namespace.
+
+  It also adds a handful of methods to the Form class, and to Form elements.  These are mostly related to
+  input validation and determining element visibility.
+
+* The Tapestry Object
+
+  The standard library adds a new function, <<<$T()>>>.  This function is used much like
+  Prototype's <<<$()>>>, except that instead of returning a DOM object, it returns a hash (an initially
+  empty JavaScript object) that is associated with the DOM object.  This hash is known as <the Tapestry object>.
+
+  You may pass in an object id (as a string) or an object reference. The Tapestry Object is created on first invocation.
+  Note: you'll see it as a property name _tapestry on the DOM object (which may be useful when debugging).
+
+  When Tapestry adds information to a DOM object, it does so in the Tapestry object. This helps avoid name
+  conflicts, and groups all Tapestry-added properties into one place which is much easier to debug.
+
+  For example, you might store a value for an element in one place:
+
+----
+  $T(myid).fadeDuration = .5;
+----
+
+  Then use it somewhere else:
+
+----
+  new Effect.Fade($(myId), { duration: $T(myid).fadeDuration });
+----
+
+  
