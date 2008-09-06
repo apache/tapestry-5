@@ -19,6 +19,7 @@ import org.apache.tapestry5.ValueEncoder;
 import org.apache.tapestry5.annotations.ApplicationState;
 import org.apache.tapestry5.annotations.Component;
 import org.apache.tapestry5.annotations.Log;
+import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.corelib.components.BeanEditForm;
 import org.apache.tapestry5.integration.app1.data.RegistrationData;
 import org.apache.tapestry5.internal.services.StringValueEncoder;
@@ -29,24 +30,21 @@ import java.util.Date;
 
 public class ZoneDemo
 {
-    @Component
-    private BeanEditForm form;
+    @Component(id = "registrationForm")
+    private BeanEditForm regform;
 
     private String name;
 
     @ApplicationState
     private RegistrationData registration;
 
-    private static final String[] NAMES = { "Fred & Wilma", "Mr. <Roboto>", "Grim Fandango", "Registration" };
+    private static final String[] NAMES = {"Fred & Wilma", "Mr. <Roboto>", "Grim Fandango", "Registration", "Vote"};
 
     @Inject
-    private Block showName;
+    private Block showName, registrationForm, registrationOutput, voteForm, voteOutput;
 
-    @Inject
-    private Block registrationForm;
-
-    @Inject
-    private Block registrationOutput;
+    @Property
+    private String vote;
 
     public String[] getNames()
     {
@@ -71,17 +69,19 @@ public class ZoneDemo
 
         if (name.equals("Registration")) return registrationForm;
 
+        if (name.equals("Vote")) return voteForm;
+
         return showName;
     }
 
-    Object onSuccess()
+    Object onSuccessFromRegistrationForm()
     {
         return registrationOutput;
     }
 
     Object onActionFromClear()
     {
-        form.clearErrors();
+        regform.clearErrors();
         registration = null;
 
         return registrationForm;
@@ -110,4 +110,10 @@ public class ZoneDemo
     {
         return new StringValueEncoder();
     }
+
+    void onSelectedFromVoteYes() { vote = "Yes"; }
+
+    void onSelectedFromVoteNo() { vote = "No"; }
+
+    Object onSuccessFromVote() { return voteOutput; }
 }

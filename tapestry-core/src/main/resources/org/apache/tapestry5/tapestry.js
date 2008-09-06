@@ -16,7 +16,7 @@ var Tapestry = {
 
     /** Event that allows observers to perform cross-form validation after individual
      *  fields have performed their validation. The form element is passed as the
-     *  event memo. Observers may set the form's validationError property to true (which
+     *  event memo. Observers may set the validationError property of the Form's Tapestry object to true (which
      *  will prevent form submission).
      */
     FORM_VALIDATE_EVENT : "tapestry:formvalidate",
@@ -64,9 +64,13 @@ var Tapestry = {
     },
 
     /** Find all elements marked with the "t-invisible" CSS class and hide()s them, so that
-     * Prototype's visible() method operates correctly. This is invoked when the
+     * Prototype's visible() method operates correctly.                                    In addition,
+     * finds form control elements and adds additional listeners to them to support
+     * form field input validation.
+     *
+     * <p>This is invoked when the
      * DOM is first loaded, and AGAIN whenever dynamic content is loaded via the Zone
-     * mechanism. In addition, adds a focus listener for each form element.
+     * mechanism.
      */
     onDomLoadedCallback : function()
     {
@@ -87,14 +91,35 @@ var Tapestry = {
             // and we don't want to add multiple listeners to the same
             // element.
 
-            if (! element.isObservingFocusChange)
+            var t = $T(element);
+
+            if (! t.observingFocusChange)
             {
                 element.observe("focus", function()
                 {
                     document.fire(Tapestry.FOCUS_CHANGE_EVENT, element);
                 });
 
-                element.isObservingFocusChange = true;
+                t.observingFocusChange = true;
+            }
+        });
+
+        // When a submit element is clicked, record the name of the element
+        // on the associated form. This is necessary for some Ajax processing
+        // TAPESTRY-2324.
+
+        $$("INPUT[type=submit]").each(function(element)
+        {
+            var t = $T(element);
+
+            if (!t.trackingClicks)
+            {
+                element.observe("click", function()
+                {
+                    $T(element.form).lastSubmit = element;
+                });
+
+                t.trackingClicks = true;
             }
         });
     },
@@ -330,12 +355,79 @@ Element.addMethods('FORM',
      */
     getFormEventManager : function(form)
     {
-        var manager = form.eventManager;
+        form = $(form);
+        var t = $T(form);
+
+        var manager = t.formEventManager;
 
         if (manager == undefined)
+        {
             manager = new Tapestry.FormEventManager(form);
+            t.formEventManager = manager;
+        }
 
         return manager;
+    },
+
+    /**
+     * Sends an Ajax request to the Form's action. This encapsulates
+     * a few things, such as a default onFailure handler, and working
+     * around bugs/features in Prototype concerning how
+     * submit buttons are processed.
+     *
+     * @param form used to define the data to be sent in the request
+     * @param options      standard Prototype Ajax Options
+     * @return Ajax.Request the Ajax.Request created for the request
+     */
+    sendAjaxRequest : function (form, options)
+    {
+        form = $(form);
+
+        // Generally, options should not be null or missing,
+        // because otherwise there's no way to provide any callbacks!
+
+        options = Object.clone(options || { });
+
+        // Set a default failure handler if none is provided.
+
+        options.onFailure |= Tapestry.ajaxFailureHandler;
+
+        // Find the elements, skipping over any submit buttons.
+        // This works around bugs in Prototype 1.6.0.2.
+
+        var elements = form.getElements().reject(function(e)
+        {
+            return e.tagName == "INPUT" && e.type == "submit";
+        });
+
+        var hash = Form.serializeElements(elements, true);
+
+        var lastSubmit = $T(form).lastSubmit;
+
+        // Put the last submit clicked into the hash, emulating
+        // what a normal form submit would do.
+
+        if (lastSubmit && lastSubmit.name)
+        {
+            hash[lastSubmit.name] = $F(lastSubmit);
+        }
+
+
+        // Copy the parameters in, overwriting field values,
+        // because Prototype 1.6.0.2 does not.
+
+        Object.extend(hash, options.parameters);
+
+        options.parameters = hash;
+
+        // We'll just assume that the form has an action; this
+        // will always be true in Tapestry.
+
+        var url = form.readAttribute('action');
+
+        // Ajax.Request will convert the hash into a query string and post it.
+
+        return new Ajax.Request(url, options);
     }
 });
 
@@ -350,17 +442,22 @@ Element.addMethods(['INPUT', 'SELECT', 'TEXTAREA'],
     getFieldEventManager : function(field)
     {
         field = $(field);
+        var t = $T(field);
 
-        var manager = field.fieldEventManager;
+        var manager = t.fieldEventManager;
 
-        if (manager == undefined) manager = new Tapestry.FieldEventManager(field);
+        if (manager == undefined)
+        {
+            manager = new Tapestry.FieldEventManager(field);
+            t.fieldEventManager = manager;
+        }
 
         return manager;
     },
 
     /**
      * Obtains the Tapestry.FieldEventManager and asks it to show
-     * the validation message.   Sets the element's validationError property to true.
+     * the validation message.   Sets the  validationError property of the elements tapestry object to true.
      * @param element
      * @param message to display
      */
@@ -368,8 +465,8 @@ Element.addMethods(['INPUT', 'SELECT', 'TEXTAREA'],
     {
         element = $(element);
 
-        element.validationError = true;
-        element.form.validationError = true;
+        $T(element).validationError = true;
+        $T(element.form).validationError = true;
 
         element.getFieldEventManager().showValidationMessage(message);
 
@@ -458,6 +555,7 @@ Tapestry.Initializer = {
     formLoopRemoveLink : function(spec)
     {
         var link = $(spec.link);
+        var fragmentId = spec.fragment;
 
         link.observe("click", function(event)
         {
@@ -465,11 +563,12 @@ Tapestry.Initializer = {
 
             var successHandler = function(transport)
             {
-                var container = $(spec.fragment);
+                var container = $(fragmentId);
+                var fragment = $T(container).formFragment;
 
-                if (container.formFragment != undefined)
+                if (fragment != undefined)
                 {
-                    container.formFragment.hideAndRemove();
+                    fragment.hideAndRemove();
                 }
                 else
                 {
@@ -498,16 +597,22 @@ Tapestry.Initializer = {
         // Update the element with the id of zone div. This may be changed dynamically on the client
         // side.
 
-        element.zone = zoneDiv;
+        $T(element).zone = zoneDiv;
 
         var successHandler = function(transport)
         {
             var reply = transport.responseJSON;
 
             // Find the zone id for the element, and from there, the Tapestry.Zone object
-            // responsible for the zone.
+            // responsible for the zone.  This is evaluated late so that zone can be dynamically
+            // changed on the client.  Sorry about the confusion; there's the zone <div>, and
+            // there's the Tapestry.Zone object.    Perhaps should rename Tapestry.Zone
+            // to Tapestry.ZoneManager?
 
-            $(element.zone).zone.show(reply.content);
+            var zoneId = $T(element).zone;
+            var zoneObject = $T(zoneId).zone;
+
+            zoneObject.show(reply.content);
 
             Tapestry.processScriptInReply(reply);
         };
@@ -524,7 +629,7 @@ Tapestry.Initializer = {
 
             element.observe(Tapestry.FORM_PROCESS_SUBMIT_EVENT, function()
             {
-                element.request({ onSuccess : successHandler, onFailure: Tapestry.ajaxFailureHandler });
+                element.sendAjaxRequest({ onSuccess : successHandler });
             });
 
             return;
@@ -601,7 +706,7 @@ Tapestry.Initializer = {
         {
             $(trigger.form).observe("click", function()
             {
-                $(element).formFragment.setVisible(trigger.checked);
+                $T(element).formFragment.setVisible(trigger.checked);
             });
 
             return;
@@ -614,7 +719,7 @@ Tapestry.Initializer = {
 
         trigger.observe("click", function()
         {
-            $(element).formFragment.setVisible(trigger.checked);
+            $T(element).formFragment.setVisible(trigger.checked);
         });
 
     }
@@ -862,14 +967,15 @@ Tapestry.FormEventManager = Class.create({
     initialize : function(form)
     {
         this.form = $(form);
-        this.form.eventManager = this;
 
         this.form.onsubmit = this.handleSubmit.bindAsEventListener(this);
     },
 
     handleSubmit : function(domevent)
     {
-        this.form.validationError = false;
+        var t = $T(this.form);
+
+        t.validationError = false;
 
         var firstErrorField = null;
 
@@ -879,11 +985,13 @@ Tapestry.FormEventManager = Class.create({
 
         this.form.getElements().each(function(element)
         {
-            if (element.fieldEventManager != undefined)
+            var fem = $T(element).fieldEventManager;
+
+            if (fem != undefined)
             {
                 // Ask the FEM to validate input for the field, which fires
                 // a number of events.
-                var error = element.fieldEventManager.validateInput();
+                var error = fem.validateInput();
 
                 if (error && ! firstErrorField)
                 {
@@ -899,13 +1007,18 @@ Tapestry.FormEventManager = Class.create({
 
         this.form.fire(Tapestry.FORM_VALIDATE_EVENT, this.form);
 
-        if (this.form.validationError)
+        if (t.validationError)
         {
             Event.stop(domevent); // Should be domevent.stop(), but that fails under IE
 
             if (firstErrorField) firstErrorField.activate();
 
-            return;
+            // Because the submission failed, the last submit property is cleared,
+            // since the form may be submitted for some other reason later.
+
+            t.lastSubmit = null;
+
+            return false;
         }
 
         this.form.fire(Tapestry.FORM_PREPARE_FOR_SUBMIT_EVENT, this.form);
@@ -926,6 +1039,10 @@ Tapestry.FormEventManager = Class.create({
 
             return false;
         }
+
+        // Validation is OK, not doing Ajax, continue as planned.
+
+        return true;
     }
 });
 
@@ -934,7 +1051,6 @@ Tapestry.FieldEventManager = Class.create({
     initialize : function(field)
     {
         this.field = $(field);
-        this.field.fieldEventManager = this;
 
         var id = this.field.id;
         this.label = $(id + ':label');
@@ -1005,13 +1121,15 @@ Tapestry.FieldEventManager = Class.create({
 
         if (! this.field.isDeepVisible()) return;
 
-        this.field.validationError = false;
+        var t = $T(this.field);
+
+        t.validationError = false;
 
         this.field.fire(Tapestry.FIELD_FORMAT_EVENT, this.field);
 
         // If Format went ok, perhaps do the other validations.
 
-        if (! this.field.validationError)
+        if (! t.validationError)
         {
             var value = $F(this.field);
 
@@ -1021,10 +1139,10 @@ Tapestry.FieldEventManager = Class.create({
 
         // Lastly, if no validation errors were found, remove the decorations.
 
-        if (! this.field.validationError)
+        if (! t.validationError)
             this.field.removeDecorations();
 
-        return this.field.validationError;
+        return t.validationError;
     }
 });
 
@@ -1078,7 +1196,7 @@ Tapestry.Zone = Class.create({
 
         // Link the div back to this zone.
 
-        this.element.zone = this;
+        $T(this.element).zone = this;
 
         // Look inside the Zone element for an element with the CSS class "t-zone-update".
         // If present, then this is the elements whose content will be changed, rather
@@ -1088,7 +1206,7 @@ Tapestry.Zone = Class.create({
 
         var updates = this.element.select(".t-zone-update");
 
-        this.updateElement = updates.length == 0 ? this.element : updates[0];
+        this.updateElement = updates.first() || this.element;
     },
 
     // Updates the content of the div controlled by this Zone, then
@@ -1116,7 +1234,7 @@ Tapestry.FormFragment = Class.create({
 
         this.element = $(spec.element);
 
-        this.element.formFragment = this;
+        $T(this.element).formFragment = this;
 
         this.hidden = $(spec.element + ":hidden");
 
@@ -1197,8 +1315,7 @@ Tapestry.FormInjector = Class.create({
                 // Insert the new element before or after the existing element.
 
                 var param = { };
-                var key = this.below ? "after" : "before";
-                param[key] = newElement;
+                param[this.below ? "after" : "before"] = newElement;
 
                 // Add the new element with the downloaded content.
 
@@ -1396,5 +1513,32 @@ Tapestry.ScriptManager = {
         });
     }
 };
+
+/**
+ * In the spirit of $(), $T() exists to access the <em>Tapestry object</em> for the element. The Tapestry object
+ * is used to store additional values related to the element; it is simply an annoymous object stored as property
+ * <code>_tapestry</code> of the element, created the first time it is accessed.
+ * <p>This mechanism acts as a namespace, and so helps prevent name
+ * conflicts that would occur if properties were stored directly on DOM elements, and makes debugging a bit easier (the Tapestry-specific
+ * properties are all in one place!).
+ * For the moment,
+ * added methods stored directly on the object, and are not prefixed in any way, valuing readability over preventing naming conflicts.
+ *
+ * @param element an element instance or element id
+ * @return object Tapestry object for the element
+ */
+function $T(element)
+{
+    var e = $(element);
+    var t = e._tapestry;
+
+    if (!t)
+    {
+        t = { };
+        e._tapestry = t;
+    }
+
+    return t;
+}
 
 Tapestry.onDOMLoaded(Tapestry.onDomLoadedCallback);

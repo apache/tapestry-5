@@ -17,7 +17,7 @@
     <t:block id="registrationForm">
 
 
-        <t:beaneditform t:id="form" object="registration" zone="output" add="roles">
+        <t:beaneditform t:id="registrationForm" object="registration" zone="output" add="roles">
 
             <t:parameter name="roles">
                 <t:palette selected="registration.roles" encoder="encoder" model="literal:guest,user,admin"/>
@@ -35,6 +35,19 @@
                 ${registration.roles}
             </t:parameter>
         </t:beandisplay>
+    </t:block>
+
+    <t:block id="voteForm">
+        <t:form t:id="vote" zone="output">
+            Vote:
+            <input type="submit" name="abstain" value="Abstain"/>
+            <t:submit t:id="voteYes" value="Yes"/>
+            <t:submit t:id="voteNo" value="No"/>
+        </t:form>
+    </t:block>
+
+    <t:block id="voteOutput">
+        You voted: ${vote}
     </t:block>
 
 

@@ -84,6 +84,8 @@ Third Party Libraries, Tutorials and Resources
 
 New And Of Note
 
+  * Tapestry now bundles Prototype version 1.6.0.2.
+
   * New methods have been added to
     {{{../apidocs/org/apache/tapestry5/dom/Node.html}Node}} to allow nodes to be moved about or otherwise
     manipulated.
