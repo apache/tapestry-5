@@ -19,7 +19,7 @@ Tapestry Ajax Support
 Changes to Prototype
 
   Tapestry currently uses
-  {{{http://www.thebungeebook.net/wp-content/uploads/2008/01/prototype-1601.js}Prototype 1.6.0.2}}.
+  {{{http://prototypejs.org/assets/2008/1/25/prototype-1.6.0.2.js}Prototype 1.6.0.2}}.
   Tapestry's version is slightly patched
   for {{{https://issues.apache.org/jira/browse/TAPESTRY-2108}TAPESTRY-2108}}.
 
