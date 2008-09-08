@@ -58,8 +58,8 @@ container.  For a Tomcat deployment, you're more likely to include
 the hibernate JARs and dependencies inside the WAR. -->
         <dependency>
             <groupId>org.hibernate</groupId>
-            <artifactId>hibernate</artifactId>
-            <version>3.2.2.ga</version>
+            <artifactId>hibernate-core</artifactId>
+            <version>3.3.0.SP1</version>
             <exclusions>
                 <exclusion>
                     <groupId>javax.transaction</groupId>
@@ -79,7 +79,7 @@ the hibernate JARs and dependencies inside the WAR. -->
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-annotations</artifactId>
-            <version>3.2.1.ga</version>
+            <version>3.4.0.GA</version>
         </dependency>
 
         <dependency>
@@ -136,6 +136,15 @@ the hibernate JARs and dependencies inside the WAR. -->
 
         </plugins>
     </build>
+
+    <repositories>
+        <repository>
+            <id>jboss</id>
+            <name>JBoss</name>
+            <url>http://repository.jboss.org/maven2</url>
+        </repository>
+    </repositories>
+
     <reporting>
         <plugins>
             <plugin>
