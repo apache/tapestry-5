@@ -1839,7 +1839,8 @@ public final class TapestryModule
 
         configuration.add(SymbolConstants.CHARSET, "UTF-8");
 
-        configuration.add(SymbolConstants.APPLICATION_CATALOG, "WEB-INF/${tapestry.app-name}.properties");
+        configuration.add(SymbolConstants.APPLICATION_CATALOG,
+                          "WEB-INF/${" + InternalConstants.TAPESTRY_APP_NAME_SYMBOL + "}.properties");
 
         configuration.add(SymbolConstants.EXCEPTION_REPORT_PAGE, "ExceptionReport");
     }
