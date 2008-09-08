@@ -44,7 +44,7 @@ import java.util.*;
  * @requiresDependencyResolution compile
  * @execute phase="generate-sources"
  */
-@SuppressWarnings({ "unchecked" })
+@SuppressWarnings({"unchecked"})
 public class ComponentReport extends AbstractMavenReport
 {
     /**
@@ -52,8 +52,8 @@ public class ComponentReport extends AbstractMavenReport
      */
     private static final String REFERENCE_DIR = "ref";
 
-    private final static String[] PARAMETER_HEADERS = { "Name", "Type", "Flags", "Default", "Default Prefix",
-            "Description" };
+    private final static String[] PARAMETER_HEADERS = {"Name", "Type", "Flags", "Default", "Default Prefix",
+            "Description"};
 
 
     /**
@@ -237,7 +237,6 @@ public class ComponentReport extends AbstractMavenReport
                 sink.list_();
                 sink.section2_();
             }
-
         }
         catch (Exception ex)
         {
@@ -530,7 +529,7 @@ public class ComponentReport extends AbstractMavenReport
 
         String parametersPath = workDirectory + File.separator + "component-parameters.xml";
 
-        String[] arguments = { "-private", "-o", parametersPath,
+        String[] arguments = {"-private", "-o", parametersPath,
 
                 "-subpackages", rootPackage,
 
@@ -540,13 +539,38 @@ public class ComponentReport extends AbstractMavenReport
 
                 "-sourcepath", sourcePath(),
 
-                "-classpath", classPath() };
+                "-classpath", classPath()};
 
-        command.addArguments(arguments);
+        String argumentsFile = writeArgumentsFile(arguments);
+
+        command.addArguments(new String[] {"@" + argumentsFile});
 
         executeCommand(command);
 
         return readXML(parametersPath);
+    }
+
+    private String writeArgumentsFile(String[] arguments) throws MavenReportException
+    {
+        String fileName = workDirectory + "/component-report-javadoc-arguments.txt";
+
+        try
+        {
+            PrintWriter pw = new PrintWriter(fileName);
+
+            for (String arg : arguments)
+            {
+                pw.println(arg);
+            }
+
+            pw.close();
+        }
+        catch (IOException ex)
+        {
+            throw new MavenReportException(ex.getMessage());
+        }
+
+        return fileName;
     }
 
     @SuppressWarnings("unchecked")
