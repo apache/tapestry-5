@@ -19,7 +19,7 @@
             <t:label for="email">User Email</t:label>
             <input t:type="TextField" t:id="email" value="incident.email" size="50" disabled="disabled"/>
             <br/>
-            <t:label for="message"/>
+            <t:label for="message" ignorebody="true">This label body is ignored.</t:label>
             <input t:type="TextArea" t:id="message" label="Incident Message" value="incident.message"
                    cols="50" rows="10" disabled="disabled">You can put text here, but it isn't used.
             </input>

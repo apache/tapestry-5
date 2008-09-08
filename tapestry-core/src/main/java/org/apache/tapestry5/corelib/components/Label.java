@@ -15,7 +15,9 @@
 package org.apache.tapestry5.corelib.components;
 
 import org.apache.tapestry5.*;
-import org.apache.tapestry5.annotations.*;
+import org.apache.tapestry5.annotations.Environmental;
+import org.apache.tapestry5.annotations.Parameter;
+import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
@@ -50,8 +52,16 @@ public class Label
 
     private Element labelElement;
 
-    @BeginRender
-    void begin(MarkupWriter writer)
+    /**
+     * If true, then the body of the label element (in the template) is ignored. This is used when a designer places a
+     * value inside the &lt;label&gt; element for WYSIWYG purposes, but it should be replaced with a different
+     * (probably, localized) value at runtime. The default is false, so a body will be used if present and the field's
+     * label will only be used if the body is empty or blank.
+     */
+    @Parameter
+    private boolean ignoreBody;
+
+    boolean beginRender(MarkupWriter writer)
     {
         final Field field = this.field;
 
@@ -78,10 +88,11 @@ public class Label
         };
 
         heartbeat.defer(command);
+
+        return !ignoreBody;
     }
 
-    @AfterRender
-    void after(MarkupWriter writer)
+    void afterRender(MarkupWriter writer)
     {
         // If the Label element has a body that renders some non-blank output, that takes precendence
         // over the label string provided by the field.
