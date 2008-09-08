@@ -57,6 +57,16 @@ public interface RenderSupport
     void addScriptLink(Asset... scriptAssets);
 
     /**
+     * Adds some number of script links as strings representations of URLs.  The scripts are passed down to the client
+     * as-is. Note that Tapestry generates relative URLs for assets because the base URL varies dependending on the page
+     * and its activation context; scripts added with this method will not be adjusted in anyway. Typically, this is
+     * used to reference a script stored outside the web application entirely.
+     *
+     * @param scriptURLs URL strings of scripts
+     */
+    void addScriptLink(String... scriptURLs);
+
+    /**
      * Used to add scripts that are stored on the classpath. Each element has {@linkplain SymbolSource symbols
      * expanded}, then is {@linkplain AssetSource converted to an asset} and added as a script link.
      *
@@ -75,6 +85,14 @@ public interface RenderSupport
      */
 
     void addStylesheetLink(Asset stylesheet, String media);
+
+    /**
+     * Adds a stylesheet as a URL. See notes in {@link #addScriptLink(String[])}.
+     *
+     * @param stylesheetURL URL string of stylesheet
+     * @param media         media value fo the stylesheet, or null to not specify a specific media type
+     */
+    void addStylesheetLink(String stylesheetURL, String media);
 
     /**
      * Adds a script statement to the page's script block. A newline will be added after the script statement.

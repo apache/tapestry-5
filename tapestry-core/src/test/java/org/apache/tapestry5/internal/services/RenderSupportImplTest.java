@@ -51,6 +51,22 @@ public class RenderSupportImplTest extends InternalBaseTestCase
     }
 
     @Test
+    public void add_script_link_by_url()
+    {
+        DocumentLinker linker = mockDocumentLinker();
+
+        linker.addScriptLink(ASSET_URL);
+
+        replay();
+
+        RenderSupport support = new RenderSupportImpl(linker, null, null);
+
+        support.addScriptLink(ASSET_URL);
+
+        verify();
+    }
+
+    @Test
     public void core_assets_added()
     {
         getMocksControl().checkOrder(true);
@@ -144,7 +160,7 @@ public class RenderSupportImplTest extends InternalBaseTestCase
     }
 
     @Test
-    public void add_stylesheet_link()
+    public void add_stylesheet_link_by_asset()
     {
         String media = "print";
         DocumentLinker linker = mockDocumentLinker();
@@ -158,6 +174,23 @@ public class RenderSupportImplTest extends InternalBaseTestCase
         RenderSupport support = new RenderSupportImpl(linker, null, null);
 
         support.addStylesheetLink(asset, media);
+
+        verify();
+    }
+
+    @Test
+    public void add_stylesheet_link_by_url()
+    {
+        String media = "print";
+        DocumentLinker linker = mockDocumentLinker();
+
+        linker.addStylesheetLink(ASSET_URL, media);
+
+        replay();
+
+        RenderSupport support = new RenderSupportImpl(linker, null, null);
+
+        support.addStylesheetLink(ASSET_URL, media);
 
         verify();
     }
