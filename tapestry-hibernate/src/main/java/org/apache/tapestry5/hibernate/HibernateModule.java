@@ -48,6 +48,7 @@ public class HibernateModule
     public static void bind(ServiceBinder binder)
     {
         binder.bind(HibernateTransactionDecorator.class, HibernateTransactionDecoratorImpl.class);
+        binder.bind(HibernateConfigurer.class, DefaultHibernateConfigurer.class).withId("DefaultHibernateConfigurer");
     }
 
     public static void contributeFactoryDefaults(MappedConfiguration<String, String> configuration)
@@ -131,13 +132,18 @@ public class HibernateModule
     /**
      * Adds the following configurers: <ul> <li>Default - performs default hibernate configuration</li> <li>PackageName
      * - loads entities by package name</li> </ul>
+     * <p/>
+     * Note: if another service implementing {@link org.apache.tapestry5.hibernate.HibernateConfigurer} is defined, then
+     * an contribution to the {@link org.apache.tapestry5.services.Alias} service will be necessary to disambiguate.
      */
     public static void contributeHibernateSessionSource(OrderedConfiguration<HibernateConfigurer> config,
-                                                        final ClassNameLocator classNameLocator,
-                                                        final HibernateEntityPackageManager packageManager)
+
+                                                        HibernateConfigurer defaultHibernateConfigurer,
+
+                                                        ObjectLocator locator)
     {
-        config.add("Default", new DefaultHibernateConfigurer());
-        config.add("PackageName", new PackageNameHibernateConfigurer(packageManager, classNameLocator));
+        config.add("Default", defaultHibernateConfigurer);
+        config.add("PackageName", locator.autobuild(PackageNameHibernateConfigurer.class));
     }
 
     /**
