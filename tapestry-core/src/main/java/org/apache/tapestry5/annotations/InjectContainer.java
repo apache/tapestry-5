@@ -21,8 +21,8 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Target;
 
 /**
- * Used in inject the container of a component as a field of the component. The container of a mixin is the component to
- * which the mixin is attached.
+ * Used to inject the component which contains this component. For mixins, this injects the component to which the mixin
+ * is attached.
  */
 @Target(FIELD)
 @Documented
