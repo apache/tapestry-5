@@ -88,17 +88,14 @@ public class CookiesImpl implements Cookies
     {
         Cookie cookie = new Cookie(name, value);
         cookie.setPath(path);
+        cookie.setMaxAge(defaultMaxAge);
 
         cookieSink.addCookie(cookie);
     }
 
     public void writeDomainCookieValue(String name, String value, String domain)
     {
-        Cookie cookie = new Cookie(name, value);
-        cookie.setPath(request.getContextPath() + "/");
-        cookie.setDomain(domain);
-
-        cookieSink.addCookie(cookie);
+        writeDomainCookieValue(name, value, domain, defaultMaxAge);
     }
 
     public void writeDomainCookieValue(String name, String value, String domain, int maxAge)
@@ -116,6 +113,7 @@ public class CookiesImpl implements Cookies
         Cookie cookie = new Cookie(name, value);
         cookie.setPath(path);
         cookie.setDomain(domain);
+        cookie.setMaxAge(defaultMaxAge);
 
         cookieSink.addCookie(cookie);
     }
