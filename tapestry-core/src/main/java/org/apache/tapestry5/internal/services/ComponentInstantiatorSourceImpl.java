@@ -18,7 +18,6 @@ import javassist.*;
 import org.apache.tapestry5.internal.event.InvalidationEventHubImpl;
 import org.apache.tapestry5.internal.events.UpdateListener;
 import org.apache.tapestry5.internal.util.URLChangeTracker;
-import org.apache.tapestry5.ioc.internal.InternalConstants;
 import org.apache.tapestry5.ioc.internal.services.ClassFactoryClassPool;
 import org.apache.tapestry5.ioc.internal.services.ClassFactoryImpl;
 import org.apache.tapestry5.ioc.internal.services.CtClassSource;
@@ -73,6 +72,21 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
             super(parent, classPool);
         }
 
+
+        /**
+         * Synchronizes on the parent class loader before continuing, which is necessary to prevent thread deadlocks. Any classes
+         * loaded, or transformed, by this class loader will do so with the parent (context) class loader locked.
+         * The required order is always that the context class loader be locked, then the child class loader.  Painful.
+         */
+        @Override
+        protected Class loadClass(String name, boolean resolve) throws ClassFormatError, ClassNotFoundException
+        {
+            synchronized (getParent())
+            {
+                return super.loadClass(name, resolve);
+            }
+        }
+
         /**
          * Determines if the class name represents a component class from a controlled package.  If so,
          * super.findClass() will load it and transform it. Returns null if not in a controlled package, allowing the
@@ -100,7 +114,6 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
 
             return null;
         }
-
     }
 
     public ComponentInstantiatorSourceImpl(Logger logger, ClassLoader parent, ComponentClassTransformer transformer,
@@ -160,7 +173,9 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
         classFactory = new ClassFactoryImpl(loader, classPool, classSource, logger);
     }
 
-    // This is called from well within a synchronized block.
+    // This is called from well within a synchronized block.    The component layer class loader,
+    // and the context class loader, should each be locked.
+
     public void onLoad(ClassPool pool, String classname) throws NotFoundException, CannotCompileException
     {
         logger.debug("BEGIN onLoad " + classname);
@@ -179,20 +194,17 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
 
         try
         {
-            synchronized (InternalConstants.GLOBAL_CLASS_CREATION_MUTEX)
-            {
-                CtClass ctClass = pool.get(classname);
+            CtClass ctClass = pool.get(classname);
 
-                // Force the creation of the super-class before the target class.
+            // Force the creation of the super-class before the target class.
 
-                forceSuperclassTransform(ctClass);
+            forceSuperclassTransform(ctClass);
 
-                // Do the transformations here
+            // Do the transformations here
 
-                transformer.transformComponentClass(ctClass, loader);
+            transformer.transformComponentClass(ctClass, loader);
 
-                writeClassToFileSystemForHardCoreDebuggingPurposesOnly(ctClass);
-            }
+            writeClassToFileSystemForHardCoreDebuggingPurposesOnly(ctClass);
 
             diag = "END";
         }
@@ -218,7 +230,6 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
             ctClass.writeFile(JAVASSIST_WRITE_DIR);
             ctClass.defrost();
             ctClass.stopPruning(p);
-
         }
         catch (Exception ex)
         {

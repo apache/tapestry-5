@@ -20,9 +20,7 @@ import org.apache.tapestry5.ioc.def.DecoratorDef;
 import org.apache.tapestry5.ioc.def.ModuleDef;
 import org.apache.tapestry5.ioc.def.ServiceDef;
 import org.apache.tapestry5.ioc.internal.services.JustInTimeObjectCreator;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.internal.util.Defense;
-import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.ioc.internal.util.*;
 import org.apache.tapestry5.ioc.services.*;
 import org.slf4j.Logger;
 
@@ -46,18 +44,19 @@ public class ModuleImpl implements Module
 
     private final Logger logger;
 
-    // Guarded by InternalConstants.GLOBAL_CLASS_CREATION_MUTEX
     private Object moduleBuilder;
 
     // Set to true when invoking the module constructor. Used to
     // detect endless loops caused by irresponsible dependencies in
-    // the constructor. Guarded by InternalConstants.GLOBAL_CLASS_CREATION_MUTEX.
+    // the constructor.
     private boolean insideConstructor;
 
     /**
      * Keyed on fully qualified service id; values are instantiated services (proxies).
      */
     private final Map<String, Object> services = CollectionFactory.newCaseInsensitiveMap();
+
+    private final ConcurrentBarrier barrier = new ConcurrentBarrier();
 
     public ModuleImpl(InternalRegistry registry, ServiceActivityTracker tracker, ModuleDef moduleDef,
                       ClassFactory classFactory, Logger logger)
@@ -135,47 +134,58 @@ public class ModuleImpl implements Module
 
     /**
      * Locates the service proxy for a particular service (from the service definition).
-     * <p/>
-     * Access is synchronized via {@link InternalConstants#GLOBAL_CLASS_CREATION_MUTEX}.
      *
      * @param def              defines the service
      * @param eagerLoadProxies collection into which proxies for eager loaded services are added (or null)
      * @return the service proxy
      */
-    private Object findOrCreate(ServiceDef def, Collection<EagerLoadServiceProxy> eagerLoadProxies)
+    private synchronized Object findOrCreate(final ServiceDef def,
+                                             final Collection<EagerLoadServiceProxy> eagerLoadProxies)
     {
-        synchronized (InternalConstants.GLOBAL_CLASS_CREATION_MUTEX)
+        final String key = def.getServiceId();
+
+        final Invokable create = new Invokable()
         {
-            String key = def.getServiceId();
-
-            Object result = services.get(key);
-
-            if (result == null)
+            public Object invoke()
             {
-                result = create(def, eagerLoadProxies);
-                services.put(key, result);
-            }
+                Object result = create(def, eagerLoadProxies);
 
-            return result;
-        }
+                services.put(key, result);
+
+                return result;
+            }
+        };
+
+        Invokable find = new Invokable()
+        {
+            public Object invoke()
+            {
+                Object result = services.get(key);
+
+                if (result == null)
+                {
+                    result = barrier.withWrite(create);
+                }
+
+                return result;
+            }
+        };
+
+        return barrier.withRead(find);
     }
 
     public void collectEagerLoadServices(Collection<EagerLoadServiceProxy> proxies)
     {
-        synchronized (InternalConstants.GLOBAL_CLASS_CREATION_MUTEX)
+        for (String serviceId : moduleDef.getServiceIds())
         {
-            for (String serviceId : moduleDef.getServiceIds())
-            {
-                ServiceDef def = moduleDef.getServiceDef(serviceId);
+            ServiceDef def = moduleDef.getServiceDef(serviceId);
 
-                if (def.isEagerLoad()) findOrCreate(def, proxies);
-            }
+            if (def.isEagerLoad()) findOrCreate(def, proxies);
         }
     }
 
     /**
-     * Creates the service and updates the cache of created services. Access is synchronized via {@link
-     * InternalConstants#GLOBAL_CLASS_CREATION_MUTEX}.
+     * Creates the service and updates the cache of created services.
      *
      * @param eagerLoadProxies a list into which any eager loaded proxies should be added
      */
@@ -239,20 +249,30 @@ public class ModuleImpl implements Module
         }
     }
 
-    public Object getModuleBuilder()
+    private final Runnable instantiateModuleBuilder = new Runnable()
     {
-        synchronized (InternalConstants.GLOBAL_CLASS_CREATION_MUTEX)
+        public void run()
         {
-            if (moduleBuilder == null) moduleBuilder = instantiateModuleBuilder();
+            moduleBuilder = constructModuleBuilder();
+        }
+    };
+
+    private final Invokable provideModuleBuilder = new Invokable<Object>()
+    {
+        public Object invoke()
+        {
+            if (moduleBuilder == null) barrier.withWrite(instantiateModuleBuilder);
 
             return moduleBuilder;
         }
+    };
+
+    public Object getModuleBuilder()
+    {
+        return barrier.withRead(provideModuleBuilder);
     }
 
-    /**
-     * Access synchronized by MUTEX.
-     */
-    private Object instantiateModuleBuilder()
+    private Object constructModuleBuilder()
     {
         Class builderClass = moduleDef.getBuilderClass();
 
@@ -338,7 +358,7 @@ public class ModuleImpl implements Module
         classFab.addField("creator", Modifier.PRIVATE | Modifier.FINAL, ObjectCreator.class);
         classFab.addField("token", Modifier.PRIVATE | Modifier.FINAL, ServiceProxyToken.class);
 
-        classFab.addConstructor(new Class[]{ObjectCreator.class, ServiceProxyToken.class}, null,
+        classFab.addConstructor(new Class[] {ObjectCreator.class, ServiceProxyToken.class}, null,
                                 "{ creator = $1; token = $2; }");
 
         // Make proxies serializable by writing the token to the stream.
@@ -348,7 +368,7 @@ public class ModuleImpl implements Module
         // This is the "magic" signature that allows an object to substitute some other
         // object for itself.
         MethodSignature writeReplaceSig = new MethodSignature(Object.class, "writeReplace", null,
-                                                              new Class[]{ObjectStreamException.class});
+                                                              new Class[] {ObjectStreamException.class});
 
         classFab.addMethod(Modifier.PRIVATE, writeReplaceSig, "return token;");
 
@@ -397,5 +417,4 @@ public class ModuleImpl implements Module
     {
         return moduleDef.getLoggerName();
     }
-
 }
