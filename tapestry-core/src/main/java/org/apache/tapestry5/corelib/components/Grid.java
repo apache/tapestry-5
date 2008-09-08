@@ -197,7 +197,8 @@ public class Grid implements GridModel
 
     /**
      * If true, then the Grid will be wrapped in an element that acts like a {@link
-     * org.apache.tapestry5.corelib.components.Zone}; all the paging and sorting links will
+     * org.apache.tapestry5.corelib.components.Zone}; all the paging and sorting links will refresh the zone, repainting
+     * the entire grid within it, but leaving the rest of the page (outside the zone) unchanged.
      */
     @Parameter
     private boolean inPlace;
