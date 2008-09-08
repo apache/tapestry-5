@@ -16,7 +16,6 @@ package org.apache.tapestry5.ioc.internal.services;
 
 import javassist.CtClass;
 import javassist.NotFoundException;
-import org.apache.tapestry5.ioc.internal.InternalConstants;
 import org.apache.tapestry5.ioc.services.ClassFabUtils;
 
 import java.security.ProtectionDomain;
@@ -49,7 +48,7 @@ public class CtClassSourceImpl implements CtClassSource
         this.loader = loader;
     }
 
-    public CtClass toCtClass(Class searchClass)
+    public synchronized CtClass toCtClass(Class searchClass)
     {
         ClassLoader loader = searchClass.getClassLoader();
 
@@ -75,7 +74,7 @@ public class CtClassSourceImpl implements CtClassSource
         }
     }
 
-    public synchronized CtClass newClass(String name, Class superClass)
+    public CtClass newClass(String name, Class superClass)
     {
         CtClass ctSuperClass = toCtClass(superClass);
 
@@ -84,17 +83,20 @@ public class CtClassSourceImpl implements CtClassSource
 
     private static final String WRITE_DIR = System.getProperty("javassist-write-dir");
 
-    public synchronized Class createClass(CtClass ctClass)
+    public Class createClass(CtClass ctClass)
     {
         if (WRITE_DIR != null) writeClass(ctClass);
 
-        synchronized (InternalConstants.GLOBAL_CLASS_CREATION_MUTEX)
+        synchronized (loader)
         {
             try
             {
                 Class result = pool.toClass(ctClass, loader, domain);
 
-                createdClassCount++;
+                synchronized (this)
+                {
+                    createdClassCount++;
+                }
 
                 return result;
             }
