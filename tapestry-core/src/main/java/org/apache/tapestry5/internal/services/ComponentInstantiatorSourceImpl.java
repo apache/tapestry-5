@@ -28,6 +28,7 @@ import org.apache.tapestry5.ioc.services.ClassFactory;
 import org.slf4j.Logger;
 
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.Map;
 import java.util.Set;
 
@@ -72,21 +73,6 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
             super(parent, classPool);
         }
 
-
-        /**
-         * Synchronizes on the parent class loader before continuing, which is necessary to prevent thread deadlocks. Any classes
-         * loaded, or transformed, by this class loader will do so with the parent (context) class loader locked.
-         * The required order is always that the context class loader be locked, then the child class loader.  Painful.
-         */
-        @Override
-        protected Class loadClass(String name, boolean resolve) throws ClassFormatError, ClassNotFoundException
-        {
-            synchronized (getParent())
-            {
-                return super.loadClass(name, resolve);
-            }
-        }
-
         /**
          * Determines if the class name represents a component class from a controlled package.  If so,
          * super.findClass() will load it and transform it. Returns null if not in a controlled package, allowing the
@@ -101,13 +87,7 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
         {
             if (inControlledPackage(className))
             {
-                // TAPESTRY-2561: Prevent other threads from creating new classes in either
-                // the component class loader or in the context class loader (which is used for
-                // IoC proxies and the like). This is draconian, but the deadlock issue remains.                
-                //  synchronized (InternalConstants.GLOBAL_CLASS_CREATION_MUTEX)
-                // {
                 return super.findClass(className);
-                // }
             }
 
             // Returning null forces delegation to the parent class loader.
@@ -153,7 +133,13 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
     {
         ClassFactoryClassPool classPool = new ClassFactoryClassPool(parent);
 
-        loader = new PackageAwareLoader(parent, classPool);
+        // For TAPESTRY-2561, we're introducing a class loader between the parent (i.e., the
+        // context class loader), and the component class loader, to try and prevent the deadlocks
+        // that we've been seeing.
+
+        ClassLoader threadDeadlockBuffer = new URLClassLoader(new URL[0], parent);
+
+        loader = new PackageAwareLoader(threadDeadlockBuffer, classPool);
 
         ClassPath path = new LoaderClassPath(loader);
 
@@ -264,11 +250,19 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
     {
         Instantiator result = classNameToInstantiator.get(className);
 
+        // Note: a race condition here can result in the temporary creation of a duplicate instantiator.
+
         if (result == null)
         {
             // Force the creation of the class (and the transformation of the class).
 
             findClass(className);
+
+            // Note: this is really a create, and in fact, will create a new Class instance
+            // (it doesn't cache internally). This code is the only cache, which is why
+            // the method is synchronized.  We could use a ConcurrentBarrier, but I suspect
+            // that the overhead of that is greater on a typical invocation than
+            // the cost of the synchronization and the Map lookup.
 
             result = transformer.createInstantiator(className);
 

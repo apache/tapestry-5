@@ -124,7 +124,6 @@ public class PagePoolImpl implements PagePool, InvalidationListener, UpdateListe
         }
 
         cache.release(page);
-
     }
 
     private synchronized PagePoolCache get(String pageName, Locale locale)
@@ -153,6 +152,10 @@ public class PagePoolImpl implements PagePool, InvalidationListener, UpdateListe
         pool.clear();
     }
 
+    /**
+     * On the periodic check for updates call, we clean up the caches, discarding unsued and out of date page
+     * instances.
+     */
     public synchronized void checkForUpdates()
     {
         for (PagePoolCache cache : pool.values())

@@ -1,5 +1,4 @@
-<html t:type="Border"
-      xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
 
     <h1>Tapestry 5 Integration Application 1</h1>
 
