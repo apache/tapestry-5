@@ -189,6 +189,12 @@ public final class TapestryModule
         binder.bind(PageDocumentGenerator.class, PageDocumentGeneratorImpl.class);
         binder.bind(ResponseRenderer.class, ResponseRendererImpl.class);
         binder.bind(FieldTranslatorSource.class, FieldTranslatorSourceImpl.class);
+        binder.bind(BindingFactory.class, MessageBindingFactory.class).withId("MessageBindingFactory");
+        binder.bind(BindingFactory.class, ValidateBindingFactory.class).withId("ValidateBindingFactory");
+        binder.bind(BindingFactory.class, TranslateBindingFactory.class).withId("TranslateBindingFactory");
+        binder.bind(BindingFactory.class, AssetBindingFactory.class).withId("AssetBindingFactory");
+        binder.bind(BindingFactory.class, NullFieldStrategyBindingFactory.class).withId(
+                "NullFieldStrategyBindingFactory");
     }
 
     // ========================================================================
@@ -228,20 +234,32 @@ public final class TapestryModule
                                                @InjectService("PropBindingFactory")
                                                BindingFactory propBindingFactory,
 
-                                               ObjectLocator locator)
+                                               @InjectService("MessageBindingFactory")
+                                               BindingFactory messageBindingFactory,
+
+                                               @InjectService("ValidateBindingFactory")
+                                               BindingFactory validateBindingFactory,
+
+                                               @InjectService("TranslateBindingFactory")
+                                               BindingFactory translateBindingFactory,
+
+                                               @InjectService("AssetBindingFactory")
+                                               BindingFactory assetBindingFactory,
+
+                                               @InjectService("NullFieldStrategyBindingFactory")
+                                               BindingFactory nullFieldStrategyBindingFactory)
     {
         configuration.add(BindingConstants.LITERAL, new LiteralBindingFactory());
-        configuration.add(BindingConstants.PROP, propBindingFactory);
-
         configuration.add(BindingConstants.COMPONENT, new ComponentBindingFactory());
-        configuration.add(BindingConstants.MESSAGE, new MessageBindingFactory());
-        configuration.add(BindingConstants.VALIDATE, locator.autobuild(ValidateBindingFactory.class));
-        configuration.add(BindingConstants.TRANSLATE, locator.autobuild(TranslateBindingFactory.class));
-        configuration.add(BindingConstants.BLOCK, new BlockBindingFactory());
-        configuration.add(BindingConstants.ASSET, locator.autobuild(AssetBindingFactory.class));
         configuration.add(BindingConstants.VAR, new RenderVariableBindingFactory());
-        configuration.add(BindingConstants.NULLFIELDSTRATEGY,
-                          locator.autobuild(NullFieldStrategyBindingFactory.class));
+        configuration.add(BindingConstants.BLOCK, new BlockBindingFactory());
+
+        configuration.add(BindingConstants.PROP, propBindingFactory);
+        configuration.add(BindingConstants.MESSAGE, messageBindingFactory);
+        configuration.add(BindingConstants.VALIDATE, validateBindingFactory);
+        configuration.add(BindingConstants.TRANSLATE, translateBindingFactory);
+        configuration.add(BindingConstants.ASSET, assetBindingFactory);
+        configuration.add(BindingConstants.NULLFIELDSTRATEGY, nullFieldStrategyBindingFactory);
     }
 
     public static void contributeClasspathAssetAliasManager(MappedConfiguration<String, String> configuration,
