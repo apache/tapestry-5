@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ import org.apache.tapestry5.hibernate.HibernateConfigurer;
 import org.hibernate.cfg.Configuration;
 
 /**
- * Simply calls configure() to do the default Hibernate configuration.
+ * Simply calls configure() to do the default Hibernate configuration.  This will read the hibernate.cfg.xml file.
  */
 public final class DefaultHibernateConfigurer implements HibernateConfigurer
 {
