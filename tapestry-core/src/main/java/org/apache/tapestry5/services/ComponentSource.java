@@ -24,9 +24,9 @@ import org.apache.tapestry5.runtime.Component;
 public interface ComponentSource
 {
     /**
-     * Gets a component by its {@linkplain org.apache.tapestry5.ComponentResourcesCommon#getCompleteId() complete id}. If
-     * the component id is for a mixin, then the mixin attached to the component will be returned. A mixin's complete id
-     * is its container's complete id, suffixed with "$" and the mixin's id (its simple class name).
+     * Gets a component by its {@linkplain org.apache.tapestry5.ComponentResourcesCommon#getCompleteId() complete id}.
+     * If the component id is for a mixin, then the mixin attached to the component will be returned. A mixin's complete
+     * id is its container's complete id, suffixed with "$" and the mixin's id (its simple class name).
      *
      * @param completeId complete component id (case insensitive)
      * @return the component
@@ -44,4 +44,13 @@ public interface ComponentSource
      * @throws IllegalArgumentException if the page can not be found
      */
     Component getPage(String pageName);
+
+    /**
+     * A convienience for obtaining a page instance via a class instance.  This is provided so as to be refactoring
+     * safe.  The pageClass is simply converted to a class name and this is used to locate a page instance.
+     *
+     * @param pageClass used to locate the page instance
+     * @return the page instance
+     */
+    Component getPage(Class pageClass);
 }

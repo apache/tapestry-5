@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ import org.apache.tapestry5.internal.structure.ComponentPageElement;
 import org.apache.tapestry5.internal.structure.Page;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.runtime.Component;
+import org.apache.tapestry5.services.ComponentClassResolver;
 import org.apache.tapestry5.services.ComponentSource;
 import org.testng.annotations.Test;
 
@@ -33,6 +34,7 @@ public class ComponentSourceImplTest extends InternalBaseTestCase
         RequestPageCache cache = mockRequestPageCache();
         Page page = mockPage();
         Component component = mockComponent();
+        ComponentClassResolver resolver = mockComponentClassResolver();
 
         train_get(cache, PAGE_NAME, page);
 
@@ -40,7 +42,7 @@ public class ComponentSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentSource source = new ComponentSourceImpl(cache);
+        ComponentSource source = new ComponentSourceImpl(cache, resolver);
 
         assertSame(source.getComponent(PAGE_NAME), component);
 
@@ -54,6 +56,7 @@ public class ComponentSourceImplTest extends InternalBaseTestCase
         Page page = mockPage();
         ComponentPageElement element = mockComponentPageElement();
         Component component = mockComponent();
+        ComponentClassResolver resolver = mockComponentClassResolver();
 
         train_get(cache, PAGE_NAME, page);
 
@@ -63,7 +66,7 @@ public class ComponentSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentSource source = new ComponentSourceImpl(cache);
+        ComponentSource source = new ComponentSourceImpl(cache, resolver);
 
         assertSame(source.getComponent(PAGE_NAME + ":" + NESTED_ELEMENT_ID), component);
 
@@ -76,13 +79,14 @@ public class ComponentSourceImplTest extends InternalBaseTestCase
         RequestPageCache cache = mockRequestPageCache();
         Page page = mockPage();
         Component component = mockComponent();
+        ComponentClassResolver resolver = mockComponentClassResolver();
 
         train_get(cache, PAGE_NAME, page);
         train_getRootComponent(page, component);
 
         replay();
 
-        ComponentSource source = new ComponentSourceImpl(cache);
+        ComponentSource source = new ComponentSourceImpl(cache, resolver);
 
         assertSame(source.getPage(PAGE_NAME), component);
 
@@ -92,6 +96,22 @@ public class ComponentSourceImplTest extends InternalBaseTestCase
     @Test
     public void get_page_by_class()
     {
-    }
+        RequestPageCache cache = mockRequestPageCache();
+        Page page = mockPage();
+        Component component = mockComponent();
+        ComponentClassResolver resolver = mockComponentClassResolver();
 
+        train_resolvePageClassNameToPageName(resolver, ComponentSourceImplTest.class.getName(), PAGE_NAME);
+
+        train_get(cache, PAGE_NAME, page);
+        train_getRootComponent(page, component);
+
+        replay();
+
+        ComponentSource source = new ComponentSourceImpl(cache, resolver);
+
+        assertSame(source.getPage(ComponentSourceImplTest.class), component);
+
+        verify();
+    }
 }
