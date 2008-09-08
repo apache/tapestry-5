@@ -17,20 +17,27 @@ package org.apache.tapestry5.internal.services;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.internal.structure.ComponentPageElement;
 import org.apache.tapestry5.internal.structure.Page;
+import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.runtime.Component;
+import org.apache.tapestry5.services.ComponentClassResolver;
 import org.apache.tapestry5.services.ComponentSource;
 
 public class ComponentSourceImpl implements ComponentSource
 {
     private final RequestPageCache pageCache;
 
-    public ComponentSourceImpl(RequestPageCache pageCache)
+    private final ComponentClassResolver resolver;
+
+    public ComponentSourceImpl(RequestPageCache pageCache, ComponentClassResolver resolver)
     {
         this.pageCache = pageCache;
+        this.resolver = resolver;
     }
 
     public Component getComponent(String completeId)
     {
+        Defense.notBlank(completeId, "completeId");
+
         int colonx = completeId.indexOf(':');
 
         if (colonx < 0)
@@ -67,9 +74,19 @@ public class ComponentSourceImpl implements ComponentSource
 
     public Component getPage(String pageName)
     {
+        Defense.notBlank(pageName, "pageName");
+
         Page page = pageCache.get(pageName);
 
         return page.getRootComponent();
     }
 
+    public Component getPage(Class pageClass)
+    {
+        Defense.notNull(pageClass, "pageClass");
+
+        String pageName = resolver.resolvePageClassNameToPageName(pageClass.getName());
+
+        return getPage(pageName);
+    }
 }
