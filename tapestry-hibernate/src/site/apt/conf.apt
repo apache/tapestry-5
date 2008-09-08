@@ -49,3 +49,14 @@ public static void contributeHibernateEntityPackageManager(Configuration<String>
 
   You may add as many packages in this manner as you wish. This option is most often used when the entities themselves are contained in a library included
   within an application, rather than part of the application directly.
+
+Hibernate Symbols
+
+  The Hibernate integration includes a number of {{{../tapestry-ioc/symbols.html}symbols}} used to control certain features:
+
+  [tapestry.hibernate.provide-entity-value-encoders] If true (the default) then ValueEncoders are automatically provided for all Hibernate entities (ValueEncoders are used
+  to encode the primary keys of entities as strings that can be included in URLs).  Set to false if you
+  want direct control over this feature.
+
+  [tapestry.hibernate.default-configuration] If true (the default), then the application must include a <<<hibernate.cfg.xml>>> file.  If your application  configures
+  itself entirely in code, you should set this symbol to false.

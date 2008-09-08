@@ -39,11 +39,6 @@ import java.util.List;
 @SuppressWarnings({"JavaDoc"})
 public class HibernateModule
 {
-    /**
-     * If true (the default), then {@link org.apache.tapestry5.ValueEncoder}s are automatically created for each entity.
-     * Override to "false" to handle entity value encoding explicitly.
-     */
-    public static final String PROVIDE_ENTITY_VALUE_ENCODERS_SYMBOL = "tapestry.hibernate.provide-entity-value-encoders";
 
     public static void bind(ServiceBinder binder)
     {
@@ -53,7 +48,8 @@ public class HibernateModule
 
     public static void contributeFactoryDefaults(MappedConfiguration<String, String> configuration)
     {
-        configuration.add(PROVIDE_ENTITY_VALUE_ENCODERS_SYMBOL, "true");
+        configuration.add(HibernateConstants.PROVIDE_ENTITY_VALUE_ENCODERS_SYMBOL, "true");
+        configuration.add(HibernateConstants.DEFAULT_CONFIGURATION, "true");
     }
 
     public static HibernateEntityPackageManager buildHibernateEntityPackageManager(
@@ -153,7 +149,7 @@ public class HibernateModule
      */
     @SuppressWarnings("unchecked")
     public static void contributeValueEncoderSource(MappedConfiguration<Class, ValueEncoderFactory> configuration,
-                                                    @Symbol(PROVIDE_ENTITY_VALUE_ENCODERS_SYMBOL)
+                                                    @Symbol(HibernateConstants.PROVIDE_ENTITY_VALUE_ENCODERS_SYMBOL)
                                                     boolean provideEncoders,
                                                     final HibernateSessionSource sessionSource,
                                                     final Session session,
