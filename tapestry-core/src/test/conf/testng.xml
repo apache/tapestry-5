@@ -20,11 +20,6 @@ tests run at the same time as Selenium-based integration tests.  See TAPESTRY-25
 <suite name="Tapestry Core" annotations="1.5" verbose="2">
     <test name="Integration Tests">
         <packages>
-            <package name="org.apache.tapestry5.integration"/>
-        </packages>
-    </test>
-    <test name="Components">
-        <packages>
             <package name="org.apache.tapestry5.integration.pagelevel"/>
             <package name="org.apache.tapestry5.corelib.base"/>
             <package name="org.apache.tapestry5.corelib.components"/>
@@ -57,4 +52,9 @@ tests run at the same time as Selenium-based integration tests.  See TAPESTRY-25
             <package name="org.apache.tapestry5.internal.util"/>
         </packages>
     </test>
+    <test name="Integration Tests">
+        <packages>
+            <package name="org.apache.tapestry5.integration"/>
+        </packages>
+    </test>    
 </suite>

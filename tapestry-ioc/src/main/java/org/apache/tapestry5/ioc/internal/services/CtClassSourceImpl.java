@@ -87,23 +87,20 @@ public class CtClassSourceImpl implements CtClassSource
     {
         if (WRITE_DIR != null) writeClass(ctClass);
 
-        synchronized (loader)
+        try
         {
-            try
-            {
-                Class result = pool.toClass(ctClass, loader, domain);
+            Class result = pool.toClass(ctClass, loader, domain);
 
-                synchronized (this)
-                {
-                    createdClassCount++;
-                }
-
-                return result;
-            }
-            catch (Throwable ex)
+            synchronized (this)
             {
-                throw new RuntimeException(ServiceMessages.unableToWriteClass(ctClass, ex), ex);
+                createdClassCount++;
             }
+
+            return result;
+        }
+        catch (Throwable ex)
+        {
+            throw new RuntimeException(ServiceMessages.unableToWriteClass(ctClass, ex), ex);
         }
     }
 

@@ -139,8 +139,8 @@ public class ModuleImpl implements Module
      * @param eagerLoadProxies collection into which proxies for eager loaded services are added (or null)
      * @return the service proxy
      */
-    private synchronized Object findOrCreate(final ServiceDef def,
-                                             final Collection<EagerLoadServiceProxy> eagerLoadProxies)
+    private Object findOrCreate(final ServiceDef def,
+                                final Collection<EagerLoadServiceProxy> eagerLoadProxies)
     {
         final String key = def.getServiceId();
 
