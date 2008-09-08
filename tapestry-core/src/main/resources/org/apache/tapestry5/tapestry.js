@@ -138,8 +138,6 @@ var Tapestry = {
         {
             var functionName = pair.key;
 
-            // Tapestry.logWarning("Initialize: #{name} ...", { name:functionName });
-
             var initf = Tapestry.Initializer[functionName];
 
             if (initf == undefined)
@@ -877,8 +875,6 @@ Tapestry.ErrorPopup = Class.create({
                 return;
             }
 
-            // Tapestry.debug("Focus change: #{memo} for #{field}", { memo: event.memo.id, field: this.field.id });
-
             var focused = event.memo;
 
             if (focused == this.field)
@@ -894,8 +890,6 @@ Tapestry.ErrorPopup = Class.create({
 
     showMessage : function(message)
     {
-        // Tapestry.debug("Show message: #{message} for #{field}", { message: message, field: this.field.id });
-
         this.stopAnimation();
 
         this.innerSpan.update(message);
@@ -918,8 +912,6 @@ Tapestry.ErrorPopup = Class.create({
 
     fadeIn : function()
     {
-        // Tapestry.debug("fadeIn: " + this.field.id);
-
         if (! this.hasMessage) return;
 
         this.repositionBubble();
@@ -1366,8 +1358,6 @@ Tapestry.DependentExecutor = Class.create({
 
                 scriptElement.onreadystatechange = function ()
                 {
-                    // Tapestry.debug("State #{state} for #{script} (loaded is #{loaded})", { state:this.readyState, script:scriptElement.src, loaded:loaded });
-
                     // IE may fire either loaded or complete, or perhaps even both.
                     if (! loaded && (this.readyState == 'loaded' || this.readyState == 'complete'))
                     {
@@ -1387,8 +1377,6 @@ Tapestry.DependentExecutor = Class.create({
     loadComplete : function(element)
     {
         this.loaded++;
-
-        // Tapestry.debug("Script #{loaded} of #{toload} loaded", this);
 
         // Evaluated the dependent script only once all the elements have loaded.
 
@@ -1428,8 +1416,6 @@ Tapestry.ScriptManager = {
      */
     contains : function (collection, prop, assetURL)
     {
-        // Tapestry.debug("Checking previously loaded for: " + assetURL);
-
         return $A(collection).any(function (element)
         {
             var existing = element[prop];
@@ -1438,8 +1424,6 @@ Tapestry.ScriptManager = {
 
             var complete =
                     Prototype.Browser.IE ? Tapestry.rebuildURL(existing) : existing;
-
-            // Tapestry.debug("Previously loaded: " + complete);
 
             return complete == assetURL;
         });
@@ -1464,8 +1448,6 @@ Tapestry.ScriptManager = {
                 var assetURL = Tapestry.rebuildURL(s);
 
                 if (Tapestry.ScriptManager.contains(document.scripts, "src", assetURL)) return; // continue to next script
-
-                // Tapestry.debug("Loading script: " + assetURL);
 
                 var element = new Element('script', { src: assetURL, type: 'text/javascript' });
 
