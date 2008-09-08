@@ -24,19 +24,25 @@ public class EntityPersistentFieldStrategyTest extends TapestryTestCase
 {
     public void not_an_entity()
     {
+        String nonEntity = "foo";
         Session session = newMock(Session.class);
-        EntityPersistentFieldStrategy strategy = new EntityPersistentFieldStrategy(session, null, null);
+        EntityPersistentFieldStrategy strategy = new EntityPersistentFieldStrategy(session, null);
 
-        expect(session.getEntityName("foo")).andThrow(new HibernateException("error"));
+        expect(session.getEntityName(nonEntity)).andThrow(new HibernateException("error"));
+
         replay();
+
         try
         {
-            strategy.postChange(null, null, null, "foo");
-            fail("did not throw");
+            strategy.postChange("pageName", "", "fieldName", nonEntity);
+
+            unreachable();
         }
-        catch (IllegalArgumentException e)
+        catch (IllegalArgumentException ex)
         {
+            assertEquals(ex.getMessage(), "Failed persisting an entity in the session. Only entities attached to a Hibernate Session can be persisted. entity: foo");
         }
+
         verify();
     }
 }

@@ -53,7 +53,12 @@ public abstract class AbstractSessionPersistentFieldStrategy implements Persiste
 
         for (String name : session.getAttributeNames(fullPrefix))
         {
-            PersistentFieldChange change = buildChange(name, session.getAttribute(name));
+            Object persistedValue = session.getAttribute(name);
+
+            Object applicationValue = persistedValue == null ? null : convertPersistedToApplicationValue(
+                    persistedValue);
+
+            PersistentFieldChange change = buildChange(name, applicationValue);
 
             result.add(change);
 
@@ -88,18 +93,15 @@ public abstract class AbstractSessionPersistentFieldStrategy implements Persiste
     {
     }
 
-    private PersistentFieldChange buildChange(String name, Object attribute)
+    private PersistentFieldChange buildChange(String name, Object newValue)
     {
-        // TODO: Regexp is probably too expensive for what we need here. Maybe an IOC InternalUtils
-        // method for this purpose?
-
         String[] chunks = name.split(":");
 
         // Will be empty string for the root component
         String componentId = chunks[2];
         String fieldName = chunks[3];
 
-        return new PersistentFieldChangeImpl(componentId, fieldName, attribute);
+        return new PersistentFieldChangeImpl(componentId, fieldName, newValue);
     }
 
     public final void postChange(String pageName, String componentId, String fieldName,
@@ -107,6 +109,8 @@ public abstract class AbstractSessionPersistentFieldStrategy implements Persiste
     {
         notBlank(pageName, "pageName");
         notBlank(fieldName, "fieldName");
+
+        Object persistedValue = newValue == null ? null : convertApplicationValueToPersisted(newValue);
 
         StringBuilder builder = new StringBuilder(prefix);
         builder.append(pageName);
@@ -117,14 +121,41 @@ public abstract class AbstractSessionPersistentFieldStrategy implements Persiste
         builder.append(':');
         builder.append(fieldName);
 
-        Session session = request.getSession(newValue != null);
+        Session session = request.getSession(persistedValue != null);
 
         // TAPESTRY-2308: The session will be false when newValue is null and the session
         // does not already exist.
 
         if (session != null)
         {
-            session.setAttribute(builder.toString(), newValue);
+            session.setAttribute(builder.toString(), persistedValue);
         }
+    }
+
+    /**
+     * Hook that allows a value to be converted as it is written to the session. Passed the new value provided by the
+     * application, returns the object to be stored in the session. This implementation simply returns the provided
+     * value.
+     *
+     * @param newValue non-null value
+     * @return persisted value
+     * @see #convertPersistedToApplicationValue(Object)
+     */
+    protected Object convertApplicationValueToPersisted(Object newValue)
+    {
+        return newValue;
+    }
+
+    /**
+     * Converts a persisted value stored in the session back into an application value.   This implementation returns
+     * the persisted value as is.
+     *
+     * @param persistedValue non-null persisted value
+     * @return application value
+     * @see #convertPersistedToApplicationValue(Object)
+     */
+    protected Object convertPersistedToApplicationValue(Object persistedValue)
+    {
+        return persistedValue;
     }
 }
