@@ -108,6 +108,16 @@ public class RenderSupportImpl implements RenderSupport
         }
     }
 
+    public void addScriptLink(String... scriptURLs)
+    {
+        addCore();
+
+        for (String url : scriptURLs)
+        {
+            linker.addScriptLink(url);
+        }
+    }
+
     public void addClasspathScriptLink(String... classpaths)
     {
         addCore();
@@ -218,6 +228,12 @@ public class RenderSupportImpl implements RenderSupport
         notNull(stylesheet, "stylesheet");
 
         linker.addStylesheetLink(stylesheet.toClientURL(), media);
+    }
+
+
+    public void addStylesheetLink(String stylesheetURL, String media)
+    {
+        linker.addStylesheetLink(stylesheetURL, media);
     }
 
     private void addCore()
