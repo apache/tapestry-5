@@ -15,6 +15,8 @@
 package org.apache.tapestry5.internal.hibernate;
 
 import org.apache.tapestry5.hibernate.HibernateConfigurer;
+import org.apache.tapestry5.hibernate.HibernateConstants;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.hibernate.cfg.Configuration;
 
 /**
@@ -22,9 +24,17 @@ import org.hibernate.cfg.Configuration;
  */
 public final class DefaultHibernateConfigurer implements HibernateConfigurer
 {
+    private final boolean defaultConfiguration;
+
+    public DefaultHibernateConfigurer(
+            @Symbol(HibernateConstants.DEFAULT_CONFIGURATION)
+            boolean defaultConfiguration)
+    {
+        this.defaultConfiguration = defaultConfiguration;
+    }
 
     public void configure(Configuration configuration)
     {
-        configuration.configure();
+        if (defaultConfiguration) configuration.configure();
     }
 }

@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -22,13 +22,27 @@ import org.testng.annotations.Test;
 @Test
 public class DefaultHibernateConfigurerFilterTest
 {
-    public void testConfigure() throws Exception
+    public void configure_with_default_configuration_on() throws Exception
     {
         Configuration config = createMock(Configuration.class);
         expect(config.configure()).andReturn(config);
 
+
         replay(config);
-        new DefaultHibernateConfigurer().configure(config);
+
+        new DefaultHibernateConfigurer(true).configure(config);
+
+        verify(config);
+    }
+
+    public void configure_with_default_configuration_off() throws Exception
+    {
+        Configuration config = createMock(Configuration.class);
+
+        replay(config);
+
+        new DefaultHibernateConfigurer(false).configure(config);
+
         verify(config);
     }
 }

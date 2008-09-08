@@ -48,7 +48,7 @@ public class HibernateSessionSourceImplTest extends TapestryTestCase
         expect(packageManager.getPackageNames()).andReturn(packageNames);
 
         List<HibernateConfigurer> filters = Arrays.asList(
-                new DefaultHibernateConfigurer(),
+                new DefaultHibernateConfigurer(true),
                 new PackageNameHibernateConfigurer(packageManager,
                                                    new ClassNameLocatorImpl(new ClasspathURLConverterImpl())));
 
@@ -94,5 +94,4 @@ public class HibernateSessionSourceImplTest extends TapestryTestCase
             assertTrue(e.getMessage().contains("immutable"));
         }
     }
-
 }
