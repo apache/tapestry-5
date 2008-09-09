@@ -167,6 +167,11 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
         return null;
     }
 
+    public Block getBody()
+    {
+        return element.getBody();
+    }
+
     public boolean hasBody()
     {
         return element.hasBody();

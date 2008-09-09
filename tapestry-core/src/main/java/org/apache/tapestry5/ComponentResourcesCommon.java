@@ -149,4 +149,10 @@ public interface ComponentResourcesCommon extends Locatable
      * will return false.
      */
     boolean hasBody();
+
+    /**
+     * Returns the body of this component as a (possibly empty) block.  When invoked on a mixin, returns the containing
+     * component's body.
+     */
+    Block getBody();
 }

@@ -6,12 +6,9 @@
 
 
     <t:zone t:id="output" style="float:right; width: 800px;" update="slidedown">
-        No name has been selected.
-
-        <t:block id="showName">
+        <t:if test="name" else="No name has been selected.">
             Selected: ${name}
-        </t:block>
-
+        </t:if>
     </t:zone>
 
     <t:block id="registrationForm">
