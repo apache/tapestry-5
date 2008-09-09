@@ -110,4 +110,15 @@ public class Zone implements ClientElement
     {
         return clientId;
     }
+
+    /**
+     * Returns the zone's body (the content enclosed by its start and end tags). This is often used as part of an Ajax
+     * partial page render to update the client with a fresh render of the content inside the zone.
+     *
+     * @return the zone's body as a Block
+     */
+    public Block getBody()
+    {
+        return resources.getBody();
+    }
 }

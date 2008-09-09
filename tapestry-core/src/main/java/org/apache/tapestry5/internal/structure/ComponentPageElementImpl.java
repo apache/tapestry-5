@@ -50,6 +50,19 @@ import java.util.*;
 public class ComponentPageElementImpl extends BaseLocatable implements ComponentPageElement, PageLifecycleListener
 {
     /**
+     * Placeholder for the body used when the component has no real content.
+     */
+    private static class PlaceholderBlock implements Block, Renderable
+    {
+        public void render(MarkupWriter writer)
+        {
+        }
+    }
+
+    private static final Block PLACEHOLDER_BLOCK = new PlaceholderBlock();
+
+
+    /**
      * @see #render(org.apache.tapestry5.MarkupWriter, org.apache.tapestry5.runtime.RenderQueue)
      */
     private static final RenderCommand POP_COMPONENT_ID = new RenderCommand()
@@ -277,7 +290,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
 
             queue.push(afterRenderBody);
 
-            if (handler.getResult()) pushElements(queue, body);
+            if (handler.getResult() && bodyBlock != null) queue.push(bodyBlock);
 
             handler.queueCommands(queue);
         }
@@ -357,7 +370,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
 
     private Map<String, Block> blocks;
 
-    private List<PageElement> body;
+    private BlockImpl bodyBlock;
 
     private Map<String, ComponentPageElement> children;
 
@@ -679,9 +692,9 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
 
     public void addToBody(PageElement element)
     {
-        if (body == null) body = CollectionFactory.newList();
+        if (bodyBlock == null) bodyBlock = new BlockImpl(getLocation());
 
-        body.add(element);
+        bodyBlock.addToBody(element);
     }
 
     public void addToTemplate(PageElement element)
@@ -768,7 +781,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
     {
         // If no body, then no beforeRenderBody or afterRenderBody
 
-        if (body != null) queue.push(beforeRenderBody);
+        if (bodyBlock != null) queue.push(beforeRenderBody);
     }
 
     public String getCompleteId()
@@ -1178,7 +1191,12 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
 
     public boolean hasBody()
     {
-        return body != null;
+        return bodyBlock != null;
+    }
+
+    public Block getBody()
+    {
+        return bodyBlock == null ? PLACEHOLDER_BLOCK : bodyBlock;
     }
 
     public Map<String, Binding> getInformalParameterBindings()

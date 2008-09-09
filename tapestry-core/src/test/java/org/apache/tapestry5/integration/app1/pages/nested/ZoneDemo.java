@@ -16,11 +16,9 @@ package org.apache.tapestry5.integration.app1.pages.nested;
 
 import org.apache.tapestry5.Block;
 import org.apache.tapestry5.ValueEncoder;
-import org.apache.tapestry5.annotations.ApplicationState;
-import org.apache.tapestry5.annotations.Component;
-import org.apache.tapestry5.annotations.Log;
-import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.annotations.*;
 import org.apache.tapestry5.corelib.components.BeanEditForm;
+import org.apache.tapestry5.corelib.components.Zone;
 import org.apache.tapestry5.integration.app1.data.RegistrationData;
 import org.apache.tapestry5.internal.services.StringValueEncoder;
 import org.apache.tapestry5.ioc.annotations.Inject;
@@ -41,10 +39,14 @@ public class ZoneDemo
     private static final String[] NAMES = {"Fred & Wilma", "Mr. <Roboto>", "Grim Fandango", "Registration", "Vote"};
 
     @Inject
-    private Block showName, registrationForm, registrationOutput, voteForm, voteOutput;
+    private Block registrationForm, registrationOutput, voteForm, voteOutput;
 
     @Property
     private String vote;
+
+    @InjectComponent
+    private Zone output;
+
 
     public String[] getNames()
     {
@@ -71,7 +73,7 @@ public class ZoneDemo
 
         if (name.equals("Vote")) return voteForm;
 
-        return showName;
+        return output.getBody();
     }
 
     Object onSuccessFromRegistrationForm()
