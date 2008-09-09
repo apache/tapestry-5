@@ -82,12 +82,21 @@
         <mvn:dependencies filesetid="bin.dependency.fileset" sourcesfilesetid="bin.dependency.sources.fileset">
             <dependency groupid="${group}" artifactid="tapestry-upload" version="${pom.version}"/>
             <dependency groupid="${group}" artifactid="tapestry-hibernate" version="${pom.version}">
-                <exclusion  groupid="org.hibernate" artifactid="hibernate"/>
+                <exclusion groupid="org.hibernate" artifactid="hibernate-core"/>
                 <exclusion groupid="org.hibernate" artifactid="hibernate-annotations"/>
-                <exclusion  groupid="geronimo-spec" artifactid="geronimo-spec-jta"/>
-                <exclusion  groupid="c3p0" artifactid="c3p0"/>
+                <exclusion groupid="geronimo-spec" artifactid="geronimo-spec-jta"/>
+                <exclusion groupid="c3p0" artifactid="c3p0"/>
             </dependency>
             <dependency groupid="${group}" artifactid="tapestry-spring" version="${pom.version}"/>
+
+            <!-- tapestry-test is also tricky, we want it without its (non-Apache) dependencies. -->
+
+            <dependency groupid="${group}" artifactid="tapestry-test" version="${pom.version}">
+                <exclusion groupid="org.openqa.selenium.client-drivers" artifactid="selenium-java-client-driver"/>
+                <exclusion groupid="org.openqa.selenium.server" artifactid="selenium-server"/>
+                <exclusion groupid="org.openqa.selenium.server" artifactid="selenium-server-coreless"/>
+                <exclusion groupid="org.testng" artifactid="testng"/>
+            </dependency>
 
             <!-- All else will be dragged in. -->
         </mvn:dependencies>
