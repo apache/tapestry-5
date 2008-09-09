@@ -233,25 +233,6 @@ public class DefaultModuleDefImplTest extends IOCTestCase
     }
 
     @Test
-    public void decorator_method_does_not_include_delegate_parameter() throws Exception
-    {
-        Class moduleClass = NoDelegateDecoratorMethodModule.class;
-        Method m = moduleClass.getMethod("decorateNoDelegate");
-
-        Logger logger = mockLogger();
-
-        logger.warn(IOCMessages.decoratorMethodNeedsDelegateParameter(m));
-
-        replay();
-
-        ModuleDef md = new DefaultModuleDefImpl(moduleClass, logger, null);
-
-        assertTrue(md.getDecoratorDefs().isEmpty());
-
-        verify();
-    }
-
-    @Test
     public void contribution_without_annotation()
     {
         attemptConfigurationMethod(SimpleModule.class, "Barney", "contributeBarney(Configuration)");

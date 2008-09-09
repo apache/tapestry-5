@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -148,7 +148,6 @@ public class DefaultModuleDefImpl implements ModuleDef, ServiceDefAccumulator
 
                 return result;
             }
-
         };
 
         Arrays.sort(methods, c);
@@ -174,7 +173,6 @@ public class DefaultModuleDefImpl implements ModuleDef, ServiceDefAccumulator
                 addContributionDef(m);
                 continue;
             }
-
         }
     }
 
@@ -231,15 +229,6 @@ public class DefaultModuleDefImpl implements ModuleDef, ServiceDefAccumulator
             return;
         }
 
-        if (!methodContainsObjectParameter(method))
-        {
-            logger.warn(IOCMessages.decoratorMethodNeedsDelegateParameter(method));
-            return;
-        }
-
-        // TODO: Check that at least one parameter is type java.lang.Object,
-        // since that's how the delegate is passed in.
-
         Order orderAnnotation = method.getAnnotation(Order.class);
         Match match = method.getAnnotation(Match.class);
 
@@ -247,7 +236,7 @@ public class DefaultModuleDefImpl implements ModuleDef, ServiceDefAccumulator
 
         // TODO: Validate constraints here?
 
-        String[] patterns = match == null ? new String[]{decoratorId} : match.value();
+        String[] patterns = match == null ? new String[] {decoratorId} : match.value();
 
         DecoratorDef def = new DecoratorDefImpl(decoratorId, method, patterns, constraints, classFactory);
 

@@ -183,7 +183,6 @@ public class IntegrationTest extends IOCInternalTestCase
         List<String> names = service.getNames();
 
         assertEquals(names, Arrays.asList("BARNEY", "FRED"));
-
     }
 
     @SuppressWarnings("unchecked")
@@ -900,6 +899,18 @@ public class IntegrationTest extends IOCInternalTestCase
         // Comes from the @Local DrawlGreeter, even though there are many other Greeter services available.
 
         assertEquals(g.getValue(), "Hello, y'all!");
+
+        r.shutdown();
+    }
+
+    @Test
+    public void decorator_receive_delegate_by_specific_type()
+    {
+        Registry r = buildRegistry(GreeterModule.class, SpecificDecoratorModule.class);
+
+        Greeter g = r.getService("HelloGreeter", Greeter.class);
+
+        assertEquals(g.getGreeting(), "HELLO");
 
         r.shutdown();
     }
