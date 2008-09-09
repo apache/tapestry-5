@@ -325,10 +325,7 @@ public class DefaultModuleDefImpl implements ModuleDef, ServiceDefAccumulator
         ServiceDef existing = serviceDefs.get(serviceId);
 
         if (existing != null)
-        {
-            logger.warn(buildMethodConflict(serviceDef.toString(), existing.toString()));
-            return;
-        }
+            throw new RuntimeException(buildMethodConflict(serviceId, serviceDef.toString(), existing.toString()));
 
         serviceDefs.put(serviceId, serviceDef);
     }

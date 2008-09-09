@@ -35,9 +35,9 @@ final class IOCMessages
 {
     private static final Messages MESSAGES = MessagesImpl.forClass(IOCMessages.class);
 
-    static String buildMethodConflict(String conflict, String existing)
+    static String buildMethodConflict(String serviceId, String conflict, String existing)
     {
-        return MESSAGES.format("build-method-conflict", conflict, existing);
+        return MESSAGES.format("build-method-conflict", serviceId, conflict, existing);
     }
 
     static String buildMethodWrongReturnType(Method method)

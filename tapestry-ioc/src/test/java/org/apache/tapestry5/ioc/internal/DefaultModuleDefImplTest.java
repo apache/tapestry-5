@@ -19,7 +19,6 @@ import org.apache.tapestry5.ioc.def.ContributionDef;
 import org.apache.tapestry5.ioc.def.DecoratorDef;
 import org.apache.tapestry5.ioc.def.ModuleDef;
 import org.apache.tapestry5.ioc.def.ServiceDef;
-import static org.apache.tapestry5.ioc.internal.IOCMessages.buildMethodConflict;
 import org.apache.tapestry5.ioc.internal.services.ClassFactoryImpl;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
@@ -133,30 +132,23 @@ public class DefaultModuleDefImplTest extends IOCTestCase
 
         Logger logger = mockLogger();
 
-        logger.warn(buildMethodConflict(conflictMethodString, expectedMethod));
-
         replay();
 
         // BigDecimal is arbitrary, any class would do.
 
-        ModuleDef md = new DefaultModuleDefImpl(ServiceIdConflictMethodModule.class, logger, classFactory);
+        try
+        {
+            new DefaultModuleDefImpl(ServiceIdConflictMethodModule.class, logger, classFactory);
 
-        Set<String> ids = md.getServiceIds();
+            unreachable();
+        }
+        catch (RuntimeException ex)
+        {
+            assertMessageContains(ex,
+                                  "Service Fred (defined by org.apache.tapestry5.ioc.internal.ServiceIdConflictMethodModule.buildFred()",
+                                  "conflicts with previously defined service defined by org.apache.tapestry5.ioc.internal.ServiceIdConflictMethodModule.buildFred(Object)");
+        }
 
-        assertEquals(ids.size(), 1);
-        assertTrue(ids.contains("Fred"));
-
-        ServiceDef sd = md.getServiceDef("Fred");
-
-        assertEquals(sd.getServiceId(), "Fred");
-
-        assertEquals(sd.getServiceInterface(), FieService.class);
-
-        // The methods are considered in ascending order, by name, then descending order, by
-        // parameter count. So the grinder will latch onto the method that takes a parameter,
-        // and consider the other method (with no parameters) the conflict.
-
-        assertEquals(sd.toString(), expectedMethod.toString());
 
         verify();
     }
