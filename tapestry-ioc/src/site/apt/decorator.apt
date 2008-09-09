@@ -91,9 +91,9 @@ public class MyAppModule
    The values that may be provided to a decorator method are exactly the same as for a builder
    method, with one addition:  The underlying service will be passed in
    as a parameter of type java.lang.Object (after type erasure, the <<<T delegate>>> parameter
-   becomes <<<Object delegate>>>).  A decorator method must have one
-   parameter for this purpose.
-   
+   becomes <<<Object delegate>>>).
+
+
    In the above example, the decorator method recieves the core service implementation,
    the service interface for the Indexer service, the Log for the Indexer service,
    and an interceptor factory that generates logging interceptors.
@@ -104,7 +104,22 @@ public class MyAppModule
    
    The return value of the method is the new interceptor. You may return null if your
    decorator method decides not to decorate the supplied service.
-   
+
+
+   Alternately, when targetting services whose type is known at compile time, you may provide
+   a parameter whose type matches the service interface.  For example, decorateIndexer() will
+   always be applied to the Indexer service, whose type (Indexer) is known. We could therefore rewrite
+   decorateIndexer() as:
+
++---------------------+
+  public static Indexer decorateIndexer(Indexer delegate, Logger logger, LoggingDecorator decorator)
+  {
+    return decorator.build(Indexer.class, delegate, "Indexer", logger);
+  }
++---------------------+
+
+
+
    Of course, nothing stops you from combining building with decorating inside
    the service builder method:
    
@@ -117,10 +132,9 @@ import org.slf4j.Logger;
 
 public class MyAppModule
 {
-  public static Indexer build(Class serviceInterface, Logger logger,
-    LoggingDecorator decorator)
+  public static Indexer build(Logger logger, LoggingDecorator decorator)
   {
-    return decorator.build(serviceInterface, logger,  new IndexerImpl());
+    return decorator.build(Indexer.class, logger,  new IndexerImpl());
   } 
 }
 +---------------------+   
@@ -204,6 +218,10 @@ Ordering of Decorators
    So the core service implementation is created (via a service builder method)
    and that is passed to the last decorator method. The interceptor created there
    is passed to the the next-to-last decorator method, and so forth.
+
+   It should now be evident that the delegate passed into a decorator method is sometimes
+   the core service implementation, and some times an interceptor object created by some other
+   decorator method.
 
 Creating your own Decorators
 

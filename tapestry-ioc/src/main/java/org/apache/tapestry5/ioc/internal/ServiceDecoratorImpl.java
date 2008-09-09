@@ -62,7 +62,6 @@ public class ServiceDecoratorImpl implements ServiceDecorator
         parameterDefaults.put(ServiceResources.class, resources);
         parameterDefaults.put(Logger.class, logger);
         parameterDefaults.put(Class.class, serviceInterface);
-
     }
 
     private String methodId()
@@ -76,6 +75,7 @@ public class ServiceDecoratorImpl implements ServiceDecorator
 
         Map<Class, Object> parameterDefaults = newMap(this.parameterDefaults);
         parameterDefaults.put(Object.class, delegate);
+        parameterDefaults.put(serviceInterface, delegate);
 
         if (logger.isDebugEnabled()) logger.debug(IOCMessages.invokingMethod(methodId()));
 

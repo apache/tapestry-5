@@ -112,11 +112,6 @@ final class IOCMessages
         return MESSAGES.format("unknown-scope", name);
     }
 
-    static String decoratorMethodNeedsDelegateParameter(Method method)
-    {
-        return MESSAGES.format("decorator-method-needs-delegate-parameter", asString(method));
-    }
-
     static String decoratorReturnedWrongType(Method method, String serviceId, Object returned, Class serviceInterface)
     {
         return MESSAGES.format("decorator-returned-wrong-type", asString(method), serviceId, returned,
