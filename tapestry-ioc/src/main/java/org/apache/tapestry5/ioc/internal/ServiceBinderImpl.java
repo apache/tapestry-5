@@ -119,7 +119,9 @@ public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
 
             public String getDescription()
             {
-                return classFactory.getConstructorLocation(constructor).toString();
+                return String.format("%s via %s",
+                                     classFactory.getConstructorLocation(constructor),
+                                     classFactory.getMethodLocation(bindMethod));
             }
         };
     }
@@ -257,5 +259,4 @@ public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
 
         return this;
     }
-
 }
