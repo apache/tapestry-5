@@ -14,6 +14,7 @@
 
 package org.apache.tapestry5.corelib.components;
 
+import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.annotations.Environmental;
@@ -41,6 +42,13 @@ public class Submit extends AbstractField
      */
     @Parameter
     private boolean defer = true;
+
+    /**
+     * The name of the event that will be triggered if this component is the cause of the form submission. The default
+     * is "selected".
+     */
+    @Parameter(allowNull = false, defaultPrefix = BindingConstants.LITERAL)
+    private String event = SELECTED_EVENT;
 
     @Environmental
     private FormSupport formSupport;
@@ -90,7 +98,7 @@ public class Submit extends AbstractField
         {
             public void run()
             {
-                resources.triggerEvent(SELECTED_EVENT, null, null);
+                resources.triggerEvent(event, null, null);
             }
         };
 
@@ -100,7 +108,6 @@ public class Submit extends AbstractField
 
         if (defer) formSupport.defer(sendNotification);
         else heartbeat.defer(sendNotification);
-
     }
 
     // For testing:
