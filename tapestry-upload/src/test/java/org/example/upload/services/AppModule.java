@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,6 +14,8 @@
 
 package org.example.upload.services;
 
+import org.apache.tapestry5.SymbolConstants;
+import org.apache.tapestry5.ioc.MappedConfiguration;
 import org.apache.tapestry5.ioc.annotations.SubModule;
 import org.apache.tapestry5.upload.services.UploadModule;
 
@@ -24,5 +26,8 @@ import org.apache.tapestry5.upload.services.UploadModule;
 @SubModule(UploadModule.class)
 public class AppModule
 {
-
+    public static void contributeApplicationDefaults(MappedConfiguration<String, String> configuration)
+    {
+        configuration.add(SymbolConstants.PRODUCTION_MODE, "false");
+    }
 }

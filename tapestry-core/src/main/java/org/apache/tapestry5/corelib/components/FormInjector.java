@@ -88,6 +88,9 @@ public class FormInjector implements ClientElement
     @Environmental
     private ClientBehaviorSupport clientBehaviorSupport;
 
+    @Environmental
+    private Heartbeat heartbeat;
+
     @Inject
     @Ajax
     private ComponentEventResultProcessor componentEventResultProcessor;
@@ -217,9 +220,13 @@ public class FormInjector implements ClientElement
                 environment.push(FormSupport.class, formSupport);
                 environment.push(ValidationTracker.class, new ValidationTrackerImpl());
 
+                heartbeat.begin();
+
                 renderer.renderMarkup(writer, reply);
 
                 formSupport.executeDeferred();
+
+                heartbeat.end();
 
                 environment.pop(ValidationTracker.class);
                 environment.pop(FormSupport.class);
