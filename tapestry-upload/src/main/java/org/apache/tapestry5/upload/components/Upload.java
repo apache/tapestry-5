@@ -18,12 +18,14 @@ import org.apache.tapestry5.*;
 import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.Mixin;
 import org.apache.tapestry5.annotations.Parameter;
+import org.apache.tapestry5.annotations.Path;
 import org.apache.tapestry5.corelib.base.AbstractField;
 import org.apache.tapestry5.corelib.mixins.RenderDisabled;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.ComponentDefaultProvider;
 import org.apache.tapestry5.services.FieldValidatorDefaultSource;
 import org.apache.tapestry5.services.FormSupport;
+import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.upload.services.MultipartDecoder;
 import org.apache.tapestry5.upload.services.UploadedFile;
 
@@ -76,6 +78,16 @@ public class Upload extends AbstractField
     @SuppressWarnings("unused")
     @Mixin
     private RenderDisabled renderDisabled;
+
+    @Inject
+    @Path("upload.js")
+    private Asset uploadScript;
+
+    @Inject
+    private Request request;
+
+    @Environmental
+    private RenderSupport renderSupport;
 
     /**
      * Computes a default value for the "validate" parameter using {@link FieldValidatorDefaultSource}.
@@ -140,6 +152,13 @@ public class Upload extends AbstractField
         resources.renderInformalParameters(writer);
 
         decorateInsideField();
+
+        // TAPESTRY-2453
+        if (request.isXHR())
+        {
+            renderSupport.addScriptLink(uploadScript);
+            renderSupport.addInit("injectedUpload", getClientId());
+        }
     }
 
     public void afterRender(MarkupWriter writer)
