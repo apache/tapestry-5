@@ -43,7 +43,7 @@ public interface GridSortModel
      *
      * @see org.apache.tapestry5.grid.GridDataSource#prepare(int, int, java.util.List)
      */
-    List<SortConstraint> getSortContraints();
+    List<SortConstraint> getSortConstraints();
 
     void clear();
 }

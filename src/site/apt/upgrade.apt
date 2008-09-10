@@ -14,6 +14,11 @@ Upgrade Notes
 
 Release 5.0.15
 
+* {{{https://issues.apache.org/jira/browse/TAPESTRY-2656}TAPESTRY-2656}}
+
+  A method of the interface {{{../apidocs/org/apache/tapestry5/grid/GridSortModel.html}GridSortModel}} was renamed
+  to correct a misspelling.
+
 * {{{https://issues.apache.org/jira/browse/TAPESTRY-2567}TAPESTRY-2567}}
 
   The methods findFields() and findFieldsWithAnnotation() of
