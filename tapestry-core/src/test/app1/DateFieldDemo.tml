@@ -10,7 +10,7 @@
 
             <div class="t-beaneditor-row">
                 <t:label for="birthday"/>
-                <t:datefield format="d MMM yyyy" t:id="birthday"/>
+                <t:datefield format="d MMM yyyy" hidetextfield="true" t:id="birthday"/>
             </div>
 
             <div class="t-beaneditor-row">
