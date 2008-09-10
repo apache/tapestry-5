@@ -25,7 +25,7 @@ import java.util.List;
  * A companion to {@link org.apache.tapestry5.internal.services.AbstractComponentMethodInvocation} that stores most of
  * the method and advice information needed.
  */
-public class MethodInvocationInfo
+public class ComponentMethodInvocationInfo
 {
     private final TransformMethodSignature methodSignature;
 
@@ -35,7 +35,8 @@ public class MethodInvocationInfo
 
     private Class effectiveResultType;
 
-    public MethodInvocationInfo(TransformMethodSignature methodSignature, ComponentClassCache componentClassCache)
+    public ComponentMethodInvocationInfo(TransformMethodSignature methodSignature,
+                                         ComponentClassCache componentClassCache)
     {
         this.methodSignature = methodSignature;
         this.componentClassCache = componentClassCache;

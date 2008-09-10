@@ -28,6 +28,11 @@ public class AbstractInvocationTest extends TestBase
     {
         protected TestInvocation(Method method)
         {
+            this(new MethodInfo(method));
+        }
+
+        protected TestInvocation(MethodInfo method)
+        {
             super(method);
         }
 
@@ -40,7 +45,7 @@ public class AbstractInvocationTest extends TestBase
         {
         }
 
-        public void proceed()
+        protected void invokeDelegateMethod()
         {
         }
     }
@@ -130,7 +135,5 @@ public class AbstractInvocationTest extends TestBase
 
         assertEquals(iv.getParameterCount(), 1);
         assertSame(iv.getParameterType(0), Runnable.class);
-
     }
-
 }
