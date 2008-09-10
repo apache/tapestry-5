@@ -161,7 +161,12 @@ Tapestry.DateField = Class.create({
 
     positionPopup : function()
     {
-        this.popup.clonePosition(this.field, { offsetTop: this.field.getHeight() + 2 }).setStyle({ width: "", height: "" });
+        // The field may be a hidden field, in which csae, position the popup based on the trigger, not
+        // the hidden.
+
+        var reference = this.field.type == "text" ? this.field : this.trigger;
+
+        this.popup.clonePosition(reference, { offsetTop: reference.getHeight() + 2 }).setStyle({ width: "", height: "" });
     },
 
     /** Duration, in seconds, used when fading the popup in or out. */

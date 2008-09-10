@@ -72,6 +72,13 @@ public class DateField extends AbstractField
     private DateFormat format;
 
     /**
+     * If true, then  the text field will be hidden, and only the icon for the date picker will be visible. The default
+     * is false.
+     */
+    @Parameter
+    private boolean hideTextField;
+
+    /**
      * The object that will perform input validation (which occurs after translation). The translate binding prefix is
      * generally used to provide this object in a declarative fashion.
      */
@@ -200,7 +207,7 @@ public class DateField extends AbstractField
 
         writer.element(INPUT_PARAMETER,
 
-                       "type", "text",
+                       "type", hideTextField ? "hidden" : "text",
 
                        "name", getControlName(),
 
