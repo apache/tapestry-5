@@ -17,6 +17,7 @@ package org.apache.tapestry5.upload.components;
 import org.apache.tapestry5.*;
 import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.services.FormSupport;
+import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.test.TapestryTestCase;
 import org.apache.tapestry5.upload.services.MultipartDecoder;
 import org.apache.tapestry5.upload.services.UploadedFile;
@@ -40,6 +41,9 @@ public class UploadTest extends TapestryTestCase
         FormSupport formSupport = mockFormSupport();
         ComponentResources resources = mockComponentResources();
         FieldValidator validator = mockFieldValidator();
+        Request request = mockRequest();
+
+        train_isXHR(request, false);
 
         formSupport.setEncodingType(Upload.MULTIPART_ENCTYPE);
 
@@ -51,9 +55,8 @@ public class UploadTest extends TapestryTestCase
 
         Upload component = new Upload(null, null, null, null, resources, null);
 
-        component.injectDecorator(new BaseValidationDecorator());
-        component.injectFormSupport(formSupport);
-        component.injectFieldValidator(validator);
+        component.injectDecorator(new BaseValidationDecorator()).injectFormSupport(formSupport).injectFieldValidator(
+                validator).injectRequest(request);
 
         component.beginRender(writer);
 
@@ -78,21 +81,23 @@ public class UploadTest extends TapestryTestCase
         MarkupWriter writer = createMarkupWriter();
         writer.element("form");
         FieldValidator validator = mockFieldValidator();
+        Request request = mockRequest();
 
         FormSupport formSupport = mockFormSupport();
         formSupport.setEncodingType(Upload.MULTIPART_ENCTYPE);
 
-        component.injectFormSupport(formSupport);
+        component.injectFormSupport(formSupport).injectRequest(request);
 
         ValidationDecorator decorator = mockValidationDecorator();
 
-        component.injectDecorator(decorator);
-        component.injectFieldValidator(validator);
+        component.injectDecorator(decorator).injectFieldValidator(validator);
 
         validator.render(writer);
 
         resources.renderInformalParameters(writer);
         decorator.insideField(component);
+
+        train_isXHR(request, false);
 
         replay();
 
@@ -112,18 +117,23 @@ public class UploadTest extends TapestryTestCase
         Upload component = new Upload(null, validate, null, null, resources, null);
         MarkupWriter writer = createMarkupWriter();
         writer.element("form");
+        Request request = mockRequest();
 
         FormSupport formSupport = mockFormSupport();
         formSupport.setEncodingType(Upload.MULTIPART_ENCTYPE);
-        component.injectFormSupport(formSupport);
+
 
         ValidationDecorator decorator = mockValidationDecorator();
 
-        component.injectDecorator(decorator);
+        component.injectDecorator(decorator).injectRequest(request).injectFormSupport(formSupport);
 
         validate.render(writer);
+
         resources.renderInformalParameters(writer);
+
         decorator.insideField(component);
+
+        train_isXHR(request, false);
 
         replay();
 

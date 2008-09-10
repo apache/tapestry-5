@@ -171,22 +171,35 @@ public class Upload extends AbstractField
         return value;
     }
 
-    void injectDecorator(ValidationDecorator decorator)
+    Upload injectDecorator(ValidationDecorator decorator)
     {
         setDecorator(decorator);
+
+        return this;
     }
 
-    void injectFormSupport(FormSupport formSupport)
+    Upload injectRequest(Request request)
+    {
+        this.request = request;
+
+        return this;
+    }
+
+    Upload injectFormSupport(FormSupport formSupport)
     {
         // We have our copy ...
         this.formSupport = formSupport;
 
         // As does AbstractField
         setFormSupport(formSupport);
+
+        return this;
     }
 
-    void injectFieldValidator(FieldValidator validator)
+    Upload injectFieldValidator(FieldValidator validator)
     {
         this.validate = validator;
+
+        return this;
     }
 }
