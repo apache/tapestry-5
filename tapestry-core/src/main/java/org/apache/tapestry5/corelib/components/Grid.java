@@ -364,7 +364,7 @@ public class Grid implements GridModel
             sortAscending = true;
         }
 
-        public List<SortConstraint> getSortContraints()
+        public List<SortConstraint> getSortConstraints()
         {
             if (sortColumnId == null)
                 return Collections.emptyList();
@@ -472,7 +472,7 @@ public class Grid implements GridModel
 
         int endIndex = Math.min(startIndex + rowsPerPage - 1, availableRows - 1);
 
-        cachingSource.prepare(startIndex, endIndex, sortModel.getSortContraints());
+        cachingSource.prepare(startIndex, endIndex, sortModel.getSortConstraints());
     }
 
     Object beginRender(MarkupWriter writer)
