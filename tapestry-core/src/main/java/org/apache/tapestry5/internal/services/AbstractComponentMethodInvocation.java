@@ -20,7 +20,7 @@ import org.apache.tapestry5.services.ComponentMethodInvocation;
 
 public abstract class AbstractComponentMethodInvocation implements ComponentMethodInvocation
 {
-    private final MethodInvocationInfo info;
+    private final ComponentMethodInvocationInfo info;
 
     private final ComponentResources resources;
 
@@ -30,7 +30,7 @@ public abstract class AbstractComponentMethodInvocation implements ComponentMeth
 
     private Object result;
 
-    public AbstractComponentMethodInvocation(MethodInvocationInfo info, ComponentResources resources)
+    public AbstractComponentMethodInvocation(ComponentMethodInvocationInfo info, ComponentResources resources)
     {
         this.info = info;
         this.resources = resources;
@@ -139,6 +139,4 @@ public abstract class AbstractComponentMethodInvocation implements ComponentMeth
         result = newResult;
         thrown = null;
     }
-
-
 }

@@ -31,7 +31,7 @@ import java.util.concurrent.atomic.AtomicLong;
  *
  * @see org.apache.tapestry5.ioc.MethodAdvice
  */
-class InvocationBuilder
+class ComponentMethodInvocationBuilder
 {
     private static final String FIELD_NAME = "_p";
 
@@ -45,7 +45,7 @@ class InvocationBuilder
 
     private final TransformMethodSignature advisedMethod;
 
-    private final MethodInvocationInfo info;
+    private final ComponentMethodInvocationInfo info;
 
     private final CtClass invocationCtClass;
 
@@ -58,20 +58,20 @@ class InvocationBuilder
         return Long.toHexString(UID_GENERATOR.getAndIncrement());
     }
 
-    public InvocationBuilder(InternalClassTransformation transformation,
-                             ComponentClassCache componentClassCache, TransformMethodSignature advisedMethod,
-                             CtClassSource classSource)
+    public ComponentMethodInvocationBuilder(InternalClassTransformation transformation,
+                                            ComponentClassCache componentClassCache,
+                                            TransformMethodSignature advisedMethod,
+                                            CtClassSource classSource)
     {
         this.transformation = transformation;
         this.advisedMethod = advisedMethod;
         this.classSource = classSource;
 
-        info = new MethodInvocationInfo(advisedMethod, componentClassCache);
+        info = new ComponentMethodInvocationInfo(advisedMethod, componentClassCache);
 
         invocationClassName = this.transformation.getClassName() + "$" + this.advisedMethod.getMethodName() + "$invocation_" + nextUID();
 
         invocationCtClass = this.classSource.newClass(invocationClassName, AbstractComponentMethodInvocation.class);
-
     }
 
     public void addAdvice(ComponentMethodAdvice advice)
@@ -112,7 +112,7 @@ class InvocationBuilder
 
     private void rebuildOriginalMethod()
     {
-        String methodInfoField = transformation.addInjectedField(MethodInvocationInfo.class,
+        String methodInfoField = transformation.addInjectedField(ComponentMethodInvocationInfo.class,
                                                                  advisedMethod.getMethodName() + "Info",
                                                                  info);
 
@@ -225,7 +225,7 @@ class InvocationBuilder
 
         CtClass[] parameterTypes = new CtClass[parameterCount + 2];
 
-        parameterTypes[0] = toCtClass(MethodInvocationInfo.class);
+        parameterTypes[0] = toCtClass(ComponentMethodInvocationInfo.class);
         parameterTypes[1] = toCtClass(ComponentResources.class);
 
         BodyBuilder builder = new BodyBuilder().begin().addln("super($1,$2);");
@@ -253,7 +253,6 @@ class InvocationBuilder
         constructor.setBody(builder.toString());
 
         invocationCtClass.addConstructor(constructor);
-
     }
 
     private CtClass toCtClass(Class input)
@@ -281,7 +280,7 @@ class InvocationBuilder
         builder.end().end();
 
         CtMethod method = new CtMethod(CtClass.voidType, "override",
-                                       new CtClass[] { CtClass.intType, toCtClass(Object.class) }, invocationCtClass);
+                                       new CtClass[] {CtClass.intType, toCtClass(Object.class)}, invocationCtClass);
 
         method.setModifiers(PUBLIC_FINAL);
         method.setBody(builder.toString());
@@ -307,12 +306,11 @@ class InvocationBuilder
         builder.end().end();
 
         CtMethod method = new CtMethod(toCtClass(Object.class), "getParameter",
-                                       new CtClass[] { CtClass.intType }, invocationCtClass);
+                                       new CtClass[] {CtClass.intType}, invocationCtClass);
 
         method.setModifiers(PUBLIC_FINAL);
         method.setBody(builder.toString());
 
         invocationCtClass.addMethod(method);
     }
-
 }

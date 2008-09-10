@@ -25,21 +25,27 @@ import java.lang.reflect.Method;
  */
 public abstract class AbstractInvocation implements Invocation
 {
+    private final MethodInfo methodInfo;
+
     private final Method method;
 
     private Throwable thrown;
 
     private Object result;
 
+    private int adviceIndex = 0;
+
+    protected AbstractInvocation(MethodInfo methodInfo)
+    {
+        this.methodInfo = methodInfo;
+
+        method = methodInfo.getMethod();
+    }
+
     @Override
     public String toString()
     {
         return String.format("Invocation[%s]", method);
-    }
-
-    protected AbstractInvocation(Method method)
-    {
-        this.method = method;
     }
 
     public String getMethodName()
@@ -103,4 +109,20 @@ public abstract class AbstractInvocation implements Invocation
         result = newResult;
         thrown = null;
     }
+
+    public void proceed()
+    {
+        if (adviceIndex >= methodInfo.getAdviceCount())
+        {
+            invokeDelegateMethod();
+            return;
+        }
+
+        methodInfo.getAdvice(adviceIndex++).advise(this);
+    }
+
+    /**
+     * This method is filled in, in the dynamically generated subclass.
+     */
+    protected abstract void invokeDelegateMethod();
 }

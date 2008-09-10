@@ -28,12 +28,16 @@ public interface AspectInterceptorBuilder<T>
     /**
      * Adds advice for a specific method of the aspect interceptor being constructed.
      *
-     * @param method method (of the interface for which an interceptor is being constructed) to be adviced. A method may
-     *               only be advised <em>once</em> (for a single interceptor; it is valid to chain together a series of
-     *               interceptors).
+     * @param method method (of the interface for which an interceptor is being constructed) to be advised. Multiple
+     *               advice is allowed for a single method; the advice will be executed in the order it is added.
      * @param advice the advice for this particular method.   Advice must be threadsafe.
      */
     void adviseMethod(Method method, MethodAdvice advice);
+
+    /**
+     * Advises <em>all</em> methods of the interface with the given advice.
+     */
+    void adviseAllMethods(MethodAdvice advice);
 
     /**
      * Builds and returns the interceptor.  Any methods that have not been advised will become "pass thrus".

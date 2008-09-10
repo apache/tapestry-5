@@ -22,6 +22,8 @@ import org.apache.tapestry5.ioc.services.AspectInterceptorBuilder;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import java.lang.reflect.Method;
+
 /**
  * Tests a few edge and error cases not covered by {@link org.apache.tapestry5.ioc.internal.services.LoggingDecoratorImplTest}.
  */
@@ -106,32 +108,57 @@ public class AspectInterceptorBuilderImplTest extends IOCInternalTestCase
     @Test
     public void method_with_duplicate_advice() throws Exception
     {
-        Subject delegate = mockSubject();
-
-        MethodAdvice advice = mockAdvice();
-
-        replay();
-
-        AspectInterceptorBuilder<Subject> builder = decorator.createBuilder(Subject.class, delegate, "<Subject>");
-
-
-        builder.adviseMethod(Subject.class.getMethod("advised"), advice);
-
-        try
+        TextTransformer delegate = new TextTransformer()
         {
-            // Second is failure.
+            public String transform(String input)
+            {
+                return input;
+            }
+        };
 
-            builder.adviseMethod(Subject.class.getMethod("advised"), advice);
-
-            unreachable();
-        }
-        catch (IllegalArgumentException ex)
+        MethodAdvice stripFirstLetter = new MethodAdvice()
         {
-            assertEquals(ex.getMessage(),
-                         "Method public abstract void org.apache.tapestry5.ioc.internal.services.AspectInterceptorBuilderImplTest$Subject.advised() has already been advised.");
-        }
+            public void advise(Invocation invocation)
+            {
+                String param = (String) invocation.getParameter(0);
 
-        verify();
+                invocation.override(0, param.substring(1));
+
+                invocation.proceed();
+            }
+        };
+
+        MethodAdvice reverse = new MethodAdvice()
+        {
+            public void advise(Invocation invocation)
+            {
+                String param = (String) invocation.getParameter(0);
+
+                char[] input = param.toCharArray();
+                int count = input.length;
+
+                char[] output = new char[count];
+
+                for (int i = 0; i < count; i++)
+                    output[count - i - 1] = input[i];
+
+                invocation.override(0, new String(output));
+
+                invocation.proceed();
+            }
+        };
+
+        AspectInterceptorBuilder<TextTransformer> builder = decorator.createBuilder(TextTransformer.class, delegate,
+                                                                                    "<TextTransformer>");
+
+        Method method = TextTransformer.class.getMethod("transform", String.class);
+        builder.adviseMethod(method, stripFirstLetter);
+        builder.adviseMethod(method, reverse);
+
+        TextTransformer advised = builder.build();
+
+        // strip first letter THEN reverse
+        assertEquals(advised.transform("Tapestry"), "yrtsepa");
     }
 
     @Test
@@ -163,7 +190,7 @@ public class AspectInterceptorBuilderImplTest extends IOCInternalTestCase
 
         ArraysSubject advised = decorator.build(ArraysSubject.class, delegate, advice, "whatever");
 
-        String[] inputs = { "Fred", "Barney" };
+        String[] inputs = {"Fred", "Barney"};
 
         String[] result = advised.operation(inputs);
 
@@ -180,5 +207,4 @@ public class AspectInterceptorBuilderImplTest extends IOCInternalTestCase
     {
         return newMock(Subject.class);
     }
-
 }

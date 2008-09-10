@@ -38,10 +38,7 @@ public class AspectDecoratorImpl implements AspectDecorator
 
         AspectInterceptorBuilder<T> builder = createBuilder(serviceInterface, delegate, description);
 
-        // Use the same advice for all methods.
-
-        for (Method m : serviceInterface.getMethods())
-            builder.adviseMethod(m, advice);
+        builder.adviseAllMethods(advice);
 
         return builder.build();
     }
@@ -62,16 +59,26 @@ public class AspectDecoratorImpl implements AspectDecorator
 
             public void adviseMethod(Method method, MethodAdvice advice)
             {
-                if (builder == null)
-                    builder = new AspectInterceptorBuilderImpl<T>(classFactory, serviceInterface, delegate,
-                                                                  description);
+                getBuilder().adviseMethod(method, advice);
+            }
 
-                builder.adviseMethod(method, advice);
+            public void adviseAllMethods(MethodAdvice advice)
+            {
+                getBuilder().adviseAllMethods(advice);
             }
 
             public T build()
             {
                 return builder == null ? delegate : builder.build();
+            }
+
+            private AspectInterceptorBuilder<T> getBuilder()
+            {
+                if (builder == null)
+                    builder = new AspectInterceptorBuilderImpl<T>(classFactory, serviceInterface, delegate,
+                                                                  description);
+
+                return builder;
             }
         };
     }

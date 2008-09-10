@@ -16,7 +16,6 @@ package org.apache.tapestry5.ioc.services;
 
 import org.apache.tapestry5.ioc.MethodAdvice;
 
-
 /**
  * A decorator used to create an interceptor that delegates each method's invocation to an {@link
  * org.apache.tapestry5.ioc.MethodAdvice} for advice.  Advice can inspect or change method parameters, inspect or change
@@ -39,7 +38,8 @@ public interface AspectDecorator
 
     /**
      * Creates a builder that can be used to create the interceptor.  This is used when only some of the methods need to
-     * be advised, or when different methods need to recieve different advice.
+     * be advised, or when different methods need to recieve different advice, or when multiple advice is to be
+     * applied.
      *
      * @param serviceInterface defines the interface of the interceptor and the delegate
      * @param delegate         the object on which methods will be invokes

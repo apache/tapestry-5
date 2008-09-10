@@ -89,7 +89,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
     private Map<CtMethod, TransformMethodSignature> methodSignatures = CollectionFactory.newMap();
 
-    private Map<TransformMethodSignature, InvocationBuilder> methodToInvocationBuilder = CollectionFactory.newMap();
+    private Map<TransformMethodSignature, ComponentMethodInvocationBuilder> methodToInvocationBuilder = CollectionFactory.newMap();
 
     // Key is field name, value is expression used to replace read access
 
@@ -461,13 +461,11 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
             implementDefaultMethodsForInterface(ctInterface);
 
             ctClass.addInterface(ctInterface);
-
         }
         catch (NotFoundException ex)
         {
             throw new RuntimeException(ex);
         }
-
     }
 
     /**
@@ -530,7 +528,6 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
             throw new RuntimeException(ServicesMessages.errorAddingMethod(ctClass, method
                     .getName(), ex), ex);
         }
-
     }
 
     /**
@@ -726,7 +723,6 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
             method.setBody(source, null);
 
             ctClass.addMethod(method);
-
         }
         catch (CannotCompileException ex)
         {
@@ -763,7 +759,6 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         }
 
         addMethodToDescription(String.format("catch(%s) in", exceptionType), methodSignature, body);
-
     }
 
     public void prefixMethod(TransformMethodSignature methodSignature, String methodBody)
@@ -933,7 +928,6 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
                 String fieldName = field.getName();
 
                 if (filter.accept(fieldName, field.getType().getName())) result.add(fieldName);
-
             }
         }
         catch (NotFoundException ex)
@@ -1208,11 +1202,11 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         Defense.notNull(methodSignature, "methodSignature");
         Defense.notNull(advice, "advice");
 
-        InvocationBuilder builder = methodToInvocationBuilder.get(methodSignature);
+        ComponentMethodInvocationBuilder builder = methodToInvocationBuilder.get(methodSignature);
 
         if (builder == null)
         {
-            builder = new InvocationBuilder(this, componentClassCache, methodSignature, classSource);
+            builder = new ComponentMethodInvocationBuilder(this, componentClassCache, methodSignature, classSource);
             methodToInvocationBuilder.put(methodSignature, builder);
         }
 
@@ -1288,7 +1282,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
     {
         failIfFrozen();
 
-        for (InvocationBuilder builder : methodToInvocationBuilder.values())
+        for (ComponentMethodInvocationBuilder builder : methodToInvocationBuilder.values())
         {
             builder.commit();
         }
@@ -1586,7 +1580,6 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         if (removedFieldNames == null) removedFieldNames = CollectionFactory.newSet();
 
         removedFieldNames.add(fieldName);
-
     }
 
     public void replaceReadAccess(String fieldName, String methodName)
@@ -1760,5 +1753,4 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
     {
         return parentTransformation == null;
     }
-
 }
