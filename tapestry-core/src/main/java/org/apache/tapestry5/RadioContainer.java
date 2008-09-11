@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -25,8 +25,10 @@ public interface RadioContainer
     /**
      * Returns the value used as the name attribute of the rendered element. This value will be unique within an
      * enclosing form, even if the same component renders multiple times.
+     *
+     * @see org.apache.tapestry5.Field#getControlName()
      */
-    String getElementName();
+    String getControlName();
 
     /**
      * If true, then all buttons within the container should also be disabled.

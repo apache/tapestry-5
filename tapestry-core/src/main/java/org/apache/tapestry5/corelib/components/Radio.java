@@ -120,7 +120,7 @@ public class Radio implements Field
         String value = container.toClient(this.value);
 
         clientId = renderSupport.allocateClientId(resources);
-        controlName = container.getElementName();
+        controlName = container.getControlName();
 
         writer.element("input", "type", "radio", "id", clientId, "name", controlName, "value", value);
 

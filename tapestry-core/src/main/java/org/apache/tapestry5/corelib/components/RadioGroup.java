@@ -48,6 +48,14 @@ public class RadioGroup implements Field
     private String label;
 
     /**
+     * The id used to generate a page-unique client-side identifier for the component. If a component renders multiple
+     * times, a suffix will be appended to the to id to ensure uniqueness. The uniqued value may be accessed via the
+     * {@link #getClientId() clientId property}.
+     */
+    @Parameter(value = "prop:componentResources.id", defaultPrefix = BindingConstants.LITERAL)
+    private String clientId;
+
+    /**
      * Allows a specific implementation of {@link org.apache.tapestry5.ValueEncoder} to be supplied. This is used to
      * create client-side string values for the different radio button values.
      */
@@ -143,9 +151,7 @@ public class RadioGroup implements Field
      */
     final void setupRender()
     {
-        String name = formSupport.allocateControlName(resources.getId());
-
-        ComponentAction<RadioGroup> action = new Setup(name);
+        ComponentAction<RadioGroup> action = new Setup(formSupport.allocateControlName(clientId));
 
         formSupport.storeAndExecute(this, action);
 
@@ -153,10 +159,9 @@ public class RadioGroup implements Field
 
         final String selectedValue = submittedValue != null ? submittedValue : encoder.toClient(value);
 
-
         environment.push(RadioContainer.class, new RadioContainer()
         {
-            public String getElementName()
+            public String getControlName()
             {
                 return controlName;
             }
@@ -178,7 +183,6 @@ public class RadioGroup implements Field
             {
                 return TapestryInternalUtils.isEqual(encoder.toClient(value), selectedValue);
             }
-
         });
 
         formSupport.store(this, PROCESS_SUBMISSION);
