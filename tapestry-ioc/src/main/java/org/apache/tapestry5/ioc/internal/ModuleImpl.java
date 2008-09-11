@@ -44,6 +44,9 @@ public class ModuleImpl implements Module
 
     private final Logger logger;
 
+    /**
+     * Lazily instantiated.  Access is guarded by BARRIER.
+     */
     private Object moduleBuilder;
 
     // Set to true when invoking the module constructor. Used to
@@ -52,11 +55,15 @@ public class ModuleImpl implements Module
     private boolean insideConstructor;
 
     /**
-     * Keyed on fully qualified service id; values are instantiated services (proxies).
+     * Keyed on fully qualified service id; values are instantiated services (proxies). Guarded by BARRIER.
      */
     private final Map<String, Object> services = CollectionFactory.newCaseInsensitiveMap();
 
-    private final ConcurrentBarrier barrier = new ConcurrentBarrier();
+    /**
+     * The barrier is shared by all modules, which means that creation of *any* service for any module is single
+     * threaded.
+     */
+    private final static ConcurrentBarrier BARRIER = new ConcurrentBarrier();
 
     public ModuleImpl(InternalRegistry registry, ServiceActivityTracker tracker, ModuleDef moduleDef,
                       ClassFactory classFactory, Logger logger)
@@ -148,9 +155,20 @@ public class ModuleImpl implements Module
         {
             public Object invoke()
             {
-                Object result = create(def, eagerLoadProxies);
+                // In a race condition, two threads may try to create the same service simulatenously.
+                // The second will block until after the first creates the service.
 
-                services.put(key, result);
+                Object result = services.get(key);
+
+                // Normally, result is null, unless some other thread slipped in and created the service
+                // proxy.
+
+                if (result == null)
+                {
+                    result = create(def, eagerLoadProxies);
+
+                    services.put(key, result);
+                }
 
                 return result;
             }
@@ -164,14 +182,14 @@ public class ModuleImpl implements Module
 
                 if (result == null)
                 {
-                    result = barrier.withWrite(create);
+                    result = BARRIER.withWrite(create);
                 }
 
                 return result;
             }
         };
 
-        return barrier.withRead(find);
+        return BARRIER.withRead(find);
     }
 
     public void collectEagerLoadServices(Collection<EagerLoadServiceProxy> proxies)
@@ -261,7 +279,7 @@ public class ModuleImpl implements Module
     {
         public Object invoke()
         {
-            if (moduleBuilder == null) barrier.withWrite(instantiateModuleBuilder);
+            if (moduleBuilder == null) BARRIER.withWrite(instantiateModuleBuilder);
 
             return moduleBuilder;
         }
@@ -269,7 +287,7 @@ public class ModuleImpl implements Module
 
     public Object getModuleBuilder()
     {
-        return barrier.withRead(provideModuleBuilder);
+        return BARRIER.withRead(provideModuleBuilder);
     }
 
     private Object constructModuleBuilder()
