@@ -70,6 +70,10 @@
             <a href="fieldannotationconflict">Field Annotation Conflict</a>
             -- demo failure behavior when a field contains conflicting annotations
         </li>
+        <li>
+            <a href="failedinjectdemo">Failed Field Injection Demo</a>
+            -- demo failure when attempting to inject into a field
+        </li>
 
     </ul>
 
