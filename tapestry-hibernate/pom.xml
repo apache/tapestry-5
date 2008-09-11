@@ -65,6 +65,11 @@ the hibernate JARs and dependencies inside the WAR. -->
                     <groupId>javax.transaction</groupId>
                     <artifactId>jta</artifactId>
                 </exclusion>
+                <!-- Make sure we use the version defined by tapestry-ioc. -->
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
 
@@ -80,6 +85,13 @@ the hibernate JARs and dependencies inside the WAR. -->
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-annotations</artifactId>
             <version>3.4.0.GA</version>
+            <exclusions>
+                <!-- Make sure we use the version defined by tapestry-ioc. -->
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>

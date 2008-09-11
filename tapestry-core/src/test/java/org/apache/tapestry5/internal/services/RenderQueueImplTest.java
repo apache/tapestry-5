@@ -16,9 +16,12 @@ package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.TapestryMarkers;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.runtime.RenderCommand;
 import org.apache.tapestry5.runtime.RenderQueue;
+import static org.easymock.EasyMock.eq;
+import static org.easymock.EasyMock.isA;
 import org.slf4j.Logger;
 import org.testng.annotations.Test;
 
@@ -42,8 +45,9 @@ public class RenderQueueImplTest extends InternalBaseTestCase
 
         // There's only one check for trace enabled now.
 
-        train_isTraceEnabled(logger, false);
-        train_isDebugEnabled(logger, false);
+        expect(logger.isTraceEnabled(TapestryMarkers.RENDER_COMMANDS)).andReturn(false);
+
+        logger.debug(eq(TapestryMarkers.RENDER_COMMANDS), isA(String.class));
 
         command2.render(writer, queue);
 
@@ -82,7 +86,7 @@ public class RenderQueueImplTest extends InternalBaseTestCase
         Logger logger = mockLogger();
         MarkupWriter writer = mockMarkupWriter();
 
-        train_isTraceEnabled(logger, false);
+        expect(logger.isTraceEnabled(TapestryMarkers.RENDER_COMMANDS)).andReturn(false);
 
         logger.error("Render queue error in FailedCommand: Oops.", t);
 
@@ -106,10 +110,9 @@ public class RenderQueueImplTest extends InternalBaseTestCase
         {
             assertSame(ex.getCause(), t);
 
-            assertArraysEqual(ex.getActiveComponents(), new Object[] { foo, baz });
+            assertArraysEqual(ex.getActiveComponents(), new Object[] {foo, baz});
         }
 
         verify();
     }
-
 }

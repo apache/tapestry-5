@@ -53,8 +53,7 @@ public class ComponentActionSink
 
         String completeId = castComponent.getComponentResources().getCompleteId();
 
-        if (logger.isDebugEnabled())
-            logger.debug(String.format("Storing action: %s %s", completeId, action));
+        logger.debug("Storing action: {} {}", completeId, action);
 
         try
         {

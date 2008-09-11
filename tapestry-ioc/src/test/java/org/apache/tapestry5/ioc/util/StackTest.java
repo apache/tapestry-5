@@ -71,9 +71,11 @@ public class StackTest extends TestBase
 
         assertEquals(stack.toString(), "Stack[barney, fred]");
 
+        assertEquals(stack.getDepth(), 2);
+
         Object[] snapshot = stack.getSnapshot();
 
-        assertArraysEqual(snapshot, new Object[] { fred, barney });
+        assertArraysEqual(snapshot, new Object[] {fred, barney});
 
         assertEquals(stack.pop(), barney);
         assertEquals(stack.peek(), fred);

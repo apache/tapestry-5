@@ -17,6 +17,7 @@ package org.apache.tapestry5.internal.services;
 import javassist.CtClass;
 import javassist.CtConstructor;
 import javassist.NotFoundException;
+import org.apache.tapestry5.TapestryMarkers;
 import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.internal.events.InvalidationListener;
 import org.apache.tapestry5.internal.model.MutableComponentModelImpl;
@@ -174,7 +175,7 @@ public class ComponentClassTransformerImpl implements ComponentClassTransformer,
             throw new TransformationException(transformation, ex);
         }
 
-        if (logger.isDebugEnabled()) logger.debug("Finished class transformation: " + transformation);
+        logger.debug(TapestryMarkers.CLASS_TRANSFORMATION, "Finished class transformation: {}", transformation);
 
         nameToClassTransformation.put(classname, transformation);
         nameToComponentModel.put(classname, model);
