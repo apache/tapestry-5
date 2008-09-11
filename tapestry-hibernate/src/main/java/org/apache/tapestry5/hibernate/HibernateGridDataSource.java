@@ -57,7 +57,11 @@ public class HibernateGridDataSource implements GridDataSource
      */
     public int getAvailableRows()
     {
-        Criteria criteria = session.createCriteria(entityType).setProjection(Projections.rowCount());
+        Criteria criteria = session.createCriteria(entityType);
+
+        applyAdditionalConstraints(criteria);
+
+        criteria.setProjection(Projections.rowCount());
 
         Integer result = (Integer) criteria.uniqueResult();
 
