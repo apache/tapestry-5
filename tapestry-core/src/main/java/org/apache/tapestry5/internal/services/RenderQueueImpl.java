@@ -16,6 +16,7 @@ package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.TapestryMarkers;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.ioc.util.Stack;
@@ -25,7 +26,7 @@ import org.slf4j.Logger;
 
 public class RenderQueueImpl implements RenderQueue
 {
-    private static final int INITIAL_QUEUE_DEPTH = 100;
+    private static final int INITIAL_QUEUE_DEPTH = 200;
 
     private final Stack<RenderCommand> queue = CollectionFactory.newStack(INITIAL_QUEUE_DEPTH);
 
@@ -47,10 +48,11 @@ public class RenderQueueImpl implements RenderQueue
     {
         RenderCommand command = null;
 
-        boolean traceEnabled = logger.isTraceEnabled();
+        boolean traceEnabled = logger.isTraceEnabled(TapestryMarkers.RENDER_COMMANDS);
 
         long startNanos = System.nanoTime();
         int commandCount = 0;
+        int maxDepth = 0;
 
         // Seems to make sense to use one try/finally around the whole process, rather than
         // around each call to render() since the end result (in a failure scenario) is the same.
@@ -59,11 +61,13 @@ public class RenderQueueImpl implements RenderQueue
         {
             while (!queue.isEmpty())
             {
+                maxDepth = Math.max(maxDepth, queue.getDepth());
+
                 command = queue.pop();
 
                 commandCount++;
 
-                if (traceEnabled) logger.trace(String.format("Executing: %s", command));
+                if (traceEnabled) logger.trace(TapestryMarkers.RENDER_COMMANDS, "Executing: {}", command);
 
                 command.render(writer, this);
             }
@@ -82,17 +86,14 @@ public class RenderQueueImpl implements RenderQueue
 
         long endNanos = System.nanoTime();
 
-        if (logger.isDebugEnabled())
-        {
+        long elapsedNanos = endNanos - startNanos;
+        double elapsedSeconds = ((float) elapsedNanos) / 1000000000F;
 
-            long elapsedNanos = endNanos - startNanos;
-            double elapsedSeconds = ((float) elapsedNanos) / 1000000000F;
-
-            logger.debug(String.format("Executed %,d rendering commands in %.3f seconds",
-                                       commandCount,
-                                       elapsedSeconds));
-        }
-
+        logger.debug(TapestryMarkers.RENDER_COMMANDS,
+                     String.format("Executed %,d rendering commands (max queue depth: %,d) in %.3f seconds",
+                                   commandCount,
+                                   maxDepth,
+                                   elapsedSeconds));
     }
 
     public void startComponent(ComponentResources resources)

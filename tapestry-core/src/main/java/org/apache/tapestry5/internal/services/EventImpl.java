@@ -15,6 +15,7 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.ComponentEventCallback;
+import org.apache.tapestry5.TapestryMarkers;
 import static org.apache.tapestry5.ioc.internal.util.Defense.notNull;
 import org.apache.tapestry5.runtime.Event;
 import org.slf4j.Logger;
@@ -46,8 +47,7 @@ public class EventImpl implements Event
 
     public void setMethodDescription(String methodDescription)
     {
-        if (logger.isDebugEnabled())
-            logger.debug("Invoking: " + methodDescription);
+        logger.debug(TapestryMarkers.EVENT_HANDLER_METHOD, "Invoking: {}", methodDescription);
 
         this.methodDescription = methodDescription;
     }

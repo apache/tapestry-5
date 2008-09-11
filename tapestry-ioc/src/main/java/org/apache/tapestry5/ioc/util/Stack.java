@@ -58,6 +58,14 @@ public class Stack<E>
     }
 
     /**
+     * Returns the number of items currently in the stack.
+     */
+    public int getDepth()
+    {
+        return index + 1;
+    }
+
+    /**
      * Clears the stack, the same as popping off all elements.
      */
     public void clear()

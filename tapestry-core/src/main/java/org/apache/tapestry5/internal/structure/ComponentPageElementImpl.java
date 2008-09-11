@@ -1044,8 +1044,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
                 ComponentEvent event = new ComponentEventImpl(currentEventType, componentId, currentContext, wrapped,
                                                               pageResources, logger);
 
-                if (logger.isDebugEnabled())
-                    logger.debug("Dispatch event: " + event);
+                logger.debug(TapestryMarkers.EVENT_DISPATCH, "Dispatch event: {}", event);
 
                 result |= component.dispatchEvent(event);
 

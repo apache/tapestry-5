@@ -16,10 +16,14 @@ package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.ComponentEventCallback;
 import org.apache.tapestry5.EventContext;
+import org.apache.tapestry5.TapestryMarkers;
 import org.apache.tapestry5.internal.structure.PageResources;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.runtime.ComponentEvent;
+import org.easymock.EasyMock;
+import static org.easymock.EasyMock.eq;
+import static org.easymock.EasyMock.isA;
 import org.slf4j.Logger;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -141,7 +145,7 @@ public class ComponentEventImplTest extends InternalBaseTestCase
         EventContext context = mockEventContext();
         Logger logger = mockLogger();
 
-        train_isDebugEnabled(logger, false);
+        logger.debug(eq(TapestryMarkers.EVENT_HANDLER_METHOD), isA(String.class), isA(String.class));
 
         train_getCount(context, 0);
 
@@ -172,7 +176,7 @@ public class ComponentEventImplTest extends InternalBaseTestCase
         PageResources resources = mockPageResources();
         Logger logger = mockLogger();
 
-        train_isDebugEnabled(logger, false);
+        logger.debug(eq(TapestryMarkers.EVENT_HANDLER_METHOD), isA(String.class), isA(String.class));
 
         train_toClass(resources, Integer.class.getName(), Integer.class);
 
@@ -209,7 +213,7 @@ public class ComponentEventImplTest extends InternalBaseTestCase
         String methodDescription = "foo.Bar.baz()";
         Logger logger = mockLogger();
 
-        train_isDebugEnabled(logger, false);
+        logger.debug(eq(TapestryMarkers.EVENT_HANDLER_METHOD), isA(String.class), isA(String.class));
 
         ComponentEventCallback handler = mockComponentEventHandler();
 
@@ -238,7 +242,7 @@ public class ComponentEventImplTest extends InternalBaseTestCase
         ComponentEventCallback handler = mockComponentEventHandler();
         Logger logger = mockLogger();
 
-        train_isDebugEnabled(logger, false);
+        logger.debug(eq(TapestryMarkers.EVENT_HANDLER_METHOD), isA(String.class), isA(String.class));
 
         train_handleResult(handler, result, false);
 
@@ -261,7 +265,7 @@ public class ComponentEventImplTest extends InternalBaseTestCase
         ComponentEventCallback handler = mockComponentEventHandler();
         Logger logger = mockLogger();
 
-        train_isDebugEnabled(logger, false);
+        logger.debug(eq(TapestryMarkers.EVENT_HANDLER_METHOD), isA(String.class), isA(String.class));
 
         replay();
 
@@ -284,7 +288,9 @@ public class ComponentEventImplTest extends InternalBaseTestCase
         ComponentEventCallback handler = mockComponentEventHandler();
         Logger logger = mockLogger();
 
-        expect(logger.isDebugEnabled()).andStubReturn(false);
+        logger.debug(eq(TapestryMarkers.EVENT_HANDLER_METHOD), isA(String.class), isA(String.class));
+
+        EasyMock.expectLastCall().atLeastOnce();
 
         expect(handler.handleResult(result)).andReturn(true);
 

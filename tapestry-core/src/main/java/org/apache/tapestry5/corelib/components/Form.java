@@ -271,7 +271,6 @@ public class Form implements ClientElement, FormValidationControl
         writer.end(); // div
 
         environment.peek(Heartbeat.class).begin();
-
     }
 
     void afterRender(MarkupWriter writer)
@@ -396,8 +395,7 @@ public class Form implements ClientElement, FormValidationControl
 
         for (String actionsBase64 : values)
         {
-            if (logger.isDebugEnabled())
-                logger.debug(String.format("Processing actions: %s", actionsBase64));
+            logger.debug("Processing actions: {}", actionsBase64);
 
             ObjectInputStream ois = null;
 
@@ -414,9 +412,7 @@ public class Form implements ClientElement, FormValidationControl
 
                     component = source.getComponent(componentId);
 
-                    if (logger.isDebugEnabled())
-                        logger.debug(String.format("Processing: %s  %s", componentId, action));
-
+                    logger.debug("Processing: {} {}", componentId, action);
 
                     action.execute(component);
 
