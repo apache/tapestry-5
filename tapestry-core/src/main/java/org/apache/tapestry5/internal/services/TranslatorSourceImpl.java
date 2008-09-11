@@ -27,7 +27,7 @@ import java.util.Map;
 
 public class TranslatorSourceImpl implements TranslatorSource, InvalidationListener
 {
-    private final Map<String, Translator> translators = CollectionFactory.newMap();
+    private final Map<String, Translator> translators = CollectionFactory.newCaseInsensitiveMap();
 
     private final StrategyRegistry<Translator> registry;
 
