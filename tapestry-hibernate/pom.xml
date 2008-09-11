@@ -59,7 +59,7 @@ the hibernate JARs and dependencies inside the WAR. -->
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
-            <version>3.3.0.SP1</version>
+            <version>3.3.1.GA</version>
             <exclusions>
                 <exclusion>
                     <groupId>javax.transaction</groupId>
