@@ -64,6 +64,8 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
      */
     private final Map<String, Instantiator> classNameToInstantiator = CollectionFactory.newMap();
 
+    private final Map<String, RuntimeException> classToPriorTransformException = CollectionFactory.newMap();
+
     private CtClassSource classSource;
 
     private class PackageAwareLoader extends Loader
@@ -157,11 +159,11 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
         }
 
         classFactory = new ClassFactoryImpl(loader, classPool, classSource, logger);
+
+        classToPriorTransformException.clear();
     }
 
-    // This is called from well within a synchronized block.    The component layer class loader,
-    // and the context class loader, should each be locked.
-
+    // This is called from well within a synchronized block.
     public void onLoad(ClassPool pool, String classname) throws NotFoundException, CannotCompileException
     {
         logger.debug("BEGIN onLoad " + classname);
@@ -170,40 +172,51 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
 
         String diag = "FAIL";
 
-        // If we are loading a class, it is because it is in a controlled package. There may be
-        // errors in the class that keep it from loading. By adding it to the change tracker
-        // early, we ensure that when the class is fixed, the change is picked up. Originally,
-        // this code was at the end of the method, and classes that contained errors would not be
-        // reloaded even after the code was fixed.
+        // TAPESTRY-2517: Attempting to re-transform a class that was partially transformed (but
+        // then failed) gives confusing exceptions if the user refreshes the failed page.
+        // Just give the same exception back.
 
-        addClassFileToChangeTracker(classname);
+        RuntimeException failure = classToPriorTransformException.get(classname);
 
-        try
+        if (failure == null)
         {
-            CtClass ctClass = pool.get(classname);
+            // If we are loading a class, it is because it is in a controlled package. There may be
+            // errors in the class that keep it from loading. By adding it to the change tracker
+            // early, we ensure that when the class is fixed, the change is picked up. Originally,
+            // this code was at the end of the method, and classes that contained errors would not be
+            // reloaded even after the code was fixed.
 
-            // Force the creation of the super-class before the target class.
+            addClassFileToChangeTracker(classname);
 
-            forceSuperclassTransform(ctClass);
+            try
+            {
+                CtClass ctClass = pool.get(classname);
 
-            // Do the transformations here
+                // Force the creation of the super-class before the target class.
 
-            transformer.transformComponentClass(ctClass, loader);
+                forceSuperclassTransform(ctClass);
 
-            writeClassToFileSystemForHardCoreDebuggingPurposesOnly(ctClass);
+                // Do the transformations here
 
-            diag = "END";
+                transformer.transformComponentClass(ctClass, loader);
+
+                writeClassToFileSystemForHardCoreDebuggingPurposesOnly(ctClass);
+
+                diag = "END";
+            }
+            catch (RuntimeException classLoaderException)
+            {
+                internalRequestGlobals.storeClassLoaderException(classLoaderException);
+
+                failure = classLoaderException;
+
+                classToPriorTransformException.put(classname, failure);
+            }
         }
-        catch (RuntimeException classLoaderException)
-        {
-            internalRequestGlobals.storeClassLoaderException(classLoaderException);
 
-            throw classLoaderException;
-        }
-        finally
-        {
-            logger.debug(String.format("%5s onLoad %s", diag, classname));
-        }
+        logger.debug(String.format("%5s onLoad %s", diag, classname));
+
+        if (failure != null) throw failure;
     }
 
     private void writeClassToFileSystemForHardCoreDebuggingPurposesOnly(CtClass ctClass)

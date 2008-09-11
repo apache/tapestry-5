@@ -2237,4 +2237,23 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         assertTextSeries("//dl[@id='informals']/dt[%d]", 1, "barney", "fred", "pageName");
         assertTextSeries("//dl[@id='informals']/dd[%d]", 1, "rubble", "flintstone", "InformalParametersDemo");
     }
+
+    /**
+     * TAPESTRY-2517
+     */
+    public void cached_exception_for_loading_failed_page()
+    {
+        start("Failed Field Injection Demo");
+
+        assertTextPresent(
+                "Error obtaining injected value for field org.apache.tapestry5.integration.app1.pages.FailedInjectDemo.buffer: No service implements the interface java.lang.StringBuffer.");
+
+        refresh();
+        waitForPageToLoad(PAGE_LOAD_TIMEOUT);
+
+        // Before this bug was fixed, this message would not appear; instead on complaining about _$resources would appear which was very confusing.
+
+        assertTextPresent(
+                "Error obtaining injected value for field org.apache.tapestry5.integration.app1.pages.FailedInjectDemo.buffer: No service implements the interface java.lang.StringBuffer.");
+    }
 }

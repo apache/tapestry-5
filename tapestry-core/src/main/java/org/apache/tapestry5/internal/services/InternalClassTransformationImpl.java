@@ -216,8 +216,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
     public InternalClassTransformation createChildTransformation(CtClass childClass, MutableComponentModel childModel)
     {
         return new InternalClassTransformationImpl(childClass, this, classFactory, classSource, componentClassCache,
-                                                   childModel
-        );
+                                                   childModel);
     }
 
     private void freeze()
