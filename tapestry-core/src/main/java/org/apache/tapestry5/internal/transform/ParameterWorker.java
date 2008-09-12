@@ -175,7 +175,6 @@ public class ParameterWorker implements ComponentClassTransformWorker
                            resourcesFieldName, parameterName, bindingFactoryFieldName, defaultPrefix, defaultBinding);
 
             return;
-
         }
 
         if (autoconnect)
@@ -311,7 +310,7 @@ public class ParameterWorker implements ComponentClassTransformWorker
     {
         if (InternalUtils.isNonBlank(annotatedName)) return annotatedName;
 
-        return InternalUtils.stripMemberPrefix(fieldName);
+        return InternalUtils.stripMemberName(fieldName);
     }
 
     public static void bind(String parameterName, InternalComponentResources resources, Object value)

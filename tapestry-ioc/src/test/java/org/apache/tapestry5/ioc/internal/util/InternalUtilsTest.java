@@ -96,22 +96,44 @@ public class InternalUtilsTest extends IOCTestCase
     @Test
     public void array_size_when_non_null()
     {
-        Object[] array = { 1, 2, 3 };
+        Object[] array = {1, 2, 3};
 
         assertEquals(InternalUtils.size(array), 3);
     }
 
-    @Test(dataProvider = "memberPrefixData")
-    public void strip_member_prefix(String input, String expected)
+    @Test(dataProvider = "memberNameData")
+    public void strip_member_name(String input, String expected)
     {
-        assertEquals(InternalUtils.stripMemberPrefix(input), expected);
+        assertEquals(InternalUtils.stripMemberName(input), expected);
     }
 
-    @DataProvider(name = "memberPrefixData")
-    public Object[][] memberPrefixData()
+    @DataProvider(name = "memberNameData")
+    public Object[][] memberNameData()
     {
-        return new Object[][] { { "simple", "simple" }, { "_name", "name" }, { "$name", "name" },
-                { "$_$__$__$_$___$_$_$_$$name$", "name$" } };
+        return new Object[][] {
+                {"simple", "simple"},
+                {"_name", "name"},
+                {"$name", "name"},
+                {"ruby_style", "ruby_style"},
+                {"__$ruby_style_", "ruby_style"},
+                {"$_$__$__$_$___$_$_$_$$name$", "name"},
+                {"foo_", "foo"},
+                {"_foo_", "foo"}
+        };
+    }
+
+    @Test
+    public void strip_illegal_member_name()
+    {
+        try
+        {
+            InternalUtils.stripMemberName("!foo");
+            unreachable();
+        }
+        catch (IllegalArgumentException ex)
+        {
+            assertEquals(ex.getMessage(), "Input '!foo' is not a valid Java identifier.");
+        }
     }
 
     @Test
@@ -153,7 +175,6 @@ public class InternalUtilsTest extends IOCTestCase
     {
         List<String> many = Arrays.asList("fred", "barney", "", "wilma");
         assertEquals(InternalUtils.join(many), "fred, barney, (blank), wilma");
-
     }
 
     @Test
@@ -175,7 +196,6 @@ public class InternalUtilsTest extends IOCTestCase
         List<String> unsorted = Arrays.asList("betty", "fred", "barney", "", "wilma");
 
         assertEquals(InternalUtils.joinSorted(unsorted), "(blank), barney, betty, fred, wilma");
-
     }
 
     @Test(dataProvider = "capitalize_inputs")
@@ -187,8 +207,8 @@ public class InternalUtilsTest extends IOCTestCase
     @DataProvider(name = "capitalize_inputs")
     public Object[][] capitalize_inputs()
     {
-        return new Object[][] { { "hello", "Hello" }, { "Goodbye", "Goodbye" }, { "", "" }, { "a", "A" },
-                { "A", "A" } };
+        return new Object[][] {{"hello", "Hello"}, {"Goodbye", "Goodbye"}, {"", ""}, {"a", "A"},
+                {"A", "A"}};
     }
 
     @Test
@@ -333,7 +353,7 @@ public class InternalUtilsTest extends IOCTestCase
 
         try
         {
-            InternalUtils.validateMarkerAnnotations(new Class[] { Inject.class, NotRetainedRuntime.class });
+            InternalUtils.validateMarkerAnnotations(new Class[] {Inject.class, NotRetainedRuntime.class});
             unreachable();
         }
         catch (IllegalArgumentException ex)
@@ -432,7 +452,6 @@ public class InternalUtilsTest extends IOCTestCase
         {
             assertMessageContains(ex,
                                   "Constructor protected org.apache.tapestry5.ioc.internal.util.InternalUtilsTest$PublicInnerClass() is not public and may not be used for autobuilding an instance of the class.");
-
         }
     }
 }

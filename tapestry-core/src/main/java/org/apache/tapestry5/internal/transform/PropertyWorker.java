@@ -38,7 +38,7 @@ public class PropertyWorker implements ComponentClassTransformWorker
         {
             Property annotation = transformation.getFieldAnnotation(fieldName, Property.class);
 
-            String propertyName = InternalUtils.capitalize(InternalUtils.stripMemberPrefix(fieldName));
+            String propertyName = InternalUtils.capitalize(InternalUtils.stripMemberName(fieldName));
 
             String fieldType = transformation.getFieldType(fieldName);
 
@@ -56,13 +56,12 @@ public class PropertyWorker implements ComponentClassTransformWorker
             {
                 TransformMethodSignature setter
                         = new TransformMethodSignature(Modifier.PUBLIC | Modifier.FINAL, "void", "set" + propertyName,
-                                                       new String[] { fieldType }, null);
+                                                       new String[] {fieldType}, null);
 
                 transformation.addTransformedMethod(setter, fieldName + " = $1;");
             }
 
             // The field is NOT claimed, because we want annotation for the fields to operate.
         }
-
     }
 }

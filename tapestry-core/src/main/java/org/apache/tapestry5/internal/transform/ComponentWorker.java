@@ -54,7 +54,7 @@ public class ComponentWorker implements ComponentClassTransformWorker
 
             String id = annotation.id();
 
-            if (InternalUtils.isBlank(id)) id = InternalUtils.stripMemberPrefix(fieldName);
+            if (InternalUtils.isBlank(id)) id = InternalUtils.stripMemberName(fieldName);
 
             String type = transformation.getFieldType(fieldName);
 
@@ -113,5 +113,4 @@ public class ComponentWorker implements ComponentClassTransformWorker
             embedded.addParameter(kv.getKey(), kv.getValue());
         }
     }
-
 }

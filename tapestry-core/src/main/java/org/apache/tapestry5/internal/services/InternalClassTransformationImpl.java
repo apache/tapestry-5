@@ -442,7 +442,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
     public String newMemberName(String prefix, String baseName)
     {
-        return newMemberName(prefix + "_" + InternalUtils.stripMemberPrefix(baseName));
+        return newMemberName(prefix + "_" + InternalUtils.stripMemberName(baseName));
     }
 
     public void addImplementedInterface(Class interfaceClass)
