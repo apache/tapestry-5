@@ -29,6 +29,7 @@ import org.apache.tapestry5.internal.util.Base64ObjectInputStream;
 import org.apache.tapestry5.ioc.Location;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.TapestryException;
 import org.apache.tapestry5.ioc.util.ExceptionUtils;
@@ -121,14 +122,27 @@ public class Form implements ClientElement, FormValidationControl
     @Parameter("defaultTracker")
     private ValidationTracker tracker;
 
+    @Inject
+    @Symbol(SymbolConstants.FORM_CLIENT_LOGIC_ENABLED)
+    private boolean clientLogicDefaultEnabled;
+
     /**
      * If true (the default) then client validation is enabled for the form, and the default set of JavaScript libraries
      * (Prototype, Scriptaculous and the Tapestry library) will be added to the rendered page, and the form will
      * register itself for validation. This may be turned off when client validation is not desired; for example, when
      * many validations are used that do not operate on the client side at all.
      */
-    @Parameter("true")
-    private boolean clientValidation;
+    @Parameter
+    private boolean clientValidation = clientLogicDefaultEnabled;
+
+    /**
+     * If true (the default), then the JavaScript will be added to position the cursor into the form. The field to
+     * receive focus is the first rendered field that is in error, or required, or present (in that order of priority).
+     *
+     * @see SymbolConstants#FORM_CLIENT_LOGIC_ENABLED
+     */
+    @Parameter
+    private boolean autofocus = clientLogicDefaultEnabled;
 
     /**
      * Binding the zone parameter will cause the form submission to be handled as an Ajax request that updates the
@@ -136,13 +150,6 @@ public class Form implements ClientElement, FormValidationControl
      */
     @Parameter(defaultPrefix = BindingConstants.LITERAL)
     private String zone;
-
-    /**
-     * If true (the default), then the JavaScript will be added to position the cursor into the form. The field to
-     * receive focus is the first rendered field that is in error, or required, or present (in that order of priority).
-     */
-    @Parameter
-    private boolean autofocus = true;
 
     @Inject
     private Logger logger;

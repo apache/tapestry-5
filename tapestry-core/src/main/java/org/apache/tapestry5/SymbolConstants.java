@@ -80,8 +80,15 @@ public class SymbolConstants
     public static final String CHARSET = "tapestry.charset";
 
     /**
+     * Used as the default for the Form's autofocus and clientValidation parameters. If overridden to "false", then
+     * Forms will not (unless explicitly specified) use client validation or autofocus, which in turn, means that most
+     * pages with Forms will not make use of the Tapestry JavaScript stack.
+     */
+    public static final String FORM_CLIENT_LOGIC_ENABLED = "tapestry.form-client-logic-enabled";
+
+    /**
      * Name of page used to report exceptions; the page must implement {@link org.apache.tapestry5.services.ExceptionReporter}.
      * This is used by the default exception report handler service.
      */
-    public static final String EXCEPTION_REPORT_PAGE = "ExceptionReport";
+    public static final String EXCEPTION_REPORT_PAGE = "tapestry.exception-report-page";
 }
