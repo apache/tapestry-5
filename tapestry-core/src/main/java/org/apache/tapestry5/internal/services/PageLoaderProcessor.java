@@ -35,6 +35,7 @@ import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.model.EmbeddedComponentModel;
 import org.apache.tapestry5.runtime.RenderQueue;
 import org.apache.tapestry5.services.BindingSource;
+import org.apache.tapestry5.services.ComponentClassResolver;
 import org.slf4j.Logger;
 
 import java.util.List;
@@ -90,6 +91,8 @@ class PageLoaderProcessor
 
     private final LinkFactory linkFactory;
 
+    private final ComponentClassResolver componentClassResolver;
+
     private ComponentModel loadingComponentModel;
 
     private ComponentPageElement loadingElement;
@@ -144,12 +147,14 @@ class PageLoaderProcessor
     }
 
     PageLoaderProcessor(ComponentTemplateSource templateSource, PageElementFactory pageElementFactory,
-                        LinkFactory linkFactory, PersistentFieldManager persistentFieldManager)
+                        LinkFactory linkFactory, PersistentFieldManager persistentFieldManager,
+                        ComponentClassResolver componentClassResolver)
     {
         this.templateSource = templateSource;
         this.pageElementFactory = pageElementFactory;
         this.linkFactory = linkFactory;
         this.persistentFieldManager = persistentFieldManager;
+        this.componentClassResolver = componentClassResolver;
     }
 
     private void bindParameterFromTemplate(ComponentPageElement component, AttributeToken token)
@@ -386,7 +391,10 @@ class PageLoaderProcessor
 
         this.locale = locale;
 
-        page = new PageImpl(logicalPageName, this.locale, linkFactory, persistentFieldManager);
+        // Todo: Need a resources object for Pages, not just ComponentPageElement ... too many
+        // parameters here.
+
+        page = new PageImpl(logicalPageName, this.locale, linkFactory, persistentFieldManager, componentClassResolver);
 
         loadRootComponent(pageClassName);
 
@@ -705,7 +713,6 @@ class PageLoaderProcessor
                 {
                     handleInformalParameters(loadingElement, embeddedModel, newComponent, newComponentModel,
                                              newComponentBindings);
-
                 }
             };
 

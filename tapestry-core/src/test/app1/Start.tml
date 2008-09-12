@@ -17,6 +17,12 @@
 
     <ul>
         <li>
+            <a href="${injectDemoLink}">PageLink via Class Demo</a>
+            -- use ComponentResources to generate a link to a page using target
+            page class, not logical page name
+        </li>
+
+        <li>
             <a href="BadTemplate">BadTemplate Page</a>
             -- More exception reporting
         </li>

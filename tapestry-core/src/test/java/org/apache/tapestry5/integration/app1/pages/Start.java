@@ -14,7 +14,10 @@
 
 package org.apache.tapestry5.integration.app1.pages;
 
+import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.Link;
 import org.apache.tapestry5.annotations.InjectPage;
+import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 
 import java.util.Arrays;
@@ -25,7 +28,7 @@ import java.util.List;
  * Have to start somewhere!
  */
 public class Start
-{    
+{
     public static class Item implements Comparable<Item>
     {
         private final String pageName;
@@ -293,6 +296,9 @@ public class Start
     @InjectPage
     private SecurePage securePage;
 
+    @Inject
+    private ComponentResources resources;
+
     public List<Item> getItems()
     {
         return ITEMS;
@@ -311,6 +317,11 @@ public class Start
     Object onActionFromSecurePage()
     {
         return securePage.initialize("Triggered from Start");
+    }
+
+    public Link getInjectDemoLink()
+    {
+        return resources.createPageLink(InjectDemo.class, false);
     }
 
     public List getDemoContext()

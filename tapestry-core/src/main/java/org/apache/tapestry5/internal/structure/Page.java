@@ -127,6 +127,13 @@ public interface Page
     Link createPageRenderLink(String pageName, boolean override, Object... context);
 
     /**
+     * Creates a link to the named page.
+     *
+     * @see org.apache.tapestry5.ComponentResources#createPageLink(Class, boolean, Object[])
+     */
+    Link createPageRenderLink(Class pageClass, boolean override, Object... context);
+
+    /**
      * Posts a change to a persistent field.
      *
      * @param resources the component resources for the component or mixin containing the field whose value changed
