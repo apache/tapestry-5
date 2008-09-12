@@ -26,10 +26,6 @@ public class RenderSupportImplTest extends InternalBaseTestCase
 {
     private static final String CORE_ASSET_PATH_UNEXPANDED = "${core}";
 
-    private static final String CORE_ASSET_PATH = "/org/apache/tapestry5/core/core.png";
-
-    private static final String CORE_ASSET_URL = "/assets/core/core.png";
-
     private static final String ASSET_URL = "/assets/foo/bar.pdf";
 
     @Test
@@ -71,17 +67,12 @@ public class RenderSupportImplTest extends InternalBaseTestCase
     {
         getMocksControl().checkOrder(true);
 
-        Asset coreAsset = mockAsset();
         DocumentLinker linker = mockDocumentLinker();
         Asset asset = mockAsset();
         AssetSource assetSource = mockAssetSource();
         SymbolSource symbolSource = mockSymbolSource();
 
-        train_expandSymbols(symbolSource, CORE_ASSET_PATH_UNEXPANDED, CORE_ASSET_PATH);
-        train_getAsset(assetSource, null, CORE_ASSET_PATH, null, coreAsset);
-
-        train_toClientURL(coreAsset, CORE_ASSET_URL);
-        linker.addScriptLink(CORE_ASSET_URL);
+        train_addClasspathAsset(linker, symbolSource, assetSource, CORE_ASSET_PATH_UNEXPANDED);
 
         train_toClientURL(asset, ASSET_URL);
         linker.addScriptLink(ASSET_URL);
@@ -96,16 +87,39 @@ public class RenderSupportImplTest extends InternalBaseTestCase
         verify();
     }
 
+    private void train_addClasspathAsset(DocumentLinker linker, SymbolSource symbolSource, AssetSource assetSource,
+                                         String scriptPath)
+    {
+        String expanded = "expanded:" + scriptPath;
+        String url = "/" + scriptPath;
+
+        Asset asset = mockAsset();
+
+        train_expandSymbols(symbolSource, scriptPath, expanded);
+
+        train_getAsset(assetSource, null, expanded, null, asset);
+
+        train_toClientURL(asset, url);
+
+        linker.addScriptLink(url);
+    }
+
     @Test
     public void add_script()
     {
+        String coreScript = "corescript.js";
+
         DocumentLinker linker = mockDocumentLinker();
+        SymbolSource symbolSource = mockSymbolSource();
+        AssetSource assetSource = mockAssetSource();
+
+        train_addClasspathAsset(linker, symbolSource, assetSource, coreScript);
 
         linker.addScript("Tapestry.Foo(\"bar\");");
 
         replay();
 
-        RenderSupport support = new RenderSupportImpl(linker, null, null);
+        RenderSupport support = new RenderSupportImpl(linker, symbolSource, assetSource, coreScript);
 
         support.addScript("Tapestry.Foo(\"%s\");", "bar");
 
@@ -117,7 +131,12 @@ public class RenderSupportImplTest extends InternalBaseTestCase
     @Test
     public void add_script_no_formatting()
     {
+        String coreScript = "corescript.js";
         DocumentLinker linker = mockDocumentLinker();
+        SymbolSource symbolSource = mockSymbolSource();
+        AssetSource assetSource = mockAssetSource();
+
+        train_addClasspathAsset(linker, symbolSource, assetSource, coreScript);
 
         String script = "foo('%');";
 
@@ -125,7 +144,7 @@ public class RenderSupportImplTest extends InternalBaseTestCase
 
         replay();
 
-        RenderSupport support = new RenderSupportImpl(linker, null, null);
+        RenderSupport support = new RenderSupportImpl(linker, symbolSource, assetSource, coreScript);
 
         support.addScript(script);
 
