@@ -47,7 +47,7 @@ Securing Multiple Pages
 ----
 public void contributeMetaDataLocator(MappedConfiguration<String,String> configuration)
 {
-  configuration.put("admin:" + TapestryConstants.SECURE_PAGE, "true");
+  configuration.put("admin:" + MetaDataConstants.SECURE_PAGE, "true");
 }
 ----
 
@@ -95,7 +95,7 @@ Base URL Support
   secure HTTPS (port 8443):
 
 ----
-    public void contributeAlias(Configuration<AliasContribution> configuration)
+    public static void contributeAlias(Configuration<AliasContribution> configuration)
     {
         BaseURLSource source = new BaseURLSource()
         {
@@ -103,7 +103,7 @@ Base URL Support
             {
                 String protocol = secure ? "https" : "http";
 
-                int port = secure ? 8080 : 8443;
+                int port = secure ? 8443 : 8080;
 
                 return String.format("%s://localhost:%d", protocol, port);
             }
