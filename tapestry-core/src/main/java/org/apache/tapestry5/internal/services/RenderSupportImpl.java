@@ -19,14 +19,12 @@ import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.FieldFocusPriority;
 import org.apache.tapestry5.RenderSupport;
 import org.apache.tapestry5.ioc.internal.util.Defense;
-import static org.apache.tapestry5.ioc.internal.util.Defense.notNull;
 import org.apache.tapestry5.ioc.internal.util.IdAllocator;
 import org.apache.tapestry5.ioc.services.SymbolSource;
 import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.AssetSource;
 
-import static java.lang.String.format;
 import java.util.Arrays;
 import java.util.List;
 
@@ -102,7 +100,7 @@ public class RenderSupportImpl implements RenderSupport
 
         for (Asset asset : scriptAssets)
         {
-            notNull(asset, "scriptAsset");
+            Defense.notNull(asset, "scriptAsset");
 
             linker.addScriptLink(asset.toClientURL());
         }
@@ -137,18 +135,18 @@ public class RenderSupportImpl implements RenderSupport
 
     public void addScript(String script)
     {
+        Defense.notBlank(script, "script");
+
+        addCore();
+
         linker.addScript(script);
     }
 
     public void addScript(String format, Object... arguments)
     {
-        notNull(format, "format");
+        Defense.notNull(format, "format");
 
-        addCore();
-
-        String script = format(format, arguments);
-
-        linker.addScript(script);
+        addScript(String.format(format, arguments));
     }
 
     public void addInit(String functionName, JSONArray parameterList)
@@ -225,7 +223,7 @@ public class RenderSupportImpl implements RenderSupport
 
     public void addStylesheetLink(Asset stylesheet, String media)
     {
-        notNull(stylesheet, "stylesheet");
+        Defense.notNull(stylesheet, "stylesheet");
 
         linker.addStylesheetLink(stylesheet.toClientURL(), media);
     }
