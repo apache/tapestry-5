@@ -63,7 +63,7 @@ Build and Deploy Artifacts
   This will sign the artifacts using GPG and deploy them.  Alas, due to bugs in Maven, it has a tendency to sign the signature files (".asc") and upload those as well; we'll clean that up in a bit.
   
   Since the version number is not longer -SNAPSHOT, each file
-  will be published to the Tapestry Snapshot Repository ({{{http://people.apache.org/~hlship/tapestry-snapshot-repository/}http://people.apache.org/~hlship/tapestry-snapshot-repository/}}).
+  will be published to the Tapestry ibiblio Resync Repository ({{{http://people.apache.org/~hlship/public_html/tapestry-ibiblio-rsynch-repository}http://people.apache.org/~hlship/public_html/tapestry-ibiblio-rsynch-repository}}), a holding space that allows the Tapestry community to evaluate the release before it is approved.
   Once the vote on the release is approved, the files will be moved from there to the Apache Ibiblio Sync directory, and from there to the world.   
   
 Binary / Source Distributions
@@ -122,10 +122,10 @@ Commit Changes
   
 Tag In Subversion
 
-  You must the source in SVN, copying the trunk folder to tags/releases/5.0.x.  The SVN tags/releases folder must
+  You must the tag the source in SVN, copying the trunk folder to tags/releases/5.0.x.  The SVN tags/releases folder must
   already exist, the specific folder must not.
 
-  I do this from Eclipse, but the command line (for example) is pretty straight forward (and I may create a script to help with this):
+  I do this from IntelliJ, but the command line (for example) is pretty straight forward (and I may create a script to help with this):
     
   <<<copy -rHEAD https://svn.apache.org/repos/asf/tapestry/tapestry5/trunk https://svn.apache.org/repos/asf/tapestry/tapestry5/tags/releases/5.0.x>>>
     
