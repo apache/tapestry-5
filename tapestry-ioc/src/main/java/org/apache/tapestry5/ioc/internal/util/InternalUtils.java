@@ -33,6 +33,8 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Utilities used within various internal implemenations of Tapestry IOC and the rest of the tapestry-core framework.
@@ -44,6 +46,11 @@ public class InternalUtils
      * Leading punctiation on member names that is stripped off to form a property name or new member name.
      */
     private static final String NAME_PREFIX = "_$";
+
+    /**
+     * Pattern used to eliminate leading and trailing underscores and dollar signs.
+     */
+    private static final Pattern NAME_PATTERN = Pattern.compile("^[_|$]*([\\w|$]+?)[_|$]*$", Pattern.CASE_INSENSITIVE);
 
     /**
      * Converts a method to a user presentable string using a {@link ClassFactory} to obtain a {@link Location} (where
@@ -99,28 +106,18 @@ public class InternalUtils
     }
 
     /**
-     * Strips leading punctuation ("_" and "$") from the provided name.
+     * Strips leading "_" and "$" and trailing "_" from the name.
      */
-    public static String stripMemberPrefix(String memberName)
+    public static String stripMemberName(String memberName)
     {
-        StringBuilder builder = new StringBuilder(memberName);
+        Defense.notBlank(memberName, "memberName");
 
-        // There may be other prefixes we want to strip off, at some point!
+        Matcher matcher = NAME_PATTERN.matcher(memberName);
 
-        // Strip off leading characters defined by NAME_PREFIX
+        if (!matcher.matches())
+            throw new IllegalArgumentException(String.format("Input '%s' is not a valid Java identifier.", memberName));
 
-        // This code is really ugly and needs to be fixed.
-
-        while (true)
-        {
-            char ch = builder.charAt(0);
-
-            if (InternalUtils.NAME_PREFIX.indexOf(ch) < 0) break;
-
-            builder.deleteCharAt(0);
-        }
-
-        return builder.toString();
+        return matcher.group(1);
     }
 
     /**
@@ -128,7 +125,7 @@ public class InternalUtils
      */
     public static String createMemberName(String memberName)
     {
-        return NAME_PREFIX + stripMemberPrefix(memberName);
+        return NAME_PREFIX + stripMemberName(memberName);
     }
 
     /**
@@ -178,7 +175,6 @@ public class InternalUtils
             {
                 return findAnnotation(parameterAnnotations, annotationClass);
             }
-
         };
 
         // At some point, it would be nice to eliminate InjectService, and rely
@@ -417,7 +413,6 @@ public class InternalUtils
             {
                 throw new UnsupportedOperationException();
             }
-
         };
     }
 
@@ -576,6 +571,5 @@ public class InternalUtils
                     "Constructor %s is not public and may not be used for autobuilding an instance of the class. " +
                             "You should make the constructor public, or mark an alternate public constructor with the @Inject annotation.",
                     constructor));
-
     }
 }
