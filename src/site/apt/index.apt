@@ -69,6 +69,8 @@ Third Party Libraries, Tutorials and Resources
 *--+--+--+
 | {{{http://interldap.org}InterLDAP}} | Linagora / Francois Armand | LDAP content management system for non tech users. |
 *--+--+--+
+| {{{http://code.google.com/p/loom-t5/}loom-t5}} | Chris Scheid | Eclipse plugin. |
+*--+--+--+
 | {{{http://code.google.com/p/shams/}Shams Examples, Components}} |  Mohammad H. Shamsi |   A set of Tapestry 5 Examples, Tutorials, Components, and Documents for beginners. |
 *--+--+--+
 | {{{http://www.infoq.com/articles/tapestry5-intro}Tapestry for Nonbelievers}} |      Renat Zubairov & Igor Drobiazko | Simple introduction to using Tapestry and creating components |
