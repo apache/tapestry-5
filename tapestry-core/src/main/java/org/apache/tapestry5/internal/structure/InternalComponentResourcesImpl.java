@@ -145,6 +145,11 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
         return page.createPageRenderLink(pageName, override, context);
     }
 
+    public Link createPageLink(Class pageClass, boolean override, Object... context)
+    {
+        return page.createPageRenderLink(pageClass, override, context);
+    }
+
     public void discardPersistentFieldChanges()
     {
         page.discardPersistentFieldChanges();

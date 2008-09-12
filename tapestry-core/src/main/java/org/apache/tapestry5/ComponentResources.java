@@ -212,8 +212,22 @@ public interface ComponentResources extends ComponentResourcesCommon
      *                 providing a context, when the provided context is empty)
      * @param context  the activation context for the page. If omitted, the activation context is obtained from the
      *                 target page
+     * @return link for a render request to the targetted page
      */
     Link createPageLink(String pageName, boolean override, Object... context);
+
+    /**
+     * Creates a page render request link to render a specific page. Using a page class, rather than a page name, is
+     * more refactoring safe (in the even the page is renamed or moved).
+     *
+     * @param pageClass identifies the page to link to
+     * @param override  if true, the context is used even if empty (normally, the target page is allowed to passivate,
+     *                  providing a context, when the provided context is empty)
+     * @param context   the activation context for the page. If omitted, the activation context is obtained from the
+     *                  target page
+     * @return link for a render request to the targetted page
+     */
+    Link createPageLink(Class pageClass, boolean override, Object... context);
 
     /**
      * Discards all persistent field changes for the page containing the component.  Changes are eliminated from

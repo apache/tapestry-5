@@ -32,17 +32,17 @@ public class PageLoaderImpl extends InvalidationEventHubImpl implements PageLoad
 
     private final PersistentFieldManager persistentFieldManager;
 
-    private final ComponentClassResolver resolver;
+    private final ComponentClassResolver componentClassResolver;
 
     public PageLoaderImpl(ComponentTemplateSource templateSource,
                           PageElementFactory pageElementFactory, LinkFactory linkFactory,
-                          PersistentFieldManager persistentFieldManager, ComponentClassResolver resolver)
+                          PersistentFieldManager persistentFieldManager, ComponentClassResolver componentClassResolver)
     {
         this.templateSource = templateSource;
         this.pageElementFactory = pageElementFactory;
         this.linkFactory = linkFactory;
         this.persistentFieldManager = persistentFieldManager;
-        this.resolver = resolver;
+        this.componentClassResolver = componentClassResolver;
     }
 
     public Page loadPage(String logicalPageName, Locale locale)
@@ -52,9 +52,9 @@ public class PageLoaderImpl extends InvalidationEventHubImpl implements PageLoad
 
         PageLoaderProcessor processor = new PageLoaderProcessor(templateSource,
                                                                 pageElementFactory, linkFactory,
-                                                                persistentFieldManager);
+                                                                persistentFieldManager, componentClassResolver);
 
-        String pageClassName = resolver.resolvePageNameToClassName(logicalPageName);
+        String pageClassName = componentClassResolver.resolvePageNameToClassName(logicalPageName);
 
         return processor.loadPage(logicalPageName, pageClassName, locale);
     }
@@ -67,5 +67,4 @@ public class PageLoaderImpl extends InvalidationEventHubImpl implements PageLoad
     {
         fireInvalidationEvent();
     }
-
 }

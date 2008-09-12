@@ -2256,4 +2256,14 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         assertTextPresent(
                 "Error obtaining injected value for field org.apache.tapestry5.integration.app1.pages.FailedInjectDemo.buffer: No service implements the interface java.lang.StringBuffer.");
     }
+
+    /**
+     * TAPESTRTY-2644
+     */
+    public void create_page_link_via_page_class()
+    {
+        start("PageLink via Class Demo");
+
+        assertTextPresent("Demonstrates the use of the @Inject annotation.");
+    }
 }

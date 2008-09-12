@@ -19,10 +19,12 @@ import org.apache.tapestry5.Link;
 import org.apache.tapestry5.internal.services.LinkFactory;
 import org.apache.tapestry5.internal.services.PersistentFieldManager;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.internal.util.Defense;
 import static org.apache.tapestry5.ioc.internal.util.Defense.notNull;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.runtime.PageLifecycleListener;
+import org.apache.tapestry5.services.ComponentClassResolver;
 import org.apache.tapestry5.services.PersistentFieldBundle;
 import org.slf4j.Logger;
 
@@ -39,6 +41,8 @@ public class PageImpl implements Page
 
     private final PersistentFieldManager persistentFieldManager;
 
+    private final ComponentClassResolver componentClassResolver;
+
     private ComponentPageElement rootElement;
 
     private final List<PageLifecycleListener> listeners = CollectionFactory.newList();
@@ -52,12 +56,13 @@ public class PageImpl implements Page
     private PersistentFieldBundle fieldBundle;
 
     public PageImpl(String logicalPageName, Locale locale, LinkFactory linkFactory,
-                    PersistentFieldManager persistentFieldManager)
+                    PersistentFieldManager persistentFieldManager, ComponentClassResolver componentClassResolver)
     {
         this.logicalPageName = logicalPageName;
         this.locale = locale;
         this.linkFactory = linkFactory;
         this.persistentFieldManager = persistentFieldManager;
+        this.componentClassResolver = componentClassResolver;
     }
 
     @Override
@@ -158,6 +163,15 @@ public class PageImpl implements Page
 
     public Link createPageRenderLink(String pageName, boolean override, Object... context)
     {
+        return linkFactory.createPageLink(pageName, override, context);
+    }
+
+    public Link createPageRenderLink(Class pageClass, boolean override, Object... context)
+    {
+        Defense.notNull(pageClass, "pageClass");
+
+        String pageName = componentClassResolver.resolvePageClassNameToPageName(pageClass.getName());
+
         return linkFactory.createPageLink(pageName, override, context);
     }
 
