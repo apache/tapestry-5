@@ -82,6 +82,36 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
     }
 
     /**
+     * TAPESTRY-1923
+     */
+    @Test
+    public void get_page_names()
+    {
+        ComponentInstantiatorSource source = mockComponentInstantiatorSource();
+        ClassNameLocator locator = newClassNameLocator();
+        Logger logger = compliantLogger();
+
+        train_for_app_packages(source);
+
+
+        train_locateComponentClassNames(locator, APP_ROOT_PACKAGE + ".pages",
+                                        APP_ROOT_PACKAGE + ".pages.SimplePage",
+                                        APP_ROOT_PACKAGE + ".pages.nested.Other",
+                                        APP_ROOT_PACKAGE + ".pages.nested.NestedPage",
+                                        APP_ROOT_PACKAGE + ".pages.nested.NestedIndex");
+
+        replay();
+
+        ComponentClassResolver resolver = create(logger, source, locator);
+
+        List<String> pageNames = resolver.getPageNames();
+
+        assertListsEquals(pageNames, "SimplePage", "nested/Index", "nested/Other", "nested/Page");
+
+        verify();
+    }
+
+    /**
      * TAPESTRY-1541
      */
     @Test
@@ -127,7 +157,6 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
         assertEquals(resolver.canonicalizePageName("simplepage"), "SimplePage");
 
         verify();
-
     }
 
     @Test
@@ -846,7 +875,6 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
         }
 
         verify();
-
     }
 
     @Test

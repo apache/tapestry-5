@@ -16,6 +16,8 @@ package org.apache.tapestry5.services;
 
 import org.apache.tapestry5.ioc.services.ClassNameLocator;
 
+import java.util.List;
+
 /**
  * Resolves page names and component types to fully qualified class names. Pages and components may be provided by the
  * application or inside a <em>mapped package</em>. Page names often appear inside URLs, and component types often
@@ -50,6 +52,11 @@ public interface ComponentClassResolver
      * @return true if the page name is valid
      */
     boolean isPageName(String pageName);
+
+    /**
+     * Returns a list of all logical page names, in sorted order.
+     */
+    List<String> getPageNames();
 
     /**
      * Converts a fully qualified page class name into a logical class name (often, for inclusion as part of the URI).

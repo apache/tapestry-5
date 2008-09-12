@@ -79,7 +79,7 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
 
 
     /**
-     * Used to convert an logical page name to the canonical form of the page name; this ensures that uniform case for
+     * Used to convert a logical page name to the canonical form of the page name; this ensures that uniform case for
      * page names is used.
      */
     private final Map<String, String> pageNameToCanonicalPageName = CollectionFactory.newCaseInsensitiveMap();
@@ -143,7 +143,6 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
 
             addPackagesToInstantiatorSource(rootPackage);
         }
-
     }
 
     private void addPackagesToInstantiatorSource(String rootPackage)
@@ -166,7 +165,6 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
                 needsRebuild = true;
             }
         });
-
     }
 
     /**
@@ -275,7 +273,6 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
         }
 
         logger.info(builder.toString());
-
     }
 
     private void rebuild(String pathPrefix, String rootPackage)
@@ -421,7 +418,6 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
                 return result;
             }
         });
-
     }
 
     public boolean isPageName(final String pageName)
@@ -431,6 +427,23 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
             public Boolean invoke()
             {
                 return locate(pageName, pageToClassName) != null;
+            }
+        });
+    }
+
+    public List<String> getPageNames()
+    {
+        return barrier.withRead(new Invokable<List<String>>()
+        {
+            public List<String> invoke()
+            {
+                rebuild();
+
+                List<String> result = CollectionFactory.newList(pageClassNameToLogicalName.values());
+
+                Collections.sort(result);
+
+                return result;
             }
         });
     }
@@ -541,5 +554,4 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
             }
         });
     }
-
 }
