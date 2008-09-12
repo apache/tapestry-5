@@ -31,6 +31,7 @@ import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.TapestryException;
+import org.apache.tapestry5.ioc.util.ExceptionUtils;
 import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.services.*;
 import org.slf4j.Logger;
@@ -350,7 +351,7 @@ public class Form implements ClientElement, FormValidationControl
 
             formSupport.executeDeferred();
 
-            resources.triggerContextEvent(VALIDATE_FORM, context, callback);
+            fireValidateFormEvent(context, callback);
 
             if (callback.isAborted()) return true;
 
@@ -377,6 +378,26 @@ public class Form implements ClientElement, FormValidationControl
         {
             environment.pop(Heartbeat.class);
             environment.pop(FormSupport.class);
+        }
+    }
+
+    private void fireValidateFormEvent(EventContext context, ComponentResultProcessorWrapper callback)
+    {
+        try
+        {
+            resources.triggerContextEvent(VALIDATE_FORM, context, callback);
+        }
+        catch (RuntimeException ex)
+        {
+            ValidationException ve = ExceptionUtils.findCause(ex, ValidationException.class);
+
+            if (ve != null)
+            {
+                recordError(ve.getMessage());
+                return;
+            }
+
+            throw ex;
         }
     }
 

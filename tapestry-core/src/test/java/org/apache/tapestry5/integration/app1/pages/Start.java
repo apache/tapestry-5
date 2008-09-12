@@ -65,6 +65,10 @@ public class Start
 
     private static final List<Item> ITEMS = CollectionFactory.newList(
 
+            new Item("ValidateFormValidationExceptionDemo",
+                     "ValidationForm ValidationException Demo",
+                     "Throwing a ValidationException from the validateForm event handler."),
+
             new Item("ClientFormatDemo", "Client Format Validation", "Client-side input format validation"),
 
             new Item("ShortGrid", "Short Grid",

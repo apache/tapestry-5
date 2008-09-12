@@ -2266,4 +2266,18 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         assertTextPresent("Demonstrates the use of the @Inject annotation.");
     }
+
+    /**
+     * TAPESTRY-2438
+     */
+    public void validation_exception_thrown_from_validate_form_event_handler()
+    {
+        start("ValidationForm ValidationException Demo");
+
+        clickAndWait(SUBMIT);
+
+        assertTextPresent("From event handler method.");
+
+        assertText("event", "failure");
+    }
 }
