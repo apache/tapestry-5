@@ -1818,6 +1818,8 @@ public final class TapestryModule
 
         configuration.add(MetaDataConstants.SECURE_PAGE, "false");
 
+        configuration.add(SymbolConstants.FORM_CLIENT_LOGIC_ENABLED, "true");
+
         // This is designed to make it easy to keep synchronized with script.aculo.ous. As we
         // support a new version, we create a new folder, and update the path entry. We can then
         // delete the old version folder (or keep it around). This should be more manageable than
