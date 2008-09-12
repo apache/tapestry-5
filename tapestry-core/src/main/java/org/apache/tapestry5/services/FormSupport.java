@@ -51,9 +51,11 @@ public interface FormSupport extends ClientElement
     <T> void storeAndExecute(T component, ComponentAction<T> action);
 
     /**
-     * Defers a command until the end of the form submission. The command will be executed after the Form's validate
-     * notification, but before the Form's submit, success or failure notifications. During a form render, runnables are
-     * executed after the body of the form has rendered.
+     * Defers a command until the end of the form submission. The command will be executed <em>before</em> the Form's
+     * validate notification, but after all other submit actions for the form have been processed. This is used,
+     * primarily, to coordinate validations or other operations that involve multiple components, when the order of the
+     * components can not be determined. During a form render, runnables are executed after the body of the form has
+     * rendered.
      *
      * @param command to be executed
      */
