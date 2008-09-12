@@ -1,0 +1,13 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+	<h1>@Cached tests</h1>
+	<p>This page tests method result caching.</p>
+	
+	<span id="value">${value}${value}${value}</span>
+	<span id="value2size">${value2.size()}${value2.size()}${value2.size()}</span>
+	
+	${incrWatchValue()}
+	<span class="watch">${value3}</span>
+	<span class="watch">${value3}</span>
+	${incrWatchValue()}
+	<span class="watch">${value3}</span>
+</html>

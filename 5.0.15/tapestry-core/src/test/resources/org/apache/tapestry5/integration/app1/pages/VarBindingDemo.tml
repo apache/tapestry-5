@@ -1,0 +1,18 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+    <h1>var: Binding Prefix Demo</h1>
+
+    <p>var: allows a
+        <em>render variable</em>
+        associated with a component
+        to be read and updated from its embedded components.
+    </p>
+
+    <p>
+        Counting from 1 to 3:
+    </p>
+    <ul>
+        <li t:type="loop" source="1..3" value="var:index">${var:index}</li>
+    </ul>
+
+</html>

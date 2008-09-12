@@ -1,0 +1,56 @@
+ ---
+ Tapestry CSS Support
+ ---
+
+Tapestry CSS Support
+
+  Cascading Style Sheets (CSS) is an important technology, even with Tapestry.  Tapestry works best when the
+  rendered HTML is simple and semantic -- semantic meaning HTML that goes back to its roots, simple, straightforward,
+  with tags used for structure and, as much as possible, details about font, color and layout delegated to CSS.
+
+Default CSS Stylesheet
+
+  Tapestry includes a built-in stylesheet, default.css, is all HTML documents (documents that have an outer
+  \<html\> element and a nested \<head\> element).  The default.css stylesheet is always ordered <first> ... any additional stylesheets
+  will come after.  This allows Tapestry's default styles to be overridden.
+
+  All the styles in the default stylesheet are prefixed with "t-" (for Tapestry).
+
+Adding your own CSS
+
+  A page or component that is rendering the \<head\> tag can add a stylesheet directly in the markup.
+
++---+
+<head>
+  <link href="/css/myapp.css" rel="stylesheet" type="text/css"/>
+  . . .
++---+
+
+  If you want to leverage Tapestry's localization support, you may want to make use of an expansion and the asset: binding prefix:
+
+
++---+
+<head>
+  <link href="${asset:context:css/myapp.css}" rel="stylesheet" type="text/css"/>
+  . . .
++---+
+
+  The "asset:" prefix means that the remainder of the expansion is a path to a resource.  The "context:" part
+  indicates that it should look for the resource in the web application root (src/main/webapp in your workspace).  If you
+  left this out, it would look for the file on the classpath, relative to the component's Java class.
+
+Using the IncludeStylesheet Annotation
+
+ Another approach to adding a stylesheet is to include an
+ {{{../apidocs/org/apache/tapestry5/annotations/IncludeStylesheet.html}IncludeStylesheet}} annotation on your component class:
+
++---+
+@IncludeStylesheet("context:css/myapp.css")
+public class MyComponent
+{
+
+}
++---+
+
+ As with  {{{ajax.html}included JavaScript libraries}}, each stylesheet will only be added once,
+ regardless of the number of components that include it via the annotation.

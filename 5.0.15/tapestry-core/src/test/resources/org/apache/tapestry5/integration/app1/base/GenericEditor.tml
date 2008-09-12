@@ -1,0 +1,7 @@
+<t:border xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+    <h1>Editor for ${beanType}</h1>
+
+    <form t:id="form"/>
+
+</t:border>

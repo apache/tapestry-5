@@ -1,0 +1,136 @@
+ ---
+ Component Mixins
+ ---
+ 
+Component Mixins
+
+  Tapestry 5 includes a radical feature, <component mixins>.  Component mixins are a tricky concept; it basically allows
+  a true component to be mixed together with special limited components called mixins.  The component plus its mixins are
+  represented as just a single tag in the component template, but all the behavior of all the elements.
+  
+  The planned uses for this are to add validation to user input fields, or to add Ajax effects and behaviors to all
+  sorts of components.
+  
+  You can think of a mixin as a kind of mashup for a component; it combines the behavior of the component
+  with the behavior of the mixin, and bundles it all in one place.
+  
+  Mixins are used in two different scenarios: <Instance mixins> and <Implementation mixins>.
+  
+Mixin Classes
+
+  Mixin classes are stored in a <<<mixins>>> sub-package, below the application (or library)
+  root package. This parallels where component and page classes are stored.
+  
+  Other than that, mixin classes are exactly the same as any other component class.
+  
+Mixin Limitations
+
+  Currently, mixins are allowed to do anything a component can do, including parameters,
+  render phase methods.
+  
+  Mixins may not have a template. They integrate with the component strictly in terms of invoking
+  render phase methods.
+  
+  Mixins may have persistent fields, but currently, this is not implemented perfectly (there is a potential
+  for a name clash between a mixin and the component or another mixin).  Use persistent fields with
+  mixins with care ... or better yet, delegate persistence to the container using parameters.
+  
+  Mixins may not, themselves, have mixins.
+  
+  
+Instance Mixins
+
+  An instance mixin is a mixin applied to a specific <instance> of a component.  This can be done
+  in the {{{templates.html}component template}} with the mixins attribute of the
+  \<comp\> element.  This is a comma-separated list of mixin names.
+  
+  Alternately, when the {{{../apidocs/org/apache/tapestry5/annotations/Component.html}Component annotation}}
+  is used to define the component type, you may specify the mixins in two ways:
+  
+  * The {{{../apidocs/org/apache/tapestry5/annotations/Mixins.html}Mixins annotation}} allows a list
+    of mixin names to be specified.
+    
+  * The {{{../apidocs/org/apache/tapestry5/annotations/MixinClasses.html}MixinClasses annotation}}
+    allows a set of mixin class to be specified directly.
+    
+  []
+  
+  The former is often less verbose, and allows core mixins to be overridden with application-specific
+  mixins.  The later format is more specific and more friendly in terms of refactoring (renaming a 
+  mixin class will rename the entry in the MixinClasses annotation as well).
+  
+  Example:
+  
++----+
+
+  @Component(parameters=. . .) @Mixins({"Autocomplete", "DefaultFromCookie"})
+  private TextField userId;
++----+
+
+  This example defines a component of type TextField and mixes in the <hypothetical> Autocomplete
+  and DefaultFromCookie mixins.  
+
+
+Implementation Mixins
+
+  Implementation mixins, mixins which apply to all isntances of a component, are added using the
+  {{{../apidocs/org/apache/tapestry5/annotations/Mixin.html}Mixin annotation}}. This annotation
+  defines a field that will containg the mixin instance.
+  
++---+
+public class AutocompleteField extendes TextField
+{
+  @Mixin
+  private Autocomplete autocompleteMixin;
+  
+  . . .
+}
++---+
+
+  Often, the type of the field is the exact mixin class to be instantiated.
+  
+  In other cases, such as when the field's type is an interface or a base class, the value
+  attribute of the annotation will be used to determine the mixin class name:
+  
++---+
+public class AutocompleteField extendes TextField
+{
+  @Mixin("Autocomplete")
+  private Object autocompleteMixin;
+  
+  . . .
+}
++---+
+
+Mixin Parameters
+
+  Mixins are allowed to have parameters, just like components.
+  
+  When binding parameters (either in the template, or using the parameters attribute
+  of the Component annotation).
+  
+  Tapestry will match each parameter name against the parameters defined by each class
+  (which is to say, the component and each mixin).
+  
+  If the component and a mix both define a parameter with the same name, then the component wins:
+  the component's parameter will be bound, and the mixin's parameter will be unbound.
+  
+  Alternately, you may prefix the name of the parameter with the <unqualified> name of the Mixin class;
+  this eliminates the ambiguity.  Example:
+  
++-----+
+  @Component(parameters={"Autocomplete.id=auto", . . . }) @Mixins("Autocomplete", "DefaultFromCookie"})
+  private TextField userId;
++-----+
+
+  
+Render Phase Ordering
+
+  All mixins for a component execute their render phase methods <before> the component's render phase
+  methods for most phases.  However, in the later phases (AfterRender, CleanupRender) the order of executing
+  is reversed.
+  
+  Exception: Mixins whose class is annotated with
+  {{{../apidocs/org/apache/tapestry5/annotations/MixinAfter.html}MixinAfter}} are ordered
+  <after> the component, not before.  
+  

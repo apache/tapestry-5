@@ -1,0 +1,3 @@
+<foo:bar xmlns:foo="http://foo.com" foo:biff="baz" xml:space="preserve">
+    <gnip/>
+</foo:bar>

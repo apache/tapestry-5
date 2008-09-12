@@ -1,0 +1,15 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+    <h1>Nested BeanDisplay</h1>
+
+    <p>Demonstrates a BeanEditor as the property editor inside a BeanEditForm.</p>
+
+    <t:beandisplay object="parent" add="child">
+
+        <t:parameter name="child">
+            <t:beandisplay object="parent.child"/>
+        </t:parameter>
+
+    </t:beandisplay>
+
+</html>

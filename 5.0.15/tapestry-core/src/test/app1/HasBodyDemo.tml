@@ -1,0 +1,17 @@
+<html t:type="border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+    <h1>Has Body Demo</h1>
+
+    <p>
+        <span t:type="any" t:id="nobody"/>
+
+        <span t:type="any" t:id="somebody">Body inside component 'somebody'.</span>
+    </p>
+
+    <dl>
+        <dt>Component nobody</dt>
+        <dd id="nobody">${nobody.componentResources.hasBody()}</dd>
+        <dt>Component somebody</dt>
+        <dd id="somebody">${somebody.componentResources.hasBody()}</dd>
+    </dl>
+</html>

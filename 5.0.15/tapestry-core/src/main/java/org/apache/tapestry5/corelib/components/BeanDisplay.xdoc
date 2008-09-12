@@ -1,0 +1,187 @@
+<document>
+    <body>
+
+        <section name="Related Components">
+
+            <ul>
+                <li>
+                    <a href="BeanEditForm.html">BeanEditForm</a>
+                </li>
+                <li>
+                    <a href="Grid.html">Grid</a>
+                </li>
+            </ul>
+
+        </section>
+
+        <section name="Examples">
+
+            <p>
+                Here, we'll display a User object, consisting
+                of a first name, last name and age. We'll also customize the output of the last name property, to
+                display the name in all upper-case. The result:
+            </p>
+
+            <p>
+                <img src="beandisplay_ref.png"/>
+            </p>
+
+            <subsection name="User.java">
+                <source><![CDATA[
+public class User
+{
+    @NonVisual
+    private long id;
+    
+    private String firstName;
+
+    private String lastName;
+
+    private int age;
+
+    public long getId() { return id; }
+
+     public void setId(long id) { this.id = id; }
+
+    public String getFirstName() { return firstName; }
+
+    public void setFirstName(String firstName) { this.firstName = firstName; }
+
+    public String getLastName() { return lastName; }
+
+    public void setLastName(String lastName) { this.lastName = lastName; }
+
+    public int getAge() { return age; }
+
+    public void setAge(int age) { this.age = age; }
+}]]></source>
+
+                <p>The @NonVisual annotation prevents the id property from being displayed.</p>
+
+            </subsection>
+
+            <subsection name="ViewUser.java">
+                <source><![CDATA[
+public class ViewUser
+{
+    @Persist
+    private User user;
+
+    public User getUser()
+    {
+        return user;
+    }
+
+    public void setUser(User user)
+    {
+        this.user = user;
+    }
+}]]></source>
+
+                <p>
+                    Presumably, some other page is obtaining the User instance and invoking the setUser() method.
+                </p>
+
+            </subsection>
+
+
+            <subsection name="ViewUser.tml">
+                <source><![CDATA[
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+    <body>
+        <h1>View User</h1>
+
+        <t:beandisplay object="user">
+            <t:parameter name="lastname">
+                ${bean.lastname.toUpperCase()}
+            </t:parameter>
+        </t:beandisplay>
+    </body>
+</html>
+]]></source>
+
+                <p>
+                    The
+                    <code><![CDATA[<t:parameter>]]></code>
+                    element is an
+                    <em>override</em>
+                    for the property. The name is
+                    matched against a property of the bean.
+                </p>
+
+                <p>
+                    Here we are leveraging the ability to invoke methods as part of a property expression.
+                    We are also highlighting Tapestry's case insensitivity ("lastname" vs. "lastName").
+                </p>
+
+            </subsection>
+        </section>
+
+        <section name="CSS Customization">
+
+            <p>
+                The content is rendered as a &lt;dl&gt; (definition list) element, containing &lt;dt&gt; (term) and
+                &lt;dd&gt; (definition) elements.
+            </p>
+
+            <p>
+                The &lt;dt&gt; will have the CSS class "t-beandisplay".
+            </p>
+
+            <p>
+                The &lt;dt&gt; and &lt;dd&gt; elements will have the property id as the CSS class name (i.e.,
+                "firstName", "lastName", etc.). This allows individual properties of the bean to have specific CSS rules
+                applied.
+            </p>
+
+            <p>
+                The ":" after the property label is supplied via CSS.
+            </p>
+
+
+        </section>
+
+        <section name="Notes">
+
+            <p>
+                You can re-order the properties using the reorder parameter:
+            </p>
+
+            <source><![CDATA[<t:beandisplay object="user" reorder="lastname,firstname"/>]]></source>
+
+            <p>
+                You can accomplish the same thing by changing the order of the
+                getter methods in the bean class. The default order for properties is not alphabetical,
+                it is the order of the getter methods.
+            </p>
+
+
+            <p>
+                You can also remove properties with the exclude parameter, which is equivalent to the
+                @NonVisual annotation.
+            </p>
+
+            <p>
+                You might find
+                <code><![CDATA[<t:beandisplay object="this"/>]]></code>
+                useful on occasion. It will display all the properties of the current page.
+            </p>
+
+            <p>
+                As with the
+                <a href="BeanEditForm.html">BeanEditForm</a>
+                component,
+                you may override the labels displayed for the fields using
+                the page's message catalog.
+            </p>
+
+            <p>
+                Please refer to the
+                <a href="PageLink.html">PageLink</a>
+                component documentation for an alternate way to manage the user field.
+            </p>
+
+        </section>
+
+    </body>
+</document>
