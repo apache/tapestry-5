@@ -1,0 +1,15 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+    <h1>ToDo Listing</h1>
+
+    <t:grid rowsperpage="5" source="items" row="item">
+        <t:parameter name="titlecell">
+            <t:actionlink t:id="delete" context="item.id">${item.title}</t:actionlink>
+        </t:parameter>
+    </t:grid>
+
+    <p>
+        <t:actionlink t:id="setup">setup the database</t:actionlink>
+    </p>
+
+</html>

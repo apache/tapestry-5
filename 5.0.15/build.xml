@@ -1,0 +1,202 @@
+<?xml version="1.0"?>
+<!-- 
+   Copyright 2007, 2008 The Apache Software Foundation
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+-->
+
+<project default="assemble" xmlns:mvn="urn:maven-artifact-ant">
+
+    <!-- Requires Ant 1.7.0 to execute! -->
+
+    <property name="target.dir" value="target"/>
+    <!-- Binary and source distributions, in .zip and .tar.gz formats, go here. -->
+    <property name="dists.dir" value="${target.dir}/dist"/>
+    <!-- Directory that contains the image for the binary distro. -->
+    <property name="binimage.dir" value="${target.dir}/bin-image"/>
+
+    <property name="group" value="org.apache.tapestry"/>
+
+
+    <!-- Read the Maven POM ... -->
+    <xmlproperty file="pom.xml" prefix="pom" keeproot="false"/>
+
+    <!-- ... to obtain the version number. -->
+    <property name="version" value="${pom.version}"/>
+
+    <property name="licenses" value="LICENSE*,*.txt"/>
+    <property name="sources" value="${licenses},pom.xml,src/**"/>
+
+    <property name="bin.zip" value="${dists.dir}/tapestry-bin-${version}.zip"/>
+    <property name="src.zip" value="${dists.dir}/tapestry-src-${version}.zip"/>
+
+    <macrodef name="copyto">
+        <attribute name="dir"/>
+        <attribute name="filesetid"/>
+
+        <sequential>
+            <mkdir dir="@{dir}"/>
+            <copy todir="@{dir}" flatten="true">
+                <fileset refid="@{filesetid}"/>
+            </copy>
+        </sequential>
+    </macrodef>
+
+    <macrodef name="copy-licenses">
+        <attribute name="module"/>
+
+        <sequential>
+            <copy todir="${binimage.dir}" flatten="true">
+                <fileset dir="@{module}" includes="${licenses}"/>
+                <globmapper from="*" to="@{module}-*"/>
+            </copy>
+        </sequential>
+
+
+    </macrodef>
+
+
+    <target name="-maven-setup" unless="maven-ant-tasks.classpath">
+        <path id="maven-ant-tasks.classpath" path="support/maven-ant-tasks-2.0.8.jar"/>
+
+        <typedef resource="org/apache/maven/artifact/ant/antlib.xml" uri="urn:maven-artifact-ant"
+                 classpathref="maven-ant-tasks.classpath"/>
+
+        <echo>Maven Ant Tasks loaded.</echo>
+    </target>
+
+
+    <target name="assemble-bin" depends="-maven-setup">
+        <echo>Building binary distribution</echo>
+
+        <mvn:dependencies filesetid="bin.dependency.fileset" sourcesfilesetid="bin.dependency.sources.fileset">
+            <dependency groupid="${group}" artifactid="tapestry-upload" version="${pom.version}"/>
+            <dependency groupid="${group}" artifactid="tapestry-hibernate" version="${pom.version}">
+                <exclusion groupid="org.hibernate" artifactid="hibernate-core"/>
+                <exclusion groupid="org.hibernate" artifactid="hibernate-annotations"/>
+                <exclusion groupid="geronimo-spec" artifactid="geronimo-spec-jta"/>
+                <exclusion groupid="c3p0" artifactid="c3p0"/>
+            </dependency>
+            <dependency groupid="${group}" artifactid="tapestry-spring" version="${pom.version}"/>
+
+            <!-- tapestry-test is also tricky, we want it without its (non-Apache) dependencies. -->
+
+            <dependency groupid="${group}" artifactid="tapestry-test" version="${pom.version}">
+                <exclusion groupid="org.openqa.selenium.client-drivers" artifactid="selenium-java-client-driver"/>
+                <exclusion groupid="org.openqa.selenium.server" artifactid="selenium-server"/>
+                <exclusion groupid="org.openqa.selenium.server" artifactid="selenium-server-coreless"/>
+                <exclusion groupid="org.testng" artifactid="testng"/>
+            </dependency>
+
+            <!-- All else will be dragged in. -->
+        </mvn:dependencies>
+
+        <copyto dir="${binimage.dir}/lib" filesetid="bin.dependency.fileset"/>
+        <copyto dir="${binimage.dir}/lib-src" filesetid="bin.dependency.sources.fileset"/>
+
+        <!-- We don't package tapestry-test because of its huge number of large dependencies. -->
+
+        <copy-licenses module="tapestry-ioc"/>
+        <copy-licenses module="tapestry-core"/>
+        <copy-licenses module="tapestry-hibernate"/>
+        <copy-licenses module="tapestry-spring"/>
+        <copy-licenses module="tapestry-upload"/>
+
+        <mkdir dir="${dists.dir}"/>
+
+        <parallel>
+            <zip destfile="${bin.zip}">
+                <fileset dir="${binimage.dir}"/>
+            </zip>
+            <tar destfile="${dists.dir}/tapestry-bin-${version}.tar.gz" compression="gzip">
+                <fileset dir="${binimage.dir}"/>
+            </tar>
+
+            <tar destfile="${dists.dir}/tapestry-bin-${version}.tar.bz2" compression="bzip2">
+                <fileset dir="${binimage.dir}"/>
+            </tar>
+
+        </parallel>
+
+    </target>
+
+    <target name="-announce">
+        <echo>*** Building distribution for project version ${version} ***</echo>
+    </target>
+
+    <target name="assemble-src">
+
+        <zip destfile="${src.zip}">
+            <fileset dir="." includes="${licenses}"/>
+
+            <zipfileset prefix="tapestry-annotations" dir="tapestry-annotations" includes="${sources}"/>
+            <zipfileset prefix="tapestry-core" dir="tapestry-core" includes="${sources}"/>
+            <zipfileset prefix="tapestry-hibernate" dir="tapestry-hibernate" includes="${sources}"/>
+            <zipfileset prefix="tapestry-ioc" dir="tapestry-ioc" includes="${sources}"/>
+            <zipfileset prefix="tapestry-spring" dir="tapestry-spring" includes="${sources}"/>
+            <zipfileset prefix="tapestry-test" dir="tapestry-spring" includes="${sources}"/>
+            <zipfileset prefix="tapestry-upload" dir="tapestry-upload" includes="${sources}"/>
+
+            <zipfileset prefix="tapestry-project" dir="." includes="${sources}"/>
+            <zipfileset prefix="quickstart" dir="quickstart" includes="${sources}"/>
+            <zipfileset prefix="tapestry-component-report" dir="tapestry-component-report" includes="${sources}"/>
+            <zipfileset prefix="tapestry-tutorial1" dir="tapestry-tutorial1" includes="${sources}"/>
+
+        </zip>
+
+        <tar destfile="${dists.dir}/tapestry-src-${version}.tar.gz" compression="gzip" longfile="gnu">
+            <zipfileset src="${src.zip}"/>
+        </tar>
+
+        <tar destfile="${dists.dir}/tapestry-src-${version}.tar.bz2" compression="bzip2" longfile="gnu">
+            <zipfileset src="${src.zip}"/>
+        </tar>
+
+        <echo>Generating MD5 Checksums</echo>
+
+        <checksum fileext=".md5">
+            <fileset dir="${dists.dir}" includes="*.bz2,*.gz,*.zip"/>
+        </checksum>
+    </target>
+
+    <!-- This has to be kept synchronized with the modules, as they change. We include just the "runtime" modules,
+  no the ones used only within a Maven build; if the user is using Maven, they know how to (let Maven) get
+  the code. -->
+
+    <target name="assemble" description="Build distribution files." depends="-announce,assemble-bin,assemble-src">
+
+        <echo>Building source distribution</echo>
+
+        <!-- Now on to the source files. -->
+
+
+        <echo>*** Please sign the distributions using GPG before uploading the files. ***
+
+
+            Signing Mojo: for i in target/dist/*.zip target/dist/*.gz target/dist/*.bz2; do echo $i; gpg --armor
+            --detach-sig $i; done
+
+            Upload Mojo: scp target/dist/* hlship@people.apache.org:public_html/tapestry-releases
+
+        </echo>
+
+
+    </target>
+
+    <target name="clean" description="Remove distribution directory.">
+        <delete dir="${dists.dir}" quiet="true"/>
+        <delete dir="${binimage.dir}" quiet="true"/>
+    </target>
+
+
+</project>

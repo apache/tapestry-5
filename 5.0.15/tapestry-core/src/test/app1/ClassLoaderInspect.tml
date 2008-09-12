@@ -1,0 +1,70 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+  <h1>Class Loader Inspection</h1>
+
+
+  <dl>
+    <dt>Context ClassLoader</dt>
+    <dd>${classLoader} [${classLoader.class.name}]</dd>
+
+    <dt> Instance ClassLoader </dt>
+    <dd>${class.classLoader}</dd>
+
+  </dl>
+
+  <h2>Class Loader Hierarchy</h2>
+
+  <ul>
+    <t:loop source="loaders" value="loader">
+      <li>${loader}</li>
+    </t:loop>
+  </ul>
+
+  <h2> Find Resources </h2>
+
+  <form t:id="search">
+    <t:errors/>
+    <t:label for="resource"/>: <input t:id="resource" t:type="TextField" size="50"
+      validate="required"/>
+    <br/>
+    <input type="submit"/>
+  </form>
+
+  <t:if test="showMatches">
+
+    <h3>${listSize} Matches</h3>
+
+    <ul>
+      <t:loop source="URLs" value="URL">
+        <li>${URL} <dl>
+
+            <dt>Connection</dt>
+            <dd>${URLConnection} [${URLConnection.class.name}]</dd>
+            <dt>Content</dt>
+            <dd>${URL.content}</dd>
+
+            <dt>Stream </dt>
+            <dd>
+              <pre>
+${contentStreamContents}
+</pre>
+            </dd>
+
+            <dt> JAR Entries </dt>
+
+            <dd>
+              <ul>
+                <t:loop source="jarEntries" value="jarEntry">
+                  <li>${jarEntry}</li>
+                </t:loop>
+              </ul>
+            </dd>
+
+          </dl>
+        </li>
+      </t:loop>
+    </ul>
+
+  </t:if>
+
+</html>

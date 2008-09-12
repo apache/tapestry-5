@@ -1,0 +1,39 @@
+<document>
+    <body>
+        <section name="Examples">
+
+            <p>
+                The Errors component automatically connects with the Form that encloses it. Just place the
+                component inside a Form.
+            </p>
+
+            <subsection name="Search.tml">
+
+                <source><![CDATA[
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+    <body>
+
+    <t:form>
+
+        <t:errors>
+
+        <t:label for="search"/>
+        <t:textfield t:id="search"/>
+
+        <input type="submit" value="Search"/>
+
+    </t:form>
+
+    </body>
+</html>]]></source>
+
+                <p>
+                    The Errors component here will display any validation errors that occur when the form is submitted.
+                </p>
+
+            </subsection>
+
+
+        </section>
+    </body>
+</document>

@@ -1,0 +1,73 @@
+ ----
+ Tapestry Upload Component
+ ----
+ 
+Tapestry Upload Component
+
+  Provides a file upload component for Tapestry based on
+  {{{http://jakarta.apache.org/commons/fileupload/}Jakarata Commons FileUpload}}.
+  
+  This is packaged as an add-on to Tapestry because of the number of additional dependencies
+  it adds.  However, Maven takes care of that for you!
+  
+  
+Usage
+
+  The upload component supports default value binding (based on id) and validation.
+
+* Component Template
+  
++---+
+    <t:form>
+        <t:errors/>
+        <input t:type="upload" t:id="file" validate="required"/>
+        <br/>
+        <input type="submit" value="Upload"/>
+    </t:form>
++---+
+
+  Here, because the value parameter was not bound, the component used the file property of its container (because the
+  component's id is 'file').  If you want to upload as a different property, either bind the value parameter or
+  change the component's id.
+
+* Page class
+
++---+
+    public class UploadExample
+    {
+        private UploadedFile file;
+
+        public UploadedFile getFile()
+        {
+            return file;
+        }
+
+        public void setFile(UploadedFile file)
+        {
+            this.file = file;
+        }
+
+        public void onSuccess()
+        {
+            File copied = new File("/my/file/location/" + file.getFileName());
+            
+            file.write(copied);
+        }
+    }
++---+
+
+
+
+
+Potential Issues
+
+   The Commons FileUpload library uses the CommonsIO file cleaner service to remove temporary files when
+   they are no longer needed.  This service creates a thread to carry out its work. If the commons-io library
+   is shared amongst multiple applications (e.g. added to server classpath) it is possible for an application
+   to terminate this thread prematurely and cause errors for the other applications.
+   (see the {{{http://jakarta.apache.org/commons/fileupload/using.html}Resource Cleanup}} section in  for more discussion)
+
+   Technically the file cleanup service is not needed by Tapestry Upload (which deletes temporary files at the end
+   of request processing).  However it is currently not possible to disable it (enhancement request has been filed
+    as {{{https://issues.apache.org/jira/browse/FILEUPLOAD-133}FILEUPLOAD-133}}).
+

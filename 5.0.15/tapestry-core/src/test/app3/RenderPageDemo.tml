@@ -1,0 +1,22 @@
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+    <head>
+        <title>Demo</title>
+    </head>
+    <body>
+
+        <p>
+            Content from page "ContentPage":
+        </p>
+
+        <blockquote id="content">
+            <t:outputraw value="pageContent"/>
+        </blockquote>
+
+        <p>
+            Normal link to login page:
+            <span id="link2">
+                <t:pagelink page="login">login</t:pagelink>
+            </span>
+        </p>
+    </body>
+</html>

@@ -1,0 +1,81 @@
+ ----
+ Type Coercion
+ ----
+ 
+Type Coercion
+
+  Tapestry frequently must coerce objects from one type to another. By coercion, we mean to convert an object of some type into a new object
+  of a different type with similar content: a common example is coercing a string into an integer or a double.
+  
+  Although these types of coercions happens more inside
+  tapestry-core (inlcuding coercions of {{{../tapestry-core/guide/coercion.html}component parameters}}), this
+  may also happen inside tapestry-ioc, such as when injecting a value, rather than a service, into a builder method.
+  
+  Like everything else in Tapestry, type coercions are extensible.  At the root is the
+  {{{../apidocs/org/apache/tapestry5/ioc/services/TypeCoercer.html}TypeCoercer}} service. Its configuration consists
+  of a number of 
+  {{{../apidocs/org/apache/tapestry5/ioc/services/CoercionTuple.html}CoercionTuple}}s.  Each tuple defines how to coerce from one type to another.
+  The initial set of coercions is focused primarily on coercions between different numeric types:
+  
+[images/type-coercer.png] Default Type Coercions  
+
+  There's a few special coercions related to null there; Object --\> List wraps a lone object as a singleton list, we then need
+  null --\> List to ensure that null stays null (rather than a singleton list whose lone element is a null). 
+  
+  Tapestry can <interpolate> necessary coercions.  For example, say it is necessary to coerce a StringBuffer to an Integer; the
+  TypeCoercer will chain together a series of coercions:
+  
+   * Object --\> String
+   
+   * String --\> Long
+   
+   * Long --\> Integer
+   
+   []
+
+Coercing from null
+
+  Coercing from null is special; it is not a spanning search as with the other types.
+  Either there is a specific coercion from null to the desired type, or no coercion
+  takes places (and the coerced value is null).
+
+  The only built-in null coercion is from null to boolean (which is always false).
+   
+Contributing new Coercions
+
+  TypeCoercer is extensible, you may add new coercions as desired.  For example, let's say you have a Money type that represents
+  an amount of some currency, and you want to be able to convert from  BigDecimal to Money.  Further, let's assume that
+  Money has a constructor that accepts a BigDecimal as its parameter.  We'll use a little Tapestry IOC configuration jujitsu to
+  inform the TypeCoercer about this coercion.
+  
++---+    
+   public static void contributeTypeCoercer(Configuration<CoercionTuple> configuration)
+   {
+     Coercion<BigDecimal, Money> coercion = new Coercion<BigDecimal, Money>()
+     {
+       public Money coerce(BigDecimal input)
+       {
+         return new Money(input);
+       }
+     };
+     
+     configuration.add(new CoercionTuple<BigDecimal, Money>(BigDecimal.class, Money.class, coercion));     
+   }
++---+  
+
+  Further, since TypeCoercer knows how to convert Double to BigDecimal, or even Integer (to Long to Double) to BigDecimal, all of those coercions would
+  work as well.
+  
+  When creating a coercion from null, use Void.class as the source type.  For example, the builtin coercion from null to Boolean is implemented as:
+  
++----+
+  configuration.add(new CoercionTuple(void.class, Boolean.class,
+        new Coercion<Void, Boolean>()
+        {
+            public Boolean coerce(Void input)
+            {
+                return false;
+            }
+        }));
++---+          
+  

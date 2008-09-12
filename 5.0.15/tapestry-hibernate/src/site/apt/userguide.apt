@@ -1,0 +1,177 @@
+  ----
+  User Guide
+  ----
+  
+Entity value encoding
+
+  Value encoders are automatically created for all mapped Hibernate entity types. This is done by encoding the entity as it's 
+  id (coerced to a String) and decoding the entity by looking it up in the Hibernate Session using the encoded id. Consider
+  the following example:
+  
++----+
+public class ViewPerson
+{
+  @Property
+  private Person person;
+  
+  void onActivate(Person person)
+  {
+    this.person = person;
+  }
+  
+  Person onPassivate()
+  {
+    return person;
+  }
+}
++----+   
+
++----+
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+<body>
+  The person's name is: ${person.name}
+</body>
+</html>
++----+
+
+  Accessing the page as <</viewperson/152>> would load the Person entity with id 152 and use that as the page context.
+
+Using @PageActivationContext
+
+  If you prefer to use annotations, you may let Tapestry generate the page activation context handlers for you.
+  Relying on an existing ValueEncoder for the corresponding property you can use the @PageActivationContext annotation.
+  The disadvantage is that you can't access the handlers in a unit test.
+  
+  
++----+
+public class ViewPerson
+{
+  @Property
+  @PageActivationContext
+  private Person person;
+  
+}
++----+ 
+
+Using @Persist with entities
+
+  If you wish to persist an entity in the session, you may use the "entity" persistence strategy:
+  
++----+
+public class ViewPerson
+{
+  @Persist("entity")
+  @Property
+  private Person person;
+  
+  void onActivate(Person person)
+  {
+    this.person = person;
+  }
+  
+}
++----+   
+  
+  This persistence strategy works with any Hibernate entity that is associated with a valid Hibernate Session by persisting only the id
+  of the entity. Notice that no onPassivate() method is needed; when the page renders the entity is loaded by the id stored in the session.
+
+Committing Changes
+
+  All Hibernate operations occur in a transaction, but that transaction is aborted at the end of each request; thus
+  any changes you make will be <lost> unless the transaction is committed.
+
+  The correct way to commit the transaction is via the @CommitAfter annotation:
+
++----+
+public class EditPerson
+{
+  @Persist("entity")
+  @Property
+  private Person person;
+
+  @InjectPage
+  private PersonIndex personIndex;
+
+  void onActivate(Person person)
+  {
+    this.person = person;
+  }
+
+  Object onPassivate() { return person; }
+
+  @CommitAfter
+  Object onSuccess()
+  {
+    return personIndex;
+  }
+}
++----+
+
+  In this example, the Person object may be updated by a form; the form's success event handler method,
+  onSuccess() has the @CommitAfter annotation.
+
+  Behind the scenes, the @CommitAfter annotation causes the
+  {{{../apidocs/org/apache/tapestry5/hibernate/HibernateSessionManager.html}HibernateSessionManager}}'s commit() method to be
+  executed before the method returns.
+
+  The transaction will be committed when the method completes normally.
+
+  The transaction will be <aborted> if the method throws a RuntimeException.
+
+  The transaction will be <<committed>> if the method throws a <checked> exception (one listed in the throws clause of the method).
+
+Managing Transactions using DAOs
+
+   As your application grows, you will likely create a Data Access Object layer between your pages and the Hibernate APIs.
+
+   The @CommitAfter annotation can be useful there as well.
+
+   You may use @CommitAfter on method of your service interface, then use a decorator to provide the transaction
+   management logic.
+
+   First definine your DAO's service interface:
+
++---+
+public interface PersonDAO
+{
+  Person findByName(String name);
+
+  @CommitAfter
+  void add(Person newPerson);
+
+  @CommitAfter
+  void update(Person person);
+
+  @CommitAfter
+  void delete(Person person);
+}
++---+
+
+   Next, define your service in your application's Module class:
+
++---+
+public class AppModule
+{
+   public static void bind(ServiceBinder binder)
+   {
+      binder.bind(PersonDAO.class, PersonDAOImpl.class);
+   }
+}
++---+
+
+   Finally, add a decorator method to your module:
+
++---+
+    @Match("*DAO")
+    public static <T> T decorateTransactionally(HibernateTransactionDecorator decorator, Class<T> serviceInterface,
+                                                T delegate,
+                                                String serviceId)
+    {
+        return decorator.build(serviceInterface, delegate, serviceId);
+    }
++---+
+
+  This one is configured to match against any service whose id ends with "DAO", such as "PersonDAO".
+  The HibernateTransactionDecorator
+  service builds an interceptor around the delegate (which is, basically, the service) that understands
+  the @CommitAfter annotation.  Methods that don't have @CommitAfter pass right on through unchanged.

@@ -1,0 +1,11 @@
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+    <t:block id="boolean">
+        <t:if test="context.propertyValue">
+            Yea
+            <t:parameter name="else">
+                Nay
+            </t:parameter>
+        </t:if>
+    </t:block>
+</html>

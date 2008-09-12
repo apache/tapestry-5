@@ -1,0 +1,24 @@
+<html t:type="border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+
+    <p>
+        The following two numbers will be identical, due to @Cache:
+    </p>
+
+    <div t:type="zone" t:id="aZone">
+        <ul>
+            <li id="time1">${timeNanos}</li>
+            <li id="time2">${timeNanos}</li>
+        </ul>
+
+
+    </div>
+
+    <p>
+        Clicking
+        <a t:type="actionlink" t:id="updateZone" href="#" t:zone="aZone">update</a>
+        will refresh the numbers.
+    </p>
+
+
+</html>

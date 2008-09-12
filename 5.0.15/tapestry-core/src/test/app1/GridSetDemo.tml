@@ -1,0 +1,11 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+    <h1>Grid Set Demo</h1>
+
+    <table t:type="Grid" source="tracks" row="track" informal="supported">
+        <t:parameter name="ratingcell">
+            <t:outputRating rating="track.rating"/>
+        </t:parameter>
+    </table>
+
+</html>
