@@ -13,51 +13,18 @@ Chapter 5: Forms in Tapestry (Part Two)
 
   Well, since we're creating objects, we might as well store them somewhere ... in a database.  We're going to
   quickly integrate Tapestry with {{{http://hibernate.org}Hibernate}} as the object/relational mapping layer,
-  and ultimately store our data inside a {{{http://www.mysql.com/}MySQL}} database.  You'll have to download
-  and install MySQL on your own.
-
-  In addition, we need to create the database and user.  The database will be "t5_tutorial1" and
-  the user will be "t5tutorialuser" with password "secret". This is accomplished from the
-  command line using the mysql shell.
-
-  The two commands are:
-
-  *   create database t5_tutorial1;
-
-  *   grant all on t5_tutorial1.* to 't5tutorialuser'@'localhost' identified by 'secret';
-
-  []
-
-  Log into the MySQL monitor shell as user root to execute the commands:
-
-----
-$ mysql -u root -p
-Enter password:
-Welcome to the MySQL monitor.  Commands end with ; or \g.
-Your MySQL connection id is 4
-Server version: 5.0.51a MySQL Community Server (GPL)
-
-Type 'help;' or '\h' for help. Type '\c' to clear the buffer.
-
-mysql> create database t5_tutorial1;
-Query OK, 1 row affected (0.08 sec)
-
-
-mysql> grant all on t5_tutorial1.* to 't5tutorialuser'@'localhost' identified by 'secret';
-Query OK, 0 rows affected (0.00 sec)
-
-mysql>
----
+  and ultimately store our data inside a {{{http://www.hsqldb.org/}HSQLDB}} database.  HSQLDB is an embedded database
+  engine and requires no installation -- it will be pulled down as a dependency via maven.
 
 Re-configuring the Project
 
-  We're going to bootstrap this project from a simple Tapestry project to one that uses Hibernate and MySQL.
+  We're going to bootstrap this project from a simple Tapestry project to one that uses Hibernate and HSQLDB.
 
 
 * Updating the Dependencies
 
   First, we must update the POM to list a new set of dependencies, that includes Hibernate,
-  the Tapestry/Hibernate integration library, and the MySQL JDBC driver:
+  the Tapestry/Hibernate integration library, and the HSQLDB JDBC driver:
 
   <<src/pom.xml (partial):>>
 
@@ -70,9 +37,9 @@ Re-configuring the Project
         </dependency>
 
         <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <version>5.1.5</version>
+            <groupId>hsqldb</groupId>
+            <artifactId>hsqldb</artifactId>
+            <version>1.8.0.7</version>
         </dependency>
 
     </dependencies>
@@ -95,11 +62,11 @@ Re-configuring the Project
         "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
 <hibernate-configuration>
     <session-factory>
-        <property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
-        <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/t5_tutorial1</property>
-        <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
-        <property name="hibernate.connection.username">t5tutorialuser</property>
-        <property name="hibernate.connection.password">secret</property>
+        <property name="hibernate.connection.driver_class">org.hsqldb.jdbcDriver</property>
+        <property name="hibernate.connection.url">jdbc:hsqldb:./target/work/t5_tutorial1;shutdown=true</property>
+        <property name="hibernate.dialect">org.hibernate.dialect.HSQLDialect</property>
+        <property name="hibernate.connection.username">sa</property>
+        <property name="hibernate.connection.password"></property>
         <property name="hbm2ddl.auto">update</property>
         <property name="hibernate.show_sql">true</property>
         <property name="hibernate.format_sql">true</property>
@@ -109,6 +76,11 @@ Re-configuring the Project
 
 
   Most of the configuration is to identify the JDBC driver and connection URL.
+
+  Note the connection URL.  We are instructing HSQLDB to store its database files within our project's
+  target directory.  We are also instructing HSQLDB to flush any data to these files at shutdown.  This means
+  that data will persist across different invocations of this project, but if the target directory is destroyed
+  (e.g., via "mvn clean"), then all the database contents will be lost.
 
   In addition, we are configuring Hibernate to <update> the database schema; when Hibernate initializes
   it will create or even modify tables to match the entities.  Finally, we are configuring Hibernate
