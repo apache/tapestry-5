@@ -18,10 +18,7 @@ import org.apache.tapestry5.internal.ServletContextSymbolProvider;
 import org.apache.tapestry5.internal.TapestryAppInitializer;
 import org.apache.tapestry5.ioc.Registry;
 import org.apache.tapestry5.ioc.def.ModuleDef;
-import org.apache.tapestry5.ioc.services.ServiceActivity;
-import org.apache.tapestry5.ioc.services.ServiceActivityScoreboard;
-import org.apache.tapestry5.ioc.services.Status;
-import org.apache.tapestry5.ioc.services.SymbolProvider;
+import org.apache.tapestry5.ioc.services.*;
 import org.apache.tapestry5.services.HttpServletRequestHandler;
 import org.apache.tapestry5.services.ServletApplicationInitializer;
 import org.slf4j.Logger;
@@ -97,6 +94,8 @@ public class TapestryFilter implements Filter
 
         handler = registry.getService("HttpServletRequestHandler", HttpServletRequestHandler.class);
 
+        SymbolSource source = registry.getService("SymbolSource", SymbolSource.class);
+
         init(registry);
 
         long toFinish = System.currentTimeMillis();
@@ -104,7 +103,11 @@ public class TapestryFilter implements Filter
         StringBuilder buffer = new StringBuilder("Startup status:\n\n");
         Formatter f = new Formatter(buffer);
 
-        f.format("Startup time: %,d ms to build IoC Registry, %,d ms overall." + "\n\nStartup services status:\n",
+        f.format("Application '%s' (Tapestry version %s).\n\n" +
+                "Startup time: %,d ms to build IoC Registry, %,d ms overall.\n\n" +
+                "Startup services status:\n",
+                 filterName,
+                 source.valueForSymbol(SymbolConstants.TAPESTRY_VERSION),
                  toRegistry - start, toFinish - start);
 
         int unrealized = 0;
@@ -125,7 +128,6 @@ public class TapestryFilter implements Filter
             longest = Math.max(longest, activity.getServiceId().length());
 
             if (status == Status.DEFINED || status == Status.VIRTUAL) unrealized++;
-
         }
 
         String formatString = "%" + longest + "s: %s\n";
@@ -211,5 +213,4 @@ public class TapestryFilter implements Filter
     {
 
     }
-
 }
