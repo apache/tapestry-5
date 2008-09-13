@@ -172,7 +172,7 @@ public class Grid implements GridModel
     private boolean lean;
 
     /**
-     * If true and the Loop is enclosed by a Form, then the normal state persisting logic is turned off. Defaults to
+     * If true and the Grid is enclosed by a Form, then the normal state persisting logic is turned off. Defaults to
      * false, enabling state persisting within Forms. If a Grid is present for some reason within a Form, but does not
      * contain any form control components (such as {@link TextField}), then binding volatile to false will reduce the
      * amount of client-side state that must be persisted.
@@ -389,8 +389,6 @@ public class Grid implements GridModel
 
     Binding defaultModel()
     {
-        final ComponentResources containerResources = resources.getContainerResources();
-
         return new AbstractBinding()
         {
 
@@ -440,17 +438,17 @@ public class Grid implements GridModel
 
     Object setupRender()
     {
-        if (!volatileState && formSupport != null) formSupport.store(this, SETUP_DATA_SOURCE);
+        if (formSupport != null) formSupport.store(this, SETUP_DATA_SOURCE);
 
         setupDataSource();
+
+        // If there's no rows, display the empty block placeholder.
 
         return cachingSource.getAvailableRows() == 0 ? empty : null;
     }
 
     void setupDataSource()
     {
-        // If there's no rows, display the empty block placeholder.
-
         cachingSource = new CachingDataSource();
 
         int availableRows = cachingSource.getAvailableRows();
