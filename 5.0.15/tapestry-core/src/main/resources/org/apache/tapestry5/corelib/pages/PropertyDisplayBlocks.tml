@@ -1,0 +1,19 @@
+<t:container xml:space="default" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+    <t:block id="enum">
+        ${convertedEnumValue}
+    </t:block>
+
+    <t:block id="date">
+        <t:output value="context.propertyValue" format="dateFormat"/>
+    </t:block>
+
+    <t:block id="password">
+        <t:delegate to="passwordRenderer"/>
+    </t:block>
+
+    <t:block id="longtext">
+        <t:textoutput value="context.propertyValue"/>
+    </t:block>
+
+</t:container>

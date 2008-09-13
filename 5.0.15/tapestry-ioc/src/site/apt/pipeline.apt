@@ -1,0 +1,102 @@
+ ----
+ Building Pipelines
+ ----
+ 
+Building Pipelines
+
+  A common pattern within Tapestry is the use of filtering pipelines.   Another name
+  for a pipeline is a <filter chain>; an example of this is the Filter and FilterChain
+  interfaces inside the Servlet API.
+
+  In this pattern, an existing service is decorated with a filter.
+  The filter will delegate to the service, but has the chance to
+  alter or replace parameters before invoking the method, and
+  can perform operations before returning.  This is
+  similar to {{{command.html}chain of command}}, but differs in that
+  there are two interfaces (the service interface and the filter interface)
+  and that each filter invokes the next filter via the service interface.
+  In chain of command, the chain invokes each method, which must return 
+  before the next command in the chain is invoked.
+  
+  The service interface and the filter interface are closely related:
+  the filter interface must match the service interface method for method,
+  but each method of the filter interface must have an additional parameter
+  whose type is the service interface. For example, a pipeline
+  that performed string transformations might use the following interfaces:
+  
++------+
+public interface StringTransformService
+{
+  String transform(String input);
+}
+
+public interface StringTransformFilter
+{
+  String transform(String input, StringTransformService delegate);
+}
++-----+
+
+  An implementation of the filter might look like:
+  
++-----+
+public class UpcasePreFilter implements StringTransformFilter
+{
+  public String transform(String input, StringTransformService delegate)
+  {
+    return delegate.transform(input.toUpperCase());
+  }
+}
++-----+
+
+  Alternately, the filter could pass input to delegate unchanged, but invoke
+  toUpperCase() on the result:
+  
++-----+
+public class UpcasePostFilter implements StringTransformFilter
+{
+  public String transform(String input, StringTransformService delegate)
+  {
+    return delegate.transform(input).toUpperCase();
+  }
+}
++-----+  
+
+  The
+  {{{../apidocs/org/apache/tapestry5/ioc/services/PipelineBuilder.html}PipelineBuilder}}
+  service is useful for constructing pipelines. The service is often injected
+  into a service builder method, along with an ordered configuration of services.
+  
+  What the builder accomplishes is to represent each <filter> in the pipeline as
+  an instance of the <service> interface.
+  
+[images/PipelineCallingSequence.png] Pipeline Calling Sequence
+  
+  The bridges are created by the PipelineBuilder service.  The terminator
+  must be provided.  The bridges and the terminator implement the service interface.
+  
++-----+
+  public static StringTransformService build(
+    @InjectService("PipelineBuilder")
+    PipelineBuilder builder,
+    List<StringTransformFilter> configuration,
+    Log serviceLog)
+    {
+      
+      StringTransformService terminator = new StringTransformService()
+      {
+        public String transform(String input)
+        {
+          return input;
+        }
+      };
+      
+      return builder.build(log,
+        StringTransformService.class, StringTransformFilter.class,
+        configuration,
+        terminator);
+    }    
++-----+
+
+  Here, we create the terminator for the pipeline as an inner class instance,
+  and feed that into the builder. The result is a new service that encapsulates
+  the entire pipeline.  When there are no filters, this is just the terminator.

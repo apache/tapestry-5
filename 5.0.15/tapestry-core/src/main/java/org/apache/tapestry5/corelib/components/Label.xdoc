@@ -1,0 +1,50 @@
+<document>
+    <body>
+        <section name="Examples">
+
+            <subsection name="Search.tml">
+                <source><![CDATA[
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+    <body>
+
+        <t:form>
+            <t:label for="search"/>
+            <t:textfield t:id="search" size="50"/>
+
+            <t:checkbox t:id="all"/>
+            <t:label for="all">
+                Include out of date records
+            </t:label>
+
+        . . .
+
+</html>]]></source>
+
+                <p>
+                    This demonstrates that the Label can come before
+                    or after the form control element component (the TextField and Checkbox components).
+                    When a Label has a body, that takes precendence over the field's label, though the field's
+                    label is what's used in any error messages.
+                </p>
+
+            </subsection>
+
+        </section>
+
+        <section name="Notes">
+
+            <p>
+                The Label component is very important for user accessiblity. A user will be able to click
+                on the label to move the cursor into the corresponding field.
+            </p>
+
+            <p>
+                The Label component supports informal parameters; this can be very useful
+                for adding the
+                <code>accesskey</code>
+                attribute supported by most browsers.
+            </p>
+
+        </section>
+    </body>
+</document>
