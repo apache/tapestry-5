@@ -1,0 +1,22 @@
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+    <head>
+        <title>Login</title>
+    </head>
+    <body>
+        <h1>Login Page</h1>
+
+        <p>
+            You have reached this page via a redirect from the Index page's onActivate() event handler method.
+        </p>
+
+        <ul>
+            <li>
+                <t:pagelink page="beandisplayoverridedemo">BeanDisplay Override Demo</t:pagelink>
+            </li>
+            <li>
+                <t:pagelink page="renderpagedemo">PageDocumentGenerator demo</t:pagelink>
+            </li>
+        </ul>
+
+    </body>
+</html>

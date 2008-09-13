@@ -1,0 +1,7 @@
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+Expansion #1[${expansion1}]
+
+Expansion #2[${expansion2}]
+
+</html>

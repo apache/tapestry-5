@@ -1,0 +1,14 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+    <h1>ValidateForm ValidationException Demo</h1>
+
+
+    <t:form t:id="form">
+        <t:errors/>
+        <input type="submit"/>
+    </t:form>
+
+    <p>
+        Last event:
+        <span id="event">${event}</span>
+    </p>
+</html>

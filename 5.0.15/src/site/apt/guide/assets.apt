@@ -1,0 +1,101 @@
+ ----
+  Assets
+ ----
+ 
+Assets
+
+  Assets are any kind of file that may be downloaded to a client web browser in addition to the dynamically generated HTML.
+  
+  Assets are most often images, stylesheets, and JavaScript libraries.
+  
+  Normal assets are stored in the web application's context folder ... stored inside the web application WAR file in the ordinary way.
+  
+  Tapestry will also make files stored <on the classpath>, with your Java class files, visible to the web browser.
+  
+  Assets are exposed to your code as instances of the {{{../apidocs/org/apache/tapestry5/Asset.html}Asset}} interface.
+  
+Injecting Assets
+
+  Components learn about assets via injection.  The 
+  {{{inject.html}Inject}} annotation allows Assets to be injected into components as read-only properties.  The path to
+  the resource is specified using the
+  {{{../apidocs/org/apache/tapestry5/annotations/Path.html}Path}} annotation.
+  
++----+
+  @Inject
+  @Path("context:images/tapestry_banner.gif")
+  private Asset banner;
++----+
+
+  Assets are located within <domains>; these domains are identified by the prefix on the Inject annotation's value.
+  
+  If the prefix is omitted, the value will be interpreted as a path relative to the Java class file itself, within
+  the "classpath:" domain. This is often used when creating component libraries, where the assets used by the components
+  are packaged in the JAR with the components themselves.
+  
+  Unlike elsewhere in Tapestry, <case matters>. This is because Tapestry is dependenent on the Servlet API and the Java runtime
+  to access the underlying files, and those APIs, unlike Tapestry, are case sensitive. Be aware that some <operating systems> (such as Windows)
+  are case insenitive, which may mask errors that will be revealed at deployment (if the deployment operating system is case sensitive,
+  such as Linux).
+  
+Relative Assets
+
+  You can use relative paths with domains (if you omit the prefix):
+
++----+
+  @Inject
+  @Path("../edit.png")
+  private Asset icon;
++----+  
+
+  Since you must omit the prefix, this only makes sense for components packaged in a library for reuse.
+  
+Symbols For Assets
+
+  {{{../../tapestry-ioc/symbols.html}Symbols}} inside the annotation value are
+  expanded. This allows you to define a symbol and reference it as part of the path.  For example, you could contribute
+  a symbol named "skin.root" as "context:/skins/basic" and then reference an asset from within it:
+  
++----+
+  @Inject
+  @Path("${skin.root}/style.css")
+  private Asset style;
++----+
+
+  An override of the skin.root symbol would affect all references to the named asset.
+  
+Localization of Assets
+
+  Assets are {{{localization.html}localized}}; Tapestry will search for a variation of the file appropriate
+  to the effective locale for the request. In the previous example, a German user of the application may
+  see a file named <<<edit_de.png>>> (if such a file exists).
+  
+New Asset Domains
+
+  If you wish to create new domains for assets, for example to allow assets to be stored on the file system or in a database,
+  you may define a new
+  {{{../apidocs/org/apache/tapestry5/services/AssetFactory.html}AssetFactory}}
+  and contribute it to the AssetSource service configuration.  
+  
+Simplified Paths
+
+  Private assets (assets on the classpath) normally have the form: <<</assets/foo/bar/Baz.css>>> where <<<Baz.css>>> is a file inside the <<<foo.bar>>> Java package.
+  In other words, the package name is converted into a path underneath the virtual folder, <<</assets/>>>.  
+  
+  You are given some control over this, allowing for shorter paths.  The ClasspathAssetAliasManager service has a mapped configuration. The map keys
+  are logical folder names, and the map values are the complete classpath.  For example, Tapestry itself makes this contribution:
+  
++----+
+    public static void contributeClasspathAssetAliasManager(
+            MappedConfiguration<String, String> configuration)
+    {
+        configuration.add("tapestry", "org/apache/tapestry");
+    }
++---+
+
+  Thus, the generated URLs may say <<</assets/tapestry5/Foo.gif>>> but the underlying file will be <<</org/apache/tapestry5/Foo.gif>>> (within the classpath).
+  
+  Care should be taken to not create overlapping mappings, as the results would not be predictable.  
+
+
+  

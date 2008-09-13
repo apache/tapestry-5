@@ -1,0 +1,21 @@
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+    <head>
+        <title>Start</title>
+    </head>
+
+    <body>
+
+        <h1>Start</h1>
+
+        <t:beaneditform object="this"/>
+
+        <hr/>
+
+        <p>
+            Click
+            <t:actionlink t:id="bypass">here</t:actionlink>
+            to bypass the form.
+        </p>
+    </body>
+
+</html>

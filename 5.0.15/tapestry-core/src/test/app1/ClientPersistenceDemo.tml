@@ -1,0 +1,27 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+<h1>Client Persistence Demo</h1>
+
+
+  <p>
+    Persisted value: [${persistedValue}]
+  </p>
+  
+  <p>
+    Session: [${sessionExists}]
+  </p>
+  
+  
+  <p>
+    <t:actionlink t:id="storeString">store string</t:actionlink>
+  </p>
+  
+  <p>
+    <t:actionlink t:id="storeBad">store non-serializable</t:actionlink>
+  </p>
+  
+  <p>
+    <t:pagelink page="clientpersistencedemo">refresh</t:pagelink>
+  </p>
+
+</html>

@@ -1,0 +1,322 @@
+ ---
+ Your First Tapestry Application
+ ---
+ 
+Chapter 2: Your First Tapestry Application
+
+  Before we can get down to the fun, we have to create an empty application.  Tapestry uses a feature of Maven to do this: <<archetypes>> (a too-clever way of saying "project templates").
+  
+  What we'll do is create an empty shell application using Maven, then import the application into Eclipse to do the rest of the work.
+    
+  Before proceeding, we have to decide on three things:  A Maven <group id> and <artifact id> for our project and a <root package name>. 
+  
+  Maven uses the group id and artifact id to provide a unique identity for the application, and Tapestry needs to have a base package name so it knows where to look for pages and components.
+  
+  For this example, we'll use the group id <<org.apache.tapestry>> and the artifact id <<tapestry-tutorial1>>, and we'll use <<org.apache.tapestry5.tutorial>> as the base package.
+  
+  Our final command line is thus:
+
+----
+mvn archetype:create
+  -DarchetypeGroupId=org.apache.tapestry
+  -DarchetypeArtifactId=quickstart
+  -DgroupId=org.apache.tapestry
+  -DartifactId=tutorial1
+  -DpackageName=org.apache.tapestry5.tutorial
+----
+
+  We've shown this as several lines, but it would normally be entered as a single long line.
+  
+  As a command, it's quite a doozy!  If you are going to create lots of projects, creating a wrapper script for this is a smart idea.
+  
+  Execute this in a temporary directory, it will create a sub-directory: tapestry-tutorial1.
+    
+  The first time you execute this command, Maven will spend quite a while downloading all kinds of JARs into
+  your local repository, which can take a minute or more. Later, once all that is already available locally,
+  the whole command executes in under a second.
+
+  If you are behind a firewall, before running any "mvn" commands, you will need to configure your proxy settings in settings.xml. Here is an example:
+
+----
+<settings>
+ <proxies>
+    <proxy>
+       <active>true</active>
+       <protocol>http</protocol>
+       <host>myProxyServer.com</host>
+       <port>8080</port>
+       <username>joeuser</username>
+       <password>myPassword</password>
+       <nonProxyHosts></nonProxyHosts>
+    </proxy>
+ </proxies>
+ <localRepository>C:/Documents and Settings/joeuser/.m2/repository</localRepository>
+</settings>
+----
+
+  Of course, adjust  the \<localRepository\> element to match the correct path for your computer.  
+
+  One of the first things you can do is use Maven to run Jetty directly.
+  
+  Change into the newly created directory, and execute the command:
+  
+---
+mvn jetty:run
+---
+
+  Again, the first time, there's a dizzying number of downloads, but before you know it, the Jetty servlet container
+  is up and running.
+
+  You can open a web browser to {{{http://localhost:8080/tutorial1/}http://localhost:8080/tutorial1/}}
+  to see the running application:
+  
+[startpage.png] Default Start page for Application
+
+  The date and time in the middle of the page proves that this is a live application.
+  
+  Let's look at what Maven has generated for us. To do this, we're going to load the project inside Eclipse and continue from there.
+  
+  Start by hitting Control-C in the Terminal window to close down Jetty..
+  
+  Launch Eclipse and switch over to the Java Browser Perspective.
+  
+  Right click inside the Projects view and select <<Import ...>>
+  
+  Choose the "existing projects" option:
+  
+[eclipse-import.png] Import Project into Eclipse
+
+  Now select the folder created by Maven:
+  
+[eclipse-import-folder.png] Select folder to import
+
+  When you click the Finish button, the project will be imported into the Eclipse workspace.
+  
+  <<TODO: Picture of Java Browsing Perspective>>
+  
+  Maven dictates the layout of the project:
+  
+  * Java source files under src/main/java
+  
+  * Web application files under src/main/webapp (including src/main/webapp/WEB-INF)
+  
+  * Java test sources under src/test/java
+  
+  * Non-code resources under src/main/resources and src/test/resources
+  
+  []
+  
+  (Tapestry uses a number of non-code resources, such as template files and message catalogs, which will ultimately be packaged into
+  the WAR file.)
+  
+  The Maven Plugin, inside Eclipse, has found all the referenced libraries in your local Maven repository, and compiled the two classes created by quickstart archetype.
+  
+  Let's look at what the archetype has created for us, starting with the web.xml file:
+  
+  <<src/main/webapp/WEB-INF/web.xml>>
+  
+----
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE web-app
+      PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+      "http://java.sun.com/dtd/web-app_2_3.dtd">
+      <web-app>
+          <display-name>tutorial1 Tapestry 5 Application</display-name>
+          <context-param>
+              <!-- The only significant configuration for Tapestry 5, this informs Tapestry
+                   of where to look for pages, components and mixins. -->
+              <param-name>tapestry.app-package</param-name>
+              <param-value>org.apache.tapestry5.tutorial</param-value>
+          </context-param>
+          <filter>
+              <filter-name>app</filter-name>
+              <filter-class>org.apache.tapestry5.TapestryFilter</filter-class>
+          </filter>
+          <filter-mapping>
+              <filter-name>app</filter-name>
+              <url-pattern>/*</url-pattern>
+          </filter-mapping>
+      </web-app>
+----
+  
+  This is short and sweet: you can see that the package name you provided earlier shows up as the tapestry.app-package context parameter; the TapestryFilter instance will use
+  this information to locate the Java classes we'll look at next.
+  
+  Tapestry 5 operates as a <servlet filter> rather than as a traditional <servlet>. In this way, Tapestry has a chance to intercept all incoming requests, to determine
+  which ones apply to Tapestry pages (or other resources). The net effect is that you don't have to maintain any additional configuration
+  for Tapestry to operate, regardless of how many pages or components you add to your application.
+  
+  Tapestry pages minimally consist of an ordinary Java class plus a component template file.
+
+  In the root of your web application, a page named "Index" will be used for any request that specifies no additional
+  path after the context name.
+    
+  Let's start with the template, which is stored in the webapp's WEB-INF folder.  Tapestry component templates are well-formed XML documents.  This means that you can use
+  any available XML editor.  Templates may even have a DOCTYPE or an XML schema to validate the structure of the template.  <That is, your build process may use a tool to validate your
+  templates.  At runtime, when Tapestry reads the template, it does not use a validating parser.> For the most part, the template looks like
+  ordinary XHTML:
+  
+  <<src/main/webapp/Index.tml:>>
+  
+----
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+    <head>
+        <title>tutorial1 Start Page</title>
+    </head>
+    <body>
+        <h1>tutorial1 Start Page</h1>
+
+        <p> This is the start page for this application, a good place to start your modifications.
+            Just to prove this is live: </p>
+
+        <p> The current time is: ${currentTime}. </p>
+
+
+        <p>
+            [<t:pagelink t:page="Index">refresh</t:pagelink>]
+        </p>
+    </body>
+</html>
+----
+
+ The goal in Tapestry is for component templates, such as Index.tml, to look as much as possible like ordinary, static
+ HTML files. <By static, we mean unchanging, as opposed to a dynamically generated Tapestry page.>  In fact, the expectation
+ is that in many cases, the templates will start as static HTML files, created by a web developer and then be
+ <instrumented> to act as live Tapestry pages.
+ 
+  Tapestry hides non-standard element and attributes inside the XML namespace. By convention, the prefix "t:" is used for
+  this namespace, but that is not a requirement.
+  
+  There only two bits of Tapestry instrumentation on this page.
+  
+  First is the way we display the current date and time: <<<$\{currentTime}>>>.  This syntax is used to access a property
+  of the page object, a property named currentTime.  Tapestry calls this an <expansion>.  The value inside the braces is the name of a 
+  standard JavaBeans property supplied by the page. As we'll see in later chapters, this is just the tip of the iceberg for what is possible
+  using expansions.
+  
+  The other item is the link used to refresh the page. We're specifying a component as an XML <element> within the Tapestry namespace. The element name, "pagelink",
+  defines the type of component.  PageLink (Tapestry is case insensitive) is a component built into the framework; it is part of the
+  core component library.  The attribute, page, is a string - the name of the page to link to.  Here, we're linking back to the same page, page "Index".
+  
+  This is how Tapestry works; the Index page contains an <instance> of the PageLink component. The PageLink component is configured via its parameters, which controls what
+  it does and how it behaves.
+  
+  The URL that the PageLink component will render out is <<<http://localhost:8080/tapestry-tutorial1/>>> ."Index" pages are special and
+  are identified just by the folder name.    In later examples,
+  when we link to pages besides "Index", the page name will be part of the URL.
+  
+  Tapestry ignores case where ever it can. Inside the template, we configured the PageLink component's page parameter with the name of the page, "Index".  Here too we could be
+  inexact on case.  Feel free to use "index" if that works for you. 
+  
+  <You do have to name your component template file, Index.html, with the exact same case as the component class name, Index. If you get the case wrong, it may work on some
+  operating systems (such as Windows) and not on others (Mac OS X, Linux, and most others). This can be really vexing, as it is common to develop on Windows and deploy on Linux or
+  Solaris, so be careful about case in this one area.>
+  
+  Clicking the link in the web browser sends a request to re-render the page; the template and Java object are
+  re-used to generate the HTML sent to the browser, which results in the updated time showing up in the web browser.
+  
+  The final piece of the puzzle is the Java class for the page.  Tapestry has very specific rules for where page classes go.  Remember the package name (configured inside web.xml)?  Tapestry adds a
+  sub-package, "pages", to it and the Java class goes there. Thus the full Java class name is org.apache.tapestry5.tutorial.pages.Index.
+  
+  <<src/main/java/org/apache/tapestry5/tutorial/pages/Index.java>>
+
+---
+package org.apache.tapestry5.tutorial.pages;
+
+import java.util.Date;
+
+/**
+ * Start page of application tutorial1.
+ */
+public class Index
+{
+  public Date getCurrentTime()
+  {
+    return new Date();
+  }
+}
+---
+  
+  That's pretty darn simple: No classes to extend, no interfaces to implement, just a very pure POJO (Plain Old Java Object). You do have to meet the Tapestry framework
+  halfway:
+  
+  * You need to put the Java class in the expected package, org.apache.tapestry5.tutorial.pages
+  
+  * The class must be public
+  
+  * You need to make sure there's a public, no-arguments constructor (here, the Java compiler has silently provided one for us)
+  
+  []
+  
+  The template referenced the property currentTime and we're providing that as a property, as a <synthetic property>, a property that is computed on the fly
+  (rather than stored in an instance variable).
+  
+  This means that every time the page renders, a fresh Date instance is created, which is just what we want.
+  
+  As the page renders, it generates the HTML markup that is sent to the client web browser.  For most of the page, that markup is
+  exactly what came out of the component template: this is called the <static content> (we're using the term "static" to mean "unchanging").
+  
+  The expansion, <<<$\{currentTime}>>>, is <dynamic:> different every time.  Tapestry will read that property and convert the result
+  into a string, and that string is mixed into the stream of markup sent to the client. <We'll often talk about the "client" and we don't mean
+  the people you send your invoices to: we're talking about the client web browser. Of course, in a world of web spiders and other
+  screen scrapers, there's no guarantee that the thing on the other end of the HTTP pipe is really a web browser. You'll often see low-level HTML
+  and HTTP documentation talk about the "user agent".>  Likewise, the PageLink component is dynamic, in that it generates a URL that is
+  (potentially) different every time.
+  
+  Tapestry follows the rules defined by Sun's JavaBeans specification: a property name of currentTime maps to two methods: getCurrentTime() and setCurrentTime(). If you omit one of the other of these
+  methods, the property is either read only (as here), or write only.
+  
+  Tapestry does go one step further: it ignores case when matching properties inside the expansion to properties of the page. In the template we could say
+  <<<$\{currenttime}>>> or <<<$\{CurrentTime}>>> or any variation, and Tapestry will <still> invoke the getCurrentTime() method.
+  
+  In the next chapter, we'll start to build a simple hi-lo guessing game, but we've got one more task before then, plus a magic trick.
+  
+  The task is to set up Jetty to run our application directly out of our Eclipse workspace. This is a great way to develop web applications,
+  since we don't want to have to use Maven to compile and run the application ... or worse yet, use Maven to package and deploy the application. That's for later, when
+  we want to put the application into production.  For development, we want a fast, agile environment that can keep up with our changes, and that means we can't wait for redeploys
+  and restarts.
+  
+  Choose the <<Run ...>> item from the Eclipse <<Run>> menu to get the launch configuration dialog:
+  
+[eclipse-run.png] Eclipse Run Dialog
+
+  Select Jetty Web and click the <New> button:
+  
+[eclipse-launch.png] Eclipse Launch Configuration  
+  
+  We've filled in a name for our launch configuration, and identified the project.  We've also told Jetty Launcher where our Jetty installation is.  We've identified
+  the web context as src/main/webapp, and we've turned on NCSA logging for good measure.
+  
+  In addition, we've set up the context as "/tutorial1", which matches what our eventual WAR file, tutorial1.war, would be deployed as inside an application server.
+  
+  Once you click Run, Jetty will start up and launch (it should take about two seconds).
+  
+  You may now start the application with the URL {{{http://localhost:8080/tutorial1/}http://localhost:8080/tutorial1/}}.
+  
+  Now it's time for the magic trick. Edit Index.java and change the getCurrentTime() method to:
+  
+---
+  public String getCurrentTime()
+  {
+    return "A great day to learn Tapestry";
+  }
+---  
+
+  Make sure you save changes; then click the refresh link in the web browser:
+  
+[app-live-reload.png] Application after live class reloading
+
+  This is one of Tapestry's early <wow factor> features: changes to your component classes are picked up immediately. No restart. No re-deploy.  Make the changes and see them <now>.
+  Nothing should slow you down or get in the way of you getting your job done.
+  
+  Now that we have our basic application set up, and ready to run (or debug) directly inside Eclipse, we can start working on implementing our
+  Hi/Lo game in earnest.
+  
+===
+  
+  {{{hilo.html}Continue on to chapter 3: Implementing The Hi/Lo Game}}
+ 
+
+  
+  
+  

@@ -1,0 +1,14 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+    <p>
+        You clicked Barney.
+    </p>
+    
+    <p>
+        In this case, @InjectPage determined the target page via the value attribute of the annotation.
+    </p>
+    
+    <p>
+        [<a t:type="PageLink" t:page="InjectDemo">Back</a>]
+    </p>
+</html>
