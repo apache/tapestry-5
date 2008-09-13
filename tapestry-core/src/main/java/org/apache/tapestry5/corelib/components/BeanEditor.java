@@ -14,8 +14,10 @@
 
 package org.apache.tapestry5.corelib.components;
 
-import java.lang.annotation.Annotation;
-import org.apache.tapestry5.*;
+import org.apache.tapestry5.BindingConstants;
+import org.apache.tapestry5.ComponentAction;
+import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.PropertyOverrides;
 import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.Property;
@@ -30,10 +32,12 @@ import org.apache.tapestry5.services.BeanModelSource;
 import org.apache.tapestry5.services.Environment;
 import org.apache.tapestry5.services.FormSupport;
 
+import java.lang.annotation.Annotation;
+
 /**
  * A component that generates a user interface for editing the properties of a bean. This is the central component of
- * the {@link BeanEditForm}, and utilizes a {@link PropertyEditor} for much of its functionality.
- * This component places a {@link BeanEditContext} into the environment.
+ * the {@link BeanEditForm}, and utilizes a {@link PropertyEditor} for much of its functionality. This component places
+ * a {@link BeanEditContext} into the environment.
  */
 @SupportsInformalParameters
 public class BeanEditor
@@ -62,7 +66,7 @@ public class BeanEditor
         {
             component.cleanupEnvironment();
         }
-        
+
         @Override
         public String toString()
         {
@@ -145,26 +149,31 @@ public class BeanEditor
     @Property
     private String propertyName;
 
+    /**
+     * To support nested BeanEditors, we need to cache the object value inside {@link #doPrepare()}. See TAPESTRY-2460.
+     */
+    private Object cachedObject;
+
     // Needed for testing as well
 
     public Object getObject()
     {
-        return object;
+        return cachedObject;
     }
 
     void setupRender()
     {
         formSupport.storeAndExecute(this, new Prepare());
     }
-    
+
     void cleanupRender()
     {
         formSupport.storeAndExecute(this, CLEANUP_ENVIRONMENT);
     }
 
     /**
-     * Used to initialize the model if necessary, to instantiate the object being edited if necessary,
-     * and to push the BeanEditContext into the environment.
+     * Used to initialize the model if necessary, to instantiate the object being edited if necessary, and to push the
+     * BeanEditContext into the environment.
      */
     void doPrepare()
     {
@@ -195,19 +204,22 @@ public class BeanEditor
             }
         }
 
-        BeanEditContext context = new BeanEditContext() 
+        BeanEditContext context = new BeanEditContext()
         {
             public Class<?> getBeanClass()
             {
                 return model.getBeanType();
             }
 
-            public <T extends Annotation> T getAnnotation(Class<T> type) 
+            public <T extends Annotation> T getAnnotation(Class<T> type)
             {
                 return getBeanClass().getAnnotation(type);
             }
         };
-        
+
+
+        cachedObject = object;
+
         environment.push(BeanEditContext.class, context);
     }
 
@@ -217,7 +229,8 @@ public class BeanEditor
     }
 
     // For testing
-    void inject(ComponentResources resources, PropertyOverrides overrides, BeanModelSource source, Environment environment)
+    void inject(ComponentResources resources, PropertyOverrides overrides, BeanModelSource source,
+                Environment environment)
     {
         this.resources = resources;
         this.overrides = overrides;
