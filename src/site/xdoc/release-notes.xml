@@ -22,7 +22,6 @@
 
 
         <h1>Release Notes - Tapestry - Version 5.0.15</h1>
-
         <h2>Sub-task
         </h2>
         <ul>
@@ -57,6 +56,10 @@
             </li>
             <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-2453'>TAPESTRY-2453</a>] - Form enctype is not
                 updated when an Upload component is injected via FormInjector / AjaxFormLoop
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-2460'>TAPESTRY-2460</a>] - Nested BeanEditors
+                (where the block parameter for a property to one BeanEditor contains another BeanEditor) results in a
+                StackOverflowException
             </li>
             <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-2517'>TAPESTRY-2517</a>] - A failed service
                 injection into a component field is visible in the browser as a spurious error about field _$resources
@@ -139,6 +142,12 @@
             </li>
             <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-2664'>TAPESTRY-2664</a>] -
                 RenderSupport.addScript(String) does not add the core JavaScript dependencies
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-2668'>TAPESTRY-2668</a>] - Setting volatile to
+                true on Grid component in form results in NullPointerException
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-2669'>TAPESTRY-2669</a>] - Tapestry source
+                distribution's version of tapestry-test is actually the code for tapestry-spring
             </li>
         </ul>
 
@@ -254,6 +263,12 @@
             <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-2662'>TAPESTRY-2662</a>] - Upgrade Hibernate
                 dependency to 3.3.1
             </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-2670'>TAPESTRY-2670</a>] - Major fixes needed
+                for German (DE) localization
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-2671'>TAPESTRY-2671</a>] - TapestryFilter
+                should display name of application, version of Tapestry at startup
+            </li>
         </ul>
 
         <h2>New Feature
@@ -299,8 +314,8 @@
             <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-1964'>TAPESTRY-1964</a>] - Constant not used
                 from app-name in TapestryModule
             </li>
-
         </ul>
+
 
         <h1>Release Notes - Tapestry - Version 5.0.14</h1>
 

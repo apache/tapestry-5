@@ -144,7 +144,7 @@
             <zipfileset prefix="tapestry-hibernate" dir="tapestry-hibernate" includes="${sources}"/>
             <zipfileset prefix="tapestry-ioc" dir="tapestry-ioc" includes="${sources}"/>
             <zipfileset prefix="tapestry-spring" dir="tapestry-spring" includes="${sources}"/>
-            <zipfileset prefix="tapestry-test" dir="tapestry-spring" includes="${sources}"/>
+            <zipfileset prefix="tapestry-test" dir="tapestry-test" includes="${sources}"/>
             <zipfileset prefix="tapestry-upload" dir="tapestry-upload" includes="${sources}"/>
 
             <zipfileset prefix="tapestry-project" dir="." includes="${sources}"/>
