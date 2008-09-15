@@ -118,6 +118,6 @@ of a Tapestry Maven plugin is not required.   -->
     </pluginRepositories>
 
     <properties>
-        <tapestry-release-version>5.0.16-SNAPSHOT</tapestry-release-version>
+        <tapestry-release-version>5.1.0.0-SNAPSHOT</tapestry-release-version>
     </properties>
 </project>
