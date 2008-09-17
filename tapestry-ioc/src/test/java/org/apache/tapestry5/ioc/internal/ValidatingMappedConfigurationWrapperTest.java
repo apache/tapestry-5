@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
 package org.apache.tapestry5.ioc.internal;
 
 import org.apache.tapestry5.ioc.MappedConfiguration;
+import org.apache.tapestry5.ioc.ObjectLocator;
 import org.apache.tapestry5.ioc.def.ContributionDef;
 import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newMap;
 import org.slf4j.Logger;
@@ -34,6 +35,7 @@ public class ValidatingMappedConfigurationWrapperTest extends IOCInternalTestCas
         Logger logger = mockLogger();
         Map<Class, ContributionDef> keyToContribution = newMap();
         MappedConfiguration<Class, Runnable> delegate = mockMappedConfiguration();
+        ObjectLocator locator = mockObjectLocator();
 
         Class key = Integer.class;
         Runnable value = mockRunnable();
@@ -43,7 +45,7 @@ public class ValidatingMappedConfigurationWrapperTest extends IOCInternalTestCas
         replay();
 
         MappedConfiguration<Class, Runnable> wrapper = new ValidatingMappedConfigurationWrapper<Class, Runnable>(
-                SERVICE_ID, def, logger, Class.class, Runnable.class, keyToContribution, delegate);
+                SERVICE_ID, def, logger, Class.class, Runnable.class, keyToContribution, delegate, locator);
 
         wrapper.add(key, value);
 
@@ -59,6 +61,7 @@ public class ValidatingMappedConfigurationWrapperTest extends IOCInternalTestCas
         ContributionDef def2 = newContributionDef("contributionPlaceholder2");
         Logger logger = mockLogger();
         Map<Class, ContributionDef> keyToContribution = newMap();
+        ObjectLocator locator = mockObjectLocator();
 
         keyToContribution.put(Integer.class, def1);
 
@@ -72,7 +75,7 @@ public class ValidatingMappedConfigurationWrapperTest extends IOCInternalTestCas
         replay();
 
         MappedConfiguration<Class, Runnable> wrapper = new ValidatingMappedConfigurationWrapper<Class, Runnable>(
-                SERVICE_ID, def2, logger, Class.class, Runnable.class, keyToContribution, delegate);
+                SERVICE_ID, def2, logger, Class.class, Runnable.class, keyToContribution, delegate, locator);
 
         wrapper.add(key, value);
 
@@ -89,13 +92,14 @@ public class ValidatingMappedConfigurationWrapperTest extends IOCInternalTestCas
         Map<Class, ContributionDef> keyToContribution = newMap();
         MappedConfiguration<Class, Runnable> delegate = mockMappedConfiguration();
         Runnable value = mockRunnable();
+        ObjectLocator locator = mockObjectLocator();
 
         logger.warn(IOCMessages.contributionKeyWasNull(SERVICE_ID, def));
 
         replay();
 
         MappedConfiguration<Class, Runnable> wrapper = new ValidatingMappedConfigurationWrapper<Class, Runnable>(
-                SERVICE_ID, def, logger, Class.class, Runnable.class, keyToContribution, delegate);
+                SERVICE_ID, def, logger, Class.class, Runnable.class, keyToContribution, delegate, locator);
 
         wrapper.add(null, value);
 
@@ -111,6 +115,7 @@ public class ValidatingMappedConfigurationWrapperTest extends IOCInternalTestCas
         Map<?, ContributionDef> keyToContribution = newMap();
         MappedConfiguration delegate = mockMappedConfiguration();
         Runnable value = mockRunnable();
+        ObjectLocator locator = mockObjectLocator();
 
         logger.warn(IOCMessages
                 .contributionWrongKeyType(SERVICE_ID, def, String.class, Class.class));
@@ -119,7 +124,7 @@ public class ValidatingMappedConfigurationWrapperTest extends IOCInternalTestCas
 
         MappedConfiguration wrapper = new ValidatingMappedConfigurationWrapper(SERVICE_ID, def,
                                                                                logger, Class.class, Runnable.class,
-                                                                               keyToContribution, delegate);
+                                                                               keyToContribution, delegate, locator);
 
         wrapper.add("java.util.List", value);
 
@@ -134,6 +139,7 @@ public class ValidatingMappedConfigurationWrapperTest extends IOCInternalTestCas
         Logger logger = mockLogger();
         Map<?, ContributionDef> keyToContribution = newMap();
         MappedConfiguration delegate = mockMappedConfiguration();
+        ObjectLocator locator = mockObjectLocator();
 
         logger.warn(IOCMessages.contributionWrongValueType(
                 SERVICE_ID,
@@ -145,7 +151,7 @@ public class ValidatingMappedConfigurationWrapperTest extends IOCInternalTestCas
 
         MappedConfiguration wrapper = new ValidatingMappedConfigurationWrapper(SERVICE_ID, def,
                                                                                logger, Class.class, Runnable.class,
-                                                                               keyToContribution, delegate);
+                                                                               keyToContribution, delegate, locator);
 
         wrapper.add(List.class, "do something");
 
@@ -159,13 +165,14 @@ public class ValidatingMappedConfigurationWrapperTest extends IOCInternalTestCas
         Logger logger = mockLogger();
         Map<Class, ContributionDef> keyToContribution = newMap();
         MappedConfiguration<Class, Runnable> delegate = mockMappedConfiguration();
-
+        ObjectLocator locator = mockObjectLocator();
+                                                                                                   
         logger.warn(IOCMessages.contributionWasNull(SERVICE_ID, def));
 
         replay();
 
         MappedConfiguration<Class, Runnable> wrapper = new ValidatingMappedConfigurationWrapper<Class, Runnable>(
-                SERVICE_ID, def, logger, Class.class, Runnable.class, keyToContribution, delegate);
+                SERVICE_ID, def, logger, Class.class, Runnable.class, keyToContribution, delegate, locator);
 
         wrapper.add(Integer.class, null);
 

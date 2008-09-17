@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,6 +20,9 @@ import org.slf4j.Logger;
 import org.testng.annotations.Test;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ValidatingOrderedConfigurationWrapperTest extends IOCInternalTestCase
 {
@@ -39,6 +42,53 @@ public class ValidatingOrderedConfigurationWrapperTest extends IOCInternalTestCa
                 "Service", def, logger, Runnable.class, configuration);
 
         wrapper.add("id", contribution, "after:pre", "before:post");
+
+        verify();
+    }
+
+    @Test
+    public void contribute_valid_class()
+    {
+        ContributionDef def = mockContributionDef();
+        Logger logger = mockLogger();
+        OrderedConfiguration<Map> configuration = mockOrderedConfiguration();
+
+        configuration.addInstance("id", HashMap.class, "after:pre", "before:post");
+
+        replay();
+
+        OrderedConfiguration<Map> wrapper = new ValidatingOrderedConfigurationWrapper<Map>(
+                "Service", def, logger, Map.class, configuration);
+
+        wrapper.addInstance("id", HashMap.class, "after:pre", "before:post");
+
+        verify();
+    }
+
+    @Test
+    public void contribute_invalid_class()
+    {
+        ContributionDef def = mockContributionDef();
+        Logger logger = mockLogger();
+        OrderedConfiguration<Object> configuration = mockOrderedConfiguration();
+
+        replay();
+
+        OrderedConfiguration<Object> wrapper = new ValidatingOrderedConfigurationWrapper<Object>(
+                "Service", def, logger, Map.class, configuration);
+
+        try
+        {
+            wrapper.addInstance("id", ArrayList.class, "after:pre", "before:post");
+            unreachable();
+        }
+        catch (IllegalArgumentException ex)
+        {
+            assertMessageContains(ex,
+                                  "Unable to contribute instance of class java.util.ArrayList",
+                                  "to service 'Service'",
+                                  "as it is not assignable to expected contribution type java.util.Map.");
+        }
 
         verify();
     }

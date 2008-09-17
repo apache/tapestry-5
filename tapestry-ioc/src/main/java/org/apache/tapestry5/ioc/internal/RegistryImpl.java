@@ -94,22 +94,6 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
     private final Set<ServiceDef> allServiceDefs = CollectionFactory.newSet();
 
-
-    public static final class OrderedConfigurationToOrdererAdaptor<T> implements OrderedConfiguration<T>
-    {
-        private final Orderer<T> orderer;
-
-        public OrderedConfigurationToOrdererAdaptor(Orderer<T> orderer)
-        {
-            this.orderer = orderer;
-        }
-
-        public void add(String id, T object, String... constraints)
-        {
-            orderer.add(id, object, constraints);
-        }
-    }
-
     /**
      * Constructs the registry from a set of module definitions and other resources.
      *
@@ -174,7 +158,6 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
                 for (Class marker : serviceDef.getMarkers())
                     InternalUtils.addToMapList(markerToServiceDef, marker, serviceDef);
-
             }
 
             moduleToServiceDefs.put(module, moduleServiceDefs);
@@ -343,16 +326,8 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
         final Collection<T> result = CollectionFactory.newList();
 
-        Configuration<T> configuration = new Configuration<T>()
-        {
-            public void add(T object)
-            {
-                result.add(object);
-            }
-        };
-
         for (Module m : moduleToServiceDefs.keySet())
-            addToUnorderedConfiguration(configuration, objectType, serviceDef, m);
+            addToUnorderedConfiguration(result, objectType, serviceDef, m);
 
         return result;
     }
@@ -365,12 +340,10 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         String serviceId = serviceDef.getServiceId();
         Logger logger = getServiceLogger(serviceId);
 
-        final Orderer<T> orderer = new Orderer<T>(logger);
-
-        OrderedConfiguration<T> configuration = new OrderedConfigurationToOrdererAdaptor<T>(orderer);
+        Orderer<T> orderer = new Orderer<T>(logger);
 
         for (Module m : moduleToServiceDefs.keySet())
-            addToOrderedConfiguration(configuration, objectType, serviceDef, m);
+            addToOrderedConfiguration(orderer, objectType, serviceDef, m);
 
         // An ugly hack ... perhaps we should introduce a new builtin service so that this can be
         // accomplished in the normal way?
@@ -385,7 +358,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
                 }
             };
 
-            configuration.add("ServiceByMarker", (T) contribution);
+            orderer.add("ServiceByMarker", (T) contribution);
         }
 
         return orderer.getOrdered();
@@ -395,21 +368,13 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
     {
         lock.check();
 
-        // When the key type is String, then a case insensitive map is used for both cases.
+        // When the key type is String, then a case insensitive map is used.
 
         final Map<K, V> result = newConfigurationMap(keyType);
         Map<K, ContributionDef> keyToContribution = newConfigurationMap(keyType);
 
-        MappedConfiguration<K, V> configuration = new MappedConfiguration<K, V>()
-        {
-            public void add(K key, V value)
-            {
-                result.put(key, value);
-            }
-        };
-
         for (Module m : moduleToServiceDefs.keySet())
-            addToMappedConfiguration(configuration, keyToContribution, keyType, objectType, serviceDef, m);
+            addToMappedConfiguration(result, keyToContribution, keyType, objectType, serviceDef, m);
 
         return result;
     }
@@ -427,7 +392,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         return CollectionFactory.newMap();
     }
 
-    private <K, V> void addToMappedConfiguration(MappedConfiguration<K, V> configuration,
+    private <K, V> void addToMappedConfiguration(final Map<K, V> map,
                                                  Map<K, ContributionDef> keyToContribution, Class<K> keyClass,
                                                  Class<V> valueType, ServiceDef serviceDef, Module module)
     {
@@ -440,7 +405,22 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
         boolean debug = logger.isDebugEnabled();
 
-        ObjectLocator locator = new ServiceResourcesImpl(this, module, serviceDef, classFactory, logger);
+        final ObjectLocator locator = new ServiceResourcesImpl(this, module, serviceDef, classFactory, logger);
+
+        MappedConfiguration<K, V> configuration = new MappedConfiguration<K, V>()
+        {
+            public void add(K key, V value)
+            {
+                map.put(key, value);
+            }
+
+            public void addInstance(K key, Class<? extends V> clazz)
+            {
+                // Because of the number of checks in VMCW, we let the VMCW instantiate the instance
+                // and run checks.  This code is, effectively, unreachable.
+                throw new RuntimeException("Should not be invoked directly.");
+            }
+        };
 
         for (ContributionDef def : contributions)
         {
@@ -448,16 +428,16 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
                                                                                                   logger, keyClass,
                                                                                                   valueType,
                                                                                                   keyToContribution,
-                                                                                                  configuration);
+                                                                                                  configuration, locator);
 
             if (debug) logger.debug(IOCMessages.invokingMethod(def));
 
             def.contribute(module, locator, validating);
         }
-
     }
 
-    private <T> void addToUnorderedConfiguration(Configuration<T> configuration, Class<T> valueType,
+    private <T> void addToUnorderedConfiguration(final Collection<T> collection,
+                                                 Class<T> valueType,
                                                  ServiceDef serviceDef, Module module)
     {
         String serviceId = serviceDef.getServiceId();
@@ -469,7 +449,22 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
         boolean debug = logger.isDebugEnabled();
 
-        ObjectLocator locator = new ServiceResourcesImpl(this, module, serviceDef, classFactory, logger);
+        final ObjectLocator locator = new ServiceResourcesImpl(this, module, serviceDef, classFactory, logger);
+
+        Configuration<T> configuration = new Configuration<T>()
+        {
+            public void add(T object)
+            {
+                collection.add(object);
+            }
+
+            public void addInstance(Class<? extends T> clazz)
+            {
+                T object = locator.autobuild(clazz);
+
+                add(object);
+            }
+        };
 
         for (ContributionDef def : contributions)
         {
@@ -482,7 +477,8 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         }
     }
 
-    private <T> void addToOrderedConfiguration(OrderedConfiguration<T> configuration, Class<T> valueType,
+    private <T> void addToOrderedConfiguration(final Orderer<T> orderer,
+                                               Class<T> valueType,
                                                ServiceDef serviceDef, Module module)
     {
         String serviceId = serviceDef.getServiceId();
@@ -493,7 +489,22 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         Logger logger = getServiceLogger(serviceId);
         boolean debug = logger.isDebugEnabled();
 
-        ObjectLocator locator = new ServiceResourcesImpl(this, module, serviceDef, classFactory, logger);
+        final ObjectLocator locator = new ServiceResourcesImpl(this, module, serviceDef, classFactory, logger);
+
+        OrderedConfiguration<T> configuration = new OrderedConfiguration<T>()
+        {
+            public void add(String id, T object, String... constraints)
+            {
+                orderer.add(id, object, constraints);
+            }
+
+            public void addInstance(String id, Class<? extends T> clazz, String... constraints)
+            {
+                T object = locator.autobuild(clazz);
+
+                add(id, object, constraints);
+            }
+        };
 
         for (ContributionDef def : contributions)
         {

@@ -322,4 +322,9 @@ final class IOCMessages
     {
         return MESSAGES.format("no-convention-service-implementation-found", clazz.getName(), clazz.getName());
     }
+
+    static String wrongContributionClass(Class clazz, String serviceId, Class expectedType)
+    {
+        return MESSAGES.format("wrong-contribution-class", clazz.getName(), serviceId, expectedType.getName());
+    }
 }

@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -35,6 +35,14 @@ public interface MappedConfiguration<K, V>
      * @param value to contribute
      * @throws IllegalArgumentException if key is not unique
      */
-
     void add(K key, V value);
+
+    /**
+     * Adds a keyed object as an instantiated instance (with dependencies injected) of a class.
+     *
+     * @param key   unique id for the value
+     * @param clazz class to instantiate and contribute
+     * @since 5.1
+     */
+    void addInstance(K key, Class<? extends V> clazz);
 }
