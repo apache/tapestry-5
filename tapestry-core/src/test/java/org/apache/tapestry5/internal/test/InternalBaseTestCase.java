@@ -21,9 +21,9 @@ import org.apache.tapestry5.internal.parser.ComponentTemplate;
 import org.apache.tapestry5.internal.parser.TemplateToken;
 import org.apache.tapestry5.internal.services.*;
 import org.apache.tapestry5.internal.structure.ComponentPageElement;
+import org.apache.tapestry5.internal.structure.ComponentPageElementResources;
 import org.apache.tapestry5.internal.structure.Page;
 import org.apache.tapestry5.internal.structure.PageElement;
-import org.apache.tapestry5.internal.structure.PageResources;
 import org.apache.tapestry5.ioc.*;
 import org.apache.tapestry5.ioc.def.ContributionDef;
 import org.apache.tapestry5.ioc.def.ModuleDef;
@@ -580,20 +580,21 @@ public class InternalBaseTestCase extends TapestryTestCase implements Registry
         expect(queue.getRenderingPage()).andReturn(page);
     }
 
-    protected final PageResources mockPageResources()
+    protected final ComponentPageElementResources mockComponentPageElementResources()
     {
-        return newMock(PageResources.class);
+        return newMock(ComponentPageElementResources.class);
     }
 
-    protected final void train_toClass(PageResources resources, String className, Class toClass)
+    protected final void train_toClass(ComponentPageElementResources resources, String className, Class toClass)
     {
         expect(resources.toClass(className)).andReturn(toClass).atLeastOnce();
     }
 
-    protected final <S, T> void train_coerce(PageResources pageResources, S input, Class<T> expectedType,
+    protected final <S, T> void train_coerce(ComponentPageElementResources componentPageElementResources, S input,
+                                             Class<T> expectedType,
                                              T coercedValue)
     {
-        expect(pageResources.coerce(input, expectedType)).andReturn(coercedValue);
+        expect(componentPageElementResources.coerce(input, expectedType)).andReturn(coercedValue);
     }
 
     protected final EventContext mockEventContext()

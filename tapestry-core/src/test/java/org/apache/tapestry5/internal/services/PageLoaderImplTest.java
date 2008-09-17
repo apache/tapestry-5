@@ -80,7 +80,7 @@ public class PageLoaderImplTest extends InternalBaseTestCase
 
         replay();
 
-        PageLoader loader = new PageLoaderImpl(templateSource, elementFactory, null, null, resolver);
+        PageLoader loader = new PageLoaderImpl(templateSource, elementFactory, null, resolver);
 
         Page page = loader.loadPage(LOGICAL_PAGE_NAME, LOCALE);
 
@@ -164,11 +164,10 @@ public class PageLoaderImplTest extends InternalBaseTestCase
 
         replay();
 
-        PageLoader loader = new PageLoaderImpl(templateSource, elementFactory, null, null, resolver);
+        PageLoader loader = new PageLoaderImpl(templateSource, elementFactory, null, resolver);
 
         loader.loadPage(LOGICAL_PAGE_NAME, LOCALE);
 
         verify();
     }
-
 }

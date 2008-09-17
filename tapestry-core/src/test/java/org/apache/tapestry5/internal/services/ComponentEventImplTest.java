@@ -17,7 +17,7 @@ package org.apache.tapestry5.internal.services;
 import org.apache.tapestry5.ComponentEventCallback;
 import org.apache.tapestry5.EventContext;
 import org.apache.tapestry5.TapestryMarkers;
-import org.apache.tapestry5.internal.structure.PageResources;
+import org.apache.tapestry5.internal.structure.ComponentPageElementResources;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.runtime.ComponentEvent;
@@ -120,7 +120,7 @@ public class ComponentEventImplTest extends InternalBaseTestCase
     public void coerce_context()
     {
         ComponentEventCallback handler = mockComponentEventHandler();
-        PageResources resources = mockPageResources();
+        ComponentPageElementResources resources = mockComponentPageElementResources();
         EventContext context = mockEventContext();
         Integer value = new Integer(27);
 
@@ -173,7 +173,7 @@ public class ComponentEventImplTest extends InternalBaseTestCase
     {
         ComponentEventCallback handler = mockComponentEventHandler();
         EventContext context = mockEventContext();
-        PageResources resources = mockPageResources();
+        ComponentPageElementResources resources = mockComponentPageElementResources();
         Logger logger = mockLogger();
 
         logger.debug(eq(TapestryMarkers.EVENT_HANDLER_METHOD), isA(String.class), isA(String.class));

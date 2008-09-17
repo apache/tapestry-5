@@ -330,7 +330,7 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
         Component component = mockComponent();
         ComponentModel model = mockComponentModel();
         Binding binding = mockBinding();
-        PageResources resources = mockPageResources();
+        ComponentPageElementResources resources = mockComponentPageElementResources();
         Logger logger = mockLogger();
 
         train_getLogger(model, logger);
@@ -365,7 +365,7 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
         Page page = newPage(PAGE_NAME);
         Component component = mockComponent();
         ComponentModel model = mockComponentModel();
-        PageResources resources = mockPageResources();
+        ComponentPageElementResources resources = mockComponentPageElementResources();
         Binding binding = mockBinding();
         Logger logger = mockLogger();
 
@@ -566,7 +566,6 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
         }
 
         verify();
-
     }
 
     @Test

@@ -56,7 +56,6 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
     public void action_link_root_context_no_ids()
     {
         testActionLink("", PAGE_LOGICAL_NAME, "foo.bar", "someaction", "/sub/mypage.foo.bar:someaction");
-
     }
 
     @Test
@@ -321,7 +320,7 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
                                                   securityManager);
         factory.addListener(listener);
 
-        Link link = factory.createPageLink(PAGE_LOGICAL_NAME, false);
+        Link link = factory.createPageRenderLink(PAGE_LOGICAL_NAME, false);
 
         assertEquals(link.toRedirectURI(), ENCODED);
 
@@ -373,7 +372,7 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
                                                   securityManager);
         factory.addListener(listener);
 
-        Link link = factory.createPageLink(logicalName, false);
+        Link link = factory.createPageRenderLink(logicalName, false);
 
         assertEquals(link.toRedirectURI(), ENCODED);
 
@@ -425,7 +424,7 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
                                                   securityManager);
         factory.addListener(listener);
 
-        Link link = factory.createPageLink(logicalName, false);
+        Link link = factory.createPageRenderLink(logicalName, false);
 
         assertEquals(link.toRedirectURI(), ENCODED);
 
@@ -661,5 +660,4 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
 
         verify();
     }
-
 }

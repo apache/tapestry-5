@@ -16,7 +16,7 @@ package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.ComponentEventCallback;
 import org.apache.tapestry5.EventContext;
-import org.apache.tapestry5.internal.structure.PageResources;
+import org.apache.tapestry5.internal.structure.ComponentPageElementResources;
 import org.apache.tapestry5.runtime.ComponentEvent;
 import org.slf4j.Logger;
 
@@ -28,24 +28,26 @@ public class ComponentEventImpl extends EventImpl implements ComponentEvent
 
     private final EventContext context;
 
-    private final PageResources pageResources;
+    private final ComponentPageElementResources componentPageElementResources;
 
     /**
-     * @param eventType              non blank string used to identify the type of event that was triggered
-     * @param originatingComponentId the id of the component that triggered the event
-     * @param context                provides access to parameter values
-     * @param handler                invoked when a non-null return value is obtained from an event handler method
-     * @param pageResources          provides access to common resources and services
-     * @param logger                 used to log method invocations
+     * @param eventType                     non blank string used to identify the type of event that was triggered
+     * @param originatingComponentId        the id of the component that triggered the event
+     * @param context                       provides access to parameter values
+     * @param handler                       invoked when a non-null return value is obtained from an event handler
+     *                                      method
+     * @param componentPageElementResources provides access to common resources and services
+     * @param logger                        used to log method invocations
      */
     public ComponentEventImpl(String eventType, String originatingComponentId, EventContext context,
-                              ComponentEventCallback handler, PageResources pageResources, Logger logger)
+                              ComponentEventCallback handler,
+                              ComponentPageElementResources componentPageElementResources, Logger logger)
     {
         super(handler, logger);
 
         this.eventType = eventType;
         this.originatingComponentId = originatingComponentId;
-        this.pageResources = pageResources;
+        this.componentPageElementResources = componentPageElementResources;
         this.context = context;
     }
 
@@ -71,10 +73,9 @@ public class ComponentEventImpl extends EventImpl implements ComponentEvent
                 .contextIndexOutOfRange(getMethodDescription()));
         try
         {
-            Class desiredType = pageResources.toClass(desiredTypeName);
+            Class desiredType = componentPageElementResources.toClass(desiredTypeName);
 
             return context.get(desiredType, index);
-
         }
         catch (Exception ex)
         {

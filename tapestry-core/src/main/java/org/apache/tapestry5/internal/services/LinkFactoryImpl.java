@@ -268,7 +268,7 @@ public class LinkFactoryImpl implements LinkFactory
         return result;
     }
 
-    public Link createPageLink(String logicalPageName, boolean override, Object... context)
+    public Link createPageRenderLink(String logicalPageName, boolean override, Object... context)
     {
         // This verifies that the page name is valid.
         Page page = pageCache.get(logicalPageName);
