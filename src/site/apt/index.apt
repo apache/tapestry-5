@@ -86,6 +86,9 @@ Third Party Libraries, Tutorials and Resources
 
 New And Of Note
 
+  * IoC Service contributions may now be made in terms of classes (that are automatically instantiated) as well as
+    instances.
+
   * Tapestry now bundles Prototype version 1.6.0.2.
 
   * New methods have been added to

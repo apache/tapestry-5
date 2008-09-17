@@ -77,10 +77,9 @@ public final class TapestryIOCModule
     /**
      * Contributes the "perthread" scope.
      */
-    public void contributeServiceLifecycleSource(MappedConfiguration<String, ServiceLifecycle> configuration,
-                                                 ObjectLocator locator)
+    public void contributeServiceLifecycleSource(MappedConfiguration<String, ServiceLifecycle> configuration)
     {
-        configuration.add(PERTHREAD_SCOPE, locator.autobuild(PerThreadServiceLifecycle.class));
+        configuration.addInstance(PERTHREAD_SCOPE, PerThreadServiceLifecycle.class);
     }
 
     /**
@@ -88,12 +87,10 @@ public final class TapestryIOCModule
      * <p/>
      * Contributes "Value", which injects values (not services) triggered by the {@link Value} annotation.
      */
-    public static void contributeMasterObjectProvider(OrderedConfiguration<ObjectProvider> configuration,
-
-                                                      ObjectLocator locator)
+    public static void contributeMasterObjectProvider(OrderedConfiguration<ObjectProvider> configuration)
     {
-        configuration.add("Value", locator.autobuild(ValueObjectProvider.class));
-        configuration.add("Symbol", locator.autobuild(SymbolObjectProvider.class));
+        configuration.addInstance("Value", ValueObjectProvider.class);
+        configuration.addInstance("Symbol", SymbolObjectProvider.class);
     }
 
     /**

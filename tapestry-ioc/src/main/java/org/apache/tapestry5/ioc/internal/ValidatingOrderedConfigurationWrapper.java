@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@ package org.apache.tapestry5.ioc.internal;
 
 import org.apache.tapestry5.ioc.OrderedConfiguration;
 import org.apache.tapestry5.ioc.def.ContributionDef;
+import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.slf4j.Logger;
 
 /**
@@ -51,6 +52,16 @@ public class ValidatingOrderedConfigurationWrapper<T> implements OrderedConfigur
     public void add(String id, T object, String... constraints)
     {
         delegate.add(id, validVersionOf(object), constraints);
+    }
+
+    public void addInstance(String id, Class<? extends T> clazz, String... constraints)
+    {
+        Defense.notNull(clazz, "clazz");
+
+        if (!expectedType.isAssignableFrom(clazz))
+            throw new IllegalArgumentException(IOCMessages.wrongContributionClass(clazz, serviceId, expectedType));
+        
+        delegate.addInstance(id, clazz, constraints);
     }
 
     private T validVersionOf(T object)

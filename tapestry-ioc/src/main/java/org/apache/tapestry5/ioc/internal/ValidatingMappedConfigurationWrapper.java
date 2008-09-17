@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
 package org.apache.tapestry5.ioc.internal;
 
 import org.apache.tapestry5.ioc.MappedConfiguration;
+import org.apache.tapestry5.ioc.ObjectLocator;
 import org.apache.tapestry5.ioc.def.ContributionDef;
 import org.slf4j.Logger;
 
@@ -46,10 +47,12 @@ public class ValidatingMappedConfigurationWrapper<K, V> implements MappedConfigu
 
     private final MappedConfiguration<K, V> delegate;
 
+    private final ObjectLocator locator;
+
     public ValidatingMappedConfigurationWrapper(String serviceId, ContributionDef contributionDef,
                                                 Logger logger, Class<K> expectedKeyType, Class<V> expectedValueType,
                                                 Map<K, ContributionDef> keyToContributor,
-                                                MappedConfiguration<K, V> delegate)
+                                                MappedConfiguration<K, V> delegate, ObjectLocator locator)
     {
         this.serviceId = serviceId;
         this.contributionDef = contributionDef;
@@ -58,6 +61,7 @@ public class ValidatingMappedConfigurationWrapper<K, V> implements MappedConfigu
         this.expectedValueType = expectedValueType;
         this.keyToContributor = keyToContributor;
         this.delegate = delegate;
+        this.locator = locator;
     }
 
     public void add(K key, V value)
@@ -68,18 +72,19 @@ public class ValidatingMappedConfigurationWrapper<K, V> implements MappedConfigu
             return;
         }
 
-        if (value == null)
-        {
-            logger.warn(IOCMessages.contributionWasNull(serviceId, contributionDef));
-            return;
-        }
-
         if (!expectedKeyType.isInstance(key))
         {
             logger.warn(IOCMessages.contributionWrongKeyType(serviceId, contributionDef, key
                     .getClass(), expectedKeyType));
             return;
         }
+
+        if (value == null)
+        {
+            logger.warn(IOCMessages.contributionWasNull(serviceId, contributionDef));
+            return;
+        }
+
 
         if (!expectedValueType.isInstance(value))
         {
@@ -107,4 +112,10 @@ public class ValidatingMappedConfigurationWrapper<K, V> implements MappedConfigu
         keyToContributor.put(key, contributionDef);
     }
 
+    public void addInstance(K key, Class<? extends V> clazz)
+    {
+        V value = locator.autobuild(clazz);
+
+        add(key, value);
+    }
 }
