@@ -376,7 +376,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
 
     private final String elementName;
 
-    private final PageResources pageResources;
+    private final ComponentPageElementResources componentPageElementResources;
 
     private final Logger logger;
 
@@ -516,7 +516,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
     public ComponentPageElement newChild(String id, String elementName, Instantiator instantiator, Location location)
     {
         ComponentPageElementImpl child = new ComponentPageElementImpl(page, this, id, elementName, instantiator,
-                                                                      location, pageResources);
+                                                                      location, componentPageElementResources);
 
         addEmbeddedElement(child);
 
@@ -526,18 +526,22 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
     /**
      * Constructor for other components embedded within the root component or at deeper levels of the hierarchy.
      *
-     * @param page          ultimately containing this component
-     * @param container     component immediately containing this component (may be null for a root component)
-     * @param id            unique (within the container) id for this component (may be null for a root component)
-     * @param elementName   the name of the element which represents this component in the template, or null for
-     *                      &lt;comp&gt; element or a page component
-     * @param instantiator  used to create the new component instance and access the component's model
-     * @param location      location of the element (within a template), used as part of exception reporting
-     * @param pageResources Provides access to common methods of various services
+     * @param page                          ultimately containing this component
+     * @param container                     component immediately containing this component (may be null for a root
+     *                                      component)
+     * @param id                            unique (within the container) id for this component (may be null for a root
+     *                                      component)
+     * @param elementName                   the name of the element which represents this component in the template, or
+     *                                      null for &lt;comp&gt; element or a page component
+     * @param instantiator                  used to create the new component instance and access the component's model
+     * @param location                      location of the element (within a template), used as part of exception
+     *                                      reporting
+     * @param componentPageElementResources Provides access to common methods of various services
      */
 
     ComponentPageElementImpl(Page page, ComponentPageElement container, String id, String elementName,
-                             Instantiator instantiator, Location location, PageResources pageResources)
+                             Instantiator instantiator, Location location,
+                             ComponentPageElementResources componentPageElementResources)
     {
         super(location);
 
@@ -545,7 +549,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
         this.container = container;
         this.id = id;
         this.elementName = elementName;
-        this.pageResources = pageResources;
+        this.componentPageElementResources = componentPageElementResources;
 
         ComponentResources containerResources = container == null
                                                 ? null
@@ -581,7 +585,8 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
             }
         }
 
-        coreResources = new InternalComponentResourcesImpl(this.page, this, containerResources, this.pageResources,
+        coreResources = new InternalComponentResourcesImpl(this.page, this, containerResources,
+                                                           this.componentPageElementResources,
                                                            completeId, nestedId, instantiator);
 
         coreComponent = coreResources.getComponent();
@@ -592,9 +597,10 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
     /**
      * Constructor for the root component of a page.
      */
-    public ComponentPageElementImpl(Page page, Instantiator instantiator, PageResources pageResources)
+    public ComponentPageElementImpl(Page page, Instantiator instantiator,
+                                    ComponentPageElementResources componentPageElementResources)
     {
-        this(page, null, null, null, instantiator, null, pageResources);
+        this(page, null, null, null, instantiator, null, componentPageElementResources);
     }
 
     public void addEmbeddedElement(ComponentPageElement child)
@@ -624,7 +630,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
         String mixinExtension = "$" + mixinName.toLowerCase();
 
         InternalComponentResourcesImpl resources = new InternalComponentResourcesImpl(page, this, coreResources,
-                                                                                      pageResources,
+                                                                                      componentPageElementResources,
                                                                                       completeId + mixinExtension,
                                                                                       nestedId + mixinExtension,
                                                                                       instantiator);
@@ -989,7 +995,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
 
             public <T> T get(Class<T> desiredType, int index)
             {
-                return pageResources.coerce(values[index], desiredType);
+                return componentPageElementResources.coerce(values[index], desiredType);
             }
         };
     }
@@ -1042,7 +1048,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
                 Logger logger = component.getLogger();
 
                 ComponentEvent event = new ComponentEventImpl(currentEventType, componentId, currentContext, wrapped,
-                                                              pageResources, logger);
+                                                              componentPageElementResources, logger);
 
                 logger.debug(TapestryMarkers.EVENT_DISPATCH, "Dispatch event: {}", event);
 
@@ -1201,5 +1207,30 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
     public Map<String, Binding> getInformalParameterBindings()
     {
         return coreResources.getInformalParameterBindings();
+    }
+
+    public Link createEventLink(String eventType, Object... context)
+    {
+        return componentPageElementResources.createComponentEventLink(coreResources, eventType, false, context);
+    }
+
+    public Link createActionLink(String eventType, boolean forForm, Object... context)
+    {
+        return componentPageElementResources.createComponentEventLink(coreResources, eventType, forForm, context);
+    }
+
+    public Link createFormEventLink(String eventType, Object... context)
+    {
+        return componentPageElementResources.createComponentEventLink(coreResources, eventType, true, context);
+    }
+
+    public Link createPageLink(String pageName, boolean override, Object... context)
+    {
+        return componentPageElementResources.createPageRenderLink(pageName, override, context);
+    }
+
+    public Link createPageLink(Class pageClass, boolean override, Object... context)
+    {
+        return componentPageElementResources.createPageRenderLink(pageClass, override, context);
     }
 }

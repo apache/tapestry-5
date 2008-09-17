@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@ public class PageImplTest extends InternalBaseTestCase
 
         replay();
 
-        Page page = new PageImpl(LOGICAL_PAGE_NAME, locale, null, null, null);
+        Page page = new PageImpl(LOGICAL_PAGE_NAME, locale, null);
 
         assertNull(page.getRootElement());
 
@@ -60,7 +60,7 @@ public class PageImplTest extends InternalBaseTestCase
 
         replay();
 
-        Page page = new PageImpl(null, locale, null, null, null);
+        Page page = new PageImpl(null, locale, null);
 
         page.addLifecycleListener(listener1);
         page.addLifecycleListener(listener2);
@@ -82,7 +82,7 @@ public class PageImplTest extends InternalBaseTestCase
 
         replay();
 
-        Page page = new PageImpl(null, locale, null, null, null);
+        Page page = new PageImpl(null, locale, null);
 
         page.addLifecycleListener(listener);
 
@@ -116,7 +116,7 @@ public class PageImplTest extends InternalBaseTestCase
 
         replay();
 
-        Page page = new PageImpl(null, locale, null, null, null);
+        Page page = new PageImpl(null, locale, null);
         page.setRootElement(element);
 
         page.addLifecycleListener(listener1);
@@ -144,7 +144,7 @@ public class PageImplTest extends InternalBaseTestCase
 
         replay();
 
-        Page page = new PageImpl(null, locale, null, null, null);
+        Page page = new PageImpl(null, locale, null);
 
         page.addLifecycleListener(listener1);
         page.addLifecycleListener(listener2);
@@ -170,7 +170,7 @@ public class PageImplTest extends InternalBaseTestCase
 
         replay();
 
-        Page page = new PageImpl(LOGICAL_PAGE_NAME, locale, null, null, null);
+        Page page = new PageImpl(LOGICAL_PAGE_NAME, locale, null);
 
         page.addLifecycleListener(listener1);
         page.addLifecycleListener(listener2);
@@ -187,7 +187,7 @@ public class PageImplTest extends InternalBaseTestCase
 
         replay();
 
-        Page page = new PageImpl(LOGICAL_PAGE_NAME, locale, null, null, null);
+        Page page = new PageImpl(LOGICAL_PAGE_NAME, locale, null);
 
         page.setRootElement(root);
 

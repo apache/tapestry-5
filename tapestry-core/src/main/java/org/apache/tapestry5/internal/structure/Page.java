@@ -15,7 +15,6 @@
 package org.apache.tapestry5.internal.structure;
 
 import org.apache.tapestry5.ComponentResources;
-import org.apache.tapestry5.Link;
 import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.runtime.PageLifecycleListener;
 import org.slf4j.Logger;
@@ -111,27 +110,6 @@ public interface Page
      * @throws IllegalArgumentException if the nestedId does not correspond to a component
      */
     ComponentPageElement getComponentElementByNestedId(String nestedId);
-
-    /**
-     * Creates a link that will trigger behavior in a component within the page.
-     *
-     * @see org.apache.tapestry5.ComponentResources#createEventLink(String, Object[])
-     */
-    Link createComponentEventLink(String nestedId, String eventType, boolean forForm, Object... context);
-
-    /**
-     * Creates a link to the named page.
-     *
-     * @see org.apache.tapestry5.ComponentResources#createPageLink(String, boolean, Object[])
-     */
-    Link createPageRenderLink(String pageName, boolean override, Object... context);
-
-    /**
-     * Creates a link to the named page.
-     *
-     * @see org.apache.tapestry5.ComponentResources#createPageLink(Class, boolean, Object[])
-     */
-    Link createPageRenderLink(Class pageClass, boolean override, Object... context);
 
     /**
      * Posts a change to a persistent field.
