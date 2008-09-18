@@ -17,7 +17,6 @@ package org.apache.tapestry5.ioc.internal;
 import org.apache.tapestry5.ioc.MappedConfiguration;
 import org.apache.tapestry5.ioc.ObjectLocator;
 import org.apache.tapestry5.ioc.def.ContributionDef;
-import org.slf4j.Logger;
 
 import java.util.Map;
 
@@ -37,8 +36,6 @@ public class ValidatingMappedConfigurationWrapper<K, V> implements MappedConfigu
 
     private final ContributionDef contributionDef;
 
-    private final Logger logger;
-
     private final Class<K> expectedKeyType;
 
     private final Class<V> expectedValueType;
@@ -50,13 +47,12 @@ public class ValidatingMappedConfigurationWrapper<K, V> implements MappedConfigu
     private final ObjectLocator locator;
 
     public ValidatingMappedConfigurationWrapper(String serviceId, ContributionDef contributionDef,
-                                                Logger logger, Class<K> expectedKeyType, Class<V> expectedValueType,
+                                                Class<K> expectedKeyType, Class<V> expectedValueType,
                                                 Map<K, ContributionDef> keyToContributor,
                                                 MappedConfiguration<K, V> delegate, ObjectLocator locator)
     {
         this.serviceId = serviceId;
         this.contributionDef = contributionDef;
-        this.logger = logger;
         this.expectedKeyType = expectedKeyType;
         this.expectedValueType = expectedValueType;
         this.keyToContributor = keyToContributor;
@@ -67,42 +63,25 @@ public class ValidatingMappedConfigurationWrapper<K, V> implements MappedConfigu
     public void add(K key, V value)
     {
         if (key == null)
-        {
-            logger.warn(IOCMessages.contributionKeyWasNull(serviceId, contributionDef));
-            return;
-        }
+            throw new NullPointerException(IOCMessages.contributionKeyWasNull(serviceId));
 
         if (!expectedKeyType.isInstance(key))
-        {
-            logger.warn(IOCMessages.contributionWrongKeyType(serviceId, contributionDef, key
-                    .getClass(), expectedKeyType));
-            return;
-        }
+            throw new IllegalArgumentException(
+                    IOCMessages.contributionWrongKeyType(serviceId, key
+                            .getClass(), expectedKeyType));
 
         if (value == null)
-        {
-            logger.warn(IOCMessages.contributionWasNull(serviceId, contributionDef));
-            return;
-        }
+            throw new NullPointerException(IOCMessages.contributionWasNull(serviceId));
 
 
         if (!expectedValueType.isInstance(value))
-        {
-            logger.warn(IOCMessages.contributionWrongValueType(serviceId, contributionDef, value
+            throw new IllegalArgumentException(IOCMessages.contributionWrongValueType(serviceId, value
                     .getClass(), expectedValueType));
-            return;
-        }
 
         ContributionDef existing = keyToContributor.get(key);
 
         if (existing != null)
-        {
-            logger.warn(IOCMessages.contributionDuplicateKey(
-                    serviceId,
-                    contributionDef,
-                    existing));
-            return;
-        }
+            throw new IllegalArgumentException(IOCMessages.contributionDuplicateKey(serviceId, existing));
 
         delegate.add(key, value);
 

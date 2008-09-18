@@ -15,11 +15,8 @@
 package org.apache.tapestry5.ioc.internal;
 
 import org.apache.tapestry5.ioc.OrderedConfiguration;
-import org.apache.tapestry5.ioc.def.ContributionDef;
-import org.slf4j.Logger;
 import org.testng.annotations.Test;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -29,8 +26,6 @@ public class ValidatingOrderedConfigurationWrapperTest extends IOCInternalTestCa
     @Test
     public void valid_type_long_form()
     {
-        ContributionDef def = mockContributionDef();
-        Logger logger = mockLogger();
         OrderedConfiguration<Runnable> configuration = mockOrderedConfiguration();
         Runnable contribution = mockRunnable();
 
@@ -39,7 +34,7 @@ public class ValidatingOrderedConfigurationWrapperTest extends IOCInternalTestCa
         replay();
 
         OrderedConfiguration<Runnable> wrapper = new ValidatingOrderedConfigurationWrapper<Runnable>(
-                "Service", def, logger, Runnable.class, configuration);
+                "Service", Runnable.class, configuration);
 
         wrapper.add("id", contribution, "after:pre", "before:post");
 
@@ -49,8 +44,6 @@ public class ValidatingOrderedConfigurationWrapperTest extends IOCInternalTestCa
     @Test
     public void contribute_valid_class()
     {
-        ContributionDef def = mockContributionDef();
-        Logger logger = mockLogger();
         OrderedConfiguration<Map> configuration = mockOrderedConfiguration();
 
         configuration.addInstance("id", HashMap.class, "after:pre", "before:post");
@@ -58,7 +51,7 @@ public class ValidatingOrderedConfigurationWrapperTest extends IOCInternalTestCa
         replay();
 
         OrderedConfiguration<Map> wrapper = new ValidatingOrderedConfigurationWrapper<Map>(
-                "Service", def, logger, Map.class, configuration);
+                "Service", Map.class, configuration);
 
         wrapper.addInstance("id", HashMap.class, "after:pre", "before:post");
 
@@ -68,14 +61,12 @@ public class ValidatingOrderedConfigurationWrapperTest extends IOCInternalTestCa
     @Test
     public void contribute_invalid_class()
     {
-        ContributionDef def = mockContributionDef();
-        Logger logger = mockLogger();
         OrderedConfiguration<Object> configuration = mockOrderedConfiguration();
 
         replay();
 
         OrderedConfiguration<Object> wrapper = new ValidatingOrderedConfigurationWrapper<Object>(
-                "Service", def, logger, Map.class, configuration);
+                "Service", Map.class, configuration);
 
         try
         {
@@ -96,8 +87,6 @@ public class ValidatingOrderedConfigurationWrapperTest extends IOCInternalTestCa
     @Test
     public void valid_type_short_form()
     {
-        ContributionDef def = mockContributionDef();
-        Logger logger = mockLogger();
         OrderedConfiguration<Runnable> configuration = mockOrderedConfiguration();
         Runnable contribution = mockRunnable();
 
@@ -106,7 +95,7 @@ public class ValidatingOrderedConfigurationWrapperTest extends IOCInternalTestCa
         replay();
 
         OrderedConfiguration<Runnable> wrapper = new ValidatingOrderedConfigurationWrapper<Runnable>(
-                "Service", def, logger, Runnable.class, configuration);
+                "Service", Runnable.class, configuration);
 
         wrapper.add("id", contribution);
 
@@ -116,8 +105,6 @@ public class ValidatingOrderedConfigurationWrapperTest extends IOCInternalTestCa
     @Test
     public void null_object_passed_through()
     {
-        ContributionDef def = mockContributionDef();
-        Logger logger = mockLogger();
         OrderedConfiguration<Runnable> configuration = mockOrderedConfiguration();
 
         configuration.add("id", null);
@@ -125,7 +112,7 @@ public class ValidatingOrderedConfigurationWrapperTest extends IOCInternalTestCa
         replay();
 
         OrderedConfiguration<Runnable> wrapper = new ValidatingOrderedConfigurationWrapper<Runnable>(
-                "Service", def, logger, Runnable.class, configuration);
+                "Service", Runnable.class, configuration);
 
         wrapper.add("id", null);
 
@@ -136,32 +123,24 @@ public class ValidatingOrderedConfigurationWrapperTest extends IOCInternalTestCa
     @Test
     public void incorrect_contribution_type_is_passed_through_as_null()
     {
-        Method method = findMethod("contributeBarneyService");
-
-        ContributionDef def = new ContributionDefImpl("Service", method, getClassFactory());
-        Logger log = mockLogger();
         OrderedConfiguration<Runnable> configuration = mockOrderedConfiguration();
-
-        log.warn(IOCMessages.contributionWrongValueType(
-                "Service",
-                def,
-                String.class,
-                Runnable.class));
-
-        configuration.add("id", null);
 
         replay();
 
-        OrderedConfiguration wrapper = new ValidatingOrderedConfigurationWrapper("Service", def,
-                                                                                 log, Runnable.class, configuration);
+        OrderedConfiguration wrapper = new ValidatingOrderedConfigurationWrapper("Service",
+                                                                                 Runnable.class, configuration);
 
-        wrapper.add("id", "string");
+        try
+        {
+            wrapper.add("id", "string");
+            unreachable();
+        }
+        catch (IllegalArgumentException ex)
+        {
+            assertEquals(ex.getMessage(),
+                         "Service contribution (to service 'Service') was an instance of java.lang.String, which is not assignable to the configuration type java.lang.Runnable.");
+        }
 
         verify();
-    }
-
-    public void contributeBarneyService(OrderedConfiguration<Runnable> configuration)
-    {
-
     }
 }

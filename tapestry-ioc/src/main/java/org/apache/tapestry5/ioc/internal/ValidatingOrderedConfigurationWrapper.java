@@ -15,9 +15,7 @@
 package org.apache.tapestry5.ioc.internal;
 
 import org.apache.tapestry5.ioc.OrderedConfiguration;
-import org.apache.tapestry5.ioc.def.ContributionDef;
 import org.apache.tapestry5.ioc.internal.util.Defense;
-import org.slf4j.Logger;
 
 /**
  * Implements validation of values provided to an {@link org.apache.tapestry5.ioc.OrderedConfiguration}. If you provide
@@ -31,27 +29,22 @@ public class ValidatingOrderedConfigurationWrapper<T> implements OrderedConfigur
 {
     private final String serviceId;
 
-    private final ContributionDef contributionDef;
-
-    private final Logger logger;
-
     private final Class expectedType;
 
     private final OrderedConfiguration<T> delegate;
 
-    public ValidatingOrderedConfigurationWrapper(String serviceId, ContributionDef contributionDef,
-                                                 Logger logger, Class expectedType, OrderedConfiguration<T> delegate)
+    public ValidatingOrderedConfigurationWrapper(String serviceId, Class expectedType, OrderedConfiguration<T> delegate)
     {
         this.serviceId = serviceId;
-        this.contributionDef = contributionDef;
-        this.logger = logger;
         this.expectedType = expectedType;
         this.delegate = delegate;
     }
 
     public void add(String id, T object, String... constraints)
     {
-        delegate.add(id, validVersionOf(object), constraints);
+        checkValid(object);
+
+        delegate.add(id, object, constraints);
     }
 
     public void addInstance(String id, Class<? extends T> clazz, String... constraints)
@@ -60,17 +53,15 @@ public class ValidatingOrderedConfigurationWrapper<T> implements OrderedConfigur
 
         if (!expectedType.isAssignableFrom(clazz))
             throw new IllegalArgumentException(IOCMessages.wrongContributionClass(clazz, serviceId, expectedType));
-        
+
         delegate.addInstance(id, clazz, constraints);
     }
 
-    private T validVersionOf(T object)
+    private void checkValid(T object)
     {
-        if (object == null || expectedType.isInstance(object)) return object;
+        if (object == null || expectedType.isInstance(object)) return;
 
-        logger.warn(IOCMessages.contributionWrongValueType(serviceId, contributionDef, object
+        throw new IllegalArgumentException(IOCMessages.contributionWrongValueType(serviceId, object
                 .getClass(), expectedType));
-
-        return null;
     }
 }

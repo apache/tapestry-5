@@ -165,27 +165,27 @@ final class IOCMessages
         return MESSAGES.format("contribution-method-error", asString(method), cause);
     }
 
-    static String contributionWasNull(String serviceId, ContributionDef def)
+    static String contributionWasNull(String serviceId)
     {
-        return MESSAGES.format("contribution-was-null", serviceId, def);
+        return MESSAGES.format("contribution-was-null", serviceId);
     }
 
-    static String contributionKeyWasNull(String serviceId, ContributionDef def)
+    static String contributionKeyWasNull(String serviceId)
     {
-        return MESSAGES.format("contribution-key-was-null", serviceId, def);
+        return MESSAGES.format("contribution-key-was-null", serviceId);
     }
 
-    static String contributionWrongValueType(String serviceId, ContributionDef def, Class actualClass,
+    static String contributionWrongValueType(String serviceId, Class actualClass,
                                              Class expectedClass)
     {
-        return MESSAGES.format("contribution-wrong-value-type", serviceId, def, actualClass
+        return MESSAGES.format("contribution-wrong-value-type", serviceId, actualClass
                 .getName(), expectedClass.getName());
     }
 
-    static String contributionWrongKeyType(String serviceId, ContributionDef def, Class actualClass,
+    static String contributionWrongKeyType(String serviceId, Class actualClass,
                                            Class expectedClass)
     {
-        return MESSAGES.format("contribution-wrong-key-type", serviceId, def, actualClass.getName(),
+        return MESSAGES.format("contribution-wrong-key-type", serviceId, actualClass.getName(),
                                expectedClass.getName());
     }
 
@@ -199,10 +199,9 @@ final class IOCMessages
         return MESSAGES.format("generic-type-not-supported", type);
     }
 
-    static String contributionDuplicateKey(String serviceId, ContributionDef contributionDef,
-                                           ContributionDef existingDef)
+    static String contributionDuplicateKey(String serviceId, ContributionDef existingDef)
     {
-        return MESSAGES.format("contribution-duplicate-key", serviceId, contributionDef, existingDef);
+        return MESSAGES.format("contribution-duplicate-key", serviceId, existingDef);
     }
 
     static String errorBuildingService(String serviceId, ServiceDef serviceDef, Throwable cause)
