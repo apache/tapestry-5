@@ -45,7 +45,7 @@ public class ValidatingMappedConfigurationWrapperTest extends IOCInternalTestCas
         replay();
 
         MappedConfiguration<Class, Runnable> wrapper = new ValidatingMappedConfigurationWrapper<Class, Runnable>(
-                SERVICE_ID, def, logger, Class.class, Runnable.class, keyToContribution, delegate, locator);
+                SERVICE_ID, def, Class.class, Runnable.class, keyToContribution, delegate, locator);
 
         wrapper.add(key, value);
 
@@ -59,7 +59,6 @@ public class ValidatingMappedConfigurationWrapperTest extends IOCInternalTestCas
     {
         ContributionDef def1 = newContributionDef("contributionPlaceholder1");
         ContributionDef def2 = newContributionDef("contributionPlaceholder2");
-        Logger logger = mockLogger();
         Map<Class, ContributionDef> keyToContribution = newMap();
         ObjectLocator locator = mockObjectLocator();
 
@@ -70,14 +69,21 @@ public class ValidatingMappedConfigurationWrapperTest extends IOCInternalTestCas
         Class key = Integer.class;
         Runnable value = mockRunnable();
 
-        logger.warn(IOCMessages.contributionDuplicateKey(SERVICE_ID, def2, def1));
-
         replay();
 
         MappedConfiguration<Class, Runnable> wrapper = new ValidatingMappedConfigurationWrapper<Class, Runnable>(
-                SERVICE_ID, def2, logger, Class.class, Runnable.class, keyToContribution, delegate, locator);
+                SERVICE_ID, def2, Class.class, Runnable.class, keyToContribution, delegate, locator);
 
-        wrapper.add(key, value);
+        try
+        {
+            wrapper.add(key, value);
+            unreachable();
+        }
+        catch (IllegalArgumentException ex)
+        {
+            assertMessageContains(ex,
+                                  "Service contribution (to service 'Baz') conflicts with existing contribution");
+        }
 
         verify();
 
@@ -88,20 +94,25 @@ public class ValidatingMappedConfigurationWrapperTest extends IOCInternalTestCas
     public void null_key()
     {
         ContributionDef def = newContributionDef("contributionPlaceholder1");
-        Logger logger = mockLogger();
         Map<Class, ContributionDef> keyToContribution = newMap();
         MappedConfiguration<Class, Runnable> delegate = mockMappedConfiguration();
         Runnable value = mockRunnable();
         ObjectLocator locator = mockObjectLocator();
 
-        logger.warn(IOCMessages.contributionKeyWasNull(SERVICE_ID, def));
-
         replay();
 
         MappedConfiguration<Class, Runnable> wrapper = new ValidatingMappedConfigurationWrapper<Class, Runnable>(
-                SERVICE_ID, def, logger, Class.class, Runnable.class, keyToContribution, delegate, locator);
+                SERVICE_ID, def, Class.class, Runnable.class, keyToContribution, delegate, locator);
 
-        wrapper.add(null, value);
+        try
+        {
+            wrapper.add(null, value);
+            unreachable();
+        }
+        catch (NullPointerException ex)
+        {
+            assertEquals(ex.getMessage(), "Key for service contribution (to service 'Baz') was null.");
+        }
 
         verify();
     }
@@ -111,22 +122,27 @@ public class ValidatingMappedConfigurationWrapperTest extends IOCInternalTestCas
     public void wrong_key_type()
     {
         ContributionDef def = newContributionDef("contributionPlaceholder1");
-        Logger logger = mockLogger();
         Map<?, ContributionDef> keyToContribution = newMap();
         MappedConfiguration delegate = mockMappedConfiguration();
         Runnable value = mockRunnable();
         ObjectLocator locator = mockObjectLocator();
 
-        logger.warn(IOCMessages
-                .contributionWrongKeyType(SERVICE_ID, def, String.class, Class.class));
-
         replay();
 
         MappedConfiguration wrapper = new ValidatingMappedConfigurationWrapper(SERVICE_ID, def,
-                                                                               logger, Class.class, Runnable.class,
+                                                                               Class.class, Runnable.class,
                                                                                keyToContribution, delegate, locator);
 
-        wrapper.add("java.util.List", value);
+        try
+        {
+            wrapper.add("java.util.List", value);
+            unreachable();
+        }
+        catch (IllegalArgumentException ex)
+        {
+            assertEquals(ex.getMessage(),
+                         "Key for service contribution (to service 'Baz') was an instance of java.lang.String, but the expected key type was java.lang.Class.");
+        }
 
         verify();
     }
@@ -136,24 +152,27 @@ public class ValidatingMappedConfigurationWrapperTest extends IOCInternalTestCas
     public void wrong_value_type()
     {
         ContributionDef def = newContributionDef("contributionPlaceholder1");
-        Logger logger = mockLogger();
         Map<?, ContributionDef> keyToContribution = newMap();
         MappedConfiguration delegate = mockMappedConfiguration();
         ObjectLocator locator = mockObjectLocator();
 
-        logger.warn(IOCMessages.contributionWrongValueType(
-                SERVICE_ID,
-                def,
-                String.class,
-                Runnable.class));
 
         replay();
 
         MappedConfiguration wrapper = new ValidatingMappedConfigurationWrapper(SERVICE_ID, def,
-                                                                               logger, Class.class, Runnable.class,
+                                                                               Class.class, Runnable.class,
                                                                                keyToContribution, delegate, locator);
 
-        wrapper.add(List.class, "do something");
+        try
+        {
+            wrapper.add(List.class, "do something");
+            unreachable();
+        }
+        catch (IllegalArgumentException ex)
+        {
+            assertEquals(ex.getMessage(),
+                         "Service contribution (to service 'Baz') was an instance of java.lang.String, which is not assignable to the configuration type java.lang.Runnable.");
+        }
 
         verify();
     }
@@ -162,22 +181,26 @@ public class ValidatingMappedConfigurationWrapperTest extends IOCInternalTestCas
     public void null_value()
     {
         ContributionDef def = newContributionDef("contributionPlaceholder1");
-        Logger logger = mockLogger();
         Map<Class, ContributionDef> keyToContribution = newMap();
         MappedConfiguration<Class, Runnable> delegate = mockMappedConfiguration();
         ObjectLocator locator = mockObjectLocator();
-                                                                                                   
-        logger.warn(IOCMessages.contributionWasNull(SERVICE_ID, def));
 
         replay();
 
         MappedConfiguration<Class, Runnable> wrapper = new ValidatingMappedConfigurationWrapper<Class, Runnable>(
-                SERVICE_ID, def, logger, Class.class, Runnable.class, keyToContribution, delegate, locator);
+                SERVICE_ID, def, Class.class, Runnable.class, keyToContribution, delegate, locator);
 
-        wrapper.add(Integer.class, null);
+        try
+        {
+            wrapper.add(Integer.class, null);
+            unreachable();
+        }
+        catch (NullPointerException ex)
+        {
+            assertEquals(ex.getMessage(), "Service contribution (to service 'Baz') was null.");
+        }
 
         verify();
-
     }
 
     private ContributionDef newContributionDef(String methodName)
@@ -194,5 +217,4 @@ public class ValidatingMappedConfigurationWrapperTest extends IOCInternalTestCas
     {
 
     }
-
 }

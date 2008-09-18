@@ -15,9 +15,7 @@
 package org.apache.tapestry5.ioc.internal;
 
 import org.apache.tapestry5.ioc.Configuration;
-import org.apache.tapestry5.ioc.def.ContributionDef;
 import org.apache.tapestry5.ioc.internal.util.Defense;
-import org.slf4j.Logger;
 
 /**
  * Performs some validation before delegating to another Configuration.
@@ -26,45 +24,31 @@ public class ValidatingConfigurationWrapper<T> implements Configuration<T>
 {
     private final String serviceId;
 
-    private final ContributionDef contributionDef;
-
-    private final Logger logger;
-
     private final Configuration<T> delegate;
 
     private final Class expectedType;
 
     // Need a strategy for determing the right order for this mass of parameters!
 
-    public ValidatingConfigurationWrapper(String serviceId, Logger logger, Class expectedType,
-                                          ContributionDef contributionDef, Configuration<T> delegate)
+    public ValidatingConfigurationWrapper(String serviceId, Class expectedType, Configuration<T> delegate)
     {
         this.serviceId = serviceId;
-        this.logger = logger;
         this.expectedType = expectedType;
-        this.contributionDef = contributionDef;
         this.delegate = delegate;
     }
 
     public void add(T object)
     {
         if (object == null)
-        {
-            logger.warn(IOCMessages.contributionWasNull(serviceId, contributionDef));
-            return;
-        }
+            throw new NullPointerException(IOCMessages.contributionWasNull(serviceId));
 
         // Sure, we say it is type T ... but is it really?
 
         if (!expectedType.isInstance(object))
-        {
-            logger.warn(IOCMessages.contributionWrongValueType(
+            throw new IllegalArgumentException(IOCMessages.contributionWrongValueType(
                     serviceId,
-                    contributionDef,
                     object.getClass(),
                     expectedType));
-            return;
-        }
 
         delegate.add(object);
     }

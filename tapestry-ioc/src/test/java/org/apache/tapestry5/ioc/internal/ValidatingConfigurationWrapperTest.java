@@ -28,8 +28,6 @@ public class ValidatingConfigurationWrapperTest extends IOCInternalTestCase
     @Test
     public void valid_contribution()
     {
-        ContributionDef def = mockContributionDef();
-        Logger logger = mockLogger();
         Configuration configuration = mockConfiguration();
         Runnable value = mockRunnable();
 
@@ -37,8 +35,8 @@ public class ValidatingConfigurationWrapperTest extends IOCInternalTestCase
 
         replay();
 
-        Configuration wrapper = new ValidatingConfigurationWrapper("foo.Bar", logger,
-                                                                   Runnable.class, def, configuration);
+        Configuration wrapper = new ValidatingConfigurationWrapper("foo.Bar",
+                                                                   Runnable.class, configuration);
 
         wrapper.add(value);
 
@@ -57,8 +55,8 @@ public class ValidatingConfigurationWrapperTest extends IOCInternalTestCase
 
         replay();
 
-        Configuration wrapper = new ValidatingConfigurationWrapper("foo.Bar", logger,
-                                                                   Map.class, def, configuration);
+        Configuration wrapper = new ValidatingConfigurationWrapper("foo.Bar",
+                                                                   Map.class, configuration);
 
         wrapper.addInstance(HashMap.class);
 
@@ -69,19 +67,22 @@ public class ValidatingConfigurationWrapperTest extends IOCInternalTestCase
     @Test
     public void null_contribution()
     {
-        Logger logger = mockLogger();
         Configuration configuration = mockConfiguration();
-        ContributionDef def = new ContributionDefImpl("Bar", findMethod("contributeUnorderedNull"),
-                                                      getClassFactory());
-
-        logger.warn(IOCMessages.contributionWasNull("Bar", def));
 
         replay();
 
-        Configuration wrapper = new ValidatingConfigurationWrapper("Bar", logger, Runnable.class,
-                                                                   def, configuration);
+        Configuration wrapper = new ValidatingConfigurationWrapper("Bar", Runnable.class,
+                                                                   configuration);
 
-        wrapper.add(null);
+        try
+        {
+            wrapper.add(null);
+            unreachable();
+        }
+        catch (NullPointerException ex)
+        {
+            assertEquals(ex.getMessage(), "Service contribution (to service 'Bar') was null.");
+        }
 
         verify();
     }
@@ -90,20 +91,23 @@ public class ValidatingConfigurationWrapperTest extends IOCInternalTestCase
     @Test
     public void wrong_type_of_contribution()
     {
-        Logger logger = mockLogger();
         Configuration configuration = mockConfiguration();
-        ContributionDef def = new ContributionDefImpl("Bar", findMethod("contributeUnorderedNull"),
-                                                      getClassFactory());
-
-        logger.warn(IOCMessages
-                .contributionWrongValueType("Bar", def, String.class, Runnable.class));
 
         replay();
 
-        Configuration wrapper = new ValidatingConfigurationWrapper("Bar", logger, Runnable.class,
-                                                                   def, configuration);
+        Configuration wrapper = new ValidatingConfigurationWrapper("Bar", Runnable.class,
+                                                                   configuration);
 
-        wrapper.add("runnable");
+        try
+        {
+            wrapper.add("runnable");
+            unreachable();
+        }
+        catch (IllegalArgumentException ex)
+        {
+            assertEquals(ex.getMessage(),
+                         "Service contribution (to service 'Bar') was an instance of java.lang.String, which is not assignable to the configuration type java.lang.Runnable.");
+        }
 
         verify();
     }
@@ -111,15 +115,12 @@ public class ValidatingConfigurationWrapperTest extends IOCInternalTestCase
     @Test
     public void wrong_class_contributed()
     {
-        Logger logger = mockLogger();
         Configuration configuration = mockConfiguration();
-        ContributionDef def = new ContributionDefImpl("Bar", findMethod("contributeWrongType"),
-                                                      getClassFactory());
 
         replay();
 
-        Configuration wrapper = new ValidatingConfigurationWrapper("Bar", logger, Runnable.class,
-                                                                   def, configuration);
+        Configuration wrapper = new ValidatingConfigurationWrapper("Bar", Runnable.class,
+                                                                   configuration);
 
         try
         {

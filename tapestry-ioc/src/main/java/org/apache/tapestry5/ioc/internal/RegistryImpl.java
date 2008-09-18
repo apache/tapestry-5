@@ -425,10 +425,11 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         for (ContributionDef def : contributions)
         {
             MappedConfiguration<K, V> validating = new ValidatingMappedConfigurationWrapper<K, V>(serviceId, def,
-                                                                                                  logger, keyClass,
+                                                                                                  keyClass,
                                                                                                   valueType,
                                                                                                   keyToContribution,
-                                                                                                  configuration, locator);
+                                                                                                  configuration,
+                                                                                                  locator);
 
             if (debug) logger.debug(IOCMessages.invokingMethod(def));
 
@@ -466,11 +467,10 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
             }
         };
 
+        Configuration<T> validating = new ValidatingConfigurationWrapper<T>(serviceId, valueType,
+                                                                            configuration);
         for (ContributionDef def : contributions)
         {
-            Configuration<T> validating = new ValidatingConfigurationWrapper<T>(serviceId, logger, valueType, def,
-                                                                                configuration);
-
             if (debug) logger.debug(IOCMessages.invokingMethod(def));
 
             def.contribute(module, locator, validating);
@@ -506,11 +506,11 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
             }
         };
 
+        OrderedConfiguration<T> validating = new ValidatingOrderedConfigurationWrapper<T>(serviceId,
+                                                                                          valueType, configuration);
+
         for (ContributionDef def : contributions)
         {
-            OrderedConfiguration<T> validating = new ValidatingOrderedConfigurationWrapper<T>(serviceId, def, logger,
-                                                                                              valueType, configuration);
-
             if (debug) logger.debug(IOCMessages.invokingMethod(def));
 
             def.contribute(module, locator, validating);
