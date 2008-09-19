@@ -74,7 +74,7 @@ public class ComponentSourceImpl implements ComponentSource
 
     public Component getPage(String pageName)
     {
-        Defense.notBlank(pageName, "pageName");
+        Defense.notNull(pageName, "pageName");
 
         Page page = pageCache.get(pageName);
 
