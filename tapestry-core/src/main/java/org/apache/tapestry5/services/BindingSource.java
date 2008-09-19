@@ -29,7 +29,7 @@ public interface BindingSource
 {
     /**
      * Examines the expression and strips off the leading prefix. The prefix is used to choose the appropriate {@link
-     * BindingFactory}, which recieves the description, the expression (after the prefix), and the location. If the
+     * BindingFactory}, which receives the description, the expression (after the prefix), and the location. If the
      * prefix doesn't exist, or if there's no prefix, then the factory for the default prefix (often "literal") is used
      * (and passed the full prefix).
      * <p/>

@@ -94,7 +94,7 @@ public class MyAppModule
    becomes <<<Object delegate>>>).
 
 
-   In the above example, the decorator method recieves the core service implementation,
+   In the above example, the decorator method receives the core service implementation,
    the service interface for the Indexer service, the Log for the Indexer service,
    and an interceptor factory that generates logging interceptors.
    
@@ -233,7 +233,7 @@ Creating your own Decorators
 
   Each method of the interceptor will take <advice>.  Advice
   is provided by a {{{../apidocs/org/apache/tapestry5/ioc/MethodAdvice.html}MethodAdvice}} instance.
-  The sole method, <<<advise()>>>, recieves an
+  The sole method, <<<advise()>>>, receives an
    {{{../apidocs/org/apache/tapestry5/ioc/Invocation.html}Invocation}}.
   MethodAdvice gives you a chance to see what the method invocation <is>; you can query
   the name of the method, and the types and values of the parameters.
