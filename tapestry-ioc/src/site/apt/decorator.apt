@@ -169,7 +169,7 @@ Targetting Multiple Services
   logging for your data access and business logic services, you might end up with
   <<<@Match("Data*", "*Logic")>>> (based, of course, on how you name your services). 
   
-  As the precending example showed, a simple "glob" matching is supported, where a asterisk ('*')
+  As the preceding example showed, a simple "glob" matching is supported, where a asterisk ('*')
   may be used at the start or end of the match string to match any number of characters.
   As elsewhere, matching is case insensitive.
 
@@ -242,7 +242,7 @@ Creating your own Decorators
   call invokes the corresponding method on the original object, the delegate.
 
   If the method call throws a runtime exception, that exception is not caught.  Your method advice can
-  put a try ... catch block around the call to proceed() if interested in catching runtime exception.
+  put a try ... catch block around the call to proceed() if interested in catching runtime exceptions.
 
   Checked exceptions are not thrown (since they are not part of the proceed() method's signature).  Instead
   the invocation's <<<isFail()>>> method will return true.  You can then retrieve the exception or override it.
