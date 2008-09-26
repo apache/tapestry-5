@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -55,6 +55,15 @@ public interface Response
      * @param link link to redirect to.
      */
     void sendRedirect(Link link) throws IOException;
+
+    /**
+     * Sets the status code for this response.  This method is used to set the return status code when there is no error
+     * (for example, for the status codes SC_OK or SC_MOVED_TEMPORARILY).  If there is an error, and the caller wishes
+     * to invoke an error-page defined in the web applicaion, the <code>sendError</code> method should be used instead.
+     *
+     * @param sc the status code
+     */
+    public void setStatus(int sc);
 
     /**
      * Sends an error response to the client using the specified status. The server defaults to creating the response to
