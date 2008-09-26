@@ -13,9 +13,9 @@
                 <source><![CDATA[
 public class Account
 {
-    private long _id;
+    private long id;
 
-    private String _userName;
+    private String userName;
 
     // etc., etc., ...
 
@@ -54,23 +54,23 @@ public class Account
 public class ViewAccount
 {
     @Persist
-    private Account _account;
+    private Account account;
 
     @InjectPage
-    private AccountsSummary _accountsSummaryPage;
+    private AccountsSummary accountsSummaryPage;
 
     @Inject
-    private AccountDAO _accountDAO;
+    private AccountDAO accountDAO;
 
-    public Account getAccount() { return _account; }
+    public Account getAccount() { return account; }
 
     Object onActionFromDelete(long accountId)
     {
-        _accountDAO.delete(accountId);
+        accountDAO.delete(accountId);
 
-        _accountsSummaryPage.setMessage(String.format("Account #%d has been deleted.", accountId));
+        accountsSummaryPage.setMessage(String.format("Account #%d has been deleted.", accountId));
 
-        return _accountsSummaryPage;
+        return accountsSummaryPage;
     }
 }
 ]]></source>
@@ -115,11 +115,11 @@ public class ViewAccount
 
     Object onActionFromDelete(long companyId, long accountId)
     {
-        _accountDAO.delete(companyId, accountId);
+        accountDAO.delete(companyId, accountId);
 
-        _accountsSummaryPage.setMessage(String.format("Account #%d has been deleted.", accountId));
+        accountsSummaryPage.setMessage(String.format("Account #%d has been deleted.", accountId));
 
-        return _accountsSummaryPage;
+        return accountsSummaryPage;
     }]]></source>
 
             <p>

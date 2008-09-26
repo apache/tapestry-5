@@ -299,3 +299,37 @@ public @interface Builtin
 
   The annotation can be applied to method and constructor parameters, for use within the IoC container.  It can also be applied
   to fields, though this is specific to the Tapestry web framework.
+
+Field Injection
+
+  The {{{../apidocs/org/apache/tapestry5/annotations/Inject.html}Inject}}
+  and {{{../apidocs/org/apache/tapestry5/annotations/InjectService.html}InjectService}}
+  annotations may be used on instance fields of a module class, as an alternative
+  to passing dependencies of the module in via the constructor.
+
+  Caution: injection via fields uses reflection to make the fields accessible. In
+  addition, it may not be as thread-safe as using the constructor to assign to
+  final fields.
+
+  Using this style, the previous example of a module class may be
+  rewritten:
+
++-----------------------------------------------------------------------------------+
+public class MyModule
+{
+  @Inject
+  private JobScheduler scheduler;
+
+  @Inject
+  private FileSystem fileSystem;
+
+  public Indexer build()
+  {
+    IndexerImpl indexer = new IndexerImpl(fileSystem);
+      
+    scheduler.scheduleDailyJob(indexer);
+
+    return indexer;
+  }
+}
++-----------------------------------------------------------------------------------+

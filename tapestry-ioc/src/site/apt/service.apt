@@ -155,13 +155,15 @@ Service Ids
   It's pretty unlikely  that your service will be able to operate in a total vacuum. It will
   have other dependencies.  
   
-  Dependencies are provided to a service in one of three ways:
+  Dependencies are provided to a service in one of several ways:
   
   * As parameters to the service builder method
   
   * As parameters to the service implementation class' constructor (for autobuilt services)
   
   * As parameters passed to the constructor of the service's module builder (cached inside instance variables)
+
+  * Directly into fields of the service implementation
   
   []
    
@@ -383,7 +385,37 @@ public class IndexerImpl implements Indexer
   Understanding why this is a bad idea involves a long detour into inner details of the Java Memory Model.
   The short form is that other threads may end up invoking methods on the IndexerImpl instance, and its fields
   (even though they are final, even though they appear to already have been set) may be uninitialized.
-    
+
+Field Injection
+
+  The {{{../apidocs/org/apache/tapestry5/annotations/Inject.html}Inject}}
+  and {{{../apidocs/org/apache/tapestry5/annotations/InjectService.html}InjectService}}
+  annotations may be used on instance fields of a service implementation class, as an alternative
+  to passing dependencies of the service implementation in via the constructor.
+
+  Note that only dependencies are settable this way; if you want resources, including
+  the service's {{{configuration.html}configuration}}, you must pass those through the constructor.
+  You <are> free to mix and match, injecting partially with field injection and partially
+  with constructor injection.
+
+  Caution: injection via fields uses reflection to make the fields accessible. In
+  addition, it may not be as thread-safe as using the constructor to assign to
+  final fields.
+
++---+
+package org.example.myapp.services;
+
+import org.apache.tapestry5.ioc.annotations.InjectService;
+
+public class IndexerImpl implements Indexer
+{
+  @InjectService("FileSystem")
+  private FileSystem fileSystem;
+
+  . . .
+}
++---+
+
 Defining Service Scope
 
   Each service has a <lifecycle> that controls when the service implementation is instantiated.
@@ -455,7 +487,7 @@ Defining the scope of Autobuilt Services
   In addition, it is possible to specify the scope when binding the service:
   
 +----+
-  bind(MyServiceInterface.class, MyServiceImpl.class).scope("perthread");
+  bind(MyServiceInterface.class, MyServiceImpl.class).scope(IOCConstants.PERTHREAD_SCOPE);
 +----+
 
     
@@ -477,7 +509,7 @@ Eager Loading Services
   
   Many services may be annotated with @EagerLoad; the order in which services are created is not defined. 
   
-  With the perthread lifecycle, the service builder method will not be invoked (this won't happen until
+  With the perthread scope, the service builder method will not be invoked (this won't happen until
   a service method is invoked), but the decorators for
   the service will be created. 
   
@@ -514,7 +546,11 @@ Injecting Resources
   
   See also {{{configuration.html}service configuration}} for additional special cases
   of resources that can be injected.
-  
+
+  Note: resources may not be injected into fields, they are injectable only via
+  method or constructor parameters.
+
+
   Example:
   
 +-----------------------------------------------------------------------------------+
@@ -642,7 +678,7 @@ Mutually Dependant Services
   With Tapestry IoC, this is not even considered a special case:
   
 +-----------------------------------------------------------------------------------+
-  public static Indexer build(JobScheduler scheduler, FileSystem fileSystem)
+  public static Indexer buildIndexer(JobScheduler scheduler, FileSystem fileSystem)
   {
     IndexerImpl indexer = new IndexerImpl(fileSystem);
   
@@ -651,7 +687,7 @@ Mutually Dependant Services
     return indexer;
   }
     
-  public static Indexed build(Indexer indexer)
+  public static FileSystem buildFileSystem(Indexer indexer)
   {
     return new FileSystemImpl(indexer);
   }  

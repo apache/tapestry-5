@@ -23,7 +23,7 @@ import java.lang.annotation.Target;
 /**
  * Marks a method of a service (or a component method) as transactional: the active transaction should {@linkplain
  * org.apache.tapestry5.hibernate.HibernateSessionManager#commit() commit} after invoking the method.  Runtime
- * exceptions will abort the transaction, checked exceptions will <also commit> the transaction.
+ * exceptions will abort the transaction, checked exceptions will <em>also commit</em> the transaction.
  *
  * @see org.apache.tapestry5.hibernate.HibernateTransactionDecorator
  */

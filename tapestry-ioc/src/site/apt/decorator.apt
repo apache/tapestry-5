@@ -149,8 +149,13 @@ Targetting Multiple Services
   you may identify which services are to be decorated.
   
   The value specified in the Match annotation is one or more patterns. These patterns
-  are used to match services. In a pattern, a "*" at the start or end of a string
-  match zero or more characters.
+  are used to match services. Patterns take two forms: glob patterns and regular expressions.
+
+  In a glob pattern, a "*" at the start or end of a string
+  will match zero or more characters.              Regular expressions provide a lot more matching power, but require
+  a more involved syntax.
+
+  In either case, the matching is case insensitive.
   
   For example, to target all the services in your module:
   

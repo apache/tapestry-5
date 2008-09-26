@@ -14,12 +14,20 @@
 
 package org.apache.tapestry5.ioc.internal.util;
 
+import org.apache.tapestry5.ioc.AnnotationProvider;
 import org.apache.tapestry5.ioc.Locatable;
 import org.apache.tapestry5.ioc.Location;
+import org.apache.tapestry5.ioc.ObjectLocator;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newMap;
 import static org.apache.tapestry5.ioc.internal.util.InternalUtils.toList;
+import org.apache.tapestry5.ioc.services.Builtin;
+import org.apache.tapestry5.ioc.services.SymbolSource;
 import org.apache.tapestry5.ioc.test.IOCTestCase;
+import org.easymock.EasyMock;
+import static org.easymock.EasyMock.eq;
+import static org.easymock.EasyMock.isA;
+import org.easymock.IAnswer;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -453,5 +461,87 @@ public class InternalUtilsTest extends IOCTestCase
             assertMessageContains(ex,
                                   "Constructor protected org.apache.tapestry5.ioc.internal.util.InternalUtilsTest$PublicInnerClass() is not public and may not be used for autobuilding an instance of the class.");
         }
+    }
+
+    @Test
+    public void inject_service_annotation_on_field()
+    {
+        ObjectLocator ol = mockObjectLocator();
+        FieldInjectionViaInjectService target = new FieldInjectionViaInjectService();
+        Runnable fred = mockRunnable();
+
+        train_getService(ol, "FredService", Runnable.class, fred);
+
+        replay();
+
+        InternalUtils.injectIntoFields(target, ol);
+
+        assertSame(target.getFred(), fred);
+
+        verify();
+    }
+
+    @Test
+    public void inject_annotation_on_field()
+    {
+        ObjectLocator ol = mockObjectLocator();
+        FieldInjectionViaInject target = new FieldInjectionViaInject();
+        final SymbolSource ss = mockSymbolSource();
+
+        IAnswer answer = new IAnswer()
+        {
+            public Object answer() throws Throwable
+            {
+                Object[] args = EasyMock.getCurrentArguments();
+
+                AnnotationProvider ap = (AnnotationProvider) args[1];
+
+                // Verify that annotations on the field are accessible.
+
+                assertNotNull(ap.getAnnotation(Builtin.class));
+
+                return ss;
+            }
+        };
+
+        expect(ol.getObject(eq(SymbolSource.class), isA(AnnotationProvider.class))).andAnswer(answer);
+
+        replay();
+
+        InternalUtils.injectIntoFields(target, ol);
+
+        assertSame(target.getSymbolSource(), ss);
+
+        verify();
+    }
+
+    @Test
+    public void exception_injecting_into_field()
+    {
+        ObjectLocator ol = mockObjectLocator();
+        FieldInjectionViaInjectService target = new FieldInjectionViaInjectService();
+
+        // It's very hard to come up with a value that causes an error when assigned. We have to break
+        // a lot of rules.
+
+        ol.getService("FredService", Runnable.class);
+        EasyMock.expectLastCall().andReturn("NotTheRightType");
+
+        replay();
+
+        try
+        {
+            InternalUtils.injectIntoFields(target, ol);
+
+            unreachable();
+        }
+        catch (Exception ex)
+        {
+            assertMessageContains(ex,
+                                  "Unable to set field 'fred' of <FieldInjectionViaInjectService> to NotTheRightType");
+        }
+
+
+        verify();
     }
 }

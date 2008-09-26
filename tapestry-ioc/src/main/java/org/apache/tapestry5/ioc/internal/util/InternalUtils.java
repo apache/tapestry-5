@@ -30,6 +30,7 @@ import java.lang.annotation.Annotation;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.*;
@@ -166,14 +167,14 @@ public class InternalUtils
     }
 
     @SuppressWarnings("unchecked")
-    private static Object calculateParameterValue(Class parameterType, final Annotation[] parameterAnnotations,
-                                                  ObjectLocator locator, Map<Class, Object> parameterDefaults)
+    private static Object calculateInjection(Class injectionType, final Annotation[] annotations,
+                                             ObjectLocator locator, Map<Class, Object> defaults)
     {
         AnnotationProvider provider = new AnnotationProvider()
         {
             public <T extends Annotation> T getAnnotation(Class<T> annotationClass)
             {
-                return findAnnotation(parameterAnnotations, annotationClass);
+                return findAnnotation(annotations, annotationClass);
             }
         };
 
@@ -186,7 +187,7 @@ public class InternalUtils
         {
             String serviceId = is.value();
 
-            return locator.getService(serviceId, parameterType);
+            return locator.getService(serviceId, injectionType);
         }
 
         // In the absence of @InjectService, try some autowiring. First, does the
@@ -194,7 +195,7 @@ public class InternalUtils
 
         if (provider.getAnnotation(Inject.class) == null)
         {
-            Object result = parameterDefaults.get(parameterType);
+            Object result = defaults.get(injectionType);
 
             if (result != null) return result;
         }
@@ -202,7 +203,7 @@ public class InternalUtils
         // Otherwise, make use of the MasterObjectProvider service to resolve this type (plus
         // any other information gleaned from additional annotation) into the correct object.
 
-        return locator.getObject(parameterType, provider);
+        return locator.getObject(injectionType, provider);
     }
 
     public static Object[] calculateParametersForMethod(Method method, ObjectLocator locator,
@@ -223,7 +224,7 @@ public class InternalUtils
         return calculateParameters(locator, parameterDefaults, parameterTypes, annotations);
     }
 
-    public static Object[] calculateParameters(ObjectLocator locator, Map<Class, Object> parameterDefaults,
+    public static Object[] calculateParameters(ObjectLocator locator, Map<Class, Object> defaults,
                                                Class[] parameterTypes, Annotation[][] parameterAnnotations)
     {
         int parameterCount = parameterTypes.length;
@@ -232,11 +233,83 @@ public class InternalUtils
 
         for (int i = 0; i < parameterCount; i++)
         {
-            parameters[i] = calculateParameterValue(parameterTypes[i], parameterAnnotations[i], locator,
-                                                    parameterDefaults);
+            parameters[i] = calculateInjection(parameterTypes[i], parameterAnnotations[i], locator,
+                                               defaults);
         }
 
         return parameters;
+    }
+
+    /**
+     * Injects into the fields (of all visibilities)  when the {@link org.apache.tapestry5.ioc.annotations.Inject} or
+     * {@link org.apache.tapestry5.ioc.annotations.InjectService} annotations are present.
+     *
+     * @param object  to be initialized
+     * @param locator used to resolve external dependencies
+     */
+    public static void injectIntoFields(Object object, ObjectLocator locator)
+    {
+        Class clazz = object.getClass();
+
+        while (clazz != Object.class)
+        {
+
+            Field[] fields = clazz.getDeclaredFields();
+
+            for (final Field f : fields)
+            {
+                // Ignore all static fields.
+
+                if (Modifier.isStatic(f.getModifiers())) continue;
+
+                AnnotationProvider ap = new AnnotationProvider()
+                {
+                    public <T extends Annotation> T getAnnotation(Class<T> annotationClass)
+                    {
+                        return f.getAnnotation(annotationClass);
+                    }
+                };
+
+
+                InjectService is = ap.getAnnotation(InjectService.class);
+
+                if (is != null)
+                {
+                    inject(object, f, locator.getService(is.value(), f.getType()));
+                    continue;
+                }
+
+                if (ap.getAnnotation(Inject.class) != null)
+                {
+                    inject(object, f, locator.getObject(f.getType(), ap));
+                    continue;
+                }
+
+                // Ignore fields that do not have the necessary annotation.  Should we ignore static
+                // fields?
+            }
+
+
+            clazz = clazz.getSuperclass();
+        }
+    }
+
+    private synchronized static void inject(Object target, Field field, Object value)
+    {
+        try
+        {
+            if (!field.isAccessible()) field.setAccessible(true);
+
+            field.set(target, value);
+
+            // Is there a need to setAccessible back to false?
+        }
+        catch (Exception ex)
+        {
+            throw new RuntimeException(String.format("Unable to set field '%s' of %s to %s: %s",
+                                                     field.getName(), target, value,
+                                                     toMessage(ex)));
+        }
     }
 
     /**

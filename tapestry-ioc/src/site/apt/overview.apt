@@ -112,12 +112,13 @@ Dependency Injection
   Dependency Injection is a key part of <realization>: this is how a service is provided with the other services it needs to operate.  For example,
   a Data Access Object service may be injected with a ConnectionPool service.
   
-  In Tapestry, injection occurs exclusively through constructors.  Other frameworks support a mix of constructor injection, property injection (i.e., invoking setter methods)
-  and method injection (invoking arbitrary methods to pass in dependencies).  Tapestry focuses exclusively on constructor injection, and emphasizes
+  In Tapestry, injection occurs through constructors, through parameters to service builder methods, or through direct injection
+  into fields.   Tapestry prefers constructor injection, as this emphasizes
   that dependencies should be stored in <<final>> variables.  This is the best approach towards ensuring thread safety.
   
   In any case, injection "just happens".  Tapestry finds the constructor of your class and analyzes the parameters to determine what to pass in.  In some cases,
-  it uses just the parameter type to find a match, in other cases, annotations on the parameters may also be used.
+  it uses just the parameter type to find a match, in other cases, annotations on the parameters may also be used.  It also scans through the fields
+  of your service implementation class to identify which should have injected values written into them.
   
 Why can't I just use <<<new>>>?
 
@@ -321,7 +322,7 @@ public class MonitorModule
   A new TableMetricProducer instance is created and contributed in.  We could contribute as many producers as we like here.  Other modules could also
   define a contributeMetricScheduler() method and contribute their own MetricProducer instances.
 
-  Meanwhile, the QueueWriterImpl class no longer needs the _instance variable or getInstance() method, and the TableMetricProducer
+  Meanwhile, the QueueWriterImpl class no longer needs the <<<instance>>> variable or getInstance() method, and the TableMetricProducer
   only needs a single constructor.
 
 Advantages of IoC: Summary

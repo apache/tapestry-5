@@ -100,7 +100,7 @@ Goals
   
   Another goal is "developer friendliness". This is a true cross-cutting concern, and one not likely to be packaged
   into an aspect any time soon. The Tapestry IoC framework is designed to be easy to use and easy to understand.
-  Further, when things go wrong, it actively attempts to help you by 
+  Further, when things go wrong, it actively attempts to help you via 
 	comprehensive checks and carefully composed error messages. Further,
   all user-visible objects implement
   {{{http://howardlewisship.com/blog/2003/08/importance-of-tostring.html}a reasonable toString() method}},
@@ -119,7 +119,7 @@ Goals
   to test and maintain existing code.  Too often in the world of software development, the need to add functionality
   trumps all, and testing and maintenance is deferred ... until too late.
   
-  IoC containers is general, and Tapestry IoC very specifically, exist to address this issue, to provide the foundations
+  IoC containers in general, and Tapestry IoC very specifically, exist to address this issue, to provide the foundations
   for balancing the need to quickly add functionality against the need to test new functionality and maintain
   existing functionality.  IoC containers provide the means to break large, complex, monolithic blocks into light, small, testable
   pieces.   
@@ -201,7 +201,10 @@ Terminology
   the service interface. The first time a method is invoked on the proxy, the full service (consisting of the core service implementation wrapped with any interceptors) is
   constructed. This occurs in a completely <<thread-safe>> manner. Just-in-time instantiation allows for more complex, more finely grained networks of services, and improves
   startup time.
-  
+
+  Instantiating a service, injecting dependencies, and decorating the service are all parts of service <<realization>>, the point
+  at which a service transitions from virtual (just a proxy) to real (fully instantiated and ready to operate). 
+
   Services define a <<scope>> that controls when the service is constructed, as well as its visibility.  The default scope is <<singleton>>, meaning a single
   global instance created as needed.  Other scopes allow service implementations to be bound to the current thread (i.e., the current
   request in a servlet application).
@@ -210,4 +213,7 @@ Terminology
   dependencies can be <<injected>> into a service builder method and provided, from there, to a service implementation via
   its constructor, or via methods on the service implementation. These may also be referred to as <<collaborators>>, especially
   in the context of writing unit tests.
-  
+
+  The <<point of Injection>> is a field, method parameter, or constructor parameter that receives an injected value.
+  The type of service (or other dependency) is determined by the type of the field or parameter. Often,
+  annotations further identify what is to be injected, or in the case of field injection, that an injection is required.

@@ -174,7 +174,6 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
                 for (Class marker : serviceDef.getMarkers())
                     InternalUtils.addToMapList(markerToServiceDef, marker, serviceDef);
-
             }
 
             moduleToServiceDefs.put(module, moduleServiceDefs);
@@ -454,7 +453,6 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
             def.contribute(module, locator, validating);
         }
-
     }
 
     private <T> void addToUnorderedConfiguration(Configuration<T> configuration, Class<T> valueType,
@@ -781,7 +779,11 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
             Object[] parameters = InternalUtils.calculateParametersForConstructor(constructor, this, empty);
 
-            return clazz.cast(constructor.newInstance(parameters));
+            Object result = constructor.newInstance(parameters);
+
+            InternalUtils.injectIntoFields(result, this);
+
+            return clazz.cast(result);
         }
         catch (InvocationTargetException ite)
         {
