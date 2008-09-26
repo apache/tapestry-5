@@ -597,23 +597,6 @@ Tapestry.Initializer = {
 
         $T(element).zone = zoneDiv;
 
-        var successHandler = function(transport)
-        {
-            var reply = transport.responseJSON;
-
-            // Find the zone id for the element, and from there, the Tapestry.Zone object
-            // responsible for the zone.  This is evaluated late so that zone can be dynamically
-            // changed on the client.  Sorry about the confusion; there's the zone <div>, and
-            // there's the Tapestry.Zone object.    Perhaps should rename Tapestry.Zone
-            // to Tapestry.ZoneManager?
-
-            var zoneId = $T(element).zone;
-            var zoneObject = $T(zoneId).zone;
-
-            zoneObject.show(reply.content);
-
-            Tapestry.processScriptInReply(reply);
-        };
 
         if (element.tagName == "FORM")
         {
@@ -627,6 +610,14 @@ Tapestry.Initializer = {
 
             element.observe(Tapestry.FORM_PROCESS_SUBMIT_EVENT, function()
             {
+                var successHandler = function(transport)
+                {
+                    var zoneId = $T(element).zone;
+                    var zoneObject = $T(zoneId).zone;
+
+                    zoneObject.processReply(transport.responseJSON);
+                };
+
                 element.sendAjaxRequest({ onSuccess : successHandler });
             });
 
@@ -637,7 +628,16 @@ Tapestry.Initializer = {
 
         element.observe("click", function(event)
         {
-            Tapestry.ajaxRequest(element.href, successHandler);
+            // Find the zone id for the element, and from there, the Tapestry.Zone object
+            // responsible for the zone.  This is evaluated late so that zone can be dynamically
+            // changed on the client.  Sorry about the confusion; there's the zone <div>, and
+            // there's the Tapestry.Zone object.    Perhaps should rename Tapestry.Zone
+            // to Tapestry.ZoneManager?
+
+            var zoneId = $T(element).zone;
+            var zoneObject = $T(zoneId).zone;
+
+            zoneObject.updateFromURL(element.href);
 
             Event.stop(event);
         });
@@ -1211,6 +1211,33 @@ Tapestry.Zone = Class.create({
         var func = this.element.visible() ? this.updateFunc : this.showFunc;
 
         func.call(this, this.element);
+    },
+
+    /**
+     *  Invoked with a reply (i.e., transport.responseJSON), this updates the zone's div
+     * and processes any JavaScript in the reply.  The response should have a
+     * content key, and may have  script, scripts and stylesheets keys.
+     * @param reply response in JSON format appropriate to a Tapestry.Zone
+     */
+    processReply : function(reply)
+    {
+        this.show(reply.content);
+
+        Tapestry.processScriptInReply(reply);
+    },
+
+    /** Initiates an Ajax request to update this zone by sending a request
+     *  to the URL. Expects the correct JSON reply (wth keys content, etc.).
+     * @param URL component event request URL
+     */
+    updateFromURL : function (URL)
+    {
+        var successHandler = function(transport)
+        {
+            this.processReply(transport.responseJSON);
+        }.bind(this);
+
+        Tapestry.ajaxRequest(URL, successHandler);
     }
 });
 

@@ -32,26 +32,6 @@ What is Tapestry?
 
  Tapestry is released under the Apache Software Licence 2.0.
 
-Roadmap
-
-  Tapestry is, of course, an open-source project, with all the work coming from unpaid volunteers.  That being said, our rough timeline is as follows:
-  
-  * 5.0 Release Candidate in September 2008  
-
-  * 5.0 Final Release shortly thereafter
-
-  * 5.1 development to follow, on a much shorter release schedule
-
-  * ... but we are all open source developers working on our own time and schedules are hard to pin down.  Please be patient.  Tapestry 5
-    is increasingly stable.  Further "stable" with Tapestry usually refers to names of interfaces and methods, not to code quality,
-    which is always very, very high.
-
-  * We are now finally edging towards a release candidate, with most work being documentation, minor bug fixes and modest
-    enhancements. Note that Tapestry team members have been using Tapestry 5 to build production applications, and those
-    experiences are being applied back to the framework to improve its quality: we're finding rough edges and we're
-    smoothing them out.
-     
-  []
 
 Third Party Libraries, Tutorials and Resources
 
@@ -60,6 +40,8 @@ Third Party Libraries, Tutorials and Resources
 
 *--+--+--+
 | <<Name>> | <<Author>> | <<Description>>
+*--+--+--+
+| {{{http://code.google.com/p/tapestry5-appfuse/}AppFuse for Tapestry 5}} |   Serge Eby | Application template, with basic authentication and Hibernate and Spring integration pre-configured |
 *--+--+--+
 | {{{http://equanda.org/equanda-tapestry5/}equanda-tapestry5}} |   Joachim Van der Auwera |      Components useful for building enterprise applications. Includes Accordion, Tabs, Formtraversal. Amongst other things, these focus on easy input of data without the need for a mouse.
 *--+--+--+
@@ -85,6 +67,10 @@ Third Party Libraries, Tutorials and Resources
 *--+--+--+
 
 New And Of Note
+
+  * The Inject and InjectService annotations may now be used on fields of service implementations or other
+    objects constructed by the IoC container. In the past, injections only occured through method or
+    constructor parameters.
 
   * Tapestry now bundles Prototype version 1.6.0.2.
 

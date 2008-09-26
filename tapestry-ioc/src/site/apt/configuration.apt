@@ -50,7 +50,7 @@ Tapestry IoC Configurations
   Like service builder and service decorator methods, we can inject services if we like:
   
 +------+
-  public static void contributFileServicerDispatcher(MappedConfiguration<String,FileServicer> configuration,
+  public static void contributeFileServicerDispatcher(MappedConfiguration<String,FileServicer> configuration,
   
     @InjectService("TextFileServicer") FileServicer textFileServicer,
     
@@ -65,7 +65,7 @@ Tapestry IoC Configurations
   service configuration:
   
 +------+
-   public static void contributeFileServicerDispatcher(MappedConfiguration<String,FileServicer> configuration)
+  public static void contributeFileServicerDispatcher(MappedConfiguration<String,FileServicer> configuration)
   {
     configuration.add("doc", new WordFileServicer());
     configuration.add("ppt", new PowerPointFileServicer());
@@ -221,7 +221,7 @@ Configuration Types
   be unique.  When conflicts occur, Tapestry will log warnings (identifying the source, in terms of invoked methods, of
   the conflict), and ignore the conflicting value.
   
-  The value may not be null.
+  Neither the key nor the value may be null.
   
   For mapped configurations where the key type is String, a 
   {{{apidocs/org/apache/tapestry5/ioc/util/CaseInsensitiveMap.html}CaseInsensitiveMap}}

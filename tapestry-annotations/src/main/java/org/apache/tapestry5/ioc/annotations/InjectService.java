@@ -15,21 +15,24 @@
 package org.apache.tapestry5.ioc.annotations;
 
 import java.lang.annotation.Documented;
+import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.ElementType.PARAMETER;
 import java.lang.annotation.Retention;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Target;
 
-@Target(PARAMETER)
+
+/**
+ * Annotation used with parameters of service builder methods to identify the service to be injected into the service
+ * builder method via the parameter. In many cases the {@link org.apache.tapestry5.ioc.annotations.Inject} annotation is
+ * more flexible or appropriate.
+ * <p/>
+ * This annotation may also be used with fields of service implementation classes, modules, or other objects constructed
+ * via {@link org.apache.tapestry5.ioc.ObjectLocator#autobuild(Class)}.
+ */
+@Target({PARAMETER, FIELD})
 @Retention(RUNTIME)
 @Documented
-/**
- * Annotation used with parameters of service builder methods to identify the service to be injected
- * into the service builder method via the parameter. In many cases the
- * {@link org.apache.tapestry5.ioc.annotations.Inject} annotation is more flexible or appropriate.
- *
- *
- */
 public @interface InjectService
 {
 

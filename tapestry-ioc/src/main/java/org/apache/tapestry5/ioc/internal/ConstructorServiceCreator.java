@@ -49,7 +49,11 @@ public class ConstructorServiceCreator extends AbstractServiceCreator
 
             if (logger.isDebugEnabled()) logger.debug(IOCMessages.invokingConstructor(creatorDescription));
 
-            return constructor.newInstance(parameters);
+            Object result = constructor.newInstance(parameters);
+
+            InternalUtils.injectIntoFields(result, resources);
+
+            return result;
         }
         catch (InvocationTargetException ite)
         {

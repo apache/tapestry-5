@@ -16,10 +16,12 @@ Object Providers
   forming a {{{command.html}chain of command}}.  The commands in the chain may provide an object
   based on the parameter type, or based on additional annotations on the parameter.
   
-  There are two built-in object providers:
+  There are several built-in object providers:
   
   * Check for {{{../apidocs/org/apache/tapestry5/ioc/annotations/Value.html}Value}} annotation
-  
+
+  * Check for {{{../apidocs/org/apache/tapestry5/ioc/annotations/Symbol.html}Symbol}} annotation
+
   * Check for a <unique> service in the Registry whose service interface matches the parameter type
   
   []
@@ -43,8 +45,22 @@ Object Providers
 
   Here, the MyService service requires a configuration of a number of seconds.
   The value is supplied as a symbol, with a factory default that may be overwritten
-  with an application default. 
-  
+  with an application default.
+
+  Usually, the symbol reference is only part of the string, i.e. <<<@Value("$\{report.dir}/$\{report.name}.txt")>>>
+
+@Symbol Annotation Provider
+
+   This is closely related to the @Value annotation approach, except that the annotation
+   directly specifies a symbol name.
+
++----+
+  public MyService build(@Symbol("max-seconds") long maxSeconds)
+  {
+    return new MyServiceImpl(maxSeconds);
+  }
++----+
+
 Service Provider
 
   This is always that last object provider checked.

@@ -15,9 +15,7 @@
 package org.apache.tapestry5.ioc.annotations;
 
 import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import static java.lang.annotation.ElementType.FIELD;
-import static java.lang.annotation.ElementType.PARAMETER;
+import static java.lang.annotation.ElementType.*;
 import java.lang.annotation.Retention;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Target;
@@ -35,6 +33,10 @@ import java.lang.annotation.Target;
  * This is most often used in conjunction with {@link org.apache.tapestry5.ioc.annotations.Value} annotation when
  * injecting a string, as normally, the String would be matched as the service id.
  * <p/>
+ * For service implementations, module classes, and other objects constructed via  {@link
+ * org.apache.tapestry5.ioc.ObjectLocator#autobuild(Class)}, this annotation indicates that an injection is desired on
+ * the field, as with fields of a Tapestry component.
+ * <p/>
  * In terms of the IoC container, the Inject annotation is only used on parameters to service builder methods (and
  * contributor and decorator methods) and on module class constructors. constructors. However, inside Tapestry
  * components (<em>and only inside components</em>), it may be applied to fields. On fields that require injection, the
@@ -46,7 +48,7 @@ import java.lang.annotation.Target;
  * @see org.apache.tapestry5.ioc.ObjectProvider
  */
 @Target(
-        { PARAMETER, FIELD, ElementType.CONSTRUCTOR })
+        {PARAMETER, FIELD, CONSTRUCTOR})
 @Retention(RUNTIME)
 @Documented
 public @interface Inject

@@ -338,7 +338,11 @@ public class ModuleImpl implements Module
                                                                          constructor.getParameterTypes(),
                                                                          constructor.getParameterAnnotations());
 
-            return constructor.newInstance(parameterValues);
+            Object result = constructor.newInstance(parameterValues);
+
+            InternalUtils.injectIntoFields(result, locator);
+
+            return result;
         }
         catch (InvocationTargetException ex)
         {

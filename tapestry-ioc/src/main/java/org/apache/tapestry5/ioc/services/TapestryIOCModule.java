@@ -17,7 +17,6 @@ package org.apache.tapestry5.ioc.services;
 import org.apache.tapestry5.ioc.*;
 import static org.apache.tapestry5.ioc.IOCConstants.PERTHREAD_SCOPE;
 import org.apache.tapestry5.ioc.annotations.Marker;
-import org.apache.tapestry5.ioc.annotations.Value;
 import org.apache.tapestry5.ioc.internal.services.*;
 import org.apache.tapestry5.ioc.util.TimeInterval;
 
@@ -84,9 +83,8 @@ public final class TapestryIOCModule
     }
 
     /**
-     * Contributes "DefaultProvider", ordered last, that delegates to {@link ObjectLocator#getService(Class)}.
-     * <p/>
-     * Contributes "Value", which injects values (not services) triggered by the {@link Value} annotation.
+     * <dl> <dt>Value</dt> <dd>Supports the {@link org.apache.tapestry5.ioc.annotations.Value} annotation</dd>
+     * <dt>Symbol</dt> <dd>Supports the {@link org.apache.tapestry5.ioc.annotations.Symbol} annotations</dd> </dl>
      */
     public static void contributeMasterObjectProvider(OrderedConfiguration<ObjectProvider> configuration,
 

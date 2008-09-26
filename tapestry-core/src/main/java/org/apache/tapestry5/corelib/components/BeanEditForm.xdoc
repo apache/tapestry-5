@@ -42,30 +42,30 @@
                 <source><![CDATA[
 public class User
 {
-    private long _id;
+    private long id;
 
-    private String _firstName;
+    private String firstName;
 
-    private String _lastName;
+    private String lastName;
 
-    private int _age;
+    private int age;
 
-    public long getId() { return _id; }
+    public long getId() { return id; }
 
     @NonVisual
-    public void setId(long id) { _id = id; }
+    public void setId(long id) { this.id = id; }
 
-    public String getFirstName() { return _firstName; }
+    public String getFirstName() { return firstName; }
 
-    public void setFirstName(String firstName) { _firstName = firstName; }
+    public void setFirstName(String firstName) { this.firstName = firstName; }
 
-    public String getLastName() { return _lastName; }
+    public String getLastName() { return lastName; }
 
-    public void setLastName(String lastName) { _lastName = lastName; }
+    public void setLastName(String lastName) { this.lastName = lastName; }
 
-    public int getAge() { return _age; }
+    public int getAge() { return age; }
 
-    public void setAge(int age) { _age = age; }
+    public void setAge(int age) { this.age = age; }
 }]]></source>
 
                 <p>The @NonVisual annotation prevents the id from being displayed.</p>
@@ -144,24 +144,24 @@ lastname-label=Family Name]]></source>
 public class CreateUser
 {
     @Persist
-    private User _user;
+    private User user;
 
     @Inject
-    private UserDAO _userDAO;
+    private UserDAO userDAO;
 
     public User getUser()
     {
-      return _user;
+      return user;
     }
 
     public void setUser(User user)
     {
-      _user = user;
+      this.user = user;
     }
 
     Object onSuccess()
     {
-        _userDAO.add(_user);
+        userDAO.add(user);
 
         return UserAdmin.class;
     }
@@ -205,19 +205,19 @@ public class CreateUser
 
                 <source><![CDATA[
     @Validate("required")
-    public String getFirstName() { return _firstName; }
+    public String getFirstName() { return firstName; }
 
-    public void setFirstName(String firstName) { _firstName = firstName; }
+    public void setFirstName(String firstName) { this.firstName = firstName; }
 
     @Validate("required")
-    public String getLastName() { return _lastName; }
+    public String getLastName() { return lastName; }
 
-    public void setLastName(String lastName) { _lastName = lastName; }
+    public void setLastName(String lastName) { this.lastName = lastName; }
 
     @Validate("min=18,max=99")
-    public int getAge() { return _age; }
+    public int getAge() { return age; }
 
-    public void setAge(int age) { _age = age; }]]>    </source>
+    public void setAge(int age) { this.age = age; }]]>    </source>
 
                 <p>
                     The new @Validate annotations added to the first name and last name properties indicates that a
@@ -300,7 +300,7 @@ public class CreateUser
 
             <p>
                 You can accomplish the same thing by changing the order of the
-                getter methods in the bean class.  The default order for properties is not alphabetical,
+                getter methods in the bean class. The default order for properties is not alphabetical,
                 it is the order of the getter methods.
             </p>
 
