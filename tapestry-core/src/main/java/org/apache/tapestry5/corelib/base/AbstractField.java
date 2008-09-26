@@ -19,6 +19,7 @@ import org.apache.tapestry5.annotations.*;
 import org.apache.tapestry5.corelib.mixins.DiscardBody;
 import org.apache.tapestry5.corelib.mixins.RenderDisabled;
 import org.apache.tapestry5.corelib.mixins.RenderInformals;
+import org.apache.tapestry5.corelib.internal.InternalMessages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.ComponentDefaultProvider;
 import org.apache.tapestry5.services.FormSupport;
@@ -111,7 +112,7 @@ public abstract class AbstractField implements Field
 
     private String controlName;
 
-    @Environmental
+    @Environmental(false)
     private FormSupport formSupport;
 
     @Environmental
@@ -144,6 +145,8 @@ public abstract class AbstractField implements Field
         // Often, these controlName and clientId will end up as the same value. There are many
         // exceptions, including a form that renders inside a loop, or a form inside a component
         // that is used multiple times.
+
+        if (formSupport == null) throw new RuntimeException(InternalMessages.formFieldOutsideForm(getLabel()));
 
         assignedClientId = renderSupport.allocateClientId(id);
         String controlName = formSupport.allocateControlName(id);

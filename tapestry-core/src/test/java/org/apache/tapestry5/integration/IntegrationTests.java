@@ -2280,4 +2280,13 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         assertText("event", "failure");
     }
+
+    public void form_field_outside_form()
+    {
+        start("Form Field Outside Form");
+
+        assertTextPresent("org.apache.tapestry5.internal.services.RenderQueueException",
+                          "Render queue error in SetupRender[FormFieldOutsideForm:textfield]: The Textfield component must be enclosed by a Form component.",
+                          "context:FormFieldOutsideForm.tml, line 5, column 45");
+    }
 }

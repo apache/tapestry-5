@@ -47,4 +47,9 @@ public final class InternalMessages
     {
         return MESSAGES.format("to-client-should-return-string");
     }
+
+    public static String formFieldOutsideForm(String fieldName)
+    {
+        return MESSAGES.format("form-field-outside-form", fieldName);
+    }
 }

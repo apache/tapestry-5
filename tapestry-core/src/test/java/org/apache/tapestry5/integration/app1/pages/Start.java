@@ -287,7 +287,9 @@ public class Start
                      "BeanEditContext is pushed into enviroment by BeanEditor."),
 
             new Item("InformalParametersDemo", "Informal Parameters Demo",
-                     "Access to informal parameters names and values")
+                     "Access to informal parameters names and values"),
+
+            new Item("FormFieldOutsideForm", "Form Field Outside Form", "Nice exception message for common problem of form fields outside forms")
     );
 
     static
