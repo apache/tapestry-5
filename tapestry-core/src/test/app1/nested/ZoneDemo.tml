@@ -6,9 +6,11 @@
 
 
     <t:zone t:id="output" style="float:right; width: 800px;" update="slidedown">
-        <t:if test="name" else="No name has been selected.">
-            Selected: ${name}
-        </t:if>
+        <span class="t-zone-update">
+            <t:if test="name" else="No name has been selected.">
+                Selected: ${name}
+            </t:if>
+        </span>
     </t:zone>
 
     <t:block id="registrationForm">
@@ -55,6 +57,10 @@
         <li>
             <t:actionlink t:id="JSON" zone="output">Direct JSON response</t:actionlink>
         </li>
+        <li>
+            <t:actionlink t:id="fail" zone="output">Failure on the server side</t:actionlink>
+        </li>
+
     </ul>
 
 

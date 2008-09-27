@@ -22,10 +22,8 @@ import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.services.ExceptionReporter;
 import org.apache.tapestry5.services.Request;
-import org.apache.tapestry5.services.Response;
 import org.apache.tapestry5.services.Session;
 
-import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**
@@ -63,14 +61,6 @@ public class ExceptionReport implements ExceptionReporter
     private String propertyName;
 
     private final String pathSeparator = System.getProperty(PATH_SEPARATOR_PROPERTY);
-
-    @Inject
-    private Response response;
-
-    void setupRender()
-    {
-        response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-    }
 
     public void reportException(Throwable exception)
     {

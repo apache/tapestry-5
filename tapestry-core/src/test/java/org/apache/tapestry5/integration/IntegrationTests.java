@@ -32,7 +32,8 @@ import java.net.URL;
  * Note: If these tests fail with BindException when starting Jetty, it could be Skype. At least on my system, Skype is
  * listening on localhost:80.
  */
-@Test(timeOut = 50000, sequential = true, groups = {"integration"})
+@SuppressWarnings({"JavaDoc"})
+@Test(timeOut = 50000, sequential = true)
 public class IntegrationTests extends AbstractIntegrationTestSuite
 {
     public IntegrationTests()
@@ -1175,8 +1176,6 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     {
         start("DateField Demo", "clear", "english");
 
-        // TODO: Check to see if we need to explicitly set the locale for this test to work properly.
-
         type("birthday", "24 dec 1966");
         type("asteroidImpact", "05/28/2046");
 
@@ -2020,6 +2019,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         }
         catch (InterruptedException ex)
         {
+            // Ignored.
         }
     }
 
@@ -2288,5 +2288,23 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         assertTextPresent("org.apache.tapestry5.internal.services.RenderQueueException",
                           "Render queue error in SetupRender[FormFieldOutsideForm:textfield]: The Textfield component must be enclosed by a Form component.",
                           "context:FormFieldOutsideForm.tml, line 5, column 45");
+    }
+
+    /**
+     * TAP5-240
+     */
+    public void ajax_server_side_exception()
+    {
+        start("Zone Demo");
+
+        click("link=Failure on the server side");
+
+        // Wait for the console to appear
+
+        waitForCondition("selenium.browserbot.getCurrentWindow().$$('DIV.t-ajax-console DIV.t-err').first()",
+                         PAGE_LOAD_TIMEOUT);
+
+        assertText("//DIV[@class='t-ajax-console']/DIV[@class='t-err']",
+                   "Communication with the server failed: Server-side exception.");
     }
 }

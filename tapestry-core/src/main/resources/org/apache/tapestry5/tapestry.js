@@ -52,7 +52,7 @@ var Tapestry = {
     DEBUG_ENABLED : false,
 
     /** Time, in seconds, that console messages are visible. */
-    CONSOLE_DURATION : 60,
+    CONSOLE_DURATION : 10,
 
     // Adds a callback function that will be invoked when the DOM is loaded (which
     // occurs *before* window.onload, which has to wait for images and such to load
@@ -196,19 +196,31 @@ var Tapestry = {
             message = message.interpolate(substitutions);
 
         if (Tapestry.console == undefined)
-        {
-            var body = $$("BODY").first();
+            Tapestry.console = Tapestry.createConsole("t-console");
 
-            Tapestry.console = new Element("div", { 'class': "t-console" });
+        Tapestry.writeToConsole(Tapestry.console, className, message);
+    },
 
-            body.insert({ bottom: Tapestry.console });
-        }
+    createConsole : function(className)
+    {
+        var body = $$("BODY").first();
 
-        var div = new Element("div", { 'class': className }).update(message);
+        var console = new Element("div", { 'class': className });
 
-        Tapestry.console.insert({ bottom: div });
+        body.insert({ top: console });
 
-        var effect = new Effect.BlindUp(div, { delay: Tapestry.CONSOLE_DURATION,
+        return console;
+    },
+
+    writeToConsole : function(console, className, message, slideDown)
+    {
+        var div = new Element("div", { 'class': className }).update(message).hide();
+
+        console.insert({ top: div });
+
+        new Effect.Appear(div, { duration: .25 });
+
+        var effect = new Effect.Fade(div, { delay: Tapestry.CONSOLE_DURATION,
             afterFinish: function()
             {
                 div.remove();
@@ -219,7 +231,19 @@ var Tapestry = {
             effect.cancel();
             div.remove();
         });
+    },
 
+    /** Adds a new entry to the Ajax console (which is never displayed using FireBug's console, since
+     * we want to present the message clearly to the user).
+     * @param className of the new entry to the console, typically "t-err"
+     * @param message to display in the console
+     */
+    updateAjaxConsole : function (className, message)
+    {
+        if (Tapestry.ajaxConsole == undefined)
+            Tapestry.ajaxConsole = Tapestry.createConsole("t-ajax-console");
+
+        Tapestry.writeToConsole(Tapestry.ajaxConsole, className, message);
     },
 
     /**
@@ -243,9 +267,14 @@ var Tapestry = {
     /**
      * Default function for handling Ajax-related failures.
      */
-    ajaxFailureHandler : function()
+    ajaxFailureHandler : function(response)
     {
-        Tapestry.error("Communication with the server failed.");
+        var message = response.getHeader("X-Tapestry-ErrorMessage");
+        "A communication error with the server has occurred.";
+
+        Tapestry.updateAjaxConsole("t-err", "Communication with the server failed: " + message);
+
+        Tapestry.debug("Ajax failure: Status #{status} for #{request.url}: " + message, response);
     },
 
     /**
@@ -258,7 +287,27 @@ var Tapestry = {
      */
     ajaxRequest : function(url, successHandler)
     {
-        return new Ajax.Request(url, { onSuccess: successHandler, onFailure: Tapestry.ajaxFailureHandler })
+        return new Ajax.Request(url, {
+            onSuccess: function(response, jsonResponse)
+            {
+                if (! response.request.success())
+                {
+                    Tapestry.updateAjaxConsole("t-err", "Server request was unsuccesful. There may be a problem accessing the server.");
+                    return;
+                }
+
+                try
+                {
+                    // Re-invoke the success handler, capturing any exceptions.
+                    successHandler.call(this, response, jsonResponse);
+                }
+                catch (e)
+                {
+                    Tapestry.updateAjaxConsole("t-err", "Client exception processing response: " + e);
+                }
+            },
+            onException: Tapestry.ajaxFailureHandler,
+            onFailure: Tapestry.ajaxFailureHandler })
     },
 
     /**
