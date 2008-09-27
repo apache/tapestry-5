@@ -76,6 +76,11 @@ public class ZoneDemo
         return output.getBody();
     }
 
+    void onActionFromFail()
+    {
+        throw new RuntimeException("Server-side exception.");
+    }
+
     Object onSuccessFromRegistrationForm()
     {
         return registrationOutput;

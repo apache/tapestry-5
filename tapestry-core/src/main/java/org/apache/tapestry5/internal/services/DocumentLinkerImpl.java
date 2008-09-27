@@ -39,32 +39,6 @@ public class DocumentLinkerImpl implements DocumentLinker
         developmentMode = !productionMode;
     }
 
-    private class IncludedStylesheet
-    {
-        private final String url;
-
-        private final String media;
-
-        IncludedStylesheet(String url, String media)
-        {
-            this.url = url;
-            this.media = media;
-        }
-
-        void add(Element head, int index)
-        {
-            head.elementAt(index, "link",
-
-                           "href", url,
-
-                           "rel", "stylesheet",
-
-                           "type", "text/css",
-
-                           "media", media);
-        }
-    }
-
     public void addStylesheetLink(String styleURL, String media)
     {
         if (stylesheets.contains(styleURL)) return;
@@ -108,30 +82,33 @@ public class DocumentLinkerImpl implements DocumentLinker
 
         if (!root.getName().equals("html")) return;
 
-        int stylesheets = includedStylesheets.size();
 
-        if (stylesheets > 0)
-        {
-            Element head = root.find("head");
+        if (!stylesheets.isEmpty())
+            addStylesheetsToHead(root, includedStylesheets);
 
-            if (head == null) head = root.elementAt(0, "head");
+        addScriptElementsToBody(root);
+    }
 
-            for (int i = 0; i < stylesheets; i++)
-                includedStylesheets.get(i).add(head, i);
-        }
-
+    private void addScriptElementsToBody(Element root)
+    {
         Element body = root.find("body");
 
         if (body == null) return;
 
         // TAPESTRY-2364
 
+        if (!scripts.isEmpty()) addScriptLinksForIncludedScripts(body, scripts);
 
-        for (String scriptURL : scripts)
-        {
-            body.element("script", "src", scriptURL, "type", "text/javascript");
-        }
+        addDynamicScriptBlock(body);
+    }
 
+    /**
+     * Adds the dynamic script block, which is, ultimately, a call to the client-side Tapestry.onDOMLoaded() function.
+     *
+     * @param body element to add the dynamic scripting to
+     */
+    protected void addDynamicScriptBlock(Element body)
+    {
         boolean blockNeeded = (developmentMode && !scripts.isEmpty()) || scriptBlock.length() > 0;
 
         if (blockNeeded)
@@ -150,7 +127,38 @@ public class DocumentLinkerImpl implements DocumentLinker
 
             e.raw("// -->\n");
         }
-
     }
 
+    /**
+     * Adds a script link for each included script.  This is only invoked if there are scripts to include.
+     *
+     * @param body    element to add the script links to
+     * @param scripts
+     */
+    protected void addScriptLinksForIncludedScripts(Element body, List<String> scripts)
+    {
+        for (String scriptURL : scripts)
+        {
+            body.element("script", "src", scriptURL, "type", "text/javascript");
+        }
+    }
+
+    /**
+     * Locates the head element under the root ("html") element, creating it if necessary, and adds the stylesheets to
+     * it.
+     *
+     * @param root        element of document
+     * @param stylesheets to add to the document
+     */
+    protected void addStylesheetsToHead(Element root, List<IncludedStylesheet> stylesheets)
+    {
+        Element head = root.find("head");
+
+        if (head == null) head = root.elementAt(0, "head");
+
+        int count = stylesheets.size();
+
+        for (int i = 0; i < count; i++)
+            stylesheets.get(i).add(head, i);
+    }
 }

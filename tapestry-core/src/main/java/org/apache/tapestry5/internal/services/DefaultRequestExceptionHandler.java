@@ -18,10 +18,13 @@ import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.internal.structure.Page;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.services.ExceptionReporter;
 import org.apache.tapestry5.services.RequestExceptionHandler;
+import org.apache.tapestry5.services.Response;
 import org.slf4j.Logger;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
@@ -38,20 +41,30 @@ public class DefaultRequestExceptionHandler implements RequestExceptionHandler
 
     private final String pageName;
 
+    private final Response response;
+
     public DefaultRequestExceptionHandler(RequestPageCache pageCache, PageResponseRenderer renderer, Logger logger,
 
                                           @Inject @Symbol(SymbolConstants.EXCEPTION_REPORT_PAGE)
-                                          String pageName)
+                                          String pageName,
+
+                                          Response response)
     {
         this.pageCache = pageCache;
         this.renderer = renderer;
         this.logger = logger;
         this.pageName = pageName;
+        this.response = response;
     }
 
     public void handleRequestException(Throwable exception) throws IOException
     {
         logger.error(ServicesMessages.requestException(exception), exception);
+
+        // TAP5-233: Make sure the client knows that an error occurred.
+
+        response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        response.setHeader("X-Tapestry-ErrorMessage", InternalUtils.toMessage(exception));
 
         Page page = pageCache.get(pageName);
 

@@ -18,19 +18,20 @@ import java.io.IOException;
 
 /**
  * A dispatcher is responsible for recognizing an incoming request. Dispatchers form an ordered chain of command, with
- * each dispatcher responsible for recognizing requests that it can process.
+ * each dispatcher responsible for recognizing requests that it can process.  This is the interface for the
+ * MasterDispatcher service, which takes an ordered configuration of Dispatchers (that is, the chain of command
+ * pattern). If no dispatcher processes the request, it will utltimately be passed off to the servlet container.
  *
  * @see org.apache.tapestry5.services.TapestryModule#contributeMasterDispatcher(org.apache.tapestry5.ioc.OrderedConfiguration,
- *      ClasspathAssetAliasManager, org.apache.tapestry5.internal.services.ResourceCache,
- *      org.apache.tapestry5.internal.services.ResourceStreamer, PageRenderRequestHandler, ComponentEventRequestHandler,
- *      ComponentClassResolver, ContextValueEncoder, String)
+ *      org.apache.tapestry5.ioc.ObjectLocator)
  */
 public interface Dispatcher
 {
     /**
      * Analyzes the incoming request and performs an appropriate operation for each.
      *
-     * @return true if a response was delivered, false if the servlet container should be allowed to handle the request
+     * @return true if a response was delivered, false if the dispatcher did not handle the request (and a search for a
+     *         handler should continue)
      */
     boolean dispatch(Request request, Response response) throws IOException;
 }
