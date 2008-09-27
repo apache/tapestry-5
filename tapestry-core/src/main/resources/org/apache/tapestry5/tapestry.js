@@ -714,7 +714,7 @@ Tapestry.Initializer = {
 
             if (vfunc == undefined)
             {
-                Tapestry.error("Function Tapestry.Validator.#{name}() does not exist for field '#{fieldName}'.", {name:name, fieldName:pair.key});
+                Tapestry.error("Function Tapestry.Validator.#{name}() does not exist for field '#{fieldName}'.", {name:name, fieldName:field.id});
                 return;
             }
 
