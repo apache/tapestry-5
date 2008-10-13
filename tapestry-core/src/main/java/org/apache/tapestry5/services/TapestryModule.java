@@ -1000,6 +1000,11 @@ public final class TapestryModule
                 Request request = new RequestImpl(servletRequest, applicationCharset);
                 Response response = new ResponseImpl(servletResponse);
 
+                // TAP5-257: Make sure that the "initial guess" for request/response is available, even if
+                // some filter in the RequestHandler pipeline replaces them.
+
+                requestGlobals.storeRequestResponse(request, response);
+
                 // Transition from the Servlet API-based pipeline, to the Tapestry-based pipeline.
 
                 return handler.service(request, response);
@@ -1020,6 +1025,8 @@ public final class TapestryModule
         {
             public boolean service(Request request, Response response) throws IOException
             {
+                // Update RequestGlobals with the current request/response (in case some filter replaced the
+                // normal set).
                 requestGlobals.storeRequestResponse(request, response);
 
                 return masterDispatcher.dispatch(request, response);
