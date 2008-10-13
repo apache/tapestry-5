@@ -214,7 +214,11 @@ Tapestry.Palette = Class.create({
             }.bind(this));
             if (candidate) before = candidate;
         }
+        this.addOption(to, option, before);
+    },
 
+    addOption : function(to, option, before)
+    {
         try
         {
             to.add(option, before);
@@ -233,6 +237,7 @@ Tapestry.Palette = Class.create({
                 to.add(option, before.index);
             }
         }
+
     },
 
     moveDownClicked : function(event)
@@ -254,7 +259,7 @@ Tapestry.Palette = Class.create({
     {
         movers.each(function(option)
         {
-            this.selected.add(option, before);
+            this.addOption(this.selected, option, before);
         }.bind(this));
 
         this.updateHidden();
