@@ -22,7 +22,6 @@ import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.services.ThreadLocale;
 import org.apache.tapestry5.ioc.util.TimeInterval;
-import org.apache.tapestry5.services.ComponentClassResolver;
 import org.slf4j.Logger;
 
 import java.util.Locale;
@@ -56,8 +55,6 @@ public class PagePoolImpl implements PagePool, InvalidationListener, UpdateListe
 
     private final ThreadLocale threadLocale;
 
-    private final ComponentClassResolver resolver;
-
     private final int softLimit;
 
     private final long softWait;
@@ -74,8 +71,6 @@ public class PagePoolImpl implements PagePool, InvalidationListener, UpdateListe
 
                         ThreadLocale threadLocale,
 
-                        ComponentClassResolver resolver,
-
                         @Symbol("tapestry.page-pool.soft-limit")
                         int softLimit,
 
@@ -91,18 +86,15 @@ public class PagePoolImpl implements PagePool, InvalidationListener, UpdateListe
         this.logger = logger;
         this.pageLoader = pageLoader;
         this.threadLocale = threadLocale;
-        this.resolver = resolver;
         this.softLimit = softLimit;
         this.softWait = softWait;
         this.hardLimit = hardLimit;
         this.activeWindow = activeWindow;
     }
 
-    public Page checkout(String logicalPageName)
+    public Page checkout(String pageName)
     {
-        String canonicalPageName = resolver.canonicalizePageName(logicalPageName);
-
-        PagePoolCache cache = get(canonicalPageName, threadLocale.getLocale());
+        PagePoolCache cache = get(pageName, threadLocale.getLocale());
 
         return cache.checkout();
     }

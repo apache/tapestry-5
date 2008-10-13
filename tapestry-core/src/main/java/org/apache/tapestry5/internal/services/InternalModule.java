@@ -103,9 +103,9 @@ public class InternalModule
 
 
     @Scope(PERTHREAD_SCOPE)
-    public static RequestPageCache buildRequestPageCache(PagePool pagePool, PerthreadManager perthreadManager)
+    public static RequestPageCache buildRequestPageCache(ObjectLocator locator, PerthreadManager perthreadManager)
     {
-        RequestPageCacheImpl service = new RequestPageCacheImpl(pagePool);
+        RequestPageCacheImpl service = locator.autobuild(RequestPageCacheImpl.class);
 
         perthreadManager.addThreadCleanupListener(service);
 
@@ -216,7 +216,6 @@ public class InternalModule
             {
                 requestGlobals.getHTTPServletResponse().addCookie(cookie);
             }
-
         };
     }
 
@@ -256,5 +255,4 @@ public class InternalModule
     {
         return builder.build(componentInstantiatorSource, "classSource", CtClassSource.class);
     }
-
 }

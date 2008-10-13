@@ -17,7 +17,6 @@ package org.apache.tapestry5.internal.services;
 import org.apache.tapestry5.internal.structure.Page;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.ioc.services.ThreadLocale;
-import org.apache.tapestry5.services.ComponentClassResolver;
 import static org.easymock.EasyMock.contains;
 import org.slf4j.Logger;
 import org.testng.annotations.Test;
@@ -26,7 +25,6 @@ import java.util.Locale;
 
 public class PagePoolImplTest extends InternalBaseTestCase
 {
-    private static final String INPUT_PAGE_NAME = "mypage";
 
     private static final String LOGICAL_PAGE_NAME = "MyPage";
 
@@ -40,10 +38,7 @@ public class PagePoolImplTest extends InternalBaseTestCase
         PageLoader loader = mockPageLoader();
         Page page = mockPage();
         ThreadLocale tl = mockThreadLocale();
-        ComponentClassResolver resolver = mockComponentClassResolver();
         Logger logger = mockLogger();
-
-        train_canonicalizePageName(resolver, INPUT_PAGE_NAME, LOGICAL_PAGE_NAME);
 
         train_getLocale(tl, locale);
 
@@ -51,9 +46,9 @@ public class PagePoolImplTest extends InternalBaseTestCase
 
         replay();
 
-        PagePool pool = new PagePoolImpl(logger, loader, tl, resolver, 5, 0, 20, 600000);
+        PagePool pool = new PagePoolImpl(logger, loader, tl, 5, 0, 20, 600000);
 
-        assertSame(page, pool.checkout(INPUT_PAGE_NAME));
+        assertSame(page, pool.checkout(LOGICAL_PAGE_NAME));
 
         verify();
     }
@@ -66,9 +61,6 @@ public class PagePoolImplTest extends InternalBaseTestCase
         PageLoader loader = mockPageLoader();
         Logger logger = mockLogger();
         ThreadLocale tl = mockThreadLocale();
-        ComponentClassResolver resolver = mockComponentClassResolver();
-
-        train_canonicalizePageName(resolver, INPUT_PAGE_NAME, LOGICAL_PAGE_NAME);
 
         train_getLocale(tl, locale);
 
@@ -76,9 +68,9 @@ public class PagePoolImplTest extends InternalBaseTestCase
 
         replay();
 
-        PagePool pool = new PagePoolImpl(logger, loader, tl, resolver, 5, 0, 20, 600000);
+        PagePool pool = new PagePoolImpl(logger, loader, tl, 5, 0, 20, 600000);
 
-        assertSame(pool.checkout(INPUT_PAGE_NAME), page1);
+        assertSame(pool.checkout(LOGICAL_PAGE_NAME), page1);
 
         verify();
 
@@ -92,21 +84,18 @@ public class PagePoolImplTest extends InternalBaseTestCase
 
         verify();
 
-        train_canonicalizePageName(resolver, INPUT_PAGE_NAME, LOGICAL_PAGE_NAME);
         train_getLocale(tl, locale);
 
-        train_canonicalizePageName(resolver, INPUT_PAGE_NAME, LOGICAL_PAGE_NAME);
         train_getLocale(tl, locale);
 
         train_loadPage(loader, LOGICAL_PAGE_NAME, locale, page2);
 
         replay();
 
-        assertSame(pool.checkout(INPUT_PAGE_NAME), page1);
-        assertSame(pool.checkout(INPUT_PAGE_NAME), page2);
+        assertSame(pool.checkout(LOGICAL_PAGE_NAME), page1);
+        assertSame(pool.checkout(LOGICAL_PAGE_NAME), page2);
 
         verify();
-
     }
 
     @Test
@@ -127,7 +116,7 @@ public class PagePoolImplTest extends InternalBaseTestCase
 
         replay();
 
-        PagePool pool = new PagePoolImpl(logger, loader, null, null, 5, 0, 20, 600000);
+        PagePool pool = new PagePoolImpl(logger, loader, null, 5, 0, 20, 600000);
 
         pool.release(page);
 
