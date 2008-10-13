@@ -14,10 +14,13 @@
 
 package org.apache.tapestry5.ioc.test;
 
+import org.apache.tapestry5.ioc.internal.util.Defense;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.easymock.*;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 
+import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
 
@@ -35,12 +38,10 @@ import java.util.List;
  * functionality using {@link MockTester}.
  * <p/>
  * This class is thread safe (it uses a thread local to store the mock control). In theory, this should allow TestNG to
- * execute tests in parallel. Unfortunately, as of this writing (TestNG 5.1 and maven-surefire 2.8-SNAPSHOT) parallel
- * execution does not always work fully and consistently, some tests are dropped, and so Tapestry does not make use of
- * TestNG parallel execution.
+ * execute tests in parallel.
  *
- * @see EasyMock#createControl()
- * @see MockTester
+ * @see org.easymock.EasyMock#createControl()
+ * @see org.apache.tapestry5.ioc.test.MockTester
  */
 public class TestBase extends Assert
 {
@@ -108,7 +109,7 @@ public class TestBase extends Assert
      *
      * @param throwable the exception to be thrown by the most recent method call on any mock
      */
-    protected static final void setThrowable(Throwable throwable)
+    protected static void setThrowable(Throwable throwable)
     {
         EasyMock.expectLastCall().andThrow(throwable);
     }
@@ -118,7 +119,7 @@ public class TestBase extends Assert
      *
      * @param answer callback for the most recent method invocation
      */
-    protected static final void setAnswer(IAnswer answer)
+    protected static void setAnswer(IAnswer answer)
     {
         EasyMock.expectLastCall().andAnswer(answer);
     }
@@ -128,7 +129,7 @@ public class TestBase extends Assert
      * method that is expected to throw an exception.
      */
 
-    protected static final void unreachable()
+    protected static void unreachable()
     {
         fail("This code should not be reachable.");
     }
@@ -141,7 +142,7 @@ public class TestBase extends Assert
      * @return expectation setter, for setting return value, etc.
      */
     @SuppressWarnings("unchecked")
-    protected static final <T> IExpectationSetters<T> expect(T value)
+    protected static <T> IExpectationSetters<T> expect(T value)
     {
         return EasyMock.expect(value);
     }
@@ -152,7 +153,7 @@ public class TestBase extends Assert
      * @param t          throwable to check
      * @param substrings some number of expected substrings
      */
-    protected static final void assertMessageContains(Throwable t, String... substrings)
+    protected static void assertMessageContains(Throwable t, String... substrings)
     {
         String message = t.getMessage();
 
@@ -170,7 +171,7 @@ public class TestBase extends Assert
      * @param actual   actual values to check
      * @param expected expected values
      */
-    protected static final <T> void assertListsEquals(List<T> actual, List<T> expected)
+    protected static <T> void assertListsEquals(List<T> actual, List<T> expected)
     {
         int count = Math.min(actual.size(), expected.size());
 
@@ -189,7 +190,7 @@ public class TestBase extends Assert
      * @param actual   actual values to check
      * @param expected expected values
      */
-    protected static final <T> void assertListsEquals(List<T> actual, T... expected)
+    protected static <T> void assertListsEquals(List<T> actual, T... expected)
     {
         assertListsEquals(actual, Arrays.asList(expected));
     }
@@ -201,7 +202,7 @@ public class TestBase extends Assert
      * @param actual   actual values to check
      * @param expected expected values
      */
-    protected static final <T> void assertArraysEqual(T[] actual, T... expected)
+    protected static <T> void assertArraysEqual(T[] actual, T... expected)
     {
         assertListsEquals(Arrays.asList(actual), expected);
     }
@@ -209,8 +210,93 @@ public class TestBase extends Assert
     /**
      * A factory method to create EasyMock Capture objects.
      */
-    protected static final <T> Capture<T> newCapture()
+    protected static <T> Capture<T> newCapture()
     {
         return new Capture<T>();
+    }
+
+    /**
+     * Creates a new instance of the object using its default constructor, and initializes it (via {@link #set(Object,
+     * Object[])}).
+     *
+     * @param objectType  typeof object to instantiate
+     * @param fieldValues string field names and corresponding field values
+     * @return the initialized instance
+     */
+    protected static <T> T create(Class<T> objectType, Object... fieldValues)
+    {
+        T result = null;
+
+        try
+        {
+            result = objectType.newInstance();
+        }
+        catch (Exception ex)
+        {
+            throw new RuntimeException(String.format("Unable to instantiate instance of %s: %s",
+                                                     objectType.getName(), InternalUtils.toMessage(ex)), ex);
+        }
+
+        return set(result, fieldValues);
+    }
+
+    /**
+     * Initializes private fields (via reflection).
+     *
+     * @param object      object to be updated
+     * @param fieldValues string field names and corresponding field values
+     * @return the object
+     */
+    protected static <T> T set(T object, Object... fieldValues)
+    {
+        Defense.notNull(object, "object");
+
+        Class objectClass = object.getClass();
+
+        for (int i = 0; i < fieldValues.length; i += 2)
+        {
+            String fieldName = (String) fieldValues[i];
+            Object fieldValue = fieldValues[i + 1];
+
+            try
+            {
+                Field field = findField(objectClass, fieldName);
+
+                field.setAccessible(true);
+
+                field.set(object, fieldValue);
+            }
+            catch (Exception ex)
+            {
+                throw new RuntimeException(String.format("Unable to set field '%s' of %s to %s: %s",
+                                                         fieldName, object, fieldValue,
+                                                         InternalUtils.toMessage(ex)), ex);
+            }
+        }
+
+        return object;
+    }
+
+    private static Field findField(Class objectClass, String fieldName)
+    {
+
+        Class cursor = objectClass;
+
+        while (cursor != null)
+        {
+            try
+            {
+                return cursor.getDeclaredField(fieldName);
+            }
+            catch (NoSuchFieldException ex)
+            {
+                // Ignore.
+            }
+
+            cursor = cursor.getSuperclass();
+        }
+
+        throw new RuntimeException(
+                String.format("Class %s does not contain a field named '%s'.", objectClass.getName(), fieldName));
     }
 }

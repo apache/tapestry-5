@@ -20,6 +20,7 @@
         <packages>
             <package name="org.apache.tapestry5.ioc"/>
             <package name="org.apache.tapestry5.ioc.services"/>
+            <package name="org.apache.tapestry5.ioc.test"/>
             <package name="org.apache.tapestry5.ioc.util"/>
         </packages>
     </test>
