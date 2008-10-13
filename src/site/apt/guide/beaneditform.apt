@@ -42,6 +42,18 @@ Using the BeanEditForm Component
   
   If the object does not exist, it will be created as needed. The type is determined from the property type, which should be a specific type
   in order for automatic creation to operate properly.
+
+  The BeanEditForm component will attempt to instantiate a value for the property as necessary, when the form is submitted.
+  This can be a problem when the property type is an interface, rather than an instantiable class.
+
+  One option is to provide an event handler for the "prepare" or "prepareForSubmit" events to instantiate an instance
+  to receive the submitted information.
+
+  For a class, Tapestry will select the public constructor with the <most> parameters.  If this is not desirable
+  (for example, if you get an exception),
+  then place the
+  {{{../../apidocs/org/apache/tapestry5/ioc/annotations/Inject.html}Inject}} annotation on the constructor
+  Tapestry should use.
   
 * Implicit Object Binding
 
