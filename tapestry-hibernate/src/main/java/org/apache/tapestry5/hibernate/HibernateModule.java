@@ -126,15 +126,12 @@ public class HibernateModule
     }
 
     /**
-     * Adds the following configurers: <ul> <li>Default - performs default hibernate configuration</li> <li>PackageName
-     * - loads entities by package name</li> </ul>
-     * <p/>
-     * Note: if another service implementing {@link org.apache.tapestry5.hibernate.HibernateConfigurer} is defined, then
-     * an contribution to the {@link org.apache.tapestry5.services.Alias} service will be necessary to disambiguate.
+     * Adds the following configurers: <dl> <dt>Default <dd> performs default hibernate configuration <dt>PackageName
+     * <dd> loads entities by package name</dl>
      */
     public static void contributeHibernateSessionSource(OrderedConfiguration<HibernateConfigurer> config,
 
-                                                        HibernateConfigurer defaultHibernateConfigurer,
+                                                        @Local HibernateConfigurer defaultHibernateConfigurer,
 
                                                         ObjectLocator locator)
     {
