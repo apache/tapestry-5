@@ -17,6 +17,7 @@ package org.apache.tapestry5.corelib.components;
 import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.EventConstants;
 import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.Mixin;
 import org.apache.tapestry5.annotations.Parameter;
@@ -34,7 +35,6 @@ import org.apache.tapestry5.services.Request;
  */
 public class Submit extends AbstractField
 {
-    static final String SELECTED_EVENT = "selected";
 
     /**
      * If true (the default), then any notification sent by the component will be deferred until the end of the form
@@ -48,7 +48,7 @@ public class Submit extends AbstractField
      * is "selected".
      */
     @Parameter(allowNull = false, defaultPrefix = BindingConstants.LITERAL)
-    private String event = SELECTED_EVENT;
+    private String event = EventConstants.SELECTED;
 
     @Environmental
     private FormSupport formSupport;

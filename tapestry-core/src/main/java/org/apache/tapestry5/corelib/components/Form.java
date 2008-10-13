@@ -45,14 +45,16 @@ import java.util.List;
 /**
  * An HTML form, which will enclose other components to render out the various types of fields.
  * <p/>
- * A Form emits many notification events. When it renders, it fires a {@link #PREPARE_FOR_RENDER} notification, followed
- * by a {@link #PREPARE} notification.
+ * A Form emits many notification events. When it renders, it fires a {@link org.apache.tapestry5.EventConstants#PREPARE_FOR_RENDER}
+ * notification, followed by a {@link org.apache.tapestry5.EventConstants#PREPARE} notification.
  * <p/>
- * When the form is submitted, the component emits several notifications: first a {@link #PREPARE_FOR_SUBMIT}, then a
- * {@link #PREPARE}: these allow the page to update its state as necessary to prepare for the form submission, then
- * (after components enclosed by the form have operated), a {@link #VALIDATE_FORM}event is emitted, to allow for
- * cross-form validation. After that, either a {@link #SUCCESS} OR {@link #FAILURE} event (depending on whether the
- * {@link ValidationTracker} has recorded any errors). Lastly, a {@link #SUBMIT} event, for any listeners that care only
+ * When the form is submitted, the component emits several notifications: first a {@link
+ * org.apache.tapestry5.EventConstants#PREPARE_FOR_SUBMIT}, then a {@link org.apache.tapestry5.EventConstants#PREPARE}:
+ * these allow the page to update its state as necessary to prepare for the form submission, then (after components
+ * enclosed by the form have operated), a {@link org.apache.tapestry5.EventConstants#VALIDATE_FORM}event is emitted, to
+ * allow for cross-form validation. After that, either a {@link org.apache.tapestry5.EventConstants#SUCCESS} OR {@link
+ * org.apache.tapestry5.EventConstants#FAILURE} event (depending on whether the {@link ValidationTracker} has recorded
+ * any errors). Lastly, a {@link org.apache.tapestry5.EventConstants#SUBMIT} event, for any listeners that care only
  * about form submission, regardless of success or failure.
  * <p/>
  * For all of these notifications, the event context is derived from the <strong>context</strong> parameter. This
@@ -62,43 +64,39 @@ import java.util.List;
 public class Form implements ClientElement, FormValidationControl
 {
     /**
-     * Invoked before {@link #PREPARE} when rendering out the form.
+     * @deprecated Use constant from {@link org.apache.tapestry5.EventConstants} instead.
      */
-    public static final String PREPARE_FOR_RENDER = "prepareForRender";
+    public static final String PREPARE_FOR_RENDER = EventConstants.PREPARE_FOR_RENDER;
 
     /**
-     * Invoked before {@link #PREPARE} when the form is submitted.
+     * @deprecated Use constant from {@link org.apache.tapestry5.EventConstants} instead.
      */
-    public static final String PREPARE_FOR_SUBMIT = "prepareForSubmit";
+    public static final String PREPARE_FOR_SUBMIT = EventConstants.PREPARE_FOR_SUBMIT;
 
     /**
-     * Invoked to let the containing component(s) prepare for the form rendering or the form submission.
+     * @deprecated Use constant from {@link org.apache.tapestry5.EventConstants} instead.
      */
-    public static final String PREPARE = "prepare";
+    public static final String PREPARE = EventConstants.PREPARE;
 
     /**
-     * Event type for a notification after the form has submitted. This event notification occurs on any form submit,
-     * without respect to "success" or "failure".
+     * @deprecated Use constant from {@link org.apache.tapestry5.EventConstants} instead.
      */
-    public static final String SUBMIT = "submit";
+    public static final String SUBMIT = EventConstants.SUBMIT;
 
     /**
-     * Event type for a notification to perform validation of submitted data. This allows a listener to perform
-     * cross-field validation. This occurs before the {@link #SUCCESS} or {@link #FAILURE} notification.
+     * @deprecated Use constant from {@link org.apache.tapestry5.EventConstants} instead.
      */
-    public static final String VALIDATE_FORM = "validateForm";
+    public static final String VALIDATE_FORM = EventConstants.VALIDATE_FORM;
 
     /**
-     * Event type for a notification after the form has submitted, when there are no errors in the validation tracker.
-     * This occurs before the {@link #SUBMIT} event.
+     * @deprecated Use constant from {@link org.apache.tapestry5.EventConstants} instead.
      */
-    public static final String SUCCESS = "success";
+    public static final String SUCCESS = EventConstants.SUCCESS;
 
     /**
-     * Event type for a notification after the form has been submitted, when there are errors in the validation tracker.
-     * This occurs before the {@link #SUBMIT} event.
+     * @deprecated Use constant from {@link org.apache.tapestry5.EventConstants} instead.
      */
-    public static final String FAILURE = "failure";
+    public static final String FAILURE = EventConstants.FAILURE;
 
     /**
      * Query parameter name storing form data (the serialized commands needed to process a form submission).
@@ -245,9 +243,9 @@ public class Form implements ClientElement, FormValidationControl
 
         Object[] contextArray = context == null ? new Object[0] : context.toArray();
 
-        resources.triggerEvent(PREPARE_FOR_RENDER, contextArray, null);
+        resources.triggerEvent(EventConstants.PREPARE_FOR_RENDER, contextArray, null);
 
-        resources.triggerEvent(PREPARE, contextArray, null);
+        resources.triggerEvent(EventConstants.PREPARE, contextArray, null);
 
         Link link = resources.createFormEventLink(EventConstants.ACTION, contextArray);
 
@@ -335,11 +333,11 @@ public class Form implements ClientElement, FormValidationControl
             ComponentResultProcessorWrapper callback = new ComponentResultProcessorWrapper(
                     componentEventResultProcessor);
 
-            resources.triggerContextEvent(PREPARE_FOR_SUBMIT, context, callback);
+            resources.triggerContextEvent(EventConstants.PREPARE_FOR_SUBMIT, context, callback);
 
             if (callback.isAborted()) return true;
 
-            resources.triggerContextEvent(PREPARE, context, callback);
+            resources.triggerContextEvent(EventConstants.PREPARE, context, callback);
 
             if (callback.isAborted()) return true;
 
@@ -371,13 +369,14 @@ public class Form implements ClientElement, FormValidationControl
 
             if (!this.tracker.getHasErrors()) this.tracker.clear();
 
-            resources.triggerContextEvent(tracker.getHasErrors() ? FAILURE : SUCCESS, context, callback);
+            resources.triggerContextEvent(tracker.getHasErrors() ? EventConstants.FAILURE : EventConstants.SUCCESS,
+                                          context, callback);
 
             // Lastly, tell anyone whose interested that the form is completely submitted.
 
             if (callback.isAborted()) return true;
 
-            resources.triggerContextEvent(SUBMIT, context, callback);
+            resources.triggerContextEvent(EventConstants.SUBMIT, context, callback);
 
             return callback.isAborted();
         }
@@ -392,7 +391,7 @@ public class Form implements ClientElement, FormValidationControl
     {
         try
         {
-            resources.triggerContextEvent(VALIDATE_FORM, context, callback);
+            resources.triggerContextEvent(EventConstants.VALIDATE_FORM, context, callback);
         }
         catch (RuntimeException ex)
         {

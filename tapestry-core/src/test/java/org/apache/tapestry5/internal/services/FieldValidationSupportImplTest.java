@@ -61,7 +61,7 @@ public class FieldValidationSupportImplTest extends InternalBaseTestCase
             }
         };
 
-        EasyMock.expect(resources.triggerEvent(EasyMock.eq(FieldValidationSupportImpl.PARSE_CLIENT_EVENT),
+        EasyMock.expect(resources.triggerEvent(EasyMock.eq(EventConstants.PARSE_CLIENT),
                                                EasyMock.isA(Object[].class),
                                                EasyMock.isA(ComponentEventCallback.class))).andAnswer(answer);
 
@@ -89,7 +89,7 @@ public class FieldValidationSupportImplTest extends InternalBaseTestCase
 
         train_replaceFromClient(nullFieldStrategy, "");
 
-        ignoreEvent(resources, FieldValidationSupportImpl.PARSE_CLIENT_EVENT, clientValue);
+        ignoreEvent(resources, EventConstants.PARSE_CLIENT, clientValue);
 
         expect(translator.parse(clientValue)).andReturn("");
 
@@ -127,7 +127,7 @@ public class FieldValidationSupportImplTest extends InternalBaseTestCase
 
         String clientValue = "abracadabra";
 
-        EasyMock.expect(resources.triggerEvent(EasyMock.eq(FieldValidationSupportImpl.PARSE_CLIENT_EVENT),
+        EasyMock.expect(resources.triggerEvent(EasyMock.eq(EventConstants.PARSE_CLIENT),
                                                EasyMock.isA(Object[].class),
                                                EasyMock.isA(ComponentEventCallback.class))).andThrow(
                 new RuntimeException(ve));
@@ -164,7 +164,7 @@ public class FieldValidationSupportImplTest extends InternalBaseTestCase
         String clientValue = "abracadabra";
 
 
-        EasyMock.expect(resources.triggerEvent(EasyMock.eq(FieldValidationSupportImpl.PARSE_CLIENT_EVENT),
+        EasyMock.expect(resources.triggerEvent(EasyMock.eq(EventConstants.PARSE_CLIENT),
                                                EasyMock.isA(Object[].class),
                                                EasyMock.isA(ComponentEventCallback.class))).andThrow(re);
 
@@ -198,7 +198,7 @@ public class FieldValidationSupportImplTest extends InternalBaseTestCase
 
         String clientValue = "abracadabra";
 
-        ignoreEvent(resources, FieldValidationSupportImpl.PARSE_CLIENT_EVENT, clientValue);
+        ignoreEvent(resources, EventConstants.PARSE_CLIENT, clientValue);
 
         expect(translator.parse(clientValue)).andReturn("foobar");
 
@@ -226,7 +226,7 @@ public class FieldValidationSupportImplTest extends InternalBaseTestCase
 
         String clientValue = "abracadabra";
 
-        EasyMock.expect(resources.triggerEvent(EasyMock.eq(FieldValidationSupportImpl.TO_CLIENT_EVENT),
+        EasyMock.expect(resources.triggerEvent(EasyMock.eq(EventConstants.TO_CLIENT),
                                                EasyMock.aryEq(new Object[] {value}),
                                                EasyMock.isA(ComponentEventCallback.class))).andReturn(false);
 
@@ -266,7 +266,7 @@ public class FieldValidationSupportImplTest extends InternalBaseTestCase
             }
         };
 
-        EasyMock.expect(resources.triggerEvent(EasyMock.eq(FieldValidationSupportImpl.TO_CLIENT_EVENT),
+        EasyMock.expect(resources.triggerEvent(EasyMock.eq(EventConstants.TO_CLIENT),
                                                EasyMock.aryEq(new Object[] {value}),
                                                EasyMock.isA(ComponentEventCallback.class))).andAnswer(answer);
 
@@ -303,7 +303,7 @@ public class FieldValidationSupportImplTest extends InternalBaseTestCase
             }
         };
 
-        EasyMock.expect(resources.triggerEvent(EasyMock.eq(FieldValidationSupportImpl.TO_CLIENT_EVENT),
+        EasyMock.expect(resources.triggerEvent(EasyMock.eq(EventConstants.TO_CLIENT),
                                                EasyMock.aryEq(new Object[] {value}),
                                                EasyMock.isA(ComponentEventCallback.class))).andAnswer(answer);
 
@@ -342,7 +342,7 @@ public class FieldValidationSupportImplTest extends InternalBaseTestCase
 
         ComponentEventCallback handler = null;
 
-        expect(resources.triggerEvent(EasyMock.eq(FieldValidationSupportImpl.VALIDATE_EVENT),
+        expect(resources.triggerEvent(EasyMock.eq(EventConstants.VALIDATE),
                                       EasyMock.aryEq(new Object[] {value}), EasyMock.eq(handler))).andReturn(true);
 
 
@@ -371,7 +371,7 @@ public class FieldValidationSupportImplTest extends InternalBaseTestCase
 
         fv.validate(value);
 
-        expect(resources.triggerEvent(eq(FieldValidationSupportImpl.VALIDATE_EVENT),
+        expect(resources.triggerEvent(eq(EventConstants.VALIDATE),
                                       EasyMock.aryEq(new Object[] {value}), eq(handler))).andThrow(re);
 
 

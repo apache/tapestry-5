@@ -19,11 +19,9 @@ Licensing Issues
   License used by the rest of Tapestry. The restrictions mostly apply to redistricuting Hibernate, especially in
   any altered form, and will likely be irrelvant to the vast majority of users, but you should be aware.
   
-  This library is compiled against version <<3.2.2.ga>> of Hibernate (and version 3.2.1.ga of hibernate-annotations),
+  This library is compiled against version <<3.3.1.GA>> of Hibernate (and version 3.4.0.GA of hibernate-annotations),
   but should work with more recent versions.
   
-  You will have to manually setup a dependency against your preferred version of Hibernate in your project's Maven POM,
-  to override the default dependencies provided by tapestry-hibernate.
 
 What's New?
 
