@@ -109,7 +109,7 @@ public class PagePoolImpl implements PagePool, InvalidationListener, UpdateListe
 
     public void release(Page page)
     {
-        PagePoolCache cache = get(page.getLogicalName(), page.getLocale());
+        PagePoolCache cache = getPagePoolCache(page);
 
         // If the page is not "clean" of any request/client state, it can't go
         // back in the pool.
@@ -124,6 +124,16 @@ public class PagePoolImpl implements PagePool, InvalidationListener, UpdateListe
         }
 
         cache.release(page);
+    }
+
+    public void discard(Page page)
+    {
+        getPagePoolCache(page).remove(page);
+    }
+
+    private PagePoolCache getPagePoolCache(Page page)
+    {
+        return get(page.getLogicalName(), page.getLocale());
     }
 
     private synchronized PagePoolCache get(String pageName, Locale locale)

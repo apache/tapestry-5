@@ -35,7 +35,16 @@ public interface PagePool
     Page checkout(String logicalPageName);
 
     /**
+     * Releases a previously checked-out page.
+     *
      * @param page a previously checked-out page
      */
     void release(Page page);
+
+    /**
+     * Discards a page, which occurs when there are errors invoking lifecycle methods on the page.
+     *
+     * @param page a previously checked-out page
+     */
+    void discard(Page page);
 }

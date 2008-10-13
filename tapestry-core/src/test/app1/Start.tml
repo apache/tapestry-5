@@ -80,6 +80,10 @@
             <a href="failedinjectdemo">Failed Field Injection Demo</a>
             -- demo failure when attempting to inject into a field
         </li>
+        <li>
+            <a href="pageAttachFailure">Page Attach Failure</a>
+            -- demo failure when attaching a page
+        </li>
 
     </ul>
 

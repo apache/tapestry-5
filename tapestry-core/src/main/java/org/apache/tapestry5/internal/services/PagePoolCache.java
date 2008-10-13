@@ -59,12 +59,12 @@ final class PagePoolCache
     /**
      * Pages that are available for use.
      */
-    private LinkedList<CachedPage> available = CollectionFactory.newLinkedList();
+    private final LinkedList<CachedPage> available = CollectionFactory.newLinkedList();
 
     /**
      * Pages that are currently in use.
      */
-    private LinkedList<CachedPage> inUse = CollectionFactory.newLinkedList();
+    private final LinkedList<CachedPage> inUse = CollectionFactory.newLinkedList();
 
     /**
      * Guards access to the available and in use lists.
@@ -264,7 +264,6 @@ final class PagePoolCache
                     i.remove();
                     break;
                 }
-
             }
 
             // This should not ever happen. The only scenario I can think of is if a page instance
@@ -282,7 +281,6 @@ final class PagePoolCache
             available.addFirst(cached);
 
             pageAvailable.signal();
-
         }
         finally
         {
@@ -347,6 +345,4 @@ final class PagePoolCache
             lock.unlock();
         }
     }
-
-
 }

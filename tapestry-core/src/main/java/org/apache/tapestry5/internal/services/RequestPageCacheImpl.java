@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -42,7 +42,16 @@ public class RequestPageCacheImpl implements RequestPageCache, ThreadCleanupList
         {
             page = pagePool.checkout(logicalPageName);
 
-            page.attached();
+            try
+            {
+                page.attached();
+            }
+            catch (RuntimeException ex)
+            {
+                pagePool.discard(page);
+
+                throw ex;
+            }
 
             cache.put(logicalPageName, page);
         }

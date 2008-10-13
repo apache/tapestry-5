@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@ package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.internal.structure.Page;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
+import org.easymock.EasyMock;
 import org.testng.annotations.Test;
 
 public class RequestPageCacheImplTest extends InternalBaseTestCase
@@ -54,6 +55,38 @@ public class RequestPageCacheImplTest extends InternalBaseTestCase
         // Now, trigger the release()
 
         cache.threadDidCleanup();
+
+        verify();
+    }
+
+    @Test
+    public void failure_in_attach_will_discard_page()
+    {
+        PagePool pool = mockPagePool();
+        Page page = mockPage();
+        RuntimeException t = new RuntimeException("Failure in attach.");
+
+        expect(pool.checkout(PAGE_NAME)).andReturn(page);
+
+        page.attached();
+
+        EasyMock.expectLastCall().andThrow(t);
+
+        pool.discard(page);
+
+        replay();
+
+        RequestPageCacheImpl cache = new RequestPageCacheImpl(pool);
+
+        try
+        {
+            cache.get(PAGE_NAME);
+            unreachable();
+        }
+        catch (RuntimeException ex)
+        {
+            assertSame(ex, t);
+        }
 
         verify();
     }
