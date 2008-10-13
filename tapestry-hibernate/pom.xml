@@ -50,11 +50,8 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- The Hibernate dependencies are provided; which gives the final application
-the ability to choose the appropriate version.  Further, in many cases
-(such as JBoss deployment), they are, in fact, provided by the
-container.  For a Tomcat deployment, you're more likely to include
-the hibernate JARs and dependencies inside the WAR. -->
+        <!-- This is the default version of Hibernate used; Maven provides the ability to override this dependency, though
+         it can be tricky because there are overlapping third-party dependencies with slightly different version numbers. -->
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>

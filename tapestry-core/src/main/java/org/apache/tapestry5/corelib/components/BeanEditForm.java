@@ -128,7 +128,7 @@ public class BeanEditForm implements ClientElement, FormValidationControl
 
     void onPrepareFromForm()
     {
-        resources.triggerEvent(Form.PREPARE, null, null);
+        resources.triggerEvent(EventConstants.PREPARE, null, null);
 
         if (model == null)
         {

@@ -15,6 +15,7 @@
 package org.apache.tapestry5.corelib.components;
 
 import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.EventConstants;
 import org.apache.tapestry5.corelib.internal.FormSupportImpl;
 import org.apache.tapestry5.internal.services.HeartbeatImpl;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
@@ -64,7 +65,7 @@ public class SubmitTest extends InternalBaseTestCase
 
         verify();
 
-        expect(resources.triggerEvent(Submit.SELECTED_EVENT, null, null)).andReturn(false);
+        expect(resources.triggerEvent(EventConstants.SELECTED, null, null)).andReturn(false);
 
         replay();
 
@@ -98,7 +99,7 @@ public class SubmitTest extends InternalBaseTestCase
 
         verify();
 
-        expect(resources.triggerEvent(Submit.SELECTED_EVENT, null, null)).andReturn(false);
+        expect(resources.triggerEvent(EventConstants.SELECTED, null, null)).andReturn(false);
 
         replay();
 

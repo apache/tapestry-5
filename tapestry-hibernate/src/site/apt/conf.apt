@@ -6,7 +6,9 @@ Configuring Hibernate
 
   The Tapestry Hibernate Library is responsible for configuring Hibernate for you. This is done in a just-in-time manner, the first time
   a Hibernate Session is required.
-  
+
+* HibernateSessionSource Configuration
+
   One way to configure hibernate is to create a <<<hibernate.cfg.xml>>> file and place it in the root of your application (i.e., under src/main/resources).  Most Hibernate-specific
   configuration occurs in this file. Another way is to contribute objects that perform configuration (such as setting event listeners). Example:
   
@@ -22,8 +24,12 @@ public static void contributeHibernateSessionSource(OrderedConfiguration<Hiberna
    * <<Default>> - performs default hibernate configuration
    
    * <<PackageName>> - loads entities by package name as contributed to the HibernateEntityPackageManager service
-  
-  For each package contributed the library will:
+
+* HibernateEntityPackageManager Configuration
+
+  This configuration is a set of package names, identifying where to search for entity classes.  
+
+  For each package contributed, the library will:
   
   * {{{http://www.hibernate.org/hib_docs/annotations/api/org/hibernate/cfg/AnnotationConfiguration.html#addPackage(java.lang.String)}Add the package to the configuration}},
     which will load annotations from the package-info class within the named package, if present.

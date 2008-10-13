@@ -24,10 +24,6 @@ import org.apache.tapestry5.ioc.util.ExceptionUtils;
 
 public class FieldValidationSupportImpl implements FieldValidationSupport
 {
-    static final String PARSE_CLIENT_EVENT = "parseClient";
-    static final String TO_CLIENT_EVENT = "toClient";
-    static final String VALIDATE_EVENT = "validate";
-
     private final TypeCoercer typeCoercer;
 
     public FieldValidationSupportImpl(TypeCoercer typeCoercer)
@@ -61,7 +57,7 @@ public class FieldValidationSupportImpl implements FieldValidationSupport
             }
         };
 
-        componentResources.triggerEvent(TO_CLIENT_EVENT, new Object[] {value}, callback);
+        componentResources.triggerEvent(EventConstants.TO_CLIENT, new Object[] {value}, callback);
 
         if (resultHolder.hasValue()) return resultHolder.get();
 
@@ -115,7 +111,7 @@ public class FieldValidationSupportImpl implements FieldValidationSupport
 
         try
         {
-            componentResources.triggerEvent(PARSE_CLIENT_EVENT, new Object[] {effectiveValue}, callback);
+            componentResources.triggerEvent(EventConstants.PARSE_CLIENT, new Object[] {effectiveValue}, callback);
         }
         catch (RuntimeException ex)
         {
@@ -154,7 +150,7 @@ public class FieldValidationSupportImpl implements FieldValidationSupport
 
         try
         {
-            componentResources.triggerEvent(VALIDATE_EVENT, new Object[] {value}, null);
+            componentResources.triggerEvent(EventConstants.VALIDATE, new Object[] {value}, null);
         }
         catch (RuntimeException ex)
         {
