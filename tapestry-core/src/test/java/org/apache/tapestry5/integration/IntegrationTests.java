@@ -2307,4 +2307,14 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         assertText("//DIV[@class='t-ajax-console']/DIV[@class='t-err']",
                    "Communication with the server failed: Server-side exception.");
     }
+
+    /**
+     * TAP5-256
+     */
+    public void exception_when_attaching_page()
+    {
+        start("Page Attach Failure");
+
+        assertTextPresent("Failure inside pageAttached().");
+    }
 }
