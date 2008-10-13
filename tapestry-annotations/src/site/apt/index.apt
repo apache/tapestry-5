@@ -4,7 +4,7 @@
  
 Tapestry Annotations
 
- The majority of Tapestry annotations (defined in the {{{.../tapestry-core}tapestry-core}} and {{{.../tapestry-ioc}tapestry-ioc}} modules)
+ The majority of Tapestry annotations (defined in the {{{../tapestry-core}tapestry-core}} and {{{../tapestry-ioc}tapestry-ioc}} modules)
  are very specific to Tapestry components or Tapestry IoC services.
  
  A small number of annotations are intended for data holding classes that are not Tapestry components; these annotations
