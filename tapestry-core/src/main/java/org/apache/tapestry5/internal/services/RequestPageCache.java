@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -26,8 +26,9 @@ import org.apache.tapestry5.internal.structure.Page;
 public interface RequestPageCache
 {
     /**
-     * Gets the page via its page name, in the current locale. The page name is resolved to a class name, which is used
-     * to obtain the page (from the page pool).
+     * Gets the page via its page name, in the current locale. The logical page name is resolved to a class name, which
+     * is used to obtain the page (from the page pool).  Note that under certain circumstances, a page may have multiple
+     * names (even beyond simple case-insensitivity), and RequestPageCache caches correctly.
      *
      * @param logicalPageName the name of the page to retrieve (this is the logical page name, not the fully qualified
      *                        class name)

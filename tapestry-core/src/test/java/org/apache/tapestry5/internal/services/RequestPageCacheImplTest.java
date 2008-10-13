@@ -16,35 +16,44 @@ package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.internal.structure.Page;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
+import org.apache.tapestry5.services.ComponentClassResolver;
 import org.easymock.EasyMock;
 import org.testng.annotations.Test;
 
 public class RequestPageCacheImplTest extends InternalBaseTestCase
 {
-    private static final String PAGE_NAME = "MyPage";
+    private static final String PAGE_NAME = "edit/EditFoo";
+
+    private static final String CANON_PAGE_NAME = "edit/Foo";
 
     @Test
     public void get_is_cached()
     {
         PagePool pool = mockPagePool();
         Page page = mockPage();
+        ComponentClassResolver resolver = mockComponentClassResolver();
 
-        expect(pool.checkout(PAGE_NAME)).andReturn(page);
+        train_canonicalizePageName(resolver, PAGE_NAME, CANON_PAGE_NAME);
+
+        expect(pool.checkout(CANON_PAGE_NAME)).andReturn(page);
 
         page.attached();
 
         replay();
 
-        RequestPageCacheImpl cache = new RequestPageCacheImpl(pool);
+        RequestPageCacheImpl cache = new RequestPageCacheImpl(pool, resolver);
 
         assertSame(cache.get(PAGE_NAME), page);
 
         verify();
 
+        train_canonicalizePageName(resolver, CANON_PAGE_NAME, CANON_PAGE_NAME);
+
         replay();
 
-        // Again, same object, but no PagePool this time.
-        assertSame(cache.get(PAGE_NAME), page);
+        // Again, same object, but no PagePool this time.  Also checks that name is
+        // properly resolved to canon name.
+        assertSame(cache.get(CANON_PAGE_NAME), page);
 
         verify();
 
@@ -65,8 +74,11 @@ public class RequestPageCacheImplTest extends InternalBaseTestCase
         PagePool pool = mockPagePool();
         Page page = mockPage();
         RuntimeException t = new RuntimeException("Failure in attach.");
+        ComponentClassResolver resolver = mockComponentClassResolver();
 
-        expect(pool.checkout(PAGE_NAME)).andReturn(page);
+        train_canonicalizePageName(resolver, PAGE_NAME, CANON_PAGE_NAME);
+
+        expect(pool.checkout(CANON_PAGE_NAME)).andReturn(page);
 
         page.attached();
 
@@ -76,7 +88,7 @@ public class RequestPageCacheImplTest extends InternalBaseTestCase
 
         replay();
 
-        RequestPageCacheImpl cache = new RequestPageCacheImpl(pool);
+        RequestPageCacheImpl cache = new RequestPageCacheImpl(pool, resolver);
 
         try
         {

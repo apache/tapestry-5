@@ -16,7 +16,9 @@ package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.internal.structure.Page;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.ioc.services.ThreadCleanupListener;
+import org.apache.tapestry5.services.ComponentClassResolver;
 
 import java.util.Map;
 
@@ -24,23 +26,29 @@ public class RequestPageCacheImpl implements RequestPageCache, ThreadCleanupList
 {
     private final PagePool pagePool;
 
+    private final ComponentClassResolver resolver;
     /**
-     * Keyed on logical page name (case insensitive).
+     * Keyed on canonical page name (case insensitive).
      */
     private final Map<String, Page> cache = CollectionFactory.newCaseInsensitiveMap();
 
-    public RequestPageCacheImpl(PagePool pagePool)
+    public RequestPageCacheImpl(PagePool pagePool, ComponentClassResolver resolver)
     {
         this.pagePool = pagePool;
+        this.resolver = resolver;
     }
 
     public Page get(String logicalPageName)
     {
-        Page page = cache.get(logicalPageName);
+        Defense.notNull(logicalPageName, "logicalPageName");
+
+        String canonicalName = resolver.canonicalizePageName(logicalPageName);
+
+        Page page = cache.get(canonicalName);
 
         if (page == null)
         {
-            page = pagePool.checkout(logicalPageName);
+            page = pagePool.checkout(canonicalName);
 
             try
             {
@@ -53,7 +61,7 @@ public class RequestPageCacheImpl implements RequestPageCache, ThreadCleanupList
                 throw ex;
             }
 
-            cache.put(logicalPageName, page);
+            cache.put(canonicalName, page);
         }
 
         return page;
