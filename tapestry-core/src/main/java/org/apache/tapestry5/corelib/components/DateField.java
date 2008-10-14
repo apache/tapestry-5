@@ -43,6 +43,9 @@ import java.util.Locale;
  * One wierd aspect here is that, because client-side JavaScript formatting and parsing is so limited, we (currently)
  * use Ajax to send the user's input to the server for parsing (before raising the popup) and formatting (after closing
  * the popup).  Wierd and inefficient, but easier than writing client-side JavaScript for that purpose.
+ * <p/>
+ * Tapestry's DateField component is a wrapper around <a href="http://webfx.eae.net/dhtml/datepicker/datepicker.html">WebFX
+ * DatePicker</a>.
  */
 // TODO: More testing; see https://issues.apache.org/jira/browse/TAPESTRY-1844
 @IncludeStylesheet("${tapestry.datepicker}/css/datepicker.css")
@@ -52,7 +55,7 @@ import java.util.Locale;
 public class DateField extends AbstractField
 {
     /**
-     * The value parameter of a DateField must be a {@link Date}.
+     * The value parameter of a DateField must be a {@link java.util.Date}.
      */
     @Parameter(required = true, principal = true, autoconnect = true)
     private Date value;
@@ -256,12 +259,24 @@ public class DateField extends AbstractField
 
             String[] weekdays = symbols.getWeekdays();
 
-            for (int i = Calendar.SUNDAY; i <= Calendar.SATURDAY; i++)
+            Calendar c = Calendar.getInstance(locale);
+
+            int firstDay = c.getFirstDayOfWeek();
+
+            // DatePicker needs them in order from monday to sunday.
+
+            for (int i = Calendar.MONDAY; i <= Calendar.SATURDAY; i++)
             {
                 days.append(weekdays[i].substring(0, 1));
             }
 
+            days.append(weekdays[Calendar.SUNDAY].substring(0, 1));
+
             spec.put("days", days.toString().toLowerCase(locale));
+
+            // DatePicker expects 0 to be monday. Calendar defines SUNDAY as 1, MONDAY as 2, etc.
+
+            spec.put("firstDay", firstDay == Calendar.SUNDAY ? 6 : firstDay - 2);
 
             // TODO: Skip localization if locale is English?
 

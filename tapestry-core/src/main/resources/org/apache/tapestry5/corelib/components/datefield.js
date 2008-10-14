@@ -31,6 +31,8 @@ Tapestry.DateField = Class.create({
         {
             DatePicker.months = spec.localization.months;
             DatePicker.days = spec.localization.days.toArray();
+
+            Tapestry.DateField.prototype.firstDay = spec.localization.firstDay;
         }
     },
 
@@ -115,6 +117,8 @@ Tapestry.DateField = Class.create({
     createPopup : function()
     {
         this.datePicker = new DatePicker();
+
+        this.datePicker.setFirstWeekDay(this.firstDay);
 
         this.popup = $(this.datePicker.create());
 
