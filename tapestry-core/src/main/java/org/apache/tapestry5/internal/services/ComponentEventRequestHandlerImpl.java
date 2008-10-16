@@ -17,6 +17,7 @@ package org.apache.tapestry5.internal.services;
 import org.apache.tapestry5.EventConstants;
 import org.apache.tapestry5.internal.structure.ComponentPageElement;
 import org.apache.tapestry5.internal.structure.Page;
+import org.apache.tapestry5.ioc.internal.util.TapestryException;
 import org.apache.tapestry5.services.*;
 
 import java.io.IOException;
@@ -64,7 +65,12 @@ public class ComponentEventRequestHandlerImpl implements ComponentEventRequestHa
 
         environment.push(ComponentEventResultProcessor.class, resultProcessor);
 
-        element.triggerContextEvent(parameters.getEventType(), parameters.getEventContext(), callback);
+        boolean handled = element.triggerContextEvent(parameters.getEventType(), parameters.getEventContext(),
+                                                      callback);
+
+        if (!handled)
+            throw new TapestryException(ServicesMessages.eventNotHandled(element, parameters.getEventType()), element,
+                                        null);
 
         environment.pop(ComponentEventResultProcessor.class);
 

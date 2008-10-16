@@ -20,6 +20,7 @@ import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.internal.structure.ComponentPageElement;
 import org.apache.tapestry5.internal.structure.Page;
 import org.apache.tapestry5.internal.util.Holder;
+import org.apache.tapestry5.ioc.internal.util.TapestryException;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.*;
 
@@ -103,7 +104,12 @@ public class AjaxComponentEventRequestHandler implements ComponentEventRequestHa
 
         environment.push(ComponentEventResultProcessor.class, interceptor);
 
-        element.triggerContextEvent(parameters.getEventType(), parameters.getEventContext(), callback);
+        boolean handled = element.triggerContextEvent(parameters.getEventType(), parameters.getEventContext(),
+                                                      callback);
+
+        if (!handled)
+            throw new TapestryException(ServicesMessages.eventNotHandled(element, parameters.getEventType()), element,
+                                        null);
 
         environment.pop(ComponentEventResultProcessor.class);
 

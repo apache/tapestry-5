@@ -2327,4 +2327,25 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         assertText("value", "99");
     }
+
+    /**
+     * TAP5-285
+     */
+    public void unhandled_client_events_throw_exceptions()
+    {
+        start("Unhandled Event Demo");
+
+        click("link=ajax");
+
+        waitForCondition("selenium.browserbot.getCurrentWindow().$$('DIV.t-ajax-console DIV.t-err').first()",
+                         PAGE_LOAD_TIMEOUT);
+
+        assertText("//DIV[@class='t-ajax-console']/DIV[@class='t-err']",
+                   "Communication with the server failed: Request event 'action' (on component UnhandledEventDemo:ajax) was not handled; you must provide a matching event handler method in the component or in one of its containers.");
+
+        start("Unhandled Event Demo", "traditional");
+
+        assertTextPresent(
+                "Request event 'action' (on component UnhandledEventDemo:traditional) was not handled; you must provide a matching event handler method in the component or in one of its containers.");
+    }
 }

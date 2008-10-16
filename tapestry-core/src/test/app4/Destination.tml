@@ -20,7 +20,7 @@
 
         <hr/>
 
-        <t:actionlink>refresh via action</t:actionlink>
+        <t:actionlink t:id="refresh">refresh via action</t:actionlink>
 
     </body>
 
