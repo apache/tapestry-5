@@ -210,7 +210,7 @@ public class ParameterWorker implements ComponentClassTransformWorker
         if (signatures.isEmpty()) return;
 
         builder.addln("if (! %s.isBound(\"%s\"))", resourcesFieldName, parameterName);
-        builder.addln("  %s(\"%s\", %s, %s());", BIND_METHOD_NAME, parameterName, resourcesFieldName, methodName);
+        builder.addln("  %s(\"%s\", %s, ($w) %s());", BIND_METHOD_NAME, parameterName, resourcesFieldName, methodName);
     }
 
     private void addWriterMethod(String fieldName, String cachedFieldName, boolean cache, String parameterName,

@@ -2317,4 +2317,14 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         assertTextPresent("Failure inside pageAttached().");
     }
+
+    /**
+     * TAP5-284
+     */
+    public void default_method_for_parameter_returns_primitive()
+    {
+        start("Primitive Default Demo");
+
+        assertText("value", "99");
+    }
 }

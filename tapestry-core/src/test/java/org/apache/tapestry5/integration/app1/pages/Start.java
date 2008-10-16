@@ -65,6 +65,9 @@ public class Start
 
     private static final List<Item> ITEMS = CollectionFactory.newList(
 
+            new Item("PrimitiveDefaultDemo", "Primitive Default Demo",
+                     "Primitive value returned from parameter default method"),
+
             new Item("ValidateFormValidationExceptionDemo",
                      "ValidationForm ValidationException Demo",
                      "Throwing a ValidationException from the validateForm event handler."),
@@ -289,7 +292,8 @@ public class Start
             new Item("InformalParametersDemo", "Informal Parameters Demo",
                      "Access to informal parameters names and values"),
 
-            new Item("FormFieldOutsideForm", "Form Field Outside Form", "Nice exception message for common problem of form fields outside forms")
+            new Item("FormFieldOutsideForm", "Form Field Outside Form",
+                     "Nice exception message for common problem of form fields outside forms")
     );
 
     static
