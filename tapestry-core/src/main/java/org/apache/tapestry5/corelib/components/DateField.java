@@ -113,10 +113,6 @@ public class DateField extends AbstractField
     @Inject
     private FieldValidationSupport fieldValidationSupport;
 
-    /**
-     * For output, format nicely and unambiguously as four digits.
-     */
-    private final DateFormat popupFormat = new SimpleDateFormat("MM/dd/yyyy");
 
     private static final String RESULT = "result";
 
@@ -165,7 +161,7 @@ public class DateField extends AbstractField
         {
             Date date = format.parse(input);
 
-            response.put(RESULT, date.toString());
+            response.put(RESULT, date.getTime());
         }
         catch (ParseException ex)
         {
@@ -176,8 +172,9 @@ public class DateField extends AbstractField
     }
 
     /**
-     * Ajax event handler, used after the popup completes.  The client sends the date, formatted as "MM/dd/yyyy" to the
-     * server, which reformats it according to the server side format and returns the result.
+     * Ajax event handler, used after the client-side popup completes. The client sends the date, formatted as
+     * milliseconds since the epoch, to the server, which reformats it according to the server side format and returns
+     * the result.
      */
     JSONObject onFormat()
     {
@@ -187,11 +184,13 @@ public class DateField extends AbstractField
 
         try
         {
-            Date date = popupFormat.parse(input);
+            long millis = Long.parseLong(input);
+
+            Date date = new Date(millis);
 
             response.put(RESULT, format.format(date));
         }
-        catch (ParseException ex)
+        catch (NumberFormatException ex)
         {
             response.put(ERROR, ex.getMessage());
         }

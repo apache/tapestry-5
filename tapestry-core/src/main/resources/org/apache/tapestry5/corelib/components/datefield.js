@@ -70,7 +70,9 @@ Tapestry.DateField = Class.create({
 
         var resultHandler = function(result)
         {
-            var date = new Date(result);
+            var date = new Date();
+
+            date.setTime(result);
 
             this.datePicker.setDate(date);
 
@@ -128,7 +130,7 @@ Tapestry.DateField = Class.create({
 
         this.datePicker.onselect = function()
         {
-            var input = this.canonicalizeDate(this.datePicker.getDate());
+            var date = this.datePicker.getDate();
 
             var resultHandler = function(result)
             {
@@ -147,20 +149,16 @@ Tapestry.DateField = Class.create({
                 this.hidePopup();
             };
 
-            this.sendServerRequest(this.formatURL, input, resultHandler, errorHandler);
+            // If the field is blank, don't bother going to the server to parse!
+
+            if (date == null)
+            {
+                resultHandler.call(this, "");
+                return;
+            }
+
+            this.sendServerRequest(this.formatURL, date.getTime(), resultHandler, errorHandler);
         }.bind(this);
-    },
-
-    /**
-     * Reformats the date into a canoncialized format accepted on the server. The format
-     * is equivalent to M/d/yyyy. This format is used regardless of localization.
-     */
-    canonicalizeDate : function(date)
-    {
-        if (date == null) return "";
-
-        // Americanized format is simply transfer format.  Localization occurs on the server.
-        return (date.getMonth() + 1) + "/" + date.getDate() + "/" + date.getFullYear();
     },
 
     positionPopup : function()
