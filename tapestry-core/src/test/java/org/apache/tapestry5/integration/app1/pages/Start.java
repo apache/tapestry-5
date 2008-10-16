@@ -65,6 +65,9 @@ public class Start
 
     private static final List<Item> ITEMS = CollectionFactory.newList(
 
+            new Item("UnhandledEventDemo", "Unhandled Event Demo",
+                     "Events that don't have matching event handlers cause exceptions"),
+
             new Item("PrimitiveDefaultDemo", "Primitive Default Demo",
                      "Primitive value returned from parameter default method"),
 

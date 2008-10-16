@@ -1,0 +1,17 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+    <h1>Unhandled Event Demo</h1>
+
+    <t:zone id="update">
+
+    </t:zone>
+
+    <ul>
+        <li id="traditional">
+            <t:actionlink t:id="traditional">traditional</t:actionlink>
+        </li>
+        <li>
+            <t:actionlink t:id="ajax" zone="update">ajax</t:actionlink>
+        </li>
+    </ul>
+</html>

@@ -15,6 +15,7 @@
 package org.apache.tapestry5.internal.services;
 
 import javassist.CtClass;
+import org.apache.tapestry5.internal.structure.ComponentPageElement;
 import org.apache.tapestry5.ioc.Location;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.Resource;
@@ -260,7 +261,6 @@ class ServicesMessages
 
         return MESSAGES.format("missing-from-environment", type.getName(), InternalUtils
                 .joinSorted(types));
-
     }
 
     static String invalidComponentEventResult(Object result,
@@ -413,5 +413,10 @@ class ServicesMessages
     static String forbidInstantiateComponentClass(String className)
     {
         return MESSAGES.format("forbid-instantiate-component-class", className);
+    }
+
+    static String eventNotHandled(ComponentPageElement element, String eventName)
+    {
+        return MESSAGES.format("event-not-handled", eventName, element.getCompleteId());
     }
 }
