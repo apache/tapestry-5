@@ -15,14 +15,14 @@
 package org.apache.tapestry5.corelib.internal;
 
 import org.apache.tapestry5.ComponentAction;
+import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.Field;
 import org.apache.tapestry5.internal.services.ClientBehaviorSupport;
-import org.apache.tapestry5.ioc.BaseLocatable;
+import org.apache.tapestry5.ioc.Locatable;
 import org.apache.tapestry5.ioc.Location;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.ioc.internal.util.IdAllocator;
-import org.apache.tapestry5.services.FormSupport;
 
 import java.util.List;
 
@@ -32,8 +32,10 @@ import java.util.List;
  * <p/>
  * TODO: Most methods should only be invokable depending on whether the form is rendering or processing a submission.
  */
-public class FormSupportImpl extends BaseLocatable implements FormSupport
+public class FormSupportImpl implements InternalFormSupport, Locatable
 {
+    private final ComponentResources resources;
+
     private final ClientBehaviorSupport clientBehaviorSupport;
 
     private final boolean clientValidationEnabled;
@@ -50,33 +52,20 @@ public class FormSupportImpl extends BaseLocatable implements FormSupport
 
     /**
      * Constructor used when processing a form submission.
-     *
-     * @param location
      */
-    public FormSupportImpl(Location location)
+    public FormSupportImpl(ComponentResources resources)
     {
-        this(location, null, null, null, false);
+        this(resources, null, null, null, false, null);
     }
 
     /**
-     * Constructor used when rendering.
+     * Full constructor (specifically constructor for render time).
      */
-    public FormSupportImpl(Location location, String clientId, ComponentActionSink actionSink,
-                           ClientBehaviorSupport clientBehaviorSupport,
-                           boolean clientValidationEnabled)
-    {
-        this(location, clientId, actionSink, clientBehaviorSupport, clientValidationEnabled, new IdAllocator());
-    }
-
-    /**
-     * Full constructor.
-     */
-    public FormSupportImpl(Location location, String clientId, ComponentActionSink actionSink,
+    public FormSupportImpl(ComponentResources resources, String clientId, ComponentActionSink actionSink,
                            ClientBehaviorSupport clientBehaviorSupport,
                            boolean clientValidationEnabled, IdAllocator idAllocator)
     {
-        super(location);
-
+        this.resources = resources;
         this.clientId = clientId;
         this.actionSink = actionSink;
         this.clientBehaviorSupport = clientBehaviorSupport;
@@ -84,9 +73,14 @@ public class FormSupportImpl extends BaseLocatable implements FormSupport
         this.idAllocator = idAllocator;
     }
 
-    public String getFormId()
+    public Location getLocation()
     {
-        return clientId;
+        return resources.getLocation();
+    }
+
+    public String getFormComponentId()
+    {
+        return resources.getCompleteId();
     }
 
     public String allocateControlName(String id)
