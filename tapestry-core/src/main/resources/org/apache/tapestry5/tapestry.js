@@ -1309,7 +1309,13 @@ Tapestry.FormFragment = Class.create({
         this.showFunc = Tapestry.ElementEffect[spec.show] || Tapestry.ElementEffect.slidedown;
         this.hideFunc = Tapestry.ElementEffect[spec.hide] || Tapestry.ElementEffect.slideup;
 
-        $(this.hidden.form).observe(Tapestry.FORM_PREPARE_FOR_SUBMIT_EVENT, function()
+        var form = $(this.hidden.form);
+
+        // TAP5-283: Force creation of the FormEventManager if it does not already exist.
+
+        form.getFormEventManager();
+
+        $(form).observe(Tapestry.FORM_PREPARE_FOR_SUBMIT_EVENT, function()
         {
             // On a submission, if the fragment is not visible, then wipe out its
             // form submission data, so that no processing or validation occurs on the server.
