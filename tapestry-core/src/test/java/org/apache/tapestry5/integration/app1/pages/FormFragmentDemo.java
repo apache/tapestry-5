@@ -31,7 +31,7 @@ public class FormFragmentDemo
     @Property
     private boolean codeVisible;
 
-    @Component
+    @Component(parameters = {"clientValidation=false"})
     private Form form;
 
     @InjectPage
