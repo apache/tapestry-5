@@ -19,7 +19,6 @@ import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.dom.DefaultMarkupModel;
 import org.apache.tapestry5.dom.MarkupModel;
 import org.apache.tapestry5.dom.XMLMarkupModel;
-import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.internal.structure.Page;
 import org.apache.tapestry5.services.MarkupWriterFactory;
 
@@ -48,7 +47,7 @@ public class MarkupWriterFactoryImpl implements MarkupWriterFactory
         // The charset parameter sets the encoding attribute of the XML declaration, if
         // not null and if using the XML model.
 
-        return new MarkupWriterImpl(model, contentType.getParameter(InternalConstants.CHARSET_CONTENT_TYPE_PARAMETER));
+        return new MarkupWriterImpl(model, contentType.getCharset());
     }
 
     public MarkupWriter newMarkupWriter(String pageName)
@@ -59,5 +58,4 @@ public class MarkupWriterFactoryImpl implements MarkupWriterFactory
 
         return newMarkupWriter(contentType);
     }
-
 }
