@@ -65,6 +65,8 @@ public class Start
 
     private static final List<Item> ITEMS = CollectionFactory.newList(
 
+            new Item("NestedForm", "Nested Form Demo", "Error when a Form is nested inside another Form."),
+
             new Item("UnhandledEventDemo", "Unhandled Event Demo",
                      "Events that don't have matching event handlers cause exceptions"),
 

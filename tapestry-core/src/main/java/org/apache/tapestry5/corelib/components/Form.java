@@ -214,14 +214,22 @@ public class Form implements ClientElement, FormValidationControl
         this.defaultTracker = defaultTracker;
     }
 
+    void setupRender()
+    {
+        FormSupport existing = environment.peek(FormSupport.class);
+
+        if (existing != null)
+            throw new TapestryException(messages.get("nesting-not-allowed"), existing, null);
+    }
+
     void beginRender(MarkupWriter writer)
     {
-
         actionSink = new ComponentActionSink(logger);
 
         name = renderSupport.allocateClientId(resources);
 
-        formSupport = new FormSupportImpl(name, actionSink, clientBehaviorSupport, clientValidation);
+        formSupport = new FormSupportImpl(resources.getLocation(), name, actionSink, clientBehaviorSupport,
+                                          clientValidation);
 
         if (zone != null) clientBehaviorSupport.linkZone(name, zone);
 
@@ -317,7 +325,7 @@ public class Form implements ClientElement, FormValidationControl
     {
         tracker.clear();
 
-        formSupport = new FormSupportImpl();
+        formSupport = new FormSupportImpl(resources.getLocation());
 
         environment.push(ValidationTracker.class, tracker);
         environment.push(FormSupport.class, formSupport);
