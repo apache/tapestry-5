@@ -133,6 +133,14 @@ public final class ContentType
     }
 
     /**
+     * @return the character set (the  "charset" parameter) or null.
+     */
+    public String getCharset()
+    {
+        return getParameter(InternalConstants.CHARSET_CONTENT_TYPE_PARAMETER);
+    }
+
+    /**
      * @param key the name of the content type parameter
      * @return the value of the content type parameter
      */
@@ -212,5 +220,4 @@ public final class ContentType
     {
         return unparse();
     }
-
 }

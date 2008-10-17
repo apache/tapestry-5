@@ -70,8 +70,7 @@ public class ContentTypeTest extends Assert
 
         assertEquals(parameterNames.get(0), "charset");
 
-        String charset = contentType.getParameter("charset");
-        assertEquals(charset, "utf-8");
+        assertEquals(contentType.getCharset(), "utf-8");
 
         String nonexistant = contentType.getParameter("nonexistant");
         assertTrue(nonexistant == null);
