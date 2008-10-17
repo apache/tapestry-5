@@ -214,7 +214,7 @@ public class FormInjector implements ClientElement
 
                 reply.put("elementId", clientId);
 
-                FormSupportImpl formSupport = new FormSupportImpl(formId, actionSink, clientBehaviorSupport, true,
+                FormSupportImpl formSupport = new FormSupportImpl(null, formId, actionSink, clientBehaviorSupport, true,
                                                                   idAllocator);
 
                 environment.push(FormSupport.class, formSupport);

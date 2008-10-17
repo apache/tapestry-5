@@ -24,7 +24,7 @@ public class FormSupportImplTest extends InternalBaseTestCase
     @Test
     public void execute_deferred_with_no_commands()
     {
-        FormSupportImpl support = new FormSupportImpl();
+        FormSupportImpl support = new FormSupportImpl(null);
 
         support.executeDeferred();
     }
@@ -42,7 +42,7 @@ public class FormSupportImplTest extends InternalBaseTestCase
 
         replay();
 
-        FormSupportImpl support = new FormSupportImpl();
+        FormSupportImpl support = new FormSupportImpl(null);
 
         support.defer(r1);
         support.defer(r2);
@@ -66,7 +66,7 @@ public class FormSupportImplTest extends InternalBaseTestCase
 
         replay();
 
-        FormSupportImpl support = new FormSupportImpl();
+        FormSupportImpl support = new FormSupportImpl(null);
 
         support.defer(r1);
         support.defer(r2);
@@ -89,7 +89,7 @@ public class FormSupportImplTest extends InternalBaseTestCase
     @Test
     public void set_encoding_type()
     {
-        FormSupportImpl support = new FormSupportImpl();
+        FormSupportImpl support = new FormSupportImpl(null);
 
         String encodingType = "foo/bar";
 
@@ -101,7 +101,7 @@ public class FormSupportImplTest extends InternalBaseTestCase
     @Test
     public void set_encoding_type_to_same_value_is_allowed()
     {
-        FormSupportImpl support = new FormSupportImpl();
+        FormSupportImpl support = new FormSupportImpl(null);
 
         String encodingType = "foo/bar";
 
@@ -115,7 +115,7 @@ public class FormSupportImplTest extends InternalBaseTestCase
     public void set_encoding_type_conflict()
     {
 
-        FormSupportImpl support = new FormSupportImpl();
+        FormSupportImpl support = new FormSupportImpl(null);
 
         support.setEncodingType("foo");
         try
@@ -128,7 +128,6 @@ public class FormSupportImplTest extends InternalBaseTestCase
             assertEquals(ex.getMessage(),
                          "Encoding type of form has already been set to \'foo\' and may not be changed to \'bar\'.");
         }
-
     }
 
     @Test
@@ -141,7 +140,7 @@ public class FormSupportImplTest extends InternalBaseTestCase
 
         replay();
 
-        FormSupportImpl support = new FormSupportImpl(null, null, clientBehaviorSupport, true);
+        FormSupportImpl support = new FormSupportImpl(null, null, null, clientBehaviorSupport, true);
 
         support.addValidation(barney, "required", "Who can live without Barney?", null);
 
@@ -156,12 +155,10 @@ public class FormSupportImplTest extends InternalBaseTestCase
 
         replay();
 
-        FormSupportImpl support = new FormSupportImpl(null, null, clientBehaviorSupport, false);
+        FormSupportImpl support = new FormSupportImpl(null, null, null, clientBehaviorSupport, false);
 
         support.addValidation(barney, "required", "Who can live without Barney?", null);
 
         verify();
     }
-
-
 }

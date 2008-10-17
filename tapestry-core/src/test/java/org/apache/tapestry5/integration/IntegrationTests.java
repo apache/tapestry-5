@@ -2348,4 +2348,14 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         assertTextPresent(
                 "Request event 'action' (on component UnhandledEventDemo:traditional) was not handled; you must provide a matching event handler method in the component or in one of its containers.");
     }
+
+    /**
+     * TAP5-281
+     */
+    public void nested_form_check()
+    {
+        start("Nested Form Demo");
+
+        assertTextPresent("Form components may not be placed inside other Form components.");
+    }
 }
