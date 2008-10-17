@@ -84,4 +84,10 @@ public interface FormSupport extends ClientElement
      * Return true if client validation is enabled for this form, false otherwise.
      */
     boolean isClientValidationEnabled();
+
+    /**
+     * Returns the complete id of the underlying Form component.  This is needed by {@link
+     * org.apache.tapestry5.corelib.components.FormInjector}.
+     */
+    String getFormComponentId();
 }

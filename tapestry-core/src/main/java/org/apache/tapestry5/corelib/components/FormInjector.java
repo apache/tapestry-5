@@ -20,8 +20,8 @@ import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.corelib.data.InsertPosition;
 import org.apache.tapestry5.corelib.internal.ComponentActionSink;
-import org.apache.tapestry5.corelib.internal.FormSupportImpl;
 import org.apache.tapestry5.corelib.internal.HiddenFieldPositioner;
+import org.apache.tapestry5.corelib.internal.InternalFormSupport;
 import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.internal.services.ClientBehaviorSupport;
 import org.apache.tapestry5.internal.services.ComponentResultProcessorWrapper;
@@ -51,7 +51,9 @@ public class FormInjector implements ClientElement
 {
     public static final String INJECT_EVENT = "inject";
 
-    public static final String FORMID_PARAMETER = "t:formid";
+    public static final String FORM_CLIENTID_PARAMETER = "t:formid";
+
+    public static final String FORM_COMPONENTID_PARAMETER = "t:formcomponentid";
 
     /**
      * The context for the link (optional parameter). This list of values will be converted into strings and included in
@@ -113,6 +115,9 @@ public class FormInjector implements ClientElement
     @Inject
     private Logger logger;
 
+    @Inject
+    private ComponentSource componentSource;
+
     private Element clientElement;
 
     String defaultElement()
@@ -135,7 +140,8 @@ public class FormInjector implements ClientElement
         Link link = resources.createEventLink(INJECT_EVENT,
                                               context == null ? new Object[0] : context.toArray());
 
-        link.addParameter(FORMID_PARAMETER, formSupport.getClientId());
+        link.addParameter(FORM_CLIENTID_PARAMETER, formSupport.getClientId());
+        link.addParameter(FORM_COMPONENTID_PARAMETER, formSupport.getFormComponentId());
 
         clientBehaviorSupport.addFormInjector(clientId, link, position, show);
     }
@@ -186,12 +192,11 @@ public class FormInjector implements ClientElement
 
         final RenderCommand rootRenderCommand = pageRenderQueue.getRootRenderCommand();
 
-        final String formId = request.getParameter(FORMID_PARAMETER);
+        final String formClientId = readParameterValue(FORM_CLIENTID_PARAMETER);
 
-        if (InternalUtils.isBlank(formId))
-            throw new RuntimeException(String.format(
-                    "Query parameter '%s' was blank, but should have been specified in the request.",
-                    FORMID_PARAMETER));
+        String formComponentId = request.getParameter(FORM_COMPONENTID_PARAMETER);
+
+        final Form form = (Form) componentSource.getComponent(formComponentId);
 
         final ComponentActionSink actionSink = new ComponentActionSink(logger);
 
@@ -214,8 +219,8 @@ public class FormInjector implements ClientElement
 
                 reply.put("elementId", clientId);
 
-                FormSupportImpl formSupport = new FormSupportImpl(null, formId, actionSink, clientBehaviorSupport, true,
-                                                                  idAllocator);
+                InternalFormSupport formSupport =
+                        form.createRenderTimeFormSupport(formClientId, actionSink, idAllocator);
 
                 environment.push(FormSupport.class, formSupport);
                 environment.push(ValidationTracker.class, new ValidationTrackerImpl());
@@ -241,5 +246,17 @@ public class FormInjector implements ClientElement
         };
 
         pageRenderQueue.addPartialMarkupRendererFilter(filter);
+    }
+
+    private String readParameterValue(String parameterName)
+    {
+        String value = request.getParameter(parameterName);
+
+        if (InternalUtils.isBlank(value))
+            throw new RuntimeException(String.format(
+                    "Query parameter '%s' was blank, but should have been specified in the request.",
+                    parameterName));
+
+        return value;
     }
 }

@@ -140,7 +140,7 @@ public class FormSupportImplTest extends InternalBaseTestCase
 
         replay();
 
-        FormSupportImpl support = new FormSupportImpl(null, null, null, clientBehaviorSupport, true);
+        FormSupportImpl support = new FormSupportImpl(null, null, null, clientBehaviorSupport, true, null);
 
         support.addValidation(barney, "required", "Who can live without Barney?", null);
 
@@ -155,7 +155,7 @@ public class FormSupportImplTest extends InternalBaseTestCase
 
         replay();
 
-        FormSupportImpl support = new FormSupportImpl(null, null, null, clientBehaviorSupport, false);
+        FormSupportImpl support = new FormSupportImpl(null, null, null, clientBehaviorSupport, false, null);
 
         support.addValidation(barney, "required", "Who can live without Barney?", null);
 
