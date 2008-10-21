@@ -191,7 +191,7 @@ public class Autocomplete
 
         ContentType contentType = responseRenderer.findContentType(this);
 
-        MarkupWriter writer = factory.newMarkupWriter(contentType);
+        MarkupWriter writer = factory.newPartialMarkupWriter(contentType);
 
         generateResponseMarkup(writer, matchesHolder.get());
 

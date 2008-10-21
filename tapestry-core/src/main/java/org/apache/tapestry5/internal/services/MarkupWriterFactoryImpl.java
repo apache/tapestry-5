@@ -40,6 +40,16 @@ public class MarkupWriterFactoryImpl implements MarkupWriterFactory
 
     public MarkupWriter newMarkupWriter(ContentType contentType)
     {
+        return newMarkupWriter(contentType, false);
+    }
+
+    public MarkupWriter newPartialMarkupWriter(ContentType contentType)
+    {
+        return newMarkupWriter(contentType, true);
+    }
+
+    private MarkupWriter newMarkupWriter(ContentType contentType, boolean partial)
+    {
         boolean isHTML = contentType.getMimeType().equalsIgnoreCase("text/html");
 
         MarkupModel model = isHTML ? htmlModel : xmlModel;

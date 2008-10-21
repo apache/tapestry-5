@@ -61,22 +61,23 @@ public class DOMTest extends InternalBaseTestCase
     }
 
     @Test
-    public void namespace_element_without_a_prefix()
+    public void namespace_element_without_a_prefix() throws Exception
     {
 
         Document d = new Document(new XMLMarkupModel());
 
         Element root = d.newRootElement("fredns", "root");
 
-        try
-        {
-            d.toString();
-            unreachable();
-        }
-        catch (RuntimeException ex)
-        {
-            assertEquals(ex.getMessage(), "Namespace prefix for URI 'fredns' is not defined.");
-        }
+        Element child = root.element("child");
+
+        Element barney = child.elementNS("barneyns", "barney");
+
+        barney.attribute("simple", "a");
+        barney.defineNamespace("bettyns", "betty");
+        barney.attribute("bettyns", "betty", "b");
+        barney.attribute("wilmans", "wilma", "c");
+
+        assertEquals(d.toString(), readFile("namespace_element_without_a_prefix.txt"));
     }
 
     @Test

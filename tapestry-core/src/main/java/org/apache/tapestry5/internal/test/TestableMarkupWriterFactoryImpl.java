@@ -46,6 +46,11 @@ public class TestableMarkupWriterFactoryImpl implements TestableMarkupWriterFact
         return save(delegate.newMarkupWriter(contentType));
     }
 
+    public MarkupWriter newPartialMarkupWriter(ContentType contentType)
+    {
+        return save(delegate.newPartialMarkupWriter(contentType));
+    }
+
     public MarkupWriter newMarkupWriter(String pageName)
     {
         return save(delegate.newMarkupWriter(pageName));
@@ -57,6 +62,4 @@ public class TestableMarkupWriterFactoryImpl implements TestableMarkupWriterFact
 
         return writer;
     }
-
-
 }

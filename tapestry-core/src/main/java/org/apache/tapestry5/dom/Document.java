@@ -44,6 +44,7 @@ public final class Document extends Node
         this.encoding = encoding;
     }
 
+    @Override
     public Document getDocument()
     {
         return this;
