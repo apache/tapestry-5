@@ -23,9 +23,7 @@ import static org.apache.tapestry5.ioc.internal.util.Defense.notBlank;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 
 import java.io.PrintWriter;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * An element that will render with a begin tag and attributes, a body, and an end tag. Also acts as a factory for
@@ -49,10 +47,10 @@ public final class Element extends Node
         }
 
 
-        void render(MarkupModel model, StringBuilder builder)
+        void render(MarkupModel model, StringBuilder builder, Map<String, String> namespaceURIToPrefix)
         {
             builder.append(" ");
-            builder.append(toPrefixedName(namespace, name));
+            builder.append(toPrefixedName(namespaceURIToPrefix, namespace, name));
             builder.append("=\"");
             model.encodeQuoted(value, builder);
             builder.append('"');
@@ -104,6 +102,7 @@ public final class Element extends Node
         document = null;
     }
 
+    @Override
     public Document getDocument()
     {
         return document != null ? document : super.getDocument();
@@ -293,14 +292,15 @@ public final class Element extends Node
     @Override
     void toMarkup(Document document, PrintWriter writer)
     {
+        Map<String, String> namespaceToPrefixMap = createNamespaceURIToNamespaceMap();
+
         MarkupModel markupModel = document.getMarkupModel();
 
         StringBuilder builder = new StringBuilder();
 
-        String prefixedElementName = toPrefixedName(namespace, name);
+        String prefixedElementName = toPrefixedName(namespaceToPrefixMap, namespace, name);
 
         builder.append("<").append(prefixedElementName);
-
 
         if (attributes != null)
         {
@@ -310,7 +310,7 @@ public final class Element extends Node
             {
                 Attribute attribute = attributes.get(key);
 
-                attribute.render(markupModel, builder);
+                attribute.render(markupModel, builder, namespaceToPrefixMap);
             }
         }
 
@@ -359,11 +359,17 @@ public final class Element extends Node
         if (hasChildren || style == EndTagStyle.REQUIRE) writer.printf("</%s>", prefixedElementName);
     }
 
-    private String toPrefixedName(String namespace, String name)
+    private String toPrefixedName(Map<String, String> namespaceURIToPrefix, String namespace, String name)
     {
         if (namespace == null || namespace.equals("")) return name;
 
-        String prefix = toNamespacePrefix(namespace);
+        String prefix = namespaceURIToPrefix.get(namespace);
+
+        // This should never happen, because namespaces are automatically defined as needed.
+
+        if (prefix == null)
+            throw new IllegalArgumentException(
+                    String.format("No prefix has been defined for namespace '%s'.", namespace));
 
         // The empty string indicates the default namespace which doesn't use a prefix.
 
@@ -407,6 +413,7 @@ public final class Element extends Node
 
         return null;
     }
+
 
     /**
      * Searchs for a child element with a particular name below this element. The path parameter is a slash separated
@@ -493,17 +500,6 @@ public final class Element extends Node
         return this;
     }
 
-    String toNamespacePrefix(String namespaceURI)
-    {
-        String prefix = InternalUtils.get(namespaceToPrefix, namespaceURI);
-
-        if (prefix != null) return prefix;
-
-        if (parent == null) throw new RuntimeException(DomMessages.namespaceURINotMappedToPrefix(namespaceURI));
-
-        return parent.toNamespacePrefix(namespaceURI);
-    }
-
     /**
      * Defines a namespace for this element, mapping a URI to a prefix.   This will affect how namespaced elements and
      * attributes nested within the element are rendered, and will also cause <code>xmlns:</code> attributes (to define
@@ -561,5 +557,98 @@ public final class Element extends Node
         clearChildren();
 
         return this;
+    }
+
+    /**
+     * Creates the URI to namespace map for this element, which reflects namespace mappings from containing elements. In
+     * addition, automatic namespaces are defined for any URIs that are not explicitly mapped (this occurs sometimes in
+     * Ajax partial render scenarios).
+     *
+     * @return a mapping from namespace URI to namespace prefix
+     */
+    private Map<String, String> createNamespaceURIToNamespaceMap()
+    {
+        Map<String, String> result = CollectionFactory.newMap();
+
+        List<Element> elements = gatherParentElements();
+
+        elements.add(this);
+
+        for (Element e : elements)
+        {
+            // Put each namespace map, when present, overwriting child element's mappings
+            // over parent elements (by virtue of order in the list).
+
+            if (e.namespaceToPrefix != null)
+                result.putAll(e.namespaceToPrefix);
+        }
+
+        // result now contains all the mappings, including this element's.
+
+        // Add a mapping for the element's namespace.
+
+        addMappingIfNeeded(result, namespace);
+
+        // And for any attributes that have a namespace.
+
+        if (attributes != null)
+        {
+            for (Attribute a : attributes.values())
+                addMappingIfNeeded(result, a.namespace);
+        }
+
+        return result;
+    }
+
+    private void addMappingIfNeeded(Map<String, String> masterURItoPrefixMap, String namespace)
+    {
+        if (namespace == null) return;
+
+        if (masterURItoPrefixMap.containsKey(namespace)) return;
+
+        // A missing namespace.
+
+        Set<String> prefixes = CollectionFactory.newSet(masterURItoPrefixMap.values());
+
+        // A clumsy way to find a unique id for the new namespace.
+
+        int i = 0;
+        while (true)
+        {
+            String prefix = "ns" + i;
+
+            if (!prefixes.contains(prefix))
+            {
+
+                defineNamespace(namespace, prefix);
+                masterURItoPrefixMap.put(namespace, prefix);
+                return;
+            }
+
+            i++;
+        }
+    }
+
+    /**
+     * Returns the parent elements containing this element, ordered by depth (the root element is first, the current
+     * element's parent is last).
+     *
+     * @return list of elements
+     */
+    private List<Element> gatherParentElements()
+    {
+        List<Element> result = CollectionFactory.newList();
+
+        Element cursor = parent;
+
+        while (cursor != null)
+        {
+            result.add(cursor);
+            cursor = cursor.parent;
+        }
+
+        Collections.reverse(result);
+
+        return result;
     }
 }

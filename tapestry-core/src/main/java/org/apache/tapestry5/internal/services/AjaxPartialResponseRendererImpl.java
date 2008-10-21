@@ -70,7 +70,7 @@ public class AjaxPartialResponseRendererImpl implements AjaxPartialResponseRende
 
         ContentType contentType = new ContentType(InternalConstants.JSON_MIME_TYPE, outputEncoding);
 
-        MarkupWriter writer = factory.newMarkupWriter(pageContentType);
+        MarkupWriter writer = factory.newPartialMarkupWriter(pageContentType);
 
         JSONObject reply = new JSONObject();
 
