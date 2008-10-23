@@ -302,41 +302,35 @@ public final class Element extends Node
 
         builder.append("<").append(prefixedElementName);
 
-        if (attributes != null)
+        List<String> keys = InternalUtils.sortedKeys(attributes);
+
+        for (String key : keys)
         {
-            List<String> keys = InternalUtils.sortedKeys(attributes);
+            Attribute attribute = attributes.get(key);
 
-            for (String key : keys)
-            {
-                Attribute attribute = attributes.get(key);
-
-                attribute.render(markupModel, builder, namespaceToPrefixMap);
-            }
+            attribute.render(markupModel, builder, namespaceToPrefixMap);
         }
 
         // Next, emit namespace declarations for each namespace.
 
-        if (namespaceToPrefix != null)
+        List<String> namespaces = InternalUtils.sortedKeys(namespaceToPrefix);
+
+        for (String namespace : namespaces)
         {
-            List<String> namespaces = InternalUtils.sortedKeys(namespaceToPrefix);
+            String prefix = namespaceToPrefix.get(namespace);
 
-            for (String namespace : namespaces)
+            builder.append(" xmlns");
+
+            if (!prefix.equals(""))
             {
-                String prefix = namespaceToPrefix.get(namespace);
-
-                builder.append(" xmlns");
-
-                if (!prefix.equals(""))
-                {
-                    builder.append(":").append(prefix);
-                }
-
-                builder.append("=\"");
-
-                markupModel.encodeQuoted(namespace, builder);
-
-                builder.append('"');
+                builder.append(":").append(prefix);
             }
+
+            builder.append("=\"");
+
+            markupModel.encodeQuoted(namespace, builder);
+
+            builder.append('"');
         }
 
         EndTagStyle style = markupModel.getEndTagStyle(name);
@@ -602,7 +596,7 @@ public final class Element extends Node
 
     private void addMappingIfNeeded(Map<String, String> masterURItoPrefixMap, String namespace)
     {
-        if (namespace == null) return;
+        if (InternalUtils.isBlank(namespace)) return;
 
         if (masterURItoPrefixMap.containsKey(namespace)) return;
 
