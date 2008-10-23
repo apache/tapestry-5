@@ -332,7 +332,7 @@ public final class TapestryIOCModule
 
                                               @FactoryDefaults SymbolProvider factoryDefaults)
     {
-        configuration.add("SystemProperties", new SystemPropertiesSymbolProvider());
+        configuration.add("SystemProperties", new SystemPropertiesSymbolProvider(), "before:*");
         configuration.add("ApplicationDefaults", applicationDefaults, "after:SystemProperties");
         configuration.add("FactoryDefaults", factoryDefaults, "after:ApplicationDefaults");
     }
