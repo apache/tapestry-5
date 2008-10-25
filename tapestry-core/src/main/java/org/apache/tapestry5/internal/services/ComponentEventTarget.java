@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,9 +18,9 @@ import org.apache.tapestry5.EventConstants;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 
 /**
- * It represents an invocation target for an action link.
+ * It represents an invocation target for any kind of component event.
  */
-public class ActionLinkTarget implements InvocationTarget
+public class ComponentEventTarget implements InvocationTarget
 {
     private final String eventType;
 
@@ -28,12 +28,11 @@ public class ActionLinkTarget implements InvocationTarget
 
     private final String componentNestedId;
 
-    public ActionLinkTarget(String eventType, String pageName, String componentNestedId)
+    public ComponentEventTarget(String eventType, String pageName, String componentNestedId)
     {
         this.eventType = eventType;
         this.pageName = pageName;
         this.componentNestedId = componentNestedId;
-
     }
 
     public String getPath()
@@ -78,5 +77,4 @@ public class ActionLinkTarget implements InvocationTarget
     {
         return pageName;
     }
-
 }

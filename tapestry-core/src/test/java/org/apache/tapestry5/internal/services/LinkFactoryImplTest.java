@@ -14,652 +14,302 @@
 
 package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry5.ComponentEventCallback;
 import org.apache.tapestry5.EventConstants;
 import org.apache.tapestry5.Link;
 import org.apache.tapestry5.internal.InternalConstants;
-import org.apache.tapestry5.internal.structure.ComponentPageElement;
 import org.apache.tapestry5.internal.structure.Page;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
-import org.apache.tapestry5.internal.util.Holder;
-import org.apache.tapestry5.services.ContextValueEncoder;
+import org.apache.tapestry5.services.ContextPathEncoder;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.Response;
-import org.easymock.EasyMock;
-import static org.easymock.EasyMock.*;
-import org.easymock.IAnswer;
-import org.testng.annotations.AfterClass;
+import org.easymock.Capture;
+import static org.easymock.EasyMock.capture;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 public class LinkFactoryImplTest extends InternalBaseTestCase
 {
-    private static final String ENCODED = "*encoded*";
-
-    private static final String PAGE_LOGICAL_NAME = "sub/MyPage";
-
-    private ContextValueEncoder contextValueEncoder;
+    private ContextPathEncoder contextPathEncoder;
 
     @BeforeClass
     public void setup()
     {
-        contextValueEncoder = getObject(ContextValueEncoder.class, null);
-    }
-
-    @AfterClass
-    public void cleanup()
-    {
-        contextValueEncoder = null;
+        contextPathEncoder = getService(ContextPathEncoder.class);
     }
 
     @Test
-    public void action_link_root_context_no_ids()
+    public void create_page_render_link()
     {
-        testActionLink("", PAGE_LOGICAL_NAME, "foo.bar", "someaction", "/sub/mypage.foo.bar:someaction");
-
+        testPageLinkCreation("order/Edit", "/context/order/edit", false);
     }
 
     @Test
-    public void action_link_root_context_with_ids()
+    public void create_page_render_link_for_index_page()
     {
-        testActionLink("", PAGE_LOGICAL_NAME, "foo.bar", "publish", "/sub/mypage.foo.bar:publish/fred/5", "fred", 5);
+        testPageLinkCreation("order/Index", "/context/order", false);
     }
 
     @Test
-    public void action_link_with_default_action()
+    public void create_page_render_link_for_index_page_with_context()
     {
-        testActionLink("", PAGE_LOGICAL_NAME, "foo.bar", EventConstants.ACTION, "/sub/mypage.foo.bar/fred/5",
-                       "fred", 5);
+        testPageLinkCreation("order/Index", "/context/order/99", false, 99);
     }
 
     @Test
-    public void page_level_event_always_includes_action()
+    public void create_page_render_link_to_root_index_page()
     {
-        testActionLink("", PAGE_LOGICAL_NAME, "", EventConstants.ACTION, "/sub/mypage:action/barney/99",
-                       "barney", 99);
+        testPageLinkCreation("Index", "/context", false);
     }
 
     @Test
-    public void action_link_named_context_no_ids()
+    public void creat_page_render_link_to_root_index_page_with_context()
     {
-        testActionLink("/fred", PAGE_LOGICAL_NAME, "foo.bar", "someaction", "/fred/sub/mypage.foo.bar:someaction");
+        testPageLinkCreation("Index", "/context/202", false, 202);
     }
 
-    @SuppressWarnings("unchecked")
+
     @Test
-    public void page_link()
+    public void create_page_render_link_with_override_event_context()
     {
+        testPageLinkCreation("order/Edit", "/context/order/edit/1/2", true, 1, 2);
+    }
+
+    @Test
+    public void create_page_render_link_with_event_context_from_passivate()
+    {
+        testPageLinkCreation("order/Edit", "/context/order/edit/from/passivate", false, "from", "passivate");
+    }
+
+    @Test
+    public void create_page_render_link_by_name()
+    {
+        String logicalName = "order/Edit";
+
+        String expectedURL = "/base/context/order/edit/3";
+        String encodedURL = "encoded:" + expectedURL;
+
+        Page page = mockPage();
+        PageActivationContextCollector collector = mockPageActivationContextCollector();
+        RequestSecurityManager securityManager = mockRequestSecurityManager();
         Request request = mockRequest();
         Response response = mockResponse();
-        Page page = mockPage();
-        ComponentPageElement rootElement = mockComponentPageElement();
-        LinkFactoryListener listener = mockLinkFactoryListener();
-        ComponentInvocationMap map = mockComponentInvocationMap();
+        ComponentInvocationMap invocationMap = new NoOpComponentInvocationMap();
         RequestPathOptimizer optimizer = mockRequestPathOptimizer();
-        RequestSecurityManager securityManager = mockRequestSecurityManager();
+        RequestPageCache pageCache = mockRequestPageCache();
 
-        train_getLogicalName(page, PAGE_LOGICAL_NAME);
-        train_getContextPath(request, "/barney");
-
-        train_getRootElement(page, rootElement);
-
-        final Holder<Link> holder = new Holder<Link>();
-
-        train_triggerPassivateEventForPageLink(rootElement, listener, holder);
-
-        train_getBaseURL(securityManager, page, null);
-
-
-        train_encodeRedirectURL(response, "/barney/" + PAGE_LOGICAL_NAME.toLowerCase() + "/foo/bar", ENCODED);
-
-        // This needs to be refactored a bit to be more testable.
-
-        map.store(isA(Link.class), isA(ComponentInvocationImpl.class));
-
-
-        replay();
-
-        LinkFactory factory = new LinkFactoryImpl(request, response, map, null, optimizer, null, contextValueEncoder,
-                                                  securityManager);
-
-        factory.addListener(listener);
-
-        Link link = factory.createPageRenderLink(page, false);
-
-        assertEquals(link.toRedirectURI(), ENCODED);
-
-        // Make sure the link was passed to the LinkFactoryListener
-
-        assertSame(link, holder.get());
-
-        verify();
-    }
-
-    @Test
-    public void secure_page_link()
-    {
-        Request request = mockRequest();
-        Response response = mockResponse();
-        Page page = mockPage();
-        ComponentPageElement rootElement = mockComponentPageElement();
-        LinkFactoryListener listener = mockLinkFactoryListener();
-        ComponentInvocationMap map = mockComponentInvocationMap();
-        RequestPathOptimizer optimizer = mockRequestPathOptimizer();
-        RequestSecurityManager securityManager = mockRequestSecurityManager();
-
-        train_getLogicalName(page, PAGE_LOGICAL_NAME);
-        train_getContextPath(request, "/barney");
-
-        train_getRootElement(page, rootElement);
-
-        final Holder<Link> holder = new Holder<Link>();
-
-        train_triggerPassivateEventForPageLink(rootElement, listener, holder);
-
-
-        train_getBaseURL(securityManager, page, "https://example.org");
-
-
-        train_encodeRedirectURL(response,
-                                "https://example.org/barney/" + PAGE_LOGICAL_NAME.toLowerCase() + "/foo/bar",
-                                ENCODED);
-
-        // This needs to be refactored a bit to be more testable.
-
-        map.store(isA(Link.class), isA(ComponentInvocationImpl.class));
-
-        replay();
-
-        LinkFactory factory = new LinkFactoryImpl(request, response, map, null, optimizer, null,
-                                                  contextValueEncoder,
-                                                  securityManager);
-
-        factory.addListener(listener);
-
-        Link link = factory.createPageRenderLink(page, false);
-
-        assertEquals(link.toRedirectURI(), ENCODED);
-
-        // Make sure the link was passed to the LinkFactoryListener
-
-        assertSame(link, holder.get());
-
-        verify();
-    }
-
-    @SuppressWarnings("unchecked")
-    @Test
-    public void page_link_using_supplied_activation_context()
-    {
-        Request request = mockRequest();
-        Response response = mockResponse();
-        Page page = mockPage();
-        LinkFactoryListener listener = mockLinkFactoryListener();
-        ComponentInvocationMap map = mockComponentInvocationMap();
-        RequestPathOptimizer optimizer = mockRequestPathOptimizer();
-        RequestSecurityManager securityManager = mockRequestSecurityManager();
-
-        train_getLogicalName(page, PAGE_LOGICAL_NAME);
-        train_getContextPath(request, "/barney");
-
-        Holder<Link> holder = new Holder<Link>();
-
-        IAnswer<Void> createdPageLinkAnswer = newAnswerForCreatedLink(holder);
-
-        listener.createdPageRenderLink(isA(Link.class));
-        setAnswer(createdPageLinkAnswer);
-
-        train_getBaseURL(securityManager, page, null);
-
-
-        train_encodeRedirectURL(response, "/barney/" + PAGE_LOGICAL_NAME.toLowerCase() + "/biff/bazz", ENCODED);
-
-        // This needs to be refactored a bit to be more testable.
-
-        map.store(isA(Link.class), isA(ComponentInvocationImpl.class));
-
-        replay();
-
-        LinkFactory factory = new LinkFactoryImpl(request, response, map, null, optimizer, null, contextValueEncoder,
-                                                  securityManager);
-        factory.addListener(listener);
-
-        Link link = factory.createPageRenderLink(page, false, "biff", "bazz");
-
-        assertEquals(link.toRedirectURI(), ENCODED);
-
-        // Make sure the link was passed to the LinkFactoryListener
-
-        assertSame(link, holder.get());
-
-        verify();
-    }
-
-    @SuppressWarnings("unchecked")
-    @Test
-    public void page_link_using_empty_activation_context_and_override()
-    {
-        Request request = mockRequest();
-        Response response = mockResponse();
-        Page page = mockPage();
-        LinkFactoryListener listener = mockLinkFactoryListener();
-        ComponentInvocationMap map = mockComponentInvocationMap();
-        RequestPathOptimizer optimizer = mockRequestPathOptimizer();
-        RequestSecurityManager securityManager = mockRequestSecurityManager();
-
-        train_getLogicalName(page, PAGE_LOGICAL_NAME);
-        train_getContextPath(request, "/barney");
-
-        Holder<Link> holder = new Holder<Link>();
-
-        IAnswer<Void> createdPageLinkAnswer = newAnswerForCreatedLink(holder);
-
-        listener.createdPageRenderLink(isA(Link.class));
-        setAnswer(createdPageLinkAnswer);
-
-        train_getBaseURL(securityManager, page, null);
-
-        train_encodeRedirectURL(response, "/barney/" + PAGE_LOGICAL_NAME.toLowerCase(), ENCODED);
-
-        // This needs to be refactored a bit to be more testable.
-
-        map.store(isA(Link.class), isA(ComponentInvocationImpl.class));
-
-        replay();
-
-        LinkFactory factory = new LinkFactoryImpl(request, response, map, null, optimizer, null, contextValueEncoder,
-                                                  securityManager);
-        factory.addListener(listener);
-
-        Link link = factory.createPageRenderLink(page, true);
-
-        assertEquals(link.toRedirectURI(), ENCODED);
-
-        // Make sure the link was passed to the LinkFactoryListener
-
-        assertSame(link, holder.get());
-
-        verify();
-    }
-
-    @Test
-    public void page_link_by_name()
-    {
-        Request request = mockRequest();
-        Response response = mockResponse();
-        Page page = mockPage();
-        ComponentPageElement rootElement = mockComponentPageElement();
-        LinkFactoryListener listener = mockLinkFactoryListener();
-        ComponentInvocationMap map = mockComponentInvocationMap();
-        RequestPageCache cache = mockRequestPageCache();
-        RequestPathOptimizer optimizer = mockRequestPathOptimizer();
-        RequestSecurityManager securityManager = mockRequestSecurityManager();
-
-        train_get(cache, PAGE_LOGICAL_NAME, page);
-
-        train_getLogicalName(page, PAGE_LOGICAL_NAME);
-        train_getContextPath(request, "/barney");
-
-        train_getRootElement(page, rootElement);
-
-        // Answer for triggerEvent() which returns a boolean.
-        final Holder<Link> holder = new Holder<Link>();
-
-        train_triggerPassivateEventForPageLink(rootElement, listener, holder);
-
-        train_getBaseURL(securityManager, page, null);
-
-        train_encodeRedirectURL(response, "/barney/" + PAGE_LOGICAL_NAME.toLowerCase() + "/foo/bar", ENCODED);
-
-        // This needs to be refactored a bit to be more testable.
-
-        map.store(isA(Link.class), isA(ComponentInvocationImpl.class));
-
-        replay();
-
-        LinkFactory factory = new LinkFactoryImpl(request, response, map, cache, optimizer, null, contextValueEncoder,
-                                                  securityManager);
-        factory.addListener(listener);
-
-        Link link = factory.createPageLink(PAGE_LOGICAL_NAME, false);
-
-        assertEquals(link.toRedirectURI(), ENCODED);
-
-        // Make sure the link was passed to the LinkFactoryListener
-
-        assertSame(link, holder.get());
-
-        verify();
-    }
-
-    @Test
-    public void page_link_for_root_index()
-    {
-        Request request = mockRequest();
-        Response response = mockResponse();
-        Page page = mockPage();
-        ComponentPageElement rootElement = mockComponentPageElement();
-        LinkFactoryListener listener = mockLinkFactoryListener();
-        ComponentInvocationMap map = mockComponentInvocationMap();
-        RequestPageCache cache = mockRequestPageCache();
-        RequestPathOptimizer optimizer = mockRequestPathOptimizer();
-        RequestSecurityManager securityManager = mockRequestSecurityManager();
-
-        String logicalName = "Index";
-
-        train_get(cache, logicalName, page);
+        train_get(pageCache, logicalName, page);
 
         train_getLogicalName(page, logicalName);
-        train_getContextPath(request, "/barney");
 
-        train_getRootElement(page, rootElement);
+        train_collectPageActivationContext(collector, page, 3);
 
-        // Answer for triggerEvent() which returns a boolean.
-        final Holder<Link> holder = new Holder<Link>();
+        train_getBaseURL(securityManager, page, "/base");
+        train_getContextPath(request, "/context");
 
-        train_triggerPassivateEventForPageLink(rootElement, listener, holder);
-
-        train_getBaseURL(securityManager, page, null);
-
-        train_encodeRedirectURL(response, "/barney/foo/bar", ENCODED);
-
-        // This needs to be refactored a bit to be more testable.
-
-        map.store(isA(Link.class), isA(ComponentInvocationImpl.class));
+        train_encodeURL(response, expectedURL, encodedURL);
 
         replay();
 
-        LinkFactory factory = new LinkFactoryImpl(request, response, map, cache, optimizer, null, contextValueEncoder,
-                                                  securityManager);
-        factory.addListener(listener);
 
-        Link link = factory.createPageLink(logicalName, false);
+        LinkFactory factory = new LinkFactoryImpl(request, response, invocationMap, pageCache, optimizer, null,
+                                                  securityManager, contextPathEncoder, collector);
 
-        assertEquals(link.toRedirectURI(), ENCODED);
 
-        // Make sure the link was passed to the LinkFactoryListener
+        Link link = factory.createPageRenderLink(logicalName, false);
 
-        assertSame(link, holder.get());
+        // Make sure the same link is returned.
+
+        assertEquals(link.toURI(), encodedURL);
 
         verify();
     }
 
-    @Test
-    public void page_link_for_index_in_folder()
+    private void testPageLinkCreation(String logicalName, String expectedURL, boolean overrideContext,
+                                      Object... context)
     {
+        String optimizedURL = "optimized:" + expectedURL;
+        String encodedURL = "encoded:" + expectedURL;
+
+        Page page = mockPage();
+        PageActivationContextCollector collector = mockPageActivationContextCollector();
+        RequestSecurityManager securityManager = mockRequestSecurityManager();
         Request request = mockRequest();
         Response response = mockResponse();
-        Page page = mockPage();
-        ComponentPageElement rootElement = mockComponentPageElement();
-        LinkFactoryListener listener = mockLinkFactoryListener();
-        ComponentInvocationMap map = mockComponentInvocationMap();
-        RequestPageCache cache = mockRequestPageCache();
+        ComponentInvocationMap invocationMap = new NoOpComponentInvocationMap();
         RequestPathOptimizer optimizer = mockRequestPathOptimizer();
-        RequestSecurityManager securityManager = mockRequestSecurityManager();
-
-        String logicalName = "mylib/stuff/Index";
-
-        train_get(cache, logicalName, page);
+        Capture<Link> linkCapture = new Capture();
+        LinkFactoryListener listener = mockLinkFactoryListener();
 
         train_getLogicalName(page, logicalName);
-        train_getContextPath(request, "/barney");
 
-        train_getRootElement(page, rootElement);
-
-        // Answer for triggerEvent() which returns a boolean.
-        final Holder<Link> holder = new Holder<Link>();
-
-        train_triggerPassivateEventForPageLink(rootElement, listener, holder);
+        if (!overrideContext)
+            train_collectPageActivationContext(collector, page, context);
 
         train_getBaseURL(securityManager, page, null);
+        train_getContextPath(request, "/context");
 
-        train_encodeRedirectURL(response, "/barney/mylib/stuff/foo/bar", ENCODED);
 
-        // This needs to be refactored a bit to be more testable.
+        train_optimizePath(optimizer, expectedURL, optimizedURL);
+        train_encodeURL(response, optimizedURL, encodedURL);
 
-        map.store(isA(Link.class), isA(ComponentInvocationImpl.class));
+        listener.createdPageRenderLink(capture(linkCapture));
 
         replay();
 
-        LinkFactory factory = new LinkFactoryImpl(request, response, map, cache, optimizer, null, contextValueEncoder,
-                                                  securityManager);
+
+        LinkFactory factory = new LinkFactoryImpl(request, response, invocationMap, null, optimizer, null,
+                                                  securityManager, contextPathEncoder, collector);
+
         factory.addListener(listener);
 
-        Link link = factory.createPageLink(logicalName, false);
+        Object[] passedContext = overrideContext ? context : new Object[0];
 
-        assertEquals(link.toRedirectURI(), ENCODED);
+        Link link = factory.createPageRenderLink(page, overrideContext, passedContext);
 
-        // Make sure the link was passed to the LinkFactoryListener
+        // Make sure the same link is returned.
 
-        assertSame(link, holder.get());
+        assertSame(linkCapture.getValue(), link);
+
+        assertEquals(link.toURI(), encodedURL);
 
         verify();
     }
 
-    @SuppressWarnings("unchecked")
-    private void train_triggerPassivateEventForPageLink(ComponentPageElement rootElement, LinkFactoryListener listener,
-                                                        Holder<Link> holder)
+    @Test
+    public void simple_component_event_link()
     {
-        IAnswer<Boolean> triggerEventAnswer = newAnswerForPassivateEventTrigger();
 
-        IAnswer<Void> createdPageLinkAnswer = newAnswerForCreatedLink(holder);
-
-        // Intercept the call to handle component event, and let the IAnswer
-        // do the work.
-
-        expect(rootElement.triggerEvent(eq(EventConstants.PASSIVATE), (Object[]) isNull(),
-                                        isA(ComponentEventCallback.class))).andAnswer(triggerEventAnswer);
-
-        listener.createdPageRenderLink(isA(Link.class));
-        setAnswer(createdPageLinkAnswer);
-    }
-
-    @SuppressWarnings("unchecked")
-    private void train_triggerPassivateEventForActionLink(ComponentPageElement rootElement,
-                                                          LinkFactoryListener listener, Holder<Link> holder)
-    {
-        IAnswer<Boolean> triggerEventAnswer = newAnswerForPassivateEventTrigger();
-
-        IAnswer<Void> createdPageLinkAnswer = newAnswerForCreatedLink(holder);
-
-        // Intercept the call to handle component event, and let the IAnswer
-        // do the work.
-
-        expect(rootElement.triggerEvent(eq(EventConstants.PASSIVATE), (Object[]) isNull(),
-                                        isA(ComponentEventCallback.class))).andAnswer(triggerEventAnswer);
-
-        listener.createComponentEventLink(isA(Link.class));
-        setAnswer(createdPageLinkAnswer);
-    }
-
-    private IAnswer<Void> newAnswerForCreatedLink(final Holder<Link> holder)
-    {
-        return new IAnswer<Void>()
-        {
-            public Void answer() throws Throwable
-            {
-                Link link = (Link) EasyMock.getCurrentArguments()[0];
-
-                holder.put(link);
-
-                return null;
-            }
-        };
-    }
-
-    private IAnswer<Boolean> newAnswerForPassivateEventTrigger()
-    {
-        return new IAnswer<Boolean>()
-        {
-            @SuppressWarnings("unchecked")
-            public Boolean answer() throws Throwable
-            {
-                ComponentEventCallback handler = (ComponentEventCallback) EasyMock
-                        .getCurrentArguments()[2];
-
-                handler.handleResult(new Object[] {"foo", "bar"});
-
-                return true;
-            }
-        };
+        testEventLinkCreation("/context/order/edit.foo.bar?t:ac=a/b", "order/Edit", "foo.bar", EventConstants.ACTION,
+                              false);
     }
 
     @Test
-    public void action_with_context_that_contains_periods()
+    public void component_event_link_with_context()
     {
-        Request request = mockRequest();
-        Response response = mockResponse();
-        Page page = mockPage();
-        ComponentPageElement rootElement = mockComponentPageElement();
-        LinkFactoryListener listener = mockLinkFactoryListener();
-        ComponentInvocationMap map = mockComponentInvocationMap();
-        RequestPageCache cache = mockRequestPageCache();
-        RequestPathOptimizer optimizer = mockRequestPathOptimizer();
-        PageRenderQueue queue = mockPageRenderQueue();
-        RequestSecurityManager securityManager = mockRequestSecurityManager();
-
-        String optimizedPath = "/optimized/path";
-
-        final Holder<Link> holder = new Holder<Link>();
-
-        train_getLogicalName(page, "mypage");
-        train_getContextPath(request, "");
-
-        train_getBaseURL(securityManager, page, null);
-
-        train_optimizePath(optimizer, "/mypage:myaction/1.2.3/4.5.6?t:ac=foo/bar", optimizedPath);
-
-        train_getRootElement(page, rootElement);
-        train_triggerPassivateEventForActionLink(rootElement, listener, holder);
-
-        train_getRenderingPage(queue, page);
-
-        // This needs to be refactored a bit to be more testable.
-
-        map.store(isA(Link.class), isA(ComponentInvocation.class));
-
-        train_encodeURL(response, "/optimized/path", ENCODED);
-
-        replay();
-
-        LinkFactory factory = new LinkFactoryImpl(request, response, map, cache, optimizer, queue,
-                                                  contextValueEncoder, securityManager);
-        factory.addListener(listener);
-
-        Link link = factory.createComponentEventLink(page, null, "myaction", false, "1.2.3", "4.5.6");
-
-        assertEquals(link.toURI(), ENCODED);
-        assertSame(link, holder.get());
-
-        verify();
+        testEventLinkCreation("/context/order/edit.foo.bar/fred/barney?t:ac=a/b", "order/Edit", "foo.bar",
+                              EventConstants.ACTION,
+                              false, "fred", "barney");
     }
 
-    /**
-     * For good measure, we're going to also test a security change.
-     */
     @Test
-    public void action_for_non_active_page()
+    public void component_event_link_for_form()
     {
-        Request request = mockRequest();
-        Response response = mockResponse();
-        Page containingPage = mockPage();
+        Link link = testEventLinkCreation("/context/order/edit.foo.bar/fred/barney", "order/Edit", "foo.bar",
+                                          EventConstants.ACTION,
+                                          true, "fred", "barney");
+
+        assertEquals(link.getParameterValue(InternalConstants.PAGE_CONTEXT_NAME), "a/b");
+    }
+
+    @Test
+    public void component_event_from_other_page()
+    {
+        String logicalName = "blocks/AppDisplay";
+
+        String expectedURL = "/base/context/order/view.gnip.gnop:myevent/3/5/9";
+
+        Page primaryPage = mockPage();
         Page activePage = mockPage();
-        ComponentPageElement rootElement = mockComponentPageElement();
-        LinkFactoryListener listener = mockLinkFactoryListener();
-        ComponentInvocationMap map = mockComponentInvocationMap();
-        RequestPageCache cache = mockRequestPageCache();
-        RequestPathOptimizer optimizer = mockRequestPathOptimizer();
         PageRenderQueue queue = mockPageRenderQueue();
+        PageActivationContextCollector collector = mockPageActivationContextCollector();
         RequestSecurityManager securityManager = mockRequestSecurityManager();
+        Request request = mockRequest();
+        Response response = mockResponse();
+        ComponentInvocationMap invocationMap = new NoOpComponentInvocationMap();
+        RequestPathOptimizer optimizer = mockRequestPathOptimizer();
 
-        final Holder<Link> holder = new Holder<Link>();
-
-        train_getLogicalName(containingPage, "MyPage");
-        train_getContextPath(request, "");
-
-
-        train_getRootElement(activePage, rootElement);
-        train_triggerPassivateEventForActionLink(rootElement, listener, holder);
+        String encodedURL = "encoded:" + expectedURL;
 
         train_getRenderingPage(queue, activePage);
 
-        train_getLogicalName(activePage, "ActivePage");
+        train_getLogicalName(primaryPage, logicalName);
+        train_getLogicalName(activePage, "order/View");
 
-        // This needs to be refactored a bit to be more testable.
+        train_collectPageActivationContext(collector, activePage, "x", "y");
 
-        map.store(isA(Link.class), isA(ComponentInvocation.class));
+        train_getBaseURL(securityManager, activePage, "/base");
 
-        train_getBaseURL(securityManager, activePage, "http://example.org");
+        train_getContextPath(request, "/context");
 
-        train_encodeURL(response, "http://example.org/activepage:myaction?t:ac=foo/bar&t:cp=mypage", ENCODED);
+        train_encodeURL(response, expectedURL, encodedURL);
+
 
         replay();
 
-        LinkFactory factory = new LinkFactoryImpl(request, response, map, cache, optimizer, queue,
-                                                  contextValueEncoder, securityManager);
-        factory.addListener(listener);
+        LinkFactory factory = new LinkFactoryImpl(request, response, invocationMap, null, optimizer, queue,
+                                                  securityManager, contextPathEncoder, collector);
 
-        Link link = factory.createComponentEventLink(containingPage, null, "myaction", false);
+        Link link = factory.createComponentEventLink(primaryPage, "gnip.gnop", "myevent", true, 3, 5, 9);
 
-        assertEquals(link.toURI(), ENCODED);
-        assertSame(link, holder.get());
+        assertEquals(link.toURI(), encodedURL);
 
         verify();
+
+        assertEquals(link.getParameterValue(InternalConstants.CONTAINER_PAGE_NAME), "blocks/appdisplay");
+        assertEquals(link.getParameterValue(InternalConstants.PAGE_CONTEXT_NAME), "x/y");
     }
 
-
-    @SuppressWarnings("unchecked")
-    private void testActionLink(String contextPath, String logicalPageName, String nestedId, String eventName,
-                                String expectedURI, Object... context)
+    private Link testEventLinkCreation(String expectedURL, String logicalName, String nestedId, String eventType,
+                                       boolean forForm, Object... context)
     {
+        Page primaryPage = mockPage();
+        Page activePage = primaryPage;
+        PageRenderQueue queue = mockPageRenderQueue();
+        PageActivationContextCollector collector = mockPageActivationContextCollector();
+        RequestSecurityManager securityManager = mockRequestSecurityManager();
         Request request = mockRequest();
         Response response = mockResponse();
-        ComponentPageElement rootElement = mockComponentPageElement();
-        Page page = mockPage();
-        LinkFactoryListener listener = mockLinkFactoryListener();
-        ComponentInvocationMap map = mockComponentInvocationMap();
-        RequestPageCache cache = mockRequestPageCache();
+        ComponentInvocationMap invocationMap = new NoOpComponentInvocationMap();
         RequestPathOptimizer optimizer = mockRequestPathOptimizer();
-        PageRenderQueue queue = mockPageRenderQueue();
-        RequestSecurityManager securityManager = mockRequestSecurityManager();
+        Capture<Link> linkCapture = new Capture();
+        LinkFactoryListener listener = mockLinkFactoryListener();
 
+        String optimizedURL = "optimized:" + expectedURL;
+        String encodedURL = "encoded:" + expectedURL;
 
-        String optimizedPath = "/optimized/path";
+        train_getRenderingPage(queue, null);
 
-        String generatedPath = String.format("%s?%s=foo/bar", expectedURI, InternalConstants.PAGE_CONTEXT_NAME);
+        train_getLogicalName(primaryPage, logicalName);
 
-        final Holder<Link> holder = new Holder<Link>();
+        train_collectPageActivationContext(collector, primaryPage, "a", "b");
 
-        train_getLogicalName(page, logicalPageName);
-        train_getContextPath(request, contextPath);
+        train_getBaseURL(securityManager, activePage, null);
 
-        train_optimizePath(optimizer, generatedPath, optimizedPath);
+        train_getContextPath(request, "/context");
 
-        train_getRootElement(page, rootElement);
-        train_triggerPassivateEventForActionLink(rootElement, listener, holder);
+        train_optimizePath(optimizer, expectedURL, optimizedURL);
+        train_encodeURL(response, optimizedURL, encodedURL);
 
-        train_getRenderingPage(queue, page);
-
-        // This needs to be refactored a bit to be more testable.
-
-        map.store(isA(Link.class), isA(ComponentInvocationImpl.class));
-
-        train_getBaseURL(securityManager, page, null);
-
-        train_encodeURL(response, optimizedPath, ENCODED);
+        listener.createdComponentEventLink(capture(linkCapture));
 
         replay();
 
-        LinkFactory factory = new LinkFactoryImpl(request, response, map, cache, optimizer, queue,
-                                                  contextValueEncoder, securityManager);
+        LinkFactory factory = new LinkFactoryImpl(request, response, invocationMap, null, optimizer, queue,
+                                                  securityManager, contextPathEncoder, collector);
+
         factory.addListener(listener);
 
-        Link link = factory.createComponentEventLink(page, nestedId, eventName, false, context);
+        Link link = factory.createComponentEventLink(primaryPage, nestedId, eventType, forForm, context);
 
-        assertEquals(link.toURI(), ENCODED);
-        assertSame(link, holder.get());
+        // Make sure the same link is returned.
+
+        assertSame(linkCapture.getValue(), link);
+
+        assertEquals(link.toURI(), encodedURL);
 
         verify();
+
+        return link;
     }
 
+    protected final void train_collectPageActivationContext(PageActivationContextCollector collector, Page page,
+                                                            Object... context)
+    {
+        expect(collector.collectPageActivationContext(page)).andReturn(context);
+    }
+
+    protected final PageActivationContextCollector mockPageActivationContextCollector()
+    {
+        return newMock(PageActivationContextCollector.class);
+    }
 }

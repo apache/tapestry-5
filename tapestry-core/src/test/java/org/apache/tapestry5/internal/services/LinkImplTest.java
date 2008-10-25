@@ -16,30 +16,41 @@ package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.Link;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
+import org.apache.tapestry5.services.ContextPathEncoder;
 import org.apache.tapestry5.services.Response;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-
-import java.util.Arrays;
 
 public class LinkImplTest extends InternalBaseTestCase
 {
-    private static final String OPTIMIZED = "/optimized/path";
+    private static final String RAW_PATH = "foo/baz/path";
+
+    private static final String OPTIMIZED = "../baz/path";
 
     private static final String ENCODED = "*encoded*";
 
+    private ContextPathEncoder contextPathEncoder;
+
+    @BeforeClass
+    public void setup()
+    {
+        contextPathEncoder = getService(ContextPathEncoder.class);
+    }
 
     @Test
     public void simple_redirect()
     {
         RequestPathOptimizer optimizer = mockRequestPathOptimizer();
         Response response = mockResponse();
+        ComponentInvocation invocation = mockComponentInvocation();
 
-        train_encodeRedirectURL(response, "/foo/bar", ENCODED);
+        train_buildURI(invocation, RAW_PATH);
+
+        train_encodeRedirectURL(response, "/base/context/" + RAW_PATH, ENCODED);
 
         replay();
 
-        Link link = new LinkImpl(response, optimizer, "/foo", "bar");
-
+        Link link = new LinkImpl(response, optimizer, "/base", "/context", invocation);
 
         assertEquals(link.toRedirectURI(), ENCODED);
 
@@ -51,37 +62,18 @@ public class LinkImplTest extends InternalBaseTestCase
     {
         RequestPathOptimizer optimizer = mockRequestPathOptimizer();
         Response response = mockResponse();
+        ComponentInvocation invocation = mockComponentInvocation();
 
-        train_optimizePath(optimizer, "/foo/bar", OPTIMIZED);
+        train_buildURI(invocation, RAW_PATH);
+
+        train_optimizePath(optimizer, "/bar/" + RAW_PATH, OPTIMIZED);
         train_encodeURL(response, OPTIMIZED, ENCODED);
 
         replay();
 
-        Link link = new LinkImpl(response, optimizer, "/foo", "bar");
-
+        Link link = new LinkImpl(response, optimizer, null, "/bar", invocation);
 
         assertEquals(link.toString(), ENCODED);
-
-        verify();
-    }
-
-    @Test
-    public void url_with_parameters()
-    {
-        RequestPathOptimizer optimizer = mockRequestPathOptimizer();
-        Response response = mockResponse();
-
-        train_optimizePath(optimizer, "/foo/bar?barney=rubble&fred=flintstone", OPTIMIZED);
-        train_encodeURL(response, OPTIMIZED, ENCODED);
-
-        replay();
-
-        Link link = new LinkImpl(response, optimizer, "/foo", "bar");
-
-        link.addParameter("fred", "flintstone");
-        link.addParameter("barney", "rubble");
-
-        assertEquals(link.toURI(), ENCODED);
 
         verify();
     }
@@ -91,63 +83,15 @@ public class LinkImplTest extends InternalBaseTestCase
     {
         RequestPathOptimizer optimizer = mockRequestPathOptimizer();
         Response response = mockResponse();
+        ComponentInvocation invocation = mockComponentInvocation();
+
+        train_getParameter(invocation, "fred", "flintstone");
 
         replay();
 
-        Link link = new LinkImpl(response, optimizer, "", "bar");
-
-        link.addParameter("fred", "flintstone");
-        link.addParameter("barney", "rubble");
+        Link link = new LinkImpl(response, optimizer, "", "bar", invocation);
 
         assertEquals(link.getParameterValue("fred"), "flintstone");
-        assertEquals(link.getParameterValue("barney"), "rubble");
-        assertNull(link.getParameterValue("wilma"));
-
-        verify();
-    }
-
-    @Test
-    public void parameter_names_must_be_unique()
-    {
-        RequestPathOptimizer optimizer = mockRequestPathOptimizer();
-        Response response = mockResponse();
-
-        replay();
-
-        Link link = new LinkImpl(response, optimizer, "/foo", "bar");
-
-        link.addParameter("fred", "flintstone");
-        try
-        {
-            link.addParameter("fred", "flintstone");
-            unreachable();
-        }
-        catch (IllegalArgumentException ex)
-        {
-            assertEquals(ex.getMessage(),
-                         "Parameter names are required to be unique.  Parameter 'fred' already has the value 'flintstone'.");
-        }
-
-        verify();
-    }
-
-    @Test
-    public void to_form_URI_does_not_include_parameters()
-    {
-        RequestPathOptimizer optimizer = mockRequestPathOptimizer();
-        Response response = mockResponse();
-
-        train_optimizePath(optimizer, "/foo/bar", OPTIMIZED);
-        train_encodeURL(response, OPTIMIZED, ENCODED);
-
-        replay();
-
-        Link link = new LinkImpl(response, optimizer, "/foo", "bar", true);
-
-        link.addParameter("fred", "flintstone");
-        link.addParameter("barney", "rubble");
-
-        assertEquals(link.toURI(), ENCODED);
 
         verify();
     }
@@ -155,34 +99,34 @@ public class LinkImplTest extends InternalBaseTestCase
     @Test
     public void url_with_anchor()
     {
-        url_with_anchor("wilma", "/foo/bar#wilma");
+        try_with_anchor("wilma", "/context/" + RAW_PATH + "#wilma");
     }
 
     @Test
     public void url_with_null_anchor()
     {
-        url_with_anchor(null, "/foo/bar");
+        try_with_anchor(null, "/context/" + RAW_PATH);
     }
 
     @Test
     public void url_with_empty_anchor()
     {
-        url_with_anchor("", "/foo/bar");
+        try_with_anchor("", "/context/" + RAW_PATH);
     }
 
-    private void url_with_anchor(String anchor, String url)
+    private void try_with_anchor(String anchor, String url)
     {
         RequestPathOptimizer optimizer = mockRequestPathOptimizer();
         Response response = mockResponse();
+        ComponentInvocation invocation = mockComponentInvocation();
 
-
+        train_buildURI(invocation, RAW_PATH);
         train_optimizePath(optimizer, url, OPTIMIZED);
         train_encodeURL(response, OPTIMIZED, ENCODED);
 
-
         replay();
 
-        Link link = new LinkImpl(response, optimizer, "/foo", "bar");
+        Link link = new LinkImpl(response, optimizer, null, "/context", invocation);
 
         link.setAnchor(anchor);
 
@@ -194,35 +138,10 @@ public class LinkImplTest extends InternalBaseTestCase
     }
 
     @Test
-    public void url_with_anchor_and_parameters()
-    {
-        RequestPathOptimizer optimizer = mockRequestPathOptimizer();
-        Response response = mockResponse();
-
-
-        train_optimizePath(optimizer, "/foo/bar?barney=rubble&fred=flintstone#wilma", OPTIMIZED);
-        train_encodeURL(response, OPTIMIZED, ENCODED);
-
-        replay();
-
-        Link link = new LinkImpl(response, optimizer, "/foo", "bar");
-
-        link.addParameter("fred", "flintstone");
-        link.addParameter("barney", "rubble");
-        link.setAnchor("wilma");
-
-        assertEquals(link.toURI(), ENCODED);
-
-        verify();
-    }
-
-
-    @Test
     public void force_absolute_uri()
     {
         RequestPathOptimizer optimizer = mockRequestPathOptimizer();
         Response response = mockResponse();
-
 
         train_encodeURL(response, "/ctx/foo", ENCODED);
 
@@ -230,29 +149,13 @@ public class LinkImplTest extends InternalBaseTestCase
 
 
         Link link = new LinkImpl(response, optimizer, null, "/ctx",
-                                 new ComponentInvocationImpl(new OpaqueConstantTarget("foo"), new String[0], null),
-                                 false);
+                                 new ComponentInvocationImpl(contextPathEncoder, new OpaqueConstantTarget("foo"), null,
+                                                             null,
+                                                             false)
+        );
 
         assertEquals(link.toAbsoluteURI(), ENCODED);
 
-
-        verify();
-    }
-
-    @Test
-    public void parameter_names_are_returned_sorted()
-    {
-        RequestPathOptimizer optimizer = mockRequestPathOptimizer();
-        Response response = mockResponse();
-
-        replay();
-
-        Link link = new LinkImpl(response, optimizer, "/foo", "bar");
-
-        link.addParameter("fred", "flintstone");
-        link.addParameter("barney", "rubble");
-
-        assertEquals(link.getParameterNames(), Arrays.asList("barney", "fred"));
 
         verify();
     }

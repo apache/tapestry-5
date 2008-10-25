@@ -64,7 +64,7 @@ public interface LinkFactory
      * @param context         activation context for the page
      * @return
      */
-    Link createPageLink(String logicalPageName, boolean override, Object... context);
+    Link createPageRenderLink(String logicalPageName, boolean override, Object... context);
 
     /**
      * Adds a listener, to be notified any time an action or render link is created; this allows the listener to modify

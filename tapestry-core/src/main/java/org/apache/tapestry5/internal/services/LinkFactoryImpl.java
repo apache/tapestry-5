@@ -14,26 +14,16 @@
 
 package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry5.ComponentEventCallback;
-import org.apache.tapestry5.EventConstants;
 import org.apache.tapestry5.Link;
 import org.apache.tapestry5.internal.InternalConstants;
-import org.apache.tapestry5.internal.TapestryInternalUtils;
-import org.apache.tapestry5.internal.structure.ComponentPageElement;
 import org.apache.tapestry5.internal.structure.Page;
-import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.*;
-import static org.apache.tapestry5.ioc.internal.util.Defense.notBlank;
-import static org.apache.tapestry5.ioc.internal.util.Defense.notNull;
-import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.ioc.util.StrategyRegistry;
-import org.apache.tapestry5.services.ContextValueEncoder;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.internal.util.Defense;
+import org.apache.tapestry5.services.ContextPathEncoder;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.Response;
 
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 public class LinkFactoryImpl implements LinkFactory
 {
@@ -45,23 +35,18 @@ public class LinkFactoryImpl implements LinkFactory
 
     private final RequestPageCache pageCache;
 
-    private final ContextValueEncoder contextValueEncoder;
-
     private final RequestPathOptimizer optimizer;
 
     private final PageRenderQueue pageRenderQueue;
 
     private final RequestSecurityManager requestSecurityManager;
 
-    private final List<LinkFactoryListener> listeners = newThreadSafeList();
+    private final ContextPathEncoder contextPathEncoder;
 
-    private final StrategyRegistry<PassivateContextHandler> registry;
+    private final PageActivationContextCollector contextCollector;
 
+    private final List<LinkFactoryListener> listeners = CollectionFactory.newThreadSafeList();
 
-    private interface PassivateContextHandler<T>
-    {
-        void handle(T result, List context);
-    }
 
     public LinkFactoryImpl(Request request,
                            Response response,
@@ -69,8 +54,9 @@ public class LinkFactoryImpl implements LinkFactory
                            RequestPageCache pageCache,
                            RequestPathOptimizer optimizer,
                            PageRenderQueue pageRenderQueue,
-                           ContextValueEncoder contextValueEncoder,
-                           RequestSecurityManager requestSecurityManager)
+                           RequestSecurityManager requestSecurityManager,
+                           ContextPathEncoder contextPathEncoder,
+                           PageActivationContextCollector contextCollector)
     {
         this.request = request;
         this.response = response;
@@ -78,40 +64,9 @@ public class LinkFactoryImpl implements LinkFactory
         this.pageCache = pageCache;
         this.optimizer = optimizer;
         this.pageRenderQueue = pageRenderQueue;
-        this.contextValueEncoder = contextValueEncoder;
         this.requestSecurityManager = requestSecurityManager;
-
-        Map<Class, PassivateContextHandler> registrations = newMap();
-
-        registrations.put(Object.class, new PassivateContextHandler()
-        {
-            @SuppressWarnings("unchecked")
-            public void handle(Object result, List context)
-            {
-                context.add(result);
-            }
-        });
-
-        registrations.put(Object[].class, new PassivateContextHandler<Object[]>()
-        {
-
-            @SuppressWarnings("unchecked")
-            public void handle(Object[] result, List context)
-            {
-                context.addAll(Arrays.asList(result));
-            }
-        });
-
-        registrations.put(Collection.class, new PassivateContextHandler<Collection>()
-        {
-            @SuppressWarnings("unchecked")
-            public void handle(Collection result, List context)
-            {
-                context.addAll(result);
-            }
-        });
-
-        registry = StrategyRegistry.newInstance(PassivateContextHandler.class, registrations);
+        this.contextPathEncoder = contextPathEncoder;
+        this.contextCollector = contextCollector;
     }
 
     public void addListener(LinkFactoryListener listener)
@@ -120,27 +75,26 @@ public class LinkFactoryImpl implements LinkFactory
     }
 
     public Link createComponentEventLink(Page page, String nestedId, String eventType, boolean forForm,
-                                         Object... context)
+                                         Object... eventContext)
     {
-        notNull(page, "page");
-        notBlank(eventType, "action");
+        Defense.notNull(page, "page");
+        Defense.notBlank(eventType, "action");
 
         Page activePage = pageRenderQueue.getRenderingPage();
 
         // See TAPESTRY-2184
         if (activePage == null) activePage = page;
 
-        ActionLinkTarget target = new ActionLinkTarget(eventType, activePage.getLogicalName(), nestedId);
+        ComponentEventTarget target = new ComponentEventTarget(eventType, activePage.getLogicalName(), nestedId);
 
-        String[] contextStrings = toContextStrings(context);
+        Object[] pageActivationContext = contextCollector.collectPageActivationContext(activePage);
 
-        String[] activationContext = collectActivationContextForPage(activePage);
-
-        ComponentInvocation invocation = new ComponentInvocationImpl(target, contextStrings, activationContext);
+        ComponentInvocation invocation = new ComponentInvocationImpl(contextPathEncoder, target, eventContext,
+                                                                     pageActivationContext, forForm);
 
         String baseURL = requestSecurityManager.getBaseURL(activePage);
 
-        Link link = new LinkImpl(response, optimizer, baseURL, request.getContextPath(), invocation, forForm);
+        Link link = new LinkImpl(response, optimizer, baseURL, request.getContextPath(), invocation);
 
         // TAPESTRY-2044: Sometimes the active page drags in components from another page and we
         // need to differentiate that.
@@ -148,46 +102,29 @@ public class LinkFactoryImpl implements LinkFactory
         if (activePage != page)
             link.addParameter(InternalConstants.CONTAINER_PAGE_NAME, page.getLogicalName().toLowerCase());
 
-        // Now see if the page has an activation context.
-
-        addActivationContextToLink(link, activationContext, forForm);
+        // This is a hook used for testing; we can relate the link to an invocation so that we can simulate
+        // the clicking of the link (or submitting of the form).
 
         componentInvocationMap.store(link, invocation);
 
         for (LinkFactoryListener listener : listeners)
-            listener.createComponentEventLink(link);
+            listener.createdComponentEventLink(link);
 
         return link;
     }
 
-    private void addActivationContextToLink(Link link, String[] activationContext, boolean forForm)
+
+    public Link createPageRenderLink(Page page, boolean override, Object... pageActivationContext)
     {
-        if (activationContext.length == 0) return;
-
-        StringBuilder builder = new StringBuilder();
-
-        for (int i = 0; i < activationContext.length; i++)
-        {
-            if (i > 0) builder.append("/");
-
-            builder.append(forForm
-                           ? TapestryInternalUtils.escapePercentAndSlash(activationContext[i])
-                           : TapestryInternalUtils.encodeContext(activationContext[i]));
-        }
-
-        link.addParameter(InternalConstants.PAGE_CONTEXT_NAME, builder.toString());
-    }
-
-    public Link createPageRenderLink(Page page, boolean override, Object... activationContext)
-    {
-        notNull(page, "page");
+        Defense.notNull(page, "page");
 
         String logicalPageName = page.getLogicalName();
 
         // When override is true, we use the activation context even if empty.
 
-        String[] context = (override || activationContext.length != 0) ? toContextStrings(
-                activationContext) : collectActivationContextForPage(page);
+        Object[] context = (override || pageActivationContext.length != 0)
+                           ? pageActivationContext
+                           : contextCollector.collectPageActivationContext(page);
 
         // Strip a trailing "/index" from the path.
 
@@ -202,13 +139,13 @@ public class LinkFactoryImpl implements LinkFactory
             logicalPageName = lastSlashx < 0 ? "" : logicalPageName.substring(0, lastSlashx);
         }
 
-        PageLinkTarget target = new PageLinkTarget(logicalPageName);
+        PageRenderTarget target = new PageRenderTarget(logicalPageName);
 
-        ComponentInvocation invocation = new ComponentInvocationImpl(target, context, null);
+        ComponentInvocation invocation = new ComponentInvocationImpl(contextPathEncoder, target, null, context, false);
 
         String baseURL = requestSecurityManager.getBaseURL(page);
 
-        Link link = new LinkImpl(response, optimizer, baseURL, request.getContextPath(), invocation, false);
+        Link link = new LinkImpl(response, optimizer, baseURL, request.getContextPath(), invocation);
 
         componentInvocationMap.store(link, invocation);
 
@@ -218,57 +155,7 @@ public class LinkFactoryImpl implements LinkFactory
         return link;
     }
 
-    /**
-     * Returns a list of objects acquired by invoking triggering the passivate event on the page's root element. May
-     * return an empty list.
-     */
-    private String[] collectActivationContextForPage(final Page page)
-    {
-        final List context = newList();
-
-        ComponentEventCallback callback = new ComponentEventCallback()
-        {
-            @SuppressWarnings("unchecked")
-            public boolean handleResult(Object result)
-            {
-                PassivateContextHandler contextHandler = registry.getByInstance(result);
-
-                contextHandler.handle(result, context);
-
-                return true;
-            }
-        };
-
-        ComponentPageElement rootElement = page.getRootElement();
-
-        rootElement.triggerEvent(EventConstants.PASSIVATE, null, callback);
-
-        return toContextStrings(context.toArray());
-    }
-
-    private String[] toContextStrings(Object[] context)
-    {
-        if (context == null) return new String[0];
-
-        String[] result = new String[context.length];
-
-        for (int i = 0; i < context.length; i++)
-        {
-
-            Object value = context[i];
-
-            String encoded = value == null ? null : contextValueEncoder.toClient(value);
-
-            if (InternalUtils.isBlank(encoded))
-                throw new RuntimeException(ServicesMessages.contextValueMayNotBeNull());
-
-            result[i] = encoded;
-        }
-
-        return result;
-    }
-
-    public Link createPageLink(String logicalPageName, boolean override, Object... context)
+    public Link createPageRenderLink(String logicalPageName, boolean override, Object... context)
     {
         // This verifies that the page name is valid.
         Page page = pageCache.get(logicalPageName);

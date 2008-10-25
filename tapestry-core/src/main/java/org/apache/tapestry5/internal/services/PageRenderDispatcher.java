@@ -15,8 +15,6 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.EventContext;
-import org.apache.tapestry5.internal.TapestryInternalUtils;
-import org.apache.tapestry5.internal.URLEventContext;
 import org.apache.tapestry5.services.*;
 
 import java.io.IOException;
@@ -32,14 +30,14 @@ public class PageRenderDispatcher implements Dispatcher
 
     private final PageRenderRequestHandler handler;
 
-    private final ContextValueEncoder contextValueEncoder;
+    private final ContextPathEncoder contextPathEncoder;
 
     public PageRenderDispatcher(ComponentClassResolver componentClassResolver, PageRenderRequestHandler handler,
-                                ContextValueEncoder contextValueEncoder)
+                                ContextPathEncoder contextPathEncoder)
     {
         this.componentClassResolver = componentClassResolver;
         this.handler = handler;
-        this.contextValueEncoder = contextValueEncoder;
+        this.contextPathEncoder = contextPathEncoder;
     }
 
     public boolean dispatch(Request request, final Response response) throws IOException
@@ -87,34 +85,12 @@ public class PageRenderDispatcher implements Dispatcher
     {
         if (!componentClassResolver.isPageName(pageName)) return false;
 
-        String[] values = convertActivationContext(pageActivationContext);
-
-        EventContext activationContext
-                = new URLEventContext(contextValueEncoder, values);
+        EventContext activationContext = contextPathEncoder.decodePath(pageActivationContext);
 
         PageRenderRequestParameters parameters = new PageRenderRequestParameters(pageName, activationContext);
 
         handler.handle(parameters);
 
         return true;
-    }
-
-    /**
-     * Converts the "extra path", the portion after the page name (and after the slash seperating the page name from the
-     * activation context) into an array of strings. LinkFactory and friends URL encode each value, so we URL decode the
-     * value (we assume that page names are "URL safe").
-     */
-    private String[] convertActivationContext(String extraPath)
-    {
-        if (extraPath.length() == 0) return new String[0];
-
-        String[] context = TapestryInternalUtils.splitPath(extraPath);
-
-        for (int i = 0; i < context.length; i++)
-        {
-            context[i] = TapestryInternalUtils.unescapePercentAndSlash(context[i]);
-        }
-
-        return context;
     }
 }

@@ -84,6 +84,7 @@ public class InternalModule
         binder.bind(RequestSecurityManager.class, RequestSecurityManagerImpl.class);
         binder.bind(InternalRequestGlobals.class, InternalRequestGlobalsImpl.class);
         binder.bind(EndOfRequestListenerHub.class);
+        binder.bind(PageActivationContextCollector.class);
     }
 
     /**

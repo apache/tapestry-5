@@ -804,7 +804,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         clickAndWait("link=Null in context");
 
-        assertTextPresent("Context values (which are added to the request URL) may not be null or blank.");
+        assertText("//li[1]", "NULL");
     }
 
     @Test
@@ -813,12 +813,12 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         start("Page Context in Form");
 
         assertTextSeries("//li[%d]", 1, "betty", "wilma", "context with spaces", "context/with/slashes");
-        assertFieldValue("t:ac", "betty/wilma/context with spaces/context%2Fwith%2Fslashes");
+        assertFieldValue("t:ac", "betty/wilma/context$0020with$0020spaces/context$002fwith$002fslashes");
 
         clickAndWait(SUBMIT);
 
         assertTextSeries("//li[%d]", 1, "betty", "wilma", "context with spaces", "context/with/slashes");
-        assertFieldValue("t:ac", "betty/wilma/context with spaces/context%2Fwith%2Fslashes");
+        assertFieldValue("t:ac", "betty/wilma/context$0020with$0020spaces/context$002fwith$002fslashes");
     }
 
     @Test

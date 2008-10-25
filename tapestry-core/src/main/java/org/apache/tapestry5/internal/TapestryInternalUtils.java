@@ -14,18 +14,13 @@
 
 package org.apache.tapestry5.internal;
 
-import org.apache.commons.codec.EncoderException;
-import org.apache.commons.codec.net.URLCodec;
 import org.apache.tapestry5.OptionModel;
 import org.apache.tapestry5.SelectModel;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newList;
 import org.apache.tapestry5.ioc.internal.util.Defense;
-import static org.apache.tapestry5.ioc.internal.util.Defense.notNull;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 
-import java.util.BitSet;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -35,30 +30,12 @@ import java.util.regex.Pattern;
  */
 public class TapestryInternalUtils
 {
+    private static final String SLASH = "/";
+
+    private static final Pattern SLASH_PATTERN = Pattern.compile(SLASH);
+
     private static final Pattern NON_WORD_PATTERN = Pattern.compile("[^\\w]");
 
-    private static final URLCodec CODEC = new URLCodec()
-    {
-
-        private BitSet contextSafe = (BitSet) WWW_FORM_URL.clone();
-
-        {
-            // Servlet container does not decode '+' in path to ' ',
-            // so we encode ' ' to %20, not to '+'.
-            contextSafe.clear(' ');
-        }
-
-        @Override
-        public byte[] encode(byte[] bytes)
-        {
-            return encodeUrl(contextSafe, bytes);
-        }
-    };
-
-    private TapestryInternalUtils()
-    {
-        // Prevent instantiation.
-    }
 
     /**
      * Capitalizes the string, and inserts a space before each upper case character (or sequence of upper case
@@ -150,7 +127,7 @@ public class TapestryInternalUtils
     {
         Defense.notNull(input, "input");
 
-        List<OptionModel> result = newList();
+        List<OptionModel> result = CollectionFactory.newList();
 
         for (String term : input.split(","))
             result.add(toOptionModel(term.trim()));
@@ -179,7 +156,7 @@ public class TapestryInternalUtils
      */
     public static OptionModel toOptionModel(Map.Entry input)
     {
-        notNull(input, "input");
+        Defense.notNull(input, "input");
 
         String label = input.getValue() != null ? String.valueOf(input.getValue()) : "";
 
@@ -196,7 +173,7 @@ public class TapestryInternalUtils
     {
         Defense.notNull(input, "input");
 
-        List<OptionModel> result = newList();
+        List<OptionModel> result = CollectionFactory.newList();
 
         for (Map.Entry entry : input.entrySet())
             result.add(toOptionModel(entry));
@@ -240,7 +217,7 @@ public class TapestryInternalUtils
     {
         Defense.notNull(input, "input");
 
-        List<OptionModel> result = newList();
+        List<OptionModel> result = CollectionFactory.newList();
 
         for (E element : input)
             result.add(toOptionModel(element));
@@ -363,60 +340,6 @@ public class TapestryInternalUtils
         String prefix = lastTerm(value.getClass().getName());
 
         return getLabelForEnum(messages, prefix, value);
-    }
-
-    /**
-     * Encodes a string for inclusion in a URL.  Slashes and percents are converted to "%25" and "%2F" respectively,
-     * then the entire string is  URL encoded.
-     *
-     * @param input string to include, may not be blank
-     * @return encoded input
-     */
-    public static String encodeContext(String input)
-    {
-        Defense.notBlank(input, "input");
-
-        try
-        {
-            return CODEC.encode(escapePercentAndSlash(input));
-        }
-        catch (EncoderException ex)
-        {
-            throw new RuntimeException(ex);
-        }
-    }
-
-    private static final String PERCENT = "%";
-    private static final Pattern PERCENT_PATTERN = Pattern.compile(PERCENT);
-    private static final String ENCODED_PERCENT = "%25";
-    private static final Pattern ENCODED_PERCENT_PATTERN = Pattern.compile(ENCODED_PERCENT);
-
-    private static final String SLASH = "/";
-    private static final Pattern SLASH_PATTERN = Pattern.compile(SLASH);
-    private static final String ENCODED_SLASH = "%2F";
-    private static final Pattern ENCODED_SLASH_PATTERN = Pattern.compile(ENCODED_SLASH, Pattern.CASE_INSENSITIVE);
-
-    /**
-     * Encodes percent and slash characters in the string for later decoding via {@link
-     * #unescapePercentAndSlash(String)}.
-     *
-     * @param input string to encode
-     * @return modified string
-     */
-    public static String escapePercentAndSlash(String input)
-    {
-        return replace(replace(input, PERCENT_PATTERN, ENCODED_PERCENT), SLASH_PATTERN, ENCODED_SLASH);
-    }
-
-    /**
-     * Used to decode certain escaped characters that are replaced when using {@link #encodeContext(String)}}.
-     *
-     * @param input a previously encoded string
-     * @return the string with slash and percent characters restored
-     */
-    public static String unescapePercentAndSlash(String input)
-    {
-        return replace(replace(input, ENCODED_SLASH_PATTERN, SLASH), ENCODED_PERCENT_PATTERN, PERCENT);
     }
 
     private static String replace(String input, Pattern pattern, String replacement)

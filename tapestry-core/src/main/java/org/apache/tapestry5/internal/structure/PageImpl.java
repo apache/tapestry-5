@@ -163,7 +163,7 @@ public class PageImpl implements Page
 
     public Link createPageRenderLink(String pageName, boolean override, Object... context)
     {
-        return linkFactory.createPageLink(pageName, override, context);
+        return linkFactory.createPageRenderLink(pageName, override, context);
     }
 
     public Link createPageRenderLink(Class pageClass, boolean override, Object... context)
@@ -172,7 +172,7 @@ public class PageImpl implements Page
 
         String pageName = componentClassResolver.resolvePageClassNameToPageName(pageClass.getName());
 
-        return linkFactory.createPageLink(pageName, override, context);
+        return linkFactory.createPageRenderLink(pageName, override, context);
     }
 
     public void persistFieldChange(ComponentResources resources, String fieldName, Object newValue)

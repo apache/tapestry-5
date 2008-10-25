@@ -35,7 +35,7 @@ public class URLEventContext implements EventContext
 
     public int getCount()
     {
-        return values.length;
+        return values == null ? 0 : values.length;
     }
 
     public <T> T get(Class<T> desiredType, int index)

@@ -29,6 +29,7 @@ import static org.apache.tapestry5.ioc.internal.util.Defense.notNull;
 import org.apache.tapestry5.ioc.services.SymbolProvider;
 import org.apache.tapestry5.ioc.util.StrategyRegistry;
 import org.apache.tapestry5.services.ApplicationGlobals;
+import org.apache.tapestry5.services.ContextPathEncoder;
 
 import java.util.Locale;
 import java.util.Map;
@@ -49,9 +50,11 @@ public class PageTester implements ComponentInvoker
 
     private final StrategyRegistry<ComponentInvoker> invokerRegistry;
 
-    private Locale preferedLanguage;
-
     private final LocalizationSetter localizationSetter;
+
+    private final ContextPathEncoder contextPathEncoder;
+
+    private Locale preferedLanguage;
 
     public static final String DEFAULT_CONTEXT_PATH = "src/main/webapp";
 
@@ -104,10 +107,12 @@ public class PageTester implements ComponentInvoker
         globals.storeContext(new PageTesterContext(contextPath));
 
         Map<Class, ComponentInvoker> map = newMap();
-        map.put(PageLinkTarget.class, new PageLinkInvoker(registry));
-        map.put(ActionLinkTarget.class, new ActionLinkInvoker(registry, this, invocationMap));
+        map.put(PageRenderTarget.class, new PageRenderInvoker(registry));
+        map.put(ComponentEventTarget.class, new ComponentEventInvoker(registry, this, invocationMap));
 
         invokerRegistry = StrategyRegistry.newInstance(ComponentInvoker.class, map);
+
+        contextPathEncoder = registry.getService(ContextPathEncoder.class);
     }
 
     /**
@@ -156,7 +161,8 @@ public class PageTester implements ComponentInvoker
      */
     public Document renderPage(String pageName)
     {
-        return invoke(new ComponentInvocationImpl(new PageLinkTarget(pageName), new String[0], null));
+        return invoke(
+                new ComponentInvocationImpl(contextPathEncoder, new PageRenderTarget(pageName), null, null, false));
     }
 
     /**
