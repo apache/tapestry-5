@@ -37,20 +37,7 @@ public class LinkImpl implements Link
 
     private final ComponentInvocation invocation;
 
-    private final boolean forForm;
-
     private String anchor;
-
-    LinkImpl(Response response, RequestPathOptimizer optimizer, String contextPath, String targetPath)
-    {
-        this(response, optimizer, contextPath, targetPath, false);
-    }
-
-    LinkImpl(Response response, RequestPathOptimizer optimizer, String contextPath, String targetPath, boolean forForm)
-    {
-        this(response, optimizer, null, contextPath,
-             new ComponentInvocationImpl(new OpaqueConstantTarget(targetPath), new String[0], null), forForm);
-    }
 
     /**
      * Creates a new Link.  Links may be full or optimized; optimization involves creating a relative URI from the
@@ -61,17 +48,15 @@ public class LinkImpl implements Link
      * @param baseURL     base URL prefix (before the context path), used when switching between secure and non-secure
      * @param contextPath path for the context {@link org.apache.tapestry5.services.Request#getContextPath()}
      * @param invocation  abstraction around the type of link (needed by {@link org.apache.tapestry5.test.PageTester})
-     * @param forForm     if true, then a Form has requested the Link, in which case, the link should not generated
      */
     public LinkImpl(Response response, RequestPathOptimizer optimizer, String baseURL, String contextPath,
-                    ComponentInvocation invocation, boolean forForm)
+                    ComponentInvocation invocation)
     {
         this.response = response;
         this.optimizer = optimizer;
         this.baseURL = baseURL;
         this.contextPath = contextPath;
         this.invocation = invocation;
-        this.forForm = forForm;
     }
 
     public void addParameter(String parameterName, String value)
@@ -108,8 +93,15 @@ public class LinkImpl implements Link
         if (baseURL != null) builder.append(baseURL);
 
         builder.append(contextPath);
-        builder.append("/");
-        builder.append(invocation.buildURI(forForm));
+
+        String invocationURI = invocation.buildURI();
+
+        if (invocationURI.length() > 0)
+        {
+            builder.append("/");
+
+            builder.append(invocationURI);
+        }
 
         if (InternalUtils.isNonBlank(anchor))
         {

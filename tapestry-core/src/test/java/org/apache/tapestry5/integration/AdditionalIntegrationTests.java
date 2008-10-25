@@ -58,7 +58,7 @@ public class AdditionalIntegrationTests extends AbstractIntegrationTestSuite
     @Test
     public void activation_context_for_root_index_page()
     {
-        open(BASE_URL + "it worked");
+        open(BASE_URL + "it$0020worked");
 
         assertText("//h1", "Index");
 
@@ -80,5 +80,4 @@ public class AdditionalIntegrationTests extends AbstractIntegrationTestSuite
         // Fuckin Selenium
         // assertAttribute("//a[2]/@href", "login");
     }
-
 }

@@ -96,14 +96,4 @@ public class AbstractLinkTest extends InternalBaseTestCase
         assertEquals(writer.toString(), "<a href=\"/foo/bar.baz#wilma\">link text</a>");
         assertSame(map.get(e), invocation);
     }
-
-    protected final void train_toURI(Link link, String URI)
-    {
-        expect(link.toURI()).andReturn(URI);
-    }
-
-    protected final ComponentInvocation mockComponentInvocation()
-    {
-        return newMock(ComponentInvocation.class);
-    }
 }

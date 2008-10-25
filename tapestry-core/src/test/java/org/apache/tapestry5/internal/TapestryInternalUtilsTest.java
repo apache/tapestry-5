@@ -67,8 +67,8 @@ public class TapestryInternalUtilsTest extends InternalBaseTestCase
     @DataProvider(name = "to_user_presentable")
     public Object[][] to_user_presentable_data()
     {
-        return new Object[][] { { "hello", "Hello" }, { "userId", "User Id" }, { "useHTML", "Use HTML" },
-                { "underscored_name", "Underscored Name" }, };
+        return new Object[][] {{"hello", "Hello"}, {"userId", "User Id"}, {"useHTML", "Use HTML"},
+                {"underscored_name", "Underscored Name"},};
     }
 
     @Test
@@ -358,42 +358,6 @@ public class TapestryInternalUtilsTest extends InternalBaseTestCase
     }
 
     @Test
-    public void escape_percent_and_slash()
-    {
-        assertEquals(TapestryInternalUtils.escapePercentAndSlash("foo%bar/baz"), "foo%25bar%2Fbaz");
-    }
-
-    @Test
-    public void unescape_percent_and_slash()
-    {
-        assertEquals(TapestryInternalUtils.unescapePercentAndSlash("foo%25bar%2Fbaz"), "foo%bar/baz");
-    }
-
-    @Test
-    public void encode_alphanum_context()
-    {
-        String input = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-        String expected = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-        assertEquals(TapestryInternalUtils.encodeContext(input), expected);
-    }
-
-    @Test
-    public void encode_unsafe_context()
-    {
-        String input = " !\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~";
-        String expected = "%20%21%22%23%24%2525%26%27%28%29*%2B%2C-.%252F%3A%3B%3C%3D%3E%3F%40%5B%5C%5D%5E_%60%7B%7C%7D%7E";
-        assertEquals(TapestryInternalUtils.encodeContext(input), expected);
-    }
-
-    @Test
-    public void encode_utf8_japanese_context()
-    {
-        String input = "\u65E5\u672C\u8A9E";
-        String expected = "%E6%97%A5%E6%9C%AC%E8%AA%9E";
-        assertEquals(TapestryInternalUtils.encodeContext(input), expected);
-    }
-
-    @Test
     public void to_class_attribute_value_empty()
     {
         List<String> classes = Collections.emptyList();
@@ -408,6 +372,4 @@ public class TapestryInternalUtilsTest extends InternalBaseTestCase
 
         assertEquals(TapestryInternalUtils.toClassAttributeValue(classes), "fred barney wilma");
     }
-
-
 }

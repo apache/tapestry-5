@@ -1154,4 +1154,9 @@ public abstract class TapestryTestCase extends IOCTestCase
     {
         expect(ts.findByType(propertyType)).andReturn(translator);
     }
+
+    protected final void train_toURI(Link link, String URI)
+    {
+        expect(link.toURI()).andReturn(URI);
+    }
 }

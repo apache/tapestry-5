@@ -651,4 +651,19 @@ public class InternalBaseTestCase extends TapestryTestCase implements Registry
     {
         return newMock(FieldComponent.class);
     }
+
+    protected final ComponentInvocation mockComponentInvocation()
+    {
+        return newMock(ComponentInvocation.class);
+    }
+
+    protected final void train_buildURI(ComponentInvocation invocation, String URI)
+    {
+        expect(invocation.buildURI()).andReturn(URI);
+    }
+
+    protected void train_getParameter(ComponentInvocation invocation, String parameterName, String parameterValue)
+    {
+        expect(invocation.getParameterValue(parameterName)).andReturn(parameterValue).atLeastOnce();
+    }
 }

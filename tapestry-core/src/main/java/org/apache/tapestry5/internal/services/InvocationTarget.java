@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,8 +17,14 @@ package org.apache.tapestry5.internal.services;
 /**
  * It represents target for a {@link org.apache.tapestry5.internal.services.ComponentInvocation}. For example, it may be
  * a page or an action for a component within a page.
+ *
+ * @see org.apache.tapestry5.services.Dispatcher
  */
 public interface InvocationTarget
 {
+    /**
+     * Represents the invocation as a path, part of a larger URI. The path will come after the context path and before
+     * extra path info (converted from event or page activation context values).
+     */
     String getPath();
 }

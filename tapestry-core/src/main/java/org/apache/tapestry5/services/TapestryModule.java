@@ -195,6 +195,8 @@ public final class TapestryModule
         binder.bind(BindingFactory.class, AssetBindingFactory.class).withId("AssetBindingFactory");
         binder.bind(BindingFactory.class, NullFieldStrategyBindingFactory.class).withId(
                 "NullFieldStrategyBindingFactory");
+        binder.bind(URLEncoder.class, URLEncoderImpl.class);
+        binder.bind(ContextPathEncoder.class, ContextPathEncoderImpl.class);
     }
 
     // ========================================================================

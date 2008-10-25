@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,26 +14,55 @@
 
 package org.apache.tapestry5.internal.services;
 
+import org.apache.tapestry5.EventContext;
+
 import java.util.List;
 
+/**
+ * Represents an invocation of a page (to render) or a component (to handle an event). This is the core of the {@link
+ * org.apache.tapestry5.Link} implementation, and is seperated out to faciliate the {@link
+ * org.apache.tapestry5.test.PageTester}.
+ */
 public interface ComponentInvocation
 {
     /**
-     * @return A path taking the format <em>target-path</em>/e1/e2?&q1=v1&q2=v2. where the <em>target-path</em> is the
-     *         path provided by the invocation target; e1 and e2 are elements of the context; q1 and q2 are the
-     *         parameters.
+     * Constructs the URI for the component invocation. This may include the event context or page activation context.
+     * If the invocation was constructed for a form, then parameters will be omitted (such that they can be rendered as
+     * individual hidden fields within the form) ... otherwise, the URI will include query parameters.
      */
-    String buildURI(boolean isForm);
+    String buildURI();
 
-    String[] getContext();
+    /**
+     * Returns the event context associated with the component event.  This will be an empty event context for a page
+     * render request.
+     */
+    EventContext getEventContext();
 
-    String[] getActivationContext();
+    /**
+     * Returns the page activation context for the page referenced in a page render or component event request.
+     */
+    EventContext getPageActivationContext();
 
+    /**
+     * Adds an additional parameter to be encoded into the URL.
+     *
+     * @param parameterName name of parameter
+     * @param value         parameter value (should be URL safe)
+     */
     void addParameter(String parameterName, String value);
 
+    /**
+     * Returns sorted list of parameter names.
+     */
     List<String> getParameterNames();
 
+    /**
+     * Returns value for a parameter.
+     */
     String getParameterValue(String name);
 
+    /**
+     * Returns the target of the invocation (this is used by {@link org.apache.tapestry5.test.PageTester}).
+     */
     InvocationTarget getTarget();
 }

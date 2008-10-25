@@ -16,8 +16,7 @@ package org.apache.tapestry5.internal.test;
 
 import org.apache.tapestry5.Link;
 import org.apache.tapestry5.dom.Document;
-import org.apache.tapestry5.internal.URLEventContext;
-import org.apache.tapestry5.internal.services.ActionLinkTarget;
+import org.apache.tapestry5.internal.services.ComponentEventTarget;
 import org.apache.tapestry5.internal.services.ComponentInvocation;
 import org.apache.tapestry5.internal.services.ComponentInvocationMap;
 import org.apache.tapestry5.internal.services.InvocationTarget;
@@ -25,14 +24,13 @@ import org.apache.tapestry5.ioc.Registry;
 import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.services.ComponentEventRequestHandler;
 import org.apache.tapestry5.services.ComponentEventRequestParameters;
-import org.apache.tapestry5.services.ContextValueEncoder;
 
 import java.io.IOException;
 
 /**
- * Simulates a click on an action link.
+ * Simulates a click on an component event invocation link.
  */
-public class ActionLinkInvoker implements ComponentInvoker
+public class ComponentEventInvoker implements ComponentInvoker
 {
     private final Registry registry;
 
@@ -44,21 +42,17 @@ public class ActionLinkInvoker implements ComponentInvoker
 
     private final TestableResponse response;
 
-    private final ContextValueEncoder contextValueEncoder;
-
-    public ActionLinkInvoker(Registry registry, ComponentInvoker followupInvoker,
-                             ComponentInvocationMap componentInvocationMap)
+    public ComponentEventInvoker(Registry registry, ComponentInvoker followupInvoker,
+                                 ComponentInvocationMap componentInvocationMap)
     {
         this.registry = registry;
         this.followupInvoker = followupInvoker;
-        componentEventRequestHandler = this.registry.getService("ComponentEventRequestHandler",
-                                                                ComponentEventRequestHandler.class);
-
-        response = this.registry.getObject(TestableResponse.class, null);
-
         this.componentInvocationMap = componentInvocationMap;
-        contextValueEncoder = this.registry.getService(ContextValueEncoder.class);
 
+        componentEventRequestHandler = registry.getService("ComponentEventRequestHandler",
+                                                           ComponentEventRequestHandler.class);
+
+        response = registry.getObject(TestableResponse.class, null);
     }
 
     /**
@@ -90,20 +84,20 @@ public class ActionLinkInvoker implements ComponentInvoker
         {
             InvocationTarget target = invocation.getTarget();
 
-            ActionLinkTarget actionLinkTarget = Defense.cast(target, ActionLinkTarget.class, "target");
+            ComponentEventTarget componentEventTarget = Defense.cast(target, ComponentEventTarget.class, "target");
 
             ComponentEventRequestParameters parameters = new ComponentEventRequestParameters(
-                    actionLinkTarget.getPageName(),
+                    componentEventTarget.getPageName(),
 
-                    actionLinkTarget.getPageName(),
+                    componentEventTarget.getPageName(),
 
-                    actionLinkTarget.getComponentNestedId(),
+                    componentEventTarget.getComponentNestedId(),
 
-                    actionLinkTarget.getEventType(),
+                    componentEventTarget.getEventType(),
 
-                    new URLEventContext(contextValueEncoder, invocation.getActivationContext()),
+                    invocation.getPageActivationContext(),
 
-                    new URLEventContext(contextValueEncoder, invocation.getContext()));
+                    invocation.getEventContext());
 
             componentEventRequestHandler.handle(parameters);
         }

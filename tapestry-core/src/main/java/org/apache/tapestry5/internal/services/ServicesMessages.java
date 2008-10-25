@@ -405,11 +405,6 @@ class ServicesMessages
         return MESSAGES.format("no-such-method", ClassFabUtils.toJavaClassName(clazz), methodName);
     }
 
-    static String contextValueMayNotBeNull()
-    {
-        return MESSAGES.get("context-value-may-not-be-null");
-    }
-
     static String forbidInstantiateComponentClass(String className)
     {
         return MESSAGES.format("forbid-instantiate-component-class", className);

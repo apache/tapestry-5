@@ -4,7 +4,9 @@
     <t:if test="activationContext">
 
         <ul>
-            <li t:type="loop" source="activationContext" value="object">${object}</li>
+            <li t:type="loop" source="activationContext" value="object">
+                <t:if test="object" else="NULL">${object}</t:if>
+            </li>
         </ul>
         <t:parameter name="else">No activation context.</t:parameter>
     </t:if>
@@ -15,19 +17,19 @@
             <li t:type="loop" source="componentContext" value="object">${object}</li>
         </ul>
 
-        <t:parameter name="else"> No component context. </t:parameter>
+        <t:parameter name="else">No component context.</t:parameter>
     </t:if>
-    <h2>Setup Component Context</h2> [<a t:type="actionlink" context="contextToEncode">go</a>] 
-    
+    <h2>Setup Component Context</h2>
+    [<a t:type="actionlink" context="contextToEncode">go</a>]
+
     <h2>Navigation</h2>
-    
-    <p>[<a t:type="pagelink" page="pagelinkcontext">PageLink Context Demo</a>]</p>
-    
-  <p>
-    [<t:pagelink t:id="nocontext" page="target" context="null">Target base, no context</t:pagelink>]
-  </p>
-    
-    
-    
-    
-    </html>
+
+    <p>[<a t:type="pagelink" page="pagelinkcontext">PageLink Context Demo</a>]
+    </p>
+
+    <p>
+        [<t:pagelink t:id="nocontext" page="target" context="null">Target base, no context</t:pagelink>]
+    </p>
+
+
+</html>

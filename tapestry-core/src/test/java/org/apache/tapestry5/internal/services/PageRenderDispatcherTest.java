@@ -30,12 +30,12 @@ import org.testng.annotations.Test;
 
 public class PageRenderDispatcherTest extends InternalBaseTestCase
 {
-    private ContextValueEncoder contextValueEncoder;
+    private ContextPathEncoder contextPathEncoder;
 
     @BeforeClass
     public void setup()
     {
-        contextValueEncoder = getService(ContextValueEncoder.class);
+        contextPathEncoder = getService(ContextPathEncoder.class);
     }
 
     @Test
@@ -53,7 +53,7 @@ public class PageRenderDispatcherTest extends InternalBaseTestCase
 
         replay();
 
-        Dispatcher d = new PageRenderDispatcher(resolver, handler, null);
+        Dispatcher d = new PageRenderDispatcher(resolver, handler, contextPathEncoder);
 
         assertFalse(d.dispatch(request, response));
 
@@ -75,7 +75,7 @@ public class PageRenderDispatcherTest extends InternalBaseTestCase
 
         replay();
 
-        Dispatcher d = new PageRenderDispatcher(resolver, handler, null);
+        Dispatcher d = new PageRenderDispatcher(resolver, handler, contextPathEncoder);
 
         assertFalse(d.dispatch(request, response));
 
@@ -107,7 +107,7 @@ public class PageRenderDispatcherTest extends InternalBaseTestCase
 
         train_getRootElement(page, rootElement);
 
-        train_triggerContextEvent(rootElement, EventConstants.ACTIVATE, new Object[] { "foo", "bar" }, false);
+        train_triggerContextEvent(rootElement, EventConstants.ACTIVATE, new Object[] {"foo", "bar"}, false);
 
         renderer.renderPageResponse(page);
 
@@ -115,7 +115,7 @@ public class PageRenderDispatcherTest extends InternalBaseTestCase
 
         PageRenderRequestHandler handler = new PageRenderRequestHandlerImpl(cache, processor, renderer);
 
-        Dispatcher d = new PageRenderDispatcher(resolver, handler, contextValueEncoder);
+        Dispatcher d = new PageRenderDispatcher(resolver, handler, contextPathEncoder);
 
         assertTrue(d.dispatch(request, response));
 
@@ -162,7 +162,7 @@ public class PageRenderDispatcherTest extends InternalBaseTestCase
 
         PageRenderRequestHandler handler = new PageRenderRequestHandlerImpl(cache, processor, renderer);
 
-        Dispatcher d = new PageRenderDispatcher(resolver, handler, null);
+        Dispatcher d = new PageRenderDispatcher(resolver, handler, contextPathEncoder);
 
         assertTrue(d.dispatch(request, response));
 
@@ -204,7 +204,7 @@ public class PageRenderDispatcherTest extends InternalBaseTestCase
         train_get(cache, "foo/Bar", page);
         train_getRootElement(page, rootElement);
 
-        train_triggerContextEvent(rootElement, EventConstants.ACTIVATE, new Object[] { "zip", "zoom" }, false);
+        train_triggerContextEvent(rootElement, EventConstants.ACTIVATE, new Object[] {"zip", "zoom"}, false);
 
         renderer.renderPageResponse(page);
 
@@ -212,7 +212,7 @@ public class PageRenderDispatcherTest extends InternalBaseTestCase
 
         PageRenderRequestHandler handler = new PageRenderRequestHandlerImpl(cache, processor, renderer);
 
-        Dispatcher d = new PageRenderDispatcher(resolver, handler, contextValueEncoder);
+        Dispatcher d = new PageRenderDispatcher(resolver, handler, contextPathEncoder);
 
         assertTrue(d.dispatch(request, response));
 

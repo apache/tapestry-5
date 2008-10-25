@@ -29,10 +29,13 @@ public class ComponentEventDispatcherTest extends InternalBaseTestCase
 {
     private ContextValueEncoder contextValueEncoder;
 
+    private ContextPathEncoder contextPathEncoder;
+
     @BeforeClass
     public void setup()
     {
         contextValueEncoder = getService(ContextValueEncoder.class);
+        contextPathEncoder = getService(ContextPathEncoder.class);
     }
 
     @Test
@@ -137,7 +140,7 @@ public class ComponentEventDispatcherTest extends InternalBaseTestCase
                                                                                                  "eventname",
                                                                                                  new URLEventContext(
                                                                                                          contextValueEncoder,
-                                                                                                         new String[]{
+                                                                                                         new String[] {
                                                                                                                  "alpha",
                                                                                                                  "beta"}),
                                                                                                  new EmptyEventContext());
@@ -154,8 +157,7 @@ public class ComponentEventDispatcherTest extends InternalBaseTestCase
 
         replay();
 
-        Dispatcher dispatcher = new ComponentEventDispatcher(handler, resolver, contextValueEncoder
-        );
+        Dispatcher dispatcher = new ComponentEventDispatcher(handler, resolver, contextPathEncoder);
 
         assertTrue(dispatcher.dispatch(request, response));
 
@@ -187,8 +189,7 @@ public class ComponentEventDispatcherTest extends InternalBaseTestCase
 
         replay();
 
-        Dispatcher dispatcher = new ComponentEventDispatcher(handler, resolver, contextValueEncoder
-        );
+        Dispatcher dispatcher = new ComponentEventDispatcher(handler, resolver, contextPathEncoder);
 
         assertTrue(dispatcher.dispatch(request, response));
 
@@ -245,8 +246,7 @@ public class ComponentEventDispatcherTest extends InternalBaseTestCase
 
         replay();
 
-        Dispatcher dispatcher = new ComponentEventDispatcher(handler, resolver, contextValueEncoder
-        );
+        Dispatcher dispatcher = new ComponentEventDispatcher(handler, resolver, contextPathEncoder);
 
         assertTrue(dispatcher.dispatch(request, response));
 

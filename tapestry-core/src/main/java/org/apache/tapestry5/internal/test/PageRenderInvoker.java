@@ -14,14 +14,11 @@
 
 package org.apache.tapestry5.internal.test;
 
-import org.apache.tapestry5.EventContext;
 import org.apache.tapestry5.dom.Document;
-import org.apache.tapestry5.internal.URLEventContext;
 import org.apache.tapestry5.internal.services.ComponentInvocation;
 import org.apache.tapestry5.internal.services.InvocationTarget;
-import org.apache.tapestry5.internal.services.PageLinkTarget;
+import org.apache.tapestry5.internal.services.PageRenderTarget;
 import org.apache.tapestry5.ioc.Registry;
-import org.apache.tapestry5.services.ContextValueEncoder;
 import org.apache.tapestry5.services.PageRenderRequestHandler;
 import org.apache.tapestry5.services.PageRenderRequestParameters;
 
@@ -30,7 +27,7 @@ import java.io.IOException;
 /**
  * Simulates a click on a page link.
  */
-public class PageLinkInvoker implements ComponentInvoker
+public class PageRenderInvoker implements ComponentInvoker
 {
     private final Registry registry;
 
@@ -40,16 +37,13 @@ public class PageLinkInvoker implements ComponentInvoker
 
     private final TestableResponse response;
 
-    private final ContextValueEncoder contextValueEncoder;
-
-    public PageLinkInvoker(Registry registry)
+    public PageRenderInvoker(Registry registry)
     {
         this.registry = registry;
 
         pageRenderRequestHandler = this.registry.getService(PageRenderRequestHandler.class);
         markupWriterFactory = this.registry.getService(TestableMarkupWriterFactory.class);
         response = this.registry.getService(TestableResponse.class);
-        contextValueEncoder = this.registry.getService(ContextValueEncoder.class);
     }
 
     /**
@@ -64,12 +58,10 @@ public class PageLinkInvoker implements ComponentInvoker
         {
             InvocationTarget target = invocation.getTarget();
 
-            PageLinkTarget pageLinkTarget = (PageLinkTarget) target;
+            PageRenderTarget pageRenderTarget = (PageRenderTarget) target;
 
-            EventContext activationContext
-                    = new URLEventContext(contextValueEncoder, invocation.getContext());
-            PageRenderRequestParameters parameters = new PageRenderRequestParameters(pageLinkTarget.getPageName(),
-                                                                                     activationContext);
+            PageRenderRequestParameters parameters = new PageRenderRequestParameters(pageRenderTarget.getPageName(),
+                                                                                     invocation.getPageActivationContext());
 
             pageRenderRequestHandler.handle(parameters);
 
@@ -85,7 +77,5 @@ public class PageLinkInvoker implements ComponentInvoker
 
             registry.cleanupThread();
         }
-
     }
-
 }

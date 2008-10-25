@@ -104,7 +104,8 @@ public final class TapestryIOCModule
      * false)</li> <li>Collection to Boolean (false if empty)</li> <li>Object[] to List</li> <li>primitive[] to
      * List</li> <li>Object to List (by wrapping as a singleton list)</li>  <li>String to File</li> <li>String to {@link
      * org.apache.tapestry5.ioc.util.TimeInterval}</li> <li>{@link org.apache.tapestry5.ioc.util.TimeInterval} to
-     * Long</li> </ul>
+     * Long</li> <li>Object to Object[] (wrapping the object as an array)</li> <li>Collection to Object[] (via the
+     * toArray() method)</ul>
      */
     @SuppressWarnings("unchecked")
     public static void contributeTypeCoercer(Configuration<CoercionTuple> configuration)
@@ -315,6 +316,22 @@ public final class TapestryIOCModule
             public Long coerce(TimeInterval input)
             {
                 return input.milliseconds();
+            }
+        });
+
+        add(configuration, Object.class, Object[].class, new Coercion<Object, Object[]>()
+        {
+            public Object[] coerce(Object input)
+            {
+                return new Object[] {input};
+            }
+        });
+
+        add(configuration, Collection.class, Object[].class, new Coercion<Collection, Object[]>()
+        {
+            public Object[] coerce(Collection input)
+            {
+                return input.toArray();
             }
         });
     }

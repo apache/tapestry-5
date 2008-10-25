@@ -14,51 +14,63 @@
 
 package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry5.internal.TapestryInternalUtils;
-import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newMap;
+import org.apache.tapestry5.EventContext;
+import org.apache.tapestry5.internal.InternalConstants;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import static org.apache.tapestry5.ioc.internal.util.Defense.notBlank;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.test.PageTester;
+import org.apache.tapestry5.services.ContextPathEncoder;
 
 import java.util.List;
 import java.util.Map;
 
 /**
- * Represents an invocation for a page or a component in the current application. This information is extracted from
- * incoming URLs for a running application (or created by the {@link PageTester}. Each invocation may provide a context
- * (Object[]) and parameters to the invocation target.
+ * Represents an invocation for a page render or a component event, in the current application.
  */
 public class ComponentInvocationImpl implements ComponentInvocation
 {
-    private final String[] context;
+    private final ContextPathEncoder encoder;
+
+    private final String eventContextPath;
 
     private final InvocationTarget target;
 
-    private final String[] activationContext;
+    private final String pageActivationContextPath;
+
+    private final boolean forForm;
 
     private Map<String, String> parameters;
 
     /**
-     * @param target            identifies the target of the event: a component with a page
-     * @param context           context information supplied by the component to be provided back when the event on the
-     *                          component is triggered, or contains the activation context when the invocation is for a
-     *                          page render request
-     * @param activationContext page activation context for the page containing the component, supplied via a passivate
-     *                          event to the page's root component (used when an action component invocation is for a
-     *                          page with an activation context)
+     * @param encoder
+     * @param target                identifies the target of the event: a component with a page
+     * @param eventContext          event activation context (or null for a page render invocation)
+     * @param pageActivationContext page activation context (may be null)
+     * @param forForm               if true, the URL is rendered for a form
      */
-    public ComponentInvocationImpl(InvocationTarget target, String[] context, String[] activationContext)
+    public ComponentInvocationImpl(ContextPathEncoder encoder, InvocationTarget target, Object[] eventContext,
+                                   Object[] pageActivationContext,
+                                   boolean forForm)
     {
+        this.encoder = encoder;
         this.target = target;
-        this.context = context;
-        this.activationContext = activationContext;
+        this.forForm = forForm;
+        this.eventContextPath = eventContext == null ? null : encoder.encodeIntoPath(eventContext);
+        this.pageActivationContextPath = encoder.encodeIntoPath(pageActivationContext);
+
+        // For component events, the page activation context (if it exists) is a query parameter
+        // not path info.
+
+        if (eventContext != null && !InternalUtils.isBlank(this.pageActivationContextPath))
+            addParameter(InternalConstants.PAGE_CONTEXT_NAME, this.pageActivationContextPath);
     }
 
 
-    public String buildURI(boolean isForm)
+    public String buildURI()
     {
         String path = getPath();
-        if (isForm || parameters == null) return path;
+
+        if (forForm || parameters == null) return path;
 
         StringBuilder builder = new StringBuilder();
 
@@ -86,31 +98,34 @@ public class ComponentInvocationImpl implements ComponentInvocation
     }
 
     /**
-     * @return Just like the return value of {@link #buildURI(boolean)} except that parameters are not included.
+     * Return the path which identifies the page (and perhaps component) plus the event or page activation context. This
+     * is the {@linkplain InvocationTarget#getPath() target path} plus any extra path info.
      */
     private String getPath()
     {
-        StringBuilder builder = new StringBuilder();
-        builder.append(target.getPath());
+        // For component event requests, the extra path info the the event context.  For page render requests,
+        // the extra path info is the page activation context.
 
-        for (String id : context)
-        {
-            if (builder.length() > 0) builder.append("/");
+        String extraPath =
+                eventContextPath != null ? eventContextPath : pageActivationContextPath;
 
-            builder.append(TapestryInternalUtils.encodeContext(id));
-        }
+        String targetPath = target.getPath();
 
-        return builder.toString();
+        if (InternalUtils.isBlank(extraPath)) return targetPath;
+
+        if (targetPath.length() == 0) return extraPath;
+
+        return targetPath + "/" + extraPath;
     }
 
-    public String[] getContext()
+    public EventContext getEventContext()
     {
-        return context;
+        return encoder.decodePath(eventContextPath);
     }
 
-    public String[] getActivationContext()
+    public EventContext getPageActivationContext()
     {
-        return activationContext;
+        return encoder.decodePath(pageActivationContextPath);
     }
 
     public void addParameter(String parameterName, String value)
@@ -118,7 +133,7 @@ public class ComponentInvocationImpl implements ComponentInvocation
         notBlank(parameterName, "parameterName");
         notBlank(value, "value");
 
-        if (parameters == null) parameters = newMap();
+        if (parameters == null) parameters = CollectionFactory.newMap();
 
         if (parameters.containsKey(parameterName)) throw new IllegalArgumentException(
                 ServicesMessages.parameterNameMustBeUnique(parameterName, parameters.get(parameterName)));

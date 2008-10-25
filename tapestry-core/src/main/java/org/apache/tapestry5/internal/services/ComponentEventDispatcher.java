@@ -16,10 +16,7 @@ package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.EventConstants;
 import org.apache.tapestry5.EventContext;
-import org.apache.tapestry5.internal.EmptyEventContext;
 import org.apache.tapestry5.internal.InternalConstants;
-import org.apache.tapestry5.internal.TapestryInternalUtils;
-import org.apache.tapestry5.internal.URLEventContext;
 import org.apache.tapestry5.services.*;
 
 import java.io.IOException;
@@ -50,9 +47,7 @@ public class ComponentEventDispatcher implements Dispatcher
 
     private final ComponentEventRequestHandler componentEventRequestHandler;
 
-    private final ContextValueEncoder contextValueEncoder;
-
-    private final EventContext emptyContext = new EmptyEventContext();
+    private final ContextPathEncoder contextPathEncoder;
 
     public ComponentEventDispatcher(
             @Traditional
@@ -60,11 +55,11 @@ public class ComponentEventDispatcher implements Dispatcher
 
             ComponentClassResolver componentClassResolver,
 
-            ContextValueEncoder contextValueEncoder)
+            ContextPathEncoder contextPathEncoder)
     {
         this.componentEventRequestHandler = componentEventRequestHandler;
         this.componentClassResolver = componentClassResolver;
-        this.contextValueEncoder = contextValueEncoder;
+        this.contextPathEncoder = contextPathEncoder;
     }
 
     // A beast that recognizes all the elements of a path in a single go.
@@ -108,9 +103,10 @@ public class ComponentEventDispatcher implements Dispatcher
 
         if (!componentClassResolver.isPageName(activePageName)) return false;
 
-        EventContext eventContext = decodeContext(matcher.group(CONTEXT));
+        EventContext eventContext = contextPathEncoder.decodePath(matcher.group(CONTEXT));
 
-        EventContext activationContext = decodeContext(request.getParameter(InternalConstants.PAGE_CONTEXT_NAME));
+        EventContext activationContext = contextPathEncoder.decodePath(
+                request.getParameter(InternalConstants.PAGE_CONTEXT_NAME));
 
         // The event type is often omitted, and defaults to "action".
 
@@ -132,20 +128,4 @@ public class ComponentEventDispatcher implements Dispatcher
 
         return true;
     }
-
-
-    private EventContext decodeContext(String input)
-    {
-        if (input == null) return emptyContext;
-
-        String[] values = TapestryInternalUtils.splitPath(input);
-
-        for (int i = 0; i < values.length; i++)
-        {
-            values[i] = TapestryInternalUtils.unescapePercentAndSlash(values[i]);
-        }
-
-        return new URLEventContext(contextValueEncoder, values);
-    }
-
 }

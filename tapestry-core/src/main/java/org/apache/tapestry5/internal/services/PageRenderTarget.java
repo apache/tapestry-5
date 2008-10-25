@@ -20,14 +20,13 @@ package org.apache.tapestry5.internal.services;
  * and the real Tapestry code {@link org.apache.tapestry5.internal.services.PageRenderDispatcher} in order to invoke a
  * page link.
  */
-public class PageLinkTarget implements InvocationTarget
+public class PageRenderTarget implements InvocationTarget
 {
     private final String pageName;
 
-    public PageLinkTarget(String pageName)
+    public PageRenderTarget(String pageName)
     {
         this.pageName = pageName;
-
     }
 
     public String getPath()
@@ -39,5 +38,4 @@ public class PageLinkTarget implements InvocationTarget
     {
         return pageName;
     }
-
 }
