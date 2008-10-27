@@ -20,13 +20,12 @@ import org.apache.tapestry5.internal.parser.EndElementToken;
 import org.apache.tapestry5.internal.parser.StartComponentToken;
 import org.apache.tapestry5.internal.structure.ComponentPageElement;
 import org.apache.tapestry5.internal.structure.Page;
-import org.apache.tapestry5.internal.structure.PageElement;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.ioc.Location;
+import org.apache.tapestry5.ioc.internal.util.TapestryException;
 import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.model.EmbeddedComponentModel;
 import org.apache.tapestry5.services.ComponentClassResolver;
-import org.easymock.EasyMock;
 import org.slf4j.Logger;
 import org.testng.annotations.Test;
 
@@ -97,15 +96,10 @@ public class PageLoaderImplTest extends InternalBaseTestCase
         ComponentPageElement rootElement = mockComponentPageElement();
         InternalComponentResources resources = mockInternalComponentResources();
         ComponentModel model = mockComponentModel();
-        ComponentModel childModel = mockComponentModel();
         ComponentTemplate template = mockComponentTemplate();
         Logger logger = mockLogger();
         EmbeddedComponentModel emodel = mockEmbeddedComponentModel();
-        ComponentPageElement childElement = mockComponentPageElement();
-        InternalComponentResources childResources = mockInternalComponentResources();
         Location l = mockLocation();
-        PageElement body = mockPageElement();
-        ComponentTemplate childTemplate = mockComponentTemplate();
         ComponentClassResolver resolver = mockComponentClassResolver();
 
         train_resolvePageNameToClassName(resolver, LOGICAL_PAGE_NAME, PAGE_CLASS_NAME);
@@ -117,7 +111,6 @@ public class PageLoaderImplTest extends InternalBaseTestCase
         train_getComponentClassName(model, PAGE_CLASS_NAME);
 
         train_getTemplate(templateSource, model, LOCALE, template);
-
 
         train_isMissing(template, false);
 
@@ -133,42 +126,22 @@ public class PageLoaderImplTest extends InternalBaseTestCase
 
         train_getComponentType(emodel, "Barney");
 
-        train_getMixinClassNames(emodel);
-
-        logger.error(ServicesMessages.compTypeConflict("foo", "Fred", "Barney"));
-
-        train_getComponentClassName(emodel, "foo.components.Barney");
-
-        train_newComponentElement(elementFactory, rootElement, "foo", "Barney", "foo.components.Barney", null, l,
-                                  childElement);
-
-        train_getCompleteId(childElement, PAGE_CLASS_NAME + "/Barney");
-
-        train_getInheritInformalParameters(emodel, false);
-
-        rootElement.addToTemplate(childElement);
-
-        train_getParameterNames(emodel);
-
-        // Alas, what comes next is the recursive call to load the child element
-
-        train_getComponentResources(childElement, childResources);
-        train_getComponentModel(childResources, childModel);
-        train_getComponentClassName(childModel, CHILD_CLASS_NAME);
-        train_getTemplate(templateSource, childModel, LOCALE, childTemplate);
-        train_isMissing(childTemplate, true);
-
-        // This will be the RenderBody element ...
-
-        childElement.addToTemplate(EasyMock.isA(PageElement.class));
-
         replay();
 
         PageLoader loader = new PageLoaderImpl(templateSource, elementFactory, null, null, resolver);
 
-        loader.loadPage(LOGICAL_PAGE_NAME, LOCALE);
+        try
+        {
+            loader.loadPage(LOGICAL_PAGE_NAME, LOCALE);
+            unreachable();
+        }
+        catch (TapestryException ex)
+        {
+            assertEquals(ex.getMessage(),
+                         "Embedded component 'foo' provides a type attribute in the template ('Fred') as well as in the component class ('Barney'). You should not provide a type attribute in the template when defining an embedded component within the component class.");
+            assertSame(ex.getLocation(), l);
+        }
 
         verify();
     }
-
 }

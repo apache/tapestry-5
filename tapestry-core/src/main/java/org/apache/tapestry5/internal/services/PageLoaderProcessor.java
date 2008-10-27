@@ -22,14 +22,7 @@ import org.apache.tapestry5.internal.bindings.LiteralBinding;
 import org.apache.tapestry5.internal.parser.*;
 import org.apache.tapestry5.internal.structure.*;
 import org.apache.tapestry5.ioc.Location;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newCaseInsensitiveMap;
-import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newMap;
-import org.apache.tapestry5.ioc.internal.util.IdAllocator;
-import static org.apache.tapestry5.ioc.internal.util.InternalUtils.isBlank;
-import static org.apache.tapestry5.ioc.internal.util.InternalUtils.isNonBlank;
-import org.apache.tapestry5.ioc.internal.util.OneShotLock;
-import org.apache.tapestry5.ioc.internal.util.TapestryException;
+import org.apache.tapestry5.ioc.internal.util.*;
 import org.apache.tapestry5.ioc.util.Stack;
 import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.model.EmbeddedComponentModel;
@@ -84,7 +77,6 @@ class PageLoaderProcessor
     /**
      * Used as a queue of Runnable objects used to handle final setup.
      */
-
     private final List<Runnable> finalization = CollectionFactory.newList();
 
     private final IdAllocator idAllocator = new IdAllocator();
@@ -452,7 +444,7 @@ class PageLoaderProcessor
         Logger logger = loadingComponentModel.getLogger();
 
         // Don't have a case-insensitive Set, so we'll make due with a Map
-        Map<String, Boolean> embeddedIds = newCaseInsensitiveMap();
+        Map<String, Boolean> embeddedIds = CollectionFactory.newCaseInsensitiveMap();
 
         for (String id : loadingComponentModel.getEmbeddedComponentIds())
             embeddedIds.put(id, true);
@@ -647,19 +639,19 @@ class PageLoaderProcessor
         {
             String modelType = embeddedModel.getComponentType();
 
-            if (isNonBlank(modelType) && embeddedType != null)
-            {
-                Logger log = loadingComponentModel.getLogger();
-                log.error(ServicesMessages.compTypeConflict(embeddedId, embeddedType, modelType));
-            }
+            if (InternalUtils.isNonBlank(modelType) && embeddedType != null)
+                throw new TapestryException(ServicesMessages.compTypeConflict(embeddedId, embeddedType, modelType),
+                                            token, null);
 
             embeddedType = modelType;
             embeddedComponentClassName = embeddedModel.getComponentClassName();
         }
 
-        if (isBlank(embeddedType) && isBlank(embeddedComponentClassName)) throw new TapestryException(
-                ServicesMessages.noTypeForEmbeddedComponent(embeddedId, loadingComponentModel.getComponentClassName()),
-                token, null);
+        if (InternalUtils.isBlank(embeddedType) && InternalUtils.isBlank(embeddedComponentClassName))
+            throw new TapestryException(
+                    ServicesMessages.noTypeForEmbeddedComponent(embeddedId,
+                                                                loadingComponentModel.getComponentClassName()),
+                    token, null);
 
         final ComponentPageElement newComponent = pageElementFactory.newComponentElement(page, loadingElement,
                                                                                          embeddedId, embeddedType,
@@ -669,7 +661,7 @@ class PageLoaderProcessor
 
         addMixinsToComponent(newComponent, embeddedModel, token.getMixins());
 
-        final Map<String, Binding> newComponentBindings = newMap();
+        final Map<String, Binding> newComponentBindings = CollectionFactory.newMap();
         componentIdToBindingMap.put(newComponent.getCompleteId(), newComponentBindings);
 
         if (embeddedModel != null)
