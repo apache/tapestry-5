@@ -508,7 +508,8 @@ public final class Element extends Node
         Defense.notNull(namespace, "namespace");
         Defense.notNull(namespacePrefix, "namespacePrefix");
 
-        if (namespaceToPrefix == null) namespaceToPrefix = CollectionFactory.newMap();
+        if (namespaceToPrefix == null)
+            namespaceToPrefix = CollectionFactory.newMap();
 
         namespaceToPrefix.put(namespace, namespacePrefix);
 
@@ -581,7 +582,17 @@ public final class Element extends Node
 
         // Add a mapping for the element's namespace.
 
-        addMappingIfNeeded(result, namespace);
+        if (InternalUtils.isNonBlank(namespace))
+        {
+
+            // Add the namespace for the element as the default namespace.
+
+            if (!result.containsKey(namespace))
+            {
+                defineNamespace(namespace, "");
+                result.put(namespace, "");
+            }
+        }
 
         // And for any attributes that have a namespace.
 
