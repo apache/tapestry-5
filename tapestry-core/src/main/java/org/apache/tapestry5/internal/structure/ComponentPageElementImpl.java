@@ -73,7 +73,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
         }
     };
 
-    private static final ComponentCallback CONTAINING_PAGE_DID_ATTACH = new ComponentCallback()
+    private static final ComponentCallback CONTAINING_PAGE_DID_ATTACH = new LifecycleNotificationComponentCallback()
     {
         public void run(Component component)
         {
@@ -81,7 +81,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
         }
     };
 
-    private static final ComponentCallback CONTAINING_PAGE_DID_DETACH = new ComponentCallback()
+    private static final ComponentCallback CONTAINING_PAGE_DID_DETACH = new LifecycleNotificationComponentCallback()
     {
         public void run(Component component)
         {
@@ -89,7 +89,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
         }
     };
 
-    private static final ComponentCallback CONTAINING_PAGE_DID_LOAD = new ComponentCallback()
+    private static final ComponentCallback CONTAINING_PAGE_DID_LOAD = new LifecycleNotificationComponentCallback()
     {
         public void run(Component component)
         {
@@ -97,7 +97,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
         }
     };
 
-    private static final ComponentCallback POST_RENDER_CLEANUP = new ComponentCallback()
+    private static final ComponentCallback POST_RENDER_CLEANUP = new LifecycleNotificationComponentCallback()
     {
         public void run(Component component)
         {
@@ -191,7 +191,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
             RenderPhaseEventHandler handler = new RenderPhaseEventHandler();
             final Event event = new EventImpl(handler, getEventLogger());
 
-            ComponentCallback callback = new ComponentCallback()
+            ComponentCallback callback = new AbstractComponentCallback(event)
             {
                 public void run(Component component)
                 {
@@ -220,7 +220,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
             RenderPhaseEventHandler handler = new RenderPhaseEventHandler();
             final Event event = new EventImpl(handler, getEventLogger());
 
-            ComponentCallback callback = new ComponentCallback()
+            ComponentCallback callback = new AbstractComponentCallback(event)
             {
                 public void run(Component component)
                 {
@@ -249,7 +249,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
             RenderPhaseEventHandler handler = new RenderPhaseEventHandler();
             final Event event = new EventImpl(handler, getEventLogger());
 
-            ComponentCallback callback = new ComponentCallback()
+            ComponentCallback callback = new AbstractComponentCallback(event)
             {
                 public void run(Component component)
                 {
@@ -278,7 +278,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
             RenderPhaseEventHandler handler = new RenderPhaseEventHandler();
             final Event event = new EventImpl(handler, getEventLogger());
 
-            ComponentCallback callback = new ComponentCallback()
+            ComponentCallback callback = new AbstractComponentCallback(event)
             {
                 public void run(Component component)
                 {
@@ -309,7 +309,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
             final RenderPhaseEventHandler handler = new RenderPhaseEventHandler();
             final Event event = new EventImpl(handler, getEventLogger());
 
-            ComponentCallback callback = new ComponentCallback()
+            ComponentCallback callback = new AbstractComponentCallback(event)
             {
                 public void run(Component component)
                 {
@@ -340,7 +340,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
             RenderPhaseEventHandler handler = new RenderPhaseEventHandler();
             final Event event = new EventImpl(handler, getEventLogger());
 
-            ComponentCallback callback = new ComponentCallback()
+            ComponentCallback callback = new AbstractComponentCallback(event)
             {
                 public void run(Component component)
                 {
@@ -387,7 +387,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
             RenderPhaseEventHandler handler = new RenderPhaseEventHandler();
             final Event event = new EventImpl(handler, getEventLogger());
 
-            ComponentCallback callback = new ComponentCallback()
+            ComponentCallback callback = new AbstractComponentCallback(event)
             {
                 public void run(Component component)
                 {
@@ -483,7 +483,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
             RenderPhaseEventHandler handler = new RenderPhaseEventHandler();
             final Event event = new EventImpl(handler, getEventLogger());
 
-            ComponentCallback callback = new ComponentCallback()
+            ComponentCallback callback = new AbstractComponentCallback(event)
             {
                 public void run(Component component)
                 {
@@ -916,7 +916,12 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
 
             Iterator<Component> i = reverse ? InternalUtils.reverseIterator(components) : components.iterator();
 
-            while (i.hasNext()) callback.run(i.next());
+            while (i.hasNext())
+            {
+                callback.run(i.next());
+
+                if (callback.isEventAborted()) return;
+            }
         }
         catch (RuntimeException ex)
         {

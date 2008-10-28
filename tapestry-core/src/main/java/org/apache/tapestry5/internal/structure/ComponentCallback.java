@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -25,4 +25,12 @@ public interface ComponentCallback
      * Callback method, passed a component to operate upon.
      */
     void run(Component component);
+
+    /**
+     * Returns true if the underlying event has been aborted and no further event method invocations should occur.
+     *
+     * @return true if the event is aborted, false if event processing should continue
+     * @see org.apache.tapestry5.runtime.Event#isAborted()
+     */
+    boolean isEventAborted();
 }
