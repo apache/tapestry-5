@@ -145,7 +145,7 @@ Tapestry: The Full Cycle Solution
   You don't have to worry about URLs. Incoming requests for Tapestry encode the
   name of the page and the id of the component within the page, along with other information,
   into the URL for you. Your code never has to pick apart a URL, you create
-  {{{tapestry-core/guide/event.html}event listening methods}} to know when the user has clicked a link
+  {{{../guide/event.html}event handler methods}} to know when the user has clicked a link
   or submitted a form, or done something more interesting using Ajax.  Tapestry has the structure it needs
   to build all necessary information into the URL, and unpack that information in a later request.
   
