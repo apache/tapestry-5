@@ -355,6 +355,10 @@ IMG.t-calendar-trigger {
     cursor: pointer;
 }
 
+DIV.t-autocomplete-menu {
+    z-index: 9999;
+}
+
 DIV.t-autocomplete-menu UL {
     border: 2px outset #cc9933;
     background-color: #cc9933;
