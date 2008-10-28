@@ -84,10 +84,10 @@ $ mvn archetype:create -DarchetypeGroupId=org.apache.tapestry -DarchetypeArtifac
 $
 +---+
 
-  <This first time you try this, you'll probably see a huge amount of messages about Maven downloading stuff, in addition to what's above.>
+  <This first time you try this, you'll probably see a huge amount of messages about Maven downloading all sorts of plugins and JARs, in addition to what's above.>
 
   Maven has combined your information to form a new directory containing your application.  It has created a Maven pom.xml, a web.xml, a log4j.properties file,
-  and a starting page (Start.html and Start.java) with each file in its correct location. It also creates a starter Tapestry IoC module for the application (AppModule.java).
+  and a starting page (Index.tml and Index.java) with each file in its correct location. It also creates a starter Tapestry IoC module for the application (AppModule.java).  
   
   You can run the application directly, using the Jetty servlet container:
   
@@ -132,9 +132,9 @@ Compiling 1 source file to /Users/Howard/work/myapp/target/classes
   
 About Snapshots
 
-  Tapestry 5 is currently in a pre-release stage. The Tapestry libraries, including this archetype, are being distributed as snaphots and are rebuilt nightly. Being snapshots, these artifacts are not in the central Maven repository.
+  Tapestry 5 is currently in a pre-release stage. The Tapestry libraries, including this archetype, are being distributed as snapshots and are rebuilt nightly. Being snapshots, these artifacts are not in the central Maven repository.
   To make use of the Tapestry snapshots, append  <<<-DremoteRepositories=http://tapestry.formos.com/maven-snapshot-repository/>>> and <<<-DarchetypeVersion=5.0.x-SNAPSHOT>>>  (you'll have to figure out what
-  the lastest snapshot version is) to the command line when invoking Maven. 
+  the latest snapshot version is) to the command line when invoking Maven. 
   
   The generated POM includes entries to automatically search the snapshot repository, so you won't need to use <<<-DremoteRepositories>>> after creating your initial project.
   
