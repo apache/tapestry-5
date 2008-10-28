@@ -878,7 +878,8 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
 
     public boolean dispatchEvent(ComponentEvent event)
     {
-        if (components == null) return coreComponent.dispatchComponentEvent(event);
+        if (components == null)
+            return coreComponent.dispatchComponentEvent(event);
 
         // Otherwise, iterate over mixins + core component
 
@@ -1039,7 +1040,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
         {
             try
             {
-                Logger logger = component.getLogger();
+                Logger logger = component.getEventLogger();
 
                 ComponentEvent event = new ComponentEventImpl(currentEventType, componentId, currentContext, wrapped,
                                                               pageResources, logger);
@@ -1201,5 +1202,10 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
     public Map<String, Binding> getInformalParameterBindings()
     {
         return coreResources.getInformalParameterBindings();
+    }
+
+    public Logger getEventLogger()
+    {
+        return pageResources.getEventLogger(logger);
     }
 }

@@ -26,6 +26,7 @@ import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.runtime.ComponentEvent;
 import org.apache.tapestry5.runtime.PageLifecycleListener;
 import org.apache.tapestry5.runtime.RenderQueue;
+import org.slf4j.Logger;
 
 /**
  * Extended version of {@link org.apache.tapestry5.internal.structure.PageElement} for elements that are, in fact,
@@ -136,4 +137,9 @@ public interface ComponentPageElement extends ComponentResourcesCommon, Internal
      * @return the new component
      */
     ComponentPageElement newChild(String id, String elementName, Instantiator instantiator, Location location);
+
+    /**
+     * Returns a logger used to for logging event dispatch and event method invocation.
+     */
+    Logger getEventLogger();
 }

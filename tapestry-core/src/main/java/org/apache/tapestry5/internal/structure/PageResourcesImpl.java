@@ -16,10 +16,12 @@ package org.apache.tapestry5.internal.structure;
 
 import org.apache.tapestry5.internal.services.ComponentClassCache;
 import org.apache.tapestry5.internal.services.ComponentMessagesSource;
+import org.apache.tapestry5.ioc.LoggerSource;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.services.ContextValueEncoder;
+import org.slf4j.Logger;
 
 import java.util.Locale;
 
@@ -35,14 +37,18 @@ public class PageResourcesImpl implements PageResources
 
     private final ContextValueEncoder contextValueEncoder;
 
+    private final LoggerSource loggerSource;
+
     public PageResourcesImpl(Locale locale, ComponentMessagesSource componentMessagesSource, TypeCoercer typeCoercer,
-                             ComponentClassCache componentClassCache, ContextValueEncoder contextValueEncoder)
+                             ComponentClassCache componentClassCache, ContextValueEncoder contextValueEncoder,
+                             LoggerSource loggerSource)
     {
         this.componentMessagesSource = componentMessagesSource;
         this.locale = locale;
         this.typeCoercer = typeCoercer;
         this.componentClassCache = componentClassCache;
         this.contextValueEncoder = contextValueEncoder;
+        this.loggerSource = loggerSource;
     }
 
     public Messages getMessages(ComponentModel componentModel)
@@ -58,6 +64,13 @@ public class PageResourcesImpl implements PageResources
     public Class toClass(String className)
     {
         return componentClassCache.forName(className);
+    }
+
+    public Logger getEventLogger(Logger componentLogger)
+    {
+        String name = "tapestry.events." + componentLogger.getName();
+
+        return loggerSource.getLogger(name);
     }
 
     public String toClient(Object value)

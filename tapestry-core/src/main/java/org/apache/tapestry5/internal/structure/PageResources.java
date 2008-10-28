@@ -17,6 +17,7 @@ package org.apache.tapestry5.internal.structure;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.services.ContextValueEncoder;
+import org.slf4j.Logger;
 
 /**
  * Provides access to common methods of various services, needed by implementations of {@link ComponentPageElement} and
@@ -58,4 +59,13 @@ public interface PageResources extends ContextValueEncoder
      * @see org.apache.tapestry5.internal.services.ComponentClassCache
      */
     Class toClass(String className);
+
+    /**
+     * Returns the event logger for the provided component logger.  The event logger is based on the component logger's
+     * name (which matches the component class name) with a "tapestry..events." prefix.
+     *
+     * @param componentLogger provides base name for logger
+     * @return the logger
+     */
+    Logger getEventLogger(Logger componentLogger);
 }

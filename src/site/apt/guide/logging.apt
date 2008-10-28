@@ -38,14 +38,16 @@ public class MyPage
 @Log annotation
 
   You may mark any component method with the {{{../apidocs/org/apache/tapestry5/annotations/Log.html}Log}} annotation.
-  Method entry, exit (and any thrown exceptions) will be logged at DEBUG level. This is very convienient for
+  Method entry, exit (and any thrown exceptions) will be logged at DEBUG level, along with parameter values and the
+  method's return value. This is very convienient for
   debugging, especially when placed on event handler methods.
 
 
-DEBUG Level
+Component Transformation Debugging
 
-  When a component's logger is configured at the DEBUG level, you will also see added output when the class is first
-  accessed identifying how Tapestry is modifying the bytecode of the class.  
+  Tapestry performs a transformation on your classes as they are loaded, often you want to gain insight into
+  what it has done.  Tapestry uses a secondary logger, consisting of the class name with the prefix "tapestry.transformer.",
+  to log (at debug level) the results of transforming the class.
   
   Example:
   
@@ -121,34 +123,69 @@ add constructor: org.apache.tapestry5.integration.app1.pages.MerryChristmas(org.
 
   Is this helpful?  Probably only if you are developing your own code that integrates into the component class transformation chain; for example,
   to support your own field and method annotations.
-  
-TRACE Level
 
-  Enabling the TRACE level <for pages> results in extremely verbose logging of every activity that drives the rendering of output, such as each component
-  working its way through the {{{rendering.html}rendering stage machine}}.  Example:
-  
+Component Event Debugging
+
+  Tapestry can also debug component event logic.  The component's logger, with a "tapestry.events." prefix, is used at debug level.
+  The debugging output identifies the event name and event source, and identifies any methods that are invoked.
+
+  Note that events that are not handled by a component will bubble up to the component's container; further logging for
+  the same event will occur using the logger associated with the container.  The page containing the initial component
+  is the final step when logging.
+
+  Examples:
+
 ----
-[TRACE] MerryChristmas Executing: ComponentPageElement[MerryChristmas]
-[TRACE] MerryChristmas Executing: SetupRender[MerryChristmas]
-[TRACE] MerryChristmas Executing: BeginRender[MerryChristmas]
-[TRACE] MerryChristmas Executing: BeforeRenderTemplate[MerryChristmas]
-[TRACE] MerryChristmas Executing: ComponentPageElement[MerryChristmas:border]
-[TRACE] MerryChristmas Executing: SetupRender[MerryChristmas:border]
-[TRACE] MerryChristmas Executing: BeginRender[MerryChristmas:border]
-[TRACE] MerryChristmas Executing: BeforeRenderTemplate[MerryChristmas:border]
-[TRACE] MerryChristmas Executing: Start[html]
-[TRACE] MerryChristmas Executing: Text[
-    ]
-[TRACE] MerryChristmas Executing: Start[head]
-[TRACE] MerryChristmas Executing: Text[
-        ]
-[TRACE] MerryChristmas Executing: Start[title]
-[TRACE] MerryChristmas Executing: Text[Tapestry Integration Test Application #1]
+[DEBUG] ActionLink Dispatch event: ComponentEvent[action from (self)]
+[DEBUG] ActionDemo Dispatch event: ComponentEvent[action from actionlink]
+[DEBUG] ActionDemo Invoking: org.apache.tapestry5.integration.app1.pages.nested.ActionDemo.onAction(java.lang.Long) (at ActionDemo.java:28)
+[DEBUG] ActionDemo Dispatch event: ComponentEvent[passivate from (self)]
+[DEBUG] ActionDemo Invoking: org.apache.tapestry5.integration.app1.pages.nested.ActionDemo.onPassivate() (at ActionDemo.java:38)
+-----
+  
+Render State Debugging
 
+  Occasionally it is useful to get debugging output of all the steps involved in rendering a page.
+  In Tapestry, rendering involves a series of rendering commands passed through a rendering queue (most commands
+  will operate by queuing up additional commands).
+
+  The logger is the page's logger prefixed with "tapestry.render.".
+
+  This debugging is most useful when you get a rendering exception about unbalanced open and close tags.
+
+  Most logging is at the trace level, except for a debug-level entry at the end identifying the number of commands
+  and the elapsed time.
+
+----
   . . .
-----
+  
+[TRACE] ActionDemo Executing: Text[Apache Software Foundation]
+[TRACE] ActionDemo Executing: End
+[TRACE] ActionDemo Executing: Text[
+            ]
+[TRACE] ActionDemo Executing: End
+[TRACE] ActionDemo Executing: Text[
 
-  Is this helpful?  Only if you are writing your own components and get an exception about unbalanced elements. This output gives
-  you a detailed view into what has rendered and when, so you can track it down.
+            ]
+[TRACE] ActionDemo Executing: Start[http://www.w3.org/1999/xhtml div]
+[TRACE] ActionDemo Executing: org.apache.tapestry5.internal.services.PageElementFactoryImpl$1@587e3a30
+[TRACE] ActionDemo Executing: End
+[TRACE] ActionDemo Executing: Text[
+
+        ]
+[TRACE] ActionDemo Executing: End
+[TRACE] ActionDemo Executing: End
+[TRACE] ActionDemo Executing: End
+[TRACE] ActionDemo Executing: AfterRenderTemplate[nested/ActionDemo:border]
+[TRACE] ActionDemo Executing: AfterRender[nested/ActionDemo:border]
+[TRACE] ActionDemo Executing: CleanupRender[nested/ActionDemo:border]
+[TRACE] ActionDemo Executing: org.apache.tapestry5.internal.structure.ComponentPageElementImpl$1@7efc0795
+[TRACE] ActionDemo Executing: DTD[name=html; publicId=-//W3C//DTD XHTML 1.0 Strict//EN; systemId=http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd]
+[TRACE] ActionDemo Executing: AfterRenderTemplate[nested/ActionDemo]
+[TRACE] ActionDemo Executing: AfterRender[nested/ActionDemo]
+[TRACE] ActionDemo Executing: CleanupRender[nested/ActionDemo]
+[TRACE] ActionDemo Executing: org.apache.tapestry5.internal.structure.ComponentPageElementImpl$1@7efc0795
+[DEBUG] ActionDemo Executed 276 rendering commands (max queue depth: 141) in 0.025 seconds
+----
     
   

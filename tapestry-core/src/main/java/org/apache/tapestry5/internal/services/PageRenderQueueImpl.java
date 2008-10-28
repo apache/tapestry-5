@@ -18,6 +18,7 @@ import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.internal.structure.Page;
 import static org.apache.tapestry5.ioc.IOCConstants.PERTHREAD_SCOPE;
+import org.apache.tapestry5.ioc.LoggerSource;
 import org.apache.tapestry5.ioc.annotations.Scope;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.Defense;
@@ -26,6 +27,7 @@ import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.runtime.RenderCommand;
 import org.apache.tapestry5.services.PartialMarkupRenderer;
 import org.apache.tapestry5.services.PartialMarkupRendererFilter;
+import org.slf4j.Logger;
 
 /**
  * This services keeps track of the page being rendered and the root command for the partial render, it is therefore
@@ -35,6 +37,8 @@ import org.apache.tapestry5.services.PartialMarkupRendererFilter;
 @Scope(PERTHREAD_SCOPE)
 public class PageRenderQueueImpl implements PageRenderQueue
 {
+    private final LoggerSource loggerSource;
+
     private Page page;
 
     private RenderCommand rootCommand;
@@ -57,6 +61,11 @@ public class PageRenderQueueImpl implements PageRenderQueue
         {
             filter.renderMarkup(writer, reply, delegate);
         }
+    }
+
+    public PageRenderQueueImpl(LoggerSource loggerSource)
+    {
+        this.loggerSource = loggerSource;
     }
 
     public void initializeForCompletePage(Page page)
@@ -99,7 +108,11 @@ public class PageRenderQueueImpl implements PageRenderQueue
 
     public void render(MarkupWriter writer)
     {
-        RenderQueueImpl queue = new RenderQueueImpl(page.getLogger());
+        String name = "tapestry.render." + page.getLogger().getName();
+
+        Logger logger = loggerSource.getLogger(name);
+
+        RenderQueueImpl queue = new RenderQueueImpl(logger);
 
         queue.push(rootCommand);
 
