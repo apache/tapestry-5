@@ -42,8 +42,9 @@
             <item name="Download" href="http://tapestry.apache.org/download.html"/>
             <item name="Release Notes" href="release-notes.html"/>
             <item name="Component Reference" href="tapestry-core/ref/"/>
+            <item name="JavaDocs" href="apidocs/"/>
             <item name="Nightly Docs" href="http://tapestry.formos.com/nightly/tapestry5/"/>
-            <item name="Issues" href="https://issues.apache.org/jira/browse/TAPESTRY"/>
+            <item name="Issues" href="https://issues.apache.org/jira/browse/TAP5"/>
             <item name="FAQ" href="faq/general.html"/>
         </menu>
 
@@ -104,6 +105,7 @@
             <item name="Default Parameter" href="cookbook/defaultparameter.html"/>
             <item name="Exception Reporting" href="cookbook/exceptions.html"/>
             <item name="Supporting Informal Parameters" href="cookbook/informals.html"/>
+            <item name="Component Libraries" href="cookbook/lib.html"/>
         </menu>
 
         <menu name="Tapestry 5 Maven Support">

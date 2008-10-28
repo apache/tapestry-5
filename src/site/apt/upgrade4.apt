@@ -15,6 +15,4 @@ Upgrading from Tapestry 4 to Tapestry 5
 
  As part of {{{https://issues.apache.org/jira/browse/TAPESTRY-2421}TAPESTRY-2421}}, we've done
  some judicous renaming so that Tapestry 4 and Tapestry 5 applications can run inside the same WAR.
-
-
- More to come ...
+ 

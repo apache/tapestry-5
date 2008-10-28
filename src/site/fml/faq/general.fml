@@ -189,7 +189,7 @@
                 <pre>
                     private static final String LOGIN = "login";
 
-                    @OnEvent(value=Form.VALIDATE_FORM, component=LOGIN)
+                    @OnEvent(value=EventConstants.VALIDATE_FORM, component=LOGIN)
                     void validateUserCredentials()
                     {
                     ...
@@ -197,7 +197,7 @@
                 </pre>
 
                 <p>
-                    This helps the compiler check your code for typos, and mnimizes the difficult of change when
+                    This helps the compiler check your code for typos, and minimizes the difficult of change when
                     refactoring the names of components.
                 </p>
 
@@ -253,7 +253,7 @@
         </faq>
 
 
-        <faq>
+        <faq id="request-vs-servlet-request">
             <question>
                 Why are there both Request and HttpServletRequest?
             </question>
@@ -264,7 +264,7 @@
                     to the standard HttpServletRequest interface. It differs in just a few ways, omitting
                     a number of unneeded methods, adding a couple
                     of methods (such as isXHR()) and changing how a few of the existing methods
-                    operate. for example, getParameterNames() returns a sorted List of Strings;
+                    operate. For example, getParameterNames() returns a sorted List of Strings;
                     HttpServletRequest returns an Enumeration, which is a very dated approach.
                 </p>
 
@@ -273,6 +273,41 @@
                     is for support of Portlets in the future. By writing your code in terms of
                     Request, and not HttpServletRequest, you can be assured that the same
                     code will operate in both Servlet Tapestry and Portlet Tapestry.
+                </p>
+            </answer>
+        </faq>
+
+        <faq id="beaneditform-constructor-exception">
+            <question>
+                Why do I get an exception about invoking a constructor when I use my bean with the
+                BeanEditForm component?
+            </question>
+            <answer>
+                <p>When you build a UI using BeanEditForm, the BeanEditForm component needs a place
+                    to store the data that is provided in the submission.
+                </p>
+                <p>If you don't provide a new instance, it will instantiate one.</p>
+                <p>
+                    The BeanEditForm component uses the same mechanism that is used to instantiate
+                    services in the Tapestry IoC container; it looks for the constructor with the most
+                    parameters, and tries to match each parameter to an IoC service.
+                </p>
+                <p>
+                    When you have a constructor like:
+                    <code>public MyBean(String name, Date date)</code>,
+                    Tapestry will try to inject the date parameter and find no IoC service matches that type.
+                </p>
+                <p>
+                    The solution is to put an @Inject annotation on the constructor Tapestry
+                    <em>should</em>
+                    be
+                    using (the default constructor, with no parameters).
+                </p>
+                <p>
+                    Alternately, provide a handler for the prepareForSubmit event, and store an instance
+                    into the property connected to the BeanEditForm. The BeanEditForm will see a non-null value and use
+                    it,
+                    therefore it will not get tripped up in terms of instantiating an instance.
                 </p>
             </answer>
         </faq>
