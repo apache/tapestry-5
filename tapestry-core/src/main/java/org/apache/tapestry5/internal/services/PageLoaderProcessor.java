@@ -29,7 +29,6 @@ import org.apache.tapestry5.model.EmbeddedComponentModel;
 import org.apache.tapestry5.runtime.RenderQueue;
 import org.apache.tapestry5.services.BindingSource;
 import org.apache.tapestry5.services.ComponentClassResolver;
-import org.slf4j.Logger;
 
 import java.util.List;
 import java.util.Locale;
@@ -441,8 +440,6 @@ class PageLoaderProcessor
 
         // Pre-allocate ids to avoid later name collisions.
 
-        Logger logger = loadingComponentModel.getLogger();
-
         // Don't have a case-insensitive Set, so we'll make due with a Map
         Map<String, Boolean> embeddedIds = CollectionFactory.newCaseInsensitiveMap();
 
@@ -458,7 +455,10 @@ class PageLoaderProcessor
         }
 
         if (!embeddedIds.isEmpty())
-            logger.error(ServicesMessages.embeddedComponentsNotInTemplate(embeddedIds.keySet(), componentClassName));
+            throw new TapestryException(
+                    ServicesMessages.embeddedComponentsNotInTemplate(embeddedIds.keySet(), componentClassName),
+                    loadingElement.getLocation(),
+                    null);
 
         addAttributesAsComponentBindings = false;
 

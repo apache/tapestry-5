@@ -19,14 +19,12 @@ import org.apache.tapestry5.internal.parser.ComponentTemplate;
 import org.apache.tapestry5.internal.parser.EndElementToken;
 import org.apache.tapestry5.internal.parser.StartComponentToken;
 import org.apache.tapestry5.internal.structure.ComponentPageElement;
-import org.apache.tapestry5.internal.structure.Page;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.ioc.Location;
 import org.apache.tapestry5.ioc.internal.util.TapestryException;
 import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.model.EmbeddedComponentModel;
 import org.apache.tapestry5.services.ComponentClassResolver;
-import org.slf4j.Logger;
 import org.testng.annotations.Test;
 
 import java.util.Arrays;
@@ -51,8 +49,8 @@ public class PageLoaderImplTest extends InternalBaseTestCase
         InternalComponentResources resources = mockInternalComponentResources();
         ComponentModel model = mockComponentModel();
         ComponentTemplate template = mockComponentTemplate();
-        Logger logger = mockLogger();
         ComponentClassResolver resolver = mockComponentClassResolver();
+        Location l = mockLocation();
 
         train_resolvePageNameToClassName(resolver, LOGICAL_PAGE_NAME, PAGE_CLASS_NAME);
 
@@ -67,23 +65,27 @@ public class PageLoaderImplTest extends InternalBaseTestCase
 
         train_isMissing(template, false);
 
-        train_getLogger(model, logger);
-
         train_getEmbeddedIds(model, "foo", "bar", "baz");
 
         train_getComponentIds(template, "baz", "biff");
 
-        logger.error(ServicesMessages.embeddedComponentsNotInTemplate(Arrays.asList("foo", "bar"), PAGE_CLASS_NAME));
-
-        train_getTokens(template);
+        train_getLocation(rootElement, l);
 
         replay();
 
         PageLoader loader = new PageLoaderImpl(templateSource, elementFactory, null, null, resolver);
 
-        Page page = loader.loadPage(LOGICAL_PAGE_NAME, LOCALE);
-
-        assertSame(page.getLogicalName(), LOGICAL_PAGE_NAME);
+        try
+        {
+            loader.loadPage(LOGICAL_PAGE_NAME, LOCALE);
+            unreachable();
+        }
+        catch (TapestryException ex)
+        {
+            assertEquals(ex.getMessage(), ServicesMessages.embeddedComponentsNotInTemplate(Arrays.asList("foo", "bar"),
+                                                                                           PAGE_CLASS_NAME));
+            assertSame(ex.getLocation(), l);
+        }
 
         verify();
     }
@@ -97,7 +99,6 @@ public class PageLoaderImplTest extends InternalBaseTestCase
         InternalComponentResources resources = mockInternalComponentResources();
         ComponentModel model = mockComponentModel();
         ComponentTemplate template = mockComponentTemplate();
-        Logger logger = mockLogger();
         EmbeddedComponentModel emodel = mockEmbeddedComponentModel();
         Location l = mockLocation();
         ComponentClassResolver resolver = mockComponentClassResolver();
@@ -113,8 +114,6 @@ public class PageLoaderImplTest extends InternalBaseTestCase
         train_getTemplate(templateSource, model, LOCALE, template);
 
         train_isMissing(template, false);
-
-        train_getLogger(model, logger);
 
         train_getEmbeddedIds(model, "foo");
 
