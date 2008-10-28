@@ -2358,4 +2358,15 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         assertTextPresent("Form components may not be placed inside other Form components.");
     }
+
+    /**
+     * TAP5-105
+     */
+    public void component_in_class_but_not_template_is_an_exception()
+    {
+        start("Components Not In Template Demo");
+
+        assertTextPresent(
+                "Embedded component(s) form are defined within component class org.apache.tapestry5.integration.app1.pages.ComponentsNotInTemplateDemo, but are not present in the component template.");
+    }
 }

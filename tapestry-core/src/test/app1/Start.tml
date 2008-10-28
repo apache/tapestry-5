@@ -85,6 +85,10 @@
             -- demo failure when attaching a page
         </li>
 
+        <li>
+            <a href="componentsNotInTemplateDemo">Components Not In Template Demo</a>
+            -- demo exception when a component is defined in the class but not present in the template
+        </li>
     </ul>
 
 </html>                      
