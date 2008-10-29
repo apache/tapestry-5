@@ -14,7 +14,7 @@
 
 package org.apache.tapestry5.internal.services;
 
-import static org.apache.tapestry5.ioc.IOCConstants.PERTHREAD_SCOPE;
+import org.apache.tapestry5.ioc.ScopeConstants;
 import org.apache.tapestry5.ioc.annotations.Scope;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.RequestGlobals;
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * Dumb data holder for per-request data.
  */
-@Scope(PERTHREAD_SCOPE)
+@Scope(ScopeConstants.PERTHREAD)
 public class RequestGlobalsImpl implements RequestGlobals
 {
     private HttpServletRequest servletRequest;
@@ -68,5 +68,4 @@ public class RequestGlobalsImpl implements RequestGlobals
     {
         return response;
     }
-
 }

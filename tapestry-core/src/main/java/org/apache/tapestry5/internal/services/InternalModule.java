@@ -17,8 +17,8 @@ package org.apache.tapestry5.internal.services;
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.internal.structure.PageResourcesSource;
 import org.apache.tapestry5.internal.structure.PageResourcesSourceImpl;
-import static org.apache.tapestry5.ioc.IOCConstants.PERTHREAD_SCOPE;
 import org.apache.tapestry5.ioc.ObjectLocator;
+import org.apache.tapestry5.ioc.ScopeConstants;
 import org.apache.tapestry5.ioc.ServiceBinder;
 import org.apache.tapestry5.ioc.ServiceResources;
 import org.apache.tapestry5.ioc.annotations.Inject;
@@ -103,7 +103,7 @@ public class InternalModule
     }
 
 
-    @Scope(PERTHREAD_SCOPE)
+    @Scope(ScopeConstants.PERTHREAD)
     public static RequestPageCache buildRequestPageCache(ObjectLocator locator, PerthreadManager perthreadManager)
     {
         RequestPageCacheImpl service = locator.autobuild(RequestPageCacheImpl.class);

@@ -18,10 +18,11 @@ import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.ioc.MappedConfiguration;
 import org.apache.tapestry5.ioc.annotations.SubModule;
 import org.apache.tapestry5.upload.services.UploadModule;
+import org.apache.tapestry5.upload.services.UploadSymbols;
 
 /**
  * The SubModule is not normally needed, except that during tests of tapestry-upload, the necessary JAR Manifest does
- * not yet exist, so we force the tapestry.upload module into the registry explicitly.
+ * not yet exist, so we force the tapestry-upload module into the registry explicitly.
  */
 @SubModule(UploadModule.class)
 public class AppModule
@@ -29,5 +30,7 @@ public class AppModule
     public static void contributeApplicationDefaults(MappedConfiguration<String, String> configuration)
     {
         configuration.add(SymbolConstants.PRODUCTION_MODE, "false");
+
+        configuration.add(UploadSymbols.FILESIZE_MAX, "5000");
     }
 }

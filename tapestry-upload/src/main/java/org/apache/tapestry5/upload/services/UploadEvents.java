@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+//  Copyright 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,15 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.ioc;
+package org.apache.tapestry5.upload.services;
 
-import org.apache.tapestry5.ioc.annotations.Scope;
-
-public class PerThreadModule
+/**
+ * Names of events that may be triggered on components due to file uploads.
+ */
+public class UploadEvents
 {
-    @Scope(ScopeConstants.PERTHREAD)
-    public StringHolder buildStringHolder()
-    {
-        return new StringHolderImpl();
-    }
-}
+    /**
+     * Name of event fired on a page when an upload form associated with that page encounters a {@link
+     * org.apache.commons.fileupload.FileUploadException} while processing the multipart form submission.
+     */
+    public static final String UPLOAD_EXCEPTION = "uploadException";
+}                       

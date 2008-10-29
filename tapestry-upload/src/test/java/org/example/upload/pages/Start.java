@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,32 +14,24 @@
 
 package org.example.upload.pages;
 
+import org.apache.commons.fileupload.FileUploadException;
+import org.apache.tapestry5.PersistenceConstants;
 import org.apache.tapestry5.annotations.Persist;
-import org.apache.tapestry5.upload.services.UploadedFile;
+import org.apache.tapestry5.annotations.Property;
+import org.example.upload.base.UploadBasePage;
 
-import java.io.File;
-
-public class Start
+public class Start extends UploadBasePage
 {
-    public static final String TARGET_DIR = "target/tmp/";
 
-    @Persist
-    private UploadedFile file;
+    @Persist(PersistenceConstants.FLASH)
+    @Property
+    private String message;
 
-    public UploadedFile getFile()
+
+    Object onUploadException(FileUploadException ex)
     {
-        return file;
-    }
+        message = "Upload exception: " + ex.getMessage();
 
-    public void setFile(UploadedFile file)
-    {
-        this.file = file;
-    }
-
-    public void onSuccess()
-    {
-        File copied = new File(TARGET_DIR + file.getFileName());
-
-        file.write(copied);
+        return this;
     }
 }

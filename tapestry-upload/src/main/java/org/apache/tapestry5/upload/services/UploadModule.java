@@ -21,17 +21,20 @@ import org.apache.tapestry5.ioc.annotations.Scope;
 import org.apache.tapestry5.ioc.services.PerthreadManager;
 import org.apache.tapestry5.ioc.services.RegistryShutdownHub;
 import org.apache.tapestry5.ioc.services.RegistryShutdownListener;
+import org.apache.tapestry5.services.ComponentEventRequestFilter;
 import org.apache.tapestry5.services.HttpServletRequestFilter;
 import org.apache.tapestry5.services.LibraryMapping;
 import org.apache.tapestry5.upload.internal.services.MultipartDecoderImpl;
 import org.apache.tapestry5.upload.internal.services.MultipartServletRequestFilter;
+import org.apache.tapestry5.upload.internal.services.UploadExceptionFilter;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class UploadModule
 {
-    private static final AtomicBoolean needToAddShutdownListener = new AtomicBoolean(true);
     private static final String NO_LIMIT = "-1";
+
+    private static final AtomicBoolean needToAddShutdownListener = new AtomicBoolean(true);
 
     public static void contributeComponentClassResolver(Configuration<LibraryMapping> configuration)
     {
@@ -40,7 +43,7 @@ public class UploadModule
         configuration.add(new LibraryMapping("core", "org.apache.tapestry5.upload"));
     }
 
-    @Scope(IOCConstants.PERTHREAD_SCOPE)
+    @Scope(ScopeConstants.PERTHREAD)
     public static MultipartDecoder buildMultipartDecoder(PerthreadManager perthreadManager,
 
                                                          RegistryShutdownHub shutdownHub,
@@ -74,6 +77,19 @@ public class UploadModule
                                                            MultipartDecoder multipartDecoder)
     {
         configuration.add("MultipartFilter", new MultipartServletRequestFilter(multipartDecoder), "after:IgnoredPaths");
+    }
+
+    /**
+     * Adds UploadException to the pipeline, between Secure and Ajax (both provided by TapestryModule). UploadException
+     * is responsible for triggering the {@linkplain org.apache.tapestry5.upload.services.UploadEvents#UPLOAD_EXCEPTION
+     * upload exception event}.
+     */
+    public static void contributeComponentEventRequestHandler(
+            OrderedConfiguration<ComponentEventRequestFilter> configuration,
+            ObjectLocator locator)
+    {
+        configuration.add("UploadException", locator.autobuild(UploadExceptionFilter.class), "after:Secure",
+                          "before:Ajax");
     }
 
     public static void contributeFactoryDefaults(MappedConfiguration<String, String> configuration)

@@ -159,7 +159,7 @@ public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
         flush();
 
         this.serviceInterface = serviceInterface;
-        this.scope = IOCConstants.DEFAULT_SCOPE;
+        this.scope = ScopeConstants.DEFAULT;
 
         serviceId = serviceInterface.getSimpleName();
 
@@ -205,7 +205,7 @@ public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
 
         Scope scope = serviceImplementation.getAnnotation(Scope.class);
 
-        this.scope = scope != null ? scope.value() : IOCConstants.DEFAULT_SCOPE;
+        this.scope = scope != null ? scope.value() : ScopeConstants.DEFAULT;
 
         Marker marker = serviceImplementation.getAnnotation(Marker.class);
 

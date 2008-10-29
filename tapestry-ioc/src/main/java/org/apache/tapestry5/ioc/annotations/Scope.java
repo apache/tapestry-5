@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -35,9 +35,11 @@ import java.lang.annotation.Target;
  * <p/>
  * The annotation may also be placed directly on a service implementation class, when using service autobuilding (via
  * the {@link ServiceBinder}.
+ *
+ * @see org.apache.tapestry5.ioc.ScopeConstants
  */
 @Target(
-        { TYPE, METHOD })
+        {TYPE, METHOD})
 @Retention(RUNTIME)
 @Documented
 public @interface Scope

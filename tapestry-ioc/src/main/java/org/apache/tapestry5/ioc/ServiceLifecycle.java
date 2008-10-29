@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -29,4 +29,14 @@ public interface ServiceLifecycle
      * @return the service or equivalent service proxy
      */
     Object createService(ServiceResources resources, ObjectCreator creator);
+
+    /**
+     * Returns true if the lifecycle is a singleton (a service that will only be created once).  Return false if the
+     * underlying service instance may be created multiple times (for example, the {@link
+     * org.apache.tapestry5.ioc.ScopeConstants#PERTHREAD} scope}. A future version of Tapestry IoC may optimize for the
+     * later case.
+     *
+     * @return true for singletons, false   for services that can be repeatedly constructed
+     */
+    boolean isSingleton();
 }
