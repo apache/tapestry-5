@@ -18,7 +18,6 @@ import org.apache.tapestry5.ValueEncoder;
 import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.internal.hibernate.*;
 import org.apache.tapestry5.ioc.*;
-import static org.apache.tapestry5.ioc.IOCConstants.PERTHREAD_SCOPE;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Local;
 import org.apache.tapestry5.ioc.annotations.Scope;
@@ -81,7 +80,7 @@ public class HibernateModule
      * The session manager manages sessions on a per-thread/per-request basis. A {@link org.hibernate.Transaction} is
      * created initially, and is committed at the end of the request.
      */
-    @Scope(PERTHREAD_SCOPE)
+    @Scope(ScopeConstants.PERTHREAD)
     public static HibernateSessionManager buildHibernateSessionManager(HibernateSessionSource sessionSource,
                                                                        PerthreadManager perthreadManager)
     {

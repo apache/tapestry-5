@@ -79,7 +79,7 @@ public class DefaultModuleDefImplTest extends IOCTestCase
         assertEquals(sd.getServiceInterface(), FieService.class);
 
         assertTrue(sd.toString().contains(className + ".buildFred()"));
-        assertEquals(sd.getServiceScope(), IOCConstants.DEFAULT_SCOPE);
+        assertEquals(sd.getServiceScope(), ScopeConstants.DEFAULT);
         assertEquals(sd.isEagerLoad(), false);
         assertTrue(sd.getMarkers().isEmpty());
 
@@ -318,7 +318,7 @@ public class DefaultModuleDefImplTest extends IOCTestCase
 
         assertEquals(sd.getServiceInterface(), StringHolder.class);
         assertEquals(sd.getServiceId(), "StringHolder");
-        assertEquals(sd.getServiceScope(), IOCConstants.DEFAULT_SCOPE);
+        assertEquals(sd.getServiceScope(), ScopeConstants.DEFAULT);
         assertFalse(sd.isEagerLoad());
 
         verify();

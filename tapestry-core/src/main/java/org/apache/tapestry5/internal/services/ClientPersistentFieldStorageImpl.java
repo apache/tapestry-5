@@ -17,7 +17,7 @@ package org.apache.tapestry5.internal.services;
 import org.apache.tapestry5.Link;
 import org.apache.tapestry5.internal.util.Base64ObjectInputStream;
 import org.apache.tapestry5.internal.util.Base64ObjectOutputStream;
-import static org.apache.tapestry5.ioc.IOCConstants.PERTHREAD_SCOPE;
+import org.apache.tapestry5.ioc.ScopeConstants;
 import org.apache.tapestry5.ioc.annotations.Scope;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newMap;
@@ -36,7 +36,7 @@ import java.util.Map;
  * ensure that we don't uncessarily convert between objects and Base64 (the encoding used to record the value on the
  * client).
  */
-@Scope(PERTHREAD_SCOPE)
+@Scope(ScopeConstants.PERTHREAD)
 public class ClientPersistentFieldStorageImpl implements ClientPersistentFieldStorage
 {
     static final String PARAMETER_NAME = "t:state:client";
@@ -273,7 +273,6 @@ public class ClientPersistentFieldStorageImpl implements ClientPersistentFieldSt
                 os.writeObject(e.getKey());
                 os.writeObject(e.getValue());
             }
-
         }
         catch (Exception ex)
         {

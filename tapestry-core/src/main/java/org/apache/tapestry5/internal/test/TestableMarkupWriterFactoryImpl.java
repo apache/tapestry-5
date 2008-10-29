@@ -16,12 +16,12 @@ package org.apache.tapestry5.internal.test;
 
 import org.apache.tapestry5.ContentType;
 import org.apache.tapestry5.MarkupWriter;
-import static org.apache.tapestry5.ioc.IOCConstants.PERTHREAD_SCOPE;
+import org.apache.tapestry5.ioc.ScopeConstants;
 import org.apache.tapestry5.ioc.annotations.Scope;
 import org.apache.tapestry5.services.Core;
 import org.apache.tapestry5.services.MarkupWriterFactory;
 
-@Scope(PERTHREAD_SCOPE)
+@Scope(ScopeConstants.PERTHREAD)
 public class TestableMarkupWriterFactoryImpl implements TestableMarkupWriterFactory
 {
     private final MarkupWriterFactory delegate;

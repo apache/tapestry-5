@@ -16,9 +16,9 @@ package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.internal.parser.*;
-import static org.apache.tapestry5.ioc.IOCConstants.PERTHREAD_SCOPE;
 import org.apache.tapestry5.ioc.Location;
 import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.ioc.ScopeConstants;
 import org.apache.tapestry5.ioc.annotations.Scope;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
@@ -43,7 +43,7 @@ import java.util.regex.Pattern;
 /**
  * Non-threadsafe implementation; the IOC service uses the perthread lifecycle.
  */
-@Scope(PERTHREAD_SCOPE)
+@Scope(ScopeConstants.PERTHREAD)
 public class TemplateParserImpl implements TemplateParser, LexicalHandler, ContentHandler, EntityResolver
 {
     private static final String MIXINS_ATTRIBUTE_NAME = "mixins";
@@ -477,8 +477,6 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
         compressWhitespaceStack.push(compressWhitespace);
 
         endTagHandlerStack.push(endOfElementHandler);
-
-
     }
 
     private String findSingleParameter(String elementName, String attributeName, Attributes attributes)
@@ -803,5 +801,4 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
 
         return null;
     }
-
 }

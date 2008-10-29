@@ -334,7 +334,7 @@ public class DefaultModuleDefImpl implements ModuleDef, ServiceDefAccumulator
     {
         Scope scope = method.getAnnotation(Scope.class);
 
-        return scope != null ? scope.value() : IOCConstants.DEFAULT_SCOPE;
+        return scope != null ? scope.value() : ScopeConstants.DEFAULT;
     }
 
     public Set<DecoratorDef> getDecoratorDefs()

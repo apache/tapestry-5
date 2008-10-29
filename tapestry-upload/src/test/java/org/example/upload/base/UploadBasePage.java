@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+//  Copyright 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,15 +12,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.ioc;
+package org.example.upload.base;
 
-import org.apache.tapestry5.ioc.annotations.Scope;
+import org.apache.tapestry5.annotations.Persist;
+import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.upload.services.UploadedFile;
 
-public class PerThreadModule
+import java.io.File;
+
+public class UploadBasePage
 {
-    @Scope(ScopeConstants.PERTHREAD)
-    public StringHolder buildStringHolder()
+    public static final String TARGET_DIR = "target/tmp/";
+
+    @Persist
+    @Property
+    private UploadedFile file;
+
+    public void onSuccess()
     {
-        return new StringHolderImpl();
+        File copied = new File(TARGET_DIR + file.getFileName());
+
+        file.write(copied);
     }
 }

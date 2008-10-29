@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,7 +14,6 @@
 
 package org.apache.tapestry5.ioc.internal;
 
-import org.apache.tapestry5.ioc.IOCConstants;
 import org.apache.tapestry5.ioc.ObjectCreator;
 import org.apache.tapestry5.ioc.ServiceBuilderResources;
 import org.apache.tapestry5.ioc.def.ServiceDef;
@@ -40,7 +39,7 @@ public class ServiceDefImpl implements ServiceDef
      *                         non-proxied services)
      * @param serviceId        unique id for the service
      * @param markers          set of marker annotation classes (will be retained not copied)
-     * @param scope            scope of the service (i.e., {@link IOCConstants#DEFAULT_SCOPE}).
+     * @param scope            scope of the service (i.e., {@link org.apache.tapestry5.ioc.ScopeConstants#DEFAULT}).
      * @param eagerLoad        if true, the service is realized at startup, rather than on-demand
      * @param source           used to create the service implementation when needed
      */
@@ -91,5 +90,4 @@ public class ServiceDefImpl implements ServiceDef
     {
         return markers;
     }
-
 }

@@ -35,17 +35,8 @@ Usage
 +---+
     public class UploadExample
     {
+        @Property
         private UploadedFile file;
-
-        public UploadedFile getFile()
-        {
-            return file;
-        }
-
-        public void setFile(UploadedFile file)
-        {
-            this.file = file;
-        }
 
         public void onSuccess()
         {
@@ -57,7 +48,56 @@ Usage
 +---+
 
 
+Upload Exceptions
 
+  In some cases, file uploads may fail.  This can be because of a simple communication exception, or more likely,
+  because the configured  maximum upload size was exceeded.
+
+  When a file upload exception occurs, Tapestry will trigger a "uploadException" event on the page to notify it of
+  the error. All other normal processing is skipped (no "activate" event, no form submission, etc.).
+
+  The event handler should return a non-null object, which will be handled as a navigational result.  Example:
+
+----
+
+   @Persist(PersistenceConstants.FLASH)
+    @Property
+    private String message;
+
+
+    Object onUploadException(FileUploadException ex)
+    {
+        message = "Upload exception: " + ex.getMessage();
+
+        return this;
+    }
+----
+
+  Note the importance of <<<return this;>>>.  A void event handler method, or one that returns null, will result
+  in the FileUploadException being reported to the user as an uncaught runtime exception.
+
+Configuration
+
+  Four values may be configured as {{{../tapestry-ioc/symbols.html}symbols}}:
+
+  [upload.repository-location]
+  The directory to which files that are too large to keep in memory will be written to.
+  The default is from the java.io.tmpdir system property.
+
+  [upload.repository-threshold]
+  Upload size, in bytes, at which point the uploaded file is written to disk rather than kept in memory.
+  The default is 10 kilobytes.
+
+  [upload.requestsize-max]
+  Maximim size, in bytes, for the overall request.  If exceeed, a FileUploadException will occur.
+  The default is no maximum.
+
+  [upload.filesize-max]
+  Maximum size, in bytes, for any individual uploaded file.  Again, a FileUploadException will occur
+  if exceeded.              The default is no maximum.
+
+  The class {{{../apidocs/org/apache/tapestry5/upload/services/UploadSymbols.html}UploadSymbols}}
+  defines constants for all four of these.
 
 Potential Issues
 

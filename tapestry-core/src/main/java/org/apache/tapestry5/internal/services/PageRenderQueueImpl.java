@@ -17,8 +17,8 @@ package org.apache.tapestry5.internal.services;
 import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.internal.structure.Page;
-import static org.apache.tapestry5.ioc.IOCConstants.PERTHREAD_SCOPE;
 import org.apache.tapestry5.ioc.LoggerSource;
+import org.apache.tapestry5.ioc.ScopeConstants;
 import org.apache.tapestry5.ioc.annotations.Scope;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.Defense;
@@ -34,7 +34,7 @@ import org.slf4j.Logger;
  * request/thread scoped.  There's a filter pipeline around the rendering, and that gets to be stateless because this
  * service, at the end of the pipeline, is stateful.
  */
-@Scope(PERTHREAD_SCOPE)
+@Scope(ScopeConstants.PERTHREAD)
 public class PageRenderQueueImpl implements PageRenderQueue
 {
     private final LoggerSource loggerSource;

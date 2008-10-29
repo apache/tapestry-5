@@ -16,9 +16,9 @@ package org.apache.tapestry5.internal.renderers;
 
 import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.dom.Element;
-import static org.apache.tapestry5.ioc.IOCConstants.PERTHREAD_SCOPE;
 import org.apache.tapestry5.ioc.Location;
 import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.ioc.ScopeConstants;
 import org.apache.tapestry5.ioc.annotations.Scope;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
@@ -32,7 +32,7 @@ import java.util.Set;
  * snippet of the source file) once per render. This requires the use of the "perthread" scope (since the service
  * tracks, internally, which locations have already been rendered, to avoid repetition).
  */
-@Scope(PERTHREAD_SCOPE)
+@Scope(ScopeConstants.PERTHREAD)
 public class LocationRenderer implements ObjectRenderer<Location>
 {
     private static final int RANGE = 5;
@@ -118,5 +118,4 @@ public class LocationRenderer implements ObjectRenderer<Location>
 
         writer.end(); // div
     }
-
 }

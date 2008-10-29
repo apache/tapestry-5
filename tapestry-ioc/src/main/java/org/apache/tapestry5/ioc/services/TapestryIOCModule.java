@@ -15,7 +15,6 @@
 package org.apache.tapestry5.ioc.services;
 
 import org.apache.tapestry5.ioc.*;
-import static org.apache.tapestry5.ioc.IOCConstants.PERTHREAD_SCOPE;
 import org.apache.tapestry5.ioc.annotations.Marker;
 import org.apache.tapestry5.ioc.internal.services.*;
 import org.apache.tapestry5.ioc.util.TimeInterval;
@@ -79,7 +78,7 @@ public final class TapestryIOCModule
     public void contributeServiceLifecycleSource(MappedConfiguration<String, ServiceLifecycle> configuration,
                                                  ObjectLocator locator)
     {
-        configuration.add(PERTHREAD_SCOPE, locator.autobuild(PerThreadServiceLifecycle.class));
+        configuration.add(ScopeConstants.PERTHREAD, locator.autobuild(PerThreadServiceLifecycle.class));
     }
 
     /**

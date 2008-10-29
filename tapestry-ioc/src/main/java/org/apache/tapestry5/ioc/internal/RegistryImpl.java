@@ -260,7 +260,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
             public String getServiceScope()
             {
-                return IOCConstants.DEFAULT_SCOPE;
+                return ScopeConstants.DEFAULT;
             }
 
             public boolean isEagerLoad()

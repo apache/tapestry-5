@@ -50,6 +50,14 @@ public class PerThreadServiceLifecycle implements ServiceLifecycle
         this.classFactory = classFactory;
     }
 
+    /**
+     * Returns false; this lifecycle represents a service that will be created many times (by each thread).
+     */
+    public boolean isSingleton()
+    {
+        return false;
+    }
+
     public Object createService(ServiceResources resources, ObjectCreator creator)
     {
         Class proxyClass = createProxyClass(resources);
@@ -83,7 +91,7 @@ public class PerThreadServiceLifecycle implements ServiceLifecycle
         // Constructor takes a ServiceCreator
 
         cf.addConstructor(new Class[]
-                { ObjectCreator.class }, null, "_creator = $1;");
+                {ObjectCreator.class}, null, "_creator = $1;");
 
         String body = format("return (%s) _creator.createObject();", serviceInterface.getName());
 

@@ -14,8 +14,8 @@
 
 package org.apache.tapestry5.internal.spring;
 
-import org.apache.tapestry5.ioc.IOCConstants;
 import org.apache.tapestry5.ioc.ObjectCreator;
+import org.apache.tapestry5.ioc.ScopeConstants;
 import org.apache.tapestry5.ioc.ServiceBuilderResources;
 import org.apache.tapestry5.ioc.def.ContributionDef;
 import org.apache.tapestry5.ioc.def.DecoratorDef;
@@ -79,7 +79,7 @@ public class SpringModuleDef implements ModuleDef
 
                 public String getServiceScope()
                 {
-                    return IOCConstants.DEFAULT_SCOPE;
+                    return ScopeConstants.DEFAULT;
                 }
 
                 public boolean isEagerLoad()
@@ -92,7 +92,6 @@ public class SpringModuleDef implements ModuleDef
                 {
                     return Collections.emptySet();
                 }
-
             };
 
             serviceDefs.put(beanName, serviceDef);
@@ -125,7 +124,7 @@ public class SpringModuleDef implements ModuleDef
 
             public String getServiceScope()
             {
-                return IOCConstants.DEFAULT_SCOPE;
+                return ScopeConstants.DEFAULT;
             }
 
             public boolean isEagerLoad()
@@ -138,7 +137,6 @@ public class SpringModuleDef implements ModuleDef
             {
                 return Collections.emptySet();
             }
-
         };
 
         serviceDefs.put(CONTEXT_SERVICE_ID, serviceDef);
@@ -179,5 +177,4 @@ public class SpringModuleDef implements ModuleDef
     {
         return serviceDefs.keySet();
     }
-
 }

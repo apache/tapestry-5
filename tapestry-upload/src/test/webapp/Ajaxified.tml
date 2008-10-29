@@ -16,8 +16,7 @@
             <input type="submit" value="Upload"/>
         </t:form>
         <t:if test="file">
-            <p>File: ${file.filePath}</p>
-            <p>Size: ${file.size}</p>
+            <t:beandisplay object="file"/>
         </t:if>
 
         <t:block id="content">

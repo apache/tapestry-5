@@ -51,10 +51,11 @@ public class MultipartDecoderImplTest extends TapestryTestCase
     {
         HttpServletRequest request = mockHttpServletRequest();
         MultipartDecoderImpl decoder = new MultipartDecoderImpl("/tmp", 888, -1, -1, CHARSET);
+        List<FileItem> items = Collections.emptyList();
 
         replay();
 
-        HttpServletRequest decodedRequest = decoder.processFileItems(request, null);
+        HttpServletRequest decodedRequest = decoder.processFileItems(request, items);
 
         verify();
 
@@ -205,5 +206,4 @@ public class MultipartDecoderImplTest extends TapestryTestCase
 
         return item;
     }
-
 }

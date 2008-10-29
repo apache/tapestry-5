@@ -31,6 +31,7 @@ import org.apache.tapestry5.upload.services.UploadedFile;
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.UnsupportedEncodingException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -50,6 +51,8 @@ public class MultipartDecoderImpl implements MultipartDecoder, ThreadCleanupList
     private final long maxFileSize;
 
     private final String requestEncoding;
+
+    private FileUploadException uploadException;
 
     public MultipartDecoderImpl(
 
@@ -111,15 +114,18 @@ public class MultipartDecoderImpl implements MultipartDecoder, ThreadCleanupList
         {
             return createFileUpload().parseRequest(request);
         }
-        catch (FileUploadException e)
+        catch (FileUploadException ex)
         {
-            throw new RuntimeException(UploadMessages.unableToDecode(), e);
+            uploadException = ex;
+
+            return Collections.emptyList();
         }
     }
 
     protected ServletFileUpload createFileUpload()
     {
         FileItemFactory factory = new DiskFileItemFactory(repositoryThreshold, new File(repositoryLocation));
+
         ServletFileUpload upload = new ServletFileUpload(factory);
 
         // set maximum file upload size
@@ -131,7 +137,7 @@ public class MultipartDecoderImpl implements MultipartDecoder, ThreadCleanupList
 
     protected HttpServletRequest processFileItems(HttpServletRequest request, List<FileItem> fileItems)
     {
-        if (fileItems == null || fileItems.isEmpty())
+        if (uploadException == null && fileItems.isEmpty())
         {
             return request;
         }
@@ -169,5 +175,10 @@ public class MultipartDecoderImpl implements MultipartDecoder, ThreadCleanupList
     protected void addUploadedFile(String name, UploadedFileItem file)
     {
         uploads.put(name, file);
+    }
+
+    public FileUploadException getUploadException()
+    {
+        return uploadException;
     }
 }

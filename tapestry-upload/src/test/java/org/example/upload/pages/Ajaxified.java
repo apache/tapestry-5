@@ -20,8 +20,9 @@ import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.corelib.components.FormInjector;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.example.upload.base.UploadBasePage;
 
-public class Ajaxified extends Start
+public class Ajaxified extends UploadBasePage
 {
     @Inject
     private Block content;

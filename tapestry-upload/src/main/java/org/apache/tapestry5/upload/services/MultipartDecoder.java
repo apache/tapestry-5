@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,6 +13,8 @@
 // limitations under the License.
 
 package org.apache.tapestry5.upload.services;
+
+import org.apache.commons.fileupload.FileUploadException;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -37,4 +39,10 @@ public interface MultipartDecoder
      * @return decoded http request
      */
     HttpServletRequest decode(HttpServletRequest request);
+
+    /**
+     * Returns the exception the occured during the file upload, or null if the processing of the multipart upload
+     * stream was succesful.
+     */
+    FileUploadException getUploadException();
 }
