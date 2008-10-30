@@ -42,7 +42,6 @@ import org.slf4j.Logger;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.util.List;
 
 /**
  * An HTML form, which will enclose other components to render out the various types of fields.
@@ -111,7 +110,7 @@ public class Form implements ClientElement, FormValidationControl
      * methods.
      */
     @Parameter
-    private List<?> context;
+    private Object[] context;
 
     /**
      * The object which will record user input and validation errors. The object must be persistent between requests
@@ -250,13 +249,11 @@ public class Form implements ClientElement, FormValidationControl
         // Now that the environment is setup, inform the component or other listeners that the form
         // is about to render.  
 
-        Object[] contextArray = context == null ? new Object[0] : context.toArray();
+        resources.triggerEvent(EventConstants.PREPARE_FOR_RENDER, context, null);
 
-        resources.triggerEvent(EventConstants.PREPARE_FOR_RENDER, contextArray, null);
+        resources.triggerEvent(EventConstants.PREPARE, context, null);
 
-        resources.triggerEvent(EventConstants.PREPARE, contextArray, null);
-
-        Link link = resources.createFormEventLink(EventConstants.ACTION, contextArray);
+        Link link = resources.createFormEventLink(EventConstants.ACTION, context);
 
         // Save the form element for later, in case we want to write an encoding type attribute.
 

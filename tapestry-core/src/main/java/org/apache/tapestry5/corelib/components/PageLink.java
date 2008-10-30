@@ -22,8 +22,6 @@ import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.corelib.base.AbstractLink;
 import org.apache.tapestry5.ioc.annotations.Inject;
 
-import java.util.List;
-
 /**
  * Generates a render request link to some other page in the application. If an activation context is supplied (as the
  * context parameter), then the context values will be encoded into the URL. If no context is supplied, then the target
@@ -48,17 +46,13 @@ public class PageLink extends AbstractLink
      * If not provided, then the target page will provide its own activation context.
      */
     @Parameter
-    private List context;
-
-    private final Object[] emptyContext = new Object[0];
+    private Object[] context;
 
     void beginRender(MarkupWriter writer)
     {
         if (isDisabled()) return;
 
-        Object[] activationContext = context != null ? context.toArray() : emptyContext;
-
-        Link link = resources.createPageLink(page, resources.isBound("context"), activationContext);
+        Link link = resources.createPageLink(page, resources.isBound("context"), context);
 
         writeLink(writer, link);
     }

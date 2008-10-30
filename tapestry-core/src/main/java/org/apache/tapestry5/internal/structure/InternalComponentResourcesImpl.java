@@ -67,6 +67,8 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
     // Case insensitive
     private Map<String, Object> renderVariables;
 
+    private static final Object[] EMPTY = new Object[0];
+
     public InternalComponentResourcesImpl(Page page, ComponentPageElement element,
                                           ComponentResources containerResources, PageResources pageResources,
                                           String completeId, String nestedId, Instantiator componentInstantiator
@@ -127,27 +129,27 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
      */
     public Link createActionLink(String eventType, boolean forForm, Object... context)
     {
-        return page.createComponentEventLink(element.getNestedId(), eventType, forForm, context);
+        return page.createComponentEventLink(element.getNestedId(), eventType, forForm, defaulted(context));
     }
 
     public Link createEventLink(String eventType, Object... context)
     {
-        return page.createComponentEventLink(element.getNestedId(), eventType, false, context);
+        return page.createComponentEventLink(element.getNestedId(), eventType, false, defaulted(context));
     }
 
     public Link createFormEventLink(String eventType, Object... context)
     {
-        return page.createComponentEventLink(element.getNestedId(), eventType, true, context);
+        return page.createComponentEventLink(element.getNestedId(), eventType, true, defaulted(context));
     }
 
     public Link createPageLink(String pageName, boolean override, Object... context)
     {
-        return page.createPageRenderLink(pageName, override, context);
+        return page.createPageRenderLink(pageName, override, defaulted(context));
     }
 
     public Link createPageLink(Class pageClass, boolean override, Object... context)
     {
-        return page.createPageRenderLink(pageClass, override, context);
+        return page.createPageRenderLink(pageClass, override, defaulted(context));
     }
 
     public void discardPersistentFieldChanges()
@@ -213,7 +215,12 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
 
     public boolean triggerEvent(String eventType, Object[] context, ComponentEventCallback handler)
     {
-        return element.triggerEvent(eventType, context, handler);
+        return element.triggerEvent(eventType, defaulted(context), handler);
+    }
+
+    private Object[] defaulted(Object[] input)
+    {
+        return input == null ? EMPTY : input;
     }
 
     public boolean triggerContextEvent(String eventType, EventContext context, ComponentEventCallback callback)

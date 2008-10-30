@@ -24,8 +24,8 @@ import org.apache.tapestry5.ioc.annotations.Inject;
 
 /**
  * Used inside a {@link org.apache.tapestry5.corelib.components.AjaxFormLoop} to remove the current row from the loop.
- * This fires a server-side "removeRow" event (from the AjaxFormLoop component). On the client-side, the element for the
- * row is hidden, then removed altogether.
+ * This fires a server-side  event (from the AjaxFormLoop component); the event context is the object to be removed. On
+ * the client-side, the element for the row is hidden, then removed altogether.
  */
 @SupportsInformalParameters
 public class RemoveRowLink

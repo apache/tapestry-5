@@ -21,8 +21,6 @@ import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.internal.services.ClientBehaviorSupport;
 
-import java.util.List;
-
 /**
  * Base class for link-generating components that are based on a component event request. Such events have an event
  * context and may also update a {@link org.apache.tapestry5.corelib.components.Zone}.
@@ -35,7 +33,7 @@ public abstract class AbstractComponentEventLink extends AbstractLink
      * methods.
      */
     @Parameter
-    private List<?> context;
+    private Object[] context;
 
     /**
      * Binding the zone parameter turns the link into a an Ajax control that causes the related zone to be updated.
@@ -50,9 +48,7 @@ public abstract class AbstractComponentEventLink extends AbstractLink
     {
         if (isDisabled()) return;
 
-        Object[] contextArray = context == null ? new Object[0] : context.toArray();
-
-        Link link = createLink(contextArray);
+        Link link = createLink(context);
 
         writeLink(writer, link);
 
@@ -61,6 +57,8 @@ public abstract class AbstractComponentEventLink extends AbstractLink
 
     /**
      * Invoked to create the Link that will become the href attribute of the output.
+     *
+     * @param eventContext the context as an object array, possibly null
      */
     protected abstract Link createLink(Object[] eventContext);
 
@@ -70,5 +68,4 @@ public abstract class AbstractComponentEventLink extends AbstractLink
 
         writer.end(); // <a>
     }
-
 }

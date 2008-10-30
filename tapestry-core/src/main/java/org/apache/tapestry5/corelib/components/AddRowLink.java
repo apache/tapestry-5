@@ -24,7 +24,9 @@ import org.apache.tapestry5.ioc.annotations.Inject;
 
 /**
  * Used inside an {@link org.apache.tapestry5.corelib.components.AjaxFormLoop} component to spur the addition of a new
- * row.  Triggers a server-side "addRow" event which must return a Block (or component) to render the new row.
+ * row.  Triggers a server-side {@linkplain org.apache.tapestry5.EventConstants#ADD_ROW addRow} event on the
+ * AjaxFormLoop, which must return the newly added object, which will be rendered in the body of the AjaxFormLoop and
+ * sent to the client web browser.
  */
 @SupportsInformalParameters
 public class AddRowLink
