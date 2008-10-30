@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,10 +14,11 @@
 
 package org.apache.tapestry5.internal.parser;
 
+import org.apache.tapestry5.ioc.Location;
 import org.apache.tapestry5.ioc.Resource;
 
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
 /**
  * A parsed component template, containing all the tokens parsed from the template.
@@ -40,8 +41,11 @@ public interface ComponentTemplate
     List<TemplateToken> getTokens();
 
     /**
-     * Returns a set of strings corresponding to {@link org.apache.tapestry5.internal.parser.StartComponentToken}s
-     * within the template that have a non-blank id attribute.
+     * Identifies     {@link org.apache.tapestry5.internal.parser.StartComponentToken}s with a non-blank id, mapping the
+     * id to its location (within the template). This is used to report unmatched ids (where the component, or its
+     * super-classes, do not define an embedded component).
+     *
+     * @see org.apache.tapestry5.annotations.Component (used to define an embedded component)
      */
-    Set<String> getComponentIds();
+    Map<String, Location> getComponentIds();
 }

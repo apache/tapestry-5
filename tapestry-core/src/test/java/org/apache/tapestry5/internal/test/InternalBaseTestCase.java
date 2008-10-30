@@ -28,7 +28,6 @@ import org.apache.tapestry5.ioc.*;
 import org.apache.tapestry5.ioc.def.ContributionDef;
 import org.apache.tapestry5.ioc.def.ModuleDef;
 import org.apache.tapestry5.ioc.internal.InternalRegistry;
-import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newSet;
 import org.apache.tapestry5.ioc.internal.util.MessagesImpl;
 import org.apache.tapestry5.ioc.services.ClassPropertyAdapter;
 import org.apache.tapestry5.ioc.services.PropertyAccess;
@@ -293,11 +292,6 @@ public class InternalBaseTestCase extends TapestryTestCase implements Registry
     protected final void train_getTokens(ComponentTemplate template, TemplateToken... tokens)
     {
         expect(template.getTokens()).andReturn(Arrays.asList(tokens));
-    }
-
-    protected final void train_getComponentIds(ComponentTemplate template, String... ids)
-    {
-        expect(template.getComponentIds()).andReturn(newSet(Arrays.asList(ids)));
     }
 
     protected final void train_getEmbeddedIds(ComponentModel model, String... ids)

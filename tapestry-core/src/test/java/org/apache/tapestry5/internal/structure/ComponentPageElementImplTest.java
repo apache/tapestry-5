@@ -400,7 +400,6 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
         Page page = newPage(PAGE_NAME);
         Component component = mockComponent();
         ComponentModel model = mockComponentModel();
-        TypeCoercer coercer = mockTypeCoercer();
         Logger logger = mockLogger();
 
         train_getLogger(model, logger);
@@ -410,7 +409,7 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentPageElement cpe = new ComponentPageElementImpl(page, ins, null);
+        ComponentPageElementImpl cpe = new ComponentPageElementImpl(page, ins, null);
         cpe.addEmbeddedElement(new ComponentPageElementImpl(page, cpe, "nested", null, ins2, null, null));
 
         try
@@ -435,7 +434,6 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
         ComponentModel model = mockComponentModel();
         ComponentPageElement childElement = mockComponentPageElement();
         Component childComponent = mockComponent();
-        TypeCoercer coercer = mockTypeCoercer();
         Logger logger = mockLogger();
 
         train_getLogger(model, logger);
@@ -447,7 +445,7 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentPageElement cpe = new ComponentPageElementImpl(page, ins, null);
+        ComponentPageElementImpl cpe = new ComponentPageElementImpl(page, ins, null);
 
         cpe.addEmbeddedElement(childElement);
 
@@ -468,7 +466,6 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
         ComponentModel model = mockComponentModel();
         ComponentPageElement child1 = mockComponentPageElement();
         ComponentPageElement child2 = mockComponentPageElement();
-        TypeCoercer coercer = mockTypeCoercer();
         Location l = mockLocation();
         Logger logger = mockLogger();
 
@@ -483,7 +480,7 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentPageElement cpe = new ComponentPageElementImpl(page, ins, null);
+        ComponentPageElementImpl cpe = new ComponentPageElementImpl(page, ins, null);
 
         cpe.addEmbeddedElement(child1);
 
@@ -566,7 +563,6 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
         }
 
         verify();
-
     }
 
     @Test

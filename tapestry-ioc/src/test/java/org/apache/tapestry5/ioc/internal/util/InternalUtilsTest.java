@@ -544,4 +544,21 @@ public class InternalUtilsTest extends IOCTestCase
 
         verify();
     }
+
+    @Test
+    public void keys_on_null_is_empty()
+    {
+        assertTrue(InternalUtils.keys(null).isEmpty());
+    }
+
+    @Test
+    public void keys_on_actual_map()
+    {
+        Map<String, Integer> map = CollectionFactory.newMap();
+
+        map.put("frobozz", 41);
+        map.put("gnip", 97);
+
+        assertSame(InternalUtils.keys(map), map.keySet());
+    }
 }

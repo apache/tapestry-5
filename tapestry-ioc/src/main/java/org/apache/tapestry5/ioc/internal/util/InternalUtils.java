@@ -440,6 +440,15 @@ public class InternalUtils
         return keys;
     }
 
+    public static <K, V> Set<K> keys(Map<K, V> map)
+    {
+        if (map == null)
+            return Collections.emptySet();
+
+        return map.keySet();
+    }
+
+
     /**
      * Gets a value from a map (which may be null).
      *

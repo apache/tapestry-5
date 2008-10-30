@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ import java.util.List;
  * component model is immutable. During <em>construction</em> time, when the class is being transformed and loaded, the
  * model is mutable.
  *
- * @see MutableComponentModel
+ * @see org.apache.tapestry5.model.MutableComponentModel
  */
 public interface ComponentModel
 {
@@ -44,12 +44,12 @@ public interface ComponentModel
 
     /**
      * Returns the ids of all embedded components defined within the component class (via the {@link
-     * org.apache.tapestry5.annotations.Component} annotation).
+     * org.apache.tapestry5.annotations.Component} annotation), including those defined by any super-class.
      */
     List<String> getEmbeddedComponentIds();
 
     /**
-     * Returns an embedded component.
+     * Returns an embedded component defined by this component or by a super-class.
      *
      * @param componentId the id of the embedded component
      * @return the embedded component model, or null if no component exists with that id
@@ -67,6 +67,8 @@ public interface ComponentModel
 
     /**
      * Returns object that will be used to log warnings and errors related to this component.
+     *
+     * @see org.apache.tapestry5.annotations.Log
      */
     Logger getLogger();
 

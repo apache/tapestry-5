@@ -597,7 +597,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
         this(page, null, null, null, instantiator, null, pageResources);
     }
 
-    public void addEmbeddedElement(ComponentPageElement child)
+    void addEmbeddedElement(ComponentPageElement child)
     {
         if (children == null) children = CollectionFactory.newCaseInsensitiveMap();
 
@@ -811,12 +811,11 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
 
     public ComponentPageElement getEmbeddedElement(String embeddedId)
     {
-        ComponentPageElement embeddedElement = InternalUtils.get(children, embeddedId
-                .toLowerCase());
+        ComponentPageElement embeddedElement = InternalUtils.get(children, embeddedId);
 
         if (embeddedElement == null)
         {
-            Set<String> ids = children == null ? null : children.keySet();
+            Set<String> ids = InternalUtils.keys(children);
 
             throw new TapestryException(StructureMessages.noSuchComponent(this, embeddedId, ids), this, null);
         }

@@ -71,12 +71,6 @@ public interface ComponentPageElement extends ComponentResourcesCommon, Internal
     void addBlock(String blockId, Block block);
 
     /**
-     * Adds a component to its container. The embedded component's id must be unique within the container (after the id
-     * is converted to lower case).
-     */
-    void addEmbeddedElement(ComponentPageElement child);
-
-    /**
      * Adds a mixin.
      *
      * @param instantiator used to instantiate an instance of the mixin

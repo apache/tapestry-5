@@ -441,24 +441,22 @@ class PageLoaderProcessor
         // Pre-allocate ids to avoid later name collisions.
 
         // Don't have a case-insensitive Set, so we'll make due with a Map
-        Map<String, Boolean> embeddedIds = CollectionFactory.newCaseInsensitiveMap();
-
-        for (String id : loadingComponentModel.getEmbeddedComponentIds())
-            embeddedIds.put(id, true);
+        Map<String, Boolean> embeddedIds = collectedEmbeddedComponentIds(loadingComponentModel);
 
         idAllocator.clear();
 
-        for (String id : template.getComponentIds())
+        final Map<String, Location> componentIdsMap = template.getComponentIds();
+
+        for (String id : componentIdsMap.keySet())
         {
             idAllocator.allocateId(id);
             embeddedIds.remove(id);
         }
 
         if (!embeddedIds.isEmpty())
-            throw new TapestryException(
-                    ServicesMessages.embeddedComponentsNotInTemplate(embeddedIds.keySet(), componentClassName),
-                    loadingElement.getLocation(),
-                    null);
+            throw new RuntimeException(
+                    ServicesMessages.embeddedComponentsNotInTemplate(embeddedIds.keySet(), componentClassName,
+                                                                     template.getResource()));
 
         addAttributesAsComponentBindings = false;
 
@@ -546,6 +544,23 @@ class PageLoaderProcessor
         // as the ComponentTemplate is valid.
     }
 
+    /**
+     * Returns a pseudo-set (a case insensitive map where the values are always true) for all the embedded component ids
+     * in the component.
+     *
+     * @param componentModel
+     * @return map whose keys are the embedded component ids
+     */
+    private Map<String, Boolean> collectedEmbeddedComponentIds(ComponentModel componentModel)
+    {
+        Map<String, Boolean> result = CollectionFactory.newCaseInsensitiveMap();
+
+        for (String id : componentModel.getEmbeddedComponentIds())
+            result.put(id, true);
+
+        return result;
+    }
+
     private void cdata(CDATAToken token)
     {
         final String content = token.getContent();
@@ -624,16 +639,18 @@ class PageLoaderProcessor
         // Initial guess: the type from the token (but this may be null in many cases).
         String embeddedType = token.getComponentType();
 
+        // This may be null for an anonymous component.
         String embeddedId = token.getId();
 
         String embeddedComponentClassName = null;
 
+        final EmbeddedComponentModel embeddedModel = embeddedId == null
+                                                     ? null
+                                                     : loadingComponentModel.getEmbeddedComponentModel(embeddedId);
+
         // We know that if embeddedId is null, embeddedType is not.
 
         if (embeddedId == null) embeddedId = generateEmbeddedId(embeddedType, idAllocator);
-
-        final EmbeddedComponentModel embeddedModel = loadingComponentModel
-                .getEmbeddedComponentModel(embeddedId);
 
         if (embeddedModel != null)
         {
@@ -647,7 +664,10 @@ class PageLoaderProcessor
             embeddedComponentClassName = embeddedModel.getComponentClassName();
         }
 
-        if (InternalUtils.isBlank(embeddedType) && InternalUtils.isBlank(embeddedComponentClassName))
+        // We only have the embeddedModel if the embeddedId was specified.  If embeddedType was ommitted
+        // and
+
+        if (InternalUtils.isBlank(embeddedType) && embeddedModel == null)
             throw new TapestryException(
                     ServicesMessages.noTypeForEmbeddedComponent(embeddedId,
                                                                 loadingComponentModel.getComponentClassName()),
