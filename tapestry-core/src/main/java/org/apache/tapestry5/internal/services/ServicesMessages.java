@@ -130,10 +130,11 @@ class ServicesMessages
         return MESSAGES.format("no-type-for-embedded-component", embeddedId, componentClassName);
     }
 
-    static String embeddedComponentsNotInTemplate(Collection<String> ids, String componentClassName)
+    static String embeddedComponentsNotInTemplate(Collection<String> ids, String componentClassName,
+                                                  Resource templateResource)
     {
         return MESSAGES.format("embedded-components-not-in-template", InternalUtils.joinSorted(ids),
-                               componentClassName);
+                               componentClassName, InternalUtils.lastTerm(componentClassName), templateResource);
     }
 
     static String bindingSourceFailure(String expression, Throwable cause)

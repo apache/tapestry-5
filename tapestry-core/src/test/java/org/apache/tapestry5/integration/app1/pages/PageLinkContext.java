@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,14 +17,17 @@ package org.apache.tapestry5.integration.app1.pages;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.ioc.annotations.Inject;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class PageLinkContext
 {
     @Inject
     private ComponentResources resources;
 
-    public Object[] getComputedContext()
+    public List getComputedContext()
     {
-        return new Object[] { "fred", 7, true };
+        return Arrays.asList("fred", 7, true);
     }
 
     public String getUnsafeCharacters()
@@ -39,7 +42,6 @@ public class PageLinkContext
 
     Object onActionFromNullContext()
     {
-        return resources.createPageLink("target", true, new Object[] { null });
+        return resources.createPageLink("target", true, new Object[] {null});
     }
-
 }

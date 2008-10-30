@@ -21,6 +21,7 @@ import org.apache.tapestry5.internal.parser.ComponentTemplate;
 import org.apache.tapestry5.internal.parser.TemplateToken;
 import org.apache.tapestry5.internal.util.MultiKey;
 import org.apache.tapestry5.internal.util.URLChangeTracker;
+import org.apache.tapestry5.ioc.Location;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.model.ComponentModel;
@@ -28,7 +29,6 @@ import org.apache.tapestry5.model.ComponentModel;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Service implementation that manages a cache of parsed component templates.
@@ -56,7 +56,7 @@ public final class ComponentTemplateSourceImpl extends InvalidationEventHubImpl 
 
     private final ComponentTemplate missingTemplate = new ComponentTemplate()
     {
-        public Set<String> getComponentIds()
+        public Map<String, Location> getComponentIds()
         {
             return null;
         }

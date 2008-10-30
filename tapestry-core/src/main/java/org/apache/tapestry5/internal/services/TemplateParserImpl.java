@@ -22,7 +22,6 @@ import org.apache.tapestry5.ioc.ScopeConstants;
 import org.apache.tapestry5.ioc.annotations.Scope;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newList;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.LocationImpl;
 import org.apache.tapestry5.ioc.internal.util.TapestryException;
@@ -36,7 +35,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -100,11 +98,11 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
      * events, we need to accumlate the {@link org.apache.tapestry5.internal.parser.DefineNamespacePrefixToken}s ahead
      * of time to get the correct ordering in the output tokens list.
      */
-    private final List<DefineNamespacePrefixToken> defineNamespaceTokens = newList();
+    private final List<DefineNamespacePrefixToken> defineNamespaceTokens = CollectionFactory.newList();
 
     // Non-blank ids from start component elements
 
-    private final Set<String> componentIds = CollectionFactory.newSet();
+    private final Map<String, Location> componentIds = CollectionFactory.newMap();
 
     // Used to accumulate text provided by the characters() method. Even contiguous characters may
     // be broken up across multiple invocations due to parser internals. We accumulate those
@@ -532,7 +530,8 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
      * @param namespaceURI   the namespace URI for the element (or the empty string)
      * @param elementName    the name of the element (to be assigned to the new token), may be null for a component in
      *                       the Tapestry namespace
-     * @param identifiedType the type of the element, usually null, but may be the component type derived from
+     * @param identifiedType the type of the element, usually null, but may be the component type derived from elewment
+     *                       name
      */
     private void startPossibleComponent(Attributes attributes, String namespaceURI, String elementName,
                                         String identifiedType)
@@ -547,7 +546,7 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
         String mixins = null;
         int count = attributes.getLength();
         Location location = getCurrentLocation();
-        List<TemplateToken> attributeTokens = newList();
+        List<TemplateToken> attributeTokens = CollectionFactory.newList();
 
         for (int i = 0; i < count; i++)
         {
@@ -614,7 +613,8 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
 
         tokens.addAll(attributeTokens);
 
-        if (id != null) componentIds.add(id);
+        if (id != null)
+            componentIds.put(id, location);
 
         // TODO: Is there value in having different end elements for components vs. ordinary
         // elements?

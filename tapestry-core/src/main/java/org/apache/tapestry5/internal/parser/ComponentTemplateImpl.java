@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,12 +14,13 @@
 
 package org.apache.tapestry5.internal.parser;
 
+import org.apache.tapestry5.ioc.Location;
 import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newList;
-import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newSet;
 
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
 public class ComponentTemplateImpl implements ComponentTemplate
 {
@@ -27,7 +28,7 @@ public class ComponentTemplateImpl implements ComponentTemplate
 
     private final List<TemplateToken> tokens;
 
-    private final Set<String> componentIds;
+    private final Map<String, Location> componentIds;
 
     /**
      * @param resource     the resource from which the template was parsed
@@ -35,11 +36,11 @@ public class ComponentTemplateImpl implements ComponentTemplate
      * @param componentIds ids of components defined in the template
      */
     public ComponentTemplateImpl(Resource resource, List<TemplateToken> tokens,
-                                 Set<String> componentIds)
+                                 Map<String, Location> componentIds)
     {
         this.resource = resource;
         this.tokens = newList(tokens);
-        this.componentIds = newSet(componentIds);
+        this.componentIds = CollectionFactory.newMap(componentIds);
     }
 
     public Resource getResource()
@@ -52,7 +53,7 @@ public class ComponentTemplateImpl implements ComponentTemplate
         return tokens;
     }
 
-    public Set<String> getComponentIds()
+    public Map<String, Location> getComponentIds()
     {
         return componentIds;
     }
@@ -64,5 +65,4 @@ public class ComponentTemplateImpl implements ComponentTemplate
     {
         return false;
     }
-
 }
