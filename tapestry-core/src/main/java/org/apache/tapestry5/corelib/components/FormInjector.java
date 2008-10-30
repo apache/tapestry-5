@@ -35,7 +35,6 @@ import org.apache.tapestry5.services.*;
 import org.slf4j.Logger;
 
 import java.io.IOException;
-import java.util.List;
 
 /**
  * A way to add new content to an existing Form. The FormInjector emulates its tag from the template (or uses a
@@ -61,7 +60,7 @@ public class FormInjector implements ClientElement
      * methods.
      */
     @Parameter
-    private List<?> context;
+    private Object[] context;
 
     @Parameter(defaultPrefix = BindingConstants.LITERAL, value = "above")
     private InsertPosition position;
@@ -129,16 +128,13 @@ public class FormInjector implements ClientElement
     {
         clientId = renderSupport.allocateClientId(resources);
 
-        clientElement = writer.element(element,
-
-                                       "id", clientId);
+        clientElement = writer.element(element, "id", clientId);
 
         resources.renderInformalParameters(writer);
 
         // Now work on the JavaScript side of things.
 
-        Link link = resources.createEventLink(INJECT_EVENT,
-                                              context == null ? new Object[0] : context.toArray());
+        Link link = resources.createEventLink(INJECT_EVENT, context);
 
         link.addParameter(FORM_CLIENTID_PARAMETER, formSupport.getClientId());
         link.addParameter(FORM_COMPONENTID_PARAMETER, formSupport.getFormComponentId());

@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,18 +14,19 @@
 
 package org.apache.tapestry5;
 
-import org.apache.tapestry5.corelib.components.Loop;
-
 import java.io.Serializable;
 import java.util.List;
 
 /**
- * Used by {@link Loop} and similar components to extract out an identifier, here termed a "primary key", that can be
- * stored on the client and later used to recover the same, or equivalent, server side object.
+ * Used by {@link org.apache.tapestry5.corelib.components.Loop}, {@link org.apache.tapestry5.corelib.components.AjaxFormLoop}
+ * and similar components to extract out an identifier, here termed a "primary key", that can be stored on the client
+ * and later used to recover the same, or equivalent, server side object.
+ * <p/>
+ * The {@link org.apache.tapestry5.util.DefaultPrimaryKeyEncoder} implementation is used in most circumstances.
  *
  * @param <K> the type of the primary key, used to identify the value (which must be serializable)
  * @param <V> the type of value identified by the key
- * @see ValueEncoder
+ * @see org.apache.tapestry5.ValueEncoder
  */
 public interface PrimaryKeyEncoder<K extends Serializable, V>
 {

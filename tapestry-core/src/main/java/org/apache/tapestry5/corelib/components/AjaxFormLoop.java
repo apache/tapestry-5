@@ -29,12 +29,17 @@ import org.apache.tapestry5.services.*;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.List;
 
 /**
  * A special form of the {@link org.apache.tapestry5.corelib.components.Loop} component that adds a lot of Ajax support
  * to handle adding new rows and removing existing rows dynamically.  Expects that the values being iterated over are
  * entities that can be identified via a {@link org.apache.tapestry5.PrimaryKeyEncoder}.
+ * <p/>
+ * Works with {@link org.apache.tapestry5.corelib.components.AddRowLink} and {@link
+ * org.apache.tapestry5.corelib.components.RemoveRowLink} components.
+ *
+ * @see org.apache.tapestry5.EventConstants#ADD_ROW
+ * @see org.apache.tapestry5.EventConstants#REMOVE_ROW
  */
 public class AjaxFormLoop
 {
@@ -65,7 +70,7 @@ public class AjaxFormLoop
      * handler methods.
      */
     @Parameter
-    private List<?> context;
+    private Object[] context;
 
 
     /**
@@ -379,7 +384,7 @@ public class AjaxFormLoop
             }
         };
 
-        resources.triggerContextEvent("addRow", context, callback);
+        resources.triggerContextEvent(EventConstants.ADD_ROW, context, callback);
 
         if (value == null)
             throw new IllegalArgumentException(
@@ -414,7 +419,7 @@ public class AjaxFormLoop
 
         Object value = encoder.toValue(coerced);
 
-        resources.triggerEvent("removeRow", new Object[] {value}, null);
+        resources.triggerEvent(EventConstants.REMOVE_ROW, new Object[] {value}, null);
 
         return new JSONObject();
     }

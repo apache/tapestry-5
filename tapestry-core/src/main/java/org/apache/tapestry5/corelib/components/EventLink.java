@@ -49,6 +49,7 @@ public class EventLink extends AbstractComponentEventLink
         return resources.getId();
     }
 
+    @Override
     protected Link createLink(Object[] eventContext)
     {
         ComponentResources containerResources = resources.getContainerResources();

@@ -28,9 +28,9 @@ public class ActionLink extends AbstractComponentEventLink
     @Inject
     private ComponentResources resources;
 
+    @Override
     protected Link createLink(Object[] contextArray)
     {
         return resources.createEventLink(EventConstants.ACTION, contextArray);
     }
-
 }
