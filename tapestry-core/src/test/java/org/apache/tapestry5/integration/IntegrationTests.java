@@ -2400,4 +2400,26 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         assertTextPresent(
                 "Embedded component(s) form are defined within component class org.apache.tapestry5.integration.app1.pages.ComponentsNotInTemplateDemo");
     }
+
+    /**
+     * TAP5-87
+     */
+    public void blank_password_does_not_update()
+    {
+        start("Blank Password Demo");
+
+        type("password", "secret");
+
+        clickAndWait(SUBMIT);
+
+        assertFieldValue("password", "");
+
+        assertText("visiblepassword", "secret");
+
+        clickAndWait(SUBMIT);
+
+        assertFieldValue("password", "");
+
+        assertText("visiblepassword", "secret");
+    }
 }

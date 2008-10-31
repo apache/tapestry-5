@@ -19,7 +19,8 @@ import org.apache.tapestry5.corelib.base.AbstractTextField;
 
 /**
  * A version of {@link TextField}, but rendered out as an &lt;input type="password"&gt; element. Further, the output
- * value for a PasswordField is always blank.
+ * value for a PasswordField is always blank.  When the value provided to the PasswordField is blank, it does not update
+ * its property (care should be taken that the "required" validator not be used in that case).
  * <p/>
  * Includes the <code>size</code> attribute, if a {@link org.apache.tapestry5.beaneditor.Width} annotation is present on
  * the property bound to the value parameter.
@@ -43,9 +44,21 @@ public class PasswordField extends AbstractTextField
                        "size", getWidth());
     }
 
+
     final void afterRender(MarkupWriter writer)
     {
         writer.end(); // input
     }
 
+    /**
+     * Returns true, blank input should be ignored and not cause an update to the server-side property bound to the
+     * value parameter.
+     *
+     * @return true
+     */
+    @Override
+    protected boolean ignoreBlankInput()
+    {
+        return true;
+    }
 }
