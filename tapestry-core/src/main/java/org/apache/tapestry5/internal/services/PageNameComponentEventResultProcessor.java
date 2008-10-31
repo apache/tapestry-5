@@ -23,13 +23,14 @@ import java.io.IOException;
  * Used when a component event handler returns a string value. The value is interpreted as the logical name of a page. A
  * link to the page will be sent as a redirect.
  */
-public class StringResultProcessor implements ComponentEventResultProcessor<String>
+public class PageNameComponentEventResultProcessor implements ComponentEventResultProcessor<String>
 {
     private final RequestPageCache requestPageCache;
 
     private final ActionRenderResponseGenerator generator;
 
-    public StringResultProcessor(RequestPageCache requestPageCache, ActionRenderResponseGenerator generator)
+    public PageNameComponentEventResultProcessor(RequestPageCache requestPageCache,
+                                                 ActionRenderResponseGenerator generator)
     {
         this.requestPageCache = requestPageCache;
         this.generator = generator;
@@ -41,5 +42,4 @@ public class StringResultProcessor implements ComponentEventResultProcessor<Stri
 
         generator.generateResponse(page);
     }
-
 }

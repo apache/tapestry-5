@@ -1270,9 +1270,19 @@ Tapestry.Zone = Class.create({
      */
     processReply : function(reply)
     {
-        this.show(reply.content);
+        var redirect = reply.redirectURL;
 
-        Tapestry.processScriptInReply(reply);
+        if (redirect)
+        {
+            window.location.pathname = redirect;
+        }
+        else
+        {
+
+            this.show(reply.content);
+
+            Tapestry.processScriptInReply(reply);
+        }
     },
 
     /** Initiates an Ajax request to update this zone by sending a request

@@ -36,21 +36,24 @@ public class AjaxComponentInstanceEventResultProcessorTest extends InternalBaseT
         Page page = mockPage();
         ComponentResources resources = mockComponentResources();
         Component component = mockComponent();
+        Component pageComponent = mockComponent();
+
         ComponentPageElement element = mockComponentPageElement();
-        PageRenderQueue queue = mockPageRenderQueue();
+        ComponentEventResultProcessor master = mockComponentEventResultProcessor();
 
         train_getComponentResources(component, resources);
+        train_getPage(resources, pageComponent);
         train_getPageName(resources, pageName);
         train_get(cache, pageName, page);
         train_getNestedId(resources, nestedId);
         train_getComponentElementByNestedId(page, nestedId, element);
 
-        queue.initializeForPartialPageRender(element);
+        master.processResultValue(element);
 
         replay();
 
         ComponentEventResultProcessor<Component> processor = new AjaxComponentInstanceEventResultProcessor(
-                cache, queue);
+                cache, master);
 
         processor.processResultValue(component);
 
@@ -63,25 +66,22 @@ public class AjaxComponentInstanceEventResultProcessorTest extends InternalBaseT
         String pageName = "Biff";
 
         RequestPageCache cache = mockRequestPageCache();
-        Page page = mockPage();
         ComponentResources resources = mockComponentResources();
         Component component = mockComponent();
-        ComponentPageElement element = mockComponentPageElement();
         PageRenderQueue queue = mockPageRenderQueue();
+        ComponentEventResultProcessor master = mockComponentEventResultProcessor();
 
         train_getComponentResources(component, resources);
+        train_getPage(resources, component);
         train_getPageName(resources, pageName);
-        train_get(cache, pageName, page);
-        train_getNestedId(resources, null);
-        train_getRootElement(page, element);
 
-        queue.initializeForPartialPageRender(element);
+        master.processResultValue(pageName);
 
         replay();
 
         ComponentEventResultProcessor<Component> processor = new AjaxComponentInstanceEventResultProcessor(
                 cache,
-                queue);
+                master);
 
         processor.processResultValue(component);
 

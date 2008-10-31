@@ -2422,4 +2422,16 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         assertText("visiblepassword", "secret");
     }
+
+    /**
+     * TAP5-187
+     */
+    public void zone_redirect_by_class()
+    {
+        start("Zone Demo");
+
+        clickAndWait("link=Perform a redirect to another page");
+
+        assertText("activePageName", "nested/AssetDemo");
+    }
 }
