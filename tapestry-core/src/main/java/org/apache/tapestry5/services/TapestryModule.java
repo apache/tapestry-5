@@ -1469,6 +1469,9 @@ public final class TapestryModule
                                          @Symbol(SymbolConstants.PRODUCTION_MODE)
                                          final boolean productionMode,
 
+                                         @Symbol(SymbolConstants.SCRIPTS_AT_TOP)
+                                         final boolean scriptsAtTop,
+
                                          @Path("${tapestry.default-stylesheet}")
                                          final Asset stylesheetAsset,
 
@@ -1485,7 +1488,7 @@ public final class TapestryModule
         {
             public void renderMarkup(MarkupWriter writer, MarkupRenderer renderer)
             {
-                DocumentLinkerImpl linker = new DocumentLinkerImpl(productionMode);
+                DocumentLinkerImpl linker = new DocumentLinkerImpl(productionMode, scriptsAtTop);
 
                 RenderSupportImpl support = new RenderSupportImpl(linker, symbolSource, assetSource,
 
@@ -1858,6 +1861,8 @@ public final class TapestryModule
                           "WEB-INF/${" + InternalConstants.TAPESTRY_APP_NAME_SYMBOL + "}.properties");
 
         configuration.add(SymbolConstants.EXCEPTION_REPORT_PAGE, "ExceptionReport");
+
+        configuration.add(SymbolConstants.SCRIPTS_AT_TOP, "false");
     }
 
 
@@ -2049,9 +2054,9 @@ public final class TapestryModule
     /**
      * Contributes filters: <dl> <dt>Ajax</dt> <dd>Determines if the request is Ajax oriented, and redirects to an
      * alternative handler if so</dd> <dt>ImmediateRender</dt> <dd>When {@linkplain
-     * org.apache.tapestry5.SymbolConstants#SUPPRESS_REDIRECT_FROM_ACTION_REQUESTS immediate action response rendering}
-     * is enabled, generates the markup response (instead of a page redirect response, which is the normal behavior)
-     * </dd> <dt>Secure</dt> <dd>Sends a redirect if an non-secure request accesses a secure page</dd></dl>
+     * SymbolConstants#SUPPRESS_REDIRECT_FROM_ACTION_REQUESTS immediate action response rendering} is enabled, generates
+     * the markup response (instead of a page redirect response, which is the normal behavior) </dd> <dt>Secure</dt>
+     * <dd>Sends a redirect if an non-secure request accesses a secure page</dd></dl>
      */
     public void contributeComponentEventRequestHandler(OrderedConfiguration<ComponentEventRequestFilter> configuration,
                                                        final RequestSecurityManager requestSecurityManager,
