@@ -1165,4 +1165,9 @@ public abstract class TapestryTestCase extends IOCTestCase
     {
         expect(source.createEditModel(beanClass, messages)).andReturn(model);
     }
+
+    protected final ComponentEventResultProcessor mockComponentEventResultProcessor()
+    {
+        return newMock(ComponentEventResultProcessor.class);
+    }
 }

@@ -18,6 +18,7 @@ import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.internal.structure.Page;
 import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.runtime.RenderCommand;
+import org.apache.tapestry5.services.Ajax;
 import org.apache.tapestry5.services.ComponentEventResultProcessor;
 
 import java.io.IOException;
@@ -29,29 +30,39 @@ public class AjaxComponentInstanceEventResultProcessor implements ComponentEvent
 {
     private final RequestPageCache cache;
 
-    private final PageRenderQueue pageRenderQueue;
+    private final ComponentEventResultProcessor masterProcessor;
 
-    public AjaxComponentInstanceEventResultProcessor(RequestPageCache cache, PageRenderQueue pageRenderQueue)
+    public AjaxComponentInstanceEventResultProcessor(RequestPageCache cache,
+                                                     @Ajax ComponentEventResultProcessor masterProcessor)
     {
         this.cache = cache;
-        this.pageRenderQueue = pageRenderQueue;
+        this.masterProcessor = masterProcessor;
     }
 
     public void processResultValue(Component value) throws IOException
     {
         ComponentResources resources = value.getComponentResources();
 
+        boolean isPage = value == resources.getPage();
+
         String pageName = resources.getPageName();
+
+        if (isPage)
+        {
+            // This will ultimately send a JSON response to redirect to the page
+
+            masterProcessor.processResultValue(pageName);
+            return;
+        }
+
+        // Otherwise, a component within a page.
 
         Page page = cache.get(pageName);
 
         String nestedId = resources.getNestedId();
 
-        // The user may return a complete page instance, which isn't really a partial render, I guess.
-        // Depends on the structure of the page returned.
+        RenderCommand command = page.getComponentElementByNestedId(nestedId);
 
-        RenderCommand command = nestedId == null ? page.getRootElement() : page.getComponentElementByNestedId(nestedId);
-
-        pageRenderQueue.initializeForPartialPageRender(command);
+        masterProcessor.processResultValue(command);
     }
 }

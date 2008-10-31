@@ -68,6 +68,9 @@ Third Party Libraries, Tutorials and Resources
 
 New And Of Note
 
+  * Event handler methods for Ajax requests may now return a page name, page class or page instance to force
+    the browser to redirect to the page.
+
   * The Inject and InjectService annotations may now be used on fields of service implementations or other
     objects constructed by the IoC container. In the past, injections only occured through method or
     constructor parameters.

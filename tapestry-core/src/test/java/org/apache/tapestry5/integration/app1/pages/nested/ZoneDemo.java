@@ -123,4 +123,9 @@ public class ZoneDemo
     void onSelectedFromVoteNo() { vote = "No"; }
 
     Object onSuccessFromVote() { return voteOutput; }
+
+    Object onActionFromRedirect()
+    {
+        return AssetDemo.class;
+    }
 }

@@ -1322,9 +1322,7 @@ public final class TapestryModule
             @InjectService("ComponentInstanceResultProcessor")
             ComponentEventResultProcessor componentInstanceProcessor,
 
-            ComponentClassResolver componentClassResolver,
-
-            final RequestPageCache requestPageCache,
+            ObjectLocator locator,
 
             MappedConfiguration<Class, ComponentEventResultProcessor> configuration)
     {
@@ -1344,24 +1342,27 @@ public final class TapestryModule
             }
         });
 
-        configuration.add(String.class, new StringResultProcessor(requestPageCache, actionRenderResponseGenerator));
+        configuration.add(String.class, locator.autobuild(PageNameComponentEventResultProcessor.class));
 
-        configuration.add(Class.class, new ClassResultProcessor(componentClassResolver, requestPageCache,
-                                                                actionRenderResponseGenerator));
+        configuration.add(Class.class, locator.autobuild(ClassResultProcessor.class));
 
         configuration.add(Component.class, componentInstanceProcessor);
 
-        configuration.add(StreamResponse.class, new StreamResponseResultProcessor(response));
+        configuration.add(StreamResponse.class, locator.autobuild(StreamResponseResultProcessor.class));
     }
 
 
     /**
      * Contributes handlers for the following types: <dl> <dt>Object</dt> <dd>Failure case, added to provide more useful
      * exception message</dd> <dt>{@link RenderCommand}</dt> <dd>Typically, a {@link org.apache.tapestry5.Block}</dd>
-     * <dt>{@link Component}</dt> <dd>Renders the component and its body</dd> <dt>{@link
-     * org.apache.tapestry5.json.JSONObject} or {@link org.apache.tapestry5.json.JSONArray}</dt> <dd>The JSONObject is
-     * returned as a text/javascript response</dd> <dt>{@link org.apache.tapestry5.StreamResponse}</dt> <dd>The stream
-     * response is sent as the actual response</dd> </dl>
+     * <dt>{@link org.apache.tapestry5.annotations.Component}</dt> <dd>Renders the component and its body (unless its a
+     * page, in which case a redirect JSON response is sent)</dd> <dt>{@link org.apache.tapestry5.json.JSONObject} or
+     * {@link org.apache.tapestry5.json.JSONArray}</dt> <dd>The JSONObject is returned as a text/javascript
+     * response</dd> <dt>{@link org.apache.tapestry5.StreamResponse}</dt> <dd>The stream response is sent as the actual
+     * response</dd> <dt>String</dt> <dd>Interprets the value as a logical page name and sends a client response to
+     * redirect to that page</dd> <dt>{@link org.apache.tapestry5.Link}</dt> <dd>Sends a JSON response to redirect to
+     * the link</dd> <dt>{@link Class}</dt> <dd>Treats the class as a page class and sends a redirect for a page render
+     * for that page</dd> </dl>
      */
 
     public void contributeAjaxComponentEventResultProcessor(
@@ -1372,6 +1373,9 @@ public final class TapestryModule
         configuration.add(JSONObject.class, locator.autobuild(JSONObjectEventResultProcessor.class));
         configuration.add(JSONArray.class, locator.autobuild(JSONArrayEventResultProcessor.class));
         configuration.add(StreamResponse.class, new StreamResponseResultProcessor(response));
+        configuration.add(String.class, locator.autobuild(AjaxPageNameComponentEventResultProcessor.class));
+        configuration.add(Link.class, locator.autobuild(AjaxLinkComponentEventResultProcessor.class));
+        configuration.add(Class.class, locator.autobuild(AjaxPageClassComponentEventResultProcessor.class));
     }
 
     /**

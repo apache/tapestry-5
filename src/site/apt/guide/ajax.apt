@@ -249,6 +249,12 @@ Ajax Components and Mixins
   This return value should be an injected component or block.  The value will be rendered, and that
   markup will be used on the client side to update the Zone's \<div\>.
 
+  An event handler may return a
+  {{{../apidocs/org/apache/tapestry5/Link.html}Link}} and the client will be redirected to that link.
+
+  Returning a page name (as a String), or a page class, or a page instance will also send a redirect
+  to the indicated page.
+
 ** Graceful Degradation
 
   Users who do not have JavaScript enabled may click ActionLinks that are configured to update a Zone.
