@@ -20,6 +20,7 @@ import org.apache.tapestry5.beaneditor.Width;
 import org.apache.tapestry5.corelib.mixins.RenderDisabled;
 import org.apache.tapestry5.ioc.AnnotationProvider;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.services.ComponentDefaultProvider;
 import org.apache.tapestry5.services.Request;
 
@@ -202,12 +203,25 @@ public abstract class AbstractTextField extends AbstractField
 
             fieldValidationSupport.validate(translated, resources, validate);
 
-            value = translated;
+            // If the value provided is blank and we're ignoring blank input (i.e. PasswordField),
+            // then don't update the value parameter.
+
+            if (!(ignoreBlankInput() && InternalUtils.isBlank(rawValue)))
+                value = translated;
         }
         catch (ValidationException ex)
         {
             tracker.recordError(this, ex.getMessage());
         }
+    }
+
+    /**
+     * Should blank input be ignored (after validation)?  This will be true for {@link
+     * org.apache.tapestry5.corelib.components.PasswordField}.
+     */
+    protected boolean ignoreBlankInput()
+    {
+        return false;
     }
 
     @Override

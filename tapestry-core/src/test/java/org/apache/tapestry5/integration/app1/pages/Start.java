@@ -65,6 +65,9 @@ public class Start
 
     private static final List<Item> ITEMS = CollectionFactory.newList(
 
+            new Item("BlankPasswordDemo", "Blank Password Demo",
+                     "Show that a blank value in a PasswordField does not update the server side value."),
+
             new Item("GridFormEncoderDemo", "Grid Form Encoder Demo",
                      "Grid inside a Form using the PrimaryKeyEncoder option"),
 
