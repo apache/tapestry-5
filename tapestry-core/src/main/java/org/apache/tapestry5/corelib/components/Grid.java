@@ -400,7 +400,14 @@ public class Grid implements GridModel
         return new DefaultGridSortModel();
     }
 
-    Binding defaultModel()
+    /**
+     * Returns a {@link org.apache.tapestry5.Binding} instance that attempts to identify the model from the source
+     * parameter (via {@link org.apache.tapestry5.grid.GridDataSource#getRowType()}. Subclasses may override to provide
+     * a different mechanism.  The returning binding is variant (not invariant).
+     *
+     * @see BeanModelSource#createDisplayModel(Class, org.apache.tapestry5.ioc.Messages)
+     */
+    protected Binding defaultModel()
     {
         return new AbstractBinding()
         {
