@@ -2434,4 +2434,16 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         assertText("activePageName", "nested/AssetDemo");
     }
+
+    /**
+     * TAP5-205
+     */
+    public void handling_of_empty_loop()
+    {
+        start("Empty Loop Demo");
+
+        assertText("first", "");
+        assertText("second", "Source is null.");
+        assertText("third", "Source is the empty list.");
+    }
 }

@@ -65,6 +65,8 @@ public class Start
 
     private static final List<Item> ITEMS = CollectionFactory.newList(
 
+            new Item("EmptyLoopDemo", "Empty Loop Demo", "Use of empty parameter with the Loop component."),
+
             new Item("BlankPasswordDemo", "Blank Password Demo",
                      "Show that a blank value in a PasswordField does not update the server side value."),
 

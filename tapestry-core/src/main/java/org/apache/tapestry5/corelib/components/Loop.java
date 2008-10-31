@@ -17,7 +17,7 @@ package org.apache.tapestry5.corelib.components;
 import org.apache.tapestry5.*;
 import org.apache.tapestry5.annotations.*;
 import org.apache.tapestry5.ioc.annotations.Inject;
-import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newList;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.services.FormSupport;
 import org.apache.tapestry5.services.Heartbeat;
 
@@ -239,6 +239,12 @@ public class Loop
     @Parameter
     private int index;
 
+    /**
+     * A Block to render instead of the loop when the source is empty.  The default is to render nothing.
+     */
+    @Parameter(defaultPrefix = BindingConstants.LITERAL)
+    private Block empty;
+
     private Iterator<?> iterator;
 
     @Environmental
@@ -248,6 +254,8 @@ public class Loop
 
     @Inject
     private ComponentResources resources;
+
+    private Block cleanupBlock;
 
 
     String defaultElement()
@@ -260,24 +268,21 @@ public class Loop
     {
         index = 0;
 
-        if (source == null) return false;
-
-        iterator = source.iterator();
+        iterator = source == null ? null : source.iterator();
 
         storeRenderStateInForm = formSupport != null && !volatileState;
 
         // Only render the body if there is something to iterate over
 
-        boolean result = iterator.hasNext();
+        boolean hasContent = iterator != null && iterator.hasNext();
 
-        if (formSupport != null && result)
+        if (formSupport != null && hasContent)
         {
-
             formSupport.store(this, volatileState ? SETUP_FOR_VOLATILE : RESET_INDEX);
 
             if (encoder != null)
             {
-                List<Serializable> keyList = newList();
+                List<Serializable> keyList = CollectionFactory.newList();
 
                 // We'll keep updating the _keyList while the Loop renders, the values will "lock
                 // down" when the Form serializes all the data.
@@ -286,7 +291,20 @@ public class Loop
             }
         }
 
-        return result;
+        cleanupBlock = hasContent ? null : empty;
+
+        // Jump directly to cleanupRender if there is no content
+
+        return hasContent;
+    }
+
+    /**
+     * Returns the empty block, or null, after the render has finished. It will only be the empty block (which itself
+     * may be null) if the source was null or empty.
+     */
+    Block cleanupRender()
+    {
+        return cleanupBlock;
     }
 
     private void prepareForKeys(List<Serializable> keys)
