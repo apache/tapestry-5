@@ -30,6 +30,43 @@ Symbols
      
   Although not shown here, it is possible to use multple symbols inside the string, or mix literal text with
   symbols.
+
+Injecting Values from Symbols
+
+  You may also inject symbol values.  For example, if you are interested in whether the application
+  is in production mode or developer mode:
+
+---
+public class MyService implements MyServiceInterface
+{
+  private boolean productionMode;
+
+  public MyService(@Value("${tapestry.production-mode}") boolean productionMode, ...)
+  {
+    this.productionMode = productionMode;
+    . . .
+----
+
+  Here Tapestry has {{{coerce.apt}coerced}} the "tapestry.production-mode" symbol to a boolean to be injected.
+
+  An alternate annotation, @Symbol, may be used:
+
+---
+public class MyService implements MyServiceInterface
+{
+  private boolean productionMode;
+
+  public MyService(@Symbol(SymbolConstants.PRODUCTION_MODE) boolean productionMode, ...)
+  {
+    this.productionMode = productionMode;
+    . . .
+----
+
+  This is very useful when a constant value is defined for the symbol; it means that the compiler can catch
+  a typo, rather than detecting it a runtime.
+    
+  <<Note:>> When injecting a symbol as a <string> into a service, you must use the @Inject annotation as well as @Value or @Symbol; otherwise
+  Tapestry will inject the service's service id.
   
 Symbol Resolution
 
@@ -47,7 +84,7 @@ Symbol Resolution
 
   The first provider allows JVM System Properties to provide symbol values.  This allows the use
   of the <<java>> command's <<-D>> option to provide runtime overrides.  This is most often used
-  when testing code, rather than in production.
+  when testing code, rather than in production.       SystemProperties is always checked first.
   
 * ApplicationDefaults
 
@@ -71,6 +108,8 @@ Symbol Resolution
   Libraries will typically set reasonable defaults as contributions to the FactoryDefaults service configuration.
   Individual applications may hard code overrides of those defaults using ApplicationDefaults.  Individual developers
   may override even those defaults by setting JVM System Properties.
+
+  FactoryDefaults is always checked last when resolving symbol names to symbol values.
   
 Recursive Symbols
 
