@@ -249,19 +249,45 @@ var Tapestry = {
     /**
      * Passed the JSON content of a Tapestry partial markup response, extracts
      * the script and stylesheet information.  JavaScript libraries and stylesheets are loaded,
-     * then any script code is evaluated.  All three keys are optional:
+     * then the callback is invoked.  All three keys are optional:
      * <dl>
+     * <dt>redirectURL</dt> <dd>URL to redirect to (in which case, the callback is not invoked)</dd>
      * <dt>scripts</dt><dd>Array of strings (URIs of scripts)</dd>
      * <dt>stylesheets</dt><dd>Array of hashes, each hash has key href and optional key media</dd>
-     * <dt>script</dt> <dd>JavaScript to be executed once all scripts are loaded</dd></dl>
+     *
+     * @param reply JSON response object from the server
+     * @param callback function invoked after the scripts have all loaded (presumably, to update the DOM)
      */
-    processScriptInReply : function(reply)
+    loadScriptsInReply : function(reply, callback)
     {
-        Tapestry.ScriptManager.addScripts(reply.scripts, reply.script);
+        var redirectURL = reply.redirectURL;
+
+        if (redirectURL)
+        {
+            window.location.pathname = redirectURL;
+
+            // Don't bother loading scripts or invoking the callback.
+
+            return;
+        }
 
         Tapestry.ScriptManager.addStylesheets(reply.stylesheets);
 
-        Tapestry.onDomLoadedCallback();
+        Tapestry.ScriptManager.addScripts(reply.scripts,
+                function()
+                {
+                    callback.call(this);
+
+                    // After the callback updates the DOM
+                    // (presumably), continue on with
+                    // evaluating the reply.script
+                    // and other final steps.
+
+                    if (reply.script) eval(reply.script);
+
+                    Tapestry.onDomLoadedCallback();
+
+                });
     },
 
     /**
@@ -270,7 +296,6 @@ var Tapestry = {
     ajaxFailureHandler : function(response)
     {
         var message = response.getHeader("X-Tapestry-ErrorMessage");
-        "A communication error with the server has occurred.";
 
         Tapestry.updateAjaxConsole("t-err", "Communication with the server failed: " + message);
 
@@ -1263,26 +1288,17 @@ Tapestry.Zone = Class.create({
     },
 
     /**
-     *  Invoked with a reply (i.e., transport.responseJSON), this updates the zone's div
+     * Invoked with a reply (i.e., transport.responseJSON), this updates the zone's div
      * and processes any JavaScript in the reply.  The response should have a
      * content key, and may have  script, scripts and stylesheets keys.
      * @param reply response in JSON format appropriate to a Tapestry.Zone
      */
     processReply : function(reply)
     {
-        var redirect = reply.redirectURL;
-
-        if (redirect)
+        Tapestry.loadScriptsInReply(reply, function()
         {
-            window.location.pathname = redirect;
-        }
-        else
-        {
-
             this.show(reply.content);
-
-            Tapestry.processScriptInReply(reply);
-        }
+        }.bind(this));
     },
 
     /** Initiates an Ajax request to update this zone by sending a request
@@ -1401,24 +1417,22 @@ Tapestry.FormInjector = Class.create({
                 var param = { };
                 param[this.below ? "after" : "before"] = newElement;
 
-                // Add the new element with the downloaded content.
+                Tapestry.loadScriptsInReply(reply, function()
+                {
+                    // Add the new element with the downloaded content.
 
-                this.element.insert(param);
+                    this.element.insert(param);
 
-                // Update the empty element with the content from the server
+                    // Update the empty element with the content from the server
 
-                newElement.update(reply.content);
+                    newElement.update(reply.content);
 
-                newElement.id = reply.elementId;
+                    newElement.id = reply.elementId;
 
-                // Handle any scripting issues.
+                    // Add some animation to reveal it all.
 
-                Tapestry.processScriptInReply(reply);
-
-                // Add some animation to reveal it all.
-
-                this.showFunc(newElement);
-
+                    this.showFunc(newElement);
+                }.bind(this));
             }.bind(this);
 
             Tapestry.ajaxRequest(this.url, successHandler);
@@ -1429,20 +1443,19 @@ Tapestry.FormInjector = Class.create({
 });
 
 /**
- * Coordinates the execution of JavaScript code blocks (via eval) with the loading
- * of an array of <script> elements.
+ * Wait for a set of JavaScript libraries to load (in terms of DOM script elements), then invokes a callback function.
  */
-Tapestry.DependentExecutor = Class.create({
+Tapestry.ScriptLoadMonitor = Class.create({
 
-    initialize : function(prereqs, dependent)
+    initialize : function(scriptElements, callback)
     {
-        this.dependent = dependent;
+        this.callback = callback;
         this.loaded = 0;
-        this.toload = prereqs.length;
+        this.toload = scriptElements.length;
 
         var executor = this;
 
-        prereqs.each(function (scriptElement)
+        scriptElements.each(function (scriptElement)
         {
             if (Prototype.Browser.IE)
             {
@@ -1464,16 +1477,20 @@ Tapestry.DependentExecutor = Class.create({
                 scriptElement.onload = executor.loadComplete.bindAsEventListener(executor, scriptElement);
             }
         });
+
+        // If no scripts to actually load, call the callback immediately.
+
+        if (this.toload == 0) this.callback.call(this);
     },
 
-    loadComplete : function(element)
+    loadComplete : function()
     {
         this.loaded++;
 
         // Evaluated the dependent script only once all the elements have loaded.
 
         if (this.loaded == this.toload)
-            eval(this.dependent);
+            this.callback.call(this);
     }
 });
 
@@ -1523,7 +1540,13 @@ Tapestry.ScriptManager = {
         return false;
     },
 
-    addScripts: function(scripts, dependent)
+    /**
+     * Add scripts, as needed, to the document, then waits for them all to load, and finally, calls
+     * the callback function.
+     * @param scripts        Array of scripts to load
+     * @param callback invoked after scripts are loaded                                
+     */
+    addScripts: function(scripts, callback)
     {
         var added = new Array();
 
@@ -1552,15 +1575,7 @@ Tapestry.ScriptManager = {
 
         }
 
-        if (!dependent) return;
-
-        if (added.length)
-        {
-            new Tapestry.DependentExecutor(added, dependent);
-            return;
-        }
-
-        eval(dependent);
+        new Tapestry.ScriptLoadMonitor(added, callback);
     },
 
     addStylesheets : function(stylesheets)

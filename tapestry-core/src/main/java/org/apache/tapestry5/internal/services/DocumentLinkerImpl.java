@@ -34,9 +34,12 @@ public class DocumentLinkerImpl implements DocumentLinker
 
     private final boolean developmentMode;
 
-    public DocumentLinkerImpl(boolean productionMode)
+    private final boolean scriptsAtTop;
+
+    public DocumentLinkerImpl(boolean productionMode, boolean scriptsAtTop)
     {
         developmentMode = !productionMode;
+        this.scriptsAtTop = scriptsAtTop;
     }
 
     public void addStylesheetLink(String styleURL, String media)
@@ -97,7 +100,7 @@ public class DocumentLinkerImpl implements DocumentLinker
 
         // TAPESTRY-2364
 
-        if (!scripts.isEmpty()) addScriptLinksForIncludedScripts(body, scripts);
+        addScriptLinksForIncludedScripts(body, scripts);
 
         addDynamicScriptBlock(body);
     }
@@ -130,16 +133,24 @@ public class DocumentLinkerImpl implements DocumentLinker
     }
 
     /**
-     * Adds a script link for each included script.  This is only invoked if there are scripts to include.
+     * Adds a script link for each included script.
      *
      * @param body    element to add the script links to
-     * @param scripts
+     * @param scripts scripts to add
      */
     protected void addScriptLinksForIncludedScripts(Element body, List<String> scripts)
     {
-        for (String scriptURL : scripts)
+        int count = scripts.size();
+
+        for (int i = 0; i < count; i++)
         {
-            body.element("script", "src", scriptURL, "type", "text/javascript");
+            String scriptURL = scripts.get(i);
+
+            Element element = scriptsAtTop
+                              ? body.elementAt(i, "script")
+                              : body.element("script");
+
+            element.attributes("src", scriptURL, "type", "text/javascript");
         }
     }
 

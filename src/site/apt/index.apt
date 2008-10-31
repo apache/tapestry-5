@@ -68,6 +68,8 @@ Third Party Libraries, Tutorials and Resources
 
 New And Of Note
 
+  * You can now configure Tapestry to move \<script\> links to the top of the page.
+
   * Event handler methods for Ajax requests may now return a page name, page class or page instance to force
     the browser to redirect to the page.
 

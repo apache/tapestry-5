@@ -91,4 +91,11 @@ public class SymbolConstants
      * This is used by the default exception report handler service.
      */
     public static final String EXCEPTION_REPORT_PAGE = "tapestry.exception-report-page";
+
+    /**
+     * If true, then links for external JavaScript libraries are placed at the top of the document (just inside the
+     * &lt;body&gt; element).  If false, the default, then the libraries are placed at the bottom of the document.
+     * Per-page initialization always goes at the bottom.
+     */
+    public static final String SCRIPTS_AT_TOP = "tapestry.script-at-top";
 }

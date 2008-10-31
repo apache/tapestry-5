@@ -223,7 +223,9 @@ Step 6: Versioning Assets
   the application was deployed as happyapp.war).
 
   Tapestry uses a far-future expiration date for classpath assets; this allows browsers to aggresively cache
-  the file, but this causes a problem should a later version of the library change the file.
+  the file, but this causes a problem should a later version of the library change the file.     This is discussed
+  in detail in
+  {{{http://developer.yahoo.com/performance/rules.html#expires}Yahoo's Performance Best Practices}}.
 
   To handle this problem, you should map your library assets to a versioned folder. This can be accomplished using
   another contribution from the HappyModule, this time to the ClasspathAssetAliasManager service
