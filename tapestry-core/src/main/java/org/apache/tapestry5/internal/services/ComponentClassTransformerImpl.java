@@ -131,7 +131,8 @@ public class ComponentClassTransformerImpl implements ComponentClassTransformer,
 
         String classname = ctClass.getName();
 
-        Logger logger = loggerSource.getLogger("tapestry.transfomer." + classname);
+        Logger transformLogger = loggerSource.getLogger("tapestry.transfomer." + classname);
+        Logger logger = loggerSource.getLogger(classname);
 
         // If the parent class is in a controlled package, it will already have been loaded and
         // transformed (that is driven by the ComponentInstantiatorSource).
@@ -175,7 +176,8 @@ public class ComponentClassTransformerImpl implements ComponentClassTransformer,
             throw new TransformationException(transformation, ex);
         }
 
-        logger.debug(TapestryMarkers.CLASS_TRANSFORMATION, "Finished class transformation: {}", transformation);
+        transformLogger.debug(TapestryMarkers.CLASS_TRANSFORMATION, "Finished class transformation: {}",
+                              transformation);
 
         nameToClassTransformation.put(classname, transformation);
         nameToComponentModel.put(classname, model);

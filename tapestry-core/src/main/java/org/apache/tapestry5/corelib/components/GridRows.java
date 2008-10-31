@@ -28,6 +28,7 @@
 package org.apache.tapestry5.corelib.components;
 
 import org.apache.tapestry5.ComponentAction;
+import org.apache.tapestry5.PrimaryKeyEncoder;
 import org.apache.tapestry5.PropertyOverrides;
 import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.Parameter;
@@ -40,6 +41,7 @@ import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.services.FormSupport;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -50,17 +52,24 @@ import java.util.List;
  * form render and the form submission, this can cause unexpected results, including applying changes to the wrong
  * objects.
  */
+@SuppressWarnings({"unchecked"})
 public class GridRows
 {
     private int startRow;
 
-    static class SetupForRow implements ComponentAction<GridRows>
+    private boolean recordStateByIndex;
+    private boolean recordStateByEncoder;
+
+    /**
+     * This action is used when a {@link org.apache.tapestry5.PrimaryKeyEncoder} is not.
+     */
+    static class SetupForRowByIndex implements ComponentAction<GridRows>
     {
         private static final long serialVersionUID = -3216282071752371975L;
 
         private final int rowIndex;
 
-        public SetupForRow(int rowIndex)
+        public SetupForRowByIndex(int rowIndex)
         {
             this.rowIndex = rowIndex;
         }
@@ -73,7 +82,57 @@ public class GridRows
         @Override
         public String toString()
         {
-            return String.format("GridRows.SetupForRow[%d]", rowIndex);
+            return String.format("GridRows.SetupForRowByIndex[%d]", rowIndex);
+        }
+    }
+
+    /**
+     * This action is used when a {@link org.apache.tapestry5.PrimaryKeyEncoder} is provided.
+     */
+    static class SetupForRowByKey implements ComponentAction<GridRows>
+    {
+        private final Serializable rowKey;
+
+        SetupForRowByKey(Serializable rowKey)
+        {
+            this.rowKey = rowKey;
+        }
+
+        public void execute(GridRows component)
+        {
+            component.setupForRowByKey(rowKey);
+        }
+
+        @Override
+        public String toString()
+        {
+            return String.format("GridRows.SetupForRowByKey[%s]", rowKey);
+        }
+    }
+
+
+    /**
+     * This action is also associated with the {@link org.apache.tapestry5.PrimaryKeyEncoder}; it allows the PKE to be
+     * informed of the series of keys to expect with the form submission.
+     */
+    static class PrepareForKeys implements ComponentAction<GridRows>
+    {
+        private List<Serializable> storedKeys;
+
+        public PrepareForKeys(List<Serializable> storedKeys)
+        {
+            this.storedKeys = storedKeys;
+        }
+
+        public void execute(GridRows component)
+        {
+            component.prepareForKeys(storedKeys);
+        }
+
+        @Override
+        public String toString()
+        {
+            return "GridRows.PrepareForKeys" + storedKeys.toString();
         }
     }
 
@@ -133,6 +192,14 @@ public class GridRows
     private boolean volatileState;
 
     /**
+     * Changes how state is recorded into the form to store the {@linkplain org.apache.tapestry5.PrimaryKeyEncoder#toKey(Object)
+     * primary key} for each row (rather than the index), and restore the {@linkplain
+     * org.apache.tapestry5.PrimaryKeyEncoder#toValue(java.io.Serializable) row values} from the primary keys.
+     */
+    @Parameter
+    private PrimaryKeyEncoder encoder;
+
+    /**
      * Optional output parameter (only set during rendering) that identifies the current row index. This is the index on
      * the page (i.e., always numbered from zero) as opposed to the row index inside the {@link
      * org.apache.tapestry5.grid.GridDataSource}.
@@ -147,11 +214,9 @@ public class GridRows
     @Property
     private int columnIndex;
 
-
     @Environmental(false)
     private FormSupport formSupport;
 
-    private boolean recordingStateInsideForm;
 
     private int endRow;
 
@@ -164,6 +229,8 @@ public class GridRows
 
     @Property(write = false)
     private PropertyModel columnModel;
+
+    private List<Serializable> encodedPrimaryKeys;
 
     public String getRowClass()
     {
@@ -227,7 +294,20 @@ public class GridRows
 
         dataRowIndex = startRow;
 
-        recordingStateInsideForm = !volatileState && formSupport != null;
+        boolean recordingStateInsideForm = !volatileState && formSupport != null;
+
+        recordStateByIndex = recordingStateInsideForm && (encoder == null);
+        recordStateByEncoder = recordingStateInsideForm && (encoder != null);
+
+        if (recordStateByEncoder)
+        {
+            encodedPrimaryKeys = CollectionFactory.newList();
+
+            // As we render, we'll fill in encodedPrimaryKeys.  That's ok, because nothing is serialized
+            // until later.  When the form is submitted, this will give us a chance to inform
+            // the PKE about the keys to expect.
+            formSupport.store(this, new PrepareForKeys(encodedPrimaryKeys));
+        }
     }
 
     /**
@@ -238,18 +318,54 @@ public class GridRows
         row = gridModel.getDataSource().getRowValue(rowIndex);
     }
 
+    /**
+     * Callback method that bypasses the data source and converts a primary key back into a row value (via {@link
+     * org.apache.tapestry5.PrimaryKeyEncoder#toValue(java.io.Serializable)}).
+     */
+    void setupForRowByKey(Serializable rowKey)
+    {
+        row = encoder.toValue(rowKey);
+
+        if (row == null)
+            throw new IllegalArgumentException(
+                    String.format("%s returned null for key %s.", encoder, rowKey));
+    }
+
+    /**
+     * Callback method that allows the primary key encoder to prepare for the keys that will be resolved to row values
+     * in this request.
+     */
+    private void prepareForKeys(List<Serializable> storedKeys)
+    {
+        encoder.prepareForKeys(storedKeys);
+    }
+
+
     boolean beginRender()
     {
-        // When needed, store a callback used when the form is submitted.
-
-        if (recordingStateInsideForm) formSupport.store(this, new SetupForRow(dataRowIndex));
-
-        // And do it now for the render.
+        // Setup for this row.
 
         setupForRow(dataRowIndex);
 
         // Update the index parameter (which starts from zero).
         rowIndex = dataRowIndex - startRow;
+
+
+        if (row != null)
+        {
+            // When needed, store a callback used when the form is submitted.
+
+            if (recordStateByIndex)
+                formSupport.store(this, new SetupForRowByIndex(dataRowIndex));
+
+            if (recordStateByEncoder)
+            {
+                Serializable key = encoder.toKey(row);
+                encodedPrimaryKeys.add(key);
+
+                formSupport.store(this, new SetupForRowByKey(key));
+            }
+        }
 
         // If the row is null, it's because the rowIndex is too large (see the notes
         // on GridDataSource).  When row is null, return false to not render anything for this iteration

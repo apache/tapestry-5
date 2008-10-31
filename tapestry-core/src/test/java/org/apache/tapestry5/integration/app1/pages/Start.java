@@ -65,6 +65,9 @@ public class Start
 
     private static final List<Item> ITEMS = CollectionFactory.newList(
 
+            new Item("GridFormEncoderDemo", "Grid Form Encoder Demo",
+                     "Grid inside a Form using the PrimaryKeyEncoder option"),
+
             new Item("DateFieldAjaxFormLoop", "DateField inside AjaxFormLoop",
                      "Show that DateField component works correctly inside AjaxFormLoop"),
 

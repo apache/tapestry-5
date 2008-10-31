@@ -1159,6 +1159,28 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     }
 
     @Test
+    public void grid_inside_form_with_encoder()
+    {
+        start("Grid Form Encoder Demo", "reset", "2");
+
+        // The first input field is the form's hidden field.
+
+        assertFieldValue("title", "ToDo # 6");
+        assertFieldValueSeries("title_%d", 0, "ToDo # 7", "ToDo # 8", "ToDo # 9", "ToDo # 10");
+
+        type("title_0", "Cure Cancer");
+        select("urgency_0", "Top Priority");
+
+        type("title_1", "Pay Phone Bill");
+        select("urgency_1", "Low");
+
+        clickAndWait(SUBMIT);
+
+        assertFieldValueSeries("title_%d", 0, "Cure Cancer", "Pay Phone Bill");
+        assertFieldValueSeries("urgency_%d", 0, "HIGH", "LOW");
+    }
+
+    @Test
     public void missing_template_for_page()
     {
         start("Missing Template Demo");

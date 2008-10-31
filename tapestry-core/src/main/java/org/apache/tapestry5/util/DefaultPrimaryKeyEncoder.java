@@ -25,10 +25,10 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * A default, extensible version of {@link PrimaryKeyEncoder} that is based on loading known values into an internal
- * map. When there's a reasonable number (hundreds, perhaps thousands) of items to choose from, and those items are fast
- * and cheap to read and instantiate, this implementation is a good bet. For very large result sets, you'll need to
- * create your own implementation of {@link PrimaryKeyEncoder}.
+ * A default, extensible version of {@link org.apache.tapestry5.PrimaryKeyEncoder} that is based on loading known values
+ * into an internal map. When there's a reasonable number (hundreds, perhaps thousands) of items to choose from, and
+ * those items are fast and cheap to read and instantiate, this implementation is a good bet. For very large result
+ * sets, you'll need to create your own implementation of {@link PrimaryKeyEncoder}.
  *
  * @param <K> the key type (which must be serializable)
  * @param <V> the value type

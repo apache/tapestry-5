@@ -114,5 +114,10 @@ public class ToDoDatabaseImpl implements ToDoDatabase
             throw new RuntimeException(String.format("ToDoItem #%d not found.", itemId));
     }
 
+    public ToDoItem get(long itemId)
+    {
+        ToDoItem item = items.get(itemId);
 
+        return item == null ? null : item.clone();
+    }
 }
