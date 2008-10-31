@@ -1159,4 +1159,10 @@ public abstract class TapestryTestCase extends IOCTestCase
     {
         expect(link.toURI()).andReturn(URI);
     }
+
+    protected final void train_createEditModel(BeanModelSource source, Class beanClass, Messages messages,
+                                               BeanModel model)
+    {
+        expect(source.createEditModel(beanClass, messages)).andReturn(model);
+    }
 }

@@ -116,8 +116,7 @@ public class BeanDisplay
 
     void setupRender()
     {
-        if (model == null) model = modelSource.create(object.getClass(), false,
-                                                      overrides.getContainerMessages());
+        if (model == null) model = modelSource.createDisplayModel(object.getClass(), overrides.getContainerMessages());
 
         BeanModelUtils.modify(model, add, include, exclude, reorder);
     }

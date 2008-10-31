@@ -134,7 +134,7 @@ public class BeanEditForm implements ClientElement, FormValidationControl
         {
             Class beanType = resources.getBoundType("object");
 
-            model = beanModelSource.create(beanType, true, resources.getContainerMessages());
+            model = beanModelSource.createEditModel(beanType, resources.getContainerMessages());
         }
 
         BeanModelUtils.modify(model, add, include, exclude, reorder);
@@ -173,5 +173,4 @@ public class BeanEditForm implements ClientElement, FormValidationControl
     {
         form.recordError(errorMessage);
     }
-
 }

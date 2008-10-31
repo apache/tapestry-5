@@ -14,8 +14,6 @@
 
 package org.apache.tapestry5.corelib.components;
 
-import java.lang.annotation.Annotation;
-
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.PropertyOverrides;
 import org.apache.tapestry5.beaneditor.BeanModel;
@@ -30,6 +28,8 @@ import org.apache.tapestry5.test.TapestryTestCase;
 import org.easymock.EasyMock;
 import org.easymock.IArgumentMatcher;
 import org.testng.annotations.Test;
+
+import java.lang.annotation.Annotation;
 
 public class BeanEditorTest extends TapestryTestCase
 {
@@ -46,7 +46,7 @@ public class BeanEditorTest extends TapestryTestCase
 
         train_getBoundType(resources, "object", RegistrationData.class);
 
-        train_create(source, RegistrationData.class, true, messages, model);
+        train_createEditModel(source, RegistrationData.class, messages, model);
 
         train_getOverrideMessages(overrides, messages);
 
@@ -57,7 +57,7 @@ public class BeanEditorTest extends TapestryTestCase
 
         BeanEditor component = new BeanEditor();
 
-        component.inject(resources, overrides, source,env);
+        component.inject(resources, overrides, source, env);
 
         component.doPrepare();
 
@@ -83,7 +83,7 @@ public class BeanEditorTest extends TapestryTestCase
 
         train_getBoundType(resources, "object", Runnable.class);
 
-        train_create(source, Runnable.class, true, messages, model);
+        train_createEditModel(source, Runnable.class, messages, model);
 
         expect(model.newInstance()).andThrow(exception);
 
@@ -98,7 +98,7 @@ public class BeanEditorTest extends TapestryTestCase
 
         BeanEditor component = new BeanEditor();
 
-        component.inject(resources, overrides, source,env);
+        component.inject(resources, overrides, source, env);
 
         try
         {
@@ -119,7 +119,7 @@ public class BeanEditorTest extends TapestryTestCase
 
     private static BeanEditContext contextEq()
     {
-        EasyMock.reportMatcher(new IArgumentMatcher() 
+        EasyMock.reportMatcher(new IArgumentMatcher()
         {
             public void appendTo(StringBuffer buf)
             {
@@ -129,7 +129,7 @@ public class BeanEditorTest extends TapestryTestCase
             public boolean matches(Object argument)
             {
                 return (argument instanceof BeanEditContext) &&
-                       ((BeanEditContext)argument).getBeanClass() == RegistrationData.class;
+                        ((BeanEditContext) argument).getBeanClass() == RegistrationData.class;
             }
         });
 
@@ -137,7 +137,7 @@ public class BeanEditorTest extends TapestryTestCase
     }
 
     @Test
-    public void beaneditcontext_pushed_to_environment() 
+    public void beaneditcontext_pushed_to_environment()
     {
         ComponentResources resources = mockComponentResources();
         BeanModelSource source = mockBeanModelSource();
@@ -149,10 +149,10 @@ public class BeanEditorTest extends TapestryTestCase
 
         train_getBoundType(resources, "object", RegistrationData.class);
 
-        train_create(source, RegistrationData.class, true, messages, model);
+        train_createEditModel(source, RegistrationData.class, messages, model);
 
         train_getOverrideMessages(overrides, messages);
-        
+
         expect(model.newInstance()).andReturn(data);
         expect(model.getBeanType()).andReturn(RegistrationData.class);
 
@@ -174,15 +174,15 @@ public class BeanEditorTest extends TapestryTestCase
 
         BeanEditor component = new BeanEditor();
 
-        component.inject(resources, overrides, source,env);
+        component.inject(resources, overrides, source, env);
 
         component.doPrepare();
 
         verify();
     }
-    
+
     @Test
-    public void beaneditcontext_popped_from_environment() 
+    public void beaneditcontext_popped_from_environment()
     {
         ComponentResources resources = mockComponentResources();
         BeanModelSource source = mockBeanModelSource();
@@ -190,12 +190,12 @@ public class BeanEditorTest extends TapestryTestCase
         PropertyOverrides overrides = mockPropertyOverrides();
 
         expect(env.pop(BeanEditContext.class)).andReturn(null);
-        
+
         replay();
 
         BeanEditor component = new BeanEditor();
 
-        component.inject(resources, overrides, source,env);
+        component.inject(resources, overrides, source, env);
 
         component.cleanupEnvironment();
 
