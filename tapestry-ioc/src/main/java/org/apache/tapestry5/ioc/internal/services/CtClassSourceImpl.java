@@ -26,6 +26,8 @@ import java.security.ProtectionDomain;
  */
 public class CtClassSourceImpl implements CtClassSource
 {
+    private static final String WRITE_DIR = System.getProperty("javassist-write-dir");
+
     private final ClassFactoryClassPool pool;
 
     private final ClassLoader loader;
@@ -81,7 +83,6 @@ public class CtClassSourceImpl implements CtClassSource
         return pool.makeClass(name, ctSuperClass);
     }
 
-    private static final String WRITE_DIR = System.getProperty("javassist-write-dir");
 
     public Class createClass(CtClass ctClass)
     {
@@ -108,13 +109,7 @@ public class CtClassSourceImpl implements CtClassSource
     {
         try
         {
-            boolean pruning = ctClass.stopPruning(true);
-
-            ctClass.writeFile(WRITE_DIR);
-
-            ctClass.defrost();
-
-            ctClass.stopPruning(pruning);
+            ctClass.debugWriteFile(WRITE_DIR);
         }
         catch (Exception ex)
         {

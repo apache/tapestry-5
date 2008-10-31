@@ -42,8 +42,10 @@ import java.util.List;
  * A Grid may operate inside a {@link org.apache.tapestry5.corelib.components.Form}. By overriding the cell renderers of
  * properties, the default output-only behavior can be changed to produce a complex form with individual control for
  * editing properties of each row. This is currently workable but less than ideal -- if the order of rows provided by
- * the {@link GridDataSource} changes between render and form submission, then there's the possibility that data will be
- * applied to the wrong server-side objects.
+ * the {@link org.apache.tapestry5.grid.GridDataSource} changes between render and form submission, then there's the
+ * possibility that data will be applied to the wrong server-side objects. In general, when using Grid and Form
+ * together, you want to provide the Grid with a {@link org.apache.tapestry5.PrimaryKeyEncoder} (via the encoder
+ * parameter).
  *
  * @see org.apache.tapestry5.beaneditor.BeanModel
  * @see org.apache.tapestry5.services.BeanModelSource
@@ -204,6 +206,14 @@ public class Grid implements GridModel
     private boolean inPlace;
 
     /**
+     * Changes how state is recorded into the form to store the {@linkplain org.apache.tapestry5.PrimaryKeyEncoder#toKey(Object)
+     * primary key} for each row (rather than the index), and restore the {@linkplain
+     * org.apache.tapestry5.PrimaryKeyEncoder#toValue(java.io.Serializable) row values} from the primary keys.
+     */
+    @Parameter
+    private PrimaryKeyEncoder encoder;
+
+    /**
      * The name of the psuedo-zone that encloses the Grid.
      */
     @Property(write = false)
@@ -229,7 +239,6 @@ public class Grid implements GridModel
     @Environmental
     private ClientBehaviorSupport clientBehaviorSupport;
 
-    @SuppressWarnings("unused")
     @Component(
             parameters = {
                     "index=inherit:columnIndex",
@@ -238,7 +247,6 @@ public class Grid implements GridModel
                     "zone=zone"})
     private GridColumns columns;
 
-    @SuppressWarnings("unused")
     @Component(
             parameters = {
                     "rowIndex=inherit:rowIndex",
@@ -249,6 +257,7 @@ public class Grid implements GridModel
                     "row=row",
                     "overrides=overrides",
                     "volatile=inherit:volatile",
+                    "encoder=inherit:encoder",
                     "lean=inherit:lean"})
     private GridRows rows;
 
@@ -259,15 +268,12 @@ public class Grid implements GridModel
             "zone=zone"})
     private GridPager pager;
 
-    @SuppressWarnings("unused")
     @Component(parameters = "to=pagerTop")
     private Delegate pagerTop;
 
-    @SuppressWarnings("unused")
     @Component(parameters = "to=pagerBottom")
     private Delegate pagerBottom;
 
-    @SuppressWarnings("unused")
     @Component(parameters = "class=tableClass", inheritInformalParameters = true)
     private Any table;
 
@@ -297,17 +303,24 @@ public class Grid implements GridModel
     /**
      * A version of GridDataSource that caches the availableRows property. This addresses TAPESTRY-2245.
      */
-    class CachingDataSource implements GridDataSource
+    static class CachingDataSource implements GridDataSource
     {
+        private final GridDataSource delegate;
+
         private boolean availableRowsCached;
 
         private int availableRows;
+
+        CachingDataSource(GridDataSource delegate)
+        {
+            this.delegate = delegate;
+        }
 
         public int getAvailableRows()
         {
             if (!availableRowsCached)
             {
-                availableRows = source.getAvailableRows();
+                availableRows = delegate.getAvailableRows();
                 availableRowsCached = true;
             }
 
@@ -316,17 +329,17 @@ public class Grid implements GridModel
 
         public void prepare(int startIndex, int endIndex, List<SortConstraint> sortConstraints)
         {
-            source.prepare(startIndex, endIndex, sortConstraints);
+            delegate.prepare(startIndex, endIndex, sortConstraints);
         }
 
         public Object getRowValue(int index)
         {
-            return source.getRowValue(index);
+            return delegate.getRowValue(index);
         }
 
         public Class getRowType()
         {
-            return source.getRowType();
+            return delegate.getRowType();
         }
     }
 
@@ -449,7 +462,12 @@ public class Grid implements GridModel
 
     void setupDataSource()
     {
-        cachingSource = new CachingDataSource();
+        // TAP5-34: We pass the source into the CachingDataSource now; previously
+        // we were accessing source directly, but during submit the value wasn't
+        // cached, and therefore access was very inefficient, and sorting was
+        // very inconsistent during the processing of the form submission.
+
+        cachingSource = new CachingDataSource(source);
 
         int availableRows = cachingSource.getAvailableRows();
 

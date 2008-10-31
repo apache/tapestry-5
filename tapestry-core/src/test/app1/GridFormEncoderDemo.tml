@@ -1,7 +1,7 @@
 <html t:type="Border"
       xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
 
-    <h1>Grid Form Demo</h1>
+    <h1>Grid Form Encoder Demo</h1>
 
 
     <t:form>
@@ -9,6 +9,7 @@
         <t:errors/>
 
         <table t:type="Grid" source="items" row="item" pagerposition="top"
+               encoder="encoder"
                add="id" reorder="id,title,urgency"
                rowsperpage="5">
 

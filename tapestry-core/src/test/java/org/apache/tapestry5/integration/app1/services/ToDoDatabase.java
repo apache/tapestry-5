@@ -55,4 +55,9 @@ public interface ToDoDatabase
      * @throws RuntimeException if the item does not exist
      */
     void remove(long itemId);
+
+    /**
+     * Gets the item, or returns null.
+     */
+    ToDoItem get(long itemId);
 }

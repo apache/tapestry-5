@@ -3,10 +3,13 @@
         <section name="Related Components">
             <ul>
                 <li>
-                    <a href="BeanEditForm">BeanEditForm</a>
+                    <a href="BeanEditForm.html">BeanEditForm</a>
                 </li>
                 <li>
-                    <a href="BeanDisplay">BeanDisplay</a>
+                    <a href="BeanDisplay.html">BeanDisplay</a>
+                </li>
+                <li>
+                    <a href="Loop.html"></a>
                 </li>
             </ul>
         </section>
