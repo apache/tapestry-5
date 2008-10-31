@@ -192,7 +192,16 @@ public class AbstractIntegrationTestSuite extends Assert implements Selenium
 
     protected final void assertFieldValue(String locator, String expected)
     {
-        assertEquals(getValue(locator), expected);
+        try
+        {
+            assertEquals(getValue(locator), expected);
+        }
+        catch (AssertionError ex)
+        {
+            System.err.printf("%s:\n%s\n\n", ex.getMessage(), selenium.getHtmlSource());
+
+            throw ex;
+        }
     }
 
     protected final void clickAndWait(String link)
@@ -940,5 +949,4 @@ public class AbstractIntegrationTestSuite extends Assert implements Selenium
         for (String s : linkText)
             clickAndWait(String.format("link=%s", s));
     }
-
 }

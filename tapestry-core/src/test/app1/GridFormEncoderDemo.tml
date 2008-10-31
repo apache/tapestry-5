@@ -8,7 +8,7 @@
 
         <t:errors/>
 
-        <table t:type="Grid" source="items" row="item" pagerposition="top"
+        <table t:id="grid" t:type="Grid" source="items" row="item" pagerposition="top"
                encoder="encoder"
                add="id" reorder="id,title,urgency"
                rowsperpage="5">

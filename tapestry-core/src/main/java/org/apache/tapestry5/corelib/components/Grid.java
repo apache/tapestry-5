@@ -382,7 +382,7 @@ public class Grid implements GridModel
             if (sortColumnId == null)
                 return Collections.emptyList();
 
-            PropertyModel sortModel = dataModel.getById(sortColumnId);
+            PropertyModel sortModel = getDataModel().getById(sortColumnId);
 
             SortConstraint constraint = new SortConstraint(sortModel, getColumnSort());
 
@@ -404,19 +404,23 @@ public class Grid implements GridModel
     {
         return new AbstractBinding()
         {
-
             public Object get()
             {
                 // Get the default row type from the data source
 
-                Class rowType = source.getRowType();
+                GridDataSource gridDataSource = source;
 
-                if (rowType == null) throw new RuntimeException(
-                        "Unable to determine the bean type for rows from the GridDataSource. You should bind the model parameter explicitly.");
+                Class rowType = gridDataSource.getRowType();
+
+                if (rowType == null)
+                    throw new RuntimeException(
+                            String.format(
+                                    "Unable to determine the bean type for rows from %s. You should bind the model parameter explicitly.",
+                                    gridDataSource));
 
                 // Properties do not have to be read/write
 
-                return modelSource.create(rowType, false, overrides.getOverrideMessages());
+                return modelSource.createDisplayModel(rowType, overrides.getOverrideMessages());
             }
 
             /**
@@ -473,10 +477,6 @@ public class Grid implements GridModel
 
         if (availableRows == 0) return;
 
-        dataModel = model;
-
-        BeanModelUtils.modify(dataModel, add, include, exclude, reorder);
-
         int maxPage = ((availableRows - 1) / rowsPerPage) + 1;
 
         // This captures when the number of rows has decreased, typically due to deletions.
@@ -487,6 +487,8 @@ public class Grid implements GridModel
         int startIndex = (currentPage - 1) * rowsPerPage;
 
         int endIndex = Math.min(startIndex + rowsPerPage - 1, availableRows - 1);
+
+        dataModel = null;
 
         cachingSource.prepare(startIndex, endIndex, sortModel.getSortConstraints());
     }
@@ -523,6 +525,13 @@ public class Grid implements GridModel
 
     public BeanModel getDataModel()
     {
+        if (dataModel == null)
+        {
+            dataModel = model;
+
+            BeanModelUtils.modify(dataModel, add, include, exclude, reorder);
+        }
+
         return dataModel;
     }
 

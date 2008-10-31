@@ -45,6 +45,26 @@ public interface BeanModelSource
      *                                 org.apache.tapestry5.corelib.components.BeanDisplay}).
      * @param messages                 Used to find explicit overrides of
      * @return a model
+     * @deprecated use {@link #createDisplayModel(Class, org.apache.tapestry5.ioc.Messages)} or {@link
+     *             #createEditModel(Class, org.apache.tapestry5.ioc.Messages)}
      */
     <T> BeanModel<T> create(Class<T> beanClass, boolean filterReadOnlyProperties, Messages messages);
+
+    /**
+     * Creates a model for display purposes; this may include properties which are read-only.
+     *
+     * @param beanClass class of object to be edited
+     * @param messages
+     * @return a model containing properties that can be presented to the user
+     */
+    <T> BeanModel<T> createDisplayModel(Class<T> beanClass, Messages messages);
+
+    /**
+     * Creates a model for edit and update purposes, only properties that are fully read-write are included.
+     *
+     * @param beanClass class of object to be edited
+     * @param messages
+     * @return a model containing properties that can be presented to the user
+     */
+    <T> BeanModel<T> createEditModel(Class<T> beanClass, Messages messages);
 }

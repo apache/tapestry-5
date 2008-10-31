@@ -180,7 +180,7 @@ public class BeanEditor
         if (model == null)
         {
             Class type = resources.getBoundType("object");
-            model = modelSource.create(type, true, overrides.getOverrideMessages());
+            model = modelSource.createEditModel(type, overrides.getOverrideMessages());
         }
 
         BeanModelUtils.modify(model, add, include, exclude, reorder);

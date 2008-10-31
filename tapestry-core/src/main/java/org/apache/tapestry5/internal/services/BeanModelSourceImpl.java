@@ -108,7 +108,6 @@ public class BeanModelSourceImpl implements BeanModelSource
         {
             propertyNames.add(po.propertyName);
         }
-
     }
 
     private static int computeDepth(Method method)
@@ -138,6 +137,16 @@ public class BeanModelSourceImpl implements BeanModelSource
         this.classFactory = classFactory;
         this.dataTypeAnalyzer = dataTypeAnalyzer;
         this.locator = locator;
+    }
+
+    public <T> BeanModel<T> createDisplayModel(Class<T> beanClass, Messages messages)
+    {
+        return create(beanClass, false, messages);
+    }
+
+    public <T> BeanModel<T> createEditModel(Class<T> beanClass, Messages messages)
+    {
+        return create(beanClass, true, messages);
     }
 
     public <T> BeanModel<T> create(Class<T> beanClass, boolean filterReadOnlyProperties, Messages messages)

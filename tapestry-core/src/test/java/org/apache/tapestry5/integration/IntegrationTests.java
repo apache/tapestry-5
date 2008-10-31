@@ -1165,8 +1165,10 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         // The first input field is the form's hidden field.
 
-        assertFieldValue("title", "ToDo # 6");
-        assertFieldValueSeries("title_%d", 0, "ToDo # 7", "ToDo # 8", "ToDo # 9", "ToDo # 10");
+        // Note the difference: same data sorted differently (there's a default sort).
+
+        assertFieldValue("title", "ToDo # 14");
+        assertFieldValueSeries("title_%d", 0, "ToDo # 15", "ToDo # 16", "ToDo # 17", "ToDo # 18");
 
         type("title_0", "Cure Cancer");
         select("urgency_0", "Top Priority");
@@ -1176,8 +1178,15 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         clickAndWait(SUBMIT);
 
-        assertFieldValueSeries("title_%d", 0, "Cure Cancer", "Pay Phone Bill");
-        assertFieldValueSeries("urgency_%d", 0, "HIGH", "LOW");
+        // Because of the sort, the updated items shift to page #1
+
+        clickAndWait("link=1");
+
+        assertFieldValue("title", "Cure Cancer");
+        assertFieldValue("title_0", "Pay Phone Bill");
+
+        assertFieldValue("urgency", "HIGH");
+        assertFieldValue("urgency_0", "LOW");
     }
 
     @Test

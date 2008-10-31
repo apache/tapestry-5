@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -29,11 +29,6 @@ public class GridFormDemo
 
     private List<ToDoItem> items;
 
-    void onPrepare()
-    {
-        items = database.findAll();
-    }
-
     void onSuccess()
     {
         // Here's the down side: we don't have a good way of identifying just what changed.
@@ -46,6 +41,9 @@ public class GridFormDemo
 
     public List<ToDoItem> getItems()
     {
+        if (items == null)
+            items = database.findAll();
+
         return items;
     }
 

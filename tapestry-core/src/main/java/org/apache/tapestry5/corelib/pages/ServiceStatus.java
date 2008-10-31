@@ -60,7 +60,7 @@ public class ServiceStatus
     private boolean productionMode;
 
     {
-        model = source.create(ServiceActivity.class, false, messages);
+        model = source.createDisplayModel(ServiceActivity.class, messages);
 
         model.add("serviceInterface", null);
 
