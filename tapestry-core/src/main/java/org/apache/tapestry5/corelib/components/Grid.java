@@ -59,7 +59,7 @@ public class Grid implements GridModel
      * {@link GridDataSource}. For Lists and object arrays, a GridDataSource is created automatically as a wrapper
      * around the underlying List.
      */
-    @Parameter(required = true)
+    @Parameter(required = true, autoconnect = true)
     private GridDataSource source;
 
     /**
