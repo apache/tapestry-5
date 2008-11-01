@@ -203,15 +203,12 @@ public class AppPropertyEditBlocks
     @Component(parameters =
     { "value=context.propertyValue", "label=prop:context.label",
             "translate=prop:currencyTranslator", "validate=prop:currencyValidator",
-            "clientId=prop:context.propertyId" })
+            "clientId=prop:context.propertyId", "annotationProvider=context" })
     private TextField currency;
 
     @Inject
     private ComponentResources resources;
 
-    @Inject
-    private FieldTranslatorSource fieldTranslatorSource;
-    
     public FieldValidator getCurrencyValidator()
     {
       return context.getValidator(currency);
@@ -219,10 +216,7 @@ public class AppPropertyEditBlocks
     
     public FieldTranslator getCurrencyTranslator()
     {
-      Translator translator = ...;
-
-      return fieldTranslatorSource.createTranslator(currency, context.getPropertyId(), context.getContainerMessages(),
-        resources.getLocale(), context.getPropertyType(), context);
+      return context.getTranslator(current);
     }
 }
 +---+
