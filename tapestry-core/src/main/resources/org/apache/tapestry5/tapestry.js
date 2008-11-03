@@ -45,7 +45,7 @@ var Tapestry = {
      */
     FIELD_VALIDATE_EVENT : "tapestry:fieldvalidate",
 
-    /** Event, triggered on the document object, which identifies the current focus element. */
+    /** Event, triggered on the document object, which identifies the current focus input element. */
     FOCUS_CHANGE_EVENT : "tapestry:focuschange",
 
     /** When false, the default, the Tapestry.debug() function will be a no-op. */
@@ -97,7 +97,14 @@ var Tapestry = {
             {
                 element.observe("focus", function()
                 {
-                    document.fire(Tapestry.FOCUS_CHANGE_EVENT, element);
+                    if (element != Tapestry.currentFocusField)
+                    {
+                        Tapestry.debug("Focus changed to #{id}", element);
+
+                        document.fire(Tapestry.FOCUS_CHANGE_EVENT, element);
+
+                        Tapestry.currentFocusField = element;
+                    }
                 });
 
                 t.observingFocusChange = true;
@@ -105,8 +112,8 @@ var Tapestry = {
         });
 
         // When a submit element is clicked, record the name of the element
-        // on the associated form. This is necessary for some Ajax processing
-        // TAPESTRY-2324.
+        // on the associated form. This is necessary for some Ajax processing,
+        // see TAPESTRY-2324.
 
         $$("INPUT[type=submit]").each(function(element)
         {
@@ -949,16 +956,16 @@ Tapestry.ErrorPopup = Class.create({
                 return;
             }
 
-            var focused = event.memo;
-
-            if (focused == this.field)
+            if (event.memo == this.field)
             {
                 this.fadeIn();
+                return;
             }
-            else
-            {
-                this.fadeOut();
-            }
+
+            // If this field is not the focus field after a focus change, then it's bubble,
+            // if visible, should fade out. This covers tabbing from one form to another. 
+            this.fadeOut();
+
         }.bind(this));
     },
 
@@ -986,17 +993,27 @@ Tapestry.ErrorPopup = Class.create({
 
     fadeIn : function()
     {
+        Tapestry.debug("fadeIn: " + this.field.id);
+
         if (! this.hasMessage) return;
 
         this.repositionBubble();
 
-        if (this.status == "fadeIn") return;
+        if (this.animation) return;
 
-        if (this.outerDiv.visible()) return;
+        this.animation = new Effect.Appear(this.outerDiv, {
+            queue: this.queue,
+            afterFinish: function()
+            {
+                this.animation = null;
 
-        this.animation = new Effect.Appear(this.outerDiv, { queue: this.queue });
-
-        this.status = "fadeIn";
+                if (this.field != Tapestry.currentFocusField)
+                {
+                    Tapestry.debug("Field #{id} lost focus, fading bubble", this.field);
+                    this.fadeOut();
+                }
+            }.bind(this)
+        });
     },
 
     stopAnimation : function()
@@ -1004,18 +1021,19 @@ Tapestry.ErrorPopup = Class.create({
         if (this.animation) this.animation.cancel();
 
         this.animation = null;
-        this.status = null;
     },
 
     fadeOut : function ()
     {
-        // Tapestry.debug("fadeOut: " + this.field.id);
+        Tapestry.debug("fadeOut: " + this.field.id);
 
-        if (this.status == "fadeOut") return;
+        if (this.animation) return;
 
-        this.animation = new Effect.Fade(this.outerDiv, { queue : this.queue });
-
-        this.status = "fadeOut";
+        this.animation = new Effect.Fade(this.outerDiv, { queue : this.queue,
+            afterFinish: function()
+            {
+                this.animation = null;
+            }.bind(this) });
     },
 
     hide : function()
@@ -1122,9 +1140,18 @@ Tapestry.FieldEventManager = Class.create({
         this.label = $(id + ':label');
         this.icon = $(id + ':icon');
 
-        this.field.observe("blur", function()
+        document.observe(Tapestry.FOCUS_CHANGE_EVENT, function(event)
         {
-            this.validateInput(false);
+            // If changing focus *within the same form* then
+            // perform validation.  Note that Tapestry.currentFocusField does not change
+            // until after the FOCUS_CHANGE_EVENT notification.
+
+            if (Tapestry.currentFocusField == this.field &&
+                this.field.form == event.memo.form)
+            {
+                Tapestry.debug("Validating input for #{id} on focus change", this.field);
+                this.validateInput();
+            }
         }.bindAsEventListener(this));
     },
 
