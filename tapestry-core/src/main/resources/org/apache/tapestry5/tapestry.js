@@ -804,7 +804,7 @@ Tapestry.Initializer = {
 
 // When FireBug is available, rewrite the error(), warn() and debug()
 // methods to make use of it.
-if (window.console)
+if (window.console && ! Prototype.Browser.WebKit)
 {
     var createlog = function (log)
     {
