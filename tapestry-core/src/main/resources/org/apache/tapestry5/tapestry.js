@@ -99,8 +99,6 @@ var Tapestry = {
                 {
                     if (element != Tapestry.currentFocusField)
                     {
-                        Tapestry.debug("Focus changed to #{id}", element);
-
                         document.fire(Tapestry.FOCUS_CHANGE_EVENT, element);
 
                         Tapestry.currentFocusField = element;
@@ -993,8 +991,6 @@ Tapestry.ErrorPopup = Class.create({
 
     fadeIn : function()
     {
-        Tapestry.debug("fadeIn: " + this.field.id);
-
         if (! this.hasMessage) return;
 
         this.repositionBubble();
@@ -1008,10 +1004,7 @@ Tapestry.ErrorPopup = Class.create({
                 this.animation = null;
 
                 if (this.field != Tapestry.currentFocusField)
-                {
-                    Tapestry.debug("Field #{id} lost focus, fading bubble", this.field);
                     this.fadeOut();
-                }
             }.bind(this)
         });
     },
@@ -1025,8 +1018,6 @@ Tapestry.ErrorPopup = Class.create({
 
     fadeOut : function ()
     {
-        Tapestry.debug("fadeOut: " + this.field.id);
-
         if (this.animation) return;
 
         this.animation = new Effect.Fade(this.outerDiv, { queue : this.queue,
@@ -1148,10 +1139,8 @@ Tapestry.FieldEventManager = Class.create({
 
             if (Tapestry.currentFocusField == this.field &&
                 this.field.form == event.memo.form)
-            {
-                Tapestry.debug("Validating input for #{id} on focus change", this.field);
                 this.validateInput();
-            }
+
         }.bindAsEventListener(this));
     },
 
