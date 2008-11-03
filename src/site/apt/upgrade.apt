@@ -12,6 +12,10 @@ Upgrade Notes
   You should also check the {{{release-notes.html}project-wide release notes}} for information
   about bugs fixes and other improvements.
 
+Release 5.0.16
+
+  The client-side class Tapestry.Zone has been renamed to Tapestry.ZoneManager.
+
 Release 5.0.15
 
   Method <<<getElementName()>>> of the

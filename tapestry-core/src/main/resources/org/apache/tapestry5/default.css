@@ -446,7 +446,7 @@ DIV.t-ajax-console {
     font-size: large;
     cursor: pointer;
     width: 100%;
-    text-align: center;
+    text-align: left;
     position: fixed;
     z-index: 0;
     left: 0px;
