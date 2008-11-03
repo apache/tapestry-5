@@ -17,18 +17,23 @@ package org.apache.tapestry5.integration.app1.pages;
 import org.apache.tapestry5.annotations.ApplicationState;
 import org.apache.tapestry5.annotations.Component;
 import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.beaneditor.Validate;
 import org.apache.tapestry5.corelib.components.BeanEditForm;
 import org.apache.tapestry5.integration.app1.data.RegistrationData;
 
 public class BeanEditorDemo
 {
     @Component(id = "registrationData", parameters =
-            { "clientValidation=clientValidation" })
+            {"clientValidation=clientValidation"})
     private BeanEditForm form;
 
     @ApplicationState
     @Property
     private RegistrationData registrationData;
+
+    @Property
+    @Validate("required")
+    private String searchTerm;
 
     Object onSuccess()
     {
