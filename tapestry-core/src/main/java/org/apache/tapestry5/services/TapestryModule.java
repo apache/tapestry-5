@@ -1806,7 +1806,7 @@ public final class TapestryModule
         configuration.add(SymbolConstants.FILE_CHECK_UPDATE_TIMEOUT, "50 ms");
 
         // This should be overridden for particular applications.
-        configuration.add(SymbolConstants.SUPPORTED_LOCALES, "en,it,zh_CN,pt_PT,de,ru,hr,fi_FI,sv_SE,fr_FR,da");
+        configuration.add(SymbolConstants.SUPPORTED_LOCALES, "en,it,zh_CN,pt_PT,de,ru,hr,fi_FI,sv_SE,fr_FR,da,pt_BR");
 
         configuration.add(SymbolConstants.TAPESTRY_VERSION,
                           VersionUtils.readVersionNumber(
