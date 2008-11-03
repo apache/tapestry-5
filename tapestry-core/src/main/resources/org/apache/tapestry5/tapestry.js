@@ -242,11 +242,15 @@ var Tapestry = {
      * we want to present the message clearly to the user).
      * @param className of the new entry to the console, typically "t-err"
      * @param message to display in the console
+     * @param substitutions optional substitutions to interpolate into mesasge
      */
-    updateAjaxConsole : function (className, message)
+    updateAjaxConsole : function (className, message, substitutions)
     {
         if (Tapestry.ajaxConsole == undefined)
             Tapestry.ajaxConsole = Tapestry.createConsole("t-ajax-console");
+
+        if (substitutions != undefined)
+            message = message.interpolate(substitutions);
 
         Tapestry.writeToConsole(Tapestry.ajaxConsole, className, message);
     },
@@ -302,9 +306,20 @@ var Tapestry = {
     {
         var message = response.getHeader("X-Tapestry-ErrorMessage");
 
-        Tapestry.updateAjaxConsole("t-err", "Communication with the server failed: " + message);
+        Tapestry.ajaxError("Communication with the server failed: " + message);
 
         Tapestry.debug("Ajax failure: Status #{status} for #{request.url}: " + message, response);
+    },
+
+    /**
+     * Writes a message to the Ajax console.
+     *
+     * @param message error message to display
+     * @param substitutions optional substitutions to interpolate into message
+     */
+    ajaxError : function(message, substitutions)
+    {
+        Tapestry.updateAjaxConsole("t-err", message, substitutions);
     },
 
     /**
@@ -322,7 +337,7 @@ var Tapestry = {
             {
                 if (! response.request.success())
                 {
-                    Tapestry.updateAjaxConsole("t-err", "Server request was unsuccesful. There may be a problem accessing the server.");
+                    Tapestry.ajaxError("Server request was unsuccesful. There may be a problem accessing the server.");
                     return;
                 }
 
@@ -333,12 +348,42 @@ var Tapestry = {
                 }
                 catch (e)
                 {
-                    Tapestry.updateAjaxConsole("t-err", "Client exception processing response: " + e);
+                    Tapestry.ajaxError("Client exception processing response: " + e);
                 }
             },
             onException: Tapestry.ajaxFailureHandler,
             onFailure: Tapestry.ajaxFailureHandler })
     },
+
+    /** Obtains the Tapestry.ZoneManager object associated with a triggering element
+     * (an <a> or <form>) configured to update a zone. Writes errors to the AjaxConsole
+     * if the zone and ZoneManager can not be resolved.
+     * 
+     * @param element   triggering element
+     * @return Tapestry.ZoneManager instance for updated zone, or null if not found.
+     */
+    findZoneManager : function(element)
+    {
+        var zoneId = $T(element).zoneId;
+        var zoneElement = $(zoneId);
+
+        if (!zoneElement)
+        {
+            Tapestry.ajaxError("Unable to locate Ajax Zone '#{id}' for dynamic update.", { id:zoneId});
+            return null;
+        }
+
+        var manager = $T(zoneElement).zoneManager;
+
+        if (!manager)
+        {
+            Tapestry.ajaxError("Ajax Zone '#{id}' does not have an associated Tapestry.ZoneManager object.", { id :zoneId });
+            return null;
+        }
+
+        return manager;
+    },
+
 
     /**
      * Used to reconstruct a complete URL from a path that is (or may be) relative to window.location.
@@ -663,19 +708,21 @@ Tapestry.Initializer = {
     },
 
 
+
     /**
      * Convert a form or link into a trigger of an Ajax update that
      * updates the indicated Zone.
+     * @param element id or instance of <form> or <a> element
+     * @param zoneId id of the element to update when link clicked or form submitted
      */
-    linkZone : function(element, zoneDiv)
+    linkZone : function(element, zoneId)
     {
         element = $(element);
 
         // Update the element with the id of zone div. This may be changed dynamically on the client
         // side.
 
-        $T(element).zone = zoneDiv;
-
+        $T(element).zoneId = zoneId;
 
         if (element.tagName == "FORM")
         {
@@ -689,12 +736,13 @@ Tapestry.Initializer = {
 
             element.observe(Tapestry.FORM_PROCESS_SUBMIT_EVENT, function()
             {
+                var zoneManager = Tapestry.findZoneManager(element);
+
+                if (!zoneManager) return;
+
                 var successHandler = function(transport)
                 {
-                    var zoneId = $T(element).zone;
-                    var zoneObject = $T(zoneId).zone;
-
-                    zoneObject.processReply(transport.responseJSON);
+                    zoneManager.processReply(transport.responseJSON);
                 };
 
                 element.sendAjaxRequest({ onSuccess : successHandler });
@@ -707,18 +755,13 @@ Tapestry.Initializer = {
 
         element.observe("click", function(event)
         {
-            // Find the zone id for the element, and from there, the Tapestry.Zone object
-            // responsible for the zone.  This is evaluated late so that zone can be dynamically
-            // changed on the client.  Sorry about the confusion; there's the zone <div>, and
-            // there's the Tapestry.Zone object.    Perhaps should rename Tapestry.Zone
-            // to Tapestry.ZoneManager?
+            Event.stop(event);
 
-            var zoneId = $T(element).zone;
-            var zoneObject = $T(zoneId).zone;
+            var zoneObject = Tapestry.findZoneManager(element);
+
+            if (!zoneObject) return;
 
             zoneObject.updateFromURL(element.href);
-
-            Event.stop(event);
         });
     },
 
@@ -758,7 +801,7 @@ Tapestry.Initializer = {
 
     zone : function(spec)
     {
-        new Tapestry.Zone(spec);
+        new Tapestry.ZoneManager(spec);
     },
 
     formFragment : function(spec)
@@ -1261,7 +1304,12 @@ Tapestry.ElementEffect = {
 };
 
 
-Tapestry.Zone = Class.create({
+/**
+ * Manages a &lt;div&lt; (or other element) for dynamic updates.
+ *
+ * @param element
+ */
+Tapestry.ZoneManager = Class.create({
     // spec are the parameters for the Zone:
     // trigger: required -- name or instance of link.
     // element: required -- name or instance of div element to be shown, hidden and updated
@@ -1278,11 +1326,11 @@ Tapestry.Zone = Class.create({
 
         // Link the div back to this zone.
 
-        $T(this.element).zone = this;
+        $T(this.element).zoneManager = this;
 
-        // Look inside the Zone element for an element with the CSS class "t-zone-update".
-        // If present, then this is the elements whose content will be changed, rather
-        // then the entire Zone div.  This allows a Zone div to contain "wrapper" markup
+        // Look inside the managed element for another element with the CSS class "t-zone-update".
+        // If present, then this is the element whose content will be changed, rather
+        // then the entire zone's element.  This allows a Zone element to contain "wrapper" markup
         // (borders and such).  Typically, such a Zone element will initially be invisible.
         // The show and update functions apply to the Zone element, not the update element.
 
@@ -1304,7 +1352,7 @@ Tapestry.Zone = Class.create({
     },
 
     /**
-     * Invoked with a reply (i.e., transport.responseJSON), this updates the zone's div
+     * Invoked with a reply (i.e., transport.responseJSON), this updates the managed element
      * and processes any JavaScript in the reply.  The response should have a
      * content key, and may have  script, scripts and stylesheets keys.
      * @param reply response in JSON format appropriate to a Tapestry.Zone
@@ -1624,10 +1672,10 @@ Tapestry.ScriptManager = {
  * is used to store additional values related to the element; it is simply an annoymous object stored as property
  * <code>_tapestry</code> of the element, created the first time it is accessed.
  * <p>This mechanism acts as a namespace, and so helps prevent name
- * conflicts that would occur if properties were stored directly on DOM elements, and makes debugging a bit easier (the Tapestry-specific
- * properties are all in one place!).
- * For the moment,
- * added methods stored directly on the object, and are not prefixed in any way, valuing readability over preventing naming conflicts.
+ * conflicts that would occur if properties were stored directly on DOM elements, and makes debugging a bit easier
+ * (the Tapestry-specific properties are all in one place!).
+ * For the moment, added methods are stored directly on the object, and are not prefixed in any way, valuing
+ * readability over preventing naming conflicts.
  *
  * @param element an element instance or element id
  * @return object Tapestry object for the element

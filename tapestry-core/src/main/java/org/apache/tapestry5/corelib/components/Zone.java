@@ -29,15 +29,23 @@ import org.apache.tapestry5.json.JSONObject;
  * Zone renders out as a &lt;div&gt; element and may have content initially, or may only get its content as a result of
  * client side activity.
  * <p/>
- * Often, Zone's are initially invisible, in which case the visible parameter may be set to false (it defaults to
- * false).
+ * Often, Zones are initially invisible, in which case the visible parameter may be set to false (it defaults to true).
  * <p/>
  * When a user clicks an {@link org.apache.tapestry5.corelib.components.ActionLink} whose zone parameter is set, the
  * corresponding client-side Tapestry.Zone object is located. It will update the content of the Zone's &lt;div&gt; and
  * then invoke either a show method (if the div is not visible) or an update method (if the div is visible).  The show
- * and update parameters are the <em>names</em> of functions attached to the Tapestry.ElementEffect object.
+ * and update parameters are the <em>names</em> of functions attached to the Tapestry.ElementEffect object.    Likewise,
+ * a {@link org.apache.tapestry5.corelib.components.Form} component may also trigger an update of a client-side Zone.
  * <p/>
  * Renders informal parameters, adding CSS class "t-zone" and possibly, "t-invisible".
+ * <p/>
+ * You will often want to specify the id parameter of the Zone, in addition to it's Tapestry component id; this "locks
+ * down" the client-side id, so the same value is used even in later partial renders of the page (essential if the Zone
+ * is nested inside another Zone).  When you specify the client-side id, it is used exactly as provided (meaning that
+ * you are responsible for ensuring that there will not be an id conflict even in the face of multiple partial renders
+ * of the page). Failure to provide an explicit id results in a new, and non-predictable, id being generated for each
+ * partial render, which will often result in client-side failures to locate the element to update when the Zone is
+ * triggered.
  */
 @SupportsInformalParameters
 public class Zone implements ClientElement
