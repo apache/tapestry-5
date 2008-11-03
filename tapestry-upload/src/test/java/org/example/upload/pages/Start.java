@@ -18,6 +18,8 @@ import org.apache.commons.fileupload.FileUploadException;
 import org.apache.tapestry5.PersistenceConstants;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.beaneditor.Validate;
+import org.apache.tapestry5.beaneditor.Width;
 import org.example.upload.base.UploadBasePage;
 
 public class Start extends UploadBasePage
@@ -26,6 +28,11 @@ public class Start extends UploadBasePage
     @Persist(PersistenceConstants.FLASH)
     @Property
     private String message;
+
+    @Property
+    @Validate("required")
+    @Width(50)
+    private String name;
 
 
     Object onUploadException(FileUploadException ex)

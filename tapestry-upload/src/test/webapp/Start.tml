@@ -15,6 +15,9 @@
 
         <t:form>
             <t:errors/>
+            <t:label for="name"/>
+            <t:textfield t:id="name"/>
+            <br/>
             <t:label for="file"/>
             <input t:type="upload" t:id="file" validate="required"/>
             <br/>

@@ -16,6 +16,7 @@ package org.example.upload.base;
 
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.beaneditor.Validate;
 import org.apache.tapestry5.upload.services.UploadedFile;
 
 import java.io.File;
@@ -26,6 +27,7 @@ public class UploadBasePage
 
     @Persist
     @Property
+    @Validate("required")
     private UploadedFile file;
 
     public void onSuccess()
