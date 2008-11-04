@@ -37,17 +37,11 @@ public class TranslateBindingFactory implements BindingFactory
     public Binding newBinding(String description, ComponentResources container,
                               final ComponentResources component, final String expression, Location location)
     {
-        return new AbstractBinding(location)
+        return new VariantBinding(FieldTranslator.class, description + ": " + expression, location)
         {
             public Object get()
             {
                 return source.createTranslator(component, expression);
-            }
-
-            @Override
-            public Class getBindingType()
-            {
-                return FieldTranslator.class;
             }
         };
     }

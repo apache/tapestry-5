@@ -26,9 +26,9 @@ import java.lang.annotation.Target;
  * "required", "minlength") and optionally, a constraint value. Most validators need a constraint value, which is
  * separated from the type by an equals size (i.e., "maxlength=30").
  * <p/>
- * May be placed on an getter or setter method, or on the matching field.
+ * May be placed on any getter or setter method, or on the matching field.
  */
-@Target({ ElementType.FIELD, ElementType.METHOD })
+@Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RUNTIME)
 @Documented
 public @interface Validate

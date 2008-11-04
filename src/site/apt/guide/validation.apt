@@ -239,10 +239,74 @@ Errors and Decorations
   This is nice and seamless; the same look and feel and behavior for both the built-in validators, and for errors generated based on
   application logic.
 
+Centralizing Validation with @Validate
+
+  The {{{../apidocs/org/apache/tapestry5/beaneditor/Validate.html}Validate}} annotation can take the place of the
+  validate parameter of TextField, PasswordField, TextArea and other components.  When the validate parameter
+  is not bound, the component will check for the @Validate annotation and use its value as the validation definition.
+
+  The annotation may be placed on the getter or setter method, or on the field itself.
+
+Customizing Validation Messages
+
+  Each validator (such as "required" or "minlength") has a default message used (on the client side and the server side)
+  when the constraint is violated; that is, when the user input is not valid.
+
+  The message can be customized by adding an entry to the page's {{{localization.html}message catalog}} (or the containing
+  component's message catalog).  As with any localized property, this can also go into the application's message catalog.
+
+  The first key checked is <formId>-<fieldId>-<validatorName>-message.
+
+  * formId: the local component id of the Form component
+
+  * fieldId: the local component id of the field (TextField, etc.)
+
+  * validatorName: the name of the validator, i.e., "required" or "minlength"
+
+  []
+
+  If there is not message for that key, a second check is made, for  <fieldId>-<validatorName>-message.
+
+  If that does not match a message, then the built-in default validation message is used.
+
+Customizing Validation Messages / BeanEditForm
+
+  The {{{beaneditform.html}BeanEditForm}} component also supports validation message customizing.  The search is the similar;
+  the <formId> is the component id of the BeanEditForm component (not the Form component it contains).
+  The <fieldId> is the property name.
+
+Configuring Validator Contraints in the Message Catalog
+
+  It is possible to omit the validation constraint from the validator parameter (or @Validator annotation), in which
+  case it is expected to be stored in the message catalog.
+
+  This is useful when the validation constraint is awkward to enter inline, such as a regular expression for use
+  with the regexp validator.
+
+  The key here is similar to customizing the validation message:  <formId>-<fieldId>-<validatorName> or
+  just <fieldId>-<validatorName>.
+
+  For example, your template may have the following:
+
+---
+  <t:textfield t:id="ssn" validate="required,regexp"/>
+---
+
+  And your message catalog can contain:
+
+---
+ssn-regexp=\d{3}-\d{2}-\d{4}
+ssn-regexp-message=Social security numbers are in the format 12-34-5678.
+---
+
+  This technique also works with the BeanEditForm; as with validation messages, the
+  formId is the BeanEditForm component's id, and the
+  fieldId is the name of the property being editted.
+
 Overriding the Translator with Events
 
   The TextField, PasswordField and TextArea components all have a translate parameter, a
-  {{{../apidocs/org/apache/tapestry5/Translator.html}Translator}} object that is used to convert values on the server
+  {{{../apidocs/org/apache/tapestry5/FieldTranslator.html}FieldTranslator}} object that is used to convert values on the server
   side to strings on the client side.
 
   In most cases, the translate parameter is not set explicitly; Tapestry derives an appropriate value
@@ -287,7 +351,7 @@ Overriding the Translator with Events
   }
 +---+
 
-  The event handler metohd has precendence over the translator.  Here it checks for the empty string
+  The event handler method has precendence over the translator.  Here it checks for the empty string
   (and note that the input may be null!) and evaluates that as zero.
 
   Again, returning null lets the normal translator do its work.
@@ -296,7 +360,7 @@ Overriding the Translator with Events
   {{{../apidocs/org/apache/tapestry5/ValidationException.html}ValidationException}} to indicate a value
   that can't be parsed.
 
-  Now, what if you want to perform your own custom validation?  That's another event: "validateInput":
+  Now, what if you want to perform your own custom validation?  That's another event: "validate":
 
 +---+
   void onValidateFromCount(Integer value) throws ValidationException
@@ -313,5 +377,6 @@ Overriding the Translator with Events
 
   <<Caution:>> These events are exclusively on the <server side>.
   This means that, in certain circumstances,
-  an input value will be rejected on the client side even though it is valid on the server side.
+  an input value will be rejected on the client side even though it is valid on the server side.   You may
+  need to disable client-side validation in order to use this feature.
 

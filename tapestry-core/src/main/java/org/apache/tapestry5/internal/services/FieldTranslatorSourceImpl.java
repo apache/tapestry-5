@@ -102,10 +102,23 @@ public class FieldTranslatorSourceImpl implements FieldTranslatorSource
     private MessageFormatter findFormatter(String overrideId, Messages overrideMessages, Locale locale,
                                            Translator translator)
     {
-        String overrideKey = overrideId + "-" + translator.getName() + "-message";
+        // TAP5-228: Try to distinguish message overrides by form id and overrideId (i.e., property name) first.
+
+        String translatorName = translator.getName();
+
+        String overrideKey = formSupport.getFormValidationId() + "-" + overrideId + "-" + translatorName + "-message";
 
         if (overrideMessages.contains(overrideKey))
             return overrideMessages.getFormatter(overrideKey);
+
+        // Ok, look for a simpler name that omits the formId prefix.
+
+        overrideKey = overrideId + "-" + translatorName + "-message";
+
+        if (overrideMessages.contains(overrideKey))
+            return overrideMessages.getFormatter(overrideKey);
+
+        // Otherwise, use the built-in validation message appropriate to this validator.
 
         Messages validationMessages = validationMessagesSource.getValidationMessages(locale);
 

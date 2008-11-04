@@ -78,7 +78,8 @@ Using the BeanEditForm Component
 * Property ordering
 
   By default, the order in which properties are presented is as defined above (order of the getter method).
-  The {{{../apidocs/org/apache/tapestry5/beaneditor/Order.html}Order}} annotation may be used to modify the normal ordering.
+  This can be overridden using the {{{../apidocs/org/apache/tapestry5/beaneditor/ReorderProperties.html}ReorderProperties}}
+  class annotation.
   
 * Default Label
 
@@ -113,9 +114,11 @@ Customizing the BeanModel
   You may want to customize the BeanModel further, to remove from the form properties that should not be editable by the user,
   and to change the order in which properties are presented within the form.
   
-  The BeanEditForm component has two parameters for this purpose:
-  
-  * remove: A comma separated list of property names to remove from the model.
+  The BeanEditForm component has several parameters for this purpose:
+
+  * add: A command seperated list of property names to add to the model.
+
+  * exclude: A comma separated list of property names to exclude from the model.
   
   * reorder: A comma separated list of property names indicating the desired order.
   
@@ -124,6 +127,10 @@ Customizing the BeanModel
   If a model has more properties that are listed in the reorder parameter, then the additional properties will be ordered at the end of the form.
   
   Note that these parameters <modify> the BeanModel.
+
+  Added properties must not conflict with normal properties. Cells for added properties will render blank unless an override is provided.
+
+
     
 Providing the BeanModel
 

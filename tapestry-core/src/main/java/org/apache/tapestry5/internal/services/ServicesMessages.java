@@ -350,9 +350,11 @@ class ServicesMessages
         return MESSAGES.format("no-edit-for-data-type", datatype);
     }
 
-    static String missingValidatorConstraint(String validatorType, Class type)
+    static String missingValidatorConstraint(String validatorType, Class type, String perFormMessageKey,
+                                             String generalMessageKey)
     {
-        return MESSAGES.format("missing-validator-constraint", validatorType, type.getName());
+        return MESSAGES.format("missing-validator-constraint", validatorType, type.getName(), perFormMessageKey,
+                               generalMessageKey);
     }
 
     static String resourcesAccessForbidden(String URI)

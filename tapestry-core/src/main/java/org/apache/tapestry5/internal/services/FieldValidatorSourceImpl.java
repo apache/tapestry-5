@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -77,40 +77,74 @@ public class FieldValidatorSourceImpl implements FieldValidatorSource
 
         Validator validator = validators.get(validatorType);
 
-        if (validator == null) throw new IllegalArgumentException(
-                ServicesMessages.unknownValidatorType(validatorType, InternalUtils.sortedKeys(validators)));
+        if (validator == null)
+            throw new IllegalArgumentException(
+                    ServicesMessages.unknownValidatorType(validatorType, InternalUtils.sortedKeys(validators)));
 
         // I just have this thing about always treating parameters as finals, so
         // we introduce a second variable to treat a mutable.
 
-        String finalConstraintValue = constraintValue;
+        String formValidationid = formSupport.getFormValidationId();
 
-        // If no constraint was provided, check to see if it is available via a localized message
-        // key. This is really handy for complex validations such as patterns.
+        Object coercedConstraintValue = computeConstraintValue(validatorType, validator, constraintValue,
+                                                               formValidationid,
+                                                               overrideId,
+                                                               overrideMessages);
 
-        if (finalConstraintValue == null && validator.getConstraintType() != null)
-        {
-            String key = overrideId + "-" + validatorType;
-
-            if (overrideMessages.contains(key)) finalConstraintValue = overrideMessages.get(key);
-            else throw new IllegalArgumentException(
-                    ServicesMessages.missingValidatorConstraint(validatorType, validator.getConstraintType()));
-        }
-
-        Object coercedConstraintValue = coerceConstraintValue(finalConstraintValue, validator
-                .getConstraintType());
-
-        MessageFormatter formatter = findMessageFormatter(overrideId, overrideMessages, locale, validatorType,
+        MessageFormatter formatter = findMessageFormatter(formValidationid, overrideId, overrideMessages, locale,
+                                                          validatorType,
                                                           validator);
 
         return new FieldValidatorImpl(field, coercedConstraintValue, formatter, validator, formSupport);
     }
 
-    private MessageFormatter findMessageFormatter(String overrideId, Messages overrideMessages, Locale locale,
+    private Object computeConstraintValue(String validatorType, Validator validator, String constraintValue,
+                                          String formId, String overrideId,
+                                          Messages overrideMessages)
+    {
+        Class constraintType = validator.getConstraintType();
+
+        String constraintText = findConstraintValue(validatorType, constraintType, constraintValue, formId, overrideId,
+                                                    overrideMessages);
+
+        if (constraintText == null) return null;
+
+        return typeCoercer.coerce(constraintText, constraintType);
+    }
+
+    private String findConstraintValue(String validatorType, Class constraintType, String constraintValue,
+                                       String formValidationId, String overrideId,
+                                       Messages overrideMessages)
+    {
+        if (constraintValue != null) return constraintValue;
+
+        if (constraintType == null) return null;
+
+        // If no constraint was provided, check to see if it is available via a localized message
+        // key. This is really handy for complex validations such as patterns.
+
+        String perFormKey = formValidationId + "-" + overrideId + "-" + validatorType;
+
+        if (overrideMessages.contains(perFormKey)) return overrideMessages.get(perFormKey);
+
+        String generalKey = overrideId + "-" + validatorType;
+
+        if (overrideMessages.contains(generalKey)) return overrideMessages.get(generalKey);
+
+        throw new IllegalArgumentException(
+                ServicesMessages.missingValidatorConstraint(validatorType, constraintType, perFormKey, generalKey));
+    }
+
+    private MessageFormatter findMessageFormatter(String formId, String overrideId, Messages overrideMessages,
+                                                  Locale locale,
                                                   String validatorType, Validator validator)
     {
 
-        String overrideKey = overrideId + "-" + validatorType + "-message";
+        String overrideKey = formId + "-" + overrideId + "-" + validatorType + "-message";
+
+        if (overrideMessages.contains(overrideKey)) return overrideMessages.getFormatter(overrideKey);
+
+        overrideKey = overrideId + "-" + validatorType + "-message";
 
         if (overrideMessages.contains(overrideKey)) return overrideMessages.getFormatter(overrideKey);
 
@@ -136,14 +170,6 @@ public class FieldValidatorSourceImpl implements FieldValidatorSource
         if (fieldValidators.size() == 1) return fieldValidators.get(0);
 
         return new CompositeFieldValidator(fieldValidators);
-    }
-
-    @SuppressWarnings("unchecked")
-    private Object coerceConstraintValue(String constraintValue, Class constraintType)
-    {
-        if (constraintType == null) return null;
-
-        return typeCoercer.coerce(constraintValue, constraintType);
     }
 
     /**
@@ -280,7 +306,6 @@ public class FieldValidatorSourceImpl implements FieldValidatorSource
                         skipWhitespace = true;
                         state = State.TYPE_START;
                         break;
-
                     }
 
                     parseError(cursor, specification);
@@ -317,7 +342,6 @@ public class FieldValidatorSourceImpl implements FieldValidatorSource
                 // For better or worse, ending the string with a comma is valid.
 
             default:
-
         }
 
         return result;

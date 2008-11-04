@@ -58,8 +58,18 @@ public interface ComponentDefaultProvider
      * @param parameterName
      * @param resources
      * @return the translator, or null
+     * @deprecated Use {@link #defaultTranslatorBinding(String, org.apache.tapestry5.ComponentResources)} instead
      */
     FieldTranslator defaultTranslator(String parameterName, ComponentResources resources);
+
+    /**
+     * Provides a binding that itself provides the field translator.
+     *
+     * @param parameterName
+     * @param resources
+     * @return binding that provides the {@link org.apache.tapestry5.FieldTranslator}
+     */
+    Binding defaultTranslatorBinding(String parameterName, ComponentResources resources);
 
     /**
      * Provides a validator based on the bound parameter type.  If the property type of the parameter is not known, then
@@ -68,6 +78,16 @@ public interface ComponentDefaultProvider
      * @param parameterName
      * @param resources
      * @return the validator, possibly a no-op validator
+     * @deprecated Use {@link #defaultValidatorBinding(String, org.apache.tapestry5.ComponentResources)} instead
      */
     FieldValidator defaultValidator(String parameterName, ComponentResources resources);
+
+    /**
+     * Provides a binding that itself provides the field translator.
+     *
+     * @param parameterName
+     * @param resources
+     * @return binding that provides the {@link org.apache.tapestry5.FieldTranslator}
+     */
+    Binding defaultValidatorBinding(String parameterName, ComponentResources resources);
 }

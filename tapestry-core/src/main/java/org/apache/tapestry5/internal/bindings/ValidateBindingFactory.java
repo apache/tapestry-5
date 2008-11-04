@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -24,8 +24,9 @@ import org.apache.tapestry5.services.BindingFactory;
 import org.apache.tapestry5.services.FieldValidatorSource;
 
 /**
- * Factory for bindings that provide a {@link FieldValidator} based on a validator specification. This binding factory
- * is only useable with components that implement the {@link Field} interface.
+ * Factory for bindings that provide a {@link org.apache.tapestry5.FieldValidator} based on a validator specification.
+ * This binding factory is only useable with components that implement the {@link org.apache.tapestry5.Field}
+ * interface.
  */
 public class ValidateBindingFactory implements BindingFactory
 {
@@ -37,7 +38,7 @@ public class ValidateBindingFactory implements BindingFactory
     }
 
     public Binding newBinding(String description, ComponentResources container,
-                              ComponentResources component, String expression, Location location)
+                              ComponentResources component, final String expression, Location location)
     {
         Object fieldAsObject = component.getComponent();
 
@@ -45,16 +46,19 @@ public class ValidateBindingFactory implements BindingFactory
             throw new TapestryException(BindingsMessages.validateBindingForFieldsOnly(component),
                                         location, null);
 
-        Field field = (Field) fieldAsObject;
+        final Field field = (Field) fieldAsObject;
 
-        // The expression is a validator specification, such as "required,minLength=5".
-        // ValidatorBindingFactory is the odd man out becasuse it needs the binding component (the
-        // component whose parameter is to be bound) rather than the containing component, the way
-        // most factories work.
+        return new VariantBinding(FieldValidator.class, description + ": " + expression, location)
+        {
+            public Object get()
+            {
+                // The expression is a validator specification, such as "required,minLength=5".
+                // ValidatorBindingFactory is the odd man out becasuse it needs the binding component (the
+                // component whose parameter is to be bound) rather than the containing component, the way
+                // most factories work.
 
-        FieldValidator validator = fieldValidatorSource.createValidators(field, expression);
-
-        return new LiteralBinding(description, validator, location);
+                return fieldValidatorSource.createValidators(field, expression);
+            }
+        };
     }
-
 }

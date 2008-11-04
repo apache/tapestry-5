@@ -25,6 +25,7 @@ import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newMap;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.services.FieldValidatorSource;
+import org.apache.tapestry5.services.FormSupport;
 import org.apache.tapestry5.services.ValidationMessagesSource;
 import org.testng.annotations.Test;
 
@@ -90,15 +91,19 @@ public class FieldValidatorSourceImplTest extends InternalBaseTestCase
         Object inputValue = new Object();
         ComponentResources resources = mockComponentResources();
         Messages containerMessages = mockMessages();
+        FormSupport fs = mockFormSupport();
 
         Map<String, Validator> map = singletonMap("required", validator);
 
         train_getConstraintType(validator, null);
 
+        train_getFormValidationId(fs, "form");
+
         train_getComponentResources(field, resources);
 
         train_getId(resources, "fred");
         train_getContainerMessages(resources, containerMessages);
+        train_contains(containerMessages, "form-fred-required-message", false);
         train_contains(containerMessages, "fred-required-message", false);
 
         train_getLocale(resources, Locale.FRENCH);
@@ -114,7 +119,7 @@ public class FieldValidatorSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        FieldValidatorSource source = new FieldValidatorSourceImpl(messagesSource, coercer, null, map);
+        FieldValidatorSource source = new FieldValidatorSourceImpl(messagesSource, coercer, fs, map);
 
         FieldValidator fieldValidator = source.createValidator(field, "required", null);
 
@@ -135,15 +140,20 @@ public class FieldValidatorSourceImplTest extends InternalBaseTestCase
         Object inputValue = new Object();
         ComponentResources resources = mockComponentResources();
         Messages containerMessages = mockMessages();
+        FormSupport fs = mockFormSupport();
 
         Map<String, Validator> map = singletonMap("required", validator);
 
         train_getConstraintType(validator, null);
 
+        train_getFormValidationId(fs, "form");
+
         train_getComponentResources(field, resources);
         train_getId(resources, "fred");
         train_getLocale(resources, Locale.ENGLISH);
         train_getContainerMessages(resources, containerMessages);
+
+        train_contains(containerMessages, "form-fred-required-message", false);
         train_contains(containerMessages, "fred-required-message", true);
 
         train_getMessageFormatter(containerMessages, "fred-required-message", formatter);
@@ -154,7 +164,50 @@ public class FieldValidatorSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        FieldValidatorSource source = new FieldValidatorSourceImpl(messagesSource, coercer, null, map);
+        FieldValidatorSource source = new FieldValidatorSourceImpl(messagesSource, coercer, fs, map);
+
+        FieldValidator fieldValidator = source.createValidator(field, "required", null);
+
+        fieldValidator.validate(inputValue);
+
+        verify();
+    }
+
+    @Test
+    public void component_messages_overrides_validator_messages_per_form() throws Exception
+    {
+        ValidationMessagesSource messagesSource = mockValidationMessagesSource();
+        Validator validator = mockValidator();
+        TypeCoercer coercer = mockTypeCoercer();
+        FieldComponent field = newFieldComponent();
+        MessageFormatter formatter = mockMessageFormatter();
+        Object inputValue = new Object();
+        ComponentResources resources = mockComponentResources();
+        Messages containerMessages = mockMessages();
+        FormSupport fs = mockFormSupport();
+
+        Map<String, Validator> map = singletonMap("required", validator);
+
+        train_getConstraintType(validator, null);
+
+        train_getFormValidationId(fs, "form");
+
+        train_getComponentResources(field, resources);
+        train_getId(resources, "fred");
+        train_getLocale(resources, Locale.ENGLISH);
+        train_getContainerMessages(resources, containerMessages);
+
+        train_contains(containerMessages, "form-fred-required-message", true);
+
+        train_getMessageFormatter(containerMessages, "form-fred-required-message", formatter);
+
+        train_isRequired(validator, false);
+        train_getValueType(validator, Object.class);
+        validator.validate(field, null, formatter, inputValue);
+
+        replay();
+
+        FieldValidatorSource source = new FieldValidatorSourceImpl(messagesSource, coercer, fs, map);
 
         FieldValidator fieldValidator = source.createValidator(field, "required", null);
 
@@ -165,7 +218,7 @@ public class FieldValidatorSourceImplTest extends InternalBaseTestCase
 
     @SuppressWarnings("unchecked")
     @Test
-    public void constraint_value_from_message_catalog() throws Exception
+    public void constraint_value_from_message_catalog_per() throws Exception
     {
         ValidationMessagesSource messagesSource = mockValidationMessagesSource();
         Validator validator = mockValidator();
@@ -176,20 +229,26 @@ public class FieldValidatorSourceImplTest extends InternalBaseTestCase
         Object inputValue = new Object();
         ComponentResources resources = mockComponentResources();
         Messages containerMessages = mockMessages();
+        FormSupport fs = mockFormSupport();
+
 
         Map<String, Validator> map = singletonMap("minlength", validator);
 
         train_getConstraintType(validator, Integer.class);
 
+        train_getFormValidationId(fs, "myform");
+
         train_getComponentResources(field, resources);
         train_getId(resources, "fred");
 
+        train_contains(containerMessages, "myform-fred-minlength", false);
         train_contains(containerMessages, "fred-minlength", true);
         train_get(containerMessages, "fred-minlength", "5");
 
         train_coerce(coercer, "5", Integer.class, 5);
 
         train_getContainerMessages(resources, containerMessages);
+        train_contains(containerMessages, "myform-fred-minlength-message", false);
         train_contains(containerMessages, "fred-minlength-message", false);
 
         train_getLocale(resources, Locale.FRENCH);
@@ -205,7 +264,7 @@ public class FieldValidatorSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        FieldValidatorSource source = new FieldValidatorSourceImpl(messagesSource, coercer, null, map);
+        FieldValidatorSource source = new FieldValidatorSourceImpl(messagesSource, coercer, fs, map);
 
         FieldValidator fieldValidator = source.createValidators(field, "minlength");
 
@@ -213,6 +272,63 @@ public class FieldValidatorSourceImplTest extends InternalBaseTestCase
 
         verify();
     }
+
+    @SuppressWarnings("unchecked")
+    @Test
+    public void constraint_value_from_message_catalog_per_form() throws Exception
+    {
+        ValidationMessagesSource messagesSource = mockValidationMessagesSource();
+        Validator validator = mockValidator();
+        TypeCoercer coercer = mockTypeCoercer();
+        FieldComponent field = newFieldComponent();
+        Messages messages = mockMessages();
+        MessageFormatter formatter = mockMessageFormatter();
+        Object inputValue = new Object();
+        ComponentResources resources = mockComponentResources();
+        Messages containerMessages = mockMessages();
+        FormSupport fs = mockFormSupport();
+
+
+        Map<String, Validator> map = singletonMap("minlength", validator);
+
+        train_getConstraintType(validator, Integer.class);
+
+        train_getFormValidationId(fs, "myform");
+
+        train_getComponentResources(field, resources);
+        train_getId(resources, "fred");
+
+        train_contains(containerMessages, "myform-fred-minlength", true);
+        train_get(containerMessages, "myform-fred-minlength", "5");
+
+        train_coerce(coercer, "5", Integer.class, 5);
+
+        train_getContainerMessages(resources, containerMessages);
+        train_contains(containerMessages, "myform-fred-minlength-message", false);
+        train_contains(containerMessages, "fred-minlength-message", false);
+
+        train_getLocale(resources, Locale.FRENCH);
+
+        train_getValidationMessages(messagesSource, Locale.FRENCH, messages);
+
+        train_getMessageKey(validator, "key");
+        train_getMessageFormatter(messages, "key", formatter);
+
+        train_isRequired(validator, false);
+        train_getValueType(validator, Object.class);
+        validator.validate(field, 5, formatter, inputValue);
+
+        replay();
+
+        FieldValidatorSource source = new FieldValidatorSourceImpl(messagesSource, coercer, fs, map);
+
+        FieldValidator fieldValidator = source.createValidators(field, "minlength");
+
+        fieldValidator.validate(inputValue);
+
+        verify();
+    }
+
 
     @SuppressWarnings("unchecked")
     @Test
@@ -224,21 +340,25 @@ public class FieldValidatorSourceImplTest extends InternalBaseTestCase
         FieldComponent field = newFieldComponent();
         ComponentResources resources = mockComponentResources();
         Messages containerMessages = mockMessages();
+        FormSupport fs = mockFormSupport();
 
         Map<String, Validator> map = singletonMap("minlength", validator);
 
         train_getConstraintType(validator, Integer.class);
+
+        train_getFormValidationId(fs, "myform");
 
         train_getComponentResources(field, resources);
         train_getId(resources, "fred");
         train_getLocale(resources, Locale.GERMAN);
         train_getContainerMessages(resources, containerMessages);
 
+        train_contains(containerMessages, "myform-fred-minlength", false);
         train_contains(containerMessages, "fred-minlength", false);
 
         replay();
 
-        FieldValidatorSource source = new FieldValidatorSourceImpl(messagesSource, coercer, null, map);
+        FieldValidatorSource source = new FieldValidatorSourceImpl(messagesSource, coercer, fs, map);
 
         try
         {
@@ -248,11 +368,10 @@ public class FieldValidatorSourceImplTest extends InternalBaseTestCase
         catch (IllegalArgumentException ex)
         {
             assertEquals(ex.getMessage(),
-                         "Validator \'minlength\' requires a validation constraint (of type java.lang.Integer) but none was provided.");
+                         "Validator 'minlength' requires a validation constraint (of type java.lang.Integer) but none was provided. The constraint may be provided inside the @Validator annotaton on the property, or in the associated component message catalog as key 'myform-fred-minlength' or key 'fred-minlength'. ");
         }
 
         verify();
-
     }
 
     @SuppressWarnings("unchecked")
@@ -268,14 +387,19 @@ public class FieldValidatorSourceImplTest extends InternalBaseTestCase
         Object inputValue = new Object();
         ComponentResources resources = mockComponentResources();
         Messages containerMessages = mockMessages();
+        FormSupport fs = mockFormSupport();
 
         Map<String, Validator> map = singletonMap("required", validator);
+
+        train_getFormValidationId(fs, "myform");
 
         train_getConstraintType(validator, null);
 
         train_getComponentResources(field, resources);
         train_getId(resources, "fred");
         train_getContainerMessages(resources, containerMessages);
+
+        train_contains(containerMessages, "myform-fred-required-message", false);
         train_contains(containerMessages, "fred-required-message", false);
 
         train_getLocale(resources, Locale.FRENCH);
@@ -291,7 +415,7 @@ public class FieldValidatorSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        FieldValidatorSource source = new FieldValidatorSourceImpl(messagesSource, coercer, null, map);
+        FieldValidatorSource source = new FieldValidatorSourceImpl(messagesSource, coercer, fs, map);
 
         FieldValidator fieldValidator = source.createValidators(field, "required");
 
@@ -316,11 +440,14 @@ public class FieldValidatorSourceImplTest extends InternalBaseTestCase
         ComponentResources resources = mockComponentResources();
         Messages containerMessages = mockMessages();
         Integer fifteen = 15;
+        FormSupport fs = mockFormSupport();
 
         Map<String, Validator> map = newMap();
 
         map.put("required", required);
         map.put("minLength", minLength);
+
+        train_getFormValidationId(fs, "myform");
 
         train_getConstraintType(required, null);
         train_getConstraintType(minLength, Integer.class);
@@ -328,6 +455,7 @@ public class FieldValidatorSourceImplTest extends InternalBaseTestCase
         train_getComponentResources(field, resources);
         train_getId(resources, "fred");
         train_getContainerMessages(resources, containerMessages);
+        train_contains(containerMessages, "myform-fred-required-message", false);
         train_contains(containerMessages, "fred-required-message", false);
 
         train_getLocale(resources, Locale.FRENCH);
@@ -337,6 +465,7 @@ public class FieldValidatorSourceImplTest extends InternalBaseTestCase
         train_getMessageKey(required, "required");
         train_getMessageFormatter(messages, "required", requiredFormatter);
 
+        train_contains(containerMessages, "myform-fred-minLength-message", false);
         train_contains(containerMessages, "fred-minLength-message", false);
 
         train_getMessageKey(minLength, "min-length");
@@ -354,7 +483,7 @@ public class FieldValidatorSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        FieldValidatorSource source = new FieldValidatorSourceImpl(messagesSource, coercer, null, map);
+        FieldValidatorSource source = new FieldValidatorSourceImpl(messagesSource, coercer, fs, map);
 
         FieldValidator fieldValidator = source.createValidators(field, "required,minLength=15");
 
@@ -377,16 +506,20 @@ public class FieldValidatorSourceImplTest extends InternalBaseTestCase
         ComponentResources resources = mockComponentResources();
         Messages containerMessages = mockMessages();
         Integer five = 5;
+        FormSupport fs = mockFormSupport();
 
         Map<String, Validator> map = singletonMap("minLength", validator);
 
         train_getConstraintType(validator, Integer.class);
+
+        train_getFormValidationId(fs, "myform");
 
         train_coerce(coercer, "5", Integer.class, five);
 
         train_getComponentResources(field, resources);
         train_getId(resources, "fred");
         train_getContainerMessages(resources, containerMessages);
+        train_contains(containerMessages, "myform-fred-minLength-message", false);
         train_contains(containerMessages, "fred-minLength-message", false);
 
         train_getLocale(resources, Locale.FRENCH);
@@ -402,7 +535,7 @@ public class FieldValidatorSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        FieldValidatorSource source = new FieldValidatorSourceImpl(messagesSource, coercer, null, map);
+        FieldValidatorSource source = new FieldValidatorSourceImpl(messagesSource, coercer, fs, map);
 
         FieldValidator fieldValidator = source.createValidator(field, "minLength", "5");
 

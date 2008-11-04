@@ -16,6 +16,7 @@ package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.*;
 import org.apache.tapestry5.internal.TapestryInternalUtils;
+import org.apache.tapestry5.internal.bindings.VariantBinding;
 import org.apache.tapestry5.ioc.Messages;
 import static org.apache.tapestry5.ioc.internal.util.Defense.notBlank;
 import static org.apache.tapestry5.ioc.internal.util.Defense.notNull;
@@ -51,6 +52,7 @@ public class ComponentDefaultProviderImpl implements ComponentDefaultProvider
             return false;
         }
     };
+
 
     public ComponentDefaultProviderImpl(PropertyAccess propertyAccess, BindingSource bindingSource,
                                         ValueEncoderSource valueEncoderSource,
@@ -103,6 +105,7 @@ public class ComponentDefaultProviderImpl implements ComponentDefaultProvider
                 componentId);
     }
 
+    @SuppressWarnings({"unchecked"})
     public ValueEncoder defaultValueEncoder(String parameterName, ComponentResources resources)
     {
         notBlank(parameterName, "parameterName");
@@ -120,10 +123,39 @@ public class ComponentDefaultProviderImpl implements ComponentDefaultProvider
         return fieldTranslatorSource.createDefaultTranslator(resources, parameterName);
     }
 
+    public Binding defaultTranslatorBinding(final String parameterName, final ComponentResources resources)
+    {
+        String description = String.format("default translator, parameter %s of %s",
+                                           parameterName, resources.getCompleteId());
+
+        return new VariantBinding(FieldTranslator.class, description,
+                                  resources.getLocation())
+        {
+            public Object get()
+            {
+                return defaultTranslator(parameterName, resources);
+            }
+        };
+    }
+
     public FieldValidator defaultValidator(String parameterName, ComponentResources resources)
     {
         FieldValidator result = fieldValidatorDefaultSource.createDefaultValidator(resources, parameterName);
 
         return result == null ? NOOP_VALIDATOR : result;
+    }
+
+    public Binding defaultValidatorBinding(final String parameterName, final ComponentResources resources)
+    {
+        String description = String.format("default validator, parameter %s of %s", parameterName,
+                                           resources.getCompleteId());
+
+        return new VariantBinding(FieldValidator.class, description, resources.getLocation())
+        {
+            public Object get()
+            {
+                return defaultValidator(parameterName, resources);
+            }
+        };
     }
 }

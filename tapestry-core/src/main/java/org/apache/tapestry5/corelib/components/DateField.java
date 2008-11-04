@@ -25,7 +25,6 @@ import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.ComponentDefaultProvider;
-import org.apache.tapestry5.services.FieldValidatorDefaultSource;
 import org.apache.tapestry5.services.Request;
 
 import java.text.DateFormat;
@@ -139,11 +138,11 @@ public class DateField extends AbstractField
     }
 
     /**
-     * Computes a default value for the "validate" parameter using {@link FieldValidatorDefaultSource}.
+     * Computes a default value for the "validate" parameter using {@link ComponentDefaultProvider}.
      */
-    final FieldValidator defaultValidate()
+    final Binding defaultValidate()
     {
-        return defaultProvider.defaultValidator("value", resources);
+        return defaultProvider.defaultValidatorBinding("value", resources);
     }
 
     /**

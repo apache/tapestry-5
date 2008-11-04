@@ -24,7 +24,7 @@ public class FormSupportImplTest extends InternalBaseTestCase
     @Test
     public void execute_deferred_with_no_commands()
     {
-        FormSupportImpl support = new FormSupportImpl(null);
+        FormSupportImpl support = new FormSupportImpl(null, null);
 
         support.executeDeferred();
     }
@@ -42,7 +42,7 @@ public class FormSupportImplTest extends InternalBaseTestCase
 
         replay();
 
-        FormSupportImpl support = new FormSupportImpl(null);
+        FormSupportImpl support = new FormSupportImpl(null, null);
 
         support.defer(r1);
         support.defer(r2);
@@ -66,7 +66,7 @@ public class FormSupportImplTest extends InternalBaseTestCase
 
         replay();
 
-        FormSupportImpl support = new FormSupportImpl(null);
+        FormSupportImpl support = new FormSupportImpl(null, null);
 
         support.defer(r1);
         support.defer(r2);
@@ -89,7 +89,7 @@ public class FormSupportImplTest extends InternalBaseTestCase
     @Test
     public void set_encoding_type()
     {
-        FormSupportImpl support = new FormSupportImpl(null);
+        FormSupportImpl support = new FormSupportImpl(null, null);
 
         String encodingType = "foo/bar";
 
@@ -101,7 +101,7 @@ public class FormSupportImplTest extends InternalBaseTestCase
     @Test
     public void set_encoding_type_to_same_value_is_allowed()
     {
-        FormSupportImpl support = new FormSupportImpl(null);
+        FormSupportImpl support = new FormSupportImpl(null, null);
 
         String encodingType = "foo/bar";
 
@@ -115,7 +115,7 @@ public class FormSupportImplTest extends InternalBaseTestCase
     public void set_encoding_type_conflict()
     {
 
-        FormSupportImpl support = new FormSupportImpl(null);
+        FormSupportImpl support = new FormSupportImpl(null, null);
 
         support.setEncodingType("foo");
         try
@@ -140,7 +140,8 @@ public class FormSupportImplTest extends InternalBaseTestCase
 
         replay();
 
-        FormSupportImpl support = new FormSupportImpl(null, null, null, clientBehaviorSupport, true, null);
+        FormSupportImpl support = new FormSupportImpl(null, null, null, clientBehaviorSupport, true, null,
+                                                      null);
 
         support.addValidation(barney, "required", "Who can live without Barney?", null);
 
@@ -155,7 +156,8 @@ public class FormSupportImplTest extends InternalBaseTestCase
 
         replay();
 
-        FormSupportImpl support = new FormSupportImpl(null, null, null, clientBehaviorSupport, false, null);
+        FormSupportImpl support = new FormSupportImpl(null, null, null, clientBehaviorSupport, false, null,
+                                                      null);
 
         support.addValidation(barney, "required", "Who can live without Barney?", null);
 
