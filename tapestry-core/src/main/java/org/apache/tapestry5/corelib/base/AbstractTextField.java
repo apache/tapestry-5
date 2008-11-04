@@ -112,9 +112,9 @@ public abstract class AbstractTextField extends AbstractField
      * Computes a default value for the "translate" parameter using {@link org.apache.tapestry5.services.ComponentDefaultProvider#defaultTranslator(String,
      * org.apache.tapestry5.ComponentResources)}.
      */
-    final FieldTranslator defaultTranslate()
+    final Binding defaultTranslate()
     {
-        return defaultProvider.defaultTranslator("value", resources);
+        return defaultProvider.defaultTranslatorBinding("value", resources);
     }
 
     final AnnotationProvider defaultAnnotationProvider()
@@ -131,9 +131,9 @@ public abstract class AbstractTextField extends AbstractField
     /**
      * Computes a default value for the "validate" parameter using {@link org.apache.tapestry5.services.FieldValidatorDefaultSource}.
      */
-    final FieldValidator defaultValidate()
+    final Binding defaultValidate()
     {
-        return defaultProvider.defaultValidator("value", resources);
+        return defaultProvider.defaultValidatorBinding("value", resources);
     }
 
     /**

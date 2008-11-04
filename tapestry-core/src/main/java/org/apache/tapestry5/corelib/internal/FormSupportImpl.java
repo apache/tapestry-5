@@ -46,6 +46,8 @@ public class FormSupportImpl implements InternalFormSupport, Locatable
 
     private final ComponentActionSink actionSink;
 
+    private final String formValidationId;
+
     private List<Runnable> commands;
 
     private String encodingType;
@@ -53,9 +55,9 @@ public class FormSupportImpl implements InternalFormSupport, Locatable
     /**
      * Constructor used when processing a form submission.
      */
-    public FormSupportImpl(ComponentResources resources)
+    public FormSupportImpl(ComponentResources resources, String formValidationId)
     {
-        this(resources, null, null, null, false, null);
+        this(resources, null, null, null, false, null, formValidationId);
     }
 
     /**
@@ -63,7 +65,7 @@ public class FormSupportImpl implements InternalFormSupport, Locatable
      */
     public FormSupportImpl(ComponentResources resources, String clientId, ComponentActionSink actionSink,
                            ClientBehaviorSupport clientBehaviorSupport,
-                           boolean clientValidationEnabled, IdAllocator idAllocator)
+                           boolean clientValidationEnabled, IdAllocator idAllocator, String formValidationId)
     {
         this.resources = resources;
         this.clientId = clientId;
@@ -71,6 +73,7 @@ public class FormSupportImpl implements InternalFormSupport, Locatable
         this.clientBehaviorSupport = clientBehaviorSupport;
         this.clientValidationEnabled = clientValidationEnabled;
         this.idAllocator = idAllocator;
+        this.formValidationId = formValidationId;
     }
 
     public Location getLocation()
@@ -146,5 +149,10 @@ public class FormSupportImpl implements InternalFormSupport, Locatable
     public boolean isClientValidationEnabled()
     {
         return clientValidationEnabled;
+    }
+
+    public String getFormValidationId()
+    {
+        return formValidationId;
     }
 }

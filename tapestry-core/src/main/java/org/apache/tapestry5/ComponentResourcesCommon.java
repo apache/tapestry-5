@@ -23,11 +23,14 @@ import java.util.Locale;
  * Operations shared by the public {@link org.apache.tapestry5.ComponentResources} interface and {@link
  * org.apache.tapestry5.internal.structure.ComponentPageElement} interface (on the internal side).
  */
+@SuppressWarnings({"JavaDoc"})
 public interface ComponentResourcesCommon extends Locatable
 {
     /**
-     * Returns the id of the component. The id will be unique within the component's immediate container. For a page's
-     * root component, the value null is returned.
+     * Returns the simple (or local) id of the component. The id will be unique within the component's immediate
+     * container. For a page's root component, the value null is returned.
+     * <p/>
+     * \
      */
     String getId();
 
@@ -40,26 +43,25 @@ public interface ComponentResourcesCommon extends Locatable
 
     /**
      * Returns a string consisting of the logical name of the containing page, and the {@link #getNestedId() nested id}
-     * of this component, separated by a colon. I.e., "mypage:foo.bar.baz". For a page, returns just the page's logical
+     * of this component, separated by a colon. I.e., "MyPage:foo.bar.baz". For a page, returns just the page's logical
      * name.
      * <p/>
      * This value is often used to obtain an equivalent component instance in a later request.
      *
      * @see org.apache.tapestry5.services.ComponentSource#getComponent(String)
      */
-
     String getCompleteId();
 
     /**
      * A convienience for invoking {@link #triggerContextEvent(String, EventContext , ComponentEventCallback)}. Wraps
      * the context values into an {@link org.apache.tapestry5.EventContext}.
      *
-     * @param eventType event type (as determined from the request, or otherwise by design)
-     * @param context   Values that may be provided to the event handler method as method parameters, or null if no
-     *                  context values are available
-     * @param callback  the handler to be informed of the result, or null if the event is a notification that does not
-     *                  support return values from event handler methods (the value true is allowed even if the handler
-     *                  is null).
+     * @param eventType     event type (as determined from the request, or otherwise by design)
+     * @param contextValues Values that may be provided to the event handler method as method parameters, or null if no
+     *                      context values are available
+     * @param callback      the handler to be informed of the result, or null if the event is a notification that does
+     *                      not support return values from event handler methods (the value true is allowed even if the
+     *                      handler is null).
      * @return true if any event handler was invoked (even if no event handler method returns a non-null value)
      * @throws org.apache.tapestry5.runtime.ComponentEventException
      *          if an event handler method throws a checked or unchecked exception

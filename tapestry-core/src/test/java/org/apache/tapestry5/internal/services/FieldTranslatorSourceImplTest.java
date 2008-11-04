@@ -87,6 +87,10 @@ public class FieldTranslatorSourceImplTest extends InternalBaseTestCase
 
 
         train_findByType(ts, propertyType, translator);
+
+        train_getFormValidationId(fs, "myform");
+
+        train_contains(messages, "myform-myfield-maptrans-message", false);
         train_contains(messages, "myfield-maptrans-message", false);
         train_getValidationMessages(vms, locale, validationMessages);
 
@@ -127,8 +131,53 @@ public class FieldTranslatorSourceImplTest extends InternalBaseTestCase
         String message = "Formatted Message";
 
         train_findByType(ts, propertyType, translator);
+
+        train_getFormValidationId(fs, "myform");
+
+        train_contains(messages, "myform-myfield-maptrans-message", false);
         train_contains(messages, "myfield-maptrans-message", true);
         train_getMessageFormatter(messages, "myfield-maptrans-message", formatter);
+
+        train_getLabel(field, label);
+        train_format(formatter, message, label);
+
+        translator.render(field, message, writer, fs);
+
+        replay();
+
+        FieldTranslatorSource source = new FieldTranslatorSourceImpl(ts, vms, fs);
+
+        FieldTranslator ft = source.createDefaultTranslator(field, "myfield", messages, locale, propertyType, null);
+
+        assertEquals(ft.getType(), Map.class);
+
+        ft.render(writer);
+
+        verify();
+    }
+
+    @Test
+    public void create_default_translator_with_per_form_override_message()
+    {
+        Field field = mockField();
+        Messages messages = mockMessages();
+        Locale locale = Locale.ENGLISH;
+        Class propertyType = Map.class;
+        TranslatorSource ts = mockTranslatorSource();
+        ValidationMessagesSource vms = mockValidationMessagesSource();
+        FormSupport fs = mockFormSupport();
+        Translator translator = mockTranslator("maptrans", Map.class);
+        MessageFormatter formatter = mockMessageFormatter();
+        MarkupWriter writer = mockMarkupWriter();
+        String label = "My Label";
+        String message = "Formatted Message";
+
+        train_findByType(ts, propertyType, translator);
+
+        train_getFormValidationId(fs, "myform");
+
+        train_contains(messages, "myform-myfield-maptrans-message", true);
+        train_getMessageFormatter(messages, "myform-myfield-maptrans-message", formatter);
 
         train_getLabel(field, label);
         train_format(formatter, message, label);
@@ -171,6 +220,10 @@ public class FieldTranslatorSourceImplTest extends InternalBaseTestCase
         train_getLocale(resources, locale);
 
         train_get(ts, "map", translator);
+
+        train_getFormValidationId(fs, "myform");
+
+        train_contains(messages, "myform-myfield-map-message", false);
         train_contains(messages, "myfield-map-message", false);
         train_getValidationMessages(vms, locale, validationMessages);
 

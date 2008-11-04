@@ -92,9 +92,9 @@ public class Upload extends AbstractField
     /**
      * Computes a default value for the "validate" parameter using {@link FieldValidatorDefaultSource}.
      */
-    final FieldValidator defaultValidate()
+    final Binding defaultValidate()
     {
-        return defaultProvider.defaultValidator("value", resources);
+        return defaultProvider.defaultValidatorBinding("value", resources);
     }
 
     public Upload()

@@ -95,10 +95,10 @@ public class BeanEditForm implements ClientElement, FormValidationControl
     private String reorder;
 
     /**
-     * If true, the default, then the embedded Form component will use client-side validation.
+     * May be bound, to override the Form's default for clientValidation.
      */
     @Parameter
-    private boolean clientValidation = true;
+    private boolean clientValidation;
 
     /**
      * Binding the zone parameter will cause the form submission to be handled as an Ajax request that updates the
@@ -107,7 +107,9 @@ public class BeanEditForm implements ClientElement, FormValidationControl
     @Parameter(defaultPrefix = BindingConstants.LITERAL)
     private String zone;
 
-    @Component(parameters = {"clientValidation=inherit:clientValidation", "zone=inherit:zone"})
+    @Component(parameters = {"clientValidation=inherit:clientValidation",
+            "validationId=componentResources.id",
+            "zone=inherit:zone"})
     private Form form;
 
     /**

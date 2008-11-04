@@ -1170,4 +1170,14 @@ public abstract class TapestryTestCase extends IOCTestCase
     {
         return newMock(ComponentEventResultProcessor.class);
     }
+
+    protected final void train_getFormComponentId(FormSupport formSupport, String componentId)
+    {
+        expect(formSupport.getFormComponentId()).andReturn(componentId).atLeastOnce();
+    }
+
+    protected final void train_getFormValidationId(FormSupport formSupport, String validationId)
+    {
+        expect(formSupport.getFormValidationId()).andReturn(validationId).atLeastOnce();
+    }
 }

@@ -49,7 +49,7 @@ public class SubmitTest extends InternalBaseTestCase
     {
         Request request = mockRequest();
         ComponentResources resources = mockComponentResources();
-        FormSupportImpl support = new FormSupportImpl(null);
+        FormSupportImpl support = new FormSupportImpl(null, null);
 
         String elementName = "myname";
 

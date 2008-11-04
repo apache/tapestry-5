@@ -195,9 +195,9 @@ public class Select extends AbstractField
     /**
      * Computes a default value for the "validate" parameter using {@link FieldValidatorDefaultSource}.
      */
-    FieldValidator defaultValidate()
+    Binding defaultValidate()
     {
-        return defaultProvider.defaultValidator("value", resources);
+        return defaultProvider.defaultValidatorBinding("value", resources);
     }
 
     Object defaultBlankLabel()

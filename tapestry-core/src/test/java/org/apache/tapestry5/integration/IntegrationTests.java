@@ -2446,4 +2446,33 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         assertText("second", "Source is null.");
         assertText("third", "Source is the empty list.");
     }
+
+    /**
+     * TAP5-228: And to think I almost blew off the integration tests!
+     */
+    public void per_form_validation_messages_and_constraints()
+    {
+        start("Per-Form Validation Messages");
+
+        clickAndWait("//input[@type='submit' and @value='Login']");
+
+        assertTextPresent("Enter the unique user id you provided when you registerred.");
+
+        type("userId", "aaa");
+
+        clickAndWait("//input[@type='submit' and @value='Login']");
+
+        assertTextPresent("You must provide at least 10 characters for User Id.");
+
+
+        clickAndWait("//input[@type='submit' and @value='Register']");
+
+        assertTextPresent("Enter a unique user id, such as your initials.");
+
+        type("userId_0", "aaa");
+
+        clickAndWait("//input[@type='submit' and @value='Register']");
+
+        assertTextPresent("You must provide at least 20 characters for User Id.");
+    }
 }

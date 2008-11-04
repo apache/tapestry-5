@@ -75,4 +75,9 @@ public class FormSupportAdapter implements FormSupport
     {
         return delegate.getFormComponentId();
     }
+
+    public String getFormValidationId()
+    {
+        return delegate.getFormValidationId();
+    }
 }

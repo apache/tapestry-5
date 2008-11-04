@@ -65,6 +65,9 @@ public class Start
 
     private static final List<Item> ITEMS = CollectionFactory.newList(
 
+            new Item("PerFormValidationMessageDemo", "Per-Form Validation Messages",
+                     "Per-form configuration of validation messages and constraints."),
+
             new Item("EmptyLoopDemo", "Empty Loop Demo", "Use of empty parameter with the Loop component."),
 
             new Item("BlankPasswordDemo", "Blank Password Demo",
