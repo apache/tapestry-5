@@ -79,13 +79,6 @@ public class DocumentLinkerImpl implements DocumentLinker
         // If the document failed to render entirely, that's a different problem and is reported elsewhere.        
         if (root == null) return;
 
-        // This only applies when the document is an HTML document. This may need to change in the
-        // future, perhaps configurable, to allow for html and xhtml and perhaps others. Does SVG
-        // use stylesheets?
-
-
-        if (!root.getName().equals("html"))
-            throw new RuntimeException(ServicesMessages.documentMissingHTMLRoot());
 
         if (!stylesheets.isEmpty())
             addStylesheetsToHead(root, includedStylesheets);
@@ -93,8 +86,24 @@ public class DocumentLinkerImpl implements DocumentLinker
         addScriptElementsToBody(root);
     }
 
+    private void validateRoot(Element root)
+    {
+        // This only applies when the document is an HTML document. This may need to change in the
+        // future, perhaps configurable, to allow for html and xhtml and perhaps others. Does SVG
+        // use stylesheets?
+
+        String rootElementName = root.getName();
+
+        if (!rootElementName.equals("html"))
+            throw new RuntimeException(ServicesMessages.documentMissingHTMLRoot(rootElementName));
+    }
+
     private void addScriptElementsToBody(Element root)
     {
+        if (scripts.isEmpty() && scriptBlock.length() == 0) return;
+
+        validateRoot(root);
+
         Element body = root.find("body");
 
         // Create the body element is it is somehow missing.
@@ -166,11 +175,15 @@ public class DocumentLinkerImpl implements DocumentLinker
      */
     protected void addStylesheetsToHead(Element root, List<IncludedStylesheet> stylesheets)
     {
+        int count = stylesheets.size();
+
+        if (count == 0) return;
+
+        validateRoot(root);
+
         Element head = root.find("head");
 
         if (head == null) head = root.elementAt(0, "head");
-
-        int count = stylesheets.size();
 
         for (int i = 0; i < count; i++)
             stylesheets.get(i).add(head, i);
