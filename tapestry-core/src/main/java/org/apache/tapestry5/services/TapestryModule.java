@@ -95,8 +95,6 @@ public final class TapestryModule
 
     private final RequestGlobals requestGlobals;
 
-    private final ActionRenderResponseGenerator actionRenderResponseGenerator;
-
     private final EnvironmentalShadowBuilder environmentalBuilder;
 
 
@@ -130,8 +128,6 @@ public final class TapestryModule
 
                           ThreadLocale threadLocale,
 
-                          ActionRenderResponseGenerator actionRenderResponseGenerator,
-
                           EnvironmentalShadowBuilder environmentalBuilder)
     {
         this.pipelineBuilder = pipelineBuilder;
@@ -146,7 +142,6 @@ public final class TapestryModule
         this.request = request;
         this.response = response;
         this.threadLocale = threadLocale;
-        this.actionRenderResponseGenerator = actionRenderResponseGenerator;
         this.environmentalBuilder = environmentalBuilder;
     }
 
@@ -1457,8 +1452,9 @@ public final class TapestryModule
 
     /**
      * Adds page render filters, each of which provides an {@link org.apache.tapestry5.annotations.Environmental}
-     * service. Filters often provide {@link Environmental} services needed by components as they render. <dl>
-     * <dt>PageRenderSupport</dt>  <dd>Provides {@link org.apache.tapestry5.RenderSupport}</dd>
+     * service. Filters often provide {@link org.apache.tapestry5.annotations.Environmental} services needed by
+     * components as they render. <dl> <dt>DocumentLinker</dt> <dd>Provides {@link org.apache.tapestry5.internal.services.DocumentLinker}
+     * <dt>RenderSupport</dt>  <dd>Provides {@link org.apache.tapestry5.RenderSupport}</dd>
      * <dt>ClientBehaviorSupport</dt> <dd>Provides {@link org.apache.tapestry5.internal.services.ClientBehaviorSupport}</dd>
      * <dt>Heartbeat</dt> <dd>Provides {@link org.apache.tapestry5.services.Heartbeat}</dd>
      * <dt>DefaultValidationDecorator</dt> <dd>Provides {@link org.apache.tapestry5.ValidationDecorator} (as an instance
@@ -1484,11 +1480,27 @@ public final class TapestryModule
 
                                          final AssetSource assetSource)
     {
-        MarkupRendererFilter pageRenderSupport = new MarkupRendererFilter()
+        MarkupRendererFilter documentLinker = new MarkupRendererFilter()
         {
             public void renderMarkup(MarkupWriter writer, MarkupRenderer renderer)
             {
                 DocumentLinkerImpl linker = new DocumentLinkerImpl(productionMode, scriptsAtTop);
+
+                environment.push(DocumentLinker.class, linker);
+
+                renderer.renderMarkup(writer);
+
+                environment.pop(DocumentLinker.class);
+
+                linker.updateDocument(writer.getDocument());
+            }
+        };
+
+        MarkupRendererFilter renderSupport = new MarkupRendererFilter()
+        {
+            public void renderMarkup(MarkupWriter writer, MarkupRenderer renderer)
+            {
+                DocumentLinker linker = environment.peekRequired(DocumentLinker.class);
 
                 RenderSupportImpl support = new RenderSupportImpl(linker, symbolSource, assetSource,
 
@@ -1508,11 +1520,9 @@ public final class TapestryModule
 
                 renderer.renderMarkup(writer);
 
-                support.commit();
-
-                linker.updateDocument(writer.getDocument());
-
                 environment.pop(RenderSupport.class);
+
+                support.commit();
             }
         };
 
@@ -1570,7 +1580,8 @@ public final class TapestryModule
         };
 
 
-        configuration.add("RenderSupport", pageRenderSupport);
+        configuration.add("DocumentLinker", documentLinker, "before:RenderSupport");
+        configuration.add("RenderSupport", renderSupport);
         configuration.add("ClientBehaviorSupport", clientBehaviorSupport, "after:RenderSupport");
         configuration.add("Heartbeat", heartbeat, "after:RenderSupport");
         configuration.add("DefaultValidationDecorator", defaultValidationDecorator, "after:Heartbeat");
@@ -1578,10 +1589,8 @@ public final class TapestryModule
 
 
     /**
-     * Contributes {@link PartialMarkupRendererFilter}s used when rendering a partial Ajax response.  This is an analog
-     * to {@link #contributeMarkupRenderer(org.apache.tapestry5.ioc.OrderedConfiguration, boolean,
-     * org.apache.tapestry5.Asset, org.apache.tapestry5.Asset, ValidationMessagesSource,
-     * org.apache.tapestry5.ioc.services.SymbolSource, AssetSource)}  } and overlaps it to some degree. <dl> <dt>
+     * Contributes {@link PartialMarkupRendererFilter}s used when rendering a partial Ajax response. <dl>
+     * <dt>DocumentLinker <dd>Provides {@link org.apache.tapestry5.internal.services.DocumentLinker} <dt>
      * PageRenderSupport     </dt> <dd>Provides {@link org.apache.tapestry5.RenderSupport}</dd>
      * <dt>ClientBehaviorSupport</dt> <dd>Provides {@link org.apache.tapestry5.internal.services.ClientBehaviorSupport}</dd>
      * <dt>Heartbeat</dt> <dd>Provides {@link org.apache.tapestry5.services.Heartbeat}</dd>
@@ -1599,7 +1608,24 @@ public final class TapestryModule
 
                                                 final ValidationMessagesSource validationMessagesSource)
     {
-        PartialMarkupRendererFilter pageRenderSupport = new PartialMarkupRendererFilter()
+        PartialMarkupRendererFilter documentLinker = new PartialMarkupRendererFilter()
+        {
+            public void renderMarkup(MarkupWriter writer, JSONObject reply, PartialMarkupRenderer renderer)
+            {
+                PartialMarkupDocumentLinker linker = new PartialMarkupDocumentLinker();
+
+                environment.push(DocumentLinker.class, linker);
+
+                renderer.renderMarkup(writer, reply);
+
+                environment.pop(DocumentLinker.class);
+
+                linker.commit(reply);
+            }
+        };
+
+
+        PartialMarkupRendererFilter renderSupport = new PartialMarkupRendererFilter()
         {
             public void renderMarkup(MarkupWriter writer, JSONObject reply, PartialMarkupRenderer renderer)
             {
@@ -1609,7 +1635,7 @@ public final class TapestryModule
 
                 IdAllocator idAllocator = new IdAllocator(namespace);
 
-                PartialMarkupDocumentLinker linker = new PartialMarkupDocumentLinker();
+                DocumentLinker linker = environment.peekRequired(DocumentLinker.class);
 
                 RenderSupportImpl support = new RenderSupportImpl(linker, symbolSource, assetSource,
                                                                   idAllocator);
@@ -1621,8 +1647,6 @@ public final class TapestryModule
                 support.commit();
 
                 environment.pop(RenderSupport.class);
-
-                linker.commit(reply);
             }
         };
 
@@ -1680,7 +1704,8 @@ public final class TapestryModule
         };
 
 
-        configuration.add("RenderSupport", pageRenderSupport);
+        configuration.add("DocumentLinker", documentLinker, "before:RenderSupport");
+        configuration.add("RenderSupport", renderSupport);
         configuration.add("ClientBehaviorSupport", clientBehaviorSupport, "after:RenderSupport");
         configuration.add("Heartbeat", heartbeat, "after:RenderSupport");
         configuration.add("DefaultValidationDecorator", defaultValidationDecorator, "after:Heartbeat");

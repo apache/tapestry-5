@@ -417,4 +417,9 @@ class ServicesMessages
     {
         return MESSAGES.format("event-not-handled", eventName, element.getCompleteId());
     }
+
+    static String documentMissingHTMLRoot()
+    {
+        return MESSAGES.get("document-missing-html-root");
+    }
 }

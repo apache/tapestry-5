@@ -76,15 +76,16 @@ public class DocumentLinkerImpl implements DocumentLinker
     {
         Element root = document.getRootElement();
 
-        // This can happen due to a catastrophic rendering error, such as a missing page template.
+        // If the document failed to render entirely, that's a different problem and is reported elsewhere.        
         if (root == null) return;
 
         // This only applies when the document is an HTML document. This may need to change in the
         // future, perhaps configurable, to allow for html and xhtml and perhaps others. Does SVG
         // use stylesheets?
 
-        if (!root.getName().equals("html")) return;
 
+        if (!root.getName().equals("html"))
+            throw new RuntimeException(ServicesMessages.documentMissingHTMLRoot());
 
         if (!stylesheets.isEmpty())
             addStylesheetsToHead(root, includedStylesheets);
@@ -96,7 +97,9 @@ public class DocumentLinkerImpl implements DocumentLinker
     {
         Element body = root.find("body");
 
-        if (body == null) return;
+        // Create the body element is it is somehow missing.
+
+        if (body == null) body = root.element("body");
 
         // TAPESTRY-2364
 
