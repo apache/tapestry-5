@@ -239,13 +239,15 @@ public class Form implements ClientElement, FormValidationControl
 
     void beginRender(MarkupWriter writer)
     {
+        Link link = resources.createFormEventLink(EventConstants.ACTION, context);
+
         actionSink = new ComponentActionSink(logger);
 
         name = renderSupport.allocateClientId(resources);
 
         formSupport = createRenderTimeFormSupport(name, actionSink, new IdAllocator());
 
-        if (zone != null) clientBehaviorSupport.linkZone(name, zone);
+        if (zone != null) clientBehaviorSupport.linkZone(name, zone, link);
 
         // TODO: Forms should not allow to nest. Perhaps a set() method instead of a push() method
         // for this kind of check?  
@@ -267,15 +269,13 @@ public class Form implements ClientElement, FormValidationControl
 
         resources.triggerEvent(EventConstants.PREPARE, context, null);
 
-        Link link = resources.createFormEventLink(EventConstants.ACTION, context);
-
         // Save the form element for later, in case we want to write an encoding type attribute.
 
         form = writer.element("form",
                               "name", name,
                               "id", name,
                               "method", "post",
-                              "action", link);
+                              "action", zone == null ? link : "#");
 
         componentInvocationMap.store(form, link);
 

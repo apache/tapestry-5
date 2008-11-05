@@ -142,7 +142,9 @@ public class GridPager
 
         Link link = resources.createEventLink(EventConstants.ACTION, context);
 
-        Element element = writer.element("a", "href", link, "title", messages.format("goto-page", pageIndex));
+        Element element = writer.element("a",
+                                         "href", zone == null ? link : "#",
+                                         "title", messages.format("goto-page", pageIndex));
 
         writer.write(Integer.toString(pageIndex));
         writer.end();
@@ -153,7 +155,7 @@ public class GridPager
 
             element.attribute("id", id);
 
-            clientBehaviorSupport.linkZone(id, zone);
+            clientBehaviorSupport.linkZone(id, zone, link);
         }
     }
 

@@ -43,8 +43,9 @@ public interface ClientBehaviorSupport
      *
      * @param linkId    id of the link to Ajax enable
      * @param elementId id of an element that has been previously registered as a Zone
+     * @param eventLink
      */
-    void linkZone(String linkId, String elementId);
+    void linkZone(String linkId, String elementId, Link eventLink);
 
     /**
      * Adds a new client-side Tapestry.FormFragment object.  FormFragment's are used to make parts of a client-side form
