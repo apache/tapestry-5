@@ -26,7 +26,7 @@ public class DocumentLinkerImplTest extends InternalBaseTestCase
         assertEquals(document.toString(), readFile(file));
     }
 
-    @Test(expectedExceptions = RuntimeException.class)
+    @Test
     public void exception_if_missing_html_root_element()
     {
         Document document = new Document();
@@ -35,10 +35,21 @@ public class DocumentLinkerImplTest extends InternalBaseTestCase
 
         DocumentLinkerImpl linker = new DocumentLinkerImpl(true, false);
 
+        // Only checked if there's something to link.
+
         linker.addScript("foo.js");
         linker.addScript("doSomething();");
 
-        linker.updateDocument(document);
+        try
+        {
+            linker.updateDocument(document);
+            unreachable();
+        }
+        catch (RuntimeException ex)
+        {
+            assertEquals(ex.getMessage(),
+                         "The root element of the rendered document was <not-html>, not <html>. A root element of <html> is needed when linking JavaScript and stylesheet resources.");
+        }
     }
 
     @Test

@@ -418,8 +418,8 @@ class ServicesMessages
         return MESSAGES.format("event-not-handled", eventName, element.getCompleteId());
     }
 
-    static String documentMissingHTMLRoot()
+    static String documentMissingHTMLRoot(String rootElementName)
     {
-        return MESSAGES.get("document-missing-html-root");
+        return MESSAGES.format("document-missing-html-root", rootElementName);
     }
 }
