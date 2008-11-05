@@ -26,8 +26,8 @@ public class DocumentLinkerImplTest extends InternalBaseTestCase
         assertEquals(document.toString(), readFile(file));
     }
 
-    @Test
-    public void do_nothing_if_no_body()
+    @Test(expectedExceptions = RuntimeException.class)
+    public void exception_if_missing_html_root_element()
     {
         Document document = new Document();
 
@@ -39,8 +39,21 @@ public class DocumentLinkerImplTest extends InternalBaseTestCase
         linker.addScript("doSomething();");
 
         linker.updateDocument(document);
+    }
 
-        assertEquals(document.toString(), "<not-html>not an HTML document</not-html>");
+    @Test
+    public void missing_root_element_is_a_noop()
+    {
+        Document document = new Document();
+
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(true, false);
+
+        linker.addScript("foo.js");
+        linker.addScript("doSomething();");
+
+        // No root element is not an error, even though there's work to do.
+        // The failure to render is reported elsewhere.
+        linker.updateDocument(document);
     }
 
     @Test

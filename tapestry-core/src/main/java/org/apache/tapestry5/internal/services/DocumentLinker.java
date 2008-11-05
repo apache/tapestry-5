@@ -22,7 +22,7 @@ public interface DocumentLinker
 {
     /**
      * Adds a link to load a script. Scripts will be loaded only once.  The &lt;script&gt; elements will be added at the
-     * bottom of the &lt;body&gt; element.
+     * top or bottom of the &lt;body&gt; element (the location is configurable).
      */
     void addScriptLink(String scriptURL);
 
