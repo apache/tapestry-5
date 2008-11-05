@@ -52,7 +52,12 @@ public abstract class AbstractComponentEventLink extends AbstractLink
 
         writeLink(writer, link);
 
-        if (zone != null) clientBehaviorSupport.linkZone(getClientId(), zone);
+        if (zone != null)
+        {
+            writer.getElement().forceAttributes("href", "#");
+
+            clientBehaviorSupport.linkZone(getClientId(), zone, link);
+        }
     }
 
     /**

@@ -64,11 +64,12 @@ public class ClientBehaviorSupportImpl implements ClientBehaviorSupport
         if (showFunctionName != null) spec.put(key, showFunctionName.toLowerCase());
     }
 
-    public void linkZone(String linkId, String elementId)
+    public void linkZone(String linkId, String elementId, Link eventLink)
     {
         JSONArray spec = new JSONArray();
         spec.put(linkId);
         spec.put(elementId);
+        spec.put(eventLink.toAbsoluteURI());
 
         renderSupport.addInit("linkZone", spec);
     }

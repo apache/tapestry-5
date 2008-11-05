@@ -501,7 +501,7 @@ Element.addMethods('FORM',
      * @param options      standard Prototype Ajax Options
      * @return Ajax.Request the Ajax.Request created for the request
      */
-    sendAjaxRequest : function (form, options)
+    sendAjaxRequest : function (form, url, options)
     {
         form = $(form);
 
@@ -541,11 +541,6 @@ Element.addMethods('FORM',
         Object.extend(hash, options.parameters);
 
         options.parameters = hash;
-
-        // We'll just assume that the form has an action; this
-        // will always be true in Tapestry.
-
-        var url = form.readAttribute('action');
 
         // Ajax.Request will convert the hash into a query string and post it.
 
@@ -714,8 +709,9 @@ Tapestry.Initializer = {
      * updates the indicated Zone.
      * @param element id or instance of <form> or <a> element
      * @param zoneId id of the element to update when link clicked or form submitted
+     * @param url absolute component event request URL
      */
-    linkZone : function(element, zoneId)
+    linkZone : function(element, zoneId, url)
     {
         element = $(element);
 
@@ -745,7 +741,7 @@ Tapestry.Initializer = {
                     zoneManager.processReply(transport.responseJSON);
                 };
 
-                element.sendAjaxRequest({ onSuccess : successHandler });
+                element.sendAjaxRequest(url, { onSuccess : successHandler });
             });
 
             return;
@@ -761,7 +757,7 @@ Tapestry.Initializer = {
 
             if (!zoneObject) return;
 
-            zoneObject.updateFromURL(element.href);
+            zoneObject.updateFromURL(url);
         });
     },
 

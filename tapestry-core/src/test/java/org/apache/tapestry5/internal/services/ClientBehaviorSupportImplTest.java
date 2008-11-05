@@ -14,6 +14,7 @@
 
 package org.apache.tapestry5.internal.services;
 
+import org.apache.tapestry5.Link;
 import org.apache.tapestry5.RenderSupport;
 import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
@@ -39,21 +40,32 @@ public class ClientBehaviorSupportImplTest extends TapestryTestCase
     @Test
     public void add_links()
     {
+        Link link1 = mockLink("/link1");
+        Link link2 = mockLink("/link2");
         RenderSupport support = mockRenderSupport();
 
-        support.addInit("linkZone", new JSONArray("['client1', 'zone1']"));
-        support.addInit("linkZone", new JSONArray("['client2', 'zone2']"));
+        support.addInit("linkZone", new JSONArray("['client1', 'zone1', '/link1']"));
+        support.addInit("linkZone", new JSONArray("['client2', 'zone2', '/link2']"));
 
         replay();
 
         ClientBehaviorSupportImpl setup = new ClientBehaviorSupportImpl(support);
 
-        setup.linkZone("client1", "zone1");
-        setup.linkZone("client2", "zone2");
+        setup.linkZone("client1", "zone1", link1);
+        setup.linkZone("client2", "zone2", link2);
 
         setup.commit();
 
         verify();
+    }
+
+    private Link mockLink(String absoluteURI)
+    {
+        Link link = mockLink();
+
+        expect(link.toAbsoluteURI()).andReturn(absoluteURI).atLeastOnce();
+
+        return link;
     }
 
     @Test
