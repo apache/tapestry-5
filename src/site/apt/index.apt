@@ -47,7 +47,7 @@ Third Party Libraries, Tutorials and Resources
 *--+--+--+
 | {{{http://code.google.com/p/gc-tapestry-components/}Godcode Components}} |   Chris Lewis |         A mixed collection of components providing simple but time-saving functionality, as well as more exotic ones; built on top of the prototype and script.aculo.us javascript libraries. |
 *--+--+--+
-| <<{{{http://files.doublenegative.com.au/jumpstart/}JumpStart}}>> |   Geoff Callender | A "living tutorial" in the form of a base Tapestry application ready to be expanded and customized. |
+| <<{{{http://jumpstart.doublenegative.com.au/}JumpStart}}>> |   Geoff Callender | A "living tutorial" in the form of a base Tapestry application ready to be expanded and customized. |
 *--+--+--+
 | {{{http://interldap.org}InterLDAP}} | Linagora / Francois Armand | LDAP content management system for non tech users. |
 *--+--+--+
