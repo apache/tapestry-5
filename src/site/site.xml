@@ -81,6 +81,7 @@
             <item name="Component Rendering" href="guide/rendering.html"/>
             <item name="Component Templates" href="guide/templates.html"/>
             <item name="Configuration" href="guide/conf.html"/>
+            <item name="Content Type and Markup" href="guide/content-type.html"/>
             <item name="CSS" href="guide/css.html"/>
             <item name="DOM" href="guide/dom.html"/>
             <item name="Environmental Services" href="guide/env.html"/>

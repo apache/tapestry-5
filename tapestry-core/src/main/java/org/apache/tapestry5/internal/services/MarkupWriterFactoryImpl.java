@@ -48,6 +48,7 @@ public class MarkupWriterFactoryImpl implements MarkupWriterFactory
         return newMarkupWriter(contentType, true);
     }
 
+    @SuppressWarnings({"UnusedDeclaration"})
     private MarkupWriter newMarkupWriter(ContentType contentType, boolean partial)
     {
         boolean isHTML = contentType.getMimeType().equalsIgnoreCase("text/html");

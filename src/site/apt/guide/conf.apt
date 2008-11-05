@@ -71,12 +71,28 @@ Configuring Tapestry
   
   If such a class exists, it is added to the IoC Registry. It is not an error for your application to not have a module, though
   any non-trivial application will have a module.
-  
+
+  An application module will often override some of Tapestry's default, or "factory", symbols, by contributing overrides
+  to the ApplicationDefaults service configuration.  For example:
+
+----
+public class AppModule
+{
+  public static void contributeApplicationDefaults(MappedConfiguration<String,String> configuration)
+  {
+    configuration.add(SymbolConstants.SUPPORTED_LOCALES, "en,fr,de");
+    configuration.add(SymbolConstants.FILE_CHECK_INTERVAL, "10 m");
+  }
+}
+----
+
 * Configuration Symbols
 
   Tapestry may also be configured via {{{../../tapestry-ioc/symbols.html}symbols}}.  A certain number of built-in services
   (some of which are not even public) are configured via symbols.  These symbols can be overridden
-  by contributing to the ApplicationDefaults service configuration, or on the command line
+  by contributing to the ApplicationDefaults service configuration, or by placing a
+  \<context-param\> element into the application's web.xml,
+  or on the command line
   by defining JVM System Properties with the -D command line option.
 
   These symbols are always defined in terms of strings, that are coerced to the appropriate type (a number,

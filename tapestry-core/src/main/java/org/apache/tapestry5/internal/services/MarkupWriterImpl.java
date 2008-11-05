@@ -35,6 +35,9 @@ public class MarkupWriterImpl implements MarkupWriter
 
     private List<MarkupWriterListener> listeners;
 
+    /**
+     * Creates a new instance of the MarkupWriter with a {@link org.apache.tapestry5.dom.DefaultMarkupModel}.
+     */
     public MarkupWriterImpl()
     {
         this(new DefaultMarkupModel());
@@ -123,7 +126,6 @@ public class MarkupWriterImpl implements MarkupWriter
 
             current.attribute(name, value.toString());
         }
-
     }
 
     private void ensureCurrentElement()

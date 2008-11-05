@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -23,6 +23,9 @@ public enum EndTagStyle
 
     /**
      * Omit the end tag. Examples for HTML include the input, br and img elements.
+     *
+     * @deprecated Tapestry always renders well formed XML markup (even when a DOCTYPE  is not present, or the content
+     *             type is traditional text/html).
      */
     OMIT,
     /**
@@ -30,8 +33,9 @@ public enum EndTagStyle
      */
     REQUIRE,
     /**
-     * Require an end tag, but abbreviate it if the element has no children. This is the only value used in XML
-     * documents.
+     * Require an end tag, but abbreviate it if the element has no children. This is the only value that should be used
+     * in XML documents, but {@link org.apache.tapestry5.dom.DefaultMarkupModel} forces certain tags to use {@link
+     * #REQUIRE} for semi-obscure browser compatibility issues.
      */
     ABBREVIATE
 }

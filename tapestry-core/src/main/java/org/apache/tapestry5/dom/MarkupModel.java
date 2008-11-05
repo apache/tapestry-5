@@ -24,8 +24,8 @@ package org.apache.tapestry5.dom;
 public interface MarkupModel
 {
     /**
-     * Encodes the characters into the buffer, converting control characters (such as '&lt;') into corresponding
-     * entities (such as &amp;lt;).
+     * Encodes the characters, converting control characters (such as '&lt;') into corresponding entities (such as
+     * &amp;lt;).
      *
      * @param content to be filtered
      * @return the filtered content
@@ -51,7 +51,7 @@ public interface MarkupModel
      * Returns true if the document markup is XML, which is used to determine the need for an XML declaration at the
      * start of the document, and whether CDATA sections are supported.
      *
-     * @return true for XML output, false for HTML (SGML) output
+     * @return true for XML output, false for HTML output
      */
     boolean isXML();
 }

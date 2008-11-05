@@ -142,7 +142,7 @@ public class MarkupWriterImplTest extends InternalBaseTestCase
 
         // img is a tag with an end tag style of omit, so no close tag is written.
 
-        assertEquals(w.toString(), "<img height=\"20\" src=\"foo.png\" width=\"20\">");
+        assertEquals(w.toString(), "<img height=\"20\" src=\"foo.png\" width=\"20\"/>");
     }
 
     @Test
@@ -154,7 +154,7 @@ public class MarkupWriterImplTest extends InternalBaseTestCase
 
         w.attributes("foo", "bar", "gnip", "gnop");
 
-        assertEquals(w.toString(), "<root foo=\"bar\" gnip=\"gnop\"></root>");
+        assertEquals(w.toString(), "<root foo=\"bar\" gnip=\"gnop\"/>");
     }
 
     @Test
@@ -179,7 +179,6 @@ public class MarkupWriterImplTest extends InternalBaseTestCase
         w.end();
 
         assertEquals(w.toString(), "<root><!-- <&> --></root>");
-
     }
 
     @Test
@@ -205,7 +204,7 @@ public class MarkupWriterImplTest extends InternalBaseTestCase
         w.write(null);
         w.end();
 
-        assertEquals(w.toString(), "<root></root>");
+        assertEquals(w.toString(), "<root/>");
     }
 
     @Test

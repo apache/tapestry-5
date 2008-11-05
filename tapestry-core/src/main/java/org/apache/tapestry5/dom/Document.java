@@ -40,6 +40,8 @@ public final class Document extends Node
     {
         super(null);
 
+        Defense.notNull(model, "model");
+
         this.model = model;
         this.encoding = encoding;
     }

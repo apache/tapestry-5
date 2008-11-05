@@ -19,76 +19,24 @@ import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import java.util.Set;
 
 /**
- * Default implementation of {@link org.apache.tapestry5.dom.MarkupModel} that is appropriate for traditional HTML
- * markup. This conforms to the SGML HTML definition, including some things that are not well formed XML-style markup.
- * Assumes that all tags are lower-case.
+ * Default implementation of {@link org.apache.tapestry5.dom.MarkupModel} that is appropriate for traditional (X)HTML
+ * markup. Assumes that all tags are lower-case.  A certain set of tags will always be expanded (with seperate begin and
+ * end tags) even if their content is empty: script, div, span, p, textarea, select; this is for compatibility with web
+ * browsers, especially when the content type of a response indicates HTML, not true XML.
  */
-public class DefaultMarkupModel implements MarkupModel
+public class DefaultMarkupModel extends AbstractMarkupModel
 {
-    private final Set<String> EMPTY_ELEMENTS = CollectionFactory.newSet("base", "br", "col", "frame", "hr", "img",
-                                                                        "input", "link",
-                                                                        "meta", "option", "param");
-
     /**
-     * Passes all characters but '&lt;', '&gt;' and '&amp;' through unchanged.
+     * For these tags, use {@link org.apache.tapestry5.dom.EndTagStyle#REQUIRE}.
      */
-    public void encode(String content, StringBuilder buffer)
-    {
-        encode(content, false, buffer);
-    }
-
-    public String encode(String content)
-    {
-        StringBuilder buffer = new StringBuilder(content.length() * 2);
-
-        encode(content, false, buffer);
-
-        return buffer.toString();
-    }
-
-    public void encodeQuoted(String content, StringBuilder buffer)
-    {
-        encode(content, true, buffer);
-    }
-
-    private void encode(String content, boolean encodeQuotes, StringBuilder buffer)
-    {
-        char[] array = content.toCharArray();
-
-        for (char ch : array)
-        {
-            switch (ch)
-            {
-                case '<':
-                    buffer.append("&lt;");
-                    continue;
-
-                case '>':
-                    buffer.append("&gt;");
-                    continue;
-
-                case '&':
-                    buffer.append("&amp;");
-                    continue;
-
-                case '"':
-                    if (encodeQuotes)
-                    {
-                        buffer.append("&quot;");
-                        continue;
-                    }
-
-                default:
-                    buffer.append(ch);
-            }
-        }
-    }
+    private final Set<String> REQUIRE_END_TAG =
+            CollectionFactory.newSet("script", "div", "span", "p", "textarea", "select");
 
     public EndTagStyle getEndTagStyle(String element)
     {
-        boolean isEmpty = EMPTY_ELEMENTS.contains(element);
+        boolean required = REQUIRE_END_TAG.contains(element);
 
-        return isEmpty ? EndTagStyle.OMIT : EndTagStyle.REQUIRE;
+        return required ? EndTagStyle.REQUIRE : EndTagStyle.ABBREVIATE;
     }
 
     /**
