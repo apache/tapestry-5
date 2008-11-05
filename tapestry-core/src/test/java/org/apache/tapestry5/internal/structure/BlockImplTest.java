@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,6 +16,10 @@ package org.apache.tapestry5.internal.structure;
 
 import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
+import org.apache.tapestry5.ioc.Location;
+import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.ioc.internal.util.ClasspathResource;
+import org.apache.tapestry5.ioc.internal.util.LocationImpl;
 import org.apache.tapestry5.runtime.RenderQueue;
 import org.testng.annotations.Test;
 
@@ -24,7 +28,7 @@ public class BlockImplTest extends InternalBaseTestCase
     @Test
     public void empty_block()
     {
-        BlockImpl block = new BlockImpl(null);
+        BlockImpl block = new BlockImpl(null, null);
         RenderQueue queue = mockRenderQueue();
         MarkupWriter writer = mockMarkupWriter();
 
@@ -38,7 +42,7 @@ public class BlockImplTest extends InternalBaseTestCase
     @Test
     public void body_pushed_to_queue_backwards()
     {
-        BlockImpl block = new BlockImpl(null);
+        BlockImpl block = new BlockImpl(null, null);
         RenderQueue queue = mockRenderQueue();
         MarkupWriter writer = mockMarkupWriter();
         PageElement element1 = mockPageElement();
@@ -57,5 +61,16 @@ public class BlockImplTest extends InternalBaseTestCase
         block.render(writer, queue);
 
         verify();
+    }
+
+    @Test
+    public void to_string()
+    {
+        Resource r = new ClasspathResource("foo/pages/MyPage.tml");
+        Location l = new LocationImpl(r, 23);
+
+        BlockImpl block = new BlockImpl(l, "test block");
+
+        assertEquals(block.toString(), "Block[test block, at classpath:foo/pages/MyPage.tml, line 23]");
     }
 }

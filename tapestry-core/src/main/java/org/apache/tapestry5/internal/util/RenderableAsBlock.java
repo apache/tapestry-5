@@ -41,4 +41,10 @@ public class RenderableAsBlock implements Block, RenderCommand
     {
         renderable.render(writer);
     }
+
+    @Override
+    public String toString()
+    {
+        return String.format("Block[%s]", renderable);
+    }
 }

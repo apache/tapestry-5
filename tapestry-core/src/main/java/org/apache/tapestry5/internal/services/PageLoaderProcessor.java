@@ -591,14 +591,17 @@ class PageLoaderProcessor
 
     private void parameter(ParameterToken token)
     {
-        BlockImpl block = new BlockImpl(token.getLocation());
+        ComponentPageElement element = activeElementStack.peek();
         String name = token.getName();
+
+        BlockImpl block = new BlockImpl(token.getLocation(),
+                                        String.format("Parmeter %s of %s", name, element.getCompleteId()));
 
         Binding binding = new LiteralBinding("block parameter " + name, block, token.getLocation());
 
         // TODO: Check that the t:parameter doesn't appear outside of an embedded component.
 
-        activeElementStack.peek().bindParameter(name, binding);
+        element.bindParameter(name, binding);
 
         setupBlock(block);
     }
@@ -620,12 +623,16 @@ class PageLoaderProcessor
 
     private void block(BlockToken token)
     {
+
+        String id = token.getId();
         // Don't use the page element factory here becauses we need something that is both Block and
         // BodyPageElement and don't want to use casts.
 
-        BlockImpl block = new BlockImpl(token.getLocation());
+        String description = id == null
+                             ? String.format("Anonymous within %s", loadingElement.getCompleteId())
+                             : String.format("%s within %s", id, loadingElement.getCompleteId());
 
-        String id = token.getId();
+        BlockImpl block = new BlockImpl(token.getLocation(), description);
 
         if (id != null) loadingElement.addBlock(id, block);
 

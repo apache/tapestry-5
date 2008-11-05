@@ -57,10 +57,15 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
         public void render(MarkupWriter writer)
         {
         }
+
+        @Override
+        public String toString()
+        {
+            return "<PlaceholderBlock>";
+        }
     }
 
     private static final Block PLACEHOLDER_BLOCK = new PlaceholderBlock();
-
 
     /**
      * @see #render(org.apache.tapestry5.MarkupWriter, org.apache.tapestry5.runtime.RenderQueue)
@@ -692,7 +697,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
 
     public void addToBody(PageElement element)
     {
-        if (bodyBlock == null) bodyBlock = new BlockImpl(getLocation());
+        if (bodyBlock == null) bodyBlock = new BlockImpl(getLocation(), "Body of " + getCompleteId());
 
         bodyBlock.addToBody(element);
     }

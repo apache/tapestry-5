@@ -74,7 +74,7 @@ public class PageElementFactoryImpl implements PageElementFactory
         this.pageResourcesSource = pageResourcesSource;
     }
 
-    public PageElement newAttributeElement(ComponentResources componentResources, AttributeToken token)
+    public PageElement newAttributeElement(ComponentResources componentResources, final AttributeToken token)
     {
         final StringProvider provider = parseAttributeExpansionExpression(token.getValue(), componentResources,
                                                                           token.getLocation());
@@ -87,6 +87,12 @@ public class PageElementFactoryImpl implements PageElementFactory
             public void render(MarkupWriter writer, RenderQueue queue)
             {
                 writer.attributeNS(namespace, name, provider.provideString());
+            }
+
+            @Override
+            public String toString()
+            {
+                return String.format("AttributeNS[%s %s \"%s\"]", namespace, name, token.getValue());
             }
         };
     }
@@ -168,7 +174,6 @@ public class PageElementFactoryImpl implements PageElementFactory
                 return builder.toString();
             }
         };
-
     }
 
     public PageElement newExpansionElement(ComponentResources componentResources, ExpansionToken token)
