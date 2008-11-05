@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -31,9 +31,13 @@ public class BlockImpl extends BaseLocatable implements Block, BodyPageElement, 
 
     private final List<PageElement> elements = CollectionFactory.newList();
 
-    public BlockImpl(Location location)
+    private final String description;
+
+    public BlockImpl(Location location, String description)
     {
         super(location);
+
+        this.description = description;
     }
 
     public void addToBody(PageElement element)
@@ -51,4 +55,9 @@ public class BlockImpl extends BaseLocatable implements Block, BodyPageElement, 
             queue.push(elements.get(i));
     }
 
+    @Override
+    public String toString()
+    {
+        return String.format("Block[%s, at %s]", description, getLocation());
+    }
 }

@@ -33,4 +33,10 @@ public class StringRenderable implements Renderable
     {
         writer.write(text);
     }
+
+    @Override
+    public String toString()
+    {
+        return String.format("Renderable[%s]", text);
+    }
 }
