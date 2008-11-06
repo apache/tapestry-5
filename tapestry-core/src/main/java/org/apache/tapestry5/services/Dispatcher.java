@@ -14,6 +14,8 @@
 
 package org.apache.tapestry5.services;
 
+import org.apache.tapestry5.ioc.annotations.UsesOrderedConfiguration;
+
 import java.io.IOException;
 
 /**
@@ -21,10 +23,8 @@ import java.io.IOException;
  * each dispatcher responsible for recognizing requests that it can process.  This is the interface for the
  * MasterDispatcher service, which takes an ordered configuration of Dispatchers (that is, the chain of command
  * pattern). If no dispatcher processes the request, it will utltimately be passed off to the servlet container.
- *
- * @see org.apache.tapestry5.services.TapestryModule#contributeMasterDispatcher(org.apache.tapestry5.ioc.OrderedConfiguration,
- *      org.apache.tapestry5.ioc.ObjectLocator)
  */
+@UsesOrderedConfiguration(Dispatcher.class)
 public interface Dispatcher
 {
     /**

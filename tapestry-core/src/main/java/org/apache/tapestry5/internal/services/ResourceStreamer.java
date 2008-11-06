@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,14 +15,17 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.ioc.Resource;
-import org.apache.tapestry5.ioc.internal.util.ClasspathResource;
+import org.apache.tapestry5.ioc.annotations.UsesMappedConfiguration;
 
 import java.io.IOException;
 
 /**
- * Responsible for streaming the contents of a resource to the client. The {@link Resource} to stream is almost always a
- * {@link ClasspathResource}.
+ * Responsible for streaming the contents of a resource to the client. The {@link org.apache.tapestry5.ioc.Resource} to
+ * stream is almost always a {@link org.apache.tapestry5.ioc.internal.util.ClasspathResource}.
+ * <p/>
+ * The service's configuration is used to map file extensions to content types.
  */
+@UsesMappedConfiguration(String.class)
 public interface ResourceStreamer
 {
     /**

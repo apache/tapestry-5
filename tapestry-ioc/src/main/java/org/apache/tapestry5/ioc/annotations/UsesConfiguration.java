@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+//  Copyright 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,22 +12,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.hibernate;
+package org.apache.tapestry5.ioc.annotations;
 
-import org.apache.tapestry5.ioc.annotations.UsesConfiguration;
+import java.lang.annotation.*;
 
-import java.util.Collection;
 
 /**
- * Contains a set of contributed package names from which to load entities.
- * <p/>
- * The service's configuration is the names of Java packages to search for Hibernate entities.
+ * A documentation-only interface placed on service interfaces for services which have an {@linkplain
+ * org.apache.tapestry5.ioc.Configuration unordered configuration}, to identify the type of contribution.
  */
-@UsesConfiguration(String.class)
-public interface HibernateEntityPackageManager
+@Target(ElementType.TYPE)
+@Retention(RetentionPolicy.CLASS)
+@Documented
+public @interface UsesConfiguration
 {
     /**
-     * Returns packages from which read entity classes
+     * The type of object which may be contributed into the service's configuration.
      */
-    Collection<String> getPackageNames();
+    Class value();
 }

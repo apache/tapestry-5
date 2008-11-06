@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,12 +16,17 @@ package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.internal.parser.ComponentTemplate;
 import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.ioc.annotations.UsesMappedConfiguration;
+
+import java.net.URL;
 
 /**
- * Parses a resource into a {@link org.apache.tapestry5.internal.parser.ComponentTemplate}.
+ * Parses a resource into a {@link org.apache.tapestry5.internal.parser.ComponentTemplate}. The service's configuration
+ * is used to map common document types to internal copies of the corresponding DTD.
  *
- * @see PageLoader
+ * @see org.apache.tapestry5.internal.services.PageLoader
  */
+@UsesMappedConfiguration(URL.class)
 public interface TemplateParser
 {
     /**

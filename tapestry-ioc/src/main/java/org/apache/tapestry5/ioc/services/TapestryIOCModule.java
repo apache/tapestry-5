@@ -65,9 +65,9 @@ public final class TapestryIOCModule
     {
         return new ServiceLifecycleSource()
         {
-            public ServiceLifecycle get(String lifecycleName)
+            public ServiceLifecycle get(String scope)
             {
-                return configuration.get(lifecycleName);
+                return configuration.get(scope);
             }
         };
     }

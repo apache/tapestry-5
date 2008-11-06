@@ -1,4 +1,4 @@
-// Copyright  2008 The Apache Software Foundation
+// Copyright 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,12 +15,12 @@
 package org.apache.tapestry5.services;
 
 import org.apache.tapestry5.NullFieldStrategy;
+import org.apache.tapestry5.ioc.annotations.UsesMappedConfiguration;
 
 /**
  * A source for {@link org.apache.tapestry5.NullFieldStrategy} instances based on a logical name.
- *
- * @see TapestryModule#contributeNullFieldStrategySource(org.apache.tapestry5.ioc.MappedConfiguration)
  */
+@UsesMappedConfiguration(NullFieldStrategy.class)
 public interface NullFieldStrategySource
 {
     /**

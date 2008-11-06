@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,6 +14,17 @@
 
 package org.apache.tapestry5.services;
 
+import org.apache.tapestry5.ioc.annotations.UsesMappedConfiguration;
+
+/**
+ * Used as part of the support for classpath {@link org.apache.tapestry5.Asset}s, to convert the Asset's {@link
+ * org.apache.tapestry5.ioc.Resource} to a URL that can be accessed by the client.    The asset path, within the
+ * classpath, is converted into a shorter virtual path (one that, typically, includes some kind of version number).
+ * <p/>
+ * Service configuration is a map from aliases (short names) to complete names. Names should not start or end end with a
+ * slash.
+ */
+@UsesMappedConfiguration(String.class)
 public interface ClasspathAssetAliasManager
 {
     /**

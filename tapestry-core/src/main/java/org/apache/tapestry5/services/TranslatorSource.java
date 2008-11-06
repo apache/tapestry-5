@@ -15,12 +15,15 @@
 package org.apache.tapestry5.services;
 
 import org.apache.tapestry5.Translator;
+import org.apache.tapestry5.ioc.annotations.UsesConfiguration;
 
 /**
- * A source for {@link Translator}s, either by name or by property type.
+ * A source for {@link org.apache.tapestry5.Translator}s, either by name or by property type.
  * <p/>
- * The configuration for the service is an unordered collection of {@link org.apache.tapestry5.Translator}.
+ * The configuration includes all the translators; each contributed translator must have a unique {@linkplain
+ * org.apache.tapestry5.Translator#getName() name}.
  */
+@UsesConfiguration(Translator.class)
 public interface TranslatorSource
 {
     /**

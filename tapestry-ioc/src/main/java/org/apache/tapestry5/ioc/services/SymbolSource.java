@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,13 +14,18 @@
 
 package org.apache.tapestry5.ioc.services;
 
+import org.apache.tapestry5.ioc.annotations.UsesOrderedConfiguration;
 import org.apache.tapestry5.ioc.annotations.Value;
 
 /**
  * Used to manage <em>symbols</em>, configuration properties whose value is evaluated at runtime. Symbols use the Ant
  * syntax: <code>${foo.bar.baz}</code> where <code>foo.bar.baz</code> is the name of the symbol. The symbol may appear
- * inside annotation, such as {@link Value}. Values for symbols are provided by {@link SymbolProvider}.
+ * inside annotation, such as {@link Value}.
+ * <p/>
+ * The SymbolSource service configuration is an ordered list of {@link org.apache.tapestry5.ioc.services.SymbolProvider}s.
+ * Two key SymbolProvider services are FactoryDefaults and ApplicationDefaults.
  */
+@UsesOrderedConfiguration(SymbolProvider.class)
 public interface SymbolSource
 {
     /**

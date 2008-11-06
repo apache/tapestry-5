@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,6 +14,7 @@
 
 package org.apache.tapestry5.hibernate;
 
+import org.apache.tapestry5.ioc.annotations.UsesOrderedConfiguration;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
@@ -21,7 +22,11 @@ import org.hibernate.cfg.Configuration;
 /**
  * Responsible for creating a Hibernate session as needed. Internally, is responsible for Hibernate {@link
  * Configuration}, resulting in a {@link SessionFactory}.
+ * <p/>
+ * The service's configuration is a {@linkplain org.apache.tapestry5.ioc.services.ChainBuilder chain of command} of
+ * configurator objects.
  */
+@UsesOrderedConfiguration(HibernateConfigurer.class)
 public interface HibernateSessionSource
 {
     /**

@@ -14,20 +14,26 @@
 
 package org.apache.tapestry5.services;
 
-import org.apache.tapestry5.corelib.components.ActionLink;
-import org.apache.tapestry5.corelib.components.Form;
+import org.apache.tapestry5.ioc.annotations.UsesOrderedConfiguration;
 
 import java.io.IOException;
 
 /**
- * Handler interface for action requests. Action requests <em>do things</em> such as process a form submission or
- * otherwise change state. In the majority of cases, after the action, a redirect response is sent to the client which,
- * in turn, causes a page render.
+ * Handler interface for component event requests. Component event requests <em>do things</em> such as process a form
+ * submission or otherwise change state. In the majority of cases, after the component event, a redirect response is
+ * sent to the client which, in turn, causes a page render.
+ * <p/>
+ * The ComponentEventRequestHandler service is a pipeline, allowing extensibility via contributed {@linkplain
+ * org.apache.tapestry5.services.ComponentEventRequestFilter filters}.    It may be distinguished by the @{@link
+ * org.apache.tapestry5.services.Traditional} marker annotation.
+ * <p/>
+ * A second service, AjaxComponentEventRequestHandler is also a pipeline and may be distinguished by the @{@link
+ * org.apache.tapestry5.services.Ajax} marker annotation.
  *
- * @see ActionLink
- * @see Form
- * @see ComponentEventRequestFilter
+ * @see org.apache.tapestry5.corelib.components.ActionLink
+ * @see org.apache.tapestry5.corelib.components.Form
  */
+@UsesOrderedConfiguration(ComponentEventRequestFilter.class)
 public interface ComponentEventRequestHandler
 {
     /**

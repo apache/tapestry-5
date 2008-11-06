@@ -54,6 +54,7 @@
             <item name="Decorators" href="decorator.html"/>
             <item name="Configuration" href="configuration.html"/>
             <item name="Type Coercion" href="coerce.html"/>
+            <item name="Injection in Detail" href="injection.html"/>
             <item name="Serialization" href="serialization.html"/>
             <item name="Case Insensitivity" href="case.html"/>
             <item name="Symbols" href="symbols.html"/>

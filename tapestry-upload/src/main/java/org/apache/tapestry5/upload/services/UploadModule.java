@@ -30,7 +30,8 @@ import org.apache.tapestry5.upload.internal.services.UploadExceptionFilter;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class UploadModule
+public class
+        UploadModule
 {
     private static final String NO_LIMIT = "-1";
 

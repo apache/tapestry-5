@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,12 +19,15 @@ import org.apache.tapestry5.FieldValidator;
 import org.apache.tapestry5.Validator;
 import org.apache.tapestry5.corelib.components.BeanEditForm;
 import org.apache.tapestry5.ioc.Messages;
+import org.apache.tapestry5.ioc.annotations.UsesMappedConfiguration;
 
 import java.util.Locale;
 
 /**
- * Used to create {@link FieldValidator}s for a particular {@link Field} component.
+ * Used to create {@link org.apache.tapestry5.FieldValidator}s for a particular {@link org.apache.tapestry5.Field}
+ * component.
  */
+@UsesMappedConfiguration(Validator.class)
 public interface FieldValidatorSource
 {
     /**
@@ -35,7 +38,8 @@ public interface FieldValidatorSource
      * you to override the message for a particular validation of a particular field.
      *
      * @param field           the field for which a validator is to be created
-     * @param validatorType   used to select the {@link Validator} that forms the core of the {@link FieldValidator}
+     * @param validatorType   used to select the {@link org.apache.tapestry5.Validator} that forms the core of the
+     *                        {@link org.apache.tapestry5.FieldValidator}
      * @param constraintValue a value used to configure the validator, or null if the validator is not configurarable
      * @return the field validator for the field
      */
@@ -47,14 +51,15 @@ public interface FieldValidatorSource
      * to use when checking. The {@link BeanEditForm} is an example of this.
      *
      * @param field            the field for which a validator is to be created
-     * @param validatorType    used to select the {@link Validator} that forms the core of the {@link FieldValidator}
+     * @param validatorType    used to select the {@link org.apache.tapestry5.Validator} that forms the core of the
+     *                         {@link org.apache.tapestry5.FieldValidator}
      * @param constraintValue  a value used to configure the validator, or null if the validator is not configurable
      * @param overrideId       the base id used when searching for validator message overrides (this would normally be
      *                         the field component's simple id)
      * @param overrideMessages the message catalog to search for override messages (this would normally be the catalog
      *                         for the container of the field component)
      * @param locale           locale used when retrieving default validation messages from the {@link
-     *                         ValidationMessagesSource}
+     *                         org.apache.tapestry5.services.ValidationMessagesSource}
      * @return the field validator for the field
      */
     FieldValidator createValidator(Field field, String validatorType, String constraintValue,

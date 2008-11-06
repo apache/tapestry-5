@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,15 +14,18 @@
 
 package org.apache.tapestry5.services;
 
+import org.apache.tapestry5.ioc.annotations.UsesOrderedConfiguration;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
- * Service interface for the HttpServletRequestHandler pipeline service.
- *
- * @see org.apache.tapestry5.services.HttpServletRequestFilter
+ * The first step in handing an incoming request to the {@linkplain org.apache.tapestry5.TapestryFilter servlet filter},
+ * this constructed as a {@linkplain org.apache.tapestry5.ioc.services.PipelineBuilder pipeline}.  The main
+ * implementation hands off to the {@link org.apache.tapestry5.services.RequestHandler} service.
  */
+@UsesOrderedConfiguration(HttpServletRequestFilter.class)
 public interface HttpServletRequestHandler
 {
     /**

@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,11 +17,17 @@ package org.apache.tapestry5.ioc.services;
 import org.apache.tapestry5.ioc.AnnotationProvider;
 import org.apache.tapestry5.ioc.ObjectLocator;
 import org.apache.tapestry5.ioc.ObjectProvider;
+import org.apache.tapestry5.ioc.annotations.UsesOrderedConfiguration;
 
 /**
- * Rolls up a number of {@link org.apache.tapestry5.ioc.ObjectProvider}, but allows for the case where no object may be
- * provided.
+ * A service that acts as a chain-of-command over a number of {@link org.apache.tapestry5.ioc.ObjectProvider}, but
+ * allows for the case where no object may be provided.
+ * <p/>
+ * This service is itself a key part of Tapestry's general injection mechanism; it is used when instantiating a service
+ * implementation instance, invoking module methods (service builder, decorator, or contribution methods), when
+ * {@linkplain ObjectLocator#autobuild(Class) autobuilding} objects of any type.
  */
+@UsesOrderedConfiguration(ObjectProvider.class)
 public interface MasterObjectProvider
 {
     /**

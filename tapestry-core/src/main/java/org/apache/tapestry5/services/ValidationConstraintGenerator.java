@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@ package org.apache.tapestry5.services;
 
 import org.apache.tapestry5.FieldValidator;
 import org.apache.tapestry5.ioc.AnnotationProvider;
+import org.apache.tapestry5.ioc.annotations.UsesOrderedConfiguration;
 
 import java.util.List;
 
@@ -25,14 +26,15 @@ import java.util.List;
  * ultimately handed to {@link FieldValidatorSource#createValidator(org.apache.tapestry5.Field, String, String, String,
  * org.apache.tapestry5.ioc.Messages, java.util.Locale)}.
  */
+@UsesOrderedConfiguration(ValidationConstraintGenerator.class)
 public interface ValidationConstraintGenerator
 {
     /**
      * For a given property, identify all the approprite validation constraints. Each returned value is the name of a
      * validator (i.e., "required") or a validator name and configuration (i.e., "minlength=5"). These contraints are
-     * exactly the individual terms in a {@link FieldValidatorSource#createValidators(org.apache.tapestry5.Field, String)
-     * validate specification}. These will ultimately be used to create {@link FieldValidator}s for the field that edits
-     * the property.
+     * exactly the individual terms in a {@link FieldValidatorSource#createValidators(org.apache.tapestry5.Field,
+     * String) validate specification}. These will ultimately be used to create {@link FieldValidator}s for the field
+     * that edits the property.
      *
      * @param propertyType       the type of the property for which constraints are needed
      * @param annotationProvider provides access to any annotations concerning the property (for implementations that

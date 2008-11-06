@@ -15,15 +15,15 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.ioc.annotations.UsesMappedConfiguration;
 import org.apache.tapestry5.services.PersistentFieldBundle;
+import org.apache.tapestry5.services.PersistentFieldStrategy;
 
 /**
  * Handle persistent property changes. Primarily, delegates to a number of {@link org.apache.tapestry5.services.PersistentFieldStrategy}
  * instances.
- *
- * @see org.apache.tapestry5.services.TapestryModule#contributePersistentFieldManager(org.apache.tapestry5.ioc.MappedConfiguration,
- *      org.apache.tapestry5.services.Request , org.apache.tapestry5.services.PersistentFieldStrategy)
  */
+@UsesMappedConfiguration(PersistentFieldStrategy.class)
 public interface PersistentFieldManager
 {
     /**

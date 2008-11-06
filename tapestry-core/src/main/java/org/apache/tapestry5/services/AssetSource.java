@@ -16,20 +16,19 @@ package org.apache.tapestry5.services;
 
 import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.ioc.annotations.UsesMappedConfiguration;
 import org.apache.tapestry5.ioc.services.ThreadLocale;
 
 import java.util.Locale;
 
 /**
- * Used to find or create an {@link Asset} with a given path.
+ * Used to find or create an {@link org.apache.tapestry5.Asset} with a given path.
  * <p/>
  * Assets are defined with a domain, and the domain is indicated by a prefix.  The two builtin domains are "context:"
  * (for files inside the web application context) and "classpath:" for files stored on the classpath (typically, inside
  * a JAR, such as a component library).
- *
- * @see org.apache.tapestry5.services.TapestryModule#contributeAssetSource(org.apache.tapestry5.ioc.MappedConfiguration,
- *      AssetFactory, AssetFactory)
  */
+@UsesMappedConfiguration(AssetFactory.class)
 public interface AssetSource
 {
     /**

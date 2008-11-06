@@ -14,13 +14,22 @@
 
 package org.apache.tapestry5.services;
 
+import org.apache.tapestry5.ioc.annotations.UsesMappedConfiguration;
+
 import java.io.IOException;
 
 /**
  * Responsible for handling the return value provided by a component event handler method.
+ * <p/>
+ * There are two services built into Tapestry that implement this interface: ComponentEventResultProcessor (used for
+ * ordinary page-oriented requests, and distinguished by the @{@link org.apache.tapestry5.services.Traditional}  and/or
  *
+ * @{@link org.apache.tapestry5.ioc.annotations.Primary} marker annotations) and AjaxComponentEventResultProcessor, used
+ * for Ajax requests (which typically return a partially rendered page), distinguished by the @{@link
+ * org.apache.tapestry5.services.Ajax} marker annotation.
  * @param <T>
  */
+@UsesMappedConfiguration(key = Class.class, value = ComponentEventResultProcessor.class)
 public interface ComponentEventResultProcessor<T>
 {
     /**
