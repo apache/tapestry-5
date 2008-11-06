@@ -86,16 +86,7 @@ Persistence Search
   
 Default Values
 
-  As with other fields, a default value may be specified inline, or inside a constructor.
-  
-  This value is retained and used to reset the value of the field at the end of each request,
-  before the page is returned to the page pool.
-  
-  Handling of the null value can be a tricky case, due to the limitations of the underlying 
-  Servlet API.  Changing a persistent field's value to null <removes> the
-  field's attribute from the session. On later requests, the field will reset to its
-  default value. Since that is usually null, this is not a problem ... it is only a problem
-  if a field has a non-null default value and may be changed to null.
+  Fields marked with @Persist may not have default values (whether set inline, or inside a constructor).
 
 Clearing Persistent Fields
 
