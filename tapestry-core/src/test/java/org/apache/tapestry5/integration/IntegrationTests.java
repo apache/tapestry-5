@@ -2475,4 +2475,32 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         assertTextPresent("You must provide at least 20 characters for User Id.");
     }
+
+    /**
+     * TAP5-157
+     */
+    public void link_submit_component()
+    {
+        start("LinkSubmit Demo");
+
+        click("link=Fred");
+
+        waitForCondition("selenium.browserbot.getCurrentWindow().$('name:errorpopup')",
+                         PAGE_LOAD_TIMEOUT);
+
+        assertTextPresent("You must provide a value for Name.");
+
+        type("name", "Wilma");
+
+        clickAndWait("link=Fred");
+
+        assertText("name-value", "Wilma");
+        assertText("last-clicked", "Fred");
+
+        type("name", "Betty");
+        clickAndWait("link=Barney");
+
+        assertText("name-value", "Betty");
+        assertText("last-clicked", "Barney");
+    }
 }
