@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,12 +15,16 @@
 package org.apache.tapestry5.services;
 
 import org.apache.tapestry5.ioc.Messages;
+import org.apache.tapestry5.ioc.annotations.UsesOrderedConfiguration;
 
 import java.util.Locale;
 
 /**
  * Source for validation messages, within a particular locale.
+ * <p/>
+ * The service's configuration are paths, within the classpath, to bundles to load as part of the validation messages.
  */
+@UsesOrderedConfiguration(String.class)
 public interface ValidationMessagesSource
 {
     Messages getValidationMessages(Locale locale);

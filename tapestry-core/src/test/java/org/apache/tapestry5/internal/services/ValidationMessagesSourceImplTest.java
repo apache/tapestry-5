@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -47,6 +47,23 @@ public class ValidationMessagesSourceImplTest extends Assert
         assertEquals(
                 messages.format("required", "My Field"),
                 "You must provide a value for My Field.");
+    }
+
+
+    @Test
+    public void overriden_message()
+    {
+        Messages messages = source.getValidationMessages(Locale.ENGLISH);
+
+        assertEquals(messages.get("number-format-exception"), "Number Format Exception");
+    }
+
+    @Test
+    public void nonlocalized_override()
+    {
+        Messages messages = source.getValidationMessages(Locale.FRANCE);
+
+        assertEquals(messages.get("number-format-exception"), "Number Format Exception");
     }
 
     @Test

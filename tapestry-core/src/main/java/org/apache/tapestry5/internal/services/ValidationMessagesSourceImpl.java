@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.services.ValidationMessagesSource;
 
-import java.util.Collection;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -40,7 +40,7 @@ public class ValidationMessagesSourceImpl implements ValidationMessagesSource, U
 
         private final MessagesBundle parent;
 
-        public ValidationMessagesBundle(final Resource baseResource, final MessagesBundle parent)
+        public ValidationMessagesBundle(Resource baseResource, MessagesBundle parent)
         {
             this.baseResource = baseResource;
             this.parent = parent;
@@ -60,7 +60,6 @@ public class ValidationMessagesSourceImpl implements ValidationMessagesSource, U
         {
             return parent;
         }
-
     }
 
     /**
@@ -71,7 +70,7 @@ public class ValidationMessagesSourceImpl implements ValidationMessagesSource, U
     {
         private final Locale locale;
 
-        public ValidationMessages(final Locale locale)
+        public ValidationMessages(Locale locale)
         {
             this.locale = locale;
         }
@@ -108,12 +107,12 @@ public class ValidationMessagesSourceImpl implements ValidationMessagesSource, U
         }
     }
 
-    public ValidationMessagesSourceImpl(Collection<String> bundles, Resource classpathRoot)
+    public ValidationMessagesSourceImpl(List<String> bundles, Resource classpathRoot)
     {
         this(bundles, classpathRoot, new URLChangeTracker());
     }
 
-    ValidationMessagesSourceImpl(Collection<String> bundles, Resource classpathRoot, URLChangeTracker tracker)
+    ValidationMessagesSourceImpl(List<String> bundles, Resource classpathRoot, URLChangeTracker tracker)
     {
         messagesSource = new MessagesSourceImpl(tracker);
 
@@ -145,9 +144,8 @@ public class ValidationMessagesSourceImpl implements ValidationMessagesSource, U
     public void checkForUpdates()
     {
         // When there are changes, the Messages cached inside the MessagesSource will be discarded
-        // and will be rebuilt on demand by the ValidatonMessages instances.
+        // and will be rebuilt on demand by the ValidationMessages instances.
 
         messagesSource.checkForUpdates();
     }
-
 }

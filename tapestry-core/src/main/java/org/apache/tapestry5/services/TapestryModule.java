@@ -876,7 +876,7 @@ public final class TapestryModule
      * Builds the source of {@link Messages} containing validation messages. The contributions are paths to message
      * bundles (resource paths within the classpath); the default contribution is "org/apache/tapestry5/internal/ValidationMessages".
      */
-    public ValidationMessagesSource buildValidationMessagesSource(Collection<String> configuration,
+    public ValidationMessagesSource buildValidationMessagesSource(List<String> configuration,
 
                                                                   UpdateListenerHub updateListenerHub,
 
@@ -1726,9 +1726,12 @@ public final class TapestryModule
         configuration.add("client", clientStrategy);
     }
 
-    public void contributeValidationMessagesSource(Configuration<String> configuration)
+    /**
+     * Contributes org/apache/tapestry5/internal/ValidationMessages as "Default", ordered first.
+     */
+    public void contributeValidationMessagesSource(OrderedConfiguration<String> configuration)
     {
-        configuration.add("org/apache/tapestry5/internal/ValidationMessages");
+        configuration.add("Default", "org/apache/tapestry5/internal/ValidationMessages", "before:*");
     }
 
     public ValueEncoderSource buildValueEncoderSource(Map<Class, ValueEncoderFactory> configuration)
