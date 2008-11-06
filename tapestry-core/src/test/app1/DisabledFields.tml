@@ -40,4 +40,8 @@
         <t:submit t:id="submit" disabled="true" value="Disabled Submit"/>
         <input type="submit" value="Continue"/>
     </t:form>
+
+    <p>
+        Submit id: ${submit.clientId}
+    </p>
 </html>

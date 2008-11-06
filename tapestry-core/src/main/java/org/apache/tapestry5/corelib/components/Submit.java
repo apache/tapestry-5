@@ -14,15 +14,11 @@
 
 package org.apache.tapestry5.corelib.components;
 
-import org.apache.tapestry5.BindingConstants;
-import org.apache.tapestry5.ComponentResources;
-import org.apache.tapestry5.MarkupWriter;
-import org.apache.tapestry5.EventConstants;
+import org.apache.tapestry5.*;
 import org.apache.tapestry5.annotations.Environmental;
-import org.apache.tapestry5.annotations.Mixin;
 import org.apache.tapestry5.annotations.Parameter;
-import org.apache.tapestry5.corelib.base.AbstractField;
-import org.apache.tapestry5.corelib.mixins.RenderDisabled;
+import org.apache.tapestry5.annotations.SupportsInformalParameters;
+import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.FormSupport;
 import org.apache.tapestry5.services.Heartbeat;
@@ -33,9 +29,9 @@ import org.apache.tapestry5.services.Request;
  * submit responsible for the form submission will post a notification that allows the application to know that it was
  * the responsible entity. The notification is named "selected" and has no context.
  */
-public class Submit extends AbstractField
+@SupportsInformalParameters
+public class Submit implements ClientElement
 {
-
     /**
      * If true (the default), then any notification sent by the component will be deferred until the end of the form
      * submission (this is usually desirable).
@@ -50,6 +46,14 @@ public class Submit extends AbstractField
     @Parameter(allowNull = false, defaultPrefix = BindingConstants.LITERAL)
     private String event = EventConstants.SELECTED;
 
+    /**
+     * If true, then the field will render out with a disabled attribute (to turn off client-side behavior). Further, a
+     * disabled field ignores any value in the request when the form is submitted.
+     */
+    @Parameter("false")
+    private boolean disabled;
+
+
     @Environmental
     private FormSupport formSupport;
 
@@ -62,9 +66,27 @@ public class Submit extends AbstractField
     @Inject
     private Request request;
 
-    @SuppressWarnings("unused")
-    @Mixin
-    private RenderDisabled renderDisabled;
+    @Inject
+    private RenderSupport renderSupport;
+
+    private Element element;
+
+    private String clientId;
+
+    private static class ProcessSubmission implements ComponentAction<Submit>
+    {
+        private final String elementName;
+
+        public ProcessSubmission(String elementName)
+        {
+            this.elementName = elementName;
+        }
+
+        public void execute(Submit component)
+        {
+            component.processSubmission(elementName);
+        }
+    }
 
     public Submit()
     {
@@ -77,7 +99,17 @@ public class Submit extends AbstractField
 
     void beginRender(MarkupWriter writer)
     {
-        writer.element("input", "type", "submit", "name", getControlName(), "id", getClientId());
+        clientId = null;
+
+        String name = formSupport.allocateControlName(resources.getId());
+
+        // Save the element, to see if an id is later requested.
+
+        element = writer.element("input", "type", "submit", "name", name);
+
+        if (disabled) writer.attributes("disabled", "disabled");
+
+        formSupport.store(this, new ProcessSubmission(name));
 
         resources.renderInformalParameters(writer);
     }
@@ -87,9 +119,10 @@ public class Submit extends AbstractField
         writer.end();
     }
 
-    @Override
-    protected void processSubmission(String elementName)
+    void processSubmission(String elementName)
     {
+        if (disabled) return;
+
         String value = request.getParameter(elementName);
 
         if (value == null) return;
@@ -117,10 +150,29 @@ public class Submit extends AbstractField
         this.defer = defer;
     }
 
-    void setup(ComponentResources resources, FormSupport support, Heartbeat heartbeat)
+    void setup(ComponentResources resources, FormSupport formSupport, Heartbeat heartbeat, RenderSupport renderSupport)
     {
         this.resources = resources;
-        formSupport = support;
+        this.formSupport = formSupport;
         this.heartbeat = heartbeat;
+        this.renderSupport = renderSupport;
+    }
+
+    /**
+     * Returns the component's client id. This must be called after the component has rendered. The id is allocated
+     * lazily (first time this method is invoked).
+     *
+     * @return client id for the component
+     */
+    public String getClientId()
+    {
+        if (clientId == null)
+        {
+            clientId = renderSupport.allocateClientId(resources);
+
+            element.forceAttributes("id", clientId);
+        }
+
+        return clientId;
     }
 }

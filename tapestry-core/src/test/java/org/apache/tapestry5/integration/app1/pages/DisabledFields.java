@@ -15,7 +15,10 @@
 package org.apache.tapestry5.integration.app1.pages;
 
 import org.apache.tapestry5.ValueEncoder;
+import org.apache.tapestry5.annotations.InjectComponent;
+import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.beaneditor.Validate;
+import org.apache.tapestry5.corelib.components.Submit;
 import org.apache.tapestry5.internal.services.StringValueEncoder;
 
 import java.util.Date;
@@ -31,11 +34,16 @@ public class DisabledFields
 
     private List<String> values;
 
+    @InjectComponent
+    @Property
+    private Submit submit;
+
     @Validate("required")
     public String getStringValue()
     {
         return stringValue;
     }
+
 
     public void setStringValue(String stringValue)
     {
