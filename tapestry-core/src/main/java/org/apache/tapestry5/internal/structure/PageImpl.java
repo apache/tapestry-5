@@ -49,6 +49,8 @@ public class PageImpl implements Page
 
     private int dirtyCount;
 
+    private boolean loadComplete;
+
     /**
      * Obtained from the {@link org.apache.tapestry5.internal.services.PersistentFieldManager} when first needed,
      * discarded at the end of the request.
@@ -141,6 +143,13 @@ public class PageImpl implements Page
     {
         for (PageLifecycleListener listener : listeners)
             listener.containingPageDidLoad();
+
+        loadComplete = true;
+    }
+
+    public boolean isLoadComplete()
+    {
+        return loadComplete;
     }
 
     public void attached()
@@ -177,6 +186,9 @@ public class PageImpl implements Page
 
     public void persistFieldChange(ComponentResources resources, String fieldName, Object newValue)
     {
+        if (!loadComplete)
+            throw new RuntimeException(StructureMessages.persistChangeBeforeLoadComplete());
+
         persistentFieldManager.postChange(logicalPageName, resources, fieldName, newValue);
     }
 

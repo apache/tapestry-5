@@ -113,4 +113,9 @@ final class StructureMessages
     {
         return MESSAGES.format("render-variable-set-when-not-rendering", completeId, name);
     }
+
+    static String persistChangeBeforeLoadComplete()
+    {
+        return MESSAGES.get("persist-change-before-load-complete");
+    }
 }
