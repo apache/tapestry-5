@@ -15,6 +15,7 @@
 package org.apache.tapestry5.services;
 
 import org.apache.tapestry5.dom.Element;
+import org.apache.tapestry5.ioc.annotations.UsesMappedConfiguration;
 
 /**
  * Provides some assistance in determining <em>where</em> to place a hidden field based on standard (X)HTML elements.
@@ -22,6 +23,7 @@ import org.apache.tapestry5.dom.Element;
  * The service works based on a mapped service contribution; keys are the element names, values area {@link
  * org.apache.tapestry5.services.RelativeElementPosition}.
  */
+@UsesMappedConfiguration(RelativeElementPosition.class)
 public interface HiddenFieldLocationRules
 {
     /**

@@ -22,6 +22,10 @@ import java.io.PrintWriter;
 
 /**
  * API agnostic wrapper for generating a response. Bridges the gaps between the Servlet API and the Portlet API.
+ * <p/>
+ * <p/>
+ * The Response service is a {@linkplain org.apache.tapestry5.ioc.services.PropertyShadowBuilder shadow} of the current
+ * thread's response object.
  */
 public interface Response
 {

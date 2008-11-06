@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,18 +15,23 @@
 package org.apache.tapestry5.ioc.services;
 
 import org.apache.tapestry5.ioc.ServiceLifecycle;
+import org.apache.tapestry5.ioc.annotations.UsesMappedConfiguration;
 
 /**
  * Provides access to user defined lifecycles (beyond the two built-in lifecycles: "singleton" and "primitive"). The
  * user defined lifecycles are contributed into the service's configuration.
+ * <p/>
+ * Note that the scope {@linkplain org.apache.tapestry5.ioc.ScopeConstants#DEFAULT default} is special and not a
+ * contribution.
  */
+@UsesMappedConfiguration(ServiceLifecycle.class)
 public interface ServiceLifecycleSource
 {
     /**
      * Used to locate a configuration lifecycle, by name.
      *
-     * @param lifecycleName
+     * @param scope
      * @return the named lifecycle, or null if the name is not found
      */
-    ServiceLifecycle get(String lifecycleName);
+    ServiceLifecycle get(String scope);
 }

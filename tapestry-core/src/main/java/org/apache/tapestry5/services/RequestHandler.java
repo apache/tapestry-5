@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,15 +14,16 @@
 
 package org.apache.tapestry5.services;
 
+import org.apache.tapestry5.ioc.annotations.UsesOrderedConfiguration;
+
 import java.io.IOException;
 
 /**
- * Service interface for the RequestHandler pipeline service. An ordered configuration of filters may be contributed to
- * the service.
- *
- * @see org.apache.tapestry5.services.RequestFilter
+ * Service interface for the RequestHandler {@linkplain org.apache.tapestry5.ioc.services.PipelineBuilder pipeline}
+ * service. At the end of the pipeline, the service hands off to the {@linkplain org.apache.tapestry5.services.Dispatcher
+ * master dispatcher service}.
  */
-
+@UsesOrderedConfiguration(RequestFilter.class)
 public interface RequestHandler
 {
     /**

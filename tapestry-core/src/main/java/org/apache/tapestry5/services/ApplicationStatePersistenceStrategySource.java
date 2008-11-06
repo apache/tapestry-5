@@ -14,12 +14,13 @@
 
 package org.apache.tapestry5.services;
 
+import org.apache.tapestry5.ioc.annotations.UsesMappedConfiguration;
+
 /**
- * Used to provide access to stategies via a logical name for the stategy, such as "session".
- *
- * @see org.apache.tapestry5.services.TapestryModule#contributeApplicationStatePersistenceStrategySource(org.apache.tapestry5.ioc.MappedConfiguration,
- *      Request)
+ * Used to provide access to {@link org.apache.tapestry5.services.ApplicationStatePersistenceStrategySource} instances
+ * via a logical name for the stategy, such as "session".
  */
+@UsesMappedConfiguration(ApplicationStatePersistenceStrategy.class)
 public interface ApplicationStatePersistenceStrategySource
 {
     /**

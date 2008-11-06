@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,13 +14,14 @@
 
 package org.apache.tapestry5.services;
 
-import org.apache.tapestry5.services.Context;
+import org.apache.tapestry5.ioc.annotations.UsesOrderedConfiguration;
 
 /**
- * Service interface for initializing Tapestry for the application.
- *
- * @see ApplicationInitializerFilter
+ * Service interface for initializing Tapestry for the application.  The service is a {@linkplain
+ * org.apache.tapestry5.ioc.services.PipelineBuilder pipeline}, into which {@linkplain
+ * org.apache.tapestry5.services.ApplicationInitializerFilter filters} may be contributed.
  */
+@UsesOrderedConfiguration(ApplicationInitializerFilter.class)
 public interface ApplicationInitializer
 {
     void initializeApplication(Context context);

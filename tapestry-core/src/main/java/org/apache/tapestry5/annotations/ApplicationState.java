@@ -22,7 +22,10 @@ import java.lang.annotation.Target;
 
 /**
  * Marker annotation for a field that is an <em>application state object</em> as controlled by the {@link
- * org.apache.tapestry5.services.ApplicationStateManager}.
+ * org.apache.tapestry5.services.ApplicationStateManager}.  <em>Application</em> is something of a misnomer, as it
+ * implies that the object is stored as global, application-wide state (i.e., in the {@link
+ * javax.servlet.ServletContext}). In fact, the built-in strategies for ASO management are <em>very</em> user specific,
+ * ultimately storing data in the {@link org.apache.tapestry5.services.Session}.
  * <p/>
  * An ASO file may have a companion field, of type boolean, used to see if the ASO has been created yet. If another
  * field exists with the same name, suffixed with "Exists" (i.e., "aso" for the ASO field, and "asoExists" for the

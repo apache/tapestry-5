@@ -14,11 +14,24 @@
 
 package org.apache.tapestry5.services;
 
+import org.apache.tapestry5.ioc.annotations.UsesMappedConfiguration;
+
 /**
  * Responsible for managing <em>application state objects</em>, objects which persist between requests, but are not tied
  * to any individual page or component. ASOs are also created on demand. ASOs are typically stored in the session, so
  * that they are specific to a particular client.
+ * <p/>
+ * <em>Application</em> is a bit of a misnomer here, as it implies global state shared by all users of the application.
+ * Although that is a possibility, the supported ASO strategies are user-specific, usually storing data in the {@link
+ * org.apache.tapestry5.services.Session}.
+ * <p/>
+ * Tapestry has a built-in default strategy for storing ASOs (in the session) and instantiating them. If desired,
+ * contributions to the service configuration can override the default behavior, either specifying an alternate storage
+ * strategy, or an alternate {@linkplain org.apache.tapestry5.services.ApplicationStateCreator creation strategy}.
+ *
+ * @see org.apache.tapestry5.annotations.ApplicationState
  */
+@UsesMappedConfiguration(key = Class.class, value = ApplicationStateContribution.class)
 public interface ApplicationStateManager
 {
     /**

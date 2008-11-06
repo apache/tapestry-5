@@ -20,6 +20,10 @@ import java.util.Locale;
 /**
  * Generic version of {@link javax.servlet.http.HttpServletRequest}, used to encapsulate the Servlet API version, and to
  * help bridge the differences between Servlet API and Porlet API.
+ * <p/>
+ * <p/>
+ * The Request service is a {@linkplain org.apache.tapestry5.ioc.services.PropertyShadowBuilder shadow} of the current
+ * thread's request.
  */
 public interface Request
 {

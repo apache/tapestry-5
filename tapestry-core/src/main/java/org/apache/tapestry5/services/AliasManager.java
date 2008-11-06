@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,11 +14,16 @@
 
 package org.apache.tapestry5.services;
 
+import org.apache.tapestry5.ioc.annotations.UsesConfiguration;
+
 import java.util.Map;
 
 /**
- * A thin wrapper around a set of {@link org.apache.tapestry5.services.AliasContribution}s.
+ * A thin wrapper around a set of {@link org.apache.tapestry5.services.AliasContribution}s. An {@link
+ * org.apache.tapestry5.ioc.ObjectProvider} is contributed to the {@link org.apache.tapestry5.ioc.services.MasterObjectProvider}
+ * service, to allow contributed objects to replace other objects (typically, built in services).
  */
+@UsesConfiguration(AliasContribution.class)
 public interface AliasManager
 {
     /**

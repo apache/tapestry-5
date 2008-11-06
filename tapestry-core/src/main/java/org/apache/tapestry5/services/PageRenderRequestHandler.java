@@ -14,13 +14,17 @@
 
 package org.apache.tapestry5.services;
 
+import org.apache.tapestry5.ioc.annotations.UsesOrderedConfiguration;
+
 import java.io.IOException;
 
 /**
  * Handles a invocation related to rendering out a pages complete content.
- *
- * @see PageRenderRequestFilter
+ * <p/>
+ * The PageRenderRequestHandler service is an extensible {@linkplain org.apache.tapestry5.ioc.services.PipelineBuilder
+ * pipeline}.
  */
+@UsesOrderedConfiguration(PageRenderRequestFilter.class)
 public interface PageRenderRequestHandler
 {
     /**

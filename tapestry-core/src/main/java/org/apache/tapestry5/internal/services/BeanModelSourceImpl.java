@@ -20,7 +20,6 @@ import org.apache.tapestry5.beaneditor.ReorderProperties;
 import org.apache.tapestry5.internal.beaneditor.BeanModelImpl;
 import org.apache.tapestry5.internal.beaneditor.BeanModelUtils;
 import org.apache.tapestry5.ioc.Location;
-import org.apache.tapestry5.ioc.LoggerSource;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.ObjectLocator;
 import org.apache.tapestry5.ioc.annotations.Primary;
@@ -38,8 +37,6 @@ import java.util.List;
 
 public class BeanModelSourceImpl implements BeanModelSource
 {
-    private final LoggerSource loggerSource;
-
     private final TypeCoercer typeCoercer;
 
     private final PropertyAccess propertyAccess;
@@ -91,7 +88,6 @@ public class BeanModelSourceImpl implements BeanModelSource
         for (String name : propertyNames)
         {
             PropertyAdapter pa = classAdapter.getPropertyAdapter(name);
-            List<String> propertyConstraints = CollectionFactory.newList();
 
             Method readMethod = pa.getReadMethod();
 
@@ -126,11 +122,10 @@ public class BeanModelSourceImpl implements BeanModelSource
         return depth;
     }
 
-    public BeanModelSourceImpl(LoggerSource loggerSource, TypeCoercer typeCoercer, PropertyAccess propertyAccess,
+    public BeanModelSourceImpl(TypeCoercer typeCoercer, PropertyAccess propertyAccess,
                                PropertyConduitSource propertyConduitSource, @ComponentLayer ClassFactory classFactory,
                                @Primary DataTypeAnalyzer dataTypeAnalyzer, ObjectLocator locator)
     {
-        this.loggerSource = loggerSource;
         this.typeCoercer = typeCoercer;
         this.propertyAccess = propertyAccess;
         this.propertyConduitSource = propertyConduitSource;

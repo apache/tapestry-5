@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
 package org.apache.tapestry5.ioc.internal;
 
 import org.apache.tapestry5.ioc.ModuleBuilderSource;
+import org.apache.tapestry5.ioc.ObjectLocator;
 import org.apache.tapestry5.ioc.ServiceDecorator;
 import org.apache.tapestry5.ioc.ServiceResources;
 import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newMap;
@@ -59,6 +60,7 @@ public class ServiceDecoratorImpl implements ServiceDecorator
         this.classFactory = classFactory;
 
         parameterDefaults.put(String.class, serviceId);
+        parameterDefaults.put(ObjectLocator.class, resources);
         parameterDefaults.put(ServiceResources.class, resources);
         parameterDefaults.put(Logger.class, logger);
         parameterDefaults.put(Class.class, serviceInterface);

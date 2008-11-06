@@ -959,7 +959,7 @@ public final class TapestryModule
 
 
     /**
-     * Initializes the application.
+     * Initializes the application, using a pipeline of {@link org.apache.tapestry5.services.ApplicationInitializer}s.
      */
     @Marker(Primary.class)
     public ApplicationInitializer buildApplicationInitializer(Logger logger,
@@ -1189,9 +1189,6 @@ public final class TapestryModule
      * @param logger          used to log errors building the pipeline
      * @param configuration   filters on this service
      * @return the service
-     * @see #contributeMarkupRenderer(org.apache.tapestry5.ioc.OrderedConfiguration, org.apache.tapestry5.Asset,
-     *      org.apache.tapestry5.Asset, ValidationMessagesSource, org.apache.tapestry5.ioc.services.SymbolSource,
-     *      AssetSource)
      */
     public MarkupRenderer buildMarkupRenderer(final PageRenderQueue pageRenderQueue, Logger logger,
                                               List<MarkupRendererFilter> configuration)
@@ -1259,8 +1256,9 @@ public final class TapestryModule
     }
 
     /**
-     * Builds the action request handler for Ajax requests, based on {@link org.apache.tapestry5.internal.services.AjaxComponentEventRequestHandler}.
-     * Filters on the request handler are supported here as well.
+     * Builds the action request handler for Ajax requests, based on a {@linkplain org.apache.tapestry5.ioc.services.PipelineBuilder
+     * pipeline} around {@link org.apache.tapestry5.internal.services.AjaxComponentEventRequestHandler}. Filters on the
+     * request handler are supported here as well.
      */
     @Marker(Ajax.class)
     public ComponentEventRequestHandler buildAjaxComponentEventRequestHandler(
@@ -1793,7 +1791,7 @@ public final class TapestryModule
         // Java class files always require a digest.
         configuration.add("class");
 
-// Likewise, we don't want people fishing for templates.
+        // Likewise, we don't want people fishing for templates.
         configuration.add(InternalConstants.TEMPLATE_EXTENSION);
     }
 
@@ -1896,7 +1894,6 @@ public final class TapestryModule
      * Adds content types for "css" and "js" file extensions. <dl> <dt>css</dt> <dd>test/css</dd> <dt>js</dt>
      * <dd>text/javascript</dd> </dl>
      */
-    @SuppressWarnings({"JavaDoc"})
     public void contributeResourceStreamer(MappedConfiguration<String, String> configuration)
     {
         configuration.add("css", "text/css");

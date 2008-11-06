@@ -15,11 +15,17 @@
 package org.apache.tapestry5.services;
 
 import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.ioc.annotations.UsesMappedConfiguration;
 
 /**
  * A strategy interface used for converting an object into markup that describes that object. This is primarily used in
  * terms of an {@link org.apache.tapestry5.services.ExceptionReporter} page.
+ * <p/>
+ * The ObjectRenderer service (distinguished by the @{@link org.apache.tapestry5.ioc.annotations.Primary} marker
+ * annotation) uses {@linkplain org.apache.tapestry5.ioc.services.StrategyBuilder type-based matching} to find a
+ * specific ObjectRenderer for any given type.
  */
+@UsesMappedConfiguration(key = Class.class, value = ObjectRenderer.class)
 public interface ObjectRenderer<T>
 {
     /**

@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,24 +14,26 @@
 
 package org.apache.tapestry5.services;
 
-import org.apache.tapestry5.internal.services.ClasspathAssetFactory;
-import org.apache.tapestry5.ioc.Resource;
-import org.apache.tapestry5.ioc.internal.util.ClasspathResource;
+import org.apache.tapestry5.ioc.annotations.UsesConfiguration;
 
 import java.net.URL;
 
 /**
  * Responsible for determining which classpath resources require checksums, and for generating checksums for such
  * resources.
+ * <p/>
+ * The service's configuration identifies which file extensions will be secured using an checksum. The default list is
+ * "class" and "tml".
  *
- * @see ClasspathResource
- * @see ClasspathAssetFactory
+ * @see org.apache.tapestry5.ioc.internal.util.ClasspathResource
+ * @see org.apache.tapestry5.internal.services.ClasspathAssetFactory
  */
+@UsesConfiguration(String.class)
 public interface ResourceDigestGenerator
 {
     /**
      * Examines the path (typically, the file name extension at the end of the path) to determine if a checksum is
-     * required for the path. The path is {@link Resource} style, without a leading slash.
+     * required for the path. The path is {@link org.apache.tapestry5.ioc.Resource} style, without a leading slash.
      */
     boolean requiresDigest(String path);
 

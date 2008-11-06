@@ -15,6 +15,7 @@
 package org.apache.tapestry5.services;
 
 import org.apache.tapestry5.Block;
+import org.apache.tapestry5.ioc.annotations.UsesConfiguration;
 
 /**
  * A source of {@link Block}s used to display the properties of a bean (used by the {@link
@@ -31,6 +32,7 @@ import org.apache.tapestry5.Block;
  * @see org.apache.tapestry5.services.DataTypeAnalyzer
  * @see org.apache.tapestry5.services.TapestryModule#contributeBeanBlockSource(org.apache.tapestry5.ioc.Configuration)
  */
+@UsesConfiguration(BeanBlockContribution.class)
 public interface BeanBlockSource
 {
     /**

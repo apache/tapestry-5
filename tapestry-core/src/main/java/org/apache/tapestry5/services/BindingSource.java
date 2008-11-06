@@ -17,14 +17,13 @@ package org.apache.tapestry5.services;
 import org.apache.tapestry5.Binding;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.ioc.Location;
+import org.apache.tapestry5.ioc.annotations.UsesMappedConfiguration;
 
 /**
  * Used to acquire bindings for component parameters. The BindingSource service strips off the binding prefix to locate
  * a {@link org.apache.tapestry5.services.BindingFactory}.
- *
- * @see org.apache.tapestry5.services.TapestryModule#contributeBindingSource(org.apache.tapestry5.ioc.MappedConfiguration,
- *      AssetSource, BindingFactory, FieldValidatorSource, TranslatorSource, org.apache.tapestry5.ioc.ObjectLocator)
  */
+@UsesMappedConfiguration(BindingFactory.class)
 public interface BindingSource
 {
     /**
