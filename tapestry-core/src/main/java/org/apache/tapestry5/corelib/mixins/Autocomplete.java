@@ -20,6 +20,7 @@ import org.apache.tapestry5.annotations.*;
 import org.apache.tapestry5.internal.util.Holder;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
+import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.MarkupWriterFactory;
 import org.apache.tapestry5.services.Request;
@@ -51,7 +52,7 @@ import java.util.List;
  * }
  * </pre>
  */
-@IncludeJavaScriptLibrary("${tapestry.scriptaculous}/controls.js")
+@IncludeJavaScriptLibrary({"${tapestry.scriptaculous}/controls.js", "autocomplete.js"})
 public class Autocomplete
 {
     static final String EVENT_NAME = "autocomplete";
@@ -161,8 +162,7 @@ public class Autocomplete
         // Let subclasses do more.
         configure(config);
 
-        renderSupport.addScript("new Ajax.Autocompleter('%s', '%s', '%s', %s);", id, menuId, link.toAbsoluteURI(),
-                                config);
+        renderSupport.addInit("autocompleter", new JSONArray(id, menuId, link.toAbsoluteURI(), config));
     }
 
     Object onAutocomplete()
