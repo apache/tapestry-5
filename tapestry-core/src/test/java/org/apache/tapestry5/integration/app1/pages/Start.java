@@ -65,6 +65,8 @@ public class Start
 
     private static final List<Item> ITEMS = CollectionFactory.newList(
 
+            new Item("LinkSubmitDemo", "LinkSubmit Demo", "JavaScript LinkSubmit component"),
+
             new Item("PerFormValidationMessageDemo", "Per-Form Validation Messages",
                      "Per-form configuration of validation messages and constraints."),
 

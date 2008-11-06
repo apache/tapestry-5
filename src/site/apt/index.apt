@@ -68,6 +68,8 @@ Third Party Libraries, Tutorials and Resources
 
 New And Of Note
 
+  * At long last, an official {{{tapestry-core/ref/org/apache/tapestry5/corelib/components/LinkSubmit.html}LinkSubmit}} component.
+
   * A {{{tapestry-ioc/injection.html}detailed guide to Injection}} has been added.
 
   * You can now configure Tapestry to move \<script\> links to the top of the page.
