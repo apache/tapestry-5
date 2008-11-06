@@ -59,7 +59,7 @@ public class SubmitTest extends InternalBaseTestCase
 
         Submit submit = new Submit(request);
 
-        submit.setup(resources, support, null);
+        submit.setup(resources, support, null, null);
 
         submit.processSubmission(elementName);
 
@@ -92,7 +92,7 @@ public class SubmitTest extends InternalBaseTestCase
 
         Submit submit = new Submit(request);
 
-        submit.setup(resources, support, heartbeat);
+        submit.setup(resources, support, heartbeat, null);
         submit.setDefer(false);
 
         submit.processSubmission(elementName);
