@@ -222,13 +222,14 @@ public class Grid implements GridModel
     private boolean didRenderZoneDiv;
 
     @Persist
-    private int currentPage = 1;
+    private Integer currentPage;
 
     @Persist
     private String sortColumnId;
 
     @Persist
-    private boolean sortAscending = true;
+    private Boolean sortAscending;
+
 
     @Inject
     private ComponentResources resources;
@@ -359,7 +360,7 @@ public class Grid implements GridModel
 
         private ColumnSort getColumnSort()
         {
-            return sortAscending ? ColumnSort.ASCENDING : ColumnSort.DESCENDING;
+            return getSortAscending() ? ColumnSort.ASCENDING : ColumnSort.DESCENDING;
         }
 
 
@@ -369,12 +370,12 @@ public class Grid implements GridModel
 
             if (columnId.equals(sortColumnId))
             {
-                sortAscending = !sortAscending;
+                setSortAscending(!getSortAscending());
                 return;
             }
 
             sortColumnId = columnId;
-            sortAscending = true;
+            setSortAscending(true);
         }
 
         public List<SortConstraint> getSortConstraints()
@@ -488,10 +489,12 @@ public class Grid implements GridModel
 
         // This captures when the number of rows has decreased, typically due to deletions.
 
-        if (currentPage > maxPage)
-            currentPage = maxPage;
+        int effectiveCurrentPage = getCurrentPage();
 
-        int startIndex = (currentPage - 1) * rowsPerPage;
+        if (effectiveCurrentPage > maxPage)
+            effectiveCurrentPage = maxPage;
+
+        int startIndex = (effectiveCurrentPage - 1) * rowsPerPage;
 
         int endIndex = Math.min(startIndex + rowsPerPage - 1, availableRows - 1);
 
@@ -564,12 +567,22 @@ public class Grid implements GridModel
 
     public int getCurrentPage()
     {
-        return currentPage;
+        return currentPage == null ? 1 : currentPage;
     }
 
     public void setCurrentPage(int currentPage)
     {
         this.currentPage = currentPage;
+    }
+
+    private boolean getSortAscending()
+    {
+        return sortAscending != null && sortAscending.booleanValue();
+    }
+
+    private void setSortAscending(boolean sortAscending)
+    {
+        this.sortAscending = sortAscending;
     }
 
     public int getRowsPerPage()
@@ -593,7 +606,7 @@ public class Grid implements GridModel
      */
     public void reset()
     {
-        currentPage = 1;
+        setCurrentPage(1);
         sortModel.clear();
     }
 

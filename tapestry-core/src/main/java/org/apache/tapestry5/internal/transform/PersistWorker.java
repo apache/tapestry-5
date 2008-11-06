@@ -19,7 +19,6 @@ import org.apache.tapestry5.ioc.util.BodyBuilder;
 import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.services.*;
 
-import static java.lang.String.format;
 import java.lang.reflect.Modifier;
 
 /**
@@ -50,22 +49,18 @@ public class PersistWorker implements ComponentClassTransformWorker
         Persist annotation = transformation.getFieldAnnotation(fieldName, Persist.class);
 
         transformation.claimField(fieldName, annotation);
-        
+
         // Record the type of persistence, until needed later.
 
         String logicalFieldName = model.setFieldPersistenceStrategy(fieldName, annotation.value());
 
-        String defaultFieldName = transformation.addField(Modifier.PRIVATE, fieldType, fieldName
-                + "_default");
+        String defaultValue = TransformUtils.getDefaultValue(fieldType);
 
-        transformation.extendMethod(TransformConstants.CONTAINING_PAGE_DID_LOAD_SIGNATURE, format(
-                "%s = %s;",
-                defaultFieldName,
-                fieldName));
+        // Force the field back to its default value (null, 0, false) at the end of each request.
 
         transformation.extendMethod(
                 TransformConstants.CONTAINING_PAGE_DID_DETACH_SIGNATURE,
-                format("%s = %s;", fieldName, defaultFieldName));
+                String.format("%s = %s;", fieldName, defaultValue));
 
         String resourcesFieldName = transformation.getResourcesFieldName();
 
@@ -83,7 +78,7 @@ public class PersistWorker implements ComponentClassTransformWorker
 
         transformation.addMethod(new TransformMethodSignature(Modifier.PRIVATE, "void", writeMethodName,
                                                               new String[]
-                                                                      { fieldType }, null), builder.toString());
+                                                                      {fieldType}, null), builder.toString());
 
         transformation.replaceWriteAccess(fieldName, writeMethodName);
 
@@ -118,6 +113,5 @@ public class PersistWorker implements ComponentClassTransformWorker
         transformation.extendMethod(
                 TransformConstants.CONTAINING_PAGE_DID_ATTACH_SIGNATURE,
                 builder.toString());
-
     }
 }

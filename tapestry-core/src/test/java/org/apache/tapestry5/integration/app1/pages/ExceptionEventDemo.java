@@ -22,7 +22,7 @@ public class ExceptionEventDemo
     private String message;
 
     @Persist
-    private boolean intercept = true;
+    private boolean intercept;
 
     public Object getInvalidContext()
     {

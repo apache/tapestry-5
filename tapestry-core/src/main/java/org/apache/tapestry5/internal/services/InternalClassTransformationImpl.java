@@ -1286,40 +1286,17 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
             builder.commit();
         }
 
+        String initializer = convertConstructorToMethod();
+
         performFieldTransformations();
 
-        addConstructor();
+        addConstructor(initializer);
 
         freeze();
     }
 
-    private void addConstructor()
+    private void addConstructor(String initializer)
     {
-        String initializer = idAllocator.allocateId("initializer");
-
-        try
-        {
-            CtConstructor defaultConstructor = ctClass.getConstructor("()V");
-
-            CtMethod initializerMethod = defaultConstructor.toMethod(initializer, ctClass);
-
-            ctClass.addMethod(initializerMethod);
-
-            // Replace the constructor body with one that fails.  This leaves, as an open question,
-            // what to do about any other constructors.
-
-            String body = String.format("throw new RuntimeException(\"%s\");",
-                                        ServicesMessages.forbidInstantiateComponentClass(getClassName()));
-
-            defaultConstructor.setBody(body);
-        }
-        catch (Exception ex)
-        {
-            throw new RuntimeException(ex);
-        }
-
-        formatter.format("convert default constructor: %s();\n\n", initializer);
-
         int count = constructorArgs.size();
 
         CtClass[] types = new CtClass[count];
@@ -1364,6 +1341,36 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         }
 
         formatter.format(")\n%s\n\n", constructorBody);
+    }
+
+    private String convertConstructorToMethod()
+    {
+        String initializer = idAllocator.allocateId("initializer");
+
+        try
+        {
+            CtConstructor defaultConstructor = ctClass.getConstructor("()V");
+
+            CtMethod initializerMethod = defaultConstructor.toMethod(initializer, ctClass);
+
+            ctClass.addMethod(initializerMethod);
+
+            // Replace the constructor body with one that fails.  This leaves, as an open question,
+            // what to do about any other constructors.
+
+            String body = String.format("throw new RuntimeException(\"%s\");",
+                                        ServicesMessages.forbidInstantiateComponentClass(getClassName()));
+
+            defaultConstructor.setBody(body);
+        }
+        catch (Exception ex)
+        {
+            throw new RuntimeException(ex);
+        }
+
+        formatter.format("convert default constructor: %s();\n\n", initializer);
+
+        return initializer;
     }
 
     public Instantiator createInstantiator()
