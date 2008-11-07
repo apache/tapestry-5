@@ -94,6 +94,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
     private final Set<ServiceDef> allServiceDefs = CollectionFactory.newSet();
 
+    private final OperationTracker operationTracker;
 
     public static final class OrderedConfigurationToOrdererAdaptor<T> implements OrderedConfiguration<T>
     {
@@ -120,6 +121,8 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
     public RegistryImpl(Collection<ModuleDef> moduleDefs, ClassFactory classFactory, LoggerSource loggerSource)
     {
         this.loggerSource = loggerSource;
+
+        operationTracker = new PerThreadOperationTracker(loggerSource.getLogger(Registry.class));
 
         final ServiceActivityTrackerImpl scoreboardAndTracker = new ServiceActivityTrackerImpl();
 
@@ -428,7 +431,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
     private <K, V> void addToMappedConfiguration(MappedConfiguration<K, V> configuration,
                                                  Map<K, ContributionDef> keyToContribution, Class<K> keyClass,
-                                                 Class<V> valueType, ServiceDef serviceDef, Module module)
+                                                 Class<V> valueType, ServiceDef serviceDef, final Module module)
     {
         String serviceId = serviceDef.getServiceId();
         Set<ContributionDef> contributions = module.getContributorDefsForService(serviceId);
@@ -439,24 +442,35 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
         boolean debug = logger.isDebugEnabled();
 
-        ObjectLocator locator = new ServiceResourcesImpl(this, module, serviceDef, classFactory, logger);
+        final ServiceResources resources = new ServiceResourcesImpl(this, module, serviceDef, classFactory, logger);
 
-        for (ContributionDef def : contributions)
+        for (final ContributionDef def : contributions)
         {
-            MappedConfiguration<K, V> validating = new ValidatingMappedConfigurationWrapper<K, V>(serviceId, def,
-                                                                                                  logger, keyClass,
-                                                                                                  valueType,
-                                                                                                  keyToContribution,
-                                                                                                  configuration);
+            final MappedConfiguration<K, V> validating =
+                    new ValidatingMappedConfigurationWrapper<K, V>(serviceId, def,
+                                                                   logger,
+                                                                   keyClass,
+                                                                   valueType,
+                                                                   keyToContribution,
+                                                                   configuration);
 
-            if (debug) logger.debug(IOCMessages.invokingMethod(def));
+            String description = IOCMessages.invokingMethod(def);
 
-            def.contribute(module, locator, validating);
+            if (debug)
+                logger.debug(description);
+
+            operationTracker.run(description, new Runnable()
+            {
+                public void run()
+                {
+                    def.contribute(module, resources, validating);
+                }
+            });
         }
     }
 
     private <T> void addToUnorderedConfiguration(Configuration<T> configuration, Class<T> valueType,
-                                                 ServiceDef serviceDef, Module module)
+                                                 ServiceDef serviceDef, final Module module)
     {
         String serviceId = serviceDef.getServiceId();
         Set<ContributionDef> contributions = module.getContributorDefsForService(serviceId);
@@ -467,21 +481,30 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
         boolean debug = logger.isDebugEnabled();
 
-        ObjectLocator locator = new ServiceResourcesImpl(this, module, serviceDef, classFactory, logger);
+        final ServiceResources resources = new ServiceResourcesImpl(this, module, serviceDef, classFactory, logger);
 
-        for (ContributionDef def : contributions)
+        for (final ContributionDef def : contributions)
         {
-            Configuration<T> validating = new ValidatingConfigurationWrapper<T>(serviceId, logger, valueType, def,
-                                                                                configuration);
+            final Configuration<T> validating =
+                    new ValidatingConfigurationWrapper<T>(serviceId, logger, valueType, def, configuration);
 
-            if (debug) logger.debug(IOCMessages.invokingMethod(def));
+            String description = IOCMessages.invokingMethod(def);
 
-            def.contribute(module, locator, validating);
+            if (debug)
+                logger.debug(description);
+
+            operationTracker.run(description, new Runnable()
+            {
+                public void run()
+                {
+                    def.contribute(module, resources, validating);
+                }
+            });
         }
     }
 
     private <T> void addToOrderedConfiguration(OrderedConfiguration<T> configuration, Class<T> valueType,
-                                               ServiceDef serviceDef, Module module)
+                                               ServiceDef serviceDef, final Module module)
     {
         String serviceId = serviceDef.getServiceId();
         Set<ContributionDef> contributions = module.getContributorDefsForService(serviceId);
@@ -491,16 +514,25 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         Logger logger = getServiceLogger(serviceId);
         boolean debug = logger.isDebugEnabled();
 
-        ObjectLocator locator = new ServiceResourcesImpl(this, module, serviceDef, classFactory, logger);
+        final ServiceResources resources = new ServiceResourcesImpl(this, module, serviceDef, classFactory, logger);
 
-        for (ContributionDef def : contributions)
+        for (final ContributionDef def : contributions)
         {
-            OrderedConfiguration<T> validating = new ValidatingOrderedConfigurationWrapper<T>(serviceId, def, logger,
-                                                                                              valueType, configuration);
+            final OrderedConfiguration<T> validating =
+                    new ValidatingOrderedConfigurationWrapper<T>(serviceId, def, logger, valueType, configuration);
 
-            if (debug) logger.debug(IOCMessages.invokingMethod(def));
+            String description = IOCMessages.invokingMethod(def);
 
-            def.contribute(module, locator, validating);
+            if (debug)
+                logger.debug(description);
+
+            operationTracker.run(description, new Runnable()
+            {
+                public void run()
+                {
+                    def.contribute(module, resources, validating);
+                }
+            });
         }
     }
 
@@ -759,44 +791,60 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         return symbolSource;
     }
 
-    public <T> T autobuild(Class<T> clazz)
+    public <T> T autobuild(final Class<T> clazz)
     {
         Defense.notNull(clazz, "clazz");
 
-        Constructor constructor = InternalUtils.findAutobuildConstructor(clazz);
+        final Constructor constructor = InternalUtils.findAutobuildConstructor(clazz);
 
         if (constructor == null) throw new RuntimeException(IOCMessages.noAutobuildConstructor(clazz));
 
-        Throwable failure;
-        // An empty map, because when performing autobuilding outside the context of building a
-        // service, we don't have defaults for Log, service id, etc.
+        final ObjectLocator locator = this;
+        final OperationTracker tracker = this;
 
-        Map<Class, Object> empty = Collections.emptyMap();
-
-        try
+        final Invokable<T> operation = new Invokable<T>()
         {
-            InternalUtils.validateConstructorForAutobuild(constructor);
+            public T invoke()
+            {
+                Throwable failure;
+                // An empty map, because when performing autobuilding outside the context of building a
+                // service, we don't have defaults for Log, service id, etc.
 
-            Object[] parameters = InternalUtils.calculateParametersForConstructor(constructor, this, empty);
+                Map<Class, Object> empty = Collections.emptyMap();
 
-            Object result = constructor.newInstance(parameters);
+                try
+                {
+                    InternalUtils.validateConstructorForAutobuild(constructor);
 
-            InternalUtils.injectIntoFields(result, this);
+                    Object[] parameters = InternalUtils.calculateParametersForConstructor(constructor,
+                                                                                          locator,
+                                                                                          empty,
+                                                                                          tracker);
 
-            return clazz.cast(result);
-        }
-        catch (InvocationTargetException ite)
-        {
-            failure = ite.getTargetException();
-        }
-        catch (Exception ex)
-        {
-            failure = ex;
-        }
+                    Object result = constructor.newInstance(parameters);
 
-        String description = classFactory.getConstructorLocation(constructor).toString();
+                    InternalUtils.injectIntoFields(result, locator, tracker);
 
-        throw new RuntimeException(IOCMessages.autobuildConstructorError(description, failure), failure);
+                    return clazz.cast(result);
+                }
+                catch (InvocationTargetException ite)
+                {
+                    failure = ite.getTargetException();
+                }
+                catch (Exception ex)
+                {
+                    failure = ex;
+                }
+
+                String description = classFactory.getConstructorLocation(constructor).toString();
+
+                throw new RuntimeException(IOCMessages.autobuildConstructorError(description, failure),
+                                           failure);
+            }
+        };
+
+        return invoke("Autobuilding instance of class " + clazz.getName(),
+                      operation);
     }
 
     public <T> T proxy(Class<T> interfaceClass, final Class<? extends T> implementationClass)
@@ -838,5 +886,15 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
     public Object provideServiceProxy(String serviceId)
     {
         return getService(serviceId, Object.class);
+    }
+
+    public void run(String description, Runnable operation)
+    {
+        operationTracker.run(description, operation);
+    }
+
+    public <T> T invoke(String description, Invokable<T> operation)
+    {
+        return operationTracker.invoke(description, operation);
     }
 }

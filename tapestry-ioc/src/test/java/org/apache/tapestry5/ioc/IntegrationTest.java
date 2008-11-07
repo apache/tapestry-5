@@ -14,8 +14,7 @@
 
 package org.apache.tapestry5.ioc;
 
-import org.apache.tapestry5.ioc.internal.ExceptionInConstructorModule;
-import org.apache.tapestry5.ioc.internal.IOCInternalTestCase;
+import org.apache.tapestry5.ioc.internal.*;
 import org.apache.tapestry5.ioc.services.*;
 import org.easymock.EasyMock;
 import org.testng.Assert;
@@ -911,6 +910,56 @@ public class IntegrationTest extends IOCInternalTestCase
         Greeter g = r.getService("HelloGreeter", Greeter.class);
 
         assertEquals(g.getGreeting(), "HELLO");
+
+        r.shutdown();
+    }
+
+    @Test
+    public void cyclic_dependency_in_MOP() throws Exception
+    {
+        Registry r = buildRegistry(CyclicMOPModule.class);
+
+        Runnable trigger = r.getService("Trigger", Runnable.class);
+
+        try
+        {
+            trigger.run();
+            unreachable();
+        }
+        catch (RuntimeException ex)
+        {
+            assertMessageContains(ex, "Construction of service 'TypeCoercer' has failed due to recursion");
+        }
+
+        r.shutdown();
+    }
+
+    @Test
+    public void no_public_constructor_on_module_builder_class()
+    {
+        Registry r = buildRegistry(PrivateConstructorModule.class);
+
+        try
+        {
+            r.getService("Trigger", Runnable.class).run();
+
+            unreachable();
+        }
+        catch (RuntimeException ex)
+        {
+            assertMessageContains(ex,
+                                  "Module builder class org.apache.tapestry5.ioc.internal.PrivateConstructorModule does not contain any public constructors.");
+        }
+    }
+
+    @Test
+    public void too_many_public_constructors_on_module_builder_class()
+    {
+        Registry r = buildRegistry(ExtraPublicConstructorsModule.class);
+
+        UpcaseService s = r.getService(UpcaseService.class);
+
+        assertEquals(s.upcase("Hello, ${fred}"), "HELLO, FLINTSTONE");
 
         r.shutdown();
     }

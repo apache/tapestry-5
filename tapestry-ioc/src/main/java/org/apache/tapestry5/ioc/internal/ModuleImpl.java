@@ -22,6 +22,7 @@ import org.apache.tapestry5.ioc.def.ServiceDef;
 import org.apache.tapestry5.ioc.internal.services.JustInTimeObjectCreator;
 import org.apache.tapestry5.ioc.internal.util.*;
 import org.apache.tapestry5.ioc.services.*;
+import org.apache.tapestry5.ioc.util.Stack;
 import org.slf4j.Logger;
 
 import java.io.ObjectStreamException;
@@ -64,6 +65,13 @@ public class ModuleImpl implements Module
      * threaded.
      */
     private final static ConcurrentBarrier BARRIER = new ConcurrentBarrier();
+
+    /**
+     * Tracks what is currently going on in the module. Guarded by the Barrier.
+     */
+    private static final Stack<String> activeOperations = CollectionFactory.newStack();
+
+    private static boolean operationsReported;
 
     public ModuleImpl(InternalRegistry registry, ServiceActivityTracker tracker, ModuleDef moduleDef,
                       ClassFactory classFactory, Logger logger)
@@ -181,9 +189,7 @@ public class ModuleImpl implements Module
                 Object result = services.get(key);
 
                 if (result == null)
-                {
                     result = BARRIER.withWrite(create);
-                }
 
                 return result;
             }
@@ -192,86 +198,121 @@ public class ModuleImpl implements Module
         return BARRIER.withRead(find);
     }
 
-    public void collectEagerLoadServices(Collection<EagerLoadServiceProxy> proxies)
+    public void collectEagerLoadServices(final Collection<EagerLoadServiceProxy> proxies)
     {
-        for (String serviceId : moduleDef.getServiceIds())
+        Runnable work = new Runnable()
         {
-            ServiceDef def = moduleDef.getServiceDef(serviceId);
+            public void run()
+            {
+                for (String serviceId : moduleDef.getServiceIds())
+                {
+                    ServiceDef def = moduleDef.getServiceDef(serviceId);
 
-            if (def.isEagerLoad()) findOrCreate(def, proxies);
-        }
+                    if (def.isEagerLoad()) findOrCreate(def, proxies);
+                }
+            }
+        };
+
+        registry.run("Eager loading services", work);
     }
+
 
     /**
      * Creates the service and updates the cache of created services.
      *
      * @param eagerLoadProxies a list into which any eager loaded proxies should be added
      */
-    private Object create(ServiceDef def, Collection<EagerLoadServiceProxy> eagerLoadProxies)
+    private Object create(final ServiceDef def, final Collection<EagerLoadServiceProxy> eagerLoadProxies)
     {
-        String serviceId = def.getServiceId();
+        final String serviceId = def.getServiceId();
 
-        Logger logger = registry.getServiceLogger(serviceId);
+        final Logger logger = registry.getServiceLogger(serviceId);
 
-        if (logger.isDebugEnabled()) logger.debug(IOCMessages.creatingService(serviceId));
+        String description = IOCMessages.creatingService(serviceId);
 
-        try
+        if (logger.isDebugEnabled())
+            logger.debug(description);
+
+        final Module module = this;
+
+        Invokable operation = new Invokable()
         {
-            ServiceBuilderResources resources = new ServiceResourcesImpl(registry, this, def, classFactory, logger);
+            public Object invoke()
+            {
+                try
+                {
+                    ServiceBuilderResources resources = new ServiceResourcesImpl(registry, module, def,
+                                                                                 classFactory,
+                                                                                 logger);
 
-            // Build up a stack of operations that will be needed to realize the service
-            // (by the proxy, at a later date).
+                    // Build up a stack of operations that will be needed to realize the service
+                    // (by the proxy, at a later date).
 
-            ObjectCreator creator = def.createServiceCreator(resources);
+                    ObjectCreator creator = def.createServiceCreator(resources);
 
-            Class serviceInterface = def.getServiceInterface();
+                    Class serviceInterface = def.getServiceInterface();
 
-            // For non-proxyable services, we immediately create the service implementation
-            // and return it. There's no interface to proxy, which throws out the possibility of
-            // deferred instantiation, service lifecycles, and decorators.
+                    // For non-proxyable services, we immediately create the service implementation
+                    // and return it. There's no interface to proxy, which throws out the possibility of
+                    // deferred instantiation, service lifecycles, and decorators.
 
-            if (!serviceInterface.isInterface()) return creator.createObject();
+                    if (!serviceInterface.isInterface()) return creator.createObject();
 
-            creator = new LifecycleWrappedServiceCreator(registry, def.getServiceScope(), resources, creator);
+                    creator = new OperationTrackingObjectCreator(registry, "Invoking " + creator.toString(), creator);
 
-            // Don't allow the core IOC services services to be decorated.
+                    creator = new LifecycleWrappedServiceCreator(registry, def.getServiceScope(), resources, creator);
 
-            if (!TapestryIOCModule.class.equals(moduleDef.getBuilderClass()))
-                creator = new InterceptorStackBuilder(this, serviceId, creator);
+                    // Don't allow the core IOC services services to be decorated.
 
-            // Add a wrapper that checks for recursion.
+                    if (!TapestryIOCModule.class.equals(moduleDef.getBuilderClass()))
+                        creator = new InterceptorStackBuilder(module, serviceId, creator, registry);
 
-            creator = new RecursiveServiceCreationCheckWrapper(def, creator, logger);
+                    // Add a wrapper that checks for recursion.
 
-            JustInTimeObjectCreator delegate = new JustInTimeObjectCreator(tracker, creator, serviceId);
+                    creator = new RecursiveServiceCreationCheckWrapper(def, creator, logger);
 
-            Object proxy = createProxy(resources, delegate);
+                    creator = new OperationTrackingObjectCreator(registry, "Realizing service " + serviceId, creator);
 
-            registry.addRegistryShutdownListener(delegate);
+                    JustInTimeObjectCreator delegate = new JustInTimeObjectCreator(tracker, creator, serviceId);
 
-            // Occasionally service A may invoke service B from its service builder method; if
-            // service B
-            // is eager loaded, we'll hit this method but eagerLoadProxies will be null. That's OK
-            // ... service B
-            // is being realized anyway.
+                    Object proxy = createProxy(resources, delegate);
 
-            if (def.isEagerLoad() && eagerLoadProxies != null) eagerLoadProxies.add(delegate);
+                    registry.addRegistryShutdownListener(delegate);
 
-            tracker.setStatus(serviceId, Status.VIRTUAL);
+                    // Occasionally service A may invoke service B from its service builder method; if
+                    // service B
+                    // is eager loaded, we'll hit this method but eagerLoadProxies will be null. That's OK
+                    // ... service B
+                    // is being realized anyway.
 
-            return proxy;
-        }
-        catch (Exception ex)
-        {
-            throw new RuntimeException(IOCMessages.errorBuildingService(serviceId, def, ex), ex);
-        }
+                    if (def.isEagerLoad() && eagerLoadProxies != null) eagerLoadProxies.add(delegate);
+
+                    tracker.setStatus(serviceId, Status.VIRTUAL);
+
+                    return proxy;
+                }
+                catch (Exception ex)
+                {
+                    throw new RuntimeException(IOCMessages.errorBuildingService(serviceId, def, ex), ex);
+                }
+            }
+        };
+
+        return registry.invoke(description, operation);
     }
 
     private final Runnable instantiateModuleBuilder = new Runnable()
     {
         public void run()
         {
-            moduleBuilder = constructModuleBuilder();
+            moduleBuilder = registry.invoke("Constructing module class " + moduleDef.getBuilderClass().getName(),
+                                            new Invokable()
+                                            {
+                                                public Object invoke()
+                                                {
+                                                    return constructModuleBuilder();
+                                                }
+                                            });
         }
     };
 
@@ -336,11 +377,12 @@ public class ModuleImpl implements Module
 
             Object[] parameterValues = InternalUtils.calculateParameters(locator, parameterDefaults,
                                                                          constructor.getParameterTypes(),
-                                                                         constructor.getParameterAnnotations());
+                                                                         constructor.getParameterAnnotations(),
+                                                                         registry);
 
             Object result = constructor.newInstance(parameterValues);
 
-            InternalUtils.injectIntoFields(result, locator);
+            InternalUtils.injectIntoFields(result, locator, registry);
 
             return result;
         }

@@ -14,11 +14,9 @@
 
 package org.apache.tapestry5.ioc.internal.util;
 
-import org.apache.tapestry5.ioc.AnnotationProvider;
-import org.apache.tapestry5.ioc.Locatable;
-import org.apache.tapestry5.ioc.Location;
-import org.apache.tapestry5.ioc.ObjectLocator;
+import org.apache.tapestry5.ioc.*;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.internal.QuietOperationTracker;
 import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newMap;
 import static org.apache.tapestry5.ioc.internal.util.InternalUtils.toList;
 import org.apache.tapestry5.ioc.services.Builtin;
@@ -39,6 +37,7 @@ import java.util.*;
 
 public class InternalUtilsTest extends IOCTestCase
 {
+    private final OperationTracker tracker = new QuietOperationTracker();
 
     private static class PrivateInnerClass
     {
@@ -474,7 +473,7 @@ public class InternalUtilsTest extends IOCTestCase
 
         replay();
 
-        InternalUtils.injectIntoFields(target, ol);
+        InternalUtils.injectIntoFields(target, ol, tracker);
 
         assertSame(target.getFred(), fred);
 
@@ -508,7 +507,7 @@ public class InternalUtilsTest extends IOCTestCase
 
         replay();
 
-        InternalUtils.injectIntoFields(target, ol);
+        InternalUtils.injectIntoFields(target, ol, tracker);
 
         assertSame(target.getSymbolSource(), ss);
 
@@ -531,7 +530,7 @@ public class InternalUtilsTest extends IOCTestCase
 
         try
         {
-            InternalUtils.injectIntoFields(target, ol);
+            InternalUtils.injectIntoFields(target, ol, tracker);
 
             unreachable();
         }

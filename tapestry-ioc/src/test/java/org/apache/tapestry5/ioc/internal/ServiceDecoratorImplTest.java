@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
 package org.apache.tapestry5.ioc.internal;
 
 import org.apache.tapestry5.ioc.ModuleBuilderSource;
+import org.apache.tapestry5.ioc.OperationTracker;
 import org.apache.tapestry5.ioc.ServiceResources;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.slf4j.Logger;
@@ -25,6 +26,8 @@ import java.lang.reflect.Method;
 public class ServiceDecoratorImplTest extends IOCInternalTestCase
 {
     private static final String SERVICE_ID = "ioc.Fie";
+
+    private final OperationTracker tracker = new QuietOperationTracker();
 
     private ModuleBuilderSource newSource(final Object builder)
     {
@@ -48,7 +51,7 @@ public class ServiceDecoratorImplTest extends IOCInternalTestCase
         ServiceDecoratorFixture fixture = new ServiceDecoratorFixture();
         Method m = findMethod(fixture, "decoratorReturnsInterceptor");
 
-        ServiceResources resources = mockServiceResources();
+        ServiceResources resources = mockServiceResources(tracker);
         Logger logger = mockLogger();
         fixture.expectedDelegate = mockFieService();
         fixture.interceptorToReturn = mockFieService();
@@ -80,7 +83,7 @@ public class ServiceDecoratorImplTest extends IOCInternalTestCase
     {
         ServiceDecoratorFixture fixture = new ServiceDecoratorFixture();
         ModuleBuilderSource source = newSource(fixture);
-        ServiceResources resources = mockServiceResources();
+        ServiceResources resources = mockServiceResources(tracker);
         Logger logger = mockLogger();
         Object delegate = mockFieService();
 
@@ -107,7 +110,7 @@ public class ServiceDecoratorImplTest extends IOCInternalTestCase
     {
         ServiceDecoratorFixture fixture = new ServiceDecoratorFixture();
         ModuleBuilderSource source = newSource(fixture);
-        ServiceResources resources = mockServiceResources();
+        ServiceResources resources = mockServiceResources(tracker);
         Logger logger = mockLogger();
         fixture.expectedDelegate = mockFieService();
         fixture.interceptorToReturn = newMock(FoeService.class);
@@ -141,7 +144,7 @@ public class ServiceDecoratorImplTest extends IOCInternalTestCase
     {
         ServiceDecoratorFixture fixture = new ServiceDecoratorFixture();
         ModuleBuilderSource source = newSource(fixture);
-        ServiceResources resources = mockServiceResources();
+        ServiceResources resources = mockServiceResources(tracker);
         Logger logger = mockLogger();
         Object delegate = mockFieService();
         fixture.exception = new RuntimeException("Ouch!");
@@ -188,5 +191,4 @@ public class ServiceDecoratorImplTest extends IOCInternalTestCase
 
         train_getLogger(resources, logger);
     }
-
 }

@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,10 +15,12 @@
 package org.apache.tapestry5.ioc.internal;
 
 import org.apache.tapestry5.ioc.ObjectCreator;
+import org.apache.tapestry5.ioc.OperationTracker;
 import org.apache.tapestry5.ioc.ServiceBuilderResources;
 import org.apache.tapestry5.ioc.def.ServiceDef;
 import static org.apache.tapestry5.ioc.internal.util.Defense.notNull;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.ioc.internal.util.Invokable;
 import org.apache.tapestry5.ioc.services.ClassFactory;
 import org.slf4j.Logger;
 
@@ -36,6 +38,10 @@ import java.util.Map;
  */
 public class ServiceResourcesImpl extends ObjectLocatorImpl implements ServiceBuilderResources
 {
+    private final InternalRegistry registry;
+
+    private final Module module;
+
     private final ServiceDef serviceDef;
 
     private final Logger logger;
@@ -47,6 +53,8 @@ public class ServiceResourcesImpl extends ObjectLocatorImpl implements ServiceBu
     {
         super(registry, module);
 
+        this.registry = registry;
+        this.module = module;
         this.serviceDef = serviceDef;
         this.classFactory = classFactory;
         this.logger = logger;
@@ -67,9 +75,17 @@ public class ServiceResourcesImpl extends ObjectLocatorImpl implements ServiceBu
         return logger;
     }
 
-    public <T> Collection<T> getUnorderedConfiguration(Class<T> valueType)
+    public <T> Collection<T> getUnorderedConfiguration(final Class<T> valueType)
     {
-        Collection<T> result = getRegistry().getUnorderedConfiguration(serviceDef, valueType);
+        Collection<T> result =
+                registry.invoke("Collecting unordered configuration for service " + serviceDef.getServiceId(),
+                                new Invokable<Collection<T>>()
+                                {
+                                    public Collection<T> invoke()
+                                    {
+                                        return registry.getUnorderedConfiguration(serviceDef, valueType);
+                                    }
+                                });
 
         logConfiguration(result);
 
@@ -82,18 +98,34 @@ public class ServiceResourcesImpl extends ObjectLocatorImpl implements ServiceBu
             logger.debug(IOCMessages.constructedConfiguration(configuration));
     }
 
-    public <T> List<T> getOrderedConfiguration(Class<T> valueType)
+    public <T> List<T> getOrderedConfiguration(final Class<T> valueType)
     {
-        List<T> result = getRegistry().getOrderedConfiguration(serviceDef, valueType);
+        List<T> result = registry.invoke(
+                "Collecting ordered configuration for service " + serviceDef.getServiceId(),
+                new Invokable<List<T>>()
+                {
+                    public List<T> invoke()
+                    {
+                        return registry.getOrderedConfiguration(serviceDef, valueType);
+                    }
+                });
 
         logConfiguration(result);
 
         return result;
     }
 
-    public <K, V> Map<K, V> getMappedConfiguration(Class<K> keyType, Class<V> valueType)
+    public <K, V> Map<K, V> getMappedConfiguration(final Class<K> keyType, final Class<V> valueType)
     {
-        Map<K, V> result = getRegistry().getMappedConfiguration(serviceDef, keyType, valueType);
+        Map<K, V> result =
+                registry.invoke("Collecting mapped configuration for service " + serviceDef.getServiceId(),
+                                new Invokable<Map<K, V>>()
+                                {
+                                    public Map<K, V> invoke()
+                                    {
+                                        return registry.getMappedConfiguration(serviceDef, keyType, valueType);
+                                    }
+                                });
 
         if (logger.isDebugEnabled()) logger.debug(IOCMessages.constructedConfiguration(result));
 
@@ -102,7 +134,7 @@ public class ServiceResourcesImpl extends ObjectLocatorImpl implements ServiceBu
 
     public Object getModuleBuilder()
     {
-        return getModule().getModuleBuilder();
+        return module.getModuleBuilder();
     }
 
     @Override
@@ -120,5 +152,10 @@ public class ServiceResourcesImpl extends ObjectLocatorImpl implements ServiceBu
         ObjectCreator creator = new ConstructorServiceCreator(this, description, constructor);
 
         return clazz.cast(creator.createObject());
+    }
+
+    public OperationTracker getTracker()
+    {
+        return registry;
     }
 }

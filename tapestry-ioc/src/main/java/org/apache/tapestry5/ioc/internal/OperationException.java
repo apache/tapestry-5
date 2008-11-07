@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+//  Copyright 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,15 +14,23 @@
 
 package org.apache.tapestry5.ioc.internal;
 
-
 /**
- * Used by {@link org.apache.tapestry5.ioc.internal.ModuleImplTest}.
+ * An exception caught and reported by an {@link org.apache.tapestry5.ioc.OperationTracker}; the trace property
+ * identifies what operations were active at the time of the exception.
  */
-public class PrivateConstructorModule
+public class OperationException extends RuntimeException
 {
-    private PrivateConstructorModule()
+    private final String[] trace;
+
+    public OperationException(Throwable cause, String[] trace)
     {
+        super(cause.getMessage(), cause);
+
+        this.trace = trace;
     }
 
-    public Runnable buildTrigger() { return null; }
+    public String[] getTrace()
+    {
+        return trace;
+    }
 }

@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -26,6 +26,8 @@ import java.lang.reflect.Method;
 
 public class ContributionDefImplTest extends IOCTestCase implements ModuleBuilderSource
 {
+    private final OperationTracker tracker = new QuietOperationTracker();
+
     private Object toContribute;
 
     public Object getModuleBuilder()
@@ -39,7 +41,7 @@ public class ContributionDefImplTest extends IOCTestCase implements ModuleBuilde
     {
         toContribute = new Object();
         Configuration configuration = mockConfiguration();
-        ObjectLocator locator = mockObjectLocator();
+        ServiceResources serviceResources = mockServiceResources(tracker);
 
         configuration.add(toContribute);
 
@@ -48,7 +50,7 @@ public class ContributionDefImplTest extends IOCTestCase implements ModuleBuilde
         Method m = findMethod("contributeUnordered");
         ContributionDef def = new ContributionDefImpl("foo.Bar", m, null);
 
-        def.contribute(this, locator, configuration);
+        def.contribute(this, serviceResources, configuration);
 
         verify();
     }
@@ -58,10 +60,10 @@ public class ContributionDefImplTest extends IOCTestCase implements ModuleBuilde
     public void unordered_collection_with_service_lookup()
     {
         Configuration configuration = mockConfiguration();
-        ObjectLocator locator = mockObjectLocator();
+        ServiceResources resources = mockServiceResources(tracker);
         UpcaseService service = mockUpcaseService();
 
-        train_getService(locator, "zip.Zap", UpcaseService.class, service);
+        train_getService(resources, "zip.Zap", UpcaseService.class, service);
 
         configuration.add(service);
 
@@ -70,7 +72,7 @@ public class ContributionDefImplTest extends IOCTestCase implements ModuleBuilde
         Method m = findMethod("contributeUnorderedParameter");
         ContributionDef def = new ContributionDefImpl("foo.Bar", m, null);
 
-        def.contribute(this, locator, configuration);
+        def.contribute(this, resources, configuration);
 
         verify();
     }
@@ -79,11 +81,11 @@ public class ContributionDefImplTest extends IOCTestCase implements ModuleBuilde
     public void unordered_collection_with_incorrect_configuration_parameter()
     {
         Configuration configuration = mockConfiguration();
-        ObjectLocator locator = mockObjectLocator();
+        ServiceResources resources = mockServiceResources(tracker);
 
         Throwable t = new RuntimeException("Missing service.");
 
-        expect(locator.getObject(eq(MappedConfiguration.class), isA(AnnotationProvider.class)))
+        expect(resources.getObject(eq(MappedConfiguration.class), isA(AnnotationProvider.class)))
                 .andThrow(t);
 
         replay();
@@ -93,7 +95,7 @@ public class ContributionDefImplTest extends IOCTestCase implements ModuleBuilde
 
         try
         {
-            def.contribute(this, locator, configuration);
+            def.contribute(this, resources, configuration);
             unreachable();
         }
         catch (RuntimeException ex)
@@ -114,10 +116,10 @@ public class ContributionDefImplTest extends IOCTestCase implements ModuleBuilde
     public void ordered_collection_with_service_lookup()
     {
         OrderedConfiguration configuration = mockOrderedConfiguration();
-        ObjectLocator locator = mockObjectLocator();
+        ServiceResources resources = mockServiceResources(tracker);
         UpcaseService service = mockUpcaseService();
 
-        train_getService(locator, "zip.Zap", UpcaseService.class, service);
+        train_getService(resources, "zip.Zap", UpcaseService.class, service);
 
         configuration.add("fred", service);
 
@@ -126,7 +128,7 @@ public class ContributionDefImplTest extends IOCTestCase implements ModuleBuilde
         Method m = findMethod("contributeOrderedParameter");
         ContributionDef def = new ContributionDefImpl("foo.Bar", m, null);
 
-        def.contribute(this, locator, configuration);
+        def.contribute(this, resources, configuration);
 
         verify();
     }
@@ -136,10 +138,10 @@ public class ContributionDefImplTest extends IOCTestCase implements ModuleBuilde
     public void mapped_collection_with_service_lookup()
     {
         MappedConfiguration configuration = mockMappedConfiguration();
-        ObjectLocator locator = mockObjectLocator();
+        ServiceResources resources = mockServiceResources(tracker);
         UpcaseService service = mockUpcaseService();
 
-        train_getService(locator, "zip.Zap", UpcaseService.class, service);
+        train_getService(resources, "zip.Zap", UpcaseService.class, service);
 
         configuration.add("upcase", service);
 
@@ -148,7 +150,7 @@ public class ContributionDefImplTest extends IOCTestCase implements ModuleBuilde
         Method m = findMethod("contributeMappedParameter");
         ContributionDef def = new ContributionDefImpl("foo.Bar", m, null);
 
-        def.contribute(this, locator, configuration);
+        def.contribute(this, resources, configuration);
 
         verify();
     }

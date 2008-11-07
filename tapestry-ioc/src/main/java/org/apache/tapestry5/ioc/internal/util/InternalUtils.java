@@ -14,14 +14,12 @@
 
 package org.apache.tapestry5.ioc.internal.util;
 
-import org.apache.tapestry5.ioc.AnnotationProvider;
-import org.apache.tapestry5.ioc.Locatable;
-import org.apache.tapestry5.ioc.Location;
-import org.apache.tapestry5.ioc.ObjectLocator;
+import org.apache.tapestry5.ioc.*;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.InjectService;
 import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newList;
 import static org.apache.tapestry5.ioc.internal.util.Defense.notBlank;
+import org.apache.tapestry5.ioc.services.ClassFabUtils;
 import org.apache.tapestry5.ioc.services.ClassFactory;
 
 import java.io.Closeable;
@@ -207,25 +205,27 @@ public class InternalUtils
     }
 
     public static Object[] calculateParametersForMethod(Method method, ObjectLocator locator,
-                                                        Map<Class, Object> parameterDefaults)
+                                                        Map<Class, Object> parameterDefaults, OperationTracker tracker)
     {
         Class[] parameterTypes = method.getParameterTypes();
         Annotation[][] annotations = method.getParameterAnnotations();
 
-        return calculateParameters(locator, parameterDefaults, parameterTypes, annotations);
+        return calculateParameters(locator, parameterDefaults, parameterTypes, annotations, tracker);
     }
 
     public static Object[] calculateParametersForConstructor(Constructor constructor, ObjectLocator locator,
-                                                             Map<Class, Object> parameterDefaults)
+                                                             Map<Class, Object> parameterDefaults,
+                                                             OperationTracker tracker)
     {
         Class[] parameterTypes = constructor.getParameterTypes();
         Annotation[][] annotations = constructor.getParameterAnnotations();
 
-        return calculateParameters(locator, parameterDefaults, parameterTypes, annotations);
+        return calculateParameters(locator, parameterDefaults, parameterTypes, annotations, tracker);
     }
 
-    public static Object[] calculateParameters(ObjectLocator locator, Map<Class, Object> defaults,
-                                               Class[] parameterTypes, Annotation[][] parameterAnnotations)
+    public static Object[] calculateParameters(final ObjectLocator locator, final Map<Class, Object> defaults,
+                                               Class[] parameterTypes, Annotation[][] parameterAnnotations,
+                                               OperationTracker tracker)
     {
         int parameterCount = parameterTypes.length;
 
@@ -233,8 +233,21 @@ public class InternalUtils
 
         for (int i = 0; i < parameterCount; i++)
         {
-            parameters[i] = calculateInjection(parameterTypes[i], parameterAnnotations[i], locator,
-                                               defaults);
+            final Class type = parameterTypes[i];
+            final Annotation[] annotations = parameterAnnotations[i];
+
+            String description = String.format("Determining injection value for parameter #%d (%s)", i + 1,
+                                               ClassFabUtils.toJavaClassName(type));
+
+            final Invokable<Object> operation = new Invokable<Object>()
+            {
+                public Object invoke()
+                {
+                    return calculateInjection(type, annotations, locator, defaults);
+                }
+            };
+
+            parameters[i] = tracker.invoke(description, operation);
         }
 
         return parameters;
@@ -246,8 +259,9 @@ public class InternalUtils
      *
      * @param object  to be initialized
      * @param locator used to resolve external dependencies
+     * @param tracker track operations
      */
-    public static void injectIntoFields(Object object, ObjectLocator locator)
+    public static void injectIntoFields(final Object object, final ObjectLocator locator, OperationTracker tracker)
     {
         Class clazz = object.getClass();
 
@@ -262,7 +276,7 @@ public class InternalUtils
 
                 if (Modifier.isStatic(f.getModifiers())) continue;
 
-                AnnotationProvider ap = new AnnotationProvider()
+                final AnnotationProvider ap = new AnnotationProvider()
                 {
                     public <T extends Annotation> T getAnnotation(Class<T> annotationClass)
                     {
@@ -270,23 +284,34 @@ public class InternalUtils
                     }
                 };
 
+                String description = String.format("Calculating injection value for field '%s' (%s)",
+                                                   f.getName(),
+                                                   ClassFabUtils.toJavaClassName(f.getType()));
 
-                InjectService is = ap.getAnnotation(InjectService.class);
 
-                if (is != null)
+                tracker.run(description, new Runnable()
                 {
-                    inject(object, f, locator.getService(is.value(), f.getType()));
-                    continue;
-                }
+                    public void run()
+                    {
+                        InjectService is = ap.getAnnotation(InjectService.class);
 
-                if (ap.getAnnotation(Inject.class) != null)
-                {
-                    inject(object, f, locator.getObject(f.getType(), ap));
-                    continue;
-                }
+                        if (is != null)
+                        {
+                            inject(object, f, locator.getService(is.value(), f.getType()));
+                            return;
+                        }
 
-                // Ignore fields that do not have the necessary annotation.  Should we ignore static
-                // fields?
+                        if (ap.getAnnotation(Inject.class) != null)
+                        {
+                            inject(object, f, locator.getObject(f.getType(), ap));
+                            return;
+                        }
+
+                        // Ignore fields that do not have the necessary annotation.  Should we ignore static
+                        // fields?
+
+                    }
+                });
             }
 
 

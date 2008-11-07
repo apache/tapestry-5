@@ -238,7 +238,6 @@ public class IOCTestCase extends TestBase
     protected final void train_expandSymbols(SymbolSource source, String input)
     {
         train_expandSymbols(source, input, input);
-
     }
 
     protected final void train_expandSymbols(SymbolSource source, String input, String expanded)
@@ -308,7 +307,6 @@ public class IOCTestCase extends TestBase
     protected final void train_getServiceId(ServiceResources resources, String serviceId)
     {
         expect(resources.getServiceId()).andReturn(serviceId).atLeastOnce();
-
     }
 
     protected final void train_getServiceInterface(ServiceDef def, Class serviceInterface)
@@ -324,7 +322,6 @@ public class IOCTestCase extends TestBase
     protected final void train_getLogger(ServiceResources resources, Logger log)
     {
         expect(resources.getLogger()).andReturn(log).atLeastOnce();
-
     }
 
     protected final void train_isDebugEnabled(Logger log, boolean debugEnabled)
@@ -402,5 +399,28 @@ public class IOCTestCase extends TestBase
     protected final PerthreadManager mockPerthreadManager()
     {
         return newMock(PerthreadManager.class);
+    }
+
+    protected final ServiceResources mockServiceResources(OperationTracker tracker)
+    {
+        ServiceResources resources = mockServiceResources();
+
+        train_getTracker(resources, tracker);
+
+        return resources;
+    }
+
+    protected final void train_getTracker(ServiceResources resources, OperationTracker tracker)
+    {
+        expect(resources.getTracker()).andReturn(tracker).atLeastOnce();
+    }
+
+    protected final ServiceBuilderResources mockServiceBuilderResources(OperationTracker tracker)
+    {
+        ServiceBuilderResources resources = mockServiceBuilderResources();
+
+        train_getTracker(resources, tracker);
+
+        return resources;
     }
 }
