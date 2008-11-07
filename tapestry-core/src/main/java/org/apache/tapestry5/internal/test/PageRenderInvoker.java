@@ -14,8 +14,10 @@
 
 package org.apache.tapestry5.internal.test;
 
+import org.apache.tapestry5.Link;
 import org.apache.tapestry5.dom.Document;
 import org.apache.tapestry5.internal.services.ComponentInvocation;
+import org.apache.tapestry5.internal.services.ComponentInvocationMap;
 import org.apache.tapestry5.internal.services.InvocationTarget;
 import org.apache.tapestry5.internal.services.PageRenderTarget;
 import org.apache.tapestry5.ioc.Registry;
@@ -37,9 +39,16 @@ public class PageRenderInvoker implements ComponentInvoker
 
     private final TestableResponse response;
 
-    public PageRenderInvoker(Registry registry)
+    private final ComponentInvoker followupInvoker;
+
+    private final ComponentInvocationMap componentInvocationMap;
+
+    public PageRenderInvoker(Registry registry, ComponentInvoker followupInvoker,
+                             ComponentInvocationMap componentInvocationMap)
     {
         this.registry = registry;
+        this.followupInvoker = followupInvoker;
+        this.componentInvocationMap = componentInvocationMap;
 
         pageRenderRequestHandler = this.registry.getService(PageRenderRequestHandler.class);
         markupWriterFactory = this.registry.getService(TestableMarkupWriterFactory.class);
@@ -64,6 +73,18 @@ public class PageRenderInvoker implements ComponentInvoker
                                                                                      invocation.getPageActivationContext());
 
             pageRenderRequestHandler.handle(parameters);
+
+            Link redirect = response.getRedirectLink();
+
+            if (redirect != null)
+            {
+
+                ComponentInvocation followup = componentInvocationMap.get(redirect);
+
+                response.clear();
+
+                return followupInvoker.invoke(followup);
+            }
 
             return markupWriterFactory.getLatestMarkupWriter().getDocument();
         }

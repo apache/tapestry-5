@@ -107,7 +107,9 @@ public class PageTester implements ComponentInvoker
         globals.storeContext(new PageTesterContext(contextPath));
 
         Map<Class, ComponentInvoker> map = newMap();
-        map.put(PageRenderTarget.class, new PageRenderInvoker(registry));
+
+        map.put(PageRenderTarget.class, new PageRenderInvoker(registry, this, invocationMap));
+
         map.put(ComponentEventTarget.class, new ComponentEventInvoker(registry, this, invocationMap));
 
         invokerRegistry = StrategyRegistry.newInstance(ComponentInvoker.class, map);
