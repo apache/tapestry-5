@@ -15,11 +15,14 @@
 package org.apache.tapestry5.upload.internal.services;
 
 import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.FileItemFactory;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.tapestry5.test.TapestryTestCase;
 import org.testng.annotations.Test;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -27,13 +30,14 @@ import java.util.List;
 
 public class MultipartDecoderImplTest extends TapestryTestCase
 {
+    private final FileItemFactory fileItemFactory = new DiskFileItemFactory(888, new File("/tmp"));
 
     private static final String CHARSET = "UTF-8";
 
     @Test
     public void create_file_upload_gets_configuration_from_symbols() throws Exception
     {
-        MultipartDecoderImpl decoder = new MultipartDecoderImpl("/tmp", 888, 7777, 6666, CHARSET);
+        MultipartDecoderImpl decoder = new MultipartDecoderImpl(fileItemFactory, 7777, 6666, CHARSET);
 
         replay();
 
@@ -50,7 +54,7 @@ public class MultipartDecoderImplTest extends TapestryTestCase
     public void process_file_items_does_nothing_when_null_file_items() throws Exception
     {
         HttpServletRequest request = mockHttpServletRequest();
-        MultipartDecoderImpl decoder = new MultipartDecoderImpl("/tmp", 888, -1, -1, CHARSET);
+        MultipartDecoderImpl decoder = new MultipartDecoderImpl(fileItemFactory, -1, -1, CHARSET);
         List<FileItem> items = Collections.emptyList();
 
         replay();
@@ -66,7 +70,7 @@ public class MultipartDecoderImplTest extends TapestryTestCase
     public void process_file_items_does_nothing_when_empty_file_items() throws Exception
     {
         HttpServletRequest request = mockHttpServletRequest();
-        MultipartDecoderImpl decoder = new MultipartDecoderImpl("/tmp", 888, -1, -1, CHARSET);
+        MultipartDecoderImpl decoder = new MultipartDecoderImpl(fileItemFactory, -1, -1, CHARSET);
         List<FileItem> fileItems = Collections.emptyList();
 
         replay();
@@ -83,7 +87,7 @@ public class MultipartDecoderImplTest extends TapestryTestCase
     {
         HttpServletRequest request = mockHttpServletRequest();
 
-        MultipartDecoderImpl decoder = new MultipartDecoderImpl("/tmp", 888, -1, -1, CHARSET);
+        MultipartDecoderImpl decoder = new MultipartDecoderImpl(fileItemFactory, -1, -1, CHARSET);
         List<FileItem> fileItems = Arrays.asList(createValueItem("one", "first"), createValueItem("two", "second"));
 
         replay();
@@ -103,7 +107,7 @@ public class MultipartDecoderImplTest extends TapestryTestCase
     {
         HttpServletRequest request = mockHttpServletRequest();
 
-        MultipartDecoderImpl decoder = new MultipartDecoderImpl("/tmp", 888, -1, -1, CHARSET);
+        MultipartDecoderImpl decoder = new MultipartDecoderImpl(fileItemFactory, -1, -1, CHARSET);
 
         List<FileItem> fileItems = Arrays.asList(createValueItem("one", "first"), createValueItem("two", "second"));
 
@@ -123,7 +127,7 @@ public class MultipartDecoderImplTest extends TapestryTestCase
     public void process_file_items_set_file_parameters_with_file_name() throws Exception
     {
         HttpServletRequest request = mockHttpServletRequest();
-        MultipartDecoderImpl decoder = new MultipartDecoderImpl("/tmp", 888, -1, -1, CHARSET);
+        MultipartDecoderImpl decoder = new MultipartDecoderImpl(fileItemFactory, -1, -1, CHARSET);
         List<FileItem> fileItems = Arrays.asList(createFileItem("one", "first.txt"),
                                                  createFileItem("two", "second.txt"));
 
@@ -143,7 +147,7 @@ public class MultipartDecoderImplTest extends TapestryTestCase
     public void uploaded_file_stored() throws Exception
     {
         HttpServletRequest request = mockHttpServletRequest();
-        MultipartDecoderImpl decoder = new MultipartDecoderImpl("/tmp", 888, -1, -1, CHARSET);
+        MultipartDecoderImpl decoder = new MultipartDecoderImpl(fileItemFactory, -1, -1, CHARSET);
         List<FileItem> fileItems = Arrays.asList(createFileItem("one", "first.txt"),
                                                  createFileItem("two", "second.txt"));
 
@@ -163,7 +167,7 @@ public class MultipartDecoderImplTest extends TapestryTestCase
     public void file_items_cleaned_up() throws Exception
     {
         HttpServletRequest request = mockHttpServletRequest();
-        MultipartDecoderImpl decoder = new MultipartDecoderImpl("/tmp", 888, -1, -1, CHARSET);
+        MultipartDecoderImpl decoder = new MultipartDecoderImpl(fileItemFactory, -1, -1, CHARSET);
         StubFileItem firstItem = new StubFileItem("one");
         firstItem.setFormField(false);
         StubFileItem secondItem = new StubFileItem("two");

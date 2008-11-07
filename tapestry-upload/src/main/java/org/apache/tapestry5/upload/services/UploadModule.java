@@ -14,10 +14,13 @@
 
 package org.apache.tapestry5.upload.services;
 
+import org.apache.commons.fileupload.FileItemFactory;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.io.FileCleaner;
 import org.apache.tapestry5.ioc.*;
+import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Scope;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.services.PerthreadManager;
 import org.apache.tapestry5.ioc.services.RegistryShutdownHub;
 import org.apache.tapestry5.ioc.services.RegistryShutdownListener;
@@ -28,10 +31,10 @@ import org.apache.tapestry5.upload.internal.services.MultipartDecoderImpl;
 import org.apache.tapestry5.upload.internal.services.MultipartServletRequestFilter;
 import org.apache.tapestry5.upload.internal.services.UploadExceptionFilter;
 
+import java.io.File;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class
-        UploadModule
+public class UploadModule
 {
     private static final String NO_LIMIT = "-1";
 
@@ -91,6 +94,19 @@ public class
     {
         configuration.add("UploadException", locator.autobuild(UploadExceptionFilter.class), "after:Secure",
                           "before:Ajax");
+    }
+
+    /**
+     * The default FileItemFactory used by the MultipartDecoder is {@link org.apache.commons.fileupload.disk.DiskFileItemFactory}.
+     */
+    public static FileItemFactory buildDefaultFileItemFactory(
+            @Symbol(UploadSymbols.REPOSITORY_THRESHOLD)
+            int repositoryThreshold,
+
+            @Inject @Symbol(UploadSymbols.REPOSITORY_LOCATION)
+            String repositoryLocation)
+    {
+        return new DiskFileItemFactory(repositoryThreshold, new File(repositoryLocation));
     }
 
     public static void contributeFactoryDefaults(MappedConfiguration<String, String> configuration)

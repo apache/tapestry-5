@@ -20,9 +20,11 @@ import java.io.File;
 
 public class RunJettyUpload
 {
-    public static void main(String[] args) throws InterruptedException
+    public static void main(String[] args) throws Exception
     {
         File workingDir = new File(System.getProperty("user.dir"));
+
+        new File(workingDir, "target/tmp").mkdirs();
 
         new JettyRunner(workingDir, "/", 8080, "src/test/webapp");
     }

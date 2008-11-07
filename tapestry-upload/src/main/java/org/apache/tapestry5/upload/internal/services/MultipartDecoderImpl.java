@@ -17,7 +17,6 @@ package org.apache.tapestry5.upload.internal.services;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileItemFactory;
 import org.apache.commons.fileupload.FileUploadException;
-import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.ioc.annotations.Inject;
@@ -29,7 +28,6 @@ import org.apache.tapestry5.upload.services.UploadSymbols;
 import org.apache.tapestry5.upload.services.UploadedFile;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.util.Collections;
 import java.util.List;
@@ -42,9 +40,7 @@ public class MultipartDecoderImpl implements MultipartDecoder, ThreadCleanupList
 {
     private final Map<String, UploadedFileItem> uploads = CollectionFactory.newMap();
 
-    private final String repositoryLocation;
-
-    private final int repositoryThreshold;
+    private final FileItemFactory fileItemFactory;
 
     private final long maxRequestSize;
 
@@ -56,11 +52,7 @@ public class MultipartDecoderImpl implements MultipartDecoder, ThreadCleanupList
 
     public MultipartDecoderImpl(
 
-            @Inject @Symbol(UploadSymbols.REPOSITORY_LOCATION)
-            String repositoryLocation,
-
-            @Symbol(UploadSymbols.REPOSITORY_THRESHOLD)
-            int repositoryThreshold,
+            FileItemFactory fileItemFactory,
 
             @Symbol(UploadSymbols.REQUESTSIZE_MAX)
             long maxRequestSize,
@@ -71,8 +63,7 @@ public class MultipartDecoderImpl implements MultipartDecoder, ThreadCleanupList
             @Inject @Symbol(SymbolConstants.CHARSET)
             String requestEncoding)
     {
-        this.repositoryLocation = repositoryLocation;
-        this.repositoryThreshold = repositoryThreshold;
+        this.fileItemFactory = fileItemFactory;
         this.maxRequestSize = maxRequestSize;
         this.maxFileSize = maxFileSize;
         this.requestEncoding = requestEncoding;
@@ -124,9 +115,7 @@ public class MultipartDecoderImpl implements MultipartDecoder, ThreadCleanupList
 
     protected ServletFileUpload createFileUpload()
     {
-        FileItemFactory factory = new DiskFileItemFactory(repositoryThreshold, new File(repositoryLocation));
-
-        ServletFileUpload upload = new ServletFileUpload(factory);
+        ServletFileUpload upload = new ServletFileUpload(fileItemFactory);
 
         // set maximum file upload size
         upload.setSizeMax(maxRequestSize);
