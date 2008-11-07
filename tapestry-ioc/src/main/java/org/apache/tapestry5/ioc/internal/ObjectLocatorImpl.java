@@ -49,16 +49,6 @@ public class ObjectLocatorImpl implements ObjectLocator
         return registry.getObject(objectType, annotationProvider, module);
     }
 
-    protected InternalRegistry getRegistry()
-    {
-        return registry;
-    }
-
-    protected Module getModule()
-    {
-        return module;
-    }
-
     public <T> T autobuild(Class<T> clazz)
     {
         return registry.autobuild(clazz);
@@ -68,5 +58,4 @@ public class ObjectLocatorImpl implements ObjectLocator
     {
         return registry.proxy(interfaceClass, implementationClass);
     }
-
 }

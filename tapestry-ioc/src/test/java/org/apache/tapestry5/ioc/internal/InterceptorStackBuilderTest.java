@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
 package org.apache.tapestry5.ioc.internal;
 
 import org.apache.tapestry5.ioc.ObjectCreator;
+import org.apache.tapestry5.ioc.OperationTracker;
 import org.apache.tapestry5.ioc.ServiceDecorator;
 import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newList;
 import org.testng.annotations.Test;
@@ -25,6 +26,8 @@ import java.util.List;
 public class InterceptorStackBuilderTest extends IOCInternalTestCase
 {
     private static final String SERVICE_ID = "foo.bar.Baz";
+
+    private final OperationTracker tracker = new QuietOperationTracker();
 
     @Test
     public void no_decorators()
@@ -40,7 +43,7 @@ public class InterceptorStackBuilderTest extends IOCInternalTestCase
 
         replay();
 
-        ObjectCreator isb = new InterceptorStackBuilder(module, SERVICE_ID, core);
+        ObjectCreator isb = new InterceptorStackBuilder(module, SERVICE_ID, core, tracker);
 
         Object intercepted = isb.createObject();
 
@@ -67,7 +70,7 @@ public class InterceptorStackBuilderTest extends IOCInternalTestCase
 
         replay();
 
-        ObjectCreator isb = new InterceptorStackBuilder(module, SERVICE_ID, core);
+        ObjectCreator isb = new InterceptorStackBuilder(module, SERVICE_ID, core, tracker);
 
         Object intercepted = isb.createObject();
 
@@ -100,7 +103,7 @@ public class InterceptorStackBuilderTest extends IOCInternalTestCase
 
         replay();
 
-        ObjectCreator isb = new InterceptorStackBuilder(module, SERVICE_ID, core);
+        ObjectCreator isb = new InterceptorStackBuilder(module, SERVICE_ID, core, tracker);
 
         Object intercepted = isb.createObject();
 

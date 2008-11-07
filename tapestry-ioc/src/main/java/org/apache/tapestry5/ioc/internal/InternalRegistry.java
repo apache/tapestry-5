@@ -14,10 +14,7 @@
 
 package org.apache.tapestry5.ioc.internal;
 
-import org.apache.tapestry5.ioc.AnnotationProvider;
-import org.apache.tapestry5.ioc.Registry;
-import org.apache.tapestry5.ioc.ServiceDecorator;
-import org.apache.tapestry5.ioc.ServiceLifecycle;
+import org.apache.tapestry5.ioc.*;
 import org.apache.tapestry5.ioc.def.ServiceDef;
 import org.apache.tapestry5.ioc.services.ClassFab;
 import org.apache.tapestry5.ioc.services.RegistryShutdownHub;
@@ -30,7 +27,7 @@ import java.util.Map;
 /**
  * Internal view of the module registry, adding additional methods needed by modules.
  */
-public interface InternalRegistry extends Registry, RegistryShutdownHub
+public interface InternalRegistry extends Registry, RegistryShutdownHub, OperationTracker
 {
     /**
      * As with {@link org.apache.tapestry5.ioc.Registry#getObject(Class, org.apache.tapestry5.ioc.AnnotationProvider)},

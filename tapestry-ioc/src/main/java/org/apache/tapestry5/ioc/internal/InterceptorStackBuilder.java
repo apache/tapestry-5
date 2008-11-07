@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,7 +15,9 @@
 package org.apache.tapestry5.ioc.internal;
 
 import org.apache.tapestry5.ioc.ObjectCreator;
+import org.apache.tapestry5.ioc.OperationTracker;
 import org.apache.tapestry5.ioc.ServiceDecorator;
+import org.apache.tapestry5.ioc.internal.util.Invokable;
 
 import java.util.Collections;
 import java.util.List;
@@ -32,17 +34,21 @@ public class InterceptorStackBuilder implements ObjectCreator
 
     private final Module module;
 
+    private final OperationTracker tracker;
+
     /**
      * @param module             the module containing the decorator method
      * @param serviceId          identifies the service to be decorated
      * @param coreServiceCreator responsible for creating the core service which is then decorated with a stack of
-     *                           interceptors
+     * @param tracker            used to track which decorator is being invoked
      */
-    public InterceptorStackBuilder(Module module, String serviceId, ObjectCreator coreServiceCreator)
+    public InterceptorStackBuilder(Module module, String serviceId, ObjectCreator coreServiceCreator,
+                                   OperationTracker tracker)
     {
         this.module = module;
         this.serviceId = serviceId;
         this.coreServiceCreator = coreServiceCreator;
+        this.tracker = tracker;
     }
 
     public Object createObject()
@@ -56,9 +62,18 @@ public class InterceptorStackBuilder implements ObjectCreator
 
         Collections.reverse(decorators);
 
-        for (ServiceDecorator decorator : decorators)
+        for (final ServiceDecorator decorator : decorators)
         {
-            Object interceptor = decorator.createInterceptor(current);
+            final Object delegate = current;
+
+            Object interceptor =
+                    tracker.invoke("Invoking " + decorator, new Invokable<Object>()
+                    {
+                        public Object invoke()
+                        {
+                            return decorator.createInterceptor(delegate);
+                        }
+                    });
 
             // Decorator methods may return null; this indicates that the decorator chose not to
             // decorate.
@@ -72,5 +87,4 @@ public class InterceptorStackBuilder implements ObjectCreator
 
         return current;
     }
-
 }

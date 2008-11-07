@@ -38,6 +38,8 @@ public class DefaultModuleDefImplTest extends IOCTestCase
 {
     private ClassFactory classFactory;
 
+    private final OperationTracker tracker = new QuietOperationTracker();
+
     @BeforeClass
     public void setup()
     {
@@ -387,6 +389,8 @@ public class DefaultModuleDefImplTest extends IOCTestCase
     {
         Logger logger = mockLogger();
         ServiceBuilderResources resources = mockServiceBuilderResources();
+
+        train_getTracker(resources, tracker);
 
         train_isDebugEnabled(logger, true);
 

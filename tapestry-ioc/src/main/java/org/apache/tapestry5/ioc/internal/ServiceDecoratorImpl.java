@@ -66,6 +66,12 @@ public class ServiceDecoratorImpl implements ServiceDecorator
         parameterDefaults.put(Class.class, serviceInterface);
     }
 
+    @Override
+    public String toString()
+    {
+        return classFactory.getMethodLocation(decoratorMethod).toString();
+    }
+
     private String methodId()
     {
         return InternalUtils.asString(decoratorMethod, classFactory);
@@ -92,7 +98,7 @@ public class ServiceDecoratorImpl implements ServiceDecorator
             Object[] parameters = InternalUtils.calculateParametersForMethod(
                     decoratorMethod,
                     resources,
-                    parameterDefaults);
+                    parameterDefaults, resources.getTracker());
 
             result = decoratorMethod.invoke(moduleBuilder, parameters);
         }

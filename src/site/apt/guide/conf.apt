@@ -242,7 +242,7 @@ Ignored Paths
   You contribution would look like:
 
 ---
-  public static void contributeIgnoredPathsFilter(UnorderedCollection<String> configuration)
+  public static void contributeIgnoredPathsFilter(Configuration<String> configuration)
   {
     configuration.add("/dwr/.*");
   }

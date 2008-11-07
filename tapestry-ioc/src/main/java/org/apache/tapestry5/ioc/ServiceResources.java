@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -39,4 +39,10 @@ public interface ServiceResources extends ObjectLocator
      * itself. Often service interceptors will make use of the service's logger.
      */
     Logger getLogger();
+
+    /**
+     * Returns an object that can be used to track operations related to constructing, configuring, decorating and
+     * initializing the service.
+     */
+    OperationTracker getTracker();
 }

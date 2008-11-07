@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -50,25 +50,25 @@ public class ContributionDefImpl implements ContributionDef
         return serviceId;
     }
 
-    public void contribute(ModuleBuilderSource moduleBuilderSource, ObjectLocator locator,
+    public void contribute(ModuleBuilderSource moduleBuilderSource, ServiceResources resources,
                            Configuration configuration)
     {
-        invokeMethod(moduleBuilderSource, locator, Configuration.class, configuration);
+        invokeMethod(moduleBuilderSource, resources, Configuration.class, configuration);
     }
 
-    public void contribute(ModuleBuilderSource moduleBuilderSource, ObjectLocator locator,
+    public void contribute(ModuleBuilderSource moduleBuilderSource, ServiceResources resources,
                            OrderedConfiguration configuration)
     {
-        invokeMethod(moduleBuilderSource, locator, OrderedConfiguration.class, configuration);
+        invokeMethod(moduleBuilderSource, resources, OrderedConfiguration.class, configuration);
     }
 
-    public void contribute(ModuleBuilderSource moduleBuilderSource, ObjectLocator locator,
+    public void contribute(ModuleBuilderSource moduleBuilderSource, ServiceResources resources,
                            MappedConfiguration configuration)
     {
-        invokeMethod(moduleBuilderSource, locator, MappedConfiguration.class, configuration);
+        invokeMethod(moduleBuilderSource, resources, MappedConfiguration.class, configuration);
     }
 
-    private <T> void invokeMethod(ModuleBuilderSource source, ObjectLocator locator,
+    private <T> void invokeMethod(ModuleBuilderSource source, ServiceResources resources,
                                   Class<T> parameterType, T parameterValue)
     {
         Map<Class, Object> parameterDefaults = CollectionFactory.newMap();
@@ -78,7 +78,7 @@ public class ContributionDefImpl implements ContributionDef
         // type, then we'll see an error putting together the parameter.
 
         parameterDefaults.put(parameterType, parameterValue);
-        parameterDefaults.put(ObjectLocator.class, locator);
+        parameterDefaults.put(ObjectLocator.class, resources);
 
         Throwable fail = null;
 
@@ -89,8 +89,8 @@ public class ContributionDefImpl implements ContributionDef
         {
             Object[] parameters = InternalUtils.calculateParametersForMethod(
                     contributorMethod,
-                    locator,
-                    parameterDefaults);
+                    resources,
+                    parameterDefaults, resources.getTracker());
 
             contributorMethod.invoke(moduleBuilder, parameters);
         }

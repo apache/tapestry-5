@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@ package org.apache.tapestry5.ioc.internal;
 
 import org.apache.tapestry5.ioc.AnnotationProvider;
 import org.apache.tapestry5.ioc.ObjectCreator;
+import org.apache.tapestry5.ioc.OperationTracker;
 import org.apache.tapestry5.ioc.ServiceBuilderResources;
 import static org.apache.tapestry5.ioc.internal.AbstractServiceCreator.findParameterizedTypeFromGenericType;
 import static org.easymock.EasyMock.eq;
@@ -35,11 +36,13 @@ public class ServiceBuilderMethodInvokerTest extends IOCInternalTestCase
 
     private static final String CREATOR_DESCRIPTION = "{CREATOR DESCRIPTION}";
 
+    private final OperationTracker tracker = new QuietOperationTracker();
+
     @Test
     public void noargs_method()
     {
         ServiceBuilderMethodFixture fixture = new ServiceBuilderMethodFixture();
-        ServiceBuilderResources resources = mockServiceBuilderResources();
+        ServiceBuilderResources resources = mockServiceBuilderResources(tracker);
         Logger logger = mockLogger();
 
         fixture.fie = mockFieService();
@@ -76,7 +79,7 @@ public class ServiceBuilderMethodInvokerTest extends IOCInternalTestCase
     {
         ServiceBuilderMethodFixture fixture = new ServiceBuilderMethodFixture();
         Method method = findMethod(fixture, "build_args");
-        ServiceBuilderResources resources = mockServiceBuilderResources();
+        ServiceBuilderResources resources = mockServiceBuilderResources(tracker);
 
         Logger logger = mockLogger();
 
@@ -111,7 +114,7 @@ public class ServiceBuilderMethodInvokerTest extends IOCInternalTestCase
     {
         ServiceBuilderMethodFixture fixture = new ServiceBuilderMethodFixture();
         Method method = findMethod(fixture, "build_with_forced_injection");
-        ServiceBuilderResources resources = mockServiceBuilderResources();
+        ServiceBuilderResources resources = mockServiceBuilderResources(tracker);
 
         Logger logger = mockLogger();
 
@@ -147,7 +150,7 @@ public class ServiceBuilderMethodInvokerTest extends IOCInternalTestCase
     public void injected_service_method()
     {
         ServiceBuilderMethodFixture fixture = new ServiceBuilderMethodFixture();
-        ServiceBuilderResources resources = mockServiceBuilderResources();
+        ServiceBuilderResources resources = mockServiceBuilderResources(tracker);
         Logger logger = mockLogger();
 
         fixture.fie = mockFieService();
@@ -178,7 +181,7 @@ public class ServiceBuilderMethodInvokerTest extends IOCInternalTestCase
     public void injected_ordered_collection()
     {
         ServiceBuilderMethodFixture fixture = new ServiceBuilderMethodFixture();
-        ServiceBuilderResources resources = mockServiceBuilderResources();
+        ServiceBuilderResources resources = mockServiceBuilderResources(tracker);
         Logger logger = mockLogger();
 
         fixture.fie = mockFieService();
@@ -203,7 +206,6 @@ public class ServiceBuilderMethodInvokerTest extends IOCInternalTestCase
         assertSame(actual, fixture.fie);
 
         verify();
-
     }
 
     @SuppressWarnings("unchecked")
@@ -211,7 +213,7 @@ public class ServiceBuilderMethodInvokerTest extends IOCInternalTestCase
     public void injected_unordered_collection()
     {
         ServiceBuilderMethodFixture fixture = new ServiceBuilderMethodFixture();
-        ServiceBuilderResources resources = mockServiceBuilderResources();
+        ServiceBuilderResources resources = mockServiceBuilderResources(tracker);
         Logger logger = mockLogger();
 
         fixture.fie = mockFieService();
@@ -247,7 +249,7 @@ public class ServiceBuilderMethodInvokerTest extends IOCInternalTestCase
     public void builder_method_returns_null()
     {
         ServiceBuilderMethodFixture fixture = new ServiceBuilderMethodFixture();
-        ServiceBuilderResources resources = mockServiceBuilderResources();
+        ServiceBuilderResources resources = mockServiceBuilderResources(tracker);
         Logger logger = mockLogger();
 
         Method method = findMethod(fixture, "build_noargs");
@@ -280,7 +282,7 @@ public class ServiceBuilderMethodInvokerTest extends IOCInternalTestCase
     public void builder_method_failed()
     {
         ServiceBuilderMethodFixture fixture = new ServiceBuilderMethodFixture();
-        ServiceBuilderResources resources = mockServiceBuilderResources();
+        ServiceBuilderResources resources = mockServiceBuilderResources(tracker);
         Logger logger = mockLogger();
 
         Method method = findMethod(fixture, "build_fail");
@@ -319,7 +321,7 @@ public class ServiceBuilderMethodInvokerTest extends IOCInternalTestCase
         ServiceBuilderMethodFixture fixture = new ServiceBuilderMethodFixture();
         Method method = findMethod(fixture, "build_auto");
 
-        ServiceBuilderResources resources = mockServiceBuilderResources();
+        ServiceBuilderResources resources = mockServiceBuilderResources(tracker);
         Logger logger = mockLogger();
 
         fixture.fie = mockFieService();
@@ -403,5 +405,4 @@ public class ServiceBuilderMethodInvokerTest extends IOCInternalTestCase
     {
         return newMock(FieService.class);
     }
-
 }

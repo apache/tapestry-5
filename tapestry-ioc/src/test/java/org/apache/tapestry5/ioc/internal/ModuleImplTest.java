@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,12 +19,7 @@ import org.apache.tapestry5.ioc.RegistryBuilder;
 import org.apache.tapestry5.ioc.def.DecoratorDef;
 import org.apache.tapestry5.ioc.def.ModuleDef;
 import org.apache.tapestry5.ioc.def.ServiceDef;
-import org.apache.tapestry5.ioc.internal.services.ClassFactoryImpl;
 import org.apache.tapestry5.ioc.services.ClassFactory;
-import org.apache.tapestry5.ioc.services.RegistryShutdownListener;
-import org.apache.tapestry5.ioc.services.Status;
-import static org.easymock.EasyMock.contains;
-import static org.easymock.EasyMock.isA;
 import org.slf4j.Logger;
 import org.testng.annotations.Test;
 
@@ -34,50 +29,6 @@ import java.util.Set;
 
 public class ModuleImplTest extends IOCInternalTestCase
 {
-    @Test
-    public void get_service_by_id_exists()
-    {
-        InternalRegistry registry = mockInternalRegistry();
-        Logger logger = mockLogger();
-        ClassFactory factory = new ClassFactoryImpl();
-        ServiceActivityTracker tracker = mockServiceActivityTracker();
-
-        ModuleDef moduleDef = new DefaultModuleDefImpl(ModuleImplTestModule.class, logger, getClassFactory());
-
-        Module module = new ModuleImpl(registry, tracker, moduleDef, null, logger);
-
-        expect(registry.getServiceLogger("Upcase")).andReturn(logger);
-
-        train_isDebugEnabled(logger, true);
-        logger.debug("Creating service 'Upcase'.");
-
-        tracker.setStatus("Upcase", Status.VIRTUAL);
-
-        train_newClass(registry, factory, UpcaseService.class);
-
-        registry.addRegistryShutdownListener(isA(RegistryShutdownListener.class));
-
-        replay();
-
-        UpcaseService service = module.getService("Upcase", UpcaseService.class);
-
-        verify();
-
-        train_getLifecycle(registry, "singleton", new SingletonServiceLifecycle());
-
-        train_isDebugEnabled(logger, false);
-
-        train_findDecoratorsForService(registry);
-
-        tracker.setStatus("Upcase", Status.REAL);
-
-        replay();
-
-        assertEquals(service.upcase("hello"), "HELLO");
-
-        verify();
-    }
-
     protected final void train_newClass(InternalRegistry registry, ClassFactory factory, Class serviceInterface)
     {
         expect(registry.newClass(serviceInterface)).andReturn(factory.newClass(serviceInterface));
@@ -136,53 +87,6 @@ public class ModuleImplTest extends IOCInternalTestCase
         verify();
     }
 
-    @Test
-    public void no_public_constructor_on_module_builder_class()
-    {
-        InternalRegistry registry = mockInternalRegistry();
-        Logger logger = mockLogger();
-        ModuleDef def = new DefaultModuleDefImpl(PrivateConstructorModule.class, logger, null);
-
-        replay();
-
-        Module module = new ModuleImpl(registry, null, def, null, logger);
-
-        try
-        {
-            module.getModuleBuilder();
-            unreachable();
-        }
-        catch (RuntimeException ex)
-        {
-            assertEquals(ex.getMessage(),
-                         "Module builder class org.apache.tapestry5.ioc.internal.PrivateConstructorModule " + "does not contain any public constructors.");
-        }
-
-        verify();
-
-    }
-
-    @Test
-    public void too_many_public_constructors_on_module_builder_class()
-    {
-        InternalRegistry registry = mockInternalRegistry();
-        Logger logger = mockLogger();
-        ModuleDef def = new DefaultModuleDefImpl(ExtraPublicConstructorsModule.class, logger, null);
-        ClassFactory factory = newMock(ClassFactory.class);
-        Module module = new ModuleImpl(registry, null, def, null, logger);
-
-        logger.warn(contains("contains more than one public constructor"));
-
-        train_expandSymbols(registry, "ClassFactory", "ClassFactory");
-
-        train_getService(registry, "ClassFactory", ClassFactory.class, factory);
-
-        replay();
-
-        assertTrue(module.getModuleBuilder() instanceof ExtraPublicConstructorsModule);
-
-        verify();
-    }
 
     protected void train_expandSymbols(InternalRegistry registry, String input, String expanded)
     {
@@ -237,5 +141,4 @@ public class ModuleImplTest extends IOCInternalTestCase
 
         registry.shutdown();
     }
-
 }

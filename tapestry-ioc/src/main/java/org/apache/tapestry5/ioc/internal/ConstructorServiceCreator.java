@@ -36,6 +36,12 @@ public class ConstructorServiceCreator extends AbstractServiceCreator
         this.constructor = constructor;
     }
 
+    @Override
+    public String toString()
+    {
+        return creatorDescription;
+    }
+
     public Object createObject()
     {
         Throwable failure;
@@ -45,13 +51,14 @@ public class ConstructorServiceCreator extends AbstractServiceCreator
             InternalUtils.validateConstructorForAutobuild(constructor);
 
             Object[] parameters = InternalUtils.calculateParametersForConstructor(constructor, resources,
-                                                                                  getParameterDefaultsWithConfigurations());
+                                                                                  getParameterDefaultsWithConfigurations(),
+                                                                                  resources.getTracker());
 
             if (logger.isDebugEnabled()) logger.debug(IOCMessages.invokingConstructor(creatorDescription));
 
             Object result = constructor.newInstance(parameters);
 
-            InternalUtils.injectIntoFields(result, resources);
+            InternalUtils.injectIntoFields(result, resources, resources.getTracker());
 
             return result;
         }

@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+//  Copyright 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,15 +14,21 @@
 
 package org.apache.tapestry5.ioc.internal;
 
+import org.apache.tapestry5.ioc.OperationTracker;
+import org.apache.tapestry5.ioc.internal.util.Invokable;
 
 /**
- * Used by {@link org.apache.tapestry5.ioc.internal.ModuleImplTest}.
+ * Minimal implementation used for testing, that does no logging, tracking, or exception catching.
  */
-public class PrivateConstructorModule
+public class QuietOperationTracker implements OperationTracker
 {
-    private PrivateConstructorModule()
+    public void run(String description, Runnable operation)
     {
+        operation.run();
     }
 
-    public Runnable buildTrigger() { return null; }
+    public <T> T invoke(String description, Invokable<T> operation)
+    {
+        return operation.invoke();
+    }
 }
