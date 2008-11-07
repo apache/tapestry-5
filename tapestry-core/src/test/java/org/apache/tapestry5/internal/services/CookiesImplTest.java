@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Tests for {@link org.apache.tapestry5.services.impl.CookiesImpl}.
+ * Tests for {@link org.apache.tapestry5.internal.services.CookiesImpl}.
  */
 @Test
 public class CookiesImplTest extends Assert
@@ -99,12 +99,12 @@ public class CookiesImplTest extends Assert
 
     public void test_Match()
     {
-        attempt("fred", "flintstone", new String[] { "barney", "rubble", "fred", "flintstone" });
+        attempt("fred", "flintstone", new String[] {"barney", "rubble", "fred", "flintstone"});
     }
 
     public void test_No_Match()
     {
-        attempt("foo", null, new String[] { "bar", "baz" });
+        attempt("foo", null, new String[] {"bar", "baz"});
     }
 
     public void test_Write_Cookie_Domain()
@@ -128,7 +128,6 @@ public class CookiesImplTest extends Assert
             {
                 cookies.add(cookie);
             }
-
         }, 1000l * 1000l);
     }
 

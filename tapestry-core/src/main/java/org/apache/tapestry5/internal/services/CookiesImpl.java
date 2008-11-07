@@ -80,6 +80,7 @@ public class CookiesImpl implements Cookies
         Cookie cookie = new Cookie(name, value);
         cookie.setPath(request.getContextPath() + "/");
         cookie.setMaxAge(maxAge);
+        cookie.setSecure(request.isSecure());
 
         cookieSink.addCookie(cookie);
     }
@@ -89,6 +90,7 @@ public class CookiesImpl implements Cookies
         Cookie cookie = new Cookie(name, value);
         cookie.setPath(path);
         cookie.setMaxAge(defaultMaxAge);
+        cookie.setSecure(request.isSecure());
 
         cookieSink.addCookie(cookie);
     }
@@ -104,6 +106,7 @@ public class CookiesImpl implements Cookies
         cookie.setPath(request.getContextPath() + "/");
         cookie.setDomain(domain);
         cookie.setMaxAge(maxAge);
+        cookie.setSecure(request.isSecure());
 
         cookieSink.addCookie(cookie);
     }
@@ -114,6 +117,7 @@ public class CookiesImpl implements Cookies
         cookie.setPath(path);
         cookie.setDomain(domain);
         cookie.setMaxAge(defaultMaxAge);
+        cookie.setSecure(request.isSecure());
 
         cookieSink.addCookie(cookie);
     }
@@ -123,8 +127,8 @@ public class CookiesImpl implements Cookies
         Cookie cookie = new Cookie(name, null);
         cookie.setPath(request.getContextPath() + "/");
         cookie.setMaxAge(0);
+        cookie.setSecure(request.isSecure());
 
         cookieSink.addCookie(cookie);
     }
-
 }

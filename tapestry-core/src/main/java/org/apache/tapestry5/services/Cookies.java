@@ -15,7 +15,9 @@
 package org.apache.tapestry5.services;
 
 /**
- * Used by other services to obtain cookie values for the current request.
+ * Used by other services to obtain cookie values for the current request, or to write cookie values as part of the
+ * request.  Note that when writing cookies, the cookie's secure flag will match {@link
+ * org.apache.tapestry5.services.Request#isSecure()}.
  */
 public interface Cookies
 {
@@ -67,6 +69,5 @@ public interface Cookies
     /**
      * Removes a previously written cookie, by writing a new cookie with a maxAge of 0.
      */
-
     void removeCookieValue(String name);
 }
