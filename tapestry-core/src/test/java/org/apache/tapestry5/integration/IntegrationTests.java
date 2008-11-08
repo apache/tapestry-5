@@ -2503,4 +2503,14 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         assertText("name-value", "Betty");
         assertText("last-clicked", "Barney");
     }
+
+    /**
+     * TAP5-309
+     */
+    public void conflict_between_property_annotation_and_existing_method()
+    {
+        start("Getter Method Already Exists");
+
+        assertTextPresent("Unable to add new method public final java.lang.String getName() as it already exists.");
+    }
 }

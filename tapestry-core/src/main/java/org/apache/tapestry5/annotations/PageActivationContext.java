@@ -22,16 +22,24 @@ import java.lang.annotation.Target;
 
 /**
  * Annotation for a field for which the page activation context handlers (onActivate and onPassivate) should be created.
- * In order to use this annotation you must contribute a {@link ValueEncoder} for the class of the annotated property.
+ * In order to use this annotation you must contribute a {@link org.apache.tapestry5.ValueEncoder} for the class of the
+ * annotated property.
+ * <p/>
+ * You should not use this annotation within a class that already has an onActivate() or onPassivate() method; doing so
+ * will result in a runtime exception.
  */
 @Target(FIELD)
 @Documented
 @Retention(RUNTIME)
 public @interface PageActivationContext
 {
-    /** Whether to create an activate event handler.  */
+    /**
+     * Whether to create an activate event handler.
+     */
     boolean activate() default true;
 
-    /** Whether to create a passivate event handler  */
+    /**
+     * Whether to create a passivate event handler
+     */
     boolean passivate() default true;
 }

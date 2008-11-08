@@ -37,11 +37,6 @@ public class FormFragmentDemo
     @InjectPage
     private FormFragmentOutput outputPage;
 
-    public SubscribeData getSubscribe()
-    {
-        return subscribe;
-    }
-
     void onPrepare()
     {
         subscribe = new SubscribeData();

@@ -1,4 +1,4 @@
-// Copyright  2008 The Apache Software Foundation
+// Copyright 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,18 +20,8 @@ import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.integration.app1.data.Track;
 
 public class MusicDetails2
-{   
+{
     @Property
     @PageActivationContext
     private Track track;
-    
-    void onActivate(Track track)
-    {
-        throw new RuntimeException("onActivate invoked unexpectedly");
-    }
-    
-    Object onPassivate()
-    {
-        throw new RuntimeException("onPassivate invoked unexpectedly");
-    }
 }

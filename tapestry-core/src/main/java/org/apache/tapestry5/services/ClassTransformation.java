@@ -129,9 +129,9 @@ public interface ClassTransformation extends AnnotationProvider
 
     /**
      * Claims a field so as to ensure that only a single annotation is applied to any single field. When a
-     * transformation occurs (driven by a field annotation), the field is claimed (using the annotation object
-     * as the tag).  If a field has multiple conflicting annotations, this will be discovered
-     * when the code attempts to claim the field a second time.
+     * transformation occurs (driven by a field annotation), the field is claimed (using the annotation object as the
+     * tag).  If a field has multiple conflicting annotations, this will be discovered when the code attempts to claim
+     * the field a second time.
      *
      * @param fieldName the name of the field that is being claimed
      * @param tag       a non-null object that represents why the field is being tagged (this is typically a specific
@@ -285,7 +285,7 @@ public interface ClassTransformation extends AnnotationProvider
 
     /**
      * As with {@link #addMethod(TransformMethodSignature, String)}, but field references inside the method
-     * <em>will</em> be transformed.
+     * <em>will</em> be transformed, and the method <em>must not already exist</em>.
      */
     void addTransformedMethod(TransformMethodSignature methodSignature, String methodBody);
 

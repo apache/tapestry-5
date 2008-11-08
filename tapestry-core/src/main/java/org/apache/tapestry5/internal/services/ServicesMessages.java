@@ -422,4 +422,9 @@ class ServicesMessages
     {
         return MESSAGES.format("document-missing-html-root", rootElementName);
     }
+
+    public static String addNewMethodConflict(TransformMethodSignature signature)
+    {
+        return MESSAGES.format("add-new-method-conflict", signature);
+    }
 }
