@@ -1,4 +1,4 @@
-// Copyright 2008 The Apache Software Foundation
+//  Copyright 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,22 +15,19 @@
 package org.apache.tapestry5.integration.app1.pages;
 
 import org.apache.tapestry5.annotations.Property;
-import org.apache.tapestry5.integration.app1.data.Track;
-import org.apache.tapestry5.integration.app1.services.MusicLibrary;
-import org.apache.tapestry5.ioc.annotations.Inject;
 
-import java.util.List;
-
-public class Music
+public class GetterMethodAlreadyExists
 {
-    @Inject
-    private MusicLibrary library;
-
     @Property
-    private Track track;
+    private String name;
 
-    public List<Track> getTracks()
+    public String getName()
     {
-        return library.getTracks();
+        return name;
+    }
+
+    public void setName(String name)
+    {
+        this.name = name;
     }
 }

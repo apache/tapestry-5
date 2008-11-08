@@ -89,6 +89,10 @@
             <a href="componentsNotInTemplateDemo">Components Not In Template Demo</a>
             -- demo exception when a component is defined in the class but not present in the template
         </li>
+        <li>
+            <a href="GetterMethodAlreadyExists">Getter Method Already Exists</a>
+            -- demo @Property attempting to overwrite an existing getter method
+        </li>
     </ul>
 
 </html>                      

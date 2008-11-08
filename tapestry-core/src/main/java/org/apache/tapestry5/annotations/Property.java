@@ -24,6 +24,9 @@ import java.lang.annotation.Target;
  * Annotation for fields for which accessor methods (getters and setters) should be created.  This can help when
  * defining the kind of placeholder properties often used in components, though the disadvantage is that you can't
  * access the fields in a unit test, and you may get compiler warnings about unused private variables.
+ * <p/>
+ * The annotation <em>will not</em> overwrite an existing getter or setter method; if you put a Property annotation on a
+ * field that already has a getter or a setter you will see a runtime exception.
  */
 @Target(FIELD)
 @Documented

@@ -635,9 +635,54 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         addMethodToDescription(action, signature, methodBody);
     }
 
-    public void addTransformedMethod(TransformMethodSignature methodSignature, String methodBody)
+    public void addTransformedMethod(TransformMethodSignature signature, String methodBody)
     {
-        addOrReplaceMethod(methodSignature, methodBody, false);
+        failIfFrozen();
+
+        CtClass returnType = findCtClass(signature.getReturnType());
+        CtClass[] parameters = buildCtClassList(signature.getParameterTypes());
+        CtClass[] exceptions = buildCtClassList(signature.getExceptionTypes());
+
+
+        try
+        {
+            CtMethod existing = ctClass.getDeclaredMethod(signature.getMethodName(), parameters);
+
+            if (existing != null)
+                throw new RuntimeException(ServicesMessages.addNewMethodConflict(signature));
+        }
+        catch (NotFoundException ex)
+        {
+            // That's ok. Kind of sloppy to rely on a thrown exception; wish getDeclaredMethod()
+            // would return null for
+            // that case. Alternately, we could maintain a set of the method signatures of declared
+            // or added methods.
+        }
+
+        try
+        {
+            CtMethod method = new CtMethod(returnType, signature.getMethodName(), parameters, ctClass);
+
+            // TODO: Check for duplicate method add
+
+            method.setModifiers(signature.getModifiers());
+
+            method.setBody(methodBody);
+            method.setExceptionTypes(exceptions);
+
+            ctClass.addMethod(method);
+        }
+        catch (CannotCompileException ex)
+        {
+            throw new MethodCompileException(ServicesMessages.methodCompileError(signature, methodBody, ex), methodBody,
+                                             ex);
+        }
+        catch (NotFoundException ex)
+        {
+            throw new RuntimeException(ex);
+        }
+
+        addMethodToDescription("add transformed", signature, methodBody);
     }
 
     private CtClass[] buildCtClassList(String[] typeNames)
