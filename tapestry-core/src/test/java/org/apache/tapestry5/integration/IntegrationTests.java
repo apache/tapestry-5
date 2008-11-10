@@ -658,8 +658,8 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         // The lack of a leading slash indicates that the path was optimized, see TAPESTRY-1502
 
-        assertAttribute("//img[@id='title:sort']/@src", "assets/UNKNOWN/tapestry/corelib/components/sort-asc.png");
-        assertAttribute("//img[@id='title:sort']/@alt", "[Asc]");
+        assertAttribute("//img[@class='t-sort-icon']/@src", "assets/UNKNOWN/tapestry/corelib/components/sort-asc.png");
+        assertAttribute("//img[@class='t-sort-icon']/@alt", "[Asc]");
 
         clickAndWait("link=1");
 
@@ -667,8 +667,8 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         clickAndWait("link=Title");
 
-        assertAttribute("//img[@id='title:sort']/@src", "assets/UNKNOWN/tapestry/corelib/components/sort-desc.png");
-        assertAttribute("//img[@id='title:sort']/@alt", "[Desc]");
+        assertAttribute("//img[@class='t-sort-icon']/@src", "assets/UNKNOWN/tapestry/corelib/components/sort-desc.png");
+        assertAttribute("//img[@class='t-sort-icon']/@alt", "[Desc]");
 
         clickAndWait("link=reset the Grid");
 
