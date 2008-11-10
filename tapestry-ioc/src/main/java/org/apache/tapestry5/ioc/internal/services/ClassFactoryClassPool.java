@@ -172,11 +172,11 @@ public class ClassFactoryClassPool extends ClassPool
 
             boolean hasDomain = domain != null;
 
-            Method method = hasDomain ? defineClass : defineClassWithProtectionDomain;
+            Method method = hasDomain ? defineClassWithProtectionDomain : defineClass;
 
             Object[] args = hasDomain
-                            ? new Object[] {ct.getName(), b, 0, b.length}
-                            : new Object[] {ct.getName(), b, 0, b.length, domain};
+                            ? new Object[] {ct.getName(), b, 0, b.length, domain}
+                            : new Object[] {ct.getName(), b, 0, b.length};
 
             return (Class) method.invoke(loader, args);
         }

@@ -312,5 +312,34 @@
             </answer>
         </faq>
 
+        <faq id="hibernate-startup">
+            <question>
+                How do I get Hibernate to startup up when the application starts up, rather than lazily
+                with the first request for the application?
+            </question>
+            <answer>
+                <p>This really can bother people with very large Hibernate schemas, as Hibernate can take
+                    considerable time to start up. It would be better if Tapestry and Hibernate initialized
+                    early, before accepting any requests.
+                </p>
+                <p>
+                    The trick is to force the Tapestry services that wrap around Hibernate to initialize at
+                    startup. The following can be added to your AppModule:
+                </p>
+                <pre>
+                    public void contributeRegistryStartup(OrderedConfiguration&lt;Runnable&gt; configuration, final
+                    HibernateSessionSource sessionSource)
+                    {
+                    configuration.add("HibernateStartup", new Runnable()
+                    {
+                    public void run()
+                    {
+                    sessionSource.getConfiguration();
+                    }
+                    });
+                    }
+                </pre>
+            </answer>
+        </faq>
     </part>
 </faqs>
