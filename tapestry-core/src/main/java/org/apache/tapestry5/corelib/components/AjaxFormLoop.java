@@ -31,8 +31,8 @@ import java.util.Collections;
 import java.util.Iterator;
 
 /**
- * A special form of the {@link org.apache.tapestry5.corelib.components.Loop} component that adds a lot of Ajax support
- * to handle adding new rows and removing existing rows dynamically.  Expects that the values being iterated over are
+ * A special form of the {@link org.apache.tapestry5.corelib.components.Loop} component that adds  Ajax support to
+ * handle adding new rows and removing existing rows dynamically.  Expects that the values being iterated over are
  * entities that can be identified via a {@link org.apache.tapestry5.PrimaryKeyEncoder}.
  * <p/>
  * Works with {@link org.apache.tapestry5.corelib.components.AddRowLink} and {@link
