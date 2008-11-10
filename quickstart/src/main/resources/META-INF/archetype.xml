@@ -20,6 +20,7 @@
         <resource>.classpath</resource>
         <resource>.project</resource>
         <resource>src/main/webapp/WEB-INF/web.xml</resource>
+        <resource>src/main/webapp/WEB-INF/app.properties</resource>
         <resource>src/main/webapp/Index.tml</resource>
         <resource>src/main/webapp/favicon.ico</resource>
         <resource>src/main/resources/log4j.properties</resource>
