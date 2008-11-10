@@ -15,10 +15,16 @@
 package org.apache.tapestry5.ioc.internal.services;
 
 import javassist.*;
-import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newMap;
-import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newSet;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.ClassFabUtils;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.security.AccessController;
+import java.security.PrivilegedActionException;
+import java.security.PrivilegedExceptionAction;
+import java.security.ProtectionDomain;
 import java.util.Map;
 import java.util.Set;
 
@@ -29,12 +35,49 @@ import java.util.Set;
  */
 public class ClassFactoryClassPool extends ClassPool
 {
+
+    // Kind of duplicating some logic from ClassPool to avoid a deadlock-producing synchronized block.
+
+    private static final Method defineClass = findMethod("defineClass", String.class, byte[].class,
+                                                         int.class, int.class);
+
+    private static final Method defineClassWithProtectionDomain = findMethod("defineClass", String.class, byte[].class,
+                                                                             int.class, int.class,
+                                                                             ProtectionDomain.class);
+
+    private static Method findMethod(final String methodName, final Class... parameterTypes)
+    {
+        try
+        {
+            return AccessController.doPrivileged(new PrivilegedExceptionAction<Method>()
+            {
+                public Method run() throws Exception
+                {
+                    Class cl = Class.forName("java.lang.ClassLoader");
+
+                    Method result = cl.getDeclaredMethod(methodName, parameterTypes);
+
+                    // Just make it accessible; no particular reason to make it unaccessible again.
+
+                    result.setAccessible(true);
+
+                    return result;
+                }
+            });
+        }
+        catch (PrivilegedActionException ex)
+        {
+            throw new RuntimeException(String.format("Unable to initialize ClassFactoryClassPool: %s",
+                                                     InternalUtils.toMessage(ex)), ex);
+        }
+    }
+
     /**
      * Used to identify which class loaders have already been integrated into the pool.
      */
-    private final Set<ClassLoader> allLoaders = newSet();
+    private final Set<ClassLoader> allLoaders = CollectionFactory.newSet();
 
-    private final Map<ClassLoader, ClassPath> leafLoaders = newMap();
+    private final Map<ClassLoader, ClassPath> leafLoaders = CollectionFactory.newMap();
 
     public ClassFactoryClassPool(ClassLoader contextClassLoader)
     {
@@ -111,5 +154,44 @@ public class ClassFactoryClassPool extends ClassPool
             allLoaders.add(l);
             l = l.getParent();
         }
+    }
+
+    /**
+     * Overriden to remove a deadlock producing synchronized block. We expect that the defineClass() methods will have
+     * been marked as accessible statically (by this class), so there's no need to set them accessible again.
+     */
+    @Override
+    public Class toClass(CtClass ct, ClassLoader loader, ProtectionDomain domain)
+            throws CannotCompileException
+    {
+        Throwable failure;
+
+        try
+        {
+            byte[] b = ct.toBytecode();
+
+            boolean hasDomain = domain != null;
+
+            Method method = hasDomain ? defineClass : defineClassWithProtectionDomain;
+
+            Object[] args = hasDomain
+                            ? new Object[] {ct.getName(), b, 0, b.length}
+                            : new Object[] {ct.getName(), b, 0, b.length, domain};
+
+            return (Class) method.invoke(loader, args);
+        }
+        catch (InvocationTargetException ite)
+        {
+            failure = ite.getTargetException();
+        }
+        catch (Exception ex)
+        {
+            failure = ex;
+        }
+
+        throw new CannotCompileException(
+                String.format("Failure defining new class %s: %s",
+                              ct.getName(),
+                              InternalUtils.toMessage(failure)), failure);
     }
 }
