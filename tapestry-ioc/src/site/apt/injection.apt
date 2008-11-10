@@ -125,7 +125,7 @@ Standard Injection Processing
 
   Tapestry then works through the known marker annotations. For each marker annotation that is present
   at the point of annotation, Tapestry eliminates services which do not have the marker.  Thus, if multiple
-  marker annotations are present, the final service must have <em>all of them</em>.
+  marker annotations are present, the final service must have <all of them>.
 
   At the end, of this, Tapestry determines how many services match.
 
