@@ -275,7 +275,7 @@ public class Form implements ClientElement, FormValidationControl
                               "name", name,
                               "id", name,
                               "method", "post",
-                              "action", zone == null ? link : "#");
+                              "action", link);
 
         componentInvocationMap.store(form, link);
 
