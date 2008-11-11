@@ -14,19 +14,27 @@
 
 package org.apache.tapestry5.internal.structure;
 
+import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.Link;
 import org.apache.tapestry5.internal.services.ComponentClassCache;
 import org.apache.tapestry5.internal.services.ComponentMessagesSource;
+import org.apache.tapestry5.internal.services.LinkFactory;
+import org.apache.tapestry5.internal.services.RequestPageCache;
 import org.apache.tapestry5.ioc.LoggerSource;
 import org.apache.tapestry5.ioc.Messages;
+import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.model.ComponentModel;
+import org.apache.tapestry5.services.ComponentClassResolver;
 import org.apache.tapestry5.services.ContextValueEncoder;
 import org.slf4j.Logger;
 
 import java.util.Locale;
 
-public class PageResourcesImpl implements PageResources
+public class ComponentPageElementResourcesImpl implements ComponentPageElementResources
 {
+    private static final Object[] EMPTY = new Object[0];
+
     private final Locale locale;
 
     private final ComponentMessagesSource componentMessagesSource;
@@ -37,17 +45,29 @@ public class PageResourcesImpl implements PageResources
 
     private final ContextValueEncoder contextValueEncoder;
 
+    private final LinkFactory linkFactory;
+
+    private final RequestPageCache requestPageCache;
+
+    private final ComponentClassResolver componentClassResolver;
+
     private final LoggerSource loggerSource;
 
-    public PageResourcesImpl(Locale locale, ComponentMessagesSource componentMessagesSource, TypeCoercer typeCoercer,
-                             ComponentClassCache componentClassCache, ContextValueEncoder contextValueEncoder,
-                             LoggerSource loggerSource)
+    public ComponentPageElementResourcesImpl(Locale locale, ComponentMessagesSource componentMessagesSource,
+                                             TypeCoercer typeCoercer,
+                                             ComponentClassCache componentClassCache,
+                                             ContextValueEncoder contextValueEncoder, LinkFactory linkFactory,
+                                             RequestPageCache requestPageCache,
+                                             ComponentClassResolver componentClassResolver, LoggerSource loggerSource)
     {
         this.componentMessagesSource = componentMessagesSource;
         this.locale = locale;
         this.typeCoercer = typeCoercer;
         this.componentClassCache = componentClassCache;
         this.contextValueEncoder = contextValueEncoder;
+        this.linkFactory = linkFactory;
+        this.requestPageCache = requestPageCache;
+        this.componentClassResolver = componentClassResolver;
         this.loggerSource = loggerSource;
     }
 
@@ -66,6 +86,29 @@ public class PageResourcesImpl implements PageResources
         return componentClassCache.forName(className);
     }
 
+    public Link createComponentEventLink(ComponentResources resources, String eventType, boolean forForm,
+                                         Object... context)
+    {
+        Page page = requestPageCache.get(resources.getPageName());
+
+        return linkFactory.createComponentEventLink(page, resources.getNestedId(), eventType, forForm,
+                                                    defaulted(context));
+    }
+
+    public Link createPageRenderLink(String pageName, boolean override, Object... context)
+    {
+        return linkFactory.createPageRenderLink(pageName, override, defaulted(context));
+    }
+
+    public Link createPageRenderLink(Class pageClass, boolean override, Object... context)
+    {
+        Defense.notNull(pageClass, "pageClass");
+
+        String pageName = componentClassResolver.resolvePageClassNameToPageName(pageClass.getName());
+
+        return linkFactory.createPageRenderLink(pageName, override, defaulted(context));
+    }
+
     public Logger getEventLogger(Logger componentLogger)
     {
         String name = "tapestry.events." + componentLogger.getName();
@@ -78,8 +121,14 @@ public class PageResourcesImpl implements PageResources
         return contextValueEncoder.toClient(value);
     }
 
+
     public <T> T toValue(Class<T> requiredType, String clientValue)
     {
         return contextValueEncoder.toValue(requiredType, clientValue);
+    }
+
+    private Object[] defaulted(Object[] context)
+    {
+        return context == null ? EMPTY : context;
     }
 }

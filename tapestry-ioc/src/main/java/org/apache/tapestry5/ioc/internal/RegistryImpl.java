@@ -96,21 +96,6 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
     private final OperationTracker operationTracker;
 
-    public static final class OrderedConfigurationToOrdererAdaptor<T> implements OrderedConfiguration<T>
-    {
-        private final Orderer<T> orderer;
-
-        public OrderedConfigurationToOrdererAdaptor(Orderer<T> orderer)
-        {
-            this.orderer = orderer;
-        }
-
-        public void add(String id, T object, String... constraints)
-        {
-            orderer.add(id, object, constraints);
-        }
-    }
-
     /**
      * Constructs the registry from a set of module definitions and other resources.
      *
@@ -345,16 +330,8 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
         final Collection<T> result = CollectionFactory.newList();
 
-        Configuration<T> configuration = new Configuration<T>()
-        {
-            public void add(T object)
-            {
-                result.add(object);
-            }
-        };
-
         for (Module m : moduleToServiceDefs.keySet())
-            addToUnorderedConfiguration(configuration, objectType, serviceDef, m);
+            addToUnorderedConfiguration(result, objectType, serviceDef, m);
 
         return result;
     }
@@ -367,12 +344,10 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         String serviceId = serviceDef.getServiceId();
         Logger logger = getServiceLogger(serviceId);
 
-        final Orderer<T> orderer = new Orderer<T>(logger);
-
-        OrderedConfiguration<T> configuration = new OrderedConfigurationToOrdererAdaptor<T>(orderer);
+        Orderer<T> orderer = new Orderer<T>(logger);
 
         for (Module m : moduleToServiceDefs.keySet())
-            addToOrderedConfiguration(configuration, objectType, serviceDef, m);
+            addToOrderedConfiguration(orderer, objectType, serviceDef, m);
 
         // An ugly hack ... perhaps we should introduce a new builtin service so that this can be
         // accomplished in the normal way?
@@ -387,7 +362,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
                 }
             };
 
-            configuration.add("ServiceByMarker", (T) contribution);
+            orderer.add("ServiceByMarker", (T) contribution);
         }
 
         return orderer.getOrdered();
@@ -397,21 +372,13 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
     {
         lock.check();
 
-        // When the key type is String, then a case insensitive map is used for both cases.
+        // When the key type is String, then a case insensitive map is used.
 
         final Map<K, V> result = newConfigurationMap(keyType);
         Map<K, ContributionDef> keyToContribution = newConfigurationMap(keyType);
 
-        MappedConfiguration<K, V> configuration = new MappedConfiguration<K, V>()
-        {
-            public void add(K key, V value)
-            {
-                result.put(key, value);
-            }
-        };
-
         for (Module m : moduleToServiceDefs.keySet())
-            addToMappedConfiguration(configuration, keyToContribution, keyType, objectType, serviceDef, m);
+            addToMappedConfiguration(result, keyToContribution, keyType, objectType, serviceDef, m);
 
         return result;
     }
@@ -429,7 +396,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         return CollectionFactory.newMap();
     }
 
-    private <K, V> void addToMappedConfiguration(MappedConfiguration<K, V> configuration,
+    private <K, V> void addToMappedConfiguration(Map<K, V> map,
                                                  Map<K, ContributionDef> keyToContribution, Class<K> keyClass,
                                                  Class<V> valueType, ServiceDef serviceDef, final Module module)
     {
@@ -444,15 +411,15 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
         final ServiceResources resources = new ServiceResourcesImpl(this, module, serviceDef, classFactory, logger);
 
+
         for (final ContributionDef def : contributions)
         {
-            final MappedConfiguration<K, V> validating =
-                    new ValidatingMappedConfigurationWrapper<K, V>(serviceId, def,
-                                                                   logger,
-                                                                   keyClass,
-                                                                   valueType,
-                                                                   keyToContribution,
-                                                                   configuration);
+            final MappedConfiguration<K, V> validating = new ValidatingMappedConfigurationWrapper<K, V>(map, serviceId,
+                                                                                                        def,
+                                                                                                        keyClass,
+                                                                                                        valueType,
+                                                                                                        keyToContribution,
+                                                                                                        resources);
 
             String description = IOCMessages.invokingMethod(def);
 
@@ -469,7 +436,8 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         }
     }
 
-    private <T> void addToUnorderedConfiguration(Configuration<T> configuration, Class<T> valueType,
+    private <T> void addToUnorderedConfiguration(Collection<T> collection,
+                                                 Class<T> valueType,
                                                  ServiceDef serviceDef, final Module module)
     {
         String serviceId = serviceDef.getServiceId();
@@ -486,7 +454,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         for (final ContributionDef def : contributions)
         {
             final Configuration<T> validating =
-                    new ValidatingConfigurationWrapper<T>(serviceId, logger, valueType, def, configuration);
+                    new ValidatingConfigurationWrapper<T>(collection, serviceId, valueType, resources);
 
             String description = IOCMessages.invokingMethod(def);
 
@@ -503,7 +471,8 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         }
     }
 
-    private <T> void addToOrderedConfiguration(OrderedConfiguration<T> configuration, Class<T> valueType,
+    private <T> void addToOrderedConfiguration(Orderer<T> orderer,
+                                               Class<T> valueType,
                                                ServiceDef serviceDef, final Module module)
     {
         String serviceId = serviceDef.getServiceId();
@@ -516,11 +485,12 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
         final ServiceResources resources = new ServiceResourcesImpl(this, module, serviceDef, classFactory, logger);
 
+        final OrderedConfiguration<T> validating = new ValidatingOrderedConfigurationWrapper<T>(orderer, serviceId,
+                                                                                                valueType,
+                                                                                                resources);
+
         for (final ContributionDef def : contributions)
         {
-            final OrderedConfiguration<T> validating =
-                    new ValidatingOrderedConfigurationWrapper<T>(serviceId, def, logger, valueType, configuration);
-
             String description = IOCMessages.invokingMethod(def);
 
             if (debug)

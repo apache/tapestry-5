@@ -14,6 +14,8 @@
 
 package org.apache.tapestry5.internal.structure;
 
+import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.Link;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.services.ContextValueEncoder;
@@ -23,7 +25,7 @@ import org.slf4j.Logger;
  * Provides access to common methods of various services, needed by implementations of {@link ComponentPageElement} and
  * {@link org.apache.tapestry5.internal.InternalComponentResources}.
  */
-public interface PageResources extends ContextValueEncoder
+public interface ComponentPageElementResources extends ContextValueEncoder
 {
     /**
      * Used to obtain a {@link org.apache.tapestry5.ioc.Messages} instance for a particular component. If the component
@@ -59,6 +61,45 @@ public interface PageResources extends ContextValueEncoder
      * @see org.apache.tapestry5.internal.services.ComponentClassCache
      */
     Class toClass(String className);
+
+    /**
+     * Creates a link on behalf of a component.
+     *
+     * @param resources resources for the component
+     * @param eventType type of event to create
+     * @param forForm   true if generating for a form submission
+     * @param context   additional event context associated with the link
+     * @return the link
+     * @since 5.1
+     */
+    Link createComponentEventLink(ComponentResources resources, String eventType, boolean forForm, Object... context);
+
+    /**
+     * Creates a page render request link to render a specific page.
+     *
+     * @param pageName the logical name of the page to link to
+     * @param override if true, the context is used even if empty (normally, the target page is allowed to passivate,
+     *                 providing a context, when the provided context is empty)
+     * @param context  the activation context for the page. If omitted, the activation context is obtained from the
+     *                 target page
+     * @return link for a render request to the targetted page
+     * @since 5.1
+     */
+    Link createPageRenderLink(String pageName, boolean override, Object... context);
+
+    /**
+     * Creates a page render request link to render a specific page. Using a page class, rather than a page name, is
+     * more refactoring safe (in the even the page is renamed or moved).
+     *
+     * @param pageClass identifies the page to link to
+     * @param override  if true, the context is used even if empty (normally, the target page is allowed to passivate,
+     *                  providing a context, when the provided context is empty)
+     * @param context   the activation context for the page. If omitted, the activation context is obtained from the
+     *                  target page
+     * @return link for a render request to the targetted page
+     * @since 5.1
+     */
+    Link createPageRenderLink(Class pageClass, boolean override, Object... context);
 
     /**
      * Returns the event logger for the provided component logger.  The event logger is based on the component logger's

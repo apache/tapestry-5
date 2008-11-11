@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,104 +14,110 @@
 
 package org.apache.tapestry5.ioc.internal;
 
+import org.apache.tapestry5.ioc.ObjectLocator;
 import org.apache.tapestry5.ioc.OrderedConfiguration;
-import org.apache.tapestry5.ioc.def.ContributionDef;
+import org.apache.tapestry5.ioc.internal.util.Orderer;
 import org.slf4j.Logger;
 import org.testng.annotations.Test;
 
-import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ValidatingOrderedConfigurationWrapperTest extends IOCInternalTestCase
 {
     @Test
     public void valid_type_long_form()
     {
-        ContributionDef def = mockContributionDef();
-        Logger logger = mockLogger();
-        OrderedConfiguration<Runnable> configuration = mockOrderedConfiguration();
         Runnable contribution = mockRunnable();
+        Runnable pre = mockRunnable();
+        Runnable post = mockRunnable();
+        Logger logger = mockLogger();
+        Orderer<Runnable> orderer = new Orderer<Runnable>(logger);
 
-        configuration.add("id", contribution, "after:pre", "before:post");
+
+        orderer.add("pre", pre);
+        orderer.add("post", post);
 
         replay();
 
         OrderedConfiguration<Runnable> wrapper = new ValidatingOrderedConfigurationWrapper<Runnable>(
-                "Service", def, logger, Runnable.class, configuration);
+                orderer, "Service", Runnable.class, null);
 
         wrapper.add("id", contribution, "after:pre", "before:post");
 
         verify();
+
+        assertListsEquals(orderer.getOrdered(), pre, contribution, post);
     }
 
     @Test
-    public void valid_type_short_form()
+    public void contribute_valid_class()
     {
-        ContributionDef def = mockContributionDef();
         Logger logger = mockLogger();
-        OrderedConfiguration<Runnable> configuration = mockOrderedConfiguration();
-        Runnable contribution = mockRunnable();
+        Orderer<Map> orderer = new Orderer<Map>(logger);
+        Map pre = new HashMap();
+        Map post = new HashMap();
+        HashMap contribution = new HashMap();
+        ObjectLocator locator = mockObjectLocator();
 
-        configuration.add("id", contribution);
+        train_autobuild(locator, HashMap.class, contribution);
+
+        orderer.add("pre", pre);
+        orderer.add("post", post);
 
         replay();
 
-        OrderedConfiguration<Runnable> wrapper = new ValidatingOrderedConfigurationWrapper<Runnable>(
-                "Service", def, logger, Runnable.class, configuration);
+        OrderedConfiguration<Map> wrapper = new ValidatingOrderedConfigurationWrapper<Map>(
+                orderer, "Service", Map.class, locator);
 
-        wrapper.add("id", contribution);
+        wrapper.addInstance("id", HashMap.class, "after:pre", "before:post");
 
         verify();
+
+        assertListsEquals(orderer.getOrdered(), pre, contribution, post);
     }
 
     @Test
     public void null_object_passed_through()
     {
-        ContributionDef def = mockContributionDef();
         Logger logger = mockLogger();
-        OrderedConfiguration<Runnable> configuration = mockOrderedConfiguration();
-
-        configuration.add("id", null);
+        Orderer<Runnable> orderer = new Orderer<Runnable>(logger);
 
         replay();
 
         OrderedConfiguration<Runnable> wrapper = new ValidatingOrderedConfigurationWrapper<Runnable>(
-                "Service", def, logger, Runnable.class, configuration);
+                orderer, "Service", Runnable.class, null);
 
         wrapper.add("id", null);
 
         verify();
+
+        assertTrue(orderer.getOrdered().isEmpty());
     }
 
     @SuppressWarnings("unchecked")
     @Test
     public void incorrect_contribution_type_is_passed_through_as_null()
     {
-        Method method = findMethod("contributeBarneyService");
-
-        ContributionDef def = new ContributionDefImpl("Service", method, getClassFactory());
-        Logger log = mockLogger();
-        OrderedConfiguration<Runnable> configuration = mockOrderedConfiguration();
-
-        log.warn(IOCMessages.contributionWrongValueType(
-                "Service",
-                def,
-                String.class,
-                Runnable.class));
-
-        configuration.add("id", null);
+        Logger logger = mockLogger();
+        Orderer<Runnable> orderer = new Orderer<Runnable>(logger);
 
         replay();
 
-        OrderedConfiguration wrapper = new ValidatingOrderedConfigurationWrapper("Service", def,
-                                                                                 log, Runnable.class, configuration);
+        OrderedConfiguration wrapper = new ValidatingOrderedConfigurationWrapper(orderer, "Service",
+                                                                                 Runnable.class, null);
 
-        wrapper.add("id", "string");
+        try
+        {
+            wrapper.add("id", "string");
+            unreachable();
+        }
+        catch (IllegalArgumentException ex)
+        {
+            assertEquals(ex.getMessage(),
+                         "Service contribution (to service 'Service') was an instance of java.lang.String, which is not assignable to the configuration type java.lang.Runnable.");
+        }
 
         verify();
-    }
-
-    public void contributeBarneyService(OrderedConfiguration<Runnable> configuration)
-    {
-
     }
 }

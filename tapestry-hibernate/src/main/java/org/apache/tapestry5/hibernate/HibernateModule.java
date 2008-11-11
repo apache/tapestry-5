@@ -130,12 +130,10 @@ public class HibernateModule
      */
     public static void contributeHibernateSessionSource(OrderedConfiguration<HibernateConfigurer> config,
 
-                                                        @Local HibernateConfigurer defaultHibernateConfigurer,
-
-                                                        ObjectLocator locator)
+                                                        HibernateConfigurer defaultHibernateConfigurer)
     {
         config.add("Default", defaultHibernateConfigurer);
-        config.add("PackageName", locator.autobuild(PackageNameHibernateConfigurer.class));
+        config.addInstance("PackageName", PackageNameHibernateConfigurer.class);
     }
 
     /**
@@ -180,10 +178,9 @@ public class HibernateModule
      * Session}</dd> </dl>
      */
     public static void contributePersistentFieldManager(
-            MappedConfiguration<String, PersistentFieldStrategy> configuration,
-            ObjectLocator locator)
+            MappedConfiguration<String, PersistentFieldStrategy> configuration)
     {
-        configuration.add("entity", locator.autobuild(EntityPersistentFieldStrategy.class));
+        configuration.addInstance("entity", EntityPersistentFieldStrategy.class);
     }
 
     /**
@@ -191,11 +188,10 @@ public class HibernateModule
      * annotation.
      */
     public static void contributeComponentClassTransformWorker(
-            OrderedConfiguration<ComponentClassTransformWorker> configuration,
-            ObjectLocator locator)
+            OrderedConfiguration<ComponentClassTransformWorker> configuration)
     {
         // If logging is enabled, we want logging to be the first advice, wrapping around the commit advice.
 
-        configuration.add("CommitAfter", locator.autobuild(CommitAfterWorker.class), "after:Log");
+        configuration.addInstance("CommitAfter", CommitAfterWorker.class, "after:Log");
     }
 }

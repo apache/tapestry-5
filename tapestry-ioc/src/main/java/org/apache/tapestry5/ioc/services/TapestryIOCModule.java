@@ -75,22 +75,19 @@ public final class TapestryIOCModule
     /**
      * Contributes the "perthread" scope.
      */
-    public void contributeServiceLifecycleSource(MappedConfiguration<String, ServiceLifecycle> configuration,
-                                                 ObjectLocator locator)
+    public void contributeServiceLifecycleSource(MappedConfiguration<String, ServiceLifecycle> configuration)
     {
-        configuration.add(ScopeConstants.PERTHREAD, locator.autobuild(PerThreadServiceLifecycle.class));
+        configuration.addInstance(ScopeConstants.PERTHREAD, PerThreadServiceLifecycle.class);
     }
 
     /**
      * <dl> <dt>Value</dt> <dd>Supports the {@link org.apache.tapestry5.ioc.annotations.Value} annotation</dd>
      * <dt>Symbol</dt> <dd>Supports the {@link org.apache.tapestry5.ioc.annotations.Symbol} annotations</dd> </dl>
      */
-    public static void contributeMasterObjectProvider(OrderedConfiguration<ObjectProvider> configuration,
-
-                                                      ObjectLocator locator)
+    public static void contributeMasterObjectProvider(OrderedConfiguration<ObjectProvider> configuration)
     {
-        configuration.add("Value", locator.autobuild(ValueObjectProvider.class));
-        configuration.add("Symbol", locator.autobuild(SymbolObjectProvider.class));
+        configuration.addInstance("Value", ValueObjectProvider.class);
+        configuration.addInstance("Symbol", SymbolObjectProvider.class);
     }
 
     /**

@@ -15,8 +15,8 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.SymbolConstants;
-import org.apache.tapestry5.internal.structure.PageResourcesSource;
-import org.apache.tapestry5.internal.structure.PageResourcesSourceImpl;
+import org.apache.tapestry5.internal.structure.ComponentPageElementResourcesSource;
+import org.apache.tapestry5.internal.structure.ComponentPageElementResourcesSourceImpl;
 import org.apache.tapestry5.ioc.ObjectLocator;
 import org.apache.tapestry5.ioc.ScopeConstants;
 import org.apache.tapestry5.ioc.ServiceBinder;
@@ -80,7 +80,7 @@ public class InternalModule
         binder.bind(AjaxPartialResponseRenderer.class, AjaxPartialResponseRendererImpl.class);
         binder.bind(PageContentTypeAnalyzer.class, PageContentTypeAnalyzerImpl.class);
         binder.bind(RequestPathOptimizer.class, RequestPathOptimizerImpl.class);
-        binder.bind(PageResourcesSource.class, PageResourcesSourceImpl.class);
+        binder.bind(ComponentPageElementResourcesSource.class, ComponentPageElementResourcesSourceImpl.class);
         binder.bind(RequestSecurityManager.class, RequestSecurityManagerImpl.class);
         binder.bind(InternalRequestGlobals.class, InternalRequestGlobalsImpl.class);
         binder.bind(EndOfRequestListenerHub.class);

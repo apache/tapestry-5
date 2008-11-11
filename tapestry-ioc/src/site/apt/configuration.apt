@@ -227,7 +227,12 @@ Configuration Types
   {{{apidocs/org/apache/tapestry5/ioc/util/CaseInsensitiveMap.html}CaseInsensitiveMap}}
   will be  automatically used (and passed to the service builder method), to help ensure that {{{case.html}case insensitivity}} 
   is automatic and pervasive.
-  
+
+Injecting Classes
+
+  All three configuration interfaces have a second method, addInstance().  This method takes a class, not an instance.
+  The class is instantiated and contributed. If the constructor for the class takes dependencies, those are injected as well.
+
 Injecting Resources
 
   In addition to injecting services into a contributor method (via

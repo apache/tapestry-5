@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,52 +14,53 @@
 
 package org.apache.tapestry5.ioc.internal;
 
+import org.apache.tapestry5.ioc.ObjectLocator;
 import org.apache.tapestry5.ioc.OrderedConfiguration;
-import org.apache.tapestry5.ioc.def.ContributionDef;
-import org.slf4j.Logger;
+import org.apache.tapestry5.ioc.internal.util.Orderer;
 
 /**
- * Implements validation of values provided to an {@link org.apache.tapestry5.ioc.OrderedConfiguration}. If you provide
- * an incorrect value type, the value is converted to null but added anyway. This ensures that incorrect values
- * contributed in don't screw up the {@link org.apache.tapestry5.ioc.internal.util.Orderer} (and generate a bunch of
- * error messages there).
+ * Wraps a {@link java.util.List} as a {@link org.apache.tapestry5.ioc.OrderedConfiguration}, implementing validation of
+ * values provided to an {@link org.apache.tapestry5.ioc.OrderedConfiguration}.
  *
  * @param <T>
  */
 public class ValidatingOrderedConfigurationWrapper<T> implements OrderedConfiguration<T>
 {
+    private final Orderer<T> orderer;
+
     private final String serviceId;
-
-    private final ContributionDef contributionDef;
-
-    private final Logger logger;
 
     private final Class expectedType;
 
-    private final OrderedConfiguration<T> delegate;
+    private final ObjectLocator locator;
 
-    public ValidatingOrderedConfigurationWrapper(String serviceId, ContributionDef contributionDef,
-                                                 Logger logger, Class expectedType, OrderedConfiguration<T> delegate)
+
+    public ValidatingOrderedConfigurationWrapper(Orderer<T> orderer, String serviceId, Class expectedType,
+                                                 ObjectLocator locator)
     {
+        this.orderer = orderer;
         this.serviceId = serviceId;
-        this.contributionDef = contributionDef;
-        this.logger = logger;
         this.expectedType = expectedType;
-        this.delegate = delegate;
+        this.locator = locator;
     }
 
     public void add(String id, T object, String... constraints)
     {
-        delegate.add(id, validVersionOf(object), constraints);
+        checkValid(object);
+
+        orderer.add(id, object, constraints);
     }
 
-    private T validVersionOf(T object)
+    public void addInstance(String id, Class<? extends T> clazz, String... constraints)
     {
-        if (object == null || expectedType.isInstance(object)) return object;
+        add(id, locator.autobuild(clazz), constraints);
+    }
 
-        logger.warn(IOCMessages.contributionWrongValueType(serviceId, contributionDef, object
+    private void checkValid(T object)
+    {
+        if (object == null || expectedType.isInstance(object)) return;
+
+        throw new IllegalArgumentException(IOCMessages.contributionWrongValueType(serviceId, object
                 .getClass(), expectedType));
-
-        return null;
     }
 }

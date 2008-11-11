@@ -28,7 +28,6 @@ import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.model.EmbeddedComponentModel;
 import org.apache.tapestry5.runtime.RenderQueue;
 import org.apache.tapestry5.services.BindingSource;
-import org.apache.tapestry5.services.ComponentClassResolver;
 
 import java.util.List;
 import java.util.Locale;
@@ -79,10 +78,6 @@ class PageLoaderProcessor
     private final List<Runnable> finalization = CollectionFactory.newList();
 
     private final IdAllocator idAllocator = new IdAllocator();
-
-    private final LinkFactory linkFactory;
-
-    private final ComponentClassResolver componentClassResolver;
 
     private ComponentModel loadingComponentModel;
 
@@ -138,14 +133,11 @@ class PageLoaderProcessor
     }
 
     PageLoaderProcessor(ComponentTemplateSource templateSource, PageElementFactory pageElementFactory,
-                        LinkFactory linkFactory, PersistentFieldManager persistentFieldManager,
-                        ComponentClassResolver componentClassResolver)
+                        PersistentFieldManager persistentFieldManager)
     {
         this.templateSource = templateSource;
         this.pageElementFactory = pageElementFactory;
-        this.linkFactory = linkFactory;
         this.persistentFieldManager = persistentFieldManager;
-        this.componentClassResolver = componentClassResolver;
     }
 
     private void bindParameterFromTemplate(ComponentPageElement component, AttributeToken token)
@@ -385,7 +377,7 @@ class PageLoaderProcessor
         // Todo: Need a resources object for Pages, not just ComponentPageElement ... too many
         // parameters here.
 
-        page = new PageImpl(logicalPageName, this.locale, linkFactory, persistentFieldManager, componentClassResolver);
+        page = new PageImpl(logicalPageName, this.locale, persistentFieldManager);
 
         loadRootComponent(pageClassName);
 

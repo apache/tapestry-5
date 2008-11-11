@@ -190,6 +190,8 @@ public final class TapestryModule
         binder.bind(BindingFactory.class, AssetBindingFactory.class).withId("AssetBindingFactory");
         binder.bind(BindingFactory.class, NullFieldStrategyBindingFactory.class).withId(
                 "NullFieldStrategyBindingFactory");
+        binder.bind(ApplicationStatePersistenceStrategy.class, SessionApplicationStatePersistenceStrategy.class).withId(
+                "SessionApplicationStatePersistenceStrategy");
         binder.bind(URLEncoder.class, URLEncoderImpl.class);
         binder.bind(ContextPathEncoder.class, ContextPathEncoderImpl.class);
     }
@@ -327,7 +329,7 @@ public final class TapestryModule
         // only have a single annotation, the order doesn't matter so much, as long as
         // UnclaimedField is last.
 
-        configuration.add("Cached", locator.autobuild(CachedWorker.class));
+        configuration.addInstance("Cached", CachedWorker.class);
 
         configuration.add("Meta", new MetaWorker());
 
@@ -340,7 +342,7 @@ public final class TapestryModule
         configuration.add("Mixin", new MixinWorker(resolver));
         configuration.add("OnEvent", new OnEventWorker());
         configuration.add("SupportsInformalParameters", new SupportsInformalParametersWorker());
-        configuration.add("InjectPage", locator.autobuild(InjectPageWorker.class));
+        configuration.addInstance("InjectPage", InjectPageWorker.class);
         configuration.add("InjectContainer", new InjectContainerWorker());
         configuration.add("InjectComponent", new InjectComponentWorker());
         configuration.add("RenderCommand", new RenderCommandWorker());
@@ -348,7 +350,7 @@ public final class TapestryModule
         // Default values for parameters are often some form of injection, so make sure
         // that Parameter fields are processed after injections.
 
-        configuration.add("Parameter", locator.autobuild(ParameterWorker.class), "after:Inject*");
+        configuration.addInstance("Parameter", ParameterWorker.class, "after:Inject*");
 
         // Workers for the component rendering state machine methods; this is in typical
         // execution order.
@@ -375,9 +377,9 @@ public final class TapestryModule
         configuration.add("Retain", new RetainWorker());
         configuration.add("Persist", new PersistWorker());
 
-        configuration.add("IncludeStylesheet", locator.autobuild(IncludeStylesheetWorker.class), "after:SetupRender");
-        configuration.add("IncludeJavaScriptLibrary", locator.autobuild(IncludeJavaScriptLibraryWorker.class),
-                          "after:SetupRender");
+        configuration.addInstance("IncludeStylesheet", IncludeStylesheetWorker.class, "after:SetupRender");
+        configuration.addInstance("IncludeJavaScriptLibrary", IncludeJavaScriptLibraryWorker.class,
+                                  "after:SetupRender");
 
         configuration.add("InvokePostRenderCleanupOnResources", new InvokePostRenderCleanupOnResourcesWorker());
 
@@ -386,11 +388,10 @@ public final class TapestryModule
         configuration.add("Property", new PropertyWorker());
 
         // These must come after Property, since they actually delete fields that may still have the annotation
-        configuration.add("ApplicationState", locator.autobuild(ApplicationStateWorker.class),
-                          "after:Property");
-        configuration.add("Environment", locator.autobuild(EnvironmentalWorker.class), "after:Property");
+        configuration.addInstance("ApplicationState", ApplicationStateWorker.class, "after:Property");
+        configuration.addInstance("Environment", EnvironmentalWorker.class, "after:Property");
 
-        configuration.add("Log", locator.autobuild(LogWorker.class));
+        configuration.addInstance("Log", LogWorker.class);
 
         // This one is always last. Any additional private fields that aren't annotated will
         // be converted to clear out at the end of the request.
@@ -596,9 +597,7 @@ public final class TapestryModule
 
                                          LocalizationSetter localizationSetter,
 
-                                         final EndOfRequestListenerHub endOfRequestListenerHub,
-
-                                         ObjectLocator locator)
+                                         final EndOfRequestListenerHub endOfRequestListenerHub)
     {
         RequestFilter staticFilesFilter = new StaticFilesFilter(context);
 
@@ -632,7 +631,7 @@ public final class TapestryModule
 
         configuration.add("StaticFiles", staticFilesFilter);
 
-        configuration.add("ErrorFilter", locator.autobuild(RequestErrorFilter.class));
+        configuration.addInstance("ErrorFilter", RequestErrorFilter.class);
 
         configuration.add("StoreIntoGlobals", storeIntoGlobals, "after:StaticFiles", "before:ErrorFilter");
 
@@ -1286,11 +1285,6 @@ public final class TapestryModule
         configuration.add("session", sessionStategy);
     }
 
-    public ApplicationStatePersistenceStrategy buildSessionApplicationStatePersistenceStrategy(ObjectLocator locator)
-    {
-        return locator.autobuild(SessionApplicationStatePersistenceStrategy.class);
-    }
-
     public void contributeAssetSource(MappedConfiguration<String, AssetFactory> configuration,
                                       @ContextProvider AssetFactory contextAssetFactory,
 
@@ -1311,11 +1305,8 @@ public final class TapestryModule
      * external URL</dd> </dl>
      */
     public void contributeComponentEventResultProcessor(
-
             @InjectService("ComponentInstanceResultProcessor")
             ComponentEventResultProcessor componentInstanceProcessor,
-
-            ObjectLocator locator,
 
             MappedConfiguration<Class, ComponentEventResultProcessor> configuration)
     {
@@ -1335,13 +1326,13 @@ public final class TapestryModule
             }
         });
 
-        configuration.add(String.class, locator.autobuild(PageNameComponentEventResultProcessor.class));
+        configuration.addInstance(String.class, PageNameComponentEventResultProcessor.class);
 
-        configuration.add(Class.class, locator.autobuild(ClassResultProcessor.class));
+        configuration.addInstance(Class.class, ClassResultProcessor.class);
 
         configuration.add(Component.class, componentInstanceProcessor);
 
-        configuration.add(StreamResponse.class, locator.autobuild(StreamResponseResultProcessor.class));
+        configuration.addInstance(StreamResponse.class, StreamResponseResultProcessor.class);
     }
 
 
@@ -1358,17 +1349,17 @@ public final class TapestryModule
      * for that page</dd> </dl>
      */
 
-    public void contributeAjaxComponentEventResultProcessor(
-            MappedConfiguration<Class, ComponentEventResultProcessor> configuration, ObjectLocator locator)
+    public static void contributeAjaxComponentEventResultProcessor(
+            MappedConfiguration<Class, ComponentEventResultProcessor> configuration)
     {
-        configuration.add(RenderCommand.class, locator.autobuild(RenderCommandComponentEventResultProcessor.class));
-        configuration.add(Component.class, locator.autobuild(AjaxComponentInstanceEventResultProcessor.class));
-        configuration.add(JSONObject.class, locator.autobuild(JSONObjectEventResultProcessor.class));
-        configuration.add(JSONArray.class, locator.autobuild(JSONArrayEventResultProcessor.class));
-        configuration.add(StreamResponse.class, new StreamResponseResultProcessor(response));
-        configuration.add(String.class, locator.autobuild(AjaxPageNameComponentEventResultProcessor.class));
-        configuration.add(Link.class, locator.autobuild(AjaxLinkComponentEventResultProcessor.class));
-        configuration.add(Class.class, locator.autobuild(AjaxPageClassComponentEventResultProcessor.class));
+        configuration.addInstance(RenderCommand.class, RenderCommandComponentEventResultProcessor.class);
+        configuration.addInstance(Component.class, AjaxComponentInstanceEventResultProcessor.class);
+        configuration.addInstance(JSONObject.class, JSONObjectEventResultProcessor.class);
+        configuration.addInstance(JSONArray.class, JSONArrayEventResultProcessor.class);
+        configuration.addInstance(StreamResponse.class, StreamResponseResultProcessor.class);
+        configuration.addInstance(String.class, AjaxPageNameComponentEventResultProcessor.class);
+        configuration.addInstance(Link.class, AjaxLinkComponentEventResultProcessor.class);
+        configuration.addInstance(Class.class, AjaxPageClassComponentEventResultProcessor.class);
     }
 
     /**
@@ -1379,28 +1370,22 @@ public final class TapestryModule
      * PageRenderRequestHandler}</dd> <dt>ComponentEvent</dt> <dd>Identifies the {@link ComponentEventRequestParameters}
      * and forwards onto the {@link ComponentEventRequestHandler}</dd> </dl>
      */
-    public void contributeMasterDispatcher(OrderedConfiguration<Dispatcher> configuration,
-                                           ObjectLocator locator)
+    public static void contributeMasterDispatcher(OrderedConfiguration<Dispatcher> configuration)
     {
         // Looks for the root path and renders the start page. This is maintained for compatibility
         // with earlier versions of Tapestry 5, it is recommended that an Index page be used instead.
 
-        configuration.add("RootPath",
-                          locator.autobuild(RootPathDispatcher.class),
-                          "before:Asset");
+        configuration.addInstance("RootPath", RootPathDispatcher.class, "before:Asset");
 
         // This goes first because an asset to be streamed may have an file extension, such as
         // ".html", that will confuse the later dispatchers.
 
-        configuration.add("Asset",
-                          locator.autobuild(AssetDispatcher.class), "before:ComponentEvent");
+        configuration.addInstance("Asset", AssetDispatcher.class, "before:ComponentEvent");
 
 
-        configuration.add("ComponentEvent", locator.autobuild(ComponentEventDispatcher.class),
-                          "before:PageRender");
+        configuration.addInstance("ComponentEvent", ComponentEventDispatcher.class, "before:PageRender");
 
-        configuration.add("PageRender",
-                          locator.autobuild(PageRenderDispatcher.class));
+        configuration.addInstance("PageRender", PageRenderDispatcher.class);
     }
 
     /**
@@ -1413,9 +1398,7 @@ public final class TapestryModule
                                          @InjectService("LocationRenderer")
                                          ObjectRenderer locationRenderer,
 
-                                         final TypeCoercer typeCoercer,
-
-                                         ObjectLocator locator)
+                                         final TypeCoercer typeCoercer)
     {
         configuration.add(Object.class, new ObjectRenderer()
         {
@@ -1425,7 +1408,7 @@ public final class TapestryModule
             }
         });
 
-        configuration.add(Request.class, locator.autobuild(RequestRenderer.class));
+        configuration.addInstance(Request.class, RequestRenderer.class);
 
         configuration.add(Location.class, locationRenderer);
 
@@ -1441,10 +1424,10 @@ public final class TapestryModule
 
         configuration.add(ClassTransformation.class, preformatted);
 
-        configuration.add(List.class, locator.autobuild(ListRenderer.class));
-        configuration.add(Object[].class, locator.autobuild(ObjectArrayRenderer.class));
-        configuration.add(ComponentResources.class, locator.autobuild(ComponentResourcesRenderer.class));
-        configuration.add(EventContext.class, locator.autobuild(EventContextRenderer.class));
+        configuration.addInstance(List.class, ListRenderer.class);
+        configuration.addInstance(Object[].class, ObjectArrayRenderer.class);
+        configuration.addInstance(ComponentResources.class, ComponentResourcesRenderer.class);
+        configuration.addInstance(EventContext.class, EventContextRenderer.class);
     }
 
 
@@ -1747,10 +1730,9 @@ public final class TapestryModule
      * Contributes {@link ValueEncoderFactory}s for types: <ul> <li>Object <li>String <li>Enum </ul>
      */
     @SuppressWarnings("unchecked")
-    public static void contributeValueEncoderSource(MappedConfiguration<Class, ValueEncoderFactory> configuration,
-                                                    ObjectLocator locator)
+    public static void contributeValueEncoderSource(MappedConfiguration<Class, ValueEncoderFactory> configuration)
     {
-        configuration.add(Object.class, locator.autobuild(TypeCoercedValueEncoderFactory.class));
+        configuration.addInstance(Object.class, TypeCoercedValueEncoderFactory.class);
         configuration.add(String.class, GenericValueEncoderFactory.create(new StringValueEncoder()));
         configuration.add(Enum.class, new EnumValueEncoderFactory());
     }
@@ -2086,8 +2068,8 @@ public final class TapestryModule
      */
     public void contributeComponentEventRequestHandler(OrderedConfiguration<ComponentEventRequestFilter> configuration,
                                                        final RequestSecurityManager requestSecurityManager,
-                                                       @Ajax ComponentEventRequestHandler ajaxHandler,
-                                                       ObjectLocator locator)
+                                                       @Ajax ComponentEventRequestHandler ajaxHandler
+    )
     {
         ComponentEventRequestFilter secureFilter = new ComponentEventRequestFilter()
         {
@@ -2102,7 +2084,7 @@ public final class TapestryModule
 
         configuration.add("Ajax", new AjaxFilter(request, ajaxHandler));
 
-        configuration.add("ImmediateRender", locator.autobuild(ImmediateActionRenderResponseFilter.class));
+        configuration.addInstance("ImmediateRender", ImmediateActionRenderResponseFilter.class);
 
         configuration.add("Secure", secureFilter, "before:Ajax");
     }

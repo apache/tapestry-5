@@ -28,19 +28,16 @@ public class PageLoaderImpl extends InvalidationEventHubImpl implements PageLoad
 
     private final PageElementFactory pageElementFactory;
 
-    private final LinkFactory linkFactory;
-
     private final PersistentFieldManager persistentFieldManager;
 
     private final ComponentClassResolver componentClassResolver;
 
     public PageLoaderImpl(ComponentTemplateSource templateSource,
-                          PageElementFactory pageElementFactory, LinkFactory linkFactory,
+                          PageElementFactory pageElementFactory,
                           PersistentFieldManager persistentFieldManager, ComponentClassResolver componentClassResolver)
     {
         this.templateSource = templateSource;
         this.pageElementFactory = pageElementFactory;
-        this.linkFactory = linkFactory;
         this.persistentFieldManager = persistentFieldManager;
         this.componentClassResolver = componentClassResolver;
     }
@@ -51,8 +48,8 @@ public class PageLoaderImpl extends InvalidationEventHubImpl implements PageLoad
         // effort to pool them for reuse, but not too likely.
 
         PageLoaderProcessor processor = new PageLoaderProcessor(templateSource,
-                                                                pageElementFactory, linkFactory,
-                                                                persistentFieldManager, componentClassResolver);
+                                                                pageElementFactory,
+                                                                persistentFieldManager);
 
         String pageClassName = componentClassResolver.resolvePageNameToClassName(logicalPageName);
 

@@ -18,7 +18,7 @@ import org.apache.tapestry5.Link;
 import org.apache.tapestry5.internal.structure.Page;
 
 /**
- * A source for {@link Link} objects.
+ * A source for {@link org.apache.tapestry5.Link} objects.
  *
  * @see LinkFactoryListener
  */
@@ -57,12 +57,12 @@ public interface LinkFactory
 
     /**
      * As with {@link #createPageRenderLink(Page, boolean, Object[])}, but the page is specified by logical name, rather
-     * than as an instance.
+     * than as an instance.  Note: renamed from createPageLink() in 5.1.
      *
      * @param logicalPageName the logical name of the page to generate a link to
      * @param override        if true, then the provided activation context is always used even if empty
      * @param context         activation context for the page
-     * @return
+     * @return a link
      */
     Link createPageRenderLink(String logicalPageName, boolean override, Object... context);
 
