@@ -27,7 +27,7 @@ Add The Next Release to JIRA
 
   Use:
   
-  {{{https://issues.apache.org/jira/secure/project/ManageVersions.jspa?pid=10573}https://issues.apache.org/jira/secure/project/ManageVersions.jspa?pid=10573}}
+  {{{https://issues.apache.org/jira/secure/project/ManageVersions.jspa?pid=12310833}https://issues.apache.org/jira/secure/project/ManageVersions.jspa?pid=12310833}}
   
   to add the next release.  Any bugs that are fixed will be tagged with this new version number (5.0.x + 1).  Example: after building out 5.0.3, create 5.0.4.    
   Schedule it above the existing version.
@@ -39,7 +39,7 @@ Generate the Release Notes
 
   JIRA has the ability to generate release notes automatically (this is why it is so important to keep the fix version number accurate).
   
-  {{{https://issues.apache.org/jira/secure/ConfigureReleaseNote.jspa?projectId=10573}https://issues.apache.org/jira/secure/ConfigureReleaseNote.jspa?projectId=10573}}
+  {{{https://issues.apache.org/jira/secure/ConfigureReleaseNote.jspa?projectId=12310833}https://issues.apache.org/jira/secure/ConfigureReleaseNote.jspa?projectId=12310833}}
   
   Select the correct version, in HTML format.
   
@@ -127,7 +127,7 @@ Tag In Subversion
 
   I do this from IntelliJ, but the command line (for example) is pretty straight forward (and I may create a script to help with this):
     
-  <<<copy -rHEAD https://svn.apache.org/repos/asf/tapestry/tapestry5/trunk https://svn.apache.org/repos/asf/tapestry/tapestry5/tags/releases/5.0.x>>>
+  <<<svn copy -rHEAD https://svn.apache.org/repos/asf/tapestry/tapestry5/trunk https://svn.apache.org/repos/asf/tapestry/tapestry5/tags/releases/5.0.x>>>
     
 
 
