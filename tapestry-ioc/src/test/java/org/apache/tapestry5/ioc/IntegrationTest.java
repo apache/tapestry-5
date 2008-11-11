@@ -963,4 +963,40 @@ public class IntegrationTest extends IOCInternalTestCase
 
         r.shutdown();
     }
+
+    @Test
+    public void unordered_configuration_contribute_by_class()
+    {
+        Registry r = buildRegistry(ContributeByClassModule.class);
+
+        StringTransformer st = r.getService("MasterStringTransformer", StringTransformer.class);
+
+        assertEquals(st.transform("Tapestry"), "TAPESTRY");
+
+        r.shutdown();
+    }
+
+    @Test
+    public void ordered_configuration_contribute_by_class()
+    {
+        Registry r = buildRegistry(ContributeByClassModule.class);
+
+        StringTransformer st = r.getService("StringTransformerChain", StringTransformer.class);
+
+        assertEquals(st.transform("Tapestry"), "TAPESTRY");
+
+        r.shutdown();
+    }
+
+    @Test
+    public void mapped_configuration_contribute_by_class()
+    {
+        Registry r = buildRegistry(ContributeByClassModule.class);
+
+        StringTransformer st = r.getService("MappedStringTransformer", StringTransformer.class);
+
+        assertEquals(st.transform("Tapestry"), "TAPESTRY");
+
+        r.shutdown();
+    }
 }

@@ -15,16 +15,12 @@
 package org.apache.tapestry5.internal.structure;
 
 import org.apache.tapestry5.ComponentResources;
-import org.apache.tapestry5.Link;
-import org.apache.tapestry5.internal.services.LinkFactory;
 import org.apache.tapestry5.internal.services.PersistentFieldManager;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.internal.util.Defense;
 import static org.apache.tapestry5.ioc.internal.util.Defense.notNull;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.runtime.PageLifecycleListener;
-import org.apache.tapestry5.services.ComponentClassResolver;
 import org.apache.tapestry5.services.PersistentFieldBundle;
 import org.slf4j.Logger;
 
@@ -37,11 +33,7 @@ public class PageImpl implements Page
 
     private final Locale locale;
 
-    private final LinkFactory linkFactory;
-
     private final PersistentFieldManager persistentFieldManager;
-
-    private final ComponentClassResolver componentClassResolver;
 
     private ComponentPageElement rootElement;
 
@@ -57,14 +49,11 @@ public class PageImpl implements Page
      */
     private PersistentFieldBundle fieldBundle;
 
-    public PageImpl(String logicalPageName, Locale locale, LinkFactory linkFactory,
-                    PersistentFieldManager persistentFieldManager, ComponentClassResolver componentClassResolver)
+    public PageImpl(String logicalPageName, Locale locale, PersistentFieldManager persistentFieldManager)
     {
         this.logicalPageName = logicalPageName;
         this.locale = locale;
-        this.linkFactory = linkFactory;
         this.persistentFieldManager = persistentFieldManager;
-        this.componentClassResolver = componentClassResolver;
     }
 
     @Override
@@ -147,11 +136,6 @@ public class PageImpl implements Page
         loadComplete = true;
     }
 
-    public boolean isLoadComplete()
-    {
-        return loadComplete;
-    }
-
     public void attached()
     {
         if (dirtyCount != 0) throw new IllegalStateException(StructureMessages.pageIsDirty(this));
@@ -163,25 +147,6 @@ public class PageImpl implements Page
     public Logger getLogger()
     {
         return rootElement.getLogger();
-    }
-
-    public Link createComponentEventLink(String nestedId, String eventType, boolean forForm, Object... context)
-    {
-        return linkFactory.createComponentEventLink(this, nestedId, eventType, forForm, context);
-    }
-
-    public Link createPageRenderLink(String pageName, boolean override, Object... context)
-    {
-        return linkFactory.createPageRenderLink(pageName, override, context);
-    }
-
-    public Link createPageRenderLink(Class pageClass, boolean override, Object... context)
-    {
-        Defense.notNull(pageClass, "pageClass");
-
-        String pageName = componentClassResolver.resolvePageClassNameToPageName(pageClass.getName());
-
-        return linkFactory.createPageRenderLink(pageName, override, context);
     }
 
     public void persistFieldChange(ComponentResources resources, String fieldName, Object newValue)

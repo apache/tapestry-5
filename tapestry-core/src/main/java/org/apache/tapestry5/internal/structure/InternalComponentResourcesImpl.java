@@ -57,7 +57,7 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
 
     private final ComponentResources containerResources;
 
-    private final PageResources pageResources;
+    private final ComponentPageElementResources elementResources;
 
     // Case insensitive
     private Map<String, Binding> bindings;
@@ -70,14 +70,15 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
     private static final Object[] EMPTY = new Object[0];
 
     public InternalComponentResourcesImpl(Page page, ComponentPageElement element,
-                                          ComponentResources containerResources, PageResources pageResources,
+                                          ComponentResources containerResources,
+                                          ComponentPageElementResources elementResources,
                                           String completeId, String nestedId, Instantiator componentInstantiator
     )
     {
         this.page = page;
         this.element = element;
         this.containerResources = containerResources;
-        this.pageResources = pageResources;
+        this.elementResources = elementResources;
         this.completeId = completeId;
         this.nestedId = nestedId;
 
@@ -121,35 +122,29 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
         return getFieldChange(fieldName) != null;
     }
 
-    /**
-     * Delegates to the {@link Page#createComponentEventLink(String, String, boolean, Object[])} on the containing page.
-     * Uses the element's nested id (i.e., a mixin can generate a link, but the link targets the component, not the
-     * mixin itself). Why the extra layer? Trying to avoid some unwanted injection (of LinkFactory, into every component
-     * page element).
-     */
-    public Link createActionLink(String eventType, boolean forForm, Object... context)
-    {
-        return page.createComponentEventLink(element.getNestedId(), eventType, forForm, defaulted(context));
-    }
-
     public Link createEventLink(String eventType, Object... context)
     {
-        return page.createComponentEventLink(element.getNestedId(), eventType, false, defaulted(context));
+        return element.createEventLink(eventType, context);
+    }
+
+    public Link createActionLink(String eventType, boolean forForm, Object... context)
+    {
+        return element.createActionLink(eventType, forForm, context);
     }
 
     public Link createFormEventLink(String eventType, Object... context)
     {
-        return page.createComponentEventLink(element.getNestedId(), eventType, true, defaulted(context));
+        return element.createFormEventLink(eventType, context);
     }
 
     public Link createPageLink(String pageName, boolean override, Object... context)
     {
-        return page.createPageRenderLink(pageName, override, defaulted(context));
+        return element.createPageLink(pageName, override, context);
     }
 
     public Link createPageLink(Class pageClass, boolean override, Object... context)
     {
-        return page.createPageRenderLink(pageClass, override, defaulted(context));
+        return element.createPageLink(pageClass, override, context);
     }
 
     public void discardPersistentFieldChanges()
@@ -283,7 +278,7 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
 
             Object boundValue = b.get();
 
-            result = pageResources.coerce(boundValue, expectedType);
+            result = elementResources.coerce(boundValue, expectedType);
         }
         catch (Exception ex)
         {
@@ -310,7 +305,7 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
 
     public Object readParameter(String parameterName, String desiredTypeName)
     {
-        Class parameterType = pageResources.toClass(desiredTypeName);
+        Class parameterType = elementResources.toClass(desiredTypeName);
 
         return readParameter(parameterName, parameterType);
     }
@@ -331,7 +326,7 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
 
         try
         {
-            Object coerced = pageResources.coerce(parameterValue, bindingType);
+            Object coerced = elementResources.coerce(parameterValue, bindingType);
 
             b.set(coerced);
         }
@@ -383,7 +378,7 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
 
             if (value instanceof Block) continue;
 
-            String valueString = pageResources.coerce(value, String.class);
+            String valueString = elementResources.coerce(value, String.class);
 
             writer.attributes(name, valueString);
         }
@@ -413,7 +408,7 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
 
     public Messages getMessages()
     {
-        if (messages == null) messages = pageResources.getMessages(componentModel);
+        if (messages == null) messages = elementResources.getMessages(componentModel);
 
         return messages;
     }

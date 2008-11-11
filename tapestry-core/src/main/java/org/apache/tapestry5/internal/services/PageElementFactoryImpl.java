@@ -44,7 +44,7 @@ public class PageElementFactoryImpl implements PageElementFactory
 
     private final BindingSource bindingSource;
 
-    private final PageResourcesSource pageResourcesSource;
+    private final ComponentPageElementResourcesSource componentPageElementResourcesSource;
 
     private static final String EXPANSION_START = "${";
 
@@ -65,13 +65,13 @@ public class PageElementFactoryImpl implements PageElementFactory
 
     public PageElementFactoryImpl(ComponentInstantiatorSource componentInstantiatorSource,
                                   ComponentClassResolver resolver, TypeCoercer typeCoercer, BindingSource bindingSource,
-                                  PageResourcesSource pageResourcesSource)
+                                  ComponentPageElementResourcesSource componentPageElementResourcesSource)
     {
         this.componentInstantiatorSource = componentInstantiatorSource;
         componentClassResolver = resolver;
         this.typeCoercer = typeCoercer;
         this.bindingSource = bindingSource;
-        this.pageResourcesSource = pageResourcesSource;
+        this.componentPageElementResourcesSource = componentPageElementResourcesSource;
     }
 
     public PageElement newAttributeElement(ComponentResources componentResources, final AttributeToken token)
@@ -261,9 +261,9 @@ public class PageElementFactoryImpl implements PageElementFactory
     {
         Instantiator instantiator = componentInstantiatorSource.findInstantiator(componentType);
 
-        PageResources pageResources = pageResourcesSource.get(locale);
+        ComponentPageElementResources componentPageElementResources = componentPageElementResourcesSource.get(locale);
 
-        ComponentPageElement result = new ComponentPageElementImpl(page, instantiator, pageResources);
+        ComponentPageElement result = new ComponentPageElementImpl(page, instantiator, componentPageElementResources);
 
         page.addLifecycleListener(result);
 

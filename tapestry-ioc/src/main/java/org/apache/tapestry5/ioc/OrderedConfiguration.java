@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -37,4 +37,14 @@ public interface OrderedConfiguration<T>
      * @parm object to add to the service's configuration
      */
     void add(String id, T object, String... constraints);
+
+    /**
+     * Adds an ordered object by instantiating (with dependencies) the indicated class.
+     *
+     * @param id          of contribution (used for ordering)
+     * @param clazz       class to instantiate
+     * @param constraints used to order the object relative to other contributed objects
+     * @since 5.1
+     */
+    void addInstance(String id, Class<? extends T> clazz, String... constraints);
 }

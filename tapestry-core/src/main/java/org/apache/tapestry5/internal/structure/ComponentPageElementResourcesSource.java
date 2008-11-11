@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,20 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.services;
+package org.apache.tapestry5.internal.structure;
 
-import java.io.IOException;
+import java.util.Locale;
 
 /**
- * Filter interface for {@link org.apache.tapestry5.services.ComponentEventRequestHandler}.
+ * Provides access to the {@link org.apache.tapestry5.internal.structure.ComponentPageElementResources} facade.
  */
-public interface ComponentEventRequestFilter
+public interface ComponentPageElementResourcesSource
 {
     /**
-     * Filter for a component action request.
+     * Gets (or creates) an instance of {@link ComponentPageElementResources} for the indicated locale.
      *
-     * @param parameters defining details of the request
-     * @param handler    to delegate to
+     * @param locale to create the resources for
+     * @return the resources
      */
-    void handle(ComponentEventRequestParameters parameters, ComponentEventRequestHandler handler) throws IOException;
+    ComponentPageElementResources get(Locale locale);
 }

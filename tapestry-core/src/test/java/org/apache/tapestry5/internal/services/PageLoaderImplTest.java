@@ -82,7 +82,7 @@ public class PageLoaderImplTest extends InternalBaseTestCase
 
         replay();
 
-        PageLoader loader = new PageLoaderImpl(templateSource, elementFactory, null, null, resolver);
+        PageLoader loader = new PageLoaderImpl(templateSource, elementFactory, null, resolver);
 
         try
         {
@@ -138,7 +138,7 @@ public class PageLoaderImplTest extends InternalBaseTestCase
 
         replay();
 
-        PageLoader loader = new PageLoaderImpl(templateSource, elementFactory, null, null, resolver);
+        PageLoader loader = new PageLoaderImpl(templateSource, elementFactory, null, resolver);
 
         try
         {

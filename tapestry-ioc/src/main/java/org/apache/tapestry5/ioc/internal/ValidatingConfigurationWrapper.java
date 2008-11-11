@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,57 +15,53 @@
 package org.apache.tapestry5.ioc.internal;
 
 import org.apache.tapestry5.ioc.Configuration;
-import org.apache.tapestry5.ioc.def.ContributionDef;
-import org.slf4j.Logger;
+import org.apache.tapestry5.ioc.ObjectLocator;
+
+import java.util.Collection;
 
 /**
- * Performs some validation before delegating to another Configuration.
+ * Wraps a {@link java.util.Collection} as a {@link org.apache.tapestry5.ioc.Configuration} and perform validation that
+ * collected value are of the correct type.
  */
 public class ValidatingConfigurationWrapper<T> implements Configuration<T>
 {
     private final String serviceId;
 
-    private final ContributionDef contributionDef;
-
-    private final Logger logger;
-
-    private final Configuration<T> delegate;
-
     private final Class expectedType;
+
+    private final Collection<T> collection;
+
+    private final ObjectLocator locator;
 
     // Need a strategy for determing the right order for this mass of parameters!
 
-    public ValidatingConfigurationWrapper(String serviceId, Logger logger, Class expectedType,
-                                          ContributionDef contributionDef, Configuration<T> delegate)
+    public ValidatingConfigurationWrapper(Collection<T> collection, String serviceId, Class expectedType,
+                                          ObjectLocator locator)
     {
+        this.collection = collection;
         this.serviceId = serviceId;
-        this.logger = logger;
         this.expectedType = expectedType;
-        this.contributionDef = contributionDef;
-        this.delegate = delegate;
+        this.locator = locator;
     }
 
     public void add(T object)
     {
         if (object == null)
-        {
-            logger.warn(IOCMessages.contributionWasNull(serviceId, contributionDef));
-            return;
-        }
+            throw new NullPointerException(IOCMessages.contributionWasNull(serviceId));
 
         // Sure, we say it is type T ... but is it really?
 
         if (!expectedType.isInstance(object))
-        {
-            logger.warn(IOCMessages.contributionWrongValueType(
+            throw new IllegalArgumentException(IOCMessages.contributionWrongValueType(
                     serviceId,
-                    contributionDef,
                     object.getClass(),
                     expectedType));
-            return;
-        }
 
-        delegate.add(object);
+        collection.add(object);
     }
 
+    public void addInstance(Class<? extends T> clazz)
+    {
+        add(locator.autobuild(clazz));
+    }
 }

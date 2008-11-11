@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -35,4 +35,13 @@ public interface Configuration<T>
      * @param object to add to the service's configuration
      */
     void add(T object);
+
+    /**
+     * Automatically instantiates an instance of the class, with dependencies injeted, and adds it to the
+     * configuration.
+     *
+     * @param clazz what class to instantiate
+     * @since 5.1
+     */
+    void addInstance(Class<? extends T> clazz);
 }

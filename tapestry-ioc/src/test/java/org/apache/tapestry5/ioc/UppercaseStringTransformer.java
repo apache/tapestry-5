@@ -1,4 +1,4 @@
-// Copyright 2008 The Apache Software Foundation
+//  Copyright 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,20 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.internal.structure;
+package org.apache.tapestry5.ioc;
 
-import java.util.Locale;
-
-/**
- * Provides access to the {@link PageResources} facade.
- */
-public interface PageResourcesSource
+public class UppercaseStringTransformer implements StringTransformer
 {
-    /**
-     * Gets (or creates) an instance of {@link PageResources} for the indicated locale.
-     *
-     * @param locale to create the resources for
-     * @return the resources
-     */
-    PageResources get(Locale locale);
+    public String transform(String input)
+    {
+        return input.toUpperCase();
+    }
 }

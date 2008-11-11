@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,28 +15,31 @@
 package org.apache.tapestry5.ioc.internal;
 
 import org.apache.tapestry5.ioc.MappedConfiguration;
+import org.apache.tapestry5.ioc.ObjectLocator;
 import org.apache.tapestry5.ioc.def.ContributionDef;
-import org.slf4j.Logger;
 
 import java.util.Map;
 
 /**
- * Provides two forms of validation for mapped configurations: <ul> <li>If either key or value is null, then a warning
- * is logged </li> <li>If the key has previously been stored (by some other {@link
- * org.apache.tapestry5.ioc.def.ContributionDef}, then a warning is logged</li> </ul>
+ * A wrapper around a Map that provides the {@link org.apache.tapestry5.ioc.MappedConfiguration} interface, and provides
+ * two forms of validation for mapped configurations: <ul> <li>If either key or value is null, then a warning is logged
+ * </li> <li>If the key has previously been stored (by some other {@link org.apache.tapestry5.ioc.def.ContributionDef},
+ * then a warning is logged</li> </ul>
  * <p/>
  * When a warning is logged, the key/value pair is not added to the delegate.
+ * <p/>
+ * Handles instantiation of instances.
  *
  * @param <K>
  * @param <V>
  */
 public class ValidatingMappedConfigurationWrapper<K, V> implements MappedConfiguration<K, V>
 {
+    private final Map<K, V> map;
+
     private final String serviceId;
 
     private final ContributionDef contributionDef;
-
-    private final Logger logger;
 
     private final Class<K> expectedKeyType;
 
@@ -44,62 +47,46 @@ public class ValidatingMappedConfigurationWrapper<K, V> implements MappedConfigu
 
     private final Map<K, ContributionDef> keyToContributor;
 
-    private final MappedConfiguration<K, V> delegate;
+    private final ObjectLocator locator;
 
-    public ValidatingMappedConfigurationWrapper(String serviceId, ContributionDef contributionDef,
-                                                Logger logger, Class<K> expectedKeyType, Class<V> expectedValueType,
+    public ValidatingMappedConfigurationWrapper(Map<K, V> map, String serviceId, ContributionDef contributionDef,
+                                                Class<K> expectedKeyType, Class<V> expectedValueType,
                                                 Map<K, ContributionDef> keyToContributor,
-                                                MappedConfiguration<K, V> delegate)
+                                                ObjectLocator locator)
     {
+        this.map = map;
         this.serviceId = serviceId;
         this.contributionDef = contributionDef;
-        this.logger = logger;
         this.expectedKeyType = expectedKeyType;
         this.expectedValueType = expectedValueType;
         this.keyToContributor = keyToContributor;
-        this.delegate = delegate;
+        this.locator = locator;
     }
 
     public void add(K key, V value)
     {
         if (key == null)
-        {
-            logger.warn(IOCMessages.contributionKeyWasNull(serviceId, contributionDef));
-            return;
-        }
-
-        if (value == null)
-        {
-            logger.warn(IOCMessages.contributionWasNull(serviceId, contributionDef));
-            return;
-        }
+            throw new NullPointerException(IOCMessages.contributionKeyWasNull(serviceId));
 
         if (!expectedKeyType.isInstance(key))
-        {
-            logger.warn(IOCMessages.contributionWrongKeyType(serviceId, contributionDef, key
-                    .getClass(), expectedKeyType));
-            return;
-        }
+            throw new IllegalArgumentException(
+                    IOCMessages.contributionWrongKeyType(serviceId, key
+                            .getClass(), expectedKeyType));
+
+        if (value == null)
+            throw new NullPointerException(IOCMessages.contributionWasNull(serviceId));
+
 
         if (!expectedValueType.isInstance(value))
-        {
-            logger.warn(IOCMessages.contributionWrongValueType(serviceId, contributionDef, value
+            throw new IllegalArgumentException(IOCMessages.contributionWrongValueType(serviceId, value
                     .getClass(), expectedValueType));
-            return;
-        }
 
         ContributionDef existing = keyToContributor.get(key);
 
         if (existing != null)
-        {
-            logger.warn(IOCMessages.contributionDuplicateKey(
-                    serviceId,
-                    contributionDef,
-                    existing));
-            return;
-        }
+            throw new IllegalArgumentException(IOCMessages.contributionDuplicateKey(serviceId, existing));
 
-        delegate.add(key, value);
+        map.put(key, value);
 
         // Remember that this key is provided by this contribution, when looking
         // for future conflicts.
@@ -107,4 +94,10 @@ public class ValidatingMappedConfigurationWrapper<K, V> implements MappedConfigu
         keyToContributor.put(key, contributionDef);
     }
 
+    public void addInstance(K key, Class<? extends V> clazz)
+    {
+        V value = locator.autobuild(clazz);
+
+        add(key, value);
+    }
 }
