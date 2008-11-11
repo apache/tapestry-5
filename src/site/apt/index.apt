@@ -32,6 +32,26 @@ What is Tapestry?
 
  Tapestry is released under the Apache Software Licence 2.0.
 
+Roadmap
+
+  Tapestry is, of course, an open-source project, with all the work coming from unpaid volunteers.  That being said, our rough timeline is as follows:
+
+  * 5.0 Release Candidate in November 2008
+
+  * 5.0 Final Release shortly thereafter
+
+  * 5.1 development to follow, on a much shorter release schedule
+
+  * ... but we are all open source developers working on our own time and schedules are hard to pin down.  Please be patient.  Tapestry 5
+    is increasingly stable.  Further "stable" with Tapestry usually refers to names of interfaces and methods, not to code quality,
+    which is always very, very high.
+
+  * We are now finally edging towards a release candidate, with most work being documentation, minor bug fixes and modest
+    enhancements. Note that Tapestry team members have been using Tapestry 5 to build production applications, and those
+    experiences are being applied back to the framework to improve its quality: we're finding rough edges and we're
+    smoothing them out.
+
+  []
 
 Third Party Libraries, Tutorials and Resources
 
@@ -67,6 +87,9 @@ Third Party Libraries, Tutorials and Resources
 *--+--+--+
 
 New And Of Note
+
+  * IoC Service contributions may now be made in terms of classes (that are automatically instantiated) as well as
+    instances.
 
   * At long last, an official {{{tapestry-core/ref/org/apache/tapestry5/corelib/components/LinkSubmit.html}LinkSubmit}} component.
 
@@ -326,4 +349,3 @@ Backwards Compatibility
   Because of this, Tapestry will be able to change internally to a great degree without it affecting any
   of the application code <you> write. This should finally crack the backwards compatibility nut, allowing you to have
   great assurance that you can upgrade to future releases of Tapestry without breaking your existing applications.
-    
