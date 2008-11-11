@@ -4,11 +4,11 @@
     <groupId>org.apache.tapestry</groupId>
     <artifactId>tapestry-project</artifactId>
     <packaging>pom</packaging>
-    <version>5.0.16</version>
+    <version>5.1.0.0-SNAPSHOT</version>
     <name>Tapestry 5 Project</name>
     <description>Master project for the modules of Tapestry 5.</description>
     <inceptionYear>2006</inceptionYear>
-    <url>http://tapestry.apache.org/tapestry5/</url>
+    <url>http://tapestry.apache.org/tapestry5.1/</url>
     <issueManagement>
         <system>Jira</system>
         <url>https://issues.apache.org/jira/browse/TAPESTRY</url>
