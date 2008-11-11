@@ -571,6 +571,132 @@
             </SvnBranchConfiguration>
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/tapestry-annotations">
+          <value>
+            <SvnBranchConfiguration>
+              <option name="branchUrls">
+                <list>
+                  <option value="https://svn.apache.org/repos/asf/tapestry/tapestry5/tapestry5" />
+                  <option value="https://svn.apache.org/repos/asf/tapestry/tapestry5/branches" />
+                  <option value="https://svn.apache.org/repos/asf/tapestry/tapestry5/tags" />
+                </list>
+              </option>
+              <option name="trunkUrl" value="https://svn.apache.org/repos/asf/tapestry/tapestry5/trunk" />
+            </SvnBranchConfiguration>
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/tapestry-component-report">
+          <value>
+            <SvnBranchConfiguration>
+              <option name="branchUrls">
+                <list>
+                  <option value="https://svn.apache.org/repos/asf/tapestry/tapestry5/tapestry5" />
+                  <option value="https://svn.apache.org/repos/asf/tapestry/tapestry5/branches" />
+                  <option value="https://svn.apache.org/repos/asf/tapestry/tapestry5/tags" />
+                </list>
+              </option>
+              <option name="trunkUrl" value="https://svn.apache.org/repos/asf/tapestry/tapestry5/trunk" />
+            </SvnBranchConfiguration>
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/tapestry-core">
+          <value>
+            <SvnBranchConfiguration>
+              <option name="branchUrls">
+                <list>
+                  <option value="https://svn.apache.org/repos/asf/tapestry/tapestry5/tapestry5" />
+                  <option value="https://svn.apache.org/repos/asf/tapestry/tapestry5/branches" />
+                  <option value="https://svn.apache.org/repos/asf/tapestry/tapestry5/tags" />
+                </list>
+              </option>
+              <option name="trunkUrl" value="https://svn.apache.org/repos/asf/tapestry/tapestry5/trunk" />
+            </SvnBranchConfiguration>
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/tapestry-hibernate">
+          <value>
+            <SvnBranchConfiguration>
+              <option name="branchUrls">
+                <list>
+                  <option value="https://svn.apache.org/repos/asf/tapestry/tapestry5/tapestry5" />
+                  <option value="https://svn.apache.org/repos/asf/tapestry/tapestry5/branches" />
+                  <option value="https://svn.apache.org/repos/asf/tapestry/tapestry5/tags" />
+                </list>
+              </option>
+              <option name="trunkUrl" value="https://svn.apache.org/repos/asf/tapestry/tapestry5/trunk" />
+            </SvnBranchConfiguration>
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/tapestry-ioc">
+          <value>
+            <SvnBranchConfiguration>
+              <option name="branchUrls">
+                <list>
+                  <option value="https://svn.apache.org/repos/asf/tapestry/tapestry5/tapestry5" />
+                  <option value="https://svn.apache.org/repos/asf/tapestry/tapestry5/branches" />
+                  <option value="https://svn.apache.org/repos/asf/tapestry/tapestry5/tags" />
+                </list>
+              </option>
+              <option name="trunkUrl" value="https://svn.apache.org/repos/asf/tapestry/tapestry5/trunk" />
+            </SvnBranchConfiguration>
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/tapestry-spring">
+          <value>
+            <SvnBranchConfiguration>
+              <option name="branchUrls">
+                <list>
+                  <option value="https://svn.apache.org/repos/asf/tapestry/tapestry5/tapestry5" />
+                  <option value="https://svn.apache.org/repos/asf/tapestry/tapestry5/branches" />
+                  <option value="https://svn.apache.org/repos/asf/tapestry/tapestry5/tags" />
+                </list>
+              </option>
+              <option name="trunkUrl" value="https://svn.apache.org/repos/asf/tapestry/tapestry5/trunk" />
+            </SvnBranchConfiguration>
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/tapestry-test">
+          <value>
+            <SvnBranchConfiguration>
+              <option name="branchUrls">
+                <list>
+                  <option value="https://svn.apache.org/repos/asf/tapestry/tapestry5/tapestry5" />
+                  <option value="https://svn.apache.org/repos/asf/tapestry/tapestry5/branches" />
+                  <option value="https://svn.apache.org/repos/asf/tapestry/tapestry5/tags" />
+                </list>
+              </option>
+              <option name="trunkUrl" value="https://svn.apache.org/repos/asf/tapestry/tapestry5/trunk" />
+            </SvnBranchConfiguration>
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/tapestry-tutorial1">
+          <value>
+            <SvnBranchConfiguration>
+              <option name="branchUrls">
+                <list>
+                  <option value="https://svn.apache.org/repos/asf/tapestry/tapestry5/tapestry5" />
+                  <option value="https://svn.apache.org/repos/asf/tapestry/tapestry5/branches" />
+                  <option value="https://svn.apache.org/repos/asf/tapestry/tapestry5/tags" />
+                </list>
+              </option>
+              <option name="trunkUrl" value="https://svn.apache.org/repos/asf/tapestry/tapestry5/trunk" />
+            </SvnBranchConfiguration>
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/tapestry-upload">
+          <value>
+            <SvnBranchConfiguration>
+              <option name="branchUrls">
+                <list>
+                  <option value="https://svn.apache.org/repos/asf/tapestry/tapestry5/tapestry5" />
+                  <option value="https://svn.apache.org/repos/asf/tapestry/tapestry5/branches" />
+                  <option value="https://svn.apache.org/repos/asf/tapestry/tapestry5/tags" />
+                </list>
+              </option>
+              <option name="trunkUrl" value="https://svn.apache.org/repos/asf/tapestry/tapestry5/trunk" />
+            </SvnBranchConfiguration>
+          </value>
+        </entry>
       </map>
     </option>
     <option name="myVersion" value="123" />
