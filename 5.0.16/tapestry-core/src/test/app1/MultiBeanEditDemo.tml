@@ -1,0 +1,32 @@
+<html t:type="Border"
+  xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+  <h1>MultiBean Edit</h1>
+
+  <form t:id="form">
+
+    <t:errors />
+
+    <div class="t-beaneditor">
+
+      <!--  Demonstrate default object binding from component id -->
+      <t:beaneditor t:id="credentials" />
+      <t:beaneditor t:id="rolePath" />
+
+      <div class="t-beaneditor-row">
+        <input type="submit" value="Set Access" />
+      </div>
+
+
+    </div>
+
+
+  </form>
+
+  <p>
+    [
+    <t:actionlink t:id="clear">Clear Data</t:actionlink>
+    ]
+  </p>
+
+</html>

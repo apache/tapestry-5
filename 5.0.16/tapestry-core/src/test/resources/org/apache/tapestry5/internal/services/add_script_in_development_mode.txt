@@ -1,0 +1,7 @@
+<html><body><p>Ready to be updated with scripts.</p><script src="foo.js" type="text/javascript"></script><script type="text/javascript">
+<!--
+Tapestry.DEBUG_ENABLED = true;
+Tapestry.onDOMLoaded(function() {
+});
+// -->
+</script></body></html>

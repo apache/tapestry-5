@@ -1,0 +1,26 @@
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+    <head>
+        <title>tutorial1 Start Page</title>
+    </head>
+    <body>
+
+        <h1>Hi/Lo Guess</h1>
+
+        <p>I'm thinking of a number between one and ten ...</p>
+
+        <p>
+            <t:actionlink>Start guessing</t:actionlink>
+        </p>
+
+        <h1>Address Book</h1>
+
+        <t:grid source="addresses"/>
+
+        <ul>
+            <li>
+                <t:pagelink page="address/create">Create new address</t:pagelink>
+            </li>
+        </ul>
+
+    </body>
+</html>

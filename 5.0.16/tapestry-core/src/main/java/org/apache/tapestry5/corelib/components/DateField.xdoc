@@ -1,0 +1,74 @@
+<document>
+    <body>
+
+        <section name="Related Components">
+            <ul>
+                <li>
+                    <a href="Form.html">Form</a>
+                </li>
+                <li>
+                    <a href="TextField.html">TextField</a>
+                </li>
+            </ul>
+        </section>
+
+        <section name="Examples">
+            <p>
+                The DateField component is very easy to use, all the JavaScript is generated for you. Then end result
+                looks like:
+            </p>
+
+            <p>
+                <em>Note: these screenshots are out of date, and reflect an earlier version of Tapestry and a different
+                    third-party JavaScript calendar than is currently available.
+                </em>
+            </p>
+
+            <p>
+                <img src="datefield_ref1.png"/>
+            </p>
+
+            <p>
+                Clicking the icon raises the popup calendar:
+            </p>
+
+            <p>
+                <img src="datefield_ref2.png"/>
+            </p>
+
+            <subsection name="DateFieldDemo.tml">
+                <source><![CDATA[<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+    <body>
+        <t:form>
+            <div class="t-beaneditor">
+                <div class="t-beaneditrow">
+                    <t:label for="date"/>
+                    <t:datefield t:id="date"/>
+                </div>
+                <div class="t-beaneditrow">
+                    <input type="submit" value="Update"/>
+                </div>
+            </div>
+        </t:form>
+    </body>
+</html>]]></source>
+            </subsection>
+
+            <p>
+                The use of the extra &lt;div&gt; elements is to trigger the CSS styles that are
+                usually used as part of a<a href="BeanEditForm.html">BeanEditForm</a>. Just the
+                <code><![CDATA[<t:datefield>]]></code>
+                element is all that's really necessary.
+            </p>
+        </section>
+
+        <section name="Notes">
+
+            <p>The DateField component is based on the open source
+                <a href="http://webfx.eae.net/dhtml/datepicker/usage.html">WebFX DatePicker</a>
+                widget.
+            </p>
+
+        </section>
+    </body>
+</document>

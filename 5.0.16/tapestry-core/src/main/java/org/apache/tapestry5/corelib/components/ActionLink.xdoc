@@ -1,0 +1,141 @@
+<document>
+    <body>
+
+        <section name="Examples">
+
+            <p>
+                In this example, we are showing part of a page to view and Account object, with an option to
+                delete the Account.
+            </p>
+
+
+            <subsection name="Account.java">
+                <source><![CDATA[
+public class Account
+{
+    private long id;
+
+    private String userName;
+
+    // etc., etc., ...
+
+    // Getters and setters omitted ...
+    
+}]]></source>
+            </subsection>
+
+            <subsection name="ViewAccount.tml">
+                <source><![CDATA[
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+    <body>
+        <h1>View Account #${account.id}</h1>
+
+        <t:beandisplay object="account"/>
+
+        <p>
+          [<t:actionlink t:id="delete" context="account.id">delete</t:actionlink>
+        </p>
+    </body>
+</html>
+]]></source>
+
+                <p>
+                    We store the account's id as
+                    <em>event context</em>
+                    inside the URL. The account's id will
+                    be part of the URL and will be accessible when the event request is later triggered.
+                </p>
+
+
+            </subsection>
+
+            <subsection name="ViewAccount.java">
+                <source><![CDATA[
+public class ViewAccount
+{
+    @Persist
+    private Account account;
+
+    @InjectPage
+    private AccountsSummary accountsSummaryPage;
+
+    @Inject
+    private AccountDAO accountDAO;
+
+    public Account getAccount() { return account; }
+
+    Object onActionFromDelete(long accountId)
+    {
+        accountDAO.delete(accountId);
+
+        accountsSummaryPage.setMessage(String.format("Account #%d has been deleted.", accountId));
+
+        return accountsSummaryPage;
+    }
+}
+]]></source>
+
+                <p>
+                    The ActionLink component triggers an "action" event, which is matched by the
+                    onActionFromDelete() method. A real application might have other action links on the page, for (say)
+                    creating new accounts or other operations, thus we use the component's id ("delete")
+                    to ensure that the method is only invoked under the expected circumstances.
+                </p>
+
+                <p>
+                    Notice how the context (from when the link was rendered) now becomes parameters
+                    to the event handler method.
+                </p>
+
+                <p>
+                    The AccountDAO (data access object) service is responsible for the work, we
+                    then set a message on another page (the field for this message should be persistent) and return
+                    the page. Tapestry will send a redirect request to the client to display the page.
+                </p>
+
+
+            </subsection>
+
+        </section>
+
+        <section name="Notes">
+
+            <p>
+                Rarely, you might need to pass more information in the context. For example, perhaps
+                account id is not enought to uniquely identify the Account object in question - hypothetically,
+                you may need to include a company id as well as the account id. You can
+                build an object array to contain both values:
+            </p>
+
+            <source><![CDATA[
+    public Object[] getAccountContext()
+    {
+        return new Object[] { account.companyId, account.id };
+    }
+
+    Object onActionFromDelete(long companyId, long accountId)
+    {
+        accountDAO.delete(companyId, accountId);
+
+        accountsSummaryPage.setMessage(String.format("Account #%d has been deleted.", accountId));
+
+        return accountsSummaryPage;
+    }]]></source>
+
+            <p>
+                In the template, this would be referenced as:
+            </p>
+            <source><![CDATA[
+        <p>
+          [<t:actionlink t:id="delete" context="accountContext">delete</t:actionlink>
+        </p>]]></source>
+
+            <p>
+                This highlights the use of the component class: any complicated processing should be offloaded
+                out of the template and into the class.
+            </p>
+
+        </section>
+
+    </body>
+</document>
