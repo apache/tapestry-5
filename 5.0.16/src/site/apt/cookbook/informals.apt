@@ -1,0 +1,89 @@
+ ----
+ Supporting Informal Parameters
+ ----
+ 
+Supporting Informal Parameters
+
+  Informal parameters are additional parameters beyond the formal parameters
+  defined for a component using the
+  {{{../apidocs/org/apache/tapestry5/annotations/Parameter.html}Parameter}}
+  annotation.
+
+  A component that closely emulates a particular HTML element should also
+  support informal parameters.  You'll find that many of the built-in
+  Tapestry components, such as Form, Label and TextField, do exactly that.
+
+  Normally, specifying additional parameters for a component, beyond its
+  formal parameters, does nothing: the additional parameters are ignored.
+
+  The
+  {{{../apidocs/org/apache/tapestry5/annotations/SupportsInformalParameters.html}SupportsInformalParameters}}
+  annotation is used to identify a component for which informal parameters
+  are to be kept.
+
+  The example is an Img component, a replacement for the \<img\> tag.
+  Its src parameter will be an asset.
+
+----
+@SupportsInformalParameters
+public class Img
+{
+  @Parameter(required=true, allowNull=false, defaultPrefix=BindingConstants.ASSET)
+  private Asset src;
+
+  @Inject
+  private ComponentResources resources;
+
+  boolean beginRender(MarkupWriter writer)
+  {
+     writer.element("img",
+                    "src", src);
+
+     resources.renderInformalParameters(writer);
+
+     writer.end();
+
+     return false;
+  }
+}
+----
+
+  The call to renderInformalParameters() is what converts and outputs
+  the informal parameters. It should occur <after> your code has
+  rendered attributes into the element (earlier written attributes
+  will <not> be overwritten by later written attributes).
+
+  Returning false from beginRender() ensures that the body of the component
+  is not rendered, which makes sense for a \<img\> tag, which has no body.
+
+  Another option is to use the
+  {{{../apidocs/org/apache/tapestry5/corelib/mixins/RenderInformals.html}RenderInformals}}
+  mixin:
+
+----
+public class Img
+{
+  @Parameter(required=true, allowNull=false, defaultPrefix=BindingConstants.ASSET)
+  private Asset src;
+
+  @Mixin
+  private RenderInformals renderInformals;
+
+  void beginRender(MarkupWriter writer)
+  {
+     writer.element("img",
+                    "src", src);
+  }
+
+  boolean beforeRenderBody(MarkupWriter writer)
+  {
+    writer.end();
+
+    return false;
+  }
+}
+----
+
+  This variation splits the rendering of the tag in two pieces, so that
+  the RenderInformals mixin can operate (after beginRender() and before
+  beforeRenderBody()).

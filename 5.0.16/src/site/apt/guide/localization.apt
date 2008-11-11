@@ -1,0 +1,183 @@
+ ----
+  Localization
+ ----
+ 
+Localization
+
+  Localization is all about getting the right text to the user, in the right language.
+  
+  Localization support is well integrated into Tapestry.  Tapestry allows you to easily seperate the text you present to your users
+  from the rest of your application ... pull it out of your Java code and even out of your component templates.  You can then translate
+  your messages into other languages and let Tapestry put everthing together.
+  
+Component Message Catalogs
+
+  Each component class may have a component message catalog. A component message catalog is a set of files with the extension ".properties".
+  These property files are the same format used by java.util.ResourceBundle, just lines of <<<key=value>>>.
+  These files are stored on the classpath, in the same package folder as the page or component's compiled Java class.
+  
+  So for a class named org.example.myapp.pages.MyPage, you would have a main properties file as <<<org/example/myapp/pages/MyPage.properties>>>.
+  
+  If you have a translations of these values, you provide additional properties file, adding an
+  {{{http://www.loc.gov/standards/iso639-2/englangn.html}ISO language code}} before the extension.  Thus, if you have a French translation,
+  you could create a file <<<MyPage_fr.properties>>>.
+  
+  Any values in the more language specific file will <override> values from the main properties file.  If you had an even more specific
+  localization for just French as spoken in France, you could create <<<MyPage_fr_FR.properties>>> (thats a language code plus a country code,
+  you can even go further
+  and add variants ... but its unlikely that you'll ever need to go beyond just language codes in practice).
+  
+  The messages in the catalog are accessed by keys.  Tapestry ignores the case of the keys when accessing messages in the catalog.
+
+Properties File Charset
+
+  Tapestry uses the <<<UTF-8>>> charset when reading the properties files in a message catalog. This means that you don't have to use the Java
+  <<<native2ascii>>> tool.
+  
+Message Catalog Inheritance
+
+  If a component class is a subclass of another component class, then it inherits that base class' message catalog. Its own message catalog extends and overrides
+  the values inherited from the base class.
+  
+  In this way, you could have a base component class that contained common messages, and extend or override those messages in subclasses (just as you would
+  extend or override the methods of the base component class). This, of course, works for as many levels of inheritance as you care to support.
+  
+Application Message Catalog
+
+  If the file <<<WEB-INF/>>><AppName><<<.properties>>> exists in the context, it will be used as an application-wide message catalog.  The <AppName>
+  is derived from the name of the filter inside the web.xml file; this is most often just "app", thus <<<WEB-INF/app.properties>>>.
+  The search for the file is case sensitive. The properties files may be localized.
+  
+  Individual pages and components can override the values defined in the message catalog.
+  
+Localized Component Templates
+
+  The same lookup mechanism applies to component templates.  Tapestry will search for a localized version of each component template and use the closest
+  match.  Thus you could have <<<MyPage_fr.html>>> for French users, and <<<MyPage.html>>> for all other users.
+  
+Accessing Localized Messages
+
+  The above discusses what files to create and where to store them, but doesn't address how to make use of that information.
+  
+  Messages can be accessed in one of two ways:
+  
+  * Using the {{{parameters.html}message: binding prefix}} in a component template
+  
+  * By injecting the comopnent's Messages object
+  
+  []
+  
+  In the first case, you may use the message: binding prefix with component parameters, or with template expansions:
+  
++-----+
+<t:layout title="message:page-title">
+
+  ${message:greeting}, ${user.name}!
+  
+  . . .
+</t:layout>
++-----+
+
+  Here, the <<<page-title>>> message is extracted from the catalog and passed to the Border component's title parameter.
+  
+  In addition, the <<<greeting>>> message is extracted and written into the response as part of the template.
+  
+  As usual, "prop:" is the defalt binding prefix, thus <<<user.name>>> is a property path, not a message key.
+  
+  You would extend this with a set of properties files:
+  
++----+
+page-title=Your Account
+greeting=Welcome back
++----+
+
+  Or, perhaps, a French version:
+  
++----+
+page-title=Votre Compte
+greeting=Bienvenue en arriere
++----+
+    
+    Programatically, you may inject your component message catalog into your class, as an instance of the Messages interface:
+    
++----+
+  @Inject
+  private Messages messages;
++----+
+
+  You could then <<<get()>>> messages, or <<<format()>>> them:
+  
++----+
+
+  public String getCartSummary()     
+  {
+    if (items.isEmpty())
+      return messages.get("no-items");
+      
+    return messages.format("item-summary", _items.size());
+  }
++----+
+
+  The format() option works using a java.text.Formatter, with all the printf-style loveliness you've come to expect:
+  
++----+
+no-items=Your shopping cart is empty.     
+item-summary=You have %d items in your cart.
++----+
+
+  As easy as conditionals are to do inside a Tapestry template, sometimes its even easier to do it in Java code.    
+ 
+    
+Missing Keys
+
+  If you reference a key that is not in the message catalog, Tapestry does not throw an exception (that would make initially developing
+  an application very frustrating).  When a key can not be located, a "placeholder" message is generated, such as "[[missing key: key-not-found]]".
+  
+  
+Reloading
+
+  If you change a property file in a message catalog, you'll see the change immediately, just as with component classes and component templates.
+  
+Asset Localization
+
+  When {{{inject.html}injecting assets}}, the injected asset will be localized as well.  A search for the closest match for the active locale
+  is made, and the final Asset will reflect that.
+      
+Locale Selection
+
+  The locale for each request is determined from the HTTP request headers.  The request locale reflects the environment of the web browser and possibly even
+  the keyboard selection of the user on the client.  It can be highly specific, for example, identifying British English (as en_GB) vs. American English (en).
+  
+  Tapestry "narrows" the raw request locale, as specified in the request, to a known quantity. 
+  It uses the {{{conf.html}configuration symbol}} tapestry.supported-locales to choose the effective locale for each request.  This value is a comma-separated
+  list of locale names. Tapestry searches the list for the best
+  match for the request locale; for example, a request locale of "fr_FR" would match "fr" but not "de".  If no match is found, then the first locale name
+  in the list is used as the effective locale (it is used as the default for non-matches).  Thus a site that primarily caters to French speakers
+  would want to list "fr" as the first locale in the list.  
+  
+Changing the Locale
+
+  Tapestry does not yet support changing the locale, but that will be available shortly.  The intent is to mimic Tapestry 4 behavior: store a cookie
+  on the client to provide the default for the locale on the next visit, and store a locale name in the session (if a session exists).  <<TODO: I believe
+  this has been implemented by Kent.>>
+  
+Output Content Type and Charset
+
+  When Tapestry renders a page, the very first step is to determine the output content type and charset.  
+  
+  This information is obtained from meta data on the page itself.  Meta data is specified using the
+  {{{../apidocs/org/apache/tapestry5/annotations/Meta.html}Meta}} annotation.
+  
+  The response content type is obtained via meta-data key "tapestry.response-content-type".  This value defaults to "text/html".
+
+  As a convienence, the {{{../apidocs/org/apache/tapestry5/annotations/ContentType.html}ContentType}} annotation can be used to specify the response
+  content type.  The value attribute of the annotation is the content type.
+  
+  The character set for all outgoing markup and all incoming requests is "UTF-8".  UTF-8 is a version of Unicode where individual characters are encoded as one
+  or more bytes.  Most western language characters (that is, typical ASCII characters) are encoded in a single byte.  Accented characters or
+  non-western characters (such as Japanese, Arabic, etc.) may be encoded as two or more bytes.
+
+  
+  
+  
+  

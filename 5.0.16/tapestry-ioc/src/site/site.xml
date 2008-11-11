@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!-- 
+   Copyright 2006 The Apache Software Foundation
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+-->
+
+<project name="Tapestry IoC">
+    <bannerLeft>
+        <name>Tapestry 5</name>
+        <href>http://tapestry.apache.org/tapestry5/</href>
+        <src>images/tapestry_banner.gif</src>
+    </bannerLeft>
+    <bannerRight>
+        <name>Apache</name>
+        <href>http://www.apache.org</href>
+        <src>images/asf_logo_wide.gif</src>
+    </bannerRight>
+    <skin>
+        <groupId>org.apache.tapestry</groupId>
+        <artifactId>maven-skin</artifactId>
+        <version>1.1</version>
+    </skin>
+
+    <publishDate format="dd MMM yyyy"/>
+
+    <body>
+
+        <head>
+            <script src="http://www.google-analytics.com/urchin.js" type="text/javascript"></script>
+            <script type="text/javascript">_uacct = "UA-400821-1"; urchinTracker();</script>
+        </head>
+
+        <menu name="Quick Links">
+            <item name="Download" href="http://tapestry.apache.org/download.html"/>
+        </menu>
+
+        <menu name="Tapestry IoC Container">
+            <item name="Introduction" href="index.html"/>
+            <item name="Overview of Tapestry IoC" href="overview.html"/>
+            <item name="Modules" href="module.html"/>
+            <item name="Module Autoloading" href="autoload.html"/>
+            <item name="Services" href="service.html"/>
+            <item name="Decorators" href="decorator.html"/>
+            <item name="Configuration" href="configuration.html"/>
+            <item name="Type Coercion" href="coerce.html"/>
+            <item name="Injection in Detail" href="injection.html"/>
+            <item name="Serialization" href="serialization.html"/>
+            <item name="Case Insensitivity" href="case.html"/>
+            <item name="Symbols" href="symbols.html"/>
+            <item name="Starting the Registry" href="run.html"/>
+            <item name="Object Providers" href="provider.html"/>
+            <item name="Ordering" href="order.html"/>
+            <item name="Logging" href="logging.html"/>
+            <item name="Startup" href="startup.html"/>
+        </menu>
+
+
+        <menu name="Service Builders">
+            <item name="Chain Of Command" href="command.html"/>
+            <item name="Strategy" href="strategy.html"/>
+            <item name="Pipeline" href="pipeline.html"/>
+            <item name="Shadow Services" href="shadow.html"/>
+        </menu>
+
+        <menu name="Tapestry IoC Cookbook">
+            <item name="Introduction" href="cookbook/index.html"/>
+            <item name="Basics" href="cookbook/basics.html"/>
+            <item name="Service Configurations" href="cookbook/servconf.html"/>
+            <item name="Using Patterns" href="cookbook/patterns.html"/>
+        </menu>
+
+
+        <menu ref="reports"/>
+
+    </body>
+</project>

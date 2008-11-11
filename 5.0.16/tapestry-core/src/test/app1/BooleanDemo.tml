@@ -1,0 +1,27 @@
+<html t:type="Border"
+      xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+    <h1>Boolean Property Access Demo</h1>
+
+    <p>
+        Both
+        <code>is</code>
+        and
+        <code>get</code>
+        prefixes work.
+    </p>
+
+    <dl>
+        <dt>flagUsingGet</dt>
+        <dd id="usingGet">${flagUsingGet}</dd>
+        <dt>flagUsingIs</dt>
+        <dd id="usingIs">${flagUsingIs}</dd>
+    </dl>
+
+    <p>
+        <t:actionlink t:id="set">set</t:actionlink>
+        |
+        <t:actionlink t:id="clear">clear</t:actionlink>
+    </p>
+
+</html>

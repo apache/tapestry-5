@@ -1,0 +1,7 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+    <h1>Form Field Outside Form</h1>
+
+    <t:textfield value="quantity" size="3"/>
+
+</html>

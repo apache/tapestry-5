@@ -1,0 +1,17 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+    <h1>Component as Parameter</h1>
+
+    <p>Tests the ability to use a component type as a parameter.</p>
+
+    <t:if test="message">
+        <p>${message}</p>
+    </t:if>
+
+    <t:block>
+        <t:actionlink t:id="blockAction">click me</t:actionlink>
+    </t:block>
+
+    <t:actionlinkindirect component="blockAction"/>
+
+</html>

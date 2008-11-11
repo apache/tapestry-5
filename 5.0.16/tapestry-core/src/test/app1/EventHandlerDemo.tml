@@ -1,0 +1,32 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+    <h1>EventHandler Demo</h1>
+
+    <t:if test="methodNames">
+        <p>Event method names:
+            <span id="methodNames">${methodNames}</span>
+        </p>
+    </t:if>
+
+
+    <p>[<t:pagelink page="eventhandlerdemo" context="'anything'">clear</t:pagelink>]
+    </p>
+
+
+    <ul>
+        <li>
+            <t:actionlink t:id="wilma">No Context</t:actionlink>
+        </li>
+        <li>
+            <t:actionlink t:id="barney" context="literal:one">Single context value</t:actionlink>
+        </li>
+        <li>
+            <t:actionlink t:id="betty" context="twoContext">Two value context</t:actionlink>
+        </li>
+        <li>
+            <t:actionlink context="'two'" t:id="fred">Two value context (from fred)</t:actionlink>
+        </li>
+    </ul>
+
+
+</html>

@@ -1,0 +1,97 @@
+ ----
+ Persistent Page Data
+ ----
+ 
+Persistent Page Data
+
+  Most instance variables in Tapestry are automatically cleared at the end of each request.
+  
+  This is important, as it pertains to how Tapestry pages are pooled and shared, over time,
+  by many users.
+  
+  However, you often want to store some persistent data on a page, and have access
+  to it in later requests.
+  
+  This is accomplished with the 
+  {{{../apidocs/org/apache/tapestry5/annotations/Persist.html}Persist annotation}}.
+  
+  This annotation is applied to private instance fields.
+    
++----+
+  @Persist
+  private int value;
++----+
+    
+  Annotated fields will store their state between requests. Generally, speaking, this means
+  that the value is stored into the session (but other approaches are possible).
+  
+  Whenever you make a change to a persistent field, its value is stored.
+  
+  On later requests, the value for such persistent fields is reloaded from storage.
+  
+Persistence Strategies
+
+  The value for each field is the <strategy> used to store the field between requests.
+  
+* session strategy
+
+  The session strategy stores field changes into the session; the session is created as necessary.
+  
+  A suitably long session attribute name is used; it incorporates the
+  name of the page, the nested component id, and the name of the field.
+  
+  Session strategy is the default strategy used unless otherwise overridden.
+  
+* flash strategy
+
+  The flash strategy stores information in the session as well, just for not very long.  Values are
+  stored into the session, but then deleted from the session as they are first used to restore
+  a page's state.
+  
+  The flash is typically used to store temporary messages that should only be displayed to the user
+  once.
+  
+* client strategy
+
+  The field is persisted onto the client; you will see an additional query parameter in each URL
+  (or an extra hidden field in each form).
+  
+  Client persistence is somewhat expensive.  It can bloat the size of the rendered pages by adding hundreds
+  of characters to each link. There is extra processing on each request to de-serialize the 
+  values encoded into the query parameter.
+  
+  Client persistence does not scale very well; as more information is stored into the query parameter, its
+  length can become problematic. In many cases, web browsers, firewalls or other servers may silently
+  truncate the URL which will break the application.
+  
+  Use client persistence with care, and store a minimal amount of data.  Try to store the identity (that is,
+  primary key) of an object, rather than the object itself.
+ 
+  
+Persistence Search
+
+  By default the value for the Persist annotation is the empty string. When this is true,
+  then the actual strategy to be used is determined by a search up the 
+  component hiearchy.
+  
+  For each component, the meta-data property <<<tapestry.persistence-strategy>>> is checked.
+  This can be specified using the 
+  {{{../apidocs/org/apache/tapestry5/annotations/Meta.html}Meta}} annotation.
+  
+  If the value is non-blank, then that strategy is used. This allows a component to control
+  the persistence strategy used inside any sub-components (that don't explicitly use a different
+  strategy).
+  
+  In any case, if no component provides the meta data, then the ultimate default, "session", is used.  
+  
+Default Values
+
+  Fields marked with @Persist may not have default values (whether set inline, or inside a constructor).
+
+Clearing Persistent Fields
+
+   If you reach a point where you know that all data for a page can be discarded, you can do exactly that.
+
+   The method <<<discardPersistentFieldChanges()>>> of ComponentResources will discard all persistent fields
+   for the page, regardless of which strategy is used to store the property. This will not affect the
+   page in memory, but takes effect for subsequent requests.
