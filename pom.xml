@@ -1,9 +1,10 @@
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0">
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.apache.tapestry</groupId>
     <artifactId>tapestry-project</artifactId>
     <packaging>pom</packaging>
-    <version>5.0.16-SNAPSHOT</version>
+    <version>5.0.16</version>
     <name>Tapestry 5 Project</name>
     <description>Master project for the modules of Tapestry 5.</description>
     <inceptionYear>2006</inceptionYear>
