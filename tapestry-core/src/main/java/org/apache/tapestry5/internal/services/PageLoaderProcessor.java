@@ -591,7 +591,7 @@ class PageLoaderProcessor
 
         Binding binding = new LiteralBinding("block parameter " + name, block, token.getLocation());
 
-        // TODO: Check that the t:parameter doesn't appear outside of an embedded component.
+        // TODO: Check that the parameter block doesn't appear outside of an embedded component.
 
         element.bindParameter(name, binding);
 
@@ -711,7 +711,7 @@ class PageLoaderProcessor
 
         // If the component was from an embedded @Component annotation, and it is inheritting informal parameters,
         // and the component in question supports informal parameters, than get those inheritted informal parameters ...
-        // but later (this helps ensure that <t:parameter> elements that may provide informal parameters are
+        // but later (this helps ensure that block parameter elements that may provide informal parameters are
         // visible when the informal parameters are copied to the child component).
 
         if (embeddedModel != null && embeddedModel.getInheritInformalParameters() && newComponentModel.getSupportsInformalParameters())

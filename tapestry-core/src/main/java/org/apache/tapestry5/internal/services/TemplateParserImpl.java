@@ -57,6 +57,12 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
      */
     public static final String TAPESTRY_SCHEMA_5_0_0 = "http://tapestry.apache.org/schema/tapestry_5_0_0.xsd";
 
+    /**
+     * Special namespace used to denote Block parameters to components, as a (preferred) alternative to the t:parameter
+     * element.  The simple element name is the name of the parameter.
+     */
+    public static final String TAPESTRY_PARAMETERS_URI = "tapestry:parameter";
+
     private static final Pattern ID_PATTERN = Pattern.compile("^[a-z]\\w*$", Pattern.CASE_INSENSITIVE);
 
     /**
@@ -76,9 +82,7 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
     // expansions on the same text line into a single large
     // but invalid expansion.
 
-    private static final String EXPANSION_REGEXP = "\\$\\{\\s*(.*?)\\s*}";
-
-    private static final Pattern EXPANSION_PATTERN = Pattern.compile(EXPANSION_REGEXP);
+    private static final Pattern EXPANSION_PATTERN = Pattern.compile("\\$\\{\\s*(.*?)\\s*}");
 
 
     private XMLReader reader;
@@ -353,6 +357,12 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
             return;
         }
 
+        if (TAPESTRY_PARAMETERS_URI.equals(uri))
+        {
+            startParameterElement(localName, attributes);
+            return;
+        }
+
         startPossibleComponent(attributes, uri, localName, null);
     }
 
@@ -387,7 +397,7 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
 
         if (localName.equalsIgnoreCase("parameter"))
         {
-            startParameter(attributes);
+            startClassicParameter(attributes);
             return;
         }
 
@@ -453,7 +463,12 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
         // TODO: Check for an xml:space attribute
     }
 
-    private void startParameter(Attributes attributes)
+    /**
+     * Starts a t:parameter element which was the only way to demarcate block parameters in 5.0.
+     *
+     * @param attributes
+     */
+    private void startClassicParameter(Attributes attributes)
     {
         addEndOfElementHandler();
 
@@ -463,6 +478,24 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
             throw new TapestryException(ServicesMessages.parameterElementNameRequired(), getCurrentLocation(), null);
 
         tokens.add(new ParameterToken(parameterName, getCurrentLocation()));
+    }
+
+    /**
+     * New in 5.1 is the "tapestry:parameter" namespace. Elements in this namespace are the names of block parameters to
+     * components, replacing the &lt;t:parameter name="foo"&gt; construct used in 5.0.
+     *
+     * @param localName  unqualifed  element name
+     * @param attributes must be zero length
+     */
+    private void startParameterElement(String localName, Attributes attributes)
+    {
+        addEndOfElementHandler();
+
+        if (attributes.getLength() > 0)
+            throw new TapestryException(ServicesMessages.parameterElementDoesNotAllowAttributes(), getCurrentLocation(),
+                                        null);
+
+        tokens.add(new ParameterToken(localName, getCurrentLocation()));
     }
 
     /**
@@ -780,6 +813,10 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
         // Not interested in the Tapestry namespace (that is never sent to the client).
 
         if (uri.equals(TAPESTRY_SCHEMA_5_0_0)) return;
+
+        // Likewise, the special namespace for block parameters.
+
+        if (uri.equals(TAPESTRY_PARAMETERS_URI)) return;
 
         // The prefix may be blank, which happens when the xmlns attribute is used to define the
         // namespace for the default namespace, and when a document has an explicit DOCTYPE.

@@ -76,7 +76,7 @@ public class User
             <subsection name="CreateUser.tml">
 
                 <source><![CDATA[
-<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd" xmlns:p="tapestry:parameter">
     <body>
         <h1>Create New User</h1>
 
@@ -264,18 +264,18 @@ public class CreateUser
 
                 <source><![CDATA[
         <t:beaneditform t:id="user" submitlabel="message:create-user">
-            <t:parameter name="age">
+            <p:age>
                 <t:label for="age"/>
                 <t:textfield t:id="age" value="user.age"/>
                 <em>
                     Users must be between 18 and 99.
                 </em>
-            </t:parameter>
+            </p:age>
         </t:beaneditform>]]></source>
 
                 <p>
                     The
-                    <code><![CDATA[<t:parameter>]]></code>
+                    <code><![CDATA[<p:age>]]></code>
                     element
                     is an
                     <em>override</em>
