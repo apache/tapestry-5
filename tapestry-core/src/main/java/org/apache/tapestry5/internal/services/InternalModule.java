@@ -21,10 +21,7 @@ import org.apache.tapestry5.ioc.ObjectLocator;
 import org.apache.tapestry5.ioc.ScopeConstants;
 import org.apache.tapestry5.ioc.ServiceBinder;
 import org.apache.tapestry5.ioc.ServiceResources;
-import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.ioc.annotations.Marker;
-import org.apache.tapestry5.ioc.annotations.Scope;
-import org.apache.tapestry5.ioc.annotations.Symbol;
+import org.apache.tapestry5.ioc.annotations.*;
 import org.apache.tapestry5.ioc.internal.services.CtClassSource;
 import org.apache.tapestry5.ioc.services.Builtin;
 import org.apache.tapestry5.ioc.services.ClassFactory;
@@ -104,10 +101,9 @@ public class InternalModule
 
 
     @Scope(ScopeConstants.PERTHREAD)
-    public static RequestPageCache buildRequestPageCache(ObjectLocator locator, PerthreadManager perthreadManager)
+    public static RequestPageCache buildRequestPageCache(@Autobuild RequestPageCacheImpl service,
+                                                         PerthreadManager perthreadManager)
     {
-        RequestPageCacheImpl service = locator.autobuild(RequestPageCacheImpl.class);
-
         perthreadManager.addThreadCleanupListener(service);
 
         return service;
@@ -153,20 +149,19 @@ public class InternalModule
         return source;
     }
 
-    public ComponentClassTransformer buildComponentClassTransformer(ServiceResources resources)
+    public ComponentClassTransformer buildComponentClassTransformer(
+            @Autobuild ComponentClassTransformerImpl transformer)
     {
-        ComponentClassTransformerImpl transformer = resources.autobuild(ComponentClassTransformerImpl.class);
-
         componentInstantiatorSource.addInvalidationListener(transformer);
 
         return transformer;
     }
 
-    public PagePool buildPagePool(PageLoader pageLoader, ComponentMessagesSource componentMessagesSource,
+    public PagePool buildPagePool(@Autobuild PagePoolImpl service,
+                                  PageLoader pageLoader,
+                                  ComponentMessagesSource componentMessagesSource,
                                   ServiceResources resources)
     {
-        PagePoolImpl service = resources.autobuild(PagePoolImpl.class);
-
         // This covers invalidations due to changes to classes
 
         pageLoader.addInvalidationListener(service);
@@ -186,10 +181,8 @@ public class InternalModule
         return service;
     }
 
-    public ComponentClassCache buildComponentClassCache(@ComponentLayer ClassFactory classFactory)
+    public ComponentClassCache buildComponentClassCache(@Autobuild ComponentClassCacheImpl service)
     {
-        ComponentClassCacheImpl service = new ComponentClassCacheImpl(classFactory);
-
         componentInstantiatorSource.addInvalidationListener(service);
 
         return service;
@@ -239,10 +232,8 @@ public class InternalModule
         return service;
     }
 
-    public PageLoader buildPageLoader(ServiceResources resources)
+    public PageLoader buildPageLoader(@Autobuild PageLoaderImpl service)
     {
-        PageLoaderImpl service = resources.autobuild(PageLoaderImpl.class);
-
         // Recieve invalidations when the class loader is discarded (due to a component class
         // change). The notification is forwarded to the page loader's listeners.
 

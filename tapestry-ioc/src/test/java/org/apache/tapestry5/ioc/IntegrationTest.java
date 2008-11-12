@@ -999,4 +999,19 @@ public class IntegrationTest extends IOCInternalTestCase
 
         r.shutdown();
     }
+
+    /**
+     * TAP5-139
+     */
+    @Test
+    public void autobuild_injection()
+    {
+        Registry r = buildRegistry(AutobuildInjectionModule.class);
+
+        StringTransformer st = r.getService(StringTransformer.class);
+
+        assertEquals(st.transform("Hello, ${fred}"), "Hello, flintstone");
+
+        r.shutdown();
+    }
 }

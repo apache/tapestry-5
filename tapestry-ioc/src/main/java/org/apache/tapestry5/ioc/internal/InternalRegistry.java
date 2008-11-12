@@ -35,10 +35,12 @@ public interface InternalRegistry extends Registry, RegistryShutdownHub, Operati
      *
      * @param objectType         type of object o be injected
      * @param annotationProvider access to annotations at point of injection
+     * @param locator            used to resolve any subsequent injections
      * @param localModule        module to limit services to, if Local annotaton present
      * @return the service or object
      */
-    <T> T getObject(Class<T> objectType, AnnotationProvider annotationProvider, Module localModule);
+    <T> T getObject(Class<T> objectType, AnnotationProvider annotationProvider, ObjectLocator locator,
+                    Module localModule);
 
     /**
      * Returns a service lifecycle by service scope name.

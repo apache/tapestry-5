@@ -171,6 +171,12 @@ Standard Injection Processing
    {{{../apidocs/org/apache/tapestry5/ioc/annotations/Symbol.html}Symbol}} annotation's value
    (if present) is lookup up and converted to the injection type.
 
+** Autobuild ObjectProvider
+
+   Checks to see if the
+   {{{../apidocs/org/apache/tapestry5/ioc/annotation/Autobuild.html}Autobuild}} is present and,
+   if so, autobuilds the value for the parameter. 
+
 ** Alias ObjectProvider  (tapestry-core)
 
   Uses the
@@ -185,16 +191,15 @@ Standard Injection Processing
   Checks for the
   {{{../apidocs/org/apache/tapestry5/annotations/Path.html}Path}}    annotation.
 
-   If present, the annotation value has embedded symbols expanded, and is converted into an Asset (which must
+   If present, the annotation's value has embedded symbols expanded, and is converted into an Asset (which must
    exist).
 
    The TypeCoercer can then convert the Asset to the injection type.
 
-
 ** Service ObjectProvider (tapestry-core)
 
   Looks for the  {{{../apidocs/org/apache/tapestry5/annotations/Service.html}Service}} annotation;
-  if present, the annotation value is the exact service id to inject.  This is necessary because
+  if present, the annotation's value is the exact service id to inject.  This is necessary because
   injections into <component> fields are always triggered by the Inject annotation.
 
 * Service Lookup

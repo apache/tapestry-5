@@ -82,12 +82,14 @@ public final class TapestryIOCModule
 
     /**
      * <dl> <dt>Value</dt> <dd>Supports the {@link org.apache.tapestry5.ioc.annotations.Value} annotation</dd>
-     * <dt>Symbol</dt> <dd>Supports the {@link org.apache.tapestry5.ioc.annotations.Symbol} annotations</dd> </dl>
+     * <dt>Symbol</dt> <dd>Supports the {@link org.apache.tapestry5.ioc.annotations.Symbol} annotations</dd>
+     * <dt>Autobuild</dt> <dd>Supports the {@link org.apache.tapestry5.ioc.annotations.Autobuild} annotation</dd> </dl>
      */
     public static void contributeMasterObjectProvider(OrderedConfiguration<ObjectProvider> configuration)
     {
         configuration.addInstance("Value", ValueObjectProvider.class);
         configuration.addInstance("Symbol", SymbolObjectProvider.class);
+        configuration.add("Autobuild", new AutobuildObjectProvider());
     }
 
     /**

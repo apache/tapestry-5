@@ -18,6 +18,7 @@ import org.apache.commons.fileupload.FileItemFactory;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.io.FileCleaner;
 import org.apache.tapestry5.ioc.*;
+import org.apache.tapestry5.ioc.annotations.Autobuild;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Scope;
 import org.apache.tapestry5.ioc.annotations.Symbol;
@@ -52,10 +53,8 @@ public class UploadModule
 
                                                          RegistryShutdownHub shutdownHub,
 
-                                                         ObjectLocator locator)
+                                                         @Autobuild MultipartDecoderImpl multipartDecoder)
     {
-        MultipartDecoderImpl multipartDecoder = locator.autobuild(MultipartDecoderImpl.class);
-
         // This is proabably overkill since the FileCleaner should catch temporary files, but lets
         // be safe.
         perthreadManager.addThreadCleanupListener(multipartDecoder);
@@ -92,8 +91,8 @@ public class UploadModule
             OrderedConfiguration<ComponentEventRequestFilter> configuration,
             ObjectLocator locator)
     {
-        configuration.add("UploadException", locator.autobuild(UploadExceptionFilter.class), "after:Secure",
-                          "before:Ajax");
+        configuration.addInstance("UploadException", UploadExceptionFilter.class, "after:Secure",
+                                  "before:Ajax");
     }
 
     /**
