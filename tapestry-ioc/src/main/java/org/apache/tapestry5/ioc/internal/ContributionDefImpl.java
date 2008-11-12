@@ -17,7 +17,9 @@ package org.apache.tapestry5.ioc.internal;
 import org.apache.tapestry5.ioc.*;
 import org.apache.tapestry5.ioc.def.ContributionDef;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.internal.util.InjectionResources;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.ioc.internal.util.MapInjectionResources;
 import org.apache.tapestry5.ioc.services.ClassFactory;
 
 import java.lang.reflect.InvocationTargetException;
@@ -71,14 +73,16 @@ public class ContributionDefImpl implements ContributionDef
     private <T> void invokeMethod(ModuleBuilderSource source, ServiceResources resources,
                                   Class<T> parameterType, T parameterValue)
     {
-        Map<Class, Object> parameterDefaults = CollectionFactory.newMap();
+        Map<Class, Object> resourceMap = CollectionFactory.newMap();
 
         // The way it works is: the method will take Configuration, OrderedConfiguration or
         // MappedConfiguration. So, if the method is for one type and the service is for a different
         // type, then we'll see an error putting together the parameter.
 
-        parameterDefaults.put(parameterType, parameterValue);
-        parameterDefaults.put(ObjectLocator.class, resources);
+        resourceMap.put(parameterType, parameterValue);
+        resourceMap.put(ObjectLocator.class, resources);
+
+        InjectionResources injectionResources = new MapInjectionResources(resourceMap);
 
         Throwable fail = null;
 
@@ -90,7 +94,7 @@ public class ContributionDefImpl implements ContributionDef
             Object[] parameters = InternalUtils.calculateParametersForMethod(
                     contributorMethod,
                     resources,
-                    parameterDefaults, resources.getTracker());
+                    injectionResources, resources.getTracker());
 
             contributorMethod.invoke(moduleBuilder, parameters);
         }

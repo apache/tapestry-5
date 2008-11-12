@@ -19,7 +19,9 @@ import org.apache.tapestry5.ioc.ObjectLocator;
 import org.apache.tapestry5.ioc.ServiceDecorator;
 import org.apache.tapestry5.ioc.ServiceResources;
 import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newMap;
+import org.apache.tapestry5.ioc.internal.util.InjectionResources;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.ioc.internal.util.MapInjectionResources;
 import org.apache.tapestry5.ioc.services.ClassFactory;
 import org.slf4j.Logger;
 
@@ -85,6 +87,8 @@ public class ServiceDecoratorImpl implements ServiceDecorator
         parameterDefaults.put(Object.class, delegate);
         parameterDefaults.put(serviceInterface, delegate);
 
+        InjectionResources injectionResources = new MapInjectionResources(parameterDefaults);
+
         if (logger.isDebugEnabled()) logger.debug(IOCMessages.invokingMethod(methodId()));
 
         Object result = null;
@@ -97,8 +101,8 @@ public class ServiceDecoratorImpl implements ServiceDecorator
         {
             Object[] parameters = InternalUtils.calculateParametersForMethod(
                     decoratorMethod,
-                    resources,
-                    parameterDefaults, resources.getTracker());
+                    this.resources,
+                    injectionResources, resources.getTracker());
 
             result = decoratorMethod.invoke(moduleBuilder, parameters);
         }

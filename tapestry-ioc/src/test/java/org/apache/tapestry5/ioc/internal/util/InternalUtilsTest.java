@@ -473,7 +473,7 @@ public class InternalUtilsTest extends IOCTestCase
 
         replay();
 
-        InternalUtils.injectIntoFields(target, ol, tracker);
+        InternalUtils.injectIntoFields(target, ol, null, tracker);
 
         assertSame(target.getFred(), fred);
 
@@ -507,7 +507,7 @@ public class InternalUtilsTest extends IOCTestCase
 
         replay();
 
-        InternalUtils.injectIntoFields(target, ol, tracker);
+        InternalUtils.injectIntoFields(target, ol, null, tracker);
 
         assertSame(target.getSymbolSource(), ss);
 
@@ -530,7 +530,7 @@ public class InternalUtilsTest extends IOCTestCase
 
         try
         {
-            InternalUtils.injectIntoFields(target, ol, tracker);
+            InternalUtils.injectIntoFields(target, ol, null, tracker);
 
             unreachable();
         }

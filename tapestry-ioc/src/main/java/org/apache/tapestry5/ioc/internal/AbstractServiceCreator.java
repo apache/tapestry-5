@@ -20,6 +20,9 @@ import org.apache.tapestry5.ioc.ServiceBuilderResources;
 import org.apache.tapestry5.ioc.ServiceResources;
 import static org.apache.tapestry5.ioc.internal.ConfigurationType.*;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.internal.util.DelegatingInjectionResources;
+import org.apache.tapestry5.ioc.internal.util.InjectionResources;
+import org.apache.tapestry5.ioc.internal.util.MapInjectionResources;
 import org.slf4j.Logger;
 
 import java.lang.reflect.ParameterizedType;
@@ -36,7 +39,7 @@ public abstract class AbstractServiceCreator implements ObjectCreator
 {
     protected final String serviceId;
 
-    private final Map<Class, Object> parameterDefaults = CollectionFactory.newMap();
+    private final Map<Class, Object> injectionResources = CollectionFactory.newMap();
 
     protected final ServiceBuilderResources resources;
 
@@ -60,90 +63,77 @@ public abstract class AbstractServiceCreator implements ObjectCreator
         this.creatorDescription = creatorDescription;
         logger = resources.getLogger();
 
-        parameterDefaults.put(String.class, serviceId);
-        parameterDefaults.put(ObjectLocator.class, resources);
-        parameterDefaults.put(ServiceResources.class, resources);
-        parameterDefaults.put(Logger.class, logger);
-        parameterDefaults.put(Class.class, resources.getServiceInterface());
+        injectionResources.put(String.class, serviceId);
+        injectionResources.put(ObjectLocator.class, resources);
+        injectionResources.put(ServiceResources.class, resources);
+        injectionResources.put(Logger.class, logger);
+        injectionResources.put(Class.class, resources.getServiceInterface());
     }
 
     /**
-     * Returns a map (based on _parameterDefaults) that includes (possibly) an additional mapping containing the
+     * Returns a map (based on parameterDefaults) that includes (possibly) an additional mapping containing the
      * collected configuration data. This involves scanning the parameters and generic types.
      */
-    protected final Map<Class, Object> getParameterDefaultsWithConfiguration(Class[] parameterTypes,
-                                                                             Type[] genericParameterTypes)
+    protected final InjectionResources createInjectionResources()
     {
-        Map<Class, Object> result = CollectionFactory.newMap(parameterDefaults);
-        ConfigurationType type = null;
+        InjectionResources core = new MapInjectionResources(injectionResources);
 
-        for (int i = 0; i < parameterTypes.length; i++)
+        InjectionResources configurations = new InjectionResources()
         {
-            Class parameterType = parameterTypes[i];
+            private boolean seenOne;
 
-            ConfigurationType thisType = PARAMETER_TYPE_TO_CONFIGURATION_TYPE.get(parameterType);
-
-            if (thisType == null) continue;
-
-            if (type != null)
+            public <T> T findResource(Class<T> resourceType, Type genericType)
             {
-                logger.warn(IOCMessages.tooManyConfigurationParameters(creatorDescription));
-                break;
+                ConfigurationType thisType = PARAMETER_TYPE_TO_CONFIGURATION_TYPE.get(resourceType);
+
+                if (thisType == null) return null;
+
+                if (seenOne)
+                    throw new RuntimeException(IOCMessages.tooManyConfigurationParameters(creatorDescription));
+
+
+                seenOne = true;
+
+                switch (thisType)
+                {
+                    case UNORDERED:
+
+                        return resourceType.cast(getUnorderedConfiguration(genericType));
+
+                    case ORDERED:
+
+                        return resourceType.cast(getOrderedConfiguration(genericType));
+
+                    case MAPPED:
+
+                        return resourceType.cast(getMappedConfiguration(genericType));
+                }
+
+                return null;
             }
+        };
 
-            // Remember that we've seen a configuration parameter, in case there
-            // is another.
 
-            type = thisType;
-
-            Type genericType = genericParameterTypes[i];
-
-            switch (type)
-            {
-
-                case UNORDERED:
-
-                    addUnorderedConfigurationParameter(result, genericType);
-
-                    break;
-
-                case ORDERED:
-
-                    addOrderedConfigurationParameter(result, genericType);
-
-                    break;
-
-                case MAPPED:
-
-                    addMappedConfigurationParameter(result, genericType);
-
-                    break;
-            }
-        }
-
-        return result;
+        return new DelegatingInjectionResources(core, configurations);
     }
 
-    @SuppressWarnings("unchecked")
-    private void addOrderedConfigurationParameter(Map<Class, Object> parameterDefaults, Type genericType)
+    private List getOrderedConfiguration(Type genericType)
     {
         Class valueType = findParameterizedTypeFromGenericType(genericType);
-        List configuration = resources.getOrderedConfiguration(valueType);
-
-        parameterDefaults.put(List.class, configuration);
+        return resources.getOrderedConfiguration(valueType);
     }
 
+
     @SuppressWarnings("unchecked")
-    private void addUnorderedConfigurationParameter(Map<Class, Object> parameterDefaults, Type genericType)
+    private Collection getUnorderedConfiguration(Type genericType)
     {
         Class valueType = findParameterizedTypeFromGenericType(genericType);
-        Collection configuration = resources.getUnorderedConfiguration(valueType);
 
-        parameterDefaults.put(Collection.class, configuration);
+        return resources.getUnorderedConfiguration(valueType);
     }
 
     @SuppressWarnings("unchecked")
-    private void addMappedConfigurationParameter(Map<Class, Object> parameterDefaults, Type genericType)
+    private Map getMappedConfiguration(Type genericType)
     {
         Class keyType = findParameterizedTypeFromGenericType(genericType, 0);
         Class valueType = findParameterizedTypeFromGenericType(genericType, 1);
@@ -151,9 +141,7 @@ public abstract class AbstractServiceCreator implements ObjectCreator
         if (keyType == null || valueType == null)
             throw new IllegalArgumentException(IOCMessages.genericTypeNotSupported(genericType));
 
-        Map configuration = resources.getMappedConfiguration(keyType, valueType);
-
-        parameterDefaults.put(Map.class, configuration);
+        return resources.getMappedConfiguration(keyType, valueType);
     }
 
     /**

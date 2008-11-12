@@ -364,10 +364,12 @@ public class ModuleImpl implements Module
             throw new RuntimeException(IOCMessages.recursiveModuleConstructor(builderClass, constructor));
 
         ObjectLocator locator = new ObjectLocatorImpl(registry, this);
-        Map<Class, Object> parameterDefaults = CollectionFactory.newMap();
+        Map<Class, Object> resourcesMap = CollectionFactory.newMap();
 
-        parameterDefaults.put(Logger.class, logger);
-        parameterDefaults.put(ObjectLocator.class, locator);
+        resourcesMap.put(Logger.class, logger);
+        resourcesMap.put(ObjectLocator.class, locator);
+
+        InjectionResources resources = new MapInjectionResources(resourcesMap);
 
         Throwable fail = null;
 
@@ -375,14 +377,15 @@ public class ModuleImpl implements Module
         {
             insideConstructor = true;
 
-            Object[] parameterValues = InternalUtils.calculateParameters(locator, parameterDefaults,
+            Object[] parameterValues = InternalUtils.calculateParameters(locator, resources,
                                                                          constructor.getParameterTypes(),
+                                                                         constructor.getGenericParameterTypes(),
                                                                          constructor.getParameterAnnotations(),
                                                                          registry);
 
             Object result = constructor.newInstance(parameterValues);
 
-            InternalUtils.injectIntoFields(result, locator, registry);
+            InternalUtils.injectIntoFields(result, locator, resources, registry);
 
             return result;
         }

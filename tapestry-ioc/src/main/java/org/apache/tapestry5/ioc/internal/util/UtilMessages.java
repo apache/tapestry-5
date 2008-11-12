@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
 package org.apache.tapestry5.ioc.internal.util;
 
 import org.apache.tapestry5.ioc.Messages;
+import org.apache.tapestry5.ioc.services.ClassFabUtils;
 
 class UtilMessages
 {
@@ -62,5 +63,10 @@ class UtilMessages
     static String badMarkerAnnotation(Class annotationClass)
     {
         return MESSAGES.format("bad-marker-annotation", annotationClass.getName());
+    }
+
+    static String injectResourceFailure(String fieldName, Class fieldType)
+    {
+        return MESSAGES.format("inject-resource-failure", fieldName, ClassFabUtils.toJavaClassName(fieldType));
     }
 }

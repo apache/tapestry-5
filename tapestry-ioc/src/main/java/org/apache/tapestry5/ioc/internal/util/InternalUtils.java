@@ -16,6 +16,7 @@ package org.apache.tapestry5.ioc.internal.util;
 
 import org.apache.tapestry5.ioc.*;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.annotations.InjectResource;
 import org.apache.tapestry5.ioc.annotations.InjectService;
 import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newList;
 import static org.apache.tapestry5.ioc.internal.util.Defense.notBlank;
@@ -27,10 +28,7 @@ import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
+import java.lang.reflect.*;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -39,6 +37,7 @@ import java.util.regex.Pattern;
  * Utilities used within various internal implemenations of Tapestry IOC and the rest of the tapestry-core framework.
  */
 
+@SuppressWarnings({"JavaDoc", "unchecked"})
 public class InternalUtils
 {
     /**
@@ -164,9 +163,8 @@ public class InternalUtils
         return null;
     }
 
-    @SuppressWarnings("unchecked")
-    private static Object calculateInjection(Class injectionType, final Annotation[] annotations,
-                                             ObjectLocator locator, Map<Class, Object> defaults)
+    private static Object calculateInjection(Class injectionType, Type genericType, final Annotation[] annotations,
+                                             ObjectLocator locator, InjectionResources resources)
     {
         AnnotationProvider provider = new AnnotationProvider()
         {
@@ -193,7 +191,7 @@ public class InternalUtils
 
         if (provider.getAnnotation(Inject.class) == null)
         {
-            Object result = defaults.get(injectionType);
+            Object result = resources.findResource(injectionType, genericType);
 
             if (result != null) return result;
         }
@@ -205,26 +203,30 @@ public class InternalUtils
     }
 
     public static Object[] calculateParametersForMethod(Method method, ObjectLocator locator,
-                                                        Map<Class, Object> parameterDefaults, OperationTracker tracker)
+                                                        InjectionResources resources,
+                                                        OperationTracker tracker)
     {
-        Class[] parameterTypes = method.getParameterTypes();
-        Annotation[][] annotations = method.getParameterAnnotations();
 
-        return calculateParameters(locator, parameterDefaults, parameterTypes, annotations, tracker);
+        return calculateParameters(locator, resources, method.getParameterTypes(), method.getGenericParameterTypes(),
+                                   method.getParameterAnnotations(),
+                                   tracker);
     }
 
     public static Object[] calculateParametersForConstructor(Constructor constructor, ObjectLocator locator,
-                                                             Map<Class, Object> parameterDefaults,
+                                                             InjectionResources resources,
                                                              OperationTracker tracker)
     {
-        Class[] parameterTypes = constructor.getParameterTypes();
-        Annotation[][] annotations = constructor.getParameterAnnotations();
 
-        return calculateParameters(locator, parameterDefaults, parameterTypes, annotations, tracker);
+        return calculateParameters(locator, resources, constructor.getParameterTypes(),
+                                   constructor.getGenericParameterTypes(),
+                                   constructor.getParameterAnnotations(), tracker);
     }
 
-    public static Object[] calculateParameters(final ObjectLocator locator, final Map<Class, Object> defaults,
-                                               Class[] parameterTypes, Annotation[][] parameterAnnotations,
+    public static Object[] calculateParameters(final ObjectLocator locator,
+                                               final InjectionResources resources,
+                                               Class[] parameterTypes,
+                                               final Type[] genericTypes,
+                                               Annotation[][] parameterAnnotations,
                                                OperationTracker tracker)
     {
         int parameterCount = parameterTypes.length;
@@ -234,6 +236,7 @@ public class InternalUtils
         for (int i = 0; i < parameterCount; i++)
         {
             final Class type = parameterTypes[i];
+            final Type genericType = genericTypes[i];
             final Annotation[] annotations = parameterAnnotations[i];
 
             String description = String.format("Determining injection value for parameter #%d (%s)", i + 1,
@@ -243,7 +246,7 @@ public class InternalUtils
             {
                 public Object invoke()
                 {
-                    return calculateInjection(type, annotations, locator, defaults);
+                    return calculateInjection(type, genericType, annotations, locator, resources);
                 }
             };
 
@@ -257,17 +260,19 @@ public class InternalUtils
      * Injects into the fields (of all visibilities)  when the {@link org.apache.tapestry5.ioc.annotations.Inject} or
      * {@link org.apache.tapestry5.ioc.annotations.InjectService} annotations are present.
      *
-     * @param object  to be initialized
-     * @param locator used to resolve external dependencies
-     * @param tracker track operations
+     * @param object    to be initialized
+     * @param locator   used to resolve external dependencies
+     * @param resources provides injection resources for fields
+     * @param tracker   track operations
      */
-    public static void injectIntoFields(final Object object, final ObjectLocator locator, OperationTracker tracker)
+    public static void injectIntoFields(final Object object, final ObjectLocator locator,
+                                        final InjectionResources resources,
+                                        OperationTracker tracker)
     {
         Class clazz = object.getClass();
 
         while (clazz != Object.class)
         {
-
             Field[] fields = clazz.getDeclaredFields();
 
             for (final Field f : fields)
@@ -293,22 +298,35 @@ public class InternalUtils
                 {
                     public void run()
                     {
-                        InjectService is = ap.getAnnotation(InjectService.class);
+                        final Class<?> fieldType = f.getType();
 
+                        InjectService is = ap.getAnnotation(InjectService.class);
                         if (is != null)
                         {
-                            inject(object, f, locator.getService(is.value(), f.getType()));
+                            inject(object, f, locator.getService(is.value(), fieldType));
                             return;
                         }
 
                         if (ap.getAnnotation(Inject.class) != null)
                         {
-                            inject(object, f, locator.getObject(f.getType(), ap));
+                            inject(object, f, locator.getObject(fieldType, ap));
                             return;
                         }
 
-                        // Ignore fields that do not have the necessary annotation.  Should we ignore static
-                        // fields?
+
+                        if (ap.getAnnotation(InjectResource.class) != null)
+                        {
+                            Object value = resources.findResource(fieldType, f.getGenericType());
+
+                            if (value == null)
+                                throw new RuntimeException(UtilMessages.injectResourceFailure(f.getName(), fieldType));
+
+                            inject(object, f, value);
+
+                            return;
+                        }
+
+                        // Ignore fields that do not have the necessary annotation.
 
                     }
                 });
