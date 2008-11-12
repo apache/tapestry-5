@@ -604,8 +604,8 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         return classFactory.newClass(serviceInterface);
     }
 
-    private <T> T getObject(Class<T> objectType, AnnotationProvider annotationProvider, ObjectLocator locator,
-                            Module localModule)
+    public <T> T getObject(Class<T> objectType, AnnotationProvider annotationProvider, ObjectLocator locator,
+                           Module localModule)
     {
         lock.check();
 
@@ -727,11 +727,6 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         return getObject(objectType, annotationProvider, this, null);
     }
 
-
-    public <T> T getObject(Class<T> objectType, AnnotationProvider annotationProvider, Module localModule)
-    {
-        return getObject(objectType, annotationProvider, this, localModule);
-    }
 
     public void addRegistryShutdownListener(RegistryShutdownListener listener)
     {

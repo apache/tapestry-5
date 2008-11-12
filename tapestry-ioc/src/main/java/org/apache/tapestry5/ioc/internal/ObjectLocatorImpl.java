@@ -46,7 +46,7 @@ public class ObjectLocatorImpl implements ObjectLocator
 
     public <T> T getObject(Class<T> objectType, AnnotationProvider annotationProvider)
     {
-        return registry.getObject(objectType, annotationProvider, module);
+        return registry.getObject(objectType, annotationProvider, this, module);
     }
 
     public <T> T autobuild(Class<T> clazz)

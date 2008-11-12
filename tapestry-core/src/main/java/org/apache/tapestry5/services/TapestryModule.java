@@ -826,10 +826,8 @@ public final class TapestryModule
         return shadowBuilder.build(globals, "context", Context.class);
     }
 
-    public ComponentClassResolver buildComponentClassResolver(ServiceResources resources)
+    public ComponentClassResolver buildComponentClassResolver(@Autobuild ComponentClassResolverImpl service)
     {
-        ComponentClassResolverImpl service = resources.autobuild(ComponentClassResolverImpl.class);
-
         // Allow the resolver to clean its cache when the source is invalidated
 
         componentInstantiatorSource.addInvalidationListener(service);
@@ -888,20 +886,16 @@ public final class TapestryModule
         return service;
     }
 
-    public MetaDataLocator buildMetaDataLocator(ServiceResources resources)
+    public MetaDataLocator buildMetaDataLocator(@Autobuild MetaDataLocatorImpl service)
     {
-        MetaDataLocatorImpl service = resources.autobuild(MetaDataLocatorImpl.class);
-
         componentInstantiatorSource.addInvalidationListener(service);
 
         return service;
     }
 
     public PersistentFieldStrategy buildClientPersistentFieldStrategy(LinkFactory linkFactory,
-                                                                      ServiceResources resources)
+                                                                      @Autobuild ClientPersistentFieldStrategy service)
     {
-        ClientPersistentFieldStrategy service = resources.autobuild(ClientPersistentFieldStrategy.class);
-
         linkFactory.addListener(service);
 
         return service;
@@ -1093,19 +1087,15 @@ public final class TapestryModule
      * The default data type analyzer is the final analyzer consulted and identifies the type entirely pased on the
      * property type, working against its own configuration (mapping property type class to data type).
      */
-    public DataTypeAnalyzer buildDefaultDataTypeAnalyzer(ServiceResources resources)
+    public DataTypeAnalyzer buildDefaultDataTypeAnalyzer(@Autobuild DefaultDataTypeAnalyzer service)
     {
-        DefaultDataTypeAnalyzer service = resources.autobuild(DefaultDataTypeAnalyzer.class);
-
         componentInstantiatorSource.addInvalidationListener(service);
 
         return service;
     }
 
-    public TranslatorSource buildTranslatorSource(ServiceResources resources)
+    public TranslatorSource buildTranslatorSource(@Autobuild TranslatorSourceImpl service, ServiceResources resources)
     {
-        TranslatorSourceImpl service = resources.autobuild(TranslatorSourceImpl.class);
-
         componentInstantiatorSource.addInvalidationListener(service);
 
         return service;
@@ -1232,26 +1222,27 @@ public final class TapestryModule
                                      configuration, terminator);
     }
 
-    public PageRenderRequestHandler buildPageRenderRequestHandler(List<PageRenderRequestFilter> configuration,
-                                                                  Logger logger, ServiceResources resources)
+    public PageRenderRequestHandler buildPageRenderRequestHandler(
+            List<PageRenderRequestFilter> configuration,
+            Logger logger,
+            @Autobuild PageRenderRequestHandlerImpl terminator)
     {
         return pipelineBuilder.build(logger, PageRenderRequestHandler.class, PageRenderRequestFilter.class,
-                                     configuration, resources.autobuild(PageRenderRequestHandlerImpl.class));
+                                     configuration, terminator);
     }
 
 
     /**
      * Builds the component action request handler for traditional (non-Ajax) requests. These typically result in a
      * redirect to a Tapestry render URL.
-     *
-     * @see org.apache.tapestry5.internal.services.ComponentEventRequestHandlerImpl
      */
     @Marker(Traditional.class)
     public ComponentEventRequestHandler buildComponentEventRequestHandler(
-            List<ComponentEventRequestFilter> configuration, Logger logger, ServiceResources resources)
+            List<ComponentEventRequestFilter> configuration, Logger logger,
+            @Autobuild ComponentEventRequestHandlerImpl terminator)
     {
         return pipelineBuilder.build(logger, ComponentEventRequestHandler.class, ComponentEventRequestFilter.class,
-                                     configuration, resources.autobuild(ComponentEventRequestHandlerImpl.class));
+                                     configuration, terminator);
     }
 
     /**
@@ -1261,10 +1252,11 @@ public final class TapestryModule
      */
     @Marker(Ajax.class)
     public ComponentEventRequestHandler buildAjaxComponentEventRequestHandler(
-            List<ComponentEventRequestFilter> configuration, Logger logger, ServiceResources resources)
+            List<ComponentEventRequestFilter> configuration, Logger logger,
+            @Autobuild AjaxComponentEventRequestHandler terminator)
     {
         return pipelineBuilder.build(logger, ComponentEventRequestHandler.class, ComponentEventRequestFilter.class,
-                                     configuration, resources.autobuild(AjaxComponentEventRequestHandler.class));
+                                     configuration, terminator);
     }
 
     // ========================================================================
