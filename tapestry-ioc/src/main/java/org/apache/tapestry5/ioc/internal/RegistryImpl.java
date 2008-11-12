@@ -776,6 +776,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
                 // service, we don't have defaults for Log, service id, etc.
 
                 Map<Class, Object> empty = Collections.emptyMap();
+                InjectionResources resources = new MapInjectionResources(empty);
 
                 try
                 {
@@ -783,12 +784,12 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
                     Object[] parameters = InternalUtils.calculateParametersForConstructor(constructor,
                                                                                           locator,
-                                                                                          empty,
+                                                                                          resources,
                                                                                           tracker);
 
                     Object result = constructor.newInstance(parameters);
 
-                    InternalUtils.injectIntoFields(result, locator, tracker);
+                    InternalUtils.injectIntoFields(result, locator, resources, tracker);
 
                     return clazz.cast(result);
                 }

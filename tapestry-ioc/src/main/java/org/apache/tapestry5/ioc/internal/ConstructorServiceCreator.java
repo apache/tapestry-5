@@ -15,11 +15,11 @@
 package org.apache.tapestry5.ioc.internal;
 
 import org.apache.tapestry5.ioc.ServiceBuilderResources;
+import org.apache.tapestry5.ioc.internal.util.InjectionResources;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Map;
 
 /**
  * A service creator based on an implementation class' constructor, rather than a service builder method.
@@ -50,15 +50,17 @@ public class ConstructorServiceCreator extends AbstractServiceCreator
         {
             InternalUtils.validateConstructorForAutobuild(constructor);
 
+            InjectionResources injectionResources = createInjectionResources();
+
             Object[] parameters = InternalUtils.calculateParametersForConstructor(constructor, resources,
-                                                                                  getParameterDefaultsWithConfigurations(),
+                                                                                  injectionResources,
                                                                                   resources.getTracker());
 
             if (logger.isDebugEnabled()) logger.debug(IOCMessages.invokingConstructor(creatorDescription));
 
             Object result = constructor.newInstance(parameters);
 
-            InternalUtils.injectIntoFields(result, resources, resources.getTracker());
+            InternalUtils.injectIntoFields(result, resources, injectionResources, resources.getTracker());
 
             return result;
         }
@@ -72,15 +74,5 @@ public class ConstructorServiceCreator extends AbstractServiceCreator
         }
 
         throw new RuntimeException(IOCMessages.constructorError(creatorDescription, serviceId, failure), failure);
-    }
-
-    /**
-     * Returns a map that includes (possibly) an additional mapping containing the collected configuration data. This
-     * involves scanning the constructor's parameters.
-     */
-    private Map<Class, Object> getParameterDefaultsWithConfigurations()
-    {
-        return getParameterDefaultsWithConfiguration(constructor.getParameterTypes(), constructor
-                .getGenericParameterTypes());
     }
 }

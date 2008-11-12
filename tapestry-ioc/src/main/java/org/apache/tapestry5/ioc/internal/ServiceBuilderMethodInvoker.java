@@ -19,7 +19,6 @@ import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Map;
 
 /**
  * Basic implementation of {@link org.apache.tapestry5.ioc.ObjectCreator} that handles invoking a method on the module
@@ -35,17 +34,6 @@ public class ServiceBuilderMethodInvoker extends AbstractServiceCreator
         super(resources, creatorDescription);
 
         builderMethod = method;
-    }
-
-    /**
-     * Returns a map that includes (possibly) an additional mapping containing the collected configuration data. This
-     * involves scanning the builder method's parameters.
-     */
-    private Map<Class, Object> getParameterDefaultsWithConfigurations()
-    {
-        return getParameterDefaultsWithConfiguration(
-                builderMethod.getParameterTypes(),
-                builderMethod.getGenericParameterTypes());
     }
 
     /**
@@ -67,7 +55,7 @@ public class ServiceBuilderMethodInvoker extends AbstractServiceCreator
             Object[] parameters = InternalUtils.calculateParametersForMethod(
                     builderMethod,
                     resources,
-                    getParameterDefaultsWithConfigurations(), resources.getTracker());
+                    createInjectionResources(), resources.getTracker());
 
             if (logger.isDebugEnabled())
                 logger.debug(IOCMessages.invokingMethod(creatorDescription));

@@ -1014,4 +1014,42 @@ public class IntegrationTest extends IOCInternalTestCase
 
         r.shutdown();
     }
+
+    /**
+     * TAP5-292
+     */
+    @Test
+    public void field_resource_injection()
+    {
+        Registry r = buildRegistry(FieldResourceInjectionModule.class);
+
+        FieldResourceService s = r.getService(FieldResourceService.class);
+
+        assertEquals(s.getServiceId(), "FieldResourceService");
+        assertListsEquals(s.getLabels(), "Barney", "Betty", "Fred", "Wilma");
+
+        r.shutdown();
+    }
+
+    /**
+     * TAP5-292
+     */
+    @Test
+    public void failed_field_resource_injection()
+    {
+        Registry r = buildRegistry(FieldResourceInjectionModule.class);
+
+        StringTransformer s = r.getService(StringTransformer.class);
+
+        try
+        {
+            s.transform("hello");
+            unreachable();
+        }
+        catch (RuntimeException ex)
+        {
+            assertMessageContains(ex,
+                                  "Unable to determine resource value to inject into field 'unknownRunnable' (of type java.lang.Runnable).");
+        }
+    }
 }

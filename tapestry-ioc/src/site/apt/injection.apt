@@ -73,9 +73,6 @@ Standard Injection Processing
 
    This step applies only to IoC layer injection (not to injection into components).
 
-   <Currently: this step only applies to parameter, not to field; an outstanding issue is to support resource
-   injection into fields.>
-
    When the Inject annotation is <not present> at the point of injection, Tapestry checks to see
    if a resource can be injected.  When the Inject annotation is present, this step is skipped (this is necessary
    when the object to be injected has a type that conflicts with a resource type, such as String).
@@ -112,6 +109,13 @@ Standard Injection Processing
 
    If field type does not match any of the available resource types, or the Inject annotation is present,
    logic continues to the next step.
+
+   Injection of resources into fields is triggered by the presence of the
+   {{{../apidocs/org/apache/tapestry5/ioc/annotations/InjectResource.html}InjectResource}}
+   annotation, whereas injection of resources into parameters occurs when the Inject or InjectService
+   annotation is <not> present.  These rules are slightly tricky, which reflects a desire to avoid
+   any annotations except when needed, and the fact that field injection came much later than
+   parameter injection.
 
 * Service Lookup by Type and Annotations
 
@@ -174,8 +178,9 @@ Standard Injection Processing
 ** Autobuild ObjectProvider
 
    Checks to see if the
-   {{{../apidocs/org/apache/tapestry5/ioc/annotation/Autobuild.html}Autobuild}} is present and,
-   if so, autobuilds the value for the parameter. 
+   {{{../apidocs/org/apache/tapestry5/ioc/annotation/Autobuild.html}Autobuild}} annotation is present and,
+   if so, autobuilds the value for the parameter. Of course, the object being built will itself
+   be configured via injection.
 
 ** Alias ObjectProvider  (tapestry-core)
 
