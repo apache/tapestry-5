@@ -32,9 +32,9 @@ import org.apache.tapestry5.services.BeanModelSource;
  * annotation), and the order and validation for the properties determined from annotations on the property's getter and
  * setter methods.
  * <p/>
- * You may add &lt;t:parameter&gt;s to the component; when the name matches (case insensitive) the name of a property,
- * then the corresponding Block is renderered, rather than any of the built in property editor blocks. This allows you
- * to override specific properties with your own customized UI, for cases where the default UI is insufficient, or no
+ * You may add block parameters to the component; when the name matches (case insensitive) the name of a property, then
+ * the corresponding Block is renderered, rather than any of the built in property editor blocks. This allows you to
+ * override specific properties with your own customized UI, for cases where the default UI is insufficient, or no
  * built-in editor type is appropriate.
  *
  * @see org.apache.tapestry5.beaneditor.BeanModel

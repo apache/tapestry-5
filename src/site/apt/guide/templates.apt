@@ -190,7 +190,7 @@ Tapestry Elements
 
   Note that the id parameter is <not> placed in the Tapestry namespace (since the element always <is> in the Tapestry namespace).
 
-* \<parameter\>
+* \<parameter\>             <(deprecated)>
 
   A \<parameter\> element is a special kind of block.  It is placed inside the body of an embedded component.  The block defined by the
   \<parameter\> is passsed to the component.  \<parameter\> includes a mandatory name attribute to identify which parameter of the component
@@ -206,6 +206,9 @@ Tapestry Elements
   </t:parameter>
 </t:if>
 +---+
+
+  The parameter element has been deprecated (but is still fully supported, for backwards compatibility). The name
+  <parameter namespace> is more concise and readable.
 
 
 Expansions
@@ -338,8 +341,34 @@ Invisible Instrumentation
 
   Here, the loop component "merges into" the \<tr\> element.  It will render out a \<tr\> for each item object in the items list.
   It will write a dynamic class attribute into each \<tr\>.
-        
-   
+
+Parameter Namespace
+
+  Parameter namespaces are a new feature introduced in Tapestry 5.1. They are a more concise way of passing parameter blocks
+  to components.
+
+  You must define a special namespace, usually given the prefix "p":
+
+---
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd" xmlns:p="tapestry:parameter">
+  . . .
+---
+
+  With the "tapestry:parameter" namespace defined, you can pass block using the "p:" prefix and an element name
+  that matches the parameter name:
+
+----
+<t:if test="loggedIn">
+  Hello, ${userName}!
+  <p:else>
+    Click <a t:type="actionlink" t:id="login">here</a> to log in.
+  </p:else>
+</t:if>
+----  
+
+  Namespaced parameter elements are not allowed to have any attributes. The element name itself is used to identify
+  the parameter of the component to bind.
+
 Whitespace in Templates
 
   Tapestry strips out unnecessary whitespace from templates as they are parsed.

@@ -576,6 +576,25 @@ public class TemplateParserImplTest extends InternalBaseTestCase
         assertEquals(token8.getTokenType(), TokenType.END_ELEMENT);
     }
 
+    /**
+     * TAP5-112
+     */
+    @Test
+    public void parameter_namespace_element()
+    {
+        List<TemplateToken> tokens = tokens("parameter_namespace_element.tml");
+
+        ParameterToken token4 = get(tokens, 4);
+        assertEquals(token4.getName(), "fred");
+
+        CommentToken token6 = get(tokens, 6);
+        assertEquals(token6.getComment(), "fred content");
+
+        TemplateToken token8 = get(tokens, 8);
+
+        assertEquals(token8.getTokenType(), TokenType.END_ELEMENT);
+    }
+
     @Test
     public void complex_component_type()
     {
@@ -631,6 +650,9 @@ public class TemplateParserImplTest extends InternalBaseTestCase
                 {"unexpected_attribute_in_block_element.tml",
                         "Element <block> does not support an attribute named 'name'. The only allowed attribute name is 'id'.",
                         3},
+
+                {"parameter_namespace_with_attributes.tml",
+                        ServicesMessages.parameterElementDoesNotAllowAttributes(), 4}
         };
     }
 

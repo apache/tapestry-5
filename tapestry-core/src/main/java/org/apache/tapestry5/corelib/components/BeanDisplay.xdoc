@@ -87,14 +87,14 @@ public class ViewUser
 
             <subsection name="ViewUser.tml">
                 <source><![CDATA[
-<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd" xmlns:p="tapestry:parameter">
     <body>
         <h1>View User</h1>
 
         <t:beandisplay object="user">
-            <t:parameter name="lastname">
+            <p:lastName>
                 ${bean.lastname.toUpperCase()}
-            </t:parameter>
+            </p:lastName>
         </t:beandisplay>
     </body>
 </html>
@@ -102,7 +102,7 @@ public class ViewUser
 
                 <p>
                     The
-                    <code><![CDATA[<t:parameter>]]></code>
+                    <code><![CDATA[<p:lastName>]]></code>
                     element is an
                     <em>override</em>
                     for the property. The name is

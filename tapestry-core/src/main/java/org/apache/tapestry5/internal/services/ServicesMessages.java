@@ -427,4 +427,9 @@ class ServicesMessages
     {
         return MESSAGES.format("add-new-method-conflict", signature);
     }
+
+    static String parameterElementDoesNotAllowAttributes()
+    {
+        return MESSAGES.get("parameter-element-does-not-allow-attributes");
+    }
 }

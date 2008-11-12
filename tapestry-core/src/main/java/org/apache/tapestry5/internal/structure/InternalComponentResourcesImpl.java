@@ -373,7 +373,7 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
 
             if (value == null) continue;
 
-            // Because Blocks can be passed in (right from the template, using <t:parameter>),
+            // Because Blocks can be passed in (right from the template),
             // we want to skip those when rending informal parameters.
 
             if (value instanceof Block) continue;

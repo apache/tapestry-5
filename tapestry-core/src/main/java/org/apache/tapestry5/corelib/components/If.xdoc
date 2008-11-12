@@ -5,16 +5,16 @@
             <subsection name="Start.tml">
 
                 <source><![CDATA[
-<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd" xmlns:p="tapestry:parameter">
     <body>
         <h1>Welcome!</h1>
 
         <t:if test="user">
             Welcome back, ${user.firstName}
-            <t:parameter name="else">
+            <p:else>
                 <t:pagelink name="login">Login</t:pagelink> /
                 <t:pagelink name="register">Register</t:pagelink>
-            </t:parameter>
+            </p:else>
         </t:if>
         
         . . .

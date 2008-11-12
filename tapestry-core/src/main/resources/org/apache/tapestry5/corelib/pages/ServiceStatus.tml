@@ -1,4 +1,4 @@
-<html xml:space="default" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+<html xml:space="default" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd" xmlns:p="tapestry:parameter">
     <head>
         <title>Tapestry IoC Services Status</title>
         <style>
@@ -30,9 +30,9 @@
 
             <t:grid rowsperpage="100" model="model" rowClass="row.status" source="activity" row="row">
 
-                <t:parameter name="serviceInterfaceCell">
+                <p:serviceInterfaceCell>
                     ${row.serviceInterface}
-                </t:parameter>
+                </p:serviceInterfaceCell>
 
             </t:grid>
 
@@ -69,11 +69,11 @@
                 </dl>
             </p>
 
-            <t:parameter name="else">
+            <p:else>
                 <p>
                     <em>${message:service-status-hidden}</em>
                 </p>
-            </t:parameter>
+            </p:else>
         </t:unless>
     </body>
 </html>
