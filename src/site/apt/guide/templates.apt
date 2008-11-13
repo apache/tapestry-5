@@ -207,8 +207,8 @@ Tapestry Elements
 </t:if>
 +---+
 
-  The parameter element has been deprecated (but is still fully supported, for backwards compatibility). The name
-  <parameter namespace> is more concise and readable.
+  The parameter element has been deprecated (but is still fully supported, for backwards compatibility). The
+  <parameter namespace> approach is more concise and readable.
 
 
 Expansions
@@ -296,10 +296,37 @@ Component Elements
    In some cases, components require some kind of enclosure; for example, all of the field components will throw a runtime exception
    if not enclosed by a Form component.
    
-   It is possible to place Tapestry components in subclasses.  For example, your application may have a package org.example.myapp.components.ajax.Dialog.
+   It is possible to place Tapestry components in sub-packages.  For example, your application may have a package org.example.myapp.components.ajax.Dialog.
    This component's normal type name is "ajax/dialog" (because it is in the ajax subfolder). This name is problematic, as
    it is not valid to define an XML element with an element name <<<\<t:ajax/dialog\>>>>.  Instead,
    replace the slashes with periods: <<<\<t:ajax.dialog\>>>>.
+
+Library Namespaces
+
+   If you are using many components from a common Tapestry component library, you can use a special namespace to
+   simplify references to those components.
+
+   The special namespace URI <<<tapestry-library:path>>> can be defined; the path is a prefix used in conjuction
+   with component element names.
+
+   Borrowing from the above example, all of the following are equivalent:
+
+----
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd" xmlns:a="tapestry-library:ajax">
+
+  <t:ajax.dialog/>
+
+  <span t:type="ajax/dialog"/>
+
+  <a:dialog/>
+
+  . . .
+---
+
+  In other words, the path, <code>ajax</code>, from the namespace URI takes the place of the path prefixes <code>ajax.</code>
+  seen in the first element, or <code>ajax/</code> seen in the second.  As far as Tapestry is concerned, they are all
+  equivalent.
+
    
 Invisible Instrumentation
 
