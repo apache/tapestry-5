@@ -607,6 +607,21 @@ public class TemplateParserImplTest extends InternalBaseTestCase
         assertEquals(token1.getComponentType(), "subfolder/nifty");
     }
 
+    /**
+     * TAP5-66
+     */
+    @Test
+    public void component_inside_library_namespace()
+    {
+        List<TemplateToken> tokens = tokens("component_inside_library_namespace.tml");
+
+        assertEquals(tokens.size(), 4);
+
+        StartComponentToken token1 = get(tokens, 1);
+
+        assertEquals(token1.getComponentType(), "subfolder/nifty");
+    }
+
     @Test
     public void block_element()
     {
@@ -652,7 +667,10 @@ public class TemplateParserImplTest extends InternalBaseTestCase
                         3},
 
                 {"parameter_namespace_with_attributes.tml",
-                        ServicesMessages.parameterElementDoesNotAllowAttributes(), 4}
+                        ServicesMessages.parameterElementDoesNotAllowAttributes(), 4},
+
+                {"invalid_library_namespace_path.tml",
+                        "The path portion of library namespace URI 'tapestry-library:subfolder/' is not valid", 2}
         };
     }
 

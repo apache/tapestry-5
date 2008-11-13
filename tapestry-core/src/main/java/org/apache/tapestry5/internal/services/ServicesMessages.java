@@ -432,4 +432,9 @@ class ServicesMessages
     {
         return MESSAGES.get("parameter-element-does-not-allow-attributes");
     }
+
+    static String invalidPathForLibraryNamespace(String URI)
+    {
+        return MESSAGES.format("invalid-path-for-library-namespace", URI);
+    }
 }

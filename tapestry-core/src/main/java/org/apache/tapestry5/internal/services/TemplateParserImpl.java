@@ -61,7 +61,20 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
      * Special namespace used to denote Block parameters to components, as a (preferred) alternative to the t:parameter
      * element.  The simple element name is the name of the parameter.
      */
-    public static final String TAPESTRY_PARAMETERS_URI = "tapestry:parameter";
+    private static final String TAPESTRY_PARAMETERS_URI = "tapestry:parameter";
+
+    /**
+     * URI prefix used to identify a Tapestry library, the remainder of the URI becomes a prefix on the element name.
+     */
+    private static final String LIB_NAMESPACE_URI_PREFIX = "tapestry-library:";
+
+    /**
+     * Pattern used to parse the path portion of the library namespace URI.  A series of simple identifiers with slashes
+     * allowed as seperators.
+     */
+
+    private static final Pattern LIBRARY_PATH_PATTERN = Pattern.compile("^[a-z]\\w*(/[a-z]\\w*)*$",
+                                                                        Pattern.CASE_INSENSITIVE);
 
     private static final Pattern ID_PATTERN = Pattern.compile("^[a-z]\\w*$", Pattern.CASE_INSENSITIVE);
 
@@ -363,7 +376,27 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
             return;
         }
 
+        if (uri != null && uri.startsWith(LIB_NAMESPACE_URI_PREFIX))
+        {
+            startLibraryNamespaceComponent(uri, localName, attributes);
+            return;
+        }
+
+
         startPossibleComponent(attributes, uri, localName, null);
+    }
+
+    /**
+     * Added in release 5.1.
+     */
+    private void startLibraryNamespaceComponent(String uri, String localName, Attributes attributes)
+    {
+        String path = uri.substring(LIB_NAMESPACE_URI_PREFIX.length());
+
+        if (!LIBRARY_PATH_PATTERN.matcher(path).matches())
+            throw new RuntimeException(ServicesMessages.invalidPathForLibraryNamespace(uri));
+
+        startPossibleComponent(attributes, uri, localName, path + "/" + localName);
     }
 
     /**
@@ -563,7 +596,7 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
      * @param namespaceURI   the namespace URI for the element (or the empty string)
      * @param elementName    the name of the element (to be assigned to the new token), may be null for a component in
      *                       the Tapestry namespace
-     * @param identifiedType the type of the element, usually null, but may be the component type derived from elewment
+     * @param identifiedType the type of the element, usually null, but may be the component type derived from element
      *                       name
      */
     private void startPossibleComponent(Attributes attributes, String namespaceURI, String elementName,
@@ -817,6 +850,10 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
         // Likewise, the special namespace for block parameters.
 
         if (uri.equals(TAPESTRY_PARAMETERS_URI)) return;
+
+        // Likewise, the special URI prefix for Tapestry namespaces.
+
+        if (uri.startsWith(LIB_NAMESPACE_URI_PREFIX)) return;
 
         // The prefix may be blank, which happens when the xmlns attribute is used to define the
         // namespace for the default namespace, and when a document has an explicit DOCTYPE.
