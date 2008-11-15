@@ -26,9 +26,10 @@ import java.util.List;
 
 /**
  * Provides a component instance with the resources provided by the framework. In many circumstances, the resources
- * object can be considered the component itself; in others, it is the {@link #getComponent() component property}, and
- * instance of a class provided by the application developer (though transformed in many ways while being loaded) that
- * is the true component. In reality, it is the combination of the resources object with the lifecycle instance.
+ * object can be considered the component itself; in others, it is the {@linkplain #getComponent() component property},
+ * an instance of a class provided by the application developer (though transformed in many ways while being loaded)
+ * that is the true component. In reality, it is the combination of the resources object with the user class instance
+ * that forms the components; neither is useful without the other.
  */
 public interface ComponentResources extends ComponentResourcesCommon
 {
