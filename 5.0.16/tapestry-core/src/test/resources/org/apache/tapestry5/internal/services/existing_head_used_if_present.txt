@@ -1,2 +1,0 @@
-<?xml version="1.0"?>
-<html><head><link href="foo.css" rel="stylesheet" type="text/css"/><!-- existing head --></head><body>body content</body></html>
