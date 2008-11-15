@@ -15,7 +15,7 @@
        limitations under the License.
     -->
 
-    <id>tapestry-simple</id>
+    <id>quickstart</id>
     <resources>
         <resource>.classpath</resource>
         <resource>.project</resource>
