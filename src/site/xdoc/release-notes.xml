@@ -211,6 +211,10 @@
             <li>[<a href='https://issues.apache.org/jira/browse/TAP5-343'>TAP5-343</a>] - The Grid component generates
                 non-unique HTML DOM ids for sort columns
             </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-359'>TAP5-359</a>] - Use of the email validator
+                with client-side validation displays a pop-up error message about client-side validator &quot;email&quot;
+                being missing
+            </li>
         </ul>
 
         <h2>Improvement
