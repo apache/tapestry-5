@@ -1,0 +1,316 @@
+<document>
+    <body>
+
+        <p>
+            The BeanEditForm component is a convienent wrapper around three components:
+            <a href="Form.html">Form</a>,
+            <a href="Errors.html">Errors</a>
+            and
+            <a href="BeanEditor.html">BeanEditor</a>.
+        </p>
+
+
+        <section name="Related Components">
+
+            <ul>
+                <li>
+                    <a href="BeanDisplay.html">BeanDisplay</a>
+                </li>
+                <li>
+                    <a href="Grid.html">Grid</a>
+                </li>
+            </ul>
+
+        </section>
+
+        <section name="Simple Example">
+
+            <p>
+                Using the bean editor, we can easily create a simple form for collecting information
+                from the user. In this example, we'll collect a little bit of data about a User:
+            </p>
+
+            <p>
+                <img src="beaneditform_ref_simple.png"/>
+            </p>
+
+            <p>
+                The bean to edit will be a property of the containing page.
+            </p>
+
+            <subsection name="User.java">
+                <source><![CDATA[
+public class User
+{
+    private long id;
+
+    private String firstName;
+
+    private String lastName;
+
+    private int age;
+
+    public long getId() { return id; }
+
+    @NonVisual
+    public void setId(long id) { this.id = id; }
+
+    public String getFirstName() { return firstName; }
+
+    public void setFirstName(String firstName) { this.firstName = firstName; }
+
+    public String getLastName() { return lastName; }
+
+    public void setLastName(String lastName) { this.lastName = lastName; }
+
+    public int getAge() { return age; }
+
+    public void setAge(int age) { this.age = age; }
+}]]></source>
+
+                <p>The @NonVisual annotation prevents the id from being displayed.</p>
+
+            </subsection>
+
+
+            <subsection name="CreateUser.tml">
+
+                <source><![CDATA[
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+    <body>
+        <h1>Create New User</h1>
+
+        <t:beaneditform t:id="user" submitlabel="message:create-user"/>
+    </body>
+</html>
+]]></source>
+
+                <p>
+                    Nominally, we should have to bind the object parameter of the BeanEditForm component. However, as
+                    a convienience, Tapestry has defaulted the object parameter
+                    based on the component id. This works because the CreateUser class
+                    includes a property named "user", which matches the BeanEditForm component's id.
+
+                </p>
+
+                <p>
+                    When the object to be editted is not a direct property of the page,
+                    it will be necessary to bind the object parameter explicitly. For example,
+                    <code>object="registration.address"</code>
+                    to create or edit the address
+                    property of the page's registration property. Component ids may not contain periods,
+                    so there's no way to specify this without the object parameter. A best practice is to still
+                    explicitly set the component's id, thus:
+                    <code><![CDATA[<t:beaneditform t:id="address" object="registration.address"/>]]></code>
+                </p>
+
+
+            </subsection>
+
+            <subsection name="CreateUser.properties">
+
+                <source><![CDATA[
+create-user=Create New User
+firstname-label=Given Name
+lastname-label=Family Name]]></source>
+
+                <p>
+                    We are using the page's message catalog to supply a messages. Externalizing such messages
+                    make them easier to work with, especially for an application that may be localized.
+                </p>
+
+                <p>
+                    The
+                    <code>create-user</code>
+                    key is explicitly referenced (<code>submitlabel="message:create-user"</code>).
+                    This becomes the label on the submit button for the generated form.
+                </p>
+
+                <p>
+                    The two label keys will be picked up and used as the labels for the corresponding properties
+                    (in both the rendered &lt;label&gt; elements, and in any error messages).
+                </p>
+
+                <p>
+                    In many cases, common entries can be moved up to an application-wide message catalog. In that case,
+                    the page's own message catalog becomes a local override.
+                </p>
+
+
+            </subsection>
+
+            <subsection name="CreateUser.java">
+                <source><![CDATA[
+public class CreateUser
+{
+    @Persist
+    private User user;
+
+    @Inject
+    private UserDAO userDAO;
+
+    public User getUser()
+    {
+      return user;
+    }
+
+    public void setUser(User user)
+    {
+      this.user = user;
+    }
+
+    Object onSuccess()
+    {
+        userDAO.add(user);
+
+        return UserAdmin.class;
+    }
+}]]></source>
+
+
+                <p>
+                    Notice that we don't instantiate the User object ourselves; instead we let the BeanEditForm
+                    component
+                    do that for us. It's capable of doing so because the User class has a default public no arguments
+                    constructor.
+                </p>
+
+                <p>
+                    The onSuccess() method is invoked when the form is submitted with no validation errors (although
+                    client validation is enabled by default, server-side validation is
+                    <em>always</em>
+                    enforced).
+                    The UserDAO service is used to add the new user.
+                </p>
+
+                <p>
+                    Returning a class from an event handler method (<code>UserAdmin.class</code>) will
+                    activate the indicated page as the response page. As always, a redirect to to the response page is
+                    sent to the client.
+                </p>
+
+            </subsection>
+
+        </section>
+
+        <section name="Validations and Overrides">
+
+            <p>
+                By placing some annotations on the properties of the User class, we can enable client-side
+                validations. In addition, we can override the default editor components for a property
+                to add some additional instructions.
+            </p>
+
+            <subsection name="User.java (partial)">
+
+                <source><![CDATA[
+    @Validate("required")
+    public String getFirstName() { return firstName; }
+
+    public void setFirstName(String firstName) { this.firstName = firstName; }
+
+    @Validate("required")
+    public String getLastName() { return lastName; }
+
+    public void setLastName(String lastName) { this.lastName = lastName; }
+
+    @Validate("min=18,max=99")
+    public int getAge() { return age; }
+
+    public void setAge(int age) { this.age = age; }]]>    </source>
+
+                <p>
+                    The new @Validate annotations added to the first name and last name properties indicates that a
+                    non-blank
+                    value must be provided. For the age property we are setting minimum and maximum values as well.
+                </p>
+
+                <p>
+                    Validation for each field occurs when the form is submitted, and when the user tabs out of a field.
+                    If you submit
+                    immediately, Tapestry will display popup bubbles for each field identifying the error:
+                </p>
+
+                <p>
+                    <img src="beaneditform_ref_validation1.png"/>
+                </p>
+
+                <p>
+                    In addition, fields with errors are marked with a red X, the font for the first turns red, and the
+                    label
+                    for the field turns red. We're providing a lot of feedback to the user.
+                    After a moment, all the bubbles except for the current field fade. Bubbles fade in and out as you
+                    tab from field to field.
+                </p>
+
+                <p>
+                    <img src="beaneditform_ref_validation2.png"/>
+                </p>
+
+
+            </subsection>
+
+
+            <subsection name="CreateUser.tml (partial)">
+
+                <p>
+                    We can customize how individual properties are editted. Here we'll
+                    add a small reminder next to the age property:
+                </p>
+
+                <p>
+                    <img src="beaneditform_ref_customized.png"/>
+                </p>
+
+                <source><![CDATA[
+        <t:beaneditform t:id="user" submitlabel="message:create-user">
+            <t:parameter name="age">
+                <t:label for="age"/>
+                <t:textfield t:id="age" value="user.age"/>
+                <em>
+                    Users must be between 18 and 99.
+                </em>
+            </t:parameter>
+        </t:beaneditform>]]></source>
+
+                <p>
+                    The
+                    <code><![CDATA[<t:parameter>]]></code>
+                    element
+                    is an
+                    <em>override</em>
+                    for the property. The name is
+                    matched against a property of the bean. We need to provide a
+                    <a href="Label.html">Label</a>
+                    component, and an appropriate
+                    editor component.
+                </p>
+
+            </subsection>
+
+        </section>
+
+        <section name="Notes">
+
+            <p>
+                You can re-order the properties using the reorder parameter:
+            </p>
+
+            <source><![CDATA[<t:beaneditform t:id="user" reorder="lastname,firstname"/>]]></source>
+
+            <p>
+                You can accomplish the same thing by changing the order of the
+                getter methods in the bean class. The default order for properties is not alphabetical,
+                it is the order of the getter methods.
+            </p>
+
+            <p>
+                You can also remove properties with the exclude parameter, which is equivalent to the
+                @NonVisual annotation.
+            </p>
+
+
+        </section>
+
+    </body>
+</document>

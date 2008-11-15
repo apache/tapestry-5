@@ -1,0 +1,18 @@
+  ----
+  Upgrading from Tapestry 4 to Tapestry 5
+  ----
+  
+Upgrading from Tapestry 4 to Tapestry 5
+  
+ There is no simple, direct upgrade path from Tapestry 4 to Tapestry 5.
+
+ Tapestry 5 represents a completely new code base. Although it maintains the <spirit> of
+ Tapestry 4, it is also a quantum leap ahead of Tapestry 4.
+
+ A lot of the familiar aspects of Tapestry are completely different between the two releases.
+ In other cases, core concepts remain, but the details, names, and implementations
+ have changed.
+
+ As part of {{{https://issues.apache.org/jira/browse/TAPESTRY-2421}TAPESTRY-2421}}, we've done
+ some judicous renaming so that Tapestry 4 and Tapestry 5 applications can run inside the same WAR.
+ 

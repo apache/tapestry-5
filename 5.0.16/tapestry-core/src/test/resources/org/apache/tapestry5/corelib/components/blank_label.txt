@@ -1,0 +1,2 @@
+<?xml version="1.0"?>
+<select><option value="">Make a selection</option><option value="fred">Fred Flintstone</option><option selected="selected" value="barney">Barney Rubble</option></select>

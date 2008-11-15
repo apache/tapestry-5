@@ -1,0 +1,20 @@
+<html t:type="border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+    <h1>Empty Loop Demo</h1>
+
+
+    <div id="first">
+        <t:loop source="null"/>
+    </div>
+
+    <div id="second">
+        <t:loop source="null" empty="Source is null."/>
+    </div>
+
+    <t:loop source="emptyList">
+        <t:parameter name="empty">
+            <div id="third">Source is the empty list.</div>
+        </t:parameter>
+    </t:loop>
+
+</html>

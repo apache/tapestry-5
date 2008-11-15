@@ -1,0 +1,231 @@
+ ----
+ Tapestry Developer's Bible
+ ----
+
+Tapestry Developer's Bible
+
+ This is a semi-random outpouring of thoughts related to being a Tapestry committer.
+
+IDE
+
+ <<IntelliJ>>.  It's a free license for all committers and it's just better. You'll love it after the
+ first couple of days fumbling because you're so used to Eclipse bending you over and doing unspeakable things.
+
+ There are shared code formatting settings in <<<support/idea-settings.jar>>>.  This will prevent
+ unexpected conflicts due to formatting.
+
+Copyrights
+
+  All source files should have a copyright comment on top, except where such a comment
+  would interfere with its behavior.  For example, component template files omit the comment.
+
+  The year on the copyright should be updated as a file changes.  As you are reviewing your changes
+  before checking them in, try to check the coyright date, and add the current year to the list if not
+  present.
+
+Commit Messages
+
+  Always provide a commit message.  I generally try to work off the JIRA, so my commit message is often:
+
+----
+TAPESTRY-1234: Make the Foo Widget more Ajax-tastic!
+----
+
+  It is <<very important>> to include the JIRA issue id in the commit.  This is used in many places:
+  JIRA links issues to the SVN commits for that issue (very handy for seeing what changed
+  as part of a bug fix).  Bamboo (the continuous integration server) does something similar.
+
+JIRA Procedures
+
+  All Tapestry committers should be registerred with JIRA and part of the tapestry-developers JIRA group.
+
+  I work the following JIRA list:
+  {{{https://issues.apache.org/jira/secure/IssueNavigator.jspa?mode=hide&requestId=12311597}JIRA Work Queue}}.
+
+
+  Ideally, we would always work top priortity to low priority.  I (Howard) sometimes jump out of order,
+  if there's something cool to work on that fits in an available time slot.  Alternately, you are always
+  allowed to change the priority of a bug before or as you work it.
+
+* Starting work  
+
+  When you start to work on an issue, make sure it is <<assigned to you>> and use the <<start progress>>
+  option.
+
+  I often add comments about the state of the fix, or the challenges.  This often spurs the Issue's adder to
+  provide more details.
+
+  I often update the issue description to make it more legible and more precise, i.e., "NPE in CheckUpdates"
+  might become "NullPointerException when checking for updates to file that have been deleted".  Verbose is good.
+
+* Closing bugs  
+
+  Is it a bug fix without tests?  <<No.>>  In some cases, I write new tests to prove that an issue is not valid and
+  then leave
+  the tests in place -- the close the bug as invalid.
+
+  A good plan is to write a test that fails then work the code until the test passes.
+  I'm also surprised by how often code works in a unit test but fails unexpectedly in an integration test.
+  As the G-Man says, <"Expect unforseen consequences">.
+
+  When you check in a fix, you should <<close>> the issue and make sure the <<fix release>> is correct.
+
+  We're playing fast and loose -- a better procedure would be to mark the bug resolved and verify
+  the fix before closing it.  That's ok, we have a community to double check our work :-).
+
+  For anything non-trivial, wait for the Bamboo server to build.  It catches a lot of things ... such as
+  files that were not added to SVN.  And even IntelliJ has a bit of trouble with wildly refactored code.
+  Bamboo will catch all that.
+
+* Invalid issues and duplicates
+
+  Always provide comments about <why> an issue is invalid (<"A Ruby implementation of Tapestry is out of scope for the project.">),
+  or at least, a link to the duplicate issues.
+
+  Close the issue but <<make sure the fix release is blank>>.  Otherwise, the issue <<will be listed
+  in the release notes>>, which we don't want.
+
+Copyrights
+
+  The ASF copyright must appear on all Java source files.  Technically it should appear on all non-binary
+  files in the repository.
+
+  As you make changes to files, update the copyright to add the current year to the list.  The goal is that the copyright
+  notice includes the year in which files change.  When creating a new file, don't back date the copyright year ... start
+  with the current year.  Try not to change the copyright year on files that haven't actually changed.
+
+  IntelliJ has a great comparison view: Cmd-9 to see the local changes, the Cmd-D to see the differences.
+  I whip through the changes (using Cmd-forward arrow) and make sure copyrights are up to date as I review the changes
+  prior to a commit.
+
+Public vs. Private/Internal
+
+  This is a real big deal.  As long as code is in the internal package, we have a high degree of carte-blanche
+  to change it.  As soon as code is public, we become handcuffed to backwards compatibility.
+
+  <<Interfaces are public, implementations are private>>.  You can see this is the bulk of the code, where
+  org.apache.tapestry5.services is almost all interfaces and the implementations are
+  in org.apache.tapestry5.internal.services.
+
+  Many more services have both the interface and the implementation in org.apache.tapestry5.internal.services.
+
+  We absolutely <<do not>> want to make Page or ComponentPageElement public.  You will often see
+  public service facades that take a page name as a method parameter,
+  and convert it to a page instance before invoking methods
+  on internal services.
+
+Evolving Components
+
+  We do not have a specific plan for this yet. Future Tapestry 5 will add features to allow clean renames
+  of parameters, and a way to deprecated and eventually remove components.
+
+Code Style
+
+  Yes, I (Howard) use leading underscores for field names.  I just prefer that to prefixing with <<<this.>>>, you don't
+  have to do so, but try to make your code blend in when modifying existing source.
+
+  Long ago, Tapestry code use the regrettable "leading-I-on-interfaces" style.  Don't do that.  Everythings an interface.
+
+  I prefer braces on a new line (and thus, open braces lined up with close braces), so that's what the default
+  code formatting is set up for. I sometimes omit braces for trivial if statements, such as <<<return;>>>.  I use a lot
+  of vertical whitespace to break methods into logical sections.
+
+  We're coding Java, not Pascal; I'd much rather see a few checks early on with quick returns or exceptions than
+  have ten-levels deep block nesting just so a method can have a single return statement. In other words, <else
+   considered harmful>. Low code complexity is
+  better, more readable, more maintainable code.
+
+  I don't bother alphabetizing things, because I have an IDE that lets me jump around easily.
+
+  <<Final is the new private.>>  Final fields are great for multi-threaded code.  Especially when creating
+  service implementations with dependencies, store that dependencies into final fields. Once we're all running
+  on 100 core workstations, you'll thank me.  Seriously, Java's memory model is seriously twisted stuff, and
+  assigning to a non-final field from a constructor opens up a tiny window of non-thread safety.
+
+Comments
+
+  Comments are overwhelmingly important.  Try to capture the <why> of a class or method.   Add lots
+  of links, to code that will be invoked by the method, to related methods or classes, and so forth.
+
+  Comment the <interfaces> and don't get worked up on the <implementations>.  Javadoc does a perfectly
+  good job of copying interface comments to implementations, so this falls under the <Dont Repeat Yourself>
+  guideline.
+
+  Be very careful about documenting what methods can accept null, and what methods may return null.
+
+Class and Method Naming Conventions
+
+ Naming things is hard.  Names that make sense to one person won't to another.
+
+ That being said, I've tried to be somewhat consistent with naming.  Not perfectly.
+
+ [Factory, Creator]
+ A factory class creates new objects. Methods will often be prefixed with "create"
+ or "new".  Don't expect a Factory to cache anything, it just creates new things.
+
+ [Source]
+ A source is a level up from a Factory.  It <may> combine multiple factories together.
+ It <usually> will cache the result.  Method are often prefixed with "get".
+
+ [Find vs. Get]
+ For methods:  A "find" prefix indicates that a non-match is valid and null may be returned.
+ A "get" prefix indicates that a non-match is invalid and an exception will be thrown
+ in that case (and null will never be returned).
+
+ [Contribution]
+ A data object usually associated with a Tapestry IoC service's configuration.
+
+ [Filter]
+ Part of a pipeline, where there's an associated main interface,
+ and the Filter wraps around that main interface.  Each main interface
+ method is duplicated in the Filter, with an extra parameter used
+ to chain the interface.
+
+ [Manager]
+ Often a wrapper around a service configuration, it provides access
+ to the contributed values (possibly after some transformation).
+
+ [To]
+ A method prefix that indicates a conversion or coersion from one type to another.
+
+ [Worker]
+ An object that peforms a specific job.  Workers will be stateless, but will be passed
+ a stateful object to perform some operation upon.
+
+ [Builder]
+ An object whose job is to create other objects, typically in the context of
+ creating a core service implementation for a Tapestry IoC service (such as PipelineBuilder
+ or ChainBuilder).
+
+ [Support]
+ An object that provides supporting operations to other objects; this is a kind of "loose aggregation".
+
+ [Parameters]
+ An data object that holds a number of related values that would otherwise be seperate
+ parameter values to a method. This tends to streamline code (especially when using
+ a Filter interface) and allows the parameters to be changed without changing the method signature.
+
+ [Strategy]
+ An object that "plugs into" some other code, allowing certain decisions to be deferred
+ to the Strategy. Often a Strategy is selected based on the type of some object
+ being operated upon.
+
+ [Context]
+ Captures some stateful information that may be passed around between stateless services.
+
+ [Constants]
+ A non-instantiable class that contains public static fields that are referenced in multiple places.
+
+ [Hub]
+ An object that allows listeners to be registered. Often includes a method prefixed with "trigger"
+ that will send notifications to listeners.
+ 
+toString()
+
+ Objects that are exposed to user code should generally implement a meaningful toString() method.
+ And that method should be tested.
+
+ 
+
+
+

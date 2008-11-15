@@ -1,0 +1,47 @@
+<html t:type="Border"
+      xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+    <h1>DateField Demo</h1>
+
+    <t:form>
+        <t:errors/>
+
+        <div class="t-beaneditor">
+
+            <div class="t-beaneditor-row">
+                <t:label for="birthday"/>
+                <t:datefield format="d MMM yyyy" hidetextfield="true" t:id="birthday"/>
+            </div>
+
+            <div class="t-beaneditor-row">
+                <t:label for="asteroidImpact"/>
+                <t:datefield t:id="asteroidImpact"/>
+            </div>
+
+
+            <div class="t-beaneditor-row">
+                <input type="submit" value="Go"/>
+            </div>
+
+        </div>
+    </t:form>
+
+    <p>
+        <t:actionlink t:id="clear">clear</t:actionlink>
+        <t:actionlink t:id="english">english</t:actionlink>
+        <t:actionlink t:id="french">french</t:actionlink>
+    </p>
+
+    <t:if test="birthday">
+        <hr/>
+        <p>
+            Birthday: [<t:output value="birthday" format="dateFormat"/>]
+        </p>
+
+        <p>
+            Impact: [<t:output value="asteroidImpact" format="dateFormat"/>]
+        </p>
+    </t:if>
+
+
+</html>
