@@ -1,0 +1,33 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+    <h1>Palette Demo</h1>
+
+
+    <t:form>
+        <div>
+            <t:checkbox t:id="reorder" label="Enable Reorder"/>
+            <t:label for="reorder"/>
+        </div>
+
+        <div class="t-beaneditor">
+
+
+            <t:palette t:id="languages" model="languageModel" reorder="reorder" encoder="languageEncoder"
+                       availableLabel="Languages Offered">
+                <t:parameter name="selectedLabel" xml:space="default">
+                    Selected <t:if test="reorder">/ Ranked</t:if> Languages
+                </t:parameter>
+            </t:palette>
+            <br/>
+            <input type="submit"/>
+        </div>
+    </t:form>
+
+    <p>Selected Languages: ${languages}</p>
+
+    <p>
+        [
+        <t:actionlink t:id="reset">reset</t:actionlink>
+        ]
+    </p>
+</html>

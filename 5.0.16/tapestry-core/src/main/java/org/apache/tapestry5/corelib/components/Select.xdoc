@@ -1,0 +1,175 @@
+<document>
+    <body>
+        <section name="Simple Example">
+
+            <p>
+                A simple example, selecting one of three strings:
+            </p>
+
+            <subsection name="SelectColor.tml">
+                <source><![CDATA[
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+    <body>
+        <h1>Select Color</h1>
+
+        <t:form>
+
+            <t:label for="color"/>:
+            <t:select t:id="color" model="literal:Red,Green,Blue"/>
+
+            <br/>
+
+            <input type="submit" value="Continue"/>
+        </t:form>
+
+    </body>
+</html>]]></source>
+
+                <p>
+                    When the model parameter is a string, it is split apart at the commas.
+                </p>
+
+                <p>
+                    When using this approach, you'll commonly put the list into the message catalog,
+                    and reference it using a "message:" binding.
+                </p>
+
+                <p>
+                    Here the label displayed to the user is the same as the value used to update the property, but that
+                    doesn't
+                    have to be the case. By specifying a value and a label, we can control the server side value without
+                    changing how the UI appears to the user:
+                </p>
+
+                <source>
+                    <![CDATA[
+            <t:select t:id="color" model="literal:FF0000=Red,00FF00=Green,0000FF=Blue"/>
+]]>
+                </source>
+
+
+            </subsection>
+
+<subsection name="SelectColor.java">
+
+<source><![CDATA[
+public class SelectColor
+{
+  private String _color;
+
+  @Validate("required")
+  public String getColor() { return _color; }
+
+  public void setColor(String color) { _color = color; }
+}]]></source>
+
+    <p>
+        Placing the @Validate annotation on the field indicates that it is required.  This prevents the
+        select component from including a blank option for the field (though this can be overridden).
+        Without the @Validate, it would be possible for the user to select a blank value, and null would
+        be assigned to the color property of SelectColor.  This might be appropriate for a search form, but
+        not for an edit form.
+    </p>
+
+</subsection>
+
+        </section>
+
+        <section name="Enum Example">
+
+            <p>Working with Enums is, amazingly, even easier (and more so than with the Radio component).</p>
+
+            <p>
+                Most of this example is the same as for the
+                <a href="Radio.html">Radio</a>
+                component, except that
+                we're using a single Select component instead of multiple Radio components:
+            </p>
+
+            <p>
+                <img src="select_ref2.png"/>
+            </p>
+
+            <subsection name="CardType.java">
+
+                <source><![CDATA[
+public enum CardType
+{
+    MASTER_CARD, VISA, AMERICAN_EXPRESS, DINERS_CLUB, DISCOVER
+}
+]]></source>
+
+            </subsection>
+
+            <subsection name="Payment.tml (partial)">
+
+                <p>
+                    In the Radio example, we used a Label and a Radio component for each enum value.
+                    With Select we use a single Label and a single Select component:
+                </p>
+
+                <source><![CDATA[
+    <t:label for="type"/>:
+    <t:select t:id="type"/>]]></source>
+
+
+                <p>
+                    Here again, Tapestry is binding the value parameter to the type property, based on the component's
+                    id.
+                    In addition, because the property type of the property in question is an enum, a SelectModel
+                    is automatically generated.
+                </p>
+
+            </subsection>
+
+            <subsection name="Payment.java (partial)">
+
+                <source><![CDATA[                                                                   
+public class Payment
+{
+    . . .
+
+    @Persist
+    private CardType _type;
+
+    @Validate("required")
+    public CardType getType() { return _type; }
+
+    public void setType(CardType type) { _type = type; }
+
+    . . .
+}]]></source>
+
+
+            </subsection>
+
+            <subsection name="Payment.properties">
+
+                <p>
+                    Once again, we need to slightly customize Tapestry's guess at the label for the enum value
+                    DINERS_CLUB.
+                    In the Radio example, we overrode the label for the dinersClub<em>component</em>. Here there is just
+                    the Select component,
+                    but we still have an option: override how the DINERS_CLUB enum value is displayed:
+                </p>
+
+                <source><![CDATA[DINERS_CLUB=Diner's Club]]></source>
+
+                <p>Tapestry looks inside a component's message catalog for entries before "humanizing" the name. In the
+                    <em>very rare</em>
+                    event that there's a naming conflict, you may qualify the enum value with its class name:
+                </p>
+
+
+                <source><![CDATA[CardType.DINERS_CLUB=Diner's Club]]></source>
+
+                <p>And, of course, all of this is case insensitive. The use of case here helps to identify how the
+                    values
+                    are to be used.
+                </p>
+            </subsection>
+
+        </section>
+
+    </body>
+</document>

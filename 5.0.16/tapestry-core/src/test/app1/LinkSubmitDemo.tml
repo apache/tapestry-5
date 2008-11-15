@@ -1,0 +1,21 @@
+<html t:type="border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+    <h1>Link Submit Demo</h1>
+
+    <t:form>
+        <t:errors/>
+
+        <t:textfield t:id="name"/>
+        <br/>
+        <t:linksubmit t:id="fred">Fred</t:linksubmit>
+        <t:linksubmit t:id="barney" defer="true" event="neighbor">Barney</t:linksubmit>
+
+    </t:form>
+
+    <dl>
+        <dt>Name</dt>
+        <dd id="name-value">${name}</dd>
+        <dt>Last Clicked</dt>
+        <dd id="last-clicked">${lastClicked}</dd>
+    </dl>
+
+</html>

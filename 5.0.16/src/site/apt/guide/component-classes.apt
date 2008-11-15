@@ -1,0 +1,233 @@
+ ---
+  Component Classes
+ ----
+ 
+Component Classes
+
+  Component classes in Tapestry 5 are much easier than in Tapestry 4.  There are no base classes to extend from, the classes are concrete (not abstract), and there's no XML file. There is still
+  a bit of configuration in the form of Java annotations, but
+  those now go directly onto fields of your class, rather than on abstract getters and setters (the case in Tapestry 4).  
+  
+  Classes for pages, for components and for component mixins are all created in an identical way.
+
+* Component Class Basics
+
+  Creating page and component classes in Tapestry 5 is a breeze.
+  
+  Unlike Tapestry 4, in Tapestry 5, component classes are not <abstract>, nor do
+  they extend from framework base classes. They are pure POJOs (Plain Old Java Objects).
+  
+  There are only a few constraints:
+  
+  * The classes must be public.
+  
+  * The classes must be in the correct package, as per the {{{conf.html}application configuration}}.
+  
+  * The class must have a standard public, no arguments constructor.
+  
+  []
+  
+  Here's a very basic component:
+  
+  
++----+
+package org.example.myapp.components;
+
+import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.annotations.BeginRender;
+
+public class HelloWorld
+{
+    @BeginRender
+    void renderMessage(MarkupWriter writer)
+    {
+        writer.write("Bonjour from HelloWorld component.");
+    }
+}
++----+  
+  
+  This component's only job is to write out a fixed message. The
+  {{{../apidocs/org/apache/tapestry5/annotations/BeginRender.html}BeginRender}} annotation is
+  a type of <{{{rendering.html}component lifecycle annotation}}>, a method annotation that instructs
+  Tapestry when and under what circumstances to invoke methods of your class.
+ 
+  In another departure from Tapestry 4, these methods are not necessarily public; they
+  can have any visibility you like.
+  
+Component Packages
+
+  Component classes must exist within an appropriate package (this is necessary for runtime code transformation
+  and class reloading to operate).
+  
+  These packages exist under the application's root package.
+  
+  For pages, place classes in <root>.<<pages>>.  Page names are mapped to classes within this package.
+  
+  For components, place classes in <root>.<<components>>.  Component types are mapped to classes within this package.
+  
+  For mixins, place classes in <root>.<<mixins>>.   Mixin types are mapped to classes within this package.
+  
+  In addition, it is common for an application to have base classes, often <abstract> base classes, that should not be directly referenced. These
+  should not go in the <<pages>>, <<components>> or <<mixins>> packages, because they then look like valid pages, components or mixins. Instead,
+  use the <root>.<<base>> package to store such base classes.
+  
+Sub-Folders / Sub-Packages
+
+  Classes do not have to go directly inside the package (pages, components, mixins, etc.). It is valid to create a sub-package 
+  to store some of the classes.  The sub-package name becomes part of the page name or component type.  Thus you might define a page component 
+  <<<com.example.myapp.pages.admin.CreateUser>>> and the logical page name (which often shows up inside URLs) will be <<admin/CreateUser>>.
+  
+  Tapestry performs some simple optimizations of the logical page name (or component type, or mixin type).  It checks to see if the package name
+  is either a prefix or a suffix of the unqualified class name (case insensitively, of course) and removes the prefix or suffix if so.  The net result is
+  that a class name such as <<<com.example.myapp.pages.user.EditUser>>> will have a page name of <<<user/Edit>>> (<not> <<<user/EditUser>>>).  The goal here is to provide
+  shorter, more natural URLs.
+  
+Pages vs. Components
+
+  The distinction in Tapestry 5 between pages and component is very, very small.  The only
+  real difference is the package name:  <root>.<<pages>>.<PageName> for pages,
+  and <root>.<<components>>.<ComponentType> for components.
+  
+  In Tapestry 4, there was a much greater distinction between pages
+  and components, which showed up as seperate interfaces and a hierarchy of
+  abstract implementations to extend your classes from.
+  
+  In Tapestry 5, the "page" is still somewhat present, but is really
+  an internal Tapestry class. Page components are simply the <root component> of a page's
+  component tree.
+  
+Class Transformation
+
+  Tapestry uses your class as a starting point. It <transforms> your class at runtime. This is necessary
+  for a number of reasons, including to address how Tapestry pools pages between requests.
+  
+  For the most part, these transformations are both sensible and invisible. In a few limited cases, they
+  are maginally {{{http://www.joelonsoftware.com/printerFriendly/articles/LeakyAbstractions.html}leaky}} -- for instance,
+  the requirement that instance variables be private -- but we feel that the programming
+  model in general will support very high levels of developer productivity.
+  
+  Because transformation doesn't occur until <runtime>, the build stage of your application is not
+  affected by the fact that you are creating a Tapestry application. Further, your classes are absolutely
+  simple POJOs during unit testing.
+  
+Live Class Reloading
+
+  Component classes are monitored for changes by the framework. 
+  {{{reload.html}Classes are reloaded when changed.}} This allows you to build your application
+  with a speed approaching that of a scripting environment, without sacrificing any of the power
+  of the Java platform.
+  
+  And it's fast!  You won't even notice that this magic class reloading has occured. 
+  
+  The net result: super productivity --- change your class, see the change instantly. This is designed to be
+  a blend of the best of scripting environments (such as Python or Ruby) with all the speed and power of Java backing it up.
+  
+  However, class reloading <only> applies to component classes.  Other classes, such as service interfaces and implementations, or
+  other data objects, are loaded by the normal class loader and not subject to live class reloading.
+  
+Instance Variables
+
+  Tapestry components may have instance variables (unlike Tapestry 4, where you had to 
+  use <abstract properties>). 
+  
+  <<Instance variables must be private.>> Tapestry must perform runtime class modifications to
+  support instance variables, and may only do so for private variables. You may have
+  non-private variables in your class, but you may then see unexpected behavior in
+  a production application because of how Tapestry pools and reuses pages and components. Tapestry
+  will log an error for each component class that contains fields that are neither static nor private.  
+  
+  Be aware that you will need to provide getter and setter methods to access your classes'
+  instance variables. Tapestry <does not> do this automatically unless you provide
+  the {{{../apidocs/org/apache/tapestry5/annotations/Property.html}Property}} annotation on the field.
+    
+  
+Transient Instance Variables
+
+  Unless an instance variable is decorated with an annotation, it will be a
+  <transient> instance variable. This means that its value resets to its
+  default value
+  at the end of reach request (when the
+  {{{lifecycle.html}page is detached from the request}}).
+  
+  If you have a variable that can keep its value between requests and you would like
+  to defeat that reset logic, then you should attach a
+  {{{../apidocs/org/apache/tapestry5/annotations/Retain.html}Retain}} annotation to the field.  You should take
+  care that no client-specific data is stored into such a field, since on a later request
+  the same page <instance> may be used for a different user. Likewise, on a later request for the <same> user,
+  a <different> page instance may be used.
+  
+  Use {{{persist.html}persistent fields}} to hold information from one request to the next.
+  
+  Further, final fields are (in fact) final, and will not be reset.
+  
+Constructors
+
+  Tapestry will instantiate your class using the default, no arguments constructor.  Other constructors will
+  be ignored.
+  
+Injection
+
+  {{{inject.html}Injection}} of dependencies occurs at the field level, via additional annotations.  At runtime,
+  fields that contain injections become read-only.
+  
+Parameters
+
+  {{{parameters.html}Component parameters}} are also identified using private fields of your class, with
+  the {{{.../apidocs/org/apache/tapestry5/annotations/Parameter.html}Parameter}} annotation.
+  
+Persistent Fields
+
+  Fields may be annotated so that they {{{persist.html}retain their value across requests}}.  
+  
+{Embedded Components}
+
+  Components often contain other components.  Components inside another component's template are called <embedded components>.  
+  The containing component's
+  {{{templates.html}template}} will contain special elements, in the Tapestry namespace, identifying where the the embedded components go.
+  
+  You can define the type of component inside template, or you can create an instance variable for the component
+  and use the
+  {{{../apidocs/org/apache/tapestry5/annotations/Component.html}Component}} annotation to define the component type
+  and parameters. 
+  
+  Example:
+  
++---+
+package org.example.app.pages;
+
+import org.apache.tapestry5.annotations.Component;
+import org.apache.tapestry5.annotations.Property;
+import org.example.app.components.Count;
+
+public class Countdown
+{
+    @Component(parameters =
+    { "start=5", "end=1", "value=countValue" })
+    private Count count;
+
+    @Property
+    private int countValue;
+}
++---+
+
+  The above defines a component whose embedded id is "count" (this id is derived from the name of the field).  The type
+  of component is org.example.app.components.Count.  
+  The start and end parameters of the Count component are bound to literal values, and the value
+  parameter of the Count component is bound to the countValue property of the Countdown component.
+  
+  Technically, the start and end parameters should be bound to properties, just the the value parameter.  However,
+  certain literal values, such as the numeric literals in the example,
+  are accepted by the prop: binding prefix even though they are not actually properties (this is largely as a convienience
+  to the application developer).  We could also use the "literal:" prefix, <<<"start=literal:5">>> which accomplishes
+  largely the same thing.
+  
+  You may specify additional parameters inside the component template, but parameters in the component class
+  take precendence.  
+  
+  <<TODO: May want a more complex check; what if user uses prop: in the template and there's a conflict?>>
+  
+  You may override the default component id (as derived from the field name)
+  using the id() attribute of the Component annotation.
+  
+  If you define a component in the component class, and there is no corresponding  element in the template,
+  Tapestry will log an error.

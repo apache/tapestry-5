@@ -1,0 +1,11 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+    <h1>Grid Remove/Reorder Demo</h1>
+
+    <table t:id="grid" source="tracks" row="track" remove="playCount" reorder="rating,title">
+        <t:parameter name="ratingcell">
+            <t:outputRating rating="track.rating"/>
+        </t:parameter>
+    </table>
+
+</html>

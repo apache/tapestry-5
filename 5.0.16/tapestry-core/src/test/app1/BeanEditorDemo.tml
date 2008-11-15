@@ -1,0 +1,31 @@
+<t:border xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+    <h1>${pageTitle}</h1>
+
+    <form t:id="registrationData" submitlabel="Register">
+
+        <t:parameter name="firstName">
+            <t:label for="firstName"/>
+            <input t:type="TextField" t:id="firstName" value="registrationData.firstName" size="40"/>
+            (First Name is Required)
+        </t:parameter>
+
+    </form>
+
+    <p>[<a t:type="ActionLink" t:id="clear">Clear Data</a>]
+    </p>
+
+    <h2>Second Form</h2>
+
+    <p>Used to test tabbing
+        <em>between</em>
+        forms.
+    </p>
+
+    <p>
+        <t:form t:id="search">
+            <t:label for="searchTerm"/>
+            <t:textfield t:id="searchTerm"/>
+            <input type="submit"/>
+        </t:form>
+    </p>
+</t:border>

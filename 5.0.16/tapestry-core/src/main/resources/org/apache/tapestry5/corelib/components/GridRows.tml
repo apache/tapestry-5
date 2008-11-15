@@ -1,0 +1,7 @@
+<tr class="${rowClass}" xml:space="default" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+    <t:loop source="propertyNames" value="propertyName" index="columnIndex" volatile="inherit:volatile">
+        <td class="${cellClass}">
+            <t:gridcell model="columnModel" object="row" overrides="overrides"/>
+        </td>
+    </t:loop>
+</tr>

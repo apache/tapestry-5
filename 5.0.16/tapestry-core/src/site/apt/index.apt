@@ -1,0 +1,15 @@
+ ----
+ tapestry-core
+ ----
+ 
+Tapestry Core
+
+  The tapestry-core module provides the interfaces and annotations that form the Tapestry API.
+  
+  tapestry-core is built upon the {{{../tapestry-ioc/index.html}Tapestry IoC Container}}.
+
+
+* Documentation Has Moved
+
+  Most documentation that used to live at this level has {{{../}moved up to the main Tapestry project}}.
+  

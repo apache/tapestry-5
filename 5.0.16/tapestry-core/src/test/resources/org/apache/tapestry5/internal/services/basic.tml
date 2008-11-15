@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd" xmlns:bar="bar">
+    <head>
+        <title>Test</title>
+    </head>
+    <body>
+        <t:comp id="fred" type="If" value="foo">
+            <p>You have been served!</p>
+        </t:comp>
+        <p t:id="barney" class="error">
+            You are barney!<br/>You are barney!
+        </p>
+        pre<!-- A comment! -->post
+        
+        <pre>
+line 1
+line 2            
+line 3: <![CDATA[This text contains <invalid markup>]]>
+        </pre>
+        
+        <bar:baz biff="boo">
+            Zippy!
+        </bar:baz>        
+    </body>
+</html>  <!-- Spaces and comments at end -->
+
+

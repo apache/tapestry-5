@@ -1,0 +1,503 @@
+ ---
+  Component Parameters
+ ----
+ 
+Component Parameters
+
+  Component parameters are a critical aspect of Tapestry.  It is not enough that an instance of
+  a component class <exists>, it must be <configured> to do the right thing. Configuration is in
+  terms of the parameters of the component.
+  
+  A component may have any number of parameters.  Each parameter has a specific name,
+  a specific Java type (which may be a primitive value), and may be <optional> or <required>.
+  
+  Parameters are defined by placing a
+  {{{../apidocs/org/apache/tapestry5/annotations/Parameter.html}Parameter}} annotation
+  onto a private field.
+  
+  The component listed below is a looping component; it renders its body
+  a number of times, defined by its start and end parameters (which set the boundaries
+  of the loop).  The component can update a value parameter bound to a property of its container,
+  it will automatically count up or down depending on whether start or end is larger.
+  
++---+
+package org.example.app.components;
+
+import org.apache.tapestry5.annotations.AfterRender;
+import org.apache.tapestry5.annotations.Parameter;
+import org.apache.tapestry5.annotations.SetupRender;
+
+public class Count
+{
+    @Parameter
+    private int start = 1;
+
+    @Parameter(required = true)
+    private int end;
+
+    @Parameter
+    private int value;
+
+    private boolean increment;
+
+    @SetupRender
+    void initializeValue()
+    {
+        value = start;
+
+        increment = start < end;
+    }
+
+    @AfterRender
+    boolean next()
+    {
+        if (increment)
+        {
+            int newValue = value + 1;
+
+            if (newValue <= end)
+            {
+                value = newValue;
+                return false; 
+            }
+        }
+        else
+        {
+            int newValue = value - 1;
+
+            if (newValue >= end)
+            {
+                value = newValue;
+                return false; 
+            }
+        }
+
+        return true;
+    }
+}
++---+
+  
+  The name of the parameter is derived from the field name (by stripping leading "_" and "$" characters).
+  Here, the parameter names are "start", "end" and "value".  
+  
+Binding Parameters
+
+  The component above can be referenced in another component or page 
+  {{{templates.html}template}}:
+  
++---+
+<html t:type="layout" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+    <p> Merry Christmas: <t:count end="3"> Ho! </t:count>
+    </p>
+</html>
++---+  
+  
+  The end attribute is used to <bind> the end parameter of the
+  Count component.  Here, it is being bound to the string value "3", which is automatically
+  {{{coercion.html}coerced}} by Tapestry into the int value, 3.
+    
+  Any number of parameters may be bound this way.
+  
+  Component parameters may also be bound using the
+  {{{component-classes.html#Embedded Components}Component annotation}} inside the component class.
+  
+  Where conflicts occur, the parameters bound using the Component annotation will
+  take precendence over parameter bindings
+  in the template.
+    
+Binding Expressions
+
+  The value inside the template, "3" in the previous example, is a <binding expression>.
+    
+  By placing a prefix in front of the value, you can change how Tapestry interprets the remainder
+  of the expression (the part after the colon):
+  
+*------------+----------------------------------------------------------------------------------+
+| <<Prefix>> | <<Description>>                                                                  |
+*------------+----------------------------------------------------------------------------------+
+| asset      | The relative path to an asset file (which must exist). |
+*------------+----------------------------------------------------------------------------------+
+| block      | The id of a block within the template. |
+*------------+----------------------------------------------------------------------------------+
+| component  | The id of another component within the same template.                            |
+*------------+----------------------------------------------------------------------------------+
+| literal    | A literal string.                                                                |
+*------------+----------------------------------------------------------------------------------+
+| nullfieldstrategy | Used to locate a pre-defined {{{../apidocs/org/apache/tapestry5/NullFieldStrategy.html}NullFieldStrategy}}|
+*------------+----------------------------------------------------------------------------------+
+| message    | Retrieves a value from the component's {{{localization.html}message catalog}}.   |
+*------------+----------------------------------------------------------------------------------+
+| prop       | The name of a property of the containing component to read or update.            |
+*------------+----------------------------------------------------------------------------------+
+| translate  | The name of a configured translator.                                             |
+*------------+----------------------------------------------------------------------------------+
+| validate   | A <validator specification> used to create some number of field validators.      |
+*------------+----------------------------------------------------------------------------------+
+| var        | Allows a render variable of the component to be read or updated. |      |
+*------------+----------------------------------------------------------------------------------+
+
+  Parameters have a default prefix, usually "prop:", that is used when the prefix is not provided.
+  
+  A <special prefix>, "inherit:", is used to support {{{#Inherited Parameter Bindings}Inherted Parameter Bindings}}.
+
+Render Variables
+
+    Components can have any number of <render variables>.  Render variables are named values with no
+    specific type (they are ultimately stored in a Map).  Render variables are useful
+    for holding simply values, such as a loop index, that needs to be passed from one component to another.
+
+    For example:
+
+---
+  <ul>
+    <li t:type="loop" source="1..10" value="index">${index}</li>
+  </ul>
+---
+
+  And in the Java code:
+
+---
+  @Property
+  private int index;
+---
+
+  ... could be rewritten as just:
+
+---
+  <ul>
+    <li t:type="loop" source="1..10" value="var:index">${var:index}</li>
+  </ul>
+---
+
+  In other words, you don't have to define a property in the Java code.  The disadvantage is that
+  render variables don't work with the property expression syntax, so you can pass around a
+  render variables <value> but you can't reference any of the value's properties.
+
+  Render variables are automatically cleared when a component finishes rendering.
+
+  Render variable names are case insensitive.
+
+Property Bindings
+
+  The "prop:" binding prefix indicates a property binding.
+  
+  The expression for a property binding is a dotted sequence of property names.  Simple
+  property expressions are just the name of a property, "prop:userName".  Complex property
+  expression may do a little navigation before getting to the property to read and/or update:
+  "prop:userData.name".  
+  
+  In addition to property names, you may also invoke arbitrary methods.  The methods must be public,
+  return a non-void value, throw no checked exceptions, and take no parameters.  To differentiate
+  a method name from a property name, you simply append the open and close parenthesis.  Thus
+  the prior examples could be rewritten as "prop:getUserName()" and "prop:getUserData().getName()".
+  Note that when the last term in the expression is a method name, the binding will be read-only,
+  rather than read/write.
+  
+  This feature is most useful for accessing a couple of propertys of standard collection classes
+  that aren't named as proper properties, such as Collection.size(), or Map.keySet().
+      
+  Ever get frustrated, tripping over null pointers inside such an expression?  You may use
+  "?." instead of "." as the separator.  This adds a null check and aborts the expression
+  if the term is null.  Thus "foo?.bar?.baz" will return null if either foo or bar are null.
+  Likewise, updating "foo?.bar?.baz" will turn into a no-op if foo or bar is null.    
+      
+  In addition, a few special cases are also supported. 
+  In most cases, these special values save you the trouble of adding a "literal:" prefix to
+  the value.  These special cases are <alternatives> to property expressions.
+  
+  * "true" and "false" will be converted to booleans. 
+  
+  * "null" will be the  value null. 
+    
+  * "this" will be the component itself.
+  
+  * Simple numeric values are also accepted. These will be parsed into Long or Double objects.
+    Ex: "prop:3.14".
+    
+  * A range of integers separated by two periods. Ex: "1..10".  
+  
+  * Literal strings, inside single quotes.  Ex: "'Hello World'"
+  
+  []
+  
+  In all these cases, excess whitespace is ignored.  For the keywords ("true", "false", "this" and
+  "null"), case is ignored.
+  
+  Such values are read only and invariant.
+  
+Validate Bindings
+
+  The "validate:" binding prefix is highly specialized. It allows a short string to be
+  used to create and configure the objects that perform input validation for 
+  form control components, such as TextField and Checkbox.
+  
+  The string is a comma-separated list of   <validator types>.  These are short aliases
+  that for objects that perform the validation.  In many cases, the validation is configurable
+  in some way: for example, a validator that enforces a minimum string length
+  needs to know what that minimum string length is.  Such values are specified after an equals sign.
+  
+  For example:  <<<validate:required,minLength=5>>> would presumably enforce that a field
+  requires a value, with at least five characters.
+  
+Translate Bindings
+
+  The "translate:" binding prefix is also related to input validator. It is the name
+  of a configured {{{../apidocs/org/apache/tapestry5/Translator.html}Translator}}, responsible
+  for converting between server-side and client-side representations of data (for instance, between
+  client-side strings and server-side numeric values).
+  
+  The list of available translators is configured by the
+  {{{../apidocs/org/apache/tapestry5/services/TranslatorSource.html}TranslatorSource}} service.
+  
+Informal Parameters
+
+  Some components support <informal parameters>, additional parameters beyond the formally defined parameters.
+  Informal parameters will be rendered into the output as additional attributes on the tag rendered by
+  the component.  Generally speaking, components that have a 1:1 relationship with a particular HTML tag
+  (such as {{{../tapestry-core/ref/org/apache/tapestry5/corelib/components/TextField.html}TextField}} and
+  \<input\> will support informal parameters.
+
+  Only components whose class is annotated with
+  {{{../apidocs/org/apache/tapestry5/annotations/SupportsInformalParameters.html}SupportsInformalParameters}}
+  will support informal parameters.
+
+  Informal parameters are often used to set the CSS class of an element, or to specify client-side event handlers.
+  
+  The default binding prefix for informal parameters depends on <where> the parameter binding is specified.
+  If the parameter is bound inside a Java class, within the 
+  {{{../apidocs/org/apache/tapestry5/annotations/Component.html}Component}} annotation, then the default binding
+  prefix is "prop:".  If the parameter is bound inside the component template, then the default binding
+  prefix is "literal:".  This reflects the fact that a parameter specified in the Java class, using the annotation, is most likely
+  a computed value, whereas a value in the template should simply be copied, as is, into the result HTML stream.
+
+Supporting Informal Parameters
+
+    <<Only>> components which area annotated with
+    {{{../apidocs/org/apache/tapestry5/annotations/SupportsInformalParameters.html}SupportsInformalParameters}}
+    may have informal parameters. Tapestry silently drops informal parameters that are specified for components
+    that do not have this annotation.
+
+    To render informal parameters, inject the
+    {{{../apidocs/org/apache/tapestry5/ComponentResources.html}ComponentResources}} for your component
+    and invoke the <<<renderInformalParameters()>>> method.
+
+    
+Parameters Are Bi-Directional
+
+  Parameters are not simply variables; each parameter represents a connection, or <binding>, between
+  a component and a property of its container.  When using the prop: binding prefix,
+  the component can force changes <into> a property of its container, just by assigning a value
+  to its own instance variable.
+  
++---+
+<t:layout xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+    <p> Countdown:
+        <t:count start="5" end="1" value="index"> 
+          ${index} ...  
+        </t:count>
+    </p>
+</t:layout>
++---+   
+
+  Because the Count component updates its value parameter (the _value field), the index property
+  of the containing component is updated.  Inside the Count's body, we output the current
+  value of the index property, using the expansion <<<$\{index\}>>>. The resulting output
+  will look something like:
+  
++---+
+  <p> Countdown: 5 ... 4 ... 3 ... 2 ... 1 ... </p>
++---+
+
+  (Though the whitespace will be quite different.)  
+  
+  The relevant part is that components can read fixed values, or <live>
+  properties of their  container, and can <change> properties of their container as well.
+  
+Required Parameters
+
+  Parameters that are required <<must>> be bound.  A runtime exception occurs if a component
+  has unbound required parameters.
+  
+Optional Parameters
+
+  Parameters which are not required, are optional.  
+  
+  You may set a default value for optional parameters as you would for any other field. In the Count component,
+  the min parameter has a default value of 1. That value is used unless the min parameter is bound,
+  in which case, the bound value supercedes the default.
+  
+  
+{Inherited Parameter Bindings}
+
+  A special prefix, "inherit:" is used to identify the name of a parameter of the containing component.
+  If the parameter is bound in the containing component, then it will be bound to the same value
+  in the embedded component.
+  
+  If the parameter is not bound in the containing component, then it will not be bound in the embedded component
+  (and so, the embedded component may use a default binding).
+  
+  Inherited bindings are useful for complex components; they are often used when an inner component
+  has a default value for a parameter, and the outer component wants to make it possible to override that default.
+  
+  More examples on this coming soon.
+    
+Parameter Binding Defaults
+
+  The Parameter annotation's value() attribute can be used to specify a <binding expression> that will be the
+  default binding for the parameter is otherwise left unbound. Typically, this is the name of a property
+  that that will compute the value on the fly.  
+  
+  Example:
+  
++----+
+  @Parameter("defaultMessage")
+  private String message;
+  
+  @Parameter(required=true)
+  private int maxLength;
+  
+  public String getDefaultMessage()
+  {
+    return String.format("Maximum field length is %d.", _maxLength);
+  }
++---+
+
+  As elsewhere, you may use a prefix on the value. A common prefix to use is the "message:" prefix, to access a localized message.  
+  
+Computed Parameter Binding Defaults
+
+  In <rare> cases, you may want to compute the binding to be used as a parameter default. In this case, you will provide
+  a <default binding method>, a method that takes no parameters.  The returned value is used to bind the parameter.  The return value may
+  be a
+  {{{../apidocs/org/apache/tapestry5/Binding.html}Binding}} instance, or it may be a simple value (which is more often the case).
+  
+  The method name is "default" plus the capitalized name
+  of the parameter.
+  
+  Using this approach, the previous example may be rewritten as:
+    
++----+
+  @Parameter
+  private String message;
+  
+  @Parameter(required=true)
+  private int maxLength;
+  
+  @Inject
+  private ComponentResources resources;
+  
+  @Inject
+  private BindingSource bindingSource;
+  
+  Binding defaultMessage()
+  {
+    return bindingSource.newBinding("default value", resources, "defaultMessage");
+  }
+  
+  public String getDefaultMessage()
+  {
+    return String.format("Maximum field length is %d.", maxLength);
+  }
++---+  
+  
+  In this example, a property expression, "defaultMessage", is used to access the message dynamically.
+  
+  Alternately, the previous example may be written even more succinctly as:
+  
++----+
+  @Parameter
+  private String message;
+  
+  @Parameter(required=true)
+  private int maxLength;
+  
+  @Inject
+  private ComponentResources resources;
+  
+  String defaultMessage()
+  {
+    return String.format("Maximum field length is %d.", _maxLength);
+  }  
++---+  
+  
+  This form is more like using the "literal:" binding prefix, except that the literal value is computed by the defaultMessage() method.
+  
+  Obviously, this is a lot more work than simply specifying a default value as part of the Parameter annotation. In the few
+  real cases where this is approach is used, the default binding method will usually deduce a proper binding, typically in terms of
+  the component's id.  For example, the TextField component will deduce a value parameter that binds to a property of its container with
+  the same name.
+  
+  A default binding method will <only> be invoked if the Parameter annotation does not provide a default value.
+  
+Unbound Parameters
+
+  If a parameter is not bound (and is optional), then the value may be read or <updated> at any time.
+  
+  Updates to unbound parameters cause no side effects.  In the first example, the value parameter of the Count
+  component is not bound, and this is perfectly valid.
+  
+  Note: updates to such fields are temporary; when the component <finishes rendering>, the field
+  will revert to its default value.
+  
+  <<TODO: This seems contradictory. What does it mean to update an unbound component parameter when the component 
+  is not rendering?>>  
+    
+  
+Parameter Caching
+
+  Reading a parameter value can be marginally expensive (because of type coercion). Therefore, it makes sense
+  to cache the parameter value, at least while the component is actively rendering itself.
+  
+  In rare cases, it is desirable to defeat the caching; this can be done by setting the cache() attribute
+  of the Parameter annotation to false.
+  
+Parameter Type Coercion
+
+  Tapestry includes a mechanism for {{{coercion.html}coecing types automatically}}. Most often, this is used to
+  convert literal strings into appropriate values, but in many cases, more complex conversions
+  will occur.
+  
+Parameter Names
+
+  By default, Tapestry converts from the field name to the parameter name, by stripping off leading
+  "$" and "_" characters.
+  
+  This can be overriden using the name() attribute of the Parameter annotation.
+  
+Determining if Bound
+
+  In rare cases, you may want to take different behaviors based on whether a parameter is bound
+  or not. This can be accomplished by querying the component's resources, which can be 
+  {{{inject.html}injected}}  into the component using the
+  {{{../apidocs/org/apache/tapestry5/ioc/annotations/Inject.html}Inject}} annotation:
+  
++---+
+public class MyComponent
+{
+  @Parameter
+  private int myParam;
+  
+  @Inject
+  private ComponentResources resources;
+  
+  @BeginRender
+  void setup()
+  {
+      if (resources.isBound("myParam"))
+      {
+        . . .
+      }
+  }
+}
++---+
+
+  The above sketch illustrates the approach.  Because the parameter type is a primitive type, int,
+  it is hard to distinguish between no binding, and binding explicitly to the value 0.
+  
+  The Inject annotation will inject the
+  {{{../apidocs/org/apache/tapestry5/ComponentResources.html}ComponentResources}} for the component.
+  These resources are the linkage between the Java class you provide, and the infrastructure Tapestry
+  builds around your class.  In any case, once the resources are injected,
+  they can be queried.
+ 
+   

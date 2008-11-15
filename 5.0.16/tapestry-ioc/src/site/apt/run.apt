@@ -1,0 +1,67 @@
+ ----
+ Starting the Tapestry IoC Registry
+ ----
+ 
+Starting the Tapestry IoC Registry
+
+ Primarily, you will use the IoC Registry as part of a Tapestry application.
+ In those situations, the 
+ {{{../apidocs/org/apache/tapestry5/TapestryFilter.html}TapestryFilter}} will
+ be responsible for starting and stopping the registry.
+ 
+ However, you may want to do some integration testing using the Registry
+ from within a test case, or you may even use Tapestry IoC separately from
+ Tapestry.
+ 
+Building the Registry
+
+  The class
+  {{{../apidocs/org/apache/tapestry5/ioc/RegistryBuilder.html}RegistryBuilder}}
+  is used to create a Registry.
+  
++---+
+RegistryBuilder builder = new RegistryBuilder();
+
+builder.add(AppModule.class, UtilModule.class);
+
+Registry registry = builder.build();
+
+registry.performRegistryStartup();
++---+
+
+  You may invoke add() as many times as you wish, or pass as many module classes
+  as you wish.
+  
+  Using this approach, you will form a Registry containing
+  the builtin services from the
+  {{{../apidocs/org/apache/tapestry5/ioc/services/TapestryIoCModule.html}Tapestry IoC module}}, plus
+  the modules you explicitly list.
+  
+  The call to performRegistryStartup() is necessary to ensure that any services marked with the
+  {{{../apidocs/org/apache/tapestry5/ioc/annotations/EagerLoad.html}EagerLoad}} annotation are, in fact,
+  loaded.
+  
+Building the Default Registry
+
+  The default registry is available by invoking the static method
+  {{{../apidocs/org/apache/tapestry5/ioc/IOCUtilities.html#buildDefaultRegistry()}IOCUtilities.buildDefaultRegistry()}}.
+  This method builds a Registry using
+  {{{autoload.html}autoloading logic}}, where modules to load
+  are identified via a JAR Manifest entry.
+  
+  In addition, the JVM system property <<<tapestry.modules>>> (if specified) is a list of additional
+  module classes to load.  This is often used in development, where tests may be executed against
+  the local classes, not JARs, and so there no manifest to read.
+  
+  
+Shutting down the Registry
+
+  The method
+  {{{../apidocs/org/apache/tapestry5/ioc/Registry.html#shutdown()}Registry.shutdown()}}
+  will shutdown the Registry. This immediately invalidates all service proxies.
+  Some services may have chosen to register for shutdown notification (for example,
+  to do cleanup work such as closing a database connection).
+  
+  Once the Registry is shutdown, it may not be used again: it will not be possible to
+  access services within the Registry, or invoke methods on services previously
+  acquired.  All you can do is release the Registry to the garbage collector.
