@@ -21,13 +21,14 @@ import org.testng.annotations.Test;
 
 public class DocumentLinkerImplTest extends InternalBaseTestCase
 {
+
     private void check(Document document, String file) throws Exception
     {
         assertEquals(document.toString(), readFile(file));
     }
 
     @Test
-    public void exception_if_missing_html_root_element()
+    public void exception_if_missing_html_root_element_and_javascript()
     {
         Document document = new Document();
 
@@ -50,6 +51,30 @@ public class DocumentLinkerImplTest extends InternalBaseTestCase
             assertEquals(ex.getMessage(),
                          "The root element of the rendered document was <not-html>, not <html>. A root element of <html> is needed when linking JavaScript and stylesheet resources.");
         }
+    }
+
+    @Test
+    public void logged_error_if_missing_html_element_and_css()
+    {
+        Document document = new Document();
+
+        document.newRootElement("not-html").text("not an HTML document");
+
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(true, false);
+
+        // Only checked if there's something to link.
+
+        linker.addStylesheetLink("style.css", null);
+
+        replay();
+
+        linker.updateDocument(document);
+
+        // Check that document is unchanged.
+
+        assertEquals(document.toString(), "<not-html>not an HTML document</not-html>");
+
+        verify();
     }
 
     @Test
