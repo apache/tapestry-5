@@ -96,7 +96,7 @@ public class LinkImpl implements Link
 
         String invocationURI = invocation.buildURI();
 
-        if (invocationURI.length() > 0)
+        if (invocationURI.length() > 0 || contextPath.length() == 0)
         {
             builder.append("/");
 
