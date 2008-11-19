@@ -1045,7 +1045,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         clickAndWait("link=bad");
         assertTextPresent("An unexpected application exception has occurred.",
-                          "An event handler for component org.apache.tapestry5.integration.app1.pages.Start returned the value 20 (from method org.apache.tapestry5.integration.app1.pages.Start.onActionFromBadReturnType() (at Start.java:34)). Return type java.lang.Integer can not be handled.");
+                          "An event handler for component org.apache.tapestry5.integration.app1.pages.Index returned the value 20 (from method org.apache.tapestry5.integration.app1.pages.Index.onActionFromBadReturnType() (at Index.java:34)). Return type java.lang.Integer can not be handled.");
     }
 
     @Test
@@ -1053,7 +1053,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     {
         open(BASE_URL);
 
-        assertText("activePageName", "Start");
+        assertText("activePageName", "Index");
 
         clickAndWait("link=Grid Demo");
 
@@ -1820,7 +1820,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         assertText("secure", "secure");
 
-        assertText("message", "Triggered from Start");
+        assertText("message", "Triggered from Index");
 
         clickAndWait("link=click");
 

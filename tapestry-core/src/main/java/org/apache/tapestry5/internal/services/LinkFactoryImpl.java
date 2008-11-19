@@ -126,19 +126,6 @@ public class LinkFactoryImpl implements LinkFactory
                            ? pageActivationContext
                            : contextCollector.collectPageActivationContext(page);
 
-        // Strip a trailing "/index" from the path.
-
-        int lastSlashx = logicalPageName.lastIndexOf("/");
-
-        String lastTerm = lastSlashx < 0 ? logicalPageName : logicalPageName.substring(lastSlashx + 1);
-
-        // This, alas, duplicates some logic inside ComponentClassResolverImpl ...
-
-        if (lastTerm.equalsIgnoreCase("index"))
-        {
-            logicalPageName = lastSlashx < 0 ? "" : logicalPageName.substring(0, lastSlashx);
-        }
-
         PageRenderTarget target = new PageRenderTarget(logicalPageName);
 
         ComponentInvocation invocation = new ComponentInvocationImpl(contextPathEncoder, target, null, context, false);
