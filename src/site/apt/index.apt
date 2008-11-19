@@ -84,7 +84,7 @@ New And Of Note
   * Tapestry now bundles Prototype version 1.6.0.2.
 
   * New methods have been added to
-    {{{../apidocs/org/apache/tapestry5/dom/Node.html}Node}} to allow nodes to be moved about or otherwise
+    {{{apidocs/org/apache/tapestry5/dom/Node.html}Node}} to allow nodes to be moved about or otherwise
     manipulated.
 
   * Application State Objects are now automatically saved back to the session at the end of the request,
