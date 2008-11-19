@@ -23,7 +23,7 @@ var Tapestry = {
 
     /** Event fired just before the form submits, to allow observers to make
      *  final preparations for the submission, such as updating hidden form fields.
-     *  The form element is passed as the event memo. 
+     *  The form element is passed as the event memo.
      */
     FORM_PREPARE_FOR_SUBMIT_EVENT : "tapestry:formprepareforsubmit",
 
@@ -352,13 +352,13 @@ var Tapestry = {
                 }
             },
             onException: Tapestry.ajaxFailureHandler,
-            onFailure: Tapestry.ajaxFailureHandler })
+            onFailure: Tapestry.ajaxFailureHandler });
     },
 
     /** Obtains the Tapestry.ZoneManager object associated with a triggering element
      * (an <a> or <form>) configured to update a zone. Writes errors to the AjaxConsole
      * if the zone and ZoneManager can not be resolved.
-     * 
+     *
      * @param element   triggering element
      * @return Tapestry.ZoneManager instance for updated zone, or null if not found.
      */
@@ -447,7 +447,7 @@ Element.addMethods(
      *
      * Note that this only applies to the CSS definition of visible; it doesn't check that the element
      * is scolled into view.
-     * 
+     *
      * @param element to search up from
      * @return true if visible (and containers visible), false if it or container are not visible
      */
@@ -1604,7 +1604,7 @@ Tapestry.ScriptManager = {
      * Add scripts, as needed, to the document, then waits for them all to load, and finally, calls
      * the callback function.
      * @param scripts        Array of scripts to load
-     * @param callback invoked after scripts are loaded                                
+     * @param callback invoked after scripts are loaded
      */
     addScripts: function(scripts, callback)
     {
