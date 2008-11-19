@@ -86,8 +86,10 @@ public class DocumentLinkerImpl implements DocumentLinker
         addScriptElementsToBody(root);
     }
 
-    private void validateRoot(Element root)
+    private void addScriptElementsToBody(Element root)
     {
+        if (scripts.isEmpty() && scriptBlock.length() == 0) return;
+
         // This only applies when the document is an HTML document. This may need to change in the
         // future, perhaps configurable, to allow for html and xhtml and perhaps others. Does SVG
         // use stylesheets?
@@ -96,13 +98,6 @@ public class DocumentLinkerImpl implements DocumentLinker
 
         if (!rootElementName.equals("html"))
             throw new RuntimeException(ServicesMessages.documentMissingHTMLRoot(rootElementName));
-    }
-
-    private void addScriptElementsToBody(Element root)
-    {
-        if (scripts.isEmpty() && scriptBlock.length() == 0) return;
-
-        validateRoot(root);
 
         Element body = root.find("body");
 
@@ -179,7 +174,14 @@ public class DocumentLinkerImpl implements DocumentLinker
 
         if (count == 0) return;
 
-        validateRoot(root);
+        // This only applies when the document is an HTML document. This may need to change in the
+        // future, perhaps configurable, to allow for html and xhtml and perhaps others. Does SVG
+        // use stylesheets?
+
+        String rootElementName = root.getName();
+
+        // Not an html document, don't add anything. 
+        if (!rootElementName.equals("html")) return;
 
         Element head = root.find("head");
 
