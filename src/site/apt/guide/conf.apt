@@ -190,8 +190,8 @@ public class AppModule
     annotation will set this value to true.
 
   [tapestry.script-at-top]
-    If true, then links for external JavaScript libraries will be placed at the top of the page, just inside the
-    \<body\> element, rather than in the default location (at the bottom). The \<script\> block for per-page
+    If true, then links for external JavaScript libraries will be placed at the top of the page,  inside the
+    \<head\> element, rather than in the default location (at the bottom of the \<body\> element). The \<script\> block for per-page
     initialization will be placed at the bottom of the page in either case.  The default (scripts at the bottom)
     was chosen in accordance with {{{http://developer.yahoo.com/performance/rules.html#js_bottom}Yahoo Peformance Best Practices}}. 
 
