@@ -111,6 +111,44 @@ public class DocumentLinkerImplTest extends InternalBaseTestCase
     }
 
     @Test
+    public void empty_document_with_scripts_at_top() throws Exception
+    {
+        Document document = new Document(new XMLMarkupModel());
+
+        document.newRootElement("html");
+
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(true, true);
+
+        linker.addStylesheetLink("style.css", "print");
+        linker.addScriptLink("foo.js");
+        linker.addScriptLink("bar/baz.js");
+        linker.addScript("pageInitialization();");
+
+        linker.updateDocument(document);
+
+        check(document, "empty_document_with_scripts_at_top.txt");
+    }
+
+    @Test
+    public void empty_document_with_scripts_at_bottom() throws Exception
+    {
+        Document document = new Document(new XMLMarkupModel());
+
+        document.newRootElement("html");
+
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(true, false);
+
+        linker.addStylesheetLink("style.css", "print");
+        linker.addScriptLink("foo.js");
+        linker.addScriptLink("bar/baz.js");
+        linker.addScript("pageInitialization();");
+
+        linker.updateDocument(document);
+
+        check(document, "empty_document_with_scripts_at_bottom.txt");
+    }
+
+    @Test
     public void add_script_links_at_top() throws Exception
     {
         Document document = new Document(new XMLMarkupModel());

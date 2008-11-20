@@ -67,8 +67,7 @@ public class DocumentLinkerImpl implements DocumentLinker
     }
 
     /**
-     * Updates the supplied Document, locating the html/body element and adding script links (to the top) and a script
-     * block (to the end).
+     * Updates the supplied Document, possibly adding &lt;head&gt; or &lt;body&gt; elements.
      *
      * @param document to be updated
      */
@@ -76,17 +75,17 @@ public class DocumentLinkerImpl implements DocumentLinker
     {
         Element root = document.getRootElement();
 
-        // If the document failed to render entirely, that's a different problem and is reported elsewhere.        
-        if (root == null) return;
+        // If the document failed to render at all, that's a different problem and is reported elsewhere.
 
+        if (root == null) return;
 
         if (!stylesheets.isEmpty())
             addStylesheetsToHead(root, includedStylesheets);
 
-        addScriptElementsToBody(root);
+        addScriptElements(root);
     }
 
-    private void addScriptElementsToBody(Element root)
+    private void addScriptElements(Element root)
     {
         if (scripts.isEmpty() && scriptBlock.length() == 0) return;
 
@@ -99,17 +98,27 @@ public class DocumentLinkerImpl implements DocumentLinker
         if (!rootElementName.equals("html"))
             throw new RuntimeException(ServicesMessages.documentMissingHTMLRoot(rootElementName));
 
-        Element body = root.find("body");
+        String childElement = scriptsAtTop ? "head" : "body";
 
-        // Create the body element is it is somehow missing.
-
-        if (body == null) body = root.element("body");
+        Element container = findOrCreateElement(root, childElement, scriptsAtTop);
 
         // TAPESTRY-2364
 
-        addScriptLinksForIncludedScripts(body, scripts);
+        addScriptLinksForIncludedScripts(container, scripts);
 
-        addDynamicScriptBlock(body);
+        addDynamicScriptBlock(findOrCreateElement(root, "body", false));
+    }
+
+    private Element findOrCreateElement(Element root, String childElement, boolean atTop)
+    {
+        Element container = root.find(childElement);
+
+        // Create the element is it is missing.
+
+        if (container == null)
+            container = atTop ? root.elementAt(0, childElement) : root.element(childElement);
+
+        return container;
     }
 
     /**
@@ -140,25 +149,18 @@ public class DocumentLinkerImpl implements DocumentLinker
     }
 
     /**
-     * Adds a script link for each included script.
+     * Adds a script link for each included script to the bottom of the container (the &lt;head&gt; or &lt;body&gt; of
+     * the document, based on the scriptsAtTop configuration).
      *
-     * @param body    element to add the script links to
-     * @param scripts scripts to add
+     * @param container element to add the script links to
+     * @param scripts   scripts to add
      */
-    protected void addScriptLinksForIncludedScripts(Element body, List<String> scripts)
+    protected void addScriptLinksForIncludedScripts(Element container, List<String> scripts)
     {
-        int count = scripts.size();
-
-        for (int i = 0; i < count; i++)
-        {
-            String scriptURL = scripts.get(i);
-
-            Element element = scriptsAtTop
-                              ? body.elementAt(i, "script")
-                              : body.element("script");
-
-            element.attributes("src", scriptURL, "type", "text/javascript");
-        }
+        for (String scriptURL : scripts)
+            container.element("script",
+                              "src", scriptURL,
+                              "type", "text/javascript");
     }
 
     /**
@@ -183,9 +185,7 @@ public class DocumentLinkerImpl implements DocumentLinker
         // Not an html document, don't add anything. 
         if (!rootElementName.equals("html")) return;
 
-        Element head = root.find("head");
-
-        if (head == null) head = root.elementAt(0, "head");
+        Element head = findOrCreateElement(root, "head", true);
 
         for (int i = 0; i < count; i++)
             stylesheets.get(i).add(head, i);
