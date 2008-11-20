@@ -31,7 +31,7 @@ import java.net.URL;
 public class ReturnTypes
 {
     @InjectPage
-    private Start start;
+    private Index index;
 
     @Inject
     private ComponentResources resources;
@@ -43,22 +43,22 @@ public class ReturnTypes
 
     Object onActionFromStringReturnValue()
     {
-        return "start";
+        return "index";
     }
 
     Object onActionFromClassReturnValue()
     {
-        return Start.class;
+        return Index.class;
     }
 
     Object onActionFromPageReturnValue()
     {
-        return start;
+        return index;
     }
 
     Object onActionFromLinkReturnValue()
     {
-        return resources.createPageLink("start", false);
+        return resources.createPageLink("index", false);
     }
 
     Object onActionFromStreamReturnValue()

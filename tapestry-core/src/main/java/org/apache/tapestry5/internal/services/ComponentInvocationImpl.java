@@ -111,6 +111,13 @@ public class ComponentInvocationImpl implements ComponentInvocation
 
         String targetPath = target.getPath();
 
+        int lastSlash = targetPath.lastIndexOf('/');
+
+        // Omit the "index" if the path ends with "/index".
+
+        if (targetPath.substring(lastSlash + 1).equalsIgnoreCase("index"))
+            targetPath = lastSlash < 0 ? "" : targetPath.substring(0, lastSlash);
+
         if (InternalUtils.isBlank(extraPath)) return targetPath;
 
         if (targetPath.length() == 0) return extraPath;
