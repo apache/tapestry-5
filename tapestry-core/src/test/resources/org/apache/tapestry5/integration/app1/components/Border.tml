@@ -28,7 +28,7 @@
                                 <span id="secure">${secure}</span>
                             </li>
                             <li>
-                                <t:pagelink page="start">Back to index</t:pagelink>
+                                <t:pagelink page="index">Back to index</t:pagelink>
                             </li>
                         </ul>
 

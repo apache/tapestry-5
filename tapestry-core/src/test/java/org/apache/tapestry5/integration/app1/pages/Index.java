@@ -27,7 +27,7 @@ import java.util.List;
 /**
  * Have to start somewhere!
  */
-public class Start
+public class Index
 {
     public static class Item implements Comparable<Item>
     {
@@ -347,7 +347,7 @@ public class Start
 
     Object onActionFromSecurePage()
     {
-        return securePage.initialize("Triggered from Start");
+        return securePage.initialize("Triggered from Index");
     }
 
     public Link getInjectDemoLink()

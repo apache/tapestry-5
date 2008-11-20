@@ -44,7 +44,6 @@ public class Email extends AbstractValidator<Void, String>
     public void render(Field field, Void constraintValue, MessageFormatter formatter, MarkupWriter markupWriter,
                        FormSupport formSupport)
     {
-        formSupport.addValidation(field, "email", buildMessage(formatter, field), null);
     }
 
     private String buildMessage(MessageFormatter formatter, Field field)

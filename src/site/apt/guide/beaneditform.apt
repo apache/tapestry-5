@@ -118,6 +118,8 @@ Customizing the BeanModel
 
   * add: A command seperated list of property names to add to the model.
 
+  * include: A comma seperated list of property names to keep with the model (others are excluded).
+
   * exclude: A comma separated list of property names to exclude from the model.
   
   * reorder: A comma separated list of property names indicating the desired order.
@@ -126,7 +128,8 @@ Customizing the BeanModel
   
   If a model has more properties that are listed in the reorder parameter, then the additional properties will be ordered at the end of the form.
   
-  Note that these parameters <modify> the BeanModel.
+  Note that these parameters <modify> the BeanModel.  If you supply your own BeanModel (via the model parameter)
+  you should not use the add, include, exclude or reorder parameters.
 
   Added properties must not conflict with normal properties. Cells for added properties will render blank unless an override is provided.
 
@@ -139,7 +142,7 @@ Providing the BeanModel
   
   Normally, the BeanEditForm automatically creates the BeanModel as needed, based on the type of object bound to its object parameter.
   
-  Alternately, the BeanModel can be supplied as the model parameter. This can be useful in situations where the remove and reorder parameters
+  Alternately, the BeanModel can be supplied as the model parameter. This can be useful in situations where the exclude and reorder parameters
   are insufficient.  For example, if the the type of the property being edited is an interface type, it may be useful to provide
   an explicit BeanModel around an underlying implementation class.
   
