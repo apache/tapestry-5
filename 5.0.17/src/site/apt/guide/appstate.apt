@@ -1,0 +1,132 @@
+ ----
+ Application State
+ ----
+ 
+Application State
+
+  Often, you will have a situation where you have a bit of data that is needed across multiple pages. Perhaps you are creating a multi-page wizard, or perhaps
+  you have an object that tracks the user's identify once logged in.
+  
+  Ordinary {{{persist.html}persistent page data}} is not appropriate, since persistent fields apply to a specific page and aren't shared across pages.
+  
+  Instead, you want to use an <Application State Object> (an ASO).
+  
+  With an ASO, the value is automatically stored outside the page; with the default storage strategy, it is stored in the session. 
+
+  <Note: Tapestry's naming convention here is in conflict with naming conventions of the Servlet API.  Do not be confused: ASOs are
+   stored (by default) in the session, not the servlet context. They are unique to an individual user, not shared between users. >
+
+
+  A field holding an ASO is marked with the
+  {{{../apidocs/org/apache/tapestry5/annotations/ApplicationState.html}ApplicationState}} annotation.
+  
+  Example:
+  
++---+
+public class MyPage
+{
+  @ApplicationState
+  private MyState myState;
+  
+  . . .
+}
++---+
+
+  Any other component or page that declares a field of the same type, regardless of name, and marks it with the ApplicationState
+  annotation will share the same value.  It's that simple.
+  
+  <For Tapestry 4 Users:> a big change here is that you don't need to provide any configuration for the ASO before using it, nor
+  do you provide a logical name.
+  Tapestry 5 uses the class name to identify the ASO, so there's no need for a logical name.
+  
+  The first time you access an ASO, it is created automatically.  Typically, the ASO will have a public no-args constructor ... but you may
+  inject dependencies into the ASO via its constructor, as you can with a Tapestry IoC service implementation.
+  
+  Assigning a value to an ASO field will store that value.  Assigning null to an ASO field will remove the ASO (reading the field subsequently
+  will force a new ASO instance to be created).
+  
+Check for Creation
+
+  Scalable web applications do not create the server-side session needlessly. If you can avoid creating the session, especially on first
+  access to your web application, you will be able to handle an order of magnitude more users. So, if you can avoid creating the ASO, you should do so.
+  
+  But how to avoid creating it?  Simply checking ("myState != null") will force the creation of the ASO and the session to store it in.
+  
+  Instead, create a second field:
+  
++---+
+  private boolean myStateExists;
++---+
+
+  This companion field is used to see if the ASO already exists. It is not annotated; it is located by name ("Exists" is appended to the name of the field
+  storing the ASO). It must be type boolean and must be a private instance variable.  
+
+  Alternately, you may allow for the state being null:
+
++---+
+  @ApplicationState(create=false)
+  private MyState myState;
++---+
+
+  In this case, the myState field will be null if the MyState ASO does not exist, but will be non-null if it has been
+  created (either by assigning a value to the field, or by a different ASO field where create is true).
+
+Persistence Strategies
+
+  Each ASO is managed according to a persistence strategy. The default persistence strategy, "session", stores the ASOs inside the session.
+  The session is created as needed.
+
+* Clustering Issue
+
+  Application State Objects are, by design, mutable objects.  This means that, once read from the session, they are often modified.
+  This poses a problem <in a cluster>, because the modified version of the ASO should be propogated to the other server(s) in the cluster.
+
+  Tapestry handles this automatically; at the end of a request, every ASO that has been accessed from the session will be restored
+  into the session.  This will trigger the application server to synchronize the new state of the ASO around the the cluster.
+
+  This can be optimized: the interface
+  {{{../apidocs/org/apache/tapestry5/OptimizedApplicationStateObject.html}OptimizedApplicationStateObject}}  can be
+  implemented by   your ASO.  This provides control over whether the ASO is "dirty" and needs to be stored.  Thus, in the majority of
+  requests where the internal state of the ASO is not changed, it will not be restored into the session.
+
+  The easiest way to take advantage of this is to extend from the
+  {{{../apidocs/org/apache/tapestry5/BaseOptimizedApplicationStateObject.html}BaseOptimizedApplicationStateObject}}, and
+  invoke markDirty() from the setter methods.
+  
+Configuring ASOs
+
+  Generally, you will configure an ASO if you need to change it from the default persistence strategy.  Right now there's only one built in
+  strategy, but more will be coming in the future.
+  
+  Alternately, you will configure an ASO so that you can control how it is instantiated.  You may need to inject some values into the ASO
+  when it is first created, or otherwise initialize it.  In this second case, you may provide an
+  {{{../apidocs/org/apache/tapestry5/services/ApplicationStateCreator.html}ApplicationStateCreator}} object, which will be called upon to create the ASO
+  as necessary.  This is also the technique to use when you want your ASO to be represented by an <interface> rather than a <class>: you need to provide
+  a creator that knows about the class that implements the interface.
+  
+  Contributions to the tapestry.ApplicationStateManager are used to configure an ASO.  From your application's module:
+  
++----+
+  public void contributeApplicationStateManager(MappedConfiguration<Class, ApplicationStateContribution> configuration)
+  {
+    ApplicationStateCreator<MyState> creator = new ApplicationStateCreator<MyState>()
+    {
+      public MyState create()
+      {
+        return new MyState(new Date());
+      }
+    };
+  
+    configuration.add(MyState.class, new ApplicationStateContribution("session", creator));
+  }
++---+
+
+  Here, we have an ASO type of MyState, and we're providing a creator for it.  We've dolled the creator up with some generic types, but
+  that isn't essential. 
+  
+  Our creator creates a new MyState instance using an alternate constructor that takes the current date and time.  Again, just an
+  example.
+  
+  Finally, we create an 
+  {{{../apidocs/org/apache/tapestry5/services/ApplicationStateContribution.html}ApplicationStateContribution}}
+  identifying the strategy name and the creator, and give that to the configuration.

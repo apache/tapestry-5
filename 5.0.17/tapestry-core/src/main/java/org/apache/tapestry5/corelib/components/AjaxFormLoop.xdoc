@@ -1,0 +1,319 @@
+<document>
+    <body>
+        <section name="Related Components">
+
+            <ul>
+                <li>
+                    <a href="AddRowLink.html">AddRowLink</a>
+                </li>
+                <li>
+                    <a href="RemoveRowLink.html">RemoveRowLink</a>
+                </li>
+                <li>
+                    <a href="Loop.html">Loop</a>
+                </li>
+                <li>
+                    <a href="FormInjector.html">FormInjector</a>
+                </li>
+            </ul>
+        </section>
+
+        <section name="Examples">
+
+            <p>
+                AjaxFormLoop renders an extensible, editable list of entities. It is intended for use with Master/Detail
+                relationships
+                (such as between an Order and a LineItem, in an e-commerce application). It allows new detail objects
+                to be added on the server side, with corresponding new user interface added to the client side.
+                Likewise,
+                existing server-side objects can be removed, and the corresponding user interface also removed.
+            </p>
+
+            <p>
+                AjaxFormLoop is dependent on the ability to extract an identifier (a primary key) from objects when
+                rendering, and
+                then retrieve the full object in a later request, such as when the form is submitted. This aligns well
+                with
+                an Object Relational Mapping layer such as Hibernate.
+            </p>
+
+
+            <p>
+                This example has an address book of Persons, each of which has multiple Phones. It is, in fact,
+                implemented in terms of Hibernate, using the tapestry-hibernate module.
+            </p>
+
+            <img src="ajaxformloop.png"/>
+
+
+            <subsection name="Person.java">
+                <source><![CDATA[package org.example.addressbook.entities;
+
+import org.apache.tapestry5.beaneditor.NonVisual;
+import org.apache.tapestry5.beaneditor.Validate;
+import org.apache.tapestry5.beaneditor.Width;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+
+import javax.persistence.*;
+import java.util.List;
+
+@Entity
+public class Person
+{
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @NonVisual
+    private long id;
+
+    . . .
+
+    @OneToMany(mappedBy = "person", cascade = CascadeType.ALL)
+    private List<Phone> phones = new ArrayList<Phone>();
+
+    . . .
+
+    public List<Phone> getPhones()
+    {
+        return phones;
+    }
+
+    public void setPhones(List<Phone> phones)
+    {
+        this.phones = phones;
+    }
+}
+]]></source>
+            </subsection>
+
+            <subsection name="PhoneType.java">
+                <source><![CDATA[package org.example.addressbook.entities;
+
+public enum PhoneType
+{
+    HOME, OFFICE, MOBILE, FAX, PAGER
+}
+]]></source>
+            </subsection>
+
+            <subsection name="Phone.java">
+                <source><![CDATA[package org.example.addressbook.entities;
+
+import org.apache.tapestry5.beaneditor.NonVisual;
+import org.apache.tapestry5.beaneditor.Validate;
+import org.apache.tapestry5.beaneditor.Width;
+
+import javax.persistence.*;
+
+@Entity
+public class Phone
+{
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @NonVisual
+    private long id;
+
+    @ManyToOne(optional = false)
+    private Person person;
+
+    private PhoneType type;
+
+    @Column(nullable = true, length = 20)
+    @Width(20)
+    @Validate("required,maxlength=20")
+    private String number;
+
+    public long getId()
+    {
+        return id;
+    }
+
+    public void setId(long id)
+    {
+        this.id = id;
+    }
+
+    public Person getPerson()
+    {
+        return person;
+    }
+
+    public void setPerson(Person person)
+    {
+        this.person = person;
+    }
+
+    public PhoneType getType()
+    {
+        return type;
+    }
+
+    public void setType(PhoneType type)
+    {
+        this.type = type;
+    }
+
+    public String getNumber()
+    {
+        return number;
+    }
+
+    public void setNumber(String number)
+    {
+        this.number = number;
+    }
+}
+]]></source>
+                <p>Notice that the number field is nullable but required. This is because, when creating a new Phone
+                    instance, we have no number to fill in.
+                    However, a number is expected, and the user interface enforces that.
+                </p>
+            </subsection>
+
+            <subsection name="Edit.tml">
+                <source><![CDATA[<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+  <body>
+    <h1>Edit ${person.firstName} ${person.lastName}</h1>
+
+    <t:form t:id="form">
+
+      <t:errors/>
+
+      <div class="t-beaneditor">
+
+        <t:beaneditor t:id="person"/>
+
+        <h2>Phones</h2>
+
+        <div t:type="ajaxformloop" t:id="phones" source="person.phones" encoder="phoneEncoder" value="phone">
+          <t:select t:id="type" value="phone.type"/>
+          <t:textfield t:id="number" value="phone.number"/>
+
+          |
+
+          <t:removerowlink>remove</t:removerowlink>
+
+
+        </div>
+
+        <p>
+          <input type="submit" value="Update"/>
+        </p>
+      </div>
+    </t:form>
+
+  </body>
+</html>]]></source>
+
+                <p>
+                    Here we're editting the direct properties of the Person object and adding a section below to allow
+                    the phones for the person to be editted. The AjaxFormLoop looks much like a Loop component here,
+                    except we must provide a PrimaryKeyEncoder object.
+                </p>
+
+                <p>
+                    Each row provides a RemoveRowLink component that will remove that row (from the server side, then on
+                    the client side).
+                </p>
+
+                <p>
+                    The AjaxFormLoop provides a default row for adding additional data rows.
+                </p>
+
+
+            </subsection>
+
+            <subsection name="Edit.java">
+                <source><![CDATA[package org.example.addressbook.pages;
+
+import org.apache.tapestry5.PrimaryKeyEncoder;
+import org.apache.tapestry5.annotations.PageActivationContext;
+import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.hibernate.annotations.CommitAfter;
+import org.apache.tapestry5.ioc.annotations.Inject;
+import org.example.addressbook.entities.Person;
+import org.example.addressbook.entities.Phone;
+import org.hibernate.Session;
+
+import java.util.List;
+
+public class Edit
+{
+  @PageActivationContext
+  @Property
+  private Person person;
+
+  @Property
+  private Phone phone;
+
+  @Inject
+  private Session session;
+
+  public PrimaryKeyEncoder<Long, Phone> getPhoneEncoder()
+  {
+    return new PrimaryKeyEncoder<Long, Phone>()
+    {
+      public Long toKey(Phone value)
+      {
+        return value.getId();
+      }
+
+      public void prepareForKeys(List<Long> keys)
+      {
+      }
+
+      public Phone toValue(Long key)
+      {
+        return (Phone) session.get(Phone.class, key);
+      }
+    };
+  }
+
+  @CommitAfter
+  public Object onSuccess()
+  {
+    return Index.class;
+  }
+
+  @CommitAfter
+  Object onAddRowFromPhones()
+  {
+    Phone phone = new Phone();
+
+    person.getPhones().add(phone);
+    phone.setPerson(person);
+
+    return phone;
+  }
+
+  @CommitAfter
+  void onRemoveRowFromPhones(Phone phone)
+  {
+    session.delete(phone);
+  }
+}
+]]></source>
+            </subsection>
+
+            <p>
+                The onAddRowFromPhones() event handler method's job is to add a new Phone instance and
+                connect it to the Person. The @CommitAfter annotation ensures that changes are saved
+                to the database (including generating a primary key for the new Phone instance).
+            </p>
+
+            <p>
+                The flip side is onRemoveRowFromPhones(), which is the event handler when removing a row.
+                The event handler method is passed the Phone object to remove. Again, it is necessary
+                to commit the Hibernate transaction.
+            </p>
+
+            <p>
+                The minimal implementation of a PrimaryKeyEncoder is also shown; this one is customized for
+                Phone instances, and knows how to extract primary keys (the id property) and convert
+                primary keys back into objects. This could easily be rolled out as a Tapestry IoC service.
+            </p>
+
+        </section>
+
+
+    </body>
+</document>

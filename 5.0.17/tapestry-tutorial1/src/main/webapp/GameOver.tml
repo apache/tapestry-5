@@ -1,0 +1,13 @@
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+  <head>
+    <title>Game Over!</title>
+  </head>
+  <body>
+
+    <h1>Game Over</h1>
+
+    <p> You guessed the secret number in ${count} guesses!  </p>
+
+
+  </body>
+</html>

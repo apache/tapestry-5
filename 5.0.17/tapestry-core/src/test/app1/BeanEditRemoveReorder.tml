@@ -1,0 +1,14 @@
+<t:border xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+  <h1>${pageTitle}</h1>
+
+  <form t:id="registrationData" submitlabel="Register" exclude="birthYear" reorder="lastname,firstname">
+
+    <t:parameter name="firstName">
+      <t:label for="firstName"/>
+      <input t:type="TextField" t:id="firstName" value="registrationData.firstName" size="40"/>
+      (First Name is Required) </t:parameter>
+
+  </form>
+
+  <p>[<a t:type="ActionLink" t:id="clear">Clear Data</a>]</p>
+</t:border>

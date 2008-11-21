@@ -1,0 +1,14 @@
+<form t:id="form"
+      xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+    <t:errors/>
+
+    <div class="t-beaneditor">
+
+        <t:beaneditor t:id="editor" object="object" model="model" overrides="this"/>
+
+        <div class="t-beaneditor-row">
+            <input type="submit" class="t-beaneditor-submit" value="${submitLabel}"/>
+        </div>
+    </div>
+
+</form>

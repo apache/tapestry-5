@@ -1,0 +1,18 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+    <h1>Lean Grid Demo</h1>
+
+    <table t:id="grid" source="tracks" row="track" rowIndex="rowIndex" columnIndex="columnIndex" add="indexes"
+           lean="true">
+        <t:parameter name="ratingcell">
+            <t:outputRating rating="track.rating"/>
+        </t:parameter>
+        <t:parameter name="indexesheader">
+            Indexes (${columnIndex})
+        </t:parameter>
+        <t:parameter name="indexescell">
+            ${rowIndex},${columnIndex}
+        </t:parameter>
+    </table>
+
+</html>

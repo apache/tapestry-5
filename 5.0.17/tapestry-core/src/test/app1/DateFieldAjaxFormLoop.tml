@@ -1,0 +1,20 @@
+<html t:type="border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+    <h1>DateField in AjaxFormLoop</h1>
+
+    <t:form>
+
+        <div t:type="ajaxformloop" t:id="loop" source="dateHolders" value="current" encoder="dateHolderConverter">
+
+            <t:datefield value="current.date"/>
+            <t:removerowlink>remove</t:removerowlink>
+
+        </div>
+
+        <p>
+            <input type="submit" value="Go"/>
+        </p>
+    </t:form>
+
+
+</html>

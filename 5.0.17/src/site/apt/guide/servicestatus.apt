@@ -1,0 +1,27 @@
+ ----
+  IoC Services Status
+ ----
+
+IoC Services Status
+
+  Using Tapestry there will often be a large number of services defined in the registry; a mix of the builtin services provided by the framework
+  and your own.
+  
+  Built in to every Tapestry application is a page, ServiceStatus, that can present this information to you.
+  
+  The page "ServiceStatus" presents the list of services within the appication's Registry.
+   
+[../images/servicestatus.png] Service Status Page
+
+  Services may be builtin, defined, virtual or real.
+  
+  Builtin only applies to a few special services that are part of Tapestry IoC.
+  
+  Defined services are defined in some module, but have not yet been referenced in any way.
+  
+  Virtual services have been referenced and have gotten as far as creating a service proxy.
+  
+  Real services have had methods invoked, this forces the <realization> of the service which includes
+  instantiating the service, injecting dependencies, and decorating with any applicable interceptors.
+
+  <The Service Status page does not display service information when the application is in production mode.>
