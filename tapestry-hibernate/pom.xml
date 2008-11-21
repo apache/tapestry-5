@@ -12,7 +12,7 @@
     <parent>
         <groupId>org.apache.tapestry</groupId>
         <artifactId>tapestry-project</artifactId>
-        <version>5.0.17-SNAPSHOT</version>
+        <version>5.0.17</version>
     </parent>
     <inceptionYear>2007</inceptionYear>
 
