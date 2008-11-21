@@ -63,6 +63,8 @@ Third Party Libraries, Tutorials and Resources
 *--+--+--+
 | {{{http://code.google.com/p/tapestry5-appfuse/}AppFuse for Tapestry 5}} |   Serge Eby | Application template, with basic authentication and Hibernate and Spring integration pre-configured |
 *--+--+--+
+| {{{http://www.arsmachina.com.br}Ars Machina}} |   Thiago H. de Paula Figueiredo |  Tapestry/Hibernate extensions for Generic DAOs, standard CRUD interfaces, and user access logging and tracking |
+*--+--+--+
 | {{{http://equanda.org/equanda-tapestry5/}equanda-tapestry5}} |   Joachim Van der Auwera |      Components useful for building enterprise applications. Includes Accordion, Tabs, Formtraversal. Amongst other things, these focus on easy input of data without the need for a mouse.
 *--+--+--+
 | {{{http://code.google.com/p/gc-tapestry-components/}Godcode Components}} |   Chris Lewis |         A mixed collection of components providing simple but time-saving functionality, as well as more exotic ones; built on top of the prototype and script.aculo.us javascript libraries. |

@@ -1807,7 +1807,7 @@ public final class TapestryModule
 
         // This should be overridden for particular applications.
         configuration.add(SymbolConstants.SUPPORTED_LOCALES,
-                          "en,it,es,zh_CN,pt_PT,de,ru,hr,fi_FI,sv_SE,fr_FR,da,pt_BR");
+                          "en,it,es,zh_CN,pt_PT,de,ru,hr,fi_FI,sv_SE,fr_FR,da,pt_BR,ja,el");
 
         configuration.add(SymbolConstants.TAPESTRY_VERSION,
                           VersionUtils.readVersionNumber(

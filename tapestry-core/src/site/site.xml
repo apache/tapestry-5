@@ -34,9 +34,12 @@
 
     <publishDate format="dd MMM yyyy"/>
 
+    <version/>
+
     <body>
 
 
+        <menu ref="parent"/>
         <!--
 
        This is probably useful but it drives me crazy whenever I reload a page.
