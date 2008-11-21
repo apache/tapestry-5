@@ -33,9 +33,11 @@
     </skin>
 
     <publishDate format="dd MMM yyyy"/>
+    <version/>
 
     <body>
 
+        <menu ref="parent"/>
 
         <menu name="Quick Links">
             <item name="Download" href="http://tapestry.apache.org/download.html"/>
