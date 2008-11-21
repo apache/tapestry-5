@@ -33,9 +33,11 @@
     </skin>
 
     <publishDate format="dd MMM yyyy"/>
+    <version/>
 
     <body>
 
+        <menu ref="parent"/>
 
         <menu name="Tapestry Component Report">
             <item name="Usage" href="index.html"/>

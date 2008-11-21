@@ -16,35 +16,37 @@
 -->
 
 <project name="Tapestry Hibernate Integration">
-  <bannerLeft>
-    <name>Tapestry 5</name>
-    <href>http://tapestry.apache.org/tapestry5/</href>
-    <src>images/tapestry_banner.gif</src>
-  </bannerLeft>
-  <bannerRight>
-    <name>Apache</name>
-    <href>http://www.apache.org</href>
-    <src>images/asf_logo_wide.gif</src>
-  </bannerRight>
-  <skin>
-    <groupId>org.apache.tapestry</groupId>
-    <artifactId>maven-skin</artifactId>
-    <version>1.1</version>
-  </skin>
-  
-  <publishDate format="dd MMM yyyy" />
-  
-  <body>
+    <bannerLeft>
+        <name>Tapestry 5</name>
+        <href>http://tapestry.apache.org/tapestry5/</href>
+        <src>images/tapestry_banner.gif</src>
+    </bannerLeft>
+    <bannerRight>
+        <name>Apache</name>
+        <href>http://www.apache.org</href>
+        <src>images/asf_logo_wide.gif</src>
+    </bannerRight>
+    <skin>
+        <groupId>org.apache.tapestry</groupId>
+        <artifactId>maven-skin</artifactId>
+        <version>1.1</version>
+    </skin>
 
-    
-    <menu name="Quick Links">
-      <item name="About" href="index.html"/>
-      <item name="Configuration" href="conf.html"/>
-      <item name="User guide" href="userguide.html" />
-      <item name="Download" href="http://tapestry.apache.org/download.html"/>
-    </menu>
-        
-    <menu ref="reports"/>
-    
-  </body>
+    <publishDate format="dd MMM yyyy"/>
+    <version/>
+
+    <body>
+
+        <menu ref="parent"/>
+
+        <menu name="Quick Links">
+            <item name="About" href="index.html"/>
+            <item name="Configuration" href="conf.html"/>
+            <item name="User guide" href="userguide.html"/>
+            <item name="Download" href="http://tapestry.apache.org/download.html"/>
+        </menu>
+
+        <menu ref="reports"/>
+
+    </body>
 </project>
