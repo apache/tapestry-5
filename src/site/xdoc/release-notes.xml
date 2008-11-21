@@ -20,6 +20,60 @@
     </properties>
     <body>
 
+
+        <h1>Release Notes - Tapestry 5 - Version 5.0.17</h1>
+
+        <h2>Bug
+        </h2>
+        <ul>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-354'>TAP5-354</a>] - BeanEditForm guide references
+                parameter &quot;remove&quot; which is now called &quot;exclude&quot;
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-356'>TAP5-356</a>] - Link to the Node JavaDoc from
+                the &quot;New And Of Note&quot; section of the project page is broken
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-357'>TAP5-357</a>] - Tapestry documentation should
+                clearly/boldly identify the release number
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-362'>TAP5-362</a>] - Linking to an index page can
+                result in an empty href attribute on a PageLink, which is treated by the browser as staying on the same
+                page
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-370'>TAP5-370</a>] - Error from DocumentLinker
+                about missing &lt;html&gt; tag, even for XML document w/o JavaScript
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-373'>TAP5-373</a>] - When JavaScript libraries are
+                moved to the &quot;top&quot; of the document, they should be added to the &lt;head&gt;, not the &lt;body&gt;
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-377'>TAP5-377</a>] - Broken links inside on project
+                site to pipeline description and to JIRA
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-378'>TAP5-378</a>] - Missing i18n files for
+                Brazilian Portuguese
+            </li>
+        </ul>
+
+        <h2>Improvement
+        </h2>
+        <ul>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-365'>TAP5-365</a>] - Localization support for
+                Japanese
+            </li>
+            <li>[<a href="https://issues.apache.org/jira/browse/TAP5-380">TAP5-380</a>] - Add localiztion support for
+                Greek
+            </li>
+
+        </ul>
+
+        <h2>Task
+        </h2>
+        <ul>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-379'>TAP5-379</a>] - Add the Ars Machina Project to
+                the list of Tapestry 5-related packages
+            </li>
+        </ul>
+
+
         <h1>
             Release Notes - Tapestry 5 - Version 5.0.16
         </h1>

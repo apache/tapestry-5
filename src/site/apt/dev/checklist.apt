@@ -46,16 +46,7 @@ Generate the Release Notes
   Paste the notes to the <<top>> of tapestry-project/src/site/xdoc/release-notes.xdoc
   
   Wrap the title ("Release Notes - Tapestry - Version 5.0.x") inside an \<h1\> element.
-  
-Build and Deploy Site
 
-  Execute <<<mvn site site:deploy -Pjavadoc>>>
-  
-  This will build the project site and each of the module sites.  The sites go to a server that is periodically copied over to the live server; it can take up to an hour
-  for changes to show up.
-  
-  The -Pjavadoc activates a profile that ensure that Javadoc is generated (normally, Javadoc is not generated as it is so time consuming).
-  
 Build and Deploy Artifacts
 
   Execute <<<mvn deploy -Pdeploy>>>
@@ -115,6 +106,8 @@ Cleaning up
   And, of course, permissions are never quite right:
   
   <<<chmod -R ug+w tapestry-ibiblio-rsynch-repository/ tapestry-releases/>>>
+
+  <<<chgrp -R tapestry *>>>
        
 Commit Changes
 
@@ -158,12 +151,22 @@ Vote will run for three days; on success I'll move the voted artifacts into plac
 ----
 
 On success: roll it out!
-  
+
+* Build and Deploy Site
+
+  Execute <<<mvn site site:deploy -Pjavadoc>>>
+
+  This will build the project site and each of the module sites.  The sites go to a server that is periodically copied over to the live server; it can take up to an hour
+  for changes to show up.
+
+  The -Pjavadoc activates a profile that ensure that Javadoc is generated (normally, Javadoc is not generated as it is so time consuming).
+
+* Move the artifacts into place
+
 	You need to ssh to people.apache.org.
 	
 ----
 > cd ~hlship/public_html/tapestry-releases/
-> chmod 664 *
 > mv * /www/www.apache.org/dist/tapestry/
 > rm /www/www.apache.org/dist/tapestry/*-5.0.4*
 ----
