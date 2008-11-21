@@ -1,0 +1,11 @@
+<document>
+    <body>
+        <p>See the
+            <a href="BeanEditForm.html">BeanEditForm</a>
+            documentation for examples of how to use and customize this component. A further
+            example is available in the documentation for the
+            <a href="FormFragment.html">FormFragment</a>
+            component.
+        </p>
+    </body>
+</document>

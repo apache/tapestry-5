@@ -1,0 +1,23 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+    <t:if test="number">
+        <p>
+            <strong>
+                <span id="message">Number: ${number}</span>
+            </strong>
+        </p>
+    </t:if>
+
+    <p>
+        Choose a number:
+
+        <ul>
+            <t:loop source="1..3" value="var:currentNumber">
+                <li>
+                    <t:actionlink t:id="actionlink" context="var:currentNumber">${var:currentNumber}</t:actionlink>
+                </li>
+            </t:loop>
+        </ul>
+    </p>
+
+</html>

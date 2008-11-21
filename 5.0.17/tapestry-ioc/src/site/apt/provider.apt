@@ -1,0 +1,104 @@
+ ----
+ Object Providers
+ ----
+
+Object Providers
+
+  When you don't provide the {{{../apidocs/org/apache/tapestry5/ioc/annotations/InjectService.html}InjectService}} annotation
+  on a parameter (to a service builder method or constructor), Tapestry will
+  resolve the parameter automatically.
+  
+  This is called <object injection>, rather than <service injection>, because the value that will ultimately
+  be injected is not necessarily a service; it may be some arbitrary object.
+  
+  If this sounds vague, its because there is not just one
+  {{{../apidocs/org/apache/tapestry5/ioc/ObjectProvider.html}ObjectProvider}}; there's a whole set of them,
+  forming a {{{command.html}chain of command}}.  The commands in the chain may provide an object
+  based on the parameter type, or based on additional annotations on the parameter.
+  
+  There are several built-in object providers:
+  
+  * Check for {{{../apidocs/org/apache/tapestry5/ioc/annotations/Value.html}Value}} annotation
+
+  * Check for {{{../apidocs/org/apache/tapestry5/ioc/annotations/Symbol.html}Symbol}} annotation
+
+  * Check for a <unique> service in the Registry whose service interface matches the parameter type
+  
+  []
+  
+  Usually, the @Inject annotation is supplemented by an additional annotation which
+  triggers a specific  ObjectProvider to provide the value.
+  
+@Value Annotation Provider
+
+  The Value annotation
+  allows a literal value to be injected.  When combined with 
+  {{{symbols.html}symbols}}, they represent a way for parts of the overall service
+  network to be spot-configured.  For example:
+  
++----+
+  public MyService build(@Value("${max-seconds}") long maxSeconds)
+  {
+    return new MyServiceImpl(maxSeconds);
+  }
++----+
+
+  Here, the MyService service requires a configuration of a number of seconds.
+  The value is supplied as a symbol, with a factory default that may be overwritten
+  with an application default.
+
+  Usually, the symbol reference is only part of the string, i.e. <<<@Value("$\{report.dir}/$\{report.name}.txt")>>>
+
+@Symbol Annotation Provider
+
+   This is closely related to the @Value annotation approach, except that the annotation
+   directly specifies a symbol name.
+
++----+
+  public MyService build(@Symbol("max-seconds") long maxSeconds)
+  {
+    return new MyServiceImpl(maxSeconds);
+  }
++----+
+
+Service Provider
+
+  This is always that last object provider checked.
+  
+  A <single> service must exist whose service interface matches the parameter type.  This is <not> an exact match: a search is made for any and all
+  services whose service interface is a super class of the parameter type.  
+  
+  An exception is thrown if there are no matches, or if there are multiple matches.
+
+  
+Alias Object Provider
+
+  The {{{../tapestry-core/}tapestry-core}} module
+  defines the 
+  {{{../tapestry-core/guide/alias.html}Alias object provider}},
+   which is used as a way to override services or
+  disambiguate services (when multiple services implement the same interface).  
+    
+Defining New Providers
+
+  New providers can be specified by contributing to the
+  MasterObjectProvider service's configuration.  The configuration
+  is mapped, with the keys being the provider prefix, and the values
+  being the object provider implementation.
+  
+  Example:
+  
++-----+
+  public void contributeMasterObjectProvider(OrderedConfiguration<ObjectProvider> configuration)
+  {
+    configuration.add("MyObject", new MyObjectProvider());
+  }
++-----+
+
+  This establishes a name for the object provider (useful if the exact order of execution of the
+  provider, relative to other providers, is relevant). 
+
+  Of course, this is a simplified example. In a real scenario, the provider is most likely
+  a service with its own dependencies.      
+  
+  

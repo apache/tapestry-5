@@ -1,0 +1,331 @@
+ ----
+ Apache Tapestry 5
+ ----
+ 
+What is Tapestry?
+
+ Tapestry is an open-source framework for creating dynamic, robust, highly scalable web applications in Java. 
+ Tapestry complements and builds upon the standard Java Servlet API, and so it works in any servlet container or application server.
+
+ Tapestry divides a web application into a set of pages, each constructed from components. This provides a consistent structure, 
+ allowing the Tapestry framework to assume responsibility for key concerns such as URL construction and dispatch, persistent state 
+ storage on the client or on the server, user input validation, localization/internationalization, and exception reporting. 
+ Developing Tapestry applications involves creating HTML templates using plain HTML, and combining the templates with small amounts of 
+ Java code. In Tapestry, you create your application in terms of objects, and the methods and properties of those 
+ objects -- and specifically not in terms of URLs and query parameters. 
+ Tapestry brings true object oriented development to Java web applications.
+
+ Tapestry is specifically designed to make creating new components very easy, 
+ as this is a routine approach when building applications. 
+ 
+ Tapestry is architected to scale from tiny, single-page applications all the way up to
+ massive applications consisting of hundreds of individual pages, developed by
+ large, diverse teams. Tapestry easily integrates with any kind of backend, including JEE, 
+ HiveMind, Spring and Hibernate.
+ 
+ It's more than what you <can> do with Tapestry ... it's also <how> you do it!  Tapestry is a vastly productive environment.
+ Java developers love it because they can make <Java code> changes and see them immediately ... no redeploy, no restart! And it's blazingly fast to boot
+ (even when files change). Designers
+ love it because Tapestry templates are so close to ordinary HTML, without all the cruft and confusion seen in JavaServer Pages. Managers love it because
+ it makes it easy for large teams to work together, and because they know important features (including localization) are baked right in. Once you work
+ in Tapestry there's no going back!
+
+ Tapestry is released under the Apache Software Licence 2.0.
+
+
+Third Party Libraries, Tutorials and Resources
+
+  Tapestry 5 has inspired a number of people to create third party libraries, providing a mix of new components
+  and new and improved integrations.
+
+*--+--+--+
+| <<Name>> | <<Author>> | <<Description>>
+*--+--+--+
+| {{{http://code.google.com/p/tapestry5-appfuse/}AppFuse for Tapestry 5}} |   Serge Eby | Application template, with basic authentication and Hibernate and Spring integration pre-configured |
+*--+--+--+
+| {{{http://www.arsmachina.com.br}Ars Machina}} |   Thiago H. de Paula Figueiredo |  Tapestry/Hibernate extensions for Generic DAOs, standard CRUD interfaces, and user access logging and tracking |
+*--+--+--+
+| {{{http://equanda.org/equanda-tapestry5/}equanda-tapestry5}} |   Joachim Van der Auwera |      Components useful for building enterprise applications. Includes Accordion, Tabs, Formtraversal. Amongst other things, these focus on easy input of data without the need for a mouse.
+*--+--+--+
+| {{{http://code.google.com/p/gc-tapestry-components/}Godcode Components}} |   Chris Lewis |         A mixed collection of components providing simple but time-saving functionality, as well as more exotic ones; built on top of the prototype and script.aculo.us javascript libraries. |
+*--+--+--+
+| <<{{{http://jumpstart.doublenegative.com.au/}JumpStart}}>> |   Geoff Callender | A "living tutorial" in the form of a base Tapestry application ready to be expanded and customized. |
+*--+--+--+
+| {{{http://interldap.org}InterLDAP}} | Linagora / Francois Armand | LDAP content management system for non tech users. |
+*--+--+--+
+| {{{http://code.google.com/p/loom-t5/}loom-t5}} | Chris Scheid | Eclipse plugin. |
+*--+--+--+
+| {{{http://code.google.com/p/shams/}Shams Examples, Components}} |  Mohammad H. Shamsi |   A set of Tapestry 5 Examples, Tutorials, Components, and Documents for beginners. |
+*--+--+--+
+| {{{http://www.infoq.com/articles/tapestry5-intro}Tapestry for Nonbelievers}} |      Renat Zubairov & Igor Drobiazko | Simple introduction to using Tapestry and creating components |
+*--+--+--+
+| {{{http://code.google.com/p/tapestry5-components/}T5Components}} | Sven Homburg | Ajax-enabled components based on Prototype and Scriptaculous. |
+*--+--+--+
+| {{{http://tacos.sourceforge.net/tacos5/tacos-seam/}tacos-seam}} | Igor Drobiazko | Intregrates with {{{http://www.jboss.com/products/seam}JBoss Seam}}. |
+*--+--+--+
+| {{{http://www.localhost.nu/java/tapestry5-acegi/}tapestry5-acegi}} | Robin Helgelin  | Integration with the Acegi path-based security framework. |
+*--+--+--+
+| {{{http://code.google.com/p/tapestry5-treegrid/}tapestry5-treegrid}} | Gabriel Landais |  Combination tree navigation and data grid, based on sstree. |
+*--+--+--+
+
+New And Of Note
+
+  * At long last, an official {{{tapestry-core/ref/org/apache/tapestry5/corelib/components/LinkSubmit.html}LinkSubmit}} component.
+
+  * A {{{tapestry-ioc/injection.html}detailed guide to Injection}} has been added.
+
+  * You can now configure Tapestry to move \<script\> links to the top of the page.
+
+  * Event handler methods for Ajax requests may now return a page name, page class or page instance to force
+    the browser to redirect to the page.
+
+  * The Inject and InjectService annotations may now be used on fields of service implementations or other
+    objects constructed by the IoC container. In the past, injections only occured through method or
+    constructor parameters.
+
+  * Tapestry now bundles Prototype version 1.6.0.2.
+
+  * New methods have been added to
+    {{{apidocs/org/apache/tapestry5/dom/Node.html}Node}} to allow nodes to be moved about or otherwise
+    manipulated.
+
+  * Application State Objects are now automatically saved back to the session at the end of the request,
+    which ensures that ASO data is properly replicated across at cluster.
+
+  * The new {{{apidocs/org/apache/tapestry5/ioc/annotations/Local.html}@Local}}
+    annotation makes it easier to reference services within the same module when injecting.  
+
+  * Most general documentation has been moved from the tapestry-core module up to the project level.
+  
+  * Work has started on a {{{cookbook}Tapestry Cookbook}}, showing how to tackle common scenarios. 
+
+  * Component methods may be marked with the @Log annotation, to enable debug logging of
+    method entry (with parameters) and exit (with return value, or thrown exception).
+
+  * It is now possible to provide method invocation advice to component methods. This opens up
+    a very powerful Aspect Oriented Programming approach to Tapestry components.
+
+  * The Exception Report page now identifies the version of the Tapestry framework, and lists
+    out System properties (including the Java classpath).
+
+  * The {{{tapestry-core/ref/org/apache/tapestry5/corelib/components/Grid.html}Grid}} component can now update itself in place,
+    using Ajax, when paging or sorting links are clicked.
+
+  * Added a zone parameter to the  {{{tapestry-core/ref/org/apache/tapestry5/corelib/components/BeanEditForm.html}BeanEditForm}}
+    component, to support Ajax updates.
+
+  * The @Cached annotation has been added to allowing the caching of method results.
+
+  []
+
+
+What's changed since Tapestry 4?
+
+  Tapestry 5 is an all new code base, written from the ground up to take Java web
+  application development to new levels of productivity.
+  
+  This new release removes many limitations of Tapestry 4:
+  
+  * Components no longer extend from base classes.
+  
+  * {{{tapestry-core/guide/component-classes.html}Components classes are no longer <abstract>}}.  
+     Components are pure, simple POJOs (<plain old Java objects>).
+  
+  * Tapestry no longer uses XML page and component specification files. Information that used to
+    be supplied in such files is now supplied directly in the Java class, using Java annotations and naming conventions.
+    
+  * {{{tapestry-core/guide/reload.html}Changes to Tapestry component templates <and classes> are now picked up <immediately>}}, 
+    without any kind
+    of restart. This will even work properly in <production>, not just during development.
+    
+  * <<Blazing Speed>>. The new code base operates considerably faster than Tapestry 4. Critical
+  code paths have been simplified, and the use of reflection has been virtually eliminated.
+  Tapestry 4 was as fast as an equivalent Servlet/JSP application, Tapestry 5 is much faster.
+    
+  []
+  
+
+Adaptive API
+
+  A key feature of Tapestry 5 is <adaptive API>.
+
+  In traditional Java frameworks, including Tapestry 4, user code is expected to
+  conform to the framework.  You create classes that extend from framework-provided
+  base classes, or implement framework-provided interfaces.
+
+  This works well until you upgrade to the next release of the framework: with
+  the new features of the upgrade, you will more often than not experience breaks
+  in backwards compatibility. Interfaces or base classes will have changed and your
+  existing code will need to be changed to match.
+
+  In Tapestry 5, the framework <adapts to your code>.  You have control over the
+  names of the methods, the parameters they take, and the value that is returned. This
+  is driven by annotations, which tell Tapestry under what circumstances your
+  methods are to be invoked.
+
+  For example, you may have a login form and have a method that gets invoked
+  when the form is submitted:
+
++----+
+public class Login
+{
+  @Persist
+  @Property
+  private String userId;
+
+  @Property
+  private String password;
+
+  @Component
+  private Form form;
+
+  @Inject
+  private LoginAuthenticator authenticator;
+
+  void onValidateForm()
+  {
+    if (! authenticator.isValidLogin(userId, password))
+    {
+      form.recordError("Invalid user name or password.");
+    }
+  }
+
+  Object onSuccess()
+  {
+    return PostLogin.class;
+  }
+
+}
++----+
+
+  This short snippet demonstrates a bit about how Tapestry operates.  Pages and services
+  within the application are injected with the @Inject annotation. The method names, onValidateForm()
+  and onSuccess(),
+  inform Tapestry about when the method is to be invoked.  The two events <validateForm> and <success> occur
+  when a form is submitted; "validateForm" is triggered to perform cross-field validations, and "success" is
+  only triggered when there are no validation errors. The onSuccess() method's
+  return value directs Tapestry on what to do next: jump to another page within the application
+  (here identified as the class for the page, but many other options exist).  When there are exceptions,
+  the page will be redisplayed to the user.
+
+  This also represents a distinct change from Tapestry 4. In earlier versions of Tapestry,
+  the Form component's listener parameter would be bound to the method to invoke, by name.  Further,
+  the listener method had to be public.
+  This new approach not only support multiple listeners, but provides an improved separation of
+  view concerns (inside the page's HTML template) and logic concerns, inside the Java class.
+
+  In many cases, additional information about the event is available, and can be passed
+  into the method by adding parameters to the method. Again, Tapestry will adapt
+  to your parameters, in whatever order you supply them.
+
+  Tapestry also saves you effort:  the @Property annotation marks a field as readable and writable;
+  Tapestry will provide the accessor methods automatically.
+
+  Finally, Tapestry 5 explicitly separates actions (requests that change things) and rendering (requests that
+  render pages) into two separate requests.  Performing an action, such as clicking a link or submitting a form,
+  results in a <client side redirect> to the new page. This is often called "redirect after post". This helps ensure
+  that URLs in the browser are book-markable ... but also requires that a bit more information be stored in the session
+  between requests (using the @Persist annotation).
+    
+About Snapshots and Releases
+
+  Tapestry is built using {{{http://maven.apache.org/}Maven}}, which makes it really easy to download the source and build it yourself, either the whole
+  project, or just one single module.
+  
+  Better yet, you can pull down Tapestry modules from the central Maven repository.
+  
+  The use of Maven has let us move with great speed, providing preview releases and <snapshots>.
+  
+  Snapshots are <intermediate versions> of releases. As I'm writing this, the most recent preview release is 5.0.2 and the current snapshots are
+  for 5.0.3-SNAPSHOT.  Maven keys off the -SNAPSHOT suffix and handles the dependency specially. It knows that snapshot releases can change frequently,
+  so it will keep checking (at least once a day, maybe more often) to see if there's an updated version of the snapshot.
+  
+  A nightly build process on Tapestry's continuous integration server creates new snapshots <em>every night</em>.
+  
+  Snapshots don't go in the central Maven repository (that's reserved for full releases). Instead, they  go into the Tapestry snapshots repository
+  at {{{http://tapestry.formos.com/maven-snapshot-repository}http://tapestry.formos.com/maven-snapshot-repository}}.
+  
+  To access this repository, you may add <<<-DremoteRepositories=http://tapestry.formos.com/maven-snapshot-repository>>> to the command line when
+  running Maven.
+  
+  Your best bet is to use the {{{quickstart/}quickstart Maven archetype}} to create your initial Tapestry project; it generates a full project
+  directory, including a POM that links to the Apache snapshots repository.
+  
+  <<Documentation on this site usually refers to the latest snapshot ... that is, it is usually ahead of the last official release. In some cases,
+  it is written as if the snapshot release is stable; if documentation refers to version 5.0.x and that doesn't work, try 5.0.x-SNAPSHOT.>>
+    
+Principle 1 -- Static Structure, Dynamic Behavior
+
+  Tapestry is designed to be extremely scalable in several dimensions:
+  
+  * Tapestry applications may contain large numbers of pages and many custom components.
+  
+  * Tapestry applications may contain very complex functionality.
+  
+  * Tapestry applications may be created by large, diverse teams.
+  
+  * Tapestry applications can service large numbers of concurrent users.
+  
+ One core architecture decision in Tapestry exists to service many of the above goals
+ (and others that are harder to describe).  <<Static Structure, Dynamic Behavior>>
+
+ In Tapestry, the structure of any particular page is <static>. This is necessary for
+ several reasons, most importantly because Tapestry pages are <pooled>.  Creating a Tapestry page
+ is an involved process, because the page object is simply the root of a large tree of other
+ objects including user provided components, many kinds of structural objects, template objects,
+ and others. Creating a new page instance for each request is simply not <scalable>.
+ 
+ Instead, Tapestry <pools> pages.  Once created, a page instance will be stored in a pool for
+ that particular type of page, and reused
+ in later requests. An incoming request, the result of a user clicking a link or submitting a form,
+ will be processed by <some> server within a cluster, and will use <some> page instance within the
+ page pool. Because page instances are static and uniform across instances and servers, 
+ Tapestry can use any available page instance, or create a new one as needed.
+ 
+ Tapestry does not need to store page instances inside the HttpSession. At most, it stores a smattering
+ of <persistent field values> from the page, but not the entire page instance. This lean
+ use of the HttpSession is key to Tapestry's very high scalability, especially in a clustered
+ configuration.
+ 
+ In some Tapestry-like frameworks, such as Faces and Wicket, the page structure is more dynamic, at 
+ the cost of storing much, much more data in the HttpSession.
+ 
+ This static structure is not so limiting as you might think. With different kinds of conditional
+ and looping components, and the ability to "jump out of the flow" and render components in an arbitrary order, 
+ you will not find Tapestry to be rigid ... anything but!
+  
+Public vs. Internal
+
+  An issue plaguing previous versions of Tapestry 4 (and earlier) was the lack of a clear delineator
+  between private, internal APIs and public, external APIs.  The fact that your code would extend
+  from base objects but that many of the methods on those base objects were "off limits"
+  further confused the issue. This has been identified as a key factor in the
+  "steep learning curve of Tapestry" meme.
+  
+  With the clean slate of Tapestry 5, we are being much more ruthless about internal vs. external.
+  
+  First of all, anything inside the org.apache.tapestry5.internal package
+  is <<internal>>.  It is part of the implementation of Tapestry.  It is the man behind the curtain.
+  You should not ever need to directly use this code.  It is a <<bad idea>> to do so, because
+  internal code may <<change from one release to the next>> without concern for backwards
+  compatibility.
+  
+Backwards Compatibility
+
+  Tapestry has been plagued by backwards compatibility problems with every major release. Tapestry 5
+  does not even attempt to be backwards compatible to Tapestry 4. Instead, it lays the ground work for
+  true backwards compatibility going forwards.
+  
+  Tapestry 5's API is based almost entirely on naming conventions and <annotations>.  You components are just
+  ordinary Java classes; you will annotate fields to allow Tapestry to maintain their state or to allow Tapestry 
+  to inject resources, and you will name (or annotate) methods to tell Tapestry under what circumstances
+  a method should be invoked.
+  
+  Tapestry will adapt to your classes. It will call your methods, passing in values via method parameters. 
+  Instead of the rigidness of a fixed interface to implement, Tapestry will simply adapt to your classes, using
+  the hints provided by annotations and simple naming conventions.
+  
+  Because of this, Tapestry will be able to change internally to a great degree without it affecting any
+  of the application code <you> write. This should finally crack the backwards compatibility nut, allowing you to have
+  great assurance that you can upgrade to future releases of Tapestry without breaking your existing applications.
+    

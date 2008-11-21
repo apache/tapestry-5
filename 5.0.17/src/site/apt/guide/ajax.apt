@@ -1,0 +1,372 @@
+ ---
+ Tapestry Ajax Support
+ ---
+
+Tapestry Ajax Support
+
+  Tapestry includes sophisticated JavaScript and Ajax support, based on the
+  {{{http://www.prototypejs.org/}Prototype}} and
+  {{{http://script.aculo.us/}Scriptaculous}} libraries.  These libraries are
+  all packaged with Tapestry itself ... no extra download required.
+
+  The goal for Tapestry is to have many basic and useful components available within the
+  application itself, and make it easy for other JavaScript widgets to be encapsulated as
+  Tapestry components.
+
+  Ajax support takes the form of new components and, occasionally,
+  {{{mixins.html}component mixins}}.  
+
+Changes to Prototype
+
+  Tapestry currently uses
+  {{{http://prototypejs.org/assets/2008/9/29/prototype-1.6.0.3.js}Prototype 1.6.0.3}}.
+
+Changes to Scriptaculous
+
+  Scriptaculous normally has a special {{{http://wiki.script.aculo.us/scriptaculous/show/Usage}script loading option}}.
+  Loading just the Scriptaculous main library, scriptaculous.js, will also load <all> the other scripts in the library. Normally,
+  you can fine-tune this using "load" query parameter.
+
+  This doesn't fit well with the Tapestry; as discussed below, Tapestry has the capability to allow
+  individual components to control which JavaScript libraries are loaded with the page.  Further, the exact set of scripts
+  needed is determined over the course of rendering the page, and depends on the needs of the specific components that have
+  rendered.
+
+  The main Scriptaculous library, scriptaculous.js, is modified to turn off the autoloading behavior.
+  Tapestry will automatically link in prototype.js, scriptaculous.js, effects.js and the Tapestry library, tapestry.js.
+  You can add additional libraries as needed.
+
+
+Basic JavaScript
+
+  The general strategy in Tapestry is that any significant amount of JavaScript should be packaged up
+  as a static JavaScript library, a .js file that can be downloaded to the client.
+
+  Page specific JavaScript should be in the form of minimal statements to initialize objects, referencing
+  the JavaScript libraries.
+
+  Most of this is accomplished via the
+  {{{../apidocs/org/apache/tapestry5/RenderSupport.html}RenderSupport}} object.
+
+  RenderSupport include a number of methods that will be used by components, or event by
+  services that are called from components.
+
+* addScriptLink()
+
+  <<<void addScriptLink(Asset... scriptAssets);>>>
+
+  This method adds a link to a script file, a JavaScript library.  A component can inject such a script and
+  pass one or more of assets to this method.  Tapestry will ensure that the necessary \<link\> elements
+  are added to the <top> of the document (just inside the \<head\> element).
+
+  Adding the same asset multiple times does <not> create duplicate links.  The subsequent ones are simply
+  ignored.  In this way, each component can add the assets it needs, without worrying about conflicts
+  with other components.
+
+  Note that the Prototype, Scriptaculous main and effects libraries, and the standard Tapestry library (which largely consists of
+  support for form input validation) are included automatically.
+
+  If you are need access to other Scriptaculous libraries, you can provide them as follows:
+
++---+
+
+  @Inject @Path("${tapestry.scriptaculous}/dragdrop.js")
+  private Asset dragDropLibrary;
+
+  @Environmental
+  private RenderSupport renderSupport;
+
+  void setupRender()
+  {
+    renderSupport.addScriptLink(dragDropLibrary);
+  }
+
++---+
+
+  The Asset is injected, using the $\{tapestry.scriptaculous\} symbol to reference the location
+  of the Scriptaculous library.
+
+  The RenderSupport is accessed as an Environmental service.
+
+  The setupRender() method (the name is specifically linked to a
+  {{{rendering.html}render phase}}) is the correct place to inform the RenderSupport service that
+  the library is needed.
+
+  
+
+* addScript()
+
+  <<<void addScript(String format, Object... arguments);>>>
+
+  This method adds some initialization JavaScript to the page.  By <initialization> we mean that
+  it goes at the bottom of the document, and will only be executed when the document has finished loading
+  on the client (i.e., from the window.onload event handler).
+  
+  When calling the method, the format string can include standard substitutions (such as '%s')
+  for arguments.  This saves you the trouble of calling String.format() yourself.  In any case, the
+  formatting JavaScript is added to the script block.
+
+* Injecting RenderSupport
+
+  RenderSupport is an <environmental> object, so you will normally inject it via the
+  {{{../apidocs/org/apache/tapestry5/annotations/Environmental.html}Environmental}} annotation:
+
++---+
+  @Environmental
+  private RenderSupport renderSupport;
++---+
+
+  Environmental only works inside components and occasionally a service may want to
+  inject RenderSupport.  Fortunately, a proxy of RenderSupport has been set up.  The upshot of which
+  is, you may also:
+
++---+
+  @Inject
+  private RenderSupport renderSupport;
++----+
+
+  ... or, in a service implementation constructor:
+
++---+
+  public MyServiceImpl(RenderSupport support)
+  {
+    . . .
+  }
++---+
+
+  Inside a component, you should use Environmental, to highlight the fact that RenderSupport (like most
+  environmental objects) is only available during rendering, not during action requests.
+
+IncludeJavaScriptLibrary Annotation
+
+  The
+  {{{../apidocs/org/apache/tapestry5/annotations/IncludeJavaScriptLibrary.html}IncludeJavaScriptLibrary}} annotation
+  is the easy way to include one or more JavaScript libraries.
+
+  The previous example could be re-written as:
+
++---+
+@IncludeJavaScriptLibrary("${tapestry.scriptaculous}/dragdrop.js")
+public class MyComponent
+{
+ . . .
+}
++---+
+
+  This saves you the effort of injecting the asset and making the call to RenderSupport.
+  Chances are you will <still> inject RenderSupport so as to add some initialization JavaScript.
+
+Ajax Components and Mixins
+
+* Autocomplete Mixin
+
+  The
+  {{{../apidocs/org/apache/tapestry5/corelib/mixins/Autocomplete.html}Autocomplete}}
+   mixin exists to allow a text field to query the server for completions for a partially
+  entered phrase.  It is often used in situations where the field exists to select a single value from
+  a large set, too large to succesfully download to the client as a drop down list; for example, when the
+  number of values to select from is numbered in the thousands.
+
+  Autocomplete can be added to an existing text field:
+
++---+
+  <t:textfield t:id="accountName" t:mixins="autocomplete" size="100"/>
++---+
+
+
+  The mixin can be configured in a number of ways, see the
+  {{{../component-parameters.html}component reference}}.
+
+  When the user types into the field, the client-side JavaScript will send a request to the server to
+  get completions.
+
+  You must write an event handler to provide these completions.  The name of the event is "providecompletions".
+  The context is the partial input value, and the return value will be converted into the selections
+  for the user.
+
+  For example:
+
++---+
+  List<String> onProvideCompletionsFromAccountName(String partial)
+  {
+    List<Account> matches = accountDAO.findByPartialAccountName(partial);
+
+    List<String> result = new ArrayList<String>():
+
+    for (Account a : matches)
+    {
+      result.add(a.getName());
+    }
+
+    return result;
+  }
++---+
+
+  This presumes that <<<findByPartialAccountName()>>> will sort the values, otherwise you will probably
+  want to sort them.  Certainly the Autocomplete mixin does <not> do any sorting.
+
+  You can return an object array, a list, even a single object.  You may return objects instead of strings ... and
+  <<<toString()>>> will be used to convert them into client-side strings.
+
+  Tapestry's default stylesheet includes entries for controlling the look of the floating popup of selections.
+
+  You may override <<<DIV.t-autocomplete-menu UL>>> to change the main look and feel,
+  <<<DIV.t-autocomplete-menu LI>>> for a normal item in the popup list, and
+   <<<DIV.t-autocomplete-menu LI.selected>>> for the element under the cursor (or selecting using the arrow keys).
+
+* Zone
+
+  Initial support for Zones is now in place.  Zones are Tapestry's approach to performing partial updates to
+  the client side.  A Zone component renders as a \<div\> element with the "t-zone" CSS class.  It also
+  adds some JavaScript to the page to "wire up" a Tapestry.Zone object to control updating
+  the \<div\> element.
+
+  A Zone can be updated via an ActionLink component.  ActionLink supports a zone parameter, which is the id
+  of the Zone's \<div\>. Clicking such a link will invoke an event handler method on the server as normal ...
+   except that the return value of the event handler method is used to send a <partial page response>
+   to the client, and the content of that response is used to update the Zone's \<div\> in place.
+
+** Zone div vs. update div
+
+  In many situations, a Zone is a kind of "wrapper" or "container" for dynamic content, that provides
+  a look and feel ... a bit of wrapping markup to create a border.  In that situtation,
+  the Zone \<div\> may contain an update \<div\>.
+
+  An update \<div\> is a \<div\> with the CSS class "t-zone-update", <inside> the Zone's \<div\>.
+
+  When an update occurs, the update \<div\>'s content will be changed, rather than the entire Zone \<div\>.
+
+  The show and update functions apply to the Zone \<div\>.
+
+** Event Handler Return Types
+
+  In a traditional request, the return value of an event handler method is used to determine
+  which page will render a <complete> response, and a <redirect> is sent to the client to render the new page (as
+  a new request).
+
+  With a Zone update, the return value is used to render a <partial response> within the <same request>.
+
+  This return value should be an injected component or block.  The value will be rendered, and that
+  markup will be used on the client side to update the Zone's \<div\>.
+
+  An event handler may return a
+  {{{../apidocs/org/apache/tapestry5/Link.html}Link}} and the client will be redirected to that link.
+
+  Returning a page name (as a String), or a page class, or a page instance will also send a redirect
+  to the indicated page.
+
+** Graceful Degradation
+
+  Users who do not have JavaScript enabled may click ActionLinks that are configured to update a Zone.
+
+  When that occurs, the request will still be sent to the server, but will be handled as a <traditional> request.
+
+  To support graceful degradation, you should detect that case and return a traditional response: a page, page name
+  or page class.
+
+  This is accomplished by injecting the
+  {{{../apidocs/org/apache/tapestry5/services/Request.html}Request}} object, and invoking the isXHR() method.
+  This value will be true for Ajax requests, and false for traditional request.
+
+** Zone Functions
+
+  A Zone may be initially visible or invisible.  When a Zone is updated, it is made visible if not currently so.
+  This is accomplished via a function on the Tapestry.ElementEffect client-side object.  By default, the show()
+  function is used for this purpose.  The Zone's show parameter is the <name> of a Tapestry.ElementEffect function.
+
+  If a Zone is already visible, then a different function is used to highlight the change. Here it is
+  the Zone's update parameter, and a default highlight() function, which perfroms a yellow fade to highlight
+  that the content of the Zone has changed.
+
+
+** Zone Limitations
+
+   Unlike many other situations, Tapestry relies on you to specify useful and unique ids to Zone components,
+   then reference those ids inside ActionLink components. Using Zone components inside any kind of loop
+   may cause additional problems, as Tapestry will <uniqueify> the client id you specify (appending an index number).
+
+   The show and update function names are converted to lower case; all the methods of Tapestry.ElementEffect should have
+   all lower-case names.  Because client-side JavaScript is so fluid (new methods may be added to
+   existing objects), Tapestry makes no attempt to validate the function names ... however, if the names
+   are not valid, then the default show and highlight methods will be used.
+
+   Currently, the partial page content that is rendered may <<not>> use an Environmental services.  This is expected
+   to change soon.
+
+** Coming Soon
+
+  * Extending a Form with a Zone
+
+  * Additional Tapestry.ElementEffect functions, plus documentation
+
+  * Real examples ...
+
+  []
+
+Your own Ajax Components
+
+  A study of the Autocomplete mixin's code should be very helpful: it shows how to
+  ask the ComponentResources object to create a link.
+
+  The key part is the way Tapestry invokes a component event handler method on the component.
+
+  For an Ajax request, the return value from an event handler method is processed differently
+  than for a traditional action request.  In an normal request, the return value
+  is the normally name of a page (to redirect to), or the Class of a page to redirect to, or
+  an instance of a page to redirect to.
+
+  For an Ajax request, a redirect is not sent: any response is rendered as part of the same
+  request and sent back immediately.
+
+  The possible return values are:
+
+  * A Block or Component to render as the response.  The response will be a JSON hash, with a "content" key
+    whose value is the rendered markup.  This is the basis for updates with the Zone component.
+
+  * A {{{../apidocs/org/apache/tapestry5/json/JSONObject.html}JSONObject}} or 
+    {{{../apidocs/org/apache/tapestry5/json/JSONArray.html}JSONArray}}, 
+    which will be sent as the response.
+
+  * A {{{../apidocs/org/apache/tapestry5/StreamResponse.html}StreamResponse}}, which will be sent as the response.
+
+  []
+
+
+The Standard Tapestry Library
+
+  Tapestry's client-side support, the standard Tapestry library, is the file tapestry.js,
+  which has dependencies on Prototype and on Scriptaculous Effects.     tapestry.js, along with
+  its dependencies, are automatically added to the page when your code adds any other JavaScript or JavaScript library.
+
+* Tapestry Namespace
+
+  Tapestry defines a number of object and classes inside the Tapestry namespace.
+
+  It also adds a handful of methods to the Form class, and to Form elements.  These are mostly related to
+  input validation and determining element visibility.
+
+* The Tapestry Object
+
+  The standard library adds a new function, <<<$T()>>>.  This function is used much like
+  Prototype's <<<$()>>>, except that instead of returning a DOM object, it returns a hash (an initially
+  empty JavaScript object) that is associated with the DOM object.  This hash is known as <the Tapestry object>.
+
+  You may pass in an object id (as a string) or an object reference. The Tapestry Object is created on first invocation.
+  Note: you'll see it as a property name _tapestry on the DOM object (which may be useful when debugging).
+
+  When Tapestry adds information to a DOM object, it does so in the Tapestry object. This helps avoid name
+  conflicts, and groups all Tapestry-added properties into one place which is much easier to debug.
+
+  For example, you might store a value for an element in one place:
+
+----
+  $T(myid).fadeDuration = .5;
+----
+
+  Then use it somewhere else:
+
+----
+  new Effect.Fade($(myId), { duration: $T(myid).fadeDuration });
+----
+
+  

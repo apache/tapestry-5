@@ -1,0 +1,5 @@
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+    <p>
+        <a t:id="link1" t:type="ActionLink" context="123" t:mixins="forceid">abc</a>
+    </p>
+</html>

@@ -1,0 +1,10 @@
+<html t:type="Border"
+      xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+    <h1>Primitive Array Parameter Demo</h1>
+
+
+    <t:intarraywriter array="values"/>
+
+</html>
+

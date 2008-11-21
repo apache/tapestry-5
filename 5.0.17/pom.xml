@@ -1,0 +1,437 @@
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.apache.tapestry</groupId>
+    <artifactId>tapestry-project</artifactId>
+    <packaging>pom</packaging>
+    <version>5.0.17</version>
+    <name>Tapestry 5 Project</name>
+    <description>Master project for the modules of Tapestry 5.</description>
+    <inceptionYear>2006</inceptionYear>
+    <url>http://tapestry.apache.org/tapestry5/</url>
+    <issueManagement>
+        <system>Jira</system>
+        <url>https://issues.apache.org/jira/browse/TAP5</url>
+    </issueManagement>
+    <licenses>
+        <license>
+            <name>Apache Software License 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+    <organization>
+        <name>Apache Software Foundation</name>
+        <url>http://www.apache.org</url>
+    </organization>
+    <scm>
+        <connection>scm:svn:https://svn.apache.org/repos/asf/tapestry/tapestry5/trunk/</connection>
+        <url>http://svn.apache.org/viewvc/tapestry/tapestry5/trunk/</url>
+    </scm>
+    <developers>
+        <developer>
+            <id>hls</id>
+            <name>Howard M. Lewis Ship</name>
+            <email>hlship@apache.org</email>
+            <url>http://howardlewisship.com</url>
+            <roles>
+                <role>Menace</role>
+            </roles>
+            <timezone>PDT</timezone>
+        </developer>
+        <developer>
+            <id>gredler</id>
+            <name>Daniel Gredler</name>
+            <email>gredler@apache.org</email>
+            <url>http://daniel.gredler.net/</url>
+            <roles>
+                <role>Newbie</role>
+            </roles>
+            <timezone>EDT</timezone>
+        </developer>
+        <developer>
+            <id>dadams</id>
+            <name>Dan Adams</name>
+            <email>dadams@apache.org</email>
+            <roles>
+                <role>Engineer</role>
+            </roles>
+            <timezone>EST</timezone>
+            <organization>Interactive Factory</organization>
+            <organizationUrl>http://ifactory.com</organizationUrl>
+        </developer>
+        <developer>
+            <id>kmenard</id>
+            <name>Kevin Menard</name>
+            <email>kmenard@servprise.com</email>
+            <organization>Servprise International, Inc.</organization>
+            <roles>
+                <role>Developer</role>
+            </roles>
+            <timezone>-5</timezone>
+        </developer>
+        <developer>
+            <id>tedst</id>
+            <name>Ted Steen</name>
+            <email>ted.steen@gmail.com</email>
+            <roles>
+                <role>Developer</role>
+            </roles>
+            <timezone>+1</timezone>
+        </developer>
+        <developer>
+            <id>drobiazko</id>
+            <name>Igor Drobiazko</name>
+            <email>drobiazko@apache.org</email>
+            <roles>
+                <role>Developer</role>
+            </roles>
+            <timezone>+1</timezone>
+        </developer>
+    </developers>
+
+    <ciManagement>
+        <system>bamboo</system>
+        <url>http://tapestry.formos.com/bamboo/</url>
+    </ciManagement>
+
+    <mailingLists>
+        <mailingList>
+            <name>Tapestry User List</name>
+            <subscribe>users-subscribe@tapestry.apache.org</subscribe>
+            <unsubscribe>users-unsubscribe@tapestry.apache.org</unsubscribe>
+            <archive>http://markmail.org/search/list:org.apache.tapestry.users</archive>
+        </mailingList>
+        <mailingList>
+            <name>Tapestry Developer List</name>
+            <subscribe>dev-subscribe@tapestry.apache.org</subscribe>
+            <unsubscribe>dev-unsubscribe@tapestry.apache.org</unsubscribe>
+            <archive>http://markmail.org/search/list:org.apache.tapestry.dev</archive>
+        </mailingList>
+        <mailingList>
+            <name>Tapestry Commits List</name>
+            <subscribe>commits-subscribe@tapestry.apache.org</subscribe>
+            <unsubscribe>commits-unsubscribe@tapestry.apache.org</unsubscribe>
+            <archive>http://markmail.org/search/list:org.apache.tapestry.commits</archive>
+        </mailingList>
+    </mailingLists>
+
+    <modules>
+        <module>tapestry-test</module>
+        <module>tapestry-ioc</module>
+        <module>tapestry-annotations</module>
+        <module>tapestry-core</module>
+
+        <!-- Integrations -->
+
+        <module>tapestry-spring</module>
+        <module>tapestry-hibernate</module>
+        <module>tapestry-upload</module>
+
+
+        <!-- Now we're getting into the archetypes. -->
+
+        <module>quickstart</module>
+
+        <!-- And the Maven plugin. -->
+        <module>tapestry-component-report</module>
+
+        <!-- Tutorials -->
+
+        <module>tapestry-tutorial1</module>
+
+    </modules>
+
+
+    <dependencyManagement>
+        <dependencies>
+
+            <dependency>
+                <groupId>javax.servlet</groupId>
+                <artifactId>servlet-api</artifactId>
+                <version>2.4</version>
+                <scope>provided</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.easymock</groupId>
+                <artifactId>easymock</artifactId>
+                <version>2.4</version>
+                <scope>test</scope>
+            </dependency>
+
+            <!-- Now, artifacts created by Tapestry sub-projects. -->
+
+            <dependency>
+                <groupId>org.apache.tapestry</groupId>
+                <artifactId>tapestry-ioc</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.tapestry</groupId>
+                <artifactId>tapestry-core</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.tapestry</groupId>
+                <artifactId>tapestry-test</artifactId>
+                <version>${project.version}</version>
+                <scope>test</scope>
+            </dependency>
+        </dependencies>
+
+    </dependencyManagement>
+
+
+    <build>
+        <pluginManagement>
+
+
+            <plugins>
+
+                <plugin>
+                    <artifactId>maven-plugin-plugin</artifactId>
+                    <version>2.3</version>
+                </plugin>
+
+                <plugin>
+                    <artifactId>maven-site-plugin</artifactId>
+                    <!-- Snapshots after this are broken. %#%#%$#@% Maven. TAPESTRY-1943 -->
+                    <version>2.0-beta-5</version>
+                </plugin>
+
+                <!-- We configure this either way, but it's only active when the "deploy" profile is active. -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-gpg-plugin</artifactId>
+                    <executions>
+                        <execution>
+                            <id>sign-artifacts</id>
+                            <phase>verify</phase>
+                            <goals>
+                                <goal>sign</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-assembly-plugin</artifactId>
+                    <configuration>
+                        <descriptorRefs>
+                            <descriptorRef>bin</descriptorRef>
+                            <descriptorRef>src</descriptorRef>
+                        </descriptorRefs>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-source-plugin</artifactId>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>jar</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <configuration>
+                        <source>1.5</source>
+                        <target>1.5</target>
+                        <optimize>true</optimize>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>2.4</version>
+                    <configuration>
+                        <suiteXmlFiles>
+                            <suiteXmlFile>src/test/conf/testng.xml</suiteXmlFile>
+                        </suiteXmlFiles>
+                        <argLine>-Xmx500m</argLine>
+                        <redirectTestOutputToFile>false</redirectTestOutputToFile>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <configuration>
+                        <archive>
+                            <compress>true</compress>
+                            <index>true</index>
+                        </archive>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-deploy-plugin</artifactId>
+                    <configuration>
+                        <!-- Will be true for profile "deploy" -->
+                        <updateReleaseInfo>${update-release-info}</updateReleaseInfo>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+    <profiles>
+        <profile>
+            <!-- Used only when cuttting a full release.  Configures the deploy plugin to mark
+          each artifact as a release (especially important for the archetype). Signs each
+          file deployed (it actually signs way too many files and we have to clean up a bit
+          once deployed). -->
+            <id>deploy</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                    </plugin>
+                </plugins>
+            </build>
+            <properties>
+                <update-release-info>true</update-release-info>
+                <!--  Don't re-run tests as part of the deploy build. -->
+                <maven.test.skip>true</maven.test.skip>
+            </properties>
+        </profile>
+        <!--  Only enable Javadoc as part of the output site when the javadoc profile is active. -->
+        <profile>
+            <id>javadoc</id>
+            <reporting>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <!--  Version 2.3 is broken: See http://jira.codehaus.org/browse/MJAVADOC-145 -->
+                        <version>2.2</version>
+                        <configuration>
+                            <linksource>true</linksource>
+                            <links>
+                                <link>http://java.sun.com/j2se/1.5.0/docs/api/</link>
+                                <link>http://java.sun.com/j2ee/1.4/docs/api/</link>
+                                <link>http://jakarta.apache.org/commons/logging/apidocs/</link>
+                            </links>
+                            <stylesheetfile>${basedir}/src/site/resources/css/jdstyle.css</stylesheetfile>
+                            <aggregate>true</aggregate>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </reporting>
+        </profile>
+
+        <profile>
+            <!-- bamboo: running inside the Bamboo CI server and deploying to the snapshot repository and nightly web site. -->
+            <id>bamboo</id>
+            <distributionManagement>
+                <repository>
+                    <id>tapestry</id>
+                    <url>file:/var/www/html/maven-repository</url>
+                </repository>
+                <snapshotRepository>
+                    <id>tapestry-snapshot</id>
+                    <url>file:/var/www/html/maven-snapshot-repository</url>
+                </snapshotRepository>
+                <site>
+                    <url>file:/var/www/html/nightly/tapestry5</url>
+                </site>
+            </distributionManagement>
+        </profile>
+
+    </profiles>
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-project-info-reports-plugin</artifactId>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>license</report>
+                            <report>scm</report>
+                            <report>project-team</report>
+                            <report>mailing-list</report>
+                            <report>cim</report>
+                            <report>issue-tracking</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+        </plugins>
+    </reporting>
+    <repositories>
+        <repository>
+            <id>tapestry</id>
+            <url>http://tapestry.formos.com/maven-repository</url>
+        </repository>
+        <repository>
+            <id>tapestry-snapshot</id>
+            <url>http://tapestry.formos.com/maven-snapshot-repository</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+        <!-- Pick up the selenium JARs. -->
+        <repository>
+            <id>OpenQA_Release</id>
+            <name>OpenQA Release Repository</name>
+            <url>http://archiva.openqa.org/repository/releases/</url>
+        </repository>
+    </repositories>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>tapestry</id>
+            <url>http://tapestry.formos.com/maven-repository</url>
+        </pluginRepository>
+        <!-- I believe the Cobertura plugin lives here. -->
+        <pluginRepository>
+            <id>codehaus.snapshots</id>
+            <url>http://snapshots.repository.codehaus.org</url>
+        </pluginRepository>
+    </pluginRepositories>
+
+    <!-- Be sure to have the following in your ~/.m2/settings.xml
+
+      <servers>
+      <server> <id>tapestry</id> <username>hlship</username>  </server>
+      </servers>
+
+      Adjust for your personal apache.org user name. Otherwise (especially on Windows),
+      Maven and ssh trip over the user name when remote logging in.
+
+      The <id> element below is used to rendevous with server data from settings.xml
+      in order to determine meta-information such as remote username.
+
+      Don't put your password in settings.xml; just upload to apache.org your
+      public key and make sure to ssh-add before invoking Maven.
+
+    -->
+
+    <distributionManagement>
+        <site>
+            <id>tapestry</id>
+            <url>scpexe://people.apache.org/www/tapestry.apache.org/tapestry5/</url>
+        </site>
+        <repository>
+            <id>tapestry</id>
+            <url>scpexe://people.apache.org/home/hlship/public_html/tapestry-ibiblio-rsynch-repository
+            </url>
+        </repository>
+        <snapshotRepository>
+            <id>tapestry-snapshot</id>
+            <url>scpexe://people.apache.org/home/hlship/public_html/tapestry-snapshot-repository</url>
+        </snapshotRepository>
+    </distributionManagement>
+
+
+    <properties>
+        <!-- Version 2.1 lists everything as 100% covered, weird. -->
+        <cobertura-plugin-version>2.2-SNAPSHOT</cobertura-plugin-version>
+        <update-release-info>false</update-release-info>
+    </properties>
+
+</project>
