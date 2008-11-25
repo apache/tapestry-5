@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,11 +15,11 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.internal.event.InvalidationEventHubImpl;
-import org.apache.tapestry5.internal.events.UpdateListener;
 import org.apache.tapestry5.internal.util.URLChangeTracker;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.services.ResourceDigestGenerator;
+import org.apache.tapestry5.services.UpdateListener;
 
 import java.net.URL;
 import java.util.Map;
@@ -56,7 +56,7 @@ public class ResourceCacheImpl extends InvalidationEventHubImpl implements Resou
             // to an actual resource.
 
             digest = (requiresDigest && url != null) ? digestGenerator.generateDigest(url)
-                     : null;
+                                                     : null;
 
             timeModified = url != null ? tracker.add(url) : MISSING_RESOURCE_TIME_MODIFIED;
         }
@@ -106,5 +106,4 @@ public class ResourceCacheImpl extends InvalidationEventHubImpl implements Resou
     {
         return get(resource).requiresDigest;
     }
-
 }

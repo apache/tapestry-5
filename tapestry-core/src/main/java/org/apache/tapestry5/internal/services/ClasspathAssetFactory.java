@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,12 +15,12 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.Asset;
-import org.apache.tapestry5.internal.events.InvalidationListener;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.internal.util.ClasspathResource;
 import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newConcurrentMap;
 import org.apache.tapestry5.services.AssetFactory;
 import org.apache.tapestry5.services.ClasspathAssetAliasManager;
+import org.apache.tapestry5.services.InvalidationListener;
 
 import java.util.Map;
 
@@ -109,5 +109,4 @@ public class ClasspathAssetFactory implements AssetFactory, InvalidationListener
     {
         return new ClasspathResource("");
     }
-
 }

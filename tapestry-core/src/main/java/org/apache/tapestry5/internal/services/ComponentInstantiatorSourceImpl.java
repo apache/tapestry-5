@@ -16,7 +16,6 @@ package org.apache.tapestry5.internal.services;
 
 import javassist.*;
 import org.apache.tapestry5.internal.event.InvalidationEventHubImpl;
-import org.apache.tapestry5.internal.events.UpdateListener;
 import org.apache.tapestry5.internal.util.URLChangeTracker;
 import org.apache.tapestry5.ioc.internal.services.ClassFactoryClassPool;
 import org.apache.tapestry5.ioc.internal.services.ClassFactoryImpl;
@@ -25,6 +24,8 @@ import org.apache.tapestry5.ioc.internal.services.CtClassSourceImpl;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.ioc.services.ClassFactory;
+import org.apache.tapestry5.services.InvalidationEventHub;
+import org.apache.tapestry5.services.UpdateListener;
 import org.slf4j.Logger;
 
 import java.net.URL;
@@ -350,5 +351,10 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
     public CtClassSource getClassSource()
     {
         return classSource;
+    }
+
+    public InvalidationEventHub getInvalidationEventHub()
+    {
+        return this;
     }
 }

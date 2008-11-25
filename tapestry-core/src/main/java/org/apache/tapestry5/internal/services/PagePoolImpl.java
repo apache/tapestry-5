@@ -14,14 +14,14 @@
 
 package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry5.internal.events.InvalidationListener;
-import org.apache.tapestry5.internal.events.UpdateListener;
 import org.apache.tapestry5.internal.structure.Page;
 import org.apache.tapestry5.ioc.annotations.IntermediateType;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.services.ThreadLocale;
 import org.apache.tapestry5.ioc.util.TimeInterval;
+import org.apache.tapestry5.services.InvalidationListener;
+import org.apache.tapestry5.services.UpdateListener;
 import org.slf4j.Logger;
 
 import java.util.Locale;
@@ -42,8 +42,8 @@ import java.util.Map;
  * A <em>hard limit</em> on the number of page instances is enforced. This number may not be exceeded. Requesting a page
  * instance when at the hard limit will result in a runtime exception.
  * <p/>
- * As an {@link org.apache.tapestry5.internal.events.UpdateListener}, the service will reduce the size of each page's
- * pool by eliminating pages that haven't been used recently.
+ * As an {@link org.apache.tapestry5.services.UpdateListener}, the service will reduce the size of each page's pool by
+ * eliminating pages that haven't been used recently.
  *
  * @see org.apache.tapestry5.internal.services.PagePoolCache
  */

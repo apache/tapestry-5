@@ -15,7 +15,6 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.PropertyConduit;
-import org.apache.tapestry5.internal.events.InvalidationListener;
 import org.apache.tapestry5.internal.util.MultiKey;
 import org.apache.tapestry5.ioc.AnnotationProvider;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
@@ -24,6 +23,7 @@ import org.apache.tapestry5.ioc.internal.util.GenericsUtils;
 import org.apache.tapestry5.ioc.services.*;
 import org.apache.tapestry5.ioc.util.BodyBuilder;
 import org.apache.tapestry5.services.ComponentLayer;
+import org.apache.tapestry5.services.InvalidationListener;
 import org.apache.tapestry5.services.PropertyConduitSource;
 
 import java.lang.annotation.Annotation;
@@ -72,10 +72,10 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
     private final Map<MultiKey, PropertyConduit> cache = CollectionFactory.newConcurrentMap();
 
     private static final MethodSignature GET_SIGNATURE = new MethodSignature(Object.class, "get",
-                                                                             new Class[] { Object.class }, null);
+                                                                             new Class[] {Object.class}, null);
 
     private static final MethodSignature SET_SIGNATURE = new MethodSignature(void.class, "set",
-                                                                             new Class[] { Object.class, Object.class },
+                                                                             new Class[] {Object.class, Object.class},
                                                                              null);
 
     private final Pattern SPLIT_AT_DOTS = Pattern.compile("\\.");
@@ -101,7 +101,6 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
         {
             result = build(effectiveClass, expression);
             cache.put(key, result);
-
         }
 
         return result;
@@ -148,7 +147,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
         ClassFab classFab = classFactory.newClass(name, BasePropertyConduit.class);
 
-        classFab.addConstructor(new Class[] { Class.class, AnnotationProvider.class, String.class }, null,
+        classFab.addConstructor(new Class[] {Class.class, AnnotationProvider.class, String.class}, null,
                                 "super($$);");
 
         String[] terms = SPLIT_AT_DOTS.split(expression);
@@ -337,7 +336,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
         builder.end();
 
-        MethodSignature sig = new MethodSignature(activeType, "navigate", new Class[] { Object.class }, null);
+        MethodSignature sig = new MethodSignature(activeType, "navigate", new Class[] {Object.class}, null);
 
         classFab.addMethod(Modifier.PRIVATE, sig, builder.toString());
 
@@ -387,13 +386,11 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
                         return method.getAnnotation(annotationClass);
                     }
                 };
-
             }
             catch (NoSuchMethodException ex)
             {
                 throw new RuntimeException(ServicesMessages.methodNotFound(term, activeType, expression), ex);
             }
-
         }
 
         // Otherwise, just a property name.
@@ -444,7 +441,6 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
         {
 
             if (method.getParameterTypes().length == 0 && method.getName().equalsIgnoreCase(methodName)) return method;
-
         }
 
         throw new NoSuchMethodException(ServicesMessages.noSuchMethod(activeType, methodName));

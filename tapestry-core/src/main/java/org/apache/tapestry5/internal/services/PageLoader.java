@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.ComponentResourcesCommon;
-import org.apache.tapestry5.internal.event.InvalidationEventHub;
 import org.apache.tapestry5.internal.structure.Page;
 
 import java.util.Locale;
@@ -30,7 +29,7 @@ import java.util.Locale;
  * @see PagePool
  * @see RequestPageCache
  */
-public interface PageLoader extends InvalidationEventHub
+public interface PageLoader
 {
     /**
      * Loads the page in the given locale.

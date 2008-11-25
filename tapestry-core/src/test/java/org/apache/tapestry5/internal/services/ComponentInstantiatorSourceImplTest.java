@@ -27,6 +27,7 @@ import org.apache.tapestry5.ioc.services.PropertyAccess;
 import org.apache.tapestry5.ioc.services.SymbolProvider;
 import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.services.TapestryModule;
+import org.apache.tapestry5.services.UpdateListenerHub;
 import org.slf4j.Logger;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -183,7 +184,7 @@ public class ComponentInstantiatorSourceImplTest extends InternalBaseTestCase
 
         UpdateListenerHub hub = registry.getService("UpdateListenerHub", UpdateListenerHub.class);
 
-        hub.fireUpdateEvent();
+        hub.fireCheckForUpdates();
 
         // This will be the new version of the class
 
@@ -259,7 +260,7 @@ public class ComponentInstantiatorSourceImplTest extends InternalBaseTestCase
 
         URL url = extraClasspath.toURL();
 
-        extraLoader = new URLClassLoader(new URL[] { url }, contextLoader);
+        extraLoader = new URLClassLoader(new URL[] {url}, contextLoader);
         RegistryBuilder builder = new RegistryBuilder(extraLoader);
 
         builder.add(TapestryModule.class);

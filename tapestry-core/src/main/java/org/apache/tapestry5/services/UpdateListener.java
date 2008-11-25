@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,10 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.internal.events;
+package org.apache.tapestry5.services;
 
 /**
  * Interface for objects which can periodically check for updates.
+ *
+ * @see org.apache.tapestry5.services.UpdateListenerHub
+ * @since 5.1
  */
 public interface UpdateListener
 {

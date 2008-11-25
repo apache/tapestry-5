@@ -19,7 +19,6 @@ import javassist.CtConstructor;
 import javassist.NotFoundException;
 import org.apache.tapestry5.TapestryMarkers;
 import org.apache.tapestry5.internal.InternalConstants;
-import org.apache.tapestry5.internal.events.InvalidationListener;
 import org.apache.tapestry5.internal.model.MutableComponentModelImpl;
 import org.apache.tapestry5.ioc.LoggerSource;
 import org.apache.tapestry5.ioc.Resource;
@@ -31,6 +30,7 @@ import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.services.ComponentClassTransformWorker;
 import org.apache.tapestry5.services.ComponentLayer;
+import org.apache.tapestry5.services.InvalidationListener;
 import org.slf4j.Logger;
 
 import java.lang.reflect.Modifier;

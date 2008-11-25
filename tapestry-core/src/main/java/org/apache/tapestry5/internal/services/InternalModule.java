@@ -20,7 +20,6 @@ import org.apache.tapestry5.internal.structure.ComponentPageElementResourcesSour
 import org.apache.tapestry5.ioc.ObjectLocator;
 import org.apache.tapestry5.ioc.ScopeConstants;
 import org.apache.tapestry5.ioc.ServiceBinder;
-import org.apache.tapestry5.ioc.ServiceResources;
 import org.apache.tapestry5.ioc.annotations.*;
 import org.apache.tapestry5.ioc.internal.services.CtClassSource;
 import org.apache.tapestry5.ioc.services.Builtin;
@@ -41,18 +40,12 @@ public class InternalModule
 {
     private final UpdateListenerHub updateListenerHub;
 
-    private final ComponentInstantiatorSource componentInstantiatorSource;
-
-    private final ComponentTemplateSource componentTemplateSource;
-
     private final RequestGlobals requestGlobals;
 
     public InternalModule(UpdateListenerHub updateListenerHub, ComponentInstantiatorSource componentInstantiatorSource,
-                          ComponentTemplateSource componentTemplateSource, RequestGlobals requestGlobals)
+                          RequestGlobals requestGlobals)
     {
         this.updateListenerHub = updateListenerHub;
-        this.componentInstantiatorSource = componentInstantiatorSource;
-        this.componentTemplateSource = componentTemplateSource;
         this.requestGlobals = requestGlobals;
     }
 
@@ -67,7 +60,6 @@ public class InternalModule
         binder.bind(PageResponseRenderer.class, PageResponseRendererImpl.class);
         binder.bind(PageMarkupRenderer.class, PageMarkupRendererImpl.class);
         binder.bind(ComponentInvocationMap.class, NoOpComponentInvocationMap.class);
-        binder.bind(UpdateListenerHub.class, UpdateListenerHubImpl.class);
         binder.bind(LinkFactory.class, LinkFactoryImpl.class);
         binder.bind(LocalizationSetter.class, LocalizationSetterImpl.class);
         binder.bind(PageElementFactory.class, PageElementFactoryImpl.class);
@@ -82,6 +74,7 @@ public class InternalModule
         binder.bind(InternalRequestGlobals.class, InternalRequestGlobalsImpl.class);
         binder.bind(EndOfRequestListenerHub.class);
         binder.bind(PageActivationContextCollector.class);
+        binder.bind(PageLoader.class, PageLoaderImpl.class);
     }
 
     /**
@@ -149,30 +142,36 @@ public class InternalModule
         return source;
     }
 
-    public ComponentClassTransformer buildComponentClassTransformer(
-            @Autobuild ComponentClassTransformerImpl transformer)
+    public static ComponentClassTransformer buildComponentClassTransformer(
+            @Autobuild ComponentClassTransformerImpl transformer, @ComponentClasses InvalidationEventHub hub)
     {
-        componentInstantiatorSource.addInvalidationListener(transformer);
+        hub.addInvalidationListener(transformer);
 
         return transformer;
     }
 
     public PagePool buildPagePool(@Autobuild PagePoolImpl service,
-                                  PageLoader pageLoader,
-                                  ComponentMessagesSource componentMessagesSource,
-                                  ServiceResources resources)
+
+                                  @ComponentClasses
+                                  InvalidationEventHub classesHub,
+
+                                  @ComponentTemplates
+                                  InvalidationEventHub templatesHub,
+
+                                  @ComponentMessages
+                                  InvalidationEventHub messagesHub)
     {
         // This covers invalidations due to changes to classes
 
-        pageLoader.addInvalidationListener(service);
+        classesHub.addInvalidationListener(service);
 
         // This covers invalidation due to changes to message catalogs (properties files)
 
-        componentMessagesSource.addInvalidationListener(service);
+        messagesHub.addInvalidationListener(service);
 
         // ... and this covers invalidations due to changes to templates
 
-        componentTemplateSource.addInvalidationListener(service);
+        templatesHub.addInvalidationListener(service);
 
         // Give the service a chance to clean up its own cache periodically as well
 
@@ -181,9 +180,10 @@ public class InternalModule
         return service;
     }
 
-    public ComponentClassCache buildComponentClassCache(@Autobuild ComponentClassCacheImpl service)
+    public static ComponentClassCache buildComponentClassCache(@Autobuild ComponentClassCacheImpl service,
+                                                               @ComponentClasses InvalidationEventHub hub)
     {
-        componentInstantiatorSource.addInvalidationListener(service);
+        hub.addInvalidationListener(service);
 
         return service;
     }
@@ -232,18 +232,9 @@ public class InternalModule
         return service;
     }
 
-    public PageLoader buildPageLoader(@Autobuild PageLoaderImpl service)
-    {
-        // Recieve invalidations when the class loader is discarded (due to a component class
-        // change). The notification is forwarded to the page loader's listeners.
-
-        componentInstantiatorSource.addInvalidationListener(service);
-
-        return service;
-    }
-
     @Marker(ComponentLayer.class)
-    public CtClassSource buildCtClassSource(PropertyShadowBuilder builder)
+    public static CtClassSource buildCtClassSource(PropertyShadowBuilder builder,
+                                                   ComponentInstantiatorSource componentInstantiatorSource)
     {
         return builder.build(componentInstantiatorSource, "classSource", CtClassSource.class);
     }

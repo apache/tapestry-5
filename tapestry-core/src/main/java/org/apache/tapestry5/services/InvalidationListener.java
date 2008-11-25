@@ -12,11 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.internal.events;
+package org.apache.tapestry5.services;
 
 /**
  * Interface for objects that may cache information that can be invalidated. Invalidation occurs when external files,
- * from which in-memory data is cached, is determined to have changed.
+ * from which in-memory data is cached, is determined to have changed. Granularity is very limited; when any external
+ * file is found to have changed, the event is fired (with the expectation that the cleared cache will be repopulated as
+ * necessary).
+ *
+ * @see org.apache.tapestry5.services.InvalidationEventHub
+ * @since 5.1
  */
 public interface InvalidationListener
 {

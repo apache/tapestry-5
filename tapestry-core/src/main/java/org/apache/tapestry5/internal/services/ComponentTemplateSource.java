@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,9 +14,9 @@
 
 package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry5.internal.event.InvalidationEventHub;
 import org.apache.tapestry5.internal.parser.ComponentTemplate;
 import org.apache.tapestry5.model.ComponentModel;
+import org.apache.tapestry5.services.InvalidationEventHub;
 
 import java.util.Locale;
 
@@ -27,10 +27,8 @@ import java.util.Locale;
  * <p/>
  * Any search for a template will end with success (a non-null template), but the template returned may be the {@link
  * ComponentTemplate#isMissing() missing template}.
- * <p/>
- * TODO: A more sophisticated, finer grained dependency manager.
  */
-public interface ComponentTemplateSource extends InvalidationEventHub
+public interface ComponentTemplateSource
 {
     /**
      * Provides access to a template. The template will be parsed as necessary. If no template for the exact component
@@ -44,4 +42,12 @@ public interface ComponentTemplateSource extends InvalidationEventHub
      * @return the cached template instance
      */
     ComponentTemplate getTemplate(ComponentModel componentModel, Locale locale);
+
+    /**
+     * Event hub used to notify listeners that underlying component template files have changed.
+     *
+     * @see org.apache.tapestry5.services.ComponentTemplates
+     * @since 5.1
+     */
+    InvalidationEventHub getInvalidationEventHub();
 }

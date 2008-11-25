@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,9 +14,9 @@
 
 package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry5.internal.event.InvalidationEventHub;
-import org.apache.tapestry5.internal.events.UpdateListener;
 import org.apache.tapestry5.ioc.Messages;
+import org.apache.tapestry5.services.InvalidationEventHub;
+import org.apache.tapestry5.services.UpdateListener;
 
 import java.util.Locale;
 
