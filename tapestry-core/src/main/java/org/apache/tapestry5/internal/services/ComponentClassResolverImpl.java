@@ -15,7 +15,6 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.internal.InternalConstants;
-import org.apache.tapestry5.internal.events.InvalidationListener;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
@@ -24,6 +23,7 @@ import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.Invokable;
 import org.apache.tapestry5.ioc.services.ClassNameLocator;
 import org.apache.tapestry5.services.ComponentClassResolver;
+import org.apache.tapestry5.services.InvalidationListener;
 import org.apache.tapestry5.services.LibraryMapping;
 import org.slf4j.Logger;
 

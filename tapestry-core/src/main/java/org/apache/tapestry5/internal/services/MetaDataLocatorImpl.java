@@ -15,10 +15,10 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.ComponentResources;
-import org.apache.tapestry5.internal.events.InvalidationListener;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.services.SymbolSource;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
+import org.apache.tapestry5.services.InvalidationListener;
 import org.apache.tapestry5.services.MetaDataLocator;
 
 import java.util.Map;
@@ -92,7 +92,6 @@ public class MetaDataLocatorImpl implements MetaDataLocator, InvalidationListene
         else
         {
             value = symbolSource.expandSymbols(value);
-
         }
 
         cache.put(cacheKey, value);
@@ -146,5 +145,4 @@ public class MetaDataLocatorImpl implements MetaDataLocator, InvalidationListene
 
         return null;
     }
-
 }

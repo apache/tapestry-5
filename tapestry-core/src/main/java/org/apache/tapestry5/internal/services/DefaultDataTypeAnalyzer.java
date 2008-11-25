@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,10 +14,10 @@
 
 package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry5.internal.events.InvalidationListener;
 import org.apache.tapestry5.ioc.services.PropertyAdapter;
 import org.apache.tapestry5.ioc.util.StrategyRegistry;
 import org.apache.tapestry5.services.DataTypeAnalyzer;
+import org.apache.tapestry5.services.InvalidationListener;
 
 import java.util.Map;
 
@@ -58,5 +58,4 @@ public class DefaultDataTypeAnalyzer implements DataTypeAnalyzer, InvalidationLi
 
         return dataType;
     }
-
 }

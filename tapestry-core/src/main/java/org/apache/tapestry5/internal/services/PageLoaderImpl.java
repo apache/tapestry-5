@@ -14,15 +14,12 @@
 
 package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry5.internal.event.InvalidationEventHubImpl;
-import org.apache.tapestry5.internal.events.InvalidationListener;
 import org.apache.tapestry5.internal.structure.Page;
 import org.apache.tapestry5.services.ComponentClassResolver;
 
 import java.util.Locale;
 
-public class PageLoaderImpl extends InvalidationEventHubImpl implements PageLoader,
-        InvalidationListener
+public class PageLoaderImpl implements PageLoader
 {
     private final ComponentTemplateSource templateSource;
 
@@ -54,14 +51,5 @@ public class PageLoaderImpl extends InvalidationEventHubImpl implements PageLoad
         String pageClassName = componentClassResolver.resolvePageNameToClassName(logicalPageName);
 
         return processor.loadPage(logicalPageName, pageClassName, locale);
-    }
-
-    /**
-     * When the page loader receives an invalidation event, it respawns the event for its listeners. Those listeners
-     * will include page caches and the like.
-     */
-    public void objectWasInvalidated()
-    {
-        fireInvalidationEvent();
     }
 }

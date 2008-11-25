@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,12 +14,12 @@
 
 package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry5.internal.events.InvalidationListener;
-import org.apache.tapestry5.internal.events.UpdateListener;
 import org.apache.tapestry5.internal.util.URLChangeTracker;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.model.ComponentModel;
+import org.apache.tapestry5.services.InvalidationEventHub;
+import org.apache.tapestry5.services.UpdateListener;
 
 import java.util.Locale;
 
@@ -88,7 +88,7 @@ public class ComponentMessagesSourceImpl implements ComponentMessagesSource, Upd
         // If the application catalog exists, set it up as the root, otherwise use null.
 
         MessagesBundle appCatalogBundle = !appCatalogResource.exists() ? null
-                                          : new MessagesBundle()
+                                                                       : new MessagesBundle()
         {
             public Resource getBaseResource()
             {
@@ -111,8 +111,8 @@ public class ComponentMessagesSourceImpl implements ComponentMessagesSource, Upd
         return messagesSource.getMessages(bundle, locale);
     }
 
-    public void addInvalidationListener(InvalidationListener listener)
+    public InvalidationEventHub getInvalidatonEventHub()
     {
-        messagesSource.addInvalidationListener(listener);
+        return messagesSource;
     }
 }

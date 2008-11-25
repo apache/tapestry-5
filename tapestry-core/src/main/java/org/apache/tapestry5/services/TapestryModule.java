@@ -25,7 +25,6 @@ import org.apache.tapestry5.internal.*;
 import org.apache.tapestry5.internal.beaneditor.PrimitiveFieldConstraintGenerator;
 import org.apache.tapestry5.internal.beaneditor.ValidateAnnotationConstraintGenerator;
 import org.apache.tapestry5.internal.bindings.*;
-import org.apache.tapestry5.internal.events.InvalidationListener;
 import org.apache.tapestry5.internal.grid.CollectionGridDataSource;
 import org.apache.tapestry5.internal.grid.NullDataSource;
 import org.apache.tapestry5.internal.renderers.*;
@@ -83,8 +82,6 @@ public final class TapestryModule
 
     private final PropertyAccess propertyAccess;
 
-    private final ComponentInstantiatorSource componentInstantiatorSource;
-
     private final ChainBuilder chainBuilder;
 
     private final Request request;
@@ -118,8 +115,6 @@ public final class TapestryModule
 
                           StrategyBuilder strategyBuilder,
 
-                          ComponentInstantiatorSource componentInstantiatorSource,
-
                           PropertyAccess propertyAccess,
 
                           Request request,
@@ -137,7 +132,6 @@ public final class TapestryModule
         this.chainBuilder = chainBuilder;
         this.environment = environment;
         this.strategyBuilder = strategyBuilder;
-        this.componentInstantiatorSource = componentInstantiatorSource;
         this.propertyAccess = propertyAccess;
         this.request = request;
         this.response = response;
@@ -194,6 +188,7 @@ public final class TapestryModule
                 "SessionApplicationStatePersistenceStrategy");
         binder.bind(URLEncoder.class, URLEncoderImpl.class);
         binder.bind(ContextPathEncoder.class, ContextPathEncoderImpl.class);
+        binder.bind(UpdateListenerHub.class, UpdateListenerHubImpl.class);
     }
 
     // ========================================================================
@@ -826,11 +821,12 @@ public final class TapestryModule
         return shadowBuilder.build(globals, "context", Context.class);
     }
 
-    public ComponentClassResolver buildComponentClassResolver(@Autobuild ComponentClassResolverImpl service)
+    public static ComponentClassResolver buildComponentClassResolver(@Autobuild ComponentClassResolverImpl service,
+                                                                     @ComponentClasses InvalidationEventHub hub)
     {
-        // Allow the resolver to clean its cache when the source is invalidated
+        // Allow the resolver to clean its cache when the component classes change
 
-        componentInstantiatorSource.addInvalidationListener(service);
+        hub.addInvalidationListener(service);
 
         return service;
     }
@@ -886,9 +882,10 @@ public final class TapestryModule
         return service;
     }
 
-    public MetaDataLocator buildMetaDataLocator(@Autobuild MetaDataLocatorImpl service)
+    public static MetaDataLocator buildMetaDataLocator(@Autobuild MetaDataLocatorImpl service,
+                                                       @ComponentClasses InvalidationEventHub hub)
     {
-        componentInstantiatorSource.addInvalidationListener(service);
+        hub.addInvalidationListener(service);
 
         return service;
     }
@@ -1087,16 +1084,18 @@ public final class TapestryModule
      * The default data type analyzer is the final analyzer consulted and identifies the type entirely pased on the
      * property type, working against its own configuration (mapping property type class to data type).
      */
-    public DataTypeAnalyzer buildDefaultDataTypeAnalyzer(@Autobuild DefaultDataTypeAnalyzer service)
+    public static DataTypeAnalyzer buildDefaultDataTypeAnalyzer(@Autobuild DefaultDataTypeAnalyzer service,
+                                                                @ComponentClasses InvalidationEventHub hub)
     {
-        componentInstantiatorSource.addInvalidationListener(service);
+        hub.addInvalidationListener(service);
 
         return service;
     }
 
-    public TranslatorSource buildTranslatorSource(@Autobuild TranslatorSourceImpl service, ServiceResources resources)
+    public static TranslatorSource buildTranslatorSource(@Autobuild TranslatorSourceImpl service,
+                                                         @ComponentClasses InvalidationEventHub hub)
     {
-        componentInstantiatorSource.addInvalidationListener(service);
+        hub.addInvalidationListener(service);
 
         return service;
     }
@@ -1118,9 +1117,9 @@ public final class TapestryModule
      * notifications). Failure to properly clean up can result in really nasty PermGen space memory leaks.
      */
     @Marker(ComponentLayer.class)
-    public ClassFactory buildComponentClassFactory()
+    public ClassFactory buildComponentClassFactory(ComponentInstantiatorSource source)
     {
-        return shadowBuilder.build(componentInstantiatorSource, "classFactory", ClassFactory.class);
+        return shadowBuilder.build(source, "classFactory", ClassFactory.class);
     }
 
 
@@ -1133,11 +1132,12 @@ public final class TapestryModule
         return chainBuilder.build(Dispatcher.class, configuration);
     }
 
-    public PropertyConduitSource buildPropertyConduitSource(@ComponentLayer ClassFactory componentClassFactory)
+    public PropertyConduitSource buildPropertyConduitSource(@ComponentLayer ClassFactory componentClassFactory,
+                                                            @ComponentClasses InvalidationEventHub hub)
     {
         PropertyConduitSourceImpl service = new PropertyConduitSourceImpl(propertyAccess, componentClassFactory);
 
-        componentInstantiatorSource.addInvalidationListener(service);
+        hub.addInvalidationListener(service);
 
         return service;
     }
@@ -1709,11 +1709,12 @@ public final class TapestryModule
         configuration.add("Default", "org/apache/tapestry5/internal/ValidationMessages", "before:*");
     }
 
-    public ValueEncoderSource buildValueEncoderSource(Map<Class, ValueEncoderFactory> configuration)
+    public static ValueEncoderSource buildValueEncoderSource(Map<Class, ValueEncoderFactory> configuration,
+                                                             @ComponentClasses InvalidationEventHub hub)
     {
         ValueEncoderSourceImpl service = new ValueEncoderSourceImpl(configuration);
 
-        componentInstantiatorSource.addInvalidationListener(service);
+        hub.addInvalidationListener(service);
 
         return service;
     }
@@ -1777,7 +1778,8 @@ public final class TapestryModule
         // Any class inside the internal module would do. Or we could move all these
         // files to o.a.t.services.
 
-        Class c = UpdateListenerHub.class;
+        Class c = UpdateListenerHubImpl.class;
+
         config.add("-//W3C//DTD XHTML 1.0 Strict//EN", c.getResource("xhtml1-strict.dtd"));
         config.add("-//W3C//DTD XHTML 1.0 Transitional//EN", c
                 .getResource("xhtml1-transitional.dtd"));
@@ -1884,7 +1886,8 @@ public final class TapestryModule
      */
     public void contributeApplicationInitializer(OrderedConfiguration<ApplicationInitializerFilter> configuration,
                                                  final TypeCoercer typeCoercer,
-                                                 final ComponentClassResolver componentClassResolver)
+                                                 final ComponentClassResolver componentClassResolver,
+                                                 @ComponentClasses final InvalidationEventHub hub)
     {
         final InvalidationListener listener = new InvalidationListener()
         {
@@ -1903,7 +1906,7 @@ public final class TapestryModule
                 // Snuck in here is the logic to clear the PropertyAccess service's cache whenever
                 // the component class loader is invalidated.
 
-                componentInstantiatorSource.addInvalidationListener(listener);
+                hub.addInvalidationListener(listener);
 
                 initializer.initializeApplication(context);
 
@@ -2117,8 +2120,40 @@ public final class TapestryModule
         configuration.add("li", RelativeElementPosition.INSIDE);
     }
 
+    /**
+     * @since 5.1
+     */
     public LinkCreationHub buildLinkCreationHub(LinkFactory factory)
     {
-        return shadowBuilder.build(factory, "linkCreationHub", LinkCreationHub.class);
+        return factory.getLinkCreationHub();
+    }
+
+    /**
+     * @since 5.1
+     */
+    @Marker(ComponentClasses.class)
+    public static InvalidationEventHub buildComponentClassesInvalidationEventHub(ComponentInstantiatorSource source)
+    {
+        return source.getInvalidationEventHub();
+    }
+
+    /**
+     * @since 5.1
+     */
+    @Marker(ComponentTemplates.class)
+    public static InvalidationEventHub buildComponentTemplatesInvalidationEventHub(
+            ComponentTemplateSource templateSource)
+    {
+        return templateSource.getInvalidationEventHub();
+    }
+
+    /**
+     * @since 5.1
+     */
+    @Marker(ComponentMessages.class)
+    public static InvalidationEventHub buildComponentMessagesInvalidationEventHub(
+            ComponentMessagesSource messagesSource)
+    {
+        return messagesSource.getInvalidatonEventHub();
     }
 }

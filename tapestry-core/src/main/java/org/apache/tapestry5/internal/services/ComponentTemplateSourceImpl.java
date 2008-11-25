@@ -16,7 +16,6 @@ package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.internal.event.InvalidationEventHubImpl;
-import org.apache.tapestry5.internal.events.UpdateListener;
 import org.apache.tapestry5.internal.parser.ComponentTemplate;
 import org.apache.tapestry5.internal.parser.TemplateToken;
 import org.apache.tapestry5.internal.util.MultiKey;
@@ -25,6 +24,8 @@ import org.apache.tapestry5.ioc.Location;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.model.ComponentModel;
+import org.apache.tapestry5.services.InvalidationEventHub;
+import org.apache.tapestry5.services.UpdateListener;
 
 import java.util.List;
 import java.util.Locale;
@@ -193,5 +194,10 @@ public final class ComponentTemplateSourceImpl extends InvalidationEventHubImpl 
             templates.clear();
             fireInvalidationEvent();
         }
+    }
+
+    public InvalidationEventHub getInvalidationEventHub()
+    {
+        return this;
     }
 }

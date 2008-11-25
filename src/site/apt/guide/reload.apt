@@ -77,3 +77,58 @@ ClassCastExceptions
   
   It is important that the interface be loaded by the default class loader, it should not be in the pages or components
   package, but instead be in another package, such as services.
+
+Handling Reloads in your Code
+
+  On occasion, you may need to know when invalidations occur, to clear your own cache.  For example, if you
+  have a binding that creates new classes, the way
+  {{{../../apidocs/org/apache/tapestry5/services/PropertyConduitSource.html}PropertyConduitSource}} does, you
+  need to discard any cached classes or instances when a change is detected in component classes.
+
+  You do this by registering a listener with the correct
+  {{{../../apidocs/org/apache/tpaestry5/services/InvalidationEventHub.html}InvalidationEventHub}} service.
+
+  For example, your service may be in the business of creating new classes based on component classes, and keep
+  a cache of those classes:
+
+---
+
+public class MyServiceImpl implements MyService, InvalidationEventListener
+{
+  public final Map<String,Class> cache = new ConcurrentHashMap<String,Class>();
+
+  . . .
+
+  public void objectWasInvalidated() { cache.clear(); }
+}
+---
+
+  Here, the service implementation impl,ements the InvalidationEventListener interface, as well as its service
+  interface.  The question is: how does it register for notifications?
+
+  In your module, you will want to use a service builder method as so:
+
+---
+public static MyService buildMyService(@Autobuild MyServiceImpl service, @ComponentClasses InvalidationEventHub hub)
+{
+  hub.addInvalidationListener(service);
+
+  return service;
+}
+---
+
+  This is the intent of service builder methods; to do more than just injecting dependencies.
+
+Checking For Updates
+
+  The built in InvalidationEventHub services provide notifications of changes to component classes,
+  to component templates, and to component message catalogs.  If you wish to check some other resources
+  (for example, files in a directory of the file system or rows in a database table), you should register
+  as an
+  {{{../../apidocs/org/apache/tapestry5/services/UpdateListener.html}UpdateListener}}
+  with the
+  {{{../../apidocs/org/apache/tapestry5/services/UpdateListenerHub.html}UpdateListenerHub}} service.
+
+  Periodically (the frequency is configurable), UpdateListeners are notified that they should check
+  for updates.  Typically, UpdateListeners are also InvalidationEventHubs (or provide InvalidationEventHubs), so
+  that other interested parties can be alerted when underlying data changes.
