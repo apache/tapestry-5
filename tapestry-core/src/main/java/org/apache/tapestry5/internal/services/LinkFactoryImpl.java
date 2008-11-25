@@ -19,13 +19,11 @@ import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.internal.structure.Page;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.Defense;
-import org.apache.tapestry5.services.ContextPathEncoder;
-import org.apache.tapestry5.services.Request;
-import org.apache.tapestry5.services.Response;
+import org.apache.tapestry5.services.*;
 
 import java.util.List;
 
-public class LinkFactoryImpl implements LinkFactory
+public class LinkFactoryImpl implements LinkFactory, LinkCreationHub
 {
     private final Request request;
 
@@ -45,7 +43,7 @@ public class LinkFactoryImpl implements LinkFactory
 
     private final PageActivationContextCollector contextCollector;
 
-    private final List<LinkFactoryListener> listeners = CollectionFactory.newThreadSafeList();
+    private final List<LinkCreationListener> listeners = CollectionFactory.newThreadSafeList();
 
 
     public LinkFactoryImpl(Request request,
@@ -67,11 +65,6 @@ public class LinkFactoryImpl implements LinkFactory
         this.requestSecurityManager = requestSecurityManager;
         this.contextPathEncoder = contextPathEncoder;
         this.contextCollector = contextCollector;
-    }
-
-    public void addListener(LinkFactoryListener listener)
-    {
-        listeners.add(listener);
     }
 
     public Link createComponentEventLink(Page page, String nestedId, String eventType, boolean forForm,
@@ -107,7 +100,7 @@ public class LinkFactoryImpl implements LinkFactory
 
         componentInvocationMap.store(link, invocation);
 
-        for (LinkFactoryListener listener : listeners)
+        for (LinkCreationListener listener : listeners)
             listener.createdComponentEventLink(link);
 
         return link;
@@ -136,7 +129,7 @@ public class LinkFactoryImpl implements LinkFactory
 
         componentInvocationMap.store(link, invocation);
 
-        for (LinkFactoryListener listener : listeners)
+        for (LinkCreationListener listener : listeners)
             listener.createdPageRenderLink(link);
 
         return link;
@@ -148,5 +141,24 @@ public class LinkFactoryImpl implements LinkFactory
         Page page = pageCache.get(logicalPageName);
 
         return createPageRenderLink(page, override, context);
+    }
+
+    public LinkCreationHub getLinkCreationHub()
+    {
+        return this;
+    }
+
+    public void addListener(LinkCreationListener listener)
+    {
+        Defense.notNull(listener, "listener");
+
+        listeners.add(listener);
+    }
+
+    public void removeListener(LinkCreationListener listener)
+    {
+        Defense.notNull(listener, "listener");
+
+        listeners.remove(listener);
     }
 }

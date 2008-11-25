@@ -39,6 +39,7 @@ import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.runtime.RenderQueue;
 import org.apache.tapestry5.services.ComponentClassResolver;
+import org.apache.tapestry5.services.LinkCreationListener;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.TapestryModule;
 import org.apache.tapestry5.test.TapestryTestCase;
@@ -419,9 +420,9 @@ public class InternalBaseTestCase extends TapestryTestCase implements Registry
         return validationMessages;
     }
 
-    protected final LinkFactoryListener mockLinkFactoryListener()
+    protected final LinkCreationListener mockLinkCreationListener()
     {
-        return newMock(LinkFactoryListener.class);
+        return newMock(LinkCreationListener.class);
     }
 
     protected final ComponentInvocationMap mockComponentInvocationMap()

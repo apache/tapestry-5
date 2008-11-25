@@ -15,6 +15,7 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.Link;
+import org.apache.tapestry5.services.LinkCreationListener;
 import org.apache.tapestry5.services.PersistentFieldChange;
 import org.apache.tapestry5.services.PersistentFieldStrategy;
 
@@ -25,7 +26,7 @@ import java.util.Collection;
  * ClientPersistentFieldStorage}. This division of layer allows this service to be a true singleton, and a listener to
  * the {@link LinkFactory}, and allow per-request state to be isolated inside the other service.
  */
-public class ClientPersistentFieldStrategy implements PersistentFieldStrategy, LinkFactoryListener
+public class ClientPersistentFieldStrategy implements PersistentFieldStrategy, LinkCreationListener
 {
     private final ClientPersistentFieldStorage storage;
 

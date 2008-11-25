@@ -893,10 +893,10 @@ public final class TapestryModule
         return service;
     }
 
-    public PersistentFieldStrategy buildClientPersistentFieldStrategy(LinkFactory linkFactory,
+    public PersistentFieldStrategy buildClientPersistentFieldStrategy(LinkCreationHub linkCreationHub,
                                                                       @Autobuild ClientPersistentFieldStrategy service)
     {
-        linkFactory.addListener(service);
+        linkCreationHub.addListener(service);
 
         return service;
     }
@@ -2115,5 +2115,10 @@ public final class TapestryModule
         configuration.add("div", RelativeElementPosition.INSIDE);
         configuration.add("td", RelativeElementPosition.INSIDE);
         configuration.add("li", RelativeElementPosition.INSIDE);
+    }
+
+    public LinkCreationHub buildLinkCreationHub(LinkFactory factory)
+    {
+        return shadowBuilder.build(factory, "linkCreationHub", LinkCreationHub.class);
     }
 }
