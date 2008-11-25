@@ -11,110 +11,6 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module-library" exported="">
-      <library name="org.openqa.selenium.client-drivers:selenium-java-client-driver:1.0-beta-1">
-        <CLASSES>
-          <root url="jar://$MAVEN_REPOSITORY$/org/openqa/selenium/client-drivers/selenium-java-client-driver/1.0-beta-1/selenium-java-client-driver-1.0-beta-1.jar!/" />
-        </CLASSES>
-        <JAVADOC>
-          <root url="jar://$MAVEN_REPOSITORY$/org/openqa/selenium/client-drivers/selenium-java-client-driver/1.0-beta-1/selenium-java-client-driver-1.0-beta-1-javadoc.jar!/" />
-        </JAVADOC>
-        <SOURCES>
-          <root url="jar://$MAVEN_REPOSITORY$/org/openqa/selenium/client-drivers/selenium-java-client-driver/1.0-beta-1/selenium-java-client-driver-1.0-beta-1-sources.jar!/" />
-        </SOURCES>
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library" exported="">
-      <library name="org.openqa.selenium.core:selenium-core:1.0-beta-1">
-        <CLASSES>
-          <root url="jar://$MAVEN_REPOSITORY$/org/openqa/selenium/core/selenium-core/1.0-beta-1/selenium-core-1.0-beta-1.jar!/" />
-        </CLASSES>
-        <JAVADOC>
-          <root url="jar://$MAVEN_REPOSITORY$/org/openqa/selenium/core/selenium-core/1.0-beta-1/selenium-core-1.0-beta-1-javadoc.jar!/" />
-        </JAVADOC>
-        <SOURCES>
-          <root url="jar://$MAVEN_REPOSITORY$/org/openqa/selenium/core/selenium-core/1.0-beta-1/selenium-core-1.0-beta-1-sources.jar!/" />
-        </SOURCES>
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library" exported="">
-      <library name="org.openqa.selenium.server:selenium-server-coreless:1.0-beta-1">
-        <CLASSES>
-          <root url="jar://$MAVEN_REPOSITORY$/org/openqa/selenium/server/selenium-server-coreless/1.0-beta-1/selenium-server-coreless-1.0-beta-1.jar!/" />
-        </CLASSES>
-        <JAVADOC>
-          <root url="jar://$MAVEN_REPOSITORY$/org/openqa/selenium/server/selenium-server-coreless/1.0-beta-1/selenium-server-coreless-1.0-beta-1-javadoc.jar!/" />
-        </JAVADOC>
-        <SOURCES>
-          <root url="jar://$MAVEN_REPOSITORY$/org/openqa/selenium/server/selenium-server-coreless/1.0-beta-1/selenium-server-coreless-1.0-beta-1-sources.jar!/" />
-        </SOURCES>
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library" exported="">
-      <library name="ant:ant:1.6.5">
-        <CLASSES>
-          <root url="jar://$MAVEN_REPOSITORY$/ant/ant/1.6.5/ant-1.6.5.jar!/" />
-        </CLASSES>
-        <JAVADOC>
-          <root url="jar://$MAVEN_REPOSITORY$/ant/ant/1.6.5/ant-1.6.5-javadoc.jar!/" />
-        </JAVADOC>
-        <SOURCES>
-          <root url="jar://$MAVEN_REPOSITORY$/ant/ant/1.6.5/ant-1.6.5-sources.jar!/" />
-        </SOURCES>
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library" exported="">
-      <library name="jetty:org.mortbay.jetty:5.1.10">
-        <CLASSES>
-          <root url="jar://$MAVEN_REPOSITORY$/jetty/org.mortbay.jetty/5.1.10/org.mortbay.jetty-5.1.10.jar!/" />
-        </CLASSES>
-        <JAVADOC>
-          <root url="jar://$MAVEN_REPOSITORY$/jetty/org.mortbay.jetty/5.1.10/org.mortbay.jetty-5.1.10-javadoc.jar!/" />
-        </JAVADOC>
-        <SOURCES>
-          <root url="jar://$MAVEN_REPOSITORY$/jetty/org.mortbay.jetty/5.1.10/org.mortbay.jetty-5.1.10-sources.jar!/" />
-        </SOURCES>
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library" exported="">
-      <library name="commons-logging:commons-logging:1.0.4">
-        <CLASSES>
-          <root url="jar://$MAVEN_REPOSITORY$/commons-logging/commons-logging/1.0.4/commons-logging-1.0.4.jar!/" />
-        </CLASSES>
-        <JAVADOC>
-          <root url="jar://$MAVEN_REPOSITORY$/commons-logging/commons-logging/1.0.4/commons-logging-1.0.4-javadoc.jar!/" />
-        </JAVADOC>
-        <SOURCES>
-          <root url="jar://$MAVEN_REPOSITORY$/commons-logging/commons-logging/1.0.4/commons-logging-1.0.4-sources.jar!/" />
-        </SOURCES>
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library name="javax.servlet:servlet-api:2.4">
-        <CLASSES>
-          <root url="jar://$MAVEN_REPOSITORY$/javax/servlet/servlet-api/2.4/servlet-api-2.4.jar!/" />
-        </CLASSES>
-        <JAVADOC>
-          <root url="jar://$MAVEN_REPOSITORY$/javax/servlet/servlet-api/2.4/servlet-api-2.4-javadoc.jar!/" />
-        </JAVADOC>
-        <SOURCES>
-          <root url="jar://$MAVEN_REPOSITORY$/javax/servlet/servlet-api/2.4/servlet-api-2.4-sources.jar!/" />
-        </SOURCES>
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library" exported="">
-      <library name="junit:junit:3.8.1">
-        <CLASSES>
-          <root url="jar://$MAVEN_REPOSITORY$/junit/junit/3.8.1/junit-3.8.1.jar!/" />
-        </CLASSES>
-        <JAVADOC>
-          <root url="jar://$MAVEN_REPOSITORY$/junit/junit/3.8.1/junit-3.8.1-javadoc.jar!/" />
-        </JAVADOC>
-        <SOURCES>
-          <root url="jar://$MAVEN_REPOSITORY$/junit/junit/3.8.1/junit-3.8.1-sources.jar!/" />
-        </SOURCES>
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library" exported="">
       <library name="org.openqa.selenium.server:selenium-server:1.0-beta-1:standalone">
         <CLASSES>
           <root url="jar://$MAVEN_REPOSITORY$/org/openqa/selenium/server/selenium-server/1.0-beta-1/selenium-server-1.0-beta-1-standalone.jar!/" />
@@ -124,32 +20,6 @@
         </JAVADOC>
         <SOURCES>
           <root url="jar://$MAVEN_REPOSITORY$/org/openqa/selenium/server/selenium-server/1.0-beta-1/selenium-server-1.0-beta-1-standalone-sources.jar!/" />
-        </SOURCES>
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library" exported="">
-      <library name="org.openqa.selenium.server:selenium-server:1.0-beta-1">
-        <CLASSES>
-          <root url="jar://$MAVEN_REPOSITORY$/org/openqa/selenium/server/selenium-server/1.0-beta-1/selenium-server-1.0-beta-1.jar!/" />
-        </CLASSES>
-        <JAVADOC>
-          <root url="jar://$MAVEN_REPOSITORY$/org/openqa/selenium/server/selenium-server/1.0-beta-1/selenium-server-1.0-beta-1-javadoc.jar!/" />
-        </JAVADOC>
-        <SOURCES>
-          <root url="jar://$MAVEN_REPOSITORY$/org/openqa/selenium/server/selenium-server/1.0-beta-1/selenium-server-1.0-beta-1-sources.jar!/" />
-        </SOURCES>
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library" exported="">
-      <library name="bouncycastle:bcprov-jdk15:135">
-        <CLASSES>
-          <root url="jar://$MAVEN_REPOSITORY$/bouncycastle/bcprov-jdk15/135/bcprov-jdk15-135.jar!/" />
-        </CLASSES>
-        <JAVADOC>
-          <root url="jar://$MAVEN_REPOSITORY$/bouncycastle/bcprov-jdk15/135/bcprov-jdk15-135-javadoc.jar!/" />
-        </JAVADOC>
-        <SOURCES>
-          <root url="jar://$MAVEN_REPOSITORY$/bouncycastle/bcprov-jdk15/135/bcprov-jdk15-135-sources.jar!/" />
         </SOURCES>
       </library>
     </orderEntry>
@@ -166,6 +36,18 @@
         </SOURCES>
       </library>
     </orderEntry>
+    <orderEntry type="library" exported="" name="Maven: org.openqa.selenium.client-drivers:selenium-java-client-driver:1.0-beta-1" level="project" />
+    <orderEntry type="library" exported="" name="Maven: org.openqa.selenium.core:selenium-core:1.0-beta-1" level="project" />
+    <orderEntry type="library" exported="" name="Maven: org.openqa.selenium.server:selenium-server-coreless:1.0-beta-1" level="project" />
+    <orderEntry type="library" exported="" name="Maven: ant:ant:1.6.5" level="project" />
+    <orderEntry type="library" exported="" name="Maven: jetty:org.mortbay.jetty:5.1.10" level="project" />
+    <orderEntry type="library" exported="" name="Maven: commons-logging:commons-logging:1.0.4" level="project" />
+    <orderEntry type="library" name="Maven: javax.servlet:servlet-api:2.4" level="project" />
+    <orderEntry type="library" exported="" name="Maven: junit:junit:3.8.1" level="project" />
+    <orderEntry type="library" exported="" name="Maven: org.openqa.selenium.server:selenium-server:standalone:1.0-beta-1" level="project" />
+    <orderEntry type="library" exported="" name="Maven: org.openqa.selenium.server:selenium-server:1.0-beta-1" level="project" />
+    <orderEntry type="library" exported="" name="Maven: bouncycastle:bcprov-jdk15:135" level="project" />
+    <orderEntry type="library" exported="" name="Maven: org.testng:testng:jdk15:5.7" level="project" />
   </component>
 </module>
 

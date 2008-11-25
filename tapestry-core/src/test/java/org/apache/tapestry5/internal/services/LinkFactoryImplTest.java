@@ -20,6 +20,7 @@ import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.internal.structure.Page;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.services.ContextPathEncoder;
+import org.apache.tapestry5.services.LinkCreationListener;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.Response;
 import org.easymock.Capture;
@@ -138,7 +139,7 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
         ComponentInvocationMap invocationMap = new NoOpComponentInvocationMap();
         RequestPathOptimizer optimizer = mockRequestPathOptimizer();
         Capture<Link> linkCapture = new Capture();
-        LinkFactoryListener listener = mockLinkFactoryListener();
+        LinkCreationListener listener = mockLinkCreationListener();
 
         train_getLogicalName(page, logicalName);
 
@@ -160,7 +161,7 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
         LinkFactory factory = new LinkFactoryImpl(request, response, invocationMap, null, optimizer, null,
                                                   securityManager, contextPathEncoder, collector);
 
-        factory.addListener(listener);
+        factory.getLinkCreationHub().addListener(listener);
 
         Object[] passedContext = overrideContext ? context : new Object[0];
 
@@ -262,7 +263,7 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
         ComponentInvocationMap invocationMap = new NoOpComponentInvocationMap();
         RequestPathOptimizer optimizer = mockRequestPathOptimizer();
         Capture<Link> linkCapture = new Capture();
-        LinkFactoryListener listener = mockLinkFactoryListener();
+        LinkCreationListener listener = mockLinkCreationListener();
 
         String optimizedURL = "optimized:" + expectedURL;
         String encodedURL = "encoded:" + expectedURL;
@@ -287,7 +288,7 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
         LinkFactory factory = new LinkFactoryImpl(request, response, invocationMap, null, optimizer, queue,
                                                   securityManager, contextPathEncoder, collector);
 
-        factory.addListener(listener);
+        factory.getLinkCreationHub().addListener(listener);
 
         Link link = factory.createComponentEventLink(primaryPage, nestedId, eventType, forForm, context);
 

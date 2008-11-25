@@ -16,11 +16,12 @@ package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.Link;
 import org.apache.tapestry5.internal.structure.Page;
+import org.apache.tapestry5.services.LinkCreationHub;
 
 /**
  * A source for {@link org.apache.tapestry5.Link} objects.
  *
- * @see LinkFactoryListener
+ * @see org.apache.tapestry5.services.LinkCreationListener
  */
 public interface LinkFactory
 {
@@ -67,10 +68,9 @@ public interface LinkFactory
     Link createPageRenderLink(String logicalPageName, boolean override, Object... context);
 
     /**
-     * Adds a listener, to be notified any time an action or render link is created; this allows the listener to modify
-     * the link (by adding additional query parameters to the link).
+     * Returns the hub, used to register and de-register {@link org.apache.tapestry5.services.LinkCreationListener}s.
      *
-     * @param listener to add
+     * @return the hub
      */
-    void addListener(LinkFactoryListener listener);
+    LinkCreationHub getLinkCreationHub();
 }

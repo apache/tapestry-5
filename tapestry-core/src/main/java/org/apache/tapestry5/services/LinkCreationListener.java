@@ -12,14 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.internal.services;
+package org.apache.tapestry5.services;
 
 import org.apache.tapestry5.Link;
 
 /**
  * Listener interface for objects that need to be notified about newly created links.
+ *
+ * @see org.apache.tapestry5.services.LinkCreationHub
  */
-public interface LinkFactoryListener
+public interface LinkCreationListener
 {
     /**
      * Invoked when a page link (a link that renders a page) is created. The listener may decide to encode additional

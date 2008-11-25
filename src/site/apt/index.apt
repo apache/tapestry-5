@@ -2,9 +2,9 @@
  Apache Tapestry 5
  ----
  
-What is Tapestry?
+What is Apache Tapestry?
 
- Tapestry is an open-source framework for creating dynamic, robust, highly scalable web applications in Java. 
+ Apache Tapestry is an open-source framework for creating dynamic, robust, highly scalable web applications in Java. 
  Tapestry complements and builds upon the standard Java Servlet API, and so it works in any servlet container or application server.
 
  Tapestry divides a web application into a set of pages, each constructed from components. This provides a consistent structure, 
@@ -34,24 +34,11 @@ What is Tapestry?
 
 Roadmap
 
-  Tapestry is, of course, an open-source project, with all the work coming from unpaid volunteers.  That being said, our rough timeline is as follows:
+  Now that that 5.0 release is <finally> out and available, work is starting on a 5.1 release.
 
-  * 5.0 Release Candidate in November 2008
+  The goal is to produce such releases on a regular schedule, ever 4 - 6 months.
 
-  * 5.0 Final Release shortly thereafter
-
-  * 5.1 development to follow, on a much shorter release schedule
-
-  * ... but we are all open source developers working on our own time and schedules are hard to pin down.  Please be patient.  Tapestry 5
-    is increasingly stable.  Further "stable" with Tapestry usually refers to names of interfaces and methods, not to code quality,
-    which is always very, very high.
-
-  * We are now finally edging towards a release candidate, with most work being documentation, minor bug fixes and modest
-    enhancements. Note that Tapestry team members have been using Tapestry 5 to build production applications, and those
-    experiences are being applied back to the framework to improve its quality: we're finding rough edges and we're
-    smoothing them out.
-
-  []
+  High priorities for 5.1 include Spring Web Flow integration, and support for developing Tapestry applications as Portlets.
 
 Third Party Libraries, Tutorials and Resources
 
