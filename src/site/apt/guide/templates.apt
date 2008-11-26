@@ -323,8 +323,8 @@ Library Namespaces
   . . .
 ---
 
-  In other words, the path, <code>ajax</code>, from the namespace URI takes the place of the path prefixes <code>ajax.</code>
-  seen in the first element, or <code>ajax/</code> seen in the second.  As far as Tapestry is concerned, they are all
+  In other words, the path, <<<ajax>>>, from the namespace URI takes the place of the path prefixes <<<ajax.>>>
+  seen in the first element, or <<<ajax/>>> seen in the second.  As far as Tapestry is concerned, they are all
   equivalent.
 
    

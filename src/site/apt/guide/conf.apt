@@ -103,6 +103,9 @@ public class AppModule
   Many of these symbols have an associated constant in the class
   {{{../apidocs/org/apache/tapestry5/SymbolConstants.html}SymbolConstants}}.
 
+  [tapestry.charset]
+    The character encoding used when generating output (or parsing input).  The default is "UTF-8".
+
   [tapestry.compress-whitespace]
     A flag (true or false).  When true (the default) whitespace in component templates is compressed by default
     (this can be fine-tuned using the standard xml:space attribute on an element in the template).

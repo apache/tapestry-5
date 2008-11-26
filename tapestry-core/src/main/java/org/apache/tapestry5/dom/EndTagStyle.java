@@ -34,7 +34,7 @@ public enum EndTagStyle
     REQUIRE,
     /**
      * Require an end tag, but abbreviate it if the element has no children. This is the only value that should be used
-     * in XML documents, but {@link org.apache.tapestry5.dom.DefaultMarkupModel} forces certain tags to use {@link
+     * in XML documents, but {@link org.apache.tapestry5.dom.DefaultMarkupModel} forces most tags to use {@link
      * #REQUIRE} for semi-obscure browser compatibility issues.
      */
     ABBREVIATE
