@@ -243,6 +243,8 @@ Injecting Resources
   
   * {{{apidocs/org/apache/tapestry5/ioc/ObjectLocator.html}ObjectLocator}}:  access to other services visible
   to the contributing module
+
+  * org.slf4j.Logger: the Logger for the service being contributed to
   
   []
   
