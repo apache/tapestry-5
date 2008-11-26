@@ -44,25 +44,24 @@ public class ConstructorServiceCreator extends AbstractServiceCreator
 
     public Object createObject()
     {
-        Throwable failure;
+        Throwable failure = null;
+        Object result = null;
+
+        InternalUtils.validateConstructorForAutobuild(constructor);
+
+        InjectionResources injectionResources = createInjectionResources();
 
         try
         {
-            InternalUtils.validateConstructorForAutobuild(constructor);
-
-            InjectionResources injectionResources = createInjectionResources();
-
             Object[] parameters = InternalUtils.calculateParametersForConstructor(constructor, resources,
                                                                                   injectionResources,
                                                                                   resources.getTracker());
 
             if (logger.isDebugEnabled()) logger.debug(IOCMessages.invokingConstructor(creatorDescription));
 
-            Object result = constructor.newInstance(parameters);
+            result = constructor.newInstance(parameters);
 
             InternalUtils.injectIntoFields(result, resources, injectionResources, resources.getTracker());
-
-            return result;
         }
         catch (InvocationTargetException ite)
         {
@@ -73,6 +72,11 @@ public class ConstructorServiceCreator extends AbstractServiceCreator
             failure = ex;
         }
 
-        throw new RuntimeException(IOCMessages.constructorError(creatorDescription, serviceId, failure), failure);
+        if (failure != null)
+            throw new RuntimeException(IOCMessages.constructorError(creatorDescription, serviceId, failure), failure);
+
+        InternalUtils.invokePostInjectionMethods(result, resources, injectionResources, resources.getTracker());
+
+        return result;
     }
 }

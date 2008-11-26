@@ -1052,4 +1052,17 @@ public class IntegrationTest extends IOCInternalTestCase
                                   "Unable to determine resource value to inject into field 'unknownRunnable' (of type java.lang.Runnable).");
         }
     }
+
+    /**
+     * TAP5-291
+     */
+    @Test
+    public void post_injection_method_invoked()
+    {
+        Registry r = buildRegistry(PostInjectionMethodModule.class);
+
+        Greeter g = r.getService(Greeter.class);
+
+        assertEquals(g.getGreeting(), "Greetings from ServiceIdGreeter.");
+    }
 }

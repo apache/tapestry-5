@@ -767,6 +767,10 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         final ObjectLocator locator = this;
         final OperationTracker tracker = this;
 
+        Map<Class, Object> empty = Collections.emptyMap();
+        final InjectionResources resources = new MapInjectionResources(empty);
+
+
         final Invokable<T> operation = new Invokable<T>()
         {
             public T invoke()
@@ -774,9 +778,6 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
                 Throwable failure;
                 // An empty map, because when performing autobuilding outside the context of building a
                 // service, we don't have defaults for Log, service id, etc.
-
-                Map<Class, Object> empty = Collections.emptyMap();
-                InjectionResources resources = new MapInjectionResources(empty);
 
                 try
                 {
@@ -809,8 +810,12 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
             }
         };
 
-        return invoke("Autobuilding instance of class " + clazz.getName(),
-                      operation);
+        T result = invoke("Autobuilding instance of class " + clazz.getName(),
+                          operation);
+
+        InternalUtils.invokePostInjectionMethods(result, locator, resources, this);
+
+        return result;
     }
 
     public <T> T proxy(Class<T> interfaceClass, final Class<? extends T> implementationClass)

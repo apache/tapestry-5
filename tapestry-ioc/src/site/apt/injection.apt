@@ -216,7 +216,34 @@ Standard Injection Processing
   If none of the ObjectProviders can identify the value to inject, a last step occurs: lookup by service type.
   If exactly <one> service matches the injection type, then that service is injected.
 
-  Otherwise, the lookup fails because either no services match, or more than one matches. 
+  Otherwise, the lookup fails because either no services match, or more than one matches.
+
+Post-Injection Methods
+
+  Autobuilt objects (services and the like, but <not> components) may have post-injection methods.
+
+  Any public method may have the
+  {{{../apidocs/org/apache/tapestry5/annotations/PostInjection.html}PostInjection}} annotation.
+
+  Such methods are invoked after constructor and/or field injection.  Only <<public methods>> will
+  be invoked.  Any return value is ignored.
+
+  Further injections may take place using the parameters of the method.
+
+  Often this is used to perform additional setup, such as registerring a service as a listener of
+  events produced by another service:
+
+----
+public class MyServiceImpl implements MyService, UpdateListener
+{
+  @PostInjection
+  public void registerAsListener(UpdateListenerHub hub)
+  {
+    hub.addUpdateListener(this);
+  }
+}
+----  
+
 
 Component Injection
 
