@@ -18,6 +18,7 @@ import org.apache.tapestry5.ioc.*;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.InjectResource;
 import org.apache.tapestry5.ioc.annotations.InjectService;
+import org.apache.tapestry5.ioc.annotations.PostInjection;
 import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newList;
 import static org.apache.tapestry5.ioc.internal.util.Defense.notBlank;
 import org.apache.tapestry5.ioc.services.ClassFabUtils;
@@ -334,6 +335,46 @@ public class InternalUtils
 
 
             clazz = clazz.getSuperclass();
+        }
+    }
+
+    public static void invokePostInjectionMethods(final Object object, final ObjectLocator locator,
+                                                  final InjectionResources injectionResources,
+                                                  final OperationTracker tracker)
+    {
+        for (final Method m : object.getClass().getMethods())
+        {
+            if (m.getAnnotation(PostInjection.class) == null) continue;
+
+            String description = String.format("Invoking post-inject method %s", m);
+
+            tracker.run(description, new Runnable()
+            {
+                public void run()
+                {
+                    Throwable fail = null;
+
+                    try
+                    {
+                        Object[] parameters = InternalUtils.calculateParametersForMethod(m, locator,
+                                                                                         injectionResources, tracker);
+
+                        m.invoke(object, parameters);
+                    }
+                    catch (InvocationTargetException ex)
+                    {
+                        fail = ex.getTargetException();
+                    }
+                    catch (Exception ex)
+                    {
+                        fail = ex;
+                    }
+
+                    if (fail != null)
+                        throw new RuntimeException(String.format("Exception invoking method %s: %s",
+                                                                 m, toMessage(fail)), fail);
+                }
+            });
         }
     }
 
