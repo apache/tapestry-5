@@ -14,10 +14,20 @@
 
 package org.apache.tapestry5.ioc;
 
-public class PostInjectionMethodModule
+import org.apache.tapestry5.ioc.annotations.PostInjection;
+
+public class ServiceIdGreeter implements Greeter
 {
-    public static void bind(ServiceBinder binder)
+    private String greeting;
+
+    public String getGreeting()
     {
-        binder.bind(Greeter.class, ServiceIdGreeter.class).withId("ServiceIdGreeter");
+        return greeting;
+    }
+
+    @PostInjection
+    public void finishSetup(String serviceId)
+    {
+        greeting = String.format("Greetings from %s.", serviceId);
     }
 }
