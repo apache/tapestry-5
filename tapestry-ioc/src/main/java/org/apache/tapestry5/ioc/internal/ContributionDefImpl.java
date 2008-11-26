@@ -25,6 +25,7 @@ import org.apache.tapestry5.ioc.services.ClassFactory;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Map;
+import java.util.logging.Logger;
 
 public class ContributionDefImpl implements ContributionDef
 {
@@ -75,12 +76,9 @@ public class ContributionDefImpl implements ContributionDef
     {
         Map<Class, Object> resourceMap = CollectionFactory.newMap();
 
-        // The way it works is: the method will take Configuration, OrderedConfiguration or
-        // MappedConfiguration. So, if the method is for one type and the service is for a different
-        // type, then we'll see an error putting together the parameter.
-
         resourceMap.put(parameterType, parameterValue);
         resourceMap.put(ObjectLocator.class, resources);
+        resourceMap.put(Logger.class, resources.getLogger());
 
         InjectionResources injectionResources = new MapInjectionResources(resourceMap);
 

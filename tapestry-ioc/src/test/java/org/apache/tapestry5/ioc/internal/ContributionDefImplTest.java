@@ -20,6 +20,7 @@ import org.apache.tapestry5.ioc.def.ContributionDef;
 import org.apache.tapestry5.ioc.test.IOCTestCase;
 import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.isA;
+import org.slf4j.Logger;
 import org.testng.annotations.Test;
 
 import java.lang.reflect.Method;
@@ -42,6 +43,9 @@ public class ContributionDefImplTest extends IOCTestCase implements ModuleBuilde
         toContribute = new Object();
         Configuration configuration = mockConfiguration();
         ServiceResources serviceResources = mockServiceResources(tracker);
+        Logger logger = mockLogger();
+
+        train_getLogger(serviceResources, logger);
 
         configuration.add(toContribute);
 
@@ -62,7 +66,9 @@ public class ContributionDefImplTest extends IOCTestCase implements ModuleBuilde
         Configuration configuration = mockConfiguration();
         ServiceResources resources = mockServiceResources(tracker);
         UpcaseService service = mockUpcaseService();
+        Logger logger = mockLogger();
 
+        train_getLogger(resources, logger);
         train_getService(resources, "zip.Zap", UpcaseService.class, service);
 
         configuration.add(service);
@@ -82,6 +88,9 @@ public class ContributionDefImplTest extends IOCTestCase implements ModuleBuilde
     {
         Configuration configuration = mockConfiguration();
         ServiceResources resources = mockServiceResources(tracker);
+        Logger logger = mockLogger();
+
+        train_getLogger(resources, logger);
 
         Throwable t = new RuntimeException("Missing service.");
 
@@ -118,6 +127,9 @@ public class ContributionDefImplTest extends IOCTestCase implements ModuleBuilde
         OrderedConfiguration configuration = mockOrderedConfiguration();
         ServiceResources resources = mockServiceResources(tracker);
         UpcaseService service = mockUpcaseService();
+        Logger logger = mockLogger();
+
+        train_getLogger(resources, logger);
 
         train_getService(resources, "zip.Zap", UpcaseService.class, service);
 
@@ -140,6 +152,9 @@ public class ContributionDefImplTest extends IOCTestCase implements ModuleBuilde
         MappedConfiguration configuration = mockMappedConfiguration();
         ServiceResources resources = mockServiceResources(tracker);
         UpcaseService service = mockUpcaseService();
+        Logger logger = mockLogger();
+
+        train_getLogger(resources, logger);
 
         train_getService(resources, "zip.Zap", UpcaseService.class, service);
 

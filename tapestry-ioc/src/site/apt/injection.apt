@@ -81,8 +81,12 @@ Standard Injection Processing
 
    * Autobuilt object: no special resources
 
-   * Contributor method: The appropriate Configuration, OrderedConfiguration or MappedConfiguration instance.
+   * Contributor method:
 
+     * The appropriate Configuration, OrderedConfiguration or MappedConfiguration instance.
+
+     *  org.slf4j.Logger: Logger for the service, based on the class name of the module and the service id
+    
    * Service builder method:
 
      * String: the service id
