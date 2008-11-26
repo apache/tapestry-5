@@ -197,7 +197,6 @@ public class Form implements ClientElement, FormValidationControl
 
     private ComponentActionSink actionSink;
 
-    @SuppressWarnings("unused")
     @Mixin
     private RenderInformals renderInformals;
 

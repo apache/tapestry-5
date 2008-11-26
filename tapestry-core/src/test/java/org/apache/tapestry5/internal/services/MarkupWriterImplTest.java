@@ -154,7 +154,7 @@ public class MarkupWriterImplTest extends InternalBaseTestCase
 
         w.attributes("foo", "bar", "gnip", "gnop");
 
-        assertEquals(w.toString(), "<root foo=\"bar\" gnip=\"gnop\"/>");
+        assertEquals(w.toString(), "<root foo=\"bar\" gnip=\"gnop\"></root>");
     }
 
     @Test
@@ -204,7 +204,7 @@ public class MarkupWriterImplTest extends InternalBaseTestCase
         w.write(null);
         w.end();
 
-        assertEquals(w.toString(), "<root/>");
+        assertEquals(w.toString(), "<root></root>");
     }
 
     @Test

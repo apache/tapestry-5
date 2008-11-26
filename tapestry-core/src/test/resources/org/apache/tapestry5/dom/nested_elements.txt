@@ -1,1 +1,1 @@
-<population><person first-name="Fred" last-name="Flintstone"/><person first-name="Barney" last-name="Rubble"/></population>
+<population><person first-name="Fred" last-name="Flintstone"></person><person first-name="Barney" last-name="Rubble"></person></population>
