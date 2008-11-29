@@ -161,7 +161,7 @@ Step 3: Choose a virtual folder name
   
 Step 4: Configure the virtual folder
 
- Tapestry needs to know to where to search for your component class. This is accomplished in your library's IoC module class, by
+ Tapestry needs to know where to search for your component class. This is accomplished in your library's IoC module class, by
  making a  <contribution> to the ComponentClassResolver {{{../../tapestry-ioc/configuration.html}service configuration}}.
 
 ----
@@ -229,7 +229,7 @@ Step 6: Versioning Assets
 
   To handle this problem, you should map your library assets to a versioned folder. This can be accomplished using
   another contribution from the HappyModule, this time to the ClasspathAssetAliasManager service
-  whose configuration maps a virtual folder under neath /assets
+  whose configuration maps a virtual folder underneath /assets
   to a package:
 
 
