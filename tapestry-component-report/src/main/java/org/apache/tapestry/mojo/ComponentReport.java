@@ -374,14 +374,12 @@ public class ComponentReport extends AbstractMavenReport
 
         javadocURL.append("../");
 
-        if (!tapestryJavadoc.contains("://"))
-        {
-            tapestryJavadoc = javadocURL.toString() + tapestryJavadoc;
-        }
+        String javadocHref = tapestryJavadoc.contains("://") ?
+                tapestryJavadoc : javadocURL.toString() + tapestryJavadoc;
 
         javadocURL.append(apidocs).append("/").append(toHtml(toPath(className)));
 
-        addChildWithJavadocs(section, "p", cd.getDescription());
+        addChildWithJavadocs(section, "p", cd.getDescription(), javadocHref);
 
         addLink(addChild(section, "p"), javadocURL.toString(), "[JavaDoc]");
 
@@ -438,11 +436,11 @@ public class ComponentReport extends AbstractMavenReport
                 table.appendChild(row);
 
                 addChild(row, "td", pd.getName());
-                addChildWithJavadocs(row, "td", pd.getType());
+                addChildWithJavadocs(row, "td", pd.getType(), javadocHref);
                 addChild(row, "td", InternalUtils.join(flags));
                 addChild(row, "td", pd.getDefaultValue());
                 addChild(row, "td", pd.getDefaultPrefix());
-                addChildWithJavadocs(row, "td", pd.getDescription());
+                addChildWithJavadocs(row, "td", pd.getDescription(), javadocHref);
             }
         }
 
@@ -886,7 +884,7 @@ public class ComponentReport extends AbstractMavenReport
         return child;
     }
 
-    private Element addChildWithJavadocs(Element container, String elementName, String text)
+    private Element addChildWithJavadocs(Element container, String elementName, String text, String javadocHref)
     {
         final String[] parts = splitWithGroup(TAPESTRY5_PATTERN, text);
         if (parts.length<=1)
@@ -907,12 +905,12 @@ public class ComponentReport extends AbstractMavenReport
                 if (part.endsWith("."))
                 {
                     part = part.substring(0, part.length()-1);
-                    addLink(element, tapestryJavadoc + "/" + toHtml(toPath(part)), extractSimpleName(part));
+                    addLink(element, javadocHref + "/" + toHtml(toPath(part)), extractSimpleName(part));
                     element.appendChild(".");
                 }
                 else
                 {
-                    addLink(element, tapestryJavadoc + "/" + toHtml(toPath(part)), extractSimpleName(part));
+                    addLink(element, javadocHref + "/" + toHtml(toPath(part)), extractSimpleName(part));
                 }
             }
         }

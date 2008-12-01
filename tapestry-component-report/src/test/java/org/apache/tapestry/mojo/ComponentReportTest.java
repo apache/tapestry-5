@@ -42,7 +42,7 @@ public class ComponentReportTest extends Assert
 {
     @Test(dataProvider = "docData")
     public void doc_generation(final Map<String, ClassDescription> javadocResults, String createdFile,
-                                             String[] expectedSummaryParts, String[] expectedFileParts)
+                                     String tapestryDoc, String[] expectedSummaryParts, String[] expectedFileParts)
             throws MojoExecutionException, IOException, MavenReportException
     {
         String tempDir = System.getProperty("java.io.tmpdir");
@@ -75,12 +75,13 @@ public class ComponentReportTest extends Assert
                 return newList();
             }
         };
+
         try
         {
             initializeMojo(report, ComponentReport.class,
                     "rootPackage", "org.apache.tapestry5.corelib",
                     "apidocs", "apidocs",
-                    "tapestryJavadoc", "http://tapestry.apache.org/tapestry5/apidocs",
+                    "tapestryJavadoc", tapestryDoc,
                     "generatedDocsDirectory", tempFolder
             );
         }
@@ -93,12 +94,10 @@ public class ComponentReportTest extends Assert
             fail("Cannot initialize mojo");
         }
 
-        StringWriter writer = new StringWriter();
-
-        RenderingContext context = new RenderingContext(tempFolder, "test.html");
-        XhtmlSink sink = new XhtmlSink(writer, context, newMap());
-
-        report.generate(new DoxiaXhtmlSinkDecorator(sink), Locale.US);
+        // generate report twice - helps uncover mojos that change their state during runs
+        // which is bad practice since properties aren't reinitialized on subsequent mojo invocations
+        generate(report, tempFolder);
+        StringWriter writer = generate(report, tempFolder);
 
         String summaryOutput = writer.toString();
         for (String summaryPart : expectedSummaryParts)
@@ -111,10 +110,23 @@ public class ComponentReportTest extends Assert
 
         for (String filePart : expectedFileParts)
         {
-            assertTrue(formOutput.contains(filePart));
+            assertTrue(formOutput.contains(filePart), "Output:\n" + formOutput + "\nshould contain:\n" + filePart);
         }
 
         FileUtils.forceDeleteOnExit(tempFolder);
+    }
+
+    private StringWriter generate(ComponentReport report, File tempFolder)
+            throws MavenReportException
+    {
+        StringWriter writer = new StringWriter();
+
+        RenderingContext context = new RenderingContext(tempFolder, "test.html");
+        XhtmlSink sink = new XhtmlSink(writer, context, newMap());
+
+        report.generate(new DoxiaXhtmlSinkDecorator(sink), Locale.US);
+
+        return writer;
     }
 
     private void initializeMojo(Object mojo, Class clazz, Object... propertyValues)
@@ -138,10 +150,20 @@ public class ComponentReportTest extends Assert
                 {
                     javadocDescriptionForForm(),
                     "ref/org/apache/tapestry5/corelib/components/Form.xml",
+                    "http://tapestry.apache.org/tapestry5/apidocs",
                     new String[]{"org.apache.tapestry5.corelib.components.Form"},
                     new String[]{"<title>Component Reference: org.apache.tapestry5.corelib.components.Form</title>",
                     "<a href=\"http://tapestry.apache.org/tapestry5/apidocs/org/apache/tapestry5/EventConstants.html#PREPARE\">"}
                 },
+                {
+                    javadocDescriptionForForm(),
+                    "ref/org/apache/tapestry5/corelib/components/Form.xml",
+                    "../apidocs",
+                    new String[]{"org.apache.tapestry5.corelib.components.Form"},
+                    new String[]{"<title>Component Reference: org.apache.tapestry5.corelib.components.Form</title>",
+                    "<a href=\"../../../../../../../apidocs/org/apache/tapestry5/EventConstants.html#PREPARE\">"}
+                },
+
         };
     }
 
