@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<!-- 
-   Copyright 2007, 2008 The Apache Software Foundation
+<!--
+   Copyright 2008 The Apache Software Foundation
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
    limitations under the License.
 -->
 
-<project name="Tapestry Hibernate Integration">
+<project name="Core Hibernate Support">
     <bannerLeft>
         <name>Tapestry 5</name>
         <href>http://tapestry.apache.org/tapestry5/</href>
@@ -41,8 +41,8 @@
 
         <menu name="Quick Links">
             <item name="About" href="index.html"/>
-            <item name="Configuration" href="../tapestry-hibernate-core/conf.html"/>
-            <item name="User guide" href="userguide.html"/>
+            <item name="Configuration" href="conf.html"/>
+            <item name="User guide" href="../tapestry-hibernate/userguide.html"/>
             <item name="Download" href="http://tapestry.apache.org/download.html"/>
         </menu>
 

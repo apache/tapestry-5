@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -75,7 +75,7 @@ final class ImmutableConfiguration extends Configuration
      */
     private <T> T unsupported()
     {
-        throw new UnsupportedOperationException(HibernateMessages.configurationImmutable());
+        throw new UnsupportedOperationException(HibernateCoreMessages.configurationImmutable());
     }
 
     @Override

@@ -20,20 +20,22 @@ import org.apache.tapestry5.hibernate.HibernateSessionSource;
 import org.apache.tapestry5.ioc.internal.services.ClassNameLocatorImpl;
 import org.apache.tapestry5.ioc.internal.services.ClasspathURLConverterImpl;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.test.TapestryTestCase;
+import org.apache.tapestry5.ioc.test.IOCTestCase;
+import org.apache.tapestry5.ioc.test.TestBase;
 import org.example.app0.entities.User;
 import org.hibernate.Session;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.metadata.ClassMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-public class HibernateSessionSourceImplTest extends TapestryTestCase
+public class HibernateSessionSourceImplTest extends IOCTestCase
 {
     private final Logger log = LoggerFactory
             .getLogger("tapestry.hibernate.HibernateSessionSourceTest");
@@ -45,7 +47,7 @@ public class HibernateSessionSourceImplTest extends TapestryTestCase
                 "org.example.myapp.entities",
                 "org.example.app0.entities");
         HibernateEntityPackageManager packageManager = newMock(HibernateEntityPackageManager.class);
-        expect(packageManager.getPackageNames()).andReturn(packageNames);
+        TestBase.expect(packageManager.getPackageNames()).andReturn(packageNames);
 
         List<HibernateConfigurer> filters = Arrays.asList(
                 new DefaultHibernateConfigurer(true),
@@ -56,11 +58,11 @@ public class HibernateSessionSourceImplTest extends TapestryTestCase
         HibernateSessionSource source = new HibernateSessionSourceImpl(log, filters);
 
         Session session = source.create();
-        assertNotNull(session);
+        Assert.assertNotNull(session);
 
         // make sure it found the entity in the package
         ClassMetadata meta = session.getSessionFactory().getClassMetadata(User.class);
-        assertEquals(meta.getEntityName(), "org.example.app0.entities.User");
+        Assert.assertEquals(meta.getEntityName(), "org.example.app0.entities.User");
 
         verify();
     }
@@ -80,18 +82,18 @@ public class HibernateSessionSourceImplTest extends TapestryTestCase
                 .asList(configurer));
 
         Configuration config = source.getConfiguration();
-        assertNotNull(config);
-        assertEquals("bar", config.getProperty("foo"));
+        Assert.assertNotNull(config);
+        Assert.assertEquals("bar", config.getProperty("foo"));
 
         // configuration should be immutable
         try
         {
             config.setProperty("hibernate.dialect", "foo");
-            fail("did not throw");
+            Assert.fail("did not throw");
         }
         catch (UnsupportedOperationException e)
         {
-            assertTrue(e.getMessage().contains("immutable"));
+            Assert.assertTrue(e.getMessage().contains("immutable"));
         }
     }
 }
