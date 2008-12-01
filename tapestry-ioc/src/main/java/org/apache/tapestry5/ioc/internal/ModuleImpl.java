@@ -484,4 +484,10 @@ public class ModuleImpl implements Module
     {
         return moduleDef.getLoggerName();
     }
+
+    @Override
+    public String toString()
+    {
+        return String.format("ModuleImpl[%s]", moduleDef.getLoggerName());
+    }
 }
