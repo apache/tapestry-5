@@ -37,6 +37,8 @@ import org.codehaus.plexus.util.cli.DefaultConsumer;
 
 import java.io.*;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * The component report generates documentation about components and parameters within the current project.
@@ -56,6 +58,7 @@ public class ComponentReport extends AbstractMavenReport
     private final static String[] PARAMETER_HEADERS = {"Name", "Type", "Flags", "Default", "Default Prefix",
             "Description"};
 
+    private static final Pattern TAPESTRY5_PATTERN = Pattern.compile("(org\\.apache\\.tapestry5[#_\\w\\.]*)");
 
     /**
      * Identifies the application root package.
@@ -117,6 +120,18 @@ public class ComponentReport extends AbstractMavenReport
      * @required
      */
     private String apidocs;
+
+    /**
+     * Where to find tapestry javadocs. This is used for generating documentation links
+     * for each parameter type.
+     *
+     * By default, this is set to "http://tapestry.apache.org/tapestry5/apidocs". A relative
+     * path can also be supplied (a sensible value would be 'apidocs') and is resolved
+     * from the documentation root.
+     *
+     * @parameter default-value="http://tapestry.apache.org/tapestry5/apidocs"
+     */
+    private String tapestryJavadoc;
 
     @Override
     protected String getOutputDirectory()
@@ -222,7 +237,7 @@ public class ComponentReport extends AbstractMavenReport
 
                 sink.listItem();
 
-                sink.link(toPath(className) + ".html");
+                sink.link(toHtml(toPath(className)));
 
                 sink.text(className);
                 sink.link_();
@@ -250,6 +265,24 @@ public class ComponentReport extends AbstractMavenReport
         return className.replace('.', '/');
     }
 
+    private String toHtml(String filename)
+    {
+        int pos = filename.lastIndexOf("#");
+        if (pos<0)
+            return filename + ".html";
+        else
+        {
+            return filename.substring(0, pos) + ".html" + filename.substring(pos);
+        }
+    }
+
+    private String extractSimpleName(String className)
+    {
+        int dotx = className.lastIndexOf(".");
+
+        return className.substring(dotx+1);
+    }
+
     private String extractSubpackage(String className)
     {
         int dotx = className.indexOf(".", rootPackage.length() + 1);
@@ -261,7 +294,7 @@ public class ComponentReport extends AbstractMavenReport
         return className.substring(rootPackage.length() + 1, dotx);
     }
 
-    private List<File> createDocSearchPath()
+    protected List<File> createDocSearchPath()
     {
         List<File> result = CollectionFactory.newList();
 
@@ -326,8 +359,6 @@ public class ComponentReport extends AbstractMavenReport
 
         Element section = addSection(body, className);
 
-        addChild(section, "p", cd.getDescription());
-
 
         StringBuilder javadocURL = new StringBuilder(200);
 
@@ -341,7 +372,16 @@ public class ComponentReport extends AbstractMavenReport
 
         String pathToRefRoot = javadocURL.toString();
 
-        javadocURL.append("../").append(apidocs).append("/").append(toPath(className)).append(".html");
+        javadocURL.append("../");
+
+        if (!tapestryJavadoc.contains("://"))
+        {
+            tapestryJavadoc = javadocURL.toString() + tapestryJavadoc;
+        }
+
+        javadocURL.append(apidocs).append("/").append(toHtml(toPath(className)));
+
+        addChildWithJavadocs(section, "p", cd.getDescription());
 
         addLink(addChild(section, "p"), javadocURL.toString(), "[JavaDoc]");
 
@@ -357,7 +397,7 @@ public class ComponentReport extends AbstractMavenReport
 
                 Element li = addChild(ul, "li");
 
-                addLink(li, name + ".html", name);
+                addLink(li, toHtml(name), name);
 
                 container = li;
             }
@@ -398,11 +438,11 @@ public class ComponentReport extends AbstractMavenReport
                 table.appendChild(row);
 
                 addChild(row, "td", pd.getName());
-                addChild(row, "td", pd.getType());
+                addChildWithJavadocs(row, "td", pd.getType());
                 addChild(row, "td", InternalUtils.join(flags));
                 addChild(row, "td", pd.getDefaultValue());
                 addChild(row, "td", pd.getDefaultPrefix());
-                addChild(row, "td", pd.getDescription());
+                addChildWithJavadocs(row, "td", pd.getDescription());
             }
         }
 
@@ -513,7 +553,7 @@ public class ComponentReport extends AbstractMavenReport
     }
 
 
-    private Map<String, ClassDescription> runJavadoc() throws MavenReportException
+    protected Map<String, ClassDescription> runJavadoc() throws MavenReportException
     {
         getLog().info("Running JavaDoc to collect component parameter data ...");
 
@@ -844,5 +884,74 @@ public class ComponentReport extends AbstractMavenReport
         child.appendChild(text);
 
         return child;
+    }
+
+    private Element addChildWithJavadocs(Element container, String elementName, String text)
+    {
+        final String[] parts = splitWithGroup(TAPESTRY5_PATTERN, text);
+        if (parts.length<=1)
+        {
+            return addChild(container, elementName, text);
+        }
+
+        final Element element = addChild(container, elementName);
+
+        for (int i = 0; i < parts.length; i++) 
+        {
+            String part = parts[i];
+            element.appendChild(part);
+            i++;
+            if (i<parts.length)
+            {
+                part = parts[i];
+                if (part.endsWith("."))
+                {
+                    part = part.substring(0, part.length()-1);
+                    addLink(element, tapestryJavadoc + "/" + toHtml(toPath(part)), extractSimpleName(part));
+                    element.appendChild(".");
+                }
+                else
+                {
+                    addLink(element, tapestryJavadoc + "/" + toHtml(toPath(part)), extractSimpleName(part));
+                }
+            }
+        }
+        return element;
+    }
+
+    /**
+     * Splits a {@link CharSequence} using the given pattern while including
+     * after each part the matched group.<p/>
+     * Mostly copied from {@link Pattern#split(CharSequence)}. 
+     */
+    private String[] splitWithGroup(Pattern pattern, CharSequence input)
+    {
+        int index = 0;
+        List<String> matchList = newList();
+        Matcher m = pattern.matcher(input);
+
+        // Add segments before each match found
+        while(m.find())
+        {
+            String match = input.subSequence(index, m.start()).toString();
+            String group = input.subSequence(m.start(), m.end()).toString();
+            matchList.add(match);
+            matchList.add(group);
+            index = m.end();
+        }
+
+        // If no match was found, return this
+        if (index == 0)
+            return new String[] {input.toString()};
+
+        // Add remaining segment
+        matchList.add(input.subSequence(index, input.length()).toString());
+
+        // Construct result
+        int resultSize = matchList.size();
+        while (resultSize > 0 && matchList.get(resultSize-1).equals(""))
+            resultSize--;
+        String[] result = new String[resultSize];
+        return matchList.subList(0, resultSize).toArray(result);
     }
 }
