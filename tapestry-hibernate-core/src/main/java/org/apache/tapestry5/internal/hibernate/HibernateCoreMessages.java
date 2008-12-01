@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,24 +15,27 @@
 package org.apache.tapestry5.internal.hibernate;
 
 import org.apache.tapestry5.ioc.Messages;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.MessagesImpl;
 
-class HibernateMessages
+import java.util.Collection;
+
+public class HibernateCoreMessages
 {
-    private static final Messages MESSAGES = MessagesImpl.forClass(HibernateMessages.class);
+    private static final Messages MESSAGES = MessagesImpl.forClass(HibernateCoreMessages.class);
 
-    static String sessionPersistedEntityLoadFailure(String entityName, Object id, Throwable cause)
+    static String configurationImmutable()
     {
-        return MESSAGES.format("session-persisted-entity-load-failure", entityName, id, cause);
+        return MESSAGES.get("configuration-immutable");
     }
 
-    static String entityNotAttached(Object entity)
+    static String startupTiming(long toConfigure, long overall)
     {
-        return MESSAGES.format("entity-not-attached", entity);
+        return MESSAGES.format("startup-timing", toConfigure, overall);
     }
 
-    static String commitTransactionInterceptor(String serviceId, Class serviceInterface)
+    static String entityCatalog(Collection entityNames)
     {
-        return MESSAGES.format("commit-transaction-interceptor", serviceId, serviceInterface.getName());
+        return MESSAGES.format("entity-catalog", InternalUtils.joinSorted(entityNames));
     }
 }

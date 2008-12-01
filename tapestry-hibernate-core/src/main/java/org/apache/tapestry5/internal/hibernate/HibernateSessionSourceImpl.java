@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -47,14 +47,13 @@ public class HibernateSessionSourceImpl implements HibernateSessionSource, Regis
 
         long factoryCreated = System.currentTimeMillis();
 
-        logger.info(HibernateMessages.startupTiming(
+        logger.info(HibernateCoreMessages.startupTiming(
                 configurationComplete - startTime,
                 factoryCreated - startTime));
 
         logger
-                .info(HibernateMessages.entityCatalog(sessionFactory.getAllClassMetadata()
+                .info(HibernateCoreMessages.entityCatalog(sessionFactory.getAllClassMetadata()
                         .keySet()));
-
     }
 
     public Session create()
@@ -76,5 +75,4 @@ public class HibernateSessionSourceImpl implements HibernateSessionSource, Regis
     {
         sessionFactory.close();
     }
-
 }

@@ -2,11 +2,10 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.apache.tapestry</groupId>
-    <artifactId>tapestry-hibernate</artifactId>
-    <name>Tapestry/Hibernate Integration Library</name>
+    <artifactId>tapestry-hibernate-core</artifactId>
+    <name>Core Hibernate Support</name>
     <description>
-        Provides support for simple CRUD applications built on top of
-        Tapestry and Hibernate
+        Basic Hibernate services for Tapestry, useable outside of a Tapestry web application
     </description>
     <packaging>jar</packaging>
     <parent>
@@ -19,14 +18,8 @@
     <dependencies>
         <dependency>
             <groupId>org.apache.tapestry</groupId>
-            <artifactId>tapestry-core</artifactId>
+            <artifactId>tapestry-ioc</artifactId>
         </dependency>
-
-        <dependency>
-            <groupId>org.apache.tapestry</groupId>
-            <artifactId>tapestry-hibernate-core</artifactId>
-        </dependency>
-
 
         <!-- Testing -->
 
@@ -45,18 +38,63 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>hsqldb</groupId>
-            <artifactId>hsqldb</artifactId>
-            <version>1.8.0.7</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
             <version>1.2.14</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>hsqldb</groupId>
+            <artifactId>hsqldb</artifactId>
+            <version>1.8.0.7</version>
+            <scope>test</scope>
+        </dependency>
 
+        <!-- This is the default version of Hibernate used; Maven provides the ability to override this dependency, though
+it can be tricky because there are overlapping third-party dependencies with slightly different version numbers. -->
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <version>3.3.1.GA</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>javax.transaction</groupId>
+                    <artifactId>jta</artifactId>
+                </exclusion>
+                <!-- Make sure we use the version defined by tapestry-ioc. -->
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>geronimo-spec</groupId>
+            <artifactId>geronimo-spec-jta</artifactId>
+            <version>1.0-M1</version>
+        </dependency>
+
+        <!-- The annotation should be compatible with the 3.2.2.ga release of the
+      core package. -->
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-annotations</artifactId>
+            <version>3.4.0.GA</version>
+            <exclusions>
+                <!-- Make sure we use the version defined by tapestry-ioc. -->
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-c3p0</artifactId>
+            <version>3.3.1.GA</version>
+        </dependency>
 
     </dependencies>
 
@@ -97,7 +135,7 @@
                     <archive>
                         <manifestEntries>
                             <Tapestry-Module-Classes>
-                                org.apache.tapestry5.hibernate.HibernateModule
+                                org.apache.tapestry5.hibernate.HibernateCoreModule
                             </Tapestry-Module-Classes>
                         </manifestEntries>
                     </archive>

@@ -11,7 +11,10 @@ Tapestry/Hibernate Integration Library
   thread-safe manner, within a <session-per-request> strategy.
   
   A number of more esoteric ideas in Hibernate are not supported, including nested transactions and supporting multiple
-  persistence units. 
+  persistence units.
+
+  The {{{../tapestry-hibernate-core/}tapestry-hibernate-core}} module allows non-Tapestry applications to access
+  Hibernate.
   
 Licensing Issues
 

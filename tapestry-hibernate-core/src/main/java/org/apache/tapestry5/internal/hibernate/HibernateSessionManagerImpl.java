@@ -66,5 +66,4 @@ public class HibernateSessionManagerImpl implements HibernateSessionManager, Thr
 
         session.close();
     }
-
 }

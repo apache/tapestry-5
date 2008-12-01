@@ -20,15 +20,17 @@ import org.apache.tapestry5.hibernate.annotations.CommitAfter;
 import org.apache.tapestry5.ioc.IOCUtilities;
 import org.apache.tapestry5.ioc.Registry;
 import org.apache.tapestry5.ioc.services.AspectDecorator;
-import org.apache.tapestry5.test.TapestryTestCase;
+import org.apache.tapestry5.ioc.test.IOCTestCase;
+import org.apache.tapestry5.ioc.test.TestBase;
+import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.sql.SQLException;
 
-@SuppressWarnings({ "ThrowableInstanceNeverThrown" })
-public class HibernateTransactionDecoratorImplTest extends TapestryTestCase
+@SuppressWarnings({"ThrowableInstanceNeverThrown"})
+public class HibernateTransactionDecoratorImplTest extends IOCTestCase
 {
     private Registry registry;
 
@@ -114,7 +116,7 @@ public class HibernateTransactionDecoratorImplTest extends TapestryTestCase
         RuntimeException re = new RuntimeException("Unexpected.");
 
         delegate.perform();
-        setThrowable(re);
+        TestBase.setThrowable(re);
         manager.abort();
 
         replay();
@@ -124,11 +126,11 @@ public class HibernateTransactionDecoratorImplTest extends TapestryTestCase
         try
         {
             interceptor.perform();
-            unreachable();
+            TestBase.unreachable();
         }
         catch (RuntimeException ex)
         {
-            assertSame(ex, re);
+            Assert.assertSame(ex, re);
         }
 
         verify();
@@ -143,7 +145,7 @@ public class HibernateTransactionDecoratorImplTest extends TapestryTestCase
         SQLException se = new SQLException("Checked.");
 
         delegate.perform();
-        setThrowable(se);
+        TestBase.setThrowable(se);
         manager.commit();
 
         replay();
@@ -153,11 +155,11 @@ public class HibernateTransactionDecoratorImplTest extends TapestryTestCase
         try
         {
             interceptor.perform();
-            unreachable();
+            TestBase.unreachable();
         }
         catch (SQLException ex)
         {
-            assertSame(ex, se);
+            Assert.assertSame(ex, se);
         }
 
         verify();
@@ -176,9 +178,8 @@ public class HibernateTransactionDecoratorImplTest extends TapestryTestCase
         manager.commit();
 
         replay();
-        assertEquals(interceptor.returnTypeMethod(), "Foo");
+        Assert.assertEquals(interceptor.returnTypeMethod(), "Foo");
         verify();
-
     }
 
     @Test
@@ -194,10 +195,10 @@ public class HibernateTransactionDecoratorImplTest extends TapestryTestCase
         manager.commit();
 
         replay();
-        assertEquals(interceptor.returnTypeMethodWithParam(5, 3), 8);
+        Assert.assertEquals(interceptor.returnTypeMethodWithParam(5, 3), 8);
         verify();
 
-        assertEquals(
+        Assert.assertEquals(
                 interceptor.toString(),
                 "Baz");
     }
@@ -209,7 +210,7 @@ public class HibernateTransactionDecoratorImplTest extends TapestryTestCase
 
     private void assertToString(VoidService interceptor)
     {
-        assertEquals(
+        Assert.assertEquals(
                 interceptor.toString(),
                 "<Hibernate Transaction interceptor for foo.Bar(" + getClass().getName() + "$VoidService)>");
     }
@@ -233,7 +234,6 @@ public class HibernateTransactionDecoratorImplTest extends TapestryTestCase
             {
                 return "Baz";
             }
-
         };
     }
 

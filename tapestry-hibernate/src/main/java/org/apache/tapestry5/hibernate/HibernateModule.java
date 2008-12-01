@@ -16,51 +16,36 @@ package org.apache.tapestry5.hibernate;
 
 import org.apache.tapestry5.ValueEncoder;
 import org.apache.tapestry5.internal.InternalConstants;
-import org.apache.tapestry5.internal.hibernate.*;
-import org.apache.tapestry5.ioc.*;
+import org.apache.tapestry5.internal.hibernate.CommitAfterWorker;
+import org.apache.tapestry5.internal.hibernate.EntityPersistentFieldStrategy;
+import org.apache.tapestry5.internal.hibernate.HibernateEntityValueEncoder;
+import org.apache.tapestry5.ioc.Configuration;
+import org.apache.tapestry5.ioc.LoggerSource;
+import org.apache.tapestry5.ioc.MappedConfiguration;
+import org.apache.tapestry5.ioc.OrderedConfiguration;
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.ioc.annotations.Local;
-import org.apache.tapestry5.ioc.annotations.Scope;
 import org.apache.tapestry5.ioc.annotations.Symbol;
-import org.apache.tapestry5.ioc.services.*;
+import org.apache.tapestry5.ioc.services.PropertyAccess;
+import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.services.AliasContribution;
 import org.apache.tapestry5.services.ComponentClassTransformWorker;
 import org.apache.tapestry5.services.PersistentFieldStrategy;
 import org.apache.tapestry5.services.ValueEncoderFactory;
 import org.hibernate.Session;
 import org.hibernate.mapping.PersistentClass;
-import org.slf4j.Logger;
 
-import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 
+/**
+ * Supplements the services defined by {@link org.apache.tapestry5.hibernate.HibernateCoreModule} with additional
+ * services and configuration specific to Tapestry web application.
+ */
 @SuppressWarnings({"JavaDoc"})
 public class HibernateModule
 {
-
-    public static void bind(ServiceBinder binder)
-    {
-        binder.bind(HibernateTransactionDecorator.class, HibernateTransactionDecoratorImpl.class);
-        binder.bind(HibernateConfigurer.class, DefaultHibernateConfigurer.class).withId("DefaultHibernateConfigurer");
-    }
-
     public static void contributeFactoryDefaults(MappedConfiguration<String, String> configuration)
     {
         configuration.add(HibernateConstants.PROVIDE_ENTITY_VALUE_ENCODERS_SYMBOL, "true");
-        configuration.add(HibernateConstants.DEFAULT_CONFIGURATION, "true");
-    }
-
-    public static HibernateEntityPackageManager buildHibernateEntityPackageManager(
-            final Collection<String> packageNames)
-    {
-        return new HibernateEntityPackageManager()
-        {
-            public Collection<String> getPackageNames()
-            {
-                return packageNames;
-            }
-        };
     }
 
     /**
@@ -76,65 +61,12 @@ public class HibernateModule
         configuration.add(appRootPackage + ".entities");
     }
 
-    /**
-     * The session manager manages sessions on a per-thread/per-request basis. A {@link org.hibernate.Transaction} is
-     * created initially, and is committed at the end of the request.
-     */
-    @Scope(ScopeConstants.PERTHREAD)
-    public static HibernateSessionManager buildHibernateSessionManager(HibernateSessionSource sessionSource,
-                                                                       PerthreadManager perthreadManager)
-    {
-        HibernateSessionManagerImpl service = new HibernateSessionManagerImpl(sessionSource);
 
-        perthreadManager.addThreadCleanupListener(service);
-
-        return service;
-    }
-
-    public static Session buildSession(HibernateSessionManager sessionManager,
-                                       PropertyShadowBuilder propertyShadowBuilder)
-    {
-        // Here's the thing: the tapestry.hibernate.Session class doesn't have to be per-thread,
-        // since
-        // it will invoke getSession() on the HibernateSessionManager service (which is per-thread).
-        // On
-        // first invocation per request,
-        // this forces the HSM into existence (which creates the session and begins the
-        // transaction).
-        // Thus we don't actually create
-        // a session until we first try to access it, then the session continues to exist for the
-        // rest
-        // of the request.
-
-        return propertyShadowBuilder.build(sessionManager, "session", Session.class);
-    }
-
-    public static void contributeAlias(Configuration<AliasContribution> configuration, @Local Session session)
+    public static void contributeAlias(Configuration<AliasContribution> configuration, @HibernateCore Session session)
     {
         configuration.add(AliasContribution.create(Session.class, session));
     }
 
-    public static HibernateSessionSource buildHibernateSessionSource(Logger logger, List<HibernateConfigurer> config,
-                                                                     RegistryShutdownHub hub)
-    {
-        HibernateSessionSourceImpl hss = new HibernateSessionSourceImpl(logger, config);
-
-        hub.addRegistryShutdownListener(hss);
-
-        return hss;
-    }
-
-    /**
-     * Adds the following configurers: <dl> <dt>Default <dd> performs default hibernate configuration <dt>PackageName
-     * <dd> loads entities by package name</dl>
-     */
-    public static void contributeHibernateSessionSource(OrderedConfiguration<HibernateConfigurer> config,
-
-                                                        HibernateConfigurer defaultHibernateConfigurer)
-    {
-        config.add("Default", defaultHibernateConfigurer);
-        config.addInstance("PackageName", PackageNameHibernateConfigurer.class);
-    }
 
     /**
      * Contributes {@link ValueEncoderFactory}s for all registered Hibernate entity classes. Encoding and decoding are

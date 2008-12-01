@@ -125,6 +125,7 @@
         <!-- Integrations -->
 
         <module>tapestry-spring</module>
+        <module>tapestry-hibernate-core</module>
         <module>tapestry-hibernate</module>
         <module>tapestry-upload</module>
 
@@ -167,11 +168,19 @@
                 <artifactId>tapestry-ioc</artifactId>
                 <version>${project.version}</version>
             </dependency>
+
             <dependency>
                 <groupId>org.apache.tapestry</groupId>
                 <artifactId>tapestry-core</artifactId>
                 <version>${project.version}</version>
             </dependency>
+
+            <dependency>
+                <groupId>org.apache.tapestry</groupId>
+                <artifactId>tapestry-hibernate-core</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
             <dependency>
                 <groupId>org.apache.tapestry</groupId>
                 <artifactId>tapestry-test</artifactId>
