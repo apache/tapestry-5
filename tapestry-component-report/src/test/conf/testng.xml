@@ -15,7 +15,10 @@
    limitations under the License.
 -->
 
-<suite name="Tapestry Component Report" annotations="1.5" verbose="2">
-    <!-- This avoids a build error when performing a non-clean build.  Just another Maven fuckup to be worked around. -->
-    <test name="Placeholder (no tests)"/>
+<suite name="Tapestry Component Report" annotations="1.5" verbose="10">
+    <test name="Internals">
+        <packages>
+            <package name="org.apache.tapestry.mojo"/>
+        </packages>
+    </test>
 </suite>
