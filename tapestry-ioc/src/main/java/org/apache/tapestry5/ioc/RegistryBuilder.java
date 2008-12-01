@@ -119,6 +119,8 @@ public final class RegistryBuilder
 
             addedModuleClasses.add(c);
 
+            logger.info("Adding module definition for " + c);
+
             ModuleDef def = new DefaultModuleDefImpl(c, logger, classFactory);
             add(def);
 
