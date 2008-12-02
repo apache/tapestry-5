@@ -120,6 +120,7 @@
                 <configuration>
                     <rootPackage>org.apache.tapestry5.upload</rootPackage>
                     <apidocs>../apidocs</apidocs>
+		    <tapestryJavadoc>../apidocs</tapestryJavadoc>
                 </configuration>
             </plugin>
         </plugins>
