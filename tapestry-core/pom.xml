@@ -100,6 +100,7 @@
                 <configuration>
                     <rootPackage>org.apache.tapestry5.corelib</rootPackage>
                     <apidocs>../apidocs</apidocs>
+		    <tapestryJavadoc>../apidocs</tapestryJavadoc>
                 </configuration>
             </plugin>
         </plugins>
