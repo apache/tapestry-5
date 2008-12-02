@@ -52,7 +52,7 @@ import java.io.ObjectInputStream;
  * When the form is submitted, the component emits several notifications: first a {@link
  * org.apache.tapestry5.EventConstants#PREPARE_FOR_SUBMIT}, then a {@link org.apache.tapestry5.EventConstants#PREPARE}:
  * these allow the page to update its state as necessary to prepare for the form submission, then (after components
- * enclosed by the form have operated), a {@link org.apache.tapestry5.EventConstants#VALIDATE_FORM}event is emitted, to
+ * enclosed by the form have operated), a {@link org.apache.tapestry5.EventConstants#VALIDATE_FORM} event is emitted, to
  * allow for cross-form validation. After that, either a {@link org.apache.tapestry5.EventConstants#SUCCESS} OR {@link
  * org.apache.tapestry5.EventConstants#FAILURE} event (depending on whether the {@link ValidationTracker} has recorded
  * any errors). Lastly, a {@link org.apache.tapestry5.EventConstants#SUBMIT} event, for any listeners that care only
