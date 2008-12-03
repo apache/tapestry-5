@@ -15,7 +15,6 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.internal.events.EndOfRequestListener;
-import org.apache.tapestry5.services.Request;
 
 /**
  * Manages request notifications for the {@link org.apache.tapestry5.internal.events.EndOfRequestListener} interface.
@@ -28,8 +27,6 @@ public interface EndOfRequestListenerHub
 
     /**
      * Invoked at the end of the request to notify the listeners.
-     *
-     * @param request which just completed
      */
-    void fire(Request request);
+    void fire();
 }

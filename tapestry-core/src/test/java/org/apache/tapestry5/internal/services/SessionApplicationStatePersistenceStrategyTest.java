@@ -196,7 +196,7 @@ public class SessionApplicationStatePersistenceStrategyTest extends InternalBase
 
         EndOfRequestListener strategy = new SessionApplicationStatePersistenceStrategy(request);
 
-        strategy.requestDidComplete(null);
+        strategy.requestDidComplete();
 
         verify();
     }
@@ -215,10 +215,9 @@ public class SessionApplicationStatePersistenceStrategyTest extends InternalBase
 
         EndOfRequestListener strategy = new SessionApplicationStatePersistenceStrategy(request);
 
-        strategy.requestDidComplete(null);
+        strategy.requestDidComplete();
 
         verify();
-
     }
 
 
@@ -242,7 +241,7 @@ public class SessionApplicationStatePersistenceStrategyTest extends InternalBase
 
         EndOfRequestListener strategy = new SessionApplicationStatePersistenceStrategy(request);
 
-        strategy.requestDidComplete(null);
+        strategy.requestDidComplete();
 
         verify();
     }
@@ -267,7 +266,7 @@ public class SessionApplicationStatePersistenceStrategyTest extends InternalBase
 
         EndOfRequestListener strategy = new SessionApplicationStatePersistenceStrategy(request);
 
-        strategy.requestDidComplete(null);
+        strategy.requestDidComplete();
 
         verify();
     }
@@ -290,7 +289,7 @@ public class SessionApplicationStatePersistenceStrategyTest extends InternalBase
 
         EndOfRequestListener strategy = new SessionApplicationStatePersistenceStrategy(request);
 
-        strategy.requestDidComplete(null);
+        strategy.requestDidComplete();
 
         verify();
     }
@@ -304,6 +303,4 @@ public class SessionApplicationStatePersistenceStrategyTest extends InternalBase
 
         return object;
     }
-
-
 }
