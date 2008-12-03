@@ -15,7 +15,6 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.OptimizedApplicationStateObject;
-import org.apache.tapestry5.internal.events.EndOfRequestEvent;
 import org.apache.tapestry5.internal.events.EndOfRequestListener;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.services.ApplicationStateCreator;
@@ -112,13 +111,12 @@ public class SessionApplicationStatePersistenceStrategy implements
         return result;
     }
 
-    public void requestDidComplete(EndOfRequestEvent event)
+    public void requestDidComplete()
     {
         Map<String, Object> map = getASOMap();
 
         for (String key : map.keySet())
         {
-
             Object aso = map.get(key);
 
             if (aso == null) continue;
