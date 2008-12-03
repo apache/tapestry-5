@@ -16,14 +16,14 @@ package org.apache.tapestry5.internal.events;
 
 /**
  * Event listener interface for objects that need to know when the current request finishes.
+ *
+ * @see org.apache.tapestry5.internal.services.EndOfRequestListenerHub
  */
 public interface EndOfRequestListener
 {
     /**
      * Notified at the end of the request.  This notification occurs after the response has been sent to the client,
      * which means that it is to late to (for example) create a new HttpSession.
-     *
-     * @param event identifies the request which did complete
      */
-    void requestDidComplete(EndOfRequestEvent event);
+    void requestDidComplete();
 }

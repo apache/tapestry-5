@@ -184,8 +184,6 @@ public final class TapestryModule
         binder.bind(BindingFactory.class, AssetBindingFactory.class).withId("AssetBindingFactory");
         binder.bind(BindingFactory.class, NullFieldStrategyBindingFactory.class).withId(
                 "NullFieldStrategyBindingFactory");
-        binder.bind(ApplicationStatePersistenceStrategy.class, SessionApplicationStatePersistenceStrategy.class).withId(
-                "SessionApplicationStatePersistenceStrategy");
         binder.bind(URLEncoder.class, URLEncoderImpl.class);
         binder.bind(ContextPathEncoder.class, ContextPathEncoderImpl.class);
         binder.bind(UpdateListenerHub.class, UpdateListenerHubImpl.class);
@@ -616,7 +614,7 @@ public final class TapestryModule
                 }
                 finally
                 {
-                    endOfRequestListenerHub.fire(request);
+                    endOfRequestListenerHub.fire();
                 }
             }
         };
@@ -2155,5 +2153,13 @@ public final class TapestryModule
             ComponentMessagesSource messagesSource)
     {
         return messagesSource.getInvalidatonEventHub();
+    }
+
+    public ApplicationStatePersistenceStrategy buildSessionApplicationStatePersistenceStrategy(
+            @Autobuild SessionApplicationStatePersistenceStrategy service, EndOfRequestListenerHub hub)
+    {
+        hub.addEndOfRequestListener(service);
+
+        return service;
     }
 }

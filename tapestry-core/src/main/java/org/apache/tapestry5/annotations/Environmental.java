@@ -14,8 +14,6 @@
 
 package org.apache.tapestry5.annotations;
 
-import org.apache.tapestry5.services.Environment;
-
 import java.lang.annotation.Documented;
 import static java.lang.annotation.ElementType.FIELD;
 import java.lang.annotation.Retention;
@@ -23,7 +21,10 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Target;
 
 /**
- * Defines a field that is replaced at runtime with a read-only value obtained from the {@link Environment} service.
+ * Defines a field of a component class that is replaced at runtime with a read-only value obtained from the {@link
+ * org.apache.tapestry5.services.Environment} service. <p>Most commonly, the field will be of type {@link
+ * org.apache.tapestry5.RenderSupport}, {@link org.apache.tapestry5.services.Heartbeat} or {@link
+ * org.apache.tapestry5.services.FormSupport}, though many other options are possible.
  */
 @Target(FIELD)
 @Documented
