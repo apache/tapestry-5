@@ -622,7 +622,7 @@ public final class TapestryModule
                 }
                 finally
                 {
-                    endOfRequestListenerHub.fire(request);
+                    endOfRequestListenerHub.fire();
                 }
             }
         };
@@ -1286,9 +1286,15 @@ public final class TapestryModule
         configuration.add("session", sessionStategy);
     }
 
-    public ApplicationStatePersistenceStrategy buildSessionApplicationStatePersistenceStrategy(ObjectLocator locator)
+    public ApplicationStatePersistenceStrategy buildSessionApplicationStatePersistenceStrategy(ObjectLocator locator,
+                                                                                               EndOfRequestListenerHub hub)
     {
-        return locator.autobuild(SessionApplicationStatePersistenceStrategy.class);
+        SessionApplicationStatePersistenceStrategy service = locator.autobuild(
+                SessionApplicationStatePersistenceStrategy.class);
+
+        hub.addEndOfRequestListener(service);
+
+        return service;
     }
 
     public void contributeAssetSource(MappedConfiguration<String, AssetFactory> configuration,

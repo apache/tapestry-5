@@ -14,12 +14,8 @@
 
 package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry5.internal.events.EndOfRequestEvent;
 import org.apache.tapestry5.internal.events.EndOfRequestListener;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
-import org.apache.tapestry5.services.Request;
-import org.easymock.Capture;
-import static org.easymock.EasyMock.capture;
 import org.testng.annotations.Test;
 
 public class EndOfRequestListenerHubImplTest extends InternalBaseTestCase
@@ -28,23 +24,18 @@ public class EndOfRequestListenerHubImplTest extends InternalBaseTestCase
     public void add_and_notify()
     {
         EndOfRequestListenerHub hub = new EndOfRequestListenerHubImpl();
-        final Request request = mockRequest();
 
         EndOfRequestListener listener = newMock(EndOfRequestListener.class);
 
-        Capture<EndOfRequestEvent> eventCapture = newCapture();
-
-        listener.requestDidComplete(capture(eventCapture));
+        listener.requestDidComplete();
 
         replay();
 
         hub.addEndOfRequestListener(listener);
 
-        hub.fire(request);
+        hub.fire();
 
         verify();
-
-        assertSame(eventCapture.getValue().getRequest(), request);
     }
 
 
@@ -52,7 +43,6 @@ public class EndOfRequestListenerHubImplTest extends InternalBaseTestCase
     public void add_remove_notify()
     {
         EndOfRequestListenerHub hub = new EndOfRequestListenerHubImpl();
-        final Request request = mockRequest();
 
         EndOfRequestListener listener = newMock(EndOfRequestListener.class);
 
@@ -61,7 +51,7 @@ public class EndOfRequestListenerHubImplTest extends InternalBaseTestCase
         hub.addEndOfRequestListener(listener);
         hub.removeEndOfRequestListener(listener);
 
-        hub.fire(request);
+        hub.fire();
 
         verify();
     }

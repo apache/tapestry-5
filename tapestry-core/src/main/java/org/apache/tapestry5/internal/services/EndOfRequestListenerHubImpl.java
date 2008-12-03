@@ -14,10 +14,8 @@
 
 package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry5.internal.events.EndOfRequestEvent;
 import org.apache.tapestry5.internal.events.EndOfRequestListener;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.services.Request;
 
 import java.util.List;
 
@@ -35,13 +33,11 @@ public class EndOfRequestListenerHubImpl implements EndOfRequestListenerHub
         listeners.remove(listener);
     }
 
-    public void fire(Request request)
+    public void fire()
     {
-        EndOfRequestEvent event = new EndOfRequestEvent(request);
-
         for (EndOfRequestListener l : listeners)
         {
-            l.requestDidComplete(event);
+            l.requestDidComplete();
         }
     }
 }
