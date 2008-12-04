@@ -20,23 +20,19 @@ import java.util.Set;
 
 /**
  * Default implementation of {@link org.apache.tapestry5.dom.MarkupModel} that is appropriate for traditional (X)HTML
- * markup. Assumes that all tags are lower-case.  A certain set of tags will always be expanded (with seperate begin and
- * end tags) even if their content is empty: script, div, span, p, textarea, select, label; this is for compatibility
- * with web browsers, especially when the content type of a response indicates HTML, not true XML.
+ * markup. Assumes that all tags are lower-case.  The majority of elements will be "expanded" (meaning a complete start
+ * and end tag); this is for compatibility with web browsers, especially when the content type of a response indicates
+ * HTML, not true XML. Only the "hr" and "br" and "img" tags will be rendered abbreviated (i.e., "lt;img/&gt;").
  */
 public class DefaultMarkupModel extends AbstractMarkupModel
 {
-    /**
-     * For these tags, use {@link org.apache.tapestry5.dom.EndTagStyle#REQUIRE}.
-     */
-    private final Set<String> REQUIRE_END_TAG =
-            CollectionFactory.newSet("script", "div", "span", "p", "textarea", "select", "label");
+    private final Set<String> ALWAYS_EMPTY = CollectionFactory.newSet("hr", "br", "img");
 
     public EndTagStyle getEndTagStyle(String element)
     {
-        boolean required = REQUIRE_END_TAG.contains(element);
+        boolean alwaysEmpty = ALWAYS_EMPTY.contains(element);
 
-        return required ? EndTagStyle.REQUIRE : EndTagStyle.ABBREVIATE;
+        return alwaysEmpty ? EndTagStyle.ABBREVIATE : EndTagStyle.REQUIRE;
     }
 
     /**

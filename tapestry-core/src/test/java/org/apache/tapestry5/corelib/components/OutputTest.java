@@ -124,7 +124,7 @@ public class OutputTest extends TapestryTestCase
 
         verify();
 
-        assertEquals(writer.toString(), "<root/>");
+        assertEquals(writer.toString(), "<root></root>");
     }
 
     @Test
@@ -189,6 +189,6 @@ public class OutputTest extends TapestryTestCase
 
         verify();
 
-        assertEquals(writer.toString(), "<root/>");
+        assertEquals(writer.toString(), "<root></root>");
     }
 }
