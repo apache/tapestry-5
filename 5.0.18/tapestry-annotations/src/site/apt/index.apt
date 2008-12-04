@@ -1,0 +1,23 @@
+ ----
+ Tapestry Annotations
+ ----
+ 
+Tapestry Annotations
+
+ The majority of Tapestry annotations (defined in the {{{../tapestry-core}tapestry-core}} and {{{../tapestry-ioc}tapestry-ioc}} modules)
+ are very specific to Tapestry components or Tapestry IoC services.
+ 
+ A small number of annotations are intended for data holding classes that are not Tapestry components; these annotations
+ allow high-level components such as Grid and BeanEditForm to
+ create powerful user interfaces with out any additional coding.
+ 
+ By separating out those annotations from the rest of Tapestry, it is reasonable to includes such annotations inside your 
+ data tier classes <without> having to bring all of Tapestry into your classpath.  This is very useful in multi-tier applications
+ where data objects may originate in an application tier (such as a JEE application server) and travel to the presentation tier (a Tapestry application).
+
+Upgrade Notes
+
+* Release 5.0.12
+
+ The artifact id for this module has changed to tapestry<<5>>-annotations.  This is necessary to
+ support Tapestry 4 and Tapestry 5 applications co-existing within a single WAR.

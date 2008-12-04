@@ -1,0 +1,212 @@
+ ----
+ Release Checklist
+ ----
+ 
+Release Checklist
+
+  Quick notes on how to prepare a new release of Tapestry.
+  
+Preparation
+
+  Send an announcement to the list, asking them to hold off on trunk checkins.
+  
+  Make <<sure>> (<<sure!>>) you have the latest copies of the Tapestry 5 project and all its modules.
+  
+Bumping the Version Number
+
+  At this point, the version number of the project POM is 5.0.x-SNAPSHOT. 
+  Modules inherit their version number from the project POM version number.
+  
+  We need to update the version number across all modules, from 5.0.x-SNAPSHOT to just 5.0.x.
+  
+  The Ruby script,  support/update-versions, can change the version numbers everywhere they need changing.  A single parameter on the command line is the new version number.
+    	 
+  From the root folder, execute <<<mvn clean install>>>; this should take a couple of minutes.
+  
+Add The Next Release to JIRA
+
+  Use:
+  
+  {{{https://issues.apache.org/jira/secure/project/ManageVersions.jspa?pid=12310833}https://issues.apache.org/jira/secure/project/ManageVersions.jspa?pid=12310833}}
+  
+  to add the next release.  Any bugs that are fixed will be tagged with this new version number (5.0.x + 1).  Example: after building out 5.0.3, create 5.0.4.    
+  Schedule it above the existing version.
+  
+  While you're there, use the <<Release>> option for the previous release; this ensures that any existing bugs are not marked as pending for the old release,
+  and sets the date of release in JIRA.  
+  
+Generate the Release Notes
+
+  JIRA has the ability to generate release notes automatically (this is why it is so important to keep the fix version number accurate).
+  
+  {{{https://issues.apache.org/jira/secure/ConfigureReleaseNote.jspa?projectId=12310833}https://issues.apache.org/jira/secure/ConfigureReleaseNote.jspa?projectId=12310833}}
+  
+  Select the correct version, in HTML format.
+  
+  Paste the notes to the <<top>> of tapestry-project/src/site/xdoc/release-notes.xdoc
+  
+  Wrap the title ("Release Notes - Tapestry - Version 5.0.x") inside an \<h1\> element.
+
+Build and Deploy Artifacts
+
+  Execute <<<mvn deploy -Pdeploy>>>
+  
+  This will sign the artifacts using GPG and deploy them.  Alas, due to bugs in Maven, it has a tendency to sign the signature files (".asc") and upload those as well; we'll clean that up in a bit.
+  
+  Since the version number is not longer -SNAPSHOT, each file
+  will be published to the Tapestry ibiblio Resync Repository ({{{http://people.apache.org/~hlship/public_html/tapestry-ibiblio-rsynch-repository}http://people.apache.org/~hlship/public_html/tapestry-ibiblio-rsynch-repository}}), a holding space that allows the Tapestry community to evaluate the release before it is approved.
+  Once the vote on the release is approved, the files will be moved from there to the Apache Ibiblio Sync directory, and from there to the world.   
+  
+Binary / Source Distributions
+
+  An Ant script is used to build traditional binary and source distributions.  It requires Ant <<1.7.0>>.
+  
+  Execute <<<ant>>>.
+  
+----
+$ ant
+Buildfile: build.xml
+
+assemble:
+     [echo] *** Building distribution for project version 5.0.5 ***
+     [echo] Building binary distribution
+      [zip] Building zip: /Users/Howard/Documents/workspace/tapestry-project/target/dist/tapestry-bin-5.0.5.zip
+      [tar] Building tar: /Users/Howard/Documents/workspace/tapestry-project/target/dist/tapestry-bin-5.0.5.tar.gz
+      [tar] Building tar: /Users/Howard/Documents/workspace/tapestry-project/target/dist/tapestry-bin-5.0.5.tar.bz2
+     [echo] Building source distribution
+      [zip] Building zip: /Users/Howard/Documents/workspace/tapestry-project/target/dist/tapestry-src-5.0.5.zip
+      [tar] Building tar: /Users/Howard/Documents/workspace/tapestry-project/target/dist/tapestry-src-5.0.5.tar.gz
+      [tar] Building tar: /Users/Howard/Documents/workspace/tapestry-project/target/dist/tapestry-src-5.0.5.tar.bz2
+     [echo] Generating MD5 Checksums
+     [echo] *** Please sign the distributions using GPG before uploading the files. ***
+
+BUILD SUCCESSFUL
+Total time: 6 minutes 0 seconds
+----
+
+  Now, sign the distribution, using <<<for i in target/dist/*.zip target/dist/*.gz target/dist/*.bz2; do echo $i; gpg --armor --detach-sig $i; done>>>
+  
+  (I set this up as an alias).  You'll be prompted for your GPG password six times (sorry!).
+  
+  Finally, copy the distros up to the tapestry-releases directory, with <<<scp target/dist/* hlship@people.apache.org:public_html/tapestry-releases>>>
+  
+  (I set this up as an alias, too).
+  
+  
+Cleaning up
+
+  Alas, Maven leaves a bit of junk behind to be cleaned up.
+  
+  You must login to people.apache.org and perform a couple of cleanups.  Starting in <<<~hlship/public_html>>>, you must execute:
+  
+  <<<find tapestry-ibiblio-rsynch-repository -name \\*.asc.\\* | xargs rm>>>
+  
+  This deletes lots of excess GnuPG signature files that were inadvertently created and uploaded.
+  
+  And, of course, permissions are never quite right:
+  
+  <<<chmod -R ug+w tapestry-ibiblio-rsynch-repository/ tapestry-releases/>>>
+
+  <<<chgrp -R tapestry *>>>
+       
+Commit Changes
+
+  Commit changes to the project.
+  
+Tag In Subversion
+
+  You must the tag the source in SVN, copying the trunk folder to tags/releases/5.0.x.  The SVN tags/releases folder must
+  already exist, the specific folder must not.
+
+  I do this from IntelliJ, but the command line (for example) is pretty straight forward (and I may create a script to help with this):
+    
+  <<<svn copy -rHEAD https://svn.apache.org/repos/asf/tapestry/tapestry5/trunk https://svn.apache.org/repos/asf/tapestry/tapestry5/tags/releases/5.0.x>>>
+    
+
+
+Run the vote
+
+	Send a "[VOTE] Tapestry Release 5.0.x" message onto the dev@tapestry.apache.org mailing list.
+	
+----
+I've created and uploaded a release of Tapestry 5.0.x, ready to be voted upon.
+
+The files are uploaded to:
+
+http://people.apache.org/~hlship/tapestry-releases/
+
+and a Maven repository:
+
+http://people.apache.org/~hlship/tapestry-ibiblio-rsynch-repository/
+
+Please examine these files to determine if a new preview release, 5.0.x, is ready.
+
+I've also created a 5.0.x tag in Subversion:
+
+http://svn.apache.org/viewvc/tapestry/tapestry5/tags/releases/5.0.x/
+
+On a successful vote, I'll move the files from these directories to the proper distribution directories.
+
+Vote will run for three days; on success I'll move the voted artifacts into place and send out appropriate notifications. 
+----
+
+On success: roll it out!
+
+* Build and Deploy Site
+
+  Execute <<<mvn site site:deploy -Pjavadoc>>>
+
+  This will build the project site and each of the module sites.  The sites go to a server that is periodically copied over to the live server; it can take up to an hour
+  for changes to show up.
+
+  The -Pjavadoc activates a profile that ensure that Javadoc is generated (normally, Javadoc is not generated as it is so time consuming).
+
+* Move the artifacts into place
+
+	You need to ssh to people.apache.org.
+	
+----
+> cd ~hlship/public_html/tapestry-releases/
+> mv * /www/www.apache.org/dist/tapestry/
+> rm /www/www.apache.org/dist/tapestry/*-5.0.4*
+----
+
+  Adjust the last line to remove the previous release.  Only the current release should be in the dist folder.
+  
+  The Maven artifacts are a little trickier, since there's the whole Maven folder hiearchy to deal with.
+  
+----
+> cd ~hlship/public_html/tapestry-ibiblio-rsynch-repository/
+> rsync -av * /www/people.apache.org/repo/m2-ibiblio-rsync-repository
+----
+
+  The aritfacts copied to m2-ibiblio-rsync-repository will (eventually) by copied to the central Maven ibiblio repository, where they will be
+  visible to every Maven user.
+  
+  
+Wait 24 Hours
+
+	It takes up to 24 hours for all the mirrors to sync, to don't go announcing the new release just yet.
+	
+Update the Downloads Page
+
+ 	The downloads page is inside the tapestry-site project as,  src/site/apt/download.apt.
+ 	
+ 	If you should edit the large block concerning Tapestry 5, updating the version number. There is no need (at least until we have a final release of Tapestry 5) to keep the links
+ 	to the old version number.
+ 	
+ 	After making the changes, and checking it in to Subversion, you can build and deploy the site.
+ 	
+ 	After deployment, it takes up to an hour for the changes to be visible.
+  
+Advance the Version Numbers
+
+	This is optional but is useful, go find all those version numbers again and set them to 5.0.(n+1)-SNAPSHOT.  So, if you just released 5.0.3, set all the version numbers to 5.0.4-SNAPSHOT.    Again,
+	use the support/update-versions Ruby script.  
+    
+    
+    
+    
+    
+  
+  

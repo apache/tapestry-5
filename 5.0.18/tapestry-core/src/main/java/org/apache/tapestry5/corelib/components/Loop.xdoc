@@ -1,0 +1,214 @@
+<document>
+    <body>
+        <section name="Basic Example">
+
+            <p>
+                This example is based around a NavBar component that generates a set
+                of links to other pages in the applilcation.
+            </p>
+
+            <subsection name="NavBar.tml">
+
+                <source><![CDATA[
+<table class="navigation" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+   <tr>
+        <t:loop source="pageNames" value="pageName">
+            <td class="${tabClass}">
+                <t:pagelink page="pageName">${pageName}</t:pagelink>
+            </td>
+        </t:loop>
+    </tr>
+
+</table>]]></source>
+
+                <p>
+                    We are assuming that the NavBar component
+                    has a pageNames property (possibly a parameter). The Loop will
+                    iterate over those page names and store each into its value parameter.
+                </p>
+
+
+            </subsection>
+
+
+            <subsection name="NavBar.java">
+
+                <source><![CDATA[
+public class NavBar
+{
+    @Parameter(defaultPrefix="literal", required=true)
+    private String pages;
+
+    @Inject
+    private ComponentResources resources;
+
+    @Property
+    private String _pageName;
+
+    public String[] getPageNames()
+    {
+        return pages.split(",");
+    }
+
+    public String getTabClass()
+    {
+        if (pageName.equalsIgnoreCase(resources.getPageName())
+            return "current";
+
+        return null;
+    }
+}
+]]></source>
+
+                <p>
+                    The component converts its pages parameter into the pageNames property
+                    by splitting it at the commas. It tracks the current pageName of the loop
+                    not just to generate the links, but to calculate the CSS class of each
+                    &lt;td&gt; element on the fly. This way we can give the tab corresponding
+                    to the current page a special look or highlight.
+                </p>
+
+            </subsection>
+
+        </section>
+
+        <section name="Invisible Instrumentation">
+
+            <p>We can fold together the Loop component and the &lt;td&gt; element:</p>
+
+            <subsection name="NavBar.tml">
+
+                <source><![CDATA[
+<table class="navigation" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+   <tr>
+        <td t:type="loop" source="pageNames" value="pageName" class="${tabClass}">
+            <t:pagelink page="pageName">${pageName}</t:pagelink>
+        </td>
+    </tr>
+
+</table>]]></source>
+
+                <p>Using the
+                    <code>t:type="loop"</code>
+                    attribute, the other way to identify a template
+                    element as a component, allows the Loop component to render the element's tag,
+                    the &lt;td&gt; on each iteration, along with informal parameters (the class attribute). This is
+                    called<em>invisible instrumentation</em>, and it is more concise and more
+                    editor/preview friendly than Tapestry's typical markup.
+                </p>
+            </subsection>
+        </section>
+
+        <section name="Forms and Loops Example">
+
+            <p>
+                Tapestry form control element components (TextField, etc.) work inside loops. However,
+                some additional configuration is needed to make this work efficiently.
+            </p>
+
+            <p>
+                With no extra configuration, each value object will be serialized into the form (if
+                you view the rendered markup, you'll see a hidden form field containing serialized data needed by
+                Tapestry to process the form). This can become very bloated, or may not work if the objects being
+                iterated
+                are not serializable.
+            </p>
+
+            <p>
+                The typical case is database driven; you are editting objects from a database and need
+                those objects back when the form is submitted. All that should be stored
+                on the client is the
+                <em>ids</em>
+                of those objects. Thats what the encoder
+                parameter is for.
+            </p>
+
+            <subsection name="EditOrder.tml">
+                <source><![CDATA[
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+    <body>
+
+        <h1>Edit Order Quantities</h1>
+
+        <t:form>
+
+            <t:errors/>
+
+            <t:loop source="items" value="item" encoder="encoder">
+                <div class="line-item">
+                    <t:label for="quantity">${item.product.name}</t:label>
+                    <t:textfield t:id="quantity" value="item.quantity"/>
+                </div>
+            </t:loop>
+
+            <input type="submit" value="Update"/>
+        </t:form>
+    </body>
+</html>]]></source>
+
+                <p>
+                    The TextField component is rendered multiple times, once
+                    for each LineItem in the Order.
+                </p>
+            </subsection>
+
+            <subsection name="EditOrder.java">
+                <source><![CDATA[
+public class EditOrder
+{
+    @Inject
+    private OrderDAO orderDAO;
+
+    @Property
+    private final PrimaryKeyEncoder<Long,LineItem> encoder = new PrimaryKeyEncoder<Long,LineItem>()
+    {
+        public Long toKey(LineItem value) { return value.getId(); }
+
+        public void prepareForKeys(List<Long> keys) { }
+
+        public LineItem toValue(Long key)
+        {
+            return orderDAO.getLineItem(key);
+        }
+    };
+
+    @Persist
+    private long orderId;
+
+    @Property
+    private LineItem item;
+
+    public List<LineItem> getItems()
+    {
+        return orderDAO.getLineItemsForOrder(orderId);
+    }
+}]]></source>
+
+                <p>
+                    Here, we expect the OrderDAO service to do most of the work,
+                    and we create a wrapper around it, in the form of the
+                    PrimeryKeyEncoder instance.
+                </p>
+
+                <p>
+                    We've glossed over a few issues here, including how to handle
+                    the case that a particular item has been deleted or changed
+                    between the render request and the form submission, as well as how the orderId
+                    property gets set in the first place.
+                </p>
+
+                <p>
+                    Accounting for those situations would largely be encapsulated inside
+                    the PrimeryKeyEncoder instance.
+                </p>
+
+
+            </subsection>
+
+
+        </section>
+
+    </body>
+</document>

@@ -1,0 +1,28 @@
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+    <head>
+        <title>Ajaxified</title>
+    </head>
+    <body>
+        <p>
+            This test of the upload component checks Ajax related behavior.
+        </p>
+        <t:form>
+            <t:errors/>
+            <t:forminjector t:id="injector">
+                <a href="#" id="trigger">add row</a>
+            </t:forminjector>
+
+            <br/>
+            <input type="submit" value="Upload"/>
+        </t:form>
+        <t:if test="file">
+            <t:beandisplay object="file"/>
+        </t:if>
+
+        <t:block id="content">
+            <t:label for="file"/>
+            <input t:type="upload" t:id="file" validate="required"/>
+
+        </t:block>
+    </body>
+</html>

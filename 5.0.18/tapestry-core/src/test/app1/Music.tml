@@ -1,0 +1,17 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+    <h1>Music Library</h1>
+
+    <t:grid source="tracks" row="track" remove="genre,artist,playcount" add="titleCopy">
+        <t:parameter name="titleCell">
+            <t:pagelink page="music/details" context="track">${track.title}</t:pagelink>
+        </t:parameter>
+        <t:parameter name="ratingcell">
+            <t:outputRating rating="track.rating"/>
+        </t:parameter>
+        <t:parameter name="titleCopyCell">
+            <t:pagelink page="music/details2" context="track">${track.title} (Copy)</t:pagelink>
+        </t:parameter>
+    </t:grid>
+
+</html>

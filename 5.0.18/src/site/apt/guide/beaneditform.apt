@@ -1,0 +1,260 @@
+ --- 
+ Using the BeanEditForm Component
+ ---
+ 
+Using the BeanEditForm Component
+
+  Tapestry includes a powerful component capable of generating a complete create/edit user interface for a typical JavaBean, BeanEditForm.
+  
+  BeanEditForm analyzes the the properties of the bean, locating just those properties that are readable and writable. It filters down
+  to properties whose type is mapped to a known editor (this is described in more detail below).
+  
+  The default ordering for properties is in the order in which the <getter methods> for the properties are defined.
+  When a super-class defines edittable properties, those are ordered before sub-class properties.
+  
+* Supported Types
+
+  The default set of property types supported by BeanEditForm:
+  
+  * String: as a text field
+  
+  * Number: as a text field
+  
+  * Enum: as a drop-down list
+  
+  * Boolean: as a checkbox
+
+  * Date: as a JavaScript calendar
+
+  []
+  
+  Resolving a property type to an editor type involves a search up the inheritance hierarchy: thus the super-type of Integer, Long, BigDecimal, etc. is
+  Number, which uses a text field for data entry.
+  
+  The list of supported property types is extensible (this is documented below).
+    
+    
+* Automatic Object Creation
+
+  When a page is rendered, the BeanEditForm component will read its object parameter as the JavaBean to edit (with the current properties
+  of the JavaBean becoming the defaults for the various fields).  Likewise, when the form is submitted by the user, the object parameter
+  is read and its properties populated from the request.
+  
+  If the object does not exist, it will be created as needed. The type is determined from the property type, which should be a specific type
+  in order for automatic creation to operate properly.
+
+  The BeanEditForm component will attempt to instantiate a value for the property as necessary, when the form is submitted.
+  This can be a problem when the property type is an interface, rather than an instantiable class.
+
+  One option is to provide an event handler for the "prepare" or "prepareForSubmit" events to instantiate an instance
+  to receive the submitted information.
+
+  For a class, Tapestry will select the public constructor with the <most> parameters.  If this is not desirable
+  (for example, if you get an exception),
+  then place the
+  {{{../../apidocs/org/apache/tapestry5/ioc/annotations/Inject.html}Inject}} annotation on the constructor
+  Tapestry should use.
+  
+* Implicit Object Binding
+
+  If the object parameter is not bound, then an implicit binding to a property of the containing component is made. The bound property will be
+  the BeanEditForm component's id, if such a property exists.  Thus you may typically give the BeanEditForm component an id (that matches a property)
+  and not have to bind the object parameter.
+  
+* Non-Visual Properties
+
+  In some cases, a property may be updatable and of a supported type for editing, but should not be presented to the user for editing: for example,
+  a property that holds the primary key of a database entity. In such a case, the
+  {{{../apidocs/org/apache/tapestry5/beaneditor/NonVisual.html}NonVisual}} annotation may be applied to the property (either the getter
+  or the setter method). 
+    
+* Default Validation
+
+  Default validation for fields is primary determined by property type.
+  
+  If desired, additional validation may be specified using the 
+  {{{../apidocs/org/apache/tapestry5/beaneditor/Validate.html}Validate}} annotation.
+  
+* Property ordering
+
+  By default, the order in which properties are presented is as defined above (order of the getter method).
+  This can be overridden using the {{{../apidocs/org/apache/tapestry5/beaneditor/ReorderProperties.html}ReorderProperties}}
+  class annotation.
+  
+* Default Label
+
+  Tapestry will attempt to provide a reasonable default label for each field, based on the property name being emitted.  The property name
+  is capitalized, and spaces are added before case changes, thus property "name" becomes label "Name" and property "streetAddress" becomes label
+  "Street Address".  
+  
+  BeanEditForm also searches for a label for the field in the containing component's message catalog.  The message key is the property name suffixed with "-label".
+  If such a label is found, it takes precedence.
+  
+Property Editor Overrides
+
+  You may override the editor for any particular property, using the a block parameter to the BeanEditForm component.  
+  
+  An editor normally consists of a Label component and some form of field component (such as TextField or TextArea).
+  
+  For example, you may want to selectively use a PasswordField component:
+  
++---+
+  <t:beaneditform object="loginCredentials">
+    <t:parameter name="password">
+      <t:label for="password"/>
+      <t:passwordfield t:id="password" value="loginCredentials.password"/>
+    </t:parameter>
+  </t:beaneditform>
++---+
+
+  The other fields will render normally (using the built-in editors).
+  
+Customizing the BeanModel
+
+  You may want to customize the BeanModel further, to remove from the form properties that should not be editable by the user,
+  and to change the order in which properties are presented within the form.
+  
+  The BeanEditForm component has several parameters for this purpose:
+
+  * add: A command seperated list of property names to add to the model.
+
+  * include: A comma seperated list of property names to keep with the model (others are excluded).
+
+  * exclude: A comma separated list of property names to exclude from the model.
+  
+  * reorder: A comma separated list of property names indicating the desired order.
+  
+  []
+  
+  If a model has more properties that are listed in the reorder parameter, then the additional properties will be ordered at the end of the form.
+  
+  Note that these parameters <modify> the BeanModel.  If you supply your own BeanModel (via the model parameter)
+  you should not use the add, include, exclude or reorder parameters.
+
+  Added properties must not conflict with normal properties. Cells for added properties will render blank unless an override is provided.
+
+
+    
+Providing the BeanModel
+
+  The BeanEditForm component operates in terms of a {{{../apidocs/org/apache/tapestry5/beaneditor/BeanModel.html}BeanModel}}, which describes
+  the properties, their presentation order, labels and so forth.
+  
+  Normally, the BeanEditForm automatically creates the BeanModel as needed, based on the type of object bound to its object parameter.
+  
+  Alternately, the BeanModel can be supplied as the model parameter. This can be useful in situations where the exclude and reorder parameters
+  are insufficient.  For example, if the the type of the property being edited is an interface type, it may be useful to provide
+  an explicit BeanModel around an underlying implementation class.
+  
+  The model can be created when the page is first instantiated:
+  
++---+
+public class MyPage
+{
+  @Inject
+  private BeanModelSource beanModelSource;
+  
+  @Inject
+  private ComponentResources resources;
+
+  @Property(write=false)
+  @Retain
+  private BeanModel model;
+
+  @Property
+  private MyBean bean;
+  
+  {
+     model = beanModelSource.create(MyBean.class, true, resources);
+     
+     // Make other changes to model here.
+  }  
+
+}
++---+
+
+  And, in the component template, the built model can be passed to the BeanEditForm component explicitly:
+
++---+
+  <t:beaneditform  object="bean" model="model"/>
++--+
+
+Adding New Property Editors
+
+  Adding a new property editor is a three step process.
+  
+  First, decide on a logical name for the data type.  For example, you may decide that the BigDecimal type will represent currency in your application, so name the data type "currency".
+  
+  Next, you must make contributions to the
+  {{{../apidocs/org/apache/tapestry5/services/DataTypeAnalyzer.html}DataTypeAnalyzer}} or
+  {{{../apidocs/org/apache/tapestry5/services/DefaultDataTypeAnalyzer.html}DefaultDataTypeAnalyzer}} services to match properties to your new name.
+  
+  DataTypeAnalyzer is a chain of command that can make match properties to data types based on property type or annotations on the property.  In general, 
+  DefaultDataTypeAnalyzer is used, as that only needs to consider property type.  DefaultDataTypeAnalyzer matches property types to data types, based on a search up
+  the inheritance path.
+  
++---+
+public static void contributeDefaultDataTypeAnalyzer(MappedConfiguration<Class, String> configuration)
+{
+  configuration.add(BigDecimal.class, "currency");
+}
++---+
+
+  You must provide an editor for the "currency" data type.  An editor is a block of a page of the application; this page is not normally rendered itself, but acts as a container for
+  one or more blocks.
+  
++---+
+public class AppPropertyEditBlocks
+{
+    @Property
+    @Environmental
+    private PropertyEditContext context;
+  
+    @Component(parameters =
+    { "value=context.propertyValue", "label=prop:context.label",
+            "translate=prop:currencyTranslator", "validate=prop:currencyValidator",
+            "clientId=prop:context.propertyId", "annotationProvider=context" })
+    private TextField currency;
+
+    @Inject
+    private ComponentResources resources;
+
+    public FieldValidator getCurrencyValidator()
+    {
+      return context.getValidator(currency);
+    }
+    
+    public FieldTranslator getCurrencyTranslator()
+    {
+      return context.getTranslator(current);
+    }
+}
++---+
+
+  The hard part is the translator; this is a piece of code that understands how to format and how to parse
+  a currency value.  It must be wrapped to create a FieldTranslator.
+
+  The editor is a block inside the component template:
+  
++---+
+  <t:block id="currency">
+    <t:label for="currency"/>
+    <t:textfield t:id="currency" size="10"/>
+  </t:block>
++--+
+
+  Finally, we tell the BeanEditForm component about the editor via a contribution to the 
+  {{{../apidocs/org/apache/tapestry5/services/BeanBlockSource.html}BeanBlockSource}} service:
+  
++---+
+public static void contributeBeanBlockSource(Configuration<BeanBlockContribution> configuration)
+{
+  configuration.add(new BeanBlockContribution("currency", "AppPropertyEditBlocks", "currency", true));
+}
++--+
+
+  Now, when the BeanEditForm sees a property of type BigDecimal, it will map that to datatype "currency" and from there
+  to the currency block of the AppPropertyEditBlocks page of the application.
+   
+
+  

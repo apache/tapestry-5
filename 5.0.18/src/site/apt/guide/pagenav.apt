@@ -1,0 +1,310 @@
+ ----
+ Page Navigation
+ ----
+
+Page Navigation
+
+  In essense, a Tapestry application is a number of related pages, working together.  To some degree, each page is like an application unto itself.
+  
+  Any individual request will be targetted at a single page.  Requests come in two forms: 
+  
+  * <component event> requests target a specific component on a specific page, triggering an event within that component
+  
+  * <render> requests target a specific page, and stream the HTML markup for that page back to the client
+  
+  []
+  
+  This dictomy between component event requests
+  and render requests is new in Tapestry 5. It is in some ways based on ideas from the Portlet specification and differentiating
+  the two types of requests alleviates a number of problems in traditional web applications related to the browser back button, or to the user hitting the
+  refresh button in their browser.
+  
+Component Event Requests
+  
+  Component event requests may take the form of hyperlinks
+  ({{{../component-parameters.html#org.apache.tapestry5.corelib.components.actionlink}ActionLink}}) or form submissions
+  ({{{../component-parameters.html#org.apache.tapestry5.corelib.components.form}Form}}).
+  
+  In both cases, the value returned from an {{{event.html}event handler method}} controls the response sent to the client web browser.
+  
+  The URL for a component event request identifies the name of the page, the nested id of the component, and the name of the event to trigger on the component (this is usually "action").
+  Further, a component event request may contain additional context information, which will be provided to the event handler method.
+  
+  These URLs expose a bit of the internal structure of the application.  Over time, as an application grows and is maintained, the ids of components may change. This means that
+  component event request URLs should not be bookmarked.  Fortunately, users will rarely have the chance to do so (see below).
+  
+* Null response
+
+  If the event handler method returns no value, or returns null, then the current page (the page containing the component) will render the response.
+  
+  A page render link for the current page is created and sent to the client as a client side redirect.  The client browser will automatically submit a new request
+  to generate the page.
+  
+  The user will see the newly generated content in their browser. In addition, the URL in the browser's address bar will be a render request URL.  Render request URLs are
+  shorter and contain less application structure (for instance, they don't include component ids or event types).
+  Render requests URLs are what your users will bookmark. The component event request URLs
+  are transitory, meaningful only while the application is actively engaged, and not meant to be used in later sessions.
+  
+* String response
+  
+  When a string is returned, it is expected to be the logical name of a page (as opposed to the page's
+  fully qualified class name).  As elsewhere, the name of the page is case insensitive.
+  
+  Again, a render request URL will be constructed and sent to the client as a redirect.
+  
+* Class response
+  
+  When a class is returned, it is expected to be a page class. Returning a page class from an event handler is safer for refactoring
+  than returning a page name.
+  
+  As with other response types, a render request URL will be constructed and sent to the client as a redirect.
+  
+* Page response
+  
+  You may also return an instance of a page, rather than the name or class of a page.
+  
+  A page may be injected via the {{{../apidocs/org/apache/tapestry5/annotations/InjectPage.html}InjectPage}} annotation.
+  
+  Often, you will configure the page in some way before returning the page (examples below).
+  
+  You can also return a component within the page, but this will generate a runtime warning.
+  
+* Link response
+
+  An event handler method may return a 
+  {{{../apidocs/org/apache/tapestry5/Link.html}Link}} instance directly.  The Link is converted into a URL and a client redirect to that URL is sent to the client.
+  
+  The {{{../apidocs/org/apache/tapestry5/ComponentResources.html}ComponentResources}} object that is injected into your pages (and components) has methods
+  for creating action and page links (they are actually defined in
+  {{{../apidocs/org/apache/tapestry5/ComponentResourcesCommon.html}ComponentResourcesCommon}}).
+  
+* Stream response
+
+  An event handler can also return a {{{../apidocs/org/apache/tapestry5/StreamResponse.html}StreamResponse}} object, which encapsulates a stream to
+  be sent directly to the client browser.  This is useful for compnents that want to, say, generate an image or PDF and provide it to the client.
+
+
+* URL response
+
+  A URL is handled as a client redirect to an external URL.
+  
+* Object response
+
+  Any other type of object returned from an event handler method is an error.
+  
+Page Render Requests
+
+  Render requests are simpler in structure and behavior than component event requests. In the simplest case, the URL is simply the
+  logical name of the page.
+  
+  Pages may have an <activation context>.  The activation context represents persistent information about the state of the page.  In practical terms,
+  the activation context is usually the id of some database-persistent object.
+  
+  When a page has an activation context, the values of the context are appended to the URL path.  
+  
+  Not all pages have an activation context.
+  
+  The activation context may be explicitly set when the render request link is created (the PageLink component has a context parameter for this purpose).
+  When no explicit activation context is provided, the page itself is queried for its activation context.
+  
+  This querying takes the form of an event trigger. The event name is "passivate" (as we'll see shortly, there's a corresponding "activate").  The 
+  return value of the method is used as the context.  For example:
+  
++---+
+public class ProductDetail
+{
+  private Product product;
+  
+  . . .
+  
+  long onPassivate() { return product.getId(); }
+}
++----+
+
+  The activation context may consist of a series of values, in which case the return value of the method should be an array or a List.
+
+  <<Note: If you are using the {{{../tapestry-hibernate/}tapestry-hibernate}} integration library and your passivate context
+  is a Hibernate entity, then you can just use the entity itself, not its id.  Tapestry will automatically extract the entities' id into the URL,
+  and convert it back for the "activate" event handler method.>>
+  
+* Page activation
+
+  When a page render request arrives, the page is activated before it is rendered.
+  
+  Activation serves two purposes:
+  
+  * It allows the page to restore its internal state from data encoded into the URL (the activation context discussed above).
+  
+  * It provides coarse approach to validating access to the page.
+  
+  []
+  
+  The later case, validation, is generally concerned with user identity and access; if you have pages that may only be accessed by certain users,
+  you may use the page's activate event handler responsible for verifying that access.
+  
+  A page's activate event handler mirrors its passivate handler:
+  
++----+
+  . . .
+  
+  void onActivate(long productId)
+  {
+     product = productDAO.getById(productId);
+  }
+  
+  . . .
++-----+
+
+  Here's the relevant part: when the page renders, it is likely to include more component event request URLs (links and forms). The component event requests
+  for those links and forms will <also> start by activating the page, before performing other work. This forms an unbroken chain of requests
+  that include the same activation context.
+  
+  To some degree, this same effect could be accomplished using a {{{persist.html}persistent page value}}, but that requires an active session,
+  and the result is not bookmarkable.
+
+  The activate event handler may also return a value, which is treated identically to a return value of a component event request event trigger.  This will typically
+  be used in an access validation scenario.
+  
+Page Navigation Patterns
+
+  This combination of action links and context and page context can be put together in any number of ways.
+  
+  Let's take a typical master/detail relationship using the concept of a product catalog page.  In this example, the 
+  ProductListing page is a list of products, and the ProductDetails page must display the details for a specific product.
+  
+* component event requests / Persistent Data
+
+  In this pattern, the ProductListing page uses action events and a persistent field on the ProductDetails page.
+  
+  ProductListing.html:
+  
++---+
+  <t:loop source="products" value="product">
+    <a t:type="actionlink" t:id="select" context="product.id">${product.name}</a>
+  </t:loop>
++---+
+
+  ProductListing.java:  
+  
++---+
+  @InjectPage
+  private ProductDetails details;
+  
+  Object onActionFromSelect(long productId)
+  {
+    details.setProductId(productId);
+    
+    return details;
+  }
++---+
+
+  ProductDetails.java:
+
++----+
+  @Inject
+  private ProductDAO dao;
+  
+  private Product product;
+  
+  @Persist
+  private long productId;
+  
+  public void setProductId(long productId) { this.productId = productId; }
+  
+  void onActivate()
+  {
+    product = dao.getById(productId);
+  }
++----+
+
+  This is a minimal approach, perhaps good enough for a prototype. 
+  
+  When the user clicks a link, the component event request URL will initially be something like "http://.../productlisting.select/99" and the final
+  render request URL will be something like "http://.../productdetails".  Notice that the product id ("99") does not appear in the render request URL.
+  
+  It has some minor flaws:
+  
+  * It requires a session (to store the _productId field between requests).
+  
+  * It may fail if the ProductDetails page is accessed before a valid product id is set.
+  
+  * The URL does not indicate the identity of the product; if the user bookmarks the URL and comes back later, they will trigger the previous case (no valid product id).
+  
+* Component Event Requests / Persistent Data
+
+  We can improve the previous example without changing the ProductListing page,  using a passivation and activation context
+  to avoid the session and make the links more bookmarkable.
+  
+  ProductDetails.java:
+
++----+
+  @Inject
+  private ProductDAO dao;
+  
+  private Product product;
+  
+  private long productId;
+  
+  public void setProductId(long productId) { productId = productId; }
+  
+  void onActivate(long productId)
+  {
+    this.productId = productId;
+    
+    product = dao.getById(productId);
+  }
+  
+  long onPassivate() { return productId; }
++----+   
+
+  This change ensures that the render request URL will include the product id, i.e., "http://.../productdetails/99".
+  
+  It has the advantage that the connection from page to page occurs in typesafe Java code, inside the onActionFromSelect method of ProductListing.
+  It has the disadvantage that clicking a link requires two round trips to the server.
+  
+* Render Requests Only
+
+  This is the most common version of this master/detail relationship.
+  
+  ProductListing.html:
+  
++---+
+  <t:loop source="products" value="product">
+    <a t:type="pagelink" page="productdetails" context="product.id">${product.name}</a>
+  </t:loop>
++---+  
+
+  ProductListing.java:
+  
+  No code is needed to support the link.
+  
+  ProductDetails.java:
+
++----+
+  @Inject
+  private ProductDAO dao;
+  
+  private Product product;
+  
+  private long productId;
+   
+  void onActivate(long productId)
+  {
+    this.productId = productId;
+    
+    product = dao.getById(productId);
+  }
+  
+  long onPassivate() { return productId; }
++----+     
+  
+  The setProductId() method is no longer needed.
+  
+* Limitations
+
+  As your application's workflow expands, you may find that there is not a reasonable way to avoid storing some data persistently between requests, outside
+  of the page activation context.  For example, if from the ProductDetails page, the user is allowed to navigate to related pages and then back to ProductDetails, it
+  starts to become necessary to keep passing that product id around from page to page to page.
+  
+  At some point, persistent values make more sense.  In the near future, there will be a client-side persistence strategy that will encode persistent data, such as
+  the product id field, into query parameters (and hidden form fields) automatically.

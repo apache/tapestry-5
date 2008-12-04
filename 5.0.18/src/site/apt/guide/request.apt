@@ -1,0 +1,140 @@
+ ----
+ Request Processing
+ ----
+ 
+Request Processing
+
+  Understanding the request processing pipeline is very important, as it is one of the
+  chief extension points for Tapestry.
+  
+  Much of the early stages of processing are in the form of extensible 
+  {{{../tapestry-ioc/pipeline.html}pipelines}}.
+  
+Tapestry Filter
+
+  All incoming requests originate with the TapestryFilter, which is configured
+  inside the application's {{{conf.html}web.xml}}.
+  
+  The TapestryFilter is responsible for a number of startup and initialization
+  functions.
+  
+  When it receives a request, the TapestryFilter obtains the
+  {{{../apidocs/org/apache/tapestry5/services/HttpServletRequestHandler.html}HttpServletRequestHandler}}
+  service, and invokes its service() method. 
+    
+HttpServletRequestHandler Pipeline
+
+  This pipeline performs initial processing of the request. It can be extended
+  by contributing a
+  {{{../apidocs/org/apache/tapestry5/services/HttpServletRequestFilter.html}HttpServletRequestFilter}} into
+  the HttpServletRequestHandler service's configuration.'
+  
+  Tapestry does not contribute any filters into this pipeline of its own
+  
+  The terminator for the pipeline does two things:
+  
+  * It stores the request and response into the {{{../apidocs/org/apache/tapestry5/services/RequestGlobals.html}RequestGlobals}}
+    service. This is a threaded service that stores per-thread/per-request information.
+    
+  * It wraps the request and response as a
+    {{{../apidocs/org/apache/tapestry5/services/Request.html}Request}} and
+    {{{../apidocs/org/apache/tapestry5/services/Response.html}Response}}, and passes them into the
+    {{{../apidocs/org/apache/tapestry5/services/RequestHandler.html}RequestHandler}} pipeline.
+ 
+  []
+
+  Primarily, this exists to bridge from the Servlet API objects to the corresponding Tapestry objects.  This is the basis
+  for the planned portlet integration for Tapestry.
+     
+RequestHandler Pipeline
+ 
+   This pipeline is where most extensions related to requests take place.  Request represents an abstraction on top of HttpServletRequest; this
+   is necessary to support non-servlet applications, such as portlet applications. Where other code and services within
+   Tapestry require access to information in the request, such as query parameters, that information is obtained from the
+   Request (or Response) objects.
+   
+   The pipeline includes a number of built-in filters:  
+   
+   * CheckForUpdates is responsible for {{{reload.html}class and template reloading}}.
+   
+   * Localization identifies the {{{localization.html}locale for the user}}.
+   
+   * StaticFiles checks for URLs that are for static files (files that exist inside the web context) and aborts
+     the request, so that the servlet container can handle the reuest normally.
+   
+   * ErrorFilter catches uncaught exceptions from the lower levels of Tapestry and presents the exception report page.
+     This involves the {{{../apidocs/org/apache/tapestry5/services/RequestExceptionHandler.html}RequestExceptionHandler}} service,
+     which is responsible for initializing and rendering the
+     {{{../apidocs/org/apache/tapestry5/corelib/pages/ExceptionReport.html}core/ExceptionReport}} page.
+    
+    
+   []
+      
+   The terminator for this pipeline stores the Request and the Response into RequestGlobals, then requests that the
+   {{{../apidocs/org/apache/tapestry5/services/Dispatcher.html}MasterDispatcher}} service figure out how to
+   handle the request (if it is, indeed, a Tapestry request).
+   
+Master Dispatcher Service
+
+  The MasterDispatcher service is a chain-of-command, aggregating together (in a specific order), several
+  Dispatcher objects.  Each Dispatcher is built to recognize and process a particular kind of URL.
+  
+* RootPath
+
+  As discussed {{{conf.html}elsewhere}}, requests for the context root will instead be treated like render
+  requests for the "start" page.
+
+* Asset
+
+  Requests that being with "/assets/" are references to {{{assets.html}asset resources}} that are stored on the classpath, inside the Tapestry JARs 
+  (or perhaps inside the JAR for a component library).  The contents of the file will be pumped down to the client browser.
+
+* PageRender
+
+  Page render requests are requests to render a particular page.  Such requests may include additional elements on the path, which will be
+  treated as {{{event.html}activation context}} (generally speaking, the primary key of some related entity object), allowing the page to
+  reconstruct the state it will need to succesfully render itself.
+  
+  The event handler method for the activate event may return a value; this is treated the same as the return value from a component action request; typically
+  this will result in a redirect to another page. In this way, the activate event can perform simple validation at the page level ("can the user
+  see this page?").
+  
+  Page render URLs consist of the logical name of the page plus additional path elements for the activation context.  The dispatcher
+  here strips terms off of the path until it finds a known page name. Thus, "/mypage/27" would look first for a page whose name was "mypage/27", then look for 
+  a page name "mypage". Assuming the second search was succesful, the page would be activated with the context "27".  If no logical page name
+  can be identified, control passes to the next dispatcher.
+
+* ComponentEvent
+
+  The component event dispatcher is used to trigger events in components.
+  
+  The URL identifies the name of the page, then a series of component ids (the path from the page down to the specific component), then the name of the event to be
+  triggered on the component. The remaining path elements are used as the context for the <event> (not for the page activation, which
+  does not currently apply). For example, "/griddemo.FOO.BAR/3" would locate page "griddemo", then component "FOO.BAR", and trigger an event named "action" (the default event type,
+  which is omitted from the URL), with
+  the context "3".
+  
+  If the page in question has an activation context, it is supplied as an additional query parameter on the link.
+  
+  In cases where the event type is not the default, "action", it will appear between the nested component id and the event context, preceded by a colon. Example:
+  "/example/foo.bar:magic/99" would trigger an event of type "magic".  This is not common in the vanilla Tapestry framework, but will likely be more common
+  as Ajax features (which would not use the normal request logic) are implemented.
+    
+  The response from a component action request is typically, but not universally, used to send a redirect to the client; the redirect URL is a page render URL
+  to display the response to the event.  This is detailed under {{{pagenav.html}page navigation}}.  
+   
+   
+RequestGlobals Service
+
+  The RequestGlobals service 
+  has a lifecycle of perthread; this means that a seperate instance exists for every thread, and therefore,
+  for every request.  The terminators of the two handler pipelines store the request/response pairs into the RequestGlobals service.
+  
+Request Service
+
+  The Request service is a 
+  {{{../../tapestry-ioc/shadow.html}shadow}}
+  of the RequestGlobals services' request property. That is, any methods invoked
+  on this service are delegated to the request object stored inside the RequestGlobals.
+   
+  

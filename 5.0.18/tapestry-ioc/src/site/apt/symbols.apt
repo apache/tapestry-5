@@ -1,0 +1,145 @@
+ ----
+ Symbols
+ ----
+ 
+Symbols
+
+  Tapestry IOC makes use of runtime-evaluated <symbols> to handle certains types of configuration tasks.
+  
+  The syntax of symbols is based on Ant expression, that is, a leading <<<$\{>>> before the symbol name,
+  and a trailing <<<\}>>> after.  The value on the inside is the <symbol name>.  By convention, the symbol
+  name is segmented with periods.
+  
+  These symbols are used inside the 
+  {{{../apidocs/org/apache/tapestry5/ioc/annoations/Value.html}Value}} and
+  {{{../apidocs/org/apache/tapestry5/ioc/annoations/InjectService.html}InjectService}}
+  annotations.
+  
+  For example:
+  
++----+
+  public static MyService build(
+      @InjectService("${some-service-id}") Collaborator collab)
+  {
+    return . . . ;
+  }
++---+
+
+  Here, the symbol,
+  <<<some-service-id>>> is  a service id, such as <<<WackyCollaborator>>>.
+     
+  Although not shown here, it is possible to use multple symbols inside the string, or mix literal text with
+  symbols.
+
+Injecting Values from Symbols
+
+  You may also inject symbol values.  For example, if you are interested in whether the application
+  is in production mode or developer mode:
+
+---
+public class MyService implements MyServiceInterface
+{
+  private boolean productionMode;
+
+  public MyService(@Value("${tapestry.production-mode}") boolean productionMode, ...)
+  {
+    this.productionMode = productionMode;
+    . . .
+----
+
+  Here Tapestry has {{{coerce.apt}coerced}} the "tapestry.production-mode" symbol to a boolean to be injected.
+
+  An alternate annotation, @Symbol, may be used:
+
+---
+public class MyService implements MyServiceInterface
+{
+  private boolean productionMode;
+
+  public MyService(@Symbol(SymbolConstants.PRODUCTION_MODE) boolean productionMode, ...)
+  {
+    this.productionMode = productionMode;
+    . . .
+----
+
+  This is very useful when a constant value is defined for the symbol; it means that the compiler can catch
+  a typo, rather than detecting it a runtime.
+    
+  <<Note:>> When injecting a symbol as a <string> into a service, you must use the @Inject annotation as well as @Value or @Symbol; otherwise
+  Tapestry will inject the service's service id.
+  
+Symbol Resolution
+
+  Symbols are resolved by the
+  {{{../apidocs/org/apache/tapestry5/ioc/services/SymbolSource.html}SymbolSource}} service.  The SymbolSource
+  checks against an ordered list of
+  {{{../apidocs/org/apache/tapestry5/ioc/services/SymbolProvider.html}SymbolProvider}} objects.
+
+  Additional symbol providers may be employed by contributing to the tapestry.ioc.SymbolSource service configuration,
+  which is an ordered list of SymbolProviders.
+  
+  By default, there are three providers:
+  
+* SystemProperties
+
+  The first provider allows JVM System Properties to provide symbol values.  This allows the use
+  of the <<java>> command's <<-D>> option to provide runtime overrides.  This is most often used
+  when testing code, rather than in production.       SystemProperties is always checked first.
+  
+* ApplicationDefaults
+
+  Values not found as System Properties are searched for in the ApplicationDefaults.  This
+  service, ApplicationDefaults, may be configured using a mapped configuration to provide values.
+  
+  From the previous example:
+  
++----+
+  public void contributeApplicationDefaults(MappedConfiguration<String, String> configuration)
+  {
+    configuration.add("some-service-id", "WackyCollaborator");
+  }
++----+
+  
+* FactoryDefaults
+
+  The same as ApplicationDefaults, but checked only if a value is not satisfied by SystemProperties
+  or ApplicationDefaults.
+  
+  Libraries will typically set reasonable defaults as contributions to the FactoryDefaults service configuration.
+  Individual applications may hard code overrides of those defaults using ApplicationDefaults.  Individual developers
+  may override even those defaults by setting JVM System Properties.
+
+  FactoryDefaults is always checked last when resolving symbol names to symbol values.
+  
+Recursive Symbols
+
+  It is possible and valid to define one symbol in terms of one ore more other symbols.
+  
+  
++----+
+  public void contributeFactoryDefaults(MappedConfiguration<String, String> configuration)
+  {
+      configuration.add("report.url", "http://${report.host}:${report.port}/${report.path}");
+      configuration.add("report.host", "www.myreportsite.com");
+      configuration.add("report.port", "80");
+      configuration.add("report.path", "/report.cgi");
+  }
++----+
+  
+  The ordinary default for <<<report.url>>> will be <<<http://www.myreportsite.com:80/report.cgi>>>.
+  
+  However, this can be changed by making an overriding contribution to the ApplicationDefaults service
+  configuration.  
+  
+  Tapestry checks that no symbol is directly or indirectly dependent on itself.  For example, the following contribution is
+  illegal:
+  
++----+
+  public void contributeApplicationDefaults(MappedConfiguration<String, String> configuration)
+  {
+      configuration.add("report.path", "${report.url}/report.cgi");
+  }
++----+  
+  
+  When the <<<report.url>>> is referenced, an exception will be thrown with the message: <<
+  Symbol 'report.path' is defined in terms of itself (report.path --> report.url --> report.path).>>
