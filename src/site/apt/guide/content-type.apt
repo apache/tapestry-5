@@ -8,19 +8,15 @@ Content Type and Markup Output
 
   * The \<?xml\?> XML declaration is omitted.
 
-  * Certain elements will render as an open and close tag, even if the body is empty:
+  * Most element render with an open and close tag, even if empty.
 
-    * script
+  * Certain elements will be abbreviated to just the open tag, if empty:
 
-    * div
+    * br
 
-    * span
+    * hr
 
-    * p
-
-    * textarea
-
-    * select
+    * img
 
     []
 
@@ -41,9 +37,8 @@ Content Type and Markup Output
 Input/Output Character Set
 
   The character set (aka character encoding) used when writing output and when parsing requests is normally "utf-8".
-  All pages use the same encoding, which can be set using the  
+  All pages use the same encoding, which can be set using the
   <<<tapestry.charset>>>
   {{{conf.html}configuration setting}}.
-  
 
-  
+
