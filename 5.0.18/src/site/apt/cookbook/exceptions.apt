@@ -1,0 +1,283 @@
+ ---
+ Overriding Exception Reporting
+ ---
+
+Overriding Exception Reporting
+
+  One of Tapestry's best features is its comprehensive exception reporting.  The level of detail is impressive
+  and useful.
+
+  Of course, one of the first questions anyone asks is "How do I turn it off?"  This exception reporting
+  is very helpful for developers but its easy to see it as terrifying for potential users.  Not that you'd have have
+  runtime exceptions in production, of course, but even so ...
+
+Version 1: Replacing the Exception Report Page
+
+  Let's start with a page that fires an exception from an event handler method.
+
+  <<Index.tml>>
+  
+----
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+    <head>
+        <title>Index</title>
+    </head>
+    <body>
+        <p>
+            <t:actionlink t:id="fail">click for exception</t:actionlink>
+        </p>
+    </body>
+</html>
+----
+
+  <<Index.java>>
+
+----
+package com.example.tapestry2523.pages;
+
+public class Index
+{
+    void onActionFromFail()
+    {
+        throw new RuntimeException("Failure inside action event handler.");
+    }
+}
+----
+
+  With production mode disabled, clicking the link displays the default exception report page:
+
+[error1.png] Default exception report
+
+  The easy way to override the exception report is to provide an ExceptionReport page that overrides the one
+  provided with the framework.
+
+  This is as easy as providing a page named "ExceptionReport".  It must implement the
+  {{{../apidocs/org/apache/tapestry5/services/ExceptionReporter.html}ExceptionReporter}} interface.
+
+
+  <<ExceptionReport.tml>>
+
+----
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+    <head>
+        <title>Exception</title>
+    </head>
+
+    <body>
+
+        <p>An exception has occurred:
+            <strong>${exception.message}</strong>
+        </p>
+
+        <p>
+            Click
+            <t:pagelink page="index">here</t:pagelink>
+            to restart.
+        </p>
+
+    </body>
+
+</html>
+----
+
+    <<ExceptionReport.java>>
+
+----
+package com.example.tapestry2523.pages;
+
+import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.services.ExceptionReporter;
+
+public class ExceptionReport implements ExceptionReporter
+{
+    @Property
+    private Throwable exception;
+
+    public void reportException(Throwable exception)
+    {
+        this.exception = exception;
+    }
+}
+----
+
+    The end result is a customized exception report page.
+
+[error2.png] Customized Exception Report Page
+
+    
+Version 2: Overriding the RequestExceptionHandler
+
+  The previous example will display a link back to the Index page of the application.
+  Another alternative is to display the error <on> the Index page.  This requires a different
+  approach: overriding the service responsible for reporting request exceptions.
+
+  The service
+  {{{../apidocs/org/apache/tapestry5/services/RequestExceptionHandler.html}RequestExceptionHandler}}
+  is responsible for this.
+
+  By replacing the default implementation of this service with our own implementation, we can take
+  control over exactly what happens when a request exception occurs.
+
+  We'll do this in two steps.  First, we'll extend the Index page to serve as an ExceptionReporter.
+  Second, we'll override the default RequestExceptionHandler to use the Index page instead
+  of the ExceptionReport page.  Of course, this is just one approach.
+
+  <<Index.tml>> (partial)
+
+----
+    <t:if test="message">
+        <p>
+            An unexpected exception has occurred:
+            <strong>${message}</strong>
+        </p>
+    </t:if>
+----
+
+  <<Index.java>>
+
+----
+public class Index implements ExceptionReporter
+{
+    @Property
+    @Persist(PersistenceConstants.FLASH)
+    private String message;
+
+    public void reportException(Throwable exception)
+    {
+        message = exception.getMessage();
+    }
+
+    void onActionFromFail()
+    {
+        throw new RuntimeException("Failure inside action event handler.");
+    }
+}
+----
+
+  The above defines a new property, message, on the Index page.  The @Persist
+  annotation indicates that values assigned to the field will persist from one
+  request to another.  The use of FLASH for the persistence strategy indicates
+  that the value will be used until the next time the page renders, then the value
+  will be discarded.
+
+  The message property is set from the thrown runtime exception.
+
+  The remaining changes take place inside AppModule.
+
+  <<AppModule.java>> (partial)
+
+----
+    public RequestExceptionHandler buildAppRequestExceptionHandler(
+            final Logger logger,
+            final ResponseRenderer renderer,
+            final ComponentSource componentSource)
+    {
+        return new RequestExceptionHandler()
+        {
+            public void handleRequestException(Throwable exception) throws IOException
+            {
+                logger.error("Unexpected runtime exception: " + exception.getMessage(), exception);
+
+                ExceptionReporter index = (ExceptionReporter) componentSource.getPage("Index");
+
+                index.reportException(exception);
+
+                renderer.renderPageMarkupResponse("Index");
+            }
+        };
+    }
+
+    public void contributeAlias(
+            Configuration<AliasContribution> configuration,
+
+            @Local
+            RequestExceptionHandler handler)
+    {
+        configuration.add(AliasContribution.create(RequestExceptionHandler.class, handler));
+    }  
+----
+
+  First we define the new service using a service builder method.  This is an alternative
+  to the bind() method; we define the service, its interface type (the return type of the method)
+  and the service id (the part that follows "build" is the method name) and provide the implementation
+  inline.  A service builder method must return the service implementation, here implemented as an inner class.
+
+  The Logger resource that is passed into the builder method is the Logger appropriate for the service.
+  ResponseRenderer and ComponentSource are two services defined by Tapestry.
+
+  With this in place, there are now two different services that implement the RequestExceptionHandler interface:
+  the default one built into Tapestry (whose service id is "RequestExceptionHandler") and the new one defined
+  in this module, "AppRequestExceptionHandler").  Without a little more work, Tapestry will be unable to determine
+  which one to use when an exception does occur.
+
+  We'll use the {{{../guide/alias.html}Alias service}} to remove this ambiguity.
+
+  The contributeAlias() method makes a contribution to the Alias service's configuration.  The Alias service
+  is used to disambiguate injections when just a service interface is given; one service will become the "Alias", hiding the
+  existence of the others.
+
+  Here we inject the AppRequestExceptionHandler service and contribute it as the alias for type RequestExceptionHandler.
+  The @Local annotation is used to select the RequestHandler service defined by this module, AppModule.  Once contributed
+  into Alias, it becomes the default service injected through the framework.
+    
+  This finally brings us to the point where we can see the result:
+
+[error3.png] Errors show on Index page
+
+   
+Version 3: Decorating the RequestExceptionHandler
+
+  A third option is available: we don't define a <new> service, but instead <decorate> the existing
+  RequestExceptionHandler service. This approach means we don't have to make a contribution to the Alias service.
+
+  Service decoration is a powerful facility of Tapestry that is generally used to "wrap" an existing service in
+  an interceptor that provides new functionality such as logging, security, transaction management or other cross-cutting
+  concerns.
+
+  However, there's no requirement that an interceptor for a service actually invoke methods on the service; here
+  we contribute a new implementation that <replaces> the original:
+
+  <<AppModule.java>>
+
+----
+    public RequestExceptionHandler decorateRequestExceptionHandler(
+            final Logger logger,
+            final ResponseRenderer renderer,
+            final ComponentSource componentSource,
+            @Symbol(SymbolConstants.PRODUCTION_MODE)
+            boolean productionMode,
+            Object service)
+    {
+        if (!productionMode) return null;
+
+        return new RequestExceptionHandler()
+        {
+            public void handleRequestException(Throwable exception) throws IOException
+            {
+                logger.error("Unexpected runtime exception: " + exception.getMessage(), exception);
+
+                ExceptionReporter index = (ExceptionReporter) componentSource.getPage("Index");
+
+                index.reportException(exception);
+
+                renderer.renderPageMarkupResponse("Index");
+            }
+        };
+    }
+----
+
+  As with service builder methods and service configuration method, decorator methods are recognized
+  by the "decorate" prefix on the method name.  As used here, the rest of the method name is used
+  to identify the service to be decorated (there are other options that allow a decorator to be applied
+  to many different services).
+
+  A change in this version is that when in development mode (that is, when <not> in production mode) we use
+  the normal implementation.  Returning null from a service decoration method indicates that the decorator
+  chooses not to decorate.
+
+  The Logger injected here is the Logger for the service being decorated, the default RequestExceptionHandler service.
+
+  Otherwise, we return an interceptor whose implementation is the same as the new service in version #2.
+
+  The end result is that in development mode we get the full exception report, and in production mode we
+  get an abbreviated message on the application's Index page.

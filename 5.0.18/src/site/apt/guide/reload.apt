@@ -1,0 +1,79 @@
+ ---
+ Live Class and Template Reloading
+ ---
+ 
+Live Class and Template Reloading
+
+  One of the great new features of Tapestry 5 is automatic reloading of changed classes and templates.
+  
+  In previous versions of Tapestry, reloading of templates was supported in development mode only. Reloading of classes
+  required a restart of the servlet container (or a redeploy of the web application).
+  
+  In Tapestry 5, <page and component> classes will automatically reload when changed.  Likewise, changes to
+  component templates  and other related resources will also be picked up immediately.
+  
+* Template Reloading
+
+  When a template changes, all page instances (as well as the hiearchy of components below them) are discarded and
+  reconstructed with the new template. However, classes are not reloaded in this case.
+
+* Class Reloading
+
+  On a change to <any> loaded class from inside a controlled package (or any sub-package of a controlled package), Tapestry will
+  discard all page instances, and discard the class loader. 
+  
+  {{{persist.html}Persistent field data}} on the pages will usually not be affected (as it is stored separately, in the session).
+  This allows you to make fairly significant changes to a component class even while the application continues to run.
+  
+Page and Component Packages
+
+  Only page and component classes are subject to reload.
+  
+  Reloading is based on package name; the packages that are reloaded are derived from the {{{conf.html}application configuration}}.
+
+  If your root package is <code>org.example.myapp</code>, then only classes in the following packages will be
+  scanned for automatic reloads:
+
+  * org.example.myapp.pages
+
+  * org.example.myapp.components
+
+  * org.example.myapp.mixins
+
+  * org.example.myapp.base
+
+  []
+  
+File System Only
+
+  Reloading of classes and other files applies only to files that are actually on the file system, and not files
+  obtained from JAR files.  This is perfect during development, where the files in question are in your local workspace.
+  In a deployed application, you are somewhat subject to the implementation of your servlet container or application server.  
+  
+Class Loader Issues
+
+  Tapestry uses an extra class loader to load page and component classes.
+  
+  When a change to an underlying Java class file is detected, Tapestry discards the class loader and any pooled page instances.
+  
+  You should be careful to not hold any references to Tapestry pages or components in other code, such as Tapestry IoC services. 
+  Holding such references can cause significant memory leaks, as they can prevent the class loader from being reclaimed by the garbage
+  collector.
+  
+ClassCastExceptions
+
+  Tapestry's class loader architecture can cause minor headaches when you make use of a services layer, or any time that you pass
+  component instances to objects that are not themselves components.
+  
+  You will often see a ClassCastException.  This is because the same class name, say org.example.myapp.pages.Start, exists as two different
+  class instances.  One class instance is loaded by the web application's default class loader.  A second class 
+  instance has been loaded <and transformed> by Tapestry's reloading class loader.
+  
+  Ordinary classes, such as Tapestry IoC Services, will be loaded by the default class loader and expect instances to be
+  loaded by the same class loader (or a parent).
+  
+  The solution to this problem is to introduce an interface; the component class will implement the interface, the service will
+  expect an instance of the interface, rather than a specific type. 
+  
+  It is important that the interface be loaded by the default class loader, it should not be in the pages or components
+  package, but instead be in another package, such as services.

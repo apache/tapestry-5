@@ -1,0 +1,191 @@
+ ----
+  Logging
+ ----
+ 
+Logging of Tapestry Components and Pages
+
+  Tapestry makes extensive use of
+  {{{http://www.slf4j.org/}SLF4J}} to log details about the creation and operation of your page and component classes.
+  
+  The default configuration for logging uses 
+  {{{http://logging.apache.org/log4j/}Log4J}} as the logging toolkit, though
+  {{{../../tapestry-ioc/logging.html}this can be changed}}.
+  
+  
+Class to Logger
+
+  The logger name for a page or component matches the fully qualified class name.  You can configure this in log4j.properties:
+  
+----
+log4j.category.org.apache.tapestry5.integration.app1.pages.MerryChristmas=trace
+----
+  
+Injecting Loggers
+
+  You may mark a field of type 
+  {{{http://www.slf4j.org/api/org/slf4j/Logger.html}Logger}} with the @Inject annotation.  The proper Logger for your
+  page or component will be injected.
+  
+---
+public class MyPage
+{
+  @Inject
+  private Logger logger;
+  
+  . . .
+---
+
+@Log annotation
+
+  You may mark any component method with the {{{../apidocs/org/apache/tapestry5/annotations/Log.html}Log}} annotation.
+  Method entry, exit (and any thrown exceptions) will be logged at DEBUG level, along with parameter values and the
+  method's return value. This is very convienient for
+  debugging, especially when placed on event handler methods.
+
+
+Component Transformation Debugging
+
+  Tapestry performs a transformation on your classes as they are loaded, often you want to gain insight into
+  what it has done.  Tapestry uses a secondary logger, consisting of the class name with the prefix "tapestry.transformer.",
+  to log (at debug level) the results of transforming the class.
+  
+  Example:
+  
+---
+[DEBUG] MerryChristmas Finished class transformation: InternalClassTransformation[
+public org.apache.tapestry5.integration.app1.pages.MerryChristmas extends java.lang.Object
+  implements org.apache.tapestry5.runtime.Component, org.apache.tapestry5.runtime.RenderCommand
+
+add default method: public void postRenderCleanup()
+<default>
+
+add default method: public void setupRender(org.apache.tapestry5.MarkupWriter $1, org.apache.tapestry5.runtime.Event $2)
+<default>
+
+add default method: public void beginRender(org.apache.tapestry5.MarkupWriter $1, org.apache.tapestry5.runtime.Event $2)
+<default>
+
+add default method: public void beforeRenderTemplate(org.apache.tapestry5.MarkupWriter $1, org.apache.tapestry5.runtime.Event $2)
+<default>
+
+add default method: public void afterRenderTemplate(org.apache.tapestry5.MarkupWriter $1, org.apache.tapestry5.runtime.Event $2)
+<default>
+
+add default method: public void beforeRenderBody(org.apache.tapestry5.MarkupWriter $1, org.apache.tapestry5.runtime.Event $2)
+<default>
+
+add default method: public void afterRenderBody(org.apache.tapestry5.MarkupWriter $1, org.apache.tapestry5.runtime.Event $2)
+<default>
+
+add default method: public void afterRender(org.apache.tapestry5.MarkupWriter $1, org.apache.tapestry5.runtime.Event $2)
+<default>
+
+add default method: public void cleanupRender(org.apache.tapestry5.MarkupWriter $1, org.apache.tapestry5.runtime.Event $2)
+<default>
+
+add default method: public boolean handleComponentEvent(org.apache.tapestry5.runtime.ComponentEvent $1)
+<default>
+
+add default method: public org.apache.tapestry5.ComponentResources getComponentResources()
+<default>
+
+add default method: public void containingPageDidLoad()
+<default>
+
+add default method: public void containingPageDidDetach()
+<default>
+
+add default method: public void containingPageDidAttach()
+<default>
+
+add field: protected final org.apache.tapestry5.internal.InternalComponentResources _$resources;
+
+replace method: public final org.apache.tapestry5.ComponentResources getComponentResources()
+return _$resources;
+
+add default method: public void render(org.apache.tapestry5.MarkupWriter $1, org.apache.tapestry5.runtime.RenderQueue $2)
+<default>
+
+replace method: public void render(org.apache.tapestry5.MarkupWriter $1, org.apache.tapestry5.runtime.RenderQueue $2)
+_$resources.queueRender($2);
+
+convert default constructor: initializer();
+
+add constructor: org.apache.tapestry5.integration.app1.pages.MerryChristmas(org.apache.tapestry5.internal.InternalComponentResources $1)
+{
+  _$resources = $1;
+  initializer();
+
+}
+
+]
+----
+
+  Is this helpful?  Probably only if you are developing your own code that integrates into the component class transformation chain; for example,
+  to support your own field and method annotations.
+
+Component Event Debugging
+
+  Tapestry can also debug component event logic.  The component's logger, with a "tapestry.events." prefix, is used at debug level.
+  The debugging output identifies the event name and event source, and identifies any methods that are invoked.
+
+  Note that events that are not handled by a component will bubble up to the component's container; further logging for
+  the same event will occur using the logger associated with the container.  The page containing the initial component
+  is the final step when logging.
+
+  Examples:
+
+----
+[DEBUG] ActionLink Dispatch event: ComponentEvent[action from (self)]
+[DEBUG] ActionDemo Dispatch event: ComponentEvent[action from actionlink]
+[DEBUG] ActionDemo Invoking: org.apache.tapestry5.integration.app1.pages.nested.ActionDemo.onAction(java.lang.Long) (at ActionDemo.java:28)
+[DEBUG] ActionDemo Dispatch event: ComponentEvent[passivate from (self)]
+[DEBUG] ActionDemo Invoking: org.apache.tapestry5.integration.app1.pages.nested.ActionDemo.onPassivate() (at ActionDemo.java:38)
+-----
+  
+Render State Debugging
+
+  Occasionally it is useful to get debugging output of all the steps involved in rendering a page.
+  In Tapestry, rendering involves a series of rendering commands passed through a rendering queue (most commands
+  will operate by queuing up additional commands).
+
+  The logger is the page's logger prefixed with "tapestry.render.".
+
+  This debugging is most useful when you get a rendering exception about unbalanced open and close tags.
+
+  Most logging is at the trace level, except for a debug-level entry at the end identifying the number of commands
+  and the elapsed time.
+
+----
+  . . .
+  
+[TRACE] ActionDemo Executing: Text[Apache Software Foundation]
+[TRACE] ActionDemo Executing: End
+[TRACE] ActionDemo Executing: Text[
+            ]
+[TRACE] ActionDemo Executing: End
+[TRACE] ActionDemo Executing: Text[
+
+            ]
+[TRACE] ActionDemo Executing: Start[http://www.w3.org/1999/xhtml div]
+[TRACE] ActionDemo Executing: org.apache.tapestry5.internal.services.PageElementFactoryImpl$1@587e3a30
+[TRACE] ActionDemo Executing: End
+[TRACE] ActionDemo Executing: Text[
+
+        ]
+[TRACE] ActionDemo Executing: End
+[TRACE] ActionDemo Executing: End
+[TRACE] ActionDemo Executing: End
+[TRACE] ActionDemo Executing: AfterRenderTemplate[nested/ActionDemo:border]
+[TRACE] ActionDemo Executing: AfterRender[nested/ActionDemo:border]
+[TRACE] ActionDemo Executing: CleanupRender[nested/ActionDemo:border]
+[TRACE] ActionDemo Executing: org.apache.tapestry5.internal.structure.ComponentPageElementImpl$1@7efc0795
+[TRACE] ActionDemo Executing: DTD[name=html; publicId=-//W3C//DTD XHTML 1.0 Strict//EN; systemId=http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd]
+[TRACE] ActionDemo Executing: AfterRenderTemplate[nested/ActionDemo]
+[TRACE] ActionDemo Executing: AfterRender[nested/ActionDemo]
+[TRACE] ActionDemo Executing: CleanupRender[nested/ActionDemo]
+[TRACE] ActionDemo Executing: org.apache.tapestry5.internal.structure.ComponentPageElementImpl$1@7efc0795
+[DEBUG] ActionDemo Executed 276 rendering commands (max queue depth: 141) in 0.025 seconds
+----
+    
+  

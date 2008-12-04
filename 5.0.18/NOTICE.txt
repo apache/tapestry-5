@@ -1,0 +1,5 @@
+This product includes software developed by
+The Apache Software Foundation (http://www.apache.org/).
+
+Please refer to the NOTICE.txt for each sub-module to
+identify further dependencies.

@@ -1,0 +1,21 @@
+<html t:type="Border"
+      xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+    <p>
+        Message:
+        <span id="message">${message}</span>
+    </p>
+
+    <ul>
+        <li>
+            <t:actionlink t:id="updateMessage" context="literal:updated">Update the message field</t:actionlink>
+        </li>
+        <li>
+            <t:actionlink t:id="discardChanges">Discard persistent field changes</t:actionlink>
+        </li>
+        <li>
+            <t:pagelink page="persistentdemo">Refresh page</t:pagelink>
+        </li>
+    </ul>
+</html>
+

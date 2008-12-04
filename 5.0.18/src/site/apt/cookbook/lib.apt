@@ -1,0 +1,253 @@
+ ---
+ Creating Component Libraries
+ ---
+
+Creating Component Libraries
+
+
+  Nearly every Tapestry application includes a least a couple of custom components, specific to the application.
+  What's exciting about Tapestry is how easy it is to package components for reuse across many applications ...
+  and the fact that applications using a component library need no special configuration.
+
+  A Tapestry component library consists of components (as well as component base class, pages and mixins).  In
+  addition, a component library will have a module that can define new services (needed by the components)
+  or configure other services present in Tapestry.  Finally, components can be packaged with
+  <assets>: resources such as images, stylesheets and JavaScript libraries that need to be provided to the
+  client web browser.
+
+  We're going to create a somewhat insipid component that displays a large happy face icon.
+
+  Tapestry doesn't mandate that you use any build system, but we'll assume for the moment that you are using
+  Maven 2.  In that case, you'll have a pom.xml file something like the following:
+
+
+---
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.example</groupId>
+  <artifactId>happylib</artifactId>
+  <version>1.0-SNAPSHOT</version>
+  <packaging>jar</packaging>
+  <name>happylib Tapestry 5 Library</name>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.tapestry</groupId>
+      <artifactId>tapestry-core</artifactId>
+      <version>${tapestry-release-version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.testng</groupId>
+      <artifactId>testng</artifactId>
+      <version>5.1</version>
+      <classifier>jdk15</classifier>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>1.5</source>
+          <target>1.5</target>
+          <optimize>true</optimize>
+        </configuration>
+      </plugin>
+
+      <plugin>
+           <groupId>org.apache.maven.plugins</groupId>
+           <artifactId>maven-jar-plugin</artifactId>
+           <configuration>
+           <archive>
+             <manifestEntries>
+               <Tapestry-Module-Classes>org.example.happylib.services.HappyModule</Tapestry-Module-Classes>
+             </manifestEntries>
+           </archive>
+           </configuration>
+       </plugin>
+
+    </plugins>
+  </build>
+
+  <repositories>
+    <repository>
+      <id>codehaus.snapshots</id>
+      <url>http://snapshots.repository.codehaus.org</url>
+    </repository>
+    <repository>
+      <id>OpenQA_Release</id>
+      <name>OpenQA Release Repository</name>
+      <url>http://archiva.openqa.org/repository/releases/</url>
+    </repository>
+  </repositories>
+
+  <properties>
+    <tapestry-release-version>5.0.16</tapestry-release-version>
+  </properties>
+</project>
+---  
+
+  We'll go into more detail about the relevant portions of this POM in the later sections.
+
+Step 1: Choose a base package name
+
+  Just as with Tapestry applications, Tapestry component libraries should have a <unique> base package name.
+  In this example, we'll use <<<org.examples.happylib>>>.
+
+  As with an application, we'll follow the conventions:  we'll place the module for this library
+  inside the services package, and place pages and components under their respective packages.
+
+Step 2: Create your pages and/or components
+
+  Our component is very simple:
+
+----
+package org.example.happylib.components;
+
+import org.apache.tapestry5.Asset;
+import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.annotations.Path;
+import org.apache.tapestry5.ioc.annotations.Inject;
+
+public class HappyIcon
+{
+    @Inject
+    @Path("happy.jpg")
+    private Asset happyIcon;
+
+    boolean beginRender(MarkupWriter writer)
+    {
+        writer.element("img", "src", happyIcon);
+        writer.end();
+
+        return false;
+    }
+}
+----
+
+  HappyIcon appears inside the components sub-package.  The happyIcon field is injected with the the Asset
+  for the file happy.jpg.  The path specified with the @Path annotation is relative to the HappyIcon.class file;
+  it should be stored in the project under src/main/resources/org/example/happylib/components.
+
+  Tapestry ensures that asset can be accessed from the web browser; the src attribute of the \<img\> tag
+  will be a URL that directly accesses the image file ... there's no need to unpackage the happy.jpg file, it's
+  all handled by Tapestry.
+
+  This component renders out an img tag for the icon.
+
+  Often, a component library will have many different components, or even pages.
+
+Step 3: Choose a virtual folder name
+
+  In Tapestry, components that have been packaged in a library are referenced using a virtual folder name.
+  It's effectively as if the application had a new root-level folder containing the components.
+
+  In our example, we'll use "happy" as the folder name.  That means the application will include the
+  HappyIcon component in the template as:
+
+  *  <<<\<t:happy.happyicon\>>>> or <<<\<t:happy.icon\>>>>
+
+  *  <<<\<img t:type="happy.happyicon"\>>>> or <<<\<img t:type="happy.icon"\>>>>
+
+  []
+  
+  Why "icon" vs. "happyicon"?  Tapestry notices that the folder name, "happy" is a prefix or suffix of the
+  class name ("HappyIcon") and creates an alias that strips off the prefix (or suffix). To Tapestry, they are
+  completely identical.
+  
+Step 4: Configure the virtual folder
+
+ Tapestry needs to know where to search for your component class. This is accomplished in your library's IoC module class, by
+ making a  <contribution> to the ComponentClassResolver {{{../../tapestry-ioc/configuration.html}service configuration}}.
+
+----
+package org.example.happylib.services;
+
+import org.apache.tapestry5.ioc.Configuration;
+import org.apache.tapestry5.services.LibraryMapping;
+
+public class HappyModule
+{
+    public static void contributeComponentClassResolver(Configuration<LibraryMapping> configuration)
+    {
+        configuration.add(new LibraryMapping("happy", "org.example.happylib"));
+    }
+}
+----
+
+ The ComponentClassResolver service is responsible for mapping libraries to packages; it takes as a contribution
+ a collection of these LibraryMapping objects.  Every module may make its own contribution to the ComponentClassResolver service,
+ mapping its own package to its own folder.
+
+ This module class is also where you would define new services that can be accessed by your components (or other parts
+ of the application).
+
+ <<Note:>> it is possible to add a mapping for "core".  "core" is the core library for Tapestry components; all the built-in
+ Tapestry components (TextField, BeanEditForm, Grid, etc.) are actually in the core library. All Tapestry does is search inside
+ the "core" library when it does find a component in the application. Contributing an additional package as "core" simply extends the number of
+  packages searched for core components (it doesn't replace Tapestry's default package, org.apache.tapestry5.corelib).
+ Adding to "core" is sometimes reasonable, if there is virtually no chance of a naming conflict (via different modules contributing
+ packages to core with conflicting class names).
+
+Step 5: Configure the module to autoload
+
+  For Tapestry to {{{../../tapestry-ioc/autoload.html}autoload}} your module, it is necessary to put an entry in the
+  JAR manifest.  This is taken care of in the pom.xml above:
+
+----
+      <plugin>
+           <groupId>org.apache.maven.plugins</groupId>
+           <artifactId>maven-jar-plugin</artifactId>
+           <configuration>
+           <archive>
+             <manifestEntries>
+             <Tapestry-Module-Classes>org.example.happylib.services.HappyModule</Tapestry-Module-Classes>
+             </manifestEntries>
+           </archive>
+           </configuration>
+       </plugin>
+
+----
+
+Step 6: Versioning Assets
+
+  Classpath assets, those packaged in JAR files (such as the happy.jpg asset) are retrieved by the client web browser
+  using a URL that reflects the package name.                  Tapestry users a special virtual folder, <<</assets>>>, under
+  the context folder for this purpose.
+
+  The image file here would exposed to the web browser via the URL  <<</happyapp/assets/org/example/happylib/components/happy.jpg>>> (this assumes that
+  the application was deployed as happyapp.war).
+
+  Tapestry uses a far-future expiration date for classpath assets; this allows browsers to aggresively cache
+  the file, but this causes a problem should a later version of the library change the file.     This is discussed
+  in detail in
+  {{{http://developer.yahoo.com/performance/rules.html#expires}Yahoo's Performance Best Practices}}.
+
+  To handle this problem, you should map your library assets to a versioned folder. This can be accomplished using
+  another contribution from the HappyModule, this time to the ClasspathAssetAliasManager service
+  whose configuration maps a virtual folder underneath /assets
+  to a package:
+
+
+----
+    public static void contributeClasspathAssetAliasManager(MappedConfiguration<String, String> configuration)
+    {
+        configuration.add("happylib/1.0", "org/example/happylib");
+    }
+----
+
+  With this in place, and the library and applications rebuilt and redeployed, the URL for happy.jpg becomes
+  <<</happyapp/assets/happylib/1.0/components/happy.jpg>>>.  This is shorter, but also incorporates a version number ("1.0")
+  that can be changed in a later release.
+
+Conclusion
+
+  That's it!  Autoloading plus the virtual folders for components and for assets takes care of all the issues related
+  to components.  Just build your JARs, setup the JAR Manifest, and drop them into your applications.
+
+
+

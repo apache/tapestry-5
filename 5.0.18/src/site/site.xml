@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!-- 
+   Copyright 2007 The Apache Software Foundation
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+-->
+
+<project name="Apache Tapestry">
+    <bannerLeft>
+        <name>Tapestry 5</name>
+        <href>http://tapestry.apache.org/tapestry5/</href>
+        <src>images/tapestry_banner.gif</src>
+    </bannerLeft>
+    <bannerRight>
+        <name>Apache</name>
+        <href>http://www.apache.org</href>
+        <src>images/asf_logo_wide.gif</src>
+    </bannerRight>
+    <skin>
+        <groupId>org.apache.tapestry</groupId>
+        <artifactId>maven-skin</artifactId>
+        <version>1.1</version>
+    </skin>
+
+    <publishDate format="dd MMM yyyy"/>
+    <version/>
+
+    <body>
+
+        <menu name="Tapestry 5 Project">
+            <item name="Screencasts" href="screencast.html"/>
+            <item name="Tapestry for Struts Developers" href="struts.html"/>
+            <item name="Download" href="http://tapestry.apache.org/download.html"/>
+            <item name="Release Notes" href="release-notes.html"/>
+            <item name="Component Reference" href="tapestry-core/ref/"/>
+            <item name="JavaDocs" href="apidocs/"/>
+            <item name="Nightly Docs" href="http://tapestry.formos.com/nightly/tapestry5/"/>
+            <item name="Issues" href="https://issues.apache.org/jira/browse/TAP5"/>
+            <item name="FAQ" href="faq/general.html"/>
+        </menu>
+
+        <menu name="Upgrade Notes">
+            <item name="From Tapestry 5" href="upgrade.html"/>
+            <item name="From Tapestry 4" href="upgrade4.html"/>
+        </menu>
+
+        <menu name="Tapestry 5 Modules">
+            <item name="tapestry5-annotations" href="tapestry5-annotations/"/>
+            <item name="tapestry-core" href="tapestry-core/"/>
+            <item name="tapestry-hibernate" href="tapestry-hibernate/"/>
+            <item name="tapestry-ioc" href="tapestry-ioc/"/>
+            <item name="tapestry-spring" href="tapestry-spring/"/>
+            <item name="tapestry-test" href="tapestry-test/"/>
+            <item name="tapestry-upload" href="tapestry-upload/"/>
+        </menu>
+
+        <menu name="Tapestry Tutorials">
+            <item name="Tutorial #1" href="tutorial1/"/>
+        </menu>
+
+        <menu name="User Guide">
+            <item name="Ajax" href="guide/ajax.html"/>
+            <item name="Aliases" href="guide/alias.html"/>
+            <item name="Application State" href="guide/appstate.html"/>
+            <item name="Assets" href="guide/assets.html"/>
+            <item name="BeanEditForm Guide" href="guide/beaneditform.html"/>
+            <item name="Class Reloading" href="guide/reload.html"/>
+            <item name="Component Classes" href="guide/component-classes.html"/>
+            <item name="Component Events" href="guide/event.html"/>
+            <item name="Component Mixins" href="guide/mixins.html"/>
+            <item name="Component Parameters" href="guide/parameters.html"/>
+            <item name="Component Rendering" href="guide/rendering.html"/>
+            <item name="Component Templates" href="guide/templates.html"/>
+            <item name="Configuration" href="guide/conf.html"/>
+            <item name="Content Type and Markup" href="guide/content-type.html"/>
+            <item name="CSS" href="guide/css.html"/>
+            <item name="DOM" href="guide/dom.html"/>
+            <item name="Environmental Services" href="guide/env.html"/>
+            <item name="HTTPS" href="guide/secure.html"/>
+            <item name="Injection" href="guide/inject.html"/>
+            <item name="Input Validation" href="guide/validation.html"/>
+            <item name="Layout Component" href="guide/layout.html"/>
+            <item name="Localization" href="guide/localization.html"/>
+            <item name="Logging" href="guide/logging.html"/>
+            <item name="Page Lifecycle" href="guide/lifecycle.html"/>
+            <item name="Page Navigation" href="guide/pagenav.html"/>
+            <item name="Persistent Data" href="guide/persist.html"/>
+            <item name="Project Layout" href="guide/project-layout.html"/>
+            <item name="Request Processing" href="guide/request.html"/>
+            <item name="Service Status" href="guide/servicestatus.html"/>
+            <item name="Type Coercion" href="guide/coercion.html"/>
+            <item name="Unit testing pages/components" href="guide/unit-testing-pages.html"/>
+        </menu>
+
+        <menu name="Tapestry Cookbook">
+            <item name="Introduction" href="cookbook/"/>
+            <item name="Default Parameter" href="cookbook/defaultparameter.html"/>
+            <item name="Exception Reporting" href="cookbook/exceptions.html"/>
+            <item name="Supporting Informal Parameters" href="cookbook/informals.html"/>
+            <item name="Component Libraries" href="cookbook/lib.html"/>
+        </menu>
+
+        <menu name="Tapestry 5 Maven Support">
+            <item name="quickstart" href="quickstart/"/>
+            <item name="tapestry-component-report" href="tapestry-component-report/"/>
+        </menu>
+
+
+        <menu name="Deployment Notes">
+            <item name="Jetty" href="jetty.html"/>
+            <item name="Tomcat" href="tomcat.html"/>
+            <item name="JBoss" href="jboss.html"/>
+            <item name="WebSphere" href="websphere.html"/>
+        </menu>
+
+        <menu name="Resources">
+            <item name="Wiki" href="http://wiki.apache.org/tapestry"/>
+            <item name="Wiki HowTos" href="http://wiki.apache.org/tapestry/Tapestry5HowTos"/>
+        </menu>
+
+        <menu name="Developer Info">
+            <item name="Environment" href="dev/env.html"/>
+            <item name="Release Checklist" href="dev/checklist.html"/>
+            <item name="Bible" href="dev/bible.html"/>
+        </menu>
+
+
+        <menu ref="reports"/>
+
+    </body>
+</project>

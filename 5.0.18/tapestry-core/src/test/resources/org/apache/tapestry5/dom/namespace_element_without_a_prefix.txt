@@ -1,0 +1,2 @@
+<?xml version="1.0"?>
+<root xmlns="fredns"><child><barney betty:betty="b" simple="a" ns0:wilma="c" xmlns="barneyns" xmlns:betty="bettyns" xmlns:ns0="wilmans"/></child></root>

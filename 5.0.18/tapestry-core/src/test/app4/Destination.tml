@@ -1,0 +1,27 @@
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+    <head>
+        <title>Destination</title>
+    </head>
+
+    <body>
+
+
+        <dl>
+            <dt>message</dt>
+            <dd>${message}</dd>
+
+            <dt>value</dt>
+            <dd>${value}</dd>
+        </dl>
+
+        <hr/>
+
+        <t:pagelink page="destination">refresh page</t:pagelink>
+
+        <hr/>
+
+        <t:actionlink t:id="refresh">refresh via action</t:actionlink>
+
+    </body>
+
+</html>

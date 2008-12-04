@@ -1,0 +1,244 @@
+ ----
+ Tapestry IoC Configurations
+ ----
+ 
+Tapestry IoC Configurations
+
+  One of the key concepts on Tapestry IoC is <distributed configuration>. This is a
+  concept borrowed from the Eclipse Plugin API and evidenced in 
+  HiveMind prior to Tapestry 5 IoC.
+  
+  So ... nice term, what does it mean?
+  
+  Distributed configuration is the key feature of Tapestry IoC that supports <extensibility>.
+  
+  The distributed part refers to the fact that <any module> may make <contributions> to 
+  any service's configuration (subject to the normal visibility rules for private services).
+  
+  This seems esoteric, but is quite handy, and is best explained by example.
+  
+  Say you are building a service that, say, maps a file extension
+  to an interface called FileServicer. There's a bunch of different services, all implementing the
+  FileServicer interface, across many different modules, each doing something specific for a
+  particular type of file (identified by the file's extension).  
+  
+  A central service uses this configuration to select a particular FileService interface:
+  
++------+
+  public static FileServicer buildFileServicerDispatcher(Map<String,FileServicer> contributions)
+  {
+    return new FileServiceDispatcherImpl(contributions);
+  } 
++------+
+
+  In order to provide a value for the contribution parameter, Tapestry will <collect> contributions
+  from service contribution methods. It will ensure that the keys and values match the generic
+  types shown (String for the key, FileServicer for the value). The map will be assembled and passed into
+  the service builder method, and from there, into the FileServiceDispatcherImpl contructor.
+  
+  So where do the values come from?  Service contributor methods, methods that start with
+  "contribute":
+  
++------+
+  public static void contributeFileServicerDispatcher(MappedConfiguration<String,FileServicer> configuration)
+  {
+    configuration.add("txt", new TextFileServicer());
+    configuration.add("pdf", new PDFFileServicer());
+  }  
++------+
+
+  Like service builder and service decorator methods, we can inject services if we like:
+  
++------+
+  public static void contributeFileServicerDispatcher(MappedConfiguration<String,FileServicer> configuration,
+  
+    @InjectService("TextFileServicer") FileServicer textFileServicer,
+    
+    @InjectService("PDFFileServicer") FileServicer pdfFileServicer,
+  {
+    configuration.add("txt", textFileServicer);
+    configuration.add("pdf", pdfFileServicer);
+  }  
++------+  
+   
+  The <<extensibility>> comes from the fact multiple modules may all contribute to the same
+  service configuration:
+  
++------+
+  public static void contributeFileServicerDispatcher(MappedConfiguration<String,FileServicer> configuration)
+  {
+    configuration.add("doc", new WordFileServicer());
+    configuration.add("ppt", new PowerPointFileServicer());
+  }  
++------+
+
+  Now the FileServicerDispatcher builder method gets a Map with at least four entries in it.
+
+  Because Tapestry IoC is highly dynamic (it scans the visible JAR manifest files to identify
+  module builder classes), the FileServicerDispatcher service may be in one module, and the
+  other contributing modules (such as the one that contributes the Office file services) may be written at 
+  a much later date. With no change to the FileServicerDispatcher service or its module builder class,
+  the new services "plug into" the overall solution, simply by having their JAR's on runtime classpath. 
+  
+Configuration Types
+
+  There are three different styles of configurations (with matching contributions):
+  
+  * Unordered Collection. Contributions are simply added in and order is not important.
+  
+  * Ordered List.  Contributions are provided as an ordered list. Contributions must
+    establish the order by giving each contributed object a unique id,
+    by establishing forward and backward dependencies between the values.
+    
+  * Map. Contributions provide unique keys and corresponding values.
+  
+  []
+  
+* Unordered Collection
+
+  A service builder method can collect an unordered list of values by defining
+  a parameter of type java.util.Collection.  Further, you should parameterize
+  the type of collection.  Tapestry will identify the parameterized type
+  and ensure that all contributions match.
+  
+  One thing to remember is that the order in which contributions occur
+  is unspecified. There will be a possibly large number modules, each having
+  zero or more methods that contribute into the service.  The order in which these
+  methods are invoked is unknown.
+  
+  For example, here's a kind of Startup service that needs some Runnable
+  objects.  It doesn't care what order the Runnable objects are executed in.
+  
++------+
+  public static Runnable buildStartup(final Collection<Runnable> configuration)
+  {
+    return new Runnable()
+    {
+      public void run()
+      {
+        for (Runnable contribution : configuration)
+          contribution.run();
+      }
+    };
+  }  
++------+
+
+  Here we don't even need a separate class for the implementation,
+  we use a inner class for the implementation. The point is, the configuration
+  is provided to the builder method, which passes it along to the implementation
+  of the service.  
+  
+  On the contribution side, a service contribution method sees a 
+  {{{apidocs/org/apache/tapestry5/ioc/Configuration.html}Configuration}} object:
+  
++------+
+  public static void contributeStartup(Configuration<Runnable> configuration)
+  {
+    configuration.add(new JMSStartup());
+    configuration.add(new FileSystemStartup());
+  }    
++------+
+   
+  The Configuration interface defines just a single method:  add().  This is very
+  intentional: the only thing you can do is add new items. If we passed in a Collection,
+  you might be tempted to check it for values, or remove them ... but that flys in the face
+  of the fact that the order of execution of these service contribution methods is 
+  entirely unknown.
+  
+  For readability (if Java any longer supports that concept), we've parameterized the
+  configuration parameter of the method, constraining it to instances of java.lang.Runnable,
+  so as to match the corresponding parameter.  This is optional, but often very helpful.  In any case,
+  attempting to contribute an object that doesn't extend or implement the type (Runnable) will result
+  in a runtime warning (and the value will be ignored).
+  
+  Tapestry supports only this simple form of parameterized types.  Java generics supports a wider
+  form, "wildcards", that Tapestry doesn't understand.
+  
+
+* {Ordered List}
+
+  Ordered lists are much more common. With an ordered list, the contributions are sorted into a
+  proper order before being provided to the service builder method.
+  
+  Again, the order in which service contribution methods are invoked is unknown. Therefore, the order in
+  which objects are added to the configuration is not known. Instead, we enforce an order on the items
+  <after> all the contributions have been added.  As with {{{decorator.html}service decorators}}, we
+  set the order by giving each contributed object a unique id, and identifying (by id) which items
+  must preceded it in the list, and which must follow.
+  
+  So, if we changed our Startup service to require a specific order for startup:
+  
++------+
+  public static Runnable buildStartup(final List<Runnable> configuration)
+  {
+    return new Runnable()
+    {
+      public void run()
+      {
+        for (Runnable contribution : configuration)
+          contribution.run();
+      }
+    };
+  }  
++------+  
+
+  Notice that the service builder method is shielded from the details of how the items are
+  ordered. It doesn't have to know about ids and pre- and post-requisites.  By using
+  a parameter type of List, we've triggered Tapestry to collected all the ordering information.
+  
+  For our service contribution methods, we must provide a parameter
+  of type 
+  {{{apidocs/org/apache/tapestry5/ioc/OrderedConfiguration.html}OrderedConfiguration}}:
+ 
++------+
+  public static void contributeStartup(OrderedConfiguration<Runnable> configuration)
+  {
+    configuration.add("JMS", new JMSStartup());
+    configuration.add("FileSystem", new FileSystemStartup(), "after:CacheSetup");
+  }    
++------+
+  
+  Often, you don't care about ordering, the first form of the add method is used then.   The ordering algorithm will find a spot for the
+  object (here the JMSStartup instance) based on the constraints of other contributed objects.
+  
+  For the "FileSystem" contribution, a constraint has been specified, indicating
+  that FileSystem should be ordered after some other contribution named "CacheSetup". Any number of such
+  {{{order.html}ordering constraints}} may be specified (the add() method accepts
+  a variable number of arguments).
+  
+  The object passed in may be null; this is valid, and is considered a "join point": points of reference in the
+  list that don't actually have any meaning of their own, but can be used when ordering other elements.
+  <TODO: Show example for chain of command, once that's put together.> 
+  
+  Null values, once ordered,
+  are editted out (the List passed to the service builder method does not include any nulls). Again, they are
+  allowed as placeholders, for the actual contributed objects to organize themselves around.
+  
+  
+* Mapped Configurations
+
+  As discussed in the earlier examples, mapped configurations are also supported.  The keys passed in must
+  be unique.  When conflicts occur, Tapestry will log warnings (identifying the source, in terms of invoked methods, of
+  the conflict), and ignore the conflicting value.
+  
+  Neither the key nor the value may be null.
+  
+  For mapped configurations where the key type is String, a 
+  {{{apidocs/org/apache/tapestry5/ioc/util/CaseInsensitiveMap.html}CaseInsensitiveMap}}
+  will be  automatically used (and passed to the service builder method), to help ensure that {{{case.html}case insensitivity}} 
+  is automatic and pervasive.
+  
+Injecting Resources
+
+  In addition to injecting services into a contributor method (via
+  the @InjectService and @Inject annotations), 
+  Tapestry will key off of the parameter type to allow
+  other things to be injected.
+  
+  
+  * {{{apidocs/org/apache/tapestry5/ioc/ObjectLocator.html}ObjectLocator}}:  access to other services visible
+  to the contributing module
+  
+  []
+  
+  No annotation is needed for these cases.

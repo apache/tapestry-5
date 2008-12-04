@@ -1,0 +1,73 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+    <head>
+        <title>Tapestry Integration Test Application #1</title>
+    </head>
+    <body>
+        <div id="wrap">
+
+            <div id="header">
+                <h1>Tapestry Integration Test Application</h1>
+            </div>
+
+            <div id="content">
+                <div id="topspread">
+                    <t:body/>
+                </div>
+
+
+                <div id="right">
+                    <div class="menu">
+                        <h4>Navigation</h4>
+                        <ul>
+                            <li>
+                                Page:
+                                <span id="activePageName">${componentResources.pageName}</span>
+                            </li>
+                            <li>Access:
+                                <span id="secure">${secure}</span>
+                            </li>
+                            <li>
+                                <t:pagelink page="index">Back to index</t:pagelink>
+                            </li>
+                        </ul>
+
+                        <h4>Infrastructure</h4>
+
+                        <dl>
+                            <dt>IOC Layer: ${iocClassFactory.createdClassCount} classes</dt>
+                            <dd>Service proxies and interceptors</dd>
+
+                            <dt>Component Layer: ${componentClassFactory.createdClassCount} classes</dt>
+                            <dd>For the most part, this is going to be prop: bindings</dd>
+                            <dt>Locale:</dt>
+                            <dd>${componentResources.locale}</dd>
+                        </dl>
+
+                    </div>
+                </div>
+
+                <div id="left">
+                    <h3>Request info:</h3>
+
+                    <t:renderobject object="request"/>
+
+                </div>
+
+
+                <div style="clear:both;"></div>
+
+
+            </div>
+            <div id="footer">
+                &copy; 2008
+                <a href="http://apache.org/">Apache Software Foundation</a>
+            </div>
+
+            <div id="bottom"/>
+
+        </div>
+
+
+    </body>
+</html>

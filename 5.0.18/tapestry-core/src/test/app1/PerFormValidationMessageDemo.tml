@@ -1,0 +1,12 @@
+<html t:type="border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+    <h1>Per-Form Validation Message Demo</h1>
+
+
+    <h1>Login</h1>
+    <t:beaneditform t:id="login" object="this" submitLabel="Login" clientValidation="false"/>
+
+    <h1>Register</h1>
+    <t:beaneditform t:id="register" object="this" submitLabel="Register" clientValidation="false"/>
+
+
+</html>

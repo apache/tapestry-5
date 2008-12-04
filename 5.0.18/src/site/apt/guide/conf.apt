@@ -1,0 +1,255 @@
+ ---
+ Configuring Tapestry
+ ---
+ 
+Configuring Tapestry
+
+  Tapestry runs on top of the standard Java Servlet API.  To the servlet container,
+  such as Tomcat, Tapestry appears as a <servlet filter>.  This gives Tapestry great
+  flexibility in matching URLs without requiring lots of configuration inside web.xml.
+  
+* web.xml
+
+  The majority of configuration occurs inside the servlet deployment descriptor,
+  WEB-INF/web.xml.
+  
+  Most of the configuration is boilerplate; the same for all applications.
+  
+  The application specific configuration is to identify the root application package.
+  Tapestry uses this package name to locate your page and component classes.
+  
+  Page classes must go in the pages sub-package, and components must go in the
+  components sub-package.
+  
+  You specify the root package as a context parameter:
+  
++----+
+<!DOCTYPE web-app
+      PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+      "http://java.sun.com/dtd/web-app_2_3.dtd">
+<web-app>
+    <display-name>My Tapestry Application</display-name>
+    <context-param>
+        <param-name>tapestry.app-package</param-name>
+        <param-value>org.example.myapp</param-value>
+    </context-param>
+    <filter>
+        <filter-name>app</filter-name>
+        <filter-class>org.apache.tapestry5.TapestryFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>app</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+</web-app>
++----+  
+
+  You may name the filter whatever you want, though "app" is a common convention.
+  
+  In this example, page classes will be stored in the <<<org.example.myapp.pages>>> package (or in sub-packages below).
+  Likewise, component classes will be stored in the <<<org.example.myapp.components>>> package.
+  
+* Tapestry Requests vs. Container Requests
+
+  The Tapestry filter matches all the requests that apply to Tapestry, and passes the rest off to the
+  servlet container.
+  
+  Actual files inside the web application take precedence over Tapestry pages, in situation where there
+  would be a naming conflict.  
+  
+  Tapestry recognizes the <root URL>, where the servlet path is simply "/", and renders the application page "Start",
+  if it exists.  
+  
+* Tapestry IoC Configuration
+
+  Most other configuration occurs inside your application's module builder class.  The application module builder
+  will often define new services, provide overrides of services, or make contributions to service configurations.
+  
+  Tapestry looks for a module builder class in the services package (under the root package). It capitalizes
+  the \<filter-name\> and appends "Module".  In the previous example, the module builder class
+  would be org.example.myapp.services.AppModule.
+  
+  If such a class exists, it is added to the IoC Registry. It is not an error for your application to not have a module, though
+  any non-trivial application will have a module.
+
+  An application module will often override some of Tapestry's default, or "factory", symbols, by contributing overrides
+  to the ApplicationDefaults service configuration.  For example:
+
+----
+public class AppModule
+{
+  public static void contributeApplicationDefaults(MappedConfiguration<String,String> configuration)
+  {
+    configuration.add(SymbolConstants.SUPPORTED_LOCALES, "en,fr,de");
+    configuration.add(SymbolConstants.FILE_CHECK_INTERVAL, "10 m");
+  }
+}
+----
+
+* Configuration Symbols
+
+  Tapestry may also be configured via {{{../../tapestry-ioc/symbols.html}symbols}}.  A certain number of built-in services
+  (some of which are not even public) are configured via symbols.  These symbols can be overridden
+  by contributing to the ApplicationDefaults service configuration, or by placing a
+  \<context-param\> element into the application's web.xml,
+  or on the command line
+  by defining JVM System Properties with the -D command line option.
+
+  These symbols are always defined in terms of strings, that are coerced to the appropriate type (a number,
+  a boolean, etc.).  Of special note are <time intervals>, which are specified in a
+  {{{../apidocs/org/apache/tapestry5/ioc/util/TimeInterval.html}particular format}}.
+
+
+  Many of these symbols have an associated constant in the class
+  {{{../apidocs/org/apache/tapestry5/SymbolConstants.html}SymbolConstants}}.
+
+  [tapestry.compress-whitespace]
+    A flag (true or false).  When true (the default) whitespace in component templates is compressed by default
+    (this can be fine-tuned using the standard xml:space attribute on an element in the template).
+    When this flag is false, then whitespace is retained by default (but can still be overridden).
+
+  [tapestry.default-cookie-max-age]
+    The default time interval that cookies created by Tapestry will be kept in the client web browser.
+    The dfault value is equal to one week. 
+    
+    Primarily, this is used with a cookie that exists 
+    to track the preferred user locale.
+
+    The default is "7 d" (that is, seven days).
+
+  [tapestry.default-stylesheet]
+    The default stylesheet automatically injected into every rendered HTML page.  Many Tapestry components assume that
+    this stylesheet is available.  All the classes defined in the stylesheet are prefixed with "t-". The exact contents
+    of the stylesheet are subject to change at any time (they are considered internal), so replacing the stylesheet,
+    rather than overriding selected rules within it, entails some risk.
+
+    The default is org/apache/tapestry5/default.css, stored on the classpath.
+
+  [tapestry.exception-report-page]
+    The name of the page used to report exceptions.  This defaults to "ExceptionReport".
+
+  [tapestry.file-check-interval]
+    Time interval between file system checks. During a file system check, only a single thread is active (all others
+    are blocked) and any files loaded are checked for changes (this is part of {{{reload.html}automatic component reloading}}).
+
+    The default is "1 s" (one second),  and is usually overridden with a higher value in production (say, between one and five minutes).
+
+  [tapestry.file-check-update-timeout]
+    Time interval that Tapestry will wait to obtain the exclusive lock needed for a file check. The default is "50 ms" (50 milliseconds).
+
+    If the exclusive lock can't be obtained in that amount of time, the request will proceeed normally (without the check),
+    but each successive request will attempt to get the lock and perform the check until successful.
+
+  [tapestry.force-absolute-uris]
+     A flag (true or false). When false (the default), Tapestry will attempt to optimize URIs that it generates, using
+     relative URIs when such URIs are shorter than absolute URIs.  You will see some savings when you make generous
+     use of libraries, sub-folders and page activation contexts ... otherwise, no significant difference.
+
+     When true, all URIs will be absolute URIs (including the
+     context path, and the complete path for the request).
+
+  [tapestry.production-mode]
+    A flag (true or false) indicating whether the application is running in production or in development. The default
+    is true, which means that runtime exceptions are not reported with full detail (only the root exception message
+    is displayed, not the entire stack of exceptions, properties and other information shown in development mode).
+
+  [tapestry.page-pool.active-window]
+    The time interval that an instantiated page instance may be cached before being removed. As pages are
+    returned to the pool, they are time stamped. Periodically (as per the file check interval),
+    the pool is scanned for page instances that have not been used recently; those that are outside
+    the active window are discarded.  This is used to free up unnecessary page instances after
+    a request surge.
+
+    The default is "10 m" (10 minutes).
+    
+  [tapestry.page-pool.hard-limit]
+    The absolute maximum number of page instances (for a particular page name / locale combination) that Tapestry
+    will create at any time.  If this number is reached, then requests will fail because a page instance is not
+    available ... this can happen as part of a denial of service attack.  For this value to have any meaning, it
+    should be lower than the number of threads that the servlet container is configured to use when processing
+    requests.
+
+    The default is 20 page instances.
+
+  [tapestry.page-pool.soft-limit]
+    The number of pages in the page pool (for a given page name / locale combination) before which Tapestry will
+    start to wait for existing pages to be made available.  Under this limit of pages, Tapestry will simply
+    create a new page instance if no existing instance is readily available.  Once the soft limit is reached,
+    Tapestry will wait a short period of time (the soft wait interval) to see if an existing page instance
+    is made available.  It will then create a new page instance (unless the hard limit has been reached).
+
+    The default is 5 page instances.    Remember that page pooling is done seperately for each
+    page (and localization of the page).
+
+  [tapestry.page-pool.soft-wait]
+    The time interval that Tapestry will wait for a page instance to become available before deciding whether to create
+    an entirely new page instance.  The default is "10 ms".
+
+  [tapestry.secure-page]
+    If true, then the page may only be accessed via HTTPS.  The {{{../apidocs/org/apache/tapestry5/annotations/Secure.html}@Secure}}
+    annotation will set this value to true.
+
+  [tapestry.script-at-top]
+    If true, then links for external JavaScript libraries will be placed at the top of the page,  inside the
+    \<head\> element, rather than in the default location (at the bottom of the \<body\> element). The \<script\> block for per-page
+    initialization will be placed at the bottom of the page in either case.  The default (scripts at the bottom)
+    was chosen in accordance with {{{http://developer.yahoo.com/performance/rules.html#js_bottom}Yahoo Peformance Best Practices}}. 
+
+  [tapestry.scriptaculous]
+    The path to the embedded copy of {{{http://script.aculo.us/}script.aculo.us}} packaged with Tapestry. This value may be overridden
+    to use a different version of the script.aculo.us library. Tapestry's default version is 1.8.1
+    (including Prototype 1.6.0.1).
+
+  [tapestry.start-page-name]
+    The logical name of the start page, the page that is rendered for the <root URL>.  This is normally "start".
+    This functionality is vestigal: it has been superceded by the use of Index pages.
+
+  [tapestry.supported-locales]
+    A comma-separated list of supported locales.  Incoming requests as "narrowed" to one of these locales, based on closest match.
+    If no match can be found, the first locale in the list is treated as the default.
+
+    The default is (currently) "en,it,es,zh_CN,pt_PT,de,ru,hr,fi_FI,sv_SE,fr_FR,da,pt_BR,ja,el".
+    As the community contributes new localizations of the necessary messages files,
+    this list will expand.  Note that the Tapestry quickstart archetype overrides the factory default, forcing the
+    application to be localized only for "en".
+
+  [tapestry.suppress-redirect-from-action-requests]
+    Normally, Tapestry responds to action requests (such as form submissions) by sending a client-side redirect
+    to the renderring page.  This has a lot of benefits in terms of improving browser navigation, making sure
+    URLs are bookmarkable, and so forth.  However, it has a cost: more data stored persistently in the session,
+    and a double-request for each user action (one action request, one render request).
+
+    Setting this symbol to "true" changes the Tapestry behavior to make it more like Tapestry 4: a markup response
+    is sent directly for the action request, no redirect in the middle. This option should be used with care,
+    and only in cases where you are certain that the benefits outweigh the disadvantages.
+
+
+Ignored Paths
+
+  In some cases, you may use Tapestry is concert with other servlets.  This can cause problems, since
+  Tapestry (being a servlet filter) may see URLs intended for another servlet and attempt to process them.
+
+  The Servlet API does not provide Tapestry with any clues about what other servlets are available in the
+  web application.  Instead, you must configure Tapestry to ignore paths intended for other servlets.
+
+  The IgnoredPathsFilter service is the method for this kind of configuration.  Its configuration
+  is an unordered collection of regular expression patterns.  A request whose path matches any of these
+  patterns is <<not>> processed by Tapestry.
+
+  For example, say you are using {{{http://getahead.org/dwr/}Direct Web Remoting}}.  You'll likely have
+  the servlet path /dwr mapped to the Direct Web Remoting servlet.
+
+  You contribution would look like:
+
+---
+  public static void contributeIgnoredPathsFilter(Configuration<String> configuration)
+  {
+    configuration.add("/dwr/.*");
+  }
+---
+
+  The regular expression matches any path that begins with "/dwr/".
+
+  The regular expressions provided in the configuration are always compiled with case insensitivity enabled.
+
+  Also note that actual files in your web application (images, stylesheets, etc.) are always ignored by Tapestry.

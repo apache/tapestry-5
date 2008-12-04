@@ -1,0 +1,28 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+    <h1>Event Handler Method Translate</h1>
+
+    <t:form clientvalidation="false">
+
+        <t:errors/>
+
+        <div class="t-beaneditor">
+
+            <div class="t-beaneditor-row">
+                <t:label for="count"/>
+                <t:textfield t:id="count"/>
+
+            </div>
+
+            <div class="t-beaneditor-row">
+                <input type="submit" value="Update"/>
+            </div>
+        </div>
+    </t:form>
+
+    <hr/>
+
+    <p>
+        Count: [${count}]
+    </p>
+
+</html>

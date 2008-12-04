@@ -1,0 +1,255 @@
+ ---
+ Injection in Detail
+ ---
+
+Injection in Detail
+
+ Injection in Tapestry IoC can be a complicated subject for a number of reasons:
+
+ * Injection can occur in many places: on fields, and on parameters to methods and constructors of certain objects.
+
+ * Parts of Injection are themselves defined in terms of Tapestry IoC services, many of which are extensible.
+
+ []
+
+ Despite this, injection generally <Just Works>: most of the time, you want
+ Tapestry to inject a service, and only a single
+ service implements the service interface.
+
+ This document discusses what to do when you hit a case
+ that doesn't Just Work, or when you want to extend the injection logic in some way.
+
+ Some aspects of this discussion reflect Tapestry IoC used within a Tapestry web application: the
+ tapestry-core module makes some extensions to injection. 
+
+Injection Triggers
+
+  Injection is triggered in a number of ways:
+
+  * A field in a component class, autobuilt object, or service implementation class the
+    {{{../apidocs/org/apache/tapestry5/ioc/annotations/Inject.html}Inject}} annotation.
+
+  * A method parameter to a service builder method, a decorator method, or a contribute method (in a Tapestry IoC module class).
+
+  * A constructor parameter to an autobuilt object, or a service implementation class.
+
+  * Any of the above with an {{{../apidocs/org/apache/tapestry5/ioc/annotations/InjectService.html}InjectService}}
+    annotation.
+
+  []
+
+  Injection also covers a related matter: providing special resources to a service or component.  For a service,
+  the service's id (as a string) or extensible configuration (as a Collection, List or Map) may be provided.
+  For a component, the component's id, locale, message catalog, or component resources may be provided.
+
+Standard Injection Processing
+
+    This section describes standard injection, which applies at the IoC layer: autobuild objects and
+    service implementations. The steps for injection
+    into Tapestry components are slightly different and are covered later.
+
+    So a the point of injection, Tapestry has identified a field or parameter that should be injected.  At
+    this point, Tapestry knows the following:
+
+    * The field name (if field injection).  The parameter name is not available.
+
+    * The field or parameter type, as a Java class. In many cases, this will be enough to identify what object shall be injected.
+
+    * Any additional annotations on the field or parameter.
+
+    []
+
+    Tapestry proceeds with this information.
+
+
+* Check for InjectService
+
+    Tapestry checks first for the InjectService annotation.  The value of this annotation is the service id
+    to inject.  When InjectService is present at the point of injection, that process is done, though it can
+    fail if the service id indicated does not exist, or if the service's interface is not compatible with
+    the field's type.
+
+* Check for service resources
+
+   This step applies only to IoC layer injection (not to injection into components).
+
+   <Currently: this step only applies to parameter, not to field; an outstanding issue is to support resource
+   injection into fields.>
+
+   When the Inject annotation is <not present> at the point of injection, Tapestry checks to see
+   if a resource can be injected.  When the Inject annotation is present, this step is skipped (this is necessary
+   when the object to be injected has a type that conflicts with a resource type, such as String).
+
+   What resources are available depend on what kind of operation is occuring:
+
+   * Autobuilt object: no special resources
+
+   * Contributor method: The appropriate Configuration, OrderedConfiguration or MappedConfiguration instance.
+
+   * Service builder method:
+
+     * String: the service id
+
+     * {{{../apidocs/org/apache/tapestry5/ioc/ObjectLocator.html}ObjectLocator}} or
+       {{{../apidocs/org/apache/tapestry5/ioc/ServiceResources.html}ServiceResources}}: Used to lookup or autobuild additional objects;
+       the same object is passed for both types
+
+     *  org.slf4j.Logger: Logger for the service, based on the class name of the module and the service id
+
+     * Class: Java class for the service's service interface
+
+     * Collection, List, Map: Combined service contributions
+
+     []
+
+   * Service Implementation Constructor: Same as service builder method.
+
+   * Service decorator method:  Same as service bulider method, without service contributions (Collection, List, Map), plus:
+
+     Object or <Service Interface>: the delegate for the interceptor created by the decorator method
+
+   []
+
+   If field type does not match any of the available resource types, or the Inject annotation is present,
+   logic continues to the next step.
+
+* Service Lookup by Type and Annotations
+
+  Tapestry attempts to find a matching <service>.
+
+  First, it generates a set of services whose service interface is compatible with the injection type. This
+  is based on assignability.
+
+  If the {{{../apidocs/org/apache/tapestry5/ioc/annotations/Local.html}Local}} annotation is present, then
+  services not from the module containing the service being constructed will be eliminated.
+
+  Tapestry then works through the known marker annotations. For each marker annotation that is present
+  at the point of annotation, Tapestry eliminates services which do not have the marker.  Thus, if multiple
+  marker annotations are present, the final service must have <all of them>.
+
+  At the end, of this, Tapestry determines how many services match.
+
+  * If there is a single matching service, then the value to inject as been identified.
+
+  * If there are no matches, and there were no marker annotations at the point of injection,
+    then the Tapestry continues to the next step.
+
+  * Otherwise there were either no matches, or too many matches: Tapestry will throw a RuntimeException.
+
+  []
+
+* MasterObjectProvider Lookup
+
+  This is the point at which Tapestry's extensibility comes into play. MasterObjectProvider is a service,
+  with a configuration of
+  {{{../apidocs/org/apache/tapestry5/ioc/ObjectProvider.html}ObjectProvider}}s.
+
+  The MasterObjectProvider is also the point at which Tapestry's IoC layer injection, and Tapestry's component injection,
+  unite.
+
+  As a chain-of-command, each of the following ObjectProviders will be considered and will attempt
+  to identify the object to be injected.
+
+  <<Note:>> a common problem when extending injection is that contributions into the MasterObjectProvider
+  configuration have to be handled carefully. Any dependencies of the contributed objects
+  should be resolvable using the early stages of the injection process, otherwise
+  MasterObjectProvider will have to be instantiated in order to handle its own injection: Tapestry will detect
+  this impossibility and throw an exception.  In addition, the
+  {{{coerce.html}TypeCoercer}} service is used by several ObjectProvider implementations,
+   so the same restrictions apply to TypeCoercer service contributions.
+
+** Value ObjectProvider
+
+   Checks for the presence of the
+   {{{../apidocs/org/apache/tapestry5/ioc/annotations/Value.html}Value}} annotation.
+   If present, then the annotations value is evaluated (to expand any symbol references), and the
+   TypeCoercer coverts the resulting String to the injection type.
+
+** Symbol ObjectProvider
+
+   Similar to the Value ObjectProvider: the
+   {{{../apidocs/org/apache/tapestry5/ioc/annotations/Symbol.html}Symbol}} annotation's value
+   (if present) is lookup up and converted to the injection type.
+
+** Alias ObjectProvider  (tapestry-core)
+
+  Uses the
+  {{{../apidocs/org/apache/tapestry5/services/Alias.html}Alias}} service to look for an object
+  that can be injected.
+
+  This is commonly used to override a built-in service by contributing an object with the
+  exact same interface.
+
+** Asset ObjectProvider (tapestry-core)
+
+  Checks for the
+  {{{../apidocs/org/apache/tapestry5/annotations/Path.html}Path}}    annotation.
+
+   If present, the annotation value has embedded symbols expanded, and is converted into an Asset (which must
+   exist).
+
+   The TypeCoercer can then convert the Asset to the injection type.
+
+
+** Service ObjectProvider (tapestry-core)
+
+  Looks for the  {{{../apidocs/org/apache/tapestry5/annotations/Service.html}Service}} annotation;
+  if present, the annotation value is the exact service id to inject.  This is necessary because
+  injections into <component> fields are always triggered by the Inject annotation.
+
+* Service Lookup
+
+  If none of the ObjectProviders can identify the value to inject, a last step occurs: lookup by service type.
+  If exactly <one> service matches the injection type, then that service is injected.
+
+  Otherwise, the lookup fails because either no services match, or more than one matches. 
+
+Component Injection
+
+  Inside Tapestry components, injection occurs exclusively on <fields> and is always triggered
+  by the Inject annotation.
+
+  Component field injection is very similar to IoC layer, but with a different set of
+  injectable resources.
+
+  Injection is the responsibility of the
+  {{{../apidocs/org/apache/tapestry5/services/InjectionProvider.html}InjectionProvider}}
+  service, which is a chain-of-command across a number of implementations.
+
+* Block InjectionProvider
+
+  Checks if the field type is Block.  If so, determines the block id
+  to inject (either from the field name, or from an
+  {{{../apidocs/org/apache/tapestry5/annotations/Id.html}Id}}, if present).
+
+* Default InjectionProvider
+
+  Uses the MasterObjectProvider service to provide the injectable value.  The Service Lookup stage
+  is skipped.
+
+* ComponentResources InjectionProvider
+
+  Injects fields of type ComponentResources.
+
+* CommonResources InjectionProvider
+
+  Injects fields with common resources:
+
+  * String: the components' complete id
+
+  * org.slf4j.Logger: Logger for the component (based on component class name)
+
+  * Locale: locale for the containing page (page locale is immutable)
+
+  * Messages: Component's message catalog
+
+  []
+  
+* Asset InjectionProvider
+
+  Triggered by the Path annotation: the Path value has symbols expanded, and is then converted to
+  an Asset.
+
+* Service InjectionProvider
+
+  Equivalent to the Service Lookup phase in an IoC layer injection.

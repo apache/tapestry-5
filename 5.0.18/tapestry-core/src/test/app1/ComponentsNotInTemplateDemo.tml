@@ -1,0 +1,14 @@
+<html t:type="border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+    <h1>Components Not In Template Demo</h1>
+
+    <p>
+        This is a very common example where there's an @Component BeanEditForm on field form, and a t:form
+        here.
+    </p>
+
+    <!-- This will get an id of "form_0" -->
+    <t:form/>
+
+
+</html>

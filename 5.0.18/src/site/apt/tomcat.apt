@@ -1,0 +1,18 @@
+ ----
+ Deployment Notes: Tomcat
+ ----
+ 
+Deployment Notes: Tomcat
+
+  Deploying Tapestry applications into {{{http://tomcat.apache.org/}Tomcat}} is (no longer) any different than deployment using
+  {{{jetty. html}Jetty}} (previously, Tomcat deployment required more effort).
+
+  Tapestry 5 has been tested with Tomcat 5.5.20.
+  
+* index.html
+
+  If your application has an index.html file, Tomcat appears to use that file, rather than triggering the Tapestry filter to render the application Start page
+  for a base URL (just the context path).
+  
+  By contrast, {{{jetty.html}Jetty}} favors the filter over the index.html file. 
+  
