@@ -48,6 +48,9 @@ public class OneShotLock
             // that creates the actual array, and includes itself as [0], getStackTrace() as [1], etc.
             // Maybe it's something to do with synchronized?
 
+            // On the other hand, for 1.6 VMs, the correct element to get is 3. So, perhaps check if
+            // [0] contains getStackTrace() and if it does, use 3 - otherwise use 4.
+
             StackTraceElement element = Thread.currentThread().getStackTrace()[4];
 
             throw new IllegalStateException(UtilMessages.oneShotLock(element));
