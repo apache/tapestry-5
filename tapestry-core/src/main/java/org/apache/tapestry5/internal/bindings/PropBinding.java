@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
 package org.apache.tapestry5.internal.bindings;
 
 import org.apache.tapestry5.PropertyConduit;
+import org.apache.tapestry5.internal.services.Invariant;
 import org.apache.tapestry5.ioc.Location;
 import org.apache.tapestry5.ioc.internal.util.TapestryException;
 
@@ -32,6 +33,8 @@ public class PropBinding extends AbstractBinding
 
     private final String toString;
 
+    private boolean invariant;
+
     public PropBinding(final Object root, final PropertyConduit conduit, final String toString,
                        final Location location)
     {
@@ -40,6 +43,8 @@ public class PropBinding extends AbstractBinding
         this.root = root;
         this.conduit = conduit;
         this.toString = toString;
+
+        invariant = conduit.getAnnotation(Invariant.class) != null;
     }
 
     /**
@@ -78,12 +83,13 @@ public class PropBinding extends AbstractBinding
     }
 
     /**
-     * Returns false; these properties are always dynamic.
+     * Almost always returns false, unless the conduit provides the {@link org.apache.tapestry5.internal.services.Invariant}
+     * annotation.
      */
     @Override
     public boolean isInvariant()
     {
-        return false;
+        return invariant;
     }
 
     @Override
@@ -97,5 +103,4 @@ public class PropBinding extends AbstractBinding
     {
         return conduit.getAnnotation(annotationClass);
     }
-
 }
