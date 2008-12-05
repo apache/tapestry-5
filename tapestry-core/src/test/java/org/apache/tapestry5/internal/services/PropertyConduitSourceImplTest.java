@@ -48,6 +48,48 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
     }
 
     @Test
+    public void literal_conduits_have_invariant_annotation()
+    {
+        PropertyConduit normal = source.create(CompositeBean.class, "12345");
+
+        assertNotNull(normal.getAnnotation(Invariant.class));
+    }
+
+    @Test
+    public void literal_conduits_are_not_updateable()
+    {
+        PropertyConduit normal = source.create(CompositeBean.class, "12345");
+        CompositeBean bean = new CompositeBean();
+
+        try
+        {
+            normal.set(bean, 42);
+            unreachable();
+        }
+        catch (RuntimeException ex)
+        {
+            assertEquals(ex.getMessage(), "Literal values are not updateable.");
+        }
+    }
+
+    @Test
+    public void this_literal_conduit_is_not_updateable()
+    {
+        PropertyConduit normal = source.create(CompositeBean.class, "this");
+        CompositeBean bean = new CompositeBean();
+
+        try
+        {
+            normal.set(bean, 42);
+            unreachable();
+        }
+        catch (RuntimeException ex)
+        {
+            assertEquals(ex.getMessage(), "Literal values are not updateable.");
+        }
+    }
+
+    @Test
     public void question_dot_operator_for_object_type()
     {
         PropertyConduit normal = source.create(CompositeBean.class, "simple.firstName");
@@ -202,5 +244,4 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
 
         assertEquals(annotation.value(), "required");
     }
-
 }

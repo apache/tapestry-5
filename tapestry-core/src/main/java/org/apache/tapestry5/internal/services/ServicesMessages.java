@@ -437,4 +437,9 @@ class ServicesMessages
     {
         return MESSAGES.format("invalid-path-for-library-namespace", URI);
     }
+
+    static String literalConduitNotUpdateable()
+    {
+        return MESSAGES.get("literal-conduit-not-updateable");
+    }
 }

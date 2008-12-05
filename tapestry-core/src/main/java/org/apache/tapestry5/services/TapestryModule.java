@@ -31,7 +31,6 @@ import org.apache.tapestry5.internal.renderers.*;
 import org.apache.tapestry5.internal.services.*;
 import org.apache.tapestry5.internal.transform.*;
 import org.apache.tapestry5.internal.translator.*;
-import org.apache.tapestry5.internal.util.IntegerRange;
 import org.apache.tapestry5.internal.util.RenderableAsBlock;
 import org.apache.tapestry5.internal.util.StringRenderable;
 import org.apache.tapestry5.ioc.*;
@@ -59,7 +58,6 @@ import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -849,6 +847,10 @@ public final class TapestryModule
      * Builds the PropBindingFactory as a chain of command. The terminator of the chain is responsible for ordinary
      * property names (and property paths). Contributions to the service cover additional special cases, such as simple
      * literal values.
+     * <p/>
+     * This mechanism has been replaced in 5.1 with a more sophisticated parser based on ANTLR. See <a
+     * href="https://issues.apache.org/jira/browse/TAP5-79">TAP5-79</a> for details.  There are no longer any built-in
+     * contributions to the configuration.
      *
      * @param configuration contributions of special factories for some constants, each contributed factory may return a
      *                      binding if applicable, or null otherwise
@@ -1920,136 +1922,6 @@ public final class TapestryModule
 
     public void contributePropBindingFactory(OrderedConfiguration<BindingFactory> configuration)
     {
-        BindingFactory keywordFactory = new BindingFactory()
-        {
-            private final Map<String, Object> keywords = CollectionFactory.newCaseInsensitiveMap();
-
-            {
-                keywords.put("true", Boolean.TRUE);
-                keywords.put("false", Boolean.FALSE);
-                keywords.put("null", null);
-            }
-
-            public Binding newBinding(String description, ComponentResources container, ComponentResources component,
-                                      String expression, Location location)
-            {
-                String key = expression.trim();
-
-                if (keywords.containsKey(key)) return new LiteralBinding(description, keywords.get(key), location);
-
-                return null;
-            }
-        };
-
-        BindingFactory thisFactory = new BindingFactory()
-        {
-
-            public Binding newBinding(String description, ComponentResources container, ComponentResources component,
-                                      String expression, Location location)
-            {
-                if ("this".equalsIgnoreCase(expression.trim()))
-                    return new LiteralBinding(description, container.getComponent(), location);
-
-                return null;
-            }
-        };
-
-        BindingFactory longFactory = new BindingFactory()
-        {
-            private final Pattern pattern = Pattern.compile("^\\s*(-?\\d+)\\s*$");
-
-            public Binding newBinding(String description, ComponentResources container, ComponentResources component,
-                                      String expression, Location location)
-            {
-                Matcher matcher = pattern.matcher(expression);
-
-                if (matcher.matches())
-                {
-                    String value = matcher.group(1);
-
-                    return new LiteralBinding(description, new Long(value), location);
-                }
-
-                return null;
-            }
-        };
-
-        BindingFactory intRangeFactory = new BindingFactory()
-        {
-            private final Pattern pattern = Pattern
-                    .compile("^\\s*(-?\\d+)\\s*\\.\\.\\s*(-?\\d+)\\s*$");
-
-            public Binding newBinding(String description, ComponentResources container, ComponentResources component,
-                                      String expression, Location location)
-            {
-                Matcher matcher = pattern.matcher(expression);
-
-                if (matcher.matches())
-                {
-                    int start = Integer.parseInt(matcher.group(1));
-                    int finish = Integer.parseInt(matcher.group(2));
-
-                    IntegerRange range = new IntegerRange(start, finish);
-
-                    return new LiteralBinding(description, range, location);
-                }
-
-                return null;
-            }
-        };
-
-        BindingFactory doubleFactory = new BindingFactory()
-        {
-            // So, either 1234. or 1234.56 or .78
-            private final Pattern pattern = Pattern
-                    .compile("^\\s*(\\-?((\\d+\\.)|(\\d*\\.\\d+)))\\s*$");
-
-            public Binding newBinding(String description, ComponentResources container, ComponentResources component,
-                                      String expression, Location location)
-            {
-                Matcher matcher = pattern.matcher(expression);
-
-                if (matcher.matches())
-                {
-                    String value = matcher.group(1);
-
-                    return new LiteralBinding(description, new Double(value), location);
-                }
-
-                return null;
-            }
-        };
-
-        BindingFactory stringFactory = new BindingFactory()
-        {
-            // This will match embedded single quotes as-is, no escaping necessary.
-
-            private final Pattern pattern = Pattern.compile("^\\s*'(.*)'\\s*$");
-
-            public Binding newBinding(String description, ComponentResources container, ComponentResources component,
-                                      String expression, Location location)
-            {
-                Matcher matcher = pattern.matcher(expression);
-
-                if (matcher.matches())
-                {
-                    String value = matcher.group(1);
-
-                    return new LiteralBinding(description, value, location);
-                }
-
-                return null;
-            }
-        };
-
-        // To be honest, order probably doesn't matter.
-
-        configuration.add("Keyword", keywordFactory);
-        configuration.add("This", thisFactory);
-        configuration.add("Long", longFactory);
-        configuration.add("IntRange", intRangeFactory);
-        configuration.add("Double", doubleFactory);
-        configuration.add("StringLiteral", stringFactory);
     }
 
     /**

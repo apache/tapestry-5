@@ -14,35 +14,59 @@
 
 package org.apache.tapestry5.internal.services;
 
+import org.antlr.runtime.ANTLRInputStream;
+import org.antlr.runtime.CommonTokenStream;
+import org.antlr.runtime.RecognitionException;
+import org.antlr.runtime.tree.Tree;
 import org.apache.tapestry5.PropertyConduit;
+import org.apache.tapestry5.internal.antlr.PropertyExpressionLexer;
+import org.apache.tapestry5.internal.antlr.PropertyExpressionParser;
+import static org.apache.tapestry5.internal.antlr.PropertyExpressionParser.*;
+import org.apache.tapestry5.internal.util.IntegerRange;
 import org.apache.tapestry5.internal.util.MultiKey;
 import org.apache.tapestry5.ioc.AnnotationProvider;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.ioc.internal.util.GenericsUtils;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.*;
 import org.apache.tapestry5.ioc.util.BodyBuilder;
 import org.apache.tapestry5.services.ComponentLayer;
 import org.apache.tapestry5.services.InvalidationListener;
 import org.apache.tapestry5.services.PropertyConduitSource;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 public class PropertyConduitSourceImpl implements PropertyConduitSource, InvalidationListener
 {
+    private static final MethodSignature GET_SIGNATURE = new MethodSignature(Object.class, "get",
+                                                                             new Class[] {Object.class}, null);
+
+    private static final MethodSignature SET_SIGNATURE = new MethodSignature(void.class, "set",
+                                                                             new Class[] {Object.class, Object.class},
+                                                                             null);
+
+    /**
+     * Describes all the gory details of one term (one property or method invocation) from within the expression.
+     */
     private interface ExpressionTermInfo extends AnnotationProvider
     {
+
         /**
          * The name of the method to invoke to read the property value, or null.
          */
         String getReadMethodName();
 
         /**
-         * The name of the method to invoke to write the property value, or null.
+         * The name of the method to invoke to write the property value, or null. Always null for method terms (which
+         * are inherently read-only).
          */
         String getWriteMethodName();
 
@@ -55,15 +79,21 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
          * True if an explicit cast to the return type is needed (typically because of generics).
          */
         boolean isCastRequired();
+
+        /**
+         * Returns a user-presentable name identifying the property or method name.
+         */
+        String getDescription();
     }
-
-
-    private static final String PARENS = "()";
 
     private final PropertyAccess access;
 
     private final ClassFactory classFactory;
 
+    /**
+     * Because of stuff like Hibernate, we sometimes start with a subclass in some inaccessible class loader and need to
+     * work up to a base class from a common class loader.
+     */
     private final Map<Class, Class> classToEffectiveClass = CollectionFactory.newConcurrentMap();
 
     /**
@@ -71,14 +101,431 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
      */
     private final Map<MultiKey, PropertyConduit> cache = CollectionFactory.newConcurrentMap();
 
-    private static final MethodSignature GET_SIGNATURE = new MethodSignature(Object.class, "get",
-                                                                             new Class[] {Object.class}, null);
+    private final Invariant invariantAnnotation = new Invariant()
+    {
+        public Class<? extends Annotation> annotationType()
+        {
+            return Invariant.class;
+        }
+    };
 
-    private static final MethodSignature SET_SIGNATURE = new MethodSignature(void.class, "set",
-                                                                             new Class[] {Object.class, Object.class},
-                                                                             null);
+    private final AnnotationProvider invariantAnnotationProvider = new AnnotationProvider()
+    {
+        public <T extends Annotation> T getAnnotation(Class<T> annotationClass)
+        {
+            if (annotationClass == Invariant.class)
+                return annotationClass.cast(invariantAnnotation);
 
-    private final Pattern SPLIT_AT_DOTS = Pattern.compile("\\.");
+            return null;
+        }
+    };
+
+    private final PropertyConduit literalTrue = newLiteralConduit(Boolean.class, true);
+
+    private final PropertyConduit literalFalse = newLiteralConduit(Boolean.class, false);
+
+    private final PropertyConduit literalNull = newLiteralConduit(Void.class, null);
+
+
+    /**
+     * Encapsulates the process of building a PropertyConduit instance from an expression.
+     */
+    class PropertyConduitBuilder
+    {
+        private final Class rootClass;
+
+        private final ClassFab classFab;
+
+        private final String expression;
+
+        private final Tree tree;
+
+        private Class conduitPropertyType;
+
+        private AnnotationProvider annotationProvider;
+
+        PropertyConduitBuilder(Class rootClass, String expression, Tree tree)
+        {
+            this.rootClass = rootClass;
+            this.expression = expression;
+            this.tree = tree;
+
+            String name = ClassFabUtils.generateClassName("PropertyConduit");
+
+            this.classFab = classFactory.newClass(name, BasePropertyConduit.class);
+        }
+
+        PropertyConduit createInstance()
+        {
+            createAccessors();
+
+            classFab.addConstructor(new Class[] {Class.class, AnnotationProvider.class, String.class}, null,
+                                    "super($$);");
+
+            String description = String.format("PropertyConduit[%s %s]", rootClass.getName(), expression);
+
+            Class conduitClass = classFab.createClass();
+
+            try
+            {
+                return (PropertyConduit) conduitClass.getConstructors()[0].newInstance(conduitPropertyType,
+                                                                                       annotationProvider,
+                                                                                       description);
+            }
+            catch (Exception ex)
+            {
+                throw new RuntimeException(ex);
+            }
+        }
+
+
+        private void createNoOp(ClassFab classFab, MethodSignature signature, String format, Object... values)
+        {
+            String message = String.format(format, values);
+
+            String body = String.format("throw new RuntimeException(\"%s\");", message);
+
+            classFab.addMethod(Modifier.PUBLIC, signature, body);
+        }
+
+        private boolean isLeaf(Tree node)
+        {
+            return node.getType() == IDENTIFIER || node.getType() == INVOKE;
+        }
+
+        private void createAccessors()
+        {
+            BodyBuilder builder = new BodyBuilder().begin();
+
+            builder.addln("%s root = (%<s) $1;", ClassFabUtils.toJavaClassName(rootClass));
+
+            builder.addln(
+                    "if (root == null) throw new NullPointerException(\"Root object of property expression '%s' is null.\");",
+                    expression);
+
+            String previousVariableName = "root";
+            Class activeType = rootClass;
+
+            int step = 0;
+
+            Tree node = tree;
+
+            while (!isLeaf(node))
+            {
+                assertNodeType(node, DEREF, SAFEDEREF);
+
+                step++;
+
+                String variableName = "step" + step;
+
+                activeType = addDereference(builder, activeType, node, previousVariableName, variableName);
+
+                previousVariableName = variableName;
+
+                // Second term is the continuation, possibly another chained DEREF, etc.,
+                // or at the end of the expression, an IDENTIFIER or INVOKE
+                node = node.getChild(1);
+            }
+
+            assertNodeType(node, IDENTIFIER, INVOKE);
+
+            builder.addln("return %s;", previousVariableName);
+
+            builder.end();
+
+            MethodSignature sig = new MethodSignature(activeType, "navigate", new Class[] {Object.class},
+                                                      null);
+
+            classFab.addMethod(Modifier.PRIVATE, sig, builder.toString());
+
+            // So, a this point, we have the navigation method written and it covers all but the terminal
+            // de-reference.  node is an IDENTIFIER or INVOKE. We're ready to use the navigation
+            // method to implement get() and set().
+
+            ExpressionTermInfo info = infoForParseNode(activeType, node);
+
+            createSetter(sig, info);
+            createGetter(sig, info);
+
+            conduitPropertyType = info.getType();
+            annotationProvider = info;
+        }
+
+        private void createSetter(MethodSignature navigateMethod,
+                                  ExpressionTermInfo info)
+        {
+            String methodName = info.getWriteMethodName();
+
+            if (methodName == null)
+            {
+                createNoOp(classFab, SET_SIGNATURE, "Expression '%s' for class %s is read-only.", expression,
+                           rootClass.getName());
+                return;
+            }
+
+            BodyBuilder builder = new BodyBuilder().begin();
+
+            builder.addln("%s target = %s($1);",
+                          ClassFabUtils.toJavaClassName(navigateMethod.getReturnType()),
+                          navigateMethod.getName());
+
+            // I.e. due to ?. operator. The navigate method will already have checked for nulls
+            // if they are not allowed.
+
+            builder.addln("if (target == null) return;");
+
+            String propertyTypeName = ClassFabUtils.toJavaClassName(info.getType());
+
+            builder.addln("target.%s(%s);", methodName, ClassFabUtils.castReference("$2", propertyTypeName));
+
+            builder.end();
+
+            classFab.addMethod(Modifier.PUBLIC, SET_SIGNATURE, builder.toString());
+        }
+
+        private void createGetter(MethodSignature navigateMethod,
+                                  ExpressionTermInfo info)
+        {
+            String methodName = info.getReadMethodName();
+
+            if (methodName == null)
+            {
+                createNoOp(classFab, GET_SIGNATURE, "Expression %s for class %s is write-only.", expression,
+                           rootClass.getName());
+                return;
+            }
+
+            BodyBuilder builder = new BodyBuilder().begin();
+
+            builder.addln("%s target = %s($1);", ClassFabUtils.toJavaClassName(navigateMethod.getReturnType()),
+                          navigateMethod.getName());
+
+            // I.e. due to ?. operator. The navigate method will already have checked for nulls
+            // if they are not allowed.
+
+            builder.addln("if (target == null) return null;");
+
+            builder.addln("return ($w) target.%s();", methodName);
+
+            builder.end();
+
+            classFab.addMethod(Modifier.PUBLIC, GET_SIGNATURE, builder.toString());
+        }
+
+        /**
+         * Part of building the navigation method, adds a de-reference (the '.' or '?.' operator).
+         *
+         * @param builder              recieves the code for this step in the expression
+         * @param activeType           the current type of the expression (this changes with each de-reference, to the
+         *                             type just de-referenced)
+         * @param node                 the DEREF or SAFEDEREF node
+         * @param previousVariableName name of local variable holding previous step in expression
+         * @param variableName         name of variable to be assigned with this step in expression
+         */
+        private Class addDereference(BodyBuilder builder, Class activeType, Tree node, String previousVariableName,
+                                     String variableName)
+        {// The first child is the term.
+
+            Tree term = node.getChild(0);
+
+            assertNodeType(term, IDENTIFIER, INVOKE);
+
+            // Get info about this property or method.
+
+            ExpressionTermInfo info = infoForParseNode(activeType, term);
+
+            String methodName = info.getReadMethodName();
+
+            if (methodName == null)
+                throw new PropertyExpressionException(
+                        ServicesMessages.writeOnlyProperty(info.getDescription(), activeType, expression), expression,
+                        null);
+
+
+            boolean nullable = node.getType() == SAFEDEREF;
+
+            // If a primitive type, convert to wrapper type
+
+            Class termType = info.getType();
+            Class wrappedType = ClassFabUtils.getWrapperType(termType);
+
+            String termJavaName = ClassFabUtils.toJavaClassName(wrappedType);
+            builder.add("%s %s = ", termJavaName, variableName);
+
+            // Casts are needed for primitives, and for the case where
+            // generics are involved.
+
+            if (termType.isPrimitive())
+            {
+                builder.add(" ($w) ");
+            }
+            else if (info.isCastRequired())
+            {
+                builder.add(" (%s) ", termJavaName);
+            }
+
+            builder.addln("%s.%s();", previousVariableName, info.getReadMethodName());
+
+            if (nullable)
+            {
+                builder.addln("if (%s == null) return null;", variableName);
+            }
+            else
+            {
+                // Perform a null check on intermediate terms.
+                builder.addln("if (%s == null) %s.nullTerm(\"%s\", \"%s\", root);",
+                              variableName, PropertyConduitSourceImpl.class.getName(), info.getDescription(),
+                              expression);
+            }
+
+            activeType = wrappedType;
+            return activeType;
+        }
+
+        private void assertNodeType(Tree node, int... expected)
+        {
+            int type = node.getType();
+
+            for (int e : expected)
+            {
+                if (type == e) return;
+            }
+
+            List<String> tokenNames = CollectionFactory.newList();
+
+            for (int i = 0; i < expected.length; i++)
+                tokenNames.add(PropertyExpressionParser.tokenNames[expected[i]]);
+
+            String message =
+                    String.format("Node %s (within expression '%s') was type %s, but was expected (one of) %s.",
+                                  PropertyExpressionParser.tokenNames[type],
+                                  InternalUtils.joinSorted(tokenNames));
+
+            throw new PropertyExpressionException(message, expression, null);
+        }
+
+        private ExpressionTermInfo infoForParseNode(Class activeType, Tree node)
+        {
+            if (node.getType() == INVOKE)
+                return infoForInvokeNode(activeType, node);
+
+
+            String propertyName = node.getText();
+
+            ClassPropertyAdapter classAdapter = access.getAdapter(activeType);
+            final PropertyAdapter adapter = classAdapter.getPropertyAdapter(propertyName);
+
+            if (adapter == null) throw new PropertyExpressionException(
+                    ServicesMessages.noSuchProperty(activeType, propertyName, expression,
+                                                    classAdapter.getPropertyNames()), expression, null);
+
+            return new ExpressionTermInfo()
+            {
+                public String getReadMethodName()
+                {
+                    return name(adapter.getReadMethod());
+                }
+
+                public String getWriteMethodName()
+                {
+                    return name(adapter.getWriteMethod());
+                }
+
+                private String name(Method m)
+                {
+                    return m == null ? null : m.getName();
+                }
+
+                public Class getType()
+                {
+                    return adapter.getType();
+                }
+
+                public boolean isCastRequired()
+                {
+                    return adapter.isCastRequired();
+                }
+
+                public String getDescription()
+                {
+                    return adapter.getName();
+                }
+
+                public <T extends Annotation> T getAnnotation(Class<T> annotationClass)
+                {
+                    return adapter.getAnnotation(annotationClass);
+                }
+            };
+        }
+
+        private ExpressionTermInfo infoForInvokeNode(Class activeType, Tree node)
+        {
+            String methodName = node.getChild(0).getText();
+
+            final String description = methodName + "()";
+
+            try
+            {
+                final Method method = findMethod(activeType, methodName);
+
+                if (method.getReturnType().equals(void.class))
+                    throw new PropertyExpressionException(
+                            ServicesMessages.methodIsVoid(description, activeType, expression), expression, null);
+
+                final Class genericType = GenericsUtils.extractGenericReturnType(activeType, method);
+
+                return new ExpressionTermInfo()
+                {
+                    public String getReadMethodName()
+                    {
+                        return method.getName();
+                    }
+
+                    public String getWriteMethodName()
+                    {
+                        return null;
+                    }
+
+                    public Class getType()
+                    {
+                        return genericType;
+                    }
+
+                    public boolean isCastRequired()
+                    {
+                        return genericType != method.getReturnType();
+                    }
+
+                    public String getDescription()
+                    {
+                        return description;
+                    }
+
+                    public <T extends Annotation> T getAnnotation(Class<T> annotationClass)
+                    {
+                        return method.getAnnotation(annotationClass);
+                    }
+                };
+            }
+            catch (NoSuchMethodException ex)
+            {
+                throw new PropertyExpressionException(
+                        ServicesMessages.methodNotFound(description, activeType, expression), expression, ex);
+            }
+        }
+
+        private Method findMethod(Class activeType, String methodName) throws NoSuchMethodException
+        {
+            for (Method method : activeType.getMethods())
+            {
+
+                if (method.getParameterTypes().length == 0 && method.getName().equalsIgnoreCase(methodName))
+                    return method;
+            }
+
+            throw new NoSuchMethodException(ServicesMessages.noSuchMethod(activeType, methodName));
+        }
+    }
 
     public PropertyConduitSourceImpl(PropertyAccess access, @ComponentLayer ClassFactory classFactory)
     {
@@ -141,309 +588,123 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
      * @param expression
      * @return the conduit
      */
-    private PropertyConduit build(Class rootClass, String expression)
+    private PropertyConduit build(final Class rootClass, String expression)
     {
-        String name = ClassFabUtils.generateClassName("PropertyConduit");
+        Tree tree = parse(expression);
 
-        ClassFab classFab = classFactory.newClass(name, BasePropertyConduit.class);
-
-        classFab.addConstructor(new Class[] {Class.class, AnnotationProvider.class, String.class}, null,
-                                "super($$);");
-
-        String[] terms = SPLIT_AT_DOTS.split(expression);
-
-        MethodSignature navigate = createNavigationMethod(rootClass, classFab, expression, terms);
-
-        String lastTerm = terms[terms.length - 1];
-
-        ExpressionTermInfo termInfo = infoForTerm(navigate.getReturnType(), expression, lastTerm);
-
-        createAccessors(rootClass, expression, classFab, navigate, termInfo);
-
-        String description = String.format("PropertyConduit[%s %s]", rootClass.getName(), expression);
-
-        Class conduitClass = classFab.createClass();
-
-        try
+        switch (tree.getType())
         {
-            return (PropertyConduit) conduitClass.getConstructors()[0].newInstance(termInfo.getType(), termInfo,
-                                                                                   description);
-        }
-        catch (Exception ex)
-        {
-            throw new RuntimeException(ex);
-        }
-    }
+            case TRUE:
 
-    private void createAccessors(Class rootClass, String expression, ClassFab classFab, MethodSignature navigateMethod,
-                                 ExpressionTermInfo termInfo)
-    {
-        createGetter(rootClass, expression, classFab, navigateMethod, termInfo);
-        createSetter(rootClass, expression, classFab, navigateMethod, termInfo);
-    }
+                return literalTrue;
 
-    private void createSetter(Class rootClass, String expression, ClassFab classFab, MethodSignature navigateMethod,
-                              ExpressionTermInfo termInfo)
-    {
-        String methodName = termInfo.getWriteMethodName();
+            case FALSE:
 
-        if (methodName == null)
-        {
-            createNoOp(classFab, SET_SIGNATURE, "Expression %s for class %s is read-only.", expression,
-                       rootClass.getName());
-            return;
-        }
+                return literalFalse;
 
-        BodyBuilder builder = new BodyBuilder().begin();
+            case NULL:
 
-        builder.addln("%s target = %s($1);",
-                      ClassFabUtils.toJavaClassName(navigateMethod.getReturnType()),
-                      navigateMethod.getName());
+                return literalNull;
 
-        // I.e. due to ?. operator
+            case INTEGER:
 
-        builder.addln("if (target == null) return;");
+                // Leading '+' may screw this up.
+                // TODO: Singleton instance for "0", maybe "1"?
 
-        String propertyTypeName = ClassFabUtils.toJavaClassName(termInfo.getType());
+                return newLiteralConduit(Long.class, new Long(tree.getText()));
 
-        builder.addln("target.%s(%s);", methodName, ClassFabUtils.castReference("$2", propertyTypeName));
+            case DECIMAL:
 
-        builder.end();
+                // Leading '+' may screw this up.
+                // TODO: Singleton instance for "0.0"?
 
-        classFab.addMethod(Modifier.PUBLIC, SET_SIGNATURE, builder.toString());
-    }
+                return newLiteralConduit(Double.class, new Double(tree.getText()));
 
-    private void createGetter(Class rootClass, String expression, ClassFab classFab, MethodSignature navigateMethod,
-                              ExpressionTermInfo termInfo)
-    {
-        String methodName = termInfo.getReadMethodName();
+            case STRING:
 
-        if (methodName == null)
-        {
-            createNoOp(classFab, GET_SIGNATURE, "Expression %s for class %s is write-only.", expression,
-                       rootClass.getName());
-            return;
-        }
+                return newLiteralConduit(String.class, tree.getText());
 
-        BodyBuilder builder = new BodyBuilder().begin();
+            case RANGEOP:
 
-        builder.addln("%s target = %s($1);", ClassFabUtils.toJavaClassName(navigateMethod.getReturnType()),
-                      navigateMethod.getName());
+                // For the moment, we know that RANGEOP must be paired with two INTEGERS.
 
-        // I.e. due to ?. operator
+                Tree fromNode = tree.getChild(0);
+                int from = Integer.parseInt(fromNode.getText());
 
-        builder.addln("if (target == null) return null;");
+                Tree toNode = tree.getChild(1);
+                int to = Integer.parseInt(toNode.getText());
 
-        builder.addln("return ($w) target.%s();", methodName);
+                IntegerRange ir = new IntegerRange(from, to);
 
-        builder.end();
+                return newLiteralConduit(IntegerRange.class, ir);
 
-        classFab.addMethod(Modifier.PUBLIC, GET_SIGNATURE, builder.toString());
-    }
+            case THIS:
 
-
-    private void createNoOp(ClassFab classFab, MethodSignature signature, String format, Object... values)
-    {
-        String message = String.format(format, values);
-
-        String body = String.format("throw new RuntimeException(\"%s\");", message);
-
-        classFab.addMethod(Modifier.PUBLIC, signature, body);
-    }
-
-
-    /**
-     * Builds a method that navigates from the root object upto, but not including, the final property. For simple
-     * properties, the generated method is effectively a big cast.  Otherwise, the generated method returns the object
-     * that contains the final property (the final term).       The generated method may return null if an intermediate
-     * term is null (and evaluated using the "?." safe dereferencing operator).
-     *
-     * @param rootClass
-     * @param classFab
-     * @param expression
-     * @param terms      the expression divided into individual terms
-     * @return signature of the added method
-     */
-    private MethodSignature createNavigationMethod(Class rootClass, ClassFab classFab, String expression,
-                                                   String[] terms)
-    {
-        BodyBuilder builder = new BodyBuilder().begin();
-
-        builder.addln("%s root = (%<s) $1;", ClassFabUtils.toJavaClassName(rootClass));
-        String previousStep = "root";
-
-        builder.addln(
-                "if (root == null) throw new NullPointerException(\"Root object of property expression '%s' is null.\");",
-                expression);
-
-        Class activeType = rootClass;
-        ExpressionTermInfo expressionTermInfo = null;
-
-        for (int i = 0; i < terms.length - 1; i++)
-        {
-            String thisStep = "step" + (i + 1);
-            String term = terms[i];
-
-            boolean nullable = term.endsWith("?");
-
-            if (nullable) term = term.substring(0, term.length() - 1);
-
-            expressionTermInfo = infoForTerm(activeType, expression, term);
-
-            String methodName = expressionTermInfo.getReadMethodName();
-
-            if (methodName == null)
-                throw new RuntimeException(ServicesMessages.writeOnlyProperty(term, activeType, expression));
-
-            // If a primitive type, convert to wrapper type
-
-            Class termType = expressionTermInfo.getType();
-            Class wrappedType = ClassFabUtils.getWrapperType(termType);
-
-            String termJavaName = ClassFabUtils.toJavaClassName(wrappedType);
-            builder.add("%s %s = ", termJavaName, thisStep);
-
-            // Casts are needed for primitives, and for the case where
-            // generics are involved.
-
-            if (termType.isPrimitive())
-            {
-                builder.add(" ($w) ");
-            }
-            else if (expressionTermInfo.isCastRequired())
-            {
-                builder.add(" (%s) ", termJavaName);
-            }
-
-            builder.addln("%s.%s();", previousStep, expressionTermInfo.getReadMethodName());
-
-            if (nullable)
-            {
-                builder.add("if (%s == null) return null;", thisStep);
-            }
-            else
-            {
-                // Perform a null check on intermediate terms.
-                builder.addln("if (%s == null) %s.nullTerm(\"%s\", \"%s\", root);",
-                              thisStep, getClass().getName(), term, expression);
-            }
-
-            activeType = wrappedType;
-            previousStep = thisStep;
-        }
-
-        builder.addln("return %s;", previousStep);
-
-        builder.end();
-
-        MethodSignature sig = new MethodSignature(activeType, "navigate", new Class[] {Object.class}, null);
-
-        classFab.addMethod(Modifier.PRIVATE, sig, builder.toString());
-
-        return sig;
-    }
-
-
-    private ExpressionTermInfo infoForTerm(Class activeType, String expression, String term)
-    {
-        if (term.endsWith(PARENS))
-        {
-            String methodName = term.substring(0, term.length() - PARENS.length());
-
-            try
-            {
-                final Method method = findMethod(activeType, methodName);
-
-                if (method.getReturnType().equals(void.class))
-                    throw new RuntimeException(ServicesMessages.methodIsVoid(term, activeType, expression));
-
-                final Class genericType = GenericsUtils.extractGenericReturnType(activeType, method);
-
-                return new ExpressionTermInfo()
+                return new PropertyConduit()
                 {
-                    public String getReadMethodName()
+                    public Object get(Object instance)
                     {
-                        return method.getName();
+                        return instance;
                     }
 
-                    public String getWriteMethodName()
+                    public void set(Object instance, Object value)
                     {
-                        return null;
+                        throw new RuntimeException(ServicesMessages.literalConduitNotUpdateable());
                     }
 
-                    public Class getType()
+                    public Class getPropertyType()
                     {
-                        return genericType;
-                    }
-
-                    public boolean isCastRequired()
-                    {
-                        return genericType != method.getReturnType();
+                        return rootClass;
                     }
 
                     public <T extends Annotation> T getAnnotation(Class<T> annotationClass)
                     {
-                        return method.getAnnotation(annotationClass);
+                        return invariantAnnotationProvider.getAnnotation(annotationClass);
                     }
                 };
-            }
-            catch (NoSuchMethodException ex)
-            {
-                throw new RuntimeException(ServicesMessages.methodNotFound(term, activeType, expression), ex);
-            }
+
+            default:
+                break;
         }
 
-        // Otherwise, just a property name.
-
-        ClassPropertyAdapter classAdapter = access.getAdapter(activeType);
-        final PropertyAdapter adapter = classAdapter.getPropertyAdapter(term);
-
-        if (adapter == null) throw new RuntimeException(
-                ServicesMessages.noSuchProperty(activeType, term, expression, classAdapter.getPropertyNames()));
-
-        return new ExpressionTermInfo()
-        {
-            public String getReadMethodName()
-            {
-                return name(adapter.getReadMethod());
-            }
-
-            public String getWriteMethodName()
-            {
-                return name(adapter.getWriteMethod());
-            }
-
-            private String name(Method m)
-            {
-                return m == null ? null : m.getName();
-            }
-
-            public Class getType()
-            {
-                return adapter.getType();
-            }
-
-            public boolean isCastRequired()
-            {
-                return adapter.isCastRequired();
-            }
-
-            public <T extends Annotation> T getAnnotation(Class<T> annotationClass)
-            {
-                return adapter.getAnnotation(annotationClass);
-            }
-        };
+        return new PropertyConduitBuilder(rootClass, expression, tree).createInstance();
     }
 
-    private Method findMethod(Class activeType, String methodName) throws NoSuchMethodException
+    private <T> PropertyConduit newLiteralConduit(Class<T> type, T value)
     {
-        for (Method method : activeType.getMethods())
-        {
+        return new LiteralPropertyConduit(type, invariantAnnotationProvider,
+                                          String.format("LiteralPropertyConduit[%s]", value), value);
+    }
 
-            if (method.getParameterTypes().length == 0 && method.getName().equalsIgnoreCase(methodName)) return method;
+    private Tree parse(String expression)
+    {
+        InputStream is = new ByteArrayInputStream(expression.getBytes());
+
+        ANTLRInputStream ais;
+
+        try
+        {
+            ais = new ANTLRInputStream(is);
+        }
+        catch (IOException ex)
+        {
+            throw new RuntimeException(ex);
         }
 
-        throw new NoSuchMethodException(ServicesMessages.noSuchMethod(activeType, methodName));
+        PropertyExpressionLexer lexer = new PropertyExpressionLexer(ais);
+
+        CommonTokenStream tokens = new CommonTokenStream(lexer);
+
+        PropertyExpressionParser parser = new PropertyExpressionParser(tokens);
+
+        try
+        {
+            return (Tree) parser.start().getTree();
+        }
+        catch (RecognitionException ex)
+        {
+            throw new RuntimeException(ex);
+        }
     }
 
     /**

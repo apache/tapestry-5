@@ -264,12 +264,11 @@ public class PropBindingFactoryTest extends InternalBaseTestCase
         {
             assertEquals(
                     ex.getMessage(),
-                    "Expression stringHolderMethod().stringValue() for class org.apache.tapestry5.internal.bindings.TargetBean is read-only.");
+                    "Expression 'stringHolderMethod().stringValue()' for class org.apache.tapestry5.internal.bindings.TargetBean is read-only.");
             assertSame(ex.getLocation(), l);
         }
 
         verify();
-
     }
 
     @Test
@@ -436,7 +435,6 @@ public class PropBindingFactoryTest extends InternalBaseTestCase
         }
 
         verify();
-
     }
 
     @Test
@@ -485,7 +483,7 @@ public class PropBindingFactoryTest extends InternalBaseTestCase
         {
             assertEquals(
                     ex.getMessage(),
-                    "Expression readOnly for class org.apache.tapestry5.internal.bindings.TargetBean is read-only.");
+                    "Expression 'readOnly' for class org.apache.tapestry5.internal.bindings.TargetBean is read-only.");
             assertEquals(ex.getLocation(), l);
         }
 
@@ -551,8 +549,8 @@ public class PropBindingFactoryTest extends InternalBaseTestCase
         verify();
     }
 
-    @Test
-    public void special_prop_binding_value_null()
+    @Test(dataProvider = "values")
+    public void special_prop_binding_values(String expression, Object expected)
     {
         Location l = mockLocation();
         String description = "my description";
@@ -560,28 +558,17 @@ public class PropBindingFactoryTest extends InternalBaseTestCase
         Component component = mockComponent();
 
         train_getComponent(resources, component);
-
-        replay();
-
-        Binding binding = factory.newBinding(description, resources, null, "this", l);
-
-        assertSame(binding.get(), component);
-
-        verify();
-    }
-
-    @Test(dataProvider = "values")
-    public void special_prop_binding_values(String expression, Object expected)
-    {
-        Location l = mockLocation();
-        String description = "my description";
-        ComponentResources resources = mockComponentResources();
+        train_getCompleteId(resources, "Does.not.matter");
 
         replay();
 
         Binding binding = factory.newBinding(description, resources, null, expression, l);
 
         assertEquals(binding.get(), expected);
+
+        // All of these are invariatns, even though they are generated from the PropertyConduit.
+
+        assertTrue(binding.isInvariant());
 
         verify();
     }
@@ -609,8 +596,7 @@ public class PropBindingFactoryTest extends InternalBaseTestCase
                         {" -10123.67", -10123.67d},
                         {"'Hello World'", "Hello World"},
                         {" 'Whitespace Ignored' ", "Whitespace Ignored"},
-                        {" ' Inside ' ", " Inside "},
-                        {" 'Nested ' Quotes ' Inside'", "Nested ' Quotes ' Inside"},
-                        {"'''", "'"}};
+                        {" ' Inside ' ", " Inside "}
+                };
     }
 }
