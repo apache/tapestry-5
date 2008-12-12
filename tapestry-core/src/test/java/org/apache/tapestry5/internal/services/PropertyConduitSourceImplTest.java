@@ -16,8 +16,10 @@ package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.PropertyConduit;
 import org.apache.tapestry5.beaneditor.Validate;
+import org.apache.tapestry5.integration.app1.data.IntegerHolder;
 import org.apache.tapestry5.internal.bindings.PropBindingFactoryTest;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
+import org.apache.tapestry5.internal.util.IntegerRange;
 import org.apache.tapestry5.ioc.internal.services.ClassFactoryImpl;
 import org.apache.tapestry5.ioc.services.ClassFab;
 import org.apache.tapestry5.ioc.services.ClassFactory;
@@ -50,20 +52,51 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
     @Test
     public void literal_conduits_have_invariant_annotation()
     {
-        PropertyConduit normal = source.create(CompositeBean.class, "12345");
+        PropertyConduit pc = source.create(CompositeBean.class, "12345");
 
-        assertNotNull(normal.getAnnotation(Invariant.class));
+        Invariant annotation = pc.getAnnotation(Invariant.class);
+
+        assertNotNull(annotation);
+
+        assertSame(annotation.annotationType(), Invariant.class);
     }
+
+    @Test
+    public void range_variable_to()
+    {
+        PropertyConduit pc = source.create(IntegerHolder.class, "10..value");
+        IntegerHolder h = new IntegerHolder();
+
+        h.setValue(5);
+
+        IntegerRange ir = (IntegerRange) pc.get(h);
+
+        assertEquals(ir, new IntegerRange(10, 5));
+    }
+
+    @Test
+    public void range_variable_from()
+    {
+        PropertyConduit pc = source.create(IntegerHolder.class, "value..99");
+        IntegerHolder h = new IntegerHolder();
+
+        h.setValue(72);
+
+        IntegerRange ir = (IntegerRange) pc.get(h);
+
+        assertEquals(ir, new IntegerRange(72, 99));
+    }
+
 
     @Test
     public void literal_conduits_are_not_updateable()
     {
-        PropertyConduit normal = source.create(CompositeBean.class, "12345");
+        PropertyConduit pc = source.create(CompositeBean.class, "12345");
         CompositeBean bean = new CompositeBean();
 
         try
         {
-            normal.set(bean, 42);
+            pc.set(bean, 42);
             unreachable();
         }
         catch (RuntimeException ex)
@@ -243,5 +276,56 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
         assertNotNull(annotation);
 
         assertEquals(annotation.value(), "required");
+    }
+
+    @Test
+    public void method_invocation_with_integer_arguments()
+    {
+        PropertyConduit conduit = source.create(EchoBean.class, "echoInt(storedInt, 3)");
+        EchoBean bean = new EchoBean();
+
+        for (int i = 0; i < 10; i++)
+        {
+            bean.setStoredInt(i);
+            assertEquals(conduit.get(bean), new Integer(i * 3));
+        }
+    }
+
+    @Test
+    public void method_invocation_with_double_argument()
+    {
+        PropertyConduit conduit = source.create(EchoBean.class, "echoDouble(storedDouble, 2.0)");
+        EchoBean bean = new EchoBean();
+
+        double value = 22. / 7.;
+
+        bean.setStoredDouble(value);
+
+        assertEquals(conduit.get(bean), new Double(2. * value));
+    }
+
+    @Test
+    public void method_invocation_with_string_argument()
+    {
+        PropertyConduit conduit = source.create(EchoBean.class, "echoString(storedString, 'B4', 'AFTER')");
+        EchoBean bean = new EchoBean();
+
+        bean.setStoredString("Moe");
+
+        assertEquals(conduit.get(bean), "B4 - Moe - AFTER");
+    }
+
+    @Test
+    public void method_invocation_using_dereference()
+    {
+        PropertyConduit conduit = source.create(EchoBean.class, "echoString(storedString, stringSource.value, 'beta')");
+        EchoBean bean = new EchoBean();
+
+        StringSource source = new StringSource("alpha");
+
+        bean.setStringSource(source);
+        bean.setStoredString("Barney");
+
+        assertEquals(conduit.get(bean), "alpha - Barney - beta");
     }
 }

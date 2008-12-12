@@ -104,6 +104,11 @@ public class InternalUtils
         return array == null ? 0 : array.length;
     }
 
+    public static int size(Collection collection)
+    {
+        return collection == null ? 0 : collection.size();
+    }
+
     /**
      * Strips leading "_" and "$" and trailing "_" from the name.
      */

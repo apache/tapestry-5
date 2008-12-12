@@ -127,13 +127,13 @@ Binding Expressions
 *------------+----------------------------------------------------------------------------------+
 | message    | Retrieves a value from the component's {{{localization.html}message catalog}}.   |
 *------------+----------------------------------------------------------------------------------+
-| prop       | The name of a property of the containing component to read or update.            |
+| prop       | A {{{propexp.html}property expression}} to read or update.                       |
 *------------+----------------------------------------------------------------------------------+
 | translate  | The name of a configured translator.                                             |
 *------------+----------------------------------------------------------------------------------+
 | validate   | A <validator specification> used to create some number of field validators.      |
 *------------+----------------------------------------------------------------------------------+
-| var        | Allows a render variable of the component to be read or updated. |      |
+| var        | Allows a render variable of the component to be read or updated.                 |
 *------------+----------------------------------------------------------------------------------+
 
   Parameters have a default prefix, usually "prop:", that is used when the prefix is not provided.
@@ -177,54 +177,19 @@ Render Variables
 
   Render variable names are case insensitive.
 
-Property Bindings
+Property Expression Bindings
 
-  The "prop:" binding prefix indicates a property binding.
-  
-  The expression for a property binding is a dotted sequence of property names.  Simple
-  property expressions are just the name of a property, "prop:userName".  Complex property
-  expression may do a little navigation before getting to the property to read and/or update:
-  "prop:userData.name".  
-  
-  In addition to property names, you may also invoke arbitrary methods.  The methods must be public,
-  return a non-void value, throw no checked exceptions, and take no parameters.  To differentiate
-  a method name from a property name, you simply append the open and close parenthesis.  Thus
-  the prior examples could be rewritten as "prop:getUserName()" and "prop:getUserData().getName()".
-  Note that when the last term in the expression is a method name, the binding will be read-only,
-  rather than read/write.
-  
-  This feature is most useful for accessing a couple of propertys of standard collection classes
-  that aren't named as proper properties, such as Collection.size(), or Map.keySet().
-      
-  Ever get frustrated, tripping over null pointers inside such an expression?  You may use
-  "?." instead of "." as the separator.  This adds a null check and aborts the expression
-  if the term is null.  Thus "foo?.bar?.baz" will return null if either foo or bar are null.
-  Likewise, updating "foo?.bar?.baz" will turn into a no-op if foo or bar is null.    
-      
-  In addition, a few special cases are also supported. 
-  In most cases, these special values save you the trouble of adding a "literal:" prefix to
-  the value.  These special cases are <alternatives> to property expressions.
-  
-  * "true" and "false" will be converted to booleans. 
-  
-  * "null" will be the  value null. 
+  The "prop:" binding prefix indicates a property expression binding.
+
+  Property expressions are used to link a parameter of a component to a property
+  of its container. Property expressions
+  can navigate a series of properties and/or invoke methods, as well as several
+  other useful patterns.  Property expressions have
+  {{{propexp.html}their own documentation}}.
+
+  The default binding prefix in most cases is "prop:", which is why it is usually
+  omitted.
     
-  * "this" will be the component itself.
-  
-  * Simple numeric values are also accepted. These will be parsed into Long or Double objects.
-    Ex: "prop:3.14".
-    
-  * A range of integers separated by two periods. Ex: "1..10".  
-  
-  * Literal strings, inside single quotes.  Ex: "'Hello World'"
-  
-  []
-  
-  In all these cases, excess whitespace is ignored.  For the keywords ("true", "false", "this" and
-  "null"), case is ignored.
-  
-  Such values are read only and invariant.
-  
 Validate Bindings
 
   The "validate:" binding prefix is highly specialized. It allows a short string to be

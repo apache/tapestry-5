@@ -66,6 +66,12 @@
                         <goals>
                             <goal>antlr</goal>
                         </goals>
+                        <configuration>
+                            <!-- This is a hack so that the parser grammar can locate the tokens file generated
+                                 by the lexer grammar. -->
+                            <libDirectory>target/generated-sources/antlr/org/apache/tapestry5/internal/antlr
+                            </libDirectory>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>

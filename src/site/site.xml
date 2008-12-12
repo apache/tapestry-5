@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <!-- 
-   Copyright 2007 The Apache Software Foundation
+   Copyright 2007, 2008 The Apache Software Foundation
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -96,6 +96,7 @@
             <item name="Page Lifecycle" href="guide/lifecycle.html"/>
             <item name="Page Navigation" href="guide/pagenav.html"/>
             <item name="Persistent Data" href="guide/persist.html"/>
+            <item name="Property Expressions" href="guide/propexp.html"/>
             <item name="Project Layout" href="guide/project-layout.html"/>
             <item name="Request Processing" href="guide/request.html"/>
             <item name="Service Status" href="guide/servicestatus.html"/>
