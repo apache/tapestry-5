@@ -17,6 +17,7 @@ package org.apache.tapestry5.internal.services;
 import org.apache.tapestry5.PropertyConduit;
 import org.apache.tapestry5.ioc.AnnotationProvider;
 import org.apache.tapestry5.ioc.internal.util.Defense;
+import org.apache.tapestry5.ioc.services.TypeCoercer;
 
 import java.lang.annotation.Annotation;
 
@@ -32,30 +33,45 @@ public abstract class BasePropertyConduit implements PropertyConduit
 
     private final String description;
 
-    public BasePropertyConduit(Class propertyType, AnnotationProvider annotationProvider, String description)
+    private final TypeCoercer typeCoercer;
+
+    public BasePropertyConduit(Class propertyType, AnnotationProvider annotationProvider, String description,
+                               TypeCoercer typeCoercer)
     {
         Defense.notNull(propertyType, "propertyType");
         Defense.notNull(annotationProvider, "annotationProvider");
         Defense.notBlank(description, "description");
+        Defense.notNull(typeCoercer, "typeCoercer");
 
         this.propertyType = propertyType;
         this.annotationProvider = annotationProvider;
         this.description = description;
+        this.typeCoercer = typeCoercer;
     }
 
     @Override
-    public String toString()
+    public final String toString()
     {
         return description;
     }
 
-    public <T extends Annotation> T getAnnotation(Class<T> annotationClass)
+    public final <T extends Annotation> T getAnnotation(Class<T> annotationClass)
     {
         return annotationProvider.getAnnotation(annotationClass);
     }
 
-    public Class getPropertyType()
+    public final Class getPropertyType()
     {
         return propertyType;
+    }
+
+    protected final int toInt(Object value)
+    {
+        return coerce(value, int.class).intValue();
+    }
+
+    protected final <T> T coerce(Object value, Class<T> type)
+    {
+        return typeCoercer.coerce(value, type);
     }
 }

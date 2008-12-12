@@ -1,0 +1,97 @@
+ ---
+ Property Expressions
+ ---
+
+Property Expressions
+
+  Tapestry uses property expressions to move data between components.  Property expressions
+  are the basis of the {{{parameters.html}component parameters}} and
+  {{{templates.html}template expansions}}.
+
+  A property expression is a string that explains to Tapestry how to navigate from a root object
+  (the containing component) through some number of properties, to a final property that can be
+  read or updated.
+
+  As elsewhere in Tapestry, the names of properties and methods are recognized in a case-insensitive
+  manner.
+
+  The most basic form of a property expression is a simple property name, such as "userName".
+
+  A series of property names may be specified, seperated by commas:  "user.name", which is equivalent
+  to either <<<getUser().getName()>>> or <<<getUser().setName()>>>, depending on context.
+
+  The "." is called the "dereference operator".  A second operator is "?." or the "safe dereference operator".
+  This works the same as "." except that it allows any of the properties to be null.  When reading, a null
+  short-circuits the expression (which returns null).  When writing to a property, an intermediate null value will
+  cause the value to be discarded without error.
+
+  In other words, "user?.name" works, even when the user property may be null.
+
+  Property expressions can also reference public methods.  Methods may take parameters (or not), but must
+  not return void.  When the final term in a property expression is a method, then the property expression
+  is read-only.
+
+  Being able to invoke methods was originally added so that it was possible to access methods such as
+  java.util.Map.size() (which is not named like a property getter method). In Tapestry 5.1, property expressions
+  were extended so that parameters could be passed into methods.
+
+  Parameters to methods are, themselves, property expressions.  This means that you can write a property expression
+  that reads a property and passes it as a parameter to a method, and then access a property of the object returns
+  from the method.
+
+Compilation
+
+  Property expressions are compiled to Java classes at runtime; there is no runtime reflection (unlike
+  the OGNL expression language used in prior releases of Tapestry).
+
+Grammar
+
+---
+expression : keyword | rangeOp | constant | propertyChain;
+
+keyword : 'null' | 'true' | 'false' | 'this';
+
+constant : <integer> | <decimal> | <string>;
+
+rangeOp :  rangeOpArg '..' rangeOpArg;
+
+rangeOpArg : <integer> | propertyChain;
+
+propertyChain : term '.' propertyChain
+              | term '?.' propertyChain
+              | term;
+
+term :   <identifier>
+     |   <identifier> '(' ')'
+     |   <identifier> '(' expression (',' expression )* ')';
+
+     
+---
+
+  Notes:
+
+  * Whitespace is ignored.
+  
+  * Integers and decimals may have a leading sign ('+' or '-').
+
+  * Constants are in base 10 (sorry, octal and hex not yet supported). Decimals may contain a decimal point
+    (exponent notation not yet supported).
+
+  * Literal strings are enclosed in single quotes.
+
+  * The rangeOp creates a range object that will iterate between the two values. The upper and lower bounds
+    may be literal integers, or property expressions.
+
+  * An identifier by itself is a property name. An identifier with parenthesis is a method invocation.
+
+  * Property names, method names, and literals are case-insensitive.
+  
+  * 'this' is the root object (i.e., the containing component).
+
+  []
+
+  Method matching is based on method name and number of parameters, but not parameter types.  The
+  {{{coercion.html}TypeCoercer}} service is used to convert parameters to the correct type to
+  be passed into the method.
+
+  

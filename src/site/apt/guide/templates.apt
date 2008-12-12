@@ -236,7 +236,7 @@ Expansions
   
   Under the covers, expansions are the same as
   {{{parameters.html}parameter bindings}}.  The default
-  binding prefix for expansions is "prop:" (that is, the name of a property), but
+  binding prefix for expansions is "prop:" (that is, the name of a property or a {{{propexp.html}property expression}}), but
   other binding prefixes are useful, especially "message:" (to access a localized
   message from the component's message catalog).
   

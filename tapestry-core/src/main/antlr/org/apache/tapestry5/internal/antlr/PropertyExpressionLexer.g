@@ -12,19 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-grammar PropertyExpression;
+lexer grammar PropertyExpressionLexer;
 
 
 options
 {
-  output=AST;		
-  ASTLabelType=CommonTree;
-}
-
-tokens
-{	
-	// Parser token representing a method invocation
-    	INVOKE;
+  superClass='org.apache.tapestry5.internal.antlr.BaseLexer';
 }
 
 @header
@@ -32,14 +25,7 @@ tokens
 package org.apache.tapestry5.internal.antlr;
 }
 
-@lexer::header
-{
-package org.apache.tapestry5.internal.antlr;
-}
 	
-start 	:	expression^ EOF!;
-		
-
 // Integer constant
 fragment INTEGER
 	:	;	
@@ -64,6 +50,7 @@ fragment SIGN
 	:	('+'|'-');
 LPAREN 	:	'(';
 RPAREN 	:	')';
+COMMA	:	',';
 
 fragment QUOTE
 	:	'\'';
@@ -129,30 +116,17 @@ STRING
 NUMBER_OR_RANGEOP
 	:	SIGN? DIGIT+
 		(
-			{ input.LA(2) != '.' }? => '.' DIGIT* { $type = DECIMAL; }
-			| { $type = INTEGER; }
+			{ input.LA(2) != '.' }? => '.' DIGIT* {   $type = DECIMAL; stripLeadingPlus(); }
+			| {  $type = INTEGER;  stripLeadingPlus(); }
 		)
 		
-	|	SIGN '.' DIGIT+ { $type = DECIMAL; }
+	|	SIGN '.' DIGIT+ {  $type = DECIMAL;  stripLeadingPlus(); }
 	
 	|	'.'
 		( 
-			DIGIT+ { $type = DECIMAL; }
+			DIGIT+ { $type = DECIMAL; stripLeadingPlus();}
 			| '.' {$type = RANGEOP; }
 			| {$type = DEREF; }
 		)
 	;	
 
-expression
-	:	term DEREF expression -> ^(DEREF term expression)
-	|	term SAFEDEREF expression -> ^(SAFEDEREF term expression)
-	|	term;
-	
-term	:	(NULL | TRUE | FALSE | THIS)
-	|	from=INTEGER  RANGEOP to=INTEGER -> ^(RANGEOP $from $to)
-	|	INTEGER
-	|	DECIMAL 
-	|	IDENTIFIER
-	|	STRING
-	|	id=IDENTIFIER LPAREN RPAREN -> ^(INVOKE $id)
-	;

@@ -97,7 +97,9 @@ public class InternalUtilsTest extends IOCTestCase
     @Test
     public void array_size_when_null()
     {
-        assertEquals(InternalUtils.size(null), 0);
+        Object[] array = null;
+
+        assertEquals(InternalUtils.size(array), 0);
     }
 
     @Test
@@ -559,5 +561,17 @@ public class InternalUtilsTest extends IOCTestCase
         map.put("gnip", 97);
 
         assertSame(InternalUtils.keys(map), map.keySet());
+    }
+
+    @Test
+    public void collection_size()
+    {
+        Collection c = null;
+
+        assertEquals(InternalUtils.size(c), 0);
+
+        c = Arrays.asList("moe", "larry", "curly");
+
+        assertEquals(InternalUtils.size(c), 3);
     }
 }

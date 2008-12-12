@@ -15,6 +15,7 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.ioc.AnnotationProvider;
+import org.apache.tapestry5.ioc.services.TypeCoercer;
 
 /**
  * A PropertyConduit for a literal value in an expression, such as a number, or "true", "false" or "null".
@@ -24,9 +25,10 @@ public class LiteralPropertyConduit extends BasePropertyConduit
     private final Object value;
 
     public LiteralPropertyConduit(Class propertyType, AnnotationProvider annotationProvider, String description,
+                                  TypeCoercer typeCoercer,
                                   Object value)
     {
-        super(propertyType, annotationProvider, description);
+        super(propertyType, annotationProvider, description, typeCoercer);
 
         this.value = value;
     }

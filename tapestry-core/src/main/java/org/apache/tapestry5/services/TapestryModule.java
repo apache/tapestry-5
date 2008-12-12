@@ -1132,11 +1132,9 @@ public final class TapestryModule
         return chainBuilder.build(Dispatcher.class, configuration);
     }
 
-    public PropertyConduitSource buildPropertyConduitSource(@ComponentLayer ClassFactory componentClassFactory,
+    public PropertyConduitSource buildPropertyConduitSource(@Autobuild PropertyConduitSourceImpl service,
                                                             @ComponentClasses InvalidationEventHub hub)
     {
-        PropertyConduitSourceImpl service = new PropertyConduitSourceImpl(propertyAccess, componentClassFactory);
-
         hub.addInvalidationListener(service);
 
         return service;

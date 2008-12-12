@@ -77,6 +77,8 @@ Third Party Libraries, Tutorials and Resources
 
 New And Of Note
 
+  * Property expressions can now invoke methods with parameters.Á
+
   * IoC Service contributions may now be made in terms of classes (that are automatically instantiated) as well as
     instances.
 

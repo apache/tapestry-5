@@ -36,9 +36,9 @@ public interface PropertyConduitSource
      * so despite the name, this method does not always create a <em>new</em> conduit. The cache is cleared if a change
      * to component classes is observed.
      *
-     * @param rootClass  the class of the root object to which the expression is applied
+     * @param rootType   the type of the root object to which the expression is applied
      * @param expression expression to be evaluated on instances of the root class
      * @return RuntimeException if the expression is invalid (poorly formed, references non-existent properties, etc.)
      */
-    PropertyConduit create(Class rootClass, String expression);
+    PropertyConduit create(Class rootType, String expression);
 }
