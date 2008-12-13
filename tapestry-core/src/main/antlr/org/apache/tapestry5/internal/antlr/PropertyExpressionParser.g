@@ -27,6 +27,8 @@ tokens
 {	
 	// Parser token representing a method invocation
     	INVOKE;
+    	// A List (top level, or as method parameter)
+    	LIST;
 }
 
 @header
@@ -42,6 +44,7 @@ expression
 	|	rangeOp
 	|	constant
 	|	propertyChain
+	|	list
 	;
 	
 keyword	:	NULL | TRUE | FALSE | THIS;
@@ -74,3 +77,6 @@ rangeOp
 rangeopArg 
 	:	INTEGER
 	|	propertyChain;	
+	
+list	:	LBRACKET RBRACKET -> ^(LIST)
+	|	LBRACKET expressionList RBRACKET -> ^(LIST expressionList);	

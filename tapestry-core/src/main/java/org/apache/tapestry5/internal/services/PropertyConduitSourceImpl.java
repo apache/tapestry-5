@@ -54,6 +54,20 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
                                                                              new Class[] {Object.class, Object.class},
                                                                              null);
 
+    private static final Method RANGE;
+
+    static
+    {
+        try
+        {
+            RANGE = BasePropertyConduit.class.getMethod("range", int.class, int.class);
+        }
+        catch (NoSuchMethodException ex)
+        {
+            throw new RuntimeException(ex);
+        }
+    }
+
     private final AnnotationProvider nullAnnotationProvider = new NullAnnotationProvider();
 
     private static class ConstructorParameter
@@ -118,6 +132,27 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
          * Returns a user-presentable name identifying the property or method name.
          */
         String getDescription();
+    }
+
+    /**
+     * How are null values in intermdiate terms to be handled?
+     */
+    private enum NullHandling
+    {
+        /**
+         * Add code to check for null and throw exception if null.
+         */
+        FORBID,
+
+        /**
+         * Add code to check for null and short-circuit (i.e., the "?." safe-dereference operator)
+         */
+        ALLOW,
+
+        /**
+         * Add no null check at all.
+         */
+        IGNORE
     }
 
     private class GeneratedTerm
@@ -289,7 +324,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
             return values.toArray();
         }
 
-        String addInjection(Class fieldType, Object fieldValue)
+        private String addInjection(Class fieldType, Object fieldValue)
         {
             String fieldName =
                     String.format("injected_%s_%d",
@@ -317,7 +352,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
         {
             int type = node.getType();
 
-            return type == IDENTIFIER || type == INVOKE || type == RANGEOP;
+            return type != DEREF && type != SAFEDEREF;
         }
 
         private void createGetRoot()
@@ -377,7 +412,6 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
             classFab.addMethod(Modifier.PRIVATE, sig, navBuilder.toString());
 
-
             createGetterAndSetter(activeType, sig, node);
         }
 
@@ -407,35 +441,70 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
                     // As currently implemented, RANGEOP can only appear as the top level, which
                     // means we didn't need the navigate method after all.
 
-                    createRangeOpGetter(navigateMethod, node);
+                    createRangeOpGetter(node);
                     createNoOpSetter();
 
                     conduitPropertyType = IntegerRange.class;
 
                     return;
 
+                case LIST:
+
+                    createListGetter(node);
+                    createNoOpSetter();
+
+                    conduitPropertyType = List.class;
+
+                    return;
 
                 default:
-                    throw unexpectedNodeType(node, IDENTIFIER, INVOKE, RANGEOP);
+                    throw unexpectedNodeType(node, IDENTIFIER, INVOKE, RANGEOP, LIST);
             }
         }
 
-        private void createRangeOpGetter(MethodSignature navigateMethod, Tree node)
+        private void createRangeOpGetter(Tree node)
         {
             BodyBuilder builder = new BodyBuilder().begin();
 
             addRootVariable(builder);
 
-            String fromVar = subexpression(builder, node.getChild(0)).getVariableName();
-            String toVar = subexpression(builder, node.getChild(1)).getVariableName();
-
-            builder.addln("return new %s(toInt(%s), toInt(%s));", IntegerRange.class.getName(), fromVar, toVar);
+            builder.addln("return %s;", createMethodInvocation(builder, node, 0, RANGE));
 
             builder.end();
 
             classFab.addMethod(Modifier.PUBLIC, GET_SIGNATURE, builder.toString());
         }
 
+        public void createListGetter(Tree node)
+        {
+            BodyBuilder builder = new BodyBuilder().begin();
+
+            addRootVariable(builder);
+
+            builder.addln("return %s;", createListConstructor(builder, node));
+
+            builder.end();
+
+            classFab.addMethod(Modifier.PUBLIC, GET_SIGNATURE, builder.toString());
+        }
+
+        private String createListConstructor(BodyBuilder builder, Tree node)
+        {
+            String listName = nextVariableName(List.class);
+
+            int count = node.getChildCount();
+
+            builder.addln("java.util.List %s = new java.util.ArrayList(%d);", listName, count);
+
+            for (int i = 0; i < count; i++)
+            {
+                GeneratedTerm generatedTerm = subexpression(builder, node.getChild(i));
+
+                builder.addln("%s.add(($w) %s);", listName, generatedTerm.getVariableName());
+            }
+
+            return listName;
+        }
 
         /**
          * Evalutates the node as a sub expression, storing the result into a new variable, whose name is returned.
@@ -455,9 +524,9 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
                 {
                     case INTEGER:
 
-                        Long integerValue = new Long(node.getText());
+                        long integerValue = Long.parseLong(node.getText());
 
-                        previousVariableName = addInjection(Long.class, integerValue);
+                        previousVariableName = addInjection(long.class, integerValue);
                         activeType = Long.class;
 
                         node = null;
@@ -466,8 +535,9 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
                     case DECIMAL:
 
-                        Double decimalValue = new Double(node.getText());
-                        previousVariableName = addInjection(Double.class, decimalValue);
+                        double decimalValue = Double.parseDouble(node.getText());
+
+                        previousVariableName = addInjection(double.class, decimalValue);
                         activeType = Double.class;
 
                         node = null;
@@ -499,7 +569,8 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
                     case IDENTIFIER:
                     case INVOKE:
 
-                        generated = addAccessForPropertyOrMethod(builder, activeType, node, previousVariableName, true);
+                        generated = addAccessForPropertyOrMethod(builder, activeType, node, previousVariableName,
+                                                                 NullHandling.IGNORE);
 
                         previousVariableName = generated.getVariableName();
                         activeType = generated.getType();
@@ -508,8 +579,18 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
                         break;
 
+                    case LIST:
+
+                        previousVariableName = createListConstructor(builder, node);
+                        activeType = List.class;
+
+                        node = null;
+
+                        break;
+
                     default:
-                        throw unexpectedNodeType(node, INTEGER, DECIMAL, STRING, DEREF, SAFEDEREF, IDENTIFIER, INVOKE);
+                        throw unexpectedNodeType(node, INTEGER, DECIMAL, STRING, DEREF, SAFEDEREF, IDENTIFIER, INVOKE,
+                                                 LIST);
                 }
             }
 
@@ -589,7 +670,32 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
             classFab.addMethod(Modifier.PUBLIC, GET_SIGNATURE, builder.toString());
         }
 
-        private String createMethodInvocation(BodyBuilder bodyBuilder, Tree methodInvocation, Method method)
+
+        /**
+         * Creates a method invocation call for the given node (an INVOKE node).
+         *
+         * @param bodyBuilder may receive new code to define variables for some sub-expressions
+         * @param node        the INVOKE node; child #1 and up are parameter expressions to the method being invoked
+         * @param method      defines the name and parameter types of the method to invoke
+         * @return method invocation string (the name of the method and any parameters, ready to be added to a method
+         *         body)
+         */
+        private String createMethodInvocation(BodyBuilder bodyBuilder, Tree node, Method method)
+        {
+            return createMethodInvocation(bodyBuilder, node, 1, method);
+        }
+
+        /**
+         * Creates a method invocation call for the given node
+         *
+         * @param bodyBuilder may receive new code to define variables for some sub-expressions
+         * @param node        the node containing child nodes for the parameters
+         * @param childOffset the offset to the first parameter (for example, this is 1 for an INVOKE node)
+         * @param method      defines the name and parameter types of the method to invoke
+         * @return method invocation string (the name of the method and any parameters, ready to be added to a method
+         *         body)
+         */
+        private String createMethodInvocation(BodyBuilder bodyBuilder, Tree node, int childOffset, Method method)
         {
             Class[] parameterTypes = method.getParameterTypes();
 
@@ -602,7 +708,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
             {
                 // child(0) is the method name, child(1) is the first parameter, etc.
 
-                GeneratedTerm generatedTerm = subexpression(bodyBuilder, methodInvocation.getChild(i + 1));
+                GeneratedTerm generatedTerm = subexpression(bodyBuilder, node.getChild(i + childOffset));
                 String variableName = generatedTerm.getVariableName();
 
                 Class actualType = generatedTerm.getType();
@@ -639,8 +745,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
          * Extends the navigate method for a node, which will be a DEREF or SAFEDERF.
          */
         private GeneratedTerm processDerefNode(BodyBuilder builder, Class activeType, Tree node,
-                                               String previousVariableName
-        )
+                                               String previousVariableName)
         {
             // The first child is the term.
 
@@ -655,7 +760,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
 
             return addAccessForPropertyOrMethod(builder, activeType, term, previousVariableName,
-                                                allowNull);
+                                                allowNull ? NullHandling.ALLOW : NullHandling.FORBID);
         }
 
         private String nextVariableName(Class type)
@@ -673,7 +778,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
         private GeneratedTerm addAccessForPropertyOrMethod(BodyBuilder builder, Class activeType, Tree term,
                                                            String previousVariableName,
-                                                           boolean allowNull)
+                                                           NullHandling nullHandling)
         {
             assertNodeType(term, IDENTIFIER, INVOKE);
 
@@ -717,16 +822,21 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
             builder.addln("%s.%s;", previousVariableName, invocation);
 
-            if (allowNull)
+            switch (nullHandling)
             {
-                builder.addln("if (%s == null) return null;", variableName);
-            }
-            else
-            {
-                // Perform a null check on intermediate terms.
-                builder.addln("if (%s == null) %s.nullTerm(\"%s\", \"%s\", $1);",
-                              variableName, PropertyConduitSourceImpl.class.getName(), info.getDescription(),
-                              expression);
+                case ALLOW:
+                    builder.addln("if (%s == null) return null;", variableName);
+                    break;
+
+                case FORBID:
+                    // Perform a null check on intermediate terms.
+                    builder.addln("if (%s == null) %s.nullTerm(\"%s\", \"%s\", $1);",
+                                  variableName, PropertyConduitSourceImpl.class.getName(), info.getDescription(),
+                                  expression);
+                    break;
+
+                default:
+                    break;
             }
 
             return new GeneratedTerm(wrappedType, variableName);

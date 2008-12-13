@@ -47,7 +47,7 @@ Compilation
 Grammar
 
 ---
-expression : keyword | rangeOp | constant | propertyChain;
+expression : keyword | rangeOp | constant | propertyChain | list;
 
 keyword : 'null' | 'true' | 'false' | 'this';
 
@@ -62,9 +62,11 @@ propertyChain : term '.' propertyChain
               | term;
 
 term :   <identifier>
-     |   <identifier> '(' ')'
-     |   <identifier> '(' expression (',' expression )* ')';
+     |   <identifier> '(' expressionList? ');
 
+list : '[' expressionList? ']';
+
+expressionList : expression (',' expression)*;
      
 ---
 
@@ -74,7 +76,7 @@ term :   <identifier>
   
   * Integers and decimals may have a leading sign ('+' or '-').
 
-  * Constants are in base 10 (sorry, octal and hex not yet supported). Decimals may contain a decimal point
+  * Constants are in base 10 (octal and hex notation is not yet supported). Decimals may contain a decimal point
     (exponent notation not yet supported).
 
   * Literal strings are enclosed in single quotes.
@@ -84,7 +86,7 @@ term :   <identifier>
 
   * An identifier by itself is a property name. An identifier with parenthesis is a method invocation.
 
-  * Property names, method names, and literals are case-insensitive.
+  * Property names, method names, and keywords are case-insensitive.
   
   * 'this' is the root object (i.e., the containing component).
 

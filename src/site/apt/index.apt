@@ -77,7 +77,7 @@ Third Party Libraries, Tutorials and Resources
 
 New And Of Note
 
-  * Property expressions can now invoke methods with parameters.Á
+  * Property expressions have been improved: You can now invoke methods with parameters, or create a list.
 
   * IoC Service contributions may now be made in terms of classes (that are automatically instantiated) as well as
     instances.

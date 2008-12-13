@@ -14,6 +14,8 @@
 
 package org.apache.tapestry5.internal.services;
 
+import java.util.List;
+
 public class EchoBean
 {
     public int storedInt;
@@ -77,5 +79,10 @@ public class EchoBean
     public String echoString(String value, String before, String after)
     {
         return String.format("%s - %s - %s", before, value, after);
+    }
+
+    public List echoList(List input)
+    {
+        return input;
     }
 }
