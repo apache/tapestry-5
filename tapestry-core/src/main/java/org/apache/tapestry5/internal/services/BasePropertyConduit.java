@@ -15,6 +15,7 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.PropertyConduit;
+import org.apache.tapestry5.internal.util.IntegerRange;
 import org.apache.tapestry5.ioc.AnnotationProvider;
 import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
@@ -65,9 +66,9 @@ public abstract class BasePropertyConduit implements PropertyConduit
         return propertyType;
     }
 
-    protected final int toInt(Object value)
+    public final IntegerRange range(int from, int to)
     {
-        return coerce(value, int.class).intValue();
+        return new IntegerRange(from, to);
     }
 
     protected final <T> T coerce(Object value, Class<T> type)

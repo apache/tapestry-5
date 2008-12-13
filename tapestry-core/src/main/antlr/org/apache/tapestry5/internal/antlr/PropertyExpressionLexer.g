@@ -50,6 +50,8 @@ fragment SIGN
 	:	('+'|'-');
 LPAREN 	:	'(';
 RPAREN 	:	')';
+LBRACKET:	'[';
+RBRACKET:	']';
 COMMA	:	',';
 
 fragment QUOTE

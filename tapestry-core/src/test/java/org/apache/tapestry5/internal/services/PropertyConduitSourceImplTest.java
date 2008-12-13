@@ -29,6 +29,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * Most of the testing occurs inside {@link PropBindingFactoryTest} (due to historical reasons).
@@ -327,5 +328,44 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
         bean.setStoredString("Barney");
 
         assertEquals(conduit.get(bean), "alpha - Barney - beta");
+    }
+
+    @Test
+    public void top_level_list()
+    {
+        PropertyConduit conduit = source.create(EchoBean.class, "[ 1, 2.0, storedString ]");
+        EchoBean bean = new EchoBean();
+
+        bean.setStoredString("Lisa");
+
+        List l = (List) conduit.get(bean);
+
+        assertListsEquals(l, new Long(1), new Double(2.0), "Lisa");
+    }
+
+    @Test
+    public void empty_list()
+    {
+        PropertyConduit conduit = source.create(EchoBean.class, "[  ]");
+        EchoBean bean = new EchoBean();
+
+        bean.setStoredString("Lisa");
+
+        List l = (List) conduit.get(bean);
+
+        assertEquals(l.size(), 0);
+    }
+
+    @Test
+    public void list_as_method_argument()
+    {
+        PropertyConduit conduit = source.create(EchoBean.class, "echoList([ 1, 2.0, storedString ])");
+        EchoBean bean = new EchoBean();
+
+        bean.setStoredString("Bart");
+
+        List l = (List) conduit.get(bean);
+
+        assertListsEquals(l, new Long(1), new Double(2.0), "Bart");
     }
 }
