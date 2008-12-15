@@ -1,6 +1,0 @@
-<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
-<body>
-	<p>entity name: <span id="name"><t:if test="user">${user.firstName}</t:if></span></p>
-	<p>create entity: <t:eventlink event="create" t:id="createentity">create an entity</t:eventlink></p>
-</body>
-</html>
