@@ -1,0 +1,12 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+  <h1>Inherited Bindings Demo</h1>
+  
+  <h1>Bound</h1>
+  
+  Bound: <t:outer outerValue="the-bound-value"/>
+
+  <h1>Unbound</h1>
+  
+  Unbound: <t:outer/>
+
+</html>

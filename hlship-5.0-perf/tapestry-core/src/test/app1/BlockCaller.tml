@@ -1,0 +1,21 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+    <h1>Block Caller Demo</h1>
+
+    <p>This page demonstrates how action links can work correctly even when located outside the
+        active page.
+    </p>
+
+    <p>
+        Page activation context:
+        <span id="context">${activationContext}</span>
+    </p>
+
+
+    <t:delegate to="block"/>
+
+    <p>
+        [<t:pagelink page="blockcaller">refresh</t:pagelink>]
+    </p>
+
+</html>

@@ -1,0 +1,146 @@
+ ----
+ Page Lifecycle
+ ----
+
+Page Lifecycle
+
+   In Tapestry, you are free to develop your presentation objects, page and components classes,
+   as ordinary objects, complete with instance variables and so forth.
+
+   This is somewhat revolutionary in terms of web development in Java.  Using servlets, or Struts,
+   your presentation objects (Servlets, or Struts Actions, or the equivalent in other frameworks)
+   are <stateless singletons>.  That is, a <single> instance is created, and all incoming requests
+   are threaded through that single instance.
+
+   Because multiple requests are handled by many different threads, this means that the single instance's
+   variable are useless ... any value written into an instance variable would immediately be
+   overwritten by a different thread.  Thus, it is necessary to use the
+   Servlet API's HttpServletRequest object to store per-request data, and the HttpSession object
+   to store data between requests.
+
+   Tapestry takes a very different approach.
+
+   In Tapestry, you will have many different instances of any particular page, each either in use
+   for a single request (on a single thread), or waiting in a <page pool> to be used.
+
+   By reserving page instances to particular threads, all the difficult, ugly issues related to
+   multi-threading go by the wayside.  Instead, familiar, simple coding practices (using ordinary methods and fields)
+   can be used.
+
+   However, there's a risk: it would be a disaster if data could "bleed" from one request to another. Imagine
+   the outcome in a banking application if the first user's account number and password became the default
+   for the second user to reach the application!
+
+   Tapestry takes special care to purge all instance variables back to their default value at the end of each request.
+
+   The end result is that all pages in the pool are entirely equivalent to each other; it doesn't matter which
+   instance is used for processing any particular request.
+
+   Remember that the page instance is just the tip of the iceberg: a page instance encompasses the page component,
+   its templates, all of its parameter bindings, tokens read from its template and (recursively) the same
+   thing for all components inside the page. It adds up.
+
+   A page instance will be "checked out" of the pool for a short period of time: a few milliseconds
+   to service a typical request. Because of this, it is generally the case that Tapestry
+   can handle a large number of end users with a relatively small pool of page instances.
+
+Comparison to JavaServer Pages
+
+   JSPs also use a caching mechanism; the JSP itself is compiled into a Java servlet class, and acts as a singleton.
+
+   However, the individual JSP tags are pooled.
+
+   This is one of the areas where Tapestry can significantly outperform JSPs.  Much of the code inside a compiled
+   JSP class concerns
+   getting tags from a tag pool, configuring the properties of the tag instance, using the tag instance, then
+   cleaning up the tag instance and putting it back in the pool.
+
+   The operations Tapestry does once per request are instead executed dozens or potentially hundreds of times (dependending
+   the complexity of the page, and if any nested loops occur).
+
+   Pooling JSP tags is simply the wrong granularity.
+
+   Tapestry can also take advantage of its more coarse grained caching to optimize how data moves, via parameters,
+   between components. This means that Tapestry pages will actually speed up after they render the first time.
+
+Page Pool Configuration
+
+   Tapestry's page pool is used to store page instances.  The pool is "keyed" on the name of the page (such as "start")
+   and the <locale> for the page (such as "en" or "fr").
+
+   Within each key, Tapestry tracks the number of page instances that have been created, as well as the number
+   that are in use (currently attached to a request).
+
+   When a page is first accessed in a request, it is taken from the pool.  Tapestry has some
+   {{{conf.html}configuration values}} that control the details of how and when page instances are created.
+
+   * If a free page instance is available, the page is marked in use and attached to the request.
+
+   * If there are fewer page instances than the <soft limit>, then a new page instance is simply created and
+     attached to the request.
+
+   * If the soft limit has been reached, Tapestry will wait for a short period of time for
+     a page instance to become available before creating a new page instance.
+
+   * If the hard limit has been reached, Tapestry will throw an exception rather than create a new page instance.
+
+   * Otherwise, Tapestry will create a new page instance.
+
+   []
+
+   Thus a busy application will initially create pages up-to the soft limit (which defaults to five page
+   instances).  If the application continues to be pounded with requests, it will slow its request
+   processing, using the soft wait time in an attempt to reuse an existing page instance.
+
+   A truly busy application will continue to create new page instances as needed until the
+   hard limit is reached.
+
+   Remember that all these configuration values are  per key: the combination of page name and locale.
+   Thus even with a hard limit of 20, you may eventually find that Tapestry
+   has created 20 start page instances for locale "en" <and> 20 start page
+   instances for locale "fr" (if your application is configured to support both English and French).  Likewise,
+   you may have 20 instances for the start page, and 20 instances for the newaccount page.
+
+   Tapestry periodically checks its cache for page instances that have not been used recently
+   (within a configurable window).  Unused page instances are release to the garbage collector.
+
+   The end result is that you have quite a degree of tuning control over the process.  If memory is a limitation
+   and throughput can be sacrificed, try lowering the soft and hard limit and increasing the soft wait.
+
+   If performance is absolute and you have lots of memory, then increase the soft and hard limit and reduce 
+   the soft wait.  This encourages Tapestry to create more page instances and not wait as long to re-use
+   existing instances.
+
+Page Lifecycle Methods
+
+  There are a few situations where it is useful for a component to perform some operations, usually some kind of initialization or
+  caching, based on the lifecycle of the page.
+  
+  The page lifecycle is quite simple.  When first needed, a page is loaded.  Loading a page involves instantitating the components of the page
+  and connecting them together.
+  
+  Once a page is loaded, it is <attached> to the current request.  Remember that there will be many threads, each handling its own request.
+  In many cases, there will be multiple copies of the same page attached to different requests (and different threads). This is how Tapestry keeps you
+  from worrying about multi-threading issues ... the objects involved in any request are reserved to <just> that request (and <just> that thread).
+  
+  At the end of a request, after a response has been sent to the client, the page is <detached> from the request.  This is a chance to perform
+  a lot of cleanup of the page, discarding temporary objects (so that they can be reclaimed by the garbage collector) and otherwise returning the
+  page to its pristine state.  After detaching, a page is placed into the page pool, where it will await reuse for some future request (likely by a completely
+  different user).
+  
+  As with {{{rendering.html}component rendering}}, you have the ability to make your components "aware" of these events by identifying methods to be invoked.
+  
+  You have the choice of attaching an annotation to a method, or simply naming the method correctly.  
+  
+  Page lifecycle methods should take no parameters and return void.
+  
+  The annotations / method names are:
+  
+   * {{{../apidocs/org/apache/tapestry5/annotations/PageLoaded.html}PageLoaded}} annotation, or method name "pageLoaded"
+   
+   * {{{../apidocs/org/apache/tapestry5/annotations/PageAttached.html}PageAttached}} annotation, or method name "pageAttached"
+   
+   * {{{../apidocs/org/apache/tapestry5/annotations/PageDetached.html}PageDetached}} annotation, or method name "pageDetached"
+   
+   
+   

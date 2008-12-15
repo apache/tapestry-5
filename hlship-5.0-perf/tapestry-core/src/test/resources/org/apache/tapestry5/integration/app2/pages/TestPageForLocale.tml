@@ -1,0 +1,4 @@
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+    <p id="id1">English page</p>
+    <p t:type="ActionLink" t:id="changeLocale" t:mixins="forceid">Change locale</p>
+</html>

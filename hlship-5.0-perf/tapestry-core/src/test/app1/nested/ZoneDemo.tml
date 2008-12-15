@@ -1,0 +1,69 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd" xml:space="default">
+    <h1>Zone/Ajax Demo</h1>
+
+
+    <h2>Last update: ${currentTime}</h2>
+
+
+    <t:zone t:id="output" style="float:right; width: 800px;" update="slidedown">
+        <span class="t-zone-update">
+            <t:if test="name" else="No name has been selected.">
+                Selected: ${name}
+            </t:if>
+        </span>
+    </t:zone>
+
+    <t:block id="registrationForm">
+
+
+        <t:beaneditform t:id="registrationForm" object="registration" zone="output" add="roles">
+
+            <t:parameter name="roles">
+                <t:palette selected="registration.roles" encoder="encoder" model="literal:guest,user,admin"/>
+            </t:parameter>
+
+        </t:beaneditform>
+
+        <t:actionlink t:id="clear" zone="output">clear</t:actionlink>
+
+    </t:block>
+
+    <t:block id="registrationOutput">
+        <t:beandisplay object="registration" add="roles">
+            <t:parameter name="roles">
+                ${registration.roles}
+            </t:parameter>
+        </t:beandisplay>
+    </t:block>
+
+    <t:block id="voteForm">
+        <t:form t:id="vote" zone="output">
+            Vote:
+            <input type="submit" name="abstain" value="Abstain"/>
+            <t:submit t:id="voteYes" value="Yes"/>
+            <t:submit t:id="voteNo" value="No"/>
+        </t:form>
+    </t:block>
+
+    <t:block id="voteOutput">
+        You voted: ${vote}
+    </t:block>
+
+
+    <ul>
+        <li t:type="loop" source="names" value="name">
+            <t:actionlink t:id="select" context="name" zone="output">Select "${name}"</t:actionlink>
+        </li>
+        <li>
+            <t:actionlink t:id="JSON" zone="output">Direct JSON response</t:actionlink>
+        </li>
+        <li>
+            <t:actionlink t:id="fail" zone="output">Failure on the server side</t:actionlink>
+        </li>
+        <li>
+            <t:actionlink t:id="redirect" zone="output">Perform a redirect to another page</t:actionlink>
+        </li>
+    </ul>
+
+
+</html>
