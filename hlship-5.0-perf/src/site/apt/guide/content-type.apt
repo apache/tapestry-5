@@ -1,0 +1,44 @@
+ ---
+ Content Type and Markup Output
+ ---
+
+Content Type and Markup Output
+
+  Tapestry reads {{{templates.html}well-formed XML template files}} and renders its output as XML, with minor caveats:
+
+  * The \<?xml\?> XML declaration is omitted.
+
+  * Most element render with an open and close tag, even if empty.
+
+  * Certain elements will be abbreviated to just the open tag, if empty:
+
+    * br
+
+    * hr
+
+    * img
+
+    []
+
+  * \<![CDATA[]\> sections are <<not>> used
+
+  []
+
+  This is all to ensure that the markup stream, while (almost) well formed, is still properly understood by browsers
+  expecting ordinary HTML.
+
+  In fact, Tapestry may decide to render a purely XML document; it depends on the content type of the response.
+  The default content type for pages is "text/html" ... this triggers specialized XML rendering.
+
+  A page may declare its content type using the {{{../apidocs/org/apache/tapestry5/annotations/ContentType.html}ContentType}}
+  class annotation.  Content types other than "text/html" will render as well-formed XML documents, including the
+  XML declaration, and more standard behavior for empty elements.
+
+Input/Output Character Set
+
+  The character set (aka character encoding) used when writing output and when parsing requests is normally "utf-8".
+  All pages use the same encoding, which can be set using the
+  <<<tapestry.charset>>>
+  {{{conf.html}configuration setting}}.
+
+

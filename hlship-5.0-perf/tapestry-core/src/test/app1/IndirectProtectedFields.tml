@@ -1,0 +1,12 @@
+<html t:type="Border"
+      xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+    <h1>Protected Fields Demo</h1>
+
+    <p>
+        <t:actionlink t:id="go">Trigger the Exception</t:actionlink>
+    </p>
+
+
+</html>
+

@@ -1,0 +1,64 @@
+#!/usr/bin/ruby
+
+# This script is used to roll the version numbers of all modules up.
+# The version number is always determined from the master POM's version number.
+# However, when changing version number of the master POM, every module must have
+# it's <parent>/<version> element updated.  That's what this script is for.
+
+# Rub gems:  Think of it as Maven for Ruby but not brain-damaged. See http://www.rubygems.org/read/book/1
+
+require 'rubygems'
+
+# This script requires the Ruby gem hpricot ("gem install hpricot"). It was built with version 0.6.
+# http://code.whytheluckystiff.net/hpricot
+
+require 'hpricot'
+
+# This script doesn't bother with optparse, it's just a single command line option: the new version number.
+# Use with care!
+
+$version = ARGV[0]
+
+def read_pom(file)
+  open(file) do |f|
+    Hpricot.XML(f)
+  end
+end
+
+def write(file, pom)
+  puts "Updating #{file} ..."
+  
+  File.open(file, "w") do |stream|
+    stream << pom
+  end  
+end
+
+def edit_pom(file)
+  pom = read_pom(file)
+  yield pom
+  write(file, pom)
+end
+
+def process_module(mod_name)
+
+  edit_pom("#{mod_name}/pom.xml") do |pom|
+    pom.at("/project/parent/version").inner_html = $version
+  end
+end
+
+puts "Updating to version #{$version} ..."
+
+edit_pom("pom.xml") do |pom|
+  
+  modules = []
+
+  (pom/"project/modules/module").each { |elem| modules << elem.inner_html }
+
+  modules.sort.each { |mod_name| process_module(mod_name) }
+
+  pom.at("/project/version").inner_html = $version
+end
+
+edit_pom("quickstart/src/main/resources/archetype-resources/pom.xml") do |pom|
+  pom.at("/project/properties/tapestry-release-version").inner_html = $version
+end

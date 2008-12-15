@@ -1,0 +1,11 @@
+<html t:type="border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+    <h1>Short Grid</h1>
+
+    <p>
+        Only items with index 0 to 5 should appear. After that, the GridDataSource returns null.
+    </p>
+
+    <t:grid id="grid" source="data"/>
+
+</html>

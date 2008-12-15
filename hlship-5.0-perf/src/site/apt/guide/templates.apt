@@ -1,0 +1,404 @@
+ ----
+ Component Templates
+ ----
+ 
+Component Templates
+
+  Under Tapestry, component templates are files associated with page or component classes that contain the markup for
+  the component, along with any <embedded components>.
+  
+  In a change from Tapestry 4, under Tapestry 5, component templates are <<well formed XML documents>>. That means
+  that every open tag must have a matching close tag, every attribute must be quoted, and so forth.
+  
+  For the most part, these templates are standard (X)HTML; Tapestry extensions to ordinary markup are provided
+  in the form of a Tapestry namespace.
+  
+  We'll cover the specific content of templates shortly, first a few details about connecting a component to its template.
+    
+Template Location
+
+  Component templates are stored with the component class file.  The files have a ".tml" extension (i.e., <T>apestry <M>arkup
+  <L>anguage), and are stored in
+  the same package as corresponding component class.
+  
+  Under a typical Maven directory structure, the Java class for a component
+  might be <<<src/main/java/org/example/myapp/components/MyComponent.java>>>.
+  The corresponding template will be <<<src/main/resources/org/example/myapp/components/MyComponent.tml>>>.
+  
+  Likewise, the Java class for a page might be <<<src/main/java/org/example/myapp/pages/MyPage.java>>> and
+  the corresponding template will be <<<src/main/resources/org/example/myapp/pages/MyPage.tml>>>.
+  
+  The template and the compiled class will be packaged together in the WEB-INF/classes folder of the application WAR.
+
+  For <pages> (not <components>), a second location will be searched: in the web application context.
+  The location is based on the logical name of the page, in the previous example, the template
+  would be <<<MyPage.tml>>> in the root folder of the web application.
+  
+  In certain cases, Tapestry will simplify the the logical name of a page. For example, the page class
+  org.example.pages.address.CreateAddress will be given a logical name of "address/Create" (the redundant "Address"
+  is removed as a suffix). However, this only affects how the page is referenced in URLs; the template file
+  will still be CreateAddress.tml, whether on the classpath, or as address/CreateAddress.tml (in the web context).
+  
+  A template on the classpath takes precedence over a file in the web application context.
+  
+Template Localization
+
+  Templates are {{{localization.html}localized}} in much the same way as individual files of a component's message
+  catalog: the effective locale is inserted into the name of the file.  Thus a German users will see the content
+  generated from <<<MyPage_de.tml>>> and French users will see content generated from <<<MyPage_fr.tml>>>.  When no
+  specific localization is available, the default location (<<<MyPage.tml>>>) is used.  
+
+Template Inheritance
+
+  If a component does not have a template, but extends from a component class that does have
+  a template, then the parent class' template will be used by the child component.
+
+  This allows a component to extend from a base class but not have to duplicate the base class' template.
+
+Template Doctypes
+
+  As mentioned above, component templates are well-formed XML documents. This means that if you want to use any
+  {{{http://www.w3.org/TR/html401/sgml/entities.html}HTML entities}} (such as &amp; &nbsp; &lt; &gt; or &copy;),
+  you must use an {{{http://www.w3.org/QA/2002/04/valid-dtd-list.html}HTML or XHTML doctype}} in your template. If
+  you choose to use (X)HTML doctypes in your templates, they will be passed on to the client in the resultant (X)HTML.
+  Note that if your pages are composed of multiple components, each with a template, and each template contains a
+  doctype declaration, only the first doctype encountered by the template parser will be passed on to the client.
+
+  It should also be noted that even though XHTML DTDs are valid XML DTDs, HTML DTDs aren't valid XML DTDs. This means
+  that HTML doctypes cannot be used by XML parsers. Tapestry works around this limitation internally by using XHTML DTDs
+  to parse templates that use HTML DTDs. This internal mapping is possible because XHTML 1.0 is nothing more than "a
+  reformulation of the three HTML 4 document types as applications of XML 1.0," {{{http://www.w3.org/TR/xhtml1/#xhtml}as per the W3C}}.
+  Don't worry though -- the original HTML 4 doctype will still be emitted to the client!
+
+ The following doctypes are the most common (X)HTML doctypes:
+
++----+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+   "http://www.w3.org/TR/html4/strict.dtd">
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+   "http://www.w3.org/TR/html4/loose.dtd">
++----+
+
+Tapestry Namespace
+
+  Component templates should include the Tapestry namespace, defining it in the root element of the template.
+
++----+
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+    <head>
+        <title>Hello World Page</title>
+    </head>
+    <body>
+        <h1>Hello World</h1>
+    </body>
+</html>
++---+
+
+  This defines the namespace using the standard prefix, "t:".  The examples on this page all assume the use of the standard 
+  prefix.
+
+Tapestry Elements
+
+  Tapestry elements are elements defined using the Tapestry namespace prefix.
+  
+  All other elements should be in the default namespace, with no prefix.
+  
+* \<body\>
+
+  In many cases, a component is designed to integrate its template with its container's
+  template.  
+  
+  The \<body\> element is used to identify where, within a component's template, its
+  body (from the container's template) is to be rendered.
+  
+  Components have control over if, and even how often, their body is rendered.
+  
+  The following example is a Layout component, that adds basic HTML elements
+  around the page specific content:
+  
++---+
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+    <head>
+        <title>My Tapestry Application</title>
+    </head>
+    <body>
+        <t:body/>
+    </body>
+</html>
++---+  
+
+  A page would use this component as follow:
+  
++---+
+<t:layout xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+  My Page Specific Content
+
+</t:layout>
++---+
+   
+   When the page renders, the page's template and the Border component's template
+   are merged together:
+   
++---+
+<html>
+  <head>
+    <title>My Tapestry Application</title>
+  </head>
+  <body>
+    My Page Specific Content
+  </body>
+</html>
++---+
+   
+   Tapestry 4 users will recognize the \<body\> element as a replacement for the
+   RenderBody component.
+   
+* \<container\>
+
+   A container element contains markup without being considered part of the template. This is useful for components that render several top level
+   tags, for example, a component that renders several columns within a table row:
+   
++---+
+<t:container xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+  <td>${label}</td>
+  <td>${value}</td>
+</t:container>
++---+     
+   
+   This component only makes sense when used inside a \<tr\> element of its container's template.
+   
+   Without the \<t:container\> element, there would be no way to create a valid XML document as the template, because XML documents must always
+   have a single root element.
+   
+* \<block\>
+
+  A block is a container of a portion of the component template. A block does not normally render; any component or contents you put inside
+  a block will not ordinarily be rendered.  However, by injected the block, you can have precise control over when and if the content renders.   
+  
+  A block may be anonymous, or it may have an id (specified with the id attribute).  Non-anonymous blocks may be 
+  {{{inject.html}injected}} into the component.
+
+  Ids must be valid Java identifiers: start with a letter, and contain only letters, numbers and underscores.
+
+  Note that the id parameter is <not> placed in the Tapestry namespace (since the element always <is> in the Tapestry namespace).
+
+* \<parameter\>
+
+  A \<parameter\> element is a special kind of block.  It is placed inside the body of an embedded component.  The block defined by the
+  \<parameter\> is passsed to the component.  \<parameter\> includes a mandatory name attribute to identify which parameter of the component
+  to bind.  
+
+  Example:
+    
++---+
+<t:if test="loggedIn">
+  Hello, ${userName}!
+  <t:parameter name="else">
+  Click <a t:type="actionlink" t:id="login">here</a> to log in.
+  </t:parameter>
+</t:if>
++---+
+
+
+Expansions
+
+  Another option when rendering output is the use of  <expansions>.  Expansions
+  are special strings that may be emdedded in template bodies, and borrow some syntax
+  from the {{{http://ant.apache.org}Ant}} build tool.
+  
++---+
+  Welcome, ${userId}!
++---+    
+
+  Here, <<<$\{userId}>>> is the expansion.  In this example, the userId property of the 
+  component is extracted, converted to a string, and streamed into the output.  
+ 
+  Expansions are allowed inside text, and inside attributes of ordinary elements, and component elements.  For example:
+  
++---+
+  <img src="${request.contextPath}/images/catalog/product_${productId}.png"/>
++---+
+
+  In this hypothetical example, the component class is providing a request property and a productId property, and these are being
+  used inside the template to assemble the src attribute of the \<img\> element.  This is component-like behavior without
+  actual components.
+  
+  Under the covers, expansions are the same as
+  {{{parameters.html}parameter bindings}}.  The default
+  binding prefix for expansions is "prop:" (that is, the name of a property), but
+  other binding prefixes are useful, especially "message:" (to access a localized
+  message from the component's message catalog).
+  
+  Tapestry 4 users will note that expansions are a concise, easy replacement for the
+  Insert component, and for the \<span key="..."\> directive.
+  
+Component Elements
+
+  An embedded component is identified within the template as an element in the t: namespace.  Example:
+  
++---+
+  You have ${cartItems.size()} items in your cart.
+  <t:actionlink t:id="clear">Remove All</t:actionlink>.
++---+ 
+  
+  The element name, "actionlink" is used to select the type of component, "ActionLink" (Tapestry is case insensitive when
+  identifying component types).
+  
+  Embedded components may have two Tapestry-specific parameters:
+  
+  * id: A unique id for the component (within its container).
+  
+  * mixins: An optional comma seperated list of mixins for the the component.
+  
+  [] 
+  
+  These attributes are specified inside the t: namespace (i.e., <<<t:id="clear">>>).
+  
+  If the id attribute is ommitted, Tapestry will assign a unique id for the element.
+
+  Ids must be valid Java identifiers: start with a letter, and contain only letters, numbers and underscores.
+  
+  Any other attributes are used to {{{parameters.html}bind parameters of the component}}. These may be formal parameters
+  or informal parameters.  Formal parameters will have a default binding prefix (usually "prop:").  Informal parameters
+  will be assumed to be literals (i.e., the "literal:" binding prefix).
+  
+  Use of the t: prefix is optional for all other attributes.  Some users implement a build process where the Tapestry template
+  files are validated ... in that case, any Tapestry-specific attributes, not defined by the underlying DTD or schema, should be in
+  the Tapestry namespace, to avoid validation errors.
+
+  The open and close tags of a Tapestry component element define the <<body>> of the component. It is quite common for
+  additional components to be <<enclosed>> in the body of another component:
+    
++----+
+<t:form>
+  <t:errors/>
+  <t:label for="userId"/>
+  <t:textfield t:id="userId"/>
+  <br/>
+  <t:table for="password"/>
+  <t:passwordfield t:id="password"/>
+  <br/>
+  <input type="submit" value="Login"/>
+</t:form>
++---+  
+   
+   In some cases, components require some kind of enclosure; for example, all of the field components will throw a runtime exception
+   if not enclosed by a Form component.
+   
+   It is possible to place Tapestry components in subclasses.  For example, your application may have a package org.example.myapp.components.ajax.Dialog.
+   This component's normal type name is "ajax/dialog" (because it is in the ajax subfolder). This name is problematic, as
+   it is not valid to define an XML element with an element name <<<\<t:ajax/dialog\>>>>.  Instead,
+   replace the slashes with periods: <<<\<t:ajax.dialog\>>>>.
+   
+Invisible Instrumentation
+
+  A favorite feature of Tapestry 4 is <invisible instrumentation>, the ability to mark ordinary HTML elements as components. Invisible instrumentation
+  leads to more concise templates that are also more readable.
+  
+  For Tapestry 5, you make use of <namespaced> id or type attributes to mark an arbitrary element as a component, for example:
+  
++---+
+<p>
+    Merry Christmas:
+    <span t:type="Count" end="3">
+        Ho!
+    </span>
+</p>
++---+   
+
+  The id, type and mixins attributes must be placed in the Tapestry namespace.  Any additional attributes may be in the Tapestry namespace
+  or in the default namespace. Placing an attribute in the Tapestry namespace is useful when the attribute is not defined for the
+  element being instrumented.
+    
+  A component <must> have a type, either via the t:type attribute in the template, or by the defining the component in the Java class using the
+  {{{../apidocs/org/apache/tapestry5/annotations/Component.html}Component}} annotation (and using the t:id attribute on the element in the template).
+
+  
+  In <most> cases,it is an aesthetic choice between normal emebedded components, and embedded components via invisible instrumentation.  In a few instances,
+  such as the Loop component, the behavior of the component is influenced by your choice.  The Loop component, when included using invisible instrumentation, will
+  render the tag and any informal parameters, around its body.  Thus, for example:
+  
++---+
+  <table>
+    <tr t:type="loop" source="items" value="item" class="prop:rowClass">
+      <td>${item.id}</td>
+      <td>${item.name}</td>
+      <td>${item.quantity}</td>
+    </tr>
+  </tabel>
++---+
+
+  Here, the loop component "merges into" the \<tr\> element.  It will render out a \<tr\> for each item object in the items list.
+  It will write a dynamic class attribute into each \<tr\>.
+        
+   
+Whitespace in Templates
+
+  Tapestry strips out unnecessary whitespace from templates as they are parsed.
+  Inside any block of text, repeated whitespace is reduced
+  to a single space character.  Blocks of text that are entirely whitespace, such a line break
+  and whitespace between two tags, is eliminated entirely.
+
+  If you do a view source on the rendered output, you'll see that the bulk of the rendered page is one
+  long unbroken line.
+
+  This approach has certain efficiency advantages on both the server (less processing to render the page) and on the client
+  (fewer characters to parse).  Tools such as
+  {{{http://www.getfirebug.com/}FireBug}} are useful for allowing you to view the rendered HTML on the client properly.
+
+  In rare cases, the whitespace in a template <is> significant.  Perhaps you are creating a \<pre\> (preformatted)
+  block of text, or the whitespace interacts with your stylesheet to some desired effect.
+
+  You may use the standard XML attribute <<<xml:space>>> to indicate to Tapestry whether whitespace should
+  be compressed (<<<xml:space="default">>>) or preserved (<<<xml:space="preserve">>>).  Such attributes are stripped
+  out by the template parser; they do not appear in the rendered output.
+
+  The xml: namespace prefix is built into all XML documents, there is no special configuration (as there is with the
+  Tapestry namespace).
+
+  For example:
+
+---
+  <ul class="navmenu" xml:space="preserve">
+    <li t:type="loop" t:source="pages" t:value="var:page">
+      <t:pagelink page="var:page">${var:page}</t:pagelink>
+    </li>
+  </ul>
+---
+
+  This will preserve the whitespace between the \<ul\> and \<li\> elements, and between the
+  (rendered) \<li\> elements and the nested \<a\> elements.  For example, the output may look something like:
+
+---
+  <ul>
+    <li>
+      <a href="showcart>ShowCart</a>
+    </li>
+    <li>
+      <a href="viewaccount">ViewAccount</a>
+    </li>
+  </ul>
+---
+
+  With normal whitespace compression, you would see the following rendered output:
+
+---
+  <ul><li><a href="showcart">ShowCart</a></li><li><a href="viewaccount">ViewAccount</li></ul>
+---
+
+
+  You can even put further <<<xml:space>>> attributes inside nested elements to fine-tune the control over
+  what whitespace is preserved and what is compressed.
+  
+  
+
+  
+  

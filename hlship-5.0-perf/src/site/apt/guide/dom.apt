@@ -1,0 +1,167 @@
+ ---
+ Document Object Model
+ ---
+ 
+Document Object Model
+
+  Tapestry 5 takes a very different approach to markup generation than Tapestry 4,
+  or most other frameworks.
+  
+* Tapestry 4 Approach
+  
+  In Tapestry 4, markup generation was based on generating a character stream.
+  At the lowest level, the fact that the output was in a markup format such as HTML, XHTML
+  or WML was not known.  Higher levels, such as the IMarkupWriter interface (and its
+  implementations) provide the concept of markup generation: elements, attributes, start
+  tags and end tags.
+
+  Often, components would work together to generate markup. A common example would
+  be a Form component and the many form control components it contains (such
+  as TextField, Checkbox, etc.).  The Form could not fully render until all
+  such enclosed components had rendered first. 
+  
+  IMarkupWriter supported <nested writers>. Nested writers are a way to buffer output
+  until needed. A Form component would render its body using a nested writer, then
+  write out its \<form\> and \<input type="hidden"\>  elements, as well as the nested,
+  buffered body.
+  
+  This technique breaks down when two elements are peers, and not in a parent/child
+  relationship. For example, the rendering of a FieldLabel component is affected by its
+  companion TextField component. Handling these cases in Tapestry 4 required a number of
+  kludges and special cases.
+  
+* Tapestry 5 Approach
+
+  Tapestry 5 components render out a DOM, a Document Object Model.  This is a tree of
+  nodes representing elements, attributes and text within a document.
+  
+  The DOM may ultimately be operated upon in a random access manner, rather than
+  the serial (or buffered) approach used in Tapestry 4.
+  
+  A new 
+  {{{../apidocs/org/apache/tapestry5/MarkupWriter.html}MarkupWriter}} interface
+  allows the majority of code to treat the generation of output as a stream. In fact,
+  MarkupWriter is more like a cursor into the DOM tree.
+  
+  Once all rendering is complete, the DOM tree is streamed to the client.
+  
+DOM Classes
+
+  The implementation of this DOM is part of Tapestry, despite the fact that several third-party
+  alternatives exist. This represents a desire to limit dependencies for the framework, but also
+  the Tapestry DOM is streamlined for initial creation, and a limited amount of subsequent modification.
+  Most DOM implemenations are more sophisticated, with greater support for querying (often using XPath) and
+  manipulation. 
+    
+  Once the Document object is created, you don't directly create new DOM objects; instead, each
+  DOM object includes methods that create new sub-objects.  This primarily applies to the Element
+  class, which can be a container of text, comments and other elements.
+  
+* {{{../apidocs/org/apache/tapestry5/dom/Document.html}Document}}
+
+  The Document object represents the an entire document, which is to say, an entire response to be
+  sent to the client.
+  
+  Documents will have a single root element.
+  The newRootElement() method is used to create the root element for the document.
+  
+  <<TODO: Support for doctypes, content type, processing instructions, and top-level comments.>>
+  
+* {{{../apidocs/org/apache/tapestry5/dom/Element.html}Element}}
+
+  An element of the document. Elements may have attributes, and they may themselves contain other
+  elements, as well as text and comments.
+  
+  The addAttribute() method adds a new attribute/value pair to the Element.  If an existing attribute
+  with the specified name already exists, then then the new value is ignored. This has implications when
+  different pieces of code try to add attributes to an Element ... the first to add an attribute will "win"
+  
+  Not yet implemented are some basic methods for manipulating the DOM after it is built. Plans are to add
+  a few methods for re-parenting DOM nodes into new elements. In addition, some searching methods may be added.
+  
+  
+{{{../apidocs/org/apache/tapestry5/MarkupWriter.html}MarkupWriter}}
+
+  The MarkupWriter interface allows the structure of the document to be built while maintaining a streaming metaphor.
+  
+* element() and end()
+
+  Calls to element() create a new element within the tree, and may provide attributes for the new element as well.  
+  Calls to write(), writeln() and writef() write text nodes
+  within the current element.  <Every call to element() should be matched with a call to end()>, which is used to move
+  the current node up one level.
+
+    
++-----+
+
+  writer.element("img", "src", "icon.png", "width", 20, "height", 20, alt, "*");
+  writer.end();
++-----+
+  
+  Note that end() must be called here, even though the \<img\> element is empty (has no body).  If the call to
+  end() is omitted, then later elements created by calls to element() will be 
+  nested <inside> the \<img\> element, which is not desired.
+  
+  Again, <<every call to element() must be matched with a call to end()>>:
+
+  
++-----+
+  writer.element("select", "name", "choice");
+  
+  for (String name : optionsNames)
+  {
+    writer.element("option");
+    writer.write(name);
+    writer.end();
+  }
+  
+  writer.end();
++-------
+    
+
+* attributes()
+  
+  Adds additional name/value pairs to the current element.
+ 
+  When a value is null, no attribute is added.
+  
+  When a new name conflicts with an existing name, the new value is ignored. This gives precedence to the first value specified
+  for an attribute over any subsequent value.
+  
+* write()
+
+  The write() method writes text inside the current element.  It scans the provided text for XML control characters
+  ('\<', '\>', and '&') and converts them to their XML entity equivalents ('&lt;', '&gt;', and '&amp;').  The result is correct, safe,
+  HTML/XML output even when the content (which may come from a template, or from an external source such as a database)
+  contains such problematic characters.
+   
+* writef()
+
+  The writef() method formats an number of arguments.  It uses a java.util.Formatter.  It is a convience for formatting that ultimately
+  invokes write().
+  
+* writeRaw()
+
+  The writeRaw() method writes unfiltered text into the DOM.  When the DOM is rendered to markup, the provided string is written to the
+  output stream exactly as-is. Care should be taken, as this can easily result invalid markup, or even markup that is not well formed.
+  
+* comment()
+
+  Adds an XML comment.  The comment delimiters will be supplied by Tapestry:
+  
++----+
+
+  writer.comment("Start of JS Menu code");
+  
++----+
+
+DOM Manipulation
+
+  A powerful feature of Tapestry 5 is the ability to manipulate the DOM after it has been rendered.
+
+  Methods on Node allow an existing node to be moved relative to an Element.  Nodes may be moved before or after the Element,
+  or may be moved inside an Element at the top (the first child) or the bottom (the last child).
+
+  In addition, the children of an Element may be removed or a Node (and all of its children) removed entirely.
+
+  Finally, an Element may "pop": the Element is removed and replaced with its children.

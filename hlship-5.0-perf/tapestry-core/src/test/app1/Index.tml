@@ -1,0 +1,99 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+    <h1>Tapestry 5 Integration Application 1</h1>
+
+    <p>${items.size()} standard test pages</p>
+
+    <ul>
+        <li t:type="loop" source="items" value="item">
+            <t:pagelink page="prop:item.pageName">${item.label}</t:pagelink>
+            -- ${item.description}
+        </li>
+    </ul>
+
+    <h2>Special Pages</h2>
+
+    <p>These are often pages which can't load due to errors.</p>
+
+    <ul>
+        <li>
+            <a href="${injectDemoLink}">PageLink via Class Demo</a>
+            -- use ComponentResources to generate a link to a page using target
+            page class, not logical page name
+        </li>
+
+        <li>
+            <a href="BadTemplate">BadTemplate Page</a>
+            -- More exception reporting
+        </li>
+        <li>
+            <t:pagelink page="eventhandlerdemo" context="'clear'">
+                EventHandler Demo
+            </t:pagelink>
+            -- Tests for event handling method order and matching
+        </li>
+
+        <li>
+            <a href="InjectContainerMismatch">
+                InjectContainerMismatch
+            </a>
+            -- check error reporting when @InjectContainer doesn't match
+            the actual field type
+        </li>
+
+        <li>
+            <a href="injectcomponentmismatch">InjectComponentMismatch</a>
+            -- check error reporting when @InjectComponent
+            doesn't match actual field type
+        </li>
+
+        <li>
+            <a href="recursivedemo">Recursive Demo</a>
+            -- check for handling of recursive components
+        </li>
+
+        <li>
+            <t:actionlink t:id="securepage">Secure Page Demo</t:actionlink>
+            -- transition to HTTPS
+        </li>
+
+        <li>
+            <t:pagelink page="listeventcontextdemo" context="demoContext">List Event Context Demo</t:pagelink>
+            -- using a List for catch-all event context parameters
+        </li>
+
+        <li>
+            <a href="datumeditor">Class Transformation Exception Demo</a>
+            -- demo proper reporting of exceptions during class transformation
+        </li>
+
+        <li>
+            <t:actionlink t:id="instantiatePage">Instantiate Page</t:actionlink>
+            --
+            attempt to instantiate (and return) a page instance
+        </li>
+        <li>
+            <a href="fieldannotationconflict">Field Annotation Conflict</a>
+            -- demo failure behavior when a field contains conflicting annotations
+        </li>
+        <li>
+            <a href="failedinjectdemo">Failed Field Injection Demo</a>
+            -- demo failure when attempting to inject into a field
+        </li>
+        <li>
+            <a href="pageAttachFailure">Page Attach Failure</a>
+            -- demo failure when attaching a page
+        </li>
+
+        <li>
+            <a href="componentsNotInTemplateDemo">Components Not In Template Demo</a>
+            -- demo exception when a component is defined in the class but not present in the template
+        </li>
+        <li>
+            <a href="GetterMethodAlreadyExists">Getter Method Already Exists</a>
+            -- demo @Property attempting to overwrite an existing getter method
+        </li>
+    </ul>
+
+</html>                      
+

@@ -1,0 +1,40 @@
+SPAN.inherit {
+    font-style: italic;
+}
+
+A.selected {
+    font-size: large;
+    font-weight: bold;
+}
+
+DIV#topspread {
+    padding: 0px 5px;
+}
+
+DIV.menu {
+    margin-bottom: 10px;
+}
+
+/** Copy of "#right h3" */
+
+DIV#left H3 {
+    background: #4A1605 url( ../layout/images/rightbig.gif ) no-repeat;
+    height: 30px;
+    line-height: 30px;
+    color: #fff;
+    padding-left: 10px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+/* Copy of ".menu h4" */
+DIV.t-env-data-section {
+    background: #4A1605 url( ../layout/images/rightsmall.gif ) no-repeat;
+    height: 20px;
+    line-height: 20px;
+    color: #fff;
+    padding-left: 10px;
+    font-size: 12px;
+    font-weight: 600;
+    width: 170px;
+}

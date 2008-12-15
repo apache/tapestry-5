@@ -1,0 +1,382 @@
+ ---
+ Form Input and Validation
+ ---
+ 
+Form Input and Validation
+
+  The life's blood of any application is form input; this is the most effective way to gather significant information from the user.
+  Whether it's a search form, a login screen or a multi-page registration wizard, forms are how the user really expresses themselves to the
+  application. 
+  
+  Tapestry excels at creating forms and validating input.  Input validation is declarative, meaning you simply tell Tapestry what validations
+  to apply to a given field, and it takes care of it on the server and (once implemented) on the client as well.
+  
+  Finally, Tapestry is able to not only present the errors back to the user, but to decorate the fields and the labels for the
+  fields, marking them as containing errors (primarily, using CSS effects).
+  
+Form component
+
+  The core of Tapestry's form support is the
+  {{{../tapestry-core/ref/org/apache/tapestry5/corelib/components/Form.html}Form}} component.  The Form component encloses (wraps around) all the
+  other <field components>  such as
+  {{{../tapestry-core/ref/org/apache/tapestry5/corelib/components/TextField.html}TextField}},
+  {{{../tapestry-core/ref/org/apache/tapestry5/corelib/components/TextArea.html}TextArea}},
+  {{{../tapestry-core/ref/org/apache/tapestry5/corelib/components/Checkbox.html}Checkbox}}, etc.
+  
+  The Form component generates a number of {{{event.html}component events}} that
+  you may provide event handler methods for.
+  
+  When rendering, the Form component emits two notifications: first, "prepareForRender", then "prepare". These
+  allow the Form's container to setup any fields or properties that will be referenced in the form.
+  For example, this is a good chance to create a temporary entity object to be rendered, or
+  to load an entity from a database to be editted.
+  
+  When user submits the form on the client, a series of steps occur on the server.
+  
+  First, the Form emits a "prepareForSubmit" notification,
+  then a "prepare" notification.  These allow the container to ensure that objects are set up
+  and ready to receive information from the form submission.
+  
+  Next, all the fields inside the form are activated to pull values out of the
+  incoming request, validate them and (if valid) store the changes.
+  
+  <For Tapestry 4 Users: > Tapestry 5 does not use the fragile "form rewind" approach
+  from Tapestry 4.  Instead, a hidden field generated during the render stores
+  the information needed to process the form submission.
+  
+  After the fields have done their processing, the Form emits a "validate" event.
+  This is a chance to perform cross-form validation that can't be described declaratively.
+  
+  Next, the Form determines if there have been any validation errors.  If there have been,
+  then the submission is considered a failure, and a "failure" event is emitted.
+  If there have been no validation errors, then a "success" event is emitted.
+  
+  Last, the Form emits a "submit" event (for logic that doesn't care about success or
+  failure).
+  
+Tracking Validation Errors
+
+  Associated with the Form is an
+  {{{../apidocs/org/apache/tapestry5/ValidationTracker.html}ValidationTracker}}
+  that tracks all the provided user input and validation errors for every field in the
+  form.  The tracker can be provided to the Form via the Form's tracker parameter,
+  but this is rarely necessary.
+  
+  The Form includes  methods <<<isValid()>>> and <<<getHasErrors()>>>, which are used to
+  see if the Form's validation tracker contains any errors.
+  
+  In your own logic, it is possible to record your own errors.  Form includes
+  two different versions of method <<<recordError()>>>, one of which specifies a 
+  {{{../apidocs/org/apache/tapestry5/Field.html}Field}} (an interface implemented by
+  all form element components), and one of which is for "global" errors, unassociated
+  with any particular field.
+  
+Storing Data Between Requests
+
+  As with other action requests, the result of a form submission is to send a redirect
+  to the client which re-renders the page.  The ValidationTracker must be
+  stored {{{persist.html}persistently}} between requests, or all the validation
+  information will be lost (the default ValidationTracker provided by the Form is persistent).
+  
+  Likewise, the individual fields updated by the components should also be persistent.
+  
+  For example, a Login page, which collects a user name and a password, might look like:
+  
++---+
+public class Login
+{
+    @Persist
+    private String userName;
+
+    private String password;
+
+    @Inject
+    private UserAuthenticator authenticator;
+
+    @Component(id = "password")
+    private PasswordField passwordField;
+
+    @Component
+    private Form form;
+
+    String onSuccess()
+    {
+        if (!authenticator.isValid(userName, password))
+        {
+            form.recordError(passwordField, "Invalid user name or password.");
+            return null;
+        }
+
+        return "PostLogin";
+    }
+
+    public String getPassword()
+    {
+        return password;
+    }
+
+    public void setPassword(String password)
+    {
+        password = password;
+    }
+
+    public String getUserName()
+    {
+        return userName;
+    }
+
+    public void setUserName(String userName)
+    {
+        userName = userName;
+    }
+}
++---+  
+
+	Because of the the fact that a form submission is <two> requests (the submission itself, then a re-render of the page),
+	it is necessary to make the value stored in the _userName field persist between the two requests. This would be necessary
+	for the _password field as well, except that the 
+	{{{../tapestry-core/ref/org/apache/tapestry5/corelib/components/PasswordField.html}PasswordField}} component never renders a value.
+	
+	Note that the onSuccess() method is not public; event handler methods can have any visibility, even private.  Package private
+	(that is, no modifier) is the typical use, as it allows the component to be tested, from a test case class in the same package.
+	
+	The Form only emits a "success" event if the there are no prior validation errors.  This means it is not necessary to
+	write <<<if (_form.getHasErrors()) return;>>> as the first line of the method.
+	
+	Finally, notice how business logic fits into validation.  The UserAuthenticator service is responsible for ensuring
+	that the userName and (plaintext) password are valid. When it returns false, we ask the Form component
+	to record an error.  We provide the PasswordField instance as the first parameter; this ensures that the
+	password field, and its label, are decorated when the Form is re-rendered, to present the errors to the user.
+
+Configuring Fields and Labels
+
+	The template for page contains a minimal amount of Tapestry instrumentation:
+	
++---+
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+    <head>
+        <title>Login</title>
+    </head>
+    <body>
+        <h1>Please Login</h1>
+
+        <form t:id="form">
+
+            <t:errors/>
+
+            <t:label for="userName"/>:
+            <input t:type="TextField" t:id="userName" t:validate="required,minlength=3" size="30"/>
+            <br/>
+            <t:label for="password"/>:
+            <input t:type="PasswordField" t:id="password" t:validate="required,minlength=3" size="30"/>
+            <br/>
+            <input type="submit" value="Login"/>
+        </form>
+    </body>
+</html>
++---+
+
+  The Tapestry Form component is responsible for creating the necessary URL for the form submission (this is Tapestry's
+  responsibility, not yours).
+  
+  The 
+  {{{../tapestry-core/ref/org/apache/tapestry5/corelib/components/Errors.html}Errors}} component must be placed inside a Form, it outputs
+  all of the errors for all the fields within the Form as a single list. It uses some simple styling to make the result more presentable.
+  
+  Each field component, such as the TextField, is paired with a
+  {{{../tapestry-core/ref/org/apache/tapestry5/corelib/components/Label.html}Label}} component.  The Label will render out
+  a \<label\> element connected to the field. This is very important for useability, especially for users with
+  visual disabilities. It also means you can click on the label text to move the cursor to the corresponding field.
+  
+  The <<<for>>> parameter of the Label is the id of a component.
+  
+  For the TextField, we provide a component id, userName.  We could specify the <<<value>>> parameter, but the default is
+  to match the TextField's id against a property of the container, the Login page, if such a property exists.
+  
+  As a rule of thumb, you should always give your fields a specific id (this id will be used to generate the <<<name>>> and <<<id>>> attributes
+  of the rendered tag).  Being allowed to omit the value parameter helps to keep the template from getting too cluttered.
+  
+  The <<<validate>>> parameter identifies what validations should occur for the field.  This is a list of validator names.  Validators are
+  configured within Tapestry, and the list of available validators is extensible.  "required" is a name of one of the built-in validators,
+  that ensures that the submitted value is not the empty string.  Likewise, "minlen" ensures that the value has the specified minimum length.
+  
+  The <<<validate>>> parameter was placed within the Tapestry namespace using the <<<t:>>> prefix. This is not strictly necessary, as the template
+  is <well formed> either way. However, putting the Tapestry specific values into the Tapestry namespace ensures that the template will itself
+  be <valid>.
+  
+Errors and Decorations
+
+  <<Note: This section has not been updated to reflect the introduction of client-side input validation.>>
+
+  When you first activate the Login page, the fields and forms will render normally, awaiting input:
+  
+[../images/validation_initial.png] Initial form presentation
+
+  Notice how the Label components are displaying the textual names for the fields. Given that we have not done any explicit configuration,
+  what's happened is that the component's ids ("userName" and "password") have been converted to "User Name" and "Password".
+  
+  If you just submit the form as is, the fields will violate the "required" constraint and the page will be redisplayed to present those
+  errors to the user:
+  
+[../images/validation_errors.png] Errors and decorations
+
+  There's a couple of subtle things going on here.  First, Tapestry tracks <all> the errors for <all> the fields.  The
+  Errors component has displayed them at the top of the form.  Further, the <default validation decorator> has added
+  decorations to the labels and the fields, adding "t-error" to the CSS class for the fields and labels. Tapestry provides a default
+  CSS stylesheet that combines with the "t-error" class to make things turn red.
+  
+  Next, we'll fill in the user name but not provide enough characters for password.
+  
+[../images/validation_minlength.png] Minlength error message
+
+  The user name field is OK, but there's an error on just the password field.  The PasswordField component always displays a blank value
+  by default, otherwise we'd see the partial password displayed inside.
+  
+  If you type in enough characters and submit, we see how the logic inside the Login page can attach errors to fields:
+  
+[../images/validation_password.png] Application supplied errors
+
+  This is nice and seamless; the same look and feel and behavior for both the built-in validators, and for errors generated based on
+  application logic.
+
+Centralizing Validation with @Validate
+
+  The {{{../apidocs/org/apache/tapestry5/beaneditor/Validate.html}Validate}} annotation can take the place of the
+  validate parameter of TextField, PasswordField, TextArea and other components.  When the validate parameter
+  is not bound, the component will check for the @Validate annotation and use its value as the validation definition.
+
+  The annotation may be placed on the getter or setter method, or on the field itself.
+
+Customizing Validation Messages
+
+  Each validator (such as "required" or "minlength") has a default message used (on the client side and the server side)
+  when the constraint is violated; that is, when the user input is not valid.
+
+  The message can be customized by adding an entry to the page's {{{localization.html}message catalog}} (or the containing
+  component's message catalog).  As with any localized property, this can also go into the application's message catalog.
+
+  The first key checked is <formId>-<fieldId>-<validatorName>-message.
+
+  * formId: the local component id of the Form component
+
+  * fieldId: the local component id of the field (TextField, etc.)
+
+  * validatorName: the name of the validator, i.e., "required" or "minlength"
+
+  []
+
+  If there is not message for that key, a second check is made, for  <fieldId>-<validatorName>-message.
+
+  If that does not match a message, then the built-in default validation message is used.
+
+Customizing Validation Messages / BeanEditForm
+
+  The {{{beaneditform.html}BeanEditForm}} component also supports validation message customizing.  The search is the similar;
+  the <formId> is the component id of the BeanEditForm component (not the Form component it contains).
+  The <fieldId> is the property name.
+
+Configuring Validator Contraints in the Message Catalog
+
+  It is possible to omit the validation constraint from the validator parameter (or @Validator annotation), in which
+  case it is expected to be stored in the message catalog.
+
+  This is useful when the validation constraint is awkward to enter inline, such as a regular expression for use
+  with the regexp validator.
+
+  The key here is similar to customizing the validation message:  <formId>-<fieldId>-<validatorName> or
+  just <fieldId>-<validatorName>.
+
+  For example, your template may have the following:
+
+---
+  <t:textfield t:id="ssn" validate="required,regexp"/>
+---
+
+  And your message catalog can contain:
+
+---
+ssn-regexp=\d{3}-\d{2}-\d{4}
+ssn-regexp-message=Social security numbers are in the format 12-34-5678.
+---
+
+  This technique also works with the BeanEditForm; as with validation messages, the
+  formId is the BeanEditForm component's id, and the
+  fieldId is the name of the property being editted.
+
+Overriding the Translator with Events
+
+  The TextField, PasswordField and TextArea components all have a translate parameter, a
+  {{{../apidocs/org/apache/tapestry5/FieldTranslator.html}FieldTranslator}} object that is used to convert values on the server
+  side to strings on the client side.
+
+  In most cases, the translate parameter is not set explicitly; Tapestry derives an appropriate value
+  based on the type of property being editted by the field.
+
+  In certain cases, you may want to override the translator.  This can be accomplished using two events
+  triggered on the component, "toclient" and "parseclient".
+
+  The "toclient" event is passed the current object value and returns a string, which will be the default
+  value for the field. When there is no event handler, or when the event handler returns null, the default
+  Translator is used to convert the server side value to a string.
+
+  For example, you may have a quantity field that you wish to display as blank, rather than zero,
+  initially:
+
++---+
+  <t:textfield t:id="quantity" size="10"/>
+
+  . . .
+
+  private int quantity;
+
+  String onToClientFromQuantity()
+  {
+    if (quantity == 0) return "";
+
+    return null;
+  }
++---+
+
+  This is good so far, but if the field is optional and the user submits the form,
+  you'll get a validation error, because the empty string is not valid as an integer.
+
+  That's where the "parseclient" event comes in:
+
++---+
+  Object onParseClientFromQuantity(String input)
+  {
+    if ("".equals(input)) return 0;
+
+    return null;
+  }
++---+
+
+  The event handler method has precendence over the translator.  Here it checks for the empty string
+  (and note that the input may be null!) and evaluates that as zero.
+
+  Again, returning null lets the normal translator do its work.
+
+  The event handler may also throw
+  {{{../apidocs/org/apache/tapestry5/ValidationException.html}ValidationException}} to indicate a value
+  that can't be parsed.
+
+  Now, what if you want to perform your own custom validation?  That's another event: "validate":
+
++---+
+  void onValidateFromCount(Integer value) throws ValidationException
+  {
+    if (value.equals(13)) throw new ValidationException("Thirteen is an unlucky number.");
+  }
++---+
+
+  This event gets fired <<after>> the normal validators. It is passed the <parsed> value (not the string from
+  the client, but the object value from the translator, or from the "parseclient" event handler).
+
+  The method may not return a value, but may throw a ValidationException to indicate a problem with
+  the value.
+
+  <<Caution:>> These events are exclusively on the <server side>.
+  This means that, in certain circumstances,
+  an input value will be rejected on the client side even though it is valid on the server side.   You may
+  need to disable client-side validation in order to use this feature.
+

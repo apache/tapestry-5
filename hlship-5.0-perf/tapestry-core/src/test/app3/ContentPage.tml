@@ -1,0 +1,13 @@
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+    <head>
+        <title>Content Page</title>
+    </head>
+    <body>
+        <div id="link">
+            <p>
+                Included link:
+                <t:pagelink page="login">login</t:pagelink>
+            </p>
+        </div>
+    </body>
+</html>
