@@ -72,4 +72,15 @@ public interface Environment
      * Clears all stacks; used when initializing the Environment before a render.
      */
     void clear();
+
+    /**
+     * For some type, gets the closure of the type. This allows for fast cached access to the environment value (until
+     * the Environment is discarded at the end of the request).
+     *
+     * @param type type of environmental object
+     * @param <T>
+     * @return closure that can be used to see the current environmental object of the type
+     * @since 5.0.19
+     */
+    <T> EnvironmentalClosure<T> getClosure(Class<T> type);
 }

@@ -23,7 +23,6 @@ import org.apache.tapestry5.internal.services.Instantiator;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.ioc.Location;
 import org.apache.tapestry5.ioc.internal.util.TapestryException;
-import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.model.ParameterModel;
 import org.apache.tapestry5.runtime.Component;
@@ -50,17 +49,18 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
         Page page = newPage(PAGE_NAME);
         Component component = mockComponent();
         ComponentModel model = mockComponentModel();
-        TypeCoercer coercer = mockTypeCoercer();
         Logger logger = mockLogger();
+        Logger eventLogger = mockLogger();
+        PageResources pr = mockPageResources(logger, eventLogger);
 
         train_getLogger(model, logger);
 
-        Instantiator ins = newInstantiator(component, model);
+        Instantiator ins = mockInstantiator(component, model);
 
         replay();
 
 
-        ComponentPageElement cpe = new ComponentPageElementImpl(page, ins, null);
+        ComponentPageElement cpe = new ComponentPageElementImpl(page, ins, pr);
 
         ComponentResources resources = cpe.getComponentResources();
 
@@ -83,17 +83,18 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
         Page page = newPage(PAGE_NAME);
         Component component = mockComponent();
         ComponentModel model = mockComponentModel();
-        TypeCoercer coercer = mockTypeCoercer();
         Block block = mockBlock();
         Logger logger = mockLogger();
+        Logger eventLogger = mockLogger();
+        PageResources pr = mockPageResources(logger, eventLogger);
 
-        Instantiator ins = newInstantiator(component, model);
+        Instantiator ins = mockInstantiator(component, model);
 
         train_getLogger(model, logger);
 
         replay();
 
-        ComponentPageElement cpe = new ComponentPageElementImpl(page, ins, null);
+        ComponentPageElement cpe = new ComponentPageElementImpl(page, ins, pr);
 
         ComponentResources resources = cpe.getComponentResources();
 
@@ -113,10 +114,11 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
         Component component = mockComponent();
         ComponentModel model = mockComponentModel();
         Binding binding = mockBinding();
-        TypeCoercer coercer = mockTypeCoercer();
         Logger logger = mockLogger();
+        Logger eventLogger = mockLogger();
+        PageResources pr = mockPageResources(logger, eventLogger);
 
-        Instantiator ins = newInstantiator(component, model);
+        Instantiator ins = mockInstantiator(component, model);
 
         train_getLogger(model, logger);
 
@@ -126,7 +128,7 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentPageElement cpe = new ComponentPageElementImpl(page, ins, null);
+        ComponentPageElement cpe = new ComponentPageElementImpl(page, ins, pr);
 
         ComponentResources resources = cpe.getComponentResources();
         assertFalse(resources.isBound("fred"));
@@ -145,18 +147,19 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
         Page page = newPage(PAGE_NAME);
         Component component = mockComponent();
         ComponentModel model = mockComponentModel();
-        TypeCoercer coercer = mockTypeCoercer();
         Block block1 = mockBlock();
         Block block2 = mockBlock();
         Logger logger = mockLogger();
+        Logger eventLogger = mockLogger();
+        PageResources pr = mockPageResources(logger, eventLogger);
 
         train_getLogger(model, logger);
 
-        Instantiator ins = newInstantiator(component, model);
+        Instantiator ins = mockInstantiator(component, model);
 
         replay();
 
-        ComponentPageElement cpe = new ComponentPageElementImpl(page, ins, null);
+        ComponentPageElement cpe = new ComponentPageElementImpl(page, ins, pr);
 
         cpe.addBlock("myblock", block1);
 
@@ -181,13 +184,14 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
         Component component = mockComponent();
         ComponentModel model = mockComponentModel();
         Binding binding = mockBinding();
-        TypeCoercer coercer = mockTypeCoercer();
         ParameterModel pmodel = mockParameterModel();
         Logger logger = mockLogger();
+        Logger eventLogger = mockLogger();
+        PageResources pr = mockPageResources(logger, eventLogger);
 
         train_getLogger(model, logger);
 
-        Instantiator ins = newInstantiator(component, model);
+        Instantiator ins = mockInstantiator(component, model);
 
         train_getParameterNames(model, "barney");
         train_getParameterModel(model, "barney", pmodel);
@@ -196,7 +200,7 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentPageElementImpl cpe = new ComponentPageElementImpl(page, ins, null);
+        ComponentPageElementImpl cpe = new ComponentPageElementImpl(page, ins, pr);
 
         cpe.bindParameter("barney", binding);
 
@@ -212,12 +216,13 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
         Component component = mockComponent();
         ComponentModel model = mockComponentModel();
         ParameterModel pmodel = mockParameterModel();
-        TypeCoercer coercer = mockTypeCoercer();
         Logger logger = mockLogger();
+        Logger eventLogger = mockLogger();
+        PageResources pr = mockPageResources(logger, eventLogger);
 
         train_getLogger(model, logger);
 
-        Instantiator ins = newInstantiator(component, model);
+        Instantiator ins = mockInstantiator(component, model);
 
         train_getParameterNames(model, "barney");
         train_getParameterModel(model, "barney", pmodel);
@@ -227,7 +232,7 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentPageElementImpl cpe = new ComponentPageElementImpl(page, ins, null);
+        ComponentPageElementImpl cpe = new ComponentPageElementImpl(page, ins, pr);
 
         cpe.containingPageDidLoad();
 
@@ -244,12 +249,13 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
         ComponentModel model = mockComponentModel();
         ParameterModel pmodel = mockParameterModel();
         Location l = mockLocation();
-        TypeCoercer coercer = mockTypeCoercer();
         Logger logger = mockLogger();
+        Logger eventLogger = mockLogger();
+        PageResources pr = mockPageResources(logger, eventLogger);
 
         train_getLogger(model, logger);
 
-        Instantiator ins = newInstantiator(component, model);
+        Instantiator ins = mockInstantiator(component, model);
 
         train_getComponentResources(container, containerResources);
 
@@ -274,7 +280,7 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentPageElementImpl cpe = new ComponentPageElementImpl(page, container, "myid", null, ins, l, null);
+        ComponentPageElementImpl cpe = new ComponentPageElementImpl(page, container, "myid", null, ins, l, pr);
 
         try
         {
@@ -290,6 +296,20 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
         verify();
     }
 
+    protected final PageResources mockPageResources(Logger componentLogger, Logger eventLogger)
+    {
+        PageResources resources = newMock(PageResources.class);
+
+        train_getEventLogger(resources, componentLogger, eventLogger);
+
+        return resources;
+    }
+
+    protected final void train_getEventLogger(PageResources resources, Logger componentLogger, Logger eventLogger)
+    {
+        expect(resources.getEventLogger(componentLogger)).andReturn(eventLogger);
+    }
+
     @Test
     public void is_invariant()
     {
@@ -297,13 +317,14 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
         Component component = mockComponent();
         ComponentModel model = mockComponentModel();
         Binding binding = mockBinding();
-        TypeCoercer coercer = mockTypeCoercer();
         ParameterModel pmodel = mockParameterModel();
         Logger logger = mockLogger();
+        Logger eventLogger = mockLogger();
+        PageResources pr = mockPageResources(logger, eventLogger);
 
         train_getLogger(model, logger);
 
-        Instantiator ins = newInstantiator(component, model);
+        Instantiator ins = mockInstantiator(component, model);
 
         train_getParameterModel(model, "barney", pmodel);
 
@@ -311,7 +332,7 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentPageElement cpe = new ComponentPageElementImpl(page, ins, null);
+        ComponentPageElement cpe = new ComponentPageElementImpl(page, ins, pr);
 
         assertFalse(cpe.getComponentResources().isInvariant("fred"));
 
@@ -330,8 +351,9 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
         Component component = mockComponent();
         ComponentModel model = mockComponentModel();
         Binding binding = mockBinding();
-        PageResources resources = mockPageResources();
         Logger logger = mockLogger();
+        Logger eventLogger = mockLogger();
+        PageResources resources = mockPageResources(logger, eventLogger);
 
         train_getLogger(model, logger);
 
@@ -339,7 +361,7 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
 
         Long boundValue = new Long(23);
 
-        Instantiator ins = newInstantiator(component, model);
+        Instantiator ins = mockInstantiator(component, model);
 
         train_getParameterModel(model, "barney", null);
 
@@ -365,13 +387,14 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
         Page page = newPage(PAGE_NAME);
         Component component = mockComponent();
         ComponentModel model = mockComponentModel();
-        PageResources resources = mockPageResources();
         Binding binding = mockBinding();
         Logger logger = mockLogger();
+        Logger eventLogger = mockLogger();
+        PageResources resources = mockPageResources(logger, eventLogger);
 
         train_getLogger(model, logger);
 
-        Instantiator ins = newInstantiator(component, model);
+        Instantiator ins = mockInstantiator(component, model);
 
         train_getParameterModel(model, "barney", null);
 
@@ -401,16 +424,20 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
         Component component = mockComponent();
         ComponentModel model = mockComponentModel();
         Logger logger = mockLogger();
+        Logger eventLogger = mockLogger();
+        PageResources pr = mockPageResources(logger, eventLogger);
 
         train_getLogger(model, logger);
 
-        Instantiator ins = newInstantiator(component, model);
-        Instantiator ins2 = newInstantiator(component, model);
+        Instantiator ins = mockInstantiator(component, model);
+        Instantiator ins2 = mockInstantiator(component, model);
+
+        train_getEventLogger(pr, logger, eventLogger);
 
         replay();
 
-        ComponentPageElementImpl cpe = new ComponentPageElementImpl(page, ins, null);
-        cpe.addEmbeddedElement(new ComponentPageElementImpl(page, cpe, "nested", null, ins2, null, null));
+        ComponentPageElementImpl cpe = new ComponentPageElementImpl(page, ins, pr);
+        cpe.addEmbeddedElement(new ComponentPageElementImpl(page, cpe, "nested", null, ins2, null, pr));
 
         try
         {
@@ -435,17 +462,19 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
         ComponentPageElement childElement = mockComponentPageElement();
         Component childComponent = mockComponent();
         Logger logger = mockLogger();
+        Logger eventLogger = mockLogger();
+        PageResources pr = mockPageResources(logger, eventLogger);
 
         train_getLogger(model, logger);
 
-        Instantiator ins = newInstantiator(component, model);
+        Instantiator ins = mockInstantiator(component, model);
 
         train_getId(childElement, "child");
         train_getComponent(childElement, childComponent);
 
         replay();
 
-        ComponentPageElementImpl cpe = new ComponentPageElementImpl(page, ins, null);
+        ComponentPageElementImpl cpe = new ComponentPageElementImpl(page, ins, pr);
 
         cpe.addEmbeddedElement(childElement);
 
@@ -468,10 +497,12 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
         ComponentPageElement child2 = mockComponentPageElement();
         Location l = mockLocation();
         Logger logger = mockLogger();
+        Logger eventLogger = mockLogger();
+        PageResources pr = mockPageResources(logger, eventLogger);
 
         train_getLogger(model, logger);
 
-        Instantiator ins = newInstantiator(pageComponent, model);
+        Instantiator ins = mockInstantiator(pageComponent, model);
 
         train_getId(child1, "Child");
         train_getId(child2, "CHILD");
@@ -480,7 +511,7 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentPageElementImpl cpe = new ComponentPageElementImpl(page, ins, null);
+        ComponentPageElementImpl cpe = new ComponentPageElementImpl(page, ins, pr);
 
         cpe.addEmbeddedElement(child1);
 
@@ -504,22 +535,23 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
         Page page = newPage(PAGE_NAME);
         Component component = mockComponent();
         ComponentModel model = mockComponentModel();
-        TypeCoercer coercer = mockTypeCoercer();
         final String mixinClassName = "foo.Bar";
         Component mixin = mockComponent();
         ComponentModel mixinModel = mockComponentModel();
         Logger logger = mockLogger();
+        Logger eventLogger = mockLogger();
+        PageResources pr = mockPageResources(logger, eventLogger);
 
         train_getLogger(model, logger);
 
-        Instantiator ins = newInstantiator(component, model);
-        Instantiator mixinIns = newInstantiator(mixin, mixinModel);
+        Instantiator ins = mockInstantiator(component, model);
+        Instantiator mixinIns = mockInstantiator(mixin, mixinModel);
 
         train_getComponentClassName(mixinModel, mixinClassName);
 
         replay();
 
-        ComponentPageElement cpe = new ComponentPageElementImpl(page, ins, null);
+        ComponentPageElement cpe = new ComponentPageElementImpl(page, ins, pr);
 
         cpe.addMixin(mixinIns);
 
@@ -534,21 +566,22 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
         Page page = newPage(PAGE_NAME);
         Component component = mockComponent();
         ComponentModel model = mockComponentModel();
-        TypeCoercer coercer = mockTypeCoercer();
         Component mixin = mockComponent();
         ComponentModel mixinModel = mockComponentModel();
         Logger logger = mockLogger();
+        Logger eventLogger = mockLogger();
+        PageResources pr = mockPageResources(logger, eventLogger);
 
         train_getLogger(model, logger);
 
-        Instantiator ins = newInstantiator(component, model);
-        Instantiator mixinIns = newInstantiator(mixin, mixinModel);
+        Instantiator ins = mockInstantiator(component, model);
+        Instantiator mixinIns = mockInstantiator(mixin, mixinModel);
 
         train_getComponentClassName(mixinModel, "foo.Bar");
 
         replay();
 
-        ComponentPageElement cpe = new ComponentPageElementImpl(page, ins, null);
+        ComponentPageElement cpe = new ComponentPageElementImpl(page, ins, pr);
 
         cpe.addMixin(mixinIns);
 
@@ -573,20 +606,21 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
         ComponentModel model = mockComponentModel();
         ComponentModel mixinModel = mockComponentModel();
         Component mixin = mockComponent();
-        TypeCoercer coercer = mockTypeCoercer();
         Binding binding = mockBinding();
         Logger logger = mockLogger();
+        Logger eventLogger = mockLogger();
+        PageResources pr = mockPageResources(logger, eventLogger);
 
         train_getLogger(model, logger);
 
-        Instantiator ins = newInstantiator(component, model);
-        Instantiator mixinInstantiator = newInstantiator(mixin, mixinModel);
+        Instantiator ins = mockInstantiator(component, model);
+        Instantiator mixinInstantiator = mockInstantiator(mixin, mixinModel);
 
         train_getComponentClassName(mixinModel, "foo.Fred");
 
         replay();
 
-        ComponentPageElement cpe = new ComponentPageElementImpl(page, ins, null);
+        ComponentPageElement cpe = new ComponentPageElementImpl(page, ins, pr);
 
         cpe.addMixin(mixinInstantiator);
 
@@ -604,7 +638,7 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
         verify();
     }
 
-    private Instantiator newInstantiator(Component component, ComponentModel model)
+    private Instantiator mockInstantiator(Component component, ComponentModel model)
     {
         Instantiator ins = newMock(Instantiator.class);
 

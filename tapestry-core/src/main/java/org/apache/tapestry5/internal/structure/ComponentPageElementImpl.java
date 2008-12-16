@@ -385,6 +385,8 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
 
     private final Logger logger;
 
+    private final Logger eventLogger;
+
     private final RenderCommand cleanupRender = new RenderCommand()
     {
         public void render(final MarkupWriter writer, RenderQueue queue)
@@ -592,6 +594,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
         coreComponent = coreResources.getComponent();
 
         logger = coreResources.getLogger();
+        eventLogger = pageResources.getEventLogger(logger);
     }
 
     /**
@@ -1215,6 +1218,6 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
 
     public Logger getEventLogger()
     {
-        return pageResources.getEventLogger(logger);
+        return eventLogger;
     }
 }
