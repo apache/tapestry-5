@@ -452,36 +452,6 @@
         <entry key="$PROJECT_DIR$">
           <value>
             <SvnBranchConfiguration>
-              <option name="branchMap">
-                <map>
-                  <entry key="https://svn.apache.org/repos/asf/tapestry/tapestry5/branches">
-                    <value>
-                      <list>
-                        <SvnBranchItem>
-                          <option name="creationDateMillis" value="1228328601230" />
-                          <option name="revision" value="722998" />
-                          <option name="url" value="https://svn.apache.org/repos/asf/tapestry/tapestry5/branches/5.0" />
-                        </SvnBranchItem>
-                        <SvnBranchItem>
-                          <option name="creationDateMillis" value="1221736060801" />
-                          <option name="revision" value="696628" />
-                          <option name="url" value="https://svn.apache.org/repos/asf/tapestry/tapestry5/branches/5.1-dev" />
-                        </SvnBranchItem>
-                        <SvnBranchItem>
-                          <option name="creationDateMillis" value="1211309495890" />
-                          <option name="revision" value="658390" />
-                          <option name="url" value="https://svn.apache.org/repos/asf/tapestry/tapestry5/branches/hlship-20080520" />
-                        </SvnBranchItem>
-                        <SvnBranchItem>
-                          <option name="creationDateMillis" value="1178591494728" />
-                          <option name="revision" value="536042" />
-                          <option name="url" value="https://svn.apache.org/repos/asf/tapestry/tapestry5/branches/hlship-20070503" />
-                        </SvnBranchItem>
-                      </list>
-                    </value>
-                  </entry>
-                </map>
-              </option>
               <option name="branchUrls">
                 <list>
                   <option value="https://svn.apache.org/repos/asf/tapestry/tapestry5/branches" />

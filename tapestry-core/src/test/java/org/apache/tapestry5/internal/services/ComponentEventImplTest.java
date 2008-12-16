@@ -145,6 +145,7 @@ public class ComponentEventImplTest extends InternalBaseTestCase
         EventContext context = mockEventContext();
         Logger logger = mockLogger();
 
+        train_isDebugEnabled(logger, true);
         logger.debug(eq(TapestryMarkers.EVENT_HANDLER_METHOD), isA(String.class), isA(String.class));
 
         train_getCount(context, 0);
@@ -176,6 +177,7 @@ public class ComponentEventImplTest extends InternalBaseTestCase
         PageResources resources = mockPageResources();
         Logger logger = mockLogger();
 
+        train_isDebugEnabled(logger, true);
         logger.debug(eq(TapestryMarkers.EVENT_HANDLER_METHOD), isA(String.class), isA(String.class));
 
         train_toClass(resources, Integer.class.getName(), Integer.class);
@@ -213,6 +215,9 @@ public class ComponentEventImplTest extends InternalBaseTestCase
         String methodDescription = "foo.Bar.baz()";
         Logger logger = mockLogger();
 
+        train_isDebugEnabled(logger, true);
+        EasyMock.expectLastCall().atLeastOnce();
+
         logger.debug(eq(TapestryMarkers.EVENT_HANDLER_METHOD), isA(String.class), isA(String.class));
 
         ComponentEventCallback handler = mockComponentEventHandler();
@@ -242,6 +247,7 @@ public class ComponentEventImplTest extends InternalBaseTestCase
         ComponentEventCallback handler = mockComponentEventHandler();
         Logger logger = mockLogger();
 
+        train_isDebugEnabled(logger, true);
         logger.debug(eq(TapestryMarkers.EVENT_HANDLER_METHOD), isA(String.class), isA(String.class));
 
         train_handleResult(handler, result, false);
@@ -265,6 +271,7 @@ public class ComponentEventImplTest extends InternalBaseTestCase
         ComponentEventCallback handler = mockComponentEventHandler();
         Logger logger = mockLogger();
 
+        train_isDebugEnabled(logger, true);
         logger.debug(eq(TapestryMarkers.EVENT_HANDLER_METHOD), isA(String.class), isA(String.class));
 
         replay();
@@ -287,6 +294,9 @@ public class ComponentEventImplTest extends InternalBaseTestCase
         Object result = new Object();
         ComponentEventCallback handler = mockComponentEventHandler();
         Logger logger = mockLogger();
+
+        train_isDebugEnabled(logger, true);
+        EasyMock.expectLastCall().atLeastOnce();
 
         logger.debug(eq(TapestryMarkers.EVENT_HANDLER_METHOD), isA(String.class), isA(String.class));
 

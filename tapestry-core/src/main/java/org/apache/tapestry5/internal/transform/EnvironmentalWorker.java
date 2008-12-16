@@ -15,11 +15,10 @@
 package org.apache.tapestry5.internal.transform;
 
 import org.apache.tapestry5.annotations.Environmental;
+import org.apache.tapestry5.ioc.services.Builtin;
+import org.apache.tapestry5.ioc.services.ClassFactory;
 import org.apache.tapestry5.model.MutableComponentModel;
-import org.apache.tapestry5.services.ClassTransformation;
-import org.apache.tapestry5.services.ComponentClassTransformWorker;
-import org.apache.tapestry5.services.Environment;
-import org.apache.tapestry5.services.TransformMethodSignature;
+import org.apache.tapestry5.services.*;
 
 import java.lang.reflect.Modifier;
 import java.util.List;
@@ -32,9 +31,13 @@ public class EnvironmentalWorker implements ComponentClassTransformWorker
 {
     private final Environment environment;
 
-    public EnvironmentalWorker(Environment environment)
+    private final ClassLoader classLoader;
+
+    public EnvironmentalWorker(Environment environment, @Builtin ClassFactory servicesLayerClassFactory)
     {
         this.environment = environment;
+
+        classLoader = servicesLayerClassFactory.getClassLoader();
     }
 
     public void transform(ClassTransformation transformation, MutableComponentModel model)
@@ -56,23 +59,57 @@ public class EnvironmentalWorker implements ComponentClassTransformWorker
         for (String name : names)
         {
             Environmental annotation = transformation.getFieldAnnotation(name, Environmental.class);
-            
+
             transformation.claimField(name, annotation);
 
-            String type = transformation.getFieldType(name);
+            String typeName = transformation.getFieldType(name);
 
             // TODO: Check for primitives
 
-            // Caching might be good for efficiency at some point.
+            // TAP5-417: Calls to javassist.runtime.Desc.getType() are showing up as method hot spots.
+
+            Class type = null;
+
+            try
+            {
+                type = classLoader.loadClass(typeName);
+            }
+            catch (ClassNotFoundException ex)
+            {
+                throw new RuntimeException(ex);
+            }
+
+            // TAP5-417: Changed the code to use EnvironmentalClosure, which encapsulates
+            // efficient caching.
+
+            String injectedTypeFieldName = transformation.addInjectedField(Class.class, "type", type);
+
+            // First we need (at page attach) to acquire the closure for the type.
+
+            String closureFieldName = transformation.addField(Modifier.PRIVATE, EnvironmentalClosure.class.getName(),
+                                                              "closure");
+
+            String attachBody = String.format("%s = %s.getClosure(%s);",
+                                              closureFieldName, envField, injectedTypeFieldName);
+
+            transformation.extendMethod(TransformConstants.CONTAINING_PAGE_DID_ATTACH_SIGNATURE, attachBody);
+
+            // Clear the closure field when the page detaches.  We'll get a new one when we next attach.
+
+            transformation.extendMethod(TransformConstants.CONTAINING_PAGE_DID_DETACH_SIGNATURE,
+                                        closureFieldName + " = null;");
+
+            // Now build a read method that invokes peek() or peekRequired() on the closure. The closure
+            // is responsible for safe caching of the environmental value.
 
             String methodName = transformation.newMemberName("environment_read", name);
 
-            TransformMethodSignature sig = new TransformMethodSignature(Modifier.PRIVATE, type, methodName, null,
+            TransformMethodSignature sig = new TransformMethodSignature(Modifier.PRIVATE, typeName, methodName, null,
                                                                         null);
 
             String body = String.format(
-                    "return ($r) %s.%s($type);",
-                    envField,
+                    "return ($r) %s.%s();",
+                    closureFieldName,
                     annotation.value() ? "peekRequired" : "peek");
 
             transformation.addMethod(sig, body);
@@ -82,5 +119,4 @@ public class EnvironmentalWorker implements ComponentClassTransformWorker
             transformation.removeField(name);
         }
     }
-
 }

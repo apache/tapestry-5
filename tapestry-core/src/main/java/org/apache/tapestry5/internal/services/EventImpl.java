@@ -47,7 +47,8 @@ public class EventImpl implements Event
 
     public void setMethodDescription(String methodDescription)
     {
-        logger.debug(TapestryMarkers.EVENT_HANDLER_METHOD, "Invoking: {}", methodDescription);
+        if (logger.isDebugEnabled())
+            logger.debug(TapestryMarkers.EVENT_HANDLER_METHOD, "Invoking: {}", methodDescription);
 
         this.methodDescription = methodDescription;
     }
@@ -60,8 +61,8 @@ public class EventImpl implements Event
         // this should never, ever happen. But what the hell,
         // let's check anyway.
 
-        if (aborted) throw new IllegalStateException(ServicesMessages
-                .componentEventIsAborted(methodDescription));
+        if (aborted)
+            throw new IllegalStateException(ServicesMessages.componentEventIsAborted(methodDescription));
 
 
         if (result != null) aborted |= handler.handleResult(result);
