@@ -50,12 +50,15 @@ public class ComponentEventImplTest extends InternalBaseTestCase
     {
         ComponentEventCallback handler = mockComponentEventHandler();
         EventContext context = mockEventContext();
+        Logger logger = mockLogger();
+
+        train_isDebugEnabled(logger, false);
 
         train_getCount(context, 0);
 
         replay();
 
-        ComponentEvent event = new ComponentEventImpl("eventType", "someId", context, handler, null, null);
+        ComponentEvent event = new ComponentEventImpl("eventType", "someId", context, handler, null, logger);
 
         assertTrue(event.matches("eventType", "someId", 0));
         assertFalse(event.matches("foo", "someId", 0));
@@ -68,12 +71,15 @@ public class ComponentEventImplTest extends InternalBaseTestCase
     {
         ComponentEventCallback handler = mockComponentEventHandler();
         EventContext context = mockEventContext();
+        Logger logger = mockLogger();
+
+        train_isDebugEnabled(logger, false);
 
         train_getCount(context, 0);
 
         replay();
 
-        ComponentEvent event = new ComponentEventImpl("eventType", "someId", context, handler, null, null);
+        ComponentEvent event = new ComponentEventImpl("eventType", "someId", context, handler, null, logger);
 
         assertTrue(event.matches("EVENTTYPE", "someid", 0));
 
@@ -85,12 +91,15 @@ public class ComponentEventImplTest extends InternalBaseTestCase
     {
         ComponentEventCallback handler = mockComponentEventHandler();
         EventContext context = mockEventContext();
+        Logger logger = mockLogger();
+
+        train_isDebugEnabled(logger, false);
 
         train_getCount(context, 0);
 
         replay();
 
-        ComponentEvent event = new ComponentEventImpl("eventType", "someId", context, handler, null, null);
+        ComponentEvent event = new ComponentEventImpl("eventType", "someId", context, handler, null, logger);
 
         assertTrue(event.matches("eventType", "someId", 0));
 
@@ -104,12 +113,15 @@ public class ComponentEventImplTest extends InternalBaseTestCase
     {
         ComponentEventCallback handler = mockComponentEventHandler();
         EventContext context = mockEventContext();
+        Logger logger = mockLogger();
+
+        train_isDebugEnabled(logger, false);
 
         train_getCount(context, 0);
 
         replay();
 
-        ComponentEvent event = new ComponentEventImpl("eventType", "someId", context, handler, null, null);
+        ComponentEvent event = new ComponentEventImpl("eventType", "someId", context, handler, null, logger);
 
         assertTrue(event.matches("eventtype", "SOMEID", 0));
 
@@ -123,6 +135,9 @@ public class ComponentEventImplTest extends InternalBaseTestCase
         PageResources resources = mockPageResources();
         EventContext context = mockEventContext();
         Integer value = new Integer(27);
+        Logger logger = mockLogger();
+
+        train_isDebugEnabled(logger, false);
 
         train_toClass(resources, "java.lang.Integer", Integer.class);
 
@@ -131,7 +146,7 @@ public class ComponentEventImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentEvent event = new ComponentEventImpl("eventType", "someId", context, handler, resources, null);
+        ComponentEvent event = new ComponentEventImpl("eventType", "someId", context, handler, resources, logger);
 
         assertSame(event.coerceContext(0, "java.lang.Integer"), value);
 
@@ -146,7 +161,7 @@ public class ComponentEventImplTest extends InternalBaseTestCase
         Logger logger = mockLogger();
 
         train_isDebugEnabled(logger, true);
-        logger.debug(eq(TapestryMarkers.EVENT_HANDLER_METHOD), isA(String.class), isA(String.class));
+        logger.debug(eq(TapestryMarkers.EVENT_HANDLER_METHOD), isA(String.class));
 
         train_getCount(context, 0);
 
@@ -178,7 +193,7 @@ public class ComponentEventImplTest extends InternalBaseTestCase
         Logger logger = mockLogger();
 
         train_isDebugEnabled(logger, true);
-        logger.debug(eq(TapestryMarkers.EVENT_HANDLER_METHOD), isA(String.class), isA(String.class));
+        logger.debug(eq(TapestryMarkers.EVENT_HANDLER_METHOD), isA(String.class));
 
         train_toClass(resources, Integer.class.getName(), Integer.class);
 
@@ -218,7 +233,7 @@ public class ComponentEventImplTest extends InternalBaseTestCase
         train_isDebugEnabled(logger, true);
         EasyMock.expectLastCall().atLeastOnce();
 
-        logger.debug(eq(TapestryMarkers.EVENT_HANDLER_METHOD), isA(String.class), isA(String.class));
+        logger.debug(eq(TapestryMarkers.EVENT_HANDLER_METHOD), isA(String.class));
 
         ComponentEventCallback handler = mockComponentEventHandler();
 
@@ -248,7 +263,7 @@ public class ComponentEventImplTest extends InternalBaseTestCase
         Logger logger = mockLogger();
 
         train_isDebugEnabled(logger, true);
-        logger.debug(eq(TapestryMarkers.EVENT_HANDLER_METHOD), isA(String.class), isA(String.class));
+        logger.debug(eq(TapestryMarkers.EVENT_HANDLER_METHOD), isA(String.class));
 
         train_handleResult(handler, result, false);
 
@@ -272,7 +287,7 @@ public class ComponentEventImplTest extends InternalBaseTestCase
         Logger logger = mockLogger();
 
         train_isDebugEnabled(logger, true);
-        logger.debug(eq(TapestryMarkers.EVENT_HANDLER_METHOD), isA(String.class), isA(String.class));
+        logger.debug(eq(TapestryMarkers.EVENT_HANDLER_METHOD), isA(String.class));
 
         replay();
 
@@ -298,7 +313,7 @@ public class ComponentEventImplTest extends InternalBaseTestCase
         train_isDebugEnabled(logger, true);
         EasyMock.expectLastCall().atLeastOnce();
 
-        logger.debug(eq(TapestryMarkers.EVENT_HANDLER_METHOD), isA(String.class), isA(String.class));
+        logger.debug(eq(TapestryMarkers.EVENT_HANDLER_METHOD), isA(String.class));
 
         EasyMock.expectLastCall().atLeastOnce();
 

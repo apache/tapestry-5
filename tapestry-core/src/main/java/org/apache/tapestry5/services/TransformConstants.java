@@ -22,13 +22,18 @@ import java.lang.reflect.Modifier;
 
 /**
  * Constants used by implementations of {@link org.apache.tapestry5.services.ComponentClassTransformWorker}.
+ * <p/>
+ * <p/>
+ * Note: methods on transformed components will not be invoked <em>unless</em> {@linkplain
+ * org.apache.tapestry5.model.MutableComponentModel#addRenderPhase(Class) the component model is updated to identify the
+ * use of the corresponding render phase}.
  */
 public final class TransformConstants
 {
     // Shared parameters of a whole bunch of lifecycle methods, representing the different
     // component render states.
-    private static final String[] RENDER_PHASE_METHOD_PARAMETERS = { MarkupWriter.class.getName(),
-            Event.class.getName() };
+    private static final String[] RENDER_PHASE_METHOD_PARAMETERS = {MarkupWriter.class.getName(),
+            Event.class.getName()};
 
     /**
      * Signature for {@link org.apache.tapestry5.runtime.Component#dispatchComponentEvent(org.apache.tapestry5.runtime.ComponentEvent)}.
@@ -36,7 +41,7 @@ public final class TransformConstants
      * @see org.apache.tapestry5.annotations.OnEvent
      */
     public static final TransformMethodSignature DISPATCH_COMPONENT_EVENT = new TransformMethodSignature(
-            Modifier.PUBLIC, "boolean", "dispatchComponentEvent", new String[] { ComponentEvent.class.getName() },
+            Modifier.PUBLIC, "boolean", "dispatchComponentEvent", new String[] {ComponentEvent.class.getName()},
             null);
 
     /**

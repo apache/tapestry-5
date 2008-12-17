@@ -30,6 +30,8 @@ public class EventImpl implements Event
 
     private final Logger logger;
 
+    private final boolean debugEnabled;
+
     /**
      * @param handler informed of return values from methods, deems when the event is aborted
      * @param logger  used to log method invocations
@@ -38,6 +40,8 @@ public class EventImpl implements Event
     {
         this.handler = notNull(handler, "handler");
         this.logger = logger;
+
+        debugEnabled = logger.isDebugEnabled();
     }
 
     public boolean isAborted()
@@ -47,8 +51,8 @@ public class EventImpl implements Event
 
     public void setMethodDescription(String methodDescription)
     {
-        if (logger.isDebugEnabled())
-            logger.debug(TapestryMarkers.EVENT_HANDLER_METHOD, "Invoking: {}", methodDescription);
+        if (debugEnabled)
+            logger.debug(TapestryMarkers.EVENT_HANDLER_METHOD, "Invoking: " + methodDescription);
 
         this.methodDescription = methodDescription;
     }
@@ -65,7 +69,8 @@ public class EventImpl implements Event
             throw new IllegalStateException(ServicesMessages.componentEventIsAborted(methodDescription));
 
 
-        if (result != null) aborted |= handler.handleResult(result);
+        if (result != null)
+            aborted |= handler.handleResult(result);
 
         return aborted;
     }
@@ -73,5 +78,11 @@ public class EventImpl implements Event
     protected String getMethodDescription()
     {
         return methodDescription;
+    }
+
+    public void reset()
+    {
+        aborted = false;
+        methodDescription = null;
     }
 }

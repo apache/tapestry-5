@@ -20,6 +20,7 @@ import org.apache.tapestry5.internal.structure.Page;
 import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.services.MarkupWriterFactory;
 import org.apache.tapestry5.services.Response;
+import org.slf4j.Logger;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -34,13 +35,16 @@ public class PageResponseRendererImpl implements PageResponseRenderer
 
     private final Response response;
 
+    private final Logger logger;
+
     public PageResponseRendererImpl(MarkupWriterFactory markupWriterFactory, PageMarkupRenderer markupRenderer,
-                                    PageContentTypeAnalyzer pageContentTypeAnalyzer, Response response)
+                                    PageContentTypeAnalyzer pageContentTypeAnalyzer, Response response, Logger logger)
     {
         this.markupWriterFactory = markupWriterFactory;
         this.markupRenderer = markupRenderer;
         this.pageContentTypeAnalyzer = pageContentTypeAnalyzer;
         this.response = response;
+        this.logger = logger;
     }
 
     public void renderPageResponse(Page page) throws IOException
@@ -58,7 +62,20 @@ public class PageResponseRendererImpl implements PageResponseRenderer
 
         PrintWriter pw = response.getPrintWriter(contentType.toString());
 
+        long startNanos = System.nanoTime();
+
         writer.toMarkup(pw);
+
+        long endNanos = System.nanoTime();
+
+        if (logger.isDebugEnabled())
+        {
+            long elapsedNanos = endNanos - startNanos;
+            double elapsedSeconds = ((float) elapsedNanos) / 1000000000F;
+
+            logger.debug(String.format("Response DOM streamed to markup in %.3f seconds",
+                                       elapsedSeconds));
+        }
 
         pw.flush();
     }

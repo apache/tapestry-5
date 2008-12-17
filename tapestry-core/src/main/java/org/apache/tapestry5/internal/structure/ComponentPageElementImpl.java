@@ -15,6 +15,7 @@
 package org.apache.tapestry5.internal.structure;
 
 import org.apache.tapestry5.*;
+import org.apache.tapestry5.annotations.*;
 import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.internal.InternalComponentResources;
 import org.apache.tapestry5.internal.TapestryInternalUtils;
@@ -31,6 +32,7 @@ import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.TapestryException;
 import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.model.ParameterModel;
+import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.runtime.*;
 import org.slf4j.Logger;
 
@@ -67,16 +69,6 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
 
     private static final Block PLACEHOLDER_BLOCK = new PlaceholderBlock();
 
-    /**
-     * @see #render(org.apache.tapestry5.MarkupWriter, org.apache.tapestry5.runtime.RenderQueue)
-     */
-    private static final RenderCommand POP_COMPONENT_ID = new RenderCommand()
-    {
-        public void render(MarkupWriter writer, RenderQueue queue)
-        {
-            queue.endComponent();
-        }
-    };
 
     private static final ComponentCallback CONTAINING_PAGE_DID_ATTACH = new LifecycleNotificationComponentCallback()
     {
@@ -125,253 +117,327 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
         return list == null ? 0 : list.size();
     }
 
-    private static class RenderPhaseEventHandler implements ComponentEventCallback
+    private abstract class AbstractPhase extends AbstractComponentCallback implements RenderCommand
     {
-        private boolean result = true;
+        private final String name;
 
-        private List<RenderCommand> commands;
+        private MarkupWriter writer;
 
-        boolean getResult()
+        public AbstractPhase(String name)
         {
-            return result;
+            super(sharedEvent);
+
+            this.name = name;
         }
 
-        public boolean handleResult(Object result)
+        @Override
+        public String toString()
         {
-            if (result instanceof Boolean)
-            {
-                this.result = (Boolean) result;
-                return true; // abort other handler methods
-            }
-
-            if (result instanceof RenderCommand)
-            {
-                RenderCommand command = (RenderCommand) result;
-
-                add(command);
-
-                return false; // do not abort!
-            }
-
-            if (result instanceof Renderable)
-            {
-                final Renderable renderable = (Renderable) result;
-
-                RenderCommand wrapper = new RenderCommand()
-                {
-                    public void render(MarkupWriter writer, RenderQueue queue)
-                    {
-                        renderable.render(writer);
-                    }
-                };
-
-                add(wrapper);
-
-                return false;
-            }
-
-            throw new RuntimeException(StructureMessages.wrongPhaseResultType(Boolean.class));
+            return phaseToString(name);
         }
 
-        private void add(RenderCommand command)
+        void reset(RenderQueue queue)
         {
-            if (commands == null) commands = CollectionFactory.newList();
+            sharedEventHandler.queueCommands(queue);
 
-            commands.add(command);
+            sharedEventHandler.reset();
+
+            sharedEvent.reset();
+
+            writer = null;
         }
 
-        public void queueCommands(RenderQueue queue)
+        void callback(boolean reverse, MarkupWriter writer)
         {
-            if (commands == null) return;
+            this.writer = writer;
 
-            for (RenderCommand command : commands)
-                queue.push(command);
+            invoke(reverse, this);
+        }
+
+        public void run(Component component)
+        {
+            invokeComponent(component, writer, sharedEvent);
+        }
+
+        protected boolean getResult()
+        {
+            return sharedEventHandler.getResult();
+        }
+
+        protected abstract void invokeComponent(Component component, MarkupWriter writer, Event event);
+    }
+
+    private class SetupRenderPhase extends AbstractPhase
+    {
+        public SetupRenderPhase()
+        {
+            super("SetupRender");
+        }
+
+        protected void invokeComponent(Component component, MarkupWriter writer, Event event)
+        {
+            component.setupRender(writer, event);
+        }
+
+        public void render(final MarkupWriter writer, RenderQueue queue)
+        {
+            callback(false, writer);
+
+            push(queue, getResult(), beginRenderPhase, cleanupRenderPhase);
+
+            reset(queue);
         }
     }
 
-    private final RenderCommand afterRender = new RenderCommand()
+    private class BeginRenderPhase extends AbstractPhase
     {
-        public void render(final MarkupWriter writer, RenderQueue queue)
+        private BeginRenderPhase()
         {
-            RenderPhaseEventHandler handler = new RenderPhaseEventHandler();
-            final Event event = new EventImpl(handler, getEventLogger());
-
-            ComponentCallback callback = new AbstractComponentCallback(event)
-            {
-                public void run(Component component)
-                {
-                    component.afterRender(writer, event);
-                }
-            };
-
-            invoke(true, callback);
-
-            if (!handler.getResult()) queue.push(beginRender);
-
-            handler.queueCommands(queue);
+            super("BeginRender");
         }
 
-        @Override
-        public String toString()
+        protected void invokeComponent(Component component, MarkupWriter writer, Event event)
         {
-            return phaseToString("AfterRender");
-        }
-    };
-
-    private final RenderCommand afterRenderBody = new RenderCommand()
-    {
-        public void render(final MarkupWriter writer, RenderQueue queue)
-        {
-            RenderPhaseEventHandler handler = new RenderPhaseEventHandler();
-            final Event event = new EventImpl(handler, getEventLogger());
-
-            ComponentCallback callback = new AbstractComponentCallback(event)
-            {
-                public void run(Component component)
-                {
-                    component.afterRenderBody(writer, event);
-                }
-            };
-
-            invoke(true, callback);
-
-            if (!handler.getResult()) queue.push(beforeRenderBody);
-
-            handler.queueCommands(queue);
+            component.beginRender(writer, event);
         }
 
-        @Override
-        public String toString()
-        {
-            return phaseToString("AfterRenderBody");
-        }
-    };
-
-    private final RenderCommand afterRenderTemplate = new RenderCommand()
-    {
         public void render(final MarkupWriter writer, final RenderQueue queue)
         {
-            RenderPhaseEventHandler handler = new RenderPhaseEventHandler();
-            final Event event = new EventImpl(handler, getEventLogger());
+            callback(false, writer);
 
-            ComponentCallback callback = new AbstractComponentCallback(event)
-            {
-                public void run(Component component)
-                {
-                    component.afterRenderTemplate(writer, event);
-                }
-            };
+            push(queue, afterRenderPhase);
+            push(queue, getResult(), beforeRenderTemplatePhase, null);
 
-            invoke(true, callback);
+            reset(queue);
+        }
+    }
 
-            if (!handler.getResult()) queue.push(beforeRenderTemplate);
-
-            handler.queueCommands(queue);
+    /**
+     * Replaces {@link org.apache.tapestry5.internal.structure.ComponentPageElementImpl.BeginRenderPhase} when there a
+     * handler for AfterRender but not BeginRender.
+     */
+    private class OptimizedBeginRenderPhase implements RenderCommand
+    {
+        public void render(MarkupWriter writer, RenderQueue queue)
+        {
+            push(queue, afterRenderPhase);
+            push(queue, beforeRenderTemplatePhase);
         }
 
         @Override
         public String toString()
         {
-            return phaseToString("AfterRenderTemplate");
+            return phaseToString("OptimizedBeginRenderPhase");
         }
-    };
+    }
 
-    private final RenderCommand beforeRenderBody = new RenderCommand()
+    /**
+     * Reponsible for rendering the component's template.  Even a component that doesn't have a template goes through
+     * this phase, as a synthetic template (used to trigger the rendering of the component's body) will be supplied.
+     */
+    private class BeforeRenderTemplatePhase extends AbstractPhase
     {
+        private BeforeRenderTemplatePhase()
+        {
+            super("BeforeRenderTemplate");
+        }
+
+
+        protected void invokeComponent(Component component, MarkupWriter writer, Event event)
+        {
+            component.beforeRenderTemplate(writer, event);
+        }
+
+        public void render(final MarkupWriter writer, final RenderQueue queue)
+        {
+            callback(false, writer);
+
+            push(queue, afterRenderTemplatePhase);
+
+            if (getResult())
+                pushElements(queue, template);
+
+            reset(queue);
+        }
+    }
+
+    /**
+     * Alternative version of BeforeRenderTemplatePhase used when the BeforeRenderTemplate render phase is not handled.
+     */
+    private class RenderTemplatePhase implements RenderCommand
+    {
+        public void render(MarkupWriter writer, RenderQueue queue)
+        {
+            push(queue, afterRenderTemplatePhase);
+
+            pushElements(queue, template);
+        }
+
+        @Override
+        public String toString()
+        {
+            return phaseToString("RenderTemplate");
+        }
+    }
+
+    private class BeforeRenderBodyPhase extends AbstractPhase
+    {
+        private BeforeRenderBodyPhase()
+        {
+            super("BeforeRenderBody");
+        }
+
+        protected void invokeComponent(Component component, MarkupWriter writer, Event event)
+        {
+            component.beforeRenderBody(writer, event);
+        }
+
         public void render(final MarkupWriter writer, RenderQueue queue)
         {
-            RenderPhaseEventHandler handler = new RenderPhaseEventHandler();
-            final Event event = new EventImpl(handler, getEventLogger());
+            callback(false, writer);
 
-            ComponentCallback callback = new AbstractComponentCallback(event)
-            {
-                public void run(Component component)
-                {
-                    component.beforeRenderBody(writer, event);
-                }
-            };
+            push(queue, afterRenderBodyPhase);
 
-            invoke(false, callback);
+            if (getResult() && bodyBlock != null)
+                queue.push(bodyBlock);
 
-            queue.push(afterRenderBody);
-
-            if (handler.getResult() && bodyBlock != null) queue.push(bodyBlock);
-
-            handler.queueCommands(queue);
+            reset(queue);
         }
+    }
 
-        @Override
-        public String toString()
-        {
-            return phaseToString("BeforeRenderBody");
-        }
-    };
 
-    private final RenderCommand beforeRenderTemplate = new RenderCommand()
+    private class AfterRenderBodyPhase extends AbstractPhase
     {
+
+        private AfterRenderBodyPhase()
+        {
+            super("AfterRenderBody");
+        }
+
+
+        protected void invokeComponent(Component component, MarkupWriter writer, Event event)
+        {
+            component.afterRenderBody(writer, event);
+        }
+
+        public void render(final MarkupWriter writer, RenderQueue queue)
+        {
+            callback(true, writer);
+
+            push(queue, getResult(), null, beforeRenderBodyPhase);
+
+            reset(queue);
+        }
+    }
+
+    private class AfterRenderTemplatePhase extends AbstractPhase
+    {
+        private AfterRenderTemplatePhase()
+        {
+            super("AfterRenderTemplate");
+        }
+
+        protected void invokeComponent(Component component, MarkupWriter writer, Event event)
+        {
+            component.afterRenderTemplate(writer, event);
+        }
+
         public void render(final MarkupWriter writer, final RenderQueue queue)
         {
-            final RenderPhaseEventHandler handler = new RenderPhaseEventHandler();
-            final Event event = new EventImpl(handler, getEventLogger());
+            callback(true, writer);
 
-            ComponentCallback callback = new AbstractComponentCallback(event)
-            {
-                public void run(Component component)
-                {
-                    component.beforeRenderTemplate(writer, event);
-                }
-            };
+            push(queue, getResult(), null, beforeRenderTemplatePhase);
 
-            invoke(false, callback);
-
-            queue.push(afterRenderTemplate);
-
-            if (handler.getResult()) pushElements(queue, template);
-
-            handler.queueCommands(queue);
+            reset(queue);
         }
+    }
 
-        @Override
-        public String toString()
-        {
-            return phaseToString("BeforeRenderTemplate");
-        }
-    };
-
-    private final RenderCommand beginRender = new RenderCommand()
+    private class AfterRenderPhase extends AbstractPhase
     {
-        public void render(final MarkupWriter writer, final RenderQueue queue)
+        private AfterRenderPhase()
         {
-            RenderPhaseEventHandler handler = new RenderPhaseEventHandler();
-            final Event event = new EventImpl(handler, getEventLogger());
+            super("AfterRender");
+        }
 
-            ComponentCallback callback = new AbstractComponentCallback(event)
-            {
-                public void run(Component component)
-                {
-                    component.beginRender(writer, event);
-                }
-            };
+        protected void invokeComponent(Component component, MarkupWriter writer, Event event)
+        {
+            component.afterRender(writer, event);
+        }
 
-            invoke(false, callback);
+        public void render(final MarkupWriter writer, RenderQueue queue)
+        {
+            callback(true, writer);
 
-            queue.push(afterRender);
+            push(queue, getResult(), cleanupRenderPhase, beginRenderPhase);
 
-            // If the component has no template whatsoever, then a
-            // renderBody element is added as the lone element of the component's template.
-            // So every component will have a non-empty template.
+            reset(queue);
+        }
+    }
 
-            if (handler.getResult()) queue.push(beforeRenderTemplate);
 
-            handler.queueCommands(queue);
+    private class CleanupRenderPhase extends AbstractPhase
+    {
+        private CleanupRenderPhase()
+        {
+            super("CleanupRender");
+        }
+
+        protected void invokeComponent(Component component, MarkupWriter writer, Event event)
+        {
+            component.cleanupRender(writer, event);
+        }
+
+        public void render(final MarkupWriter writer, RenderQueue queue)
+        {
+            callback(true, writer);
+
+            push(queue, getResult(), null, setupRenderPhase);
+
+            reset(queue);
+        }
+    }
+
+    private class PostRenderCleanupPhase implements RenderCommand
+    {
+        /**
+         * Used to detect mismatches calls to {@link MarkupWriter#element(String, Object[])} } and {@link
+         * org.apache.tapestry5.MarkupWriter#end()}.  The expectation is that any element(s) begun by this component
+         * during rendering will be balanced by end() calls, resulting in the current element reverting to its initial
+         * value.
+         */
+        private final Element expectedElementAtCompletion;
+
+        PostRenderCleanupPhase(Element expectedElementAtCompletion)
+        {
+            this.expectedElementAtCompletion = expectedElementAtCompletion;
+        }
+
+        public void render(MarkupWriter writer, RenderQueue queue)
+        {
+            rendering = false;
+
+            Element current = writer.getElement();
+
+            if (current != expectedElementAtCompletion)
+                throw new TapestryException(StructureMessages.unbalancedElements(completeId), getLocation(), null);
+
+            invoke(false, POST_RENDER_CLEANUP);
+
+            queue.endComponent();
+
+            // Now and only now the component is done rendering and fully cleaned up. Decrement
+            // the page's dirty count. If the entire render goes well, then the page will be
+            // clean and can be stored into the pool for later reuse.
+
+            page.decrementDirtyCount();
         }
 
         @Override
         public String toString()
         {
-            return phaseToString("BeginRender");
+            return phaseToString("PostRenderCleanup");
         }
-    };
+    }
 
     private Map<String, Block> blocks;
 
@@ -383,60 +449,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
 
     private final PageResources pageResources;
 
-    private final Logger logger;
-
     private final Logger eventLogger;
-
-    private final RenderCommand cleanupRender = new RenderCommand()
-    {
-        public void render(final MarkupWriter writer, RenderQueue queue)
-        {
-            RenderPhaseEventHandler handler = new RenderPhaseEventHandler();
-            final Event event = new EventImpl(handler, getEventLogger());
-
-            ComponentCallback callback = new AbstractComponentCallback(event)
-            {
-                public void run(Component component)
-                {
-                    component.cleanupRender(writer, event);
-                }
-            };
-
-            invoke(true, callback);
-
-            if (handler.getResult())
-            {
-                rendering = false;
-
-                Element current = writer.getElement();
-
-                if (current != elementAtSetup)
-                    throw new TapestryException(StructureMessages.unbalancedElements(completeId), getLocation(), null);
-
-                elementAtSetup = null;
-
-                invoke(false, POST_RENDER_CLEANUP);
-
-                // NOW and only now the component is done rendering and fully cleaned up. Decrement
-                // the page's dirty count. If the entire render goes well, then the page will be
-                // clean and can be stored into the pool for later reuse.
-
-                page.decrementDirtyCount();
-            }
-            else
-            {
-                queue.push(setupRender);
-            }
-
-            handler.queueCommands(queue);
-        }
-
-        @Override
-        public String toString()
-        {
-            return phaseToString("CleanupRender");
-        }
-    };
 
     private final String completeId;
 
@@ -470,65 +483,20 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
 
     private boolean rendering;
 
-    /**
-     * Used to detect mismatches calls to {@link MarkupWriter#element(String, Object[])} } and {@link
-     * org.apache.tapestry5.MarkupWriter#end()}.  The expectation is that any element(s) begun by this component during
-     * rendering will be balanced by end() calls, resulting in the current element reverting to its initial value.
-     */
-    private Element elementAtSetup;
-
-    private final RenderCommand setupRender = new RenderCommand()
-    {
-        public void render(final MarkupWriter writer, RenderQueue queue)
-        {
-            // TODO: Check for recursive rendering.
-
-            rendering = true;
-
-            elementAtSetup = writer.getElement();
-
-            RenderPhaseEventHandler handler = new RenderPhaseEventHandler();
-            final Event event = new EventImpl(handler, getEventLogger());
-
-            ComponentCallback callback = new AbstractComponentCallback(event)
-            {
-                public void run(Component component)
-                {
-                    component.setupRender(writer, event);
-                }
-            };
-
-            invoke(false, callback);
-
-            queue.push(cleanupRender);
-
-            if (handler.getResult()) queue.push(beginRender);
-
-            handler.queueCommands(queue);
-        }
-
-        @Override
-        public String toString()
-        {
-            return phaseToString("SetupRender");
-        }
-    };
 
     // We know that, at the very least, there will be an element to force the component to render
     // its body, so there's no reason to wait to initialize the list.
 
     private final List<PageElement> template = CollectionFactory.newList();
 
+    private boolean renderPhasesInitalized;
 
-    public ComponentPageElement newChild(String id, String elementName, Instantiator instantiator, Location location)
-    {
-        ComponentPageElementImpl child = new ComponentPageElementImpl(page, this, id, elementName, instantiator,
-                                                                      location, pageResources);
+    private RenderCommand setupRenderPhase, beginRenderPhase, beforeRenderTemplatePhase, beforeRenderBodyPhase,
+            afterRenderBodyPhase, afterRenderTemplatePhase, afterRenderPhase, cleanupRenderPhase;
 
-        addEmbeddedElement(child);
+    private final RenderPhaseEventHandler sharedEventHandler = new RenderPhaseEventHandler();
 
-        return child;
-    }
+    private final EventImpl sharedEvent;
 
     /**
      * Constructor for other components embedded within the root component or at deeper levels of the hierarchy.
@@ -593,8 +561,10 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
 
         coreComponent = coreResources.getComponent();
 
-        logger = coreResources.getLogger();
+        Logger logger = coreResources.getLogger();
         eventLogger = pageResources.getEventLogger(logger);
+
+        sharedEvent = new EventImpl(sharedEventHandler, eventLogger);
     }
 
     /**
@@ -605,6 +575,82 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
         this(page, null, null, null, instantiator, null, pageResources);
     }
 
+    private void initializeRenderPhases()
+    {
+        setupRenderPhase = new SetupRenderPhase();
+        beginRenderPhase = new BeginRenderPhase();
+        beforeRenderTemplatePhase = new BeforeRenderTemplatePhase();
+        beforeRenderBodyPhase = new BeforeRenderBodyPhase();
+        afterRenderBodyPhase = new AfterRenderBodyPhase();
+        afterRenderTemplatePhase = new AfterRenderTemplatePhase();
+        afterRenderPhase = new AfterRenderPhase();
+        cleanupRenderPhase = new CleanupRenderPhase();
+
+
+        // Now the optimization, where we remove, replace and collapse unused phases. We use
+        // the component models to determine which phases have handler methods for the
+        // render phases.
+
+        Set<Class> handled = coreResources.getComponentModel().getHandledRenderPhases();
+
+        if (mixinIdToComponentResources != null)
+        {
+            for (ComponentResources r : mixinIdToComponentResources.values())
+                handled.addAll(r.getComponentModel().getHandledRenderPhases());
+        }
+
+        if (!handled.contains(CleanupRender.class)) cleanupRenderPhase = null;
+
+        // Now, work back to front.
+
+        if (!handled.contains(AfterRender.class))
+            afterRenderPhase = cleanupRenderPhase;
+
+        if (!handled.contains(AfterRenderTemplate.class))
+            afterRenderTemplatePhase = null;
+
+        if (!handled.contains(AfterRenderBody.class))
+            afterRenderBodyPhase = null;
+
+        if (!handled.contains(BeforeRenderTemplate.class))
+            beforeRenderTemplatePhase = new RenderTemplatePhase();
+
+        if (!handled.contains(BeginRender.class))
+        {
+            RenderCommand replacement = handled.contains(AfterRender.class)
+                                        ? new OptimizedBeginRenderPhase()
+                                        : beforeRenderTemplatePhase;
+
+            beginRenderPhase = replacement;
+        }
+
+        if (!handled.contains(SetupRender.class))
+            setupRenderPhase = beginRenderPhase;
+
+        renderPhasesInitalized = true;
+    }
+
+    public ComponentPageElement newChild(String id, String elementName, Instantiator instantiator, Location location)
+    {
+        ComponentPageElementImpl child = new ComponentPageElementImpl(page, this, id, elementName, instantiator,
+                                                                      location, pageResources);
+
+        addEmbeddedElement(child);
+
+        return child;
+    }
+
+    void push(RenderQueue queue, boolean forward, RenderCommand forwardPhase, RenderCommand backwardPhase)
+    {
+        push(queue, forward ? forwardPhase : backwardPhase);
+    }
+
+    void push(RenderQueue queue, RenderCommand nextPhase)
+    {
+        if (nextPhase != null)
+            queue.push(nextPhase);
+    }
+
     void addEmbeddedElement(ComponentPageElement child)
     {
         if (children == null) children = CollectionFactory.newCaseInsensitiveMap();
@@ -612,6 +658,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
         String childId = child.getId();
 
         ComponentPageElement existing = children.get(childId);
+
         if (existing != null)
             throw new TapestryException(StructureMessages.duplicateChildComponent(this, childId), child, null);
 
@@ -789,7 +836,8 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
     {
         // If no body, then no beforeRenderBody or afterRenderBody
 
-        if (bodyBlock != null) queue.push(beforeRenderBody);
+        if (bodyBlock != null)
+            push(queue, beforeRenderBodyPhase);
     }
 
     public String getCompleteId()
@@ -960,6 +1008,12 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
      */
     public final void render(MarkupWriter writer, RenderQueue queue)
     {
+        // We assume that by the time we start to render, the structure (i.e., mixins) is nailed down.
+        // We could add a lock, but that seems wasteful.
+
+        if (!renderPhasesInitalized)
+            initializeRenderPhases();
+
         // TODO: An error if the _render flag is already set (recursive rendering not
         // allowed or advisable).
 
@@ -967,14 +1021,15 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
 
         page.incrementDirtyCount();
 
+        // TODO: Check for recursive rendering.
+
+        rendering = true;
+
         queue.startComponent(coreResources);
 
-        // POP_COMPONENT_ID will remove the component we just started.
+        queue.push(new PostRenderCleanupPhase(writer.getElement()));
 
-        queue.push(POP_COMPONENT_ID);
-
-        // This is the start of the real state machine for the component.
-        queue.push(setupRender);
+        push(queue, setupRenderPhase);
     }
 
     @Override

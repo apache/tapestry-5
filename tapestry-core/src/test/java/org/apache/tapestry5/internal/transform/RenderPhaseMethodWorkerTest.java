@@ -23,10 +23,6 @@ import org.apache.tapestry5.services.TransformMethodSignature;
 import org.apache.tapestry5.test.TapestryTestCase;
 import org.testng.annotations.Test;
 
-/**
- * Of course, we're committing the cardinal sin of testing the code that's generated, rather than the *behavior* of the
- * generated code. Fortunately, we back all this up with lots and lots of integration testing.
- */
 public class RenderPhaseMethodWorkerTest extends TapestryTestCase
 {
     @Test
