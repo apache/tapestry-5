@@ -54,6 +54,7 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
         PageResources pr = mockPageResources(logger, eventLogger);
 
         train_getLogger(model, logger);
+        train_isDebugEnabled(eventLogger, false);
 
         Instantiator ins = mockInstantiator(component, model);
 
@@ -91,6 +92,7 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
         Instantiator ins = mockInstantiator(component, model);
 
         train_getLogger(model, logger);
+        train_isDebugEnabled(eventLogger, false);
 
         replay();
 
@@ -121,6 +123,7 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
         Instantiator ins = mockInstantiator(component, model);
 
         train_getLogger(model, logger);
+        train_isDebugEnabled(eventLogger, false);
 
         train_getParameterModel(model, "barney", null);
 
@@ -154,6 +157,7 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
         PageResources pr = mockPageResources(logger, eventLogger);
 
         train_getLogger(model, logger);
+        train_isDebugEnabled(eventLogger, false);
 
         Instantiator ins = mockInstantiator(component, model);
 
@@ -190,6 +194,7 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
         PageResources pr = mockPageResources(logger, eventLogger);
 
         train_getLogger(model, logger);
+        train_isDebugEnabled(eventLogger, false);
 
         Instantiator ins = mockInstantiator(component, model);
 
@@ -221,6 +226,7 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
         PageResources pr = mockPageResources(logger, eventLogger);
 
         train_getLogger(model, logger);
+        train_isDebugEnabled(eventLogger, false);
 
         Instantiator ins = mockInstantiator(component, model);
 
@@ -254,6 +260,7 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
         PageResources pr = mockPageResources(logger, eventLogger);
 
         train_getLogger(model, logger);
+        train_isDebugEnabled(eventLogger, false);
 
         Instantiator ins = mockInstantiator(component, model);
 
@@ -323,6 +330,7 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
         PageResources pr = mockPageResources(logger, eventLogger);
 
         train_getLogger(model, logger);
+        train_isDebugEnabled(eventLogger, false);
 
         Instantiator ins = mockInstantiator(component, model);
 
@@ -356,6 +364,7 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
         PageResources resources = mockPageResources(logger, eventLogger);
 
         train_getLogger(model, logger);
+        train_isDebugEnabled(eventLogger, false);
 
         train_getSupportsInformalParameters(model, true);
 
@@ -393,6 +402,7 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
         PageResources resources = mockPageResources(logger, eventLogger);
 
         train_getLogger(model, logger);
+        train_isDebugEnabled(eventLogger, false);
 
         Instantiator ins = mockInstantiator(component, model);
 
@@ -428,11 +438,13 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
         PageResources pr = mockPageResources(logger, eventLogger);
 
         train_getLogger(model, logger);
+        train_isDebugEnabled(eventLogger, false);
 
         Instantiator ins = mockInstantiator(component, model);
         Instantiator ins2 = mockInstantiator(component, model);
 
         train_getEventLogger(pr, logger, eventLogger);
+        train_isDebugEnabled(eventLogger, false);
 
         replay();
 
@@ -466,6 +478,7 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
         PageResources pr = mockPageResources(logger, eventLogger);
 
         train_getLogger(model, logger);
+        train_isDebugEnabled(eventLogger, false);
 
         Instantiator ins = mockInstantiator(component, model);
 
@@ -501,6 +514,7 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
         PageResources pr = mockPageResources(logger, eventLogger);
 
         train_getLogger(model, logger);
+        train_isDebugEnabled(eventLogger, false);
 
         Instantiator ins = mockInstantiator(pageComponent, model);
 
@@ -543,6 +557,7 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
         PageResources pr = mockPageResources(logger, eventLogger);
 
         train_getLogger(model, logger);
+        train_isDebugEnabled(eventLogger, false);
 
         Instantiator ins = mockInstantiator(component, model);
         Instantiator mixinIns = mockInstantiator(mixin, mixinModel);
@@ -573,6 +588,7 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
         PageResources pr = mockPageResources(logger, eventLogger);
 
         train_getLogger(model, logger);
+        train_isDebugEnabled(eventLogger, false);
 
         Instantiator ins = mockInstantiator(component, model);
         Instantiator mixinIns = mockInstantiator(mixin, mixinModel);
@@ -612,6 +628,7 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
         PageResources pr = mockPageResources(logger, eventLogger);
 
         train_getLogger(model, logger);
+        train_isDebugEnabled(eventLogger, false);
 
         Instantiator ins = mockInstantiator(component, model);
         Instantiator mixinInstantiator = mockInstantiator(mixin, mixinModel);

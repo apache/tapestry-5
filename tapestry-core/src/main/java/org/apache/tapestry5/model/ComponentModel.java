@@ -21,6 +21,7 @@ import org.apache.tapestry5.ioc.Resource;
 import org.slf4j.Logger;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * Defines a component in terms of its capabilities, parameters, sub-components, etc. During <em>runtime</em>, the
@@ -146,4 +147,13 @@ public interface ComponentModel
      * @return the value for the key (possibly inherited from a parent model), or null
      */
     String getMeta(String key);
+
+    /**
+     * Returns a set of all the render phases that this model (including parent models) that are handled. Render phases
+     * are represented by the corresponding annotation ({@link org.apache.tapestry5.annotations.BeginRender}, {@link
+     * org.apache.tapestry5.annotations.AfterRender}, etc.).
+     *
+     * @return set of classes
+     */
+    Set<Class> getHandledRenderPhases();
 }

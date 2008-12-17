@@ -561,15 +561,19 @@ class PageLoaderProcessor
         return result;
     }
 
-    private void cdata(CDATAToken token)
+    private void cdata(final CDATAToken token)
     {
-        final String content = token.getContent();
-
         PageElement element = new PageElement()
         {
             public void render(MarkupWriter writer, RenderQueue queue)
             {
-                writer.cdata(content);
+                writer.cdata(token.getContent());
+            }
+
+            @Override
+            public String toString()
+            {
+                return String.format("CDATA[%s]", token.getLocation());
             }
         };
 
@@ -583,6 +587,12 @@ class PageLoaderProcessor
             public void render(MarkupWriter writer, RenderQueue queue)
             {
                 writer.defineNamespace(token.getNamespaceURI(), token.getNamespacePrefix());
+            }
+
+            @Override
+            public String toString()
+            {
+                return String.format("DefineNamespace[%s %s]", token.getNamespacePrefix(), token.getNamespaceURI());
             }
         };
 
