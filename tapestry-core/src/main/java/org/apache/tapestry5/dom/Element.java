@@ -347,7 +347,13 @@ public final class Element extends Node
 
         if (style == EndTagStyle.OMIT) return;
 
-        if (hasChildren || style == EndTagStyle.REQUIRE) writer.printf("</%s>", prefixedElementName);
+        if (hasChildren || style == EndTagStyle.REQUIRE)
+        {
+            // TAP5-471: Avoid use of printf().
+            writer.print("</");
+            writer.print(prefixedElementName);
+            writer.print(">");
+        }
     }
 
     private String toPrefixedName(Map<String, String> namespaceURIToPrefix, String namespace, String name)
