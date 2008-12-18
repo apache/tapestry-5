@@ -18,7 +18,7 @@ import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.OneShotLock;
 import org.apache.tapestry5.ioc.services.ThreadCleanupListener;
 import org.apache.tapestry5.services.Environment;
-import org.apache.tapestry5.services.EnvironmentalClosure;
+import org.apache.tapestry5.services.EnvironmentalAccess;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -35,7 +35,7 @@ public class EnvironmentImpl implements Environment, ThreadCleanupListener
 
     private final Map<Class, LinkedList> typeToStack = CollectionFactory.newMap();
 
-    private final Map<Class, EnvironmentalClosureImpl> typeToClosure = CollectionFactory.newMap();
+    private final Map<Class, EnvironmentalAccessImpl> typeToAccess = CollectionFactory.newMap();
 
     private final OneShotLock lock = new OneShotLock();
 
@@ -110,25 +110,25 @@ public class EnvironmentImpl implements Environment, ThreadCleanupListener
 
         typeToStack.clear();
 
-        for (EnvironmentalClosureImpl closure : typeToClosure.values())
+        for (EnvironmentalAccessImpl closure : typeToAccess.values())
         {
             closure.invalidate();
         }
     }
 
-    public <T> EnvironmentalClosure<T> getClosure(Class<T> type)
+    public <T> EnvironmentalAccess<T> getAccess(Class<T> type)
     {
         lock.check();
 
-        EnvironmentalClosureImpl closure = typeToClosure.get(type);
+        EnvironmentalAccessImpl access = typeToAccess.get(type);
 
-        if (closure == null)
+        if (access == null)
         {
-            closure = new EnvironmentalClosureImpl(this, type);
-            typeToClosure.put(type, closure);
+            access = new EnvironmentalAccessImpl(this, type);
+            typeToAccess.put(type, access);
         }
 
-        return closure;
+        return access;
     }
 
     public void threadDidCleanup()
@@ -138,8 +138,8 @@ public class EnvironmentImpl implements Environment, ThreadCleanupListener
 
     void invalidate(Class type)
     {
-        EnvironmentalClosureImpl closure = typeToClosure.get(type);
+        EnvironmentalAccessImpl access = typeToAccess.get(type);
 
-        if (closure != null) closure.invalidate();
+        if (access != null) access.invalidate();
     }
 }

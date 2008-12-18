@@ -22,7 +22,7 @@ package org.apache.tapestry5.services;
  * @param <T>
  * @since 5.0.19
  */
-public interface EnvironmentalClosure<T>
+public interface EnvironmentalAccess<T>
 {
 
     /**

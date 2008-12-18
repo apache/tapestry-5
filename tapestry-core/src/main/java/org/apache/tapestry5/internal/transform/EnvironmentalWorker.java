@@ -79,25 +79,25 @@ public class EnvironmentalWorker implements ComponentClassTransformWorker
                 throw new RuntimeException(ex);
             }
 
-            // TAP5-417: Changed the code to use EnvironmentalClosure, which encapsulates
+            // TAP5-417: Changed the code to use EnvironmentalAccess, which encapsulates
             // efficient caching.
 
             String injectedTypeFieldName = transformation.addInjectedField(Class.class, "type", type);
 
             // First we need (at page attach) to acquire the closure for the type.
 
-            String closureFieldName = transformation.addField(Modifier.PRIVATE, EnvironmentalClosure.class.getName(),
-                                                              "closure");
+            String accessFieldName = transformation.addField(Modifier.PRIVATE, EnvironmentalAccess.class.getName(),
+                                                             name + "_access");
 
-            String attachBody = String.format("%s = %s.getClosure(%s);",
-                                              closureFieldName, envField, injectedTypeFieldName);
+            String attachBody = String.format("%s = %s.getAccess(%s);",
+                                              accessFieldName, envField, injectedTypeFieldName);
 
             transformation.extendMethod(TransformConstants.CONTAINING_PAGE_DID_ATTACH_SIGNATURE, attachBody);
 
             // Clear the closure field when the page detaches.  We'll get a new one when we next attach.
 
             transformation.extendMethod(TransformConstants.CONTAINING_PAGE_DID_DETACH_SIGNATURE,
-                                        closureFieldName + " = null;");
+                                        accessFieldName + " = null;");
 
             // Now build a read method that invokes peek() or peekRequired() on the closure. The closure
             // is responsible for safe caching of the environmental value.
@@ -109,7 +109,7 @@ public class EnvironmentalWorker implements ComponentClassTransformWorker
 
             String body = String.format(
                     "return ($r) %s.%s();",
-                    closureFieldName,
+                    accessFieldName,
                     annotation.value() ? "peekRequired" : "peek");
 
             transformation.addMethod(sig, body);

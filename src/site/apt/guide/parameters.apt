@@ -391,16 +391,16 @@ Computed Parameter Binding Defaults
   
   Binding defaultMessage()
   {
-    return bindingSource.newBinding("default value", resources, "defaultMessage");
+    return bindingSource.newBinding("default value", resources, "basicMessage");
   }
   
-  public String getDefaultMessage()
+  public String getBasicMessage()
   {
     return String.format("Maximum field length is %d.", maxLength);
   }
 +---+  
   
-  In this example, a property expression, "defaultMessage", is used to access the message dynamically.
+  In this example, a property expression, "basicMessage", is used to access the message dynamically.
   
   Alternately, the previous example may be written even more succinctly as:
   
@@ -416,11 +416,12 @@ Computed Parameter Binding Defaults
   
   String defaultMessage()
   {
-    return String.format("Maximum field length is %d.", _maxLength);
+    return String.format("Maximum field length is %d.", maxLength);
   }  
 +---+  
   
-  This form is more like using the "literal:" binding prefix, except that the literal value is computed by the defaultMessage() method.
+  This form is more like using the "literal:" binding prefix, except that the
+  literal value is computed by the defaultMessage() method.
   
   Obviously, this is a lot more work than simply specifying a default value as part of the Parameter annotation. In the few
   real cases where this is approach is used, the default binding method will usually deduce a proper binding, typically in terms of
