@@ -15,9 +15,9 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.services.Environment;
-import org.apache.tapestry5.services.EnvironmentalClosure;
+import org.apache.tapestry5.services.EnvironmentalAccess;
 
-class EnvironmentalClosureImpl implements EnvironmentalClosure
+class EnvironmentalAccessImpl implements EnvironmentalAccess
 {
     private final Environment environment;
 
@@ -27,7 +27,7 @@ class EnvironmentalClosureImpl implements EnvironmentalClosure
 
     private Object currentValue;
 
-    public EnvironmentalClosureImpl(Environment environment, Class type)
+    public EnvironmentalAccessImpl(Environment environment, Class type)
     {
         this.environment = environment;
         this.type = type;

@@ -46,45 +46,6 @@ public interface InternalComponentResources extends ComponentResources, Internal
     void persistFieldChange(String fieldName, Object newValue);
 
     /**
-     * Reads the value of a parameter, via the parameter's {@link org.apache.tapestry5.Binding}.
-     *
-     * @param <T>
-     * @param parameterName the name of the parameter to read
-     * @param expectedType  the expected type of parameter
-     * @return the value for the parameter, or null if the parameter is not bound.
-     */
-    <T> T readParameter(String parameterName, Class<T> expectedType);
-
-    /**
-     * Used by generated component code to read a parameter value.
-     *
-     * @param parameterName   the name of the parameter to read
-     * @param desiredTypeName the class name of the desired value (classes will be resolved in the component class
-     *                        loader)
-     * @return the value coerced to the correct type
-     */
-    Object readParameter(String parameterName, String desiredTypeName);
-
-    /**
-     * Updates a parameter. It is an error to update a parameter which is not bound. The parameter {@link
-     * org.apache.tapestry5.Binding binding} may also not support updates.
-     *
-     * @param <T>
-     * @param parameterName  of parameter to update
-     * @param parameterValue new value (which may be null)
-     */
-    <T> void writeParameter(String parameterName, T parameterValue);
-
-    /**
-     * Returns true if the named parameter's {@link org.apache.tapestry5.Binding} is invariant, false if otherwise, or
-     * if the parameter is not bound. Invariant bindings are cached more aggressively than variant bindings.
-     *
-     * @param parameterName the name of parameter to check for invariance
-     * @return true if the binding is an invariant, false if the binding has no fixed value
-     */
-    boolean isInvariant(String parameterName);
-
-    /**
      * Allows the resources to cleanup any render-time only data.
      */
     void postRenderCleanup();
@@ -93,4 +54,12 @@ public interface InternalComponentResources extends ComponentResources, Internal
      * Invoked to make the receiver queue itself to be rendered.
      */
     void queueRender(RenderQueue queue);
+
+    /**
+     * Gets access object for the parameter.
+     *
+     * @param parameterName
+     * @return
+     */
+    ParameterAccess getParameterAccess(String parameterName);
 }

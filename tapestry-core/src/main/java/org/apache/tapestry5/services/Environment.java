@@ -79,8 +79,8 @@ public interface Environment
      *
      * @param type type of environmental object
      * @param <T>
-     * @return closure that can be used to see the current environmental object of the type
+     * @return access object that can be used to see the current environmental object of the type
      * @since 5.0.19
      */
-    <T> EnvironmentalClosure<T> getClosure(Class<T> type);
+    <T> EnvironmentalAccess<T> getAccess(Class<T> type);
 }
