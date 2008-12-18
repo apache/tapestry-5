@@ -15,6 +15,7 @@
 package org.apache.tapestry5.dom;
 
 import java.io.PrintWriter;
+import java.util.Map;
 
 /**
  * A node that stores parsed character content (CDATA).  For XML documents (as per {@link MarkupModel#isXML()}, this
@@ -32,7 +33,7 @@ public class CData extends Node
     }
 
     @Override
-    void toMarkup(Document document, PrintWriter writer)
+    void toMarkup(Document document, PrintWriter writer, Map<String, String> namespaceURIToPrefix)
     {
         MarkupModel model = document.getMarkupModel();
 
