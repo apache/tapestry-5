@@ -646,27 +646,4 @@ public final class Element extends Node
 
         return holder.getResult();
     }
-
-    /**
-     * Returns the parent elements containing this element, ordered by depth (the root element is first, the current
-     * element's parent is last).
-     *
-     * @return list of elements
-     */
-    private List<Element> gatherParentElements()
-    {
-        List<Element> result = CollectionFactory.newList();
-
-        Element cursor = parent;
-
-        while (cursor != null)
-        {
-            result.add(cursor);
-            cursor = cursor.parent;
-        }
-
-        Collections.reverse(result);
-
-        return result;
-    }
 }
