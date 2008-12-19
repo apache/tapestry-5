@@ -15,8 +15,8 @@
 package org.apache.tapestry5.ioc.internal.services;
 
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.*;
-import static org.apache.tapestry5.ioc.internal.util.Defense.notNull;
+import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newList;
+import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.ioc.internal.util.InheritanceSearch;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.ClassFabUtils;
@@ -28,52 +28,74 @@ import java.util.*;
 
 public class TypeCoercerImpl implements TypeCoercer
 {
-    // Read only after constructor
+    // Constructed from the service's configuration.
 
     private final Map<Class, List<CoercionTuple>> sourceTypeToTuple = CollectionFactory.newMap();
 
-    // Access to the cache must be thread safe
-
-    private final Map<CacheKey, Coercion> cache = CollectionFactory.newConcurrentMap();
-
-    static class CacheKey
+    /**
+     * A coercion to a specific target type.  Manages a cache of coercions to specific types.
+     */
+    private class TargetCoercion
     {
-        private final Class sourceClass;
+        private final Class type;
 
-        private final Class targetClass;
+        private final Map<Class, Coercion> cache = CollectionFactory.newConcurrentMap();
 
-        CacheKey(final Class sourceClass, final Class targetClass)
+        TargetCoercion(Class type)
         {
-            this.sourceClass = sourceClass;
-            this.targetClass = targetClass;
+            this.type = type;
         }
 
-        @Override
-        public boolean equals(Object obj)
+        void clearCache()
         {
-            if (obj == null) return false;
-
-            if (!(obj instanceof CacheKey)) return false;
-
-            CacheKey other = (CacheKey) obj;
-
-            return sourceClass.equals(other.sourceClass)
-                    && targetClass.equals(other.targetClass);
+            cache.clear();
         }
 
-        @Override
-        public int hashCode()
+        Object coerce(Object input)
         {
-            return sourceClass.hashCode() * 27 % targetClass.hashCode();
+
+            Class sourceType = input != null ? input.getClass() : void.class;
+
+            if (type.isAssignableFrom(sourceType)) return input;
+
+            Coercion c = getCoercion(sourceType);
+
+            try
+            {
+                return type.cast(c.coerce(input));
+            }
+            catch (Exception ex)
+            {
+                throw new RuntimeException(ServiceMessages.failedCoercion(
+                        input,
+                        type,
+                        c,
+                        ex), ex);
+            }
         }
 
-        @Override
-        public String toString()
+        String explain(Class sourceType)
         {
-            return String.format("CacheKey[%s --> %s]", sourceClass.getName(), targetClass
-                    .getName());
+            return getCoercion(sourceType).toString();
+        }
+
+        private Coercion getCoercion(Class sourceType)
+        {
+            Coercion c = cache.get(sourceType);
+
+            if (c == null)
+            {
+                c = findOrCreateCoercion(sourceType, type);
+                cache.put(sourceType, c);
+            }
+            return c;
         }
     }
+
+    /**
+     * Map from a target type to a TargetCoercion for that type.
+     */
+    private final Map<Class, TargetCoercion> typeToTargetCoercion = new WeakHashMap<Class, TargetCoercion>();
 
     private static final Coercion COERCION_NULL_TO_OBJECT = new Coercion<Void, Object>()
     {
@@ -102,49 +124,20 @@ public class TypeCoercerImpl implements TypeCoercer
     @SuppressWarnings("unchecked")
     public Object coerce(Object input, Class targetType)
     {
-        notNull(targetType, "targetType");
-
-        // Treat null as void in terms of locating a coercion.
-
-        Class sourceType = input != null ? input.getClass() : void.class;
-
-        // The caller may ask for the value in a primitive type, but the best we can do is the
-        // equivalent wrapper type.
+        Defense.notNull(targetType, "targetType");
 
         Class effectiveTargetType = ClassFabUtils.getWrapperType(targetType);
 
-        // Is a coercion even necessary? Not if the target type is assignable from the
-        // input value.
+        if (effectiveTargetType.isInstance(input)) return input;
 
-        if (effectiveTargetType.isAssignableFrom(sourceType)) return input;
-
-        Coercion coercion = findCoercion(sourceType, effectiveTargetType);
-
-        Object result;
-
-        try
-        {
-            result = coercion.coerce(input);
-        }
-        catch (Exception ex)
-        {
-            throw new RuntimeException(ServiceMessages.failedCoercion(
-                    input,
-                    targetType,
-                    coercion,
-                    ex), ex);
-        }
-
-        // Double check that the coercer provided a result of the correct type
-
-        return effectiveTargetType.cast(result);
+        return getTargetCoercion(effectiveTargetType).coerce(input);
     }
 
     @SuppressWarnings("unchecked")
     public <S, T> String explain(Class<S> inputType, Class<T> targetType)
     {
-        notNull(inputType, "inputType");
-        notNull(targetType, "targetType");
+        Defense.notNull(inputType, "inputType");
+        Defense.notNull(targetType, "targetType");
 
         Class effectiveTargetType = ClassFabUtils.getWrapperType(targetType);
 
@@ -153,29 +146,35 @@ public class TypeCoercerImpl implements TypeCoercer
 
         if (effectiveTargetType.isAssignableFrom(inputType)) return "";
 
-        Coercion coercion = findCoercion(inputType, effectiveTargetType);
-
-        return coercion.toString();
+        return getTargetCoercion(targetType).explain(inputType);
     }
 
-    private Coercion findCoercion(Class sourceType, Class targetType)
+    private synchronized TargetCoercion getTargetCoercion(Class targetType)
     {
-        CacheKey key = new CacheKey(sourceType, targetType);
+        TargetCoercion tc = typeToTargetCoercion.get(targetType);
 
-        Coercion result = cache.get(key);
-
-        if (result == null)
+        if (tc == null)
         {
-            result = findOrCreateCoercion(sourceType, targetType);
-            cache.put(key, result);
+            tc = new TargetCoercion(targetType);
+            typeToTargetCoercion.put(targetType, tc);
         }
 
-        return result;
+        return tc;
     }
 
-    public void clearCache()
+    public synchronized void clearCache()
     {
-        cache.clear();
+        // There's no need to clear the typeToTargetCoercion map, as it is a WeakHashMap and
+        // will release the keys for classes that are no longer in existence.  On the other hand,
+        // there's likely all sorts of references to unloaded classes inside each TargetCoercion's
+        // individual cache, so clear all those.
+
+        for (TargetCoercion tc : typeToTargetCoercion.values())
+        {
+            // Can tc ever be null?
+
+            tc.clearCache();
+        }
     }
 
     /**
@@ -211,8 +210,8 @@ public class TypeCoercerImpl implements TypeCoercer
         // a tuple twice, but it's more likely that different threads are looking
         // for different source/target coercions.
 
-        Set<CoercionTuple> consideredTuples = newSet();
-        LinkedList<CoercionTuple> queue = newLinkedList();
+        Set<CoercionTuple> consideredTuples = CollectionFactory.newSet();
+        LinkedList<CoercionTuple> queue = CollectionFactory.newLinkedList();
 
         seedQueue(sourceType, consideredTuples, queue);
 
@@ -378,5 +377,4 @@ public class TypeCoercerImpl implements TypeCoercer
             }
         }
     }
-
 }
