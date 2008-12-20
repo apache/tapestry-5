@@ -39,9 +39,8 @@ import org.slf4j.Logger;
 import java.util.*;
 
 /**
- * Implements {@link org.apache.tapestry5.internal.structure.PageElement} and represents a component within an overall
- * page. Much of a component page element's behavior is delegated to user code, via a {@link
- * org.apache.tapestry5.runtime.Component} instance.
+ * Implements {@link RenderCommand} and represents a component within an overall page. Much of a component page
+ * element's behavior is delegated to user code, via a {@link org.apache.tapestry5.runtime.Component} instance.
  * <p/>
  * Once instantiated, a ComponentPageElement should be registered as a {@linkplain
  * org.apache.tapestry5.internal.structure.Page#addLifecycleListener(org.apache.tapestry5.runtime.PageLifecycleListener)
@@ -105,7 +104,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
     // For the moment, every component will have a template, even if it consists of
     // just a page element to queue up a BeforeRenderBody phase.
 
-    private static void pushElements(RenderQueue queue, List<PageElement> list)
+    private static void pushElements(RenderQueue queue, List<RenderCommand> list)
     {
         int count = size(list);
         for (int i = count - 1; i >= 0; i--)
@@ -487,7 +486,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
     // We know that, at the very least, there will be an element to force the component to render
     // its body, so there's no reason to wait to initialize the list.
 
-    private final List<PageElement> template = CollectionFactory.newList();
+    private final List<RenderCommand> template = CollectionFactory.newList();
 
     private boolean renderPhasesInitalized;
 
@@ -745,14 +744,14 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
         if (informalParameterResources != null) informalParameterResources.bindParameter(parameterName, binding);
     }
 
-    public void addToBody(PageElement element)
+    public void addToBody(RenderCommand element)
     {
         if (bodyBlock == null) bodyBlock = new BlockImpl(getLocation(), "Body of " + getCompleteId());
 
         bodyBlock.addToBody(element);
     }
 
-    public void addToTemplate(PageElement element)
+    public void addToTemplate(RenderCommand element)
     {
         template.add(element);
     }

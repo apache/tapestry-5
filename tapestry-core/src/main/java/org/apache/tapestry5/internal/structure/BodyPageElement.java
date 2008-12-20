@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,11 +14,11 @@
 
 package org.apache.tapestry5.internal.structure;
 
-import org.apache.tapestry5.internal.services.PageLoader;
+import org.apache.tapestry5.runtime.RenderCommand;
 
 /**
- * A type of {@link PageElement} that has a body that can be added to. This is part of the constuction phase that is
- * faciliated by the {@link PageLoader}.
+ * A type of page element that has a body that can be added to. This is part of the constuction phase that is faciliated
+ * by the {@link org.apache.tapestry5.internal.services.PageLoader}.
  */
 public interface BodyPageElement
 {
@@ -27,5 +27,5 @@ public interface BodyPageElement
      * component is defined as the portion of the container's template directly enclosed by component's start and end
      * elements.
      */
-    void addToBody(PageElement element);
+    void addToBody(RenderCommand element);
 }

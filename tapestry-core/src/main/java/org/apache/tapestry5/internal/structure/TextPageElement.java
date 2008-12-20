@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,12 +15,13 @@
 package org.apache.tapestry5.internal.structure;
 
 import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.runtime.RenderCommand;
 import org.apache.tapestry5.runtime.RenderQueue;
 
 /**
  *
  */
-public class TextPageElement implements PageElement
+public class TextPageElement implements RenderCommand
 {
     private final String text;
 
@@ -39,5 +40,4 @@ public class TextPageElement implements PageElement
     {
         return String.format("Text[%s]", text);
     }
-
 }
