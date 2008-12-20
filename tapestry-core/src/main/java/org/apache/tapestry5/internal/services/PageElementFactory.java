@@ -21,8 +21,8 @@ import org.apache.tapestry5.internal.parser.AttributeToken;
 import org.apache.tapestry5.internal.parser.ExpansionToken;
 import org.apache.tapestry5.internal.structure.ComponentPageElement;
 import org.apache.tapestry5.internal.structure.Page;
-import org.apache.tapestry5.internal.structure.PageElement;
 import org.apache.tapestry5.ioc.Location;
+import org.apache.tapestry5.runtime.RenderCommand;
 import org.apache.tapestry5.services.BindingSource;
 
 import java.util.Locale;
@@ -32,9 +32,9 @@ import java.util.Locale;
  */
 public interface PageElementFactory
 {
-    PageElement newAttributeElement(ComponentResources componentResources, AttributeToken token);
+    RenderCommand newAttributeElement(ComponentResources componentResources, AttributeToken token);
 
-    PageElement newExpansionElement(ComponentResources componentResources, ExpansionToken token);
+    RenderCommand newExpansionElement(ComponentResources componentResources, ExpansionToken token);
 
     /**
      * Creates a new binding as with {@link BindingSource#newBinding(String, ComponentResources, ComponentResources,

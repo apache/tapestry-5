@@ -19,6 +19,7 @@ import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.internal.bindings.LiteralBinding;
+import org.apache.tapestry5.internal.pageload.CompositeRenderCommand;
 import org.apache.tapestry5.internal.parser.*;
 import org.apache.tapestry5.internal.structure.*;
 import org.apache.tapestry5.ioc.Location;
@@ -26,6 +27,7 @@ import org.apache.tapestry5.ioc.internal.util.*;
 import org.apache.tapestry5.ioc.util.Stack;
 import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.model.EmbeddedComponentModel;
+import org.apache.tapestry5.runtime.RenderCommand;
 import org.apache.tapestry5.runtime.RenderQueue;
 import org.apache.tapestry5.services.BindingSource;
 import org.apache.tapestry5.services.ComponentClassResolver;
@@ -78,6 +80,8 @@ class PageLoaderProcessor
      */
     private final List<Runnable> finalization = CollectionFactory.newList();
 
+    private final List<RenderCommand> compositedRenderCommands = CollectionFactory.newList();
+
     private final IdAllocator idAllocator = new IdAllocator();
 
     private final LinkFactory linkFactory;
@@ -102,7 +106,7 @@ class PageLoaderProcessor
 
     private final ComponentTemplateSource templateSource;
 
-    private static final PageElement END_ELEMENT = new PageElement()
+    private static final RenderCommand END_ELEMENT = new RenderCommand()
     {
         public void render(MarkupWriter writer, RenderQueue queue)
         {
@@ -116,7 +120,7 @@ class PageLoaderProcessor
         }
     };
 
-    private static class RenderBodyElement implements PageElement
+    private static class RenderBodyElement implements RenderCommand
     {
         private final ComponentPageElement component;
 
@@ -279,7 +283,7 @@ class PageLoaderProcessor
     }
 
 
-    private void addToBody(PageElement element)
+    private void addToBody(RenderCommand element)
     {
         bodyPageElementStack.peek().addToBody(element);
     }
@@ -297,14 +301,16 @@ class PageLoaderProcessor
             return;
         }
 
-        PageElement element = pageElementFactory.newAttributeElement(loadingElement
+        RenderCommand element = pageElementFactory.newAttributeElement(loadingElement
                 .getComponentResources(), token);
 
-        addToBody(element);
+        addComposableCommand(element);
     }
 
     private void body()
     {
+        flushComposedCommands();
+
         addToBody(new RenderBodyElement(loadingElement));
 
         // BODY tokens are *not* matched by END_ELEMENT tokens. Nor will there be
@@ -313,9 +319,9 @@ class PageLoaderProcessor
 
     private void comment(CommentToken token)
     {
-        PageElement commentElement = new CommentPageElement(token.getComment());
+        RenderCommand commentElement = new CommentPageElement(token.getComment());
 
-        addToBody(commentElement);
+        addComposableCommand(commentElement);
     }
 
     /**
@@ -338,7 +344,7 @@ class PageLoaderProcessor
 
         boolean discard = discardEndTagStack.pop();
 
-        if (!discard) addToBody(END_ELEMENT);
+        if (!discard) addComposableCommand(END_ELEMENT);
 
         Runnable command = endElementCommandStack.pop();
 
@@ -349,10 +355,10 @@ class PageLoaderProcessor
 
     private void expansion(ExpansionToken token)
     {
-        PageElement element = pageElementFactory.newExpansionElement(loadingElement
+        RenderCommand element = pageElementFactory.newExpansionElement(loadingElement
                 .getComponentResources(), token);
 
-        addToBody(element);
+        addComposableCommand(element);
     }
 
     private String generateEmbeddedId(String embeddedType, IdAllocator idAllocator)
@@ -467,7 +473,7 @@ class PageLoaderProcessor
 
         BodyPageElement shunt = new BodyPageElement()
         {
-            public void addToBody(PageElement element)
+            public void addToBody(RenderCommand element)
             {
                 loadingElement.addToTemplate(element);
             }
@@ -536,6 +542,9 @@ class PageLoaderProcessor
             }
         }
 
+
+        flushComposedCommands();
+
         // For neatness / symmetry:
 
         bodyPageElementStack.pop(); // the shunt
@@ -563,7 +572,7 @@ class PageLoaderProcessor
 
     private void cdata(final CDATAToken token)
     {
-        PageElement element = new PageElement()
+        RenderCommand element = new RenderCommand()
         {
             public void render(MarkupWriter writer, RenderQueue queue)
             {
@@ -577,12 +586,12 @@ class PageLoaderProcessor
             }
         };
 
-        addToBody(element);
+        addComposableCommand(element);
     }
 
     private void defineNamespacePrefix(final DefineNamespacePrefixToken token)
     {
-        PageElement element = new PageElement()
+        RenderCommand element = new RenderCommand()
         {
             public void render(MarkupWriter writer, RenderQueue queue)
             {
@@ -596,11 +605,13 @@ class PageLoaderProcessor
             }
         };
 
-        addToBody(element);
+        addComposableCommand(element);
     }
 
     private void parameter(ParameterToken token)
     {
+        flushComposedCommands();
+
         ComponentPageElement element = activeElementStack.peek();
         String name = token.getName();
 
@@ -624,6 +635,8 @@ class PageLoaderProcessor
         {
             public void run()
             {
+                flushComposedCommands();
+
                 bodyPageElementStack.pop();
             }
         };
@@ -633,6 +646,7 @@ class PageLoaderProcessor
 
     private void block(BlockToken token)
     {
+        flushComposedCommands();
 
         String id = token.getId();
         // Don't use the page element factory here becauses we need something that is both Block and
@@ -704,6 +718,8 @@ class PageLoaderProcessor
         if (embeddedModel != null)
             bindParametersFromModel(embeddedModel, loadingElement, newComponent, newComponentBindings);
 
+        flushComposedCommands();
+
         addToBody(newComponent);
 
         // Remember to load the template for this new component
@@ -753,8 +769,7 @@ class PageLoaderProcessor
         {
             public void run()
             {
-                // May need a separate queue for this, to execute at the very end of page loading.
-
+                flushComposedCommands();
 
                 activeElementStack.pop();
                 bodyPageElementStack.pop();
@@ -796,9 +811,9 @@ class PageLoaderProcessor
 
     private void startElement(StartElementToken token)
     {
-        PageElement element = new StartElementPageElement(token.getNamespaceURI(), token.getName());
+        RenderCommand element = new StartElementPageElement(token.getNamespaceURI(), token.getName());
 
-        addToBody(element);
+        addComposableCommand(element);
 
         // Controls how attributes are interpretted.
         addAttributesAsComponentBindings = false;
@@ -812,9 +827,9 @@ class PageLoaderProcessor
 
     private void text(TextToken token)
     {
-        PageElement element = new TextPageElement(token.getText());
+        RenderCommand element = new TextPageElement(token.getText());
 
-        addToBody(element);
+        addComposableCommand(element);
     }
 
     private void dtd(DTDToken token)
@@ -822,7 +837,7 @@ class PageLoaderProcessor
         // first DTD encountered wins.
         if (dtdAdded) return;
 
-        PageElement element = new DTDPageElement(token.getName(), token.getPublicId(), token.getSystemId());
+        RenderCommand element = new DTDPageElement(token.getName(), token.getPublicId(), token.getSystemId());
         // since rendering via the markup writer is to the document tree,
         // we don't really care where this gets placed in the tree; the
         // DTDPageElement will set the dtd of the document directly, rather than
@@ -843,5 +858,38 @@ class PageLoaderProcessor
 
             loadTemplateForComponent(componentElement);
         }
+    }
+
+    private void addComposableCommand(RenderCommand command)
+    {
+        compositedRenderCommands.add(command);
+    }
+
+    private void flushComposedCommands()
+    {
+        int count = compositedRenderCommands.size();
+
+        switch (count)
+        {
+            case 0:
+
+                return;
+
+            case 1:
+
+                addToBody(compositedRenderCommands.get(0));
+
+                break;
+
+            default:
+
+                RenderCommand[] commands = compositedRenderCommands.toArray(new RenderCommand[count]);
+
+                addToBody(new CompositeRenderCommand(commands));
+
+                break;
+        }
+
+        compositedRenderCommands.clear();
     }
 }

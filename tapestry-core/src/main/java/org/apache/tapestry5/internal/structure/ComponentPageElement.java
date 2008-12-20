@@ -22,17 +22,14 @@ import org.apache.tapestry5.internal.InternalComponentResourcesCommon;
 import org.apache.tapestry5.internal.services.Instantiator;
 import org.apache.tapestry5.ioc.Location;
 import org.apache.tapestry5.model.ParameterModel;
-import org.apache.tapestry5.runtime.Component;
-import org.apache.tapestry5.runtime.ComponentEvent;
-import org.apache.tapestry5.runtime.PageLifecycleListener;
-import org.apache.tapestry5.runtime.RenderQueue;
+import org.apache.tapestry5.runtime.*;
 import org.slf4j.Logger;
 
 /**
- * Extended version of {@link org.apache.tapestry5.internal.structure.PageElement} for elements that are, in fact,
- * components (rather than just static markup).
+ * Defines an element of a page that is a component elements that are, in fact, components (rather than just static
+ * markup).
  */
-public interface ComponentPageElement extends ComponentResourcesCommon, InternalComponentResourcesCommon, PageElement, BodyPageElement, PageLifecycleListener
+public interface ComponentPageElement extends ComponentResourcesCommon, InternalComponentResourcesCommon, RenderCommand, BodyPageElement, PageLifecycleListener
 {
     /**
      * Returns the core component associated with this page element (as opposed to any mixins attached to the
@@ -61,7 +58,7 @@ public interface ComponentPageElement extends ComponentResourcesCommon, Internal
      * the outermost portions of the component's template ... where a template contains elements that are all
      * components, those components will receive portions of the template as their body.
      */
-    void addToTemplate(PageElement element);
+    void addToTemplate(RenderCommand element);
 
     /**
      * Used during the contruction of a page to add a non-anonymous Block to the component.

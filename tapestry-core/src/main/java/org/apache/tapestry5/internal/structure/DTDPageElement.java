@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,9 +20,10 @@
 package org.apache.tapestry5.internal.structure;
 
 import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.runtime.RenderCommand;
 import org.apache.tapestry5.runtime.RenderQueue;
 
-public class DTDPageElement implements PageElement
+public class DTDPageElement implements RenderCommand
 {
     private final String name;
 
@@ -47,5 +48,4 @@ public class DTDPageElement implements PageElement
     {
         return String.format("DTD[name=%s; publicId=%s; systemId=%s]", name, publicId, systemId);
     }
-
 }
