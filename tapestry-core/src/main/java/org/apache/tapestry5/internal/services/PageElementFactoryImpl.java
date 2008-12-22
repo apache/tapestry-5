@@ -27,6 +27,7 @@ import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.TapestryException;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.model.ComponentModel;
+import org.apache.tapestry5.runtime.RenderCommand;
 import org.apache.tapestry5.runtime.RenderQueue;
 import org.apache.tapestry5.services.BindingSource;
 import org.apache.tapestry5.services.ComponentClassResolver;
@@ -74,7 +75,7 @@ public class PageElementFactoryImpl implements PageElementFactory
         this.componentPageElementResourcesSource = componentPageElementResourcesSource;
     }
 
-    public PageElement newAttributeElement(ComponentResources componentResources, final AttributeToken token)
+    public RenderCommand newAttributeElement(ComponentResources componentResources, final AttributeToken token)
     {
         final StringProvider provider = parseAttributeExpansionExpression(token.getValue(), componentResources,
                                                                           token.getLocation());
@@ -82,14 +83,13 @@ public class PageElementFactoryImpl implements PageElementFactory
         final String namespace = token.getNamespaceURI();
         final String name = token.getName();
 
-        return new PageElement()
+        return new RenderCommand()
         {
             public void render(MarkupWriter writer, RenderQueue queue)
             {
                 writer.attributeNS(namespace, name, provider.provideString());
             }
 
-            @Override
             public String toString()
             {
                 return String.format("AttributeNS[%s %s \"%s\"]", namespace, name, token.getValue());
@@ -176,7 +176,7 @@ public class PageElementFactoryImpl implements PageElementFactory
         };
     }
 
-    public PageElement newExpansionElement(ComponentResources componentResources, ExpansionToken token)
+    public RenderCommand newExpansionElement(ComponentResources componentResources, ExpansionToken token)
     {
         Binding binding = bindingSource.newBinding("expansion", componentResources, componentResources,
                                                    BindingConstants.PROP, token.getExpression(), token.getLocation());

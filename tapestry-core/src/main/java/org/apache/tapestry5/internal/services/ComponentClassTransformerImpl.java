@@ -131,7 +131,7 @@ public class ComponentClassTransformerImpl implements ComponentClassTransformer,
 
         String classname = ctClass.getName();
 
-        Logger transformLogger = loggerSource.getLogger("tapestry.transfomer." + classname);
+        Logger transformLogger = loggerSource.getLogger("tapestry.transformer." + classname);
         Logger logger = loggerSource.getLogger(classname);
 
         // If the parent class is in a controlled package, it will already have been loaded and

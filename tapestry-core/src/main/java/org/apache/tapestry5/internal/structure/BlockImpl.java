@@ -29,7 +29,7 @@ public class BlockImpl extends BaseLocatable implements Block, BodyPageElement, 
     // We could lazily create this, but for (parameter) block elements the case
     // for an empty block is extremely rare.
 
-    private final List<PageElement> elements = CollectionFactory.newList();
+    private final List<RenderCommand> elements = CollectionFactory.newList();
 
     private final String description;
 
@@ -40,7 +40,7 @@ public class BlockImpl extends BaseLocatable implements Block, BodyPageElement, 
         this.description = description;
     }
 
-    public void addToBody(PageElement element)
+    public void addToBody(RenderCommand element)
     {
         elements.add(element);
     }

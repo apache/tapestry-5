@@ -41,6 +41,8 @@ public class RenderQueueImpl implements RenderQueue
 
     public void push(RenderCommand command)
     {
+        Defense.notNull(command, "command");
+
         queue.push(command);
     }
 

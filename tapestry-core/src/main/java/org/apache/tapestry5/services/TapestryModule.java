@@ -149,7 +149,6 @@ public final class TapestryModule
         binder.bind(ApplicationGlobals.class, ApplicationGlobalsImpl.class);
         binder.bind(AssetSource.class, AssetSourceImpl.class);
         binder.bind(Cookies.class, CookiesImpl.class);
-        binder.bind(Environment.class, EnvironmentImpl.class);
         binder.bind(FieldValidatorDefaultSource.class, FieldValidatorDefaultSourceImpl.class);
         binder.bind(RequestGlobals.class, RequestGlobalsImpl.class);
         binder.bind(ResourceDigestGenerator.class, ResourceDigestGeneratorImpl.class);
@@ -1988,6 +1987,7 @@ public final class TapestryModule
         configuration.add("li", RelativeElementPosition.INSIDE);
     }
 
+
     /**
      * @since 5.1
      */
@@ -2029,6 +2029,16 @@ public final class TapestryModule
             @Autobuild SessionApplicationStatePersistenceStrategy service, EndOfRequestListenerHub hub)
     {
         hub.addEndOfRequestListener(service);
+
+        return service;
+    }
+
+    @Scope(ScopeConstants.PERTHREAD)
+    public Environment buildEnvironment(PerthreadManager perthreadManager)
+    {
+        EnvironmentImpl service = new EnvironmentImpl();
+
+        perthreadManager.addThreadCleanupListener(service);
 
         return service;
     }

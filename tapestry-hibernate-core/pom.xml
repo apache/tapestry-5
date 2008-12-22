@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.apache.tapestry</groupId>
     <artifactId>tapestry-hibernate-core</artifactId>
-    <name>Core Hibernate Support</name>
+    <name>Tapestry Hibernate Support</name>
     <description>
         Basic Hibernate services for Tapestry, useable outside of a Tapestry web application
     </description>

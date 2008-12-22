@@ -26,6 +26,7 @@ import org.slf4j.Logger;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Internal implementation of {@link org.apache.tapestry5.model.MutableComponentModel}.
@@ -58,6 +59,8 @@ public final class MutableComponentModelImpl implements MutableComponentModel
     private boolean mixinAfter;
 
     private Map<String, String> metaData;
+
+    private Set<Class> handledRenderPhases;
 
     public MutableComponentModelImpl(String componentClassName, Logger logger, Resource baseResource,
                                      ComponentModel parentModel)
@@ -272,6 +275,15 @@ public final class MutableComponentModelImpl implements MutableComponentModel
         metaData.put(key, value);
     }
 
+    public void addRenderPhase(Class renderPhase)
+    {
+        Defense.notNull(renderPhase, "renderPhase");
+
+        if (handledRenderPhases == null) handledRenderPhases = CollectionFactory.newSet();
+
+        handledRenderPhases.add(renderPhase);
+    }
+
     public String getMeta(String key)
     {
         String result = InternalUtils.get(metaData, key);
@@ -281,4 +293,16 @@ public final class MutableComponentModelImpl implements MutableComponentModel
         return result;
     }
 
+    public Set<Class> getHandledRenderPhases()
+    {
+        Set<Class> result = CollectionFactory.newSet();
+
+        if (parentModel != null)
+            result.addAll(parentModel.getHandledRenderPhases());
+
+        if (handledRenderPhases != null)
+            result.addAll(handledRenderPhases);
+
+        return result;
+    }
 }

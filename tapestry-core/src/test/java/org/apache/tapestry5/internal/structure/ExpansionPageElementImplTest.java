@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ import org.apache.tapestry5.Binding;
 import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
+import org.apache.tapestry5.runtime.RenderCommand;
 import org.apache.tapestry5.runtime.RenderQueue;
 import org.testng.annotations.Test;
 
@@ -37,7 +38,7 @@ public class ExpansionPageElementImplTest extends InternalBaseTestCase
 
         replay();
 
-        PageElement element = new ExpansionPageElement(binding, coercer);
+        RenderCommand element = new ExpansionPageElement(binding, coercer);
 
         verify();
 
@@ -76,7 +77,7 @@ public class ExpansionPageElementImplTest extends InternalBaseTestCase
 
         replay();
 
-        PageElement element = new ExpansionPageElement(binding, coercer);
+        RenderCommand element = new ExpansionPageElement(binding, coercer);
 
         verify();
 

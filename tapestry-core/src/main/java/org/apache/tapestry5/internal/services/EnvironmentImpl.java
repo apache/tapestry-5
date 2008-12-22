@@ -14,11 +14,11 @@
 
 package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry5.ioc.ScopeConstants;
-import org.apache.tapestry5.ioc.annotations.Scope;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newLinkedList;
+import org.apache.tapestry5.ioc.internal.util.OneShotLock;
+import org.apache.tapestry5.ioc.services.ThreadCleanupListener;
 import org.apache.tapestry5.services.Environment;
+import org.apache.tapestry5.services.EnvironmentalAccess;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -27,23 +27,29 @@ import java.util.Map;
 /**
  * A non-threadsafe implementation (expects to use the "perthread" service lifecyle).
  */
-@Scope(ScopeConstants.PERTHREAD)
-public class EnvironmentImpl implements Environment
+public class EnvironmentImpl implements Environment, ThreadCleanupListener
 {
+
     // My generics mojo breaks down when we talk about the key and the value being related
     // types.
 
-    private final Map<Class, LinkedList> stacks = CollectionFactory.newMap();
+    private final Map<Class, LinkedList> typeToStack = CollectionFactory.newMap();
+
+    private final Map<Class, EnvironmentalAccessImpl> typeToAccess = CollectionFactory.newMap();
+
+    private final OneShotLock lock = new OneShotLock();
 
     @SuppressWarnings("unchecked")
     private <T> LinkedList<T> stackFor(Class<T> type)
     {
-        LinkedList<T> result = stacks.get(type);
+        lock.check();
+
+        LinkedList<T> result = typeToStack.get(type);
 
         if (result == null)
         {
-            result = newLinkedList();
-            stacks.put(type, result);
+            result = CollectionFactory.newLinkedList();
+            typeToStack.put(type, result);
         }
 
         return result;
@@ -63,7 +69,7 @@ public class EnvironmentImpl implements Environment
         if (result == null)
         {
             List<Class> types = CollectionFactory.newList();
-            for (Map.Entry<Class, LinkedList> e : stacks.entrySet())
+            for (Map.Entry<Class, LinkedList> e : typeToStack.entrySet())
             {
                 LinkedList list = e.getValue();
 
@@ -80,6 +86,8 @@ public class EnvironmentImpl implements Environment
     {
         LinkedList<T> stack = stackFor(type);
 
+        invalidate(type);
+
         return stack.removeFirst();
     }
 
@@ -91,11 +99,47 @@ public class EnvironmentImpl implements Environment
 
         stack.addFirst(instance);
 
+        invalidate(type);
+
         return result;
     }
 
     public void clear()
     {
-        stacks.clear();
+        lock.check();
+
+        typeToStack.clear();
+
+        for (EnvironmentalAccessImpl closure : typeToAccess.values())
+        {
+            closure.invalidate();
+        }
+    }
+
+    public <T> EnvironmentalAccess<T> getAccess(Class<T> type)
+    {
+        lock.check();
+
+        EnvironmentalAccessImpl access = typeToAccess.get(type);
+
+        if (access == null)
+        {
+            access = new EnvironmentalAccessImpl(this, type);
+            typeToAccess.put(type, access);
+        }
+
+        return access;
+    }
+
+    public void threadDidCleanup()
+    {
+        lock.lock();
+    }
+
+    void invalidate(Class type)
+    {
+        EnvironmentalAccessImpl access = typeToAccess.get(type);
+
+        if (access != null) access.invalidate();
     }
 }

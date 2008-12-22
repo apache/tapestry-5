@@ -19,11 +19,11 @@ import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.dom.MarkupModel;
 import org.apache.tapestry5.dom.XMLMarkupModel;
 import org.apache.tapestry5.internal.parser.AttributeToken;
-import org.apache.tapestry5.internal.structure.PageElement;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.ioc.Location;
 import org.apache.tapestry5.ioc.internal.util.TapestryException;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
+import org.apache.tapestry5.runtime.RenderCommand;
 import org.apache.tapestry5.runtime.RenderQueue;
 import org.apache.tapestry5.services.BindingSource;
 import org.apache.tapestry5.services.ComponentClassResolver;
@@ -47,7 +47,7 @@ public class PageElementFactoryImplTest extends InternalBaseTestCase
         PageElementFactory factory = new PageElementFactoryImpl(source, resolver, null, null, null);
         AttributeToken token = new AttributeToken(null, "name", "value", l);
 
-        PageElement element = factory.newAttributeElement(null, token);
+        RenderCommand element = factory.newAttributeElement(null, token);
 
         writer.element("root");
 
