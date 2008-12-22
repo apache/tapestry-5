@@ -19,19 +19,19 @@
         <packaging>
           <containerElement type="module" name="tapestry-hibernate">
             <attribute name="method" value="5" />
-            <attribute name="URI" value="/WEB-INF/lib/tapestry-hibernate-5.0.17-SNAPSHOT.jar" />
+            <attribute name="URI" value="/WEB-INF/lib/tapestry-hibernate-5.0.19-SNAPSHOT.jar" />
           </containerElement>
           <containerElement type="module" name="tapestry-core">
             <attribute name="method" value="5" />
-            <attribute name="URI" value="/WEB-INF/lib/tapestry-core-5.0.17-SNAPSHOT.jar" />
+            <attribute name="URI" value="/WEB-INF/lib/tapestry-core-5.0.19-SNAPSHOT.jar" />
           </containerElement>
           <containerElement type="module" name="tapestry-ioc">
             <attribute name="method" value="5" />
-            <attribute name="URI" value="/WEB-INF/lib/tapestry-ioc-5.0.17-SNAPSHOT.jar" />
+            <attribute name="URI" value="/WEB-INF/lib/tapestry-ioc-5.0.19-SNAPSHOT.jar" />
           </containerElement>
           <containerElement type="module" name="tapestry-annotations">
             <attribute name="method" value="5" />
-            <attribute name="URI" value="/WEB-INF/lib/tapestry5-annotations-5.0.17-SNAPSHOT.jar" />
+            <attribute name="URI" value="/WEB-INF/lib/tapestry5-annotations-5.0.19-SNAPSHOT.jar" />
           </containerElement>
           <containerElement type="library" name="Maven: javassist:javassist:3.8.0.GA" level="project">
             <attribute name="method" value="1" />
@@ -159,5 +159,6 @@
     <orderEntry type="library" name="Maven: junit:junit:3.8.1" level="project" />
     <orderEntry type="library" name="Maven: org.easymock:easymock:2.4" level="project" />
   </component>
+  <component name="SvnBranchConfigurationManager" />
 </module>
 

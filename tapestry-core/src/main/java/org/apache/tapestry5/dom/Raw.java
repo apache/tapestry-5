@@ -15,6 +15,7 @@
 package org.apache.tapestry5.dom;
 
 import java.io.PrintWriter;
+import java.util.Map;
 
 /**
  * A specialized node in the document tree that contains raw markup to be printed to the client exactly as-is.
@@ -34,7 +35,7 @@ public final class Raw extends Node
      * Prints the text exactly as is, no translations, filtering, etc.
      */
     @Override
-    void toMarkup(Document document, PrintWriter writer)
+    void toMarkup(Document document, PrintWriter writer, Map<String, String> namespaceURIToPrefix)
     {
         writer.print(text);
     }

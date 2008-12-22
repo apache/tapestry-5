@@ -20,9 +20,7 @@ import static org.apache.tapestry5.ioc.internal.util.Defense.notBlank;
 import org.apache.tapestry5.services.Response;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintWriter;
+import java.io.*;
 
 /**
  * Implementation of {@link Response} that wraps around an underlying {@link HttpServletResponse}.
@@ -44,7 +42,11 @@ public class ResponseImpl implements Response
 
         response.setContentType(contentType);
 
-        return response.getWriter();
+        OutputStream os = response.getOutputStream();
+
+        Writer w = new OutputStreamWriter(os, response.getCharacterEncoding());
+
+        return new PrintWriter(new BufferedWriter(w));
     }
 
     public String encodeURL(String URL)
