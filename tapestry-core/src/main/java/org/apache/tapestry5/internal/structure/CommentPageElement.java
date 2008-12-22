@@ -16,6 +16,7 @@ package org.apache.tapestry5.internal.structure;
 
 import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.internal.parser.CommentToken;
+import org.apache.tapestry5.runtime.RenderCommand;
 import org.apache.tapestry5.runtime.RenderQueue;
 
 /**
@@ -23,7 +24,7 @@ import org.apache.tapestry5.runtime.RenderQueue;
  *
  * @see CommentToken
  */
-public class CommentPageElement implements PageElement
+public class CommentPageElement implements RenderCommand
 {
     private final String text;
 

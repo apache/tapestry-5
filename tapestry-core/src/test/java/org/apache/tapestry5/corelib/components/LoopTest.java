@@ -14,6 +14,7 @@
 
 package org.apache.tapestry5.corelib.components;
 
+import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.services.Heartbeat;
 import org.easymock.EasyMock;
@@ -28,6 +29,7 @@ public class LoopTest extends InternalBaseTestCase
     public void non_empty_iterator()
     {
         Heartbeat hb = mockHeartbeat();
+        MarkupWriter writer = mockMarkupWriter();
 
         // Really hard to test the exact timing of all this; it will have to
         // be "proven" by integration tests.
@@ -49,21 +51,21 @@ public class LoopTest extends InternalBaseTestCase
         assertTrue(loop.setup());
         assertEquals(loop.getIndex(), 0);
 
-        loop.begin();
+        loop.begin(writer);
         assertEquals(loop.getValue(), "alpha");
         assertEquals(loop.getIndex(), 0);
 
-        assertFalse(loop.after());
-        loop.begin();
+        assertFalse(loop.after(writer));
+        loop.begin(writer);
         assertEquals(loop.getValue(), "beta");
         assertEquals(loop.getIndex(), 1);
 
-        assertFalse(loop.after());
-        loop.begin();
+        assertFalse(loop.after(writer));
+        loop.begin(writer);
         assertEquals(loop.getValue(), "gamma");
         assertEquals(loop.getIndex(), 2);
 
-        assertTrue(loop.after());
+        assertTrue(loop.after(writer));
 
         verify();
     }

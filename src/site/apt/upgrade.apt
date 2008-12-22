@@ -12,6 +12,16 @@ Upgrade Notes
   You should also check the {{{release-notes.html}project-wide release notes}} for information
   about bugs fixes and other improvements.
 
+Release 5.0.19
+
+  As part of the changes related to
+  {{{https://issues.apache.org/jira/browse/TAP5-417}TAP5-417: Tapestry 5.0 Performance Improvements}},
+  you should be aware that Tapestry will now optimize the render phase state machine.
+  This is only relevant to advanced users who have written a ComponentClassTransformWorker
+  that adds logic to a render phase: it is necessary to
+  {{{apidocs/org/apache/tapestry5/model/MutableComponentModel.html#addRenderPhase(Class)}inform
+  Tapestry that the render phase should be invoked}}.
+
 Release 5.0.16
 
   The client-side class Tapestry.Zone has been renamed to Tapestry.ZoneManager.

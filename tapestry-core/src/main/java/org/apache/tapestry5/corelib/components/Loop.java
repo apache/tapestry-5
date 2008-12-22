@@ -332,7 +332,7 @@ public class Loop
      * Begins a new heartbeat.
      */
     @BeginRender
-    void begin()
+    void begin(MarkupWriter writer)
     {
         value = iterator.next();
 
@@ -352,15 +352,7 @@ public class Loop
         if (formSupport != null && volatileState) formSupport.store(this, ADVANCE_VOLATILE);
 
         startHeartbeat();
-    }
 
-    private void startHeartbeat()
-    {
-        heartbeat.begin();
-    }
-
-    void beforeRenderBody(MarkupWriter writer)
-    {
         if (element != null)
         {
             writer.element(element);
@@ -368,17 +360,19 @@ public class Loop
         }
     }
 
-    void afterRenderBody(MarkupWriter writer)
+    private void startHeartbeat()
     {
-        if (element != null) writer.end();
+        heartbeat.begin();
     }
 
     /**
      * Ends the current heartbeat.
      */
     @AfterRender
-    boolean after()
+    boolean after(MarkupWriter writer)
     {
+        if (element != null) writer.end();
+
         endHeartbeat();
 
         if (formSupport != null) formSupport.store(this, END_HEARTBEAT);

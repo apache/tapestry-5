@@ -21,6 +21,7 @@ import org.apache.tapestry5.ioc.internal.util.Defense;
 import java.io.PrintWriter;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 /**
  * A node within the DOM.
@@ -95,12 +96,12 @@ public abstract class Node
         return children != null && !children.isEmpty();
     }
 
-    void writeChildMarkup(Document document, PrintWriter writer)
+    void writeChildMarkup(Document document, PrintWriter writer, Map<String, String> namespaceURIToPrefix)
     {
         if (children == null) return;
 
         for (Node child : children)
-            child.toMarkup(writer);
+            child.toMarkup(document, writer, namespaceURIToPrefix);
     }
 
     /**
@@ -110,7 +111,7 @@ public abstract class Node
     {
         PrintOutCollector collector = new PrintOutCollector();
 
-        writeChildMarkup(getDocument(), collector.getPrintWriter());
+        writeChildMarkup(getDocument(), collector.getPrintWriter(), null);
 
         return collector.getPrintOut();
     }
@@ -146,13 +147,20 @@ public abstract class Node
      */
     public void toMarkup(PrintWriter writer)
     {
-        toMarkup(getDocument(), writer);
+        toMarkup(getDocument(), writer, getNamespaceURIToPrefix());
+    }
+
+    protected Map<String, String> getNamespaceURIToPrefix()
+    {
+        // For non-Elements, the container (which should be an Element) will provide the mapping.
+
+        return container.getNamespaceURIToPrefix();
     }
 
     /**
      * Implemented by each subclass, with the document passed in for efficiency.
      */
-    abstract void toMarkup(Document document, PrintWriter writer);
+    abstract void toMarkup(Document document, PrintWriter writer, Map<String, String> namespaceURIToPrefix);
 
     /**
      * Moves this node so that it becomes a sibling of the element, ordered just before the element.

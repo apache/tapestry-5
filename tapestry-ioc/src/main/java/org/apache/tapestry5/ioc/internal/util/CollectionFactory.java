@@ -39,14 +39,12 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 public final class CollectionFactory
 {
-    private static final int INITIAL_HASHMAP_CAPACITY = 31;
-
     /**
      * Constructs and returns a generic {@link HashMap} instance.
      */
     public static <K, V> Map<K, V> newMap()
     {
-        return new HashMap<K, V>(INITIAL_HASHMAP_CAPACITY);
+        return new HashMap<K, V>();
     }
 
     /**
@@ -84,7 +82,7 @@ public final class CollectionFactory
      */
     public static <K, V> ConcurrentMap<K, V> newConcurrentMap()
     {
-        return new ConcurrentHashMap<K, V>(INITIAL_HASHMAP_CAPACITY);
+        return new ConcurrentHashMap<K, V>();
     }
 
     /**

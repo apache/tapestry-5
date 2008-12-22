@@ -15,6 +15,7 @@
 package org.apache.tapestry5.dom;
 
 import java.io.PrintWriter;
+import java.util.Map;
 
 /**
  * A type of node that contains text.
@@ -46,7 +47,7 @@ public final class Text extends Node
     }
 
     @Override
-    void toMarkup(Document document, PrintWriter writer)
+    void toMarkup(Document document, PrintWriter writer, Map<String, String> namespaceURIToPrefix)
     {
         String encoded = document.getMarkupModel().encode(buffer.toString());
 

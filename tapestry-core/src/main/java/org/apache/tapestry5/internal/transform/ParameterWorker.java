@@ -17,6 +17,7 @@ package org.apache.tapestry5.internal.transform;
 import org.apache.tapestry5.Binding;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.internal.InternalComponentResources;
+import org.apache.tapestry5.internal.ParameterAccess;
 import org.apache.tapestry5.internal.bindings.LiteralBinding;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.util.BodyBuilder;
@@ -93,14 +94,15 @@ public class ParameterWorker implements ComponentClassTransformWorker
 
         String resourcesFieldName = transformation.getResourcesFieldName();
 
-        String invariantFieldName = addParameterSetup(name, annotation.defaultPrefix(), annotation.value(),
-                                                      parameterName, cachedFieldName, cache, type, resourcesFieldName,
-                                                      transformation, annotation.autoconnect());
+        String accessFieldName = addParameterSetup(name, annotation.defaultPrefix(), annotation.value(),
+                                                   parameterName, cachedFieldName, cache, type, resourcesFieldName,
+                                                   transformation, annotation.autoconnect());
 
-        addReaderMethod(name, cachedFieldName, invariantFieldName, cache, parameterName, type, resourcesFieldName,
+        addReaderMethod(name, cachedFieldName, accessFieldName, cache, parameterName, type, resourcesFieldName,
                         transformation);
 
-        addWriterMethod(name, cachedFieldName, cache, parameterName, type, resourcesFieldName, transformation);
+        addWriterMethod(name, cachedFieldName, accessFieldName, cache, parameterName, type, resourcesFieldName,
+                        transformation);
     }
 
     /**
@@ -110,16 +112,22 @@ public class ParameterWorker implements ComponentClassTransformWorker
                                      String parameterName, String cachedFieldName, boolean cache, String fieldType,
                                      String resourcesFieldName, ClassTransformation transformation, boolean autoconnect)
     {
-        String defaultFieldName = transformation.addField(Modifier.PRIVATE, fieldType, fieldName + "_default");
 
-        String invariantFieldName = transformation.addField(Modifier.PRIVATE, "boolean", fieldName + "_invariant");
+        String accessFieldName = transformation.addField(Modifier.PRIVATE, ParameterAccess.class.getName(),
+                                                         fieldName + "_access");
+
+        String defaultFieldName = transformation.addField(Modifier.PRIVATE, fieldType, fieldName + "_default");
 
         BodyBuilder builder = new BodyBuilder().begin();
 
-        addDefaultBindingSetup(parameterName, defaultPrefix, defaultBinding, resourcesFieldName, transformation,
+        addDefaultBindingSetup(parameterName, defaultPrefix, defaultBinding, resourcesFieldName,
+                               transformation,
                                builder, autoconnect);
 
-        builder.addln("%s = %s.isInvariant(\"%s\");", invariantFieldName, resourcesFieldName, parameterName);
+        // Order is (alas) important here: must invoke getParameterAccess() after the binding setup, as
+        // that code may invoke InternalComponentResources.bindParameter().
+
+        builder.addln("%s = %s.getParameterAccess(\"%s\");", accessFieldName, resourcesFieldName, parameterName);
 
         // Store the current value of the field into the default field. This value will
         // be used to reset the field after rendering.
@@ -139,7 +147,7 @@ public class ParameterWorker implements ComponentClassTransformWorker
         {
             builder.clear();
 
-            builder.addln("if (! %s)", invariantFieldName);
+            builder.addln("if (! %s.isInvariant())", accessFieldName);
             builder.begin();
             builder.addln("%s = %s;", fieldName, defaultFieldName);
             builder.addln("%s = false;", cachedFieldName);
@@ -156,11 +164,12 @@ public class ParameterWorker implements ComponentClassTransformWorker
             transformation.extendMethod(TransformConstants.CONTAINING_PAGE_DID_DETACH_SIGNATURE, builder.toString());
         }
 
-        return invariantFieldName;
+        return accessFieldName;
     }
 
     private void addDefaultBindingSetup(String parameterName, String defaultPrefix, String defaultBinding,
-                                        String resourcesFieldName, ClassTransformation transformation,
+                                        String resourcesFieldName,
+                                        ClassTransformation transformation,
                                         BodyBuilder builder, boolean autoconnect)
     {
         if (InternalUtils.isNonBlank(defaultBinding))
@@ -192,13 +201,14 @@ public class ParameterWorker implements ComponentClassTransformWorker
         // If no default binding expression provided in the annotation, then look for a default
         // binding method to provide the binding.
 
-        final String methodName = "default" + InternalUtils.capitalize(parameterName);
+        final String methodName = "default" + parameterName;
 
         MethodFilter filter = new MethodFilter()
         {
             public boolean accept(TransformMethodSignature signature)
             {
-                return signature.getParameterTypes().length == 0 && signature.getMethodName().equals(methodName);
+                return signature.getParameterTypes().length == 0
+                        && signature.getMethodName().equalsIgnoreCase(methodName);
             }
         };
 
@@ -209,12 +219,23 @@ public class ParameterWorker implements ComponentClassTransformWorker
 
         if (signatures.isEmpty()) return;
 
+        // Because the check was case-insensitive, we need to determine the actual
+        // name.
+
+        String actualMethodName = signatures.get(0).getMethodName();
+
         builder.addln("if (! %s.isBound(\"%s\"))", resourcesFieldName, parameterName);
-        builder.addln("  %s(\"%s\", %s, ($w) %s());", BIND_METHOD_NAME, parameterName, resourcesFieldName, methodName);
+        builder.addln("  %s(\"%s\", %s, ($w) %s());",
+                      BIND_METHOD_NAME,
+                      parameterName,
+                      resourcesFieldName,
+                      actualMethodName);
     }
 
-    private void addWriterMethod(String fieldName, String cachedFieldName, boolean cache, String parameterName,
-                                 String fieldType, String resourcesFieldName, ClassTransformation transformation)
+    private void addWriterMethod(String fieldName, String cachedFieldName, String accessFieldName, boolean cache,
+                                 String parameterName,
+                                 String fieldType, String resourcesFieldName,
+                                 ClassTransformation transformation)
     {
         BodyBuilder builder = new BodyBuilder();
         builder.begin();
@@ -233,8 +254,7 @@ public class ParameterWorker implements ComponentClassTransformWorker
         // read-only or unbound parameters. $1 is the single parameter
         // to the method.
 
-        builder.addln("if (%s.isBound(\"%s\"))", resourcesFieldName, parameterName);
-        builder.addln("  %s.writeParameter(\"%s\", ($w)$1);", resourcesFieldName, parameterName);
+        builder.addln("%s.write(($w)$1);", accessFieldName);
 
         builder.addln("%s = $1;", fieldName);
 
@@ -255,7 +275,7 @@ public class ParameterWorker implements ComponentClassTransformWorker
     /**
      * Adds a private method that will be the replacement for read-access to the field.
      */
-    private void addReaderMethod(String fieldName, String cachedFieldName, String invariantFieldName, boolean cache,
+    private void addReaderMethod(String fieldName, String cachedFieldName, String accessFieldName, boolean cache,
                                  String parameterName, String fieldType, String resourcesFieldName,
                                  ClassTransformation transformation)
     {
@@ -265,8 +285,8 @@ public class ParameterWorker implements ComponentClassTransformWorker
         // While the component is still loading, or when the value for the component is cached,
         // or if the value is not bound, then return the current value of the field.
 
-        builder.addln("if (%s || ! %s.isLoaded() || ! %<s.isBound(\"%s\")) return %s;", cachedFieldName,
-                      resourcesFieldName, parameterName, fieldName);
+        builder.addln("if (%s || ! %s.isLoaded() || ! %s.isBound()) return %s;", cachedFieldName,
+                      resourcesFieldName, accessFieldName, fieldName);
 
         String cast = TransformUtils.getWrapperTypeName(fieldType);
 
@@ -276,14 +296,13 @@ public class ParameterWorker implements ComponentClassTransformWorker
         // to readParameter(), since its easier to convert it properly to
         // a type on that end than in the generated code.
 
-        builder.addln("%s result = ($r) ((%s) %s.readParameter(\"%s\", \"%2$s\"));", fieldType, cast,
-                      resourcesFieldName, parameterName);
+        builder.addln("%s result = ($r) ((%s) %s.read(\"%2$s\"));", fieldType, cast, accessFieldName);
 
         // If the binding is invariant, then it's ok to cache. Othewise, its only
         // ok to cache if a) the @Parameter says to cache and b) the component
         // is rendering at the point when field is accessed.
 
-        builder.add("if (%s", invariantFieldName);
+        builder.add("if (%s.isInvariant()", accessFieldName);
 
         if (cache) builder.add(" || %s.isRendering()", resourcesFieldName);
 
@@ -313,6 +332,9 @@ public class ParameterWorker implements ComponentClassTransformWorker
         return InternalUtils.stripMemberName(fieldName);
     }
 
+    /**
+     * Invoked from generated code as part of the handling of parameter default methods.
+     */
     public static void bind(String parameterName, InternalComponentResources resources, Object value)
     {
         if (value == null) return;
