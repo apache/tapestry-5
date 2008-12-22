@@ -85,4 +85,13 @@ public interface MutableComponentModel extends ComponentModel
      * Stores a meta data value under the indicated key.
      */
     void setMeta(String key, String value);
+
+    /**
+     * Identifies that the component does handle the render phase.
+     *
+     * @param renderPhase annotation class corresponding to the render phase
+     * @see ComponentModel#getHandledRenderPhases()
+     * @since 5.0.19
+     */
+    void addRenderPhase(Class renderPhase);
 }

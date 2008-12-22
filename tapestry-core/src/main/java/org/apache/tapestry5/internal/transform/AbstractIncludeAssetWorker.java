@@ -16,6 +16,7 @@ package org.apache.tapestry5.internal.transform;
 
 import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.internal.services.ComponentResourcesOperation;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.services.SymbolSource;
@@ -94,6 +95,8 @@ public abstract class AbstractIncludeAssetWorker implements ComponentClassTransf
         // the integration test, thank you.
 
         transformation.extendMethod(TransformConstants.SETUP_RENDER_SIGNATURE, body);
+
+        model.addRenderPhase(SetupRender.class);
     }
 
     /**

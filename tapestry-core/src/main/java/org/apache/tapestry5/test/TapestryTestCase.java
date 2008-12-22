@@ -645,7 +645,7 @@ public abstract class TapestryTestCase extends IOCTestCase
     protected final void train_getParameterModel(ComponentModel model, String parameterName,
                                                  ParameterModel parameterModel)
     {
-        expect(model.getParameterModel(parameterName)).andReturn(parameterModel);
+        expect(model.getParameterModel(parameterName)).andReturn(parameterModel).atLeastOnce();
     }
 
     protected final void train_getParameterNames(ComponentModel model, String... names)
@@ -1179,5 +1179,10 @@ public abstract class TapestryTestCase extends IOCTestCase
     protected final void train_getFormValidationId(FormSupport formSupport, String validationId)
     {
         expect(formSupport.getFormValidationId()).andReturn(validationId).atLeastOnce();
+    }
+
+    protected final void train_isAllowNull(ParameterModel model, boolean allowNull)
+    {
+        expect(model.isAllowNull()).andReturn(allowNull).atLeastOnce();
     }
 }

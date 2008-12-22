@@ -20,6 +20,7 @@ import org.apache.tapestry5.ioc.Location;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.internal.util.ClasspathResource;
 import org.apache.tapestry5.ioc.internal.util.LocationImpl;
+import org.apache.tapestry5.runtime.RenderCommand;
 import org.apache.tapestry5.runtime.RenderQueue;
 import org.testng.annotations.Test;
 
@@ -45,8 +46,8 @@ public class BlockImplTest extends InternalBaseTestCase
         BlockImpl block = new BlockImpl(null, null);
         RenderQueue queue = mockRenderQueue();
         MarkupWriter writer = mockMarkupWriter();
-        PageElement element1 = mockPageElement();
-        PageElement element2 = mockPageElement();
+        RenderCommand element1 = mockRenderCommand();
+        RenderCommand element2 = mockRenderCommand();
 
         getMocksControl().checkOrder(true);
 

@@ -16,10 +16,7 @@ package org.apache.tapestry5.dom;
 
 import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newLinkedList;
-import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newMap;
 import org.apache.tapestry5.ioc.internal.util.Defense;
-import static org.apache.tapestry5.ioc.internal.util.Defense.notBlank;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 
 import java.io.PrintWriter;
@@ -138,11 +135,11 @@ public final class Element extends Node
      */
     public Element attribute(String namespace, String name, String value)
     {
-        notBlank(name, "name");
+        Defense.notBlank(name, "name");
 
         if (value == null) return this;
 
-        if (attributes == null) attributes = newMap();
+        if (attributes == null) attributes = CollectionFactory.newMap();
 
         if (!attributes.containsKey(name)) attributes.put(name, new Attribute(namespace, name, value));
 
@@ -174,7 +171,7 @@ public final class Element extends Node
      */
     public Element forceAttributes(String... namesAndValues)
     {
-        if (attributes == null) attributes = newMap();
+        if (attributes == null) attributes = CollectionFactory.newMap();
 
         int i = 0;
 
@@ -203,7 +200,7 @@ public final class Element extends Node
      */
     public Element element(String name, String... namesAndValues)
     {
-        notBlank(name, "name");
+        Defense.notBlank(name, "name");
 
         Element child = newChild(new Element(this, null, name));
 
@@ -221,14 +218,14 @@ public final class Element extends Node
      */
     public Element elementNS(String namespace, String name)
     {
-        notBlank(name, "name");
+        Defense.notBlank(name, "name");
 
         return newChild(new Element(this, namespace, name));
     }
 
     public Element elementAt(int index, String name, String... namesAndValues)
     {
-        notBlank(name, "name");
+        Defense.notBlank(name, "name");
 
         Element child = new Element(this, null, name);
         child.attributes(namesAndValues);
@@ -290,15 +287,15 @@ public final class Element extends Node
     }
 
     @Override
-    void toMarkup(Document document, PrintWriter writer)
+    void toMarkup(Document document, PrintWriter writer, Map<String, String> containerNamespacePrefixToURI)
     {
-        Map<String, String> namespaceToPrefixMap = createNamespaceURIToNamespaceMap();
+        Map<String, String> localNamespacePrefixToURI = createNamespaceURIToPrefix(containerNamespacePrefixToURI);
 
         MarkupModel markupModel = document.getMarkupModel();
 
         StringBuilder builder = new StringBuilder();
 
-        String prefixedElementName = toPrefixedName(namespaceToPrefixMap, namespace, name);
+        String prefixedElementName = toPrefixedName(localNamespacePrefixToURI, namespace, name);
 
         builder.append("<").append(prefixedElementName);
 
@@ -308,7 +305,7 @@ public final class Element extends Node
         {
             Attribute attribute = attributes.get(key);
 
-            attribute.render(markupModel, builder, namespaceToPrefixMap);
+            attribute.render(markupModel, builder, localNamespacePrefixToURI);
         }
 
         // Next, emit namespace declarations for each namespace.
@@ -343,14 +340,20 @@ public final class Element extends Node
 
         writer.print(builder.toString());
 
-        if (hasChildren) writeChildMarkup(document, writer);
+        if (hasChildren) writeChildMarkup(document, writer, localNamespacePrefixToURI);
 
         // Dangerous -- perhaps it should be an error for a tag of type OMIT to even have children!
         // We'll certainly be writing out unbalanced markup in that case.
 
         if (style == EndTagStyle.OMIT) return;
 
-        if (hasChildren || style == EndTagStyle.REQUIRE) writer.printf("</%s>", prefixedElementName);
+        if (hasChildren || style == EndTagStyle.REQUIRE)
+        {
+            // TAP5-471: Avoid use of printf().
+            writer.print("</");
+            writer.print(prefixedElementName);
+            writer.print(">");
+        }
     }
 
     private String toPrefixedName(Map<String, String> namespaceURIToPrefix, String namespace, String name)
@@ -383,7 +386,7 @@ public final class Element extends Node
     {
         Defense.notNull(id, "id");
 
-        LinkedList<Element> queue = newLinkedList();
+        LinkedList<Element> queue = CollectionFactory.newLinkedList();
 
         queue.add(this);
 
@@ -418,7 +421,7 @@ public final class Element extends Node
      */
     public Element find(String path)
     {
-        notBlank(path, "path");
+        Defense.notBlank(path, "path");
 
         Element search = this;
 
@@ -555,28 +558,18 @@ public final class Element extends Node
     }
 
     /**
-     * Creates the URI to namespace map for this element, which reflects namespace mappings from containing elements. In
-     * addition, automatic namespaces are defined for any URIs that are not explicitly mapped (this occurs sometimes in
-     * Ajax partial render scenarios).
+     * Creates the URI to namespace prefix map for this element, which reflects namespace mappings from containing
+     * elements. In addition, automatic namespaces are defined for any URIs that are not explicitly mapped (this occurs
+     * sometimes in Ajax partial render scenarios).
      *
      * @return a mapping from namespace URI to namespace prefix
      */
-    private Map<String, String> createNamespaceURIToNamespaceMap()
+    private Map<String, String> createNamespaceURIToPrefix(Map<String, String> containerNamespaceURIToPrefix)
     {
-        Map<String, String> result = CollectionFactory.newMap();
+        MapHolder holder = new MapHolder(containerNamespaceURIToPrefix);
 
-        List<Element> elements = gatherParentElements();
+        holder.putAll(namespaceToPrefix);
 
-        elements.add(this);
-
-        for (Element e : elements)
-        {
-            // Put each namespace map, when present, overwriting child element's mappings
-            // over parent elements (by virtue of order in the list).
-
-            if (e.namespaceToPrefix != null)
-                result.putAll(e.namespaceToPrefix);
-        }
 
         // result now contains all the mappings, including this element's.
 
@@ -587,10 +580,10 @@ public final class Element extends Node
 
             // Add the namespace for the element as the default namespace.
 
-            if (!result.containsKey(namespace))
+            if (!holder.getResult().containsKey(namespace))
             {
                 defineNamespace(namespace, "");
-                result.put(namespace, "");
+                holder.put(namespace, "");
             }
         }
 
@@ -599,21 +592,23 @@ public final class Element extends Node
         if (attributes != null)
         {
             for (Attribute a : attributes.values())
-                addMappingIfNeeded(result, a.namespace);
+                addMappingIfNeeded(holder, a.namespace);
         }
 
-        return result;
+        return holder.getResult();
     }
 
-    private void addMappingIfNeeded(Map<String, String> masterURItoPrefixMap, String namespace)
+    private void addMappingIfNeeded(MapHolder holder, String namespace)
     {
         if (InternalUtils.isBlank(namespace)) return;
 
-        if (masterURItoPrefixMap.containsKey(namespace)) return;
+        Map<String, String> current = holder.getResult();
+
+        if (current.containsKey(namespace)) return;
 
         // A missing namespace.
 
-        Set<String> prefixes = CollectionFactory.newSet(masterURItoPrefixMap.values());
+        Set<String> prefixes = CollectionFactory.newSet(holder.getResult().values());
 
         // A clumsy way to find a unique id for the new namespace.
 
@@ -624,9 +619,8 @@ public final class Element extends Node
 
             if (!prefixes.contains(prefix))
             {
-
                 defineNamespace(namespace, prefix);
-                masterURItoPrefixMap.put(namespace, prefix);
+                holder.put(namespace, prefix);
                 return;
             }
 
@@ -634,26 +628,28 @@ public final class Element extends Node
         }
     }
 
-    /**
-     * Returns the parent elements containing this element, ordered by depth (the root element is first, the current
-     * element's parent is last).
-     *
-     * @return list of elements
-     */
-    private List<Element> gatherParentElements()
+    @Override
+    protected Map<String, String> getNamespaceURIToPrefix()
     {
-        List<Element> result = CollectionFactory.newList();
+        MapHolder holder = new MapHolder();
+
+        List<Element> elements = CollectionFactory.newList(this);
 
         Element cursor = parent;
 
         while (cursor != null)
         {
-            result.add(cursor);
+            elements.add(cursor);
             cursor = cursor.parent;
         }
 
-        Collections.reverse(result);
+        // Reverse the list, so that later elements will overwrite earlier ones.
 
-        return result;
+        Collections.reverse(elements);
+
+        for (Element e : elements)
+            holder.putAll(e.namespaceToPrefix);
+
+        return holder.getResult();
     }
 }

@@ -22,7 +22,6 @@ import org.apache.tapestry5.internal.services.*;
 import org.apache.tapestry5.internal.structure.ComponentPageElement;
 import org.apache.tapestry5.internal.structure.ComponentPageElementResources;
 import org.apache.tapestry5.internal.structure.Page;
-import org.apache.tapestry5.internal.structure.PageElement;
 import org.apache.tapestry5.ioc.*;
 import org.apache.tapestry5.ioc.def.ContributionDef;
 import org.apache.tapestry5.ioc.def.ModuleDef;
@@ -36,6 +35,7 @@ import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.model.EmbeddedComponentModel;
 import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.runtime.Component;
+import org.apache.tapestry5.runtime.RenderCommand;
 import org.apache.tapestry5.runtime.RenderQueue;
 import org.apache.tapestry5.services.*;
 import org.apache.tapestry5.test.TapestryTestCase;
@@ -236,9 +236,9 @@ public class InternalBaseTestCase extends TapestryTestCase implements Registry
         expect(model.getComponentClassName()).andReturn(className).atLeastOnce();
     }
 
-    protected final PageElement mockPageElement()
+    protected final RenderCommand mockRenderCommand()
     {
-        return newMock(PageElement.class);
+        return newMock(RenderCommand.class);
     }
 
     protected final void train_getParameterNames(EmbeddedComponentModel model, String... names)

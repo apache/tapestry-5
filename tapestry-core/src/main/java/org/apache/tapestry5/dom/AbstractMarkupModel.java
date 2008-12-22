@@ -19,54 +19,97 @@ public abstract class AbstractMarkupModel implements MarkupModel
     /**
      * Passes all characters but '&lt;', '&gt;' and '&amp;' through unchanged.
      */
-    public void encode(String content, StringBuilder buffer)
-    {
-        encode(content, false, buffer);
-    }
-
     public String encode(String content)
     {
-        StringBuilder buffer = new StringBuilder(content.length() * 2);
+        int length = content.length();
 
-        encode(content, false, buffer);
+        StringBuilder builder = null;
 
-        return buffer.toString();
-    }
-
-    public void encodeQuoted(String content, StringBuilder buffer)
-    {
-        encode(content, true, buffer);
-    }
-
-    private void encode(String content, boolean encodeQuotes, StringBuilder buffer)
-    {
-        char[] array = content.toCharArray();
-
-        for (char ch : array)
+        for (int i = 0; i < length; i++)
         {
+            char ch = content.charAt(i);
+
             switch (ch)
             {
                 case '<':
-                    buffer.append("&lt;");
+
+                    if (builder == null)
+                    {
+                        builder = new StringBuilder(2 * length);
+
+                        builder.append(content.substring(0, i));
+                    }
+
+                    builder.append("&lt;");
                     continue;
 
                 case '>':
-                    buffer.append("&gt;");
+
+                    if (builder == null)
+                    {
+                        builder = new StringBuilder(2 * length);
+
+                        builder.append(content.substring(0, i));
+                    }
+
+                    builder.append("&gt;");
                     continue;
 
                 case '&':
-                    buffer.append("&amp;");
+
+                    if (builder == null)
+                    {
+                        builder = new StringBuilder(2 * length);
+
+                        builder.append(content.substring(0, i));
+                    }
+
+                    builder.append("&amp;");
+                    continue;
+
+                default:
+
+                    if (builder != null)
+                        builder.append(ch);
+            }
+        }
+
+        return builder == null ? content : builder.toString();
+    }
+
+    public void encodeQuoted(String content, StringBuilder builder)
+    {
+        int length = content.length();
+
+        for (int i = 0; i < length; i++)
+        {
+            char ch = content.charAt(i);
+
+            switch (ch)
+            {
+                case '<':
+
+                    builder.append("&lt;");
+                    continue;
+
+                case '>':
+
+                    builder.append("&gt;");
+                    continue;
+
+                case '&':
+
+                    builder.append("&amp;");
                     continue;
 
                 case '"':
-                    if (encodeQuotes)
-                    {
-                        buffer.append("&quot;");
-                        continue;
-                    }
+
+                    builder.append("&quot;");
+                    continue;
 
                 default:
-                    buffer.append(ch);
+
+                    builder.append(ch);
             }
         }
     }

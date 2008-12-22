@@ -17,6 +17,8 @@ package org.apache.tapestry5.dom;
 import org.apache.tapestry5.ioc.internal.util.Defense;
 
 import java.io.PrintWriter;
+import java.util.Collections;
+import java.util.Map;
 
 /**
  * The root node of a DOM.
@@ -112,7 +114,7 @@ public final class Document extends Node
     }
 
     @Override
-    public void toMarkup(Document document, PrintWriter writer)
+    public void toMarkup(Document document, PrintWriter writer, Map<String, String> namespaceURIToPrefix)
     {
         if (rootElement == null) throw new IllegalStateException(DomMessages.noRootElement());
 
@@ -132,7 +134,9 @@ public final class Document extends Node
             dtd.toMarkup(writer);
         }
 
-        rootElement.toMarkup(document, writer);
+        Map<String, String> initialNamespaceMap = Collections.emptyMap();
+
+        rootElement.toMarkup(document, writer, initialNamespaceMap);
     }
 
     @Override
@@ -162,5 +166,13 @@ public final class Document extends Node
     public void dtd(String name, String publicId, String systemId)
     {
         dtd = new DTD(name, publicId, systemId);
+    }
+
+    @Override
+    protected Map<String, String> getNamespaceURIToPrefix()
+    {
+        if (rootElement == null) return Collections.emptyMap();
+
+        return rootElement.getNamespaceURIToPrefix();
     }
 }

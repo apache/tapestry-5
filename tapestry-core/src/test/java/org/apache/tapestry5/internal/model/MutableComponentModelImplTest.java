@@ -15,6 +15,7 @@
 package org.apache.tapestry5.internal.model;
 
 import org.apache.tapestry5.BindingConstants;
+import org.apache.tapestry5.annotations.BeginRender;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.ioc.Location;
 import org.apache.tapestry5.ioc.Resource;
@@ -548,7 +549,6 @@ public class MutableComponentModelImplTest extends InternalBaseTestCase
         }
 
         verify();
-
     }
 
     @Test
@@ -719,6 +719,67 @@ public class MutableComponentModelImplTest extends InternalBaseTestCase
 
         assertEquals(parent.getMeta("fred"), "flintstone");
         assertEquals(child.getMeta("fred"), "mcmurray");
+
+        verify();
+    }
+
+    /**
+     * @since 5.0.19
+     */
+    @Test
+    public void does_not_handle_render_phase_and_no_parent()
+    {
+        Resource r = mockResource();
+        Logger logger = mockLogger();
+
+        replay();
+
+        MutableComponentModel model = new MutableComponentModelImpl(CLASS_NAME, logger, r, null);
+
+
+        assertFalse(model.getHandledRenderPhases().contains(BeginRender.class));
+
+        verify();
+    }
+
+    /**
+     * @since 5.0.19
+     */
+    @Test
+    public void handles_render_phase()
+    {
+        Resource r = mockResource();
+        Logger logger = mockLogger();
+
+        replay();
+
+        MutableComponentModel model = new MutableComponentModelImpl(CLASS_NAME, logger, r, null);
+
+        model.addRenderPhase(BeginRender.class);
+
+        assertTrue(model.getHandledRenderPhases().contains(BeginRender.class));
+
+        verify();
+    }
+
+    /**
+     * @since 5.0.19
+     */
+    @Test
+    public void parent_handles_render_phase()
+    {
+        Resource r = mockResource();
+        Logger logger = mockLogger();
+
+        replay();
+
+        MutableComponentModel parent = new MutableComponentModelImpl(CLASS_NAME, logger, r, null);
+        MutableComponentModel child = new MutableComponentModelImpl(CLASS_NAME, logger, r, parent);
+
+        parent.addRenderPhase(BeginRender.class);
+
+
+        assertTrue(child.getHandledRenderPhases().contains(BeginRender.class));
 
         verify();
     }

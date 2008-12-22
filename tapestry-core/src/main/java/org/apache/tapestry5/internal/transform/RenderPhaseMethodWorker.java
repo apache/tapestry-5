@@ -112,6 +112,8 @@ public class RenderPhaseMethodWorker implements ComponentClassTransformWorker
 
         if (methods.isEmpty()) return;
 
+        model.addRenderPhase(methodAnnotation);
+
         BodyBuilder builder = new BodyBuilder();
         builder.begin();
 
@@ -188,5 +190,4 @@ public class RenderPhaseMethodWorker implements ComponentClassTransformWorker
         else
             builder.addln(";");
     }
-
 }
