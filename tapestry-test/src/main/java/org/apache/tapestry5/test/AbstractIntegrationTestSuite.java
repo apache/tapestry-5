@@ -66,7 +66,8 @@ public class AbstractIntegrationTestSuite extends Assert implements Selenium
 
     public static final String SUBMIT = "//input[@type='submit']";
 
-    private final String webappRoot;
+
+    private String webappRoot;
 
     private final String seleniumBrowserCommand;
 
@@ -948,5 +949,15 @@ public class AbstractIntegrationTestSuite extends Assert implements Selenium
 
         for (String s : linkText)
             clickAndWait(String.format("link=%s", s));
+    }
+
+    public String getWebappRoot()
+    {
+        return webappRoot;
+    }
+
+    public void setWebappRoot(String webappRoot)
+    {
+        this.webappRoot = webappRoot;
     }
 }
