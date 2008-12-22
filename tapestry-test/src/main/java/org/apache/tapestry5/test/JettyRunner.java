@@ -102,13 +102,15 @@ public class JettyRunner
         try
         {
 
-            String warPath = new File(workingDir, this.warPath).getPath();
+            String webappPath = warPath.startsWith("/")
+                                ? warPath
+                                : new File(workingDir, this.warPath).getPath();
             String webDefaults = new File(workingDir, "src/test/conf/webdefault.xml").getPath();
 
             File keystoreFile = new File(workingDir, "src/test/conf/keystore");
             String keystore = keystoreFile.getPath();
 
-            System.out.printf("Starting Jetty instance on port %d (%s mapped to %s)\n", port, contextPath, warPath);
+            System.out.printf("Starting Jetty instance on port %d (%s mapped to %s)\n", port, contextPath, webappPath);
 
             Server server = new Server();
 
@@ -131,7 +133,7 @@ public class JettyRunner
             NCSARequestLog log = new NCSARequestLog();
             server.setRequestLog(log);
 
-            WebApplicationContext context = server.addWebApplication(contextPath, warPath);
+            WebApplicationContext context = server.addWebApplication(contextPath, webappPath);
 
             context.setDefaultsDescriptor(webDefaults);
 
