@@ -59,6 +59,7 @@
             <item name="tapestry5-annotations" href="tapestry5-annotations/"/>
             <item name="tapestry-core" href="tapestry-core/"/>
             <item name="tapestry-hibernate" href="tapestry-hibernate/"/>
+            <item name="tapestry-hibernate-core" href="tapestry-hibernate-core/"/>
             <item name="tapestry-ioc" href="tapestry-ioc/"/>
             <item name="tapestry-spring" href="tapestry-spring/"/>
             <item name="tapestry-test" href="tapestry-test/"/>
@@ -70,7 +71,7 @@
         </menu>
 
         <menu name="User Guide">
-            <item name="Ajax" href="guide/ajax.html"/>
+            <item name="Ajax &amp; JavaScript" href="guide/ajax.html"/>
             <item name="Aliases" href="guide/alias.html"/>
             <item name="Application State" href="guide/appstate.html"/>
             <item name="Assets" href="guide/assets.html"/>

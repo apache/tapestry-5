@@ -29,14 +29,14 @@ Release 5.0.16
 Release 5.0.15
 
   Method <<<getElementName()>>> of the
-  {{{../apidocs/org/apache/tapestry5/RadioContainer.html}RadioContainer}} interface was renamed
+  {{{apidocs/org/apache/tapestry5/RadioContainer.html}RadioContainer}} interface was renamed
   to <<<getControlName()>>>, to bring it into alignment with the analagous method
   of the
-   {{{../apidocs/org/apache/tapestry5/Field.html}Field}} interface..  This should not affect any user code.
+   {{{apidocs/org/apache/tapestry5/Field.html}Field}} interface..  This should not affect any user code.
 
 * {{{https://issues.apache.org/jira/browse/TAPESTRY-2656}TAPESTRY-2656}}
 
-  A method of the interface {{{../apidocs/org/apache/tapestry5/grid/GridSortModel.html}GridSortModel}} was renamed
+  A method of the interface {{{apidocs/org/apache/tapestry5/grid/GridSortModel.html}GridSortModel}} was renamed
   to correct a misspelling.
 
 * {{{https://issues.apache.org/jira/browse/TAPESTRY-2567}TAPESTRY-2567}}
@@ -56,7 +56,7 @@ Release 5.0.15
 * {{{https://issues.apache.org/jira/browse/TAPESTRY-2352}TAPESTRY-2352}}
 
   Several API changes related to
-  {{{../apidocs/org/apache/tapestry5/Translator.html}Translator}} have occured, to support
+  {{{apidocs/org/apache/tapestry5/Translator.html}Translator}} have occured, to support
   client-side validation of user input.
 
 Release 5.0.14

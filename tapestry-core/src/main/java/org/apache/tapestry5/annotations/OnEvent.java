@@ -63,9 +63,7 @@ public @interface OnEvent
      * the component's grand-container and will appear to originate from the container. Thus events that escape a
      * component will appear to originate in the component's container, and so forth.
      * <p/>
-     * <p/>
      * Matching by component id is case insensitive.
      */
     String component() default "";
-
 }
