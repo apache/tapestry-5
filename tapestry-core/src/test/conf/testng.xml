@@ -44,6 +44,7 @@ tests run at the same time as Selenium-based integration tests.  See TAPESTRY-25
             <package name="org.apache.tapestry5.internal.bindings"/>
             <package name="org.apache.tapestry5.internal.grid"/>
             <package name="org.apache.tapestry5.internal.model"/>
+            <package name="org.apache.tapestry5.internal.pageload"/>
             <package name="org.apache.tapestry5.internal.services"/>
             <package name="org.apache.tapestry5.internal.structure"/>
             <package name="org.apache.tapestry5.internal.test"/>
@@ -56,5 +57,5 @@ tests run at the same time as Selenium-based integration tests.  See TAPESTRY-25
         <packages>
             <package name="org.apache.tapestry5.integration"/>
         </packages>
-    </test>    
+    </test>
 </suite>

@@ -83,7 +83,8 @@ Basic JavaScript
 
 +---+
 
-  The Asset is injected, using the $\{tapestry.scriptaculous\} symbol to reference the location
+  The Asset is injected, using the $\{tapestry.scriptaculous\}
+  {{{../tapestry-ioc/symbols.apt}symbol}} to reference the location
   of the Scriptaculous library.
 
   The RenderSupport is accessed as an Environmental service.
@@ -92,8 +93,9 @@ Basic JavaScript
   {{{rendering.html}render phase}}) is the correct place to inform the RenderSupport service that
   the library is needed.
 
+  Even though the dragdrop.js library is stored inside a JAR file, Tapestry ensures that it can
+  be accessed from the client web browser.
   
-
 * addScript()
 
   <<<void addScript(String format, Object... arguments);>>>
