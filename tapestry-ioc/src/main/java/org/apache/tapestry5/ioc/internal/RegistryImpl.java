@@ -767,8 +767,10 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         final ObjectLocator locator = this;
         final OperationTracker tracker = this;
 
-        Map<Class, Object> empty = Collections.emptyMap();
-        final InjectionResources resources = new MapInjectionResources(empty);
+        Map<Class, Object> resourcesMap = CollectionFactory.newMap();
+        resourcesMap.put(OperationTracker.class, tracker);
+
+        final InjectionResources resources = new MapInjectionResources(resourcesMap);
 
 
         final Invokable<T> operation = new Invokable<T>()

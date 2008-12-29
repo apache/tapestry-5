@@ -12,19 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.services;
+package org.example.testapp.pages;
 
-import org.apache.tapestry5.dom.Document;
+import org.apache.tapestry5.ioc.annotations.Inject;
+import org.example.testapp.services.Flintstone;
 
 /**
- * Interface used to programatically render a page, forming a {@link org.apache.tapestry5.dom.Document} which can then
- * be manipulated or {@linkplain org.apache.tapestry5.dom.Document#toMarkup(java.io.PrintWriter) streamed to a
- * PrintWriter}.
+ * Not intstantiable because there is more than one Flintstone implementation bean inside the Spring context.
  */
-public interface PageDocumentGenerator
+public class Bedrock
 {
-    /**
-     * Renders the page.
-     */
-    Document render(String logicalPageName);
+    @Inject
+    private Flintstone citizen;
 }

@@ -368,6 +368,7 @@ public class ModuleImpl implements Module
 
         resourcesMap.put(Logger.class, logger);
         resourcesMap.put(ObjectLocator.class, locator);
+        resourcesMap.put(OperationTracker.class, registry);
 
         InjectionResources resources = new MapInjectionResources(resourcesMap);
 

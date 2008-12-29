@@ -40,6 +40,24 @@ public class TapestrySpringIntegrationTest extends AbstractIntegrationTestSuite
     {
         open(BASE_URL);
 
-        assertTextPresent("[upcase]");
+        String text = getText("beans");
+        assertTrue(text.contains("upcase"));
+    }
+
+    @Test
+    public void customize_method_of_filter_subclass_invoked() throws Exception
+    {
+        open(BASE_URL);
+
+        assertText("message", "SPRING VERSION 2.5.6: FILTER INITIALIZED");
+    }
+
+    @Test
+    public void too_many_spring_beans_are_assignable()
+    {
+        open(BASE_URL + "bedrock");
+
+        assertTextPresent(
+                "Spring context contains 2 beans assignable to type org.example.testapp.services.Flintstone: barney, fred.");
     }
 }

@@ -14,14 +14,15 @@
 
 package org.apache.tapestry5.internal;
 
-import org.apache.tapestry5.ioc.*;
-import org.apache.tapestry5.ioc.def.ContributionDef;
+import org.apache.tapestry5.ioc.ModuleBuilderSource;
+import org.apache.tapestry5.ioc.OrderedConfiguration;
+import org.apache.tapestry5.ioc.ServiceResources;
 import org.apache.tapestry5.ioc.services.SymbolProvider;
 
 /**
  * Makes a contribution to the SymbolSource service configuration.
  */
-public class SyntheticSymbolSourceContributionDef implements ContributionDef
+public class SyntheticSymbolSourceContributionDef extends AbstractContributionDef
 {
     private final String contributionName;
 
@@ -37,10 +38,6 @@ public class SyntheticSymbolSourceContributionDef implements ContributionDef
         this.constraints = constraints;
     }
 
-    public void contribute(ModuleBuilderSource moduleBuilderSource, ServiceResources resources,
-                           Configuration configuration)
-    {
-    }
 
     @SuppressWarnings("unchecked")
     public void contribute(ModuleBuilderSource moduleBuilderSource, ServiceResources resources,
@@ -49,10 +46,6 @@ public class SyntheticSymbolSourceContributionDef implements ContributionDef
         configuration.add(contributionName, provider, constraints);
     }
 
-    public void contribute(ModuleBuilderSource moduleBuilderSource, ServiceResources resources,
-                           MappedConfiguration configuration)
-    {
-    }
 
     /**
      * Returns "SymbolSource".

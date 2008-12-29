@@ -14,21 +14,28 @@
 
 package org.apache.tapestry5.internal.spring;
 
-import org.apache.tapestry5.ioc.ObjectCreator;
-import org.apache.tapestry5.ioc.ScopeConstants;
-import org.apache.tapestry5.ioc.ServiceBuilderResources;
+import org.apache.tapestry5.internal.AbstractContributionDef;
+import org.apache.tapestry5.ioc.*;
 import org.apache.tapestry5.ioc.def.ContributionDef;
 import org.apache.tapestry5.ioc.def.DecoratorDef;
 import org.apache.tapestry5.ioc.def.ModuleDef;
 import org.apache.tapestry5.ioc.def.ServiceDef;
-import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newCaseInsensitiveMap;
-import org.springframework.beans.factory.BeanFactoryUtils;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.ioc.internal.util.Invokable;
+import org.apache.tapestry5.ioc.services.ClassFabUtils;
+import org.apache.tapestry5.ioc.services.RegistryShutdownHub;
+import org.apache.tapestry5.ioc.services.RegistryShutdownListener;
 import org.springframework.context.ApplicationContext;
+import org.springframework.core.SpringVersion;
+import org.springframework.web.context.ConfigurableWebApplicationContext;
 import org.springframework.web.context.WebApplicationContext;
 
+import javax.servlet.ServletContext;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * A wrapper that converts a Spring {@link ApplicationContext} into a set of service definitions, compatible with
@@ -36,90 +43,79 @@ import java.util.Set;
  */
 public class SpringModuleDef implements ModuleDef
 {
-    private static final String CONTEXT_SERVICE_ID = WebApplicationContext.class.getSimpleName();
+    private static final String SERVICE_ID = "ApplicationContext";
 
-    private final Map<String, ServiceDef> serviceDefs = newCaseInsensitiveMap();
+    private final Map<String, ServiceDef> services = CollectionFactory.newMap();
 
-    public SpringModuleDef(final ApplicationContext context)
+    private final AtomicBoolean applicationContextCreated = new AtomicBoolean(false);
+
+    public SpringModuleDef(final ServletContext servletContext, final ApplicationContextCustomizer customizer)
     {
-        for (final String beanName : BeanFactoryUtils.beanNamesIncludingAncestors(context))
+        ServiceDef sd = new ServiceDef()
         {
-            ServiceDef serviceDef = new ServiceDef()
+            public ObjectCreator createServiceCreator(final ServiceBuilderResources resources)
             {
-                private Object getBean()
-                {
-                    return context.getBean(beanName);
-                }
+                final CustomizingContextLoader loader = new CustomizingContextLoader(
+                        customizer);
 
-                private Class getBeanType()
+                final RegistryShutdownListener shutdownListener = new RegistryShutdownListener()
                 {
-                    return context.getType(beanName);
-                }
-
-                public ObjectCreator createServiceCreator(ServiceBuilderResources resources)
-                {
-                    return new ObjectCreator()
+                    public void registryDidShutdown()
                     {
-                        public Object createObject()
-                        {
-                            return getBean();
-                        }
-                    };
-                }
+                        loader.closeWebApplicationContext(servletContext);
+                    }
+                };
 
-                public String getServiceId()
-                {
-                    return beanName;
-                }
+                final RegistryShutdownHub shutdownHub = resources.getService(RegistryShutdownHub.class);
 
-                public Class getServiceInterface()
-                {
-                    return getBeanType();
-                }
 
-                public String getServiceScope()
-                {
-                    return ScopeConstants.DEFAULT;
-                }
-
-                public boolean isEagerLoad()
-                {
-                    return false;
-                }
-
-                /** Returns an empty set, Spring has no concept of a marker annotation. */
-                public Set<Class> getMarkers()
-                {
-                    return Collections.emptySet();
-                }
-            };
-
-            serviceDefs.put(beanName, serviceDef);
-        }
-
-        // And add one service that is the Spring WebApplicationContext.
-
-        ServiceDef serviceDef = new ServiceDef()
-        {
-            public ObjectCreator createServiceCreator(ServiceBuilderResources resources)
-            {
                 return new ObjectCreator()
                 {
                     public Object createObject()
                     {
-                        return context;
+                        return resources.getTracker().invoke(
+                                "Creating Spring ApplicationContext via ContextLoader",
+                                new Invokable<Object>()
+                                {
+                                    public Object invoke()
+                                    {
+                                        resources.getLogger().info(String.format(
+                                                "Starting Spring (version %s)",
+                                                SpringVersion.getVersion()));
+
+                                        WebApplicationContext context = loader.initWebApplicationContext(
+                                                servletContext);
+
+                                        shutdownHub.addRegistryShutdownListener(shutdownListener);
+
+                                        applicationContextCreated.set(true);
+
+                                        return context;
+                                    }
+                                });
+                    }
+
+                    @Override
+                    public String toString()
+                    {
+                        return "ObjectCreator for Spring ApplicationContext";
                     }
                 };
             }
 
             public String getServiceId()
             {
-                return CONTEXT_SERVICE_ID;
+                return SERVICE_ID;
+            }
+
+            public Set<Class> getMarkers()
+            {
+                return Collections.emptySet();
             }
 
             public Class getServiceInterface()
             {
-                return WebApplicationContext.class;
+                return ConfigurableWebApplicationContext.class;
             }
 
             public String getServiceScope()
@@ -131,15 +127,9 @@ public class SpringModuleDef implements ModuleDef
             {
                 return false;
             }
-
-            /** Returns null. */
-            public Set<Class> getMarkers()
-            {
-                return Collections.emptySet();
-            }
         };
 
-        serviceDefs.put(CONTEXT_SERVICE_ID, serviceDef);
+        services.put(SERVICE_ID, sd);
     }
 
     public Class getBuilderClass()
@@ -148,11 +138,96 @@ public class SpringModuleDef implements ModuleDef
     }
 
     /**
-     * Returns an empty set.
+     * Returns a contribution, "SpringBean", to the MasterObjectProvider service.  It is ordered after the built-in
+     * contributions.
      */
     public Set<ContributionDef> getContributionDefs()
     {
-        return Collections.emptySet();
+        ContributionDef def = createContributionToMasterObjectProvider();
+
+        return CollectionFactory.newSet(def);
+    }
+
+    private ContributionDef createContributionToMasterObjectProvider()
+    {
+        final ObjectProvider springBeanProvider = new ObjectProvider()
+        {
+            public <T> T provide(Class<T> objectType, AnnotationProvider annotationProvider, ObjectLocator locator)
+            {
+                ApplicationContext context = locator.getService(SERVICE_ID, ApplicationContext.class);
+
+                Map beanMap = context.getBeansOfType(objectType);
+
+                switch (beanMap.size())
+                {
+                    case 0:
+                        return null;
+
+                    case 1:
+
+                        Object bean = beanMap.values().iterator().next();
+
+                        return objectType.cast(bean);
+
+                    default:
+
+                        String message = String.format("Spring context contains %d beans assignable to type %s: %s.",
+                                                       beanMap.size(),
+                                                       ClassFabUtils.toJavaClassName(objectType),
+                                                       InternalUtils.joinSorted(beanMap.keySet()));
+
+                        throw new IllegalArgumentException(message);
+                }
+            }
+        };
+
+        ContributionDef def = new AbstractContributionDef()
+        {
+            public String getServiceId()
+            {
+                return "MasterObjectProvider";
+            }
+
+            @Override
+            public void contribute(ModuleBuilderSource moduleBuilderSource, ServiceResources resources,
+                                   OrderedConfiguration configuration)
+            {
+                final OperationTracker tracker = resources.getTracker();
+
+                final ObjectProvider springBeanProviderInvoker = new ObjectProvider()
+                {
+                    public <T> T provide(final Class<T> objectType, final AnnotationProvider annotationProvider,
+                                         final ObjectLocator locator)
+                    {
+                        return tracker.invoke(
+                                "Resolving dependency by searching Spring ApplicationContext",
+                                new Invokable<T>()
+                                {
+                                    public T invoke()
+                                    {
+                                        return springBeanProvider.provide(objectType, annotationProvider, locator);
+                                    }
+                                });
+                    }
+                };
+
+                ObjectProvider outerCheck = new ObjectProvider()
+                {
+                    public <T> T provide(Class<T> objectType, AnnotationProvider annotationProvider,
+                                         ObjectLocator locator)
+                    {
+                        if (!applicationContextCreated.get()) return null;
+
+                        return springBeanProviderInvoker.provide(objectType, annotationProvider, locator);
+                    }
+                };
+
+
+                configuration.add("SpringBean", outerCheck, "after:Service,Alias,Autobuild");
+            }
+        };
+
+        return def;
     }
 
     /**
@@ -170,11 +245,11 @@ public class SpringModuleDef implements ModuleDef
 
     public ServiceDef getServiceDef(String serviceId)
     {
-        return serviceDefs.get(serviceId);
+        return services.get(serviceId);
     }
 
     public Set<String> getServiceIds()
     {
-        return serviceDefs.keySet();
+        return services.keySet();
     }
 }

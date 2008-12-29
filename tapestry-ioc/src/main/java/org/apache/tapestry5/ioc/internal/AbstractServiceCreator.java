@@ -14,10 +14,7 @@
 
 package org.apache.tapestry5.ioc.internal;
 
-import org.apache.tapestry5.ioc.ObjectCreator;
-import org.apache.tapestry5.ioc.ObjectLocator;
-import org.apache.tapestry5.ioc.ServiceBuilderResources;
-import org.apache.tapestry5.ioc.ServiceResources;
+import org.apache.tapestry5.ioc.*;
 import static org.apache.tapestry5.ioc.internal.ConfigurationType.*;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.DelegatingInjectionResources;
@@ -68,6 +65,7 @@ public abstract class AbstractServiceCreator implements ObjectCreator
         injectionResources.put(ServiceResources.class, resources);
         injectionResources.put(Logger.class, logger);
         injectionResources.put(Class.class, resources.getServiceInterface());
+        injectionResources.put(OperationTracker.class, resources.getTracker());
     }
 
     /**

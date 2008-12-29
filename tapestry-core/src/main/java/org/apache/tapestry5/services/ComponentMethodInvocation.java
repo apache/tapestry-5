@@ -14,17 +14,14 @@
 
 package org.apache.tapestry5.services;
 
-import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.ioc.Invocation;
+import org.apache.tapestry5.runtime.ComponentResourcesAware;
 
 /**
  * Encapsulates the parameters, thrown exceptions, and result of a method invocation, allowing a {@link
- * org.apache.tapestry5.services.ComponentMethodAdvice} to encapsulate the invocation.
+ * org.apache.tapestry5.services.ComponentMethodAdvice} to encapsulate the invocation. Extends Invocation with the
+ * {@link org.apache.tapestry5.ComponentResources} of the component for which a method is being advised.
  */
-public interface ComponentMethodInvocation extends Invocation
+public interface ComponentMethodInvocation extends Invocation, ComponentResourcesAware
 {
-    /**
-     * Returns the component resources for the component whose method is being intercepted.
-     */
-    ComponentResources getComponentResources();
 }

@@ -16,6 +16,7 @@ package org.apache.tapestry5.ioc.internal;
 
 import org.apache.tapestry5.ioc.OperationTracker;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.Invokable;
 import org.apache.tapestry5.ioc.util.Stack;
@@ -41,6 +42,9 @@ public class OperationTrackerImpl implements OperationTracker
 
     public void run(String description, final Runnable operation)
     {
+        Defense.notBlank(description, "description");
+        Defense.notNull(operation, "operation");
+
         operations.push(description);
 
         try
@@ -84,6 +88,9 @@ public class OperationTrackerImpl implements OperationTracker
 
     public <T> T invoke(String description, Invokable<T> operation)
     {
+        Defense.notBlank(description, "description");
+        Defense.notNull(operation, "operation");
+
         InvokableToRunnable<T> i2r = new InvokableToRunnable<T>(operation);
 
         run(description, i2r);

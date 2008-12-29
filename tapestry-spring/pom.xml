@@ -27,8 +27,7 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-web</artifactId>
-            <version>2.0</version>
-            <scope>provided</scope>
+            <version>2.5.6</version>
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
@@ -69,6 +68,19 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifestEntries>
+                            <Tapestry-Module-Classes>
+                                org.apache.tapestry5.internal.spring.SpringModule
+                            </Tapestry-Module-Classes>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
             </plugin>
         </plugins>
     </build>
