@@ -89,7 +89,7 @@ public class RenderQueueImpl implements RenderQueue
         long endNanos = System.nanoTime();
 
         long elapsedNanos = endNanos - startNanos;
-        double elapsedSeconds = ((float) elapsedNanos) / 1000000000F;
+        double elapsedSeconds = ((double) elapsedNanos) / 1000000000d;
 
         logger.debug(TapestryMarkers.RENDER_COMMANDS,
                      String.format("Executed %,d rendering commands (max queue depth: %,d) in %.3f seconds",

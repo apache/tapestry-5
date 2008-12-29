@@ -17,6 +17,9 @@ package org.apache.tapestry5.ioc.internal.services;
 import org.apache.tapestry5.ioc.AnnotationProvider;
 import org.apache.tapestry5.ioc.ObjectLocator;
 import org.apache.tapestry5.ioc.ObjectProvider;
+import org.apache.tapestry5.ioc.OperationTracker;
+import org.apache.tapestry5.ioc.internal.util.Invokable;
+import org.apache.tapestry5.ioc.services.ClassFabUtils;
 import org.apache.tapestry5.ioc.services.MasterObjectProvider;
 
 import java.util.List;
@@ -25,27 +28,37 @@ public class MasterObjectProviderImpl implements MasterObjectProvider
 {
     private final List<ObjectProvider> configuration;
 
-    public MasterObjectProviderImpl(List<ObjectProvider> configuration)
+    private final OperationTracker tracker;
+
+    public MasterObjectProviderImpl(List<ObjectProvider> configuration, OperationTracker tracker)
     {
         this.configuration = configuration;
+        this.tracker = tracker;
     }
 
-    public <T> T provide(Class<T> objectType, AnnotationProvider annotationProvider, ObjectLocator locator,
-                         boolean required)
+    public <T> T provide(final Class<T> objectType, final AnnotationProvider annotationProvider,
+                         final ObjectLocator locator,
+                         final boolean required)
     {
-        for (ObjectProvider provider : configuration)
+        return tracker.invoke(String.format("Resolving object of type %s using MasterObjectProvider",
+                                            ClassFabUtils.toJavaClassName(objectType)), new Invokable<T>()
         {
-            T result = provider.provide(objectType, annotationProvider, locator);
+            public T invoke()
+            {
+                for (ObjectProvider provider : configuration)
+                {
+                    T result = provider.provide(objectType, annotationProvider, locator);
 
-            if (result != null) return result;
-        }
+                    if (result != null) return result;
+                }
 
-        // If required, then we must obtain it the hard way, by
-        // seeing if there's a single service that implements the interface.
+                // If required, then we must obtain it the hard way, by
+                // seeing if there's a single service that implements the interface.
 
-        if (required) return locator.getService(objectType);
+                if (required) return locator.getService(objectType);
 
-        return null;
+                return null;
+            }
+        });
     }
-
 }

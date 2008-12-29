@@ -54,8 +54,7 @@ public interface ObjectLocator
     <T> T getService(Class<T> serviceInterface);
 
     /**
-     * Obtains an object indirectly, using an {@link org.apache.tapestry5.ioc.ObjectProvider} identified by the prefix
-     * of the reference.
+     * Obtains an object indirectly, using the {@link org.apache.tapestry5.ioc.services.MasterObjectProvider} service.
      *
      * @param objectType         the type of object to be returned
      * @param annotationProvider provides access to annotations on the field or parameter for which a value is to be

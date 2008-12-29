@@ -25,16 +25,10 @@
     <filter>
         <filter-name>app</filter-name>
         <!-- Special filter that adds in a T5 IoC module derived from the Spring WebApplicationContext. -->
-        <filter-class>org.apache.tapestry5.spring.TapestrySpringFilter</filter-class>
+        <filter-class>org.example.testapp.services.CustomizedFilter</filter-class>
     </filter>
     <filter-mapping>
         <filter-name>app</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
-    <!--
-   This is where the Spring support is configured.
-    -->
-    <listener>
-        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
-    </listener>
 </web-app>

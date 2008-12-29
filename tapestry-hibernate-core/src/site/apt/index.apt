@@ -16,7 +16,7 @@ Core Hibernate Support
 Licensing Issues
 
   Hibernate is licensed under the Lesser GNU Public License. This is more restrictive license than the Apache Software
-  License used by the rest of Tapestry. The restrictions mostly apply to redistricuting Hibernate, especially in
+  License used by the rest of Tapestry. The restrictions mostly apply to redistributing Hibernate, especially in
   any altered form, and will likely be irrelvant to the vast majority of users, but you should be aware.
 
   This library is compiled against version <<3.3.1.GA>> of Hibernate (and version 3.4.0.GA of hibernate-annotations),

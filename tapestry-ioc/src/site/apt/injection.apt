@@ -111,6 +111,9 @@ Standard Injection Processing
 
    []
 
+   In addition, {{{../apidocs/org/apache/tapestry5/ioc/OperationTracker.html}OperationTracker}} is available
+   for injection via constructor, method or field.
+
    If field type does not match any of the available resource types, or the Inject annotation is present,
    logic continues to the next step.
 
@@ -210,6 +213,13 @@ Standard Injection Processing
   Looks for the  {{{../apidocs/org/apache/tapestry5/annotations/Service.html}Service}} annotation;
   if present, the annotation's value is the exact service id to inject.  This is necessary because
   injections into <component> fields are always triggered by the Inject annotation.
+
+** SpringBean ObjectProvider (tapestry-spring)
+
+   Attempts to resolve a Spring bean purely by object type (Spring qualifiers are not supported). If no beans
+   are assignable to the type, then processing continues. If exactly one is assignable, it is used as the injection value.
+   If more than one bean is assignable, it is an error (and a list of matching beans names will be part of the thrown
+   exception).
 
 * Service Lookup
 

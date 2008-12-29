@@ -14,10 +14,7 @@
 
 package org.apache.tapestry5.ioc.internal;
 
-import org.apache.tapestry5.ioc.ModuleBuilderSource;
-import org.apache.tapestry5.ioc.ObjectLocator;
-import org.apache.tapestry5.ioc.ServiceDecorator;
-import org.apache.tapestry5.ioc.ServiceResources;
+import org.apache.tapestry5.ioc.*;
 import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newMap;
 import org.apache.tapestry5.ioc.internal.util.InjectionResources;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
@@ -66,6 +63,7 @@ public class ServiceDecoratorImpl implements ServiceDecorator
         parameterDefaults.put(ServiceResources.class, resources);
         parameterDefaults.put(Logger.class, logger);
         parameterDefaults.put(Class.class, serviceInterface);
+        parameterDefaults.put(OperationTracker.class, resources.getTracker());
     }
 
     @Override
@@ -94,7 +92,8 @@ public class ServiceDecoratorImpl implements ServiceDecorator
         Object result = null;
         Throwable failure = null;
 
-        Object moduleBuilder = InternalUtils.isStatic(decoratorMethod) ? null
+        Object moduleBuilder = InternalUtils.isStatic(decoratorMethod)
+                               ? null
                                : moduleBuilderSource.getModuleBuilder();
 
         try

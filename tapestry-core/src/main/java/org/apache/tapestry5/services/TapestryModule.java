@@ -1030,13 +1030,17 @@ public final class TapestryModule
     {
         ServletApplicationInitializer terminator = new ServletApplicationInitializer()
         {
-            public void initializeApplication(ServletContext context)
+            public void initializeApplication(ServletContext servletContext)
             {
-                applicationGlobals.storeServletContext(context);
+                applicationGlobals.storeServletContext(servletContext);
 
                 // And now, down the (Web) ApplicationInitializer pipeline ...
 
-                initializer.initializeApplication(new ContextImpl(context));
+                ContextImpl context = new ContextImpl(servletContext);
+
+                applicationGlobals.storeContext(context);
+
+                initializer.initializeApplication(context);
             }
         };
 
