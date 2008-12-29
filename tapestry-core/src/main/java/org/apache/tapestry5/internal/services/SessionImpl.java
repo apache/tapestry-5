@@ -30,6 +30,8 @@ public class SessionImpl implements Session
 {
     private final HttpSession session;
 
+    private boolean invalidated = false;
+
     public SessionImpl(HttpSession session)
     {
         this.session = session;
@@ -74,12 +76,18 @@ public class SessionImpl implements Session
 
     public void invalidate()
     {
+        invalidated = true;
+
         session.invalidate();
+    }
+
+    public boolean isInvalidated()
+    {
+        return invalidated;
     }
 
     public void setMaxInactiveInterval(int seconds)
     {
         session.setMaxInactiveInterval(seconds);
     }
-
 }

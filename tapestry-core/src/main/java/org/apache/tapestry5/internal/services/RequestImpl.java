@@ -40,6 +40,8 @@ public class RequestImpl implements Request
 
     private boolean encodingSet;
 
+    private Session session;
+
     public RequestImpl(HttpServletRequest request, String requestEncoding)
     {
         this.request = request;
@@ -96,9 +98,14 @@ public class RequestImpl implements Request
 
     public Session getSession(boolean create)
     {
-        HttpSession session = request.getSession(create);
+        if (session == null)
+        {
+            HttpSession hsession = request.getSession(create);
 
-        return session == null ? null : new SessionImpl(session);
+            if (hsession != null) session = new SessionImpl(hsession);
+        }
+
+        return session;
     }
 
     public Locale getLocale()
@@ -162,5 +169,4 @@ public class RequestImpl implements Request
     {
         return request.getServerName();
     }
-
 }

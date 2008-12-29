@@ -115,6 +115,12 @@ public class SessionApplicationStatePersistenceStrategy implements
     {
         Map<String, Object> map = getASOMap();
 
+        if (map.isEmpty()) return;
+
+        Session session = request.getSession(false);
+
+        if (session != null && session.isInvalidated()) return;
+
         for (String key : map.keySet())
         {
             Object aso = map.get(key);
@@ -123,7 +129,12 @@ public class SessionApplicationStatePersistenceStrategy implements
 
             if (needsRestore(aso))
             {
-                Session session = request.getSession(true);
+                if (session == null)
+                    session = request.getSession(true);
+
+                // Don't need to check invalidated as a session that gets created here
+                // can't have been invalidated yet ... but then again, how did the ASO get
+                // created then?
 
                 // It is expected that the ASO implements HttpSessionBindingListener and
                 // can clear its dirty flag as it is saved.

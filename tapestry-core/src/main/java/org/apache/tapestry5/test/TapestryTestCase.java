@@ -1185,4 +1185,9 @@ public abstract class TapestryTestCase extends IOCTestCase
     {
         expect(model.isAllowNull()).andReturn(allowNull).atLeastOnce();
     }
+
+    protected final void train_isInvalidated(Session session, boolean invalidated)
+    {
+        expect(session.isInvalidated()).andReturn(invalidated);
+    }
 }

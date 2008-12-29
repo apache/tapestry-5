@@ -206,10 +206,14 @@ public class SessionApplicationStatePersistenceStrategyTest extends InternalBase
     {
         Request request = mockRequest();
         Map<String, Object> asoMap = CollectionFactory.newMap();
+        Session session = mockSession();
 
         asoMap.put("some.key", null);
 
+        train_isInvalidated(session, false);
         train_getAttribute(request, ASO_MAP_ATTRIBUTE, asoMap);
+
+        train_getSession(request, false, session);
 
         replay();
 
@@ -234,7 +238,10 @@ public class SessionApplicationStatePersistenceStrategyTest extends InternalBase
         asoMap.put(key, aso);
 
         train_getAttribute(request, ASO_MAP_ATTRIBUTE, asoMap);
-        train_getSession(request, true, session);
+
+        train_getSession(request, false, session);
+        train_isInvalidated(session, false);
+
         session.setAttribute(key, aso);
 
         replay();
@@ -259,8 +266,67 @@ public class SessionApplicationStatePersistenceStrategyTest extends InternalBase
         asoMap.put(key, aso);
 
         train_getAttribute(request, ASO_MAP_ATTRIBUTE, asoMap);
-        train_getSession(request, true, session);
+
+        train_getSession(request, false, session);
+        train_isInvalidated(session, false);
+
         session.setAttribute(key, aso);
+
+        replay();
+
+        EndOfRequestListener strategy = new SessionApplicationStatePersistenceStrategy(request);
+
+        strategy.requestDidComplete();
+
+        verify();
+    }
+
+    @Test
+    public void need_to_create_session_to_restore_optimized_object()
+    {
+        Request request = mockRequest();
+        Session session = mockSession();
+        Map<String, Object> asoMap = CollectionFactory.newMap();
+
+        String key = "foo:bar";
+        OptimizedApplicationStateObject aso = mockOptimizedApplicationStateObject(true);
+
+        asoMap.put(key, aso);
+
+        train_getAttribute(request, ASO_MAP_ATTRIBUTE, asoMap);
+
+        train_getSession(request, false, null);
+
+        train_getSession(request, true, session);
+
+        session.setAttribute(key, aso);
+
+        replay();
+
+        EndOfRequestListener strategy = new SessionApplicationStatePersistenceStrategy(request);
+
+        strategy.requestDidComplete();
+
+        verify();
+    }
+
+    @Test
+    public void session_invalidated()
+    {
+        Request request = mockRequest();
+        Session session = mockSession();
+        Map<String, Object> asoMap = CollectionFactory.newMap();
+
+        String key = "foo:bar";
+        Object aso = new Object();
+
+        asoMap.put(key, aso);
+
+        train_getAttribute(request, ASO_MAP_ATTRIBUTE, asoMap);
+
+        train_getSession(request, false, session);
+
+        train_isInvalidated(session, true);
 
         replay();
 
@@ -285,6 +351,9 @@ public class SessionApplicationStatePersistenceStrategyTest extends InternalBase
 
         train_getAttribute(request, ASO_MAP_ATTRIBUTE, asoMap);
 
+        train_getSession(request, false, session);
+        train_isInvalidated(session, false);
+
         replay();
 
         EndOfRequestListener strategy = new SessionApplicationStatePersistenceStrategy(request);
@@ -296,7 +365,6 @@ public class SessionApplicationStatePersistenceStrategyTest extends InternalBase
 
     private OptimizedApplicationStateObject mockOptimizedApplicationStateObject(boolean dirty)
     {
-
         OptimizedApplicationStateObject object = newMock(OptimizedApplicationStateObject.class);
 
         expect(object.isApplicationStateObjectDirty()).andReturn(dirty);
