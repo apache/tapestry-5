@@ -64,4 +64,12 @@ public interface Session
      * @throws IllegalStateException if this method is called on an already invalidated session
      */
     void invalidate();
+
+    /**
+     * Checks to see if the session has been invalidated.  Note: this only catches calls to {@link #invalidate()}, not
+     * calls to {@link javax.servlet.http.HttpSession#invalidate()}.
+     *
+     * @since 5.1.0.0
+     */
+    boolean isInvalidated();
 }

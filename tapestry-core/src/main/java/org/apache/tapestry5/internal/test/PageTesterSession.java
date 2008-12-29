@@ -56,7 +56,6 @@ public class PageTesterSession implements Session
         {
             attributes.put(name, value);
         }
-
     }
 
     private void nyi(String name)
@@ -77,9 +76,13 @@ public class PageTesterSession implements Session
         nyi("invalidate");
     }
 
+    public boolean isInvalidated()
+    {
+        return false;
+    }
+
     public void setMaxInactiveInterval(int seconds)
     {
         nyi("setMaxInactiveInterval");
     }
-
 }
