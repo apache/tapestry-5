@@ -90,7 +90,7 @@ FALSE	:	F A L S E;
 THIS	:	T H I S;
 
 IDENTIFIER 
-	:	LETTER (LETTER | DIGIT | '_')+;
+	:	LETTER (LETTER | DIGIT | '_')*;
 
 // The Safe Dereference operator understands not to de-reference through
 // a null.
