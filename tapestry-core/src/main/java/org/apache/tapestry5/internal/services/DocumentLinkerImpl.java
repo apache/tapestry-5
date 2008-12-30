@@ -132,9 +132,7 @@ public class DocumentLinkerImpl implements DocumentLinker
 
         if (blockNeeded)
         {
-            Element e = body.element("script", "type", "text/javascript");
-            e.raw("\n<!--\n");
-
+            Element e = body.element("script");
             if (developmentMode)
                 e.raw("Tapestry.DEBUG_ENABLED = true;\n");
 
@@ -143,8 +141,6 @@ public class DocumentLinkerImpl implements DocumentLinker
             e.raw(scriptBlock.toString());
 
             e.raw("});\n");
-
-            e.raw("// -->\n");
         }
     }
 
@@ -159,8 +155,7 @@ public class DocumentLinkerImpl implements DocumentLinker
     {
         for (String scriptURL : scripts)
             container.element("script",
-                              "src", scriptURL,
-                              "type", "text/javascript");
+                              "src", scriptURL);
     }
 
     /**
