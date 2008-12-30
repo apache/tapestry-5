@@ -14,6 +14,8 @@
 
 package org.apache.tapestry5.internal.spring;
 
+import org.apache.tapestry5.SymbolConstants;
+import org.apache.tapestry5.ioc.MappedConfiguration;
 import org.apache.tapestry5.ioc.OrderedConfiguration;
 import org.apache.tapestry5.services.ApplicationInitializer;
 import org.apache.tapestry5.services.ApplicationInitializerFilter;
@@ -25,6 +27,8 @@ import org.springframework.core.SpringVersion;
 /**
  * Module for Tapestry/Spring Integration. This module exists to force the load of the Spring ApplicationContext as part
  * of Tapestry application initialization.
+ *
+ * @since 5.1.0.0
  */
 public class SpringModule
 {
@@ -49,5 +53,10 @@ public class SpringModule
         };
 
         configuration.add("SpringContextInitialization", filter);
+    }
+
+    public static void contributeFactoryDefaults(MappedConfiguration<String, String> configuration)
+    {
+        configuration.add(SymbolConstants.USE_EXTERNAL_SPRING_CONTEXT, "false");
     }
 }

@@ -14,35 +14,27 @@
 
 package org.apache.tapestry5.spring;
 
-import org.apache.tapestry5.TapestryFilter;
-import org.testng.annotations.Test;
+import org.apache.tapestry5.test.TapestryTestCase;
 
 import javax.servlet.ServletContext;
 
-public class TapestryApplicationContextTest extends SpringTestCase
+/**
+ * Base class for Spring Integration test cases.
+ */
+public class SpringTestCase extends TapestryTestCase
 {
-    @Test
-    public void no_registry_in_servlet_context()
+    protected final void train_getInitParameter(ServletContext context, String parameterName, String parameterValue)
     {
-        ServletContext context = mockServletContext();
+        expect(context.getInitParameter(parameterName)).andReturn(parameterValue).atLeastOnce();
+    }
 
-        train_getAttribute(context, TapestryFilter.REGISTRY_CONTEXT_NAME, null);
+    protected final ServletContext mockServletContext()
+    {
+        return newMock(ServletContext.class);
+    }
 
-        replay();
-
-        TapestryApplicationContext tac = new TapestryApplicationContext();
-
-        tac.setServletContext(context);
-
-        try
-        {
-            tac.createBeanFactory();
-            unreachable();
-        }
-        catch (IllegalStateException ex)
-        {
-        }
-
-        verify();
+    protected final void train_getAttribute(ServletContext context, String attributeName, Object attributeValue)
+    {
+        expect(context.getAttribute(attributeName)).andReturn(attributeValue);
     }
 }

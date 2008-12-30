@@ -75,7 +75,14 @@ Usage
 ApplicationContext Service
 
   The Spring ApplicationContext is also added as a service.
-  
+
+External Configuration
+
+ In some circumstances, it is desirable to configure the Spring ApplicationContext externally. The  symbol
+ "tapestry.use-external-spring-context" can be configured to "true".  Tapestry will then use an existing ApplicationContext,
+ provided by a Spring ContextLoaderListener. You will still be able to inject Spring beans into Tapestry components and services,
+ and the ApplicationContext service will be visible ... but you will not be able to inject Tapestry IoC services into Spring beans.
+
 Limitations
 
   Non-singleton beans are not handled properly. Tapestry will request the beans from the application context in a manner unsuitable for their lifecycle.
