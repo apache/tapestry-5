@@ -1,7 +1,4 @@
-<html><body><p>Ready to be updated with scripts.</p><script type="text/javascript">
-<!--
-Tapestry.onDOMLoaded(function() {
+<html><body><p>Ready to be updated with scripts.</p><script>Tapestry.onDOMLoaded(function() {
 for (var i = 0; i < 5; i++)  { doIt(i); }
 });
-// -->
 </script></body></html>
