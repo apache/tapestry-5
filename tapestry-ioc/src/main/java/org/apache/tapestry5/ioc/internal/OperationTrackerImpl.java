@@ -45,11 +45,27 @@ public class OperationTrackerImpl implements OperationTracker
         Defense.notBlank(description, "description");
         Defense.notNull(operation, "operation");
 
+        invoke(description, new Invokable<Void>()
+        {
+            public Void invoke()
+            {
+                operation.run();
+
+                return null;
+            }
+        });
+    }
+
+    public <T> T invoke(String description, Invokable<T> operation)
+    {
+        Defense.notBlank(description, "description");
+        Defense.notNull(operation, "operation");
+
         operations.push(description);
 
         try
         {
-            operation.run();
+            return operation.invoke();
         }
         catch (RuntimeException ex)
         {
@@ -84,18 +100,6 @@ public class OperationTrackerImpl implements OperationTracker
 
             if (operations.isEmpty()) logged = false;
         }
-    }
-
-    public <T> T invoke(String description, Invokable<T> operation)
-    {
-        Defense.notBlank(description, "description");
-        Defense.notNull(operation, "operation");
-
-        InvokableToRunnable<T> i2r = new InvokableToRunnable<T>(operation);
-
-        run(description, i2r);
-
-        return i2r.getResult();
     }
 
     boolean isEmpty() { return operations.isEmpty(); }
