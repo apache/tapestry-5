@@ -1,0 +1,233 @@
+ ----
+ Upgrade Notes
+ ----
+
+Upgrade Notes
+
+  This is a quick guide to changes between snapshot releases of Tapestry 5.0.  This is meant to provide information
+  on any additions or changes that developers will face after upgrading to the latest version of Tapestry.
+
+  It is always advised to perform a full and complete build after upgrading.
+
+  You should also check the {{{release-notes-5.0.html}project-wide release notes}} for information
+  about bugs fixes and other improvements.
+
+Release 5.0.19
+
+  As part of the changes related to
+  {{{https://issues.apache.org/jira/browse/TAP5-417}TAP5-417: Tapestry 5.0 Performance Improvements}},
+  you should be aware that Tapestry will now optimize the render phase state machine.
+  This is only relevant to advanced users who have written a ComponentClassTransformWorker
+  that adds logic to a render phase: it is necessary to
+  {{{apidocs/org/apache/tapestry5/model/MutableComponentModel.html#addRenderPhase(Class)}inform
+  Tapestry that the render phase should be invoked}}.
+
+Release 5.0.16
+
+  The client-side class Tapestry.Zone has been renamed to Tapestry.ZoneManager.
+
+Release 5.0.15
+
+  Method <<<getElementName()>>> of the
+  {{{apidocs/org/apache/tapestry5/RadioContainer.html}RadioContainer}} interface was renamed
+  to <<<getControlName()>>>, to bring it into alignment with the analagous method
+  of the
+   {{{apidocs/org/apache/tapestry5/Field.html}Field}} interface..  This should not affect any user code.
+
+* {{{https://issues.apache.org/jira/browse/TAPESTRY-2656}TAPESTRY-2656}}
+
+  A method of the interface {{{apidocs/org/apache/tapestry5/grid/GridSortModel.html}GridSortModel}} was renamed
+  to correct a misspelling.
+
+* {{{https://issues.apache.org/jira/browse/TAPESTRY-2567}TAPESTRY-2567}}
+
+  The methods findFields() and findFieldsWithAnnotation() of
+  {{{apidocs/org/apache/tapestry5/services/ClassTransformation.html}ClassTransformation}}
+  have been changed to return all fields (regardless of whether they have been claimed).  The
+  method findAllFieldsWithAnnotation() has been removed.
+
+* tapestry.js
+
+  Some significant overhauling of Tapestry's client-side validation support has
+  occurred. If you have created your own validations, or have overriden
+  how Tapestry decorates fields and presents error messages, you will need
+  to make some changes to your code.
+
+* {{{https://issues.apache.org/jira/browse/TAPESTRY-2352}TAPESTRY-2352}}
+
+  Several API changes related to
+  {{{apidocs/org/apache/tapestry5/Translator.html}Translator}} have occured, to support
+  client-side validation of user input.
+
+Release 5.0.14
+
+  The signature of the
+  {{{apidocs/org/apache/tapestry5/services/BeanModelSource.html}BeanModelSource}}.create()
+  method has changed; the last parameter is now Messages, not ComponentResources.
+
+  The Grid, PropertyDisplay, PropertyEditor and BeanEditor components have had their override
+  parameter changed from ComponentResources to
+  the new {{{apidocs/org/apache/tapestry5/PropertyOverrides.html}PropertyOverrides}} interface.
+  No changes should be necessary, as Tapestry can coerce ComponentResources to PropertyOverrides.
+
+  Attempting to instantiate a component class will now result in a runtime exception (this is a common
+  beginner's mistake; pages and components should be injected, not instantiated).
+
+  Properties files in message catalogs are now automatically read using the UTF-8 charset.  Unlike traditional
+  Java ResourceBundles, it is <not> necessary to use Java's <<<native2ascii>>> tool.
+
+* {{{https://issues.apache.org/jira/browse/TAPESTRY-2543}TAPESTRY-2543}}
+
+  TAPESTRY-2543 simplifies Tapestry's approach to localization, as it pertains to
+  output and request character encodings. Previously, each page could be configured with a different character
+  encoding, which causes a number of problems related to Ajax and file upload requests.  A single
+  application-wide character encoding is now used, by default UTF-8.
+
+Release 5.0.13
+
+  As part of {{{https://issues.apache.org/jira/browse/TAPESTRY-2311}TAPESTRY-2311}}, there have been
+  subtle changes to how event handler and render phase methods are invoked, when the methods are
+  overrides of base class methods.
+
+Release 5.0.12
+
+* ClassFabUtils
+
+  Several methods of {{{apidocs/org/apache/tapestry5/ioc/services/ClassFabUtils.html}ClassFabUtils}}
+  have been removed.  The new method {{{castReference()}}} is an improved replacement for the removed
+  methods. These methods were largely used when decorating services, and the new
+  {{{apidocs/org/apache/tapestry5/ioc/services/AspectDecorator.html}AspectDecorator}} is even easier.
+
+* JavaScript Changes
+
+  Tapestry now organizes JavaScript a bit differently; all JavaScript is at the bottom of the page, just
+  before the \</body\> tag.  This applies to both externally loaded scripts, and to per-page dynamically
+  generated JavaScript.
+
+  This can cause some pages to break, those that included inline \<script\> blocks in their templates.
+  You should inject the
+  {{{apidocs/org/apache/tapestry5/RenderSupport.html}RenderSupport}} environmental and use it
+  to include JavaScript properly.
+
+* ReorderProperties annotation
+
+  A new annotation,
+  {{{apidocs/org/apache/tapestry5/beaneditor/ReorderProperties.html}ReorderProperties}}
+  (which is placed on a type) has replaced the OrderAfter and OrderBefore annotations
+  (which were placed on accessor methods).
+
+* {{{https://issues.apache.org/jira/browse/TAPESTRY-2421}TAPESTRY-2421}}
+
+  The root package for all Tapestry code was changed from
+  org.apache.tapestry to org.apache.tapestry<<5>>.  This will make it reasonable to deploy Tapestry 3 or Tapestry 4
+  applications side-by-side with a Tapestry 5 application.
+
+  In addition, a number of classes were refactored.
+
+  PageRenderSupport has been renamed to just
+  {{{apidocs/org/apache/tapestry5/RenderSupport.html}RenderSupport}}.
+
+  TapestryConstants has been removed, split into a number of new classes (by type), such as
+  {{{apidocs/org/apache/tapestry5/SymbolConstants.html}SymbolConstants}}.
+
+  Likewise, TapestryUtils has been split into
+  {{{apidocs/org/apache/tapestry5/MarkupUtils.html}MarkupUtils}} and
+  {{{apidocs/org/apache/tapestry5/VersionUtils.html}VersionUtils}}.
+
+  []
+
+* TapestryModule
+
+  Many of the internal services of Tapestry have been split off into their own module,
+  {{{apidocs/org/apache/tapestry5/internal/services/InternalModule.html}InternalModule}}.
+  This should not affect any user code.
+
+* Form component
+
+  The default {{{apidocs/org/apache/tapestry5/ValidationTracker.html}ValidationTracker}}
+  built into the Form component now has a persistence strategy of "flash". This means that
+  if you navigate away from a page with validation errors and return, you will lose the errors.
+  To support this style of navigation, you will need to bind the Form's tracker parameter
+  to a field that has the correct persistency (most likely, "session", the previous persistence
+  strategy).
+
+* Resource.openStream()
+
+  The methods <<<exists()>>> and <<<openStream()>>> were added to the
+  {{{apidocs/org/apache/tapestry5/ioc/Resource.html}Resource}} interface. The semantics
+  of some of the other methods were slightly alterred.
+
+* Loop element parameter
+
+  The Loop component's elementName parameter was renamed to simply element (to be consistent
+  with element parameters added to the Any and FormInjector components).
+
+Release 5.0.11
+
+* Field.getElementName()
+
+  The method <<<getElementName()>>> on interface {{{apidocs/org/apache/tapestry5/Field.html}Field}}
+  was renamed to <<<getControlName()>>>.  This brings the property in alignment with W3C documentation
+  and terminology, and helps differentiate from the element name (i.e., the tag name used to represent
+  the element in a component template).
+
+  This affects a number of existing components that implement the interface.
+
+  Method <<<allocateElementName()>>> on interface {{{apidocs/org/apache/tapestry5/services/FormSupport.html}FormSupport}}
+  was likewise renamed to <<<allocateControlName()>>>.
+
+* Zone
+
+  The show and hide parameters of the {{{ref/org/apache/tapestry5/corelib/components/Zone.html}Zone}}
+  component now have a default binding prefix of "literal".
+
+  In addition, the client-side Tapestry.ZoneEffect object was renamed to Tapestry.ElementEffect to reflect
+  that it can be used with elements that are not explicitly Zones.
+
+* Validator.invokeIfBlank()
+
+  The method <<<invokeIfBlank()>>> on interface {{{apidocs/org/apache/tapestry5/Validator.html}Validator}}
+  was renamed to <<<isRequired()>>>.
+
+* MetaDataLocator
+
+  The <<findMeta()>> method on interface {{{apidocs/org/apache/tapestry5/services/MetaDataLocator.html}MetaDataLocator}}
+  has changed significantly; it now expands symbols and performs type coercion.
+
+* Grid Interfaces
+
+  The {{{apidocs/org/apache/tapestry5/grid/GridModel.html}GridModel}} interface and
+  the <<<prepare()>>> method of
+  {{{apidocs/org/apache/tapestry5/grid/GridDataSource.html}GridDataSource}} have changed to accommodate
+  the ability to sort using multiple columns.
+
+* PropertyModel
+
+  The <<<getWidth()>>> method was removed from the
+  {{{apidocs/org/apache/tapestry5/beaneditor/PropertyModel.java}PropertyModel}} interface; the logic
+  for deducing the desired field size from the @Width annotation has been moved into AbstractTextField.
+
+* Grid, BeanEditForm, BeanEditor, BeanDisplay
+
+  The data type for boolean values has changed from "checkbox" (reflecting how it is rendered in an edit form) to "boolean"
+  (reflecting what it is). In addition, all numeric types are given the data type "number".
+  This will only affect your application if you provided an overriding contribution
+  to the {{{apidocs/org/apache/tapestry5/services/BeanBlockSource.html}BeanBlockSource}} service.
+
+* ExceptionInfo
+
+  The return type for <<<getStackTrace()>>> on
+  {{{apidocs/org/apache/tapestry5/services/ExceptionInfo.html}ExceptionInfo}}
+  changed from List\<String\> to List\<StackTraceElement\>.
+
+* ApplicationGlobals and RequestGlobals
+
+  The <store> methods on these two interfaces were renamed to be more explicit. These are not methods typically
+  invoked from user code.
+
+* BeanModel
+
+  The <<<remove()>>> method of {{{apidocs/org/apache/tapestry5/beaneditor/BeanModel.html}BeanModel}} was renamed
+  to <<<exclude()>>>, and a new method, <<<include()>>> was added. The <<remove>> parameter of BeanEditForm,
+  BeanEditor, BeanDisplay and Grid were all renamed to <<exclude>> as well (and a new <<include>> parameter was added
+  to each).
