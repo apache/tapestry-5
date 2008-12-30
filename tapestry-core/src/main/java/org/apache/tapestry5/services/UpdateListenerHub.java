@@ -23,7 +23,7 @@ package org.apache.tapestry5.services;
  * org.apache.tapestry5.services.InvalidationListener} that they should do the same.
  *
  * @see org.apache.tapestry5.internal.util.URLChangeTracker
- * @since 5.1
+ * @since 5.1.0.0
  */
 public interface UpdateListenerHub
 {

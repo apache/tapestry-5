@@ -44,7 +44,7 @@ public interface OrderedConfiguration<T>
      * @param id          of contribution (used for ordering)
      * @param clazz       class to instantiate
      * @param constraints used to order the object relative to other contributed objects
-     * @since 5.1
+     * @since 5.1.0.0
      */
     void addInstance(String id, Class<? extends T> clazz, String... constraints);
 }

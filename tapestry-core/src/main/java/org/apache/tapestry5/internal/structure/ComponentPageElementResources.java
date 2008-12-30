@@ -70,7 +70,7 @@ public interface ComponentPageElementResources extends ContextValueEncoder
      * @param forForm   true if generating for a form submission
      * @param context   additional event context associated with the link
      * @return the link
-     * @since 5.1
+     * @since 5.1.0.0
      */
     Link createComponentEventLink(ComponentResources resources, String eventType, boolean forForm, Object... context);
 
@@ -83,7 +83,7 @@ public interface ComponentPageElementResources extends ContextValueEncoder
      * @param context  the activation context for the page. If omitted, the activation context is obtained from the
      *                 target page
      * @return link for a render request to the targetted page
-     * @since 5.1
+     * @since 5.1.0.0
      */
     Link createPageRenderLink(String pageName, boolean override, Object... context);
 

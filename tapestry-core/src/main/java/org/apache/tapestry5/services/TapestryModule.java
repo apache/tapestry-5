@@ -1993,7 +1993,7 @@ public final class TapestryModule
 
 
     /**
-     * @since 5.1
+     * @since 5.1.0.0
      */
     public LinkCreationHub buildLinkCreationHub(LinkFactory factory)
     {
@@ -2001,7 +2001,7 @@ public final class TapestryModule
     }
 
     /**
-     * @since 5.1
+     * @since 5.1.0.0
      */
     @Marker(ComponentClasses.class)
     public static InvalidationEventHub buildComponentClassesInvalidationEventHub(ComponentInstantiatorSource source)
@@ -2010,7 +2010,7 @@ public final class TapestryModule
     }
 
     /**
-     * @since 5.1
+     * @since 5.1.0.0
      */
     @Marker(ComponentTemplates.class)
     public static InvalidationEventHub buildComponentTemplatesInvalidationEventHub(
@@ -2020,7 +2020,7 @@ public final class TapestryModule
     }
 
     /**
-     * @since 5.1
+     * @since 5.1.0.0
      */
     @Marker(ComponentMessages.class)
     public static InvalidationEventHub buildComponentMessagesInvalidationEventHub(

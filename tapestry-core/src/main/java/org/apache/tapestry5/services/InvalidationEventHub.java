@@ -22,7 +22,7 @@ package org.apache.tapestry5.services;
  * <dt>component templates <dd>{@link org.apache.tapestry5.services.ComponentTemplates}  marker annotation <dt>component
  * classes <dd>{@link org.apache.tapestry5.services.ComponentClasses} marker annotation </dl>
  *
- * @since 5.1
+ * @since 5.1.0.0
  */
 public interface InvalidationEventHub
 {

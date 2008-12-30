@@ -18,7 +18,7 @@ package org.apache.tapestry5.services;
  * Interface for objects which can periodically check for updates.
  *
  * @see org.apache.tapestry5.services.UpdateListenerHub
- * @since 5.1
+ * @since 5.1.0.0
  */
 public interface UpdateListener
 {

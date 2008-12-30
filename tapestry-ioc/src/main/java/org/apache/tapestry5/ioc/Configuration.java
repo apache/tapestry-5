@@ -41,7 +41,7 @@ public interface Configuration<T>
      * configuration.
      *
      * @param clazz what class to instantiate
-     * @since 5.1
+     * @since 5.1.0.0
      */
     void addInstance(Class<? extends T> clazz);
 }
