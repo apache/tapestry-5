@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -36,24 +36,16 @@ public class OneShotLock
     {
         if (lock)
         {
-            // This is how I would think it would be:
+            // The depth to find the caller of the check() or lock() method varies between JDKs.
 
-            // [0] is getStackTrace()
-            // [1] is innerCheck()
-            // [2] is check() or lock()
-            // [3] is caller of check() or lock()
 
-            // ... so why do we get element 4?  Found this via trial and error.  Some extra stack frame
-            // gets in there somehow, as in, getStackTrace() must be calling something (probably native)
-            // that creates the actual array, and includes itself as [0], getStackTrace() as [1], etc.
-            // Maybe it's something to do with synchronized?
+            StackTraceElement[] elements = Thread.currentThread().getStackTrace();
 
-            // On the other hand, for 1.6 VMs, the correct element to get is 3. So, perhaps check if
-            // [0] contains getStackTrace() and if it does, use 3 - otherwise use 4.
+            int i = 0;
+            while (!elements[i].getMethodName().equals("innerCheck"))
+                i++;
 
-            StackTraceElement element = Thread.currentThread().getStackTrace()[4];
-
-            throw new IllegalStateException(UtilMessages.oneShotLock(element));
+            throw new IllegalStateException(UtilMessages.oneShotLock(elements[i + 2]));
         }
     }
 
