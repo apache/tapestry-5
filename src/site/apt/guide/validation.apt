@@ -44,7 +44,7 @@ Form component
   from Tapestry 4.  Instead, a hidden field generated during the render stores
   the information needed to process the form submission.
   
-  After the fields have done their processing, the Form emits a "validate" event.
+  After the fields have done their processing, the Form emits a "validateForm" event.
   This is a chance to perform cross-form validation that can't be described declaratively.
   
   Next, the Form determines if there have been any validation errors.  If there have been,
