@@ -14,6 +14,7 @@
 
 package org.apache.tapestry5.internal.spring;
 
+import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.internal.AbstractContributionDef;
 import org.apache.tapestry5.ioc.*;
 import org.apache.tapestry5.ioc.def.ContributionDef;
@@ -23,9 +24,7 @@ import org.apache.tapestry5.ioc.def.ServiceDef;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.Invokable;
-import org.apache.tapestry5.ioc.services.ClassFabUtils;
-import org.apache.tapestry5.ioc.services.RegistryShutdownHub;
-import org.apache.tapestry5.ioc.services.RegistryShutdownListener;
+import org.apache.tapestry5.ioc.services.*;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.SpringVersion;
 import org.springframework.web.context.ConfigurableWebApplicationContext;
@@ -43,64 +42,74 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class SpringModuleDef implements ModuleDef
 {
-    private static final String SERVICE_ID = "ApplicationContext";
+    static final String SERVICE_ID = "ApplicationContext";
 
     private final Map<String, ServiceDef> services = CollectionFactory.newMap();
 
     private final AtomicBoolean applicationContextCreated = new AtomicBoolean(false);
 
-    public SpringModuleDef(final ServletContext servletContext, final ApplicationContextCustomizer customizer)
+    private final ServletContext servletContext;
+
+    private final ApplicationContextCustomizer customizer;
+
+    private class ExternalApplicationContextLookupCreator implements ObjectCreator
     {
+        private final OperationTracker tracker;
+
+        public ExternalApplicationContextLookupCreator(OperationTracker tracker)
+        {
+            this.tracker = tracker;
+        }
+
+        public Object createObject()
+        {
+            return tracker.invoke(
+                    "Obtaining Spring ApplicationContext from ServletContext",
+                    new Invokable<Object>()
+                    {
+                        public Object invoke()
+                        {
+                            ConfigurableWebApplicationContext context = (ConfigurableWebApplicationContext) servletContext.getAttribute(
+                                    WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE);
+
+                            if (context == null)
+                                throw new NullPointerException(String.format(
+                                        "No Spring ApplicationContext stored in the ServletContext as attribute '%s'. " +
+                                                "You should either re-enable Tapestry as the creator of the ApplicationContext, or " +
+                                                "add a Spring ContextLoaderListener to web.xml.",
+                                        WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE));
+
+                            applicationContextCreated.set(true);
+
+                            return context;
+                        }
+                    });
+        }
+    }
+
+    public SpringModuleDef(ServletContext servletContext, final ApplicationContextCustomizer customizer)
+    {
+        this.servletContext = servletContext;
+        this.customizer = customizer;
+
         ServiceDef sd = new ServiceDef()
         {
             public ObjectCreator createServiceCreator(final ServiceBuilderResources resources)
             {
-                final CustomizingContextLoader loader = new CustomizingContextLoader(
-                        customizer);
+                TypeCoercer coercer = resources.getService(TypeCoercer.class);
+                SymbolSource symbolSource = resources.getService(SymbolSource.class);
 
-                final RegistryShutdownListener shutdownListener = new RegistryShutdownListener()
+                boolean useExternal = coercer.coerce(
+                        symbolSource.valueForSymbol(SymbolConstants.USE_EXTERNAL_SPRING_CONTEXT), boolean.class);
+
+                final OperationTracker tracker = resources.getTracker();
+
+                if (useExternal)
                 {
-                    public void registryDidShutdown()
-                    {
-                        loader.closeWebApplicationContext(servletContext);
-                    }
-                };
+                    return new ExternalApplicationContextLookupCreator(tracker);
+                }
 
-                final RegistryShutdownHub shutdownHub = resources.getService(RegistryShutdownHub.class);
-
-
-                return new ObjectCreator()
-                {
-                    public Object createObject()
-                    {
-                        return resources.getTracker().invoke(
-                                "Creating Spring ApplicationContext via ContextLoader",
-                                new Invokable<Object>()
-                                {
-                                    public Object invoke()
-                                    {
-                                        resources.getLogger().info(String.format(
-                                                "Starting Spring (version %s)",
-                                                SpringVersion.getVersion()));
-
-                                        WebApplicationContext context = loader.initWebApplicationContext(
-                                                servletContext);
-
-                                        shutdownHub.addRegistryShutdownListener(shutdownListener);
-
-                                        applicationContextCreated.set(true);
-
-                                        return context;
-                                    }
-                                });
-                    }
-
-                    @Override
-                    public String toString()
-                    {
-                        return "ObjectCreator for Spring ApplicationContext";
-                    }
-                };
+                return constructObjectCreatorForApplicationContext(resources);
             }
 
             public String getServiceId()
@@ -132,6 +141,55 @@ public class SpringModuleDef implements ModuleDef
         services.put(SERVICE_ID, sd);
     }
 
+    private ObjectCreator constructObjectCreatorForApplicationContext(final ServiceBuilderResources resources
+    )
+    {
+        final CustomizingContextLoader loader = new CustomizingContextLoader(customizer);
+
+        final RegistryShutdownListener shutdownListener = new RegistryShutdownListener()
+        {
+            public void registryDidShutdown()
+            {
+                loader.closeWebApplicationContext(servletContext);
+            }
+        };
+
+        final RegistryShutdownHub shutdownHub = resources.getService(RegistryShutdownHub.class);
+
+        return new ObjectCreator()
+        {
+            public Object createObject()
+            {
+                return resources.getTracker().invoke(
+                        "Creating Spring ApplicationContext via ContextLoader",
+                        new Invokable<Object>()
+                        {
+                            public Object invoke()
+                            {
+                                resources.getLogger().info(String.format(
+                                        "Starting Spring (version %s)",
+                                        SpringVersion.getVersion()));
+
+                                WebApplicationContext context = loader.initWebApplicationContext(
+                                        servletContext);
+
+                                shutdownHub.addRegistryShutdownListener(shutdownListener);
+
+                                applicationContextCreated.set(true);
+
+                                return context;
+                            }
+                        });
+            }
+
+            @Override
+            public String toString()
+            {
+                return "ObjectCreator for Spring ApplicationContext";
+            }
+        };
+    }
+
     public Class getBuilderClass()
     {
         return null;
@@ -150,36 +208,7 @@ public class SpringModuleDef implements ModuleDef
 
     private ContributionDef createContributionToMasterObjectProvider()
     {
-        final ObjectProvider springBeanProvider = new ObjectProvider()
-        {
-            public <T> T provide(Class<T> objectType, AnnotationProvider annotationProvider, ObjectLocator locator)
-            {
-                ApplicationContext context = locator.getService(SERVICE_ID, ApplicationContext.class);
 
-                Map beanMap = context.getBeansOfType(objectType);
-
-                switch (beanMap.size())
-                {
-                    case 0:
-                        return null;
-
-                    case 1:
-
-                        Object bean = beanMap.values().iterator().next();
-
-                        return objectType.cast(bean);
-
-                    default:
-
-                        String message = String.format("Spring context contains %d beans assignable to type %s: %s.",
-                                                       beanMap.size(),
-                                                       ClassFabUtils.toJavaClassName(objectType),
-                                                       InternalUtils.joinSorted(beanMap.keySet()));
-
-                        throw new IllegalArgumentException(message);
-                }
-            }
-        };
 
         ContributionDef def = new AbstractContributionDef()
         {
@@ -193,6 +222,40 @@ public class SpringModuleDef implements ModuleDef
                                    OrderedConfiguration configuration)
             {
                 final OperationTracker tracker = resources.getTracker();
+
+                final ApplicationContext context = resources.getService(SERVICE_ID, ApplicationContext.class);
+
+                final ObjectProvider springBeanProvider = new ObjectProvider()
+                {
+                    public <T> T provide(Class<T> objectType, AnnotationProvider annotationProvider,
+                                         ObjectLocator locator)
+                    {
+
+                        Map beanMap = context.getBeansOfType(objectType);
+
+                        switch (beanMap.size())
+                        {
+                            case 0:
+                                return null;
+
+                            case 1:
+
+                                Object bean = beanMap.values().iterator().next();
+
+                                return objectType.cast(bean);
+
+                            default:
+
+                                String message = String.format(
+                                        "Spring context contains %d beans assignable to type %s: %s.",
+                                        beanMap.size(),
+                                        ClassFabUtils.toJavaClassName(objectType),
+                                        InternalUtils.joinSorted(beanMap.keySet()));
+
+                                throw new IllegalArgumentException(message);
+                        }
+                    }
+                };
 
                 final ObjectProvider springBeanProviderInvoker = new ObjectProvider()
                 {
@@ -240,7 +303,7 @@ public class SpringModuleDef implements ModuleDef
 
     public String getLoggerName()
     {
-        return "Spring";
+        return SpringModuleDef.class.getName();
     }
 
     public ServiceDef getServiceDef(String serviceId)

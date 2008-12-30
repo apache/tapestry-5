@@ -98,4 +98,12 @@ public class SymbolConstants
      * Per-page initialization always goes at the bottom.
      */
     public static final String SCRIPTS_AT_TOP = "tapestry.script-at-top";
+
+    /**
+     * If true, then Tapestry will attempt to use an externally configured Spring ApplicationContext rather than create
+     * its own. This will disable the ability to inject Tapestry IoC services and objects into Spring beans.
+     *
+     * @since 5.1.0.0
+     */
+    public static final String USE_EXTERNAL_SPRING_CONTEXT = "tapestry.use-external-spring-context";
 }

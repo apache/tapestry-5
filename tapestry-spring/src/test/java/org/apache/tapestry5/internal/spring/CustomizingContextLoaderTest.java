@@ -14,7 +14,7 @@
 
 package org.apache.tapestry5.internal.spring;
 
-import org.apache.tapestry5.ioc.test.TestBase;
+import org.apache.tapestry5.spring.SpringTestCase;
 import org.apache.tapestry5.spring.TapestryApplicationContext;
 import org.springframework.web.context.ContextLoader;
 import org.springframework.web.context.support.XmlWebApplicationContext;
@@ -22,7 +22,7 @@ import org.testng.annotations.Test;
 
 import javax.servlet.ServletContext;
 
-public class CustomizingContextLoaderTest extends TestBase
+public class CustomizingContextLoaderTest extends SpringTestCase
 {
     @Test
     public void specified_context_class_is_not_compatible()
@@ -49,16 +49,6 @@ public class CustomizingContextLoaderTest extends TestBase
         }
 
         verify();
-    }
-
-    protected final void train_getInitParameter(ServletContext context, String parameterName, String parameterValue)
-    {
-        expect(context.getInitParameter(parameterName)).andReturn(parameterValue).atLeastOnce();
-    }
-
-    protected final ServletContext mockServletContext()
-    {
-        return newMock(ServletContext.class);
     }
 
     @Test
