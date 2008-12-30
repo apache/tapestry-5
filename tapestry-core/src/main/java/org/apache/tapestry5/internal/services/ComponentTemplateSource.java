@@ -47,7 +47,7 @@ public interface ComponentTemplateSource
      * Event hub used to notify listeners that underlying component template files have changed.
      *
      * @see org.apache.tapestry5.services.ComponentTemplates
-     * @since 5.1
+     * @since 5.1.0.0
      */
     InvalidationEventHub getInvalidationEventHub();
 }

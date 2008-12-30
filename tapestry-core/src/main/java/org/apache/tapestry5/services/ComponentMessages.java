@@ -21,7 +21,7 @@ import java.lang.annotation.*;
  * Marker annotation used to inject the correct {@link org.apache.tapestry5.services.InvalidationEventHub} service
  * responsible for validations when component message catalog (i.e., ".properties") files change.
  *
- * @since 5.1
+ * @since 5.1.0.0
  */
 @Target({ElementType.PARAMETER, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)

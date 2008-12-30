@@ -21,7 +21,7 @@ package org.apache.tapestry5.services;
  * necessary).
  *
  * @see org.apache.tapestry5.services.InvalidationEventHub
- * @since 5.1
+ * @since 5.1.0.0
  */
 public interface InvalidationListener
 {

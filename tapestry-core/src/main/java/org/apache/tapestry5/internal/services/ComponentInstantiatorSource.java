@@ -73,7 +73,7 @@ public interface ComponentInstantiatorSource
      * Invalidation event hub used to notify listeners that component classes have changed.
      *
      * @see org.apache.tapestry5.services.ComponentClasses
-     * @since 5.1
+     * @since 5.1.0.0
      */
     InvalidationEventHub getInvalidationEventHub();
 }

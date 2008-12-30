@@ -39,7 +39,7 @@ public interface ComponentMessagesSource
     /**
      * Returns the event hub that allows listeners to be notified when any underlying message catalog file is changed.
      *
-     * @since 5.1
+     * @since 5.1.0.0
      */
     InvalidationEventHub getInvalidatonEventHub();
 }

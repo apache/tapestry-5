@@ -65,8 +65,6 @@ public class ClassFabImpl extends AbstractFab implements ClassFab
     /**
      * Returns a representation of the fabricated class, including inheritance, fields, constructors, methods and method
      * bodies.
-     *
-     * @since 1.1
      */
     @Override
     public String toString()

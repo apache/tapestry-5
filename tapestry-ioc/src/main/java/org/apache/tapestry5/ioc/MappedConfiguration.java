@@ -42,7 +42,7 @@ public interface MappedConfiguration<K, V>
      *
      * @param key   unique id for the value
      * @param clazz class to instantiate and contribute
-     * @since 5.1
+     * @since 5.1.0.0
      */
     void addInstance(K key, Class<? extends V> clazz);
 }
