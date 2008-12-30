@@ -57,7 +57,7 @@ Configuring Tapestry
   Actual files inside the web application take precedence over Tapestry pages, in situation where there
   would be a naming conflict.  
   
-  Tapestry recognizes the <root URL>, where the servlet path is simply "/", and renders the application page "Start",
+  Tapestry recognizes the <root URL>, where the servlet path is simply "/", and renders the application page "Index",
   if it exists.  
   
 * Tapestry IoC Configuration

@@ -72,7 +72,7 @@ public class Layout
   \<link\> element to the template.
 
 
-* Start.tml
+* Index.tml
 
 ----
 <html t:type="layout" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
@@ -85,7 +85,7 @@ public class Layout
 </html>
 ----
 
-  This is an example of using the Layout component.  To keep our Start.tml template
+  This is an example of using the Layout component.  To keep our Index.tml template
   relatively previewable, we are using an \<html\> element and the t:type
   attribute to specify that it is a component.
 
