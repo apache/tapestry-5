@@ -533,6 +533,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     public void bean_editor()
     {
         start("BeanEditor Demo", "Clear Data");
+
         clickAndWait(SUBMIT);
 
         // Part of the override for the firstName property

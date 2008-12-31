@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,6 +15,8 @@
 package org.apache.tapestry5.ioc.services;
 
 import org.apache.tapestry5.ioc.util.StrategyRegistry;
+
+import java.util.Map;
 
 /**
  * A service implementation builder that operates around a {@link StrategyRegistry}, implementing a version of the Gang
@@ -38,4 +40,12 @@ public interface StrategyBuilder
      * @return a service implementation
      */
     <S> S build(StrategyRegistry<S> registry);
+
+    /**
+     * @param registrations map frm class to the adapter type
+     * @param <S>
+     * @return the dispatcher
+     * @since 5.1.0.0
+     */
+    <S> S build(Class<S> adapterType, Map<Class, S> registrations);
 }

@@ -25,7 +25,7 @@ import java.util.Map;
  * Standard implmentation of {@link ValidationTracker}. Works pretty hard to ensure a minimum amount of data is stored
  * in the HttpSession.
  */
-public final class ValidationTrackerImpl implements ValidationTracker, Serializable
+public final class ValidationTrackerImpl extends BaseOptimizedSessionPersistedObject implements ValidationTracker, Serializable
 {
     private static final long serialVersionUID = -8029192726659275677L;
 
@@ -83,6 +83,8 @@ public final class ValidationTrackerImpl implements ValidationTracker, Serializa
 
     private void store(FieldTracker fieldTracker)
     {
+        markDirty();
+
         if (fieldTrackers == null)
             fieldTrackers = CollectionFactory.newList();
 
@@ -99,6 +101,8 @@ public final class ValidationTrackerImpl implements ValidationTracker, Serializa
 
     public void clear()
     {
+        markDirty();
+
         extraErrors = null;
         fieldTrackers = null;
         fieldToTracker = null;
@@ -156,6 +160,8 @@ public final class ValidationTrackerImpl implements ValidationTracker, Serializa
 
     public void recordError(String errorMessage)
     {
+        markDirty();
+
         if (extraErrors == null)
             extraErrors = CollectionFactory.newList();
 
@@ -170,5 +176,4 @@ public final class ValidationTrackerImpl implements ValidationTracker, Serializa
 
         store(ft);
     }
-
 }

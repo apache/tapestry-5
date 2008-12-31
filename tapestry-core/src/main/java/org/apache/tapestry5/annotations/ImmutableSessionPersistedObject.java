@@ -1,4 +1,4 @@
-//  Copyright 2008 The Apache Software Foundation
+// Copyright 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,21 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.internal.services;
+package org.apache.tapestry5.annotations;
 
-import org.apache.tapestry5.internal.events.EndOfRequestListener;
+import java.lang.annotation.*;
 
 /**
- * Manages request notifications for the {@link org.apache.tapestry5.internal.events.EndOfRequestListener} interface.
+ * Marker annotation that can be placed on a session-persisted object to indicate that the object is immutable, and
+ * therefore does not require end-of-request restoring into the session.
+ *
+ * @see org.apache.tapestry5.OptimizedSessionPersistedObject
+ * @since 5.1.1.0
  */
-public interface EndOfRequestListenerHub
+@Target(ElementType.TYPE)
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+@Inherited
+public @interface ImmutableSessionPersistedObject
 {
-    void addEndOfRequestListener(EndOfRequestListener listener);
-
-    void removeEndOfRequestListener(EndOfRequestListener listener);
-
-    /**
-     * Invoked at the end of the request to notify the listeners.
-     */
-    void fire();
 }

@@ -106,4 +106,13 @@ public class SymbolConstants
      * @since 5.1.0.0
      */
     public static final String USE_EXTERNAL_SPRING_CONTEXT = "tapestry.use-external-spring-context";
+
+
+    /**
+     * Identifies the default persistence strategy for all pages that do not provide an override (using this value as
+     * {@link org.apache.tapestry5.annotations.Meta key}).
+     *
+     * @since 5.1.0.0
+     */
+    public static final String PERSISTENCE_STRATEGY = "tapestry.persistence-strategy";
 }

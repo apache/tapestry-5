@@ -19,6 +19,7 @@ package org.apache.tapestry5;
  *
  * @see org.apache.tapestry5.annotations.ApplicationState
  * @see org.apache.tapestry5.services.ApplicationStateManager
+ * @deprecated since 5.1.0.0; use {@link org.apache.tapestry5.OptimizedSessionPersistedObject} instead
  */
 public interface OptimizedApplicationStateObject
 {

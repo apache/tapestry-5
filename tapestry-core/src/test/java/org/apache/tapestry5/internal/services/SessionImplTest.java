@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@ public class SessionImplTest extends InternalBaseTestCase
 
         replay();
 
-        Session session = new SessionImpl(hs);
+        Session session = new SessionImpl(hs, null);
 
         assertEquals(session.getAttributeNames(), Arrays.asList("barney", "fred"));
 
@@ -52,7 +52,7 @@ public class SessionImplTest extends InternalBaseTestCase
 
         replay();
 
-        Session session = new SessionImpl(hs);
+        Session session = new SessionImpl(hs, null);
 
         assertEquals(session.getAttributeNames("f"), Arrays.asList("fanny", "fred"));
 
@@ -68,7 +68,7 @@ public class SessionImplTest extends InternalBaseTestCase
 
         replay();
 
-        Session session = new SessionImpl(hs);
+        Session session = new SessionImpl(hs, null);
 
         session.invalidate();
 
@@ -85,7 +85,7 @@ public class SessionImplTest extends InternalBaseTestCase
 
         replay();
 
-        Session session = new SessionImpl(hs);
+        Session session = new SessionImpl(hs, null);
 
         session.setMaxInactiveInterval(seconds);
 
@@ -102,7 +102,7 @@ public class SessionImplTest extends InternalBaseTestCase
 
         replay();
 
-        Session session = new SessionImpl(hs);
+        Session session = new SessionImpl(hs, null);
 
         assertEquals(session.getMaxInactiveInterval(), seconds);
 

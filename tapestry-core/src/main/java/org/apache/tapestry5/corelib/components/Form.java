@@ -341,9 +341,7 @@ public class Form implements ClientElement, FormValidationControl
 
         formSupport = null;
 
-        // This forces a change to the tracker, which is nice because its internal state has
-        // changed.
-        tracker = environment.pop(ValidationTracker.class);
+        environment.pop(ValidationTracker.class);
     }
 
     @SuppressWarnings({"unchecked", "InfiniteLoopStatement"})
@@ -380,15 +378,6 @@ public class Form implements ClientElement, FormValidationControl
 
             heartbeat.end();
 
-            ValidationTracker tracker = environment.peek(ValidationTracker.class);
-
-            // Let the listeners peform any final validations
-
-            // Update through the parameter because the tracker has almost certainly changed
-            // internal state.
-
-            this.tracker = tracker;
-
             formSupport.executeDeferred();
 
             fireValidateFormEvent(context, callback);
@@ -402,7 +391,8 @@ public class Form implements ClientElement, FormValidationControl
             // as well, so that the next page render will be "clean" and show
             // true persistent data, not value from the previous form submission.
 
-            if (!this.tracker.getHasErrors()) this.tracker.clear();
+            if (!tracker.getHasErrors())
+                tracker.clear();
 
             resources.triggerContextEvent(tracker.getHasErrors() ? EventConstants.FAILURE : EventConstants.SUCCESS,
                                           context, callback);
@@ -419,6 +409,12 @@ public class Form implements ClientElement, FormValidationControl
         {
             environment.pop(Heartbeat.class);
             environment.pop(FormSupport.class);
+
+            // This forces an update that feeds through the system and gets the updated
+            // state of the tracker (if using the Form's defaultTracker property, which is flash persisted)
+            // stored back into the session.
+
+            tracker = environment.pop(ValidationTracker.class);
         }
     }
 
@@ -500,20 +496,12 @@ public class Form implements ClientElement, FormValidationControl
 
     public void recordError(String errorMessage)
     {
-        ValidationTracker tracker = this.tracker;
-
         tracker.recordError(errorMessage);
-
-        this.tracker = tracker;
     }
 
     public void recordError(Field field, String errorMessage)
     {
-        ValidationTracker tracker = this.tracker;
-
         tracker.recordError(field, errorMessage);
-
-        this.tracker = tracker;
     }
 
     public boolean getHasErrors()

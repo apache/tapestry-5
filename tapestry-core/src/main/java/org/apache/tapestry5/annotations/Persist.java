@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,7 +14,6 @@
 
 package org.apache.tapestry5.annotations;
 
-import org.apache.tapestry5.services.MetaDataLocator;
 import org.apache.tapestry5.services.Session;
 
 import java.lang.annotation.Documented;
@@ -36,7 +35,8 @@ import java.lang.annotation.Target;
  * In this way, the session persistence strategy for a component and all of its sub-components can be controlled by the
  * containing component.
  *
- * @see MetaDataLocator
+ * @see org.apache.tapestry5.services.MetaDataLocator
+ * @see org.apache.tapestry5.PersistenceConstants
  */
 @Target(FIELD)
 @Documented

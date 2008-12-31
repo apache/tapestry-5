@@ -10,12 +10,15 @@ Persistent Page Data
   by many users.
   
   However, you often want to store some persistent data on a page, and have access
-  to it in later requests.
+  to it in later requests.  Long term storage of data should go in a database of some form, but
+  server-side state for the duration of the current request should go in the HttpSession (though Tapestyr
+  provides a few other options as well).
   
   This is accomplished with the 
-  {{{../apidocs/org/apache/tapestry5/annotations/Persist.html}Persist annotation}}.
+  {{{../apidocs/org/apache/tapestry5/annotations/Persist.html}Persist annotation}}. Again, this does <not>
+  refer to database persistence, it refers to session persistance.
   
-  This annotation is applied to private instance fields.
+  This annotation is applied to private instance fields of components.
     
 +----+
   @Persist
@@ -95,3 +98,49 @@ Clearing Persistent Fields
    The method <<<discardPersistentFieldChanges()>>> of ComponentResources will discard all persistent fields
    for the page, regardless of which strategy is used to store the property. This will not affect the
    page in memory, but takes effect for subsequent requests.
+
+Clustering Issues
+
+  The Servlet API was designed with the intention that there would be only a modest amount of server-side state,
+  and that the stored values would be individual numbers and strings, and thus, immutable.
+
+  Many web frameworks do not use the HttpSession this way, and store large and mutable objects in the session.
+
+  This is not an issue for single servers, but in a cluster, anything stored in the session must be serialized to
+  a bytestream and distributed to other servers within the cluster, and restored there.
+
+  Most application servers perform the serialization and distribution as part of HttpSession.setAttribute().
+
+  This creates a problem for mutable objects, because if you read a mutable session object, change its state, but <don't>
+  invoke setAttribute(), the changes will be isolated to just a single server in the cluster.
+
+  Tapestry attempts to solve this: any session persisted object that is read during a request will be re-stored back into
+  the HttpSession at the end of the request.  This ensures that changed internal state of those mutable objects
+  is properly replicated around the cluster.
+
+  This can be a problem in a cluster as all those calls to setAttribute() may impact performance, as often the internal
+  state of the mutable object don't have changed.
+
+  Tapestry has solutions to this.
+
+* Immutable Objects
+
+  Tapestry knows that Java's String, Number and Boolean classes are immutable.    Immutable objects do not require
+  a re-store into the session.
+
+  You can mark your own session objects as immutable using the
+  {{{../apidocs//org/apache/tapestry5/annotations/ImmutableSessionPersistedObject.html}ImmutableSessionPersistedObject}} annotation.
+
+* OptimizedSessionPersistedObject
+
+  The {{{../apidocs/org/apache/tapestry5/OptimizedSessionPersistedObject}OptimizedSessionPersistedObject}} interface
+  allows an object to control this behavior. An object with this interface can track when its mutable state changes. Typically,
+  you should extend from the
+  {{{../apidocs/org/apache/tapestry5/BaseOptimizedSessionPersistedObject.html}BaseOptimizedSessionPersistedObject}} base class.
+
+* SessionPersistedObjectAnalyzer
+
+  The {{{../apidocs/org/apache/tapestry5/services/SessionPersistedObjectAnalyzer.html}SessionPersistedObjectAnalyzer}}
+  service is ultimately responsible for determining whether a session persisted object is dirty or not (dirty meaning
+  in need of a restore into the session). This is an extensible service where new strategies, for new classes,
+  can be introduced.

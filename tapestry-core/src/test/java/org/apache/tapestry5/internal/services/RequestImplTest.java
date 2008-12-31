@@ -38,7 +38,7 @@ public class RequestImplTest extends InternalBaseTestCase
 
         replay();
 
-        Request request = new RequestImpl(sr, CHARSET);
+        Request request = new RequestImpl(sr, CHARSET, null);
 
         assertNull(request.getSession(false));
 
@@ -57,7 +57,7 @@ public class RequestImplTest extends InternalBaseTestCase
 
         replay();
 
-        Request request = new RequestImpl(sr, CHARSET);
+        Request request = new RequestImpl(sr, CHARSET, null);
         Session session = request.getSession(true);
 
         assertEquals(session.getAttribute("foo"), "bar");
@@ -78,7 +78,7 @@ public class RequestImplTest extends InternalBaseTestCase
 
         replay();
 
-        new RequestImpl(sr, encoding).getParameterNames();
+        new RequestImpl(sr, encoding, null).getParameterNames();
 
         verify();
     }
@@ -98,7 +98,7 @@ public class RequestImplTest extends InternalBaseTestCase
 
         try
         {
-            new RequestImpl(sr, encoding).getParameterNames();
+            new RequestImpl(sr, encoding, null).getParameterNames();
             unreachable();
         }
         catch (RuntimeException ex)
@@ -118,7 +118,7 @@ public class RequestImplTest extends InternalBaseTestCase
 
         replay();
 
-        Request request = new RequestImpl(sr, CHARSET);
+        Request request = new RequestImpl(sr, CHARSET, null);
 
         assertEquals(request.isXHR(), expected);
 
@@ -128,7 +128,7 @@ public class RequestImplTest extends InternalBaseTestCase
     @DataProvider(name = "xhr_inputs")
     public Object[][] xhr_inputs()
     {
-        return new Object[][]{{null, false}, {"", false}, {"some other value", false},
+        return new Object[][] {{null, false}, {"", false}, {"some other value", false},
                 {"XMLHttpRequest", true}};
     }
 
@@ -144,7 +144,7 @@ public class RequestImplTest extends InternalBaseTestCase
 
         replay();
 
-        Request request = new RequestImpl(sr, CHARSET);
+        Request request = new RequestImpl(sr, CHARSET, null);
 
         assertEquals(request.getPath(), path);
 
@@ -165,7 +165,7 @@ public class RequestImplTest extends InternalBaseTestCase
 
         replay();
 
-        Request request = new RequestImpl(sr, CHARSET);
+        Request request = new RequestImpl(sr, CHARSET, null);
 
         assertEquals(request.getPath(), path);
 
@@ -183,7 +183,7 @@ public class RequestImplTest extends InternalBaseTestCase
 
         replay();
 
-        Request request = new RequestImpl(sr, CHARSET);
+        Request request = new RequestImpl(sr, CHARSET, null);
 
         assertEquals(request.getPath(), "/");
 

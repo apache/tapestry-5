@@ -25,3 +25,7 @@ Release 5.1.0.0
 
   There have been some significant changes to the {{{tapestry-spring/}tapestry-spring}} module, to
   support injection of Tapestry services into Springbeans.
+
+  Tapestry is now more aggressive about automatically re-storing any session persisted object
+  back into the session at the end of the request (this used to only apply to application state objects).  See the 
+  {{{guide/persist.html}persistent page data}} notes for more details.
