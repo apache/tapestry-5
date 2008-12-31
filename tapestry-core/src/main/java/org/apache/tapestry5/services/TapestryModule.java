@@ -92,6 +92,8 @@ public final class TapestryModule
 
     private final EnvironmentalShadowBuilder environmentalBuilder;
 
+    private final EndOfRequestEventHub endOfRequestEventHub;
+
 
     /**
      * We inject all sorts of common dependencies (including builders) into the module itself (note: even though some of
@@ -121,7 +123,9 @@ public final class TapestryModule
 
                           ThreadLocale threadLocale,
 
-                          EnvironmentalShadowBuilder environmentalBuilder)
+                          EnvironmentalShadowBuilder environmentalBuilder,
+
+                          EndOfRequestEventHub endOfRequestEventHub)
     {
         this.pipelineBuilder = pipelineBuilder;
         this.shadowBuilder = shadowBuilder;
@@ -135,6 +139,7 @@ public final class TapestryModule
         this.response = response;
         this.threadLocale = threadLocale;
         this.environmentalBuilder = environmentalBuilder;
+        this.endOfRequestEventHub = endOfRequestEventHub;
     }
 
     public static void bind(ServiceBinder binder)
@@ -184,6 +189,8 @@ public final class TapestryModule
         binder.bind(URLEncoder.class, URLEncoderImpl.class);
         binder.bind(ContextPathEncoder.class, ContextPathEncoderImpl.class);
         binder.bind(UpdateListenerHub.class, UpdateListenerHubImpl.class);
+        binder.bind(ApplicationStatePersistenceStrategy.class, SessionApplicationStatePersistenceStrategy.class).withId(
+                "SessionApplicationStatePersistenceStrategy");
     }
 
     // ========================================================================
@@ -585,9 +592,7 @@ public final class TapestryModule
 
                                          UpdateListenerHub updateListenerHub,
 
-                                         LocalizationSetter localizationSetter,
-
-                                         final EndOfRequestListenerHub endOfRequestListenerHub)
+                                         LocalizationSetter localizationSetter)
     {
         RequestFilter staticFilesFilter = new StaticFilesFilter(context);
 
@@ -611,7 +616,7 @@ public final class TapestryModule
                 }
                 finally
                 {
-                    endOfRequestListenerHub.fire();
+                    endOfRequestEventHub.fire();
                 }
             }
         };
@@ -974,7 +979,10 @@ public final class TapestryModule
                                                                     final RequestHandler handler,
 
                                                                     @Inject @Symbol(SymbolConstants.CHARSET)
-                                                                    final String applicationCharset)
+                                                                    final String applicationCharset,
+
+                                                                    @Primary
+                                                                    final SessionPersistedObjectAnalyzer analyzer)
     {
         HttpServletRequestHandler terminator = new HttpServletRequestHandler()
         {
@@ -983,7 +991,7 @@ public final class TapestryModule
             {
                 requestGlobals.storeServletRequestResponse(servletRequest, servletResponse);
 
-                Request request = new RequestImpl(servletRequest, applicationCharset);
+                Request request = new RequestImpl(servletRequest, applicationCharset, analyzer);
                 Response response = new ResponseImpl(servletResponse);
 
                 // TAP5-257: Make sure that the "initial guess" for request/response is available, even if
@@ -1106,9 +1114,7 @@ public final class TapestryModule
     @Marker(Primary.class)
     public ObjectRenderer buildObjectRenderer(Map<Class, ObjectRenderer> configuration)
     {
-        StrategyRegistry<ObjectRenderer> registry = StrategyRegistry.newInstance(ObjectRenderer.class, configuration);
-
-        return strategyBuilder.build(registry);
+        return strategyBuilder.build(ObjectRenderer.class, configuration);
     }
 
 
@@ -1697,9 +1703,9 @@ public final class TapestryModule
                                                  @InjectService("ClientPersistentFieldStrategy")
                                                  PersistentFieldStrategy clientStrategy)
     {
-        configuration.add("session", new SessionPersistentFieldStrategy(request));
+        configuration.add(PersistenceConstants.SESSION, new SessionPersistentFieldStrategy(request));
         configuration.add(PersistenceConstants.FLASH, new FlashPersistentFieldStrategy(request));
-        configuration.add("client", clientStrategy);
+        configuration.add(PersistenceConstants.CLIENT, clientStrategy);
     }
 
     /**
@@ -1855,7 +1861,7 @@ public final class TapestryModule
         configuration.add("tapestry.datepicker.path", "org/apache/tapestry5/datepicker_106");
         configuration.add("tapestry.datepicker", "classpath:${tapestry.datepicker.path}");
 
-        configuration.add(PersistentFieldManagerImpl.META_KEY, PersistentFieldManagerImpl.DEFAULT_STRATEGY);
+        configuration.add(SymbolConstants.PERSISTENCE_STRATEGY, PersistenceConstants.SESSION);
 
         configuration.add(MetaDataConstants.RESPONSE_CONTENT_TYPE, "text/html");
 
@@ -1888,7 +1894,8 @@ public final class TapestryModule
     public void contributeApplicationInitializer(OrderedConfiguration<ApplicationInitializerFilter> configuration,
                                                  final TypeCoercer typeCoercer,
                                                  final ComponentClassResolver componentClassResolver,
-                                                 @ComponentClasses final InvalidationEventHub hub)
+                                                 @ComponentClasses final InvalidationEventHub invalidationEventHub,
+                                                 final @Autobuild RestoreDirtySessionObjects restoreDirtySessionObjects)
     {
         final InvalidationListener listener = new InvalidationListener()
         {
@@ -1907,7 +1914,11 @@ public final class TapestryModule
                 // Snuck in here is the logic to clear the PropertyAccess service's cache whenever
                 // the component class loader is invalidated.
 
-                hub.addInvalidationListener(listener);
+                invalidationEventHub.addInvalidationListener(listener);
+
+                endOfRequestEventHub.addEndOfRequestListener(restoreDirtySessionObjects);
+
+                // Perform other pending initialization
 
                 initializer.initializeApplication(context);
 
@@ -1921,9 +1932,6 @@ public final class TapestryModule
         configuration.add("ClearCachesOnInvalidation", clearCaches);
     }
 
-    public void contributePropBindingFactory(OrderedConfiguration<BindingFactory> configuration)
-    {
-    }
 
     /**
      * Contributes filters: <dl> <dt>Ajax</dt> <dd>Determines if the request is Ajax oriented, and redirects to an
@@ -2029,14 +2037,6 @@ public final class TapestryModule
         return messagesSource.getInvalidatonEventHub();
     }
 
-    public ApplicationStatePersistenceStrategy buildSessionApplicationStatePersistenceStrategy(
-            @Autobuild SessionApplicationStatePersistenceStrategy service, EndOfRequestListenerHub hub)
-    {
-        hub.addEndOfRequestListener(service);
-
-        return service;
-    }
-
     @Scope(ScopeConstants.PERTHREAD)
     public Environment buildEnvironment(PerthreadManager perthreadManager)
     {
@@ -2045,5 +2045,45 @@ public final class TapestryModule
         perthreadManager.addThreadCleanupListener(service);
 
         return service;
+    }
+
+    /**
+     * The master SessionPesistedObjectAnalyzer.
+     *
+     * @since 5.1.0.0
+     */
+    @Marker(Primary.class)
+    public SessionPersistedObjectAnalyzer buildSessionPersistedObjectAnalyzer(
+            Map<Class, SessionPersistedObjectAnalyzer> configuration)
+    {
+        return strategyBuilder.build(SessionPersistedObjectAnalyzer.class, configuration);
+    }
+
+    /**
+     * Identifies String, Number and Boolean as immutable objects, a catch-all handler for Object (that understands
+     * {@link org.apache.tapestry5.annotations.ImmutableSessionPersistedObject}, and handlers for {@link
+     * org.apache.tapestry5.OptimizedSessionPersistedObject} and {@link org.apache.tapestry5.OptimizedApplicationStateObject}.
+     *
+     * @since 5.1.0.0
+     */
+    public static void contributeSessionPersistedObjectAnalyzer(
+            MappedConfiguration<Class, SessionPersistedObjectAnalyzer> configuration)
+    {
+        configuration.add(Object.class, new DefaultSessionPersistedObjectAnalyzer());
+
+        SessionPersistedObjectAnalyzer<Object> immutable = new SessionPersistedObjectAnalyzer<Object>()
+        {
+            public boolean isDirty(Object object)
+            {
+                return false;
+            }
+        };
+
+        configuration.add(String.class, immutable);
+        configuration.add(Number.class, immutable);
+        configuration.add(Boolean.class, immutable);
+
+        configuration.add(OptimizedSessionPersistedObject.class, new OptimizedSessionPersistedObjectAnalyzer());
+        configuration.add(OptimizedApplicationStateObject.class, new OptimizedApplicationStateObjectAnalyzer());
     }
 }

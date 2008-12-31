@@ -18,12 +18,12 @@ import org.apache.tapestry5.internal.events.EndOfRequestListener;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.testng.annotations.Test;
 
-public class EndOfRequestListenerHubImplTest extends InternalBaseTestCase
+public class EndOfRequestEventHubImplTest extends InternalBaseTestCase
 {
     @Test
     public void add_and_notify()
     {
-        EndOfRequestListenerHub hub = new EndOfRequestListenerHubImpl();
+        EndOfRequestEventHub hub = new EndOfRequestEventHubImpl();
 
         EndOfRequestListener listener = newMock(EndOfRequestListener.class);
 
@@ -42,7 +42,7 @@ public class EndOfRequestListenerHubImplTest extends InternalBaseTestCase
     @Test
     public void add_remove_notify()
     {
-        EndOfRequestListenerHub hub = new EndOfRequestListenerHubImpl();
+        EndOfRequestEventHub hub = new EndOfRequestEventHubImpl();
 
         EndOfRequestListener listener = newMock(EndOfRequestListener.class);
 

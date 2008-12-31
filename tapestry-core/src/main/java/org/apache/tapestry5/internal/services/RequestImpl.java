@@ -17,6 +17,7 @@ package org.apache.tapestry5.internal.services;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.Session;
+import org.apache.tapestry5.services.SessionPersistedObjectAnalyzer;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -38,14 +39,18 @@ public class RequestImpl implements Request
 
     private final String requestEncoding;
 
+    private final SessionPersistedObjectAnalyzer analyzer;
+
     private boolean encodingSet;
 
     private Session session;
 
-    public RequestImpl(HttpServletRequest request, String requestEncoding)
+    public RequestImpl(HttpServletRequest request, String requestEncoding,
+                       SessionPersistedObjectAnalyzer analyzer)
     {
         this.request = request;
         this.requestEncoding = requestEncoding;
+        this.analyzer = analyzer;
     }
 
     public List<String> getParameterNames()
@@ -102,7 +107,10 @@ public class RequestImpl implements Request
         {
             HttpSession hsession = request.getSession(create);
 
-            if (hsession != null) session = new SessionImpl(hsession);
+            if (hsession != null)
+            {
+                session = new SessionImpl(hsession, analyzer);
+            }
         }
 
         return session;

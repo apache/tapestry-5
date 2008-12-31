@@ -72,7 +72,7 @@ public class InternalModule
         binder.bind(ComponentPageElementResourcesSource.class, ComponentPageElementResourcesSourceImpl.class);
         binder.bind(RequestSecurityManager.class, RequestSecurityManagerImpl.class);
         binder.bind(InternalRequestGlobals.class, InternalRequestGlobalsImpl.class);
-        binder.bind(EndOfRequestListenerHub.class);
+        binder.bind(EndOfRequestEventHub.class);
         binder.bind(PageActivationContextCollector.class);
         binder.bind(PageLoader.class, PageLoaderImpl.class);
     }

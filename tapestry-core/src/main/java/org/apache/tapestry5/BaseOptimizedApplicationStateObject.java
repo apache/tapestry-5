@@ -14,44 +14,16 @@
 
 package org.apache.tapestry5;
 
-import javax.servlet.http.HttpSessionBindingEvent;
-import javax.servlet.http.HttpSessionBindingListener;
-
 /**
  * Base class for creating optimized application state objects.  Works as a {@link
  * javax.servlet.http.HttpSessionBindingListener} to determine when the object is no longer dirty.
+ *
+ * @deprecated since 5.1.0.0; use {@link org.apache.tapestry5.BaseOptimizedSessionPersistedObject} instead
  */
-public abstract class BaseOptimizedApplicationStateObject implements OptimizedApplicationStateObject, HttpSessionBindingListener
+public abstract class BaseOptimizedApplicationStateObject extends BaseOptimizedSessionPersistedObject
 {
-    private transient boolean dirty;
-
     public final boolean isApplicationStateObjectDirty()
     {
-        return dirty;
-    }
-
-    /**
-     * Invoked by the servlet container when the value is stored (or re-stored) as an attribute of the session. This
-     * clears the dirty flag.
-     */
-    public void valueBound(HttpSessionBindingEvent event)
-    {
-        dirty = false;
-    }
-
-    /**
-     * Does nothing.
-     */
-    public void valueUnbound(HttpSessionBindingEvent event)
-    {
-    }
-
-    /**
-     * Invoked by the subclass whenever the internal state of the ASO changes. Typically, this is invoked from mutator
-     * methods.
-     */
-    protected final void markDirty()
-    {
-        dirty = true;
+        return isSessionPersistedObjectDirty();
     }
 }

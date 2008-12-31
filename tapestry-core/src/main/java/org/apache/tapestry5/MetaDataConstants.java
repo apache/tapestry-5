@@ -15,9 +15,12 @@
 package org.apache.tapestry5;
 
 /**
- * Meta-data keys that are applied to components and pages.
+ * Meta-data keys that are applied to components and pages.  In addition, in many cases a {@linkplain
+ * org.apache.tapestry5.SymbolConstants symbol constant key} is also a meta data key (where the symbol value is the
+ * ultimate default).
  *
  * @see org.apache.tapestry5.services.MetaDataLocator
+ * @see org.apache.tapestry5.MetaDataConstants
  */
 public class MetaDataConstants
 {

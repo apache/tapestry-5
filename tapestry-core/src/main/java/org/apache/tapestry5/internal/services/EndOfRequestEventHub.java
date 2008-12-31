@@ -15,29 +15,18 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.internal.events.EndOfRequestListener;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 
-import java.util.List;
-
-public class EndOfRequestListenerHubImpl implements EndOfRequestListenerHub
+/**
+ * Manages request notifications for the {@link org.apache.tapestry5.internal.events.EndOfRequestListener} interface.
+ */
+public interface EndOfRequestEventHub
 {
-    private final List<EndOfRequestListener> listeners = CollectionFactory.newThreadSafeList();
+    void addEndOfRequestListener(EndOfRequestListener listener);
 
-    public void addEndOfRequestListener(EndOfRequestListener listener)
-    {
-        listeners.add(listener);
-    }
+    void removeEndOfRequestListener(EndOfRequestListener listener);
 
-    public void removeEndOfRequestListener(EndOfRequestListener listener)
-    {
-        listeners.remove(listener);
-    }
-
-    public void fire()
-    {
-        for (EndOfRequestListener l : listeners)
-        {
-            l.requestDidComplete();
-        }
-    }
+    /**
+     * Invoked at the end of the request to notify the listeners.
+     */
+    void fire();
 }
