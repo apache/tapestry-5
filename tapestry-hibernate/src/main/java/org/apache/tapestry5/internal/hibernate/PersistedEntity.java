@@ -14,6 +14,7 @@
 
 package org.apache.tapestry5.internal.hibernate;
 
+import org.apache.tapestry5.annotations.ImmutableSessionPersistedObject;
 import org.hibernate.Session;
 
 import java.io.Serializable;
@@ -21,6 +22,7 @@ import java.io.Serializable;
 /**
  * Encapsulates a Hibernate entity name with an entity id.
  */
+@ImmutableSessionPersistedObject
 public class PersistedEntity implements Serializable
 {
     private final String entityName;
