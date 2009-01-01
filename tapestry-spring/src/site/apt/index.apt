@@ -18,6 +18,9 @@ Changes From 5.0
  <<Spring Beans are no longer exposed as services.>>
 
  You no longer create a ContextLoaderListener.
+
+ These changes represent an unfortunate backwards compatibility issue.
+ If necessary, you can still use tapestry-spring version 5.0.18 with the rest of Tapestry.
   
 Spring Version
 

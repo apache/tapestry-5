@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -173,9 +173,36 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         addBuiltin(PERTHREAD_MANAGER_SERVICE_ID, PerthreadManager.class, perthreadManager);
         addBuiltin(REGISTRY_SHUTDOWN_HUB_SERVICE_ID, RegistryShutdownHub.class, registryShutdownHub);
 
+        validateContributeDefs(moduleDefs);
+
         scoreboardAndTracker.startup();
 
         SerializationSupport.setProvider(this);
+    }
+
+    /**
+     * Validate that each module's ContributeDefs correspond to an actual service.
+     */
+    private void validateContributeDefs(Collection<ModuleDef> moduleDefs)
+    {
+        Set<ContributionDef> contributionDefs = CollectionFactory.newSet();
+
+        for (ModuleDef module : moduleDefs)
+        {
+            contributionDefs.addAll(module.getContributionDefs());
+        }
+
+        for (ContributionDef cd : contributionDefs)
+        {
+            String serviceId = cd.getServiceId();
+
+            if (!serviceIdToModule.containsKey(serviceId))
+            {
+                throw new IllegalArgumentException(
+                        String.format("Contibution %s is for service '%s', which does not exist.",
+                                      cd, serviceId));
+            }
+        }
     }
 
     /**
