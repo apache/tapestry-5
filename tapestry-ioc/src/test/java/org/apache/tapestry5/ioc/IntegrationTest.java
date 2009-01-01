@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -1064,5 +1064,24 @@ public class IntegrationTest extends IOCInternalTestCase
         Greeter g = r.getService(Greeter.class);
 
         assertEquals(g.getGreeting(), "Greetings from ServiceIdGreeter.");
+    }
+
+    /**
+     * TAP5-429
+     */
+    @Test
+    public void contribute_to_unknown_service()
+    {
+        try
+        {
+            buildRegistry(InvalidContributeDefModule.class);
+            unreachable();
+        }
+        catch (IllegalArgumentException ex)
+        {
+            assertMessageContains(ex,
+                                  "Contibution org.apache.tapestry5.ioc.InvalidContributeDefModule.contributeDoesNotExist(Configuration)",
+                                  "is for service 'DoesNotExist', which does not exist.");
+        }
     }
 }

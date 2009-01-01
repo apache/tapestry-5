@@ -77,42 +77,32 @@ Standard Injection Processing
    if a resource can be injected.  When the Inject annotation is present, this step is skipped (this is necessary
    when the object to be injected has a type that conflicts with a resource type, such as String).
 
-   What resources are available depend on what kind of operation is occuring:
+   [org.slf4j.Logger]
+   The Logger of the service being constructed (or the logger of the Module class being instantiated).
 
-   * Autobuilt object: no special resources
+   [String]
+   The service id of the service being constructed.
 
-   * Contributor method:
+   [{{{../apidocs/org/apache/tapestry5/ioc/ObjectLocator.html}ObjectLocator}}]
+   For contribute methods, used to locate additional objects.
 
-     * The appropriate Configuration, OrderedConfiguration or MappedConfiguration instance.
+   [{{{../apidocs/org/apache/tapestry5/ioc/ServiceResources.html}ServiceResources}}]
+   For service builder methods, an extended version of ObjectLocator.
 
-     *  org.slf4j.Logger: Logger for the service, based on the class name of the module and the service id
-    
-   * Service builder method:
+   [Class]
+   The service interface type.
 
-     * String: the service id
+   [{{{../apidocs/org/apache/tapestry5/ioc/OperationTracker.html}OperationTracker}}]
+   Used to track deeply nested operations so that errors can be reported sensibly.
 
-     * {{{../apidocs/org/apache/tapestry5/ioc/ObjectLocator.html}ObjectLocator}} or
-       {{{../apidocs/org/apache/tapestry5/ioc/ServiceResources.html}ServiceResources}}: Used to lookup or autobuild additional objects;
-       the same object is passed for both types
+   [Object, or service interface type]
+   Passed to decorator methods.
 
-     *  org.slf4j.Logger: Logger for the service, based on the class name of the module and the service id
+   [Collection, List, Map]
+   Assembled service configurations passed to service builder methods (or service class constructors).
 
-     * Class: Java class for the service's service interface
-
-     * Collection, List, Map: Combined service contributions
-
-     []
-
-   * Service Implementation Constructor: Same as service builder method.
-
-   * Service decorator method:  Same as service bulider method, without service contributions (Collection, List, Map), plus:
-
-     Object or <Service Interface>: the delegate for the interceptor created by the decorator method
-
-   []
-
-   In addition, {{{../apidocs/org/apache/tapestry5/ioc/OperationTracker.html}OperationTracker}} is available
-   for injection via constructor, method or field.
+   [Configuration, OrderedConfiguration, MappedConfiguration]
+   Configuration passed to contribute methods, to build service configurations.
 
    If field type does not match any of the available resource types, or the Inject annotation is present,
    logic continues to the next step.
