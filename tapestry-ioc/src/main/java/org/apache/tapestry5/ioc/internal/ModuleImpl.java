@@ -15,14 +15,13 @@
 package org.apache.tapestry5.ioc.internal;
 
 import org.apache.tapestry5.ioc.*;
-import org.apache.tapestry5.ioc.def.ContributionDef;
-import org.apache.tapestry5.ioc.def.DecoratorDef;
-import org.apache.tapestry5.ioc.def.ModuleDef;
-import org.apache.tapestry5.ioc.def.ServiceDef;
+import org.apache.tapestry5.ioc.def.*;
 import org.apache.tapestry5.ioc.internal.services.JustInTimeObjectCreator;
 import org.apache.tapestry5.ioc.internal.util.*;
-import org.apache.tapestry5.ioc.services.*;
-import org.apache.tapestry5.ioc.util.Stack;
+import org.apache.tapestry5.ioc.services.ClassFab;
+import org.apache.tapestry5.ioc.services.ClassFactory;
+import org.apache.tapestry5.ioc.services.MethodSignature;
+import org.apache.tapestry5.ioc.services.Status;
 import org.slf4j.Logger;
 
 import java.io.ObjectStreamException;
@@ -60,18 +59,13 @@ public class ModuleImpl implements Module
      */
     private final Map<String, Object> services = CollectionFactory.newCaseInsensitiveMap();
 
+    private final Map<String, ServiceDef2> serviceDefs = CollectionFactory.newCaseInsensitiveMap();
+
     /**
      * The barrier is shared by all modules, which means that creation of *any* service for any module is single
      * threaded.
      */
     private final static ConcurrentBarrier BARRIER = new ConcurrentBarrier();
-
-    /**
-     * Tracks what is currently going on in the module. Guarded by the Barrier.
-     */
-    private static final Stack<String> activeOperations = CollectionFactory.newStack();
-
-    private static boolean operationsReported;
 
     public ModuleImpl(InternalRegistry registry, ServiceActivityTracker tracker, ModuleDef moduleDef,
                       ClassFactory classFactory, Logger logger)
@@ -81,7 +75,17 @@ public class ModuleImpl implements Module
         this.moduleDef = moduleDef;
         this.classFactory = classFactory;
         this.logger = logger;
+
+        for (String id : moduleDef.getServiceIds())
+        {
+            ServiceDef sd = moduleDef.getServiceDef(id);
+
+            ServiceDef2 sd2 = InternalUtils.toServiceDef2(sd);
+
+            serviceDefs.put(id, sd2);
+        }
     }
+
 
     public <T> T getService(String serviceId, Class<T> serviceInterface)
     {
@@ -89,7 +93,7 @@ public class ModuleImpl implements Module
         Defense.notNull(serviceInterface, "serviceInterface");
         // module may be null.
 
-        ServiceDef def = moduleDef.getServiceDef(serviceId);
+        ServiceDef2 def = getServiceDef(serviceId);
 
         // RegistryImpl should already have checked that the service exists.
         assert def != null;
@@ -137,11 +141,10 @@ public class ModuleImpl implements Module
 
         Collection<String> result = CollectionFactory.newList();
 
-        for (String id : moduleDef.getServiceIds())
+        for (ServiceDef2 def : serviceDefs.values())
         {
-            ServiceDef def = moduleDef.getServiceDef(id);
-
-            if (serviceInterface.isAssignableFrom(def.getServiceInterface())) result.add(id);
+            if (serviceInterface.isAssignableFrom(def.getServiceInterface()))
+                result.add(def.getServiceId());
         }
 
         return result;
@@ -154,7 +157,7 @@ public class ModuleImpl implements Module
      * @param eagerLoadProxies collection into which proxies for eager loaded services are added (or null)
      * @return the service proxy
      */
-    private Object findOrCreate(final ServiceDef def,
+    private Object findOrCreate(final ServiceDef2 def,
                                 final Collection<EagerLoadServiceProxy> eagerLoadProxies)
     {
         final String key = def.getServiceId();
@@ -204,10 +207,8 @@ public class ModuleImpl implements Module
         {
             public void run()
             {
-                for (String serviceId : moduleDef.getServiceIds())
+                for (ServiceDef2 def : serviceDefs.values())
                 {
-                    ServiceDef def = moduleDef.getServiceDef(serviceId);
-
                     if (def.isEagerLoad()) findOrCreate(def, proxies);
                 }
             }
@@ -222,7 +223,7 @@ public class ModuleImpl implements Module
      *
      * @param eagerLoadProxies a list into which any eager loaded proxies should be added
      */
-    private Object create(final ServiceDef def, final Collection<EagerLoadServiceProxy> eagerLoadProxies)
+    private Object create(final ServiceDef2 def, final Collection<EagerLoadServiceProxy> eagerLoadProxies)
     {
         final String serviceId = def.getServiceId();
 
@@ -262,9 +263,11 @@ public class ModuleImpl implements Module
 
                     creator = new LifecycleWrappedServiceCreator(registry, def.getServiceScope(), resources, creator);
 
-                    // Don't allow the core IOC services services to be decorated.
 
-                    if (!TapestryIOCModule.class.equals(moduleDef.getBuilderClass()))
+                    // Marked services (or services inside marked modules) are not decorated.
+                    // TapestryIOCModule prevents decoration of its services.
+
+                    if (!def.isPreventDecoration())
                         creator = new InterceptorStackBuilder(module, serviceId, creator, registry);
 
                     // Add a wrapper that checks for recursion.
@@ -476,9 +479,9 @@ public class ModuleImpl implements Module
         return result;
     }
 
-    public ServiceDef getServiceDef(String serviceId)
+    public ServiceDef2 getServiceDef(String serviceId)
     {
-        return moduleDef.getServiceDef(serviceId);
+        return serviceDefs.get(serviceId);
     }
 
     public String getLoggerName()

@@ -30,9 +30,10 @@ public interface ModuleDef
     Set<String> getServiceIds();
 
     /**
-     * Returns a service definition via the service's id.
+     * Returns a service definition via the service's id. Ideally, the returned value should be an instance of {@link
+     * org.apache.tapestry5.ioc.def.ServiceDef2}, and will be converted to such if necessary.
      *
-     * @param serviceId the id of the service to retrieve
+     * @param serviceId the id of the service to retrieve  (case is ignored)
      * @return service definition or null if it doesn't exist
      */
     ServiceDef getServiceDef(String serviceId);

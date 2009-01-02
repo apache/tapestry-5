@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ import org.apache.tapestry5.ioc.ServiceDecorator;
 import org.apache.tapestry5.ioc.def.ContributionDef;
 import org.apache.tapestry5.ioc.def.DecoratorDef;
 import org.apache.tapestry5.ioc.def.ServiceDef;
+import org.apache.tapestry5.ioc.def.ServiceDef2;
 
 import java.util.Collection;
 import java.util.List;
@@ -89,7 +90,7 @@ public interface Module extends ModuleBuilderSource
      * @param serviceId unique id for the service (caseless)
      * @return the service definition or null
      */
-    ServiceDef getServiceDef(String serviceId);
+    ServiceDef2 getServiceDef(String serviceId);
 
     /**
      * Returns the name used to obtain a logger for the module. Services within the module suffix this with a period and

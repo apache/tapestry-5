@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,7 +20,8 @@ import org.apache.tapestry5.ioc.ServiceBuilderResources;
 import java.util.Set;
 
 /**
- * Service definition derived, by default, from a service builder method.
+ * Service definition derived, by default, from a service builder method. This has been extended in Tapestry 5.1 with
+ * {@link org.apache.tapestry5.ioc.def.ServiceDef2}, which adds additional methods.
  */
 public interface ServiceDef
 {

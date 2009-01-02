@@ -17,6 +17,7 @@ package org.apache.tapestry5.ioc.internal;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.def.ContributionDef;
 import org.apache.tapestry5.ioc.def.ServiceDef;
+import org.apache.tapestry5.ioc.def.ServiceDef2;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import static org.apache.tapestry5.ioc.internal.util.InternalUtils.asString;
@@ -294,7 +295,7 @@ final class IOCMessages
     }
 
     static String manyServicesMatchMarker(Class objectType, List<Class> markers,
-                                          Collection<ServiceDef> matchingServices)
+                                          Collection<ServiceDef2> matchingServices)
     {
         return MESSAGES.format("many-services-match-marker",
                                ClassFabUtils.toJavaClassName(objectType),

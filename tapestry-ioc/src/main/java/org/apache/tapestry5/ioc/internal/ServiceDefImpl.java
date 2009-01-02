@@ -16,11 +16,11 @@ package org.apache.tapestry5.ioc.internal;
 
 import org.apache.tapestry5.ioc.ObjectCreator;
 import org.apache.tapestry5.ioc.ServiceBuilderResources;
-import org.apache.tapestry5.ioc.def.ServiceDef;
+import org.apache.tapestry5.ioc.def.ServiceDef2;
 
 import java.util.Set;
 
-public class ServiceDefImpl implements ServiceDef
+public class ServiceDefImpl implements ServiceDef2
 {
     private final Class serviceInterface;
 
@@ -34,22 +34,26 @@ public class ServiceDefImpl implements ServiceDef
 
     private final Set<Class> markers;
 
+    private final boolean preventDecoration;
+
     /**
-     * @param serviceInterface interface implemented by the service (or the service implementation class, for
-     *                         non-proxied services)
-     * @param serviceId        unique id for the service
-     * @param markers          set of marker annotation classes (will be retained not copied)
-     * @param scope            scope of the service (i.e., {@link org.apache.tapestry5.ioc.ScopeConstants#DEFAULT}).
-     * @param eagerLoad        if true, the service is realized at startup, rather than on-demand
-     * @param source           used to create the service implementation when needed
+     * @param serviceInterface  interface implemented by the service (or the service implementation class, for
+     *                          non-proxied services)
+     * @param serviceId         unique id for the service
+     * @param markers           set of marker annotation classes (will be retained not copied)
+     * @param scope             scope of the service (i.e., {@link org.apache.tapestry5.ioc.ScopeConstants#DEFAULT}).
+     * @param eagerLoad         if true, the service is realized at startup, rather than on-demand
+     * @param preventDecoration if true, the service may not be decorated
+     * @param source            used to create the service implementation when needed
      */
     ServiceDefImpl(Class serviceInterface, String serviceId, Set<Class> markers, String scope,
-                   boolean eagerLoad, ObjectCreatorSource source)
+                   boolean eagerLoad, boolean preventDecoration, ObjectCreatorSource source)
     {
         this.serviceInterface = serviceInterface;
         this.serviceId = serviceId;
         this.scope = scope;
         this.eagerLoad = eagerLoad;
+        this.preventDecoration = preventDecoration;
         this.source = source;
 
         this.markers = markers;
@@ -89,5 +93,10 @@ public class ServiceDefImpl implements ServiceDef
     public Set<Class> getMarkers()
     {
         return markers;
+    }
+
+    public boolean isPreventDecoration()
+    {
+        return preventDecoration;
     }
 }

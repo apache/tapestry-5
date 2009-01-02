@@ -1104,4 +1104,43 @@ public class IntegrationTest extends IOCInternalTestCase
                                   "soIsThisMethod().");
         }
     }
+
+    /**
+     * TAP5-430
+     */
+    @Test
+    public void service_builder_method_marked_for_no_decoration()
+    {
+        Registry r = buildRegistry(PreventDecorationModule.class);
+
+        StringTransformer st = r.getService(StringTransformer.class);
+
+        assertEquals(st.transform("tapestry"), "TAPESTRY");
+
+        r.shutdown();
+    }
+
+    @Test
+    public void bind_service_marked_for_no_decoration_explicitly()
+    {
+        Registry r = buildRegistry(PreventDecorationModule.class);
+
+        Greeter g = r.getService(Greeter.class);
+
+        assertEquals(g.getGreeting(), "Greetings from ServiceIdGreeter.");
+
+        r.shutdown();
+    }
+
+    @Test
+    public void bind_service_with_prevent_service_decoration_annotations_on_implementation_class()
+    {
+        Registry r = buildRegistry(PreventDecorationModule.class);
+
+        Rocket rocket = r.getService(Rocket.class);
+
+        assertEquals(rocket.getCountdown(), "3, 2, 1, Launch!");
+
+        r.shutdown();
+    }
 }
