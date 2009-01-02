@@ -112,8 +112,10 @@ public class DefaultModuleDefImpl implements ModuleDef, ServiceDefAccumulator
 
         methods.removeAll(OBJECT_METHODS);
 
-        grind(methods);
-        bind(methods);
+        boolean modulePreventsServiceDecoration = moduleClass.getAnnotation(PreventServiceDecoration.class) != null;
+
+        grind(methods, modulePreventsServiceDecoration);
+        bind(methods, modulePreventsServiceDecoration);
 
         if (methods.isEmpty()) return;
 
@@ -147,7 +149,7 @@ public class DefaultModuleDefImpl implements ModuleDef, ServiceDefAccumulator
         return serviceDefs.get(serviceId);
     }
 
-    private void grind(Set<Method> remainingMethods)
+    private void grind(Set<Method> remainingMethods, boolean modulePreventsServiceDecoration)
     {
         Method[] methods = moduleClass.getMethods();
 
@@ -173,7 +175,7 @@ public class DefaultModuleDefImpl implements ModuleDef, ServiceDefAccumulator
 
             if (name.startsWith(BUILD_METHOD_NAME_PREFIX))
             {
-                addServiceDef(m);
+                addServiceDef(m, modulePreventsServiceDecoration);
                 remainingMethods.remove(m);
                 continue;
             }
@@ -273,7 +275,7 @@ public class DefaultModuleDefImpl implements ModuleDef, ServiceDefAccumulator
     /**
      * Invoked for public methods that have the proper prefix.
      */
-    private void addServiceDef(final Method method)
+    private void addServiceDef(final Method method, boolean modulePreventsServiceDecoration)
     {
         String serviceId = stripMethodPrefix(method, BUILD_METHOD_NAME_PREFIX);
 
@@ -294,6 +296,9 @@ public class DefaultModuleDefImpl implements ModuleDef, ServiceDefAccumulator
         String scope = extractServiceScope(method);
         boolean eagerLoad = method.isAnnotationPresent(EagerLoad.class);
 
+        boolean preventDecoration = modulePreventsServiceDecoration ||
+                method.getAnnotation(PreventServiceDecoration.class) != null;
+
         ObjectCreatorSource source = new ObjectCreatorSource()
         {
             public ObjectCreator constructCreator(ServiceBuilderResources resources)
@@ -310,7 +315,8 @@ public class DefaultModuleDefImpl implements ModuleDef, ServiceDefAccumulator
         Set<Class> markers = newSet(defaultMarkers);
         markers.addAll(extractMarkers(method));
 
-        ServiceDefImpl serviceDef = new ServiceDefImpl(returnType, serviceId, markers, scope, eagerLoad, source);
+        ServiceDefImpl serviceDef = new ServiceDefImpl(returnType, serviceId, markers, scope, eagerLoad,
+                                                       preventDecoration, source);
 
         addServiceDef(serviceDef);
     }
@@ -360,8 +366,13 @@ public class DefaultModuleDefImpl implements ModuleDef, ServiceDefAccumulator
 
     /**
      * See if the build class defined a bind method and invoke it.
+     *
+     * @param remainingMethods set of methods as yet unaccounted for
+     * @param modulePreventsServiceDecoration
+     *                         true if {@link org.apache.tapestry5.ioc.annotations.PreventServiceDecoration} on module
+     *                         class
      */
-    private void bind(Set<Method> remainingMethods)
+    private void bind(Set<Method> remainingMethods, boolean modulePreventsServiceDecoration)
     {
         Throwable failure;
         Method bindMethod = null;
@@ -374,7 +385,8 @@ public class DefaultModuleDefImpl implements ModuleDef, ServiceDefAccumulator
                 throw new RuntimeException(
                         IOCMessages.bindMethodMustBeStatic(InternalUtils.asString(bindMethod, classFactory)));
 
-            ServiceBinderImpl binder = new ServiceBinderImpl(this, bindMethod, classFactory, defaultMarkers);
+            ServiceBinderImpl binder = new ServiceBinderImpl(this, bindMethod, classFactory, defaultMarkers,
+                                                             modulePreventsServiceDecoration);
 
             bindMethod.invoke(null, binder);
 

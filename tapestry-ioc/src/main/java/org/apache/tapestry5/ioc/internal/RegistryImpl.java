@@ -16,10 +16,7 @@ package org.apache.tapestry5.ioc.internal;
 
 import org.apache.tapestry5.ioc.*;
 import org.apache.tapestry5.ioc.annotations.Local;
-import org.apache.tapestry5.ioc.def.ContributionDef;
-import org.apache.tapestry5.ioc.def.DecoratorDef;
-import org.apache.tapestry5.ioc.def.ModuleDef;
-import org.apache.tapestry5.ioc.def.ServiceDef;
+import org.apache.tapestry5.ioc.def.*;
 import org.apache.tapestry5.ioc.internal.services.PerthreadManagerImpl;
 import org.apache.tapestry5.ioc.internal.services.RegistryShutdownHubImpl;
 import org.apache.tapestry5.ioc.internal.util.*;
@@ -85,14 +82,14 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
     private SymbolSource symbolSource;
 
-    private final Map<Module, Set<ServiceDef>> moduleToServiceDefs = CollectionFactory.newMap();
+    private final Map<Module, Set<ServiceDef2>> moduleToServiceDefs = CollectionFactory.newMap();
 
     /**
      * From marker type to a list of marked service instances.
      */
-    private final Map<Class, List<ServiceDef>> markerToServiceDef = CollectionFactory.newMap();
+    private final Map<Class, List<ServiceDef2>> markerToServiceDef = CollectionFactory.newMap();
 
-    private final Set<ServiceDef> allServiceDefs = CollectionFactory.newSet();
+    private final Set<ServiceDef2> allServiceDefs = CollectionFactory.newSet();
 
     private final OperationTracker operationTracker;
 
@@ -141,19 +138,20 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
             Module module = new ModuleImpl(this, tracker, def, classFactory, logger);
 
-            Set<ServiceDef> moduleServiceDefs = CollectionFactory.newSet();
+            Set<ServiceDef2> moduleServiceDefs = CollectionFactory.newSet();
 
             for (String serviceId : def.getServiceIds())
             {
-                ServiceDef serviceDef = module.getServiceDef(serviceId);
+                ServiceDef2 serviceDef = module.getServiceDef(serviceId);
 
                 moduleServiceDefs.add(serviceDef);
                 allServiceDefs.add(serviceDef);
 
                 Module existing = serviceIdToModule.get(serviceId);
 
-                if (existing != null) throw new RuntimeException(IOCMessages.serviceIdConflict(serviceId, existing
-                        .getServiceDef(serviceId), serviceDef));
+                if (existing != null)
+                    throw new RuntimeException(IOCMessages.serviceIdConflict(serviceId, existing
+                            .getServiceDef(serviceId), serviceDef));
 
                 serviceIdToModule.put(serviceId, module);
 
@@ -251,7 +249,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         // Make sure each of the builtin services is also available via the Builtin annotation
         // marker.
 
-        ServiceDef serviceDef = new ServiceDef()
+        ServiceDef2 serviceDef = new ServiceDef2()
         {
             public ObjectCreator createServiceCreator(ServiceBuilderResources resources)
             {
@@ -281,6 +279,11 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
             public boolean isEagerLoad()
             {
                 return false;
+            }
+
+            public boolean isPreventDecoration()
+            {
+                return true;
             }
         };
 
@@ -653,11 +656,11 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         return masterProvider.provide(objectType, effectiveProvider, locator, true);
     }
 
-    private Collection<ServiceDef> filterByType(Class<?> objectType, Collection<ServiceDef> serviceDefs)
+    private Collection<ServiceDef2> filterByType(Class<?> objectType, Collection<ServiceDef2> serviceDefs)
     {
-        Collection<ServiceDef> result = CollectionFactory.newSet();
+        Collection<ServiceDef2> result = CollectionFactory.newSet();
 
-        for (ServiceDef sd : serviceDefs)
+        for (ServiceDef2 sd : serviceDefs)
         {
             if (objectType.isAssignableFrom(sd.getServiceInterface()))
             {
@@ -676,7 +679,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         boolean localOnly = localModule != null && provider.getAnnotation(Local.class) != null;
 
 
-        Set<ServiceDef> matches = CollectionFactory.newSet();
+        Set<ServiceDef2> matches = CollectionFactory.newSet();
 
         matches.addAll(filterByType(objectType, localOnly
                                                 ? moduleToServiceDefs.get(localModule)

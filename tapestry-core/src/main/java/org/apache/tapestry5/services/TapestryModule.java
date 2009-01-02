@@ -199,7 +199,7 @@ public final class TapestryModule
     //
     // ========================================================================
 
-
+    @PreventServiceDecoration
     public static Alias buildAlias(Logger logger,
 
                                    @Inject @Symbol(InternalConstants.TAPESTRY_ALIAS_MODE_SYMBOL)

@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,6 +19,8 @@ import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.InjectResource;
 import org.apache.tapestry5.ioc.annotations.InjectService;
 import org.apache.tapestry5.ioc.annotations.PostInjection;
+import org.apache.tapestry5.ioc.def.ServiceDef;
+import org.apache.tapestry5.ioc.def.ServiceDef2;
 import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newList;
 import static org.apache.tapestry5.ioc.internal.util.Defense.notBlank;
 import org.apache.tapestry5.ioc.services.ClassFabUtils;
@@ -742,5 +744,49 @@ public class InternalUtils
                     "Constructor %s is not public and may not be used for autobuilding an instance of the class. " +
                             "You should make the constructor public, or mark an alternate public constructor with the @Inject annotation.",
                     constructor));
+    }
+
+    public static ServiceDef2 toServiceDef2(final ServiceDef sd)
+    {
+        if (sd instanceof ServiceDef2)
+            return (ServiceDef2) sd;
+
+        return new ServiceDef2()
+        {
+            public boolean isPreventDecoration()
+            {
+                return false;
+            }
+
+            public ObjectCreator createServiceCreator(ServiceBuilderResources resources)
+            {
+                return sd.createServiceCreator(resources);
+            }
+
+            public String getServiceId()
+            {
+                return sd.getServiceId();
+            }
+
+            public Set<Class> getMarkers()
+            {
+                return sd.getMarkers();
+            }
+
+            public Class getServiceInterface()
+            {
+                return sd.getServiceInterface();
+            }
+
+            public String getServiceScope()
+            {
+                return sd.getServiceScope();
+            }
+
+            public boolean isEagerLoad()
+            {
+                return sd.isEagerLoad();
+            }
+        };
     }
 }

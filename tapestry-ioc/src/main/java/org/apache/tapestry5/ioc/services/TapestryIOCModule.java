@@ -16,6 +16,7 @@ package org.apache.tapestry5.ioc.services;
 
 import org.apache.tapestry5.ioc.*;
 import org.apache.tapestry5.ioc.annotations.Marker;
+import org.apache.tapestry5.ioc.annotations.PreventServiceDecoration;
 import org.apache.tapestry5.ioc.internal.services.*;
 import org.apache.tapestry5.ioc.util.TimeInterval;
 
@@ -29,6 +30,7 @@ import java.util.*;
  * Defines the base set of services for the Tapestry IOC container.
  */
 @Marker(Builtin.class)
+@PreventServiceDecoration
 public final class TapestryIOCModule
 {
     public static void bind(ServiceBinder binder)

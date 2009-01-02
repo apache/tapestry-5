@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,12 +17,11 @@ package org.apache.tapestry5.ioc.internal;
 import org.apache.tapestry5.ioc.*;
 import org.apache.tapestry5.ioc.annotations.EagerLoad;
 import org.apache.tapestry5.ioc.annotations.Marker;
+import org.apache.tapestry5.ioc.annotations.PreventServiceDecoration;
 import org.apache.tapestry5.ioc.annotations.Scope;
 import org.apache.tapestry5.ioc.def.ServiceDef;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.Defense;
-import static org.apache.tapestry5.ioc.internal.util.Defense.notBlank;
-import static org.apache.tapestry5.ioc.internal.util.Defense.notNull;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.OneShotLock;
 import org.apache.tapestry5.ioc.services.ClassFactory;
@@ -45,14 +44,19 @@ public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
 
     private final Set<Class> defaultMarkers;
 
+    private final boolean moduleDefaultPreventDecoration;
+
     public ServiceBinderImpl(ServiceDefAccumulator accumulator, Method bindMethod,
                              ClassFactory classFactory,
-                             Set<Class> defaultMarkers)
+                             Set<Class> defaultMarkers, boolean moduleDefaultPreventDecoration)
     {
         this.accumulator = accumulator;
         this.bindMethod = bindMethod;
         this.classFactory = classFactory;
         this.defaultMarkers = defaultMarkers;
+        this.moduleDefaultPreventDecoration = moduleDefaultPreventDecoration;
+
+        clear();
     }
 
     private String serviceId;
@@ -68,6 +72,8 @@ public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
     private boolean eagerLoad;
 
     private String scope;
+
+    private boolean preventDecoration;
 
     public void finish()
     {
@@ -90,10 +96,16 @@ public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
         Set<Class> markers = CollectionFactory.newSet(defaultMarkers);
         markers.addAll(this.markers);
 
-        ServiceDef serviceDef = new ServiceDefImpl(serviceInterface, serviceId, markers, scope, eagerLoad, source);
+        ServiceDef serviceDef = new ServiceDefImpl(serviceInterface, serviceId, markers, scope, eagerLoad,
+                                                   preventDecoration, source);
 
         accumulator.addServiceDef(serviceDef);
 
+        clear();
+    }
+
+    private void clear()
+    {
         serviceId = null;
         serviceInterface = null;
         serviceImplementation = null;
@@ -101,6 +113,7 @@ public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
         this.markers.clear();
         eagerLoad = false;
         scope = null;
+        preventDecoration = moduleDefaultPreventDecoration;
     }
 
     private ObjectCreatorSource createObjectCreatorSourceFromImplementationClass()
@@ -187,8 +200,8 @@ public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
 
     public <T> ServiceBindingOptions bind(Class<T> serviceInterface, Class<? extends T> serviceImplementation)
     {
-        notNull(serviceInterface, "serviceIterface");
-        notNull(serviceImplementation, "serviceImplementation");
+        Defense.notNull(serviceInterface, "serviceIterface");
+        Defense.notNull(serviceImplementation, "serviceImplementation");
 
         lock.check();
 
@@ -215,6 +228,8 @@ public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
             markers.addAll(Arrays.asList(marker.value()));
         }
 
+        preventDecoration |= serviceImplementation.getAnnotation(PreventServiceDecoration.class) != null;
+
         return this;
     }
 
@@ -227,9 +242,18 @@ public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
         return this;
     }
 
+    public ServiceBindingOptions preventDecoration()
+    {
+        lock.check();
+
+        preventDecoration = true;
+
+        return this;
+    }
+
     public ServiceBindingOptions withId(String id)
     {
-        notBlank(id, "id");
+        Defense.notBlank(id, "id");
 
         lock.check();
 
@@ -240,7 +264,7 @@ public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
 
     public ServiceBindingOptions scope(String scope)
     {
-        notBlank(scope, "scope");
+        Defense.notBlank(scope, "scope");
 
         lock.check();
 

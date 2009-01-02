@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,6 +16,8 @@ package org.apache.tapestry5.ioc.internal.util;
 
 import org.apache.tapestry5.ioc.*;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.def.ServiceDef;
+import org.apache.tapestry5.ioc.def.ServiceDef2;
 import org.apache.tapestry5.ioc.internal.QuietOperationTracker;
 import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newMap;
 import static org.apache.tapestry5.ioc.internal.util.InternalUtils.toList;
@@ -573,5 +575,61 @@ public class InternalUtilsTest extends IOCTestCase
         c = Arrays.asList("moe", "larry", "curly");
 
         assertEquals(InternalUtils.size(c), 3);
+    }
+
+    @Test
+    public void servicedef_to_servicedef2()
+    {
+        final ObjectCreator oc = mockObjectCreator();
+        final String serviceId = "RocketLauncher";
+        final Set<Class> markers = Collections.emptySet();
+        final Class serviceInterface = Runnable.class;
+
+        ServiceDef sd = new ServiceDef()
+        {
+            public ObjectCreator createServiceCreator(ServiceBuilderResources resources)
+            {
+                return oc;
+            }
+
+            public String getServiceId()
+            {
+                return serviceId;
+            }
+
+            public Set<Class> getMarkers()
+            {
+                return markers;
+            }
+
+            public Class getServiceInterface()
+            {
+                return serviceInterface;
+            }
+
+            public String getServiceScope()
+            {
+                return ScopeConstants.PERTHREAD;
+            }
+
+            public boolean isEagerLoad()
+            {
+                return true;
+            }
+        };
+
+        replay();
+
+        ServiceDef2 sd2 = InternalUtils.toServiceDef2(sd);
+
+        assertSame(sd2.createServiceCreator(null), oc);
+        assertSame(sd2.getServiceId(), serviceId);
+        assertSame(sd2.getMarkers(), markers);
+        assertSame(sd2.getServiceInterface(), serviceInterface);
+        assertSame(sd2.getServiceScope(), ScopeConstants.PERTHREAD);
+        assertTrue(sd2.isEagerLoad());
+        assertFalse(sd2.isPreventDecoration());
+
+        verify();
     }
 }

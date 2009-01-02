@@ -18,12 +18,14 @@ import org.apache.tapestry5.ioc.AnnotationProvider;
 import org.apache.tapestry5.ioc.ObjectLocator;
 import org.apache.tapestry5.ioc.ObjectProvider;
 import org.apache.tapestry5.ioc.OperationTracker;
+import org.apache.tapestry5.ioc.annotations.PreventServiceDecoration;
 import org.apache.tapestry5.ioc.internal.util.Invokable;
 import org.apache.tapestry5.ioc.services.ClassFabUtils;
 import org.apache.tapestry5.ioc.services.MasterObjectProvider;
 
 import java.util.List;
 
+@PreventServiceDecoration
 public class MasterObjectProviderImpl implements MasterObjectProvider
 {
     private final List<ObjectProvider> configuration;
