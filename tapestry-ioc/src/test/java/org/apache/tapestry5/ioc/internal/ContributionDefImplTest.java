@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,8 +18,6 @@ import org.apache.tapestry5.ioc.*;
 import org.apache.tapestry5.ioc.annotations.InjectService;
 import org.apache.tapestry5.ioc.def.ContributionDef;
 import org.apache.tapestry5.ioc.test.IOCTestCase;
-import static org.easymock.EasyMock.eq;
-import static org.easymock.EasyMock.isA;
 import org.slf4j.Logger;
 import org.testng.annotations.Test;
 
@@ -46,6 +44,7 @@ public class ContributionDefImplTest extends IOCTestCase implements ModuleBuilde
         Logger logger = mockLogger();
 
         train_getLogger(serviceResources, logger);
+        train_getServiceId(serviceResources, "Bif");
 
         configuration.add(toContribute);
 
@@ -70,6 +69,7 @@ public class ContributionDefImplTest extends IOCTestCase implements ModuleBuilde
 
         train_getLogger(resources, logger);
         train_getService(resources, "zip.Zap", UpcaseService.class, service);
+        train_getServiceId(resources, "Bif");
 
         configuration.add(service);
 
@@ -91,11 +91,7 @@ public class ContributionDefImplTest extends IOCTestCase implements ModuleBuilde
         Logger logger = mockLogger();
 
         train_getLogger(resources, logger);
-
-        Throwable t = new RuntimeException("Missing service.");
-
-        expect(resources.getObject(eq(MappedConfiguration.class), isA(AnnotationProvider.class)))
-                .andThrow(t);
+        train_getServiceId(resources, "Bif");
 
         replay();
 
@@ -109,9 +105,10 @@ public class ContributionDefImplTest extends IOCTestCase implements ModuleBuilde
         }
         catch (RuntimeException ex)
         {
-            assertEquals(ex.getMessage(), "Error invoking service contribution method "
-                    + getClass().getName()
-                    + ".contributeUnorderedWrongParameter(MappedConfiguration): Missing service.");
+            assertMessageContains(ex,
+                                  "Error invoking service contribution method org.apache.tapestry5.ioc.internal.ContributionDefImplTest.contributeUnorderedWrongParameter(MappedConfiguration)",
+                                  "Service 'Bif' is configured using org.apache.tapestry5.ioc.Configuration, not org.apache.tapestry5.ioc.MappedConfiguration."
+            );
         }
 
         verify();
@@ -132,6 +129,7 @@ public class ContributionDefImplTest extends IOCTestCase implements ModuleBuilde
         train_getLogger(resources, logger);
 
         train_getService(resources, "zip.Zap", UpcaseService.class, service);
+        train_getServiceId(resources, "Bif");
 
         configuration.add("fred", service);
 
@@ -157,6 +155,7 @@ public class ContributionDefImplTest extends IOCTestCase implements ModuleBuilde
         train_getLogger(resources, logger);
 
         train_getService(resources, "zip.Zap", UpcaseService.class, service);
+        train_getServiceId(resources, "Bif");
 
         configuration.add("upcase", service);
 
