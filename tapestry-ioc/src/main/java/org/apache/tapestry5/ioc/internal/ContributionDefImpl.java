@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,10 +16,7 @@ package org.apache.tapestry5.ioc.internal;
 
 import org.apache.tapestry5.ioc.*;
 import org.apache.tapestry5.ioc.def.ContributionDef;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.internal.util.InjectionResources;
-import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.ioc.internal.util.MapInjectionResources;
+import org.apache.tapestry5.ioc.internal.util.*;
 import org.apache.tapestry5.ioc.services.ClassFactory;
 
 import java.lang.reflect.InvocationTargetException;
@@ -34,6 +31,9 @@ public class ContributionDefImpl implements ContributionDef
     private final Method contributorMethod;
 
     private final ClassFactory classFactory;
+
+    private static final Class[] CONFIGURATION_TYPES = new Class[] {Configuration.class, MappedConfiguration.class,
+            OrderedConfiguration.class};
 
     public ContributionDefImpl(String serviceId, Method contributorMethod, ClassFactory classFactory)
     {
@@ -81,6 +81,19 @@ public class ContributionDefImpl implements ContributionDef
         resourceMap.put(Logger.class, resources.getLogger());
 
         InjectionResources injectionResources = new MapInjectionResources(resourceMap);
+
+        // For each of the other configuration types that is not expected, add a guard.
+
+        for (Class t : CONFIGURATION_TYPES)
+        {
+            if (parameterType != t)
+            {
+                injectionResources = new DelegatingInjectionResources(
+                        new WrongConfigurationTypeGuard(resources.getServiceId(), t, parameterType),
+                        injectionResources);
+            }
+        }
+
 
         Throwable fail = null;
 
