@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -67,32 +67,32 @@ public class StaticModule
         };
     }
 
-    public static synchronized void setFredRan(boolean fredRan)
+    static synchronized void setFredRan(boolean fredRan)
     {
         StaticModule.fredRan = fredRan;
     }
 
-    public static synchronized boolean getFredRan()
+    static synchronized boolean getFredRan()
     {
         return fredRan;
     }
 
-    public static synchronized void setInstantiated(boolean instantiated)
+    static synchronized void setInstantiated(boolean instantiated)
     {
         StaticModule.instantiated = instantiated;
     }
 
-    public static synchronized boolean isInstantiated()
+    static synchronized boolean isInstantiated()
     {
         return instantiated;
     }
 
-    public static synchronized void setDecoratorRan(boolean decoratorRan)
+    static synchronized void setDecoratorRan(boolean decoratorRan)
     {
         StaticModule.decoratorRan = decoratorRan;
     }
 
-    public static synchronized boolean getDecoratorRan()
+    static synchronized boolean getDecoratorRan()
     {
         return decoratorRan;
     }
@@ -116,5 +116,4 @@ public class StaticModule
     {
         configuration.add("Fred");
     }
-
 }

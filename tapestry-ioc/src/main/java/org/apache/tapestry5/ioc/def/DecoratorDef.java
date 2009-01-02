@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -51,15 +51,15 @@ public interface DecoratorDef
 
     /**
      * Creates an object that can perform the decoration (in the default case, by invoking the decorator method on the
-     * module builder instance.
+     * module class or instance.
      *
-     * @param moduleBuilderSource the module builder instance associated with the module containing the decorator (not
-     *                            necessarily the module containing the service being decorated)
-     * @param resources           the resources visible <em>to the decorator</em> (which may be in a different module
-     *                            than the service being decorated). Other resource properties (serviceId,
-     *                            serviceInterface, log, etc.) are for the service being decorated.
+     * @param moduleSource access to the the module  instance associated with the module containing the decorator (not
+     *                     necessarily the module containing the service being decorated)
+     * @param resources    the resources visible <em>to the decorator</em> (which may be in a different module than the
+     *                     service being decorated). Other resource properties (serviceId, serviceInterface, log, etc.)
+     *                     are for the service being decorated.
      */
-    ServiceDecorator createDecorator(ModuleBuilderSource moduleBuilderSource,
+    ServiceDecorator createDecorator(ModuleBuilderSource moduleSource,
                                      ServiceResources resources);
 
     /**

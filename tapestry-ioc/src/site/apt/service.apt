@@ -161,7 +161,7 @@ Service Ids
   
   * As parameters to the service implementation class' constructor (for autobuilt services)
   
-  * As parameters passed to the constructor of the service's module builder (cached inside instance variables)
+  * As parameters passed to the constructor of the service's module class (to be cached inside instance variables)
 
   * Directly into fields of the service implementation
   

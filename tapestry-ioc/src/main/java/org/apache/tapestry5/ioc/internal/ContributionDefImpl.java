@@ -53,22 +53,22 @@ public class ContributionDefImpl implements ContributionDef
         return serviceId;
     }
 
-    public void contribute(ModuleBuilderSource moduleBuilderSource, ServiceResources resources,
+    public void contribute(ModuleBuilderSource moduleSource, ServiceResources resources,
                            Configuration configuration)
     {
-        invokeMethod(moduleBuilderSource, resources, Configuration.class, configuration);
+        invokeMethod(moduleSource, resources, Configuration.class, configuration);
     }
 
-    public void contribute(ModuleBuilderSource moduleBuilderSource, ServiceResources resources,
+    public void contribute(ModuleBuilderSource moduleSource, ServiceResources resources,
                            OrderedConfiguration configuration)
     {
-        invokeMethod(moduleBuilderSource, resources, OrderedConfiguration.class, configuration);
+        invokeMethod(moduleSource, resources, OrderedConfiguration.class, configuration);
     }
 
-    public void contribute(ModuleBuilderSource moduleBuilderSource, ServiceResources resources,
+    public void contribute(ModuleBuilderSource moduleSource, ServiceResources resources,
                            MappedConfiguration configuration)
     {
-        invokeMethod(moduleBuilderSource, resources, MappedConfiguration.class, configuration);
+        invokeMethod(moduleSource, resources, MappedConfiguration.class, configuration);
     }
 
     private <T> void invokeMethod(ModuleBuilderSource source, ServiceResources resources,
@@ -97,7 +97,7 @@ public class ContributionDefImpl implements ContributionDef
 
         Throwable fail = null;
 
-        Object moduleBuilder = InternalUtils.isStatic(contributorMethod) ? null : source
+        Object moduleInstance = InternalUtils.isStatic(contributorMethod) ? null : source
                 .getModuleBuilder();
 
         try
@@ -107,7 +107,7 @@ public class ContributionDefImpl implements ContributionDef
                     resources,
                     injectionResources, resources.getTracker());
 
-            contributorMethod.invoke(moduleBuilder, parameters);
+            contributorMethod.invoke(moduleInstance, parameters);
         }
         catch (InvocationTargetException ex)
         {

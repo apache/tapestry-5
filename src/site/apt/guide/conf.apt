@@ -62,11 +62,11 @@ Configuring Tapestry
   
 * Tapestry IoC Configuration
 
-  Most other configuration occurs inside your application's module builder class.  The application module builder
+  Most other configuration occurs inside your application's module class.  The application module class
   will often define new services, provide overrides of services, or make contributions to service configurations.
   
-  Tapestry looks for a module builder class in the services package (under the root package). It capitalizes
-  the \<filter-name\> and appends "Module".  In the previous example, the module builder class
+  Tapestry looks for a module class in the services package (under the root package). It capitalizes
+  the \<filter-name\> and appends "Module".  In the previous example, the module class
   would be org.example.myapp.services.AppModule.
   
   If such a class exists, it is added to the IoC Registry. It is not an error for your application to not have a module, though

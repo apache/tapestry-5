@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -34,8 +34,8 @@ import java.lang.reflect.Modifier;
 import java.util.*;
 
 /**
- * Starting from the Class for a module builder, identifies all the services (service builder methods), decorators
- * (service decorator methods) and (not yet implemented) contributions (service contributor methods).
+ * Starting from the Class for a module, identifies all the services (service builder methods), decorators (service
+ * decorator methods) and (not yet implemented) contributions (service contributor methods).
  */
 public class DefaultModuleDefImpl implements ModuleDef, ServiceDefAccumulator
 {
@@ -56,7 +56,7 @@ public class DefaultModuleDefImpl implements ModuleDef, ServiceDefAccumulator
 
     private final static Map<Class, ConfigurationType> PARAMETER_TYPE_TO_CONFIGURATION_TYPE = newMap();
 
-    private final Class builderClass;
+    private final Class moduleClass;
 
     private final Logger logger;
 
@@ -70,11 +70,13 @@ public class DefaultModuleDefImpl implements ModuleDef, ServiceDefAccumulator
     /**
      * Keyed on decorator id.
      */
-    private final Map<String, DecoratorDef> decoratorDefs = newCaseInsensitiveMap();
+    private final Map<String, DecoratorDef> decoratorDefs = CollectionFactory.newCaseInsensitiveMap();
 
-    private final Set<ContributionDef> contributionDefs = newSet();
+    private final Set<ContributionDef> contributionDefs = CollectionFactory.newSet();
 
-    private final Set<Class> defaultMarkers = newSet();
+    private final Set<Class> defaultMarkers = CollectionFactory.newSet();
+
+    private final static Set<Method> OBJECT_METHODS = CollectionFactory.newSet(Object.class.getMethods());
 
     static
     {
@@ -84,18 +86,18 @@ public class DefaultModuleDefImpl implements ModuleDef, ServiceDefAccumulator
     }
 
     /**
-     * @param builderClass the class that is responsible for building services, etc.
+     * @param moduleClass  the class that is responsible for building services, etc.
      * @param logger       based on the class name of the module
      * @param classFactory factory used to create new classes at runtime or locate method line numbers for error
      *                     reporting
      */
-    public DefaultModuleDefImpl(Class<?> builderClass, Logger logger, ClassFactory classFactory)
+    public DefaultModuleDefImpl(Class<?> moduleClass, Logger logger, ClassFactory classFactory)
     {
-        this.builderClass = builderClass;
+        this.moduleClass = moduleClass;
         this.logger = logger;
         this.classFactory = classFactory;
 
-        Marker annotation = builderClass.getAnnotation(Marker.class);
+        Marker annotation = moduleClass.getAnnotation(Marker.class);
 
         if (annotation != null)
         {
@@ -103,23 +105,36 @@ public class DefaultModuleDefImpl implements ModuleDef, ServiceDefAccumulator
             defaultMarkers.addAll(Arrays.asList(annotation.value()));
         }
 
-        grind();
-        bind();
+        // Want to verify that every public method is meaningful to Tapestry IoC.  Remaining methods might
+        // have typos, i.e., "createFoo" that should be "buildFoo".
+
+        Set<Method> methods = CollectionFactory.newSet(moduleClass.getMethods());
+
+        methods.removeAll(OBJECT_METHODS);
+
+        grind(methods);
+        bind(methods);
+
+        if (methods.isEmpty()) return;
+
+        throw new RuntimeException(String.format("Module class %s contains unrecognized public methods: %s.",
+                                                 moduleClass.getName(),
+                                                 InternalUtils.joinSorted(methods)));
     }
 
     /**
-     * Identifies the module builder class and a list of service ids within the module.
+     * Identifies the module class and a list of service ids within the module.
      */
     @Override
     public String toString()
     {
-        return String.format("ModuleDef[%s %s]", builderClass.getName(), InternalUtils
+        return String.format("ModuleDef[%s %s]", moduleClass.getName(), InternalUtils
                 .joinSorted(serviceDefs.keySet()));
     }
 
     public Class getBuilderClass()
     {
-        return builderClass;
+        return moduleClass;
     }
 
     public Set<String> getServiceIds()
@@ -132,9 +147,9 @@ public class DefaultModuleDefImpl implements ModuleDef, ServiceDefAccumulator
         return serviceDefs.get(serviceId);
     }
 
-    private void grind()
+    private void grind(Set<Method> remainingMethods)
     {
-        Method[] methods = builderClass.getMethods();
+        Method[] methods = moduleClass.getMethods();
 
         Comparator<Method> c = new Comparator<Method>()
         {
@@ -159,18 +174,21 @@ public class DefaultModuleDefImpl implements ModuleDef, ServiceDefAccumulator
             if (name.startsWith(BUILD_METHOD_NAME_PREFIX))
             {
                 addServiceDef(m);
+                remainingMethods.remove(m);
                 continue;
             }
 
             if (name.startsWith(DECORATE_METHOD_NAME_PREFIX))
             {
                 addDecoratorDef(m);
+                remainingMethods.remove(m);
                 continue;
             }
 
             if (name.startsWith(CONTRIBUTE_METHOD_NAME_PREFIX))
             {
                 addContributionDef(m);
+                remainingMethods.remove(m);
                 continue;
             }
         }
@@ -193,20 +211,14 @@ public class DefaultModuleDefImpl implements ModuleDef, ServiceDefAccumulator
             if (thisParameter != null)
             {
                 if (type != null)
-                {
-                    logger.warn(IOCMessages.tooManyContributionParameters(method));
-                    return;
-                }
+                    throw new RuntimeException(IOCMessages.tooManyContributionParameters(method));
 
                 type = thisParameter;
             }
         }
 
         if (type == null)
-        {
-            logger.warn(IOCMessages.noContributionParameter(method));
-            return;
-        }
+            throw new RuntimeException(IOCMessages.noContributionParameter(method));
 
         ContributionDef def = new ContributionDefImpl(serviceId, method, classFactory);
 
@@ -224,10 +236,7 @@ public class DefaultModuleDefImpl implements ModuleDef, ServiceDefAccumulator
         Class returnType = method.getReturnType();
 
         if (returnType.isPrimitive() || returnType.isArray())
-        {
-            logger.warn(decoratorMethodWrongReturnType(method));
-            return;
-        }
+            throw new RuntimeException(decoratorMethodWrongReturnType(method));
 
         Order orderAnnotation = method.getAnnotation(Order.class);
         Match match = method.getAnnotation(Match.class);
@@ -280,10 +289,7 @@ public class DefaultModuleDefImpl implements ModuleDef, ServiceDefAccumulator
         Class returnType = method.getReturnType();
 
         if (returnType.isPrimitive() || returnType.isArray())
-        {
-            logger.warn(buildMethodWrongReturnType(method));
-            return;
-        }
+            throw new RuntimeException(buildMethodWrongReturnType(method));
 
         String scope = extractServiceScope(method);
         boolean eagerLoad = method.isAnnotationPresent(EagerLoad.class);
@@ -349,33 +355,32 @@ public class DefaultModuleDefImpl implements ModuleDef, ServiceDefAccumulator
 
     public String getLoggerName()
     {
-        return builderClass.getName();
+        return moduleClass.getName();
     }
 
     /**
      * See if the build class defined a bind method and invoke it.
      */
-    private void bind()
+    private void bind(Set<Method> remainingMethods)
     {
         Throwable failure;
         Method bindMethod = null;
 
         try
         {
-            bindMethod = builderClass.getMethod("bind", ServiceBinder.class);
+            bindMethod = moduleClass.getMethod("bind", ServiceBinder.class);
 
             if (!Modifier.isStatic(bindMethod.getModifiers()))
-            {
-                logger.error(IOCMessages.bindMethodMustBeStatic(InternalUtils.asString(bindMethod, classFactory)));
-
-                return;
-            }
+                throw new RuntimeException(
+                        IOCMessages.bindMethodMustBeStatic(InternalUtils.asString(bindMethod, classFactory)));
 
             ServiceBinderImpl binder = new ServiceBinderImpl(this, bindMethod, classFactory, defaultMarkers);
 
             bindMethod.invoke(null, binder);
 
             binder.finish();
+
+            remainingMethods.remove(bindMethod);
 
             return;
         }

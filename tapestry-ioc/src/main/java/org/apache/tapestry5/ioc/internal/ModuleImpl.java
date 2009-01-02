@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -48,7 +48,7 @@ public class ModuleImpl implements Module
     /**
      * Lazily instantiated.  Access is guarded by BARRIER.
      */
-    private Object moduleBuilder;
+    private Object moduleInstance;
 
     // Set to true when invoking the module constructor. Used to
     // detect endless loops caused by irresponsible dependencies in
@@ -301,43 +301,43 @@ public class ModuleImpl implements Module
         return registry.invoke(description, operation);
     }
 
-    private final Runnable instantiateModuleBuilder = new Runnable()
+    private final Runnable instantiateModule = new Runnable()
     {
         public void run()
         {
-            moduleBuilder = registry.invoke("Constructing module class " + moduleDef.getBuilderClass().getName(),
-                                            new Invokable()
-                                            {
-                                                public Object invoke()
-                                                {
-                                                    return constructModuleBuilder();
-                                                }
-                                            });
+            moduleInstance = registry.invoke("Constructing module class " + moduleDef.getBuilderClass().getName(),
+                                             new Invokable()
+                                             {
+                                                 public Object invoke()
+                                                 {
+                                                     return instantiateModuleInstance();
+                                                 }
+                                             });
         }
     };
 
-    private final Invokable provideModuleBuilder = new Invokable<Object>()
+    private final Invokable provideModuleInstance = new Invokable<Object>()
     {
         public Object invoke()
         {
-            if (moduleBuilder == null) BARRIER.withWrite(instantiateModuleBuilder);
+            if (moduleInstance == null) BARRIER.withWrite(instantiateModule);
 
-            return moduleBuilder;
+            return moduleInstance;
         }
     };
 
     public Object getModuleBuilder()
     {
-        return BARRIER.withRead(provideModuleBuilder);
+        return BARRIER.withRead(provideModuleInstance);
     }
 
-    private Object constructModuleBuilder()
+    private Object instantiateModuleInstance()
     {
-        Class builderClass = moduleDef.getBuilderClass();
+        Class moduleClass = moduleDef.getBuilderClass();
 
-        Constructor[] constructors = builderClass.getConstructors();
+        Constructor[] constructors = moduleClass.getConstructors();
 
-        if (constructors.length == 0) throw new RuntimeException(IOCMessages.noPublicConstructors(builderClass));
+        if (constructors.length == 0) throw new RuntimeException(IOCMessages.noPublicConstructors(moduleClass));
 
         if (constructors.length > 1)
         {
@@ -355,13 +355,13 @@ public class ModuleImpl implements Module
 
             Arrays.sort(constructors, comparator);
 
-            logger.warn(IOCMessages.tooManyPublicConstructors(builderClass, constructors[0]));
+            logger.warn(IOCMessages.tooManyPublicConstructors(moduleClass, constructors[0]));
         }
 
         Constructor constructor = constructors[0];
 
         if (insideConstructor)
-            throw new RuntimeException(IOCMessages.recursiveModuleConstructor(builderClass, constructor));
+            throw new RuntimeException(IOCMessages.recursiveModuleConstructor(moduleClass, constructor));
 
         ObjectLocator locator = new ObjectLocatorImpl(registry, this);
         Map<Class, Object> resourcesMap = CollectionFactory.newMap();
@@ -403,7 +403,7 @@ public class ModuleImpl implements Module
             insideConstructor = false;
         }
 
-        throw new RuntimeException(IOCMessages.instantiateBuilderError(builderClass, fail), fail);
+        throw new RuntimeException(IOCMessages.instantiateBuilderError(moduleClass, fail), fail);
     }
 
     private Object createProxy(ServiceResources resources, ObjectCreator creator)

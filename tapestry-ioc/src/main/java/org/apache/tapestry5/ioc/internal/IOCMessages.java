@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -209,14 +209,14 @@ final class IOCMessages
         return MESSAGES.format("error-building-service", serviceId, serviceDef, cause);
     }
 
-    static String noPublicConstructors(Class moduleBuilderClass)
+    static String noPublicConstructors(Class moduleClass)
     {
-        return MESSAGES.format("no-public-constructors", moduleBuilderClass.getName());
+        return MESSAGES.format("no-public-constructors", moduleClass.getName());
     }
 
-    static String tooManyPublicConstructors(Class moduleBuilderClass, Constructor constructor)
+    static String tooManyPublicConstructors(Class moduleClass, Constructor constructor)
     {
-        return MESSAGES.format("too-many-public-constructors", moduleBuilderClass.getName(), constructor);
+        return MESSAGES.format("too-many-public-constructors", moduleClass.getName(), constructor);
     }
 
     static String recursiveModuleConstructor(Class builderClass, Constructor constructor)
