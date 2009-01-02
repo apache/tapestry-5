@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -41,11 +41,12 @@ public class ServiceBuilderMethodInvoker extends AbstractServiceCreator
      */
     public Object createObject()
     {
-        // Defer getting (and possibly instantitating) the module builder until the last possible
+        // Defer getting (and possibly instantitating) the module instance until the last possible
         // moment. If the method is static, there's no need to even get the builder.
 
-        Object moduleBuilder = InternalUtils.isStatic(builderMethod) ? null : resources
-                .getModuleBuilder();
+        Object moduleInstance = InternalUtils.isStatic(builderMethod)
+                                ? null
+                                : resources.getModuleBuilder();
 
         Object result = null;
         Throwable failure = null;
@@ -60,7 +61,7 @@ public class ServiceBuilderMethodInvoker extends AbstractServiceCreator
             if (logger.isDebugEnabled())
                 logger.debug(IOCMessages.invokingMethod(creatorDescription));
 
-            result = builderMethod.invoke(moduleBuilder, parameters);
+            result = builderMethod.invoke(moduleInstance, parameters);
         }
         catch (InvocationTargetException ite)
         {

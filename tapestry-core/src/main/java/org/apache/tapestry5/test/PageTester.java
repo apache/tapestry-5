@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -77,7 +77,7 @@ public class PageTester implements ComponentInvoker
      * @param appPackage    The same value you would specify using the tapestry.app-package context parameter. As this
      *                      testing environment is not run in a servlet container, you need to specify it.
      * @param appName       The same value you would specify as the filter name. It is used to form the name of the
-     *                      module builder for your app. If you don't have one, pass an empty string.
+     *                      module class for your app. If you don't have one, pass an empty string.
      * @param contextPath   The path to the context root so that Tapestry can find the templates (if they're put
      *                      there).
      * @param moduleClasses Classes of additional modules to load

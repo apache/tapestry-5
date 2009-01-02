@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -31,7 +31,7 @@ import java.util.Map;
  */
 public class ServiceDecoratorImpl implements ServiceDecorator
 {
-    private final ModuleBuilderSource moduleBuilderSource;
+    private final ModuleBuilderSource moduleSource;
 
     private final String serviceId;
 
@@ -47,12 +47,12 @@ public class ServiceDecoratorImpl implements ServiceDecorator
 
     private final Class serviceInterface;
 
-    public ServiceDecoratorImpl(Method method, ModuleBuilderSource moduleBuilderSource,
+    public ServiceDecoratorImpl(Method method, ModuleBuilderSource moduleSource,
                                 ServiceResources resources, ClassFactory classFactory)
     {
         serviceId = resources.getServiceId();
         decoratorMethod = method;
-        this.moduleBuilderSource = moduleBuilderSource;
+        this.moduleSource = moduleSource;
         this.resources = resources;
         serviceInterface = resources.getServiceInterface();
         logger = resources.getLogger();
@@ -92,9 +92,9 @@ public class ServiceDecoratorImpl implements ServiceDecorator
         Object result = null;
         Throwable failure = null;
 
-        Object moduleBuilder = InternalUtils.isStatic(decoratorMethod)
-                               ? null
-                               : moduleBuilderSource.getModuleBuilder();
+        Object moduleInstance = InternalUtils.isStatic(decoratorMethod)
+                                ? null
+                                : moduleSource.getModuleBuilder();
 
         try
         {
@@ -103,7 +103,7 @@ public class ServiceDecoratorImpl implements ServiceDecorator
                     this.resources,
                     injectionResources, resources.getTracker());
 
-            result = decoratorMethod.invoke(moduleBuilder, parameters);
+            result = decoratorMethod.invoke(moduleInstance, parameters);
         }
         catch (InvocationTargetException ite)
         {

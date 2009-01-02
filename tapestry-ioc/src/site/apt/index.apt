@@ -92,8 +92,7 @@ Goals
   and easier than a big chunk of XML.
 
   In addition, moving from XML to Java code encourages testing; you can unit test the 
-  service builder methods of your
-  module builder class, but you can't realistically unit test an XML descriptor.
+  service builder methods of your  module  class, but you can't realistically unit test an XML descriptor.
   
   Tapestry IoC modules are easily packaged into JAR files, supporting 
   zero-configuration usage: just drop the JAR onto the classpath.
@@ -165,10 +164,10 @@ Terminology
   
   Services are aggregated into <<modules>>:
       
-  * A module is defined by a <<module builder>>, a specific class containing a mix of static or instance methods, used to define
+  * A module is defined by a <<module class>>, a specific class containing a mix of static or instance methods, used to define
     services, decorate them (see below), or contribute to service configurations (again, more below).
   
-  * Methods of the module builder class define the services provided by the module, 
+  * Methods of the module class define the services provided by the module, 
     and the same methods are responsible
     for instantiating the service implementation.
     

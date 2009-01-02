@@ -29,3 +29,8 @@ Release 5.1.0.0
   Tapestry is now more aggressive about automatically re-storing any session persisted object
   back into the session at the end of the request (this used to only apply to application state objects).  See the 
   {{{guide/persist.html}persistent page data}} notes for more details.
+
+  Many questionable practices in Tapestry module classes that used to produce warnings (which were
+  ignored, leading to more difficult questions) have been changed to fail early with exceptions. This includes
+  extra public methods on a module class that are not used by Tapestry IoC, and several other similar
+  scenarios.

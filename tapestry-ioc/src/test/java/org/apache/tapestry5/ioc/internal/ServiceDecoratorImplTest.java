@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -29,13 +29,13 @@ public class ServiceDecoratorImplTest extends IOCInternalTestCase
 
     private final OperationTracker tracker = new QuietOperationTracker();
 
-    private ModuleBuilderSource newSource(final Object builder)
+    private ModuleBuilderSource newSource(final Object moduleInstance)
     {
         return new ModuleBuilderSource()
         {
             public Object getModuleBuilder()
             {
-                return builder;
+                return moduleInstance;
             }
         };
     }

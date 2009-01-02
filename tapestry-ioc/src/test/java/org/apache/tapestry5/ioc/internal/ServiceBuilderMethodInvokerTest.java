@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -348,9 +348,9 @@ public class ServiceBuilderMethodInvokerTest extends IOCInternalTestCase
     }
 
     protected final void train_getModuleBuilder(ServiceBuilderResources resources,
-                                                Object moduleBuilder)
+                                                Object moduleInstance)
     {
-        expect(resources.getModuleBuilder()).andReturn(moduleBuilder);
+        expect(resources.getModuleBuilder()).andReturn(moduleInstance);
     }
 
     @Test

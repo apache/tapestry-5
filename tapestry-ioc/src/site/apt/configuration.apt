@@ -75,9 +75,9 @@ Tapestry IoC Configurations
   Now the FileServicerDispatcher builder method gets a Map with at least four entries in it.
 
   Because Tapestry IoC is highly dynamic (it scans the visible JAR manifest files to identify
-  module builder classes), the FileServicerDispatcher service may be in one module, and the
+  module classes), the FileServicerDispatcher service may be in one module, and the
   other contributing modules (such as the one that contributes the Office file services) may be written at 
-  a much later date. With no change to the FileServicerDispatcher service or its module builder class,
+  a much later date. With no change to the FileServicerDispatcher service or its module class,
   the new services "plug into" the overall solution, simply by having their JAR's on runtime classpath. 
   
 Configuration Types

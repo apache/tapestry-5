@@ -948,7 +948,7 @@ public class IntegrationTest extends IOCInternalTestCase
         catch (RuntimeException ex)
         {
             assertMessageContains(ex,
-                                  "Module builder class org.apache.tapestry5.ioc.internal.PrivateConstructorModule does not contain any public constructors.");
+                                  "Module class org.apache.tapestry5.ioc.internal.PrivateConstructorModule does not contain any public constructors.");
         }
     }
 
@@ -1082,6 +1082,26 @@ public class IntegrationTest extends IOCInternalTestCase
             assertMessageContains(ex,
                                   "Contibution org.apache.tapestry5.ioc.InvalidContributeDefModule.contributeDoesNotExist(Configuration)",
                                   "is for service 'DoesNotExist', which does not exist.");
+        }
+    }
+
+    /**
+     * TAP5-436
+     */
+    @Test
+    public void extra_methods_on_module_class_are_errors()
+    {
+        try
+        {
+            buildRegistry(ExtraMethodsModule.class);
+            unreachable();
+        }
+        catch (RuntimeException ex)
+        {
+            assertMessageContains(ex,
+                                  "Module class org.apache.tapestry5.ioc.ExtraMethodsModule contains unrecognized public methods: ",
+                                  "thisMethodIsInvalid()",
+                                  "soIsThisMethod().");
         }
     }
 }
