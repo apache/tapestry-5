@@ -10,10 +10,11 @@ Tapestry IoC Configurations
   
   So ... nice term, what does it mean?
   
-  Distributed configuration is the key feature of Tapestry IoC that supports <extensibility>.
+  Distributed configuration is the key feature of Tapestry IoC that supports <extensibility>
+  and <modularity>.
   
   The distributed part refers to the fact that <any module> may make <contributions> to 
-  any service's configuration (subject to the normal visibility rules for private services).
+  any service's configuration.
   
   This seems esoteric, but is quite handy, and is best explained by example.
   
@@ -249,3 +250,17 @@ Injecting Resources
   []
   
   No annotation is needed for these cases.
+
+Configuration Overrides
+
+  <<New in 5.1>> The OrderedConfiguration and MappedConfiguration interfaces now support overrides.  An override is a replacement
+  for a normally contributed object. An override <must> match a contributed object, and each contributed object may be overidden
+  at most once.
+
+  The new object replaces the original object; alternately, you may override the original object with null.
+
+  This allows you to fine tune configuration values that are contributed from modules that you are using, rather than just those
+  that you write yourself.  It is powerful and a bit dangerous.
+
+  In Tapestry 5.0, services that wanted to support this kind of override behavior had to implement it on an ad-hoc basis,
+  such as ApplicationDefaults overriding FactoryDefaults.  In many cases, that is stil useful.

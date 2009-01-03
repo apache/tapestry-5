@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -37,6 +37,8 @@ public class ValidatingMappedConfigurationWrapper<K, V> implements MappedConfigu
 {
     private final Map<K, V> map;
 
+    private final Map<K, MappedConfigurationOverride<K, V>> overrides;
+
     private final String serviceId;
 
     private final ContributionDef contributionDef;
@@ -49,12 +51,14 @@ public class ValidatingMappedConfigurationWrapper<K, V> implements MappedConfigu
 
     private final ObjectLocator locator;
 
-    public ValidatingMappedConfigurationWrapper(Map<K, V> map, String serviceId, ContributionDef contributionDef,
+    public ValidatingMappedConfigurationWrapper(Map<K, V> map, Map<K, MappedConfigurationOverride<K, V>> overrides,
+                                                String serviceId, ContributionDef contributionDef,
                                                 Class<K> expectedKeyType, Class<V> expectedValueType,
                                                 Map<K, ContributionDef> keyToContributor,
                                                 ObjectLocator locator)
     {
         this.map = map;
+        this.overrides = overrides;
         this.serviceId = serviceId;
         this.contributionDef = contributionDef;
         this.expectedKeyType = expectedKeyType;
@@ -65,21 +69,13 @@ public class ValidatingMappedConfigurationWrapper<K, V> implements MappedConfigu
 
     public void add(K key, V value)
     {
-        if (key == null)
-            throw new NullPointerException(IOCMessages.contributionKeyWasNull(serviceId));
-
-        if (!expectedKeyType.isInstance(key))
-            throw new IllegalArgumentException(
-                    IOCMessages.contributionWrongKeyType(serviceId, key
-                            .getClass(), expectedKeyType));
+        validateKey(key);
 
         if (value == null)
             throw new NullPointerException(IOCMessages.contributionWasNull(serviceId));
 
 
-        if (!expectedValueType.isInstance(value))
-            throw new IllegalArgumentException(IOCMessages.contributionWrongValueType(serviceId, value
-                    .getClass(), expectedValueType));
+        validateValue(value);
 
         ContributionDef existing = keyToContributor.get(key);
 
@@ -94,10 +90,51 @@ public class ValidatingMappedConfigurationWrapper<K, V> implements MappedConfigu
         keyToContributor.put(key, contributionDef);
     }
 
+    private void validateValue(V value)
+    {
+        if (!expectedValueType.isInstance(value))
+            throw new IllegalArgumentException(IOCMessages.contributionWrongValueType(serviceId, value
+                    .getClass(), expectedValueType));
+    }
+
+    private void validateKey(K key)
+    {
+        if (key == null)
+            throw new NullPointerException(IOCMessages.contributionKeyWasNull(serviceId));
+
+        if (!expectedKeyType.isInstance(key))
+            throw new IllegalArgumentException(
+                    IOCMessages.contributionWrongKeyType(serviceId, key
+                            .getClass(), expectedKeyType));
+    }
+
     public void addInstance(K key, Class<? extends V> clazz)
     {
         V value = locator.autobuild(clazz);
 
         add(key, value);
+    }
+
+    public void override(K key, V value)
+    {
+        validateKey(key);
+
+        if (value != null) validateValue(value);
+
+        MappedConfigurationOverride<K, V> existing = overrides.get(key);
+
+        if (existing != null)
+            throw new IllegalArgumentException(
+                    String.format("Contribution key %s has already been overridden (by %s).",
+                                  key, existing.getContribDef()));
+
+
+        overrides.put(key, new MappedConfigurationOverride<K, V>(contributionDef, map, key, value));
+    }
+
+
+    public void overrideInstance(K key, Class<? extends V> clazz)
+    {
+        override(key, locator.autobuild(clazz));
     }
 }

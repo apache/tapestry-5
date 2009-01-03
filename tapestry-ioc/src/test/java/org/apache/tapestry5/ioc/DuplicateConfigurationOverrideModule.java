@@ -20,5 +20,10 @@ public class DuplicateConfigurationOverrideModule
     {
         configuration.override("fred", "Fred Flintstone");
     }
+
+    public void contributeStringLookup(MappedConfiguration<String, String> configuration)
+    {
+        configuration.override("fred", "Frederick Flintstone");
+    }
 }
 

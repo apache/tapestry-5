@@ -30,7 +30,7 @@ import java.util.Map;
 public class BarneyModule
 {
     @Match(
-            { "UnorderedNames", "Fred", "PrivateFredAlias" })
+            {"UnorderedNames", "Fred", "PrivateFredAlias"})
     @Order("after:Beta")
     public Object decorateGamma(Object delegate, DecoratorList list)
     {
@@ -53,7 +53,6 @@ public class BarneyModule
 
                 return 1;
             }
-
         };
     }
 
@@ -111,5 +110,11 @@ public class BarneyModule
     public void contributeUnorderedNames(Configuration<String> configuration)
     {
         configuration.add("Gamma");
+    }
+
+    public void contributeStringLookup(MappedConfiguration<String, String> configuration)
+    {
+        configuration.add("barney", "BARNEY");
+        configuration.add("betty", "BETTY");
     }
 }

@@ -19,7 +19,7 @@ package org.apache.tapestry5.ioc;
  * configuration.
  * <p/>
  * A service can <em>collect</em> contributions in three different ways: <ul> <li>As an un-ordered collection of
- * values</li> <li>As an ordered list of values (where each value has a unique id, pre-requisited and
+ * values</li> <li>As an ordered list of values (where each value has a unique id, pre-requisites and
  * post-requisites)</li> <li>As a map of keys and values </ul>
  * <p/>
  * The service defines the <em>type</em> of contribution, in terms of a base class or service interface. Contributions
