@@ -1143,4 +1143,58 @@ public class IntegrationTest extends IOCInternalTestCase
 
         r.shutdown();
     }
+
+    @Test
+    public void successful_ordered_configuration_override()
+    {
+        Registry r = buildRegistry(FredModule.class, BarneyModule.class, ConfigurationOverrideModule.class);
+
+        NameListHolder service = r.getService("OrderedNames", NameListHolder.class);
+
+        List<String> names = service.getNames();
+
+        assertEquals(names, Arrays.asList("BARNEY", "WILMA", "Mr. Flintstone"));
+    }
+
+    @Test
+    public void failed_ordered_configuration_override()
+    {
+        Registry r = buildRegistry(FredModule.class, BarneyModule.class, FailedConfigurationOverrideModule.class);
+
+        NameListHolder service = r.getService("OrderedNames", NameListHolder.class);
+
+        try
+        {
+            service.getNames();
+            unreachable();
+        }
+        catch (RuntimeException ex)
+        {
+            assertMessageContains(ex,
+                                  "Failure processing override from org.apache.tapestry5.ioc.FailedConfigurationOverrideModule.contributeOrderedNames(OrderedConfiguration)",
+                                  "Override for object 'wilma' is invalid as it does not match an existing object.");
+        }
+    }
+
+    @Test
+    public void duplicate_ordered_configuration_override()
+    {
+        Registry r = buildRegistry(FredModule.class, BarneyModule.class, ConfigurationOverrideModule.class,
+                                   DuplicateConfigurationOverrideModule.class);
+
+        NameListHolder service = r.getService("OrderedNames", NameListHolder.class);
+
+        try
+        {
+            service.getNames();
+            unreachable();
+        }
+        catch (RuntimeException ex)
+        {
+            // Can't get too specific since we don't know which module will get processed first
+            assertMessageContains(ex,
+                                  "Error invoking service contribution method ",
+                                  "Contribution 'fred' has already been overridden");
+        }
+    }
 }

@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -41,7 +41,7 @@ public class ValidatingOrderedConfigurationWrapperTest extends IOCInternalTestCa
         replay();
 
         OrderedConfiguration<Runnable> wrapper = new ValidatingOrderedConfigurationWrapper<Runnable>(
-                orderer, "Service", Runnable.class, null);
+                orderer, null, null, "Service", Runnable.class, null);
 
         wrapper.add("id", contribution, "after:pre", "before:post");
 
@@ -68,7 +68,7 @@ public class ValidatingOrderedConfigurationWrapperTest extends IOCInternalTestCa
         replay();
 
         OrderedConfiguration<Map> wrapper = new ValidatingOrderedConfigurationWrapper<Map>(
-                orderer, "Service", Map.class, locator);
+                orderer, null, null, "Service", Map.class, locator);
 
         wrapper.addInstance("id", HashMap.class, "after:pre", "before:post");
 
@@ -86,7 +86,7 @@ public class ValidatingOrderedConfigurationWrapperTest extends IOCInternalTestCa
         replay();
 
         OrderedConfiguration<Runnable> wrapper = new ValidatingOrderedConfigurationWrapper<Runnable>(
-                orderer, "Service", Runnable.class, null);
+                orderer, null, null, "Service", Runnable.class, null);
 
         wrapper.add("id", null);
 
@@ -104,7 +104,7 @@ public class ValidatingOrderedConfigurationWrapperTest extends IOCInternalTestCa
 
         replay();
 
-        OrderedConfiguration wrapper = new ValidatingOrderedConfigurationWrapper(orderer, "Service",
+        OrderedConfiguration wrapper = new ValidatingOrderedConfigurationWrapper(orderer, null, null, "Service",
                                                                                  Runnable.class, null);
 
         try

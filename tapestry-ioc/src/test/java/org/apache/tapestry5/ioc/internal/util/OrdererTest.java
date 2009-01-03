@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -41,6 +41,57 @@ public class OrdererTest extends IOCInternalTestCase
         List<String> ordered = o.getOrdered();
 
         assertEquals(ordered, Arrays.asList("FRED", "BARNEY", "WILMA", "BETTY"));
+
+        verify();
+    }
+
+    @Test
+    public void override()
+    {
+        Logger logger = mockLogger();
+
+        replay();
+
+        Orderer<String> o = new Orderer<String>(logger);
+
+        o.add("fred", "FRED");
+        o.add("barney", "BARNEY");
+        o.add("wilma", "WILMA");
+        o.add("betty", "BETTY");
+
+        o.override("barney", "Mr. Rubble", "before:*");
+
+        List<String> ordered = o.getOrdered();
+
+        assertEquals(ordered, Arrays.asList("Mr. Rubble", "FRED", "WILMA", "BETTY"));
+
+        verify();
+    }
+
+    @Test
+    public void failed_override()
+    {
+        Logger logger = mockLogger();
+
+        replay();
+
+        Orderer<String> o = new Orderer<String>(logger);
+
+        o.add("fred", "FRED");
+        o.add("barney", "BARNEY");
+        o.add("wilma", "WILMA");
+        o.add("betty", "BETTY");
+
+        try
+        {
+            o.override("bambam", "Mr. Rubble JR.", "before:*");
+            unreachable();
+        }
+        catch (IllegalArgumentException ex)
+        {
+            assertEquals(ex.getMessage(),
+                         "Override for object 'bambam' is invalid as it does not match an existing object.");
+        }
 
         verify();
     }

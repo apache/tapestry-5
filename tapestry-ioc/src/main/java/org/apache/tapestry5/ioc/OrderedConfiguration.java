@@ -1,4 +1,4 @@
-// Copyright 2006, 2008 The Apache Software Foundation
+// Copyright 2006, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -39,6 +39,17 @@ public interface OrderedConfiguration<T>
     void add(String id, T object, String... constraints);
 
     /**
+     * Overrides a normally contributed object.  Each override must match a single normally contributed object.
+     *
+     * @param id          identifies object to override
+     * @param object      overriding object (may be null)
+     * @param constraints contrains for the overridden object, replacing constraints for the original object (even if
+     *                    omitted, in which case the override object will have no orderring contraints)
+     * @since 5.1.0.0
+     */
+    void override(String id, T object, String... constraints);
+
+    /**
      * Adds an ordered object by instantiating (with dependencies) the indicated class.
      *
      * @param id          of contribution (used for ordering)
@@ -47,4 +58,14 @@ public interface OrderedConfiguration<T>
      * @since 5.1.0.0
      */
     void addInstance(String id, Class<? extends T> clazz, String... constraints);
+
+    /**
+     * Instantiates an object and adds it as an override.
+     *
+     * @param id          of object to override
+     * @param clazz       to instantiate
+     * @param constraints override contraints
+     * @since 5.1.0.0
+     */
+    void overrideInstance(String id, Class<? extends T> clazz, String... constraints);
 }
