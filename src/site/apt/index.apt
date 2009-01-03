@@ -52,6 +52,8 @@ Third Party Libraries, Tutorials and Resources
 *--+--+--+
 | {{{http://www.arsmachina.com.br}Ars Machina}} |   Thiago H. de Paula Figueiredo |  Tapestry/Hibernate extensions for Generic DAOs, standard CRUD interfaces, and user access logging and tracking |
 *--+--+--+
+| {{{http://www.chenillekit.org/}Chenille Kit}} |  Massimo Lusetti  |   Collection of modules, services, utilities and components (many of which require only tapestry-ioc) \
+*--+--+--+
 | {{{http://equanda.org/equanda-tapestry5/}equanda-tapestry5}} |   Joachim Van der Auwera |      Components useful for building enterprise applications. Includes Accordion, Tabs, Formtraversal. Amongst other things, these focus on easy input of data without the need for a mouse.
 *--+--+--+
 | {{{http://code.google.com/p/gc-tapestry-components/}Godcode Components}} |   Chris Lewis |         A mixed collection of components providing simple but time-saving functionality, as well as more exotic ones; built on top of the prototype and script.aculo.us javascript libraries. |
@@ -77,7 +79,9 @@ Third Party Libraries, Tutorials and Resources
 
 New And Of Note
 
-  * Property expressions have been improved: You can now invoke methods with parameters, or create a list.
+  * Ordered and mapped configurations can now have overrides.
+
+  * Property expressions have been improved: You can now invoke methods with parameters, or create a list (very useful for link contexts).
 
   * IoC Service contributions may now be made in terms of classes (that are automatically instantiated) as well as
     instances.

@@ -16,6 +16,7 @@ package org.apache.tapestry5.ioc;
 
 import org.apache.tapestry5.ioc.internal.*;
 import org.apache.tapestry5.ioc.services.*;
+import org.apache.tapestry5.ioc.util.NonmatchingMappedConfigurationOverrideModule;
 import org.easymock.EasyMock;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -1120,6 +1121,9 @@ public class IntegrationTest extends IOCInternalTestCase
         r.shutdown();
     }
 
+    /**
+     * TAP5-430
+     */
     @Test
     public void bind_service_marked_for_no_decoration_explicitly()
     {
@@ -1132,6 +1136,9 @@ public class IntegrationTest extends IOCInternalTestCase
         r.shutdown();
     }
 
+    /**
+     * TAP5-430
+     */
     @Test
     public void bind_service_with_prevent_service_decoration_annotations_on_implementation_class()
     {
@@ -1144,6 +1151,9 @@ public class IntegrationTest extends IOCInternalTestCase
         r.shutdown();
     }
 
+    /**
+     * TAP5-437
+     */
     @Test
     public void successful_ordered_configuration_override()
     {
@@ -1156,6 +1166,9 @@ public class IntegrationTest extends IOCInternalTestCase
         assertEquals(names, Arrays.asList("BARNEY", "WILMA", "Mr. Flintstone"));
     }
 
+    /**
+     * TAP5-437
+     */
     @Test
     public void failed_ordered_configuration_override()
     {
@@ -1176,6 +1189,9 @@ public class IntegrationTest extends IOCInternalTestCase
         }
     }
 
+    /**
+     * TAP5-437
+     */
     @Test
     public void duplicate_ordered_configuration_override()
     {
@@ -1195,6 +1211,73 @@ public class IntegrationTest extends IOCInternalTestCase
             assertMessageContains(ex,
                                   "Error invoking service contribution method ",
                                   "Contribution 'fred' has already been overridden");
+        }
+    }
+
+    /**
+     * TAP5-437
+     */
+    @Test
+    public void mapped_configuration_override()
+    {
+        Registry r = buildRegistry(FredModule.class, BarneyModule.class, ConfigurationOverrideModule.class);
+
+        StringLookup sl = r.getService(StringLookup.class);
+
+        // Due to override wilma to null:
+
+        assertListsEquals(sl.keys(), "barney", "betty", "fred");
+
+        assertEquals(sl.lookup("fred"), "Mr. Flintstone");
+    }
+
+    /**
+     * TAP5-437
+     */
+    @Test
+    public void nonmatching_mapped_configuration_override()
+    {
+        Registry r = buildRegistry(FredModule.class, BarneyModule.class,
+                                   NonmatchingMappedConfigurationOverrideModule.class);
+
+        StringLookup sl = r.getService(StringLookup.class);
+
+        try
+        {
+            sl.keys();
+            unreachable();
+        }
+        catch (RuntimeException ex)
+        {
+            assertMessageContains(ex,
+                                  "Exception constructing service 'StringLookup'",
+                                  "Error invoking service builder method org.apache.tapestry5.ioc.FredModule.buildStringLookup(Map) ",
+                                  "Override for key alley cat (at org.apache.tapestry5.ioc.util.NonmatchingMappedConfigurationOverrideModule.contributeStringLookup(MappedConfiguration)",
+                                  "does not match an existing key.");
+        }
+    }
+
+    /**
+     * TAP-437
+     */
+    @Test
+    public void duplicate_override_for_mapped_configuration()
+    {
+        Registry r = buildRegistry(FredModule.class, BarneyModule.class,
+                                   ConfigurationOverrideModule.class, DuplicateConfigurationOverrideModule.class);
+
+        StringLookup sl = r.getService(StringLookup.class);
+
+        try
+        {
+            sl.keys();
+            unreachable();
+        }
+        catch (RuntimeException ex)
+        {
+            assertMessageContains(ex,
+                                  "Error invoking service contribution method org.apache.tapestry5.ioc.ConfigurationOverrideModule.contributeStringLookup(MappedConfiguration)",
+                                  "Contribution key fred has already been overridden");
         }
     }
 }

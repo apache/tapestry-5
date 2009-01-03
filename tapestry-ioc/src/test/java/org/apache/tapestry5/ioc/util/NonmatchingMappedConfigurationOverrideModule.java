@@ -12,19 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.ioc;
+package org.apache.tapestry5.ioc.util;
 
-public class ConfigurationOverrideModule
+import org.apache.tapestry5.ioc.MappedConfiguration;
+
+public class NonmatchingMappedConfigurationOverrideModule
 {
-    public static void contributeOrderedNames(OrderedConfiguration<String> configuration)
-    {
-        configuration.add("wilma", "WILMA", "after:barney");
-        configuration.override("fred", "Mr. Flintstone", "after:*");
-    }
-
     public void contributeStringLookup(MappedConfiguration<String, String> configuration)
     {
-        configuration.override("fred", "Mr. Flintstone");
-        configuration.override("wilma", null);
+        configuration.override("alley cat", "ALLEY CAT");
     }
 }

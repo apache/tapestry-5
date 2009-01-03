@@ -14,17 +14,17 @@
 
 package org.apache.tapestry5.ioc;
 
-public class ConfigurationOverrideModule
-{
-    public static void contributeOrderedNames(OrderedConfiguration<String> configuration)
-    {
-        configuration.add("wilma", "WILMA", "after:barney");
-        configuration.override("fred", "Mr. Flintstone", "after:*");
-    }
+import java.util.List;
 
-    public void contributeStringLookup(MappedConfiguration<String, String> configuration)
-    {
-        configuration.override("fred", "Mr. Flintstone");
-        configuration.override("wilma", null);
-    }
+public interface StringLookup
+{
+    /**
+     * Returns value for given key.
+     */
+    String lookup(String key);
+
+    /**
+     * Returns sorted list of keys.
+     */
+    List<String> keys();
 }

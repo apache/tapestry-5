@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,10 +17,12 @@ package org.apache.tapestry5.ioc;
 import org.apache.tapestry5.ioc.annotations.Match;
 import org.apache.tapestry5.ioc.annotations.Order;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Module used to demonstrate decorator ordering.
@@ -43,7 +45,7 @@ public class FredModule
     }
 
     @Match(
-            { "UnorderedNames", "Fred" })
+            {"UnorderedNames", "Fred"})
     @Order("before:Beta")
     public Object decorateAlpha(Object delegate, DecoratorList list)
     {
@@ -53,7 +55,7 @@ public class FredModule
     }
 
     @Match(
-            { "UnorderedNames", "Fred" })
+            {"UnorderedNames", "Fred"})
     public Object decorateBeta(Object delegate, DecoratorList list)
     {
         list.add("beta");
@@ -74,7 +76,6 @@ public class FredModule
             {
                 return sorted;
             }
-
         };
     }
 
@@ -87,7 +88,6 @@ public class FredModule
             {
                 return configuration;
             }
-
         };
     }
 
@@ -103,5 +103,27 @@ public class FredModule
     {
         configuration.add("UnorderedNames");
         configuration.add("Beta");
+    }
+
+    public StringLookup buildStringLookup(final Map<String, String> configuration)
+    {
+        return new StringLookup()
+        {
+            public String lookup(String key)
+            {
+                return configuration.get(key);
+            }
+
+            public List<String> keys()
+            {
+                return InternalUtils.sortedKeys(configuration);
+            }
+        };
+    }
+
+    public void contributeStringLookup(MappedConfiguration<String, String> configuration)
+    {
+        configuration.add("fred", "FRED");
+        configuration.add("wilma", "WILMA");
     }
 }

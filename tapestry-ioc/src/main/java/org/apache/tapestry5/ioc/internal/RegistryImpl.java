@@ -408,11 +408,17 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
         // When the key type is String, then a case insensitive map is used.
 
-        final Map<K, V> result = newConfigurationMap(keyType);
+        Map<K, V> result = newConfigurationMap(keyType);
         Map<K, ContributionDef> keyToContribution = newConfigurationMap(keyType);
+        Map<K, MappedConfigurationOverride<K, V>> overrides = newConfigurationMap(keyType);
 
         for (Module m : moduleToServiceDefs.keySet())
-            addToMappedConfiguration(result, keyToContribution, keyType, objectType, serviceDef, m);
+            addToMappedConfiguration(result, overrides, keyToContribution, keyType, objectType, serviceDef, m);
+
+        for (MappedConfigurationOverride<K, V> override : overrides.values())
+        {
+            override.apply();
+        }
 
         return result;
     }
@@ -431,6 +437,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
     }
 
     private <K, V> void addToMappedConfiguration(Map<K, V> map,
+                                                 Map<K, MappedConfigurationOverride<K, V>> overrides,
                                                  Map<K, ContributionDef> keyToContribution, Class<K> keyClass,
                                                  Class<V> valueType, ServiceDef serviceDef, final Module module)
     {
@@ -445,15 +452,11 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
         final ServiceResources resources = new ServiceResourcesImpl(this, module, serviceDef, classFactory, logger);
 
-
         for (final ContributionDef def : contributions)
         {
-            final MappedConfiguration<K, V> validating = new ValidatingMappedConfigurationWrapper<K, V>(map, serviceId,
-                                                                                                        def,
-                                                                                                        keyClass,
-                                                                                                        valueType,
-                                                                                                        keyToContribution,
-                                                                                                        resources);
+            final MappedConfiguration<K, V> validating =
+                    new ValidatingMappedConfigurationWrapper<K, V>(map, overrides, serviceId, def, keyClass, valueType,
+                                                                   keyToContribution, resources);
 
             String description = IOCMessages.invokingMethod(def);
 
@@ -505,12 +508,12 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         }
     }
 
-    private <T> void addToOrderedConfiguration(final Orderer<T> orderer,
-                                               final Map<String, OrderedConfigurationOverride<T>> overrides,
-                                               final Class<T> valueType,
+    private <T> void addToOrderedConfiguration(Orderer<T> orderer,
+                                               Map<String, OrderedConfigurationOverride<T>> overrides,
+                                               Class<T> valueType,
                                                ServiceDef serviceDef, final Module module)
     {
-        final String serviceId = serviceDef.getServiceId();
+        String serviceId = serviceDef.getServiceId();
         Set<ContributionDef> contributions = module.getContributorDefsForService(serviceId);
 
         if (contributions.isEmpty()) return;
@@ -522,6 +525,10 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
         for (final ContributionDef def : contributions)
         {
+            final OrderedConfiguration<T> validating =
+                    new ValidatingOrderedConfigurationWrapper<T>(orderer, overrides, def, serviceId, valueType,
+                                                                 resources);
+
             String description = IOCMessages.invokingMethod(def);
 
             if (debug)
@@ -531,9 +538,6 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
             {
                 public void run()
                 {
-                    OrderedConfiguration<T> validating =
-                            new ValidatingOrderedConfigurationWrapper<T>(orderer, overrides, def, serviceId, valueType,
-                                                                         resources);
 
                     def.contribute(module, resources, validating);
                 }
