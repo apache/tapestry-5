@@ -76,7 +76,7 @@
                     <archive>
                         <manifestEntries>
                             <Tapestry-Module-Classes>
-                                org.apache.tapestry5.internal.spring.SpringModule
+                                org.apache.tapestry5.spring.SpringModule
                             </Tapestry-Module-Classes>
                         </manifestEntries>
                     </archive>

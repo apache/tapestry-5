@@ -1,4 +1,4 @@
-// Copyright 2008 The Apache Software Foundation
+// Copyright 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,17 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.internal.spring;
+package org.apache.tapestry5.spring;
 
-import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.ioc.MappedConfiguration;
 import org.apache.tapestry5.ioc.OrderedConfiguration;
+import org.apache.tapestry5.ioc.annotations.Marker;
+import org.apache.tapestry5.ioc.annotations.Primary;
+import org.apache.tapestry5.ioc.services.ChainBuilder;
 import org.apache.tapestry5.services.ApplicationInitializer;
 import org.apache.tapestry5.services.ApplicationInitializerFilter;
 import org.apache.tapestry5.services.Context;
 import org.slf4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.SpringVersion;
+
+import java.util.List;
 
 /**
  * Module for Tapestry/Spring Integration. This module exists to force the load of the Spring ApplicationContext as part
@@ -57,6 +61,19 @@ public class SpringModule
 
     public static void contributeFactoryDefaults(MappedConfiguration<String, String> configuration)
     {
-        configuration.add(SymbolConstants.USE_EXTERNAL_SPRING_CONTEXT, "false");
+        configuration.add(SpringConstants.USE_EXTERNAL_SPRING_CONTEXT, "false");
+    }
+
+    /**
+     * Defines a chain-of-command for handling application context customization. This allows the Spring context to be
+     * configured before it is initially {@linkplain org.springframework.context.ConfigurableApplicationContext#refresh()
+     * refreshed}.
+     */
+    @Marker(Primary.class)
+    public static ApplicationContextCustomizer buildApplicationContextCustomizer(
+            List<ApplicationContextCustomizer> configuration,
+            ChainBuilder builder)
+    {
+        return builder.build(ApplicationContextCustomizer.class, configuration);
     }
 }

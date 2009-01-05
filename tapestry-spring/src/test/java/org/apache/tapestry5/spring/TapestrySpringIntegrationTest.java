@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -45,11 +45,11 @@ public class TapestrySpringIntegrationTest extends AbstractIntegrationTestSuite
     }
 
     @Test
-    public void customize_method_of_filter_subclass_invoked() throws Exception
+    public void customize_pipeline_is_invoked() throws Exception
     {
         open(BASE_URL);
 
-        assertText("message", "SPRING VERSION 2.5.6: FILTER INITIALIZED");
+        assertText("message", "SPRING VERSION 2.5.6: PIPELINE WAS INVOKED");
     }
 
     @Test

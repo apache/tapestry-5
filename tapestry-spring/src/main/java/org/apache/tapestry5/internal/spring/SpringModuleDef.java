@@ -14,9 +14,9 @@
 
 package org.apache.tapestry5.internal.spring;
 
-import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.internal.AbstractContributionDef;
 import org.apache.tapestry5.ioc.*;
+import org.apache.tapestry5.ioc.annotations.Primary;
 import org.apache.tapestry5.ioc.def.ContributionDef;
 import org.apache.tapestry5.ioc.def.DecoratorDef;
 import org.apache.tapestry5.ioc.def.ModuleDef;
@@ -24,7 +24,12 @@ import org.apache.tapestry5.ioc.def.ServiceDef;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.Invokable;
-import org.apache.tapestry5.ioc.services.*;
+import org.apache.tapestry5.ioc.services.ClassFabUtils;
+import org.apache.tapestry5.ioc.services.RegistryShutdownHub;
+import org.apache.tapestry5.ioc.services.RegistryShutdownListener;
+import org.apache.tapestry5.spring.ApplicationContextCustomizer;
+import org.apache.tapestry5.spring.SpringConstants;
+import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.SpringVersion;
 import org.springframework.web.context.ConfigurableWebApplicationContext;
@@ -46,70 +51,54 @@ public class SpringModuleDef implements ModuleDef
 
     private final Map<String, ServiceDef> services = CollectionFactory.newMap();
 
+    private final boolean compatibilityMode;
+
     private final AtomicBoolean applicationContextCreated = new AtomicBoolean(false);
 
     private final ServletContext servletContext;
 
-    private final ApplicationContextCustomizer customizer;
-
-    private class ExternalApplicationContextLookupCreator implements ObjectCreator
+    private ConfigurableWebApplicationContext locateExternalContext()
     {
-        private final OperationTracker tracker;
+        ConfigurableWebApplicationContext context = (ConfigurableWebApplicationContext) servletContext.getAttribute(
+                WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE);
 
-        public ExternalApplicationContextLookupCreator(OperationTracker tracker)
-        {
-            this.tracker = tracker;
-        }
+        if (context == null)
+            throw new NullPointerException(String.format(
+                    "No Spring ApplicationContext stored in the ServletContext as attribute '%s'. " +
+                            "You should either re-enable Tapestry as the creator of the ApplicationContext, or " +
+                            "add a Spring ContextLoaderListener to web.xml.",
+                    WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE));
 
-        public Object createObject()
-        {
-            return tracker.invoke(
-                    "Obtaining Spring ApplicationContext from ServletContext",
-                    new Invokable<Object>()
-                    {
-                        public Object invoke()
-                        {
-                            ConfigurableWebApplicationContext context = (ConfigurableWebApplicationContext) servletContext.getAttribute(
-                                    WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE);
+        applicationContextCreated.set(true);
 
-                            if (context == null)
-                                throw new NullPointerException(String.format(
-                                        "No Spring ApplicationContext stored in the ServletContext as attribute '%s'. " +
-                                                "You should either re-enable Tapestry as the creator of the ApplicationContext, or " +
-                                                "add a Spring ContextLoaderListener to web.xml.",
-                                        WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE));
-
-                            applicationContextCreated.set(true);
-
-                            return context;
-                        }
-                    });
-        }
+        return context;
     }
 
-    public SpringModuleDef(ServletContext servletContext, final ApplicationContextCustomizer customizer)
+    public SpringModuleDef(ServletContext servletContext)
     {
         this.servletContext = servletContext;
-        this.customizer = customizer;
 
-        ServiceDef sd = new ServiceDef()
+        compatibilityMode = Boolean.parseBoolean(
+                servletContext.getInitParameter(SpringConstants.USE_EXTERNAL_SPRING_CONTEXT));
+
+        final ApplicationContext externalContext =
+                compatibilityMode ? locateExternalContext() : null;
+
+        if (compatibilityMode)
+            addServiceDefsForSpringBeans(externalContext);
+
+        ServiceDef applicationContextServiceDef = new ServiceDef()
         {
             public ObjectCreator createServiceCreator(final ServiceBuilderResources resources)
             {
-                TypeCoercer coercer = resources.getService(TypeCoercer.class);
-                SymbolSource symbolSource = resources.getService(SymbolSource.class);
+                if (compatibilityMode)
+                    return new StaticObjectCreator(externalContext, "externally configured Spring ApplicationContext");
 
-                boolean useExternal = coercer.coerce(
-                        symbolSource.valueForSymbol(SymbolConstants.USE_EXTERNAL_SPRING_CONTEXT), boolean.class);
 
-                final OperationTracker tracker = resources.getTracker();
+                ApplicationContextCustomizer customizer = resources.getService("ApplicationContextCustomizer",
+                                                                               ApplicationContextCustomizer.class);
 
-                if (useExternal)
-                {
-                    return new ExternalApplicationContextLookupCreator(tracker);
-                }
-
-                return constructObjectCreatorForApplicationContext(resources);
+                return constructObjectCreatorForApplicationContext(resources, customizer);
             }
 
             public String getServiceId()
@@ -124,7 +113,9 @@ public class SpringModuleDef implements ModuleDef
 
             public Class getServiceInterface()
             {
-                return ConfigurableWebApplicationContext.class;
+                return compatibilityMode
+                       ? externalContext.getClass()
+                       : ConfigurableWebApplicationContext.class;
             }
 
             public String getServiceScope()
@@ -138,11 +129,20 @@ public class SpringModuleDef implements ModuleDef
             }
         };
 
-        services.put(SERVICE_ID, sd);
+        services.put(SERVICE_ID, applicationContextServiceDef);
     }
 
-    private ObjectCreator constructObjectCreatorForApplicationContext(final ServiceBuilderResources resources
-    )
+    private void addServiceDefsForSpringBeans(ApplicationContext context)
+    {
+        for (final String beanName : BeanFactoryUtils.beanNamesIncludingAncestors(context))
+        {
+            services.put(beanName, new SpringBeanServiceDef(beanName, context));
+        }
+    }
+
+    private ObjectCreator constructObjectCreatorForApplicationContext(final ServiceBuilderResources resources,
+                                                                      @Primary
+                                                                      ApplicationContextCustomizer customizer)
     {
         final CustomizingContextLoader loader = new CustomizingContextLoader(customizer);
 
@@ -279,6 +279,9 @@ public class SpringModuleDef implements ModuleDef
                     public <T> T provide(Class<T> objectType, AnnotationProvider annotationProvider,
                                          ObjectLocator locator)
                     {
+                        // I think the following line is the only reason we put the SpringBeanProvider here,
+                        // rather than in SpringModule.
+
                         if (!applicationContextCreated.get()) return null;
 
                         return springBeanProviderInvoker.provide(objectType, annotationProvider, locator);
