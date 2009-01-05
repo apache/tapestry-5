@@ -224,8 +224,48 @@ public class Index implements ExceptionReporter
 
 [error3.png] Errors show on Index page
 
+Version 3: Overriding  RequestExceptionHandler using ServiceOverride
+
+  The Alias service is part of tapestry-core; starting in Tapestry 5.1, there is an additional service, part of
+  tapestry-ioc, for overriding services. It is a bit simpler than Alias:
+
+  <<AppModule.java>> (partial)
+
+----
+    public RequestExceptionHandler buildAppRequestExceptionHandler(
+            final Logger logger,
+            final ResponseRenderer renderer,
+            final ComponentSource componentSource)
+    {
+        return new RequestExceptionHandler()
+        {
+            public void handleRequestException(Throwable exception) throws IOException
+            {
+                logger.error("Unexpected runtime exception: " + exception.getMessage(), exception);
+
+                ExceptionReporter index = (ExceptionReporter) componentSource.getPage("Index");
+
+                index.reportException(exception);
+
+                renderer.renderPageMarkupResponse("Index");
+            }
+        };
+    }
+
+    public void contributeServiceOverride(
+            MappedConfiguration<Class, Object> configuration,
+
+            @Local
+            RequestExceptionHandler handler)
+    {
+        configuration.add(RequestExceptionHandler.class, handler);
+    }
+----
+
+  This solution is similar to version 3, except that instead of contributing to Alias, we contribute
+  to ServiceOverride, and use a mapped configuration.
    
-Version 3: Decorating the RequestExceptionHandler
+Version 4: Decorating the RequestExceptionHandler
 
   A third option is available: we don't define a <new> service, but instead <decorate> the existing
   RequestExceptionHandler service. This approach means we don't have to make a contribution to the Alias service.

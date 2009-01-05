@@ -179,6 +179,13 @@ Standard Injection Processing
    if so, autobuilds the value for the parameter. Of course, the object being built will itself
    be configured via injection.
 
+** ServiceOverride ObjectProvider
+
+   Checks any contributions to the
+   {{{../apidocs/org/apache/tapestry5/ioc/services/ServiceOverride.html}ServiceOverride}} service. Contributions
+   map a type to an object of that type. Thus, ServiceOverrides will override injections of services
+   that are not qualified with a marker annotation.
+
 ** Alias ObjectProvider  (tapestry-core)
 
   Uses the
@@ -186,7 +193,7 @@ Standard Injection Processing
   that can be injected.
 
   This is commonly used to override a built-in service by contributing an object with the
-  exact same interface.
+  exact same interface.           This is an older and more complex version of the ServiceOverride provider.
 
 ** Asset ObjectProvider (tapestry-core)
 

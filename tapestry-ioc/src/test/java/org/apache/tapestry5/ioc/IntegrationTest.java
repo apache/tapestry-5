@@ -1280,4 +1280,17 @@ public class IntegrationTest extends IOCInternalTestCase
                                   "Contribution key fred has already been overridden");
         }
     }
+
+    /**
+     * TAP5-316
+     */
+    @Test
+    public void service_override()
+    {
+        Registry r = buildRegistry(GreeterServiceOverrideModule.class);
+
+        Greeter g = r.getObject(Greeter.class, null);
+
+        assertEquals(g.getGreeting(), "Override Greeting");
+    }
 }

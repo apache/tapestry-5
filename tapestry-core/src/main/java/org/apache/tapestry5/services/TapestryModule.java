@@ -552,11 +552,11 @@ public final class TapestryModule
             }
         };
 
-        configuration.add("Alias", wrapper, "after:Value,Symbol");
+        configuration.add("Alias", wrapper, "after:ServiceOverride");
 
-        configuration.add("Asset", assetObjectProvider, "before:Alias");
+        configuration.add("Asset", assetObjectProvider, "before:AnnotationBasedContributions");
 
-        configuration.add("Service", new ServiceAnnotationObjectProvider(), "before:Alias");
+        configuration.add("Service", new ServiceAnnotationObjectProvider(), "before:AnnotationBasedContributions");
     }
 
 
