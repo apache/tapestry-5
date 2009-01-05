@@ -65,6 +65,7 @@
             <item name="tapestry-spring" href="tapestry-spring/"/>
             <item name="tapestry-test" href="tapestry-test/"/>
             <item name="tapestry-upload" href="tapestry-upload/"/>
+            <item name="tapestry-webflow" href="tapestry-webflow/"/>
         </menu>
 
         <menu name="Tapestry Tutorials">
