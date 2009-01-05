@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
 package org.apache.tapestry5.ioc.services;
 
 import org.apache.tapestry5.ioc.*;
+import org.apache.tapestry5.ioc.annotations.Local;
 import org.apache.tapestry5.ioc.annotations.Marker;
 import org.apache.tapestry5.ioc.annotations.PreventServiceDecoration;
 import org.apache.tapestry5.ioc.internal.services.*;
@@ -56,6 +57,7 @@ public final class TapestryIOCModule
         binder.bind(ClassNameLocator.class, ClassNameLocatorImpl.class);
         binder.bind(AspectDecorator.class, AspectDecoratorImpl.class);
         binder.bind(ClasspathURLConverter.class, ClasspathURLConverterImpl.class);
+        binder.bind(ServiceOverride.class, ServiceOverrideImpl.class);
     }
 
     /**
@@ -83,15 +85,33 @@ public final class TapestryIOCModule
     }
 
     /**
-     * <dl> <dt>Value</dt> <dd>Supports the {@link org.apache.tapestry5.ioc.annotations.Value} annotation</dd>
-     * <dt>Symbol</dt> <dd>Supports the {@link org.apache.tapestry5.ioc.annotations.Symbol} annotations</dd>
-     * <dt>Autobuild</dt> <dd>Supports the {@link org.apache.tapestry5.ioc.annotations.Autobuild} annotation</dd> </dl>
+     * <dl> <dt>AnnotationBasedContributions</dt> <dd>Empty placeholder used to seperate annotation-based ObjectProvider
+     * contributions (which come before) from non-annotation based (ServiceOverride here, Alias in tapestry-core) which
+     * come after. </dd> <dt>Value</dt> <dd>Supports the {@link org.apache.tapestry5.ioc.annotations.Value}
+     * annotation</dd> <dt>Symbol</dt> <dd>Supports the {@link org.apache.tapestry5.ioc.annotations.Symbol}
+     * annotations</dd> <dt>Autobuild</dt> <dd>Supports the {@link org.apache.tapestry5.ioc.annotations.Autobuild}
+     * annotation</dd> <dt>ServiceOverride</dt> <dd>Allows simple service overrides via the {@link
+     * org.apache.tapestry5.ioc.services.ServiceOverride} service (and its configuration)</dl>
      */
-    public static void contributeMasterObjectProvider(OrderedConfiguration<ObjectProvider> configuration)
+    public static void contributeMasterObjectProvider(OrderedConfiguration<ObjectProvider> configuration,
+                                                      @Local final ServiceOverride serviceOverride)
     {
-        configuration.addInstance("Value", ValueObjectProvider.class);
-        configuration.addInstance("Symbol", SymbolObjectProvider.class);
-        configuration.add("Autobuild", new AutobuildObjectProvider());
+        configuration.add("AnnotationBasedContributions", null);
+
+        configuration.addInstance("Value", ValueObjectProvider.class, "before:AnnotationBasedContributions");
+        configuration.addInstance("Symbol", SymbolObjectProvider.class, "before:AnnotationBasedContributions");
+        configuration.add("Autobuild", new AutobuildObjectProvider(), "before:AnnotationBasedContributions");
+
+
+        ObjectProvider wrapper = new ObjectProvider()
+        {
+            public <T> T provide(Class<T> objectType, AnnotationProvider annotationProvider, ObjectLocator locator)
+            {
+                return serviceOverride.getServiceOverrideProvider().provide(objectType, annotationProvider, locator);
+            }
+        };
+
+        configuration.add("ServiceOverride", wrapper, "after:AnnotationBasedContributions");
     }
 
     /**
