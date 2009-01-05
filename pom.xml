@@ -140,6 +140,7 @@
         <!-- Tutorials -->
 
         <module>tapestry-tutorial1</module>
+        <module>tapestry-webflow</module>
 
     </modules>
 

@@ -240,6 +240,7 @@
         <option value="$PROJECT_DIR$/tapestry-test/pom.xml" />
         <option value="$PROJECT_DIR$/tapestry-upload/pom.xml" />
         <option value="$PROJECT_DIR$/tapestry-tutorial1/pom.xml" />
+        <option value="$PROJECT_DIR$/tapestry-webflow/pom.xml" />
       </list>
     </option>
   </component>
@@ -412,6 +413,7 @@
       <module fileurl="file://$PROJECT_DIR$/tapestry-spring/tapestry-spring.iml" filepath="$PROJECT_DIR$/tapestry-spring/tapestry-spring.iml" />
       <module fileurl="file://$PROJECT_DIR$/tapestry-test/tapestry-test.iml" filepath="$PROJECT_DIR$/tapestry-test/tapestry-test.iml" />
       <module fileurl="file://$PROJECT_DIR$/tapestry-upload/tapestry-upload.iml" filepath="$PROJECT_DIR$/tapestry-upload/tapestry-upload.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tapestry-webflow/tapestry-webflow.iml" filepath="$PROJECT_DIR$/tapestry-webflow/tapestry-webflow.iml" />
       <module fileurl="file://$PROJECT_DIR$/tapestry-tutorial1/tutorial1.iml" filepath="$PROJECT_DIR$/tapestry-tutorial1/tutorial1.iml" />
     </modules>
   </component>
@@ -1954,6 +1956,61 @@
       </JAVADOC>
       <SOURCES>
         <root url="jar://$MAVEN_REPOSITORY$/org/springframework/spring-context/2.5.6/spring-context-2.5.6-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: org.springframework.webflow:org.springframework.binding:2.0.5.RELEASE">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/springframework/webflow/org.springframework.binding/2.0.5.RELEASE/org.springframework.binding-2.0.5.RELEASE.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/org/springframework/webflow/org.springframework.binding/2.0.5.RELEASE/org.springframework.binding-2.0.5.RELEASE-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/springframework/webflow/org.springframework.binding/2.0.5.RELEASE/org.springframework.binding-2.0.5.RELEASE-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: org.springframework.webflow:org.springframework.js:2.0.5.RELEASE">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/springframework/webflow/org.springframework.js/2.0.5.RELEASE/org.springframework.js-2.0.5.RELEASE.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/org/springframework/webflow/org.springframework.js/2.0.5.RELEASE/org.springframework.js-2.0.5.RELEASE-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/springframework/webflow/org.springframework.js/2.0.5.RELEASE/org.springframework.js-2.0.5.RELEASE-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: org.springframework.webflow:org.springframework.webflow:2.0.5.RELEASE">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/springframework/webflow/org.springframework.webflow/2.0.5.RELEASE/org.springframework.webflow-2.0.5.RELEASE.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/org/springframework/webflow/org.springframework.webflow/2.0.5.RELEASE/org.springframework.webflow-2.0.5.RELEASE-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/springframework/webflow/org.springframework.webflow/2.0.5.RELEASE/org.springframework.webflow-2.0.5.RELEASE-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: org.springframework:spring-webmvc:2.5.6">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/springframework/spring-webmvc/2.5.6/spring-webmvc-2.5.6.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/org/springframework/spring-webmvc/2.5.6/spring-webmvc-2.5.6-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/springframework/spring-webmvc/2.5.6/spring-webmvc-2.5.6-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: org.springframework:spring-context-support:2.5.6">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/springframework/spring-context-support/2.5.6/spring-context-support-2.5.6.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/org/springframework/spring-context-support/2.5.6/spring-context-support-2.5.6-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/springframework/spring-context-support/2.5.6/spring-context-support-2.5.6-sources.jar!/" />
       </SOURCES>
     </library>
   </component>
