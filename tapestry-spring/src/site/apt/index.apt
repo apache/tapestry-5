@@ -15,7 +15,7 @@ Changes From 5.0
 
  The dependency on Spring is no longer scope "provider" and has changed to 2.5.6.
 
- <<Spring Beans are no longer exposed as services.>>
+ <<Spring Beans are no longer exposed as services, unless 5.0 compatibility mode is enabled.>>
 
  You no longer create a ContextLoaderListener.
 
@@ -79,12 +79,22 @@ ApplicationContext Service
 
   The Spring ApplicationContext is also added as a service.
 
-External Configuration
+ApplicationContextCustomizer
 
- In some circumstances, it is desirable to configure the Spring ApplicationContext externally. The  symbol
+  A new chain-of-command service,
+  {{{../apidocs/org/apache/tapestry5/spring/ApplicationContextCustomizer.html}ApplicationContextCustomizer}}
+  allows the application context, created by Tapestry, to be customized as it is created.  You may contribute
+  your own ApplicationContextCustomizer instances as needed.
+
+5.0 Compatibility Mode
+
+ In some circumstances, it is desirable to configure the Spring ApplicationContext externally. The  context \<config-param\>
  "tapestry.use-external-spring-context" can be configured to "true".  Tapestry will then use an existing ApplicationContext,
  provided by a Spring ContextLoaderListener. You will still be able to inject Spring beans into Tapestry components and services,
  and the ApplicationContext service will be visible ... but you will not be able to inject Tapestry IoC services into Spring beans.
+
+ This option provides compatibility with the tapestry-spring 5.0, including exposing Spring beans as Tapestry IoC services
+ (something that no longer occurs unless compatibility mode is enabled).
 
 Limitations
 

@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,38 +15,24 @@
 package org.apache.tapestry5.spring;
 
 import org.apache.tapestry5.TapestryFilter;
-import org.apache.tapestry5.internal.spring.ApplicationContextCustomizer;
 import org.apache.tapestry5.internal.spring.SpringModuleDef;
 import org.apache.tapestry5.ioc.def.ModuleDef;
-import org.springframework.context.ApplicationContext;
-import org.springframework.web.context.ConfigurableWebApplicationContext;
 
 import javax.servlet.ServletContext;
 
 /**
- * Adds a {@link ModuleDef} that contains all the beans defined by the Spring {@link ApplicationContext}, as if they
- * were Tapestry IoC services. This is done using a filter, so that the Spring beans can be "mixed into" the Tapestry
- * IoC Registry before it even starts up.
+ * Add logic to setup for Spring integration at startup.  In 5.1, this means creating a Spring ApplicationContext, and
+ * wiring parts of it to resolve Tapestry objects.  In {@linkplain org.apache.tapestry5.spring.SpringConstants#USE_EXTERNAL_SPRING_CONTEXT
+ * compatibility mode}, this means locating the externally configuration context and exposing each bean in it as a
+ * Tapestry IoC service.
  */
-public class TapestrySpringFilter extends TapestryFilter implements ApplicationContextCustomizer
+public class TapestrySpringFilter extends TapestryFilter
 {
     @Override
     protected ModuleDef[] provideExtraModuleDefs(ServletContext context)
     {
         return new ModuleDef[] {
-                new SpringModuleDef(context, this)
+                new SpringModuleDef(context)
         };
-    }
-
-    /**
-     * This implementation does nothing; subclasses may override to perform additional customizations and
-     * initializations of the application context.
-     *
-     * @param servletContext
-     * @param applicationContext
-     */
-    public void customizeApplicationContext(ServletContext servletContext,
-                                            ConfigurableWebApplicationContext applicationContext)
-    {
     }
 }

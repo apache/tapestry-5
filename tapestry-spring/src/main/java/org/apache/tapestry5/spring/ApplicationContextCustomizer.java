@@ -1,4 +1,4 @@
-// Copyright 2008 The Apache Software Foundation
+// Copyright 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,17 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.internal.spring;
+package org.apache.tapestry5.spring;
 
+import org.apache.tapestry5.ioc.annotations.UsesOrderedConfiguration;
 import org.springframework.web.context.ConfigurableWebApplicationContext;
 
 import javax.servlet.ServletContext;
 
 /**
- * A bridge from Spring's approach to customizing the application context, over to Tapestry's.  This is how it is
- * possible to subclass and override {@link  org.apache.tapestry5.spring.TapestrySpringFilter#customizeApplicationContext(javax.servlet.ServletContext,
- * org.springframework.web.context.ConfigurableWebApplicationContext)}.
+ * A bridge from Spring's approach to customizing the application context, over to Tapestry's approach. This is a
+ * chain-of-command service.
  */
+@UsesOrderedConfiguration(ApplicationContextCustomizer.class)
 public interface ApplicationContextCustomizer
 {
     /**
