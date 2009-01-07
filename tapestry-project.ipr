@@ -146,6 +146,11 @@
           <module name="tapestry-test" />
           <module name="tapestry-upload" />
           <module name="tutorial1" />
+          <module name="tapestry-webflow">
+            <files>
+              <file url="file://$PROJECT_DIR$/tapestry-webflow/src/test/webapp/WEB-INF/web.xml" />
+            </files>
+          </module>
         </modules>
       </facet-type>
       <facet-type id="jpa" />
@@ -2011,6 +2016,28 @@
       </JAVADOC>
       <SOURCES>
         <root url="jar://$MAVEN_REPOSITORY$/org/springframework/spring-context-support/2.5.6/spring-context-support-2.5.6-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: org.jboss.el:com.springsource.org.jboss.el:2.0.0.GA">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/jboss/el/com.springsource.org.jboss.el/2.0.0.GA/com.springsource.org.jboss.el-2.0.0.GA.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/org/jboss/el/com.springsource.org.jboss.el/2.0.0.GA/com.springsource.org.jboss.el-2.0.0.GA-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/jboss/el/com.springsource.org.jboss.el/2.0.0.GA/com.springsource.org.jboss.el-2.0.0.GA-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: javax.el:el-api:1.0">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/javax/el/el-api/1.0/el-api-1.0.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/javax/el/el-api/1.0/el-api-1.0-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/javax/el/el-api/1.0/el-api-1.0-sources.jar!/" />
       </SOURCES>
     </library>
   </component>

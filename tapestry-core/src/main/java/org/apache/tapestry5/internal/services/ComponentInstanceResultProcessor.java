@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,12 +16,15 @@ package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.internal.structure.Page;
+import org.apache.tapestry5.ioc.annotations.Marker;
 import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.services.ComponentEventResultProcessor;
+import org.apache.tapestry5.services.Traditional;
 import org.slf4j.Logger;
 
 import java.io.IOException;
 
+@Marker({Traditional.class, ComponentInstanceProcessor.class})
 public class ComponentInstanceResultProcessor implements ComponentEventResultProcessor<Component>
 {
     private final RequestPageCache requestPageCache;
