@@ -55,6 +55,20 @@
             <version>${web-flow-version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>javax.el</groupId>
+            <artifactId>el-api</artifactId>
+            <version>1.0</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jboss.el</groupId>
+            <artifactId>com.springsource.org.jboss.el</artifactId>
+            <version>2.0.0.GA</version>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
     <build>
         <plugins>
@@ -92,7 +106,7 @@
                     <archive>
                         <manifestEntries>
                             <Tapestry-Module-Classes>
-                                org.apache.tapestry5.internal.webflow.WebFlowModule
+                                org.apache.tapestry5.webflow.services.WebFlowModule
                             </Tapestry-Module-Classes>
                         </manifestEntries>
                     </archive>
@@ -121,6 +135,14 @@
             </plugin>
         </plugins>
     </reporting>
+
+    <repositories>
+        <repository>
+            <id>com.springsource.repository.bundles.external</id>
+            <name>SpringSource Enterprise Bundle Repository - External Releases</name>
+            <url>http://repository.springsource.com/maven/bundles/external</url>
+        </repository>
+    </repositories>
 
     <properties>
         <web-flow-version>2.0.5.RELEASE</web-flow-version>

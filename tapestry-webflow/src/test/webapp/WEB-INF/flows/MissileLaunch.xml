@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.springframework.org/schema/webflow
+                          http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+
+    <var name="targetType" class="org.apache.tapestry5.webflow.testapp.data.TargetType"/>
+
+    <!-- Each view-state should match a Tapestry page; we're also following the Tapestry naming
+    convention of using a leading capital-case character (not that Tapestry cares about case, of course). -->
+
+    <view-state id="SetLaunchCoordinates">
+        <transition on="submit" to="ConfirmLaunch"/>
+    </view-state>
+
+    <view-state id="ConfirmLaunch">
+        <transition on="submit" to="MissilesLaunched"/>
+    </view-state>
+
+    <end-state id="MissilesLaunched"/>
+
+
+</flow>

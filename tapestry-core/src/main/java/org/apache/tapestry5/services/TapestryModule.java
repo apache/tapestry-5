@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -1168,6 +1168,14 @@ public final class TapestryModule
     }
 
     /**
+     * @since 5.1.0.0
+     */
+    public HttpServletResponse buildHttpServletResponse()
+    {
+        return shadowBuilder.build(requestGlobals, "HTTPServletResponse", HttpServletResponse.class);
+    }
+
+    /**
      * Builds a shadow of the RequestGlobals.response property. Note again that the shadow can be an ordinary singleton,
      * even though RequestGlobals is perthread.
      */
@@ -1304,7 +1312,7 @@ public final class TapestryModule
      * external URL</dd> </dl>
      */
     public void contributeComponentEventResultProcessor(
-            @InjectService("ComponentInstanceResultProcessor")
+            @Traditional @ComponentInstanceProcessor
             ComponentEventResultProcessor componentInstanceProcessor,
 
             MappedConfiguration<Class, ComponentEventResultProcessor> configuration)
