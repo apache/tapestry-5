@@ -47,7 +47,7 @@ Compilation
 Grammar
 
 ---
-expression : keyword | rangeOp | constant | propertyChain | list;
+expression : keyword | rangeOp | constant | propertyChain | list | notOp;
 
 keyword : 'null' | 'true' | 'false' | 'this';
 
@@ -67,7 +67,9 @@ term :   <identifier>
 list : '[' expressionList? ']';
 
 expressionList : expression (',' expression)*;
-     
+
+notOpt : '!' expression;
+
 ---
 
   Notes:
@@ -90,6 +92,8 @@ expressionList : expression (',' expression)*;
   
   * 'this' is the root object (i.e., the containing component).
 
+  * The not operator coerces the expression to a boolean (so it can be used on strings, numbers, etc.).
+  
   []
 
   Method matching is based on method name and number of parameters, but not parameter types.  The

@@ -368,4 +368,31 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
 
         assertListsEquals(l, new Long(1), new Double(2.0), "Bart");
     }
+
+    @Test
+    public void not_operator()
+    {
+        PropertyConduit conduit = source.create(IntegerHolder.class, "! value");
+        IntegerHolder holder = new IntegerHolder();
+
+        assertEquals(conduit.get(holder), Boolean.TRUE);
+
+        holder.setValue(99);
+
+        assertEquals(conduit.get(holder), Boolean.FALSE);
+    }
+
+    @Test
+    public void no_operator_in_subexpression()
+    {
+        PropertyConduit conduit = source.create(Switch.class, "label(! value)");
+
+        Switch sw = new Switch();
+
+        assertEquals(conduit.get(sw), "aye");
+
+        sw.setValue(true);
+
+        assertEquals(conduit.get(sw), "nay");
+    }
 }

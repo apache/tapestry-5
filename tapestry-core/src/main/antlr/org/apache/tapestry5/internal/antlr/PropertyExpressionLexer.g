@@ -53,6 +53,7 @@ RPAREN 	:	')';
 LBRACKET:	'[';
 RBRACKET:	']';
 COMMA	:	',';
+BANG    :	'!';
 
 fragment QUOTE
 	:	'\'';
