@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,6 +21,9 @@ import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -36,6 +39,9 @@ public class TapestryInternalUtils
 
     private static final Pattern NON_WORD_PATTERN = Pattern.compile("[^\\w]");
 
+    private static final Pattern COMMA_PATTERN = Pattern.compile(",");
+
+    private static final int BUFFER_SIZE = 5000;
 
     /**
      * Capitalizes the string, and inserts a space before each upper case character (or sequence of upper case
@@ -372,5 +378,40 @@ public class TapestryInternalUtils
     public static String[] splitPath(String path)
     {
         return SLASH_PATTERN.split(path);
+    }
+
+    /**
+     * Splits a value around commas.
+     *
+     * @since 5.1.0.0
+     */
+    public static String[] splitAtCommas(String value)
+    {
+        return COMMA_PATTERN.split(value);
+    }
+
+    /**
+     * Copies some content from an input stream to an output stream. It is the caller's responsibility to close the
+     * streams.
+     *
+     * @param in  source of data
+     * @param out sink of data
+     * @throws IOException
+     */
+    public static void copy(InputStream in, OutputStream out) throws IOException
+    {
+        byte[] buffer = new byte[BUFFER_SIZE];
+
+        while (true)
+        {
+            int length = in.read(buffer);
+
+            if (length < 0) break;
+
+            out.write(buffer, 0, length);
+        }
+
+        // TAPESTRY-2415: WebLogic needs this flush() call.
+        out.flush();
     }
 }

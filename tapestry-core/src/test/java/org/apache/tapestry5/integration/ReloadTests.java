@@ -1,4 +1,4 @@
-// Copyright 2008 The Apache Software Foundation
+// Copyright 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
 package org.apache.tapestry5.integration;
 
 import javassist.*;
+import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.test.AbstractIntegrationTestSuite;
 import org.testng.annotations.Test;
 
@@ -102,18 +103,7 @@ public class ReloadTests extends AbstractIntegrationTestSuite
         BufferedInputStream bis = new BufferedInputStream(in);
         BufferedOutputStream bos = new BufferedOutputStream(fos);
 
-        byte[] buffer = new byte[1000];
-
-        while (true)
-        {
-            int length = bis.read(buffer);
-
-            if (length < 0) break;
-
-            bos.write(buffer, 0, length);
-        }
-
-        bos.flush();
+        TapestryInternalUtils.copy(bis, bos);
     }
 
     @Test

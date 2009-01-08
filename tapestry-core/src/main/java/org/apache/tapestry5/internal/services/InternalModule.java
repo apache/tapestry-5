@@ -75,6 +75,7 @@ public class InternalModule
         binder.bind(EndOfRequestEventHub.class);
         binder.bind(PageActivationContextCollector.class);
         binder.bind(PageLoader.class, PageLoaderImpl.class);
+        binder.bind(ResponseCompressionAnalyzer.class, ResponseCompressionAnalyzerImpl.class);
     }
 
     /**

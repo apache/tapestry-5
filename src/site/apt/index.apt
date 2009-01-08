@@ -79,6 +79,8 @@ Third Party Libraries, Tutorials and Resources
 
 New And Of Note
 
+  * Tapestry now {{{guide/compress.html}compresses}} responses for clients that support it.
+
   * Ordered and mapped configurations can now have overrides.
 
   * Property expressions have been improved: You can now invoke methods with parameters, or create a list (very useful for link contexts).

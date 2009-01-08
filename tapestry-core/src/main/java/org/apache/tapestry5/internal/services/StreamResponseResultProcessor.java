@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,8 +15,11 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.StreamResponse;
+import org.apache.tapestry5.internal.InternalConstants;
+import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.services.ComponentEventResultProcessor;
+import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.Response;
 
 import java.io.BufferedInputStream;
@@ -26,13 +29,14 @@ import java.io.OutputStream;
 
 public class StreamResponseResultProcessor implements ComponentEventResultProcessor<StreamResponse>
 {
-    private static final int BUFFER_SIZE = 5000;
+    private final Request request;
 
     private final Response response;
 
-    public StreamResponseResultProcessor(Response response)
+    public StreamResponseResultProcessor(Request request, Response response)
     {
         this.response = response;
+        this.request = request;
     }
 
     public void processResultValue(StreamResponse streamResponse)
@@ -40,6 +44,12 @@ public class StreamResponseResultProcessor implements ComponentEventResultProces
     {
         OutputStream os = null;
         InputStream is = null;
+
+        // The whole point is that the response is in the hands of the StreamResponse;
+        // if they want to compress the result, they can add their own GZIPOutputStream to
+        // their pipeline.
+
+        request.setAttribute(InternalConstants.SUPPRESS_COMPRESSION, true);
 
         streamResponse.prepareResponse(response);
 
@@ -49,18 +59,7 @@ public class StreamResponseResultProcessor implements ComponentEventResultProces
 
             os = response.getOutputStream(streamResponse.getContentType());
 
-            byte[] buffer = new byte[BUFFER_SIZE];
-
-            while (true)
-            {
-                int length = is.read(buffer, 0, buffer.length);
-                if (length < 0) break;
-
-                os.write(buffer, 0, length);
-            }
-
-            // TAPESTRY-2415: WebLogic needs this flush() call.            
-            os.flush();
+            TapestryInternalUtils.copy(is, os);
 
             os.close();
             os = null;
@@ -73,7 +72,5 @@ public class StreamResponseResultProcessor implements ComponentEventResultProces
             InternalUtils.close(is);
             InternalUtils.close(os);
         }
-
     }
-
 }

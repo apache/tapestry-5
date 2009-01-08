@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -101,4 +101,27 @@ public final class InternalConstants
      * recognize the response as JSON, and the Ajax.Response.responseJSON property will be null.
      */
     public static final String JSON_MIME_TYPE = "application/json";
+
+    /**
+     * Request attribute key; if non-null, then automatic GZIP compression of response stream is suppressed. This is
+     * useful when the code opening the response stream wants to explicitly control whether GZIP compression occurs or
+     * not.
+     *
+     * @since 5.1.0.0
+     */
+    public static final String SUPPRESS_COMPRESSION = "tapestry.supress-compression";
+
+    /**
+     * Name of response header for content encoding.
+     *
+     * @since 5.1.0.0
+     */
+    public static final String CONTENT_ENCODING_HEADER = "Content-Encoding";
+
+    /**
+     * Response content encoding value indicating use of GZIP compression.
+     *
+     * @since 5.1.0.0
+     */
+    public static final String GZIP_CONTENT_ENCODING = "gzip";
 }
