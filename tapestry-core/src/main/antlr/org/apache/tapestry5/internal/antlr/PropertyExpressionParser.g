@@ -29,6 +29,8 @@ tokens
     	INVOKE;
     	// A List (top level, or as method parameter)
     	LIST;
+    	// Not operation (invert a boolean)
+    	NOT;
 }
 
 @header
@@ -45,6 +47,7 @@ expression
 	|	constant
 	|	propertyChain
 	|	list
+	|	notOp
 	;
 	
 keyword	:	NULL | TRUE | FALSE | THIS;
@@ -76,7 +79,13 @@ rangeOp
 	
 rangeopArg 
 	:	INTEGER
-	|	propertyChain;	
+	|	propertyChain
+	;	
 	
 list	:	LBRACKET RBRACKET -> ^(LIST)
-	|	LBRACKET expressionList RBRACKET -> ^(LIST expressionList);	
+	|	LBRACKET expressionList RBRACKET -> ^(LIST expressionList)
+	;	
+	
+	
+notOp 	:	BANG expression -> ^(NOT expression)
+	;

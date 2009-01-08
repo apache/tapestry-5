@@ -56,11 +56,14 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
     private static final Method RANGE;
 
+    private static final Method INVERT;
+
     static
     {
         try
         {
             RANGE = BasePropertyConduit.class.getMethod("range", int.class, int.class);
+            INVERT = BasePropertyConduit.class.getMethod("invert", Object.class);
         }
         catch (NoSuchMethodException ex)
         {
@@ -457,8 +460,16 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
                     return;
 
+                case NOT:
+                    createNotOpGetter(node);
+                    createNoOpSetter();
+
+                    conduitPropertyType = boolean.class;
+
+                    return;
+
                 default:
-                    throw unexpectedNodeType(node, IDENTIFIER, INVOKE, RANGEOP, LIST);
+                    throw unexpectedNodeType(node, IDENTIFIER, INVOKE, RANGEOP, LIST, NOT);
             }
         }
 
@@ -474,6 +485,20 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
             classFab.addMethod(Modifier.PUBLIC, GET_SIGNATURE, builder.toString());
         }
+
+        private void createNotOpGetter(Tree node)
+        {
+            BodyBuilder builder = new BodyBuilder().begin();
+
+            addRootVariable(builder);
+
+            builder.addln("return %s;", createMethodInvocation(builder, node, 0, INVERT));
+
+            builder.end();
+
+            classFab.addMethod(Modifier.PUBLIC, GET_SIGNATURE, builder.toString());
+        }
+
 
         public void createListGetter(Tree node)
         {
@@ -506,12 +531,22 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
             return listName;
         }
 
+        private String createNotOp(BodyBuilder builder, Tree node)
+        {
+            String flagName = nextVariableName(Boolean.class);
+            GeneratedTerm term = subexpression(builder, node.getChild(0));
+
+            builder.addln("Boolean %s = invert(($w) %s);", flagName, term.getVariableName());
+
+            return flagName;
+        }
+
         /**
          * Evalutates the node as a sub expression, storing the result into a new variable, whose name is returned.
          *
          * @param builder to receive generated code
          * @param node    root of tree of nodes to be evaluated
-         * @return name of variable containing expression
+         * @return GeneratedTerm identifying the name of the variable and its type
          */
         private GeneratedTerm subexpression(BodyBuilder builder, Tree node)
         {
@@ -574,6 +609,15 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
                         previousVariableName = generated.getVariableName();
                         activeType = generated.getType();
+
+                        node = null;
+
+                        break;
+
+                    case NOT:
+
+                        previousVariableName = createNotOp(builder, node);
+                        activeType = boolean.class;
 
                         node = null;
 
@@ -715,6 +759,8 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
                 Class parameterType = parameterTypes[i];
 
+                boolean needsUnwrap = false;
+
                 if (!parameterType.isAssignableFrom(actualType))
                 {
                     String coerced = nextVariableName(parameterType);
@@ -729,12 +775,19 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
                     variableName = coerced;
                 }
-
-                // TODO: Casting, coercing, unwrapping primitives.
+                else
+                {
+                    needsUnwrap = parameterType.isPrimitive();
+                }
 
                 if (i > 0) builder.append(", ");
 
                 builder.append(variableName);
+
+                if (needsUnwrap)
+                {
+                    builder.append(".").append(ClassFabUtils.getUnwrapMethodName(parameterType)).append("()");
+                }
             }
 
             return builder.append(")").toString();

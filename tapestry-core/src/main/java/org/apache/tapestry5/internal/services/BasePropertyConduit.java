@@ -75,4 +75,9 @@ public abstract class BasePropertyConduit implements PropertyConduit
     {
         return typeCoercer.coerce(value, type);
     }
+
+    public final Boolean invert(Object value)
+    {
+        return coerce(value, Boolean.class).equals(Boolean.FALSE);
+    }
 }
