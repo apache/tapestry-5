@@ -60,4 +60,12 @@ public class TapestrySpringIntegrationTest extends AbstractIntegrationTestSuite
         assertTextPresent(
                 "Spring context contains 2 beans assignable to type org.example.testapp.services.Flintstone: barney, fred.");
     }
+
+    @Test
+    public void factory_provided_beans_accessible() throws Exception
+    {
+        open(BASE_URL);
+
+        assertEquals(getText("viaFactory"), "Instantiated via a factory bean.");
+    }
 }
