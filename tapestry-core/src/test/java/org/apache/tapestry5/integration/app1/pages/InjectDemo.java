@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,9 +17,12 @@ package org.apache.tapestry5.integration.app1.pages;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.annotations.InjectPage;
 import org.apache.tapestry5.annotations.OnEvent;
+import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.integration.app1.services.French;
 import org.apache.tapestry5.integration.app1.services.Greeter;
+import org.apache.tapestry5.integration.app1.services.MusicLibrary;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.annotations.InjectService;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.BindingSource;
 import org.apache.tapestry5.services.Request;
@@ -54,6 +57,10 @@ public class InjectDemo
     @Inject
     @French
     private Greeter greeter;
+
+    @Property
+    @InjectService("MusicLibrary")
+    private MusicLibrary musicLibrary;
 
     public String getGreeting()
     {

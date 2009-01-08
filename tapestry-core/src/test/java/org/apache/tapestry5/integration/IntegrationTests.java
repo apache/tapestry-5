@@ -192,6 +192,8 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         // Prove that injection using a marker annotation (to match against a marked service) works.
 
         assertTextPresent("Injection via Marker: Bonjour!");
+
+        assertText("viaInjectService", "1722 tracks in music library");
     }
 
     @Test
