@@ -136,7 +136,11 @@ public class SpringModuleDef implements ModuleDef
     {
         for (final String beanName : BeanFactoryUtils.beanNamesIncludingAncestors(context))
         {
-            services.put(beanName, new SpringBeanServiceDef(beanName, context));
+            String trueName = beanName.startsWith("&")
+                              ? beanName.substring(1)
+                              : beanName;
+
+            services.put(trueName, new SpringBeanServiceDef(trueName, context));
         }
     }
 

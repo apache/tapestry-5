@@ -19,6 +19,8 @@
             <dd id="beans">${springBeans}</dd>
             <dt>Filter message:</dt>
             <dd id="message">${statusProvider.status}</dd>
+            <dt>Via factory:</dt>
+            <dd id="viaFactory">${viaFactory.message}</dd>
         </dl>
 
     </body>

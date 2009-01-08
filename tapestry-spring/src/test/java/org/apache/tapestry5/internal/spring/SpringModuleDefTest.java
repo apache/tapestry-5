@@ -34,6 +34,7 @@ public class SpringModuleDefTest extends SpringTestCase
         ServletContext servletContext = mockServletContext();
         ConfigurableWebApplicationContext ac = newMock(ConfigurableWebApplicationContext.class);
         Runnable fred = mockRunnable();
+        Runnable barney = mockRunnable();
 
         ServiceBuilderResources resources = mockServiceBuilderResources();
 
@@ -41,7 +42,9 @@ public class SpringModuleDefTest extends SpringTestCase
 
         train_getAttribute(servletContext, WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE, ac);
 
-        expect(ac.getBeanNamesForType(Object.class)).andReturn(new String[] {"fred", "barney"});
+        // Simulate barney as a factory bean.
+
+        expect(ac.getBeanNamesForType(Object.class)).andReturn(new String[] {"fred", "&barney"});
         expect(ac.getParentBeanFactory()).andReturn(null);
 
         replay();
@@ -81,6 +84,15 @@ public class SpringModuleDefTest extends SpringTestCase
         assertEquals(sd.createServiceCreator(null).toString(), "ObjectCreator<Spring Bean 'fred'>");
 
         verify();
+
+        expect(ac.getType("barney")).andReturn(Runnable.class);
+        expect(ac.getBean("barney")).andReturn(barney);
+
+        replay();
+
+        sd = moduleDef.getServiceDef("barney");
+
+        assertSame(sd.createServiceCreator(null).createObject(), barney);
     }
 
     @Test

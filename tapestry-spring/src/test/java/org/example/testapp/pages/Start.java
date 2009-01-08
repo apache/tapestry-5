@@ -20,6 +20,7 @@ import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.example.testapp.services.SpringStatusProvider;
 import org.example.testapp.services.Upcase;
+import org.example.testapp.services.ViaFactory;
 import org.springframework.context.ApplicationContext;
 
 import java.util.Arrays;
@@ -39,6 +40,10 @@ public class Start
     @Inject
     @Property
     private SpringStatusProvider statusProvider;
+
+    @Inject
+    @Property
+    private ViaFactory viaFactory;
 
     void onSuccess()
     {

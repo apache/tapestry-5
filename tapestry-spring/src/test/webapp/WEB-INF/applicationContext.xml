@@ -29,5 +29,7 @@
 
     <bean id="fred" class="org.example.testapp.services.FlintstoneImpl"/>
     <bean id="barney" class="org.example.testapp.services.FlintstoneImpl"/>
+
+    <bean id="viaFactory" class="org.example.testapp.services.ViaFactoryFactory"/>
 </beans>
 
