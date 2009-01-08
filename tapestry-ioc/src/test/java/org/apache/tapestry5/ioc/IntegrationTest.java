@@ -1276,7 +1276,7 @@ public class IntegrationTest extends IOCInternalTestCase
         catch (RuntimeException ex)
         {
             assertMessageContains(ex,
-                                  "Error invoking service contribution method org.apache.tapestry5.ioc.ConfigurationOverrideModule.contributeStringLookup(MappedConfiguration)",
+                                  "Error invoking service contribution method",
                                   "Contribution key fred has already been overridden");
         }
     }
