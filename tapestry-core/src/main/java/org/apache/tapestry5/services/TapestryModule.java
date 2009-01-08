@@ -300,7 +300,8 @@ public final class TapestryModule
      * based on the {@link org.apache.tapestry5.annotations.Component} annotation</dd> <dt>Mixin </dt> <dd>Adds a mixin
      * as part of a component's implementation</dd> <dt>Environment </dt> <dd>Allows fields to contain values extracted
      * from the {@link org.apache.tapestry5.services.Environment} service</dd> <dt>Inject </dt> <dd>Used with the {@link
-     * org.apache.tapestry5.ioc.annotations.Inject} annotation, when a value is supplied</dd> <dt>InjectPage</dt>
+     * org.apache.tapestry5.ioc.annotations.Inject} annotation, when a value is supplied</dd> <dt>InjectService</dt>
+     * <dd>Handles the {@link org.apache.tapestry5.ioc.annotations.InjectService} annotation</dd> <dt>InjectPage</dt>
      * <dd>Adds code to allow access to other pages via the {@link org.apache.tapestry5.annotations.InjectPage} field
      * annotation</dd> <dt>InjectBlock </dt> <dd>Allows a block from the template to be injected into a field</dd>
      * <dt>IncludeStylesheet </dt> <dd>Supports the {@link org.apache.tapestry5.annotations.IncludeStylesheet}
@@ -337,6 +338,7 @@ public final class TapestryModule
         configuration.add("Meta", new MetaWorker());
 
         configuration.add("Inject", new InjectWorker(locator, injectionProvider));
+        configuration.addInstance("InjectService", InjectServiceWorker.class);
 
         configuration.add("Secure", new SecureWorker());
 

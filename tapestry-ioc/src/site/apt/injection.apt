@@ -301,3 +301,9 @@ Component Injection
 * Service InjectionProvider
 
   Equivalent to the Service Lookup phase in an IoC layer injection.
+
+@InjectService in Components
+
+  This is now supported; you may use the
+  {{{../apidocs/org/apache/tapestry5/ioc/annotations/InjectService.html}InjectService}} annotation on component
+  fields.
