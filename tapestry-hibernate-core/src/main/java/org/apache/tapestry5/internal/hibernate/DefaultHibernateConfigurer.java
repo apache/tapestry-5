@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
 package org.apache.tapestry5.internal.hibernate;
 
 import org.apache.tapestry5.hibernate.HibernateConfigurer;
-import org.apache.tapestry5.hibernate.HibernateConstants;
+import org.apache.tapestry5.hibernate.HibernateSymbols;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.hibernate.cfg.Configuration;
 
@@ -27,7 +27,7 @@ public final class DefaultHibernateConfigurer implements HibernateConfigurer
     private final boolean defaultConfiguration;
 
     public DefaultHibernateConfigurer(
-            @Symbol(HibernateConstants.DEFAULT_CONFIGURATION)
+            @Symbol(HibernateSymbols.DEFAULT_CONFIGURATION)
             boolean defaultConfiguration)
     {
         this.defaultConfiguration = defaultConfiguration;

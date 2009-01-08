@@ -1,4 +1,4 @@
-//  Copyright 2008 The Apache Software Foundation
+//  Copyright 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,15 +20,12 @@ package org.apache.tapestry5.hibernate;
 public class HibernateConstants
 {
     /**
-     * If true (the default), then {@link org.apache.tapestry5.ValueEncoder}s are automatically created for each entity.
-     * Override to "false" to handle entity value encoding explicitly.
+     * @deprecated Use {@link org.apache.tapestry5.hibernate.HibernateSymbols#PROVIDE_ENTITY_VALUE_ENCODERS} instead.
      */
-    public static final String PROVIDE_ENTITY_VALUE_ENCODERS_SYMBOL = "tapestry.hibernate.provide-entity-value-encoders";
+    public static final String PROVIDE_ENTITY_VALUE_ENCODERS_SYMBOL = HibernateSymbols.PROVIDE_ENTITY_VALUE_ENCODERS;
 
     /**
-     * If true, then the last {@link org.apache.tapestry5.hibernate.HibernateConfigurer} will invoke {@link
-     * org.hibernate.cfg.Configuration#configure()}, to read the application's <code>hibernate.cfg.xml</code>. This
-     * should be set to false for applications that configure exclusively in code.
+     * @deprecated Use {@link org.apache.tapestry5.hibernate.HibernateSymbols#DEFAULT_CONFIGURATION} instead
      */
-    public static final String DEFAULT_CONFIGURATION = "tapestry.hibernate.default-configuration";
+    public static final String DEFAULT_CONFIGURATION = HibernateSymbols.DEFAULT_CONFIGURATION;
 }

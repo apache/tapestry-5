@@ -1,4 +1,4 @@
-// Copyright 2008 The Apache Software Foundation
+// Copyright 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,8 +19,10 @@ import org.apache.tapestry5.ioc.MappedConfiguration;
 import org.apache.tapestry5.ioc.OrderedConfiguration;
 import org.apache.tapestry5.ioc.ScopeConstants;
 import org.apache.tapestry5.ioc.ServiceBinder;
+import org.apache.tapestry5.ioc.annotations.Local;
 import org.apache.tapestry5.ioc.annotations.Marker;
 import org.apache.tapestry5.ioc.annotations.Scope;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.services.PerthreadManager;
 import org.apache.tapestry5.ioc.services.PropertyShadowBuilder;
 import org.apache.tapestry5.ioc.services.RegistryShutdownHub;
@@ -47,7 +49,25 @@ public class HibernateCoreModule
 
     public static void contributeFactoryDefaults(MappedConfiguration<String, String> configuration)
     {
-        configuration.add(HibernateConstants.DEFAULT_CONFIGURATION, "true");
+        configuration.add(HibernateSymbols.DEFAULT_CONFIGURATION, "true");
+        configuration.add(HibernateSymbols.EARLY_START_UP, "false");
+    }
+
+    public static void contributeRegistryStartup(OrderedConfiguration<Runnable> configuration,
+
+                                                 @Symbol(HibernateSymbols.EARLY_START_UP)
+                                                 final boolean earlyStartup,
+
+                                                 final HibernateSessionSource sessionSource)
+    {
+        configuration.add("HibernateStartup", new Runnable()
+        {
+            public void run()
+            {
+                if (earlyStartup)
+                    sessionSource.getConfiguration();
+            }
+        });
     }
 
     public static HibernateEntityPackageManager buildHibernateEntityPackageManager(
@@ -112,6 +132,7 @@ public class HibernateCoreModule
      */
     public static void contributeHibernateSessionSource(OrderedConfiguration<HibernateConfigurer> config,
 
+                                                        @Local
                                                         HibernateConfigurer defaultHibernateConfigurer)
     {
         config.add("Default", defaultHibernateConfigurer);

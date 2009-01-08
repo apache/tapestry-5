@@ -66,3 +66,7 @@ Hibernate Symbols
 
   [tapestry.hibernate.default-configuration] If true (the default), then the application must include a <<<hibernate.cfg.xml>>> file.  If your application  configures
   itself entirely in code, you should set this symbol to false.
+
+  [tapestry.hibernate.early-startup]
+  If "true", the Hibernate is initialized when the application starts up.  The default is "false", to start Hibernate up lazily, on
+  first use.
