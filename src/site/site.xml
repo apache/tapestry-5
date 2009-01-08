@@ -102,6 +102,7 @@
             <item name="Property Expressions" href="guide/propexp.html"/>
             <item name="Project Layout" href="guide/project-layout.html"/>
             <item name="Request Processing" href="guide/request.html"/>
+            <item name="Response Compression" href="guide/compress.html"/>
             <item name="Service Status" href="guide/servicestatus.html"/>
             <item name="Type Coercion" href="guide/coercion.html"/>
             <item name="Unit testing pages/components" href="guide/unit-testing-pages.html"/>

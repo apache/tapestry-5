@@ -107,4 +107,13 @@ public class SymbolConstants
      * @since 5.1.0.0
      */
     public static final String PERSISTENCE_STRATEGY = "tapestry.persistence-strategy";
+
+
+    /**
+     * Minimum output stream size, in bytes, before output is compressed using GZIP. Shorter streams are not compressed.
+     * Tapestry buffers this amount and switches to a GZIP output stream as needed.
+     *
+     * @since 5.1.0.0
+     */
+    public static final String MIN_GZIP_SIZE = "tapestry.min-gzip-size";
 }

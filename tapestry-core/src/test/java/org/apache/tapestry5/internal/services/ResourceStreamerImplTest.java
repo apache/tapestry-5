@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,6 +14,7 @@
 
 package org.apache.tapestry5.internal.services;
 
+import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.internal.util.ClasspathResource;
@@ -24,6 +25,7 @@ import static org.easymock.EasyMock.*;
 import org.testng.annotations.Test;
 
 import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
@@ -53,20 +55,28 @@ public class ResourceStreamerImplTest extends InternalBaseTestCase
     private void content_type(String contentType, String fileName) throws IOException
     {
         Request request = mockRequest();
-        HttpServletResponse hsr = mockHttpServletResponse();
+        HttpServletRequest hsRequest = mockHttpServletRequest();
+        HttpServletResponse hsResponse = mockHttpServletResponse();
 
-        train_setContentLength(hsr, anyInt());
-        train_setDateHeader(hsr, eq("Last-Modified"), anyLong());
-        train_setDateHeader(hsr, eq("Expires"), anyLong());
-        train_setContentType(hsr, contentType);
-        train_getOutputStream(hsr, new TestServletOutputStream());
+        request.setAttribute(InternalConstants.SUPPRESS_COMPRESSION, true);
+
+        // We're testing with a fake client that does not support GZIP compression:
+
+        expect(hsRequest.getHeader(isA(String.class))).andReturn(null);
+
+        train_setContentLength(hsResponse, anyInt());
+        train_setDateHeader(hsResponse, eq("Last-Modified"), anyLong());
+        train_setDateHeader(hsResponse, eq("Expires"), anyLong());
+        train_setContentType(hsResponse, contentType);
+        train_getOutputStream(hsResponse, new TestServletOutputStream());
 
         replay();
 
-        Response response = new ResponseImpl(hsr);
+        Response response = new ResponseImpl(hsResponse);
         ResourceStreamer streamer = getService(ResourceStreamer.class);
         RequestGlobals globals = getService(RequestGlobals.class);
 
+        globals.storeServletRequestResponse(hsRequest, hsResponse);
         globals.storeRequestResponse(request, response);
 
         String path = getClass().getPackage().getName().replace('.', '/') + "/" + fileName;
@@ -86,5 +96,4 @@ public class ResourceStreamerImplTest extends InternalBaseTestCase
             // Empty.
         }
     }
-
 }

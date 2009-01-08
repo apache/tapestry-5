@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -43,6 +43,8 @@ public class ResourceCacheImpl extends InvalidationEventHubImpl implements Resou
 
         final long timeModified;
 
+        final StreamableResource streamable;
+
         Cached(Resource resource)
         {
             requiresDigest = digestGenerator.requiresDigest(resource.getPath());
@@ -59,6 +61,8 @@ public class ResourceCacheImpl extends InvalidationEventHubImpl implements Resou
                                                      : null;
 
             timeModified = url != null ? tracker.add(url) : MISSING_RESOURCE_TIME_MODIFIED;
+
+            streamable = url == null ? null : new StreamableResourceImpl(url, timeModified);
         }
     }
 
@@ -105,5 +109,10 @@ public class ResourceCacheImpl extends InvalidationEventHubImpl implements Resou
     public boolean requiresDigest(Resource resource)
     {
         return get(resource).requiresDigest;
+    }
+
+    public StreamableResource getStreamableResource(Resource resource)
+    {
+        return get(resource).streamable;
     }
 }

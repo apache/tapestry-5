@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ import org.apache.tapestry5.corelib.components.Form;
 import org.apache.tapestry5.corelib.mixins.RenderDisabled;
 import org.apache.tapestry5.integration.app1.data.RegistrationData;
 import org.apache.tapestry5.integration.app1.pages.RenderErrorDemo;
+import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.internal.util.ClasspathResource;
 import org.apache.tapestry5.test.AbstractIntegrationTestSuite;
@@ -476,16 +477,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         ByteArrayOutputStream os = new ByteArrayOutputStream();
 
-        byte[] buffer = new byte[10000];
-
-        while (true)
-        {
-            int length = is.read(buffer);
-
-            if (length < 0) break;
-
-            os.write(buffer, 0, length);
-        }
+        TapestryInternalUtils.copy(is, os);
 
         os.close();
         is.close();

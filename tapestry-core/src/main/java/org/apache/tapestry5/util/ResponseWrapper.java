@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,23 +12,25 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.internal.services;
+package org.apache.tapestry5.util;
 
 import org.apache.tapestry5.Link;
 import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.services.Response;
 
-import javax.servlet.http.HttpServletResponse;
-import java.io.*;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintWriter;
 
 /**
- * Implementation of {@link Response} that wraps around an underlying {@link HttpServletResponse}.
+ * Implementation of {@link org.apache.tapestry5.services.Response} that delegates all method invocations to a delegate
+ * instance. This is used as a base class for overriding just some behaviors of Response.
  */
-public class ResponseImpl implements Response
+public class ResponseWrapper implements Response
 {
-    private final HttpServletResponse response;
+    protected final Response response;
 
-    public ResponseImpl(HttpServletResponse response)
+    public ResponseWrapper(Response response)
     {
         Defense.notNull(response, "response");
 
@@ -37,23 +39,12 @@ public class ResponseImpl implements Response
 
     public PrintWriter getPrintWriter(String contentType) throws IOException
     {
-        Defense.notBlank(contentType, "contentType");
-
-        OutputStream os = getOutputStream(contentType);
-
-        Writer w = new OutputStreamWriter(os, response.getCharacterEncoding());
-
-        return new PrintWriter(new BufferedWriter(w));
+        return response.getPrintWriter(contentType);
     }
 
-    public String encodeURL(String URL)
+    public OutputStream getOutputStream(String contentType) throws IOException
     {
-        return response.encodeURL(URL);
-    }
-
-    public String encodeRedirectURL(String URL)
-    {
-        return response.encodeRedirectURL(URL);
+        return response.getOutputStream(contentType);
     }
 
     public void sendRedirect(String URL) throws IOException
@@ -63,25 +54,12 @@ public class ResponseImpl implements Response
 
     public void sendRedirect(Link link) throws IOException
     {
-        Defense.notNull(link, "link");
-
-        String redirectURL = encodeRedirectURL(link.toRedirectURI());
-
-        sendRedirect(redirectURL);
+        response.sendRedirect(link);
     }
 
     public void setStatus(int sc)
     {
         response.setStatus(sc);
-    }
-
-    public OutputStream getOutputStream(String contentType) throws IOException
-    {
-        Defense.notBlank(contentType, "contentType");
-
-        response.setContentType(contentType);
-
-        return response.getOutputStream();
     }
 
     public void sendError(int sc, String message) throws IOException
@@ -107,6 +85,16 @@ public class ResponseImpl implements Response
     public void setIntHeader(String name, int value)
     {
         response.setIntHeader(name, value);
+    }
+
+    public String encodeURL(String URL)
+    {
+        return response.encodeURL(URL);
+    }
+
+    public String encodeRedirectURL(String URL)
+    {
+        return response.encodeRedirectURL(URL);
     }
 
     public boolean isCommitted()

@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,54 +14,104 @@
 
 package org.apache.tapestry5.internal.services;
 
+import org.apache.tapestry5.SymbolConstants;
+import org.apache.tapestry5.internal.InternalConstants;
+import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.util.TimeInterval;
+import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.Response;
+import org.apache.tapestry5.services.ResponseCompressionAnalyzer;
 
-import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.Map;
 
 public class ResourceStreamerImpl implements ResourceStreamer
 {
     private static final long TEN_YEARS = new TimeInterval("10y").milliseconds();
 
-    private static final int BUFFER_SIZE = 5000;
+    private final ResourceCache resourceCache;
+
+    private final Request request;
 
     private final Response response;
 
+    private final ResponseCompressionAnalyzer analyzer;
+
     private final Map<String, String> configuration;
 
-    public ResourceStreamerImpl(final Response response, Map<String, String> configuration)
+    private final int compressionCutoff;
+
+    public ResourceStreamerImpl(Request request, Response response, ResourceCache resourceCache,
+                                Map<String, String> configuration,
+                                ResponseCompressionAnalyzer analyzer,
+
+                                @Symbol(SymbolConstants.MIN_GZIP_SIZE)
+                                int compressionCutoff)
     {
         this.response = response;
+        this.resourceCache = resourceCache;
         this.configuration = configuration;
+        this.request = request;
+        this.analyzer = analyzer;
+        this.compressionCutoff = compressionCutoff;
     }
 
     public void streamResource(Resource resource) throws IOException
     {
-        URL url = resource.toURL();
+        // Prevent the upstream code from compressing when we don't want to.
 
-        URLConnection connection = url.openConnection();
+        request.setAttribute(InternalConstants.SUPPRESS_COMPRESSION, true);
 
-        int contentLength = connection.getContentLength();
+        StreamableResource streamble = resourceCache.getStreamableResource(resource);
 
-        if (contentLength >= 0) response.setContentLength(contentLength);
-
-        // Could get this from the ResourceCache, but can't imagine
-        // it's very expensive.
-
-        long lastModified = connection.getLastModified();
+        long lastModified = streamble.getLastModified();
 
         response.setDateHeader("Last-Modified", lastModified);
         response.setDateHeader("Expires", lastModified + TEN_YEARS);
 
-        String contentType = connection.getContentType();
+        String contentType = identifyContentType(resource, streamble);
+
+        boolean compress = analyzer.isGZipSupported() &&
+                streamble.getSize(false) >= compressionCutoff &&
+                analyzer.isCompressable(contentType);
+
+        int contentLength = streamble.getSize(compress);
+
+        if (contentLength >= 0)
+            response.setContentLength(contentLength);
+
+        if (compress)
+            response.setHeader(InternalConstants.CONTENT_ENCODING_HEADER, InternalConstants.GZIP_CONTENT_ENCODING);
+
+        InputStream is = null;
+
+        try
+        {
+            is = streamble.getStream(compress);
+
+            OutputStream os = response.getOutputStream(contentType);
+
+            TapestryInternalUtils.copy(is, os);
+
+            is.close();
+            is = null;
+
+            os.close();
+        }
+        finally
+        {
+            InternalUtils.close(is);
+        }
+    }
+
+    private String identifyContentType(Resource resource, StreamableResource streamble) throws IOException
+    {
+        String contentType = streamble.getContentType();
 
         if ("content/unknown".equals(contentType)) contentType = null;
 
@@ -80,36 +130,6 @@ public class ResourceStreamerImpl implements ResourceStreamer
             if (contentType == null) contentType = "application/octet-stream";
         }
 
-        InputStream is = null;
-
-        try
-        {
-            connection.connect();
-
-            is = new BufferedInputStream(connection.getInputStream());
-
-            OutputStream os = response.getOutputStream(contentType);
-
-            byte[] buffer = new byte[BUFFER_SIZE];
-
-            while (true)
-            {
-                int length = is.read(buffer);
-
-                if (length < 0) break;
-
-                os.write(buffer, 0, length);
-            }
-
-            is.close();
-            is = null;
-
-            os.flush();
-        }
-        finally
-        {
-            InternalUtils.close(is);
-        }
-
+        return contentType;
     }
 }

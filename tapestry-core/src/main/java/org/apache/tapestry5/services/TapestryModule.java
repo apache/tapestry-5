@@ -27,6 +27,7 @@ import org.apache.tapestry5.internal.beaneditor.ValidateAnnotationConstraintGene
 import org.apache.tapestry5.internal.bindings.*;
 import org.apache.tapestry5.internal.grid.CollectionGridDataSource;
 import org.apache.tapestry5.internal.grid.NullDataSource;
+import org.apache.tapestry5.internal.gzip.GZipFilter;
 import org.apache.tapestry5.internal.renderers.*;
 import org.apache.tapestry5.internal.services.*;
 import org.apache.tapestry5.internal.transform.*;
@@ -560,12 +561,34 @@ public final class TapestryModule
     }
 
 
-    public static void contributeHttpServletRequestHandler(OrderedConfiguration<HttpServletRequestFilter> configuration,
+    /**
+     * <dl> <dt>StoreIntoGlobals</dt> <dd>Stores the request and response into {@link
+     * org.apache.tapestry5.services.RequestGlobals} at the start of the pipeline</dd> <dt>IgnoredPaths</dt>
+     * <dd>Identifies requests that are known (via the IgnoredPathsFilter service's configuration) to be mapped to other
+     * applications</dd> <dt>GZip</dt> <dd>Handles GZIP compression of response streams (if supported by client)</dd>
+     */
+    public void contributeHttpServletRequestHandler(OrderedConfiguration<HttpServletRequestFilter> configuration,
 
-                                                           @InjectService("IgnoredPathsFilter")
-                                                           HttpServletRequestFilter ignoredPathsFilter)
+                                                    @InjectService("IgnoredPathsFilter")
+                                                    HttpServletRequestFilter ignoredPathsFilter)
     {
         configuration.add("IgnoredPaths", ignoredPathsFilter);
+
+        configuration.addInstance("GZIP", GZipFilter.class, "after:IgnoredPaths");
+
+        HttpServletRequestFilter storeIntoGlobals = new HttpServletRequestFilter()
+        {
+            public boolean service(HttpServletRequest request, HttpServletResponse response,
+                                   HttpServletRequestHandler handler)
+                    throws IOException
+            {
+                requestGlobals.storeServletRequestResponse(request, response);
+
+                return handler.service(request, response);
+            }
+        };
+
+        configuration.add("StoreIntoGlobals", storeIntoGlobals, "before:*");
     }
 
     /**
@@ -577,7 +600,7 @@ public final class TapestryModule
      * handle them</dd> <dt>Localization</dt> <dd>Determines the locale for the current request from header data or
      * cookies in the request</dd> <dt>StoreIntoGlobals</dt> <dd>Stores the request and response into the {@link
      * org.apache.tapestry5.services.RequestGlobals} service (this is repeated at the end of the pipeline, in case any
-     * filter substitutes the request or response). </dl>
+     * filter substitutes the request or response).  </dl>
      */
     public void contributeRequestHandler(OrderedConfiguration<RequestFilter> configuration, Context context,
 
@@ -590,9 +613,7 @@ public final class TapestryModule
                                          @IntermediateType(TimeInterval.class)
                                          long updateTimeout,
 
-                                         UpdateListenerHub updateListenerHub,
-
-                                         LocalizationSetter localizationSetter)
+                                         UpdateListenerHub updateListenerHub)
     {
         RequestFilter staticFilesFilter = new StaticFilesFilter(context);
 
@@ -632,7 +653,7 @@ public final class TapestryModule
 
         configuration.add("EndOfRequest", fireEndOfRequestEvent, "after:StoreIntoGlobals", "before:ErrorFilter");
 
-        configuration.add("Localization", new LocalizationFilter(localizationSetter), "after:ErrorFilter");
+        configuration.addInstance("Localization", LocalizationFilter.class, "after:ErrorFilter");
     }
 
     /**
@@ -1881,11 +1902,13 @@ public final class TapestryModule
         configuration.add(SymbolConstants.EXCEPTION_REPORT_PAGE, "ExceptionReport");
 
         configuration.add(SymbolConstants.SCRIPTS_AT_TOP, "false");
+
+        configuration.add(SymbolConstants.MIN_GZIP_SIZE, "100");
     }
 
 
     /**
-     * Adds content types for "css" and "js" file extensions. <dl> <dt>css</dt> <dd>test/css</dd> <dt>js</dt>
+     * Adds content types for "css" and "js" file extensions. <dl> <dt>css</dt> <dd>text/css</dd> <dt>js</dt>
      * <dd>text/javascript</dd> </dl>
      */
     public void contributeResourceStreamer(MappedConfiguration<String, String> configuration)
@@ -2093,5 +2116,15 @@ public final class TapestryModule
 
         configuration.add(OptimizedSessionPersistedObject.class, new OptimizedSessionPersistedObjectAnalyzer());
         configuration.add(OptimizedApplicationStateObject.class, new OptimizedApplicationStateObjectAnalyzer());
+    }
+
+    /**
+     * Adds the following content types: <ul> <li>image/jpeg</li> </ul>
+     *
+     * @since 5.1.0.0
+     */
+    public static void contributeResponseCompressionAnalyzer(Configuration<String> configuration)
+    {
+        configuration.add("image/jpeg");
     }
 }

@@ -1,0 +1,44 @@
+ ----
+ Response Compression
+ ----
+
+Response Compression
+
+  Starting in Tapestry 5.1, the framework automatically GZIP compresses content streamed to the client.  This can
+  signifcantly reduce the amount of network traffic for a Tapestry application, at the cost of extra processing time
+  on the server to compress the response stream.
+
+  This applies to both rendered pages and streamed assets from the classpath.
+
+  It does not (yet) apply to ordinary files in the web application context; those are not streamed by Tapestry; they
+  are handled by the servlet container.
+
+Compression Configuration
+
+  Small streams generally do not benefit from being compressed; there is overhead when using compression, not just
+  the CPU time to compress the bytes, but a lot of overhead.  For small responses, Tapestry does not attempt
+  to compress the output stream.
+
+  The configuration symbol <<<tapestry.min-gzip-size>>> allows the cutoff to be set; it defaults to 100 bytes.
+
+  In addition, some file types are already compressed and should not be recompressed (they actually get larger, not
+  smaller!).  The service
+  {{{../apidocs/org/apache/tapestry5/services/ResponseCompressionAnalyzer.html}ResponseCompressionAnalyzer}}'s
+  configuration is an unordered collection of content type strings that should <not> be compressed.  The default
+  content types are "image/jpeg".
+
+  The mapping from file type (by extension) to content type is typically done as part of your servlet-containers
+  configuration. Alternately, you can contribute to the ResourceStreamer service's configuration.  This is a mapped
+  configuration; it maps file extensions (such as "css" or "js") to content types ("text/css" or "text/javascript")
+  respectively.
+
+StreamResponse
+
+  When returning a
+  {{{../apidocs/org/apache/tapestry5/StreamResponse.html}StreamResponse}}
+  from a {{{pagenav.html}component event method}}, the stream is totally
+  under your control; it will not be compressed.  You should use the ResponseCompressionAnalyzer service
+  to determine if the client supports compression, and add a java.util.zip.GZIPOutputStream to your stream stack
+  if compression is desired.
+
+
