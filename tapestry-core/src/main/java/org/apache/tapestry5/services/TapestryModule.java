@@ -185,6 +185,7 @@ public final class TapestryModule
         binder.bind(BindingFactory.class, ValidateBindingFactory.class).withId("ValidateBindingFactory");
         binder.bind(BindingFactory.class, TranslateBindingFactory.class).withId("TranslateBindingFactory");
         binder.bind(BindingFactory.class, AssetBindingFactory.class).withId("AssetBindingFactory");
+        binder.bind(BindingFactory.class, ContextBindingFactory.class).withId("ContextBindingFactory");
         binder.bind(BindingFactory.class, NullFieldStrategyBindingFactory.class).withId(
                 "NullFieldStrategyBindingFactory");
         binder.bind(URLEncoder.class, URLEncoderImpl.class);
@@ -244,7 +245,10 @@ public final class TapestryModule
                                                BindingFactory assetBindingFactory,
 
                                                @InjectService("NullFieldStrategyBindingFactory")
-                                               BindingFactory nullFieldStrategyBindingFactory)
+                                               BindingFactory nullFieldStrategyBindingFactory,
+
+                                               @InjectService("ContextBindingFactory")
+                                               BindingFactory contextBindingFactory)
     {
         configuration.add(BindingConstants.LITERAL, new LiteralBindingFactory());
         configuration.add(BindingConstants.COMPONENT, new ComponentBindingFactory());
@@ -257,6 +261,7 @@ public final class TapestryModule
         configuration.add(BindingConstants.TRANSLATE, translateBindingFactory);
         configuration.add(BindingConstants.ASSET, assetBindingFactory);
         configuration.add(BindingConstants.NULLFIELDSTRATEGY, nullFieldStrategyBindingFactory);
+        configuration.add(BindingConstants.CONTEXT, contextBindingFactory);
     }
 
     public static void contributeClasspathAssetAliasManager(MappedConfiguration<String, String> configuration,

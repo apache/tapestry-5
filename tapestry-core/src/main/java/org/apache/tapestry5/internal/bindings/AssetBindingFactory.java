@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -27,54 +27,14 @@ import org.apache.tapestry5.services.BindingFactory;
 /**
  * Binding factory where the expression is a reference to an asset.
  *
- * @see AssetSource
+ * @see org.apache.tapestry5.services.AssetSource
+ * @see org.apache.tapestry5.internal.bindings.ContextBindingFactory
  */
 public class AssetBindingFactory implements BindingFactory
 {
     private final AssetSource source;
 
     private final boolean forceAbsoluteURIs;
-
-    public class AssetBinding extends AbstractBinding
-    {
-        private final String description;
-
-        private final Asset asset;
-
-        protected AssetBinding(String description, Asset asset, Location location)
-        {
-            super(location);
-
-            this.description = description;
-            this.asset = asset;
-        }
-
-        public Object get()
-        {
-            return asset;
-        }
-
-        /**
-         * Asset bindings are invariant only if full URIs are being used.  This is complicated ... basically, if the
-         * Asset is invariant, then any value coerced from the Asset is also invariant (such as a String version of an
-         * Asset's path).  Thus, the invariant String gets cached inside component parameter fields.  However, when the
-         * path is dynamic (i.e., because of {@link org.apache.tapestry5.internal.services.RequestPathOptimizer}), we
-         * need to ensure that the Assets aren't cached.
-         *
-         * @return true if full URIs are enabled, false otherwise
-         */
-        @Override
-        public boolean isInvariant()
-        {
-            return forceAbsoluteURIs;
-        }
-
-        @Override
-        public String toString()
-        {
-            return String.format("AssetBinding[%s: %s]", description, asset);
-        }
-    }
 
     public AssetBindingFactory(AssetSource source,
 
@@ -92,6 +52,6 @@ public class AssetBindingFactory implements BindingFactory
 
         Asset asset = source.getAsset(baseResource, expression, container.getLocale());
 
-        return new AssetBinding(description, asset, location);
+        return new AssetBinding(location, description, asset, forceAbsoluteURIs);
     }
 }

@@ -1,4 +1,4 @@
-// Copyright 2006, 2009 The Apache Software Foundation
+// Copyright 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,23 +14,41 @@
 
 package org.apache.tapestry5.internal.bindings;
 
+import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.Binding;
 import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.ioc.Location;
+import org.apache.tapestry5.ioc.annotations.Symbol;
+import org.apache.tapestry5.services.AssetSource;
 import org.apache.tapestry5.services.BindingFactory;
 
 /**
- * Implementation of the message: binding prefix -- we simply get the message key and store it inside at {@link
- * LiteralBinding}.
+ * Specialization of {@link org.apache.tapestry5.internal.bindings.AssetBindingFactory} that is explicitly limited to
+ * context assets.
+ *
+ * @since 5.1.0.0
  */
-public class MessageBindingFactory implements BindingFactory
+public class ContextBindingFactory implements BindingFactory
 {
+    private final AssetSource source;
+
+    private final boolean forceAbsoluteURIs;
+
+    public ContextBindingFactory(AssetSource source,
+
+                                 @Symbol(SymbolConstants.FORCE_ABSOLUTE_URIS)
+                                 boolean forceAbsoluteURIs)
+    {
+        this.source = source;
+        this.forceAbsoluteURIs = forceAbsoluteURIs;
+    }
 
     public Binding newBinding(String description, ComponentResources container, ComponentResources component,
                               String expression, Location location)
     {
-        String messageValue = container.getMessages().get(expression);
+        Asset asset = source.getContextAsset(expression, container.getLocale());
 
-        return new LiteralBinding(location, description, messageValue);
+        return new AssetBinding(location, description, asset, forceAbsoluteURIs);
     }
 }

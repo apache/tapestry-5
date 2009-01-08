@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -27,7 +27,6 @@ public class ComponentBindingFactory implements BindingFactory
     public Binding newBinding(String description, ComponentResources container, ComponentResources component,
                               String expression, Location location)
     {
-        return new ComponentBinding(description, container, expression, location);
+        return new ComponentBinding(location, description, container, expression);
     }
-
 }

@@ -50,24 +50,14 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         // assertSourcePresent("<link href=\"/css/app.css\" rel=\"stylesheet\" type=\"text/css\">");
 
-        // The URL
-
-        // assertAttribute("//img[@id='icon']/@src", "/images/tapestry_banner.gif");
-
-
-        // doesn't prove that the image shows up in the client browser (it does, but
-        // it could just as easily be a broken image). Haven't figured out how Selenium
-        // allows to be verified. Note that the path below represents some aliasing
-        // of the raw classpath resource path.
-
-        // assertAttribute("//img[@id='button']/@src", "/assets/app1/pages/nested/tapestry-button.png");
-
         // Read the byte stream for the asset and compare to the real copy.
 
         compareDownloadedAsset(getAttribute("//img[@id='icon']/@src"),
                                "src/test/app1/images/tapestry_banner.gif");
         compareDownloadedAsset(getAttribute("//img[@id='button']/@src"),
                                "src/test/resources/org/apache/tapestry5/integration/app1/pages/nested/tapestry-button.png");
+        compareDownloadedAsset(getAttribute("//img[@id='viaContext']/@src"),
+                               "src/test/app1/images/asf_logo_wide.gif");
     }
 
     private void compareDownloadedAsset(String assetURL, String localPath) throws Exception
@@ -76,8 +66,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         byte[] downloaded = readContent(url);
 
-        File local = new File(
-                localPath);
+        File local = new File(localPath);
 
         byte[] actual = readContent(local.toURL());
 

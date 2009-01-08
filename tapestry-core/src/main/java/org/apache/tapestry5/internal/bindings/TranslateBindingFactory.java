@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -37,7 +37,7 @@ public class TranslateBindingFactory implements BindingFactory
     public Binding newBinding(String description, ComponentResources container,
                               final ComponentResources component, final String expression, Location location)
     {
-        return new VariantBinding(FieldTranslator.class, description + ": " + expression, location)
+        return new InvariantBinding(location, FieldTranslator.class, description + ": " + expression)
         {
             public Object get()
             {

@@ -115,11 +115,13 @@ Binding Expressions
 *------------+----------------------------------------------------------------------------------+
 | <<Prefix>> | <<Description>>                                                                  |
 *------------+----------------------------------------------------------------------------------+
-| asset      | The relative path to an asset file (which must exist). |
+| asset      | The relative path to an asset file (which must exist).                           |
 *------------+----------------------------------------------------------------------------------+
-| block      | The id of a block within the template. |
+| block      | The id of a block within the template.                                           |
 *------------+----------------------------------------------------------------------------------+
 | component  | The id of another component within the same template.                            |
+*------------+----------------------------------------------------------------------------------+
+| context    | Context asset: path from context root.                                           |
 *------------+----------------------------------------------------------------------------------+
 | literal    | A literal string.                                                                |
 *------------+----------------------------------------------------------------------------------+
@@ -234,6 +236,24 @@ Informal Parameters
   prefix is "prop:".  If the parameter is bound inside the component template, then the default binding
   prefix is "literal:".  This reflects the fact that a parameter specified in the Java class, using the annotation, is most likely
   a computed value, whereas a value in the template should simply be copied, as is, into the result HTML stream.
+
+Asset Bindings
+
+  Assets bindings are normally relative to the component class.  This can be overriden by prefixing the path with "context:",
+  in which case, the path is a context path from the root of the web application context.
+
+Context Bindings
+
+  Context bindings are like asset bindings, but the path is <always> relative to the root of the web application context.
+  This is intended for use inside templates, i.e.:
+
+---
+  <img src="${context:images/icon.png}"/>
+---
+
+  Tapestry will adjust the URL of the image so that it is processed by Tapestry, not the servlet container.
+  It will gain a URL that includes the applications version number, it will have a far-future expires header,
+  and (if the client supports it) it will be compressed before being sent to the client.
 
 Supporting Informal Parameters
 
