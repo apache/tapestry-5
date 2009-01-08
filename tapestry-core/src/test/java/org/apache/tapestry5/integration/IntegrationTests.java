@@ -19,13 +19,12 @@ import org.apache.tapestry5.corelib.mixins.RenderDisabled;
 import org.apache.tapestry5.integration.app1.data.RegistrationData;
 import org.apache.tapestry5.integration.app1.pages.RenderErrorDemo;
 import org.apache.tapestry5.internal.TapestryInternalUtils;
-import org.apache.tapestry5.ioc.Resource;
-import org.apache.tapestry5.ioc.internal.util.ClasspathResource;
 import org.apache.tapestry5.test.AbstractIntegrationTestSuite;
 import org.testng.annotations.Test;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.InputStream;
 import java.net.URL;
 
@@ -49,27 +48,38 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         // Test for https://issues.apache.org/jira/browse/TAPESTRY-1935
 
-        assertSourcePresent("<link href=\"/css/app.css\" rel=\"stylesheet\" type=\"text/css\">");
+        // assertSourcePresent("<link href=\"/css/app.css\" rel=\"stylesheet\" type=\"text/css\">");
 
-        assertAttribute("//img[@id='icon']/@src", "/images/tapestry_banner.gif");
+        // The URL
+
+        // assertAttribute("//img[@id='icon']/@src", "/images/tapestry_banner.gif");
+
 
         // doesn't prove that the image shows up in the client browser (it does, but
         // it could just as easily be a broken image). Haven't figured out how Selenium
         // allows to be verified. Note that the path below represents some aliasing
         // of the raw classpath resource path.
 
-        assertAttribute("//img[@id='button']/@src", "/assets/app1/pages/nested/tapestry-button.png");
+        // assertAttribute("//img[@id='button']/@src", "/assets/app1/pages/nested/tapestry-button.png");
 
         // Read the byte stream for the asset and compare to the real copy.
 
-        URL url = new URL("http", "localhost", JETTY_PORT, "/assets/app1/pages/nested/tapestry-button.png");
+        compareDownloadedAsset(getAttribute("//img[@id='icon']/@src"),
+                               "src/test/app1/images/tapestry_banner.gif");
+        compareDownloadedAsset(getAttribute("//img[@id='button']/@src"),
+                               "src/test/resources/org/apache/tapestry5/integration/app1/pages/nested/tapestry-button.png");
+    }
+
+    private void compareDownloadedAsset(String assetURL, String localPath) throws Exception
+    {
+        URL url = new URL("http", "localhost", JETTY_PORT, assetURL);
 
         byte[] downloaded = readContent(url);
 
-        Resource classpathResource = new ClasspathResource(
-                "org/apache/tapestry5/integration/app1/pages/nested/tapestry-button.png");
+        File local = new File(
+                localPath);
 
-        byte[] actual = readContent(classpathResource.toURL());
+        byte[] actual = readContent(local.toURL());
 
         assertEquals(downloaded, actual);
     }

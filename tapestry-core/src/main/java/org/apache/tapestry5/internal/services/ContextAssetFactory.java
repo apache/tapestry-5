@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,7 +15,10 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.Asset;
+import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.AssetFactory;
 import org.apache.tapestry5.services.Context;
 import org.apache.tapestry5.services.Request;
@@ -23,7 +26,7 @@ import org.apache.tapestry5.services.Request;
 /**
  * Implementation of {@link AssetFactory} for assets that are part of the web application context.
  *
- * @see ContextResource
+ * @see org.apache.tapestry5.internal.services.ContextResource
  */
 public class ContextAssetFactory implements AssetFactory
 {
@@ -33,16 +36,28 @@ public class ContextAssetFactory implements AssetFactory
 
     private final RequestPathOptimizer optimizer;
 
-    public ContextAssetFactory(Request request, Context context, RequestPathOptimizer optimizer)
+    private final String pathPrefix;
+
+    private final Resource rootResource;
+
+    public ContextAssetFactory(Request request, Context context, RequestPathOptimizer optimizer,
+
+                               @Inject @Symbol(SymbolConstants.APPLICATION_VERSION)
+                               String applicationVersion)
     {
         this.request = request;
         this.context = context;
         this.optimizer = optimizer;
+
+        pathPrefix = RequestConstants.ASSET_PATH_PREFIX + RequestConstants.APP_FOLDER
+                + applicationVersion + "/";
+
+        rootResource = new ContextResource(context, "/");
     }
 
     public Asset createAsset(final Resource resource)
     {
-        final String contextPath = request.getContextPath() + "/" + resource.getPath();
+        final String contextPath = request.getContextPath() + pathPrefix + resource.getPath();
 
         return new Asset()
         {
@@ -57,7 +72,7 @@ public class ContextAssetFactory implements AssetFactory
             }
 
             /**
-             * Returns the client URL, which is essiential to allow informal parameters of type
+             * Returns the client URL, which is essential to allow informal parameters of type
              * Asset to generate a proper value.
              */
             @Override
@@ -69,11 +84,10 @@ public class ContextAssetFactory implements AssetFactory
     }
 
     /**
-     * Returns the root {@link ContextResource}.
+     * Returns the root {@link org.apache.tapestry5.internal.services.ContextResource}.
      */
     public Resource getRootResource()
     {
-        return new ContextResource(context, "/");
+        return rootResource;
     }
-
 }

@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -38,10 +38,14 @@ public class ClasspathAssetFactory implements AssetFactory, InvalidationListener
 
     private final Map<Resource, String> resourceToClientURL = newConcurrentMap();
 
+    private final ClasspathResource rootResource;
+
     public ClasspathAssetFactory(final ResourceCache cache, final ClasspathAssetAliasManager aliasManager)
     {
         this.cache = cache;
         this.aliasManager = aliasManager;
+
+        rootResource = new ClasspathResource("");
     }
 
     public void objectWasInvalidated()
@@ -107,6 +111,6 @@ public class ClasspathAssetFactory implements AssetFactory, InvalidationListener
 
     public Resource getRootResource()
     {
-        return new ClasspathResource("");
+        return rootResource;
     }
 }

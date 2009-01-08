@@ -1,4 +1,4 @@
-// Copyright 2008 The Apache Software Foundation
+// Copyright 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -99,7 +99,6 @@ public class SymbolConstants
      */
     public static final String SCRIPTS_AT_TOP = "tapestry.script-at-top";
 
-
     /**
      * Identifies the default persistence strategy for all pages that do not provide an override (using this value as
      * {@link org.apache.tapestry5.annotations.Meta key}).
@@ -116,4 +115,13 @@ public class SymbolConstants
      * @since 5.1.0.0
      */
     public static final String MIN_GZIP_SIZE = "tapestry.min-gzip-size";
+
+    /**
+     * Version number integrated into URLs for context assets. This should be changed for each release, otherwise
+     * out-of-date files may be used from the client's local cache (due to far-future expired headers). The default
+     * value is semi-random and different for each execution.
+     *
+     * @since 5.1.0.0
+     */
+    public static final String APPLICATION_VERSION = "tapestry.application-version";
 }

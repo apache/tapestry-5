@@ -1,4 +1,4 @@
-// Copyright 2006, 2008 The Apache Software Foundation
+// Copyright 2006, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,12 +14,12 @@
 
 package org.apache.tapestry5.internal.services;
 
+import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.ClasspathResource;
-import org.apache.tapestry5.services.ClasspathAssetAliasManager;
-import org.apache.tapestry5.services.Dispatcher;
-import org.apache.tapestry5.services.Request;
-import org.apache.tapestry5.services.Response;
+import org.apache.tapestry5.services.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -40,14 +40,30 @@ public class AssetDispatcher implements Dispatcher
 
     private final ResourceCache resourceCache;
 
+    private final String applicationAssetPrefix;
+
+    private final AssetFactory contextAssetFactory;
+
     static final String IF_MODIFIED_SINCE_HEADER = "If-Modified-Since";
 
-    public AssetDispatcher(ResourceStreamer streamer, ClasspathAssetAliasManager aliasManager,
-                           ResourceCache resourceCache)
+    public AssetDispatcher(ResourceStreamer streamer,
+
+                           ClasspathAssetAliasManager aliasManager,
+
+                           ResourceCache resourceCache,
+
+                           @Inject @Symbol(SymbolConstants.APPLICATION_VERSION)
+                           String applicationVersion,
+
+                           @ContextProvider
+                           AssetFactory contextAssetFactory)
     {
         this.streamer = streamer;
         this.aliasManager = aliasManager;
         this.resourceCache = resourceCache;
+        this.contextAssetFactory = contextAssetFactory;
+
+        applicationAssetPrefix = RequestConstants.ASSET_PATH_PREFIX + RequestConstants.APP_FOLDER + applicationVersion + "/";
     }
 
     public boolean dispatch(Request request, Response response) throws IOException
@@ -61,9 +77,7 @@ public class AssetDispatcher implements Dispatcher
 
         // ClassLoaders like their paths to start with a leading slash.
 
-        String resourcePath = aliasManager.toResourcePath(path);
-
-        Resource resource = findResourceAndValidateDigest(response, resourcePath);
+        Resource resource = findResourceAndValidateDigest(response, path);
 
         if (resource == null) return true;
 
@@ -104,14 +118,19 @@ public class AssetDispatcher implements Dispatcher
     }
 
     /**
-     * @param response     used to send errors back to the client
-     * @param resourcePath the path to the requested resource, from the request
+     * @param response used to send errors back to the client
+     * @param path     the URI path
      * @return the resource for the path, with the digest stripped out of the URL, or null if the digest is invalid (and
      *         an error has been sent back to the client)
      * @throws IOException
      */
-    private Resource findResourceAndValidateDigest(Response response, String resourcePath) throws IOException
+    private Resource findResourceAndValidateDigest(Response response, String path) throws IOException
     {
+        if (path.startsWith(applicationAssetPrefix))
+            return findContextResource(path.substring(applicationAssetPrefix.length()));
+
+        String resourcePath = aliasManager.toResourcePath(path);
+
         Resource resource = new ClasspathResource(resourcePath);
 
         if (!resourceCache.requiresDigest(resource)) return resource;
@@ -155,5 +174,10 @@ public class AssetDispatcher implements Dispatcher
         }
 
         return result;
+    }
+
+    private Resource findContextResource(String contextPath)
+    {
+        return contextAssetFactory.getRootResource().forFile(contextPath);
     }
 }

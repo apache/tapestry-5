@@ -863,9 +863,12 @@ public final class TapestryModule
     }
 
     @Marker(ContextProvider.class)
-    public AssetFactory buildContextAssetFactory(ApplicationGlobals globals, RequestPathOptimizer optimizer)
+    public AssetFactory buildContextAssetFactory(ApplicationGlobals globals, RequestPathOptimizer optimizer,
+
+                                                 @Inject @Symbol(SymbolConstants.APPLICATION_VERSION)
+                                                 String applicationVersion)
     {
-        return new ContextAssetFactory(request, globals.getContext(), optimizer);
+        return new ContextAssetFactory(request, globals.getContext(), optimizer, applicationVersion);
     }
 
     /**
@@ -1904,6 +1907,8 @@ public final class TapestryModule
         configuration.add(SymbolConstants.SCRIPTS_AT_TOP, "false");
 
         configuration.add(SymbolConstants.MIN_GZIP_SIZE, "100");
+
+        configuration.add(SymbolConstants.APPLICATION_VERSION, Long.toHexString(System.currentTimeMillis()));
     }
 
 
