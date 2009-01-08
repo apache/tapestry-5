@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -29,6 +29,8 @@ import java.util.Map;
 public class AssetSourceImpl implements AssetSource
 {
     private static final String CLASSPATH = "classpath";
+
+    private static final String CONTEXT = "context";
 
     private final StrategyRegistry<AssetFactory> registry;
 
@@ -71,13 +73,20 @@ public class AssetSourceImpl implements AssetSource
         return getAsset(null, path, locale);
     }
 
+    public Asset getContextAsset(String path, Locale locale)
+    {
+        Defense.notBlank(path, "path");
+
+        Resource rootResource = prefixToRootResource.get(CONTEXT);
+
+        return findRelativeAsset(rootResource, path, locale);
+    }
+
     public Asset getAsset(Resource baseResource, String path, Locale locale)
     {
         Defense.notBlank(path, "path");
 
         if (baseResource == null) baseResource = prefixToRootResource.get(CLASSPATH);
-
-        if (locale == null) locale = threadLocale.getLocale();
 
         int colonx = path.indexOf(':');
 
@@ -96,7 +105,12 @@ public class AssetSourceImpl implements AssetSource
     private Asset findRelativeAsset(Resource baseResource, String path, Locale locale)
     {
         Resource unlocalized = baseResource.forFile(path);
-        Resource localized = unlocalized.forLocale(locale);
+
+        Locale effectiveLocale = locale != null
+                                 ? locale
+                                 : threadLocale.getLocale();
+
+        Resource localized = unlocalized.forLocale(effectiveLocale);
 
         if (localized == null)
             throw new RuntimeException(ServicesMessages.assetDoesNotExist(unlocalized));
@@ -129,5 +143,4 @@ public class AssetSourceImpl implements AssetSource
 
         return factory.createAsset(resource);
     }
-
 }

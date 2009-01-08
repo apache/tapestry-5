@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -47,6 +47,6 @@ public class PropBindingFactory implements BindingFactory
         String toString = String.format("PropBinding[%s %s(%s)]", description, container
                 .getCompleteId(), expression);
 
-        return new PropBinding(target, conduit, toString, location);
+        return new PropBinding(location, target, conduit, toString);
     }
 }

@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -610,7 +610,7 @@ class PageLoaderProcessor
         BlockImpl block = new BlockImpl(token.getLocation(),
                                         String.format("Parmeter %s of %s", name, element.getCompleteId()));
 
-        Binding binding = new LiteralBinding("block parameter " + name, block, token.getLocation());
+        Binding binding = new LiteralBinding(token.getLocation(), "block parameter " + name, block);
 
         // TODO: Check that the parameter block doesn't appear outside of an embedded component.
 

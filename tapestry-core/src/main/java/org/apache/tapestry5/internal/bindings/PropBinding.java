@@ -1,4 +1,4 @@
-// Copyright 2006, 2008 The Apache Software Foundation
+// Copyright 2006, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -35,8 +35,8 @@ public class PropBinding extends AbstractBinding
 
     private boolean invariant;
 
-    public PropBinding(final Object root, final PropertyConduit conduit, final String toString,
-                       final Location location)
+    public PropBinding(final Location location, final Object root, final PropertyConduit conduit, final String toString
+    )
     {
         super(location);
 

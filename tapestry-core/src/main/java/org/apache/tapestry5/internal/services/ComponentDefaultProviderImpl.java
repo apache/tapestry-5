@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@ package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.*;
 import org.apache.tapestry5.internal.TapestryInternalUtils;
-import org.apache.tapestry5.internal.bindings.VariantBinding;
+import org.apache.tapestry5.internal.bindings.InvariantBinding;
 import org.apache.tapestry5.ioc.Messages;
 import static org.apache.tapestry5.ioc.internal.util.Defense.notBlank;
 import static org.apache.tapestry5.ioc.internal.util.Defense.notNull;
@@ -128,8 +128,7 @@ public class ComponentDefaultProviderImpl implements ComponentDefaultProvider
         String description = String.format("default translator, parameter %s of %s",
                                            parameterName, resources.getCompleteId());
 
-        return new VariantBinding(FieldTranslator.class, description,
-                                  resources.getLocation())
+        return new InvariantBinding(resources.getLocation(), FieldTranslator.class, description)
         {
             public Object get()
             {
@@ -150,7 +149,7 @@ public class ComponentDefaultProviderImpl implements ComponentDefaultProvider
         String description = String.format("default validator, parameter %s of %s", parameterName,
                                            resources.getCompleteId());
 
-        return new VariantBinding(FieldValidator.class, description, resources.getLocation())
+        return new InvariantBinding(resources.getLocation(), FieldValidator.class, description)
         {
             public Object get()
             {

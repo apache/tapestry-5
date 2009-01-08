@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -55,6 +55,16 @@ public interface AssetSource
      * @return the asset
      */
     Asset getClasspathAsset(String path, Locale locale);
+
+    /**
+     * Convienience for finding assets in the context.
+     *
+     * @param path   path relative to the base resource (the context root)
+     * @param locale to localize the resource to, or null for the locale for the current request
+     * @return the asset
+     * @since 5.1.0.0
+     */
+    Asset getContextAsset(String path, Locale locale);
 
     /**
      * Obtains a classpath alias in the current locale (as defined by the {@link ThreadLocale} service).

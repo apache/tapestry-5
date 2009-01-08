@@ -1,4 +1,4 @@
-//  Copyright 2008 The Apache Software Foundation
+//  Copyright 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,13 +20,13 @@ import org.apache.tapestry5.ioc.Location;
  * Extends {@link org.apache.tapestry5.internal.bindings.AbstractBinding} with a description and a binding type, with
  * invariant forced to true.
  */
-public abstract class VariantBinding extends AbstractBinding
+public abstract class InvariantBinding extends AbstractBinding
 {
     private final Class bindingType;
 
     private final String description;
 
-    public VariantBinding(Class bindingType, String description, Location location)
+    public InvariantBinding(Location location, Class bindingType, String description)
     {
         super(location);
 
@@ -49,6 +49,6 @@ public abstract class VariantBinding extends AbstractBinding
     @Override
     public String toString()
     {
-        return String.format("VariantBinding[%s]", description);
+        return String.format("InvariantBinding[%s]", description);
     }
 }
