@@ -103,6 +103,14 @@ public class AppModule
   Many of these symbols have an associated constant in the class
   {{{../apidocs/org/apache/tapestry5/SymbolConstants.html}SymbolConstants}}.
 
+  [tapestry.application-version]
+    The version of the application, which is incorporated into URLs for context assets. Context assets
+    may be {{{compress.html}compressed}}, and will have far-future expiration headers; they will be aggresively
+    cached by the client web browser. You should change the application version on each new deployment of the
+    application to force clients to re-download changed versions of files.  If you do not specify
+    an application version, a <random> one will be assigned on every deployment (which is good for development
+    but very bad for production).
+
   [tapestry.charset]
     The character encoding used when generating output (or parsing input).  The default is "UTF-8".
 

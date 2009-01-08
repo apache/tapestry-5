@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -44,7 +44,7 @@ public class AssetDispatcherTest extends InternalBaseTestCase
 
         replay();
 
-        Dispatcher d = new AssetDispatcher(null, null, null);
+        Dispatcher d = new AssetDispatcher(null, null, null, "1.2.3", null);
 
         assertFalse(d.dispatch(request, null));
 
@@ -72,7 +72,7 @@ public class AssetDispatcherTest extends InternalBaseTestCase
 
         replay();
 
-        Dispatcher d = new AssetDispatcher(streamer, aliasManager, cache);
+        Dispatcher d = new AssetDispatcher(streamer, aliasManager, cache, "1.2.3", null);
 
         assertTrue(d.dispatch(request, response));
 
@@ -101,7 +101,7 @@ public class AssetDispatcherTest extends InternalBaseTestCase
 
         replay();
 
-        Dispatcher d = new AssetDispatcher(streamer, aliasManager, cache);
+        Dispatcher d = new AssetDispatcher(streamer, aliasManager, cache, "1.2.3", null);
 
         assertTrue(d.dispatch(request, response));
 
@@ -132,7 +132,7 @@ public class AssetDispatcherTest extends InternalBaseTestCase
 
         replay();
 
-        Dispatcher d = new AssetDispatcher(streamer, aliasManager, cache);
+        Dispatcher d = new AssetDispatcher(streamer, aliasManager, cache, "1.2.3", null);
 
         assertTrue(d.dispatch(request, response));
 
@@ -165,7 +165,7 @@ public class AssetDispatcherTest extends InternalBaseTestCase
 
         replay();
 
-        Dispatcher d = new AssetDispatcher(streamer, aliasManager, cache);
+        Dispatcher d = new AssetDispatcher(streamer, aliasManager, cache, "1.2.3", null);
 
         assertTrue(d.dispatch(request, response));
 
@@ -196,7 +196,7 @@ public class AssetDispatcherTest extends InternalBaseTestCase
 
         replay();
 
-        Dispatcher d = new AssetDispatcher(streamer, aliasManager, cache);
+        Dispatcher d = new AssetDispatcher(streamer, aliasManager, cache, "1.2.3", null);
 
         assertTrue(d.dispatch(request, response));
 
@@ -227,7 +227,7 @@ public class AssetDispatcherTest extends InternalBaseTestCase
 
         replay();
 
-        Dispatcher d = new AssetDispatcher(streamer, aliasManager, cache);
+        Dispatcher d = new AssetDispatcher(streamer, aliasManager, cache, "1.2.3", null);
 
         assertTrue(d.dispatch(request, response));
 
@@ -257,7 +257,7 @@ public class AssetDispatcherTest extends InternalBaseTestCase
 
         replay();
 
-        Dispatcher d = new AssetDispatcher(streamer, aliasManager, cache);
+        Dispatcher d = new AssetDispatcher(streamer, aliasManager, cache, "1.2.3", null);
 
         assertTrue(d.dispatch(request, response));
 
@@ -288,7 +288,7 @@ public class AssetDispatcherTest extends InternalBaseTestCase
 
         replay();
 
-        Dispatcher d = new AssetDispatcher(streamer, aliasManager, cache);
+        Dispatcher d = new AssetDispatcher(streamer, aliasManager, cache, "1.2.3", null);
 
         assertTrue(d.dispatch(request, response));
 

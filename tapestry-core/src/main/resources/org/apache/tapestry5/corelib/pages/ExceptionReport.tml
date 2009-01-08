@@ -14,8 +14,10 @@
 
                     <h2>Tapestry Framework</h2>
                     <dl>
-                        <dt>Version</dt>
+                        <dt>Tapestry Version</dt>
                         <dd>${tapestryVersion}</dd>
+                        <dt>Application Version</dt>
+                        <dd>${applicationVersion}</dd>
                     </dl>
 
                     <h2>Request</h2>

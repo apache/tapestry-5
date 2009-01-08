@@ -79,7 +79,8 @@ Third Party Libraries, Tutorials and Resources
 
 New And Of Note
 
-  * Tapestry now {{{guide/compress.html}compresses}} responses for clients that support it.
+  * Tapestry now {{{guide/compress.html}compresses}} responses for clients that support it.  Context and classpath assets
+    are now handled uniformly: versioned URLs, far-future expiration headers, and GZIP compression where applicable.
 
   * Ordered and mapped configurations can now have overrides.
 

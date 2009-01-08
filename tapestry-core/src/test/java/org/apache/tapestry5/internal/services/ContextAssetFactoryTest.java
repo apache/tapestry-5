@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -33,7 +33,7 @@ public class ContextAssetFactoryTest extends InternalBaseTestCase
 
         replay();
 
-        AssetFactory factory = new ContextAssetFactory(request, context, null);
+        AssetFactory factory = new ContextAssetFactory(request, context, null, "1.2.3");
 
         assertEquals(factory.getRootResource().toString(), "context:/");
 
@@ -51,12 +51,12 @@ public class ContextAssetFactoryTest extends InternalBaseTestCase
 
         train_getContextPath(request, "/context");
 
-        train_optimizePath(optimizer, "/context/foo/Bar.txt", "/opt/path1");
-        train_optimizePath(optimizer, "/context/foo/Bar.txt", "/opt/path2");
+        train_optimizePath(optimizer, "/context/assets/app/4.5.6/foo/Bar.txt", "/opt/path1");
+        train_optimizePath(optimizer, "/context/assets/app/4.5.6/foo/Bar.txt", "/opt/path2");
 
         replay();
 
-        AssetFactory factory = new ContextAssetFactory(request, context, optimizer);
+        AssetFactory factory = new ContextAssetFactory(request, context, optimizer, "4.5.6");
 
         Asset asset = factory.createAsset(r);
 
@@ -70,5 +70,4 @@ public class ContextAssetFactoryTest extends InternalBaseTestCase
 
         verify();
     }
-
 }
