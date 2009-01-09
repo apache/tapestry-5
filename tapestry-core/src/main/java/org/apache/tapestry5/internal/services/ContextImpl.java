@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -86,7 +86,6 @@ public class ContextImpl implements Context
                 if (match.endsWith("/")) queue.push(match);
                 else result.add(match);
             }
-
         }
 
         Collections.sort(result);
@@ -104,4 +103,8 @@ public class ContextImpl implements Context
         return InternalUtils.toList(servletContext.getAttributeNames());
     }
 
+    public String getMimeType(String file)
+    {
+        return servletContext.getMimeType(file);
+    }
 }

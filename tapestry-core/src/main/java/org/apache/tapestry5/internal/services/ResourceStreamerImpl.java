@@ -21,6 +21,7 @@ import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.util.TimeInterval;
+import org.apache.tapestry5.services.Context;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.Response;
 import org.apache.tapestry5.services.ResponseCompressionAnalyzer;
@@ -40,23 +41,35 @@ public class ResourceStreamerImpl implements ResourceStreamer
 
     private final Response response;
 
+    private final Context context;
+
     private final ResponseCompressionAnalyzer analyzer;
 
     private final Map<String, String> configuration;
 
     private final int compressionCutoff;
 
-    public ResourceStreamerImpl(Request request, Response response, ResourceCache resourceCache,
+    public ResourceStreamerImpl(Request request,
+
+                                Response response,
+
+                                Context context,
+
+                                ResourceCache resourceCache,
+
                                 Map<String, String> configuration,
+
                                 ResponseCompressionAnalyzer analyzer,
 
                                 @Symbol(SymbolConstants.MIN_GZIP_SIZE)
                                 int compressionCutoff)
+
     {
+        this.request = request;
         this.response = response;
+        this.context = context;
         this.resourceCache = resourceCache;
         this.configuration = configuration;
-        this.request = request;
         this.analyzer = analyzer;
         this.compressionCutoff = compressionCutoff;
     }
@@ -115,21 +128,24 @@ public class ResourceStreamerImpl implements ResourceStreamer
 
         if ("content/unknown".equals(contentType)) contentType = null;
 
-        if (contentType == null)
+        if (contentType != null) return contentType;
+
+        contentType = context.getMimeType(resource.getPath());
+
+        if (contentType != null) return contentType;
+
+        String file = resource.getFile();
+        int dotx = file.lastIndexOf('.');
+
+        if (dotx > 0)
         {
-            String file = resource.getFile();
-            int dotx = file.lastIndexOf('.');
+            String extension = file.substring(dotx + 1);
 
-            if (dotx > 0)
-            {
-                String extension = file.substring(dotx + 1);
-
-                contentType = configuration.get(extension);
-            }
-
-            if (contentType == null) contentType = "application/octet-stream";
+            contentType = configuration.get(extension);
         }
 
-        return contentType;
+        return contentType != null
+               ? contentType
+               : "application/octet-stream";
     }
 }
