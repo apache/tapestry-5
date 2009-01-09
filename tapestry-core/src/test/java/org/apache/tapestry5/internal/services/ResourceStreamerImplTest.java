@@ -18,9 +18,7 @@ import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.internal.util.ClasspathResource;
-import org.apache.tapestry5.services.Request;
-import org.apache.tapestry5.services.RequestGlobals;
-import org.apache.tapestry5.services.Response;
+import org.apache.tapestry5.services.*;
 import static org.easymock.EasyMock.*;
 import org.testng.annotations.Test;
 
@@ -37,26 +35,27 @@ public class ResourceStreamerImplTest extends InternalBaseTestCase
     @Test
     public void content_type_css() throws IOException
     {
-        content_type("text/css", "test.css");
+        content_type("text/css", "test.css", true);
     }
 
     @Test
     public void content_type_js() throws IOException
     {
-        content_type("text/javascript", "test.js");
+        content_type("text/javascript", "test.js", true);
     }
 
     @Test
     public void content_type_gif() throws IOException
     {
-        content_type("image/gif", "test.gif");
+        content_type("image/gif", "test.gif", false);
     }
 
-    private void content_type(String contentType, String fileName) throws IOException
+    private void content_type(String contentType, String fileName, boolean consultsContext) throws IOException
     {
         Request request = mockRequest();
         HttpServletRequest hsRequest = mockHttpServletRequest();
         HttpServletResponse hsResponse = mockHttpServletResponse();
+        Context context = mockContext();
 
         request.setAttribute(InternalConstants.SUPPRESS_COMPRESSION, true);
 
@@ -70,6 +69,10 @@ public class ResourceStreamerImplTest extends InternalBaseTestCase
         train_setContentType(hsResponse, contentType);
         train_getOutputStream(hsResponse, new TestServletOutputStream());
 
+        if (consultsContext)
+            expect(context.getMimeType(endsWith(fileName))).andReturn(null);
+
+
         replay();
 
         Response response = new ResponseImpl(hsResponse);
@@ -78,6 +81,8 @@ public class ResourceStreamerImplTest extends InternalBaseTestCase
 
         globals.storeServletRequestResponse(hsRequest, hsResponse);
         globals.storeRequestResponse(request, response);
+
+        getService(ApplicationGlobals.class).storeContext(context);
 
         String path = getClass().getPackage().getName().replace('.', '/') + "/" + fileName;
 
