@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -38,7 +38,7 @@ import java.util.regex.Pattern;
  * isn't the concern of this code, since {@link org.apache.tapestry5.services.Request#getPath()} will already have
  * stripped that off.  We can act as if the context is always "/" (the path always starts with a slash).
  *
- * @see LinkFactory#createComponentEventLink(org.apache.tapestry5.internal.structure.Page, String, String,boolean,
+ * @see LinkSource#createComponentEventLink(org.apache.tapestry5.internal.structure.Page, String, String,boolean,
  *      Object...)
  */
 public class ComponentEventDispatcher implements Dispatcher
@@ -49,17 +49,20 @@ public class ComponentEventDispatcher implements Dispatcher
 
     private final ContextPathEncoder contextPathEncoder;
 
+    private final LocalizationSetter localizationSetter;
+
     public ComponentEventDispatcher(
             @Traditional
             ComponentEventRequestHandler componentEventRequestHandler,
 
             ComponentClassResolver componentClassResolver,
 
-            ContextPathEncoder contextPathEncoder)
+            ContextPathEncoder contextPathEncoder, LocalizationSetter localizationSetter)
     {
         this.componentEventRequestHandler = componentEventRequestHandler;
         this.componentClassResolver = componentClassResolver;
         this.contextPathEncoder = contextPathEncoder;
+        this.localizationSetter = localizationSetter;
     }
 
     // A beast that recognizes all the elements of a path in a single go.
@@ -79,7 +82,7 @@ public class ComponentEventDispatcher implements Dispatcher
                     "(\\.(\\w+(\\.\\w+)*))?" + // The first dot separates the page name from the nested component id
                     "(\\:(\\w+))?" + // A colon, then the event type
                     "(/(.*))?", //  A slash, then the action context
-                                Pattern.COMMENTS);
+            Pattern.COMMENTS);
 
     // Constants for the match groups in the above pattern.
     private static final int LOGICAL_PAGE_NAME = 1;
@@ -93,13 +96,22 @@ public class ComponentEventDispatcher implements Dispatcher
 
         if (!matcher.matches()) return false;
 
-        String activePageName = matcher.group(LOGICAL_PAGE_NAME);
-
         String nestedComponentId = matcher.group(NESTED_ID);
 
         String eventType = matcher.group(EVENT_NAME);
 
         if (nestedComponentId == null && eventType == null) return false;
+
+        String activePageName = matcher.group(LOGICAL_PAGE_NAME);
+
+        int slashx = activePageName.indexOf('/');
+
+        String possibleLocaleName = slashx > 0
+                                    ? activePageName.substring(0, slashx)
+                                    : "";
+
+        if (localizationSetter.setLocaleFromLocaleName(possibleLocaleName))
+            activePageName = activePageName.substring(slashx + 1);
 
         if (!componentClassResolver.isPageName(activePageName)) return false;
 
@@ -120,7 +132,8 @@ public class ComponentEventDispatcher implements Dispatcher
 
         ComponentEventRequestParameters parameters = new ComponentEventRequestParameters(activePageName,
                                                                                          containingPageName,
-                                                                                         nestedComponentId, eventType,
+                                                                                         nestedComponentId,
+                                                                                         eventType,
                                                                                          activationContext,
                                                                                          eventContext);
 

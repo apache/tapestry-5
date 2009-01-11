@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,23 +17,26 @@ package org.apache.tapestry5.services;
 import java.util.Locale;
 
 /**
- * Manages the persistent locale stored as a cookie in the browser.
+ * Manages the persistent locale stored in the browser (inside the URL).
+ *
+ * @see org.apache.tapestry5.internal.services.LocalizationSetter#setLocaleFromLocaleName(String)
+ * @see org.apache.tapestry5.internal.services.ComponentEventDispatcher
+ * @see org.apache.tapestry5.internal.services.PageRenderDispatcher
  */
 public interface PersistentLocale
 {
     /**
-     * Sets the locale cookie in the browser.
+     * Sets the locale cookie that will be persisted in the URL.
      */
     void set(Locale locale);
 
     /**
-     * Gets the locale cookie in the browser.
+     * Gets the locale cookie obtained from the request URL.
      */
     Locale get();
 
     /**
-     * @return true if a locale cookie is set in the browser; false otherwise.
+     * @return true if a locale was present in the request URL; false otherwise.
      */
     boolean isSet();
-
 }

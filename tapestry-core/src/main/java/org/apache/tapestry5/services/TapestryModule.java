@@ -604,8 +604,7 @@ public final class TapestryModule
      * <dt>CheckForUpdates</dt> <dd>Periodically fires events that checks to see if the file system sources for any
      * cached data has changed (see {@link org.apache.tapestry5.internal.services.CheckForUpdatesFilter}).
      * <dt>ErrorFilter</dt> <dd>Catches request errors and lets the {@link org.apache.tapestry5.services.RequestExceptionHandler}
-     * handle them</dd> <dt>Localization</dt> <dd>Determines the locale for the current request from header data or
-     * cookies in the request</dd> <dt>StoreIntoGlobals</dt> <dd>Stores the request and response into the {@link
+     * handle them</dd>  <dt>StoreIntoGlobals</dt> <dd>Stores the request and response into the {@link
      * org.apache.tapestry5.services.RequestGlobals} service (this is repeated at the end of the pipeline, in case any
      * filter substitutes the request or response).  </dl>
      */
@@ -659,8 +658,6 @@ public final class TapestryModule
         configuration.add("StoreIntoGlobals", storeIntoGlobals, "after:StaticFiles", "before:ErrorFilter");
 
         configuration.add("EndOfRequest", fireEndOfRequestEvent, "after:StoreIntoGlobals", "before:ErrorFilter");
-
-        configuration.addInstance("Localization", LocalizationFilter.class, "after:ErrorFilter");
     }
 
     /**
@@ -2046,9 +2043,9 @@ public final class TapestryModule
     /**
      * @since 5.1.0.0
      */
-    public LinkCreationHub buildLinkCreationHub(LinkFactory factory)
+    public static LinkCreationHub buildLinkCreationHub(LinkSource source)
     {
-        return factory.getLinkCreationHub();
+        return source.getLinkCreationHub();
     }
 
     /**

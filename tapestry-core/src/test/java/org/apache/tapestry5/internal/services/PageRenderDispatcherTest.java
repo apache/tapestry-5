@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -46,14 +46,16 @@ public class PageRenderDispatcherTest extends InternalBaseTestCase
         PageRenderRequestHandler handler = new PageRenderRequestHandlerImpl(cache, null, null);
         Request request = mockRequest();
         Response response = mockResponse();
+        LocalizationSetter ls = mockLocalizationSetter();
 
         stub_isPageName(resolver, false);
 
+        train_setLocaleFromLocaleName(ls, "foo", false);
         train_getPath(request, "/foo/Bar.baz");
 
         replay();
 
-        Dispatcher d = new PageRenderDispatcher(resolver, handler, contextPathEncoder);
+        Dispatcher d = new PageRenderDispatcher(resolver, handler, contextPathEncoder, ls);
 
         assertFalse(d.dispatch(request, response));
 
@@ -68,14 +70,41 @@ public class PageRenderDispatcherTest extends InternalBaseTestCase
         PageRenderRequestHandler handler = newMock(PageRenderRequestHandler.class);
         Request request = mockRequest();
         Response response = mockResponse();
+        LocalizationSetter ls = mockLocalizationSetter();
 
         train_getPath(request, "");
+
+        train_setLocaleFromLocaleName(ls, "", false);
 
         train_isPageName(resolver, "", false);
 
         replay();
 
-        Dispatcher d = new PageRenderDispatcher(resolver, handler, contextPathEncoder);
+        Dispatcher d = new PageRenderDispatcher(resolver, handler, contextPathEncoder, ls);
+
+        assertFalse(d.dispatch(request, response));
+
+        verify();
+    }
+
+    @Test
+    public void just_the_locale_name() throws Exception
+    {
+        ComponentClassResolver resolver = mockComponentClassResolver();
+        PageRenderRequestHandler handler = newMock(PageRenderRequestHandler.class);
+        Request request = mockRequest();
+        Response response = mockResponse();
+        LocalizationSetter ls = mockLocalizationSetter();
+
+        train_getPath(request, "/en");
+
+        train_setLocaleFromLocaleName(ls, "en", true);
+
+        train_isPageName(resolver, "", false);
+
+        replay();
+
+        Dispatcher d = new PageRenderDispatcher(resolver, handler, contextPathEncoder, ls);
 
         assertFalse(d.dispatch(request, response));
 
@@ -96,8 +125,11 @@ public class PageRenderDispatcherTest extends InternalBaseTestCase
         PageResponseRenderer renderer = mockPageResponseRenderer();
         RequestPageCache cache = mockRequestPageCache();
         ComponentEventResultProcessor processor = newComponentEventResultProcessor();
+        LocalizationSetter ls = mockLocalizationSetter();
 
         train_getPath(request, "/foo/bar");
+
+        train_setLocaleFromLocaleName(ls, "foo", false);
 
         train_isPageName(resolver, "foo/bar", false);
         train_isPageName(resolver, "foo", false);
@@ -115,7 +147,7 @@ public class PageRenderDispatcherTest extends InternalBaseTestCase
 
         PageRenderRequestHandler handler = new PageRenderRequestHandlerImpl(cache, processor, renderer);
 
-        Dispatcher d = new PageRenderDispatcher(resolver, handler, contextPathEncoder);
+        Dispatcher d = new PageRenderDispatcher(resolver, handler, contextPathEncoder, ls);
 
         assertTrue(d.dispatch(request, response));
 
@@ -145,9 +177,12 @@ public class PageRenderDispatcherTest extends InternalBaseTestCase
         Response response = mockResponse();
         Page page = mockPage();
         ComponentPageElement rootElement = mockComponentPageElement();
+        LocalizationSetter ls = mockLocalizationSetter();
 
         String path = "/foo/Bar" + (finalSlash ? "/" : "");
         train_getPath(request, path);
+
+        train_setLocaleFromLocaleName(ls, "foo", false);
 
         train_isPageName(resolver, "foo/Bar", true);
 
@@ -162,7 +197,7 @@ public class PageRenderDispatcherTest extends InternalBaseTestCase
 
         PageRenderRequestHandler handler = new PageRenderRequestHandlerImpl(cache, processor, renderer);
 
-        Dispatcher d = new PageRenderDispatcher(resolver, handler, contextPathEncoder);
+        Dispatcher d = new PageRenderDispatcher(resolver, handler, contextPathEncoder, ls);
 
         assertTrue(d.dispatch(request, response));
 
@@ -191,9 +226,12 @@ public class PageRenderDispatcherTest extends InternalBaseTestCase
         Response response = mockResponse();
         Page page = mockPage();
         ComponentPageElement rootElement = mockComponentPageElement();
+        LocalizationSetter ls = mockLocalizationSetter();
 
         String path = "/foo/Bar/zip/zoom" + (finalSlash ? "/" : "");
         train_getPath(request, path);
+
+        train_setLocaleFromLocaleName(ls, "foo", false);
 
         train_isPageName(resolver, "foo/Bar/zip/zoom", false);
 
@@ -212,7 +250,7 @@ public class PageRenderDispatcherTest extends InternalBaseTestCase
 
         PageRenderRequestHandler handler = new PageRenderRequestHandlerImpl(cache, processor, renderer);
 
-        Dispatcher d = new PageRenderDispatcher(resolver, handler, contextPathEncoder);
+        Dispatcher d = new PageRenderDispatcher(resolver, handler, contextPathEncoder, ls);
 
         assertTrue(d.dispatch(request, response));
 

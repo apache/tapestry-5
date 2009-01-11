@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,68 +14,16 @@
 
 package org.apache.tapestry5.internal.services;
 
+import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.ioc.services.ThreadLocale;
 import org.apache.tapestry5.services.PersistentLocale;
-import org.testng.Assert;
+import org.apache.tapestry5.services.Request;
 import org.testng.annotations.Test;
 
 import java.util.Locale;
 
-public class LocalizationSetterImplTest extends Assert
+public class LocalizationSetterImplTest extends InternalBaseTestCase
 {
-    private PersistentLocale nullPersistentLocale = new PersistentLocale()
-    {
-        public boolean isSet()
-        {
-            return false;
-        }
-
-        public Locale get()
-        {
-            return null;
-        }
-
-        public void set(Locale locale)
-        {
-
-        }
-
-    };
-
-    private PersistentLocale frenchPersistentLocale = new PersistentLocale()
-    {
-        public boolean isSet()
-        {
-            return true;
-        }
-
-        public Locale get()
-        {
-            return Locale.FRENCH;
-        }
-
-        public void set(Locale locale)
-        {
-
-        }
-
-    };
-
-    private static class ThreadLocaleImpl implements ThreadLocale
-    {
-        public Locale _locale;
-
-        public void setLocale(Locale locale)
-        {
-            _locale = locale;
-        }
-
-        public Locale getLocale()
-        {
-            return _locale;
-        }
-
-    }
 
     @Test
     public void locale_split()
@@ -88,16 +36,15 @@ public class LocalizationSetterImplTest extends Assert
     @Test
     public void to_locale_is_cached()
     {
-        LocalizationSetterImpl filter = new LocalizationSetterImpl(nullPersistentLocale, null,
-                                                                   "en");
+        LocalizationSetterImpl setter = new LocalizationSetterImpl(null, null, null, "en");
 
-        Locale l1 = filter.toLocale("en");
+        Locale l1 = setter.toLocale("en");
 
         assertEquals(l1.toString(), "en");
 
         checkLocale(l1, "en", "", "");
 
-        assertSame(filter.toLocale("en"), l1);
+        assertSame(setter.toLocale("en"), l1);
     }
 
     private void checkLocale(Locale l, String expectedLanguage, String expectedCountry,
@@ -111,45 +58,74 @@ public class LocalizationSetterImplTest extends Assert
     @Test
     public void to_locale()
     {
-        LocalizationSetterImpl filter = new LocalizationSetterImpl(nullPersistentLocale, null,
-                                                                   "en");
+        LocalizationSetterImpl setter = new LocalizationSetterImpl(null, null, null, "en");
 
-        checkLocale(filter.toLocale("en"), "en", "", "");
-        checkLocale(filter.toLocale("klingon_Gach"), "klingon", "GACH", "");
-        checkLocale(filter.toLocale("klingon_Gach_snuff"), "klingon", "GACH", "snuff");
+        checkLocale(setter.toLocale("en"), "en", "", "");
+        checkLocale(setter.toLocale("klingon_Gach"), "klingon", "GACH", "");
+        checkLocale(setter.toLocale("klingon_Gach_snuff"), "klingon", "GACH", "snuff");
     }
 
     @Test
     public void known_locale()
     {
-        ThreadLocale threadLocale = new ThreadLocaleImpl();
-        threadLocale.setLocale(Locale.FRENCH);
-        LocalizationSetter setter = new LocalizationSetterImpl(nullPersistentLocale, threadLocale,
-                                                               "en,fr");
-        setter.setThreadLocale(Locale.CANADA_FRENCH);
-        assertEquals(threadLocale.getLocale(), Locale.FRENCH);
+        PersistentLocale pl = mockPersistentLocale();
+        ThreadLocale tl = mockThreadLocale();
+        Request request = mockRequest();
 
+        tl.setLocale(Locale.FRENCH);
+        pl.set(Locale.FRENCH);
+
+        replay();
+
+        LocalizationSetterImpl setter = new LocalizationSetterImpl(request, pl, tl, "en,fr");
+
+        assertTrue(setter.setLocaleFromLocaleName("fr"));
+
+        verify();
+    }
+
+    protected final PersistentLocale mockPersistentLocale()
+    {
+        return newMock(PersistentLocale.class);
     }
 
     @Test
-    public void unknown_locale_uses_default_locale()
+    public void unknown_locale_uses_locale_from_request()
     {
-        ThreadLocale threadLocale = new ThreadLocaleImpl();
-        threadLocale.setLocale(Locale.FRENCH);
-        LocalizationSetter setter = new LocalizationSetterImpl(nullPersistentLocale, threadLocale,
-                                                               "en,fr");
-        setter.setThreadLocale(Locale.JAPANESE);
-        assertEquals(threadLocale.getLocale(), Locale.ENGLISH);
+        PersistentLocale pl = mockPersistentLocale();
+        ThreadLocale tl = mockThreadLocale();
+        Request request = mockRequest();
+
+        tl.setLocale(Locale.FRENCH);
+
+        train_getLocale(request, Locale.CANADA_FRENCH);
+
+        replay();
+
+        LocalizationSetterImpl setter = new LocalizationSetterImpl(request, pl, tl, "en,fr");
+
+        assertFalse(setter.setLocaleFromLocaleName("unknown"));
+
+        verify();
     }
 
     @Test
-    public void use_persistent_locale()
+    public void unsupported_locale_in_request_uses_default_locale()
     {
-        ThreadLocale threadLocale = new ThreadLocaleImpl();
-        LocalizationSetter setter = new LocalizationSetterImpl(frenchPersistentLocale,
-                                                               threadLocale, "en,fr");
-        setter.setThreadLocale(Locale.ENGLISH);
-        assertEquals(threadLocale.getLocale(), Locale.FRENCH);
-    }
+        PersistentLocale pl = mockPersistentLocale();
+        ThreadLocale tl = mockThreadLocale();
+        Request request = mockRequest();
 
+        tl.setLocale(Locale.ITALIAN);
+
+        train_getLocale(request, Locale.CHINESE);
+
+        replay();
+
+        LocalizationSetterImpl setter = new LocalizationSetterImpl(request, pl, tl, "it,en,fr");
+
+        assertFalse(setter.setLocaleFromLocaleName("unknown"));
+
+        verify();
+    }
 }

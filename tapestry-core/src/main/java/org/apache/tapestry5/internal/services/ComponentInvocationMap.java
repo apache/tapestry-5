@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -26,8 +26,8 @@ import org.apache.tapestry5.test.PageTester;
  * the {@link PageTester#clickLink(Element) click a link} or {@link PageTester#submitForm(Element, java.util.Map) submit
  * a form}.
  * <p/>
- * The information needed is generated in slightly disparate places, so the {@link LinkFactory} tells the map about
- * Links and ComponentInvocations, and the {@link MarkupWriter} will link Elements to Link instance.
+ * The information needed is generated in slightly disparate places, so the {@link LinkSource} tells the map about Links
+ * and ComponentInvocations, and the {@link MarkupWriter} will link Elements to Link instance.
  */
 public interface ComponentInvocationMap
 {

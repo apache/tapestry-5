@@ -1,4 +1,4 @@
-// Copyright 2008 The Apache Software Foundation
+// Copyright 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.Link;
 import org.apache.tapestry5.internal.services.ComponentClassCache;
 import org.apache.tapestry5.internal.services.ComponentMessagesSource;
-import org.apache.tapestry5.internal.services.LinkFactory;
+import org.apache.tapestry5.internal.services.LinkSource;
 import org.apache.tapestry5.internal.services.RequestPageCache;
 import org.apache.tapestry5.ioc.LoggerSource;
 import org.apache.tapestry5.ioc.Messages;
@@ -45,7 +45,7 @@ public class ComponentPageElementResourcesImpl implements ComponentPageElementRe
 
     private final ContextValueEncoder contextValueEncoder;
 
-    private final LinkFactory linkFactory;
+    private final LinkSource linkSource;
 
     private final RequestPageCache requestPageCache;
 
@@ -56,7 +56,7 @@ public class ComponentPageElementResourcesImpl implements ComponentPageElementRe
     public ComponentPageElementResourcesImpl(Locale locale, ComponentMessagesSource componentMessagesSource,
                                              TypeCoercer typeCoercer,
                                              ComponentClassCache componentClassCache,
-                                             ContextValueEncoder contextValueEncoder, LinkFactory linkFactory,
+                                             ContextValueEncoder contextValueEncoder, LinkSource linkSource,
                                              RequestPageCache requestPageCache,
                                              ComponentClassResolver componentClassResolver, LoggerSource loggerSource)
     {
@@ -65,7 +65,7 @@ public class ComponentPageElementResourcesImpl implements ComponentPageElementRe
         this.typeCoercer = typeCoercer;
         this.componentClassCache = componentClassCache;
         this.contextValueEncoder = contextValueEncoder;
-        this.linkFactory = linkFactory;
+        this.linkSource = linkSource;
         this.requestPageCache = requestPageCache;
         this.componentClassResolver = componentClassResolver;
         this.loggerSource = loggerSource;
@@ -91,13 +91,13 @@ public class ComponentPageElementResourcesImpl implements ComponentPageElementRe
     {
         Page page = requestPageCache.get(resources.getPageName());
 
-        return linkFactory.createComponentEventLink(page, resources.getNestedId(), eventType, forForm,
-                                                    defaulted(context));
+        return linkSource.createComponentEventLink(page, resources.getNestedId(), eventType, forForm,
+                                                   defaulted(context));
     }
 
     public Link createPageRenderLink(String pageName, boolean override, Object... context)
     {
-        return linkFactory.createPageRenderLink(pageName, override, defaulted(context));
+        return linkSource.createPageRenderLink(pageName, override, defaulted(context));
     }
 
     public Link createPageRenderLink(Class pageClass, boolean override, Object... context)
@@ -106,7 +106,7 @@ public class ComponentPageElementResourcesImpl implements ComponentPageElementRe
 
         String pageName = componentClassResolver.resolvePageClassNameToPageName(pageClass.getName());
 
-        return linkFactory.createPageRenderLink(pageName, override, defaulted(context));
+        return linkSource.createPageRenderLink(pageName, override, defaulted(context));
     }
 
     public Logger getEventLogger(Logger componentLogger)

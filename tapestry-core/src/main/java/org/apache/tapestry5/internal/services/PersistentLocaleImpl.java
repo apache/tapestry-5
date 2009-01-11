@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,46 +14,30 @@
 
 package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry5.internal.util.LocaleUtils;
-import org.apache.tapestry5.services.Cookies;
+import org.apache.tapestry5.ioc.ScopeConstants;
+import org.apache.tapestry5.ioc.annotations.Scope;
+import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.services.PersistentLocale;
 
 import java.util.Locale;
 
+@Scope(ScopeConstants.PERTHREAD)
 public class PersistentLocaleImpl implements PersistentLocale
 {
-    /**
-     * Name of the cookie written to the client web browser to identify the locale.
-     */
-    private static final String LOCALE_COOKIE_NAME = "org.apache.tapestry5.locale";
-
-    private final Cookies cookieSource;
-
-    public PersistentLocaleImpl(Cookies cookieSource)
-    {
-        this.cookieSource = cookieSource;
-    }
+    private Locale locale;
 
     public void set(Locale locale)
     {
-        cookieSource.writeCookieValue(LOCALE_COOKIE_NAME, locale.toString());
+        this.locale = Defense.notNull(locale, "locale");
     }
 
     public Locale get()
     {
-        String localeCookieValue = getCookieValue();
-
-        return localeCookieValue != null ? LocaleUtils.toLocale(localeCookieValue) : null;
-    }
-
-    private String getCookieValue()
-    {
-        return cookieSource.readCookieValue(LOCALE_COOKIE_NAME);
+        return locale;
     }
 
     public boolean isSet()
     {
-        return getCookieValue() != null;
+        return locale != null;
     }
-
 }

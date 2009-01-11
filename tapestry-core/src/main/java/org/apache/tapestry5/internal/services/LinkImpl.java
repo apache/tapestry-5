@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.services.Response;
 
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Default implementation of {@link org.apache.tapestry5.Link}.
@@ -30,6 +31,8 @@ public class LinkImpl implements Link
     private final String baseURL;
 
     private final String contextPath;
+
+    private final Locale locale;
 
     private final Response response;
 
@@ -47,16 +50,18 @@ public class LinkImpl implements Link
      * @param optimizer   optimizes complete URLs to appropriate relative URLs
      * @param baseURL     base URL prefix (before the context path), used when switching between secure and non-secure
      * @param contextPath path for the context {@link org.apache.tapestry5.services.Request#getContextPath()}
+     * @param locale      if non-null, the locale name will be placed between the context path and the page name
      * @param invocation  abstraction around the type of link (needed by {@link org.apache.tapestry5.test.PageTester})
      */
     public LinkImpl(Response response, RequestPathOptimizer optimizer, String baseURL, String contextPath,
-                    ComponentInvocation invocation)
+                    Locale locale, ComponentInvocation invocation)
     {
         this.response = response;
         this.optimizer = optimizer;
         this.baseURL = baseURL;
         this.contextPath = contextPath;
         this.invocation = invocation;
+        this.locale = locale;
     }
 
     public void addParameter(String parameterName, String value)
@@ -93,6 +98,12 @@ public class LinkImpl implements Link
         if (baseURL != null) builder.append(baseURL);
 
         builder.append(contextPath);
+
+        if (locale != null)
+        {
+            builder.append("/");
+            builder.append(locale.toString());
+        }
 
         String invocationURI = invocation.buildURI();
 

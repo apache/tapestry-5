@@ -1,4 +1,4 @@
-// Copyright 2008 The Apache Software Foundation
+// Copyright 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@ public class RequestSecurityManagerImpl implements RequestSecurityManager
 
     private final Response response;
 
-    private final LinkFactory linkFactory;
+    private final LinkSource linkSource;
 
     private final MetaDataLocator locator;
 
@@ -38,13 +38,13 @@ public class RequestSecurityManagerImpl implements RequestSecurityManager
 
     private final RequestPageCache requestPageCache;
 
-    public RequestSecurityManagerImpl(Request request, Response response, LinkFactory linkFactory,
+    public RequestSecurityManagerImpl(Request request, Response response, LinkSource linkSource,
                                       MetaDataLocator locator, BaseURLSource baseURLSource,
                                       RequestPageCache requestPageCache)
     {
         this.request = request;
         this.response = response;
-        this.linkFactory = linkFactory;
+        this.linkSource = linkSource;
         this.locator = locator;
         this.baseURLSource = baseURLSource;
         this.requestPageCache = requestPageCache;
@@ -62,7 +62,7 @@ public class RequestSecurityManagerImpl implements RequestSecurityManager
 
         // Page is secure but request is not, so redirect.
 
-        Link link = linkFactory.createPageRenderLink(page, false);
+        Link link = linkSource.createPageRenderLink(page, false);
 
         response.sendRedirect(link);
 
