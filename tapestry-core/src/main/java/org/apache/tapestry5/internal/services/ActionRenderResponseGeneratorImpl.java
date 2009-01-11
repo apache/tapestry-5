@@ -1,4 +1,4 @@
-// Copyright 2008 The Apache Software Foundation
+// Copyright 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,24 +21,24 @@ import org.apache.tapestry5.services.Response;
 import java.io.IOException;
 
 /**
- * Simply uses the {@link org.apache.tapestry5.internal.services.LinkFactory} to generate a link which is then
- * {@linkplain org.apache.tapestry5.services.Response#sendRedirect(org.apache.tapestry5.Link)} sent as a redirect}.
+ * Simply uses the {@link LinkSource} to generate a link which is then {@linkplain
+ * org.apache.tapestry5.services.Response#sendRedirect(org.apache.tapestry5.Link)} sent as a redirect}.
  */
 public class ActionRenderResponseGeneratorImpl implements ActionRenderResponseGenerator
 {
-    private final LinkFactory linkFactory;
+    private final LinkSource linkSource;
 
     private final Response response;
 
-    public ActionRenderResponseGeneratorImpl(LinkFactory linkFactory, Response response)
+    public ActionRenderResponseGeneratorImpl(LinkSource linkSource, Response response)
     {
-        this.linkFactory = linkFactory;
+        this.linkSource = linkSource;
         this.response = response;
     }
 
     public void generateResponse(Page page) throws IOException
     {
-        Link link = linkFactory.createPageRenderLink(page, false);
+        Link link = linkSource.createPageRenderLink(page, false);
 
         response.sendRedirect(link);
     }

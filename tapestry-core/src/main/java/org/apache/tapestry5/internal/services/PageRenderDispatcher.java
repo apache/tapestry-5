@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -32,12 +32,15 @@ public class PageRenderDispatcher implements Dispatcher
 
     private final ContextPathEncoder contextPathEncoder;
 
+    private final LocalizationSetter localizationSetter;
+
     public PageRenderDispatcher(ComponentClassResolver componentClassResolver, PageRenderRequestHandler handler,
-                                ContextPathEncoder contextPathEncoder)
+                                ContextPathEncoder contextPathEncoder, LocalizationSetter localizationSetter)
     {
         this.componentClassResolver = componentClassResolver;
         this.handler = handler;
         this.contextPathEncoder = contextPathEncoder;
+        this.localizationSetter = localizationSetter;
     }
 
     public boolean dispatch(Request request, final Response response) throws IOException
@@ -58,12 +61,32 @@ public class PageRenderDispatcher implements Dispatcher
         while (extendedName.endsWith("/"))
             extendedName = extendedName.substring(0, extendedName.length() - 1);
 
-        int slashx = extendedName.length();
+        int slashx = extendedName.indexOf('/');
+
+        // So, what can we have left?
+        // 1. A page name
+        // 2. A locale followed by a page name
+        // 3. A page name followed by activation context
+        // 4. A locale name, page name, activation context
+        // 5. Just activation context (for root Index page)
+        // 6. A locale name followed by activation context
+
+        String possibleLocaleName = slashx > 0
+                                    ? extendedName.substring(0, slashx)
+                                    : extendedName;
+
+        if (localizationSetter.setLocaleFromLocaleName(possibleLocaleName))
+        {
+            extendedName = slashx > 0
+                           ? extendedName.substring(slashx + 1)
+                           : "";
+        }
+
+        slashx = extendedName.length();
         boolean atEnd = true;
 
         while (slashx > 0)
         {
-
             String pageName = extendedName.substring(0, slashx);
             String pageActivationContext = atEnd ? "" :
                                            extendedName.substring(slashx + 1);

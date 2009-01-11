@@ -1,4 +1,4 @@
-// Copyright 2008 The Apache Software Foundation
+// Copyright 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -30,7 +30,6 @@ import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.internal.util.IdAllocator;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.json.JSONObject;
-import org.apache.tapestry5.runtime.RenderCommand;
 import org.apache.tapestry5.services.*;
 import org.slf4j.Logger;
 
@@ -185,8 +184,6 @@ public class FormInjector implements ClientElement
         if (!callback.isAborted()) return;
 
         // Here's where it gets very, very tricky.
-
-        final RenderCommand rootRenderCommand = pageRenderQueue.getRootRenderCommand();
 
         final String formClientId = readParameterValue(FORM_CLIENTID_PARAMETER);
 

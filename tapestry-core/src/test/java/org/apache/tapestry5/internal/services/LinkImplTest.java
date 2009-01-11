@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -50,7 +50,7 @@ public class LinkImplTest extends InternalBaseTestCase
 
         replay();
 
-        Link link = new LinkImpl(response, optimizer, "/base", "/context", invocation);
+        Link link = new LinkImpl(response, optimizer, "/base", "/context", null, invocation);
 
         assertEquals(link.toRedirectURI(), ENCODED);
 
@@ -71,7 +71,7 @@ public class LinkImplTest extends InternalBaseTestCase
 
         replay();
 
-        Link link = new LinkImpl(response, optimizer, null, "/bar", invocation);
+        Link link = new LinkImpl(response, optimizer, null, "/bar", null, invocation);
 
         assertEquals(link.toString(), ENCODED);
 
@@ -89,7 +89,7 @@ public class LinkImplTest extends InternalBaseTestCase
 
         replay();
 
-        Link link = new LinkImpl(response, optimizer, "", "bar", invocation);
+        Link link = new LinkImpl(response, optimizer, "", "bar", null, invocation);
 
         assertEquals(link.getParameterValue("fred"), "flintstone");
 
@@ -126,7 +126,7 @@ public class LinkImplTest extends InternalBaseTestCase
 
         replay();
 
-        Link link = new LinkImpl(response, optimizer, null, "/context", invocation);
+        Link link = new LinkImpl(response, optimizer, null, "/context", null, invocation);
 
         link.setAnchor(anchor);
 
@@ -149,6 +149,7 @@ public class LinkImplTest extends InternalBaseTestCase
 
 
         Link link = new LinkImpl(response, optimizer, null, "/ctx",
+                                 null,
                                  new ComponentInvocationImpl(contextPathEncoder, new OpaqueConstantTarget("foo"), null,
                                                              null,
                                                              false)

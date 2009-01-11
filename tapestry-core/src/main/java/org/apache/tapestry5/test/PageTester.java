@@ -27,6 +27,7 @@ import org.apache.tapestry5.ioc.def.ModuleDef;
 import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newMap;
 import static org.apache.tapestry5.ioc.internal.util.Defense.notNull;
 import org.apache.tapestry5.ioc.services.SymbolProvider;
+import org.apache.tapestry5.ioc.services.ThreadLocale;
 import org.apache.tapestry5.ioc.util.StrategyRegistry;
 import org.apache.tapestry5.services.ApplicationGlobals;
 import org.apache.tapestry5.services.ContextPathEncoder;
@@ -50,7 +51,7 @@ public class PageTester implements ComponentInvoker
 
     private final StrategyRegistry<ComponentInvoker> invokerRegistry;
 
-    private final LocalizationSetter localizationSetter;
+    private final ThreadLocale threadLocale;
 
     private final ContextPathEncoder contextPathEncoder;
 
@@ -98,7 +99,7 @@ public class PageTester implements ComponentInvoker
 
         request = registry.getObject(TestableRequest.class, null);
 
-        localizationSetter = registry.getService("LocalizationSetter", LocalizationSetter.class);
+        threadLocale = registry.getService(ThreadLocale.class);
 
         invocationMap = registry.getObject(ComponentInvocationMap.class, null);
 
@@ -198,16 +199,11 @@ public class PageTester implements ComponentInvoker
         // link).
         invocationMap.clear();
 
-        setThreadLocale();
+        threadLocale.setLocale(preferedLanguage);
 
         ComponentInvoker invoker = invokerRegistry.getByInstance(invocation.getTarget());
 
         return invoker.invoke(invocation);
-    }
-
-    private void setThreadLocale()
-    {
-        localizationSetter.setThreadLocale(preferedLanguage);
     }
 
     /**

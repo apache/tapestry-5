@@ -1,4 +1,4 @@
-// Copyright 2008 The Apache Software Foundation
+// Copyright 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -60,7 +60,7 @@ public class InternalModule
         binder.bind(PageResponseRenderer.class, PageResponseRendererImpl.class);
         binder.bind(PageMarkupRenderer.class, PageMarkupRendererImpl.class);
         binder.bind(ComponentInvocationMap.class, NoOpComponentInvocationMap.class);
-        binder.bind(LinkFactory.class, LinkFactoryImpl.class);
+        binder.bind(LinkSource.class, LinkSourceImpl.class);
         binder.bind(LocalizationSetter.class, LocalizationSetterImpl.class);
         binder.bind(PageElementFactory.class, PageElementFactoryImpl.class);
         binder.bind(ResourceStreamer.class, ResourceStreamerImpl.class);
@@ -76,6 +76,7 @@ public class InternalModule
         binder.bind(PageActivationContextCollector.class);
         binder.bind(PageLoader.class, PageLoaderImpl.class);
         binder.bind(ResponseCompressionAnalyzer.class, ResponseCompressionAnalyzerImpl.class);
+        binder.bind(LinkFactory.class, LinkFactoryImpl.class);
     }
 
     /**

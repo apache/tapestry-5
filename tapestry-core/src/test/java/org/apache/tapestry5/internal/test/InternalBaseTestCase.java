@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -426,14 +426,14 @@ public class InternalBaseTestCase extends TapestryTestCase implements Registry
         return newMock(ComponentInvocationMap.class);
     }
 
-    protected final LinkFactory mockLinkFactory()
+    protected final LinkSource mockLinkSource()
     {
-        return newMock(LinkFactory.class);
+        return newMock(LinkSource.class);
     }
 
-    protected final void train_createPageRenderLink(LinkFactory factory, Page page, Link link)
+    protected final void train_createPageRenderLink(LinkSource source, Page page, Link link)
     {
-        expect(factory.createPageRenderLink(page, false)).andReturn(link);
+        expect(source.createPageRenderLink(page, false)).andReturn(link);
     }
 
     protected final void train_isLoaded(InternalComponentResources resources, boolean isLoaded)
@@ -657,5 +657,16 @@ public class InternalBaseTestCase extends TapestryTestCase implements Registry
     protected void train_getParameter(ComponentInvocation invocation, String parameterName, String parameterValue)
     {
         expect(invocation.getParameterValue(parameterName)).andReturn(parameterValue).atLeastOnce();
+    }
+
+    protected final void train_setLocaleFromLocaleName(LocalizationSetter localizationSetter, String localeName,
+                                                       boolean recognized)
+    {
+        expect(localizationSetter.setLocaleFromLocaleName(localeName)).andReturn(recognized);
+    }
+
+    protected final LocalizationSetter mockLocalizationSetter()
+    {
+        return newMock(LocalizationSetter.class);
     }
 }
