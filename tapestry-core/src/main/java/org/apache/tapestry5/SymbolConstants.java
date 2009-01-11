@@ -124,4 +124,12 @@ public class SymbolConstants
      * @since 5.1.0.0
      */
     public static final String APPLICATION_VERSION = "tapestry.application-version";
+
+    /**
+     * Used to omit the normal Tapestry framework generator meta tag. The meta tag is rendered by default, but clients
+     * who do not wish to advertise their use of Tapstry may set this symbol to "true".
+     *
+     * @since 5.1.0.0
+     */
+    public static final String OMIT_GENERATOR_META = "tapestry.omit-generator-meta";
 }

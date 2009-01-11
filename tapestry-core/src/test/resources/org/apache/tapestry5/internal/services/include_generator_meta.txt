@@ -1,0 +1,2 @@
+<?xml version="1.0"?>
+<html><head><meta content="Apache Tapestry Framework (version 1.2.3)" name="generator"/></head><body><p>Ready to be marked with generator meta.</p></body></html>

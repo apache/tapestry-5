@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -36,10 +36,19 @@ public class DocumentLinkerImpl implements DocumentLinker
 
     private final boolean scriptsAtTop;
 
-    public DocumentLinkerImpl(boolean productionMode, boolean scriptsAtTop)
+    private final boolean omitGeneratorMetaTag;
+
+    private final String tapestryBanner;
+
+    public DocumentLinkerImpl(boolean productionMode, boolean scriptsAtTop, boolean omitGeneratorMetaTag,
+                              String tapestryVersion)
     {
+
         developmentMode = !productionMode;
         this.scriptsAtTop = scriptsAtTop;
+        this.omitGeneratorMetaTag = omitGeneratorMetaTag;
+
+        tapestryBanner = String.format("Apache Tapestry Framework (version %s)", tapestryVersion);
     }
 
     public void addStylesheetLink(String styleURL, String media)
@@ -81,6 +90,14 @@ public class DocumentLinkerImpl implements DocumentLinker
 
         if (!stylesheets.isEmpty())
             addStylesheetsToHead(root, includedStylesheets);
+
+        if (!omitGeneratorMetaTag)
+        {
+            Element head = findOrCreateElement(root, "head", true);
+            head.element("meta",
+                         "name", "generator",
+                         "content", tapestryBanner);
+        }
 
         addScriptElements(root);
     }

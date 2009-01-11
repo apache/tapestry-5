@@ -161,7 +161,11 @@ public class AppModule
 
   [tapestry.min-gzip-size]
     The minimum stream size necessary for Tapestry to use GZIP compression on the response stream.
-    
+
+  [tapestry.omit-generator-meta]
+    If "true", then the \<meta\> tag that Tapestry normally writes into the \<head\>, identifying the Tapestry version,
+    will be omitted.  Use this when you do not wish to advertise your application's use of Tapestry.
+
   [tapestry.production-mode]
     A flag (true or false) indicating whether the application is running in production or in development. The default
     is true, which means that runtime exceptions are not reported with full detail (only the root exception message
