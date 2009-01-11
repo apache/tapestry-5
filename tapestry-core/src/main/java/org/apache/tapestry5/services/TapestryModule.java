@@ -1490,6 +1490,12 @@ public final class TapestryModule
                                          @Path("${tapestry.spacer-image}")
                                          final Asset spacerImage,
 
+                                         @Symbol(SymbolConstants.OMIT_GENERATOR_META)
+                                         final boolean omitGeneratorMeta,
+
+                                         @Inject @Symbol(SymbolConstants.TAPESTRY_VERSION)
+                                         final String tapestryVersion,
+
                                          final ValidationMessagesSource validationMessagesSource,
 
                                          final SymbolSource symbolSource,
@@ -1500,7 +1506,8 @@ public final class TapestryModule
         {
             public void renderMarkup(MarkupWriter writer, MarkupRenderer renderer)
             {
-                DocumentLinkerImpl linker = new DocumentLinkerImpl(productionMode, scriptsAtTop);
+                DocumentLinkerImpl linker = new DocumentLinkerImpl(productionMode, scriptsAtTop, omitGeneratorMeta,
+                                                                   tapestryVersion);
 
                 environment.push(DocumentLinker.class, linker);
 
@@ -1913,6 +1920,7 @@ public final class TapestryModule
         configuration.add(SymbolConstants.MIN_GZIP_SIZE, "100");
 
         configuration.add(SymbolConstants.APPLICATION_VERSION, Long.toHexString(System.currentTimeMillis()));
+        configuration.add(SymbolConstants.OMIT_GENERATOR_META, "false");
     }
 
 
