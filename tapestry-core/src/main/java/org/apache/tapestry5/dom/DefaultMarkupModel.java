@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -27,6 +27,16 @@ import java.util.Set;
 public class DefaultMarkupModel extends AbstractMarkupModel
 {
     private final Set<String> ALWAYS_EMPTY = CollectionFactory.newSet("hr", "br", "img");
+
+    public DefaultMarkupModel()
+    {
+        this(false);
+    }
+
+    public DefaultMarkupModel(boolean useApostropheForAttributes)
+    {
+        super(useApostropheForAttributes);
+    }
 
     public EndTagStyle getEndTagStyle(String element)
     {

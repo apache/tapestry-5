@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -55,9 +55,28 @@ public class DOMTest extends InternalBaseTestCase
 
         Element nested = root.elementNS("fredns", "nested");
 
-        Element deepest = nested.elementNS("barneyns", "deepest");
+        nested.elementNS("barneyns", "deepest");
 
         assertEquals(d.toString(), readFile("namespaced_elements.txt"));
+    }
+
+    @Test
+    public void quote_using_apostrophes() throws Exception
+    {
+        Document d = new Document(new XMLMarkupModel(true));
+
+        Element root = d.newRootElement("fredns", "root");
+
+        root.defineNamespace("fredns", "f");
+        root.defineNamespace("barneyns", "b");
+
+        Element nested = root.elementNS("fredns", "nested");
+
+        nested.attribute("attribute", "value");
+
+        nested.elementNS("barneyns", "deepest");
+
+        assertEquals(d.toString(), readFile("quote_using_apostrophes.txt"));
     }
 
     @Test

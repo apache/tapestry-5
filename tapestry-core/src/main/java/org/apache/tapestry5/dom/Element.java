@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -48,9 +48,10 @@ public final class Element extends Node
         {
             builder.append(" ");
             builder.append(toPrefixedName(namespaceURIToPrefix, namespace, name));
-            builder.append("=\"");
+            builder.append("=");
+            builder.append(model.getAttributeQuote());
             model.encodeQuoted(value, builder);
-            builder.append('"');
+            builder.append(model.getAttributeQuote());
         }
     }
 
@@ -323,11 +324,12 @@ public final class Element extends Node
                 builder.append(":").append(prefix);
             }
 
-            builder.append("=\"");
+            builder.append("=");
+            builder.append(markupModel.getAttributeQuote());
 
             markupModel.encodeQuoted(namespace, builder);
 
-            builder.append('"');
+            builder.append(markupModel.getAttributeQuote());
         }
 
         EndTagStyle style = markupModel.getEndTagStyle(name);
