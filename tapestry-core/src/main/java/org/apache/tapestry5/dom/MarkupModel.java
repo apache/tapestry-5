@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -54,4 +54,13 @@ public interface MarkupModel
      * @return true for XML output, false for HTML output
      */
     boolean isXML();
+
+    /**
+     * What character is used when generating quotes around attribute values? This will be either a single or double
+     * quote.
+     *
+     * @return single (') or double (") quote
+     * @since 5.1.0.0
+     */
+    char getAttributeQuote();
 }

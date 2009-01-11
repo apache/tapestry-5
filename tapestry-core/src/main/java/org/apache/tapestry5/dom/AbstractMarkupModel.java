@@ -1,4 +1,4 @@
-//  Copyright 2008 The Apache Software Foundation
+//  Copyright 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,6 +16,18 @@ package org.apache.tapestry5.dom;
 
 public abstract class AbstractMarkupModel implements MarkupModel
 {
+    private final boolean useApostropheForAttributes;
+
+    protected AbstractMarkupModel(boolean useApostropheForAttributes)
+    {
+        this.useApostropheForAttributes = useApostropheForAttributes;
+    }
+
+    public char getAttributeQuote()
+    {
+        return useApostropheForAttributes ? '\'' : '"';
+    }
+
     /**
      * Passes all characters but '&lt;', '&gt;' and '&amp;' through unchanged.
      */
@@ -104,8 +116,25 @@ public abstract class AbstractMarkupModel implements MarkupModel
 
                 case '"':
 
-                    builder.append("&quot;");
+                    if (!useApostropheForAttributes)
+                    {
+                        builder.append("&quot;");
+                        continue;
+                    }
+
+                    builder.append(ch);
                     continue;
+
+                case '\'':
+
+                    if (useApostropheForAttributes)
+                    {
+                        builder.append("&apos;");
+                        continue;
+                    }
+
+
+                    // Fall through
 
                 default:
 
