@@ -33,7 +33,7 @@ public class ContextAssetFactoryTest extends InternalBaseTestCase
 
         replay();
 
-        AssetFactory factory = new ContextAssetFactory(request, context, null, "1.2.3");
+        AssetFactory factory = new ContextAssetFactory(request, context, "1.2.3");
 
         assertEquals(factory.getRootResource().toString(), "context:/");
 
@@ -45,28 +45,24 @@ public class ContextAssetFactoryTest extends InternalBaseTestCase
     {
         Context context = mockContext();
         Request request = mockRequest();
-        RequestPathOptimizer optimizer = mockRequestPathOptimizer();
 
         Resource r = new ContextResource(context, "foo/Bar.txt");
 
         train_getContextPath(request, "/context");
 
-        train_optimizePath(optimizer, "/context/assets/app/4.5.6/foo/Bar.txt", "/opt/path1");
-        train_optimizePath(optimizer, "/context/assets/app/4.5.6/foo/Bar.txt", "/opt/path2");
-
         replay();
 
-        AssetFactory factory = new ContextAssetFactory(request, context, optimizer, "4.5.6");
+        AssetFactory factory = new ContextAssetFactory(request, context, "4.5.6");
 
         Asset asset = factory.createAsset(r);
 
         assertSame(asset.getResource(), r);
-        assertEquals(asset.toClientURL(), "/opt/path1");
+        assertEquals(asset.toClientURL(), "/context/assets/app/4.5.6/foo/Bar.txt");
 
         // In real life, toString() is the same as toClientURL(), but we're testing
         // that the optimize method is getting called, basically.
 
-        assertEquals(asset.toString(), "/opt/path2");
+        assertEquals(asset.toString(), "/context/assets/app/4.5.6/foo/Bar.txt");
 
         verify();
     }

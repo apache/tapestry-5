@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -43,18 +43,15 @@ public class ClasspathAssetAliasManagerImplTest extends InternalBaseTestCase
     public void to_client_url(String resourcePath, String expectedClientURL)
     {
         Request request = mockRequest();
-        RequestPathOptimizer optimizer = mockRequestPathOptimizer();
 
         train_getContextPath(request, "/ctx");
 
-        train_optimizePath(optimizer, "/ctx" + RequestConstants.ASSET_PATH_PREFIX + expectedClientURL, OPTIMIZED);
-
-
         replay();
 
-        ClasspathAssetAliasManager manager = new ClasspathAssetAliasManagerImpl(request, optimizer, configuration());
+        ClasspathAssetAliasManager manager = new ClasspathAssetAliasManagerImpl(request, configuration());
 
-        assertEquals(manager.toClientURL(resourcePath), OPTIMIZED);
+        assertEquals(manager.toClientURL(resourcePath),
+                     "/ctx" + RequestConstants.ASSET_PATH_PREFIX + expectedClientURL);
 
         verify();
     }
@@ -72,7 +69,7 @@ public class ClasspathAssetAliasManagerImplTest extends InternalBaseTestCase
     @Test(dataProvider = "to_resource_path_data")
     public void to_resource_path(String clientURL, String expectedResourcePath)
     {
-        ClasspathAssetAliasManager manager = new ClasspathAssetAliasManagerImpl(null, null, configuration());
+        ClasspathAssetAliasManager manager = new ClasspathAssetAliasManagerImpl(null, configuration());
 
         assertEquals(manager.toResourcePath(clientURL), expectedResourcePath);
     }
