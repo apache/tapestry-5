@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -48,10 +48,10 @@ import java.util.Map;
 public class PropertyConduitSourceImpl implements PropertyConduitSource, InvalidationListener
 {
     private static final MethodSignature GET_SIGNATURE = new MethodSignature(Object.class, "get",
-                                                                             new Class[] {Object.class}, null);
+                                                                             new Class[] { Object.class }, null);
 
     private static final MethodSignature SET_SIGNATURE = new MethodSignature(void.class, "set",
-                                                                             new Class[] {Object.class, Object.class},
+                                                                             new Class[] { Object.class, Object.class },
                                                                              null);
 
     private static final Method RANGE;
@@ -372,7 +372,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
             builder.end();
 
-            MethodSignature sig = new MethodSignature(rootType, "getRoot", new Class[] {Object.class}, null);
+            MethodSignature sig = new MethodSignature(rootType, "getRoot", new Class[] { Object.class }, null);
 
             classFab.addMethod(Modifier.PRIVATE, sig, builder.toString());
         }
@@ -410,7 +410,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
             navBuilder.end();
 
-            MethodSignature sig = new MethodSignature(activeType, "navigate", new Class[] {rootType},
+            MethodSignature sig = new MethodSignature(activeType, "navigate", new Class[] { rootType },
                                                       null);
 
             classFab.addMethod(Modifier.PRIVATE, sig, navBuilder.toString());
@@ -1042,6 +1042,10 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
                         methodName))
                     return method;
             }
+
+            // TAP5-330
+            if (activeType != Object.class)
+                return findMethod(Object.class, methodName, parameterCount);
 
             throw new NoSuchMethodException(ServicesMessages.noSuchMethod(activeType, methodName));
         }

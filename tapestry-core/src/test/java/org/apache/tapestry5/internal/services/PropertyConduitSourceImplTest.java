@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,6 +14,7 @@
 
 package org.apache.tapestry5.internal.services;
 
+import org.apache.tapestry5.Block;
 import org.apache.tapestry5.PropertyConduit;
 import org.apache.tapestry5.beaneditor.Validate;
 import org.apache.tapestry5.integration.app1.data.IntegerHolder;
@@ -394,5 +395,25 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
         sw.setValue(true);
 
         assertEquals(conduit.get(sw), "nay");
+    }
+
+    /**
+     * TAP5-330
+     */
+    @Test
+    public void object_methods_can_be_invoked()
+    {
+        PropertyConduit conduit = source.create(Block.class, "toString()");
+
+        Block b = new Block()
+        {
+            @Override
+            public String toString()
+            {
+                return "Do You Grok Ze Block?";
+            }
+        };
+
+        assertEquals(conduit.get(b), "Do You Grok Ze Block?");
     }
 }
