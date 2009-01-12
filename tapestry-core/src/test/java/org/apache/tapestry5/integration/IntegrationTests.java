@@ -32,7 +32,7 @@ import java.net.URL;
  * Note: If these tests fail with BindException when starting Jetty, it could be Skype. At least on my system, Skype is
  * listening on localhost:80.
  */
-@SuppressWarnings({"JavaDoc"})
+@SuppressWarnings({ "JavaDoc" })
 @Test(timeOut = 50000, sequential = true)
 public class IntegrationTests extends AbstractIntegrationTestSuite
 {
@@ -201,7 +201,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     {
         start("InstanceMixin");
 
-        final String[] dates = {"Jun 13, 1999", "Jul 15, 2001", "Dec 4, 2005"};
+        final String[] dates = { "Jun 13, 1999", "Jul 15, 2001", "Dec 4, 2005" };
 
         for (String date : dates)
         {
@@ -652,7 +652,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         // The lack of a leading slash indicates that the path was optimized, see TAPESTRY-1502
 
-        assertAttribute("//img[@class='t-sort-icon']/@src", "assets/UNKNOWN/tapestry/corelib/components/sort-asc.png");
+        assertAttribute("//img[@class='t-sort-icon']/@src", "/assets/UNKNOWN/tapestry/corelib/components/sort-asc.png");
         assertAttribute("//img[@class='t-sort-icon']/@alt", "[Asc]");
 
         clickAndWait("link=1");
@@ -661,7 +661,8 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         clickAndWait("link=Title");
 
-        assertAttribute("//img[@class='t-sort-icon']/@src", "assets/UNKNOWN/tapestry/corelib/components/sort-desc.png");
+        assertAttribute("//img[@class='t-sort-icon']/@src",
+                        "/assets/UNKNOWN/tapestry/corelib/components/sort-desc.png");
         assertAttribute("//img[@class='t-sort-icon']/@alt", "[Desc]");
 
         clickAndWait("link=reset the Grid");
@@ -822,8 +823,8 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         // The lack of a leading slash indicates that the path was optimized, see TAPESTRY-1502
 
-        assertAttributeSeries("//script[%d]/@src", 1, "assets/UNKNOWN/scriptaculous/prototype.js",
-                              "assets/UNKNOWN/scriptaculous/scriptaculous.js");
+        assertAttributeSeries("//script[%d]/@src", 1, "/assets/UNKNOWN/scriptaculous/prototype.js",
+                              "/assets/UNKNOWN/scriptaculous/scriptaculous.js");
 
         clickAndWait("link=Clear Data");
 
@@ -1380,7 +1381,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     {
         start("Disabled Fields");
 
-        String[] paths = new String[] {"//input[@id='textfield']",
+        String[] paths = new String[] { "//input[@id='textfield']",
 
                 "//input[@id='passwordfield']",
 
@@ -1404,7 +1405,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
                 "//select[@id='palette']",
 
-                "//input[@id='submit']"};
+                "//input[@id='submit']" };
 
         for (String path : paths)
         {

@@ -32,22 +32,16 @@ public class ContextAssetFactory implements AssetFactory
 {
     private final Request request;
 
-    private final Context context;
-
-    private final RequestPathOptimizer optimizer;
-
     private final String pathPrefix;
 
     private final Resource rootResource;
 
-    public ContextAssetFactory(Request request, Context context, RequestPathOptimizer optimizer,
+    public ContextAssetFactory(Request request, Context context,
 
                                @Inject @Symbol(SymbolConstants.APPLICATION_VERSION)
                                String applicationVersion)
     {
         this.request = request;
-        this.context = context;
-        this.optimizer = optimizer;
 
         pathPrefix = RequestConstants.ASSET_PATH_PREFIX + RequestConstants.APP_FOLDER
                 + applicationVersion + "/";
@@ -57,7 +51,7 @@ public class ContextAssetFactory implements AssetFactory
 
     public Asset createAsset(final Resource resource)
     {
-        final String contextPath = request.getContextPath() + pathPrefix + resource.getPath();
+        final String completePath = request.getContextPath() + pathPrefix + resource.getPath();
 
         return new Asset()
         {
@@ -68,7 +62,7 @@ public class ContextAssetFactory implements AssetFactory
 
             public String toClientURL()
             {
-                return optimizer.optimizePath(contextPath);
+                return completePath;
             }
 
             /**
