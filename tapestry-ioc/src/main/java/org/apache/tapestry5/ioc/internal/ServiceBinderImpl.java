@@ -19,6 +19,7 @@ import org.apache.tapestry5.ioc.annotations.EagerLoad;
 import org.apache.tapestry5.ioc.annotations.Marker;
 import org.apache.tapestry5.ioc.annotations.PreventServiceDecoration;
 import org.apache.tapestry5.ioc.annotations.Scope;
+import org.apache.tapestry5.ioc.annotations.ServiceId;
 import org.apache.tapestry5.ioc.def.ServiceDef;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.Defense;
@@ -212,9 +213,20 @@ public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
         this.serviceImplementation = serviceImplementation;
 
         // Set defaults for the other properties.
-
+        
+        
         eagerLoad = serviceImplementation.getAnnotation(EagerLoad.class) != null;
-        serviceId = serviceInterface.getSimpleName();
+        
+        ServiceId serviceIdAnnotation = serviceImplementation.getAnnotation(ServiceId.class);
+        
+        if(serviceIdAnnotation != null)
+        {
+            serviceId = serviceIdAnnotation.value();
+        }
+        else
+        {
+            serviceId = serviceInterface.getSimpleName();
+        }
 
         Scope scope = serviceImplementation.getAnnotation(Scope.class);
 

@@ -277,7 +277,18 @@ public class DefaultModuleDefImpl implements ModuleDef, ServiceDefAccumulator
      */
     private void addServiceDef(final Method method, boolean modulePreventsServiceDecoration)
     {
-        String serviceId = stripMethodPrefix(method, BUILD_METHOD_NAME_PREFIX);
+        ServiceId serviceIdAnnotation = method.getAnnotation(ServiceId.class);
+        
+        String serviceId;
+        
+        if(serviceIdAnnotation != null)
+        {
+            serviceId = serviceIdAnnotation.value();
+        }
+        else
+        {
+            serviceId = stripMethodPrefix(method, BUILD_METHOD_NAME_PREFIX);
+        }
 
         // If the method name was just "build()", then work from the return type.
 

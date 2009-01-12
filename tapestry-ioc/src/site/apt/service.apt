@@ -133,7 +133,17 @@ Service Ids
   
   When using a service builder method, the service id is the <simple name> of the service interface.
   
-  This can be overridden by adding the service id to the method name, after "build", for example:
+  This can be overridden by adding the {{{../apidocs/org/apache/tapestry5/ioc/annotations/ServiceId.html}ServiceId}} annotation to the service builder method:
+  
++---+
+  @ServiceId("FileSystemIndexer")
+  public static Indexer buildIndexer(@InjectService("FileSystem") FileSystem fileSystem)
+  {
+     . . .
+  }
++----+
+  
+  Another option is to add the service id to the method name, after "build", for example:
   
 +---+
   public static Indexer buildFileSystemIndexer(@InjectService("FileSystem") FileSystem fileSystem)
@@ -144,7 +154,25 @@ Service Ids
 
   Here, the service id is "FileSystemIndexer" not "Indexer".
   
-  For autobuilt services, the service id can be specified when the service is bound:
+  For autobuilt services, the service id can be specified by placing the 
+  {{{../apidocs/org/apache/tapestry5/ioc/annotations/ServiceId.html}ServiceId}} annotation directly 
+  on a service implementation class. 
+
++---+
+  @ServiceId("FileSystemIndexer")
+  public class IndexerImpl implements Indexer
+  {
+      ...
+  }
++---+
+
+  When the service is bound, the value of the annotation is used as id:
+  
++---+
+  binder.bind(Indexer.class, IndexerImpl.class);
++---+
+  
+  This id can be overriden again by calling the method {{{../apidocs/org/apache/tapestry5/ioc/ServiceBindingOptions.html#withId(java.lang.String)}withId}}
   
 +---+
   binder.bind(Indexer.class, IndexerImpl.class).withId("FileSystemIndexer");
