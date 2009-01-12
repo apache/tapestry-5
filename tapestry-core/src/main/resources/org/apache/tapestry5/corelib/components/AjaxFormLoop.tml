@@ -5,7 +5,7 @@
     </t:formfragment>
 
     <t:block id="tail">
-        <t:forminjector element="prop:element" t:id="rowInjector" context="inherit:context">
+        <t:forminjector element="prop:element" t:id="rowInjector" show="inherit:show" context="inherit:context">
             <t:delegate to="prop:addRow"/>
             <t:block id="defaultAddRow">
                 <t:addrowlink>Add row</t:addrowlink>

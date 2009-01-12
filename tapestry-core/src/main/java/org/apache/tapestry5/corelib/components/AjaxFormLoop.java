@@ -1,4 +1,4 @@
-// Copyright 2008 The Apache Software Foundation
+// Copyright 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -63,6 +63,13 @@ public class AjaxFormLoop
     @Parameter(required = true)
     private Object value;
 
+    /**
+     * Name of a function on the client-side Tapestry.ElementEffect object that is invoked to make added content
+     * visible.  This is used with the {@link FormInjector} component, when adding a new row to the loop. Leaving as
+     * null uses the default function, "highlight".
+     */
+    @Parameter(defaultPrefix = BindingConstants.LITERAL)
+    private String show;
 
     /**
      * The context for the form loop (optional parameter). This list of values will be converted into strings and
@@ -265,7 +272,7 @@ public class AjaxFormLoop
         }
     };
 
-    @SuppressWarnings({"unchecked"})
+    @SuppressWarnings({ "unchecked" })
     @Log
     private void syncValue(Serializable id)
     {
@@ -300,7 +307,7 @@ public class AjaxFormLoop
     /**
      * Uses the {@link org.apache.tapestry5.PrimaryKeyEncoder} to convert the current row value to an id.
      */
-    @SuppressWarnings({"unchecked"})
+    @SuppressWarnings({ "unchecked" })
     private Serializable idForCurrentValue()
     {
         return encoder.toKey(value);
@@ -419,7 +426,7 @@ public class AjaxFormLoop
 
         Object value = encoder.toValue(coerced);
 
-        resources.triggerEvent(EventConstants.REMOVE_ROW, new Object[] {value}, null);
+        resources.triggerEvent(EventConstants.REMOVE_ROW, new Object[] { value }, null);
 
         return new JSONObject();
     }
