@@ -1,4 +1,4 @@
-// Copyright 2008 The Apache Software Foundation
+// Copyright 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,6 +14,9 @@
 
 package org.apache.tapestry5.corelib.components;
 
+import org.apache.tapestry5.RenderSupport;
+import org.apache.tapestry5.annotations.Environmental;
+import org.apache.tapestry5.annotations.IncludeJavaScriptLibrary;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.internal.InternalConstants;
@@ -31,6 +34,7 @@ import java.util.List;
  *
  * @see org.apache.tapestry5.ioc.services.ExceptionAnalyzer
  */
+@IncludeJavaScriptLibrary("exceptiondisplay.js")
 public class ExceptionDisplay
 {
     /**
@@ -58,11 +62,21 @@ public class ExceptionDisplay
     @Property
     private List<ExceptionInfo> stack;
 
+    @Environmental
+    private RenderSupport renderSupport;
+
+    @Property
+    private String toggleId;
+
+    private boolean sawDoFilter;
+
     void setupRender()
     {
         ExceptionAnalysis analysis = analyzer.analyze(exception);
 
         stack = analysis.getExceptionInfos();
+
+        toggleId = renderSupport.allocateClientId("toggleStack");
     }
 
     public boolean getShowPropertyList()
@@ -79,8 +93,20 @@ public class ExceptionDisplay
 
     public String getFrameClass()
     {
-        if (frame.getClassName().startsWith(appPackage) && frame.getLineNumber() > 0) return "t-usercode-frame";
+        String className = frame.getClassName();
+        int lineNumber = frame.getLineNumber();
+
+        if (sawDoFilter || className.startsWith("$") && lineNumber <= 0) return "t-omitted-frame";
+
+        sawDoFilter |= frame.getMethodName().equals("doFilter");
+
+        if (className.startsWith(appPackage) && lineNumber > 0) return "t-usercode-frame";
 
         return null;
+    }
+
+    void afterRender()
+    {
+        renderSupport.addScript("Tapestry.stackFrameToggle('%s');", toggleId);
     }
 }
