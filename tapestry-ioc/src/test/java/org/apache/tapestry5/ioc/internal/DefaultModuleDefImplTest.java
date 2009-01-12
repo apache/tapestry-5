@@ -102,6 +102,42 @@ public class DefaultModuleDefImplTest extends IOCTestCase
     }
 
     @Test
+    public void default_service_id_from_method_annotation()
+    {
+        Logger logger = mockLogger();
+
+        replay();
+
+        ModuleDef def = new DefaultModuleDefImpl(ServiceIdViaAnnotationModule.class, logger, null);
+
+        assertEquals(def.getServiceIds().size(), 2);
+
+        ServiceDef sd = def.getServiceDef("FooService");
+
+        assertEquals(sd.getServiceId(), "FooService");
+
+        verify();
+    }
+    
+    @Test
+    public void default_service_id_from_annotation()
+    {
+        Logger logger = mockLogger();
+
+        replay();
+
+        ModuleDef def = new DefaultModuleDefImpl(ServiceIdViaAnnotationModule.class, logger, null);
+
+        assertEquals(def.getServiceIds().size(), 2);
+
+        ServiceDef sd = def.getServiceDef("BarneyService");
+
+        assertEquals(sd.getServiceId(), "BarneyService");
+
+        verify();
+    }
+    
+    @Test
     public void default_service_id_from_return_type()
     {
         Logger logger = mockLogger();
