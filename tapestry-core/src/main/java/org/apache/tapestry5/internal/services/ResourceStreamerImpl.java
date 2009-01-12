@@ -49,6 +49,8 @@ public class ResourceStreamerImpl implements ResourceStreamer
 
     private final int compressionCutoff;
 
+    private final boolean compressionEnabled;
+
     public ResourceStreamerImpl(Request request,
 
                                 Response response,
@@ -62,7 +64,10 @@ public class ResourceStreamerImpl implements ResourceStreamer
                                 ResponseCompressionAnalyzer analyzer,
 
                                 @Symbol(SymbolConstants.MIN_GZIP_SIZE)
-                                int compressionCutoff)
+                                int compressionCutoff,
+
+                                @Symbol(SymbolConstants.GZIP_COMPRESSION_ENABLED)
+                                boolean compressionEnabled)
 
     {
         this.request = request;
@@ -72,6 +77,7 @@ public class ResourceStreamerImpl implements ResourceStreamer
         this.configuration = configuration;
         this.analyzer = analyzer;
         this.compressionCutoff = compressionCutoff;
+        this.compressionEnabled = compressionEnabled;
     }
 
     public void streamResource(Resource resource) throws IOException
@@ -89,7 +95,8 @@ public class ResourceStreamerImpl implements ResourceStreamer
 
         String contentType = identifyContentType(resource, streamble);
 
-        boolean compress = analyzer.isGZipSupported() &&
+        boolean compress = compressionEnabled &&
+                analyzer.isGZipSupported() &&
                 streamble.getSize(false) >= compressionCutoff &&
                 analyzer.isCompressable(contentType);
 

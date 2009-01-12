@@ -215,10 +215,8 @@ public class InternalModule
         };
     }
 
-    public ResourceCache buildResourceCache(ResourceDigestGenerator digestGenerator)
+    public ResourceCache buildResourceCache(@Autobuild ResourceCacheImpl service)
     {
-        ResourceCacheImpl service = new ResourceCacheImpl(digestGenerator);
-
         updateListenerHub.addUpdateListener(service);
 
         return service;

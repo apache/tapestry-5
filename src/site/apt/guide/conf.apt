@@ -159,6 +159,9 @@ public class AppModule
      When true, all URIs will be absolute URIs (including the
      context path, and the complete path for the request).
 
+  [tapestry.gzip-compression-enabled]
+    Override to "false" to disable GZIP compression of dynamic Tapestry pages and static assets.
+     
   [tapestry.min-gzip-size]
     The minimum stream size necessary for Tapestry to use GZIP compression on the response stream.
 

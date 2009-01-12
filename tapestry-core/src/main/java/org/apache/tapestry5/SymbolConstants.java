@@ -112,6 +112,7 @@ public class SymbolConstants
      * Minimum output stream size, in bytes, before output is compressed using GZIP. Shorter streams are not compressed.
      * Tapestry buffers this amount and switches to a GZIP output stream as needed.
      *
+     * @see #GZIP_COMPRESSION_ENABLED
      * @since 5.1.0.0
      */
     public static final String MIN_GZIP_SIZE = "tapestry.min-gzip-size";
@@ -132,4 +133,14 @@ public class SymbolConstants
      * @since 5.1.0.0
      */
     public static final String OMIT_GENERATOR_META = "tapestry.omit-generator-meta";
+
+    /**
+     * If "true" (the default) then GZip compression is enabled for dynamic requests and for static assets. If you are
+     * using a server that handles GZip compression for you, or you don't want to ue the extra processing power necessary
+     * to GZIP requests, then override this to "false".
+     *
+     * @see #MIN_GZIP_SIZE
+     * @since 5.1.0.0
+     */
+    public static final String GZIP_COMPRESSION_ENABLED = "tapestry.gzip-compression-enabled";
 }
