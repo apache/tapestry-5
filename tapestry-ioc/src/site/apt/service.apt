@@ -182,9 +182,11 @@ Service Ids
   }
 +-----------------------------------------------------------------------------------+
 
-  Here we've annotated the parameters of the service builder method to identify what
-  service to inject for that parameter.  
-  
+  Tapestry assumes that parameters to builder methods are dependencies; in this example
+  it is able to figure out what services to pass in based just on the type (later we'll
+  see how we can fine tune this with annotations, when the service type is not sufficient
+  to identify a single service).
+
   This is an example of when you would want to use the service builder method, rather than
   just binding the service interface to the implementation class: because we want to do something extra,
   in this case, register the new indexer service with the scheduler.
