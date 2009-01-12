@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 2008 The Apache Software Foundation
+// Copyright 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -23,9 +23,8 @@ import java.lang.annotation.Target;
 
 /**
  * An optional annotation that may be placed on a service building method of a module, or on the implementation class
- * (when using service binding via the {@link org.apache.tapestry5.ioc.ServiceBinder}). The annotation overrides the default
- * id for services (the default service id is the simple name of the service interface). 
- *
+ * (when using service binding via the {@link org.apache.tapestry5.ioc.ServiceBinder}). The annotation overrides the
+ * default id for services (the default service id is the simple name of the service interface).
  */
 @Target({ TYPE, METHOD })
 @Retention(RUNTIME)
