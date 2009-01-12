@@ -17,7 +17,13 @@
                             </dd>
                         </t:loop>
                         <t:if test="info.stackTrace">
-                            <dt>Stack trace</dt>
+                            <dt>
+                                <span class="t-exception-stack-controls">
+                                    <input type="checkbox" id="${toggleId}" checked="checked"/>
+                                    <label for="${toggleId}">Hide uninteresting stack frames</label>
+                                </span>
+                                Stack trace
+                            </dt>
                             <dd>
                                 <ul class="t-stack-trace">
                                     <t:loop source="info.stackTrace" value="frame">

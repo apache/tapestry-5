@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,10 +17,7 @@ package org.apache.tapestry5.ioc.internal.services;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.services.*;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class ExceptionAnalyzerImpl implements ExceptionAnalyzer
 {
@@ -117,25 +114,9 @@ public class ExceptionAnalyzerImpl implements ExceptionAnalyzer
         // Usually, I'd use a terniary expression here, but Generics gets in
         // the way here.
 
-        if (t.getCause() == null) stackTrace = extractStackTrace(t);
+        if (t.getCause() == null)
+            stackTrace = Arrays.asList(t.getStackTrace());
 
         return new ExceptionInfoImpl(t, properties, stackTrace);
-    }
-
-    private List<StackTraceElement> extractStackTrace(Throwable t)
-    {
-        List<StackTraceElement> trace = CollectionFactory.newList();
-
-        for (StackTraceElement e : t.getStackTrace())
-        {
-            // Edit out IoC Proxy classes. They always start with a '$'
-            // and don't have any line number information.
-
-            if (e.getClassName().startsWith("$") && e.getLineNumber() < 0) continue;
-
-            trace.add(e);
-        }
-
-        return trace;
     }
 }

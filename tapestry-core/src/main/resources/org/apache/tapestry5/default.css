@@ -96,6 +96,11 @@ SPAN.t-exception-class-name {
     font-weight: bold;
 }
 
+SPAN.t-exception-stack-controls {
+    display: block;
+    float: right;
+}
+
 UL.t-stack-trace LI {
     font-family: Monaco, Times, monospace;
     font-size: 10pt;
@@ -106,6 +111,12 @@ UL.t-stack-trace LI {
 LI.t-usercode-frame {
     font-weight: bold;
     color: blue;
+}
+
+LI.t-omitted-frame {
+    display: none;
+    color: gray;
+    list-style: square;
 }
 
 H1.t-exception-report {
