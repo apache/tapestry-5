@@ -2104,7 +2104,7 @@ public final class TapestryModule
     }
 
     /**
-     * The master SessionPesistedObjectAnalyzer.
+     * The master Sessi`onPesistedObjectAnalyzer.
      *
      * @since 5.1.0.0
      */
@@ -2144,12 +2144,40 @@ public final class TapestryModule
     }
 
     /**
-     * Adds the following content types: <ul> <li>image/jpeg</li> </ul>
+     * Contibutions are content types that do not benefit from compression. Adds the following content types: <ul>
+     * <li>image/jpeg</li> </ul>
      *
      * @since 5.1.0.0
      */
     public static void contributeResponseCompressionAnalyzer(Configuration<String> configuration)
     {
         configuration.add("image/jpeg");
+    }
+
+    /**
+     * @since 5.1.1.0
+     */
+    @Marker(Primary.class)
+    public StackTraceElementAnalyzer buildMasterStackTraceElementAnalyzer(List<StackTraceElementAnalyzer> configuration)
+    {
+        return chainBuilder.build(StackTraceElementAnalyzer.class, configuration);
+    }
+
+    /**
+     * Adds two analyzers: <dl> <dt>Application</dt> <dd>Checks for classes in the application package</dd>
+     * <dt>Proxies</dt> <dd>Checks for classes that appear to be generated proxies.</dd> <dt>SunReflect</dt> <dd>Checks
+     * for <code>sun.reflect</code> (which are omitted)</dl>
+     *
+     * @since 5.1.0.0
+     */
+    public static void contributeMasterStackTraceElementAnalyzer(
+            OrderedConfiguration<StackTraceElementAnalyzer> configuration)
+    {
+        configuration.addInstance("Application", ApplicationStackTraceElementAnalyzer.class);
+        configuration.addInstance("Proxies", ProxiesStackTraceElementAnalyzer.class, "before:Application");
+        configuration.add("SunReflect",
+                          new PrefixCheckStackTraceElementAnalyzer(StackTraceElementClassConstants.OMITTED,
+                                                                   "sun.reflect."
+                          ));
     }
 }
