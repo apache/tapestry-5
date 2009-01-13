@@ -211,8 +211,8 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
     }
 
     /**
-     * Replaces {@link org.apache.tapestry5.internal.structure.ComponentPageElementImpl.BeginRenderPhase} when there a
-     * handler for AfterRender but not BeginRender.
+     * Replaces {@link org.apache.tapestry5.internal.structure.ComponentPageElementImpl.BeginRenderPhase} when there is
+     * a handler for AfterRender but not BeginRender.
      */
     private class OptimizedBeginRenderPhase implements RenderCommand
     {
@@ -615,7 +615,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
 
         if (!handled.contains(BeginRender.class))
         {
-            RenderCommand replacement = handled.contains(AfterRender.class)
+            RenderCommand replacement = afterRenderPhase != null
                                         ? new OptimizedBeginRenderPhase()
                                         : beforeRenderTemplatePhase;
 
