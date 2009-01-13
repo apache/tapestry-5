@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -45,6 +45,15 @@ import org.apache.tapestry5.services.BeanModelSource;
 @SupportsInformalParameters
 public class BeanEditForm implements ClientElement, FormValidationControl
 {
+    /**
+     * If true (the default), then the JavaScript will be added to position the cursor into the form. The field to
+     * receive focus is the first rendered field that is in error, or required, or present (in that order of priority).
+     *
+     * @see org.apache.tapestry5.corelib.components.Form#autofocus
+     */
+    @Parameter
+    private boolean autofocus;
+
     /**
      * The text label for the submit button of the form, by default "Create/Update".
      */
@@ -107,9 +116,10 @@ public class BeanEditForm implements ClientElement, FormValidationControl
     @Parameter(defaultPrefix = BindingConstants.LITERAL)
     private String zone;
 
-    @Component(parameters = {"clientValidation=inherit:clientValidation",
+    @Component(parameters = { "clientValidation=inherit:clientValidation",
             "validationId=componentResources.id",
-            "zone=inherit:zone"})
+            "autofocus=inherit:autofocus",
+            "zone=inherit:zone" })
     private Form form;
 
     /**
