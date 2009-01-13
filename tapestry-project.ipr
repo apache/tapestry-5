@@ -152,7 +152,6 @@
       <facet-type id="Spring" />
     </autodetection-disabled>
   </component>
-  <component name="FacetManager" />
   <component name="IdProvider" IDEtalkID="5869BD07806E60386FB39DF824C84757" />
   <component name="InspectionProjectProfileManager">
     <option name="PROJECT_PROFILE" value="Project Default" />
@@ -244,7 +243,6 @@
       </list>
     </option>
   </component>
-  <component name="NewModuleRootManager" />
   <component name="Palette2">
     <group name="Swing">
       <item class="com.intellij.uiDesigner.HSpacer" tooltip-text="Horizontal Spacer" icon="/com/intellij/uiDesigner/icons/hspacer.png" removable="false" auto-create-binding="false" can-attach-label="false">
