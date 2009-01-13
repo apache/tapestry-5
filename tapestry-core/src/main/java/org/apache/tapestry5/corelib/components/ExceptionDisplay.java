@@ -21,10 +21,13 @@ import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.annotations.Primary;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.services.ExceptionAnalysis;
 import org.apache.tapestry5.ioc.services.ExceptionAnalyzer;
 import org.apache.tapestry5.ioc.services.ExceptionInfo;
+import org.apache.tapestry5.services.StackTraceElementAnalyzer;
+import org.apache.tapestry5.services.StackTraceElementClassConstants;
 
 import java.util.List;
 
@@ -70,6 +73,10 @@ public class ExceptionDisplay
 
     private boolean sawDoFilter;
 
+    @Inject
+    @Primary
+    private StackTraceElementAnalyzer frameAnalyzer;
+
     void setupRender()
     {
         ExceptionAnalysis analysis = analyzer.analyze(exception);
@@ -93,16 +100,13 @@ public class ExceptionDisplay
 
     public String getFrameClass()
     {
-        String className = frame.getClassName();
-        int lineNumber = frame.getLineNumber();
+        if (sawDoFilter) return StackTraceElementClassConstants.OMITTED;
 
-        if (sawDoFilter || className.startsWith("$") && lineNumber <= 0) return "t-omitted-frame";
+        String result = frameAnalyzer.classForFrame(frame);
 
         sawDoFilter |= frame.getMethodName().equals("doFilter");
 
-        if (className.startsWith(appPackage) && lineNumber > 0) return "t-usercode-frame";
-
-        return null;
+        return result;
     }
 
     void afterRender()
