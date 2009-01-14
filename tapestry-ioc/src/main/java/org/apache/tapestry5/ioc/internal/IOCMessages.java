@@ -322,4 +322,9 @@ final class IOCMessages
     {
         return MESSAGES.format("no-convention-service-implementation-found", clazz.getName(), clazz.getName());
     }
+    
+    static String tooManyServicesForContributeMethod(Method method, Class clazz)
+    {
+        return MESSAGES.format("too-many-services-for-annotated-contribute-method", asString(method), clazz.getName());
+    }
 }
