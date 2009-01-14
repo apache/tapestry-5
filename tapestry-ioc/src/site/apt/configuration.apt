@@ -80,6 +80,45 @@ Tapestry IoC Configurations
   other contributing modules (such as the one that contributes the Office file services) may be written at 
   a much later date. With no change to the FileServicerDispatcher service or its module class,
   the new services "plug into" the overall solution, simply by having their JAR's on runtime classpath. 
+
+Annotated Service Contributor Methods
+
+  As an alternative to the naming convention, you may mark a method as a contributor method by placing the 
+  {{{../apidocs/org/apache/tapestry5/ioc/annotations/Contribute.html}Contribute}} annotation on it. 
+  Tapestry will invoke this method just as if it starts with 'contribute'. The value attribute of the annotation 
+  is the type of service to contribute into. Based on this type Tapestry will find the service id provided as described 
+  {{{service.html}here}}. 
+  
++------+
+  @Contribute(Runnable.class)
+  public static void arbitraryNamedMethod(MappedConfiguration<String,String> configuration)
+  {
+    ...
+  }  
++------+
+
+  If several implementations of a service interface are provided Tapestry will throw an exception. 
+  In this case you should disambiguate by providing marker annotations or by using the naming convention (method starts with 'contribute').
+
++------+
+  public class MyModule
+  {
+    public static void bind(ServiceBinder binder)
+    {
+      binder.bind(Runnable.class, RunnableImpl.class).withId("Red").withMarker(RedMarker.class);
+      
+      binder.bind(Runnable.class, AnotherRunnableImpl.class).withId("BlueAndRed")
+            .withMarker(new Class[]{BlueMarker.class,RedMarker.class});
+    }
+  
+    @Contribute(Runnable.class)
+    @Marker({BlueMarker.class,RedMarker.class})
+    public static void arbitraryNamedMethod(MappedConfiguration<String,String> configuration)
+    {
+      ...
+    } 
+  } 
++------+
   
 Configuration Types
 

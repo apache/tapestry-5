@@ -116,6 +116,7 @@ public class DefaultModuleDefImpl implements ModuleDef, ServiceDefAccumulator
 
         grind(methods, modulePreventsServiceDecoration);
         bind(methods, modulePreventsServiceDecoration);
+        contribute(methods, modulePreventsServiceDecoration);
 
         if (methods.isEmpty()) return;
 
@@ -147,6 +148,27 @@ public class DefaultModuleDefImpl implements ModuleDef, ServiceDefAccumulator
     public ServiceDef getServiceDef(String serviceId)
     {
         return serviceDefs.get(serviceId);
+    }
+    
+    public List<ServiceDef> getServiceDef(Class interfaceClass, Collection<Class> markers)
+    {
+        List<ServiceDef> result = newList();
+        
+        for (String id : getServiceIds())
+        {
+            ServiceDef def = getServiceDef(id);
+            
+            Class serviceInterface = def.getServiceInterface();
+
+            if(serviceInterface.equals(interfaceClass))
+            {
+                
+                if(CollectionFactory.newSet(markers).equals(def.getMarkers())){
+                    result.add(def);
+                }
+            }
+        }
+        return result;
     }
 
     private void grind(Set<Method> remainingMethods, boolean modulePreventsServiceDecoration)
@@ -186,20 +208,36 @@ public class DefaultModuleDefImpl implements ModuleDef, ServiceDefAccumulator
                 remainingMethods.remove(m);
                 continue;
             }
+            
+            // contribute methods are handled later, after autobuilding is finished
+        }
+    }
+    
+    private void contribute(Set<Method> remainingMethods, boolean modulePreventsServiceDecoration)
+    {
+        Method[] methods = moduleClass.getMethods();
+        
+        for (Method m : methods)
+        {
+            String name = m.getName();
 
-            if (name.startsWith(CONTRIBUTE_METHOD_NAME_PREFIX))
+            if (m.isAnnotationPresent(Contribute.class) ||
+                    name.startsWith(CONTRIBUTE_METHOD_NAME_PREFIX))
             {
+ 
                 addContributionDef(m);
                 remainingMethods.remove(m);
                 continue;
             }
         }
+        
     }
 
     private void addContributionDef(Method method)
     {
-        String serviceId = stripMethodPrefix(method, CONTRIBUTE_METHOD_NAME_PREFIX);
-
+        
+        String serviceId = extractServiceId(method);
+        
         Class returnType = method.getReturnType();
         if (!returnType.equals(void.class)) logger.warn(IOCMessages.contributionWrongReturnType(method));
 
@@ -225,6 +263,33 @@ public class DefaultModuleDefImpl implements ModuleDef, ServiceDefAccumulator
         ContributionDef def = new ContributionDefImpl(serviceId, method, classFactory);
 
         contributionDefs.add(def);
+    }
+    
+    private String extractServiceId(Method method)
+    {
+        Contribute annotation = method.getAnnotation(Contribute.class);
+        
+        if(annotation != null)
+        {
+            Class serviceClass = annotation.value();
+            Collection<Class> markers = extractMarkers(method);
+            
+            List<ServiceDef> defs = getServiceDef(serviceClass, markers);
+          
+           if(defs.isEmpty())
+           {
+               return serviceClass.getSimpleName();
+               
+           }
+           else if(defs.size() != 1)
+           {
+               throw new RuntimeException(IOCMessages.tooManyServicesForContributeMethod(method, serviceClass));
+              
+           }
+           return defs.get(0).getServiceId();
+        }
+        
+        return stripMethodPrefix(method, CONTRIBUTE_METHOD_NAME_PREFIX);
     }
 
     private void addDecoratorDef(Method method)
