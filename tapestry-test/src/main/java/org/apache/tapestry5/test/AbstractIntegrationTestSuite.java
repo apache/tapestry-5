@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ import com.thoughtworks.selenium.CommandProcessor;
 import com.thoughtworks.selenium.DefaultSelenium;
 import com.thoughtworks.selenium.HttpCommandProcessor;
 import com.thoughtworks.selenium.Selenium;
+import org.openqa.selenium.server.RemoteControlConfiguration;
 import org.openqa.selenium.server.SeleniumServer;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
@@ -264,7 +265,7 @@ public class AbstractIntegrationTestSuite extends Assert implements Selenium
 
         server.start();
 
-        CommandProcessor cp = new HttpCommandProcessor("localhost", SeleniumServer.DEFAULT_PORT,
+        CommandProcessor cp = new HttpCommandProcessor("localhost", RemoteControlConfiguration.DEFAULT_PORT,
                                                        seleniumBrowserCommand, BASE_URL);
 
         selenium = new DefaultSelenium(new ErrorReportingCommandProcessor(cp));
@@ -900,11 +901,6 @@ public class AbstractIntegrationTestSuite extends Assert implements Selenium
         selenium.addLocationStrategy(strategyName, functionDefinition);
     }
 
-    public void captureEntirePageScreenshot(String filename)
-    {
-        selenium.captureEntirePageScreenshot(filename);
-    }
-
     public void setContext(String context)
     {
         selenium.setContext(context);
@@ -942,6 +938,9 @@ public class AbstractIntegrationTestSuite extends Assert implements Selenium
 
     /**
      * Used to start a typical test, by opening to the base URL and clicking through a series of links.
+     * <p/>
+     * Note: Selenium 1.0-beta-2 has introduced a method start(String) which is distinct from this implementation (which
+     * dates back to Tapestry 5.0 and Selenium 1.0-beta-1).
      */
     protected final void start(String... linkText)
     {
@@ -959,5 +958,145 @@ public class AbstractIntegrationTestSuite extends Assert implements Selenium
     public void setWebappRoot(String webappRoot)
     {
         this.webappRoot = webappRoot;
+    }
+
+    /**
+     * @since 5.1.0.0
+     */
+    public void setExtensionJs(String extensionJs)
+    {
+        selenium.setExtensionJs(extensionJs);
+    }
+
+    /**
+     * @since 5.1.0.0
+     */
+    public void start(Object optionsObject)
+    {
+        selenium.start(optionsObject);
+    }
+
+    /**
+     * @since 5.1.0.0
+     */
+    public void showContextualBanner()
+    {
+        selenium.showContextualBanner();
+    }
+
+    /**
+     * @since 5.1.0.0
+     */
+    public void showContextualBanner(String className, String methodName)
+    {
+        selenium.showContextualBanner(className, methodName);
+    }
+
+    /**
+     * @since 5.1.0.0
+     */
+    public void mouseDownRight(String locator)
+    {
+        selenium.mouseDownRight(locator);
+    }
+
+    /**
+     * @since 5.1.0.0
+     */
+    public void mouseDownRightAt(String locator, String coordString)
+    {
+        selenium.mouseDownRightAt(locator, coordString);
+    }
+
+    /**
+     * @since 5.1.0.0
+     */
+    public void captureEntirePageScreenshot(String filename, String kwargs)
+    {
+        selenium.captureEntirePageScreenshot(filename, kwargs);
+    }
+
+    /**
+     * @since 5.1.0.0
+     */
+    public void rollup(String rollupName, String kwargs)
+    {
+        selenium.rollup(rollupName, kwargs);
+    }
+
+    /**
+     * @since 5.1.0.0
+     */
+    public void addScript(String scriptContent, String scriptTagId)
+    {
+        selenium.addScript(scriptContent, scriptTagId);
+    }
+
+    /**
+     * @since 5.1.0.0
+     */
+    public void removeScript(String scriptTagId)
+    {
+        selenium.removeScript(scriptTagId);
+    }
+
+    /**
+     * @since 5.1.0.0
+     */
+    public void useXpathLibrary(String libraryName)
+    {
+        selenium.useXpathLibrary(libraryName);
+    }
+
+    /**
+     * @since 5.1.0.0
+     */
+    public String captureScreenshotToString()
+    {
+        return selenium.captureScreenshotToString();
+    }
+
+    /**
+     * @since 5.1.0.0
+     */
+    public String captureEntirePageScreenshotToString(String kwargs)
+    {
+        return selenium.captureEntirePageScreenshotToString(kwargs);
+    }
+
+    /**
+     * @since 5.1.0.0
+     */
+    public String retrieveLastRemoteControlLogs()
+    {
+        return selenium.retrieveLastRemoteControlLogs();
+    }
+
+    /**
+     * @since 5.1.0.0
+     */
+    public void mouseUpRight(String locator)
+    {
+        selenium.mouseUpRight(locator);
+    }
+
+    /**
+     * @since 5.1.0.0
+     */
+    public void mouseUpRightAt(String locator, String coordString)
+    {
+        selenium.mouseUpRightAt(locator, coordString);
+    }
+
+    /**
+     * This does NOT invoke {@link com.thoughtworks.selenium.Selenium#start(String)}; it invokes {@link
+     * #start(String[])}.  This is necesasry due to the introduction of the start() method.
+     *
+     * @param linkText text of link to click
+     * @since 5.1.0.0
+     */
+    public void start(String linkText)
+    {
+        start(new String[] { linkText });
     }
 }

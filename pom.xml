@@ -339,14 +339,14 @@
             <distributionManagement>
                 <repository>
                     <id>tapestry</id>
-                    <url>file:/var/www/html/maven-repository</url>
+                    <url>file:/var/www/maven-repository</url>
                 </repository>
                 <snapshotRepository>
                     <id>tapestry-snapshot</id>
-                    <url>file:/var/www/html/maven-snapshot-repository</url>
+                    <url>file:/var/www/maven-snapshot-repository</url>
                 </snapshotRepository>
                 <site>
-                    <url>file:/var/www/html/nightly/tapestry5</url>
+                    <url>file:/var/www/nightly/tapestry5</url>
                 </site>
             </distributionManagement>
         </profile>
