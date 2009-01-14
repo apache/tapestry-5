@@ -15,21 +15,21 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.openqa.selenium.client-drivers</groupId>
+            <groupId>org.seleniumhq.selenium.client-drivers</groupId>
             <artifactId>selenium-java-client-driver</artifactId>
-            <version>1.0-beta-1</version>
+            <version>1.0-beta-2</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>org.openqa.selenium.server</groupId>
+            <groupId>org.seleniumhq.selenium.server</groupId>
             <artifactId>selenium-server</artifactId>
-            <version>1.0-beta-1</version>
+            <version>1.0-beta-2</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>org.openqa.selenium.server</groupId>
+            <groupId>org.seleniumhq.selenium.server</groupId>
             <artifactId>selenium-server-coreless</artifactId>
-            <version>1.0-beta-1</version>
+            <version>1.0-beta-2</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
