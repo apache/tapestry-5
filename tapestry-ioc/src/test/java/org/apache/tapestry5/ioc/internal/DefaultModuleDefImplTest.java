@@ -278,57 +278,6 @@ public class DefaultModuleDefImplTest extends IOCTestCase
     {
         attemptConfigurationMethod(SimpleModule.class, "Barney", "contributeBarney(Configuration)");
     }
-    
-    @Test
-    public void contribution_by_annotated_method()
-    {
-        attemptConfigurationMethod(ContributeViaMethodAnnotationModule.class, "Runnable", 
-                "contributeMyService(MappedConfiguration)");
-    }
-    
-    @Test
-    public void contribution_by_annotated_method_when_service_id_provided_by_builder_method()
-    {
-        attemptConfigurationMethod(ContributeViaAnnotationCombindedWithBuilderMethodModule.class, "RunnableBuilderMethod", 
-                "contributeMyService(MappedConfiguration)");
-    }
-    
-    @Test
-    public void contribution_by_annotated_method_when_service_id_provided_by_binder_method()
-    {
-        
-        attemptConfigurationMethod(ContributeViaAnnotationCombindedWithBinderMethodModule.class, "RunnableBinderMethod", 
-            "contributeMyService(MappedConfiguration)");
-    }
-    
-    @Test
-    public void contribution_by_annotated_method_ambiguous()  throws Exception
-    {
-        Class moduleClass = ContributeViaAnnotationAmbiguousModule.class;
-        
-        Method m = moduleClass.getMethod("contributeMyService", MappedConfiguration.class);
-        
-        Logger logger = mockLogger();
-        
-        try
-        {
-            new DefaultModuleDefImpl(moduleClass, logger, classFactory);            
-            unreachable();
-        }
-        catch (RuntimeException ex)
-        {
-            assertEquals(ex.getMessage(), IOCMessages.tooManyServicesForContributeMethod(m, Runnable.class));
-        }
-
-    }
-     
-    @Test
-    public void contribution_by_annotated_method_with_marker()  throws Exception
-    {
-        attemptConfigurationMethod(ContributeViaAnnotationWithMarkerModule.class, "BlueAndRed", 
-            "contributeMyService(MappedConfiguration)");
-
-    }
 
     @Test
     public void ordered_contribution_method()
