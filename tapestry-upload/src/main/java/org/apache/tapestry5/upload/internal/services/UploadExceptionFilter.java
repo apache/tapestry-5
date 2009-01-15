@@ -1,4 +1,4 @@
-//  Copyright 2008 The Apache Software Foundation
+//  Copyright 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@ package org.apache.tapestry5.upload.internal.services;
 
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.tapestry5.internal.services.ComponentResultProcessorWrapper;
+import org.apache.tapestry5.ioc.annotations.Primary;
 import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.services.*;
 import org.apache.tapestry5.upload.services.MultipartDecoder;
@@ -35,7 +36,8 @@ public class UploadExceptionFilter implements ComponentEventRequestFilter
 
     private ComponentSource componentSource;
 
-    public UploadExceptionFilter(MultipartDecoder decoder, @Traditional ComponentEventResultProcessor resultProcessor,
+    public UploadExceptionFilter(MultipartDecoder decoder,
+                                 @Traditional @Primary ComponentEventResultProcessor resultProcessor,
                                  ComponentSource componentSource)
     {
         this.decoder = decoder;
@@ -54,7 +56,7 @@ public class UploadExceptionFilter implements ComponentEventRequestFilter
 
             ComponentResultProcessorWrapper callback = new ComponentResultProcessorWrapper(resultProcessor);
 
-            page.getComponentResources().triggerEvent(UploadEvents.UPLOAD_EXCEPTION, new Object[] {uploadException},
+            page.getComponentResources().triggerEvent(UploadEvents.UPLOAD_EXCEPTION, new Object[] { uploadException },
                                                       callback);
 
             // If an event handler exists and returns a value, then the callback will be aborted and a response

@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,7 +17,10 @@ package org.apache.tapestry5.upload.services;
 import org.apache.commons.fileupload.FileItemFactory;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.io.FileCleaner;
-import org.apache.tapestry5.ioc.*;
+import org.apache.tapestry5.ioc.Configuration;
+import org.apache.tapestry5.ioc.MappedConfiguration;
+import org.apache.tapestry5.ioc.OrderedConfiguration;
+import org.apache.tapestry5.ioc.ScopeConstants;
 import org.apache.tapestry5.ioc.annotations.Autobuild;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Scope;
@@ -88,8 +91,7 @@ public class UploadModule
      * upload exception event}.
      */
     public static void contributeComponentEventRequestHandler(
-            OrderedConfiguration<ComponentEventRequestFilter> configuration,
-            ObjectLocator locator)
+            OrderedConfiguration<ComponentEventRequestFilter> configuration)
     {
         configuration.addInstance("UploadException", UploadExceptionFilter.class, "after:Secure",
                                   "before:Ajax");

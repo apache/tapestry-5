@@ -1286,7 +1286,7 @@ public final class TapestryModule
      * Builds the component action request handler for traditional (non-Ajax) requests. These typically result in a
      * redirect to a Tapestry render URL.
      */
-    @Marker(Traditional.class)
+    @Marker({ Traditional.class, Primary.class })
     public ComponentEventRequestHandler buildComponentEventRequestHandler(
             List<ComponentEventRequestFilter> configuration, Logger logger,
             @Autobuild ComponentEventRequestHandlerImpl terminator)
@@ -1300,7 +1300,7 @@ public final class TapestryModule
      * pipeline} around {@link org.apache.tapestry5.internal.services.AjaxComponentEventRequestHandler}. Filters on the
      * request handler are supported here as well.
      */
-    @Marker(Ajax.class)
+    @Marker({ Ajax.class, Primary.class })
     public ComponentEventRequestHandler buildAjaxComponentEventRequestHandler(
             List<ComponentEventRequestFilter> configuration, Logger logger,
             @Autobuild AjaxComponentEventRequestHandler terminator)
