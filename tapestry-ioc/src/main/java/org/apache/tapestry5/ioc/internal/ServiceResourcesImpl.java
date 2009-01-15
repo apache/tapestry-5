@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ import org.apache.tapestry5.ioc.ObjectCreator;
 import org.apache.tapestry5.ioc.OperationTracker;
 import org.apache.tapestry5.ioc.ServiceBuilderResources;
 import org.apache.tapestry5.ioc.def.ServiceDef;
-import static org.apache.tapestry5.ioc.internal.util.Defense.notNull;
+import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.Invokable;
 import org.apache.tapestry5.ioc.services.ClassFactory;
@@ -138,20 +138,29 @@ public class ServiceResourcesImpl extends ObjectLocatorImpl implements ServiceBu
     }
 
     @Override
-    public <T> T autobuild(Class<T> clazz)
+    public <T> T autobuild(final Class<T> clazz)
     {
-        notNull(clazz, "clazz");
+        Defense.notNull(clazz, "clazz");
 
-        Constructor constructor = InternalUtils.findAutobuildConstructor(clazz);
+        return registry.invoke("Autobuilding instance of class " + clazz.getName(),
+                               new Invokable<T>()
+                               {
+                                   public T invoke()
+                                   {
+                                       Constructor constructor = InternalUtils.findAutobuildConstructor(clazz);
 
-        if (constructor == null)
-            throw new RuntimeException(IOCMessages.noAutobuildConstructor(clazz));
+                                       if (constructor == null)
+                                           throw new RuntimeException(IOCMessages.noAutobuildConstructor(clazz));
 
-        String description = classFactory.getConstructorLocation(constructor).toString();
+                                       String description = classFactory.getConstructorLocation(constructor).toString();
 
-        ObjectCreator creator = new ConstructorServiceCreator(this, description, constructor);
+                                       ObjectCreator creator = new ConstructorServiceCreator(ServiceResourcesImpl.this,
+                                                                                             description,
+                                                                                             constructor);
 
-        return clazz.cast(creator.createObject());
+                                       return clazz.cast(creator.createObject());
+                                   }
+                               });
     }
 
     public OperationTracker getTracker()
