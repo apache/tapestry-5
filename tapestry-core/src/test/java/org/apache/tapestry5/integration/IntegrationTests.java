@@ -991,6 +991,20 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         assertTextPresent("[ERLANG, RUBY, HASKELL, JAVA, LISP, ML, PYTHON, PERL]");
     }
+    
+    /** TAP5-298 */
+    @Test
+    public void palette_component_disabled_options() {
+        start("Palette Demo", "reset");
+
+        /* force of the options to be disabled rather than creating the model with it disabled in the page.
+         * it is possible to get into this state by creating a model with disabled options.
+         */
+        getEval("this.browserbot.findElement('//select[@id=\"languages:avail\"]/option[1]').disabled = 'disabled';");
+        
+        // causes an error in the js console but does not throw an exception here. optimally, this would make the test case fail.
+        doubleClick("//select[@id=\"languages:avail\"]/option[1]");
+    }
 
     @Test
     public void event_handler_return_types()
