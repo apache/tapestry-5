@@ -133,6 +133,11 @@ Tapestry.Palette = Class.create({
 
     transferOptions : function (from, to, atEnd)
     {
+		// don't bother moving the options if nothing is selected. this can happen
+		// if you double-click a disabled option
+		if (from.selectedIndex == -1)
+			return;		
+
         // from: SELECT to move option(s) from (those that are selected)
         // to: SELECT to add option(s) to
         // atEnd : if true, add at end, otherwise by natural sort order
