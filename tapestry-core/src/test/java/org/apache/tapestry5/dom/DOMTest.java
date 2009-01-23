@@ -683,4 +683,35 @@ public class DOMTest extends InternalBaseTestCase
 
         assertEquals(d.toString(), "<doc><hr/><br/><img/></doc>");
     }
+
+    /**
+     * TAP5-402
+     */
+    @Test
+    public void is_empty()
+    {
+        Document d = new Document();
+
+        Element root = d.newRootElement("root");
+
+        assertTrue(root.isEmpty());
+
+        root.text("");
+
+        assertTrue(root.isEmpty());
+
+        root.text("  ");
+
+        assertTrue(root.isEmpty());
+
+        Element child = root.element("child");
+
+        assertFalse(root.isEmpty());
+
+        assertTrue(child.isEmpty());
+
+        child.text("not empty");
+
+        assertFalse(child.isEmpty());
+    }
 }

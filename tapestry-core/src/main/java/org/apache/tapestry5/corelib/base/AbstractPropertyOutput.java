@@ -117,15 +117,9 @@ public abstract class AbstractPropertyOutput
 
         Object value = readPropertyForObject();
 
-        // TAPESTRY-2578: Write &nbsp; for null or merely blank.
-
         String text = value == null ? "" : value.toString();
 
-        if (InternalUtils.isBlank(text))
-        {
-            writer.writeRaw("&nbsp;");
-        }
-        else
+        if (InternalUtils.isNonBlank(text))
         {
             writer.write(text);
         }

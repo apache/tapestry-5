@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -1016,7 +1016,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
         if (!renderPhasesInitalized)
             initializeRenderPhases();
 
-        // TODO: An error if the _render flag is already set (recursive rendering not
+        // TODO: An error if the render flag is already set (recursive rendering not
         // allowed or advisable).
 
         // Once we start rendering, the page is considered dirty, until we cleanup post render.
