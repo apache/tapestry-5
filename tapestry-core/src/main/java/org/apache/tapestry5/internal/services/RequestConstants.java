@@ -28,9 +28,10 @@ public final class RequestConstants
 
     /**
      * Virtual folder name for assets that are actually stored in the context, but are exposed (much like classpath
-     * assets) to gain far-future expires headers and automatic content compression.
+     * assets) to gain far-future expires headers and automatic content compression. The application version number
+     * comes after this prefix and before the true path.
      *
      * @since 5.1.0.0
      */
-    public static final String APP_FOLDER = "app/";
+    public static final String CONTEXT_FOLDER = "ctx/";
 }

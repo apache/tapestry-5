@@ -67,8 +67,8 @@ public class TapestryInternalUtilsTest extends InternalBaseTestCase
     @DataProvider(name = "to_user_presentable")
     public Object[][] to_user_presentable_data()
     {
-        return new Object[][] {{"hello", "Hello"}, {"userId", "User Id"}, {"useHTML", "Use HTML"},
-                {"underscored_name", "Underscored Name"},};
+        return new Object[][] { { "hello", "Hello" }, { "userId", "User Id" }, { "useHTML", "Use HTML" },
+                { "underscored_name", "Underscored Name" }, };
     }
 
     @Test
@@ -378,5 +378,21 @@ public class TapestryInternalUtilsTest extends InternalBaseTestCase
     {
         assertArraysEqual(TapestryInternalUtils.splitAtCommas("foo"), "foo");
         assertArraysEqual(TapestryInternalUtils.splitAtCommas("foo,bar"), "foo", "bar");
+    }
+
+    @DataProvider(name = "to_base64_data")
+    public Object[][] to_base64_data()
+    {
+        return new Object[][] {
+                { 0L, "AA" },
+                { 1L, "AQ" },
+                { 0xab54a98ceb1f0ad2L, "q1SpjOsfCtI" }
+        };
+    }
+
+    @Test(dataProvider = "to_base64_data")
+    public void to_base64(long input, String expected)
+    {
+        assertEquals(TapestryInternalUtils.toBase64(input), expected);
     }
 }

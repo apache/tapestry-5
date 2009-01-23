@@ -267,7 +267,13 @@ public final class TapestryModule
     public static void contributeClasspathAssetAliasManager(MappedConfiguration<String, String> configuration,
 
                                                             @Symbol(SymbolConstants.TAPESTRY_VERSION)
-                                                            String version,
+                                                            String tapestryVersion,
+
+                                                            @Symbol(SymbolConstants.APPLICATION_VERSION)
+                                                            String applicationVersion,
+
+                                                            @Symbol(InternalConstants.TAPESTRY_APP_PACKAGE_PARAM)
+                                                            String appPackage,
 
                                                             // @Inject not needed, because this isn't a service builder method
                                                             @Symbol("tapestry.scriptaculous.path")
@@ -280,11 +286,15 @@ public final class TapestryModule
         // For scriptaculous, etc., this version is not the version of the library, but the version
         // bundled with Tapestry.
 
-        configuration.add(version + "/tapestry", "org/apache/tapestry5");
+        configuration.add("tapestry/" + tapestryVersion, "org/apache/tapestry5");
 
-        configuration.add(version + "/scriptaculous", scriptaculousPath);
+        configuration.add("scriptaculous/" + tapestryVersion, scriptaculousPath);
 
-        configuration.add(version + "/datepicker", datepickerPath);
+        configuration.add("datepicker/" + tapestryVersion, datepickerPath);
+
+        configuration.add("app/" + applicationVersion, appPackage.replace('.', '/'));
+
+        configuration.add("classpath/" + applicationVersion, "");
     }
 
     public static void contributeComponentClassResolver(Configuration<LibraryMapping> configuration)
@@ -1926,7 +1936,10 @@ public final class TapestryModule
 
         configuration.add(SymbolConstants.MIN_GZIP_SIZE, "100");
 
-        configuration.add(SymbolConstants.APPLICATION_VERSION, Long.toHexString(System.currentTimeMillis()));
+        Random random = new Random(System.currentTimeMillis());
+
+        configuration.add(SymbolConstants.APPLICATION_VERSION, TapestryInternalUtils.toBase64(random.nextLong()));
+
         configuration.add(SymbolConstants.OMIT_GENERATOR_META, "false");
         configuration.add(SymbolConstants.GZIP_COMPRESSION_ENABLED, "true");
     }
