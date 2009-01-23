@@ -30,14 +30,13 @@ public class ClasspathAssetAliasManagerImplTest extends InternalBaseTestCase
     {
         Map<String, String> configuration = newMap();
 
-        configuration.put("tapestry/", "org/apache/tapestry5/");
-        configuration.put("tapestry-internal/", "org/apache/tapestry5/internal/");
-        configuration.put("mylib/", "com/example/mylib/");
+        configuration.put("tapestry/4.0", "org/apache/tapestry5/");
+        configuration.put("tapestry-internal/3.0", "org/apache/tapestry5/internal/");
+        configuration.put("mylib/2.0/", "com/example/mylib/");
+        configuration.put("classpath/1.0", "");
 
         return configuration;
     }
-
-    private static final String OPTIMIZED = "/opt/path";
 
     @Test(dataProvider = "to_client_url_data")
     public void to_client_url(String resourcePath, String expectedClientURL)
@@ -59,11 +58,11 @@ public class ClasspathAssetAliasManagerImplTest extends InternalBaseTestCase
     @DataProvider(name = "to_client_url_data")
     public Object[][] to_client_url_data()
     {
-        return new Object[][] { { "foo/bar/Baz.txt", "foo/bar/Baz.txt" },
-                { "com/example/mylib/Foo.bar", "mylib/Foo.bar" },
-                { "com/example/mylib/nested/Foo.bar", "mylib/nested/Foo.bar" },
-                { "org/apache/tapestry5/internal/Foo.bar", "tapestry-internal/Foo.bar" },
-                { "org/apache/tapestry5/Foo.bar", "tapestry/Foo.bar" }, };
+        return new Object[][] { { "foo/bar/Baz.txt", "classpath/1.0/foo/bar/Baz.txt" },
+                { "com/example/mylib/Foo.bar", "mylib/2.0/Foo.bar" },
+                { "com/example/mylib/nested/Foo.bar", "mylib/2.0/nested/Foo.bar" },
+                { "org/apache/tapestry5/internal/Foo.bar", "tapestry-internal/3.0/Foo.bar" },
+                { "org/apache/tapestry5/Foo.bar", "tapestry/4.0/Foo.bar" }, };
     }
 
     @Test(dataProvider = "to_resource_path_data")

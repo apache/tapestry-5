@@ -43,7 +43,7 @@ public class ContextAssetFactory implements AssetFactory
     {
         this.request = request;
 
-        pathPrefix = RequestConstants.ASSET_PATH_PREFIX + RequestConstants.APP_FOLDER
+        pathPrefix = RequestConstants.ASSET_PATH_PREFIX + RequestConstants.CONTEXT_FOLDER
                 + applicationVersion + "/";
 
         rootResource = new ContextResource(context, "/");

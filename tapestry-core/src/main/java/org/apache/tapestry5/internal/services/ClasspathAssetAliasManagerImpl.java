@@ -78,6 +78,8 @@ public class ClasspathAssetAliasManagerImpl implements ClasspathAssetAliasManage
 
     private String withSlash(String input)
     {
+        if (input.equals("")) return input;
+
         if (input.endsWith("/")) return input;
 
         return input + "/";

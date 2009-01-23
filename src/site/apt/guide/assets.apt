@@ -83,19 +83,39 @@ Simplified Paths
   In other words, the package name is converted into a path underneath the virtual folder, <<</assets/>>>.  
   
   You are given some control over this, allowing for shorter paths.  The ClasspathAssetAliasManager service has a mapped configuration. The map keys
-  are logical folder names, and the map values are the complete classpath.  For example, Tapestry itself makes this contribution:
+  are logical folder names, and the map values are the complete classpath.  For example, Tapestry itself makes a contribution similar to the following:
   
 +----+
     public static void contributeClasspathAssetAliasManager(
             MappedConfiguration<String, String> configuration)
     {
-        configuration.add("tapestry", "org/apache/tapestry");
+        configuration.add("tapestry/5.1", "org/apache/tapestry5");
     }
 +---+
 
-  Thus, the generated URLs may say <<</assets/tapestry5/Foo.gif>>> but the underlying file will be <<</org/apache/tapestry5/Foo.gif>>> (within the classpath).
+  Thus, the generated URLs may say <<</assets/tapestry/5.1/Foo.gif>>> but the underlying file will be <<</org/apache/tapestry5/Foo.gif>>> (within the classpath).
   
-  Care should be taken to not create overlapping mappings, as the results would not be predictable.  
+  There are built-in contributions for:
+
+  * tapestry/<version>
+
+  * scriptaculous/<version>
+
+  * datepicker/<version>
+
+  * app/<app-version> (for assets obtained at or beneath the application package)
+
+  * classpath/<app-version> (for assets obtained from any otherwise unmapped package)
+
+  []
+
+  Where <version> is the Tapestry framework version, and <app-version> is the application version (which will be a random
+  string if not explicitly {{{conf.html}configured}}).
+
+  If you give your application a version number, it is important to change the version number for each deployment. Assets
+  within the application (whether in the context, or the classpath) will be given a far-future expires header
+  and therefore will be aggresively cached in the client browser. Changing the version number changes the path the browser
+  sees, which forces the browser to load the new and changed version of the asset.
 
 
   

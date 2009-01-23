@@ -14,6 +14,7 @@
 
 package org.apache.tapestry5.internal;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.tapestry5.OptionModel;
 import org.apache.tapestry5.SelectModel;
 import org.apache.tapestry5.ioc.Messages;
@@ -24,6 +25,7 @@ import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.math.BigInteger;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -397,6 +399,7 @@ public class TapestryInternalUtils
      * @param in  source of data
      * @param out sink of data
      * @throws IOException
+     * @since 5.1.0.0
      */
     public static void copy(InputStream in, OutputStream out) throws IOException
     {
@@ -413,5 +416,25 @@ public class TapestryInternalUtils
 
         // TAPESTRY-2415: WebLogic needs this flush() call.
         out.flush();
+    }
+
+    /**
+     * Encodes a long in Base64. Strips off the trailing "=" padding characters (if present).
+     *
+     * @param input value to encode
+     * @return encoded as Base64
+     * @since 5.1.1.0
+     */
+    public static String toBase64(long input)
+    {
+        BigInteger big = new BigInteger(Long.toString(input));
+
+        byte[] encoded = Base64.encodeBase64(big.toByteArray());
+
+        String asString = new String(encoded);
+
+        int lastx = asString.indexOf('=');
+
+        return lastx > 0 ? asString.substring(0, lastx) : asString;
     }
 }

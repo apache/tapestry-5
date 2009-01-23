@@ -63,7 +63,6 @@ public class AssetDispatcher implements Dispatcher
         this.resourceCache = resourceCache;
         this.contextAssetFactory = contextAssetFactory;
 
-        applicationAssetPrefix = RequestConstants.ASSET_PATH_PREFIX + RequestConstants.APP_FOLDER + applicationVersion + "/";
     }
 
     public boolean dispatch(Request request, Response response) throws IOException

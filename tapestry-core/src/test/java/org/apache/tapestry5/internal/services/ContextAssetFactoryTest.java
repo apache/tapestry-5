@@ -57,12 +57,12 @@ public class ContextAssetFactoryTest extends InternalBaseTestCase
         Asset asset = factory.createAsset(r);
 
         assertSame(asset.getResource(), r);
-        assertEquals(asset.toClientURL(), "/context/assets/app/4.5.6/foo/Bar.txt");
+        assertEquals(asset.toClientURL(), "/context/assets/ctx/4.5.6/foo/Bar.txt");
 
         // In real life, toString() is the same as toClientURL(), but we're testing
         // that the optimize method is getting called, basically.
 
-        assertEquals(asset.toString(), "/context/assets/app/4.5.6/foo/Bar.txt");
+        assertEquals(asset.toString(), "/context/assets/ctx/4.5.6/foo/Bar.txt");
 
         verify();
     }

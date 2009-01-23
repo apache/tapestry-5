@@ -104,7 +104,7 @@ public class AppModule
   {{{../apidocs/org/apache/tapestry5/SymbolConstants.html}SymbolConstants}}.
 
   [tapestry.application-version]
-    The version of the application, which is incorporated into URLs for context assets. Context assets
+    The version of the application, which is incorporated into URLs for context and classpath assets. Assets
     may be {{{compress.html}compressed}}, and will have far-future expiration headers; they will be aggresively
     cached by the client web browser. You should change the application version on each new deployment of the
     application to force clients to re-download changed versions of files.  If you do not specify

@@ -652,7 +652,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         // The lack of a leading slash indicates that the path was optimized, see TAPESTRY-1502
 
-        assertAttribute("//img[@class='t-sort-icon']/@src", "/assets/UNKNOWN/tapestry/corelib/components/sort-asc.png");
+        assertAttribute("//img[@class='t-sort-icon']/@src", "/assets/tapestry/UNKNOWN/corelib/components/sort-asc.png");
         assertAttribute("//img[@class='t-sort-icon']/@alt", "[Asc]");
 
         clickAndWait("link=1");
@@ -662,7 +662,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         clickAndWait("link=Title");
 
         assertAttribute("//img[@class='t-sort-icon']/@src",
-                        "/assets/UNKNOWN/tapestry/corelib/components/sort-desc.png");
+                        "/assets/tapestry/UNKNOWN/corelib/components/sort-desc.png");
         assertAttribute("//img[@class='t-sort-icon']/@alt", "[Desc]");
 
         clickAndWait("link=reset the Grid");
@@ -823,8 +823,8 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         // The lack of a leading slash indicates that the path was optimized, see TAPESTRY-1502
 
-        assertAttributeSeries("//script[%d]/@src", 1, "/assets/UNKNOWN/scriptaculous/prototype.js",
-                              "/assets/UNKNOWN/scriptaculous/scriptaculous.js");
+        assertAttributeSeries("//script[%d]/@src", 1, "/assets/scriptaculous/UNKNOWN/prototype.js",
+                              "/assets/scriptaculous/UNKNOWN/scriptaculous.js");
 
         clickAndWait("link=Clear Data");
 
@@ -991,17 +991,20 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         assertTextPresent("[ERLANG, RUBY, HASKELL, JAVA, LISP, ML, PYTHON, PERL]");
     }
-    
-    /** TAP5-298 */
+
+    /**
+     * TAP5-298
+     */
     @Test
-    public void palette_component_disabled_options() {
+    public void palette_component_disabled_options()
+    {
         start("Palette Demo", "reset");
 
         /* force of the options to be disabled rather than creating the model with it disabled in the page.
          * it is possible to get into this state by creating a model with disabled options.
          */
         getEval("this.browserbot.findElement('//select[@id=\"languages:avail\"]/option[1]').disabled = 'disabled';");
-        
+
         // causes an error in the js console but does not throw an exception here. optimally, this would make the test case fail.
         doubleClick("//select[@id=\"languages:avail\"]/option[1]");
     }
