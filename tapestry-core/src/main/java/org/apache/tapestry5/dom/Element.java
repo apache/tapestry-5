@@ -654,4 +654,31 @@ public final class Element extends Node
 
         return holder.getResult();
     }
+
+    /**
+     * Returns true if the element has no children, or has only text children that contain only whitespace.
+     *
+     * @since 5.1.0.0
+     */
+    public boolean isEmpty()
+    {
+        List<Node> children = getChildren();
+
+        if (children.isEmpty()) return true;
+
+        for (Node n : children)
+        {
+            if (n instanceof Text)
+            {
+                Text t = (Text) n;
+
+                if (t.isEmpty()) continue;
+            }
+
+            // Not a text node, or a non-empty text node, then the element isn't empty.
+            return false;
+        }
+
+        return true;
+    }
 }
