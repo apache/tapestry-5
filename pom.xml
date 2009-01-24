@@ -206,8 +206,6 @@
 
                 <plugin>
                     <artifactId>maven-site-plugin</artifactId>
-                    <!-- Snapshots after this are broken. %#%#%$#@% Maven. TAPESTRY-1943 -->
-                    <version>2.0-beta-5</version>
                 </plugin>
 
                 <!-- We configure this either way, but it's only active when the "deploy" profile is active. -->

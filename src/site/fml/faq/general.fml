@@ -331,5 +331,47 @@
                 </p>
             </answer>
         </faq>
+        <faq id="maven-filter">
+            <question>
+                Why do Maven project names and other details show up in my pages?
+            </question>
+            <answer>
+                <p>
+                    Tapestry and Maven both use the same syntax for dynamic portions of files:
+                    the
+                    <code>${...}</code>
+                    syntax. When Maven is copying resources from
+                    src/main/resources, and when filtering is enabled (which is not the default),
+                    then any expansions in
+                    <em>Tapestry templates</em>
+                    that match against
+                    Maven project properties are substituted. If you look at the deployed
+                    application, you'll see that
+                    <code>${name}</code>
+                    is gone, replaced with the
+                    project name!
+                </p>
+                <p>
+                    The solution is to update your pom.xml to ignore any .tml files when copying and filtering:
+                </p>
+                <pre>
+                    &lt;resource&gt;
+                    &lt;directory&gt;src/main/resources&lt;/directory&gt;
+                    &lt;excludes&gt;
+                    &lt;exclude&gt;**/*.tml&lt;/exclude&gt;
+                    &lt;/excludes&gt;
+                    &lt;filtering&gt;true&lt;/filtering&gt;
+                    &lt;/resource&gt;
+
+                    &lt;resource&gt;
+                    &lt;directory&gt;src/main/resources&lt;/directory&gt;
+                    &lt;includes&gt;
+                    &lt;include&gt;**/*.tml&lt;/include&gt;
+                    &lt;/includes&gt;
+                    &lt;filtering&gt;false&lt;/filtering&gt;
+                    &lt;/resource&gt;
+                </pre>
+            </answer>
+        </faq>
     </part>
 </faqs>
