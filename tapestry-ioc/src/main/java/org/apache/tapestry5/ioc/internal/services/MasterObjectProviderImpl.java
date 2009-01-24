@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,12 +14,8 @@
 
 package org.apache.tapestry5.ioc.internal.services;
 
-import org.apache.tapestry5.ioc.AnnotationProvider;
-import org.apache.tapestry5.ioc.ObjectLocator;
-import org.apache.tapestry5.ioc.ObjectProvider;
-import org.apache.tapestry5.ioc.OperationTracker;
+import org.apache.tapestry5.ioc.*;
 import org.apache.tapestry5.ioc.annotations.PreventServiceDecoration;
-import org.apache.tapestry5.ioc.internal.util.Invokable;
 import org.apache.tapestry5.ioc.services.ClassFabUtils;
 import org.apache.tapestry5.ioc.services.MasterObjectProvider;
 

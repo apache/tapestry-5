@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,10 +14,10 @@
 
 package org.apache.tapestry5.ioc.internal;
 
+import org.apache.tapestry5.ioc.Invokable;
 import org.apache.tapestry5.ioc.ObjectCreator;
 import org.apache.tapestry5.ioc.OperationTracker;
 import org.apache.tapestry5.ioc.ServiceDecorator;
-import org.apache.tapestry5.ioc.internal.util.Invokable;
 
 import java.util.Collections;
 import java.util.List;

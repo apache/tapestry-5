@@ -14,13 +14,13 @@
 
 package org.apache.tapestry5.ioc.internal;
 
+import org.apache.tapestry5.ioc.Invokable;
 import org.apache.tapestry5.ioc.ObjectCreator;
 import org.apache.tapestry5.ioc.OperationTracker;
 import org.apache.tapestry5.ioc.ServiceBuilderResources;
 import org.apache.tapestry5.ioc.def.ServiceDef;
 import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.ioc.internal.util.Invokable;
 import org.apache.tapestry5.ioc.services.ClassFactory;
 import org.slf4j.Logger;
 
