@@ -323,22 +323,12 @@
                     early, before accepting any requests.
                 </p>
                 <p>
-                    The trick is to force the Tapestry services that wrap around Hibernate to initialize at
-                    startup. The following can be added to your AppModule:
+                    Starting with release 5.1, this is as simple as contributing
+                    an override of the
+                    <a href="../guide/conf.html">configuration symbol</a>
+                    tapestry.hibernate.early-startup to "true". Tapestry will load Hibernate at startup.
+                    Watch the console for errors as they are logged, but otherwise ignored.
                 </p>
-                <pre>
-                    public void contributeRegistryStartup(OrderedConfiguration&lt;Runnable&gt; configuration, final
-                    HibernateSessionSource sessionSource)
-                    {
-                    configuration.add("HibernateStartup", new Runnable()
-                    {
-                    public void run()
-                    {
-                    sessionSource.getConfiguration();
-                    }
-                    });
-                    }
-                </pre>
             </answer>
         </faq>
     </part>
