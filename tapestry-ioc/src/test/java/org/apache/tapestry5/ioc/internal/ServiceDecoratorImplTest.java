@@ -17,7 +17,7 @@ package org.apache.tapestry5.ioc.internal;
 import org.apache.tapestry5.ioc.ModuleBuilderSource;
 import org.apache.tapestry5.ioc.OperationTracker;
 import org.apache.tapestry5.ioc.ServiceResources;
-import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.easymock.EasyMock;
 import org.slf4j.Logger;
 import org.testng.annotations.Test;
 
@@ -61,9 +61,11 @@ public class ServiceDecoratorImplTest extends IOCInternalTestCase
 
         train_isDebugEnabled(logger, true);
 
-        logger.debug(IOCMessages.invokingMethod(InternalUtils.asString(m, getClassFactory())));
+        logger.debug(EasyMock.contains(
+                "Invoking method org.apache.tapestry5.ioc.internal.ServiceDecoratorFixture.decoratorReturnsInterceptor(Class, Object)"));
 
         replay();
+
 
         // Check that the delegate gets passed in; check that the return value of the
         // decorator method is the return value of the ServiceDecorator.
@@ -121,20 +123,24 @@ public class ServiceDecoratorImplTest extends IOCInternalTestCase
 
         train_isDebugEnabled(logger, false);
 
-        logger.warn(IOCMessages.decoratorReturnedWrongType(
-                m,
-                SERVICE_ID,
-                fixture.interceptorToReturn,
-                FieService.class));
 
         replay();
 
         ServiceDecoratorImpl decorator = new ServiceDecoratorImpl(m, source, resources,
                                                                   getClassFactory());
 
-        Object interceptor = decorator.createInterceptor(fixture.expectedDelegate);
+        try
+        {
+            decorator.createInterceptor(fixture.expectedDelegate);
+            unreachable();
+        }
+        catch (RuntimeException ex)
+        {
+            assertMessageContains(ex,
+                                  "Decorator method org.apache.tapestry5.ioc.internal.ServiceDecoratorFixture.decoratorUntyped(Object)",
+                                  "(invoked for service 'ioc.Fie') returned FoeService, which is not assignable to the org.apache.tapestry5.ioc.internal.FieService service interface.");
 
-        assertNull(interceptor);
+        }
 
         verify();
     }
@@ -167,8 +173,9 @@ public class ServiceDecoratorImplTest extends IOCInternalTestCase
         }
         catch (RuntimeException ex)
         {
-            assertEquals(ex.getMessage(), IOCMessages.decoratorMethodError(m, SERVICE_ID, ex
-                    .getCause()));
+            assertMessageContains(ex,
+                                  "Exception invoking method org.apache.tapestry5.ioc.internal.ServiceDecoratorFixture.decoratorThrowsException(Object)",
+                                  "Ouch!");
 
             Throwable cause = ex.getCause();
 

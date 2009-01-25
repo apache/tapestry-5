@@ -1,4 +1,4 @@
-// Copyright 2008 The Apache Software Foundation
+// Copyright 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@ import org.testng.annotations.Test;
 
 import java.sql.SQLException;
 
-@SuppressWarnings({"ThrowableInstanceNeverThrown"})
+@SuppressWarnings({ "ThrowableInstanceNeverThrown" })
 public class HibernateTransactionDecoratorImplTest extends IOCTestCase
 {
     private Registry registry;
@@ -205,7 +205,7 @@ public class HibernateTransactionDecoratorImplTest extends IOCTestCase
 
     private HibernateTransactionDecorator newHibernateSessionManagerDecorator(HibernateSessionManager manager)
     {
-        return new HibernateTransactionDecoratorImpl(aspectDecorator, manager);
+        return new HibernateTransactionDecoratorImpl(aspectDecorator, new HibernateTransactionAdvisorImpl(manager));
     }
 
     private void assertToString(VoidService interceptor)

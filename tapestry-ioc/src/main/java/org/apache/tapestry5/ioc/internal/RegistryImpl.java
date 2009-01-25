@@ -619,17 +619,46 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
         for (Module module : moduleToServiceDefs.keySet())
         {
-            Set<DecoratorDef> decorators = module.findMatchingDecoratorDefs(serviceDef);
+            Set<DecoratorDef> decoratorDefs = module.findMatchingDecoratorDefs(serviceDef);
 
-            if (decorators.isEmpty()) continue;
+            if (decoratorDefs.isEmpty()) continue;
 
             ServiceResources resources = new ServiceResourcesImpl(this, module, serviceDef, classFactory, logger);
 
-            for (DecoratorDef dd : decorators)
+            for (DecoratorDef decoratorDef : decoratorDefs)
             {
-                ServiceDecorator sd = dd.createDecorator(module, resources);
+                ServiceDecorator decorator = decoratorDef.createDecorator(module, resources);
 
-                orderer.add(dd.getDecoratorId(), sd, dd.getConstraints());
+                orderer.add(decoratorDef.getDecoratorId(), decorator, decoratorDef.getConstraints());
+            }
+        }
+
+        return orderer.getOrdered();
+    }
+
+    public List<ServiceAdvisor> findAdvisorsForService(ServiceDef serviceDef)
+    {
+        lock.check();
+
+        assert serviceDef != null;
+
+        Logger logger = getServiceLogger(serviceDef.getServiceId());
+
+        Orderer<ServiceAdvisor> orderer = new Orderer<ServiceAdvisor>(logger);
+
+        for (Module module : moduleToServiceDefs.keySet())
+        {
+            Set<AdvisorDef> advisorDefs = module.findMatchingServiceAdvisors(serviceDef);
+
+            if (advisorDefs.isEmpty()) continue;
+
+            ServiceResources resources = new ServiceResourcesImpl(this, module, serviceDef, classFactory, logger);
+
+            for (AdvisorDef advisorDef : advisorDefs)
+            {
+                ServiceAdvisor advisor = advisorDef.createAdvisor(module, resources);
+
+                orderer.add(advisorDef.getAdvisorId(), advisor, advisorDef.getConstraints());
             }
         }
 

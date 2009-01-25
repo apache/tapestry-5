@@ -1,4 +1,4 @@
-// Copyright 2008, 2009 The Apache Software Foundation
+// Copyright 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,20 +12,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.ioc.services;
+package org.apache.tapestry5.hibernate;
 
 import org.apache.tapestry5.ioc.MethodAdviceReciever;
 
 /**
- * A builder may be obtained from the {@link org.apache.tapestry5.ioc.services.AspectDecorator} and allows more
- * controlled creation of the created interceptor; it allows different methods to be given different advice, and allows
- * methods to be omitted (in which case the method invocation passes through without advice).
+ * A replacement for {@link org.apache.tapestry5.hibernate.HibernateTransactionDecorator}.
+ *
+ * @since 5.1.0.0
  */
-public interface AspectInterceptorBuilder<T> extends MethodAdviceReciever
+public interface HibernateTransactionAdvisor
 {
-
     /**
-     * Builds and returns the interceptor.  Any methods that have not been advised will become "pass thrus".
+     * Identifies any methods with the {@link org.apache.tapestry5.hibernate.annotations.CommitAfter} annotation and
+     * applies the transaction logic to those methods.
+     *
+     * @param receiver advice receiver
      */
-    T build();
+    void advise(MethodAdviceReciever receiver);
 }

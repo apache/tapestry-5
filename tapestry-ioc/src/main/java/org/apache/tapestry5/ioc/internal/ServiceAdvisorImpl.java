@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,8 +14,9 @@
 
 package org.apache.tapestry5.ioc.internal;
 
+import org.apache.tapestry5.ioc.MethodAdviceReciever;
 import org.apache.tapestry5.ioc.ModuleBuilderSource;
-import org.apache.tapestry5.ioc.ServiceDecorator;
+import org.apache.tapestry5.ioc.ServiceAdvisor;
 import org.apache.tapestry5.ioc.ServiceResources;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InjectionResources;
@@ -25,41 +26,28 @@ import org.apache.tapestry5.ioc.services.ClassFactory;
 import java.lang.reflect.Method;
 import java.util.Map;
 
-/**
- * A wrapper around a decorator method.
- */
-public class ServiceDecoratorImpl extends AbstractMethodInvokingInstrumenter implements ServiceDecorator
+public class ServiceAdvisorImpl extends AbstractMethodInvokingInstrumenter implements ServiceAdvisor
 {
-
-    public ServiceDecoratorImpl(Method method, ModuleBuilderSource moduleSource,
-                                ServiceResources resources, ClassFactory classFactory)
+    public ServiceAdvisorImpl(ModuleBuilderSource moduleSource, Method method, ServiceResources resources,
+                              ClassFactory classFactory)
     {
         super(moduleSource, method, resources, classFactory);
     }
 
-    public Object createInterceptor(Object delegate)
+    /**
+     * Invokes the configured method, passing the builder. The method will always take, as a parameter, a
+     * MethodAdvisor.
+     */
+    public void advise(MethodAdviceReciever methodAdviceReciever)
     {
-        // Create a copy of the parameters map so that Object.class points to the delegate instance.
-
         Map<Class, Object> resources = CollectionFactory.newMap(this.resourcesDefaults);
 
-        resources.put(Object.class, delegate);
-        resources.put(serviceInterface, delegate);
+        resources.put(MethodAdviceReciever.class, methodAdviceReciever);
 
         InjectionResources injectionResources = new MapInjectionResources(resources);
 
-        Object result = invoke(injectionResources);
+        // By design, advise methods return void, so we know that the return value is null.
 
-        if (result != null && !serviceInterface.isInstance(result))
-        {
-            throw new RuntimeException(IOCMessages.decoratorReturnedWrongType(
-                    method,
-                    serviceId,
-                    result,
-                    serviceInterface));
-        }
-
-        return result;
+        invoke(injectionResources);
     }
-
 }

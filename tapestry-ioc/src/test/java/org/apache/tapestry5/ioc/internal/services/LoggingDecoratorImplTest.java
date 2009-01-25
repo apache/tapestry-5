@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -89,7 +89,7 @@ public class LoggingDecoratorImplTest extends IOCInternalTestCase
 
     private LoggingDecoratorImpl newLoggingDecorator()
     {
-        return new LoggingDecoratorImpl(aspectDecorator, new ExceptionTrackerImpl());
+        return new LoggingDecoratorImpl(aspectDecorator, new LoggingAdvisorImpl(new ExceptionTrackerImpl()));
     }
 
     @Test

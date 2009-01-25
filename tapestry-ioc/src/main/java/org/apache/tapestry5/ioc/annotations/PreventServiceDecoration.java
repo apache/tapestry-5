@@ -25,11 +25,14 @@ import java.lang.annotation.*;
  * <p/>
  * The annotation may also be placed on a module class, to indicate that all services defined for the module should not
  * allow decoration.
+ * <p/>
+ * Service decoration includes the decoration mechanism (from Tapestry 5.0) and the newer service advice mechanism (from
+ * Tapestry 5.1).
  *
- * @see org.apache.tapestry5.ioc.def.ServiceDef#isPreventDecoration()
+ * @see org.apache.tapestry5.ioc.def.ServiceDef2#isPreventDecoration()
  * @since 5.1.0.0
  */
-@Target({ElementType.TYPE, ElementType.METHOD})
+@Target({ ElementType.TYPE, ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface PreventServiceDecoration

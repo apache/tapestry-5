@@ -35,6 +35,14 @@ import org.apache.tapestry5.ioc.ServiceResources;
  * resulting in the Logging interceptor. Thus at runtime, the Logging interceptor will execute first, then delegate to
  * the Security interceptor, which would delegate to the Transaction interceptor, which would finally delegate to the
  * core service implementation.
+ * <p/>
+ * Service decorators are part of the initial version of Tapestry IoC.  Starting in release 5.1, their use has been
+ * deprecated, in favor of {@link org.apache.tapestry5.ioc.AdvisorDef}, which is based on {@link
+ * org.apache.tapestry5.ioc.services.AspectInterceptorBuilder}.
+ * <p/>
+ * Note: service decorators are applied <em>around</em> the interceptor generated via any {@link
+ * org.apache.tapestry5.ioc.AdvisorDef}s (for compatibility with Tapestry 5.0). In general, you should use service
+ * decoration or service advice, not both.
  */
 public interface DecoratorDef
 {

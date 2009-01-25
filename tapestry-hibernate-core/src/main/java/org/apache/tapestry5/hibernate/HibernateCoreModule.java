@@ -36,13 +36,14 @@ import java.util.List;
  * Defines core services that support initialization of Hibernate and access to the Hibernate {@link
  * org.hibernate.Session}.
  */
-@SuppressWarnings({"JavaDoc"})
+@SuppressWarnings({ "JavaDoc" })
 @Marker(HibernateCore.class)
 public class HibernateCoreModule
 {
     public static void bind(ServiceBinder binder)
     {
         binder.bind(HibernateTransactionDecorator.class, HibernateTransactionDecoratorImpl.class);
+        binder.bind(HibernateTransactionAdvisor.class, HibernateTransactionAdvisorImpl.class);
         binder.bind(HibernateConfigurer.class, DefaultHibernateConfigurer.class).withId("DefaultHibernateConfigurer");
     }
 

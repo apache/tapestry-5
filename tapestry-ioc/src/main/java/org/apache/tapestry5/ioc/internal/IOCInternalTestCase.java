@@ -123,12 +123,6 @@ public class IOCInternalTestCase extends IOCTestCase implements Registry
         expect(registry.findDecoratorsForService(isA(ServiceDef.class))).andReturn(result);
     }
 
-    protected final void train_findDecoratorsForService(Module module, String serviceId,
-                                                        List<ServiceDecorator> decorators)
-    {
-        expect(module.findDecoratorsForService(serviceId)).andReturn(decorators);
-    }
-
     protected final void train_getDescription(ObjectCreatorSource source, String description)
     {
         expect(source.getDescription()).andReturn(description).atLeastOnce();

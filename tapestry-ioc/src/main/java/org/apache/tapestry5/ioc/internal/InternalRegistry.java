@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -56,6 +56,13 @@ public interface InternalRegistry extends Registry, RegistryShutdownHub, Operati
      * are ordered, then converted into {@link ServiceDecorator}s.
      */
     List<ServiceDecorator> findDecoratorsForService(ServiceDef serviceDef);
+
+    /**
+     * Searches for advisors for a particular service, returning them in order of application.
+     *
+     * @since 5.1.0.0
+     */
+    List<ServiceAdvisor> findAdvisorsForService(ServiceDef serviceDef);
 
     /**
      * Builds up an unordered collection by invoking service contributor methods that target the service (from any
