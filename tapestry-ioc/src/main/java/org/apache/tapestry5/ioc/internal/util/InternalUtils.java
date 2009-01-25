@@ -19,8 +19,7 @@ import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.InjectResource;
 import org.apache.tapestry5.ioc.annotations.InjectService;
 import org.apache.tapestry5.ioc.annotations.PostInjection;
-import org.apache.tapestry5.ioc.def.ServiceDef;
-import org.apache.tapestry5.ioc.def.ServiceDef2;
+import org.apache.tapestry5.ioc.def.*;
 import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newList;
 import static org.apache.tapestry5.ioc.internal.util.Defense.notBlank;
 import org.apache.tapestry5.ioc.services.ClassFabUtils;
@@ -40,7 +39,7 @@ import java.util.regex.Pattern;
  * Utilities used within various internal implemenations of Tapestry IOC and the rest of the tapestry-core framework.
  */
 
-@SuppressWarnings({"JavaDoc", "unchecked"})
+@SuppressWarnings({ "JavaDoc", "unchecked" })
 public class InternalUtils
 {
     /**
@@ -786,6 +785,50 @@ public class InternalUtils
             public boolean isEagerLoad()
             {
                 return sd.isEagerLoad();
+            }
+        };
+    }
+
+    public static ModuleDef2 toModuleDef2(final ModuleDef md)
+    {
+        if (md instanceof ModuleDef2)
+            return (ModuleDef2) md;
+
+        return new ModuleDef2()
+        {
+            public Set<AdvisorDef> getAdvisorDefs()
+            {
+                return Collections.emptySet();
+            }
+
+            public Class getBuilderClass()
+            {
+                return md.getBuilderClass();
+            }
+
+            public Set<ContributionDef> getContributionDefs()
+            {
+                return md.getContributionDefs();
+            }
+
+            public Set<DecoratorDef> getDecoratorDefs()
+            {
+                return md.getDecoratorDefs();
+            }
+
+            public String getLoggerName()
+            {
+                return md.getLoggerName();
+            }
+
+            public ServiceDef getServiceDef(String serviceId)
+            {
+                return md.getServiceDef(serviceId);
+            }
+
+            public Set<String> getServiceIds()
+            {
+                return md.getServiceIds();
             }
         };
     }

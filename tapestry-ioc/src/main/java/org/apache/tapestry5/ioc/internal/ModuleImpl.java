@@ -18,10 +18,7 @@ import org.apache.tapestry5.ioc.*;
 import org.apache.tapestry5.ioc.def.*;
 import org.apache.tapestry5.ioc.internal.services.JustInTimeObjectCreator;
 import org.apache.tapestry5.ioc.internal.util.*;
-import org.apache.tapestry5.ioc.services.ClassFab;
-import org.apache.tapestry5.ioc.services.ClassFactory;
-import org.apache.tapestry5.ioc.services.MethodSignature;
-import org.apache.tapestry5.ioc.services.Status;
+import org.apache.tapestry5.ioc.services.*;
 import org.slf4j.Logger;
 
 import java.io.ObjectStreamException;
@@ -38,7 +35,7 @@ public class ModuleImpl implements Module
 
     private final ServiceActivityTracker tracker;
 
-    private final ModuleDef moduleDef;
+    private final ModuleDef2 moduleDef;
 
     private final ClassFactory classFactory;
 
@@ -72,7 +69,7 @@ public class ModuleImpl implements Module
     {
         this.registry = registry;
         this.tracker = tracker;
-        this.moduleDef = moduleDef;
+        this.moduleDef = InternalUtils.toModuleDef2(moduleDef);
         this.classFactory = classFactory;
         this.logger = logger;
 
@@ -127,11 +124,16 @@ public class ModuleImpl implements Module
         return result;
     }
 
-    public List<ServiceDecorator> findDecoratorsForService(String serviceId)
+    public Set<AdvisorDef> findMatchingServiceAdvisors(ServiceDef serviceDef)
     {
-        ServiceDef sd = moduleDef.getServiceDef(serviceId);
+        Set<AdvisorDef> result = CollectionFactory.newSet();
 
-        return registry.findDecoratorsForService(sd);
+        for (AdvisorDef def : moduleDef.getAdvisorDefs())
+        {
+            if (def.matches(serviceDef)) result.add(def);
+        }
+
+        return result;
     }
 
     @SuppressWarnings("unchecked")
@@ -257,7 +259,8 @@ public class ModuleImpl implements Module
                     // and return it. There's no interface to proxy, which throws out the possibility of
                     // deferred instantiation, service lifecycles, and decorators.
 
-                    if (!serviceInterface.isInterface()) return creator.createObject();
+                    if (!serviceInterface.isInterface())
+                        return creator.createObject();
 
                     creator = new OperationTrackingObjectCreator(registry, "Invoking " + creator.toString(), creator);
 
@@ -265,10 +268,14 @@ public class ModuleImpl implements Module
 
 
                     // Marked services (or services inside marked modules) are not decorated.
-                    // TapestryIOCModule prevents decoration of its services.
+                    // TapestryIOCModule prevents decoration of its services. Note that all decorators will decorate
+                    // around the aspect interceptor, which wraps around the core service implementation.
 
                     if (!def.isPreventDecoration())
-                        creator = new InterceptorStackBuilder(module, serviceId, creator, registry);
+                    {
+                        creator = new AdvisorStackBuilder(def, creator, getAspectDecorator(), registry);
+                        creator = new InterceptorStackBuilder(def, creator, registry);
+                    }
 
                     // Add a wrapper that checks for recursion.
 
@@ -288,7 +295,8 @@ public class ModuleImpl implements Module
                     // ... service B
                     // is being realized anyway.
 
-                    if (def.isEagerLoad() && eagerLoadProxies != null) eagerLoadProxies.add(delegate);
+                    if (def.isEagerLoad() && eagerLoadProxies != null)
+                        eagerLoadProxies.add(delegate);
 
                     tracker.setStatus(serviceId, Status.VIRTUAL);
 
@@ -302,6 +310,19 @@ public class ModuleImpl implements Module
         };
 
         return registry.invoke(description, operation);
+    }
+
+    private AspectDecorator getAspectDecorator()
+    {
+        return registry.invoke(
+                "Obtaining AspectDecorator service",
+                new Invokable<AspectDecorator>()
+                {
+                    public AspectDecorator invoke()
+                    {
+                        return registry.getService(AspectDecorator.class);
+                    }
+                });
     }
 
     private final Runnable instantiateModule = new Runnable()
@@ -429,7 +450,7 @@ public class ModuleImpl implements Module
         classFab.addField("creator", Modifier.PRIVATE | Modifier.FINAL, ObjectCreator.class);
         classFab.addField("token", Modifier.PRIVATE | Modifier.FINAL, ServiceProxyToken.class);
 
-        classFab.addConstructor(new Class[] {ObjectCreator.class, ServiceProxyToken.class}, null,
+        classFab.addConstructor(new Class[] { ObjectCreator.class, ServiceProxyToken.class }, null,
                                 "{ creator = $1; token = $2; }");
 
         // Make proxies serializable by writing the token to the stream.
@@ -439,7 +460,7 @@ public class ModuleImpl implements Module
         // This is the "magic" signature that allows an object to substitute some other
         // object for itself.
         MethodSignature writeReplaceSig = new MethodSignature(Object.class, "writeReplace", null,
-                                                              new Class[] {ObjectStreamException.class});
+                                                              new Class[] { ObjectStreamException.class });
 
         classFab.addMethod(Modifier.PRIVATE, writeReplaceSig, "return token;");
 

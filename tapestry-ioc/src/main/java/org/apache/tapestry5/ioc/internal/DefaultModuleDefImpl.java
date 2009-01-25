@@ -18,12 +18,9 @@ import org.apache.tapestry5.ioc.*;
 import org.apache.tapestry5.ioc.annotations.*;
 import org.apache.tapestry5.ioc.def.ContributionDef;
 import org.apache.tapestry5.ioc.def.DecoratorDef;
-import org.apache.tapestry5.ioc.def.ModuleDef;
+import org.apache.tapestry5.ioc.def.ModuleDef2;
 import org.apache.tapestry5.ioc.def.ServiceDef;
-import static org.apache.tapestry5.ioc.internal.ConfigurationType.*;
-import static org.apache.tapestry5.ioc.internal.IOCMessages.*;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.*;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.ClassFactory;
 import org.slf4j.Logger;
@@ -37,7 +34,7 @@ import java.util.*;
  * Starting from the Class for a module, identifies all the services (service builder methods), decorators (service
  * decorator methods) and (not yet implemented) contributions (service contributor methods).
  */
-public class DefaultModuleDefImpl implements ModuleDef, ServiceDefAccumulator
+public class DefaultModuleDefImpl implements ModuleDef2, ServiceDefAccumulator
 {
     /**
      * The prefix used to identify service builder methods.
@@ -54,7 +51,9 @@ public class DefaultModuleDefImpl implements ModuleDef, ServiceDefAccumulator
      */
     private static final String CONTRIBUTE_METHOD_NAME_PREFIX = "contribute";
 
-    private final static Map<Class, ConfigurationType> PARAMETER_TYPE_TO_CONFIGURATION_TYPE = newMap();
+    private static final String ADVISE_METHOD_NAME_PREFIX = "advise";
+
+    private final static Map<Class, ConfigurationType> PARAMETER_TYPE_TO_CONFIGURATION_TYPE = CollectionFactory.newMap();
 
     private final Class moduleClass;
 
@@ -65,12 +64,14 @@ public class DefaultModuleDefImpl implements ModuleDef, ServiceDefAccumulator
     /**
      * Keyed on service id.
      */
-    private final Map<String, ServiceDef> serviceDefs = newCaseInsensitiveMap();
+    private final Map<String, ServiceDef> serviceDefs = CollectionFactory.newCaseInsensitiveMap();
 
     /**
      * Keyed on decorator id.
      */
     private final Map<String, DecoratorDef> decoratorDefs = CollectionFactory.newCaseInsensitiveMap();
+
+    private final Map<String, AdvisorDef> advisorDefs = CollectionFactory.newCaseInsensitiveMap();
 
     private final Set<ContributionDef> contributionDefs = CollectionFactory.newSet();
 
@@ -80,9 +81,9 @@ public class DefaultModuleDefImpl implements ModuleDef, ServiceDefAccumulator
 
     static
     {
-        PARAMETER_TYPE_TO_CONFIGURATION_TYPE.put(Configuration.class, UNORDERED);
-        PARAMETER_TYPE_TO_CONFIGURATION_TYPE.put(OrderedConfiguration.class, ORDERED);
-        PARAMETER_TYPE_TO_CONFIGURATION_TYPE.put(MappedConfiguration.class, MAPPED);
+        PARAMETER_TYPE_TO_CONFIGURATION_TYPE.put(Configuration.class, ConfigurationType.UNORDERED);
+        PARAMETER_TYPE_TO_CONFIGURATION_TYPE.put(OrderedConfiguration.class, ConfigurationType.ORDERED);
+        PARAMETER_TYPE_TO_CONFIGURATION_TYPE.put(MappedConfiguration.class, ConfigurationType.MAPPED);
     }
 
     /**
@@ -193,6 +194,13 @@ public class DefaultModuleDefImpl implements ModuleDef, ServiceDefAccumulator
                 remainingMethods.remove(m);
                 continue;
             }
+
+            if (name.startsWith(ADVISE_METHOD_NAME_PREFIX))
+            {
+                addAdvisorDef(m);
+                remainingMethods.remove(m);
+                continue;
+            }
         }
     }
 
@@ -238,20 +246,75 @@ public class DefaultModuleDefImpl implements ModuleDef, ServiceDefAccumulator
         Class returnType = method.getReturnType();
 
         if (returnType.isPrimitive() || returnType.isArray())
-            throw new RuntimeException(decoratorMethodWrongReturnType(method));
+            throw new RuntimeException(IOCMessages.decoratorMethodWrongReturnType(method));
 
-        Order orderAnnotation = method.getAnnotation(Order.class);
-        Match match = method.getAnnotation(Match.class);
-
-        String[] constraints = orderAnnotation != null ? orderAnnotation.value() : null;
-
-        // TODO: Validate constraints here?
-
-        String[] patterns = match == null ? new String[] {decoratorId} : match.value();
-
-        DecoratorDef def = new DecoratorDefImpl(decoratorId, method, patterns, constraints, classFactory);
+        DecoratorDef def = new DecoratorDefImpl(method, extractPatterns(decoratorId, method),
+                                                extractConstraints(method), classFactory, decoratorId);
 
         decoratorDefs.put(decoratorId, def);
+    }
+
+    private String[] extractPatterns(String id, Method method)
+    {
+        Match match = method.getAnnotation(Match.class);
+
+        if (match == null)
+            return new String[] { id };
+
+        return match.value();
+    }
+
+    private String[] extractConstraints(Method method)
+    {
+        Order order = method.getAnnotation(Order.class);
+
+        if (order == null) return null;
+
+        return order.value();
+    }
+
+    private void addAdvisorDef(Method method)
+    {
+        // TODO: methods just named "decorate"
+
+        String advisorId = stripMethodPrefix(method, ADVISE_METHOD_NAME_PREFIX);
+
+        // TODO: Check for duplicates
+
+        Class returnType = method.getReturnType();
+
+        if (!returnType.equals(void.class))
+            throw new RuntimeException(String.format("Advise method %s does not return void.",
+                                                     toString(method)));
+
+        boolean found = false;
+
+        for (Class pt : method.getParameterTypes())
+        {
+            if (pt.equals(MethodAdviceReciever.class))
+            {
+                found = true;
+
+                break;
+            }
+        }
+
+        if (!found)
+            throw new RuntimeException(String.format("Advise method %s must take a parameter of type %s.",
+                                                     toString(method),
+                                                     MethodAdviceReciever.class.getName()));
+
+
+        AdvisorDef def = new AdvisorDefImpl(method, extractPatterns(advisorId, method), extractConstraints(method),
+                                            classFactory, advisorId);
+
+        advisorDefs.put(advisorId, def);
+
+    }
+
+    private String toString(Method method)
+    {
+        return InternalUtils.asString(method, classFactory);
     }
 
     private boolean methodContainsObjectParameter(Method method)
@@ -278,10 +341,10 @@ public class DefaultModuleDefImpl implements ModuleDef, ServiceDefAccumulator
     private void addServiceDef(final Method method, boolean modulePreventsServiceDecoration)
     {
         ServiceId serviceIdAnnotation = method.getAnnotation(ServiceId.class);
-        
+
         String serviceId;
-        
-        if(serviceIdAnnotation != null)
+
+        if (serviceIdAnnotation != null)
         {
             serviceId = serviceIdAnnotation.value();
         }
@@ -302,7 +365,7 @@ public class DefaultModuleDefImpl implements ModuleDef, ServiceDefAccumulator
         Class returnType = method.getReturnType();
 
         if (returnType.isPrimitive() || returnType.isArray())
-            throw new RuntimeException(buildMethodWrongReturnType(method));
+            throw new RuntimeException(IOCMessages.buildMethodWrongReturnType(method));
 
         String scope = extractServiceScope(method);
         boolean eagerLoad = method.isAnnotationPresent(EagerLoad.class);
@@ -319,11 +382,11 @@ public class DefaultModuleDefImpl implements ModuleDef, ServiceDefAccumulator
 
             public String getDescription()
             {
-                return InternalUtils.asString(method, classFactory);
+                return DefaultModuleDefImpl.this.toString(method);
             }
         };
 
-        Set<Class> markers = newSet(defaultMarkers);
+        Set<Class> markers = CollectionFactory.newSet(defaultMarkers);
         markers.addAll(extractMarkers(method));
 
         ServiceDefImpl serviceDef = new ServiceDefImpl(returnType, serviceId, markers, scope, eagerLoad,
@@ -348,7 +411,8 @@ public class DefaultModuleDefImpl implements ModuleDef, ServiceDefAccumulator
         ServiceDef existing = serviceDefs.get(serviceId);
 
         if (existing != null)
-            throw new RuntimeException(buildMethodConflict(serviceId, serviceDef.toString(), existing.toString()));
+            throw new RuntimeException(
+                    IOCMessages.buildMethodConflict(serviceId, serviceDef.toString(), existing.toString()));
 
         serviceDefs.put(serviceId, serviceDef);
     }
@@ -362,7 +426,7 @@ public class DefaultModuleDefImpl implements ModuleDef, ServiceDefAccumulator
 
     public Set<DecoratorDef> getDecoratorDefs()
     {
-        return newSet(decoratorDefs.values());
+        return toSet(decoratorDefs);
     }
 
     public Set<ContributionDef> getContributionDefs()
@@ -394,7 +458,7 @@ public class DefaultModuleDefImpl implements ModuleDef, ServiceDefAccumulator
 
             if (!Modifier.isStatic(bindMethod.getModifiers()))
                 throw new RuntimeException(
-                        IOCMessages.bindMethodMustBeStatic(InternalUtils.asString(bindMethod, classFactory)));
+                        IOCMessages.bindMethodMustBeStatic(toString(bindMethod)));
 
             ServiceBinderImpl binder = new ServiceBinderImpl(this, bindMethod, classFactory, defaultMarkers,
                                                              modulePreventsServiceDecoration);
@@ -426,8 +490,18 @@ public class DefaultModuleDefImpl implements ModuleDef, ServiceDefAccumulator
             failure = ex.getTargetException();
         }
 
-        String methodId = InternalUtils.asString(bindMethod, classFactory);
+        String methodId = toString(bindMethod);
 
         throw new RuntimeException(IOCMessages.errorInBindMethod(methodId, failure), failure);
+    }
+
+    public Set<AdvisorDef> getAdvisorDefs()
+    {
+        return toSet(advisorDefs);
+    }
+
+    private <K, V> Set<V> toSet(Map<K, V> map)
+    {
+        return CollectionFactory.newSet(map.values());
     }
 }

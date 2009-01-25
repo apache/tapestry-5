@@ -1,4 +1,4 @@
-// Copyright 2008 The Apache Software Foundation
+// Copyright 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,53 +14,22 @@
 
 package org.apache.tapestry5.internal.hibernate;
 
-import org.apache.tapestry5.hibernate.HibernateSessionManager;
+import org.apache.tapestry5.hibernate.HibernateTransactionAdvisor;
 import org.apache.tapestry5.hibernate.HibernateTransactionDecorator;
-import org.apache.tapestry5.hibernate.annotations.CommitAfter;
-import org.apache.tapestry5.ioc.Invocation;
-import org.apache.tapestry5.ioc.MethodAdvice;
 import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.ioc.services.AspectDecorator;
 import org.apache.tapestry5.ioc.services.AspectInterceptorBuilder;
-
-import java.lang.reflect.Method;
 
 public class HibernateTransactionDecoratorImpl implements HibernateTransactionDecorator
 {
     private final AspectDecorator aspectDecorator;
 
-    private final HibernateSessionManager manager;
+    private final HibernateTransactionAdvisor advisor;
 
-    /**
-     * The rules for advice are the same for any method: commit on success or checked exception, abort on thrown
-     * exception ... so we can use a single shared advice object.
-     */
-    private final MethodAdvice advice = new MethodAdvice()
-    {
-        public void advise(Invocation invocation)
-        {
-            try
-            {
-                invocation.proceed();
-            }
-            catch (RuntimeException ex)
-            {
-                manager.abort();
-
-                throw ex;
-            }
-
-            // For success or checked exception, commit the transaction.
-
-            manager.commit();
-        }
-    };
-
-    public HibernateTransactionDecoratorImpl(AspectDecorator aspectDecorator, HibernateSessionManager manager)
+    public HibernateTransactionDecoratorImpl(AspectDecorator aspectDecorator, HibernateTransactionAdvisor advisor)
     {
         this.aspectDecorator = aspectDecorator;
-
-        this.manager = manager;
+        this.advisor = advisor;
     }
 
     public <T> T build(Class<T> serviceInterface, T delegate, String serviceId)
@@ -75,13 +44,7 @@ public class HibernateTransactionDecoratorImpl implements HibernateTransactionDe
 
         AspectInterceptorBuilder<T> builder = aspectDecorator.createBuilder(serviceInterface, delegate, description);
 
-        for (Method m : serviceInterface.getMethods())
-        {
-            if (m.getAnnotation(CommitAfter.class) != null)
-            {
-                builder.adviseMethod(m, advice);
-            }
-        }
+        advisor.advise(builder);
 
         return builder.build();
     }

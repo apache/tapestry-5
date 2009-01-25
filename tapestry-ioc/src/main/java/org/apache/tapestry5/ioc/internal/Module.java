@@ -14,15 +14,14 @@
 
 package org.apache.tapestry5.ioc.internal;
 
+import org.apache.tapestry5.ioc.AdvisorDef;
 import org.apache.tapestry5.ioc.ModuleBuilderSource;
-import org.apache.tapestry5.ioc.ServiceDecorator;
 import org.apache.tapestry5.ioc.def.ContributionDef;
 import org.apache.tapestry5.ioc.def.DecoratorDef;
 import org.apache.tapestry5.ioc.def.ServiceDef;
 import org.apache.tapestry5.ioc.def.ServiceDef2;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -52,17 +51,6 @@ public interface Module extends ModuleBuilderSource
     Collection<String> findServiceIdsForInterface(Class serviceInterface);
 
     /**
-     * Locates all the decorators that should apply the identified service. This includes visibility rules (private
-     * services may only be decorated by decorators in the same module) and other filtering rules. The resulting list is
-     * ordered and from the list of {@link org.apache.tapestry5.ioc.def.DecoratorDef}s, a list of {@link
-     * ServiceDecorator}s is returned.
-     *
-     * @param serviceId identifies the service to be decorated
-     * @return the ordered list of service decorators
-     */
-    List<ServiceDecorator> findDecoratorsForService(String serviceId);
-
-    /**
      * Iterates over any decorator definitions defined by the module and returns those that apply to the provided
      * service definition.
      *
@@ -70,6 +58,16 @@ public interface Module extends ModuleBuilderSource
      * @return set of decorators, possibly empty (but not null)
      */
     Set<DecoratorDef> findMatchingDecoratorDefs(ServiceDef serviceDef);
+
+    /**
+     * Iterates over any advisor definitions defined by the module and returns those that apply to the provided service
+     * definition.
+     *
+     * @param serviceDef for which advisors are being assembled
+     * @return set of advisors, possibly empty but not null
+     * @since 5.1.0.0
+     */
+    Set<AdvisorDef> findMatchingServiceAdvisors(ServiceDef serviceDef);
 
     /**
      * Finds any contributions that are targetted at the indicated service.

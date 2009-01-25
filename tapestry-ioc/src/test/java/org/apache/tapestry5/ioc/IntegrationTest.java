@@ -871,7 +871,7 @@ public class IntegrationTest extends IOCInternalTestCase
 
         URL url = fakejar.toURL();
 
-        URLClassLoader loader = new URLClassLoader(new URL[] {url}, Thread.currentThread().getContextClassLoader());
+        URLClassLoader loader = new URLClassLoader(new URL[] { url }, Thread.currentThread().getContextClassLoader());
 
         RegistryBuilder builder = new RegistryBuilder(loader);
 
@@ -1292,5 +1292,56 @@ public class IntegrationTest extends IOCInternalTestCase
         Greeter g = r.getObject(Greeter.class, null);
 
         assertEquals(g.getGreeting(), "Override Greeting");
+    }
+
+    /**
+     * TAP5-60
+     */
+    @Test
+    public void non_void_advisor_method_is_error()
+    {
+        try
+        {
+            buildRegistry(NonVoidAdvisorMethodModule.class);
+            unreachable();
+        }
+        catch (RuntimeException ex)
+        {
+            assertMessageContains(ex,
+                                  "Advise method org.apache.tapestry5.ioc.NonVoidAdvisorMethodModule.adviseFoo(MethodAdviceReciever)",
+                                  "does not return void.");
+        }
+    }
+
+    /**
+     * TAP5-60
+     */
+    @Test
+    public void advisor_methods_must_take_a_method_advisor_parameter()
+    {
+        try
+        {
+            buildRegistry(AdviceMethodMissingAdvisorParameterModule.class);
+            unreachable();
+        }
+        catch (RuntimeException ex)
+        {
+            assertMessageContains(ex,
+                                  "Advise method org.apache.tapestry5.ioc.AdviceMethodMissingAdvisorParameterModule.adviseBar()",
+                                  "must take a parameter of type org.apache.tapestry5.ioc.MethodAdviceReciever.");
+        }
+    }
+
+    /**
+     * TAP5-60
+     */
+    @Test
+    public void advise_services()
+    {
+        Registry r = buildRegistry(AdviceDemoModule.class);
+
+        Greeter g = r.getService(Greeter.class);
+
+        assertEquals(g.getGreeting(), "ADVICE IS EASY!");
     }
 }

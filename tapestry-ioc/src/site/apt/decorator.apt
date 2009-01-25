@@ -4,6 +4,9 @@
  
 Tapestry IoC Decorators
 
+  <<Decoration has been replaced, in Tapestry 5.1, with {{{advice.html}advice}},
+  which is a simpler mechanism for accomplishing the same thing.>>
+
   <Decoration> is the name of a popular design pattern.  Using decoration,
   an existing object's behavior can be extended without changing the implementation
   of the object.

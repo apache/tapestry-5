@@ -14,63 +14,34 @@
 
 package org.apache.tapestry5.ioc.internal;
 
-import org.apache.tapestry5.ioc.IdMatcher;
 import org.apache.tapestry5.ioc.ModuleBuilderSource;
 import org.apache.tapestry5.ioc.ServiceDecorator;
 import org.apache.tapestry5.ioc.ServiceResources;
 import org.apache.tapestry5.ioc.def.DecoratorDef;
-import org.apache.tapestry5.ioc.def.ServiceDef;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import static org.apache.tapestry5.ioc.internal.util.Defense.notBlank;
-import static org.apache.tapestry5.ioc.internal.util.Defense.notNull;
-import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.ioc.services.ClassFactory;
 
 import java.lang.reflect.Method;
-import java.util.List;
 
-public class DecoratorDefImpl implements DecoratorDef
+public class DecoratorDefImpl extends AbstractServiceInstrumenter implements DecoratorDef
 {
     private final String decoratorId;
 
-    private final Method decoratorMethod;
-
-    private final IdMatcher idMatcher;
-
-    private final String[] constraints;
-
-    private final ClassFactory classFactory;
-
-    public DecoratorDefImpl(String decoratorId, Method decoratorMethod, String[] patterns,
-                            String[] constraints, ClassFactory classFactory)
+    public DecoratorDefImpl(Method decoratorMethod, String[] patterns, String[] constraints, ClassFactory classFactory,
+                            String decoratorId
+    )
     {
-        this.decoratorId = notBlank(decoratorId, "decoratorId");
-        this.decoratorMethod = notNull(decoratorMethod, "decoratorMethod");
+        super(decoratorMethod, patterns, constraints, classFactory);
 
-        List<IdMatcher> matchers = CollectionFactory.newList();
+        this.decoratorId = Defense.notBlank(decoratorId, "decoratorId");
 
-        for (String pattern : notNull(patterns, "patterns"))
-        {
-            IdMatcher matcher = new IdMatcherImpl(pattern);
-            matchers.add(matcher);
-        }
 
-        idMatcher = new OrIdMatcher(matchers);
-
-        this.constraints = constraints != null ? constraints : new String[0];
-
-        this.classFactory = classFactory;
     }
 
-    @Override
-    public String toString()
+    public ServiceDecorator createDecorator(ModuleBuilderSource moduleSource,
+                                            ServiceResources resources)
     {
-        return InternalUtils.asString(decoratorMethod, classFactory);
-    }
-
-    public String[] getConstraints()
-    {
-        return constraints;
+        return new ServiceDecoratorImpl(method, moduleSource, resources, classFactory);
     }
 
     public String getDecoratorId()
@@ -78,20 +49,4 @@ public class DecoratorDefImpl implements DecoratorDef
         return decoratorId;
     }
 
-    public ServiceDecorator createDecorator(ModuleBuilderSource moduleSource,
-                                            ServiceResources resources)
-    {
-        return new ServiceDecoratorImpl(decoratorMethod, moduleSource, resources,
-                                        classFactory);
-    }
-
-    /**
-     * Returns true if <em>any</em> provided pattern matches the id of the service.
-     */
-    public boolean matches(ServiceDef serviceDef)
-    {
-        String serviceId = serviceDef.getServiceId();
-
-        return idMatcher.matches(serviceId);
-    }
 }

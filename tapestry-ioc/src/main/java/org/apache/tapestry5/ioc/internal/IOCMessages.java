@@ -79,11 +79,6 @@ final class IOCMessages
         return MESSAGES.format("constructor-error", creatorDescription, serviceId, cause);
     }
 
-    static String decoratorMethodError(Method method, String serviceId, Throwable cause)
-    {
-        return MESSAGES.format("decorator-method-error", asString(method), serviceId, cause);
-    }
-
     static String builderMethodReturnedNull(String methodId, String serviceId)
     {
         return MESSAGES.format("builder-method-returned-null", methodId, serviceId);

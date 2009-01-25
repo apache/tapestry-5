@@ -58,12 +58,13 @@ public final class TapestryIOCModule
         binder.bind(AspectDecorator.class, AspectDecoratorImpl.class);
         binder.bind(ClasspathURLConverter.class, ClasspathURLConverterImpl.class);
         binder.bind(ServiceOverride.class, ServiceOverrideImpl.class);
+        binder.bind(LoggingAdvisor.class, LoggingAdvisorImpl.class);
     }
 
     /**
-     * Provides access to additional service lifecycles. One lifecycles is built in ("singleton") but additional ones
-     * are accessed via this service (and its mapped configuration). Only proxiable services (those with explicit
-     * service interfaces) can be managed in terms of a lifecycle.
+     * Provides access to additional service lifecycles. One lifecycle is built in ("singleton") but additional ones are
+     * accessed via this service (and its mapped configuration). Only proxiable services (those with explicit service
+     * interfaces) can be managed in terms of a lifecycle.
      */
     public static ServiceLifecycleSource build(final Map<String, ServiceLifecycle> configuration)
     {
@@ -343,7 +344,7 @@ public final class TapestryIOCModule
         {
             public Object[] coerce(Object input)
             {
-                return new Object[] {input};
+                return new Object[] { input };
             }
         });
 
