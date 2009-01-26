@@ -2103,7 +2103,7 @@ public final class TapestryModule
     public static InvalidationEventHub buildComponentMessagesInvalidationEventHub(
             ComponentMessagesSource messagesSource)
     {
-        return messagesSource.getInvalidatonEventHub();
+        return messagesSource.getInvalidationEventHub();
     }
 
     @Scope(ScopeConstants.PERTHREAD)
@@ -2193,4 +2193,15 @@ public final class TapestryModule
                                                                    "sun.reflect."
                           ));
     }
+
+    /**
+     * Advises the {@link org.apache.tapestry5.internal.services.ComponentMessagesSource} service so that the creation
+     * of {@link org.apache.tapestry5.ioc.Messages} instances can be deferred.
+     */
+    @Match("ComponentMessagesSource")
+    public static void adviseLazy(LazyAdvisor advisor, MethodAdviceReceiver receiver)
+    {
+        advisor.addLazyMethodInvocationAdvice(receiver);
+    }
+
 }

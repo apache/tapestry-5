@@ -14,7 +14,7 @@
 
 package org.apache.tapestry5.hibernate;
 
-import org.apache.tapestry5.ioc.MethodAdviceReciever;
+import org.apache.tapestry5.ioc.MethodAdviceReceiver;
 
 /**
  * A replacement for {@link org.apache.tapestry5.hibernate.HibernateTransactionDecorator}.
@@ -29,5 +29,5 @@ public interface HibernateTransactionAdvisor
      *
      * @param receiver advice receiver
      */
-    void advise(MethodAdviceReciever receiver);
+    void addTransactionCommitAdvice(MethodAdviceReceiver receiver);
 }

@@ -12,20 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.ioc;
+package org.apache.tapestry5.ioc.annotations;
+
+import java.lang.annotation.*;
 
 /**
- * Provided by a {@link org.apache.tapestry5.ioc.AdvisorDef} to perform the advice (by invoking methods on a {@link
- * MethodAdviceReceiver}).
+ * Marks a method as specifically not-lazy, even if other methods in the same interface are being {@linkplain
+ * org.apache.tapestry5.ioc.services.LazyAdvisor advised as lazy}.
  *
  * @since 5.1.0.0
  */
-public interface ServiceAdvisor
+@Target(ElementType.METHOD)
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+public @interface NotLazy
 {
-    /**
-     * Passed the reciever, allows the code (usually a method on a module class) to advice some or all methods.
-     *
-     * @param methodAdviceReceiver
-     */
-    void advise(MethodAdviceReceiver methodAdviceReceiver);
 }

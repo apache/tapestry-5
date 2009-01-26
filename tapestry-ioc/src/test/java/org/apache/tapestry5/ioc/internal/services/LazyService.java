@@ -12,20 +12,31 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.ioc;
+package org.apache.tapestry5.ioc.internal.services;
+
+import org.apache.tapestry5.ioc.Greeter;
+import org.apache.tapestry5.ioc.annotations.NotLazy;
+
+import java.sql.SQLException;
 
 /**
- * Provided by a {@link org.apache.tapestry5.ioc.AdvisorDef} to perform the advice (by invoking methods on a {@link
- * MethodAdviceReceiver}).
- *
- * @since 5.1.0.0
+ * Used to test {@link org.apache.tapestry5.ioc.services.LazyAdvisor}, as it has a mix of lazy and not lazy methods.
  */
-public interface ServiceAdvisor
+public interface LazyService
 {
+    void notLazyBecauseVoid();
+
+    String notLazyBecauseOfReturnValue();
+
     /**
-     * Passed the reciever, allows the code (usually a method on a module class) to advice some or all methods.
-     *
-     * @param methodAdviceReceiver
+     * The only lazy method.
      */
-    void advise(MethodAdviceReceiver methodAdviceReceiver);
+    Greeter createGreeter() throws RuntimeException;
+
+    Greeter safeCreateCreator();
+
+    @NotLazy
+    Greeter notLazyFromAnnotationGreeter();
+
+    Greeter notLazyCreateGreeter() throws SQLException;
 }

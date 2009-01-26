@@ -14,7 +14,7 @@
 
 package org.apache.tapestry5.ioc.internal;
 
-import org.apache.tapestry5.ioc.MethodAdviceReciever;
+import org.apache.tapestry5.ioc.MethodAdviceReceiver;
 import org.apache.tapestry5.ioc.ModuleBuilderSource;
 import org.apache.tapestry5.ioc.ServiceAdvisor;
 import org.apache.tapestry5.ioc.ServiceResources;
@@ -38,11 +38,11 @@ public class ServiceAdvisorImpl extends AbstractMethodInvokingInstrumenter imple
      * Invokes the configured method, passing the builder. The method will always take, as a parameter, a
      * MethodAdvisor.
      */
-    public void advise(MethodAdviceReciever methodAdviceReciever)
+    public void advise(MethodAdviceReceiver methodAdviceReceiver)
     {
         Map<Class, Object> resources = CollectionFactory.newMap(this.resourcesDefaults);
 
-        resources.put(MethodAdviceReciever.class, methodAdviceReciever);
+        resources.put(MethodAdviceReceiver.class, methodAdviceReceiver);
 
         InjectionResources injectionResources = new MapInjectionResources(resources);
 

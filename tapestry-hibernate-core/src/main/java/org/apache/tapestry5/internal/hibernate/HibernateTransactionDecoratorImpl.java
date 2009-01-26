@@ -44,7 +44,7 @@ public class HibernateTransactionDecoratorImpl implements HibernateTransactionDe
 
         AspectInterceptorBuilder<T> builder = aspectDecorator.createBuilder(serviceInterface, delegate, description);
 
-        advisor.advise(builder);
+        advisor.addTransactionCommitAdvice(builder);
 
         return builder.build();
     }

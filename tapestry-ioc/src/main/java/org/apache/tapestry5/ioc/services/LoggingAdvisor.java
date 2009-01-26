@@ -14,7 +14,7 @@
 
 package org.apache.tapestry5.ioc.services;
 
-import org.apache.tapestry5.ioc.MethodAdviceReciever;
+import org.apache.tapestry5.ioc.MethodAdviceReceiver;
 import org.slf4j.Logger;
 
 /**
@@ -28,9 +28,9 @@ public interface LoggingAdvisor
      * Adds logging advice to all methods of the object.
      *
      * @param logger               log used for debug level logging messages by the interceptor
-     * @param methodAdviceReciever
+     * @param methodAdviceReceiver
      * @return a new object implementing the interface that can be used in place of the delegate, providing logging
      *         behavior around each method call on the service interface
      */
-    <T> void advise(Logger logger, MethodAdviceReciever methodAdviceReciever);
+    <T> void advise(Logger logger, MethodAdviceReceiver methodAdviceReceiver);
 }
