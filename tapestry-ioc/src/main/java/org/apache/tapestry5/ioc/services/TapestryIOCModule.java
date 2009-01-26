@@ -59,6 +59,7 @@ public final class TapestryIOCModule
         binder.bind(ClasspathURLConverter.class, ClasspathURLConverterImpl.class);
         binder.bind(ServiceOverride.class, ServiceOverrideImpl.class);
         binder.bind(LoggingAdvisor.class, LoggingAdvisorImpl.class);
+        binder.bind(LazyAdvisor.class, LazyAdvisorImpl.class);
     }
 
     /**

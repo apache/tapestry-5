@@ -16,7 +16,7 @@ package org.apache.tapestry5.ioc;
 
 public class NonVoidAdvisorMethodModule
 {
-    public static String adviseFoo(MethodAdviceReciever methodAdviceReciever)
+    public static String adviseFoo(MethodAdviceReceiver methodAdviceReceiver)
     {
         return "Never Called";
     }

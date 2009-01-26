@@ -291,7 +291,7 @@ public class DefaultModuleDefImpl implements ModuleDef2, ServiceDefAccumulator
 
         for (Class pt : method.getParameterTypes())
         {
-            if (pt.equals(MethodAdviceReciever.class))
+            if (pt.equals(MethodAdviceReceiver.class))
             {
                 found = true;
 
@@ -302,7 +302,7 @@ public class DefaultModuleDefImpl implements ModuleDef2, ServiceDefAccumulator
         if (!found)
             throw new RuntimeException(String.format("Advise method %s must take a parameter of type %s.",
                                                      toString(method),
-                                                     MethodAdviceReciever.class.getName()));
+                                                     MethodAdviceReceiver.class.getName()));
 
 
         AdvisorDef def = new AdvisorDefImpl(method, extractPatterns(advisorId, method), extractConstraints(method),

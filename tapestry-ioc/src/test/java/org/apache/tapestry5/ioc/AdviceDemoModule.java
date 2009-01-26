@@ -35,13 +35,13 @@ public class AdviceDemoModule
     }
 
     @Match("*")
-    public static void adviseLogging(MethodAdviceReciever reciever, LoggingAdvisor loggingAdvisor, Logger logger)
+    public static void adviseLogging(MethodAdviceReceiver receiver, LoggingAdvisor loggingAdvisor, Logger logger)
     {
-        loggingAdvisor.advise(logger, reciever);
+        loggingAdvisor.advise(logger, receiver);
     }
 
     @Order("after:Logging")
-    public static void adviseGreeter(MethodAdviceReciever receiver)
+    public static void adviseGreeter(MethodAdviceReceiver receiver)
     {
         MethodAdvice advice = new MethodAdvice()
         {

@@ -12,20 +12,32 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.ioc;
+package org.apache.tapestry5.ioc.internal.services;
 
-/**
- * Provided by a {@link org.apache.tapestry5.ioc.AdvisorDef} to perform the advice (by invoking methods on a {@link
- * MethodAdviceReceiver}).
- *
- * @since 5.1.0.0
- */
-public interface ServiceAdvisor
+import org.apache.tapestry5.ioc.ObjectCreator;
+
+public class OneShotObjectCreator implements ObjectCreator
 {
-    /**
-     * Passed the reciever, allows the code (usually a method on a module class) to advice some or all methods.
-     *
-     * @param methodAdviceReceiver
-     */
-    void advise(MethodAdviceReceiver methodAdviceReceiver);
+    private boolean cached;
+
+    private Object cachedValue;
+
+    private ObjectCreator creator;
+
+    public OneShotObjectCreator(ObjectCreator creator)
+    {
+        this.creator = creator;
+    }
+
+    public synchronized Object createObject()
+    {
+        if (!cached)
+        {
+            cachedValue = creator.createObject();
+            cached = true;
+            creator = null;
+        }
+
+        return cachedValue;
+    }
 }

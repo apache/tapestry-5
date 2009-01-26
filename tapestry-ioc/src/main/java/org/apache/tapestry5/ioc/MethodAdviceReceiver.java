@@ -19,7 +19,7 @@ import java.lang.reflect.Method;
 /**
  * Interface used with service advisor methods to define advice.  Allows advice on specific methods, or on all methods.
  */
-public interface MethodAdviceReciever
+public interface MethodAdviceReceiver
 {
     /**
      * Adds advice for a specific method of the aspect interceptor being constructed.
@@ -38,6 +38,7 @@ public interface MethodAdviceReciever
     /**
      * Returns the interface for which methods may be advised.
      *
+     * @see org.apache.tapestry5.ioc.services.MethodIterator
      * @since 5.1.0.0
      */
     Class getInterface();

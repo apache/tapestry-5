@@ -19,7 +19,7 @@ import org.apache.tapestry5.hibernate.HibernateTransactionAdvisor;
 import org.apache.tapestry5.hibernate.annotations.CommitAfter;
 import org.apache.tapestry5.ioc.Invocation;
 import org.apache.tapestry5.ioc.MethodAdvice;
-import org.apache.tapestry5.ioc.MethodAdviceReciever;
+import org.apache.tapestry5.ioc.MethodAdviceReceiver;
 
 import java.lang.reflect.Method;
 
@@ -57,7 +57,7 @@ public class HibernateTransactionAdvisorImpl implements HibernateTransactionAdvi
         this.manager = manager;
     }
 
-    public void advise(MethodAdviceReciever receiver)
+    public void addTransactionCommitAdvice(MethodAdviceReceiver receiver)
     {
         for (Method m : receiver.getInterface().getMethods())
         {

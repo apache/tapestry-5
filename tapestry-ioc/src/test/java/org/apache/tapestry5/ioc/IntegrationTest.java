@@ -1308,7 +1308,7 @@ public class IntegrationTest extends IOCInternalTestCase
         catch (RuntimeException ex)
         {
             assertMessageContains(ex,
-                                  "Advise method org.apache.tapestry5.ioc.NonVoidAdvisorMethodModule.adviseFoo(MethodAdviceReciever)",
+                                  "Advise method org.apache.tapestry5.ioc.NonVoidAdvisorMethodModule.adviseFoo(MethodAdviceReceiver)",
                                   "does not return void.");
         }
     }
@@ -1328,7 +1328,7 @@ public class IntegrationTest extends IOCInternalTestCase
         {
             assertMessageContains(ex,
                                   "Advise method org.apache.tapestry5.ioc.AdviceMethodMissingAdvisorParameterModule.adviseBar()",
-                                  "must take a parameter of type org.apache.tapestry5.ioc.MethodAdviceReciever.");
+                                  "must take a parameter of type org.apache.tapestry5.ioc.MethodAdviceReceiver.");
         }
     }
 

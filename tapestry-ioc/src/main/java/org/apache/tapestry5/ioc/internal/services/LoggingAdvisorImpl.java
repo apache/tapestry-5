@@ -15,7 +15,7 @@
 package org.apache.tapestry5.ioc.internal.services;
 
 import org.apache.tapestry5.ioc.MethodAdvice;
-import org.apache.tapestry5.ioc.MethodAdviceReciever;
+import org.apache.tapestry5.ioc.MethodAdviceReceiver;
 import org.apache.tapestry5.ioc.services.ExceptionTracker;
 import org.apache.tapestry5.ioc.services.LoggingAdvisor;
 import org.slf4j.Logger;
@@ -29,10 +29,10 @@ public class LoggingAdvisorImpl implements LoggingAdvisor
         this.exceptionTracker = exceptionTracker;
     }
 
-    public <T> void advise(Logger logger, MethodAdviceReciever reciever)
+    public <T> void advise(Logger logger, MethodAdviceReceiver receiver)
     {
         MethodAdvice advice = new LoggingAdvice(logger, exceptionTracker);
 
-        reciever.adviseAllMethods(advice);
+        receiver.adviseAllMethods(advice);
     }
 }
