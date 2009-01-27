@@ -143,6 +143,105 @@ public final class TapestryModule
         this.endOfRequestEventHub = endOfRequestEventHub;
     }
 
+    // A bunch of classes "promoted" from inline inner class to nested classes,
+    // just so that the stack trace would be more readable. Most of these
+    // are teminators for pipeline services.
+
+    /**
+     * @since 5.1.0.0
+     */
+    private class ApplicationInitializerTerminator implements ApplicationInitializer
+    {
+        public void initializeApplication(Context context)
+        {
+            applicationGlobals.storeContext(context);
+        }
+    }
+
+    /**
+     * @since 5.1.0.0
+     */
+    private class HttpServletRequestHandlerTerminator implements HttpServletRequestHandler
+    {
+        private final RequestHandler handler;
+        private final String applicationCharset;
+        private final SessionPersistedObjectAnalyzer analyzer;
+
+        public HttpServletRequestHandlerTerminator(RequestHandler handler, String applicationCharset,
+                                                   SessionPersistedObjectAnalyzer analyzer)
+        {
+            this.handler = handler;
+            this.applicationCharset = applicationCharset;
+            this.analyzer = analyzer;
+        }
+
+        public boolean service(HttpServletRequest servletRequest, HttpServletResponse servletResponse)
+                throws IOException
+        {
+            requestGlobals.storeServletRequestResponse(servletRequest, servletResponse);
+
+            Request request = new RequestImpl(servletRequest, applicationCharset, analyzer);
+            Response response = new ResponseImpl(servletResponse);
+
+            // TAP5-257: Make sure that the "initial guess" for request/response is available, even if
+            // some filter in the RequestHandler pipeline replaces them.
+
+            requestGlobals.storeRequestResponse(request, response);
+
+            // Transition from the Servlet API-based pipeline, to the Tapestry-based pipeline.
+
+            return handler.service(request, response);
+        }
+    }
+
+    /**
+     * @since 5.1.0.0
+     */
+    private class ServletApplicationInitializerTerminator implements ServletApplicationInitializer
+    {
+        private final ApplicationInitializer initializer;
+
+        public ServletApplicationInitializerTerminator(ApplicationInitializer initializer)
+        {
+            this.initializer = initializer;
+        }
+
+        public void initializeApplication(ServletContext servletContext)
+        {
+            applicationGlobals.storeServletContext(servletContext);
+
+            // And now, down the (Web) ApplicationInitializer pipeline ...
+
+            ContextImpl context = new ContextImpl(servletContext);
+
+            applicationGlobals.storeContext(context);
+
+            initializer.initializeApplication(context);
+        }
+    }
+
+    /**
+     * @since 5.1.0.0
+     */
+    private class RequestHandlerTerminator implements RequestHandler
+    {
+        private final Dispatcher masterDispatcher;
+
+        public RequestHandlerTerminator(Dispatcher masterDispatcher)
+        {
+            this.masterDispatcher = masterDispatcher;
+        }
+
+        public boolean service(Request request, Response response) throws IOException
+        {
+            // Update RequestGlobals with the current request/response (in case some filter replaced the
+            // normal set).
+            requestGlobals.storeRequestResponse(request, response);
+
+            return masterDispatcher.dispatch(request, response);
+        }
+    }
+
     public static void bind(ServiceBinder binder)
     {
         binder.bind(ClasspathAssetAliasManager.class, ClasspathAssetAliasManagerImpl.class);
@@ -1004,13 +1103,7 @@ public final class TapestryModule
     public ApplicationInitializer buildApplicationInitializer(Logger logger,
                                                               List<ApplicationInitializerFilter> configuration)
     {
-        ApplicationInitializer terminator = new ApplicationInitializer()
-        {
-            public void initializeApplication(Context context)
-            {
-                applicationGlobals.storeContext(context);
-            }
-        };
+        ApplicationInitializer terminator = new ApplicationInitializerTerminator();
 
         return pipelineBuilder.build(logger, ApplicationInitializer.class, ApplicationInitializerFilter.class,
                                      configuration, terminator);
@@ -1021,34 +1114,16 @@ public final class TapestryModule
                                                                     List<HttpServletRequestFilter> configuration,
 
                                                                     @Primary
-                                                                    final RequestHandler handler,
+                                                                    RequestHandler handler,
 
                                                                     @Inject @Symbol(SymbolConstants.CHARSET)
-                                                                    final String applicationCharset,
+                                                                    String applicationCharset,
 
                                                                     @Primary
-                                                                    final SessionPersistedObjectAnalyzer analyzer)
+                                                                    SessionPersistedObjectAnalyzer analyzer)
     {
-        HttpServletRequestHandler terminator = new HttpServletRequestHandler()
-        {
-            public boolean service(HttpServletRequest servletRequest, HttpServletResponse servletResponse)
-                    throws IOException
-            {
-                requestGlobals.storeServletRequestResponse(servletRequest, servletResponse);
-
-                Request request = new RequestImpl(servletRequest, applicationCharset, analyzer);
-                Response response = new ResponseImpl(servletResponse);
-
-                // TAP5-257: Make sure that the "initial guess" for request/response is available, even if
-                // some filter in the RequestHandler pipeline replaces them.
-
-                requestGlobals.storeRequestResponse(request, response);
-
-                // Transition from the Servlet API-based pipeline, to the Tapestry-based pipeline.
-
-                return handler.service(request, response);
-            }
-        };
+        HttpServletRequestHandler terminator = new HttpServletRequestHandlerTerminator(handler, applicationCharset,
+                                                                                       analyzer);
 
         return pipelineBuilder.build(logger, HttpServletRequestHandler.class, HttpServletRequestFilter.class,
                                      configuration, terminator);
@@ -1058,19 +1133,9 @@ public final class TapestryModule
     public RequestHandler buildRequestHandler(Logger logger, List<RequestFilter> configuration,
 
                                               @Primary
-                                              final Dispatcher masterDispatcher)
+                                              Dispatcher masterDispatcher)
     {
-        RequestHandler terminator = new RequestHandler()
-        {
-            public boolean service(Request request, Response response) throws IOException
-            {
-                // Update RequestGlobals with the current request/response (in case some filter replaced the
-                // normal set).
-                requestGlobals.storeRequestResponse(request, response);
-
-                return masterDispatcher.dispatch(request, response);
-            }
-        };
+        RequestHandler terminator = new RequestHandlerTerminator(masterDispatcher);
 
         return pipelineBuilder.build(logger, RequestHandler.class, RequestFilter.class, configuration, terminator);
     }
@@ -1079,23 +1144,9 @@ public final class TapestryModule
                                                                             List<ServletApplicationInitializerFilter> configuration,
 
                                                                             @Primary
-                                                                            final ApplicationInitializer initializer)
+                                                                            ApplicationInitializer initializer)
     {
-        ServletApplicationInitializer terminator = new ServletApplicationInitializer()
-        {
-            public void initializeApplication(ServletContext servletContext)
-            {
-                applicationGlobals.storeServletContext(servletContext);
-
-                // And now, down the (Web) ApplicationInitializer pipeline ...
-
-                ContextImpl context = new ContextImpl(servletContext);
-
-                applicationGlobals.storeContext(context);
-
-                initializer.initializeApplication(context);
-            }
-        };
+        ServletApplicationInitializer terminator = new ServletApplicationInitializerTerminator(initializer);
 
         return pipelineBuilder.build(logger, ServletApplicationInitializer.class,
                                      ServletApplicationInitializerFilter.class, configuration, terminator);
@@ -1233,23 +1284,11 @@ public final class TapestryModule
     /**
      * The MarkupRenderer service is used to render a full page as markup.  Supports an ordered configuration of {@link
      * org.apache.tapestry5.services.MarkupRendererFilter}s.
-     *
-     * @param pageRenderQueue handles the bulk of the work
-     * @param logger          used to log errors building the pipeline
-     * @param configuration   filters on this service
-     * @return the service
      */
-    public MarkupRenderer buildMarkupRenderer(final PageRenderQueue pageRenderQueue, Logger logger,
+    public MarkupRenderer buildMarkupRenderer(Logger logger,
+                                              @Autobuild MarkupRendererTerminator terminator,
                                               List<MarkupRendererFilter> configuration)
     {
-        MarkupRenderer terminator = new MarkupRenderer()
-        {
-            public void renderMarkup(MarkupWriter writer)
-            {
-                pageRenderQueue.render(writer);
-            }
-        };
-
         return pipelineBuilder.build(logger, MarkupRenderer.class, MarkupRendererFilter.class, configuration,
                                      terminator);
     }
@@ -1258,25 +1297,13 @@ public final class TapestryModule
      * A wrapper around {@link org.apache.tapestry5.internal.services.PageRenderQueue} used for partial page renders.
      * Supports an ordered configuration of {@link org.apache.tapestry5.services.PartialMarkupRendererFilter}s.
      *
-     * @param logger        used to log warnings creating the pipeline
-     * @param configuration filters for the service
-     * @param renderQueue   does most of the work
-     * @return the service
      * @see #contributePartialMarkupRenderer(org.apache.tapestry5.ioc.OrderedConfiguration, org.apache.tapestry5.Asset,
      *      org.apache.tapestry5.ioc.services.SymbolSource, AssetSource, ValidationMessagesSource)
      */
     public PartialMarkupRenderer buildPartialMarkupRenderer(Logger logger,
                                                             List<PartialMarkupRendererFilter> configuration,
-                                                            final PageRenderQueue renderQueue)
+                                                            @Autobuild PartialMarkupRendererTerminator terminator)
     {
-
-        PartialMarkupRenderer terminator = new PartialMarkupRenderer()
-        {
-            public void renderMarkup(MarkupWriter writer, JSONObject reply)
-            {
-                renderQueue.renderPartial(writer, reply);
-            }
-        };
 
         return pipelineBuilder.build(logger, PartialMarkupRenderer.class, PartialMarkupRendererFilter.class,
                                      configuration, terminator);
@@ -2197,11 +2224,28 @@ public final class TapestryModule
     /**
      * Advises the {@link org.apache.tapestry5.internal.services.ComponentMessagesSource} service so that the creation
      * of {@link org.apache.tapestry5.ioc.Messages} instances can be deferred.
+     *
+     * @since 5.1.0.0
      */
     @Match("ComponentMessagesSource")
     public static void adviseLazy(LazyAdvisor advisor, MethodAdviceReceiver receiver)
     {
         advisor.addLazyMethodInvocationAdvice(receiver);
     }
+
+    /**
+     * @since 5.1.0.0
+     */
+    public ComponentRequestHandler buildComponentRequestHandler(
+            List<ComponentRequestFilter> configuration,
+
+            @Autobuild ComponentRequestHandlerTerminator terminator,
+
+            Logger logger)
+    {
+        return pipelineBuilder.build(logger, ComponentRequestHandler.class, ComponentRequestFilter.class,
+                                     configuration, terminator);
+    }
+
 
 }

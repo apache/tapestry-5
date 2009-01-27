@@ -28,19 +28,21 @@ public class PageRenderDispatcher implements Dispatcher
 {
     private final ComponentClassResolver componentClassResolver;
 
-    private final PageRenderRequestHandler handler;
-
     private final ContextPathEncoder contextPathEncoder;
 
     private final LocalizationSetter localizationSetter;
 
-    public PageRenderDispatcher(ComponentClassResolver componentClassResolver, PageRenderRequestHandler handler,
-                                ContextPathEncoder contextPathEncoder, LocalizationSetter localizationSetter)
+    private final ComponentRequestHandler componentRequestHandler;
+
+    public PageRenderDispatcher(ComponentClassResolver componentClassResolver,
+                                ContextPathEncoder contextPathEncoder,
+                                LocalizationSetter localizationSetter,
+                                ComponentRequestHandler componentRequestHandler)
     {
         this.componentClassResolver = componentClassResolver;
-        this.handler = handler;
         this.contextPathEncoder = contextPathEncoder;
         this.localizationSetter = localizationSetter;
+        this.componentRequestHandler = componentRequestHandler;
     }
 
     public boolean dispatch(Request request, final Response response) throws IOException
@@ -112,7 +114,7 @@ public class PageRenderDispatcher implements Dispatcher
 
         PageRenderRequestParameters parameters = new PageRenderRequestParameters(pageName, activationContext);
 
-        handler.handle(parameters);
+        componentRequestHandler.handlePageRender(parameters);
 
         return true;
     }

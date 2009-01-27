@@ -41,7 +41,6 @@ public class ComponentEventDispatcherTest extends InternalBaseTestCase
     @Test
     public void no_dot_or_colon_in_path() throws Exception
     {
-        ComponentEventRequestHandler handler = newComponentEventRequestHandler();
         Request request = mockRequest();
         Response response = mockResponse();
 
@@ -49,16 +48,11 @@ public class ComponentEventDispatcherTest extends InternalBaseTestCase
 
         replay();
 
-        Dispatcher dispatcher = new ComponentEventDispatcher(handler, null, null, null);
+        Dispatcher dispatcher = new ComponentEventDispatcher(null, null, null, null);
 
         assertFalse(dispatcher.dispatch(request, response));
 
         verify();
-    }
-
-    protected final ComponentEventRequestHandler newComponentEventRequestHandler()
-    {
-        return newMock(ComponentEventRequestHandler.class);
     }
 
     @Test
@@ -131,7 +125,7 @@ public class ComponentEventDispatcherTest extends InternalBaseTestCase
     @Test
     public void page_activation_context_in_request() throws Exception
     {
-        ComponentEventRequestHandler handler = newComponentEventRequestHandler();
+        ComponentRequestHandler handler = mockComponentRequestHandler();
         Request request = mockRequest();
         Response response = mockResponse();
         ComponentClassResolver resolver = mockComponentClassResolver();
@@ -143,7 +137,7 @@ public class ComponentEventDispatcherTest extends InternalBaseTestCase
                                                                                                          contextValueEncoder,
                                                                                                          new String[] {
                                                                                                                  "alpha",
-                                                                                                                 "beta"}),
+                                                                                                                 "beta" }),
                                                                                                  new EmptyEventContext());
 
         train_getPath(request, "/mypage:eventname");
@@ -156,11 +150,11 @@ public class ComponentEventDispatcherTest extends InternalBaseTestCase
 
         train_getParameter(request, InternalConstants.CONTAINER_PAGE_NAME, null);
 
-        handler.handle(expectedParameters);
+        handler.handleComponentEvent(expectedParameters);
 
         replay();
 
-        Dispatcher dispatcher = new ComponentEventDispatcher(handler, resolver, contextPathEncoder, ls);
+        Dispatcher dispatcher = new ComponentEventDispatcher(resolver, contextPathEncoder, ls, handler);
 
         assertTrue(dispatcher.dispatch(request, response));
 
@@ -170,7 +164,7 @@ public class ComponentEventDispatcherTest extends InternalBaseTestCase
     @Test
     public void different_active_and_containing_pages() throws Exception
     {
-        ComponentEventRequestHandler handler = newComponentEventRequestHandler();
+        ComponentRequestHandler handler = mockComponentRequestHandler();
         Request request = mockRequest();
         Response response = mockResponse();
         ComponentClassResolver resolver = mockComponentClassResolver();
@@ -191,11 +185,11 @@ public class ComponentEventDispatcherTest extends InternalBaseTestCase
 
         train_getParameter(request, InternalConstants.CONTAINER_PAGE_NAME, "mypage");
 
-        handler.handle(expectedParameters);
+        handler.handleComponentEvent(expectedParameters);
 
         replay();
 
-        Dispatcher dispatcher = new ComponentEventDispatcher(handler, resolver, contextPathEncoder, ls);
+        Dispatcher dispatcher = new ComponentEventDispatcher(resolver, contextPathEncoder, ls, handler);
 
         assertTrue(dispatcher.dispatch(request, response));
 
@@ -205,7 +199,6 @@ public class ComponentEventDispatcherTest extends InternalBaseTestCase
     @Test
     public void request_path_reference_non_existent_page() throws Exception
     {
-        ComponentEventRequestHandler handler = newComponentEventRequestHandler();
         Request request = mockRequest();
         Response response = mockResponse();
         ComponentClassResolver resolver = mockComponentClassResolver();
@@ -218,7 +211,7 @@ public class ComponentEventDispatcherTest extends InternalBaseTestCase
 
         replay();
 
-        Dispatcher dispatcher = new ComponentEventDispatcher(handler, resolver, null, ls);
+        Dispatcher dispatcher = new ComponentEventDispatcher(resolver, null, ls, null);
 
         assertFalse(dispatcher.dispatch(request, response));
 
@@ -229,7 +222,7 @@ public class ComponentEventDispatcherTest extends InternalBaseTestCase
                       String eventType,
                       String... eventContext) throws IOException
     {
-        ComponentEventRequestHandler handler = newComponentEventRequestHandler();
+        ComponentRequestHandler handler = mockComponentRequestHandler();
         Request request = mockRequest();
         Response response = mockResponse();
         ComponentClassResolver resolver = mockComponentClassResolver();
@@ -254,11 +247,12 @@ public class ComponentEventDispatcherTest extends InternalBaseTestCase
 
         train_getParameter(request, InternalConstants.CONTAINER_PAGE_NAME, null);
 
-        handler.handle(expectedParameters);
+        handler.handleComponentEvent(expectedParameters);
 
         replay();
 
-        Dispatcher dispatcher = new ComponentEventDispatcher(handler, resolver, contextPathEncoder, localizationSetter);
+        Dispatcher dispatcher = new ComponentEventDispatcher(resolver, contextPathEncoder, localizationSetter,
+                                                             handler);
 
         assertTrue(dispatcher.dispatch(request, response));
 
