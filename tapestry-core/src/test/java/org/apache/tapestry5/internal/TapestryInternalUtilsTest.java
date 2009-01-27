@@ -377,7 +377,7 @@ public class TapestryInternalUtilsTest extends InternalBaseTestCase
     public void split_at_commas()
     {
         assertArraysEqual(TapestryInternalUtils.splitAtCommas("foo"), "foo");
-        assertArraysEqual(TapestryInternalUtils.splitAtCommas("foo,bar"), "foo", "bar");
+        assertArraysEqual(TapestryInternalUtils.splitAtCommas("foo , bar"), "foo", "bar");
     }
 
     @DataProvider(name = "to_base64_data")
