@@ -53,6 +53,10 @@ public class ResponseCompressionAnalyzerImpl implements ResponseCompressionAnaly
 
     public boolean isCompressable(String contentType)
     {
-        return notCompressable.get(contentType) == null;
+        int x = contentType.indexOf(';');
+
+        String key = x < 0 ? contentType : contentType.substring(0, x);
+
+        return notCompressable.get(key) == null;
     }
 }
