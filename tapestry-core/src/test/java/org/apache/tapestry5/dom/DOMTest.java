@@ -714,4 +714,23 @@ public class DOMTest extends InternalBaseTestCase
 
         assertFalse(child.isEmpty());
     }
+
+    /**
+     * TAP5-457
+     */
+    @Test
+    public void defaults_for_xml_defined_namespaces() throws Exception
+    {
+        Document d = new Document();
+
+        String XHTML_NAMESPACE = "http://www.w3.org/1999/xhtml";
+
+        Element root = d.newRootElement(XHTML_NAMESPACE, "html");
+
+        root.attribute(Document.XML_NAMESPACE_URI, "lang", "de");
+
+        // Before TAP5-457, it would be ns0: not xml:
+
+        assertEquals(d.toString(), readFile("defaults_for_xml_defined_namespaces.txt"));
+    }
 }
