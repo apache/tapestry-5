@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,6 +14,7 @@
 
 package org.apache.tapestry5.dom;
 
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.Defense;
 
 import java.io.PrintWriter;
@@ -25,6 +26,16 @@ import java.util.Map;
  */
 public final class Document extends Node
 {
+    /**
+     * XML Namespace URI.  May be bound to the "xml" but must not be bound to any other prefix.
+     */
+    public static final String XML_NAMESPACE_URI = "http://www.w3.org/XML/1998/namespace";
+
+    /**
+     * Namespace used exclusively for defining namespaces.
+     */
+    public static final String XMLNS_NAMESPACE_URI = "http://www.w3.org/2000/xmlns/";
+
     private Element rootElement;
 
     private DTD dtd;
@@ -134,7 +145,10 @@ public final class Document extends Node
             dtd.toMarkup(writer);
         }
 
-        Map<String, String> initialNamespaceMap = Collections.emptyMap();
+        Map<String, String> initialNamespaceMap = CollectionFactory.newMap();
+
+        initialNamespaceMap.put("xml", "http://www.w3.org/XML/1998/namespace");
+        initialNamespaceMap.put("xmlns", "http://www.w3.org/2000/xmlns/");
 
         rootElement.toMarkup(document, writer, initialNamespaceMap);
     }
@@ -171,7 +185,10 @@ public final class Document extends Node
     @Override
     protected Map<String, String> getNamespaceURIToPrefix()
     {
-        if (rootElement == null) return Collections.emptyMap();
+        if (rootElement == null)
+        {
+            return Collections.emptyMap();
+        }
 
         return rootElement.getNamespaceURIToPrefix();
     }

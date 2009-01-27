@@ -315,6 +315,8 @@ public final class Element extends Node
 
         for (String namespace : namespaces)
         {
+            if (namespace.equals(Document.XML_NAMESPACE_URI)) continue;
+
             String prefix = namespaceToPrefix.get(namespace);
 
             builder.append(" xmlns");
@@ -361,6 +363,8 @@ public final class Element extends Node
     private String toPrefixedName(Map<String, String> namespaceURIToPrefix, String namespace, String name)
     {
         if (namespace == null || namespace.equals("")) return name;
+
+        if (namespace.equals(Document.XML_NAMESPACE_URI)) return "xml:" + name;
 
         String prefix = namespaceURIToPrefix.get(namespace);
 
@@ -512,6 +516,12 @@ public final class Element extends Node
     {
         Defense.notNull(namespace, "namespace");
         Defense.notNull(namespacePrefix, "namespacePrefix");
+
+        // Don't allow an override of the XML namespace URI, per
+        // http://www.w3.org/TR/2006/REC-xml-names-20060816/#xmlReserved
+
+        if (namespace.equals(Document.XML_NAMESPACE_URI))
+            return this;
 
         if (namespaceToPrefix == null)
             namespaceToPrefix = CollectionFactory.newMap();
