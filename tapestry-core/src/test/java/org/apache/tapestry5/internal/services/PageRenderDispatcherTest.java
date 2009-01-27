@@ -42,8 +42,6 @@ public class PageRenderDispatcherTest extends InternalBaseTestCase
     public void not_a_page_request() throws Exception
     {
         ComponentClassResolver resolver = mockComponentClassResolver();
-        RequestPageCache cache = mockRequestPageCache();
-        PageRenderRequestHandler handler = new PageRenderRequestHandlerImpl(cache, null, null);
         Request request = mockRequest();
         Response response = mockResponse();
         LocalizationSetter ls = mockLocalizationSetter();
@@ -55,7 +53,7 @@ public class PageRenderDispatcherTest extends InternalBaseTestCase
 
         replay();
 
-        Dispatcher d = new PageRenderDispatcher(resolver, handler, contextPathEncoder, ls);
+        Dispatcher d = new PageRenderDispatcher(resolver, contextPathEncoder, ls, null);
 
         assertFalse(d.dispatch(request, response));
 
@@ -67,7 +65,6 @@ public class PageRenderDispatcherTest extends InternalBaseTestCase
     public void empty_path() throws Exception
     {
         ComponentClassResolver resolver = mockComponentClassResolver();
-        PageRenderRequestHandler handler = newMock(PageRenderRequestHandler.class);
         Request request = mockRequest();
         Response response = mockResponse();
         LocalizationSetter ls = mockLocalizationSetter();
@@ -80,7 +77,7 @@ public class PageRenderDispatcherTest extends InternalBaseTestCase
 
         replay();
 
-        Dispatcher d = new PageRenderDispatcher(resolver, handler, contextPathEncoder, ls);
+        Dispatcher d = new PageRenderDispatcher(resolver, contextPathEncoder, ls, null);
 
         assertFalse(d.dispatch(request, response));
 
@@ -91,7 +88,6 @@ public class PageRenderDispatcherTest extends InternalBaseTestCase
     public void just_the_locale_name() throws Exception
     {
         ComponentClassResolver resolver = mockComponentClassResolver();
-        PageRenderRequestHandler handler = newMock(PageRenderRequestHandler.class);
         Request request = mockRequest();
         Response response = mockResponse();
         LocalizationSetter ls = mockLocalizationSetter();
@@ -104,7 +100,7 @@ public class PageRenderDispatcherTest extends InternalBaseTestCase
 
         replay();
 
-        Dispatcher d = new PageRenderDispatcher(resolver, handler, contextPathEncoder, ls);
+        Dispatcher d = new PageRenderDispatcher(resolver, contextPathEncoder, ls, null);
 
         assertFalse(d.dispatch(request, response));
 
@@ -139,15 +135,13 @@ public class PageRenderDispatcherTest extends InternalBaseTestCase
 
         train_getRootElement(page, rootElement);
 
-        train_triggerContextEvent(rootElement, EventConstants.ACTIVATE, new Object[] {"foo", "bar"}, false);
+        train_triggerContextEvent(rootElement, EventConstants.ACTIVATE, new Object[] { "foo", "bar" }, false);
 
         renderer.renderPageResponse(page);
 
         replay();
 
-        PageRenderRequestHandler handler = new PageRenderRequestHandlerImpl(cache, processor, renderer);
-
-        Dispatcher d = new PageRenderDispatcher(resolver, handler, contextPathEncoder, ls);
+        Dispatcher d = new PageRenderDispatcher(resolver, contextPathEncoder, ls, wrap(cache, processor, renderer));
 
         assertTrue(d.dispatch(request, response));
 
@@ -195,9 +189,7 @@ public class PageRenderDispatcherTest extends InternalBaseTestCase
 
         replay();
 
-        PageRenderRequestHandler handler = new PageRenderRequestHandlerImpl(cache, processor, renderer);
-
-        Dispatcher d = new PageRenderDispatcher(resolver, handler, contextPathEncoder, ls);
+        Dispatcher d = new PageRenderDispatcher(resolver, contextPathEncoder, ls, wrap(cache, processor, renderer));
 
         assertTrue(d.dispatch(request, response));
 
@@ -242,19 +234,25 @@ public class PageRenderDispatcherTest extends InternalBaseTestCase
         train_get(cache, "foo/Bar", page);
         train_getRootElement(page, rootElement);
 
-        train_triggerContextEvent(rootElement, EventConstants.ACTIVATE, new Object[] {"zip", "zoom"}, false);
+        train_triggerContextEvent(rootElement, EventConstants.ACTIVATE, new Object[] { "zip", "zoom" }, false);
 
         renderer.renderPageResponse(page);
 
         replay();
 
-        PageRenderRequestHandler handler = new PageRenderRequestHandlerImpl(cache, processor, renderer);
-
-        Dispatcher d = new PageRenderDispatcher(resolver, handler, contextPathEncoder, ls);
+        Dispatcher d = new PageRenderDispatcher(resolver, contextPathEncoder, ls, wrap(cache, processor, renderer));
 
         assertTrue(d.dispatch(request, response));
 
         verify();
+    }
+
+    private ComponentRequestHandler wrap(RequestPageCache cache, ComponentEventResultProcessor processor,
+                                         PageResponseRenderer renderer)
+    {
+        PageRenderRequestHandler prh = new PageRenderRequestHandlerImpl(cache, processor, renderer);
+
+        return new ComponentRequestHandlerTerminator(null, prh);
     }
 
     protected ComponentEventResultProcessor newComponentEventResultProcessor()

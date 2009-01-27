@@ -45,24 +45,22 @@ public class ComponentEventDispatcher implements Dispatcher
 {
     private final ComponentClassResolver componentClassResolver;
 
-    private final ComponentEventRequestHandler componentEventRequestHandler;
-
     private final ContextPathEncoder contextPathEncoder;
 
     private final LocalizationSetter localizationSetter;
 
+    private final ComponentRequestHandler componentRequestHandler;
+
     public ComponentEventDispatcher(
-            @Traditional
-            ComponentEventRequestHandler componentEventRequestHandler,
-
             ComponentClassResolver componentClassResolver,
-
-            ContextPathEncoder contextPathEncoder, LocalizationSetter localizationSetter)
+            ContextPathEncoder contextPathEncoder,
+            LocalizationSetter localizationSetter,
+            ComponentRequestHandler componentRequestHandler)
     {
-        this.componentEventRequestHandler = componentEventRequestHandler;
         this.componentClassResolver = componentClassResolver;
         this.contextPathEncoder = contextPathEncoder;
         this.localizationSetter = localizationSetter;
+        this.componentRequestHandler = componentRequestHandler;
     }
 
     // A beast that recognizes all the elements of a path in a single go.
@@ -137,7 +135,7 @@ public class ComponentEventDispatcher implements Dispatcher
                                                                                          activationContext,
                                                                                          eventContext);
 
-        componentEventRequestHandler.handle(parameters);
+        componentRequestHandler.handleComponentEvent(parameters);
 
         return true;
     }
