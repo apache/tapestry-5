@@ -41,7 +41,7 @@ public class TapestryInternalUtils
 
     private static final Pattern NON_WORD_PATTERN = Pattern.compile("[^\\w]");
 
-    private static final Pattern COMMA_PATTERN = Pattern.compile(",");
+    private static final Pattern COMMA_PATTERN = Pattern.compile("\\s*,\\s*");
 
     private static final int BUFFER_SIZE = 5000;
 
