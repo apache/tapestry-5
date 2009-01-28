@@ -14,15 +14,19 @@
 
 package org.apache.tapestry5.internal;
 
+import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.ioc.IOCUtilities;
 import org.apache.tapestry5.ioc.Registry;
 import org.apache.tapestry5.ioc.RegistryBuilder;
 import org.apache.tapestry5.ioc.def.ContributionDef;
 import org.apache.tapestry5.ioc.def.ModuleDef;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.ioc.services.SymbolProvider;
-import org.apache.tapestry5.services.Alias;
+import org.apache.tapestry5.ioc.services.*;
 import org.apache.tapestry5.services.TapestryModule;
+import org.slf4j.Logger;
+
+import java.util.Formatter;
+import java.util.List;
 
 /**
  * This class is used to build the {@link Registry}. The Registry contains {@link org.apache.tapestry5.ioc.services.TapestryIOCModule}
@@ -35,6 +39,8 @@ import org.apache.tapestry5.services.TapestryModule;
  */
 public class TapestryAppInitializer
 {
+    private final Logger logger;
+
     private final SymbolProvider appProvider;
 
     private final String appName;
@@ -46,19 +52,23 @@ public class TapestryAppInitializer
     private final RegistryBuilder builder = new RegistryBuilder();
 
     private long registryCreatedTime;
+    private Registry registry;
 
-    public TapestryAppInitializer(String appPackage, String appName, String aliasMode)
+    public TapestryAppInitializer(Logger logger, String appPackage, String appName, String aliasMode)
     {
-        this(new SingleKeySymbolProvider(InternalConstants.TAPESTRY_APP_PACKAGE_PARAM, appPackage), appName, aliasMode);
+        this(logger, new SingleKeySymbolProvider(InternalConstants.TAPESTRY_APP_PACKAGE_PARAM, appPackage), appName,
+             aliasMode);
     }
 
     /**
+     * @param logger      logger for output confirmation
      * @param appProvider provides symbols for the application (normally, from the ServletContext init parameters)
      * @param appName     the name of the application (i.e., the name of the application servlet)
-     * @param aliasMode   the mode, used by the {@link Alias} service, normally "servlet"
+     * @param aliasMode   the mode, used by the {@link org.apache.tapestry5.services.Alias} service, normally "servlet"
      */
-    public TapestryAppInitializer(SymbolProvider appProvider, String appName, String aliasMode)
+    public TapestryAppInitializer(Logger logger, SymbolProvider appProvider, String appName, String aliasMode)
     {
+        this.logger = logger;
         this.appProvider = appProvider;
 
         String appPackage = appProvider.valueForSymbol(InternalConstants.TAPESTRY_APP_PACKAGE_PARAM);
@@ -139,26 +149,63 @@ public class TapestryAppInitializer
         builder.add(new SyntheticModuleDef(symbolSourceContribution, aliasModeContribution, appNameContribution));
     }
 
-    public Registry getRegistry()
+    public Registry createRegistry()
     {
         registryCreatedTime = System.currentTimeMillis();
 
-        return builder.build();
+        registry = builder.build();
+
+        return registry;
     }
 
-    /**
-     * @return the system time (in ms) when the registry has been created successfully.
-     */
-    public long getRegistryCreatedTime()
+    public void announceStartup()
     {
-        return registryCreatedTime;
-    }
+        long toFinish = System.currentTimeMillis();
 
-    /**
-     * @return the time when the initialization was started.
-     */
-    public long getStartTime()
-    {
-        return startTime;
+        SymbolSource source = registry.getService("SymbolSource", SymbolSource.class);
+
+        StringBuilder buffer = new StringBuilder("Startup status:\n\n");
+        Formatter f = new Formatter(buffer);
+
+        f.format("Application '%s' (Tapestry version %s).\n\n" +
+                "Startup time: %,d ms to build IoC Registry, %,d ms overall.\n\n" +
+                "Startup services status:\n",
+                 appName,
+                 source.valueForSymbol(SymbolConstants.TAPESTRY_VERSION),
+                 registryCreatedTime - startTime, toFinish - startTime);
+
+        int unrealized = 0;
+
+        ServiceActivityScoreboard scoreboard = registry
+                .getService(ServiceActivityScoreboard.class);
+
+        List<ServiceActivity> serviceActivity = scoreboard.getServiceActivity();
+
+        int longest = 0;
+
+        // One pass to find the longest name, and to count the unrealized services.
+
+        for (ServiceActivity activity : serviceActivity)
+        {
+            Status status = activity.getStatus();
+
+            longest = Math.max(longest, activity.getServiceId().length());
+
+            if (status == Status.DEFINED || status == Status.VIRTUAL) unrealized++;
+        }
+
+        String formatString = "%" + longest + "s: %s\n";
+
+        // A second pass to output all the services
+
+        for (ServiceActivity activity : serviceActivity)
+        {
+            f.format(formatString, activity.getServiceId(), activity.getStatus().name());
+        }
+
+        f.format("\n%4.2f%% unrealized services (%d/%d)\n", 100. * unrealized / serviceActivity.size(), unrealized,
+                 serviceActivity.size());
+
+        logger.info(buffer.toString());
     }
 }

@@ -31,6 +31,8 @@ import org.apache.tapestry5.ioc.services.ThreadLocale;
 import org.apache.tapestry5.ioc.util.StrategyRegistry;
 import org.apache.tapestry5.services.ApplicationGlobals;
 import org.apache.tapestry5.services.ContextPathEncoder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Locale;
 import java.util.Map;
@@ -43,6 +45,8 @@ import java.util.Map;
  */
 public class PageTester implements ComponentInvoker
 {
+    private final Logger logger = LoggerFactory.getLogger(PageTester.class);
+
     private final Registry registry;
 
     private final ComponentInvocationMap invocationMap;
@@ -89,13 +93,14 @@ public class PageTester implements ComponentInvoker
 
         SymbolProvider provider = new SingleKeySymbolProvider(InternalConstants.TAPESTRY_APP_PACKAGE_PARAM, appPackage);
 
-        TapestryAppInitializer initializer = new TapestryAppInitializer(provider, appName, PageTesterModule.TEST_MODE);
+        TapestryAppInitializer initializer = new TapestryAppInitializer(logger, provider, appName,
+                                                                        PageTesterModule.TEST_MODE);
 
         initializer.addModules(PageTesterModule.class);
         initializer.addModules(moduleClasses);
         initializer.addModules(provideExtraModuleDefs());
 
-        registry = initializer.getRegistry();
+        registry = initializer.createRegistry();
 
         request = registry.getObject(TestableRequest.class, null);
 

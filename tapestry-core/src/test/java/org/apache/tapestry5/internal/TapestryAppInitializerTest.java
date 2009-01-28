@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -26,8 +26,8 @@ public class TapestryAppInitializerTest extends Assert
     @Test
     public void testLoadAppModule()
     {
-        Registry registry = new TapestryAppInitializer("org.apache.tapestry5.integration.app0",
-                                                       "foo", "").getRegistry();
+        Registry registry = new TapestryAppInitializer(null, "org.apache.tapestry5.integration.app0",
+                                                       "foo", "").createRegistry();
 
         Transformer<String> s1 = registry.getService("Service1", Transformer.class);
         assertEquals(s1.transform("a"), "A");
@@ -38,7 +38,7 @@ public class TapestryAppInitializerTest extends Assert
     {
         // Apparently just checking to see that it doesn't fail.
 
-        new TapestryAppInitializer("non_existing.package", "foo", "").getRegistry();
+        new TapestryAppInitializer(null, "non_existing.package", "foo", "").createRegistry();
     }
 
 }
