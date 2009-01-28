@@ -125,6 +125,15 @@ public class LocalizationSetterImpl implements LocalizationSetter
         return supported;
     }
 
+    public void setNonPeristentLocaleFromLocaleName(String localeName)
+    {
+        Locale requested = toLocale(localeName);
+
+        Locale supported = findClosestSupportedLocale(requested);
+
+        threadLocale.setLocale(supported);
+    }
+
     private Locale findClosestSupportedLocale(Locale desiredLocale)
     {
         String localeName = desiredLocale.toString();

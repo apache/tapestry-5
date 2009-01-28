@@ -128,4 +128,23 @@ public class LocalizationSetterImplTest extends InternalBaseTestCase
 
         verify();
     }
+
+    @Test
+    public void set_nonpersistent_locale()
+    {
+        PersistentLocale pl = mockPersistentLocale();
+        ThreadLocale tl = mockThreadLocale();
+        Request request = mockRequest();
+
+        tl.setLocale(Locale.FRENCH);
+
+        replay();
+
+        LocalizationSetterImpl setter = new LocalizationSetterImpl(request, pl, tl, "en,fr");
+
+        setter.setNonPeristentLocaleFromLocaleName("fr_BE");
+
+        verify();
+
+    }
 }
