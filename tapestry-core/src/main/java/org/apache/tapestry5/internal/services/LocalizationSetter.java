@@ -37,4 +37,13 @@ public interface LocalizationSetter
      * @since 5.1.0.0
      */
     boolean setLocaleFromLocaleName(String localeName);
+
+    /**
+     * Allows the locale to be set from a specified locale name (which may be narrowed or defaulted to a support
+     * locale). Does not set the persistent locale.
+     *
+     * @param localeName locale in effect for this request
+     * @since 5.1.0.0.
+     */
+    void setNonPeristentLocaleFromLocaleName(String localeName);
 }
