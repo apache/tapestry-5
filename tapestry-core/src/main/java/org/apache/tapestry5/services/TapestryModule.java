@@ -1515,10 +1515,11 @@ public final class TapestryModule
      * service. Filters often provide {@link org.apache.tapestry5.annotations.Environmental} services needed by
      * components as they render. <dl> <dt>DocumentLinker</dt> <dd>Provides {@link org.apache.tapestry5.internal.services.DocumentLinker}
      * <dt>RenderSupport</dt>  <dd>Provides {@link org.apache.tapestry5.RenderSupport}</dd>
-     * <dt>ClientBehaviorSupport</dt> <dd>Provides {@link org.apache.tapestry5.internal.services.ClientBehaviorSupport}</dd>
-     * <dt>Heartbeat</dt> <dd>Provides {@link org.apache.tapestry5.services.Heartbeat}</dd>
-     * <dt>DefaultValidationDecorator</dt> <dd>Provides {@link org.apache.tapestry5.ValidationDecorator} (as an instance
-     * of {@link org.apache.tapestry5.internal.DefaultValidationDecorator})</dd> </dl>
+     * <dt>InjectDefaultStyleheet</dt> <dd>Injects the default stylesheet</dd></dt> <dt>ClientBehaviorSupport</dt>
+     * <dd>Provides {@link org.apache.tapestry5.internal.services.ClientBehaviorSupport}</dd> <dt>Heartbeat</dt>
+     * <dd>Provides {@link org.apache.tapestry5.services.Heartbeat}</dd> <dt>DefaultValidationDecorator</dt>
+     * <dd>Provides {@link org.apache.tapestry5.ValidationDecorator} (as an instance of {@link
+     * org.apache.tapestry5.internal.DefaultValidationDecorator})</dd> </dl>
      */
     public void contributeMarkupRenderer(OrderedConfiguration<MarkupRendererFilter> configuration,
 
@@ -1581,8 +1582,6 @@ public final class TapestryModule
 
                                                                   "org/apache/tapestry5/tapestry.js");
 
-                support.addStylesheetLink(stylesheetAsset, null);
-
                 environment.push(RenderSupport.class, support);
 
                 renderer.renderMarkup(writer);
@@ -1590,6 +1589,16 @@ public final class TapestryModule
                 environment.pop(RenderSupport.class);
 
                 support.commit();
+            }
+        };
+
+        MarkupRendererFilter injectDefaultStylesheet = new MarkupRendererFilter()
+        {
+            public void renderMarkup(MarkupWriter writer, MarkupRenderer renderer)
+            {
+                environment.peek(RenderSupport.class).addStylesheetLink(stylesheetAsset, null);
+
+                renderer.renderMarkup(writer);
             }
         };
 
@@ -1649,6 +1658,7 @@ public final class TapestryModule
 
         configuration.add("DocumentLinker", documentLinker, "before:RenderSupport");
         configuration.add("RenderSupport", renderSupport);
+        configuration.add("InjectDefaultStyleheet", injectDefaultStylesheet, "after:RenderSupport");
         configuration.add("ClientBehaviorSupport", clientBehaviorSupport, "after:RenderSupport");
         configuration.add("Heartbeat", heartbeat, "after:RenderSupport");
         configuration.add("DefaultValidationDecorator", defaultValidationDecorator, "after:Heartbeat");
