@@ -35,7 +35,7 @@ public class ErrorReportingCommandProcessor implements CommandProcessor
         StringBuilder builder = new StringBuilder();
 
         builder.append(BORDER);
-        builder.append("\nSeleninum failure processing comamnd ");
+        builder.append("\nSeleninum failure processing command ");
         builder.append(command);
         builder.append("(");
 
