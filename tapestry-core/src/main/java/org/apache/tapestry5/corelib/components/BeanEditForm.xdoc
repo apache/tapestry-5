@@ -40,6 +40,8 @@
 
             <subsection name="User.java">
                 <source><![CDATA[
+import org.apache.tapestry5.beaneditor.NonVisual;
+
 public class User
 {
     private long id;
@@ -141,6 +143,9 @@ lastname-label=Family Name]]></source>
 
             <subsection name="CreateUser.java">
                 <source><![CDATA[
+import org.apache.tapestry5.annotations.Persist;
+import org.apache.tapestry5.ioc.annotations.Inject;
+
 public class CreateUser
 {
     @Persist
