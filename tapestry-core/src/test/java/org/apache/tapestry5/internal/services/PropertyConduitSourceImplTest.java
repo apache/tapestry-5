@@ -416,4 +416,34 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
 
         assertEquals(conduit.get(b), "Do You Grok Ze Block?");
     }
+
+    @Test
+    public void parse_error_in_property_expression()
+    {
+        try
+        {
+            source.create(IntegerHolder.class, "getValue(");
+            unreachable();
+        }
+        catch (RuntimeException ex)
+        {
+            assertEquals(ex.getMessage(),
+                         "Error parsing property expression 'getValue(': line 1:0 no viable alternative at input 'getValue'.");
+        }
+    }
+
+    @Test
+    public void lexer_error_in_property_expression()
+    {
+        try
+        {
+            source.create(IntegerHolder.class, "fred {");
+            unreachable();
+        }
+        catch (RuntimeException ex)
+        {
+            assertEquals(ex.getMessage(),
+                         "Error parsing property expression 'fred {': Unable to parse input at character position 6.");
+        }
+    }
 }

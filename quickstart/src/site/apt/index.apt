@@ -11,75 +11,53 @@ Quickstart Archetype
   What you end up with is a basic Maven project, ready to build and deploy.
   
   First, you must decide on your group id, artifact id, and version number. For example, let's choose <<org.example>> for our group id,
-  <<myapp>> for the artifactId, and <<1.0.0-SNAPSHOT>> for the version number.  We also need a root package name, which we'll create by combining the group id
+  <<myapp>> for the artifactId, and <<1.0-SNAPSHOT>> for the version number.  We also need a root package name, which we'll create by combining the group id
   and the artifact id.
   
-  From the command line, you execute the following command (it's a bit of a doozy):
-  
-  mvn archetype:create -DarchetypeGroupId=org.apache.tapestry -DarchetypeArtifactId=quickstart -DgroupId=<<org.example>> -DartifactId=<<myapp>> -DpackageName=<<org.example.myapp>> -Dversion=<<1.0.0-SNAPSHOT>>
-  
-  Maven will use the information from that massive command line to locate and configure the archetype, and produce the project:
-  
+  From the command line, you execute the following command:
+
+  <<<mvn archetype:generate -DarchetypeCatalog=http://tapestry.formos.com/maven-snapshot-repository>>>
+
+  Maven uses the archetypeCatalog to get a list of available archetypes; in this case, the only option is the Tapestry Quickstart.
+  It will then ask you to enter the groupId, artifactId, version, and package.
+
 +---+
-$ mvn archetype:create -DarchetypeGroupId=org.apache.tapestry -DarchetypeArtifactId=quickstart -DgroupId=org.example -DartifactId=myapp -DpackageName=org.example.myapp -Dversion=1.0.0-SNAPSHOT
+$ mvn archetype:generate -DarchetypeCatalog=http://tapestry.formos.com/maven-snapshot-repository
 [INFO] Scanning for projects...
 [INFO] Searching repository for plugin with prefix: 'archetype'.
-[INFO] ----------------------------------------------------------------------------
+[INFO] ------------------------------------------------------------------------
 [INFO] Building Maven Default Project
-[INFO]    task-segment: [archetype:create] (aggregator-style)
-[INFO] ----------------------------------------------------------------------------
+[INFO]    task-segment: [archetype:generate] (aggregator-style)
+[INFO] ------------------------------------------------------------------------
+[INFO] Preparing archetype:generate
+[INFO] No goals needed for project - skipping
 [INFO] Setting property: classpath.resource.loader.class => 'org.codehaus.plexus.velocity.ContextClassLoaderResourceLoader'.
 [INFO] Setting property: velocimacro.messages.on => 'false'.
 [INFO] Setting property: resource.loader => 'classpath'.
 [INFO] Setting property: resource.manager.logwhenfound => 'false'.
-[INFO] ************************************************************** 
-[INFO] Starting Jakarta Velocity v1.4
-[INFO] RuntimeInstance initializing.
-[INFO] Default Properties File: org/apache/velocity/runtime/defaults/velocity.properties
-[INFO] Default ResourceManager initializing. (class org.apache.velocity.runtime.resource.ResourceManagerImpl)
-[INFO] Resource Loader Instantiated: org.codehaus.plexus.velocity.ContextClassLoaderResourceLoader
-[INFO] ClasspathResourceLoader : initialization starting.
-[INFO] ClasspathResourceLoader : initialization complete.
-[INFO] ResourceCache : initialized. (class org.apache.velocity.runtime.resource.ResourceCacheImpl)
-[INFO] Default ResourceManager initialization complete.
-[INFO] Loaded System Directive: org.apache.velocity.runtime.directive.Literal
-[INFO] Loaded System Directive: org.apache.velocity.runtime.directive.Macro
-[INFO] Loaded System Directive: org.apache.velocity.runtime.directive.Parse
-[INFO] Loaded System Directive: org.apache.velocity.runtime.directive.Include
-[INFO] Loaded System Directive: org.apache.velocity.runtime.directive.Foreach
-[INFO] Created: 20 parsers.
-[INFO] Velocimacro : initialization starting.
-[INFO] Velocimacro : adding VMs from VM library template : VM_global_library.vm
-[ERROR] ResourceManager : unable to find resource 'VM_global_library.vm' in any resource loader.
-[INFO] Velocimacro : error using  VM library template VM_global_library.vm : org.apache.velocity.exception.ResourceNotFoundException: Unable to find resource 'VM_global_library.vm'
-[INFO] Velocimacro :  VM library template macro registration complete.
-[INFO] Velocimacro : allowInline = true : VMs can be defined inline in templates
-[INFO] Velocimacro : allowInlineToOverride = false : VMs defined inline may NOT replace previous VM definitions
-[INFO] Velocimacro : allowInlineLocal = false : VMs defined inline will be  global in scope if allowed.
-[INFO] Velocimacro : initialization complete.
-[INFO] Velocity successfully started.
-[INFO] [archetype:create]
-[INFO] artifact org.apache.tapestry:quickstart: checking for updates from central
-[INFO] ----------------------------------------------------------------------------
-[INFO] Using following parameters for creating Archetype: quickstart:RELEASE
-[INFO] ----------------------------------------------------------------------------
-[INFO] Parameter: groupId, Value: org.example
-[INFO] Parameter: packageName, Value: org.example.myapp
-[INFO] Parameter: basedir, Value: /Users/Howard/Documents/workspace/tapestry5/target
-[INFO] Parameter: package, Value: org.example.myapp
-[INFO] Parameter: version, Value: 1.0.0-SNAPSHOT
-[INFO] Parameter: artifactId, Value: myapp
-[WARNING] org.apache.velocity.runtime.exception.ReferenceException: reference : template = archetype-resources/pom.xml [line 14,column 22] : ${tapestry-release-version} is not a valid reference.
-[WARNING] org.apache.velocity.runtime.exception.ReferenceException: reference : template = archetype-resources/pom.xml [line 80,column 26] : ${tapestry-release-version} is not a valid reference.
-[INFO] ********************* End of debug info from resources from generated POM ***********************
-[WARNING] org.apache.velocity.runtime.exception.ReferenceException: reference : template = archetype-resources/src/main/webapp/Start.tml [line 11,column 34] : ${currentTime} is not a valid reference.
-[INFO] Archetype created in dir: /Users/Howard/Documents/workspace/tapestry5/target/myapp
+[INFO] [archetype:generate]
+[INFO] Generating project in Interactive mode
+[INFO] No archetype defined. Using maven-archetype-quickstart (org.apache.maven.archetypes:maven-archetype-quickstart:1.0)
+Choose archetype:
+1: http://tapestry.formos.com/maven-snapshot-repository -> quickstart (Tapestry 5.1.0.0-SNAPSHOT Quickstart Project)
+Choose a number:  (1): 1
+[INFO] snapshot org.apache.tapestry:quickstart:5.1.0.0-SNAPSHOT: checking for updates from quickstart-repo
+Define value for groupId: : org.example
+Define value for artifactId: : myapp
+Define value for version:  1.0-SNAPSHOT: :
+Define value for package:  org.example: : org.example.myapp
+Confirm properties configuration:
+groupId: org.example
+artifactId: myapp
+version: 1.0-SNAPSHOT
+package: org.example.myapp
+ Y: :
 [INFO] ------------------------------------------------------------------------
 [INFO] BUILD SUCCESSFUL
 [INFO] ------------------------------------------------------------------------
-[INFO] Total time: 2 seconds
-[INFO] Finished at: Fri Oct 26 18:12:49 PDT 2007
-[INFO] Final Memory: 5M/9M
+[INFO] Total time: 16 seconds
+[INFO] Finished at: Sat Jan 31 14:29:27 PST 2009
+[INFO] Final Memory: 7M/14M
 [INFO] ------------------------------------------------------------------------
 $
 +---+
@@ -97,45 +75,78 @@ $ cd myapp
 $ mvn jetty:run
 [INFO] Scanning for projects...
 [INFO] Searching repository for plugin with prefix: 'jetty'.
-[INFO] ----------------------------------------------------------------------------
+[INFO] ------------------------------------------------------------------------
 [INFO] Building myapp Tapestry 5 Application
 [INFO]    task-segment: [jetty:run]
-[INFO] ----------------------------------------------------------------------------
+[INFO] ------------------------------------------------------------------------
 [INFO] Preparing jetty:run
 [INFO] [resources:resources]
-[INFO] Using default encoding to copy filtered resources.
+[WARNING] Using platform encoding (MacRoman actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] Copying 3 resources
 [INFO] [compiler:compile]
-Compiling 1 source file to /Users/Howard/work/myapp/target/classes
+[INFO] Compiling 3 source files to /private/tmp/myapp/target/classes
+[INFO] [resources:testResources]
+[WARNING] Using platform encoding (MacRoman actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] Copying 1 resource
+[INFO] [compiler:testCompile]
+[INFO] Nothing to compile - all classes are up to date
 [INFO] [jetty:run]
 [INFO] Configuring Jetty for project: myapp Tapestry 5 Application
-[INFO] Webapp source directory = /Users/Howard/work/myapp/src/main/webapp
-[INFO] web.xml file = /Users/Howard/work/myapp/src/main/webapp/WEB-INF/web.xml
-[INFO] Classes = /Users/Howard/work/myapp/target/classes
-2007-01-23 12:00:56.656::INFO:  Logging to STDERR via org.mortbay.log.StdErrLog
+[INFO] Webapp source directory = /private/tmp/myapp/src/main/webapp
+[INFO] web.xml file = /private/tmp/myapp/src/main/webapp/WEB-INF/web.xml
+[INFO] Classes = /private/tmp/myapp/target/classes
+2009-01-31 14:31:49.225::INFO:  Logging to STDERR via org.mortbay.log.StdErrLog
 [INFO] Context path = /myapp
-[INFO] Tmp directory = /Users/Howard/work/myapp/target/work
-[INFO] Web defaults =  jetty default
-[INFO] Webapp directory = /Users/Howard/work/myapp/src/main/webapp
-[INFO] Starting jetty 6.1.0pre0 ...
-2007-01-23 12:00:56.739::INFO:  jetty-6.1.0pre0
-[INFO] Classpath = [file:/Users/Howard/work/myapp/target/classes/, file:/Users/Howard/.m2/repository/commons-codec/commons-codec/1.3/commons-codec-1.3.jar, . . .
-[INFO] TapestryFilter Startup time: 306 ms to build IoC Registry, 761 ms overall.
-2007-01-23 12:00:57.962::INFO:  Started SelectChannelConnector @ 0.0.0.0:8080
+[INFO] Tmp directory =  determined at runtime
+[INFO] Web defaults = org/mortbay/jetty/webapp/webdefault.xml
+[INFO] Web overrides =  none
+[INFO] Webapp directory = /private/tmp/myapp/src/main/webapp
+[INFO] Starting jetty 6.1.9 ...
+2009-01-31 14:31:49.312::INFO:  jetty-6.1.9
+2009-01-31 14:31:49.502::INFO:  No Transaction manager found - if your webapp requires one, please configure one.
+[INFO] ioc.RegistryBuilder Adding module definition for class org.apache.tapestry5.ioc.services.TapestryIOCModule
+[INFO] ioc.RegistryBuilder Adding module definition for class org.apache.tapestry5.services.TapestryModule
+[INFO] ioc.RegistryBuilder Adding module definition for class org.apache.tapestry5.internal.services.InternalModule
+[INFO] ioc.RegistryBuilder Adding module definition for class org.example.myapp.services.AppModule
+[INFO] TapestryModule.ComponentClassResolver Available pages:
+              (blank): org.example.myapp.pages.Index
+      ExceptionReport: org.apache.tapestry5.corelib.pages.ExceptionReport
+                Index: org.example.myapp.pages.Index
+PropertyDisplayBlocks: org.apache.tapestry5.corelib.pages.PropertyDisplayBlocks
+   PropertyEditBlocks: org.apache.tapestry5.corelib.pages.PropertyEditBlocks
+        ServiceStatus: org.apache.tapestry5.corelib.pages.ServiceStatus
+
+[INFO] TapestryModule.ComponentClassResolver Available components:
+      ActionLink: org.apache.tapestry5.corelib.components.ActionLink
+      AddRowLink: org.apache.tapestry5.corelib.components.AddRowLink
+    AjaxFormLoop: org.apache.tapestry5.corelib.components.AjaxFormLoop
+             Any: org.apache.tapestry5.corelib.components.Any
+.
+.
+.
+                    ValidateBindingFactory: DEFINED
+             ValidationConstraintGenerator: DEFINED
+                  ValidationMessagesSource: DEFINED
+                        ValueEncoderSource: DEFINED
+
+82.89% unrealized services (126/152)
+
+2009-01-31 14:31:50.937::INFO:  Started SelectChannelConnector@0.0.0.0:8080
 [INFO] Started Jetty Server
 +---+
 
   <Again, the first time you do this, you'll see a large number of download messages.>
   
-  You can now see your running application as {{{http://localhost:8080/myapp}http://localhost:8080/myapp}}.
+  You can now see your running application as {{{http://localhost:8080/myapp}http://localhost:8080/myapp}}
   
   You can hit Control-C to stop Jetty.
   
 About Snapshots
 
-  Tapestry 5 is currently in a pre-release stage. The Tapestry libraries, including this archetype, are being distributed as snapshots and are rebuilt nightly. Being snapshots, these artifacts are not in the central Maven repository.
-  To make use of the Tapestry snapshots, append  <<<-DremoteRepositories=http://tapestry.formos.com/maven-snapshot-repository/>>> and <<<-DarchetypeVersion=5.0.x-SNAPSHOT>>>  (you'll have to figure out what
-  the latest snapshot version is) to the command line when invoking Maven. 
-  
-  The generated POM includes entries to automatically search the snapshot repository, so you won't need to use <<<-DremoteRepositories>>> after creating your initial project.
-  
+  By referencing the application catalog in Tapestry's snapshot repository,
+  http://tapestry.formos.com/maven-snapshot-repository,
+  you are directing Maven to download a snapshot version of the quickstart archetype; your application
+  will then be dependent on snapshot versions of the JARs. These are rebuilt every night, so you may see
+  Maven redownload the Tapestry JARs more often than you'd like. You can edit the generated pom.xml file
+  to switch to a more stable version of Tapestry 5, such as the most recent stable release, 5.0.18.
   
