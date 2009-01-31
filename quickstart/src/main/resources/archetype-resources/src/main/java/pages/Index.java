@@ -1,4 +1,4 @@
-package ${packageName}.pages;
+package ${package}.pages;
 
 import java.util.Date;
 

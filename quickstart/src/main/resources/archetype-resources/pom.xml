@@ -6,13 +6,13 @@
     <version>${version}</version>
     <packaging>war</packaging>
     <name>${artifactId} Tapestry 5 Application</name>
+#set( $D = '$' )    
     <dependencies>
         <dependency>
             <groupId>org.apache.tapestry</groupId>
             <artifactId>tapestry-core</artifactId>
-            <version>${tapestry-release-version}</version>
+            <version>${D}{tapestry-release-version}</version>
         </dependency>
-
         <!-- A dependency on either JUnit or TestNG is required, or the surefire plugin (which runs the tests)
 will fail, preventing Maven from packaging the WAR. Tapestry includes a large number
 of testing facilities designed for use with TestNG (http://testng.org/), so it's recommended. -->
@@ -21,6 +21,20 @@ of testing facilities designed for use with TestNG (http://testng.org/), so it's
             <artifactId>testng</artifactId>
             <version>5.8</version>
             <classifier>jdk15</classifier>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.easymock</groupId>
+            <artifactId>easymock</artifactId>
+            <version>2.4</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.tapestry</groupId>
+            <artifactId>tapestry-test</artifactId>
+            <version>${D}{tapestry-release-version}</version>
             <scope>test</scope>
         </dependency>
 
@@ -71,9 +85,9 @@ of testing facilities designed for use with TestNG (http://testng.org/), so it's
             <plugin>
                 <groupId>org.apache.tapestry</groupId>
                 <artifactId>tapestry-component-report</artifactId>
-                <version>${tapestry-release-version}</version>
+                <version>${D}{tapestry-release-version}</version>
                 <configuration>
-                    <rootPackage>${packageName}</rootPackage>
+                    <rootPackage>${package}</rootPackage>
                 </configuration>
             </plugin>
         </plugins>
