@@ -1,4 +1,4 @@
-// Copyright 2008 The Apache Software Foundation
+// Copyright 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ parser grammar PropertyExpressionParser;
 
 options
 {
+  superClass='org.apache.tapestry5.internal.antlr.BaseParser';
   output=AST;		
   ASTLabelType=CommonTree;
   tokenVocab=PropertyExpressionLexer;

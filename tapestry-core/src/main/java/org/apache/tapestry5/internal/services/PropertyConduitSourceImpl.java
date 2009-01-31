@@ -16,7 +16,6 @@ package org.apache.tapestry5.internal.services;
 
 import org.antlr.runtime.ANTLRInputStream;
 import org.antlr.runtime.CommonTokenStream;
-import org.antlr.runtime.RecognitionException;
 import org.antlr.runtime.tree.Tree;
 import org.apache.tapestry5.PropertyConduit;
 import org.apache.tapestry5.internal.antlr.PropertyExpressionLexer;
@@ -1235,9 +1234,12 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
         {
             return (Tree) parser.start().getTree();
         }
-        catch (RecognitionException ex)
+        catch (Exception ex)
         {
-            throw new RuntimeException(ex);
+            throw new RuntimeException(String.format("Error parsing property expression '%s': %s.",
+                                                     expression,
+                                                     ex.getMessage()),
+                                       ex);
         }
     }
 

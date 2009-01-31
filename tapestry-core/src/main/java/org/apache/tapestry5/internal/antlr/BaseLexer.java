@@ -1,4 +1,4 @@
-// Copyright 2008 The Apache Software Foundation
+// Copyright 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ package org.apache.tapestry5.internal.antlr;
 import org.antlr.runtime.CharStream;
 import org.antlr.runtime.Lexer;
 import org.antlr.runtime.RecognizerSharedState;
+import org.antlr.runtime.RecognitionException;
 
 public abstract class BaseLexer extends Lexer
 {
@@ -41,5 +42,13 @@ public abstract class BaseLexer extends Lexer
         {
             setText(text.substring(1));
         }
+    }
+
+    @Override
+    public void reportError(RecognitionException e)
+    {
+        throw new RuntimeException(String.format("Unable to parse input at character position %d",
+                                                 e.charPositionInLine + 1),
+                                   e);
     }
 }
