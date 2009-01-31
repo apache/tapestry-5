@@ -24,7 +24,7 @@
         <!-- The only significant configuration for Tapestry 5, this informs Tapestry
 of where to look for pages, components and mixins. -->
         <param-name>tapestry.app-package</param-name>
-        <param-value>${packageName}</param-value>
+        <param-value>${package}</param-value>
     </context-param>
     <filter>
         <filter-name>app</filter-name>

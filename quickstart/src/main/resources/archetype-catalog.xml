@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<archetype-catalog>
+    <archetypes>
+        <archetype>
+            <groupId>org.apache.tapestry</groupId>
+            <artifactId>quickstart</artifactId>
+            <version>@project.version@</version>
+            <repository>http://tapestry.formos.com/maven-snapshot-repository</repository>
+            <description>Tapestry @project.version@ Quickstart Project</description>
+        </archetype>
+    </archetypes>
+</archetype-catalog>

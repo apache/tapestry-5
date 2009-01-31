@@ -1,4 +1,4 @@
-package ${packageName}.services;
+package ${package}.services;
 
 import java.io.IOException;
 

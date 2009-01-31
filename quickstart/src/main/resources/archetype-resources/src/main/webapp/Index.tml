@@ -1,18 +1,20 @@
-<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
-    <head>
-        <title>${artifactId} Start Page</title>
-    </head>
-    <body>
-        <h1>${artifactId} Start Page</h1>
+<html t:type="layout" title="${artifactId} Home Page"
+      xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd"
+      xmlns:p="tapestry:parameter">
+#set( $D = '$' )
+    <!-- Most of the page content, including <head>, <body>, etc. tags, comes from Layout.tml -->
 
-        <p> This is the start page for this application, a good place to start your modifications.
-            Just to prove this is live: </p>
+    <p>${D}{message:greeting}</p>
 
-        <p> The current time is: ${currentTime}. </p>
+    <p>
+        Just to prove this is live:
+    </p>
+
+    <p>The current time is: ${D}{currentTime}.</p>
 
 
-        <p>
-            [<t:pagelink t:page="Index">refresh</t:pagelink>]
-        </p>
-    </body>
+    <p>
+        [<t:pagelink t:page="Index">refresh</t:pagelink>]
+    </p>
+
 </html>

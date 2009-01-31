@@ -332,8 +332,8 @@
         </profile>
 
         <profile>
-            <!-- bamboo: running inside the Bamboo CI server and deploying to the snapshot repository and nightly web site. -->
-            <id>bamboo</id>
+            <!-- ci: Running inside the Bamboo CI server and deploying to the snapshot repository and nightly web site. -->
+            <id>ci</id>
             <distributionManagement>
                 <repository>
                     <id>tapestry</id>
@@ -422,7 +422,7 @@
     <distributionManagement>
         <site>
             <id>tapestry</id>
-            <url>scpexe://people.apache.org/www/tapestry.apache.org/tapestry5/</url>
+            <url>scpexe://people.apache.org/www/tapestry.apache.org/tapestry5.1/</url>
         </site>
         <repository>
             <id>tapestry</id>
