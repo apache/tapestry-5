@@ -102,9 +102,7 @@ public class ExceptionReport implements ExceptionReporter
 
     public boolean isSimpleProperty()
     {
-        if (propertyName.equals(PATH_SEPARATOR_PROPERTY)) return true;
-
-        return !getPropertyValue().contains(pathSeparator);
+        return ! (propertyName.endsWith(".path") && getPropertyValue().contains(pathSeparator));
     }
 
     public String[] getComplexPropertyValue()
