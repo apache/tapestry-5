@@ -159,19 +159,18 @@ public class AppModule
 }
 +---+
 
-   Finally, add a decorator method to your module:
+   Finally, you should use the HibernateTransactionAdviser to add transaction advice:
 
 +---+
     @Match("*DAO")
-    public static <T> T decorateTransactionally(HibernateTransactionDecorator decorator, Class<T> serviceInterface,
-                                                T delegate,
-                                                String serviceId)
+    public static void adviseTransactions(HibernateTransactionAdviser advisor, MethodAdviceReceiver receiver)
     {
-        return decorator.build(serviceInterface, delegate, serviceId);
+        advisor.addTransactionCommitAdvice(receiver);
     }
 +---+
 
-  This one is configured to match against any service whose id ends with "DAO", such as "PersonDAO".
-  The HibernateTransactionDecorator
-  service builds an interceptor around the delegate (which is, basically, the service) that understands
-  the @CommitAfter annotation.  Methods that don't have @CommitAfter pass right on through unchanged.
+  This advice method is configured to match against any service whose id ends with "DAO", such as "PersonDAO".
+
+  The advisor scans the service interface and identifies any methods with the @CommitAfter annotation.
+
+  

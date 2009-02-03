@@ -129,6 +129,11 @@ public class ResourceStreamerImpl implements ResourceStreamer
         }
     }
 
+    public String getContentType(Resource resource) throws IOException
+    {
+        return identifyContentType(resource, resourceCache.getStreamableResource(resource));
+    }
+
     private String identifyContentType(Resource resource, StreamableResource streamble) throws IOException
     {
         String contentType = streamble.getContentType();

@@ -32,4 +32,14 @@ public interface ResourceStreamer
      * Streams the content of the resource to the client.
      */
     void streamResource(Resource resource) throws IOException;
+
+    /**
+     * Analyzes the resource to determine what its content type is, possibly using the service's configuration.
+     *
+     * @param resource to analyze
+     * @return content type
+     * @throws IOException
+     * @since 5.1.0.0
+     */
+    String getContentType(Resource resource) throws IOException;
 }
