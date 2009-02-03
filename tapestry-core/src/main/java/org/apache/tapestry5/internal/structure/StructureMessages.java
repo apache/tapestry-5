@@ -96,7 +96,7 @@ final class StructureMessages
 
     static String originalChildComponent(ComponentPageElement container, String childId, Location originalLocation)
     {
-        return MESSAGES.format("original-child-component", container.getCompleteId(), childId, originalLocation.getResource().getPath(), originalLocation.getLine());
+        return MESSAGES.format("original-child-component", container.getCompleteId(), childId, originalLocation.getLine());
     }
 
     static String duplicateBlock(ComponentPageElement component, String blockId)
