@@ -15,6 +15,7 @@
 package org.apache.tapestry5.internal.structure;
 
 import org.apache.tapestry5.ioc.Messages;
+import org.apache.tapestry5.ioc.Location;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.MessagesImpl;
 
@@ -91,6 +92,11 @@ final class StructureMessages
     static String duplicateChildComponent(ComponentPageElement container, String childId)
     {
         return MESSAGES.format("duplicate-child-component", container.getCompleteId(), childId);
+    }
+
+    static String originalChildComponent(ComponentPageElement container, String childId, Location originalLocation)
+    {
+        return MESSAGES.format("original-child-component", container.getCompleteId(), childId, originalLocation.getLine());
     }
 
     static String duplicateBlock(ComponentPageElement component, String blockId)

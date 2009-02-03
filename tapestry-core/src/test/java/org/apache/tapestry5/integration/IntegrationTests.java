@@ -2525,4 +2525,15 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         assertTextPresent("Unable to add new method public final java.lang.String getName() as it already exists.");
     }
+
+    /**
+     * TAP5-181
+     */
+    public void duplicate_ids_highlight_both_locations()
+    {
+        start("Duplicate IDs");
+
+        assertTextPresent("Component DuplicateIds already contains a child component with id 'index'. Embedded component ids must be unique (excluding case, which is ignored).");
+        assertTextPresent("Component DuplicateIds declared original child component with id 'index' on line 6.");
+    }
 }
