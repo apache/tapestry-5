@@ -2534,6 +2534,6 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         start("Duplicate IDs");
 
         assertTextPresent("Component DuplicateIds already contains a child component with id 'index'. Embedded component ids must be unique (excluding case, which is ignored).");
-        assertTextPresent("Component DuplicateIds declared original child component with id 'index' in DuplicateIds.tml on line 6.");
+        assertTextPresent("Component DuplicateIds declared original child component with id 'index' on line 6.");
     }
 }
