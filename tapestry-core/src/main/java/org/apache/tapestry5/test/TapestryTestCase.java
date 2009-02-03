@@ -889,6 +889,16 @@ public abstract class TapestryTestCase extends IOCTestCase
         expect(locatable.getLocation()).andReturn(location).atLeastOnce();
     }
 
+    public final void train_getResource(Location location, Resource resource)
+    {
+        expect(location.getResource()).andReturn(resource).atLeastOnce();
+    }
+
+    public final void train_getLine(Location location, int line)
+    {
+        expect(location.getLine()).andReturn(line).atLeastOnce();
+    }
+
     protected final void train_getParameter(Request request, String elementName, String value)
     {
         expect(request.getParameter(elementName)).andReturn(value).atLeastOnce();
