@@ -22,6 +22,7 @@ import org.apache.tapestry5.internal.InternalComponentResources;
 import org.apache.tapestry5.internal.services.Instantiator;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.ioc.Location;
+import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.internal.util.TapestryException;
 import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.model.ParameterModel;
@@ -482,7 +483,9 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
         ComponentModel model = mockComponentModel();
         ComponentPageElement child1 = mockComponentPageElement();
         ComponentPageElement child2 = mockComponentPageElement();
-        Location l = mockLocation();
+        Location loc1 = mockLocation();
+        Location loc2 = mockLocation();
+        Resource resource = mockResource();
         Logger logger = mockLogger();
         ComponentPageElementResources elementResources = mockResources(logger);
 
@@ -493,7 +496,12 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
         train_getId(child1, "Child");
         train_getId(child2, "CHILD");
 
-        train_getLocation(child2, l);
+        train_getPath(resource, PAGE_NAME);
+        train_getResource(loc1, resource);
+        train_getLine(loc1, 1);
+
+        train_getLocation(child1, loc1);
+        train_getLocation(child2, loc2);
 
         replay();
 
@@ -509,7 +517,7 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
         catch (TapestryException ex)
         {
             assertTrue(ex.getMessage().contains("already contains a child component with id 'CHILD'."));
-            assertSame(ex.getLocation(), l);
+            assertSame(ex.getLocation(), loc2);
         }
 
         verify();
