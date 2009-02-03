@@ -1,0 +1,19 @@
+<html t:type="border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+    <h1>Duplicate IDs Demo</h1>
+
+    <p>
+        <t:pagelink t:id="index" page="index">Contrived link to index.</t:pagelink>
+    </p>
+
+    <p>
+      Some spacer text to separate the second link with
+      the same ID from the original.  This will help
+      illustrate the value in highlighting both locations
+      where a given ID is used.
+    </p>
+
+    <p>
+        <t:pagelink t:id="index" page="index">Link with duplicate ID.</t:pagelink>
+    </p>
+</html>

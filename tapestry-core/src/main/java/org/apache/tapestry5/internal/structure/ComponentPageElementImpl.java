@@ -662,7 +662,8 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
         ComponentPageElement existing = children.get(childId);
 
         if (existing != null)
-            throw new TapestryException(StructureMessages.duplicateChildComponent(this, childId), child, null);
+            throw new TapestryException(StructureMessages.duplicateChildComponent(this, childId), child,
+                    new TapestryException(StructureMessages.originalChildComponent(this, childId, existing.getLocation()), existing, null));
 
         children.put(childId, child);
     }
