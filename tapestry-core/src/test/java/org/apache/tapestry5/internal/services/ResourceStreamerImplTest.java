@@ -14,15 +14,13 @@
 
 package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.internal.util.ClasspathResource;
 import org.apache.tapestry5.services.*;
-import static org.easymock.EasyMock.*;
+import static org.easymock.EasyMock.endsWith;
 import org.testng.annotations.Test;
 
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -56,22 +54,9 @@ public class ResourceStreamerImplTest extends InternalBaseTestCase
         HttpServletRequest hsRequest = mockHttpServletRequest();
         HttpServletResponse hsResponse = mockHttpServletResponse();
         Context context = mockContext();
-
-        request.setAttribute(InternalConstants.SUPPRESS_COMPRESSION, true);
-
-        // We're testing with a fake client that does not support GZIP compression:
-
-        expect(hsRequest.getHeader(isA(String.class))).andReturn(null);
-
-        train_setContentLength(hsResponse, anyInt());
-        train_setDateHeader(hsResponse, eq("Last-Modified"), anyLong());
-        train_setDateHeader(hsResponse, eq("Expires"), anyLong());
-        train_setContentType(hsResponse, contentType);
-        train_getOutputStream(hsResponse, new TestServletOutputStream());
-
+        
         if (consultsContext)
             expect(context.getMimeType(endsWith(fileName))).andReturn(null);
-
 
         replay();
 
@@ -88,17 +73,8 @@ public class ResourceStreamerImplTest extends InternalBaseTestCase
 
         Resource resource = new ClasspathResource(path);
 
-        streamer.streamResource(resource);
+        assertEquals(streamer.getContentType(resource), contentType);
 
         verify();
-    }
-
-    private static class TestServletOutputStream extends ServletOutputStream
-    {
-        @Override
-        public void write(int b) throws IOException
-        {
-            // Empty.
-        }
     }
 }
