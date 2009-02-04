@@ -37,7 +37,7 @@ public class AdviceDemoModule
     @Match("*")
     public static void adviseLogging(MethodAdviceReceiver receiver, LoggingAdvisor loggingAdvisor, Logger logger)
     {
-        loggingAdvisor.advise(logger, receiver);
+        loggingAdvisor.addLoggingAdvice(logger, receiver);
     }
 
     @Order("after:Logging")

@@ -18,7 +18,8 @@ Service Advisors
   Let's start with a (contrived) example. Let's say you have an existing set of services that have methods
   that sometimes return null, and you want them to return an empty string instead because you are getting some NullPointerExceptions.
 
-  You could track down the implementation of each service and fix the logic that provides a return value ... or you could advise the methods:
+  You could track down the implementation of each service and fix the logic that provides a return value ...
+  or you could advise the methods:
 
 ----
   @Match("*")
@@ -40,20 +41,39 @@ Service Advisors
 ----
 
   This is a method that is placed in a module class. Note the terminology: <advise> is the verb ("to advise a method")
-  and <advice> is the noun ("with this advice").
+  and <advice> is the noun ("with this advice"). The
+  {{{../../apidocs/org/apache/tapestry5/ioc/MethodAdviceReceiver.html}MethodAdviceReceiver}}
+  is a wrapper around the service being advised: you can add advice to some or all methods of the service, and also
+  obtain the interface of the service.  It is automatically passed into service advisor methods.
+
+  The {{{injection.html}guide to injection}} describes what can be injected into a service advisor method.
+
+  Service advisor methods {must} have a parameter of type MethodAdviceReciever.
+
+  A service will often be advised multiple times; any method may have any number of advice objects applied to it.
+  Some methods may not get any advice. All of this is acceptible.
+
+  Service advisor methods are always void methods (this is different than {{{decorator.html}service decorator methods}}).
 
   The {{{../../apidocs/org/apache/tapestry5/ioc/annotations/Match.html}@Match}}
   annotation indicates that this advice applies to all services (both your own, and those defined by Tapestry).
   You will want to narrow down which services are actually targetted in most cases.
 
-  The {{{../../apidocs/org/apache/tapestry5/ioc/MethodAdvice.html}MethodAdvice}} object is very simple; it recieves an
+  Note that some services, especially those built-in to Tapestry IoC, are marked as
+  {{{../../apidocs/org/apache/tapestry5/ioc/annotations/PreventServiceDecoration.html}not subject to decoration}},
+  this applies to service advice as well as service decoration.
+
+  The {{{../../apidocs/org/apache/tapestry5/ioc/MethodAdvice.html}MethodAdvice}} interface is very simple; it receives an
   {{{../../apidocs/org/apache/tapestry5/ioc/Invocation.html}Invocation}} representing a method call. Invocation
   has methods for inspecting the type and value of the parameters, and for overriding the values of the parameters.
 
-  The call to proceed() allows the invocation to continue; the original method is invoked.  You can then inspect
+  The call to proceed() allows the invocation to continue; that is, the original method is invoked.  If the method has been advised
+  multiple times, the call to proceed() may chain into the next MethodAdvice object.  In any case,
+  after invoking proceed(), you may inspect
   and override the result (the return value).
 
-  We can improve our method to only advise methods that return String:
+  Advice is pretty efficient, but it would still be better to apply it only to methods that make sense.
+  We can improve our service advisor method to only advise methods that return String:
 
 ----
   @Match("*")
@@ -78,13 +98,6 @@ Service Advisors
   };
 ----
 
-  The {{{injection.html}guide to injection}} describes what can be injected into a service advisor method.
-
-  Service advisor methods must return void and have a parameter of type MethodAdviceReciever.
-
-  A service will often be advised multiple times; any method may have any number of advice objects added to it.
-  Some methods may not get any advice. All of this is acceptible.
-
 Logging Advice
 
   Logging advice is built into Tapestry.  You can apply logging advice to your services very easily:
@@ -93,7 +106,7 @@ Logging Advice
   @Match("*")
   public static void adviseLogging(LoggingAdvisor loggingAdvisor, Logger logger, MethodAdviceReciever reciever)
   {
-    loggingAdvisor.advise(logger, reciever);
+    loggingAdvisor.addLoggingAdvice(logger, reciever);
   }
 ---
 
@@ -115,8 +128,8 @@ Matching And Orderering
 
 Decorators and Advice
 
-  {{{decorator.html}Service decorators}} are another way to achieve the same thing; service advisors were
-  added in Tapestry 5.1.
+  {{{decorator.html}Service decorators}} are another way to achieve the same thing; service advisors are a more
+  recent addition, added in Tapestry 5.1.
 
   It is not recommended that you mix advice and decoration.  If you do, decoration take precendence; all decorators
   will be in effect before any advice (internally, they are two seperate steps, with advice being processed and the

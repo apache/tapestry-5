@@ -32,5 +32,5 @@ public interface LoggingAdvisor
      * @return a new object implementing the interface that can be used in place of the delegate, providing logging
      *         behavior around each method call on the service interface
      */
-    <T> void advise(Logger logger, MethodAdviceReceiver methodAdviceReceiver);
+    <T> void addLoggingAdvice(Logger logger, MethodAdviceReceiver methodAdviceReceiver);
 }

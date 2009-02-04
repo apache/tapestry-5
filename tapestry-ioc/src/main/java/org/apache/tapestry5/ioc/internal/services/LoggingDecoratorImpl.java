@@ -39,7 +39,7 @@ public class LoggingDecoratorImpl implements LoggingDecorator
                                                                                     "<Logging interceptor for %s(%s)>",
                                                                                     serviceId,
                                                                                     serviceInterface.getName()));
-        advisor.advise(logger, builder);
+        advisor.addLoggingAdvice(logger, builder);
 
         return builder.build();
     }
