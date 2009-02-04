@@ -27,7 +27,7 @@
         <dependency>
             <groupId>javassist</groupId>
             <artifactId>javassist</artifactId>
-            <version>3.8.0.GA</version>
+            <version>3.9.0.GA</version>
         </dependency>
 
         <dependency>
@@ -122,4 +122,11 @@
             </plugin>
         </plugins>
     </reporting>
+    <repositories>
+      <repository>
+	<!-- Needed to keep up with latest Javassist versions. -->
+	<id>jboss</id>
+	<url>http://repository.jboss.com/maven2</url>
+      </repository>
+    </repositories>
 </project>
