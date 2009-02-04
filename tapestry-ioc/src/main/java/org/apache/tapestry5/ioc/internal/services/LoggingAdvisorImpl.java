@@ -29,7 +29,7 @@ public class LoggingAdvisorImpl implements LoggingAdvisor
         this.exceptionTracker = exceptionTracker;
     }
 
-    public <T> void advise(Logger logger, MethodAdviceReceiver receiver)
+    public <T> void addLoggingAdvice(Logger logger, MethodAdviceReceiver receiver)
     {
         MethodAdvice advice = new LoggingAdvice(logger, exceptionTracker);
 
