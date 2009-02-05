@@ -1,4 +1,4 @@
-// Copyright 2006, 2008 The Apache Software Foundation
+// Copyright 2006, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -29,8 +29,11 @@ public interface Asset
      * Returns a URL that can be passed, unchanged, to the client in order for it to access the resource. The same value
      * is returned from <code>toString()</code>.
      * <p/>
-     * Note that the returned value may be {@linkplain SymbolConstants#FORCE_ABSOLUTE_URIS request dependent}. You may
-     * cache instances of Asset, but do not cache the client URL path as it may change.
+     * Tapestry's built-in asset types (context and classpath) always incorporate a version number as part of the path,
+     * and alternate implementation are encouraged to do so as well. In addition, Tapestry ensures that context and
+     * classpath assets have a far-future expires header (to ensure aggresive caching by the client).
+     *
+     * @see org.apache.tapestry5.services.AssetPathConverter
      */
     String toClientURL();
 
@@ -38,4 +41,14 @@ public interface Asset
      * Returns the underlying Resource for the Asset.
      */
     Resource getResource();
+
+    /**
+     * Determines if an asset is variant or invariant: a normal asset is invariant, and always return the same value
+     * from {@link #toClientURL()}.  All the builtin types of assets are invariant. Variant assets calculate their
+     * clientURL dynamically, possibly incorporating user-specific details.
+     *
+     * @return true if the asset's client URL does not change, false if the clientURL is calculated more dynamically.
+     * @since 5.1.0.0
+     */
+    boolean isInvariant();
 }

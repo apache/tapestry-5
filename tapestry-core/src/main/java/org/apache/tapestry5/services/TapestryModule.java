@@ -292,6 +292,7 @@ public final class TapestryModule
         binder.bind(UpdateListenerHub.class, UpdateListenerHubImpl.class);
         binder.bind(ApplicationStatePersistenceStrategy.class, SessionApplicationStatePersistenceStrategy.class).withId(
                 "SessionApplicationStatePersistenceStrategy");
+        binder.bind(AssetPathConverter.class, IdentityAssetPathConverter.class);
     }
 
     // ========================================================================
@@ -975,7 +976,8 @@ public final class TapestryModule
     @Marker(ClasspathProvider.class)
     public AssetFactory buildClasspathAssetFactory(ResourceCache resourceCache, ClasspathAssetAliasManager aliasManager)
     {
-        ClasspathAssetFactory factory = new ClasspathAssetFactory(resourceCache, aliasManager);
+        ClasspathAssetFactory factory = new ClasspathAssetFactory(resourceCache, aliasManager,
+                                                                  new IdentityAssetPathConverter());
 
         resourceCache.addInvalidationListener(factory);
 
@@ -988,7 +990,8 @@ public final class TapestryModule
                                                  @Inject @Symbol(SymbolConstants.APPLICATION_VERSION)
                                                  String applicationVersion)
     {
-        return new ContextAssetFactory(request, globals.getContext(), applicationVersion);
+        return new ContextAssetFactory(request, globals.getContext(), applicationVersion,
+                                       new IdentityAssetPathConverter());
     }
 
     /**

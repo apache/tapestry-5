@@ -22,6 +22,7 @@ import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.AssetFactory;
 import org.apache.tapestry5.services.Context;
 import org.apache.tapestry5.services.Request;
+import org.apache.tapestry5.services.AssetPathConverter;
 
 /**
  * Implementation of {@link AssetFactory} for assets that are part of the web application context.
@@ -36,12 +37,15 @@ public class ContextAssetFactory implements AssetFactory
 
     private final Resource rootResource;
 
+    private final AssetPathConverter assetPathConverter;
+
     public ContextAssetFactory(Request request, Context context,
 
                                @Inject @Symbol(SymbolConstants.APPLICATION_VERSION)
-                               String applicationVersion)
+                               String applicationVersion, AssetPathConverter assetPathConverter)
     {
         this.request = request;
+        this.assetPathConverter = assetPathConverter;
 
         pathPrefix = RequestConstants.ASSET_PATH_PREFIX + RequestConstants.CONTEXT_FOLDER
                 + applicationVersion + "/";
@@ -51,9 +55,11 @@ public class ContextAssetFactory implements AssetFactory
 
     public Asset createAsset(final Resource resource)
     {
-        final String completePath = request.getContextPath() + pathPrefix + resource.getPath();
+        String defaultPath = request.getContextPath() + pathPrefix + resource.getPath();
+        
+        final String completePath = assetPathConverter.convertAssetPath(defaultPath);
 
-        return new Asset()
+        return new AbstractAsset()
         {
             public Resource getResource()
             {
@@ -63,16 +69,6 @@ public class ContextAssetFactory implements AssetFactory
             public String toClientURL()
             {
                 return completePath;
-            }
-
-            /**
-             * Returns the client URL, which is essential to allow informal parameters of type
-             * Asset to generate a proper value.
-             */
-            @Override
-            public String toString()
-            {
-                return toClientURL();
             }
         };
     }

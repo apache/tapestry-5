@@ -12,43 +12,28 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.internal.bindings;
+package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.Asset;
-import org.apache.tapestry5.ioc.Location;
 
-public class AssetBinding extends AbstractBinding
+/**
+ * Base class for an <em>invariant</em> asset.
+ *
+ * @since 5.1.0.0
+ */
+public abstract class AbstractAsset implements Asset
 {
-    private final String description;
-
-    private final Asset asset;
-
-    AssetBinding(Location location, String description, Asset asset)
-    {
-        super(location);
-
-        this.description = description;
-        this.asset = asset;
-    }
-
-    public Object get()
-    {
-        return asset;
-    }
-
     /**
-     * Queries the underlying Asset to determine if {@linkplain org.apache.tapestry5.Asset#isInvariant() it is
-     * invariant}.
+     * Returns true which is correct for most Asset types.
      */
-    @Override
     public boolean isInvariant()
     {
-        return asset.isInvariant();
+        return true;
     }
 
     @Override
     public String toString()
     {
-        return String.format("AssetBinding[%s: %s]", description, asset);
+        return toClientURL();
     }
 }
