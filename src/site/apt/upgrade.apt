@@ -46,9 +46,4 @@ Release 5.1.0.0
   Extra public methods on module classes (methods that do not define services, contribute to services,
   or decorate or advise services) are now errors.
 
-* Asset Interface
-
-  The {{{apidocs/org/apache/tapestry5/Asset.html}Asset}} interface has added a new method,
-  isInvariant().  This should only concern developers who have created their own Asset
-  implementations.
 

@@ -23,13 +23,6 @@ import org.apache.tapestry5.Asset;
  */
 public abstract class AbstractAsset implements Asset
 {
-    /**
-     * Returns true which is correct for most Asset types.
-     */
-    public boolean isInvariant()
-    {
-        return true;
-    }
 
     @Override
     public String toString()

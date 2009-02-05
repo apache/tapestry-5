@@ -20,7 +20,6 @@ import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.internal.util.ClasspathResource;
 import org.apache.tapestry5.services.AssetFactory;
 import org.apache.tapestry5.services.ClasspathAssetAliasManager;
-import org.easymock.EasyMock;
 import org.testng.annotations.Test;
 
 public class ClasspathAssetFactoryTest extends InternalBaseTestCase
@@ -40,11 +39,10 @@ public class ClasspathAssetFactoryTest extends InternalBaseTestCase
 
         train_toClientURL(aliasManager, "foo/Bar.txt", expectedClientURL);
 
-        EasyMock.expectLastCall().times(2); // Cache of the raw path, not the final path which may be optimized
-
         replay();
 
-        ClasspathAssetFactory factory = new ClasspathAssetFactory(cache, aliasManager, new IdentityAssetPathConverter());
+        ClasspathAssetFactory factory = new ClasspathAssetFactory(cache, aliasManager,
+                                                                  new IdentityAssetPathConverter());
 
         Asset asset = factory.createAsset(r);
 
@@ -84,8 +82,6 @@ public class ClasspathAssetFactoryTest extends InternalBaseTestCase
 
         train_toClientURL(aliasManager, "foo/Bar.txt", expectedClientURL);
 
-        EasyMock.expectLastCall().times(2); // 2nd time is the toString() call
-
         replay();
 
         AssetFactory factory = new ClasspathAssetFactory(cache, aliasManager, new IdentityAssetPathConverter());
@@ -114,8 +110,6 @@ public class ClasspathAssetFactoryTest extends InternalBaseTestCase
         String expectedClientURL = "/context/asset/foo/Bar.ABC123.txt";
 
         train_toClientURL(aliasManager, "foo/Bar.ABC123.txt", expectedClientURL);
-
-        EasyMock.expectLastCall().times(2); // 2nd time is the toString() call
 
         replay();
 

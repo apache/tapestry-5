@@ -1982,8 +1982,6 @@ public final class TapestryModule
 
         configuration.add(SymbolConstants.OMIT_GENERATOR_META, "false");
         configuration.add(SymbolConstants.GZIP_COMPRESSION_ENABLED, "true");
-
-        configuration.add(InternalSymbols.FORCE_ASSET_BINDINGS_VARIANT, "false");
     }
 
 

@@ -17,44 +17,20 @@ package org.apache.tapestry5.internal.bindings;
 import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.ioc.Location;
 
-public class AssetBinding extends AbstractBinding
+public class AssetBinding extends InvariantBinding
 {
-    private final String description;
-
     private final Asset asset;
 
-    private final boolean forceVariant;
-
-    AssetBinding(Location location, String description, Asset asset, boolean forceVariant)
+    AssetBinding(Location location, String description, Asset asset)
     {
-        super(location);
+        super(location, Asset.class, description);
 
-        this.description = description;
         this.asset = asset;
-        this.forceVariant = forceVariant;
-    }
-
-    @Override
-    public Class getBindingType()
-    {
-        return Asset.class;
     }
 
     public Object get()
     {
         return asset;
-    }
-
-    /**
-     * Queries the underlying Asset to determine if {@linkplain org.apache.tapestry5.Asset#isInvariant() it is
-     * invariant}.
-     *
-     * @see org.apache.tapestry5.internal.InternalSymbols#FORCE_ASSET_BINDINGS_VARIANT
-     */
-    @Override
-    public boolean isInvariant()
-    {
-        return !forceVariant && asset.isInvariant();
     }
 
     @Override
