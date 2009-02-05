@@ -27,10 +27,4 @@ public class InternalSymbols
      * resources related to the application.
      */
     public static final String APP_NAME = "tapestry.app-name";
-
-    /**
-     * If true, then all assets should be variant (normally this is false, and asset bindings follow {@link
-     * org.apache.tapestry5.Asset#isInvariant()}
-     */
-    public static final String FORCE_ASSET_BINDINGS_VARIANT = "tapestry.force-assets-bindings-variant";
 }

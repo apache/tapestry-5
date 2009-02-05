@@ -24,7 +24,7 @@ public abstract class InvariantBinding extends AbstractBinding
 {
     private final Class bindingType;
 
-    private final String description;
+    protected final String description;
 
     public InvariantBinding(Location location, Class bindingType, String description)
     {
@@ -34,6 +34,9 @@ public abstract class InvariantBinding extends AbstractBinding
         this.description = description;
     }
 
+    /**
+     * Returns true.
+     */
     @Override
     public boolean isInvariant()
     {

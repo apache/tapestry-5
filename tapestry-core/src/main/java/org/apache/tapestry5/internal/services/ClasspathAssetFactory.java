@@ -19,9 +19,9 @@ import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.internal.util.ClasspathResource;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.services.AssetFactory;
+import org.apache.tapestry5.services.AssetPathConverter;
 import org.apache.tapestry5.services.ClasspathAssetAliasManager;
 import org.apache.tapestry5.services.InvalidationListener;
-import org.apache.tapestry5.services.AssetPathConverter;
 
 import java.util.Map;
 
@@ -37,7 +37,7 @@ public class ClasspathAssetFactory implements AssetFactory, InvalidationListener
 
     private final ClasspathAssetAliasManager aliasManager;
 
-    private final Map<Resource, String> resourceToClientURL = CollectionFactory.newConcurrentMap();
+    private final Map<Resource, String> resourceToDefaultPath = CollectionFactory.newConcurrentMap();
 
     private final ClasspathResource rootResource;
 
@@ -55,26 +55,24 @@ public class ClasspathAssetFactory implements AssetFactory, InvalidationListener
 
     public void objectWasInvalidated()
     {
-        resourceToClientURL.clear();
+        resourceToDefaultPath.clear();
     }
 
     private String clientURL(Resource resource)
     {
-        String clientURL = resourceToClientURL.get(resource);
+        String defaultPath = resourceToDefaultPath.get(resource);
 
-        if (clientURL == null)
+        if (defaultPath == null)
         {
-            clientURL = buildClientURL(resource);
-            resourceToClientURL.put(resource, clientURL);
+            defaultPath = buildDefaultPath(resource);
+
+            resourceToDefaultPath.put(resource, defaultPath);
         }
 
-        // The path generated is partially request-dependent and therefore can't be cached, it will even
-        // vary from request to the next.
-
-        return aliasManager.toClientURL(clientURL);
+        return converter.convertAssetPath(defaultPath);
     }
 
-    private String buildClientURL(Resource resource)
+    private String buildDefaultPath(Resource resource)
     {
         boolean requiresDigest = cache.requiresDigest(resource);
 
@@ -89,7 +87,7 @@ public class ClasspathAssetFactory implements AssetFactory, InvalidationListener
             path = path.substring(0, lastdotx + 1) + cache.getDigest(resource) + path.substring(lastdotx);
         }
 
-        return converter.convertAssetPath(path);
+        return aliasManager.toClientURL(path);
     }
 
     public Asset createAsset(final Resource resource)
