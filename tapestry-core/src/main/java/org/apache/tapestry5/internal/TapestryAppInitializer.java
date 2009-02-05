@@ -136,13 +136,13 @@ public class TapestryAppInitializer
 
         ContributionDef aliasModeContribution = new SyntheticSymbolSourceContributionDef("AliasMode",
                                                                                          new SingleKeySymbolProvider(
-                                                                                                 InternalConstants.TAPESTRY_ALIAS_MODE_SYMBOL,
+                                                                                                 InternalSymbols.ALIAS_MODE,
                                                                                                  aliasMode),
                                                                                          "before:ServletContext");
 
         ContributionDef appNameContribution = new SyntheticSymbolSourceContributionDef("AppName",
                                                                                        new SingleKeySymbolProvider(
-                                                                                               InternalConstants.TAPESTRY_APP_NAME_SYMBOL,
+                                                                                               InternalSymbols.APP_NAME,
                                                                                                appName),
                                                                                        "before:ServletContext");
 

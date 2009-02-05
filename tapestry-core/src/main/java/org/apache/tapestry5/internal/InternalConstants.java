@@ -14,8 +14,6 @@
 
 package org.apache.tapestry5.internal;
 
-import org.apache.tapestry5.services.Alias;
-
 public final class InternalConstants
 {
     /**
@@ -28,18 +26,6 @@ public final class InternalConstants
      * Turns off loading of default modules (as driven by JAR file Manifest entries).
      */
     public static final String DISABLE_DEFAULT_MODULES_PARAM = "tapestry.disable-default-modules";
-
-    /**
-     * The application mode, generally "servlet", used to select the correct contributions to the {@link Alias}
-     * service.
-     */
-    public static final String TAPESTRY_ALIAS_MODE_SYMBOL = "tapestry.alias-mode";
-
-    /**
-     * The name of the application (i.e., the name of the application filter). Used, for example, to select additional
-     * resources related to the application.
-     */
-    public static final String TAPESTRY_APP_NAME_SYMBOL = "tapestry.app-name";
 
     /**
      * The extension used for Tapestry component template files, <em>T</em>apestry <em>M</em>arkup <em>L</em>anguage.

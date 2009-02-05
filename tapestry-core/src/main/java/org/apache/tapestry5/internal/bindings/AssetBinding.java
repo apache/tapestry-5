@@ -23,12 +23,21 @@ public class AssetBinding extends AbstractBinding
 
     private final Asset asset;
 
-    AssetBinding(Location location, String description, Asset asset)
+    private final boolean forceVariant;
+
+    AssetBinding(Location location, String description, Asset asset, boolean forceVariant)
     {
         super(location);
 
         this.description = description;
         this.asset = asset;
+        this.forceVariant = forceVariant;
+    }
+
+    @Override
+    public Class getBindingType()
+    {
+        return Asset.class;
     }
 
     public Object get()
@@ -39,11 +48,13 @@ public class AssetBinding extends AbstractBinding
     /**
      * Queries the underlying Asset to determine if {@linkplain org.apache.tapestry5.Asset#isInvariant() it is
      * invariant}.
+     *
+     * @see org.apache.tapestry5.internal.InternalSymbols#FORCE_ASSET_BINDINGS_VARIANT
      */
     @Override
     public boolean isInvariant()
     {
-        return asset.isInvariant();
+        return !forceVariant && asset.isInvariant();
     }
 
     @Override
