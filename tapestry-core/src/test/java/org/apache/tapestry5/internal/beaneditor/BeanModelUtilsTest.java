@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ import org.apache.tapestry5.beaneditor.PropertyModel;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import org.easymock.EasyMock;
 
 public class BeanModelUtilsTest extends InternalBaseTestCase
 {
@@ -85,6 +86,28 @@ public class BeanModelUtilsTest extends InternalBaseTestCase
         replay();
 
         BeanModelUtils.add(model, "fred,barney");
+
+        verify();
+    }
+
+    /**
+     * TAP5-478
+     */
+    @Test
+    public void include_before_add()
+    {
+        BeanModel model = mockBeanModel();
+        PropertyModel fred = mockPropertyModel();
+
+        EasyMock.checkOrder(model, true);
+
+        expect(model.include("sam")).andReturn(model);
+
+        expect(model.add("fred", null)).andReturn(fred);
+
+        replay();
+
+        BeanModelUtils.modify(model, "fred", "sam", null, null);
 
         verify();
     }
