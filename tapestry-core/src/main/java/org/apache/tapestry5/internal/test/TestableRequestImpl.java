@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -22,16 +22,21 @@ import org.apache.tapestry5.services.Session;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.ArrayList;
 
 public class TestableRequestImpl implements TestableRequest
 {
     private final String contextPath;
 
-    private final Map<String, String> parameters = CollectionFactory.newMap();
+    private final Map<String, Object> parameters = CollectionFactory.newMap();
 
     private final Map<String, Object> attributes = CollectionFactory.newMap();
 
     private Session session;
+
+    private String path = "/";
+
+    private Locale locale = Locale.getDefault();
 
     @Inject
     public TestableRequestImpl()
@@ -50,24 +55,65 @@ public class TestableRequestImpl implements TestableRequest
                 String.format("Request: method %s() not yet implemented by TestableRequestImpl.", methodName));
     }
 
-    public void clear()
+    public TestableRequest clear()
     {
         parameters.clear();
+
+        return this;
     }
 
-    public void loadParameter(String parameterName, String parameterValue)
+    public TestableRequest setPath(String path)
+    {
+        this.path = path;
+
+        return this;
+    }
+
+    public TestableRequest setLocale(Locale locale)
+    {
+        this.locale = locale;
+
+        return this;
+    }
+
+    public TestableRequest loadParameter(String parameterName, String parameterValue)
+    {
+        Object existing = parameters.get(parameterName);
+
+        if (existing == null)
+        {
+            parameters.put(parameterName, parameterValue);
+            return this;
+        }
+
+        if (existing instanceof List)
+        {
+            ((List) existing).add(parameterValue);
+            return this;
+        }
+
+        // Convert from a single String to a List of Strings.
+
+        List list = new ArrayList();
+        list.add(existing);
+        list.add(parameterValue);
+
+        parameters.put(parameterName, list);
+
+        return this;
+    }
+
+    public TestableRequest overrideParameter(String parameterName, String parameterValue)
     {
         parameters.put(parameterName, parameterValue);
-    }
 
-    public void loadParameters(Map<String, String> parameterValues)
-    {
-        parameters.putAll(parameterValues);
+        return this;
     }
 
     public long getDateHeader(String name)
     {
         nyi("getDateHeader");
+
         return 0;
     }
 
@@ -83,7 +129,7 @@ public class TestableRequestImpl implements TestableRequest
 
     public Locale getLocale()
     {
-        return nyi("getLocale");
+        return locale;
     }
 
     public List<String> getParameterNames()
@@ -93,14 +139,21 @@ public class TestableRequestImpl implements TestableRequest
 
     public String[] getParameters(String name)
     {
-        String value = getParameter(name);
+        Object value = parameters.get(name);
 
-        return value == null ? null : new String[] {value};
+        if (value == null) return null;
+
+        if (value instanceof String)
+            return new String[] { (String) value };
+
+        List list = (List) value;
+
+        return (String[]) list.toArray(new String[list.size()]);
     }
 
     public String getPath()
     {
-        return nyi("getPath");
+        return path;
     }
 
     public String getContextPath()
@@ -110,7 +163,13 @@ public class TestableRequestImpl implements TestableRequest
 
     public String getParameter(String name)
     {
-        return parameters.get(name);
+        Object value = parameters.get(name);
+
+        if (value == null || value instanceof String) return (String) value;
+
+        List<String> list = (List<String>) value;
+
+        return list.get(0);
     }
 
     public Session getSession(boolean create)

@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,119 +15,49 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.Link;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.services.Response;
 
 import java.util.List;
-import java.util.Locale;
+import java.util.Map;
 
-/**
- * Default implementation of {@link org.apache.tapestry5.Link}.
- */
 public class LinkImpl implements Link
 {
-    private static final int BUFFER_SIZE = 100;
+    private Map<String, String> parameters;
 
-    private final String baseURL;
+    private final String absoluteURI;
 
-    private final String contextPath;
+    private final boolean optimizable;
 
-    private final Locale locale;
+    private final boolean forForm;
 
     private final Response response;
 
     private final RequestPathOptimizer optimizer;
 
-    private final ComponentInvocation invocation;
-
     private String anchor;
 
-    /**
-     * Creates a new Link.  Links may be full or optimized; optimization involves creating a relative URI from the
-     * request's URI to the Link's URI.
-     *
-     * @param response    used to encode the response when necessary
-     * @param optimizer   optimizes complete URLs to appropriate relative URLs
-     * @param baseURL     base URL prefix (before the context path), used when switching between secure and non-secure
-     * @param contextPath path for the context {@link org.apache.tapestry5.services.Request#getContextPath()}
-     * @param locale      if non-null, the locale name will be placed between the context path and the page name
-     * @param invocation  abstraction around the type of link (needed by {@link org.apache.tapestry5.test.PageTester})
-     */
-    public LinkImpl(Response response, RequestPathOptimizer optimizer, String baseURL, String contextPath,
-                    Locale locale, ComponentInvocation invocation)
+    public LinkImpl(String absoluteURI, boolean optimizable, boolean forForm, Response response,
+                     RequestPathOptimizer optimizer)
     {
+        this.absoluteURI = absoluteURI;
+        this.optimizable = optimizable;
+        this.forForm = forForm;
         this.response = response;
         this.optimizer = optimizer;
-        this.baseURL = baseURL;
-        this.contextPath = contextPath;
-        this.invocation = invocation;
-        this.locale = locale;
     }
 
     public void addParameter(String parameterName, String value)
     {
-        invocation.addParameter(parameterName, value);
-    }
+        Defense.notBlank(parameterName, "parameterName");
+        Defense.notBlank(value, "value");
 
-    public List<String> getParameterNames()
-    {
-        return invocation.getParameterNames();
-    }
+        if (parameters == null)
+            parameters = CollectionFactory.newMap();
 
-    public String getParameterValue(String name)
-    {
-        return invocation.getParameterValue(name);
-    }
-
-    public String toURI()
-    {
-        return response.encodeURL(buildURI(false));
-    }
-
-    public String toAbsoluteURI()
-    {
-        return response.encodeURL(buildURI(true));
-    }
-
-    private String buildURI(boolean full)
-    {
-        boolean absolute = full | baseURL != null;
-
-        StringBuilder builder = new StringBuilder(BUFFER_SIZE);
-
-        if (baseURL != null) builder.append(baseURL);
-
-        builder.append(contextPath);
-
-        if (locale != null)
-        {
-            builder.append("/");
-            builder.append(locale.toString());
-        }
-
-        String invocationURI = invocation.buildURI();
-
-        if (invocationURI.length() > 0 || contextPath.length() == 0)
-        {
-            builder.append("/");
-
-            builder.append(invocationURI);
-        }
-
-        if (InternalUtils.isNonBlank(anchor))
-        {
-            builder.append("#");
-            builder.append(anchor);
-        }
-
-        String fullURI = builder.toString();
-
-        return absolute ? fullURI : optimizer.optimizePath(fullURI);
-    }
-
-    public String toRedirectURI()
-    {
-        return response.encodeRedirectURL(buildURI(true));
+        parameters.put(parameterName, value);
     }
 
     public String getAnchor()
@@ -135,14 +65,90 @@ public class LinkImpl implements Link
         return anchor;
     }
 
+    public List<String> getParameterNames()
+    {
+        return InternalUtils.sortedKeys(parameters);
+    }
+
+    public String getParameterValue(String name)
+    {
+        return InternalUtils.get(parameters, name);
+    }
+
     public void setAnchor(String anchor)
     {
         this.anchor = anchor;
     }
 
+    public String toAbsoluteURI()
+    {
+        return appendAnchor(response.encodeURL(buildURI()));
+    }
+
+    public String toRedirectURI()
+    {
+        return appendAnchor(response.encodeRedirectURL(buildURI()));
+    }
+
+    public String toURI()
+    {
+        String path = buildURI();
+
+        if (optimizable)
+            path = optimizer.optimizePath(path);
+
+        return appendAnchor(response.encodeURL(path));
+    }
+
+    private String appendAnchor(String path)
+    {
+        return InternalUtils.isBlank(anchor)
+               ? path
+               : path + "#" + anchor;
+    }
+
+    /**
+     * Returns the value from {@link #toURI()}
+     */
     @Override
     public String toString()
     {
         return toURI();
+    }
+
+
+    /**
+     * Extends the absolute path with any query parameters. Query parameters are never added to a forForm link.
+     *
+     * @return absoluteURI appended with query parameters
+     */
+    private String buildURI()
+    {
+        if (forForm || parameters == null)
+            return absoluteURI;
+
+        StringBuilder builder = new StringBuilder(absoluteURI.length() * 2);
+
+        builder.append(absoluteURI);
+
+        String sep = "?";
+
+        for (String name : getParameterNames())
+        {
+            String value = parameters.get(name);
+
+            builder.append(sep);
+
+            // We assume that the name is URL safe and that the value will already have been URL
+            // encoded if it is not known to be URL safe.
+
+            builder.append(name);
+            builder.append("=");
+            builder.append(value);
+
+            sep = "&";
+        }
+
+        return builder.toString();
     }
 }

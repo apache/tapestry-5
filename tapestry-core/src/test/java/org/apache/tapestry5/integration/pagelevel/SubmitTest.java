@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -55,14 +55,25 @@ public class SubmitTest extends Assert
     public void not_a_submit()
     {
         Element submitButton = doc.getElementById("t1");
+        
         tester.clickSubmit(submitButton, fieldValues);
     }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
+    @Test
     public void not_in_form()
     {
-        Element submitButton = doc.getElementById("orphanedSubmit");
-        tester.clickSubmit(submitButton, fieldValues);
+        try
+        {
+            Element submitButton = doc.getElementById("orphanedSubmit");
+
+            tester.clickSubmit(submitButton, fieldValues);
+
+            throw new RuntimeException("Should not be reachable.");
+        }
+        catch (RuntimeException ex)
+        {
+            assertEquals(ex.getMessage(), "Could not locate an ancestor element of type 'form'.");
+        }
     }
 
     @BeforeMethod

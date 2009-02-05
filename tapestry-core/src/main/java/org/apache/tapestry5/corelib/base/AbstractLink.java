@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,7 +19,6 @@ import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.dom.Element;
-import org.apache.tapestry5.internal.services.ComponentInvocationMap;
 import org.apache.tapestry5.ioc.annotations.Inject;
 
 /**
@@ -28,9 +27,6 @@ import org.apache.tapestry5.ioc.annotations.Inject;
 @SupportsInformalParameters
 public abstract class AbstractLink implements ClientElement
 {
-    @Inject
-    private ComponentInvocationMap componentInvocationMap;
-
     /**
      * An anchor value to append to the generated URL (the hash separator will be added automatically).
      */
@@ -90,8 +86,6 @@ public abstract class AbstractLink implements ClientElement
 
         resources.renderInformalParameters(writer);
 
-        componentInvocationMap.store(element, link);
-
         this.link = link;
     }
 
@@ -140,10 +134,9 @@ public abstract class AbstractLink implements ClientElement
     /**
      * Used for testing.
      */
-    final void inject(String anchor, ComponentInvocationMap map, ComponentResources resources)
+    final void inject(String anchor, ComponentResources resources)
     {
         this.anchor = anchor;
-        componentInvocationMap = map;
         this.resources = resources;
     }
 }

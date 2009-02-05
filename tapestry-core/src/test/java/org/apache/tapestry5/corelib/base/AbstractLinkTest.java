@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,11 +18,8 @@ import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.Link;
 import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.dom.Element;
-import org.apache.tapestry5.internal.services.ComponentInvocation;
-import org.apache.tapestry5.internal.services.ComponentInvocationMap;
 import org.apache.tapestry5.internal.services.MarkupWriterImpl;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
-import org.apache.tapestry5.internal.test.PageTesterComponentInvocationMap;
 import org.testng.annotations.Test;
 
 public class AbstractLinkTest extends InternalBaseTestCase
@@ -38,11 +35,7 @@ public class AbstractLinkTest extends InternalBaseTestCase
     {
         Link link = mockLink();
         ComponentResources resources = mockComponentResources();
-        ComponentInvocationMap map = new PageTesterComponentInvocationMap();
         MarkupWriter writer = new MarkupWriterImpl();
-        ComponentInvocation invocation = mockComponentInvocation();
-
-        map.store(link, invocation);
 
         train_toURI(link, LINK_URI);
 
@@ -50,7 +43,7 @@ public class AbstractLinkTest extends InternalBaseTestCase
 
         replay();
 
-        linkFixture.inject(null, map, resources);
+        linkFixture.inject(null, resources);
 
         linkFixture.writeLink(writer, link);
 
@@ -62,7 +55,6 @@ public class AbstractLinkTest extends InternalBaseTestCase
         writer.end();
 
         assertEquals(writer.toString(), "<a href=\"/foo/bar.baz\">link text</a>");
-        assertSame(map.get(e), invocation);
     }
 
     @Test
@@ -70,11 +62,7 @@ public class AbstractLinkTest extends InternalBaseTestCase
     {
         Link link = mockLink();
         ComponentResources resources = mockComponentResources();
-        ComponentInvocationMap map = new PageTesterComponentInvocationMap();
         MarkupWriter writer = new MarkupWriterImpl();
-        ComponentInvocation invocation = mockComponentInvocation();
-
-        map.store(link, invocation);
 
         train_toURI(link, LINK_URI);
 
@@ -82,18 +70,15 @@ public class AbstractLinkTest extends InternalBaseTestCase
 
         replay();
 
-        linkFixture.inject("wilma", map, resources);
+        linkFixture.inject("wilma", resources);
 
         linkFixture.writeLink(writer, link);
 
         verify();
 
-        Element e = writer.getElement();
-
         writer.write("link text");
         writer.end();
 
         assertEquals(writer.toString(), "<a href=\"/foo/bar.baz#wilma\">link text</a>");
-        assertSame(map.get(e), invocation);
     }
 }

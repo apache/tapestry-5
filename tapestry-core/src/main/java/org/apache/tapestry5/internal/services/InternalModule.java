@@ -59,7 +59,6 @@ public class InternalModule
         binder.bind(TemplateParser.class, TemplateParserImpl.class);
         binder.bind(PageResponseRenderer.class, PageResponseRendererImpl.class);
         binder.bind(PageMarkupRenderer.class, PageMarkupRendererImpl.class);
-        binder.bind(ComponentInvocationMap.class, NoOpComponentInvocationMap.class);
         binder.bind(LinkSource.class, LinkSourceImpl.class);
         binder.bind(LocalizationSetter.class, LocalizationSetterImpl.class);
         binder.bind(PageElementFactory.class, PageElementFactoryImpl.class);

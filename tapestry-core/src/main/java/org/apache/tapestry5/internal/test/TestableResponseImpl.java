@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
 package org.apache.tapestry5.internal.test;
 
 import org.apache.tapestry5.Link;
+import org.apache.tapestry5.dom.Document;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -26,6 +27,8 @@ public class TestableResponseImpl implements TestableResponse
     private Link link;
 
     private boolean committed;
+
+    private Document renderedDocument;
 
     private void nyi(String methodName)
     {
@@ -60,22 +63,18 @@ public class TestableResponseImpl implements TestableResponse
 
     public void setContentLength(int length)
     {
-        nyi("setContentLength");
     }
 
     public void setDateHeader(String name, long date)
     {
-        nyi("setDateHeader");
     }
 
     public void setHeader(String name, String value)
     {
-        nyi("setHeader");
     }
 
     public void setIntHeader(String name, int value)
     {
-        nyi("setIntHeader");
     }
 
     public void sendRedirect(Link link) throws IOException
@@ -113,5 +112,17 @@ public class TestableResponseImpl implements TestableResponse
     {
         committed = false;
         link = null;
+
+        renderedDocument = null;
+    }
+
+    public Document getRenderedDocument()
+    {
+        return renderedDocument;
+    }
+
+    public void setRenderedDocument(Document document)
+    {
+        renderedDocument = document;
     }
 }

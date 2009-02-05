@@ -192,4 +192,15 @@ public final class Document extends Node
 
         return rootElement.getNamespaceURIToPrefix();
     }
+
+    /**
+     * Visits the root element of the document.
+     *
+     * @param visitor callback
+     * @since 5.1.0.0
+     */
+    void visit(Visitor visitor)
+    {
+        rootElement.visit(visitor);
+    }
 }

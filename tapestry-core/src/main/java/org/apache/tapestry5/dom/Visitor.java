@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,23 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.internal.services;
+package org.apache.tapestry5.dom;
 
 /**
- * An invocation target that is specified as a path without further meaning.
+ * A callback interface used navigate the {@link org.apache.tapestry5.dom.Element}s of a document.
+ *
+ * @since 5.1.0.0
  */
-public class OpaqueConstantTarget implements InvocationTarget
+public interface Visitor
 {
-    private final String path;
-
-    public OpaqueConstantTarget(String path)
-    {
-        this.path = path;
-    }
-
-    public String getPath()
-    {
-        return path;
-    }
-
+    /**
+     * Called for each Element being visited.
+     *
+     * @param element visited
+     */
+    void visit(Element element);
 }

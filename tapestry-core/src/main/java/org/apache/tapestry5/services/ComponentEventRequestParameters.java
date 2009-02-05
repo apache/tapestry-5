@@ -15,6 +15,7 @@
 package org.apache.tapestry5.services;
 
 import org.apache.tapestry5.EventContext;
+import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.ioc.internal.util.Defense;
 
 /**
@@ -67,26 +68,9 @@ public final class ComponentEventRequestParameters
         if (!eventType.equals(that.eventType)) return false;
         if (!nestedComponentId.equals(that.nestedComponentId)) return false;
 
-        if (!isEqual(eventContext, that.eventContext)) return false;
+        if (!TapestryInternalUtils.isEqual(eventContext, that.eventContext)) return false;
 
-        return isEqual(pageActivationContext, that.pageActivationContext);
-    }
-
-    private boolean isEqual(EventContext left, EventContext right)
-    {
-        if (left == right) return true;
-
-        int count = left.getCount();
-
-        if (count != right.getCount()) return false;
-
-        for (int i = 0; i < count; i++)
-        {
-            if (!left.get(Object.class, i).equals(right.get(Object.class, i)))
-                return false;
-        }
-
-        return true;
+        return TapestryInternalUtils.isEqual(pageActivationContext, that.pageActivationContext);
     }
 
 

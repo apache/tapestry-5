@@ -15,13 +15,11 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.Link;
-import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.internal.structure.Page;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.Defense;
-import org.apache.tapestry5.services.ContextPathEncoder;
-import org.apache.tapestry5.services.LinkCreationHub;
-import org.apache.tapestry5.services.LinkCreationListener;
+import org.apache.tapestry5.ioc.services.TypeCoercer;
+import org.apache.tapestry5.services.*;
 
 import java.util.List;
 
@@ -31,26 +29,25 @@ public class LinkSourceImpl implements LinkSource, LinkCreationHub
 
     private final PageRenderQueue pageRenderQueue;
 
-    private final ContextPathEncoder contextPathEncoder;
-
     private final PageActivationContextCollector contextCollector;
 
     private final LinkFactory linkFactory;
 
     private final List<LinkCreationListener> listeners = CollectionFactory.newThreadSafeList();
 
+    private final TypeCoercer typeCoercer;
+
     public LinkSourceImpl(
             RequestPageCache pageCache,
             PageRenderQueue pageRenderQueue,
-            ContextPathEncoder contextPathEncoder,
             PageActivationContextCollector contextCollector,
-            LinkFactory linkFactory)
+            LinkFactory linkFactory, TypeCoercer typeCoercer)
     {
         this.pageCache = pageCache;
         this.pageRenderQueue = pageRenderQueue;
-        this.contextPathEncoder = contextPathEncoder;
         this.contextCollector = contextCollector;
         this.linkFactory = linkFactory;
+        this.typeCoercer = typeCoercer;
     }
 
     public Link createComponentEventLink(Page page, String nestedId, String eventType, boolean forForm,
@@ -65,20 +62,19 @@ public class LinkSourceImpl implements LinkSource, LinkCreationHub
         if (activePage == null)
             activePage = page;
 
-        ComponentEventTarget target = new ComponentEventTarget(eventType, activePage.getLogicalName(), nestedId);
-
         Object[] pageActivationContext = contextCollector.collectPageActivationContext(activePage);
 
-        ComponentInvocation invocation = new ComponentInvocationImpl(contextPathEncoder, target, eventContext,
-                                                                     pageActivationContext, forForm);
+        ComponentEventRequestParameters parameters
+                = new ComponentEventRequestParameters(
+                activePage.getLogicalName(),
+                page.getLogicalName(),
+                toBlank(nestedId),
+                eventType,
+                new ArrayEventContext(typeCoercer, pageActivationContext),
+                new ArrayEventContext(typeCoercer, eventContext));
 
-        Link link = linkFactory.create(activePage, invocation);
 
-        // TAPESTRY-2044: Sometimes the active page drags in components from another page and we
-        // need to differentiate that.
-
-        if (activePage != page)
-            link.addParameter(InternalConstants.CONTAINER_PAGE_NAME, page.getLogicalName().toLowerCase());
+        Link link = linkFactory.createComponentEventLink(parameters, forForm);
 
         for (LinkCreationListener listener : listeners)
             listener.createdComponentEventLink(link);
@@ -86,6 +82,10 @@ public class LinkSourceImpl implements LinkSource, LinkCreationHub
         return link;
     }
 
+    private String toBlank(String input)
+    {
+        return input == null ? "" : input;
+    }
 
     public Link createPageRenderLink(Page page, boolean override, Object... pageActivationContext)
     {
@@ -99,11 +99,11 @@ public class LinkSourceImpl implements LinkSource, LinkCreationHub
                            ? pageActivationContext
                            : contextCollector.collectPageActivationContext(page);
 
-        PageRenderTarget target = new PageRenderTarget(logicalPageName);
+        PageRenderRequestParameters parameters =
+                new PageRenderRequestParameters(logicalPageName,
+                                                new ArrayEventContext(typeCoercer, context));
 
-        ComponentInvocation invocation = new ComponentInvocationImpl(contextPathEncoder, target, null, context, false);
-
-        Link link = linkFactory.create(page, invocation);
+        Link link = linkFactory.createPageRenderLink(parameters);
 
         for (LinkCreationListener listener : listeners)
             listener.createdPageRenderLink(link);

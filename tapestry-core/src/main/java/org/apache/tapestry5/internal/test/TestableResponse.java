@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,10 +15,21 @@
 package org.apache.tapestry5.internal.test;
 
 import org.apache.tapestry5.Link;
+import org.apache.tapestry5.dom.Document;
 import org.apache.tapestry5.services.Response;
 
 public interface TestableResponse extends Response
 {
+    /**
+     * Invoked as part of the rendering pipeline to store the final rendered Document object.
+     */
+    void setRenderedDocument(Document document);
+
+    /**
+     * Allows access to the rendered document.
+     */
+    Document getRenderedDocument();
+
     /**
      * Returns the link redirected to via {@link org.apache.tapestry5.services.Response#sendRedirect(org.apache.tapestry5.Link)}.
      */

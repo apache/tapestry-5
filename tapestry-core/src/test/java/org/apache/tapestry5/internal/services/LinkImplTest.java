@@ -42,15 +42,14 @@ public class LinkImplTest extends InternalBaseTestCase
     {
         RequestPathOptimizer optimizer = mockRequestPathOptimizer();
         Response response = mockResponse();
-        ComponentInvocation invocation = mockComponentInvocation();
 
-        train_buildURI(invocation, RAW_PATH);
+        String URI = "/base/context/" + RAW_PATH;
 
-        train_encodeRedirectURL(response, "/base/context/" + RAW_PATH, ENCODED);
+        train_encodeRedirectURL(response, URI, ENCODED);
 
         replay();
 
-        Link link = new LinkImpl(response, optimizer, "/base", "/context", null, invocation);
+        Link link = new LinkImpl(URI, true, false, response, optimizer);
 
         assertEquals(link.toRedirectURI(), ENCODED);
 
@@ -62,16 +61,13 @@ public class LinkImplTest extends InternalBaseTestCase
     {
         RequestPathOptimizer optimizer = mockRequestPathOptimizer();
         Response response = mockResponse();
-        ComponentInvocation invocation = mockComponentInvocation();
-
-        train_buildURI(invocation, RAW_PATH);
 
         train_optimizePath(optimizer, "/bar/" + RAW_PATH, OPTIMIZED);
         train_encodeURL(response, OPTIMIZED, ENCODED);
 
         replay();
 
-        Link link = new LinkImpl(response, optimizer, null, "/bar", null, invocation);
+        Link link = new LinkImpl("/bar/" + RAW_PATH, true, false, response, optimizer);
 
         assertEquals(link.toString(), ENCODED);
 
@@ -83,13 +79,12 @@ public class LinkImplTest extends InternalBaseTestCase
     {
         RequestPathOptimizer optimizer = mockRequestPathOptimizer();
         Response response = mockResponse();
-        ComponentInvocation invocation = mockComponentInvocation();
-
-        train_getParameter(invocation, "fred", "flintstone");
 
         replay();
 
-        Link link = new LinkImpl(response, optimizer, "", "bar", null, invocation);
+        Link link = new LinkImpl("/foo/bar", true, false, response, optimizer);
+
+        link.addParameter("fred", "flintstone");
 
         assertEquals(link.getParameterValue("fred"), "flintstone");
 
@@ -99,43 +94,24 @@ public class LinkImplTest extends InternalBaseTestCase
     @Test
     public void url_with_anchor()
     {
-        try_with_anchor("wilma", "/context/" + RAW_PATH + "#wilma");
-    }
-
-    @Test
-    public void url_with_null_anchor()
-    {
-        try_with_anchor(null, "/context/" + RAW_PATH);
-    }
-
-    @Test
-    public void url_with_empty_anchor()
-    {
-        try_with_anchor("", "/context/" + RAW_PATH);
-    }
-
-    private void try_with_anchor(String anchor, String url)
-    {
         RequestPathOptimizer optimizer = mockRequestPathOptimizer();
         Response response = mockResponse();
-        ComponentInvocation invocation = mockComponentInvocation();
 
-        train_buildURI(invocation, RAW_PATH);
-        train_optimizePath(optimizer, url, OPTIMIZED);
+        train_optimizePath(optimizer, "/foo/bar", OPTIMIZED);
         train_encodeURL(response, OPTIMIZED, ENCODED);
 
         replay();
 
-        Link link = new LinkImpl(response, optimizer, null, "/context", null, invocation);
+        Link link = new LinkImpl("/foo/bar", true, false, response, optimizer);
+        link.setAnchor("wilma");
 
-        link.setAnchor(anchor);
+        assertSame(link.getAnchor(), "wilma");
 
-        assertSame(link.getAnchor(), anchor);
-
-        assertEquals(link.toURI(), ENCODED);
+        assertEquals(link.toURI(), ENCODED + "#" + "wilma");
 
         verify();
     }
+
 
     @Test
     public void force_absolute_uri()
@@ -148,12 +124,7 @@ public class LinkImplTest extends InternalBaseTestCase
         replay();
 
 
-        Link link = new LinkImpl(response, optimizer, null, "/ctx",
-                                 null,
-                                 new ComponentInvocationImpl(contextPathEncoder, new OpaqueConstantTarget("foo"), null,
-                                                             null,
-                                                             false)
-        );
+        Link link = new LinkImpl("/ctx/foo", true, false, response, optimizer);
 
         assertEquals(link.toAbsoluteURI(), ENCODED);
 
