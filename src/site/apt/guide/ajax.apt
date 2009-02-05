@@ -177,7 +177,7 @@ Ajax Components and Mixins
 
 
   The mixin can be configured in a number of ways, see the
-  {{{../component-parameters.html}component reference}}.
+  {{{../tapestry-core/ref/}component reference}}.
 
   When the user types into the field, the client-side JavaScript will send a request to the server to
   get completions.
