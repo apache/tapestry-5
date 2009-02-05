@@ -70,7 +70,7 @@ public class InternalBaseTestCase extends TapestryTestCase implements Registry
 
         // A synthetic module to ensure that the tapestry.alias-mode is set correctly.
 
-        SymbolProvider provider = new SingleKeySymbolProvider(InternalConstants.TAPESTRY_ALIAS_MODE_SYMBOL, "servlet");
+        SymbolProvider provider = new SingleKeySymbolProvider(InternalSymbols.ALIAS_MODE, "servlet");
         ContributionDef contribution = new SyntheticSymbolSourceContributionDef("AliasMode", provider,
                                                                                 "before:ApplicationDefaults");
 

@@ -304,7 +304,7 @@ public final class TapestryModule
     @PreventServiceDecoration
     public static Alias buildAlias(Logger logger,
 
-                                   @Inject @Symbol(InternalConstants.TAPESTRY_ALIAS_MODE_SYMBOL)
+                                   @Inject @Symbol(InternalSymbols.ALIAS_MODE)
                                    String mode,
 
                                    @InjectService("AliasOverrides")
@@ -1968,7 +1968,7 @@ public final class TapestryModule
         configuration.add(SymbolConstants.CHARSET, "UTF-8");
 
         configuration.add(SymbolConstants.APPLICATION_CATALOG,
-                          "WEB-INF/${" + InternalConstants.TAPESTRY_APP_NAME_SYMBOL + "}.properties");
+                          "WEB-INF/${" + InternalSymbols.APP_NAME + "}.properties");
 
         configuration.add(SymbolConstants.EXCEPTION_REPORT_PAGE, "ExceptionReport");
 
@@ -1982,6 +1982,8 @@ public final class TapestryModule
 
         configuration.add(SymbolConstants.OMIT_GENERATOR_META, "false");
         configuration.add(SymbolConstants.GZIP_COMPRESSION_ENABLED, "true");
+
+        configuration.add(InternalSymbols.FORCE_ASSET_BINDINGS_VARIANT, "false");
     }
 
 

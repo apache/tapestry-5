@@ -17,8 +17,10 @@ package org.apache.tapestry5.internal.bindings;
 import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.Binding;
 import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.internal.InternalSymbols;
 import org.apache.tapestry5.ioc.Location;
 import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.AssetSource;
 import org.apache.tapestry5.services.BindingFactory;
 
@@ -32,9 +34,15 @@ public class AssetBindingFactory implements BindingFactory
 {
     private final AssetSource source;
 
-    public AssetBindingFactory(AssetSource source)
+    private final boolean forceVariant;
+
+    public AssetBindingFactory(AssetSource source,
+
+                               @Symbol(InternalSymbols.FORCE_ASSET_BINDINGS_VARIANT)
+                               boolean forceVariant)
     {
         this.source = source;
+        this.forceVariant = forceVariant;
     }
 
     public Binding newBinding(String description, ComponentResources container, ComponentResources component,
@@ -44,6 +52,6 @@ public class AssetBindingFactory implements BindingFactory
 
         Asset asset = source.getAsset(baseResource, expression, container.getLocale());
 
-        return new AssetBinding(location, description, asset);
+        return new AssetBinding(location, description, asset, forceVariant);
     }
 }
