@@ -74,6 +74,8 @@ Third Party Libraries, Tutorials and Resources
 *--+--+--+
 | {{{http://www.localhost.nu/java/tapestry5-acegi/}tapestry5-acegi}} | Robin Helgelin  | Integration with the Acegi path-based security framework. |
 *--+--+--+
+| {{{http://tapestry.formos.com/nightly/tapestry-templating/}tapestry-templating}} | Howard M. Lewis Ship |  Use Tapestry pages off-line to generate content (such as email) |
+*--+--+--+
 | {{{http://code.google.com/p/tapestry5-treegrid/}tapestry5-treegrid}} | Gabriel Landais |  Combination tree navigation and data grid, based on sstree. |
 *--+--+--+
 
@@ -95,6 +97,9 @@ New And Of Note
 
   * IoC Service contributions may now be made in terms of classes (that are automatically instantiated) as well as
     instances.
+
+  * A simpler method of {{{apidocs/org/apache/tapestry5/ioc/services/ServiceOverride}overriding built-in services}}
+    has been added.
 
   []
 

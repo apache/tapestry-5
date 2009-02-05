@@ -33,7 +33,7 @@ public class ContextAssetFactoryTest extends InternalBaseTestCase
 
         replay();
 
-        AssetFactory factory = new ContextAssetFactory(request, context, "1.2.3");
+        AssetFactory factory = new ContextAssetFactory(request, context, "1.2.3", new IdentityAssetPathConverter());
 
         assertEquals(factory.getRootResource().toString(), "context:/");
 
@@ -52,7 +52,7 @@ public class ContextAssetFactoryTest extends InternalBaseTestCase
 
         replay();
 
-        AssetFactory factory = new ContextAssetFactory(request, context, "4.5.6");
+        AssetFactory factory = new ContextAssetFactory(request, context, "4.5.6", new IdentityAssetPathConverter());
 
         Asset asset = factory.createAsset(r);
 

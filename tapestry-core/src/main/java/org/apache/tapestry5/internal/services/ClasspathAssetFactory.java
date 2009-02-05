@@ -17,10 +17,11 @@ package org.apache.tapestry5.internal.services;
 import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.internal.util.ClasspathResource;
-import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newConcurrentMap;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.services.AssetFactory;
 import org.apache.tapestry5.services.ClasspathAssetAliasManager;
 import org.apache.tapestry5.services.InvalidationListener;
+import org.apache.tapestry5.services.AssetPathConverter;
 
 import java.util.Map;
 
@@ -36,14 +37,18 @@ public class ClasspathAssetFactory implements AssetFactory, InvalidationListener
 
     private final ClasspathAssetAliasManager aliasManager;
 
-    private final Map<Resource, String> resourceToClientURL = newConcurrentMap();
+    private final Map<Resource, String> resourceToClientURL = CollectionFactory.newConcurrentMap();
 
     private final ClasspathResource rootResource;
 
-    public ClasspathAssetFactory(final ResourceCache cache, final ClasspathAssetAliasManager aliasManager)
+    private final AssetPathConverter converter;
+
+    public ClasspathAssetFactory(final ResourceCache cache, final ClasspathAssetAliasManager aliasManager,
+                                 AssetPathConverter converter)
     {
         this.cache = cache;
         this.aliasManager = aliasManager;
+        this.converter = converter;
 
         rootResource = new ClasspathResource("");
     }
@@ -84,12 +89,12 @@ public class ClasspathAssetFactory implements AssetFactory, InvalidationListener
             path = path.substring(0, lastdotx + 1) + cache.getDigest(resource) + path.substring(lastdotx);
         }
 
-        return path;
+        return converter.convertAssetPath(path);
     }
 
     public Asset createAsset(final Resource resource)
     {
-        return new Asset()
+        return new AbstractAsset()
         {
             public Resource getResource()
             {
@@ -99,12 +104,6 @@ public class ClasspathAssetFactory implements AssetFactory, InvalidationListener
             public String toClientURL()
             {
                 return clientURL(resource);
-            }
-
-            @Override
-            public String toString()
-            {
-                return toClientURL();
             }
         };
     }

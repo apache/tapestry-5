@@ -47,6 +47,7 @@
             <item name="Nightly Docs" href="http://tapestry.formos.com/nightly/tapestry5/"/>
             <item name="Issues" href="https://issues.apache.org/jira/browse/TAP5"/>
             <item name="FAQ" href="faq/general.html"/>
+            <item name="Refcard" href="http://refcardz.dzone.com/refcardz/apache-tapestry-50?oid=hom7545"/>
         </menu>
 
         <menu name="Upgrade Notes">

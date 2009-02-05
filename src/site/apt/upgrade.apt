@@ -15,6 +15,8 @@ Upgrade Notes
 
 Release 5.1.0.0
 
+* Performance Improvements
+
   As part of the changes related to
   {{{https://issues.apache.org/jira/browse/TAP5-417}TAP5-417: Tapestry 5.0 Performance Improvements}},
   you should be aware that Tapestry will now optimize the render phase state machine.
@@ -23,14 +25,30 @@ Release 5.1.0.0
   {{{apidocs/org/apache/tapestry5/model/MutableComponentModel.html#addRenderPhase(Class)}inform
   Tapestry that the render phase should be invoked}}.
 
+* Tapestry/Spring
+
   There have been some significant changes to the {{{tapestry-spring/}tapestry-spring}} module, to
   support injection of Tapestry services into Springbeans.
+
+* Session Persisted Objects
 
   Tapestry is now more aggressive about automatically re-storing any session persisted object
   back into the session at the end of the request (this used to only apply to application state objects).  See the 
   {{{guide/persist.html}persistent page data}} notes for more details.
 
+* Module Classes
+
   Many questionable practices in Tapestry module classes that used to produce warnings (which were
   ignored, leading to more difficult questions) have been changed to fail early with exceptions. This includes
   extra public methods on a module class that are not used by Tapestry IoC, and several other similar
   scenarios.
+
+  Extra public methods on module classes (methods that do not define services, contribute to services,
+  or decorate or advise services) are now errors.
+
+* Asset Interface
+
+  The {{{apidocs/org/apache/tapestry5/Asset.html}Asset}} interface has added a new method,
+  isInvariant().  This should only concern developers who have created their own Asset
+  implementations.
+
