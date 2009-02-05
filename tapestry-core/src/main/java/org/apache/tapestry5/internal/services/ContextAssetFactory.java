@@ -15,14 +15,11 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.Asset;
-import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.ioc.Resource;
-import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.AssetFactory;
+import org.apache.tapestry5.services.AssetPathConverter;
 import org.apache.tapestry5.services.Context;
 import org.apache.tapestry5.services.Request;
-import org.apache.tapestry5.services.AssetPathConverter;
 
 /**
  * Implementation of {@link AssetFactory} for assets that are part of the web application context.
@@ -41,8 +38,9 @@ public class ContextAssetFactory implements AssetFactory
 
     public ContextAssetFactory(Request request, Context context,
 
-                               @Inject @Symbol(SymbolConstants.APPLICATION_VERSION)
-                               String applicationVersion, AssetPathConverter assetPathConverter)
+                               String applicationVersion,
+
+                               AssetPathConverter assetPathConverter)
     {
         this.request = request;
         this.assetPathConverter = assetPathConverter;
@@ -55,9 +53,7 @@ public class ContextAssetFactory implements AssetFactory
 
     public Asset createAsset(final Resource resource)
     {
-        String defaultPath = request.getContextPath() + pathPrefix + resource.getPath();
-        
-        final String completePath = assetPathConverter.convertAssetPath(defaultPath);
+        final String defaultPath = request.getContextPath() + pathPrefix + resource.getPath();
 
         return new AbstractAsset()
         {
@@ -68,7 +64,7 @@ public class ContextAssetFactory implements AssetFactory
 
             public String toClientURL()
             {
-                return completePath;
+                return assetPathConverter.convertAssetPath(defaultPath);
             }
         };
     }
