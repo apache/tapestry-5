@@ -197,7 +197,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
             if (!serviceIdToModule.containsKey(serviceId))
             {
                 throw new IllegalArgumentException(
-                        String.format("Contibution %s is for service '%s', which does not exist.",
+                        String.format("Contribution %s is for service '%s', which does not exist.",
                                       cd, serviceId));
             }
         }
