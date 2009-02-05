@@ -1081,7 +1081,7 @@ public class IntegrationTest extends IOCInternalTestCase
         catch (IllegalArgumentException ex)
         {
             assertMessageContains(ex,
-                                  "Contibution org.apache.tapestry5.ioc.InvalidContributeDefModule.contributeDoesNotExist(Configuration)",
+                                  "Contribution org.apache.tapestry5.ioc.InvalidContributeDefModule.contributeDoesNotExist(Configuration)",
                                   "is for service 'DoesNotExist', which does not exist.");
         }
     }
