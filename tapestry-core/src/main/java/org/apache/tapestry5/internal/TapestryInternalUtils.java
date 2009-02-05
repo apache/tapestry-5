@@ -17,6 +17,7 @@ package org.apache.tapestry5.internal;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.tapestry5.OptionModel;
 import org.apache.tapestry5.SelectModel;
+import org.apache.tapestry5.EventContext;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.Defense;
@@ -436,5 +437,22 @@ public class TapestryInternalUtils
         int lastx = asString.indexOf('=');
 
         return lastx > 0 ? asString.substring(0, lastx) : asString;
+    }
+
+    public static boolean isEqual(EventContext left, EventContext right)
+    {
+        if (left == right) return true;
+
+        int count = left.getCount();
+
+        if (count != right.getCount()) return false;
+
+        for (int i = 0; i < count; i++)
+        {
+            if (!left.get(Object.class, i).equals(right.get(Object.class, i)))
+                return false;
+        }
+
+        return true;
     }
 }

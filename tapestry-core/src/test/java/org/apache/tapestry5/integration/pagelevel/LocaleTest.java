@@ -45,10 +45,16 @@ public class LocaleTest extends Assert
     @Test
     public void change_language_in_browser()
     {
+        tester.setPreferedLanguage(Locale.ENGLISH);
+        
         Document doc = tester.renderPage("TestPageForLocale");
+
         assertEquals(doc.getElementById("id1").getChildMarkup(), "English page");
+
         tester.setPreferedLanguage(Locale.CANADA_FRENCH);
+
         doc = tester.renderPage("TestPageForLocale");
+        
         assertEquals(doc.getElementById("id1").getChildMarkup(), "French page");
     }
 

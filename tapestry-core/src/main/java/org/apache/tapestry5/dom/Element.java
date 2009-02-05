@@ -18,6 +18,7 @@ import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.ioc.util.Stack;
 
 import java.io.PrintWriter;
 import java.util.*;
@@ -690,5 +691,49 @@ public final class Element extends Node
         }
 
         return true;
+    }
+
+    /**
+     * Depth-first visitor traversal of this Element and its Element children. The traversal order is the same as render
+     * order.
+     *
+     * @param visitor callback
+     * @since 5.1.0.0
+     */
+    public void visit(Visitor visitor)
+    {
+        Stack<Element> queue = CollectionFactory.newStack();
+
+        queue.push(this);
+
+        while (!queue.isEmpty())
+        {
+            Element e = queue.pop();
+
+            visitor.visit(e);
+
+            e.queueChildren(queue);
+        }
+    }
+
+
+    private void queueChildren(Stack<Element> queue)
+    {
+        List<Node> children = getChildren();
+
+        int count = children.size();
+
+        // Push them in reverse order to get the correct
+        // traversal: the lowest index child is traversed first.
+
+        for (int i = count - 1; i >= 0; i--)
+        {
+            Node n = children.get(i);
+
+            if (n instanceof Element)
+            {
+                queue.push((Element) n);
+            }
+        }
     }
 }

@@ -421,11 +421,6 @@ public class InternalBaseTestCase extends TapestryTestCase implements Registry
         return newMock(LinkCreationListener.class);
     }
 
-    protected final ComponentInvocationMap mockComponentInvocationMap()
-    {
-        return newMock(ComponentInvocationMap.class);
-    }
-
     protected final LinkSource mockLinkSource()
     {
         return newMock(LinkSource.class);
@@ -642,21 +637,6 @@ public class InternalBaseTestCase extends TapestryTestCase implements Registry
     protected final FieldComponent mockFieldComponent()
     {
         return newMock(FieldComponent.class);
-    }
-
-    protected final ComponentInvocation mockComponentInvocation()
-    {
-        return newMock(ComponentInvocation.class);
-    }
-
-    protected final void train_buildURI(ComponentInvocation invocation, String URI)
-    {
-        expect(invocation.buildURI()).andReturn(URI);
-    }
-
-    protected void train_getParameter(ComponentInvocation invocation, String parameterName, String parameterValue)
-    {
-        expect(invocation.getParameterValue(parameterName)).andReturn(parameterValue).atLeastOnce();
     }
 
     protected final void train_setLocaleFromLocaleName(LocalizationSetter localizationSetter, String localeName,

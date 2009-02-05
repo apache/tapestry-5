@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@ package org.apache.tapestry5.internal.test;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.test.PageTester;
 
-import java.util.Map;
+import java.util.Locale;
 
 /**
  * An extended version of {@link Request} that allows the {@link PageTester} to control and override behavior,
@@ -27,16 +27,36 @@ public interface TestableRequest extends Request
 {
     /**
      * Clears the internal parameters map.
+     *
+     * @return the request for further configuration
      */
-    void clear();
+    TestableRequest clear();
 
     /**
-     * Loads new parameter/value pairs into the map.
+     * Sets the path; the path should begin with a "/" character and contain everything from there to the start of query
+     * parameters (if any).
+     *
+     * @param path
+     * @return the request for further configuration
      */
-    void loadParameters(Map<String, String> parameterValues);
+    TestableRequest setPath(String path);
 
     /**
-     * Loads a single parameter/value pair.
+     * Sets the locale requested by "the browser".
+     *
+     * @returns the request for further configuration
      */
-    void loadParameter(String parameterName, String parameterValue);
+    TestableRequest setLocale(Locale locale);
+
+    /**
+     * Loads a single parameter/value pair. This may define a new parameter, or add a value to a list of parameters.
+     *
+     * @return the request for further configuration
+     */
+    TestableRequest loadParameter(String parameterName, String parameterValue);
+
+    /**
+     * Overrides a parameter to the specific value, regardless of how the parameter was previously set.
+     */
+    TestableRequest overrideParameter(String parameterName, String parameterValue);
 }

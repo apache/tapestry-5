@@ -15,7 +15,10 @@
 package org.apache.tapestry5.dom;
 
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.testng.annotations.Test;
+
+import java.util.List;
 
 /**
  * Tests for a number of DOM node classes, including {@link org.apache.tapestry5.dom.Element} and {@link
@@ -732,5 +735,38 @@ public class DOMTest extends InternalBaseTestCase
         // Before TAP5-457, it would be ns0: not xml:
 
         assertEquals(d.toString(), readFile("defaults_for_xml_defined_namespaces.txt"));
+    }
+
+    @Test
+    public void visit_order()
+    {
+        Document d = new Document();
+
+        Element root = d.newRootElement("parent");
+
+        Element child1 = root.element("child1");
+        Element child2 = root.element("child2");
+
+        child1.element("child1a");
+        child1.text("Does not affect traversal");
+        child1.element("child1b");
+
+        child2.element("child2a");
+        child2.element("child2b");
+        child2.element("child2c");
+
+        final List<String> elementNames = CollectionFactory.newList();
+
+        d.visit(new Visitor()
+        {
+            public void visit(Element element)
+            {
+                elementNames.add(element.getName());
+            }
+        });
+
+        assertListsEquals(elementNames, "parent", "child1", "child1a", "child1b", "child2", "child2a", "child2b",
+                          "child2c");
+
     }
 }

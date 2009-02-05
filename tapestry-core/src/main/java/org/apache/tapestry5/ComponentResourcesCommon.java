@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -23,14 +23,12 @@ import java.util.Locale;
  * Operations shared by the public {@link org.apache.tapestry5.ComponentResources} interface and {@link
  * org.apache.tapestry5.internal.structure.ComponentPageElement} interface (on the internal side).
  */
-@SuppressWarnings({"JavaDoc"})
+@SuppressWarnings({ "JavaDoc" })
 public interface ComponentResourcesCommon extends Locatable
 {
     /**
      * Returns the simple (or local) id of the component. The id will be unique within the component's immediate
      * container. For a page's root component, the value null is returned.
-     * <p/>
-     * \
      */
     String getId();
 

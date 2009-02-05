@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -22,7 +22,6 @@ import org.apache.tapestry5.corelib.internal.InternalFormSupport;
 import org.apache.tapestry5.corelib.mixins.RenderInformals;
 import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.internal.services.ClientBehaviorSupport;
-import org.apache.tapestry5.internal.services.ComponentInvocationMap;
 import org.apache.tapestry5.internal.services.ComponentResultProcessorWrapper;
 import org.apache.tapestry5.internal.services.HeartbeatImpl;
 import org.apache.tapestry5.internal.util.AutofocusValidationDecorator;
@@ -183,9 +182,6 @@ public class Form implements ClientElement, FormValidationControl
     @Persist(PersistenceConstants.FLASH)
     private ValidationTracker defaultTracker;
 
-    @Inject
-    private ComponentInvocationMap componentInvocationMap;
-
     private InternalFormSupport formSupport;
 
     private Element form;
@@ -275,8 +271,6 @@ public class Form implements ClientElement, FormValidationControl
                               "id", name,
                               "method", "post",
                               "action", link);
-
-        componentInvocationMap.store(form, link);
 
         resources.renderInformalParameters(writer);
 

@@ -36,7 +36,7 @@ Roadmap
 
   Now that that 5.0 release is <finally> out and available, work is starting on a 5.1 release.
 
-  The goal is to produce such releases on a regular schedule, ever 4 - 6 months.
+  The goal is to produce such releases on a regular schedule, every 4 - 6 months.
 
   High priorities for 5.1 include Spring Web Flow integration, and support for developing Tapestry applications as Portlets.
 
@@ -79,7 +79,14 @@ Third Party Libraries, Tutorials and Resources
 
 New And Of Note
 
-  * Tapestry now {{{guide/compress.html}compresses}} responses for clients that support it.  Context and classpath assets
+  * Tapestry IoC services can now be easily <{{{tapestry-ioc/advice.html}advised}}> as well as
+   <{{{tapestry-ioc/decorator.html}decorated}}> (both of these refer to Aspect Oriented Techniques applied to
+    Tapestry IoC services).
+
+  * Tapestry Services can now be injected into Spring Beans, when using the Tapestry/Spring integration library.
+
+  * Tapestry now {{{guide/compress.html}compresses}} responses for clients that support compression.
+    Context and classpath assets
     are now handled uniformly: versioned URLs, far-future expiration headers, and GZIP compression where applicable.
 
   * Ordered and mapped configurations can now have overrides.
@@ -89,80 +96,7 @@ New And Of Note
   * IoC Service contributions may now be made in terms of classes (that are automatically instantiated) as well as
     instances.
 
-  * At long last, an official {{{tapestry-core/ref/org/apache/tapestry5/corelib/components/LinkSubmit.html}LinkSubmit}} component.
-
-  * A {{{tapestry-ioc/injection.html}detailed guide to Injection}} has been added.
-
-  * You can now configure Tapestry to move \<script\> links to the top of the page.
-
-  * Event handler methods for Ajax requests may now return a page name, page class or page instance to force
-    the browser to redirect to the page.
-
-  * The Inject and InjectService annotations may now be used on fields of service implementations or other
-    objects constructed by the IoC container. In the past, injections only occured through method or
-    constructor parameters.
-
-  * Tapestry now bundles Prototype version 1.6.0.2.
-
-  * New methods have been added to
-    {{{apidocs/org/apache/tapestry5/dom/Node.html}Node}} to allow nodes to be moved about or otherwise
-    manipulated.
-
-  * Application State Objects are now automatically saved back to the session at the end of the request,
-    which ensures that ASO data is properly replicated across at cluster.
-
-  * The new {{{apidocs/org/apache/tapestry5/ioc/annotations/Local.html}@Local}}
-    annotation makes it easier to reference services within the same module when injecting.  
-
-  * Most general documentation has been moved from the tapestry-core module up to the project level.
-  
-  * Work has started on a {{{cookbook}Tapestry Cookbook}}, showing how to tackle common scenarios. 
-
-  * Component methods may be marked with the @Log annotation, to enable debug logging of
-    method entry (with parameters) and exit (with return value, or thrown exception).
-
-  * It is now possible to provide method invocation advice to component methods. This opens up
-    a very powerful Aspect Oriented Programming approach to Tapestry components.
-
-  * The Exception Report page now identifies the version of the Tapestry framework, and lists
-    out System properties (including the Java classpath).
-
-  * The {{{tapestry-core/ref/org/apache/tapestry5/corelib/components/Grid.html}Grid}} component can now update itself in place,
-    using Ajax, when paging or sorting links are clicked.
-
-  * Added a zone parameter to the  {{{tapestry-core/ref/org/apache/tapestry5/corelib/components/BeanEditForm.html}BeanEditForm}}
-    component, to support Ajax updates.
-
-  * The @Cached annotation has been added to allowing the caching of method results.
-
   []
-
-
-What's changed since Tapestry 4?
-
-  Tapestry 5 is an all new code base, written from the ground up to take Java web
-  application development to new levels of productivity.
-  
-  This new release removes many limitations of Tapestry 4:
-  
-  * Components no longer extend from base classes.
-  
-  * {{{tapestry-core/guide/component-classes.html}Components classes are no longer <abstract>}}.  
-     Components are pure, simple POJOs (<plain old Java objects>).
-  
-  * Tapestry no longer uses XML page and component specification files. Information that used to
-    be supplied in such files is now supplied directly in the Java class, using Java annotations and naming conventions.
-    
-  * {{{tapestry-core/guide/reload.html}Changes to Tapestry component templates <and classes> are now picked up <immediately>}}, 
-    without any kind
-    of restart. This will even work properly in <production>, not just during development.
-    
-  * <<Blazing Speed>>. The new code base operates considerably faster than Tapestry 4. Critical
-  code paths have been simplified, and the use of reflection has been virtually eliminated.
-  Tapestry 4 was as fast as an equivalent Servlet/JSP application, Tapestry 5 is much faster.
-    
-  []
-  
 
 Adaptive API
 
@@ -271,7 +205,7 @@ About Snapshots and Releases
   directory, including a POM that links to the Apache snapshots repository.
   
   <<Documentation on this site usually refers to the latest snapshot ... that is, it is usually ahead of the last official release. In some cases,
-  it is written as if the snapshot release is stable; if documentation refers to version 5.0.x and that doesn't work, try 5.0.x-SNAPSHOT.>>
+  it is written as if the snapshot release is stable; if documentation refers to version 5.1.x.x and that doesn't work, try 5.1.x.x-SNAPSHOT.>>
     
 Principle 1 -- Static Structure, Dynamic Behavior
 
@@ -347,3 +281,7 @@ Backwards Compatibility
   Because of this, Tapestry will be able to change internally to a great degree without it affecting any
   of the application code <you> write. This should finally crack the backwards compatibility nut, allowing you to have
   great assurance that you can upgrade to future releases of Tapestry without breaking your existing applications.
+
+  This is already evident in Tapestry 5.1, where many new features and improvements have occurred, but is still
+  100% backwards compatible to Tapestry 5.0, as long as you've avoided the temptation to make use of
+  internal APIs.

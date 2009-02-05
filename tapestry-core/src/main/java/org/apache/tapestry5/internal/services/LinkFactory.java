@@ -15,7 +15,8 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.Link;
-import org.apache.tapestry5.internal.structure.Page;
+import org.apache.tapestry5.services.ComponentEventRequestParameters;
+import org.apache.tapestry5.services.PageRenderRequestParameters;
 
 /**
  * Used by {@link org.apache.tapestry5.internal.services.LinkSource} service to create {@link org.apache.tapestry5.Link}
@@ -25,12 +26,23 @@ import org.apache.tapestry5.internal.structure.Page;
  */
 public interface LinkFactory
 {
+
     /**
-     * Creates a new link; the page is used to determine if the request needs to shift between HTTP and HTTPS.
+     * Creates a component event link (possibly for a Form).
      *
-     * @param page
-     * @param invocation
-     * @return link that calls the invocation
+     * @param parameters defines the data need to create the link
+     * @param forForm    if true, the link is for a form (which handles query parameters differently than normal)
+     * @return the component event link
+     * @see org.apache.tapestry5.services.ComponentEventRequestHandler
      */
-    Link create(Page page, ComponentInvocation invocation);
+    Link createComponentEventLink(ComponentEventRequestParameters parameters, boolean forForm);
+
+    /**
+     * Creates a page render event link.
+     *
+     * @param parameters defines the page and page activation context
+     * @return the link
+     * @see org.apache.tapestry5.services.PageRenderRequestHandler
+     */
+    Link createPageRenderLink(PageRenderRequestParameters parameters);
 }
