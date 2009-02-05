@@ -974,10 +974,10 @@ public final class TapestryModule
     }
 
     @Marker(ClasspathProvider.class)
-    public AssetFactory buildClasspathAssetFactory(ResourceCache resourceCache, ClasspathAssetAliasManager aliasManager)
+    public AssetFactory buildClasspathAssetFactory(ResourceCache resourceCache, ClasspathAssetAliasManager aliasManager,
+                                                   AssetPathConverter converter)
     {
-        ClasspathAssetFactory factory = new ClasspathAssetFactory(resourceCache, aliasManager,
-                                                                  new IdentityAssetPathConverter());
+        ClasspathAssetFactory factory = new ClasspathAssetFactory(resourceCache, aliasManager, converter);
 
         resourceCache.addInvalidationListener(factory);
 
@@ -988,10 +988,11 @@ public final class TapestryModule
     public AssetFactory buildContextAssetFactory(ApplicationGlobals globals,
 
                                                  @Inject @Symbol(SymbolConstants.APPLICATION_VERSION)
-                                                 String applicationVersion)
+                                                 String applicationVersion,
+
+                                                 AssetPathConverter converter)
     {
-        return new ContextAssetFactory(request, globals.getContext(), applicationVersion,
-                                       new IdentityAssetPathConverter());
+        return new ContextAssetFactory(request, globals.getContext(), applicationVersion, converter);
     }
 
     /**
