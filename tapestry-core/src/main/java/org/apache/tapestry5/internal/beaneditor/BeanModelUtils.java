@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -23,8 +23,9 @@ public final class BeanModelUtils
 {
 
     /**
-     * Performs standard set of modifications to a {@link org.apache.tapestry5.beaneditor.BeanModel}. First new
-     * properties may be added, then properties removed, then properties reordered.
+     * Performs standard set of modifications to a {@link org.apache.tapestry5.beaneditor.BeanModel}. First propreties
+     * are included, then new properties may be added, then properties may be excluded (removed), then the final list of
+     * is properties reordered.
      *
      * @param model                to modifiy
      * @param addPropertyNames     comma seperated list of property names to add, or null
@@ -36,10 +37,10 @@ public final class BeanModelUtils
                               String excludePropertyNames,
                               String reorderPropertyNames)
     {
-        if (addPropertyNames != null) add(model, addPropertyNames);
-
         if (includePropertyNames != null) include(model, includePropertyNames);
 
+        if (addPropertyNames != null) add(model, addPropertyNames);
+        
         if (excludePropertyNames != null) exclude(model, excludePropertyNames);
 
         if (reorderPropertyNames != null) reorder(model, reorderPropertyNames);
