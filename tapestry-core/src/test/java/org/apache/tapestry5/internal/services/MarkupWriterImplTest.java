@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -29,6 +29,29 @@ public class MarkupWriterImplTest extends InternalBaseTestCase
         MarkupWriter w = new MarkupWriterImpl();
 
         w.write("fail!");
+    }
+
+    /**
+     * TAP5-349
+     */
+    @Test
+    public void single_root_element_only()
+    {
+        MarkupWriter w = new MarkupWriterImpl(new XMLMarkupModel());
+
+        w.element("root1");
+        w.end();
+
+        try
+        {
+            w.element("root2");
+            unreachable();
+        }
+        catch (RuntimeException ex)
+        {
+            assertEquals(ex.getMessage(),
+                         "A document must have exactly one root element. Element <root1> is already the root element.");
+        }
     }
 
     @Test

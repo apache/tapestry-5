@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -135,8 +135,21 @@ public class MarkupWriterImpl implements MarkupWriter
 
     public Element element(String name, Object... namesAndValues)
     {
-        if (current == null) current = document.newRootElement(name);
-        else current = current.element(name);
+        if (current == null)
+        {
+            Element existingRootElement = document.getRootElement();
+
+            if (existingRootElement != null)
+                throw new IllegalStateException(String.format(
+                        "A document must have exactly one root element. Element <%s> is already the root element.",
+                        existingRootElement.getName()));
+
+            current = document.newRootElement(name);
+        }
+        else
+        {
+            current = current.element(name);
+        }
 
         attributes(namesAndValues);
 
