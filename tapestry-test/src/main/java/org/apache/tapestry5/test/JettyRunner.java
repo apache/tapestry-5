@@ -102,7 +102,9 @@ public class JettyRunner
         try
         {
 
-            String webappPath = warPath.startsWith("/")
+        	File warPathFile = new File(warPath);
+        	
+            String webappPath = warPathFile.isAbsolute()
                                 ? warPath
                                 : new File(workingDir, this.warPath).getPath();
             String webDefaults = new File(workingDir, "src/test/conf/webdefault.xml").getPath();
