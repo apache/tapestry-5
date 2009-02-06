@@ -20,6 +20,7 @@ import org.apache.tapestry5.annotations.IncludeJavaScriptLibrary;
 import org.apache.tapestry5.annotations.IncludeStylesheet;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.corelib.base.AbstractField;
+import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.json.JSONArray;
@@ -111,6 +112,9 @@ public class DateField extends AbstractField
 
     @Inject
     private FieldValidationSupport fieldValidationSupport;
+    
+    @Inject
+    private Messages messages;
 
 
     private static final String RESULT = "result";
@@ -315,7 +319,7 @@ public class DateField extends AbstractField
         }
         catch (ParseException ex)
         {
-            tracker.recordError(this, "Date value is not parseable.");
+            tracker.recordError(this, messages.format("date-value-not-parseable", value));
             return;
         }
 
