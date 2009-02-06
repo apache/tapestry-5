@@ -23,6 +23,8 @@ import org.apache.tapestry5.ioc.Registry;
 import org.apache.tapestry5.ioc.RegistryBuilder;
 import org.apache.tapestry5.ioc.def.ContributionDef;
 import org.apache.tapestry5.ioc.def.ModuleDef;
+import org.apache.tapestry5.ioc.internal.services.ClasspathURLConverterImpl;
+import org.apache.tapestry5.ioc.services.ClasspathURLConverter;
 import org.apache.tapestry5.ioc.services.PropertyAccess;
 import org.apache.tapestry5.ioc.services.SymbolProvider;
 import org.apache.tapestry5.runtime.Component;
@@ -49,6 +51,8 @@ public class ComponentInstantiatorSourceImplTest extends InternalBaseTestCase
     private static final ClassLoader contextLoader = Thread.currentThread().getContextClassLoader();
 
     private static final String SYNTH_COMPONENT_CLASSNAME = "org.apache.tapestry5.internal.transform.pages.SynthComponent";
+    
+    private final ClasspathURLConverter converter = new ClasspathURLConverterImpl();
 
     private File extraClasspath;
 
@@ -71,7 +75,7 @@ public class ComponentInstantiatorSourceImplTest extends InternalBaseTestCase
         replay();
 
         ComponentInstantiatorSourceImpl e = new ComponentInstantiatorSourceImpl(logger, contextLoader, transformer,
-                                                                                null);
+                                                                                null, converter);
 
         assertEquals(e.inControlledPackage("foo.bar.Baz"), false);
 

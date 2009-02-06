@@ -17,6 +17,7 @@ package org.apache.tapestry5.internal.services;
 import org.apache.tapestry5.internal.util.URLChangeTracker;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.ioc.services.ClasspathURLConverter;
 import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.services.InvalidationEventHub;
 import org.apache.tapestry5.services.UpdateListener;
@@ -63,9 +64,9 @@ public class ComponentMessagesSourceImpl implements ComponentMessagesSource, Upd
         }
     }
 
-    public ComponentMessagesSourceImpl(Resource rootResource, String appCatalog)
+    public ComponentMessagesSourceImpl(Resource rootResource, String appCatalog, ClasspathURLConverter classpathURLConverter)
     {
-        this(rootResource, appCatalog, new URLChangeTracker());
+        this(rootResource, appCatalog, new URLChangeTracker(classpathURLConverter));
     }
 
     ComponentMessagesSourceImpl(Resource rootResource, String appCatalog, URLChangeTracker tracker)

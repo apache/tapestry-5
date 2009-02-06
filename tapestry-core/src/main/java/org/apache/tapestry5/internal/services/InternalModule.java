@@ -24,6 +24,7 @@ import org.apache.tapestry5.ioc.annotations.*;
 import org.apache.tapestry5.ioc.internal.services.CtClassSource;
 import org.apache.tapestry5.ioc.services.Builtin;
 import org.apache.tapestry5.ioc.services.ClassFactory;
+import org.apache.tapestry5.ioc.services.ClasspathURLConverter;
 import org.apache.tapestry5.ioc.services.PerthreadManager;
 import org.apache.tapestry5.ioc.services.PropertyShadowBuilder;
 import org.apache.tapestry5.services.*;
@@ -117,10 +118,12 @@ public class InternalModule
 
             @Inject
             @Symbol(SymbolConstants.APPLICATION_CATALOG)
-            String appCatalog)
+            String appCatalog,
+            
+            ClasspathURLConverter classpathURLConverter)
     {
         ComponentMessagesSourceImpl service = new ComponentMessagesSourceImpl(contextAssetFactory
-                .getRootResource(), appCatalog);
+                .getRootResource(), appCatalog, classpathURLConverter);
 
         updateListenerHub.addUpdateListener(service);
 
@@ -133,10 +136,12 @@ public class InternalModule
 
                                                                         Logger logger,
 
-                                                                        InternalRequestGlobals internalRequestGlobals)
+                                                                        InternalRequestGlobals internalRequestGlobals,
+                                                                        
+                                                                        ClasspathURLConverter classpathURLConverter)
     {
         ComponentInstantiatorSourceImpl source = new ComponentInstantiatorSourceImpl(logger, classFactory
-                .getClassLoader(), transformer, internalRequestGlobals);
+                .getClassLoader(), transformer, internalRequestGlobals, classpathURLConverter);
 
         updateListenerHub.addUpdateListener(source);
 
@@ -222,9 +227,11 @@ public class InternalModule
     }
 
 
-    public ComponentTemplateSource buildComponentTemplateSource(TemplateParser parser, PageTemplateLocator locator)
+    public ComponentTemplateSource buildComponentTemplateSource(TemplateParser parser,
+                                                                PageTemplateLocator locator,
+                                                                ClasspathURLConverter classpathURLConverter)
     {
-        ComponentTemplateSourceImpl service = new ComponentTemplateSourceImpl(parser, locator);
+        ComponentTemplateSourceImpl service = new ComponentTemplateSourceImpl(parser, locator, classpathURLConverter);
 
         updateListenerHub.addUpdateListener(service);
 

@@ -24,6 +24,7 @@ import org.apache.tapestry5.ioc.internal.services.CtClassSourceImpl;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.ioc.services.ClassFactory;
+import org.apache.tapestry5.ioc.services.ClasspathURLConverter;
 import org.apache.tapestry5.services.InvalidationEventHub;
 import org.apache.tapestry5.services.UpdateListener;
 import org.slf4j.Logger;
@@ -46,7 +47,7 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
 
     private final Set<String> controlledPackageNames = CollectionFactory.newSet();
 
-    private final URLChangeTracker changeTracker = new URLChangeTracker();
+    private final URLChangeTracker changeTracker;
 
     private final ClassLoader parent;
 
@@ -100,12 +101,13 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
     }
 
     public ComponentInstantiatorSourceImpl(Logger logger, ClassLoader parent, ComponentClassTransformer transformer,
-                                           InternalRequestGlobals internalRequestGlobals)
+                                           InternalRequestGlobals internalRequestGlobals, ClasspathURLConverter classpathURLConverter)
     {
         this.parent = parent;
         this.transformer = transformer;
         this.logger = logger;
         this.internalRequestGlobals = internalRequestGlobals;
+        this.changeTracker = new URLChangeTracker(classpathURLConverter);
 
         initializeService();
     }

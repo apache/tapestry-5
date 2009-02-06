@@ -18,7 +18,9 @@ import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.internal.util.URLChangeTracker;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.ioc.internal.services.ClasspathURLConverterImpl;
 import org.apache.tapestry5.ioc.internal.util.ClasspathResource;
+import org.apache.tapestry5.ioc.services.ClasspathURLConverter;
 import org.apache.tapestry5.model.ComponentModel;
 import org.testng.annotations.Test;
 
@@ -34,8 +36,10 @@ public class ComponentMessagesSourceImplTest extends InternalBaseTestCase
     // With control of the tracker, we can force changes as if underlying files were changed.
 
     private static final String SIMPLE_COMPONENT_CLASS_NAME = "org.apache.tapestry5.internal.services.SimpleComponent";
+    
+    private final ClasspathURLConverter converter = new ClasspathURLConverterImpl();
 
-    private final URLChangeTracker tracker = new URLChangeTracker();
+    private final URLChangeTracker tracker = new URLChangeTracker(converter);
 
     private final Resource simpleComponentResource = new ClasspathResource(
             "org/apache/tapestry5/internal/services/SimpleComponent.class");
@@ -205,7 +209,8 @@ public class ComponentMessagesSourceImplTest extends InternalBaseTestCase
         forceCacheClear();
 
         ComponentMessagesSource source = new ComponentMessagesSourceImpl(simpleComponentResource,
-                                                                         "NoSuchAppCatalog.properties");
+                                                                         "NoSuchAppCatalog.properties",
+                                                                         converter);
 
         Messages messages = source.getMessages(model, Locale.ENGLISH);
 

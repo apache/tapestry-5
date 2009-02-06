@@ -18,6 +18,7 @@ import org.apache.tapestry5.internal.event.InvalidationEventHubImpl;
 import org.apache.tapestry5.internal.util.URLChangeTracker;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.services.ClasspathURLConverter;
 import org.apache.tapestry5.services.ResourceDigestGenerator;
 import org.apache.tapestry5.services.UpdateListener;
 
@@ -66,10 +67,10 @@ public class ResourceCacheImpl extends InvalidationEventHubImpl implements Resou
         }
     }
 
-    public ResourceCacheImpl(final ResourceDigestGenerator digestGenerator)
+    public ResourceCacheImpl(final ResourceDigestGenerator digestGenerator, ClasspathURLConverter classpathURLConverter)
     {
         this.digestGenerator = digestGenerator;
-        tracker = new URLChangeTracker(true);
+        tracker = new URLChangeTracker(classpathURLConverter,true);
     }
 
     public void checkForUpdates()

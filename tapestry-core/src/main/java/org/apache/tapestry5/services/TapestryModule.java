@@ -1025,10 +1025,13 @@ public final class TapestryModule
 
                                                                   UpdateListenerHub updateListenerHub,
 
-                                                                  @ClasspathProvider AssetFactory classpathAssetFactory)
+                                                                  @ClasspathProvider AssetFactory classpathAssetFactory,
+                                                                  
+                                                                  ClasspathURLConverter classpathURLConverter)
     {
         ValidationMessagesSourceImpl service = new ValidationMessagesSourceImpl(configuration,
-                                                                                classpathAssetFactory.getRootResource());
+                                                                                classpathAssetFactory.getRootResource(),
+                                                                                classpathURLConverter);
         updateListenerHub.addUpdateListener(service);
 
         return service;
