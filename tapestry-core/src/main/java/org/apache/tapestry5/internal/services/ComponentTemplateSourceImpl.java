@@ -23,6 +23,7 @@ import org.apache.tapestry5.internal.util.URLChangeTracker;
 import org.apache.tapestry5.ioc.Location;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.services.ClasspathURLConverter;
 import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.services.InvalidationEventHub;
 import org.apache.tapestry5.services.UpdateListener;
@@ -78,9 +79,9 @@ public final class ComponentTemplateSourceImpl extends InvalidationEventHubImpl 
         }
     };
 
-    public ComponentTemplateSourceImpl(TemplateParser parser, PageTemplateLocator locator)
+    public ComponentTemplateSourceImpl(TemplateParser parser, PageTemplateLocator locator, ClasspathURLConverter classpathURLConverter)
     {
-        this(parser, locator, new URLChangeTracker());
+        this(parser, locator, new URLChangeTracker(classpathURLConverter));
     }
 
     ComponentTemplateSourceImpl(TemplateParser parser, PageTemplateLocator locator, URLChangeTracker tracker)

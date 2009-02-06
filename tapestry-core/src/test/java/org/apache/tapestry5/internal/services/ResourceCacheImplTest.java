@@ -16,6 +16,8 @@ package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.ioc.internal.services.ClasspathURLConverterImpl;
+import org.apache.tapestry5.ioc.services.ClasspathURLConverter;
 import org.apache.tapestry5.services.InvalidationListener;
 import org.apache.tapestry5.services.ResourceDigestGenerator;
 import org.testng.annotations.Test;
@@ -29,6 +31,8 @@ public class ResourceCacheImplTest extends InternalBaseTestCase
     private static final String PATH = "foo/Bar.gif";
 
     private static final String DIGEST = "abc123";
+    
+    private final ClasspathURLConverter converter = new ClasspathURLConverterImpl();
 
     @Test
     public void properties_for_simple_resource() throws Exception
@@ -49,7 +53,7 @@ public class ResourceCacheImplTest extends InternalBaseTestCase
 
         replay();
 
-        ResourceCacheImpl cache = new ResourceCacheImpl(generator);
+        ResourceCacheImpl cache = new ResourceCacheImpl(generator, converter);
 
         assertEquals(cache.requiresDigest(r), false);
         assertEquals(cache.getTimeModified(r), lastUpdated);
@@ -72,7 +76,7 @@ public class ResourceCacheImplTest extends InternalBaseTestCase
 
         replay();
 
-        ResourceCacheImpl cache = new ResourceCacheImpl(generator);
+        ResourceCacheImpl cache = new ResourceCacheImpl(generator, converter);
 
         assertEquals(cache.requiresDigest(r), true);
         assertEquals(cache.getTimeModified(r), ResourceCacheImpl.MISSING_RESOURCE_TIME_MODIFIED);
@@ -101,7 +105,7 @@ public class ResourceCacheImplTest extends InternalBaseTestCase
 
         replay();
 
-        ResourceCacheImpl cache = new ResourceCacheImpl(generator);
+        ResourceCacheImpl cache = new ResourceCacheImpl(generator, converter);
 
         assertEquals(cache.requiresDigest(r), true);
         assertEquals(cache.getTimeModified(r), lastUpdated);
@@ -130,7 +134,7 @@ public class ResourceCacheImplTest extends InternalBaseTestCase
 
         replay();
 
-        ResourceCacheImpl cache = new ResourceCacheImpl(generator);
+        ResourceCacheImpl cache = new ResourceCacheImpl(generator, converter);
         cache.addInvalidationListener(listener);
 
         assertEquals(cache.requiresDigest(r), true);
