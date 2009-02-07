@@ -38,12 +38,17 @@ Release 5.1.0.0
 
 * Module Classes
 
-  Many questionable practices in Tapestry module classes that used to produce warnings (which were
-  ignored, leading to more difficult questions) have been changed to fail early with exceptions. This includes
-  extra public methods on a module class that are not used by Tapestry IoC, and several other similar
-  scenarios.
+  Many questionable practices in Tapestry module classes that used to produce warnings
+  have been changed to fail early with exceptions. The rationale is that the warnings would be ignored,
+  resulting in more difficult to diagnose runtime errors. 
 
   Extra public methods on module classes (methods that do not define services, contribute to services,
   or decorate or advise services) are now errors.
+
+* Asset interface
+
+  The {{{apidocs/org/apache/tapestry5/Asset.html}Asset}} interface has been changed incompatibly:
+  A new method, isInvariant(), has been added. This will only affect applications that have provided
+  their own implementations of Asset.
 
 

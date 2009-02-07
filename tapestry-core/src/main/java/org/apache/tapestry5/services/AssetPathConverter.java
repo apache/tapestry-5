@@ -27,6 +27,16 @@ package org.apache.tapestry5.services;
 public interface AssetPathConverter
 {
     /**
+     * Returns true if the converter returns that same converted path for any specific asset path (in which case, the
+     * converted asset path may be cached more aggresively).  This value should be false if the the converted path can
+     * vary for the same input path ... that is, if external factors (such as the identity of the user, or information
+     * obtained from the request) is involved in generating the final client URI.
+     *
+     * @return true if invariant (and therefore cachable)
+     */
+    boolean isInvariant();
+
+    /**
      * Converts the default asset client URI to its final form, ready to be sent to the client. The default asset path
      * is an absolute path (it starts with a leading slash) and incorporates the context path if any.
      *

@@ -43,4 +43,16 @@ public interface Asset
      * Returns the underlying Resource for the Asset.
      */
     Resource getResource();
+
+    /**
+     * Returns true if the Asset is invariant (meaning that it returns the same value from {@link #toClientURL()} at all
+     * times}. Assets that are used as binding values will be cached more aggresively by Tapestry is they are
+     * invariant.
+     *
+     * @return true if invariant
+     * @see org.apache.tapestry5.services.AssetPathConverter#isInvariant()
+     * @see Binding#isInvariant()
+     * @since 5.1.0.0
+     */
+    boolean isInvariant();
 }

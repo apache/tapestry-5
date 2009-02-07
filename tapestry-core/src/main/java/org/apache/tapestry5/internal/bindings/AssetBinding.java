@@ -17,15 +17,24 @@ package org.apache.tapestry5.internal.bindings;
 import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.ioc.Location;
 
-public class AssetBinding extends InvariantBinding
+public class AssetBinding extends AbstractBinding
 {
+    private final String description;
+
     private final Asset asset;
 
     AssetBinding(Location location, String description, Asset asset)
     {
-        super(location, Asset.class, description);
+        super(location);
 
+        this.description = description;
         this.asset = asset;
+    }
+
+    @Override
+    public Class getBindingType()
+    {
+        return Asset.class;
     }
 
     public Object get()

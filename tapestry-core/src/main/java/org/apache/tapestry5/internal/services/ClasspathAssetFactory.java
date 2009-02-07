@@ -43,7 +43,9 @@ public class ClasspathAssetFactory implements AssetFactory, InvalidationListener
 
     private final AssetPathConverter converter;
 
-    public ClasspathAssetFactory(final ResourceCache cache, final ClasspathAssetAliasManager aliasManager,
+    private final boolean invariant;
+
+    public ClasspathAssetFactory(ResourceCache cache, ClasspathAssetAliasManager aliasManager,
                                  AssetPathConverter converter)
     {
         this.cache = cache;
@@ -51,6 +53,8 @@ public class ClasspathAssetFactory implements AssetFactory, InvalidationListener
         this.converter = converter;
 
         rootResource = new ClasspathResource("");
+
+        invariant = converter.isInvariant();
     }
 
     public void objectWasInvalidated()
@@ -92,7 +96,7 @@ public class ClasspathAssetFactory implements AssetFactory, InvalidationListener
 
     public Asset createAsset(final Resource resource)
     {
-        return new AbstractAsset()
+        return new AbstractAsset(invariant)
         {
             public Resource getResource()
             {

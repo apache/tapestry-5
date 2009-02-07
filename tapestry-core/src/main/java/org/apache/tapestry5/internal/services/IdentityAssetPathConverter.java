@@ -17,12 +17,20 @@ package org.apache.tapestry5.internal.services;
 import org.apache.tapestry5.services.AssetPathConverter;
 
 /**
- * Returns the default asset path unchanged.
+ * Returns the default asset path unchanged. This is an invariant converter.
  *
  * @since 5.1.0.0
  */
 public class IdentityAssetPathConverter implements AssetPathConverter
 {
+    /**
+     * @return true
+     */
+    public boolean isInvariant()
+    {
+        return true;
+    }
+
     /**
      * @param assetPath default asset path
      * @return assetPath unchanged
