@@ -14,30 +14,34 @@
 
 package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry5.Asset;
-
 /**
- * Base class for assets.
+ * Used to track behaviors inside {@link org.apache.tapestry5.internal.services.StaxTemplateParser}. Internal state is
+ * immutable, the set-like methods return a new immutable instance.
  *
  * @since 5.1.0.0
  */
-public abstract class AbstractAsset implements Asset
+class TemplateParserState
 {
-    private final boolean invariant;
+    private final boolean compressWhitespace;
 
-    public AbstractAsset(boolean invariant)
+    TemplateParserState(boolean compressWhitespace)
     {
-        this.invariant = invariant;
+        this.compressWhitespace = compressWhitespace;
     }
 
-    public boolean isInvariant()
+    TemplateParserState compressWhitespace(boolean flag)
     {
-        return invariant;
+        return new TemplateParserState(flag);
+    }
+
+    boolean isCompressWhitespace()
+    {
+        return compressWhitespace;
     }
 
     @Override
     public String toString()
     {
-        return toClientURL();
+        return String.format("TemplateParserState[compressWhitespace=%s]", compressWhitespace);
     }
 }

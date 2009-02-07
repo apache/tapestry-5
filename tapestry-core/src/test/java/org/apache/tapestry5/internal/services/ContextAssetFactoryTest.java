@@ -24,6 +24,7 @@ import org.testng.annotations.Test;
 
 public class ContextAssetFactoryTest extends InternalBaseTestCase
 {
+    private final IdentityAssetPathConverter converter = new IdentityAssetPathConverter();
 
     @Test
     public void root_resource()
@@ -33,7 +34,7 @@ public class ContextAssetFactoryTest extends InternalBaseTestCase
 
         replay();
 
-        AssetFactory factory = new ContextAssetFactory(request, context, "1.2.3", new IdentityAssetPathConverter());
+        AssetFactory factory = new ContextAssetFactory(request, context, "1.2.3", converter);
 
         assertEquals(factory.getRootResource().toString(), "context:/");
 

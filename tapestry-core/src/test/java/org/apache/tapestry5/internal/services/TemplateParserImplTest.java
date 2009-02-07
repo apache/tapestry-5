@@ -391,21 +391,6 @@ public class TemplateParserImplTest extends InternalBaseTestCase
     }
 
     @Test
-    public void content_within_body_element()
-    {
-        List<TemplateToken> tokens = parse("content_within_body_element.tml").getTokens();
-
-        assertEquals(tokens.size(), 5);
-
-        // javac bug is requires use of isInstance() instead of instanceof
-        // https://bugs.eclipse.org/bugs/show_bug.cgi?id=113218
-
-        assertTrue(BodyToken.class.isInstance(get(tokens, 2)));
-        assertTrue(TextToken.class.isInstance(get(tokens, 3)));
-        assertTrue(EndElementToken.class.isInstance(get(tokens, 4)));
-    }
-
-    @Test
     public void component_with_parameters()
     {
         List<TemplateToken> tokens = tokens("componentWithParameters.tml");
@@ -645,32 +630,31 @@ public class TemplateParserImplTest extends InternalBaseTestCase
     {
         return new Object[][] {
 
-                {"mixin_requires_id_or_type.tml",
+                { "mixin_requires_id_or_type.tml",
                         "You may not specify mixins for element <span> because it does not represent a component (which requires either an id attribute or a type attribute).",
-                        2},
+                        2 },
 
-                {"illegal_nesting_within_body_element.tml", "Element 'xyz' is nested within a Tapestry body element",
-                        2},
-
-                {"unexpected_attribute_in_parameter_element.tml",
+                { "unexpected_attribute_in_parameter_element.tml",
                         "Element <parameter> does not support an attribute named 'grok'. The only allowed attribute name is 'name'.",
-                        4},
+                        4 },
 
-                {"name_attribute_of_parameter_element_omitted.tml",
-                        "The name attribute of the <parameter> element must be specified.", 4},
+                { "name_attribute_of_parameter_element_omitted.tml",
+                        "The name attribute of the <parameter> element must be specified.", 4 },
 
-                {"name_attribute_of_parameter_element_blank.tml",
-                        "The name attribute of the <parameter> element must be specified.", 4},
+                { "name_attribute_of_parameter_element_blank.tml",
+                        "The name attribute of the <parameter> element must be specified.", 4 },
 
-                {"unexpected_attribute_in_block_element.tml",
+                { "unexpected_attribute_in_block_element.tml",
                         "Element <block> does not support an attribute named 'name'. The only allowed attribute name is 'id'.",
-                        3},
+                        3 },
 
-                {"parameter_namespace_with_attributes.tml",
-                        ServicesMessages.parameterElementDoesNotAllowAttributes(), 4},
+                { "parameter_namespace_with_attributes.tml",
+                        ServicesMessages.parameterElementDoesNotAllowAttributes(), 4 },
 
-                {"invalid_library_namespace_path.tml",
-                        "The path portion of library namespace URI 'tapestry-library:subfolder/' is not valid", 2}
+                { "invalid_library_namespace_path.tml",
+                        "The path portion of library namespace URI 'tapestry-library:subfolder/' is not valid", 2 },
+
+                { "content_within_body_element.tml", "", 2 }
         };
     }
 
@@ -697,8 +681,8 @@ public class TemplateParserImplTest extends InternalBaseTestCase
     @DataProvider(name = "doctype_parsed_correctly_data")
     public Object[][] doctype_parsed_correctly_data()
     {
-        return new Object[][] {{"xhtml1_strict_doctype.tml"}, {"xhtml1_transitional_doctype.tml"},
-                {"xhtml1_frameset_doctype.tml"}};
+        return new Object[][] { { "xhtml1_strict_doctype.tml" }, { "xhtml1_transitional_doctype.tml" },
+                { "xhtml1_frameset_doctype.tml" } };
     }
 
     @Test(dataProvider = "doctype_parsed_correctly_data")
@@ -715,26 +699,26 @@ public class TemplateParserImplTest extends InternalBaseTestCase
     {
         return new Object[][] {
 
-                {"xhtml1_strict_doctype.tml", "html", "-//W3C//DTD XHTML 1.0 Strict//EN",
-                        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"},
+                { "xhtml1_strict_doctype.tml", "html", "-//W3C//DTD XHTML 1.0 Strict//EN",
+                        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd" },
 
-                {"xhtml1_transitional_doctype.tml", "html", "-//W3C//DTD XHTML 1.0 Transitional//EN",
-                        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"},
+                { "xhtml1_transitional_doctype.tml", "html", "-//W3C//DTD XHTML 1.0 Transitional//EN",
+                        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd" },
 
-                {"xhtml1_frameset_doctype.tml", "html", "-//W3C//DTD XHTML 1.0 Frameset//EN",
-                        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd"},
+                { "xhtml1_frameset_doctype.tml", "html", "-//W3C//DTD XHTML 1.0 Frameset//EN",
+                        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd" },
 
-                {"html4_strict_doctype.tml", "HTML", "-//W3C//DTD HTML 4.01//EN",
-                        "http://www.w3.org/TR/html4/strict.dtd"},
+                { "html4_strict_doctype.tml", "HTML", "-//W3C//DTD HTML 4.01//EN",
+                        "http://www.w3.org/TR/html4/strict.dtd" },
 
-                {"html4_transitional_doctype.tml", "HTML", "-//W3C//DTD HTML 4.01 Transitional//EN",
-                        "http://www.w3.org/TR/html4/loose.dtd"},
+                { "html4_transitional_doctype.tml", "HTML", "-//W3C//DTD HTML 4.01 Transitional//EN",
+                        "http://www.w3.org/TR/html4/loose.dtd" },
 
-                {"html4_frameset_doctype.tml", "HTML", "-//W3C//DTD HTML 4.01 Frameset//EN",
-                        "http://www.w3.org/TR/html4/frameset.dtd"},
+                { "html4_frameset_doctype.tml", "HTML", "-//W3C//DTD HTML 4.01 Frameset//EN",
+                        "http://www.w3.org/TR/html4/frameset.dtd" },
 
-                {"system_doctype.xml", "foo", null,
-                        "src/test/resources/org/apache/tapestry5/internal/services/simple.dtd"}};
+                { "system_doctype.xml", "foo", null,
+                        "src/test/resources/org/apache/tapestry5/internal/services/simple.dtd" } };
     }
 
     @Test(dataProvider = "doctype_token_added_correctly_data")
@@ -743,10 +727,10 @@ public class TemplateParserImplTest extends InternalBaseTestCase
         System.setProperty("user.dir", TapestryTestConstants.MODULE_BASE_DIR_PATH);
 
         List<TemplateToken> tokens = tokens(fileName);
-        DTDToken t2 = get(tokens, 0);
-        assertEquals(t2.getName(), name);
-        assertEquals(t2.getPublicId(), publicId);
-        assertEquals(t2.getSystemId(), systemId);
+        DTDToken t0 = get(tokens, 0);
+        assertEquals(t0.getName(), name);
+        assertEquals(t0.getPublicId(), publicId);
+        assertEquals(t0.getSystemId(), systemId);
     }
 
     @Test

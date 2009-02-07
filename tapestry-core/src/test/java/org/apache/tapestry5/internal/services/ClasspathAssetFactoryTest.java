@@ -24,6 +24,8 @@ import org.testng.annotations.Test;
 
 public class ClasspathAssetFactoryTest extends InternalBaseTestCase
 {
+    private final IdentityAssetPathConverter converter = new IdentityAssetPathConverter();
+
     @Test
     public void asset_client_URL_is_cached()
     {
@@ -42,7 +44,7 @@ public class ClasspathAssetFactoryTest extends InternalBaseTestCase
         replay();
 
         ClasspathAssetFactory factory = new ClasspathAssetFactory(cache, aliasManager,
-                                                                  new IdentityAssetPathConverter());
+                                                                  converter);
 
         Asset asset = factory.createAsset(r);
 

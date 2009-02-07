@@ -34,28 +34,31 @@ public class ContextAssetFactory implements AssetFactory
 
     private final Resource rootResource;
 
-    private final AssetPathConverter assetPathConverter;
+    private final AssetPathConverter converter;
+
+    private final boolean invariant;
 
     public ContextAssetFactory(Request request, Context context,
 
                                String applicationVersion,
 
-                               AssetPathConverter assetPathConverter)
+                               AssetPathConverter converter)
     {
         this.request = request;
-        this.assetPathConverter = assetPathConverter;
+        this.converter = converter;
 
         pathPrefix = RequestConstants.ASSET_PATH_PREFIX + RequestConstants.CONTEXT_FOLDER
                 + applicationVersion + "/";
 
         rootResource = new ContextResource(context, "/");
+        invariant = this.converter.isInvariant();
     }
 
     public Asset createAsset(final Resource resource)
     {
         final String defaultPath = request.getContextPath() + pathPrefix + resource.getPath();
 
-        return new AbstractAsset()
+        return new AbstractAsset(invariant)
         {
             public Resource getResource()
             {
@@ -64,7 +67,7 @@ public class ContextAssetFactory implements AssetFactory
 
             public String toClientURL()
             {
-                return assetPathConverter.convertAssetPath(defaultPath);
+                return converter.convertAssetPath(defaultPath);
             }
         };
     }
