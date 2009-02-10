@@ -22,6 +22,9 @@ import org.apache.tapestry5.ioc.Resource;
  * packaged inside JARs).
  * <p/>
  * An Asset's toString() will return the URL for the resource (the same value as {@link #toClientURL()}).
+ * <p/>
+ * Release 5.1.0.0 introduced {@link org.apache.tapestry5.Asset2}, which extends this interface with an additional
+ * method.
  */
 public interface Asset
 {
@@ -33,9 +36,6 @@ public interface Asset
      * and alternate implementation are encouraged to do so as well. In addition, Tapestry ensures that context and
      * classpath assets have a far-future expires header (to ensure aggresive caching by the client).
      * <p/>
-     * This value is considered <em>variant</em>; because of {@link org.apache.tapestry5.services.AssetPathConverter},
-     * it is conceivable for the return value to be different at different times, depending on how the converter changes
-     * the default path.
      */
     String toClientURL();
 
@@ -44,15 +44,4 @@ public interface Asset
      */
     Resource getResource();
 
-    /**
-     * Returns true if the Asset is invariant (meaning that it returns the same value from {@link #toClientURL()} at all
-     * times}. Assets that are used as binding values will be cached more aggresively by Tapestry is they are
-     * invariant.
-     *
-     * @return true if invariant
-     * @see org.apache.tapestry5.services.AssetPathConverter#isInvariant()
-     * @see Binding#isInvariant()
-     * @since 5.1.0.0
-     */
-    boolean isInvariant();
 }

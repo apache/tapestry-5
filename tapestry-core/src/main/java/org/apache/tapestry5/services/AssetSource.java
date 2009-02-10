@@ -27,6 +27,9 @@ import java.util.Locale;
  * Assets are defined with a domain, and the domain is indicated by a prefix.  The two builtin domains are "context:"
  * (for files inside the web application context) and "classpath:" for files stored on the classpath (typically, inside
  * a JAR, such as a component library).
+ * <p/>
+ * Since 5.1.0.0, is is preferred that {@link org.apache.tapestry5.services.AssetFactory#createAsset(org.apache.tapestry5.ioc.Resource)}
+ * return an instance of {@link org.apache.tapestry5.Asset2}.
  */
 @UsesMappedConfiguration(AssetFactory.class)
 public interface AssetSource
