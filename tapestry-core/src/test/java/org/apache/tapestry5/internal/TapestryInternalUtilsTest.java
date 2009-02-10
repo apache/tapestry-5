@@ -14,11 +14,10 @@
 
 package org.apache.tapestry5.internal;
 
-import org.apache.tapestry5.ComponentResources;
-import org.apache.tapestry5.OptionModel;
-import org.apache.tapestry5.SelectModel;
+import org.apache.tapestry5.*;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.ioc.Messages;
+import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.services.ClassFactory;
 import org.apache.tapestry5.ioc.services.PropertyAccess;
@@ -394,5 +393,41 @@ public class TapestryInternalUtilsTest extends InternalBaseTestCase
     public void to_base64(long input, String expected)
     {
         assertEquals(TapestryInternalUtils.toBase64(input), expected);
+    }
+
+    @Test
+    public void to_asset2_no_wrapper_needed()
+    {
+        Asset2 asset2 = mockAsset2();
+
+        replay();
+
+        assertSame(TapestryInternalUtils.toAsset2(asset2), asset2);
+
+        verify();
+    }
+
+    @Test
+    public void asset_to_asset2_wrapper()
+    {
+        Asset asset = mockAsset();
+        Resource resource = mockResource();
+        String clientURL = "clientURL";
+
+        train_toClientURL(asset, clientURL);
+
+        expect(asset.getResource()).andReturn(resource);
+
+        replay();
+
+        Asset2 asset2 = TapestryInternalUtils.toAsset2(asset);
+
+        assertFalse(asset2.isInvariant());
+
+        assertSame(asset2.toClientURL(), clientURL);
+        assertSame(asset2.toString(), asset.toString());
+        assertSame(asset2.getResource(), resource);
+
+        verify();
     }
 }

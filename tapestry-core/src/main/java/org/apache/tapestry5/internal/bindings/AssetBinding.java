@@ -15,26 +15,28 @@
 package org.apache.tapestry5.internal.bindings;
 
 import org.apache.tapestry5.Asset;
+import org.apache.tapestry5.Asset2;
+import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.ioc.Location;
 
 public class AssetBinding extends AbstractBinding
 {
     private final String description;
 
-    private final Asset asset;
+    private final Asset2 asset;
 
     AssetBinding(Location location, String description, Asset asset)
     {
         super(location);
 
         this.description = description;
-        this.asset = asset;
+        this.asset = TapestryInternalUtils.toAsset2(asset);
     }
 
     @Override
     public Class getBindingType()
     {
-        return Asset.class;
+        return Asset2.class;
     }
 
     public Object get()
