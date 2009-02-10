@@ -14,14 +14,13 @@
 
 package org.apache.tapestry5.corelib.components;
 
-import org.apache.tapestry5.BindingConstants;
-import org.apache.tapestry5.Block;
 import org.apache.tapestry5.annotations.Parameter;
+import org.apache.tapestry5.corelib.base.AbstractConditional;
 
 /**
- * Conditionally renders its body.
+ * Conditionally renders its body. May render its tag and any informal parameters.
  */
-public class If
+public class If extends AbstractConditional
 {
     /**
      * If true, then the body of the If component is rendered. If false, the body is omitted.
@@ -39,34 +38,12 @@ public class If
     private boolean negate;
 
     /**
-     * An alternate {@link org.apache.tapestry5.Block} to render if the test parameter is false. The default, null,
-     * means render nothing in that situation.
+     * @return test parameter (if negate is false), or test parameter inverted (if negate is true)
      */
-    @Parameter(name = "else", defaultPrefix = BindingConstants.LITERAL)
-    private Block elseBlock;
-
-    /**
-     * Returns null if the test parameter is true, which allows normal rendering (of the body). If the test parameter is
-     * false, returns the else parameter (this may also be null).
-     */
-    Object beginRender()
-    {
-        return test != negate ? null : elseBlock;
-    }
-
-    /**
-     * If the test parameter is true, then the body is rendered, otherwise not. The component does not have a template
-     * or do any other rendering besides its body.
-     */
-    boolean beforeRenderBody()
+    protected boolean test()
     {
         return test != negate;
     }
 
-    void setup(boolean test, boolean negate, Block elseBlock)
-    {
-        this.test = test;
-        this.negate = negate;
-        this.elseBlock = elseBlock;
-    }
+
 }
