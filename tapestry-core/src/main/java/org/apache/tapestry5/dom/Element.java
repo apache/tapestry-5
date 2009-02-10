@@ -270,7 +270,7 @@ public final class Element extends Node
     }
 
     /**
-     * Adds an returns a new CDATA node.
+     * Adds and returns a new CDATA node.
      *
      * @param content the content to be rendered by the node
      * @return the newly created node

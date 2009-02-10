@@ -19,6 +19,7 @@ import org.apache.tapestry5.ioc.internal.util.Defense;
 
 import java.io.PrintWriter;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -43,6 +44,11 @@ public final class Document extends Node
     private final MarkupModel model;
 
     private final String encoding;
+
+    /**
+     * Non-element content that comes between the DOCTYPE and the root element.
+     */
+    private List<Node> preamble;
 
     public Document(MarkupModel model)
     {
@@ -145,6 +151,12 @@ public final class Document extends Node
             dtd.toMarkup(writer);
         }
 
+        if (preamble != null)
+        {
+            for (Node n : preamble)
+                n.toMarkup(this, writer, namespaceURIToPrefix);
+        }
+
         Map<String, String> initialNamespaceMap = CollectionFactory.newMap();
 
         initialNamespaceMap.put("xml", "http://www.w3.org/XML/1998/namespace");
@@ -202,5 +214,62 @@ public final class Document extends Node
     void visit(Visitor visitor)
     {
         rootElement.visit(visitor);
+    }
+
+    private <T extends Node> T newChild(T child)
+    {
+        if (preamble == null)
+            preamble = CollectionFactory.newList();
+
+        preamble.add(child);
+
+        return child;
+    }
+
+    /**
+     * Adds the comment and returns this document for further construction.
+     *
+     * @since 5.1.0.0
+     */
+    public Document comment(String text)
+    {
+        newChild(new Comment(this, text));
+
+        return this;
+    }
+
+    /**
+     * Adds the raw text and returns this document for further construction.
+     *
+     * @since 5.1.0.0
+     */
+    public Document raw(String text)
+    {
+        newChild(new Raw(this, text));
+
+        return this;
+    }
+
+    /**
+     * Adds and returns a new text node (the text node is returned so that {@link Text#write(String)} or [@link {@link
+     * Text#writef(String, Object[])} may be invoked .
+     *
+     * @param text initial text for the node
+     * @return the new Text node
+     */
+    public Text text(String text)
+    {
+        return newChild(new Text(this, text));
+    }
+
+    /**
+     * Adds and returns a new CDATA node.
+     *
+     * @param content the content to be rendered by the node
+     * @return the newly created node
+     */
+    public CData cdata(String content)
+    {
+        return newChild(new CData(this, content));
     }
 }

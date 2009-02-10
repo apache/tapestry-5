@@ -23,13 +23,6 @@ import org.testng.annotations.Test;
 
 public class MarkupWriterImplTest extends InternalBaseTestCase
 {
-    @Test(expectedExceptions = IllegalStateException.class)
-    public void write_with_no_current_element()
-    {
-        MarkupWriter w = new MarkupWriterImpl();
-
-        w.write("fail!");
-    }
 
     /**
      * TAP5-349
@@ -55,7 +48,7 @@ public class MarkupWriterImplTest extends InternalBaseTestCase
     }
 
     @Test
-    public void write_whitespace_before_start_of_root_element_is_ignored()
+    public void write_whitespace_before_start_of_root_element_is_retained()
     {
         MarkupWriter w = new MarkupWriterImpl(new XMLMarkupModel());
 
@@ -64,11 +57,12 @@ public class MarkupWriterImplTest extends InternalBaseTestCase
         w.element("root");
         w.end();
 
-        assertEquals(w.toString(), "<?xml version=\"1.0\"?>\n<root/>");
+        assertEquals(w.toString(), "<?xml version=\"1.0\"?>\n" +
+                "  <root/>");
     }
 
     @Test
-    public void write_whitespace_after_end_of_root_element_is_ignored()
+    public void write_whitespace_after_end_of_root_element_is_retained_in_preamble()
     {
         MarkupWriter w = new MarkupWriterImpl(new XMLMarkupModel());
 
@@ -77,15 +71,25 @@ public class MarkupWriterImplTest extends InternalBaseTestCase
 
         w.write("  ");
 
-        assertEquals(w.toString(), "<?xml version=\"1.0\"?>\n<root/>");
+        assertEquals(w.toString(), "<?xml version=\"1.0\"?>\n  <root/>");
     }
 
-    @Test(expectedExceptions = IllegalStateException.class)
-    public void comment_with_no_current_element()
+    @Test()
+    public void preamble_content() throws Exception
     {
-        MarkupWriter w = new MarkupWriterImpl();
+        MarkupWriter w = new MarkupWriterImpl(new XMLMarkupModel());
 
-        w.comment("fail!");
+        w.comment("preamble start");
+        w.write("preamble text");
+        w.cdata("CDATA content");
+        w.writeRaw("&nbsp;");
+        w.element("root");
+        w.end();
+        // You really shouldn't have any text after the close tag of the document, so it
+        // gets moved to the top, to the "preamble", before the first element.
+        w.comment("content after root element in preamble");
+
+        assertEquals(w.getDocument().toString(), readFile("preamble_content.txt"));
     }
 
     @Test(expectedExceptions = IllegalStateException.class)

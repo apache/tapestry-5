@@ -19,7 +19,6 @@ import org.apache.tapestry5.MarkupWriterListener;
 import org.apache.tapestry5.dom.*;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.Defense;
-import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 
 import java.io.PrintWriter;
 import java.util.Collection;
@@ -76,25 +75,29 @@ public class MarkupWriterImpl implements MarkupWriter
 
     public void cdata(String content)
     {
-        ensureCurrentElement();
-
-        current.cdata(content);
-
         currentText = null;
+
+        if (current == null)
+        {
+            document.cdata(content);
+        }
+        else
+        {
+            current.cdata(content);
+        }
     }
 
     public void write(String text)
     {
-        // Whitespace before and after the root element is quietly ignored.
-        if (current == null && InternalUtils.isBlank(text)) return;
-
-        ensureCurrentElement();
-
         if (text == null) return;
 
         if (currentText == null)
         {
-            currentText = current.text(text);
+            currentText =
+                    current == null
+                    ? document.text(text)
+                    : current.text(text);
+
             return;
         }
 
@@ -130,7 +133,8 @@ public class MarkupWriterImpl implements MarkupWriter
 
     private void ensureCurrentElement()
     {
-        if (current == null) throw new IllegalStateException(ServicesMessages.markupWriterNoCurrentElement());
+        if (current == null)
+            throw new IllegalStateException(ServicesMessages.markupWriterNoCurrentElement());
     }
 
     public Element element(String name, Object... namesAndValues)
@@ -162,11 +166,16 @@ public class MarkupWriterImpl implements MarkupWriter
 
     public void writeRaw(String text)
     {
-        ensureCurrentElement();
-
         currentText = null;
 
-        current.raw(text);
+        if (current == null)
+        {
+            document.raw(text);
+        }
+        else
+        {
+            current.raw(text);
+        }
     }
 
     public Element end()
@@ -184,11 +193,16 @@ public class MarkupWriterImpl implements MarkupWriter
 
     public void comment(String text)
     {
-        ensureCurrentElement();
-
-        current.comment(text);
-
         currentText = null;
+
+        if (current == null)
+        {
+            document.comment(text);
+        }
+        else
+        {
+            current.comment(text);
+        }
     }
 
     public Element attributeNS(String namespace, String attributeName, String attributeValue)
