@@ -28,9 +28,9 @@ public interface AssetPathConverter
 {
     /**
      * Returns true if the converter returns that same converted path for any specific asset path (in which case, the
-     * converted asset path may be cached more aggresively).  This value should be false if the the converted path can
-     * vary for the same input path ... that is, if external factors (such as the identity of the user, or information
-     * obtained from the request) is involved in generating the final client URI.
+     * converted asset path may be cached in component instance variables more aggresively). This value should be false
+     * if the converted path can vary for the same input path ... that is, if external factors (such as the identity of
+     * the user, or information obtained from the request) is involved in generating the final client URI.
      *
      * @return true if invariant (and therefore cachable)
      */

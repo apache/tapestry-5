@@ -21,14 +21,13 @@ package org.apache.tapestry5;
  * the invariance of the binding from the asset (and assumes variant unless the asset object implements this
  * interface).
  *
- * @see org.apache.tapestry5.services.AssetPathConverter#isInvariant()
  * @since 5.1.0.0
  */
 public interface Asset2 extends Asset
 {
     /**
      * Returns true if the Asset is invariant (meaning that it returns the same value from {@link Asset#toClientURL()}
-     * at all times}. Assets that are used as binding values will be cached more aggresively by Tapestry is they are
+     * at all times}. Assets that are used as binding values will be cached more aggresively by Tapestry as they are
      * invariant.
      *
      * @return true if invariant
