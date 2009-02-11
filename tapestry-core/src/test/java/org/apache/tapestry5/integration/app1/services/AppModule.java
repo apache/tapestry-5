@@ -16,6 +16,7 @@ package org.apache.tapestry5.integration.app1.services;
 
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.ValueEncoder;
+import org.apache.tapestry5.integration.app1.data.ToDoItem;
 import org.apache.tapestry5.integration.app1.data.Track;
 import org.apache.tapestry5.internal.services.GenericValueEncoderFactory;
 import org.apache.tapestry5.ioc.Configuration;
@@ -206,9 +207,10 @@ public class AppModule
     }
 
     public static void contributeValueEncoderSource(MappedConfiguration<Class, ValueEncoderFactory> configuration,
-                                                    final MusicLibrary library)
+                                                    final MusicLibrary library,
+                                                    final ToDoDatabase todoDatabase)
     {
-        ValueEncoder<Track> encoder = new ValueEncoder<Track>()
+        ValueEncoder<Track> trackEncoder = new ValueEncoder<Track>()
         {
             public String toClient(Track value)
             {
@@ -224,7 +226,24 @@ public class AppModule
         };
 
 
-        configuration.add(Track.class, GenericValueEncoderFactory.create(encoder));
+        configuration.add(Track.class, GenericValueEncoderFactory.create(trackEncoder));
+
+        ValueEncoder<ToDoItem> todoEncoder = new ValueEncoder<ToDoItem>()
+        {
+            public String toClient(ToDoItem value)
+            {
+                return String.valueOf(value.getId());
+            }
+
+            public ToDoItem toValue(String clientValue)
+            {
+                long id = Long.parseLong(clientValue);
+
+                return todoDatabase.get(id);
+            }
+        };
+
+        configuration.add(ToDoItem.class, GenericValueEncoderFactory.create(todoEncoder));
     }
 
 

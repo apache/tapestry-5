@@ -1,4 +1,4 @@
-//  Copyright 2008 The Apache Software Foundation
+//  Copyright 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -45,7 +45,6 @@ public class DateFieldAjaxFormLoop
     {
         List<DateHolder> result = CollectionFactory.newList(database.values());
 
-
         Collections.sort(result, new Comparator<DateHolder>()
         {
             public int compare(DateHolder o1, DateHolder o2)
@@ -59,7 +58,8 @@ public class DateFieldAjaxFormLoop
 
     public PrimaryKeyEncoder<Integer, DateHolder> getDateHolderConverter()
     {
-        DefaultPrimaryKeyEncoder<Integer, DateHolder> result = new DefaultPrimaryKeyEncoder<Integer, DateHolder>();
+        DefaultPrimaryKeyEncoder<Integer, DateHolder> result =
+                new DefaultPrimaryKeyEncoder<Integer, DateHolder>(Integer.class);
 
         for (DateHolder dh : getDateHolders())
         {

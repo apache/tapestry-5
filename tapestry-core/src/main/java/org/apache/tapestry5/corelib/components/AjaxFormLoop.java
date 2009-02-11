@@ -26,7 +26,6 @@ import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.*;
 
-import java.io.Serializable;
 import java.util.Collections;
 import java.util.Iterator;
 
@@ -99,7 +98,7 @@ public class AjaxFormLoop
      * Required parameter used to convert server-side objects (provided from the source) into client-side ids and back.
      */
     @Parameter(required = true, allowNull = false)
-    private PrimaryKeyEncoder encoder;
+    private ValueEncoder<Object> encoder;
 
     @InjectComponent
     private ClientElement rowInjector;
@@ -159,11 +158,7 @@ public class AjaxFormLoop
 
         public void addRemoveRowTrigger(String clientId)
         {
-            Serializable id = idForCurrentValue();
-
-            String idType = id.getClass().getName();
-
-            Link link = resources.createEventLink("triggerRemoveRow", id, idType);
+            Link link = resources.createEventLink("triggerRemoveRow", toClientValue());
 
             String asURI = link.toAbsoluteURI();
 
@@ -184,26 +179,26 @@ public class AjaxFormLoop
 
 
     /**
-     * Action for synchronizing the current element of the loop by recording its client value / primary key.
+     * Action for synchronizing the current element of the loop by recording its client value.
      */
     static class SyncValue implements ComponentAction<AjaxFormLoop>
     {
-        private final Serializable id;
+        private final String clientValue;
 
-        public SyncValue(Serializable id)
+        public SyncValue(String clientValue)
         {
-            this.id = id;
+            this.clientValue = clientValue;
         }
 
         public void execute(AjaxFormLoop component)
         {
-            component.syncValue(id);
+            component.syncValue(clientValue);
         }
 
         @Override
         public String toString()
         {
-            return String.format("AjaxFormLoop.SyncValue[%s]", id);
+            return String.format("AjaxFormLoop.SyncValue[%s]", clientValue);
         }
     }
 
@@ -274,13 +269,13 @@ public class AjaxFormLoop
 
     @SuppressWarnings({ "unchecked" })
     @Log
-    private void syncValue(Serializable id)
+    private void syncValue(String clientValue)
     {
-        Object value = encoder.toValue(id);
+        Object value = encoder.toValue(clientValue);
 
         if (value == null)
             throw new RuntimeException(
-                    String.format("Unable to convert serialized id '%s' back into an object.", id));
+                    String.format("Unable to convert client value '%s' back into a server-side object.", clientValue));
 
         this.value = value;
     }
@@ -296,21 +291,22 @@ public class AjaxFormLoop
 
     private void syncCurrentValue()
     {
-        Serializable id = idForCurrentValue();
+        String id = toClientValue();
 
-        // Add the command that restores value from the value id,
+        // Add the command that restores value from the value clientValue,
         // when the form is submitted.
 
         formSupport.store(this, new SyncValue(id));
     }
 
     /**
-     * Uses the {@link org.apache.tapestry5.PrimaryKeyEncoder} to convert the current row value to an id.
+     * Uses the {@link org.apache.tapestry5.ValueEncoder} to convert the current server-side value to a client-side
+     * value.
      */
     @SuppressWarnings({ "unchecked" })
-    private Serializable idForCurrentValue()
+    private String toClientValue()
     {
-        return encoder.toKey(value);
+        return encoder.toClient(value);
     }
 
 
@@ -396,8 +392,7 @@ public class AjaxFormLoop
         if (value == null)
             throw new IllegalArgumentException(
                     String.format("Event handler for event 'addRow' from %s should have returned a non-null value.",
-                                  resources.getCompleteId())
-            );
+                                  resources.getCompleteId()));
 
 
         renderingInjector = true;
@@ -418,13 +413,9 @@ public class AjaxFormLoop
     }
 
     @Log
-    Object onTriggerRemoveRow(String rowId, String idTypeName)
+    Object onTriggerRemoveRow(String rowId)
     {
-        Class idType = componentClassCache.forName(idTypeName);
-
-        Serializable coerced = (Serializable) typeCoercer.coerce(rowId, idType);
-
-        Object value = encoder.toValue(coerced);
+        Object value = encoder.toValue(rowId);
 
         resources.triggerEvent(EventConstants.REMOVE_ROW, new Object[] { value }, null);
 

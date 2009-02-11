@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ import org.apache.tapestry5.*;
 import org.apache.tapestry5.annotations.*;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.services.ComponentDefaultProvider;
 import org.apache.tapestry5.services.FormSupport;
 import org.apache.tapestry5.services.Heartbeat;
 
@@ -32,6 +33,9 @@ import java.util.List;
  * For a non-volatile Loop inside the form, the Loop stores a series of commands that start and end heartbeats and store
  * state (either as full objects when there the encoder parameter is not bound, or as client-side objects when there is
  * an encoder).
+ * <p/>
+ * When the Loop is used inside a Form, it will generate an {@link org.apache.tapestry5.EventConstants#SYNCHRONIZE_VALUES}
+ * event to inform its container what values were submitted and in what order.
  */
 @SupportsInformalParameters
 public class Loop
@@ -144,57 +148,58 @@ public class Loop
     /**
      * Restores the value using a stored primary key via {@link PrimaryKeyEncoder#toValue(Serializable)}.
      */
-    static class RestoreStateViaEncodedPrimaryKey implements ComponentAction<Loop>
+    static class RestoreStateFromStoredClientValue implements ComponentAction<Loop>
     {
-        private static final long serialVersionUID = -2422790241589517336L;
+        private final String clientValue;
 
-        private final Serializable primaryKey;
-
-        public RestoreStateViaEncodedPrimaryKey(final Serializable primaryKey)
+        public RestoreStateFromStoredClientValue(final String clientValue)
         {
-            this.primaryKey = primaryKey;
+            this.clientValue = clientValue;
         }
 
         public void execute(Loop component)
         {
-            component.restoreStateViaEncodedPrimaryKey(primaryKey);
+            component.restoreStateFromStoredClientValue(clientValue);
         }
 
         @Override
         public String toString()
         {
-            return String.format("Loop.RestoreStateViaEncodedPrimaryKey[%s]", primaryKey);
+            return String.format("Loop.RestoreStateFromStoredClientValue[%s]", clientValue);
         }
     }
 
     /**
-     * Stores a list of keys to be passed to {@link PrimaryKeyEncoder#prepareForKeys(List)}.
+     * Start of processing event that allows the Loop to set up internal bookeeping, to track which values have come up
+     * in the form submission.
      */
-    static class PrepareForKeys implements ComponentAction<Loop>
+    static final ComponentAction<Loop> PREPARE_FOR_SUBMISSION = new ComponentAction<Loop>()
     {
-        private static final long serialVersionUID = -6515255627142956828L;
-
-        /**
-         * The variable is final, the contents are mutable while the Loop renders.
-         */
-        private final List<Serializable> keys;
-
-        public PrepareForKeys(final List<Serializable> keys)
-        {
-            this.keys = keys;
-        }
-
         public void execute(Loop component)
         {
-            component.prepareForKeys(keys);
+            component.prepareForSubmission();
         }
 
         @Override
         public String toString()
         {
-            return "Loop.PrepareForKeys" + keys;
+            return "Loop.PrepareForSubmission";
         }
-    }
+    };
+
+    static final ComponentAction<Loop> NOTIFY_CONTAINER = new ComponentAction<Loop>()
+    {
+        public void execute(Loop component)
+        {
+            component.notifyContainer();
+        }
+
+        @Override
+        public String toString()
+        {
+            return "Loop.NotifyContainer";
+        }
+    };
 
     /**
      * Defines the collection of values for the loop to iterate over. If not specified, defaults to a property of the
@@ -204,11 +209,12 @@ public class Loop
     private Iterable<?> source;
 
     /**
-     * Optional primary key converter; if provided and inside a form and not volatile, then each iterated value is
-     * converted and stored into the form.
+     * Optional value converter; if provided (or defaulted) and inside a form and not volatile, then each iterated value
+     * is converted and stored into the form. A default for this is calculated from the type of the property bound to
+     * the value parameter.
      */
     @Parameter
-    private PrimaryKeyEncoder<Serializable, Object> encoder;
+    private ValueEncoder<Object> encoder;
 
     /**
      * If true and the Loop is enclosed by a Form, then the normal state saving logic is turned off. Defaults to false,
@@ -230,7 +236,7 @@ public class Loop
     /**
      * The current value, set before the component renders its body.
      */
-    @Parameter
+    @Parameter(principal = true)
     private Object value;
 
     /**
@@ -255,12 +261,26 @@ public class Loop
     @Inject
     private ComponentResources resources;
 
+    @Inject
+    private ComponentDefaultProvider defaultProvider;
+
     private Block cleanupBlock;
+
+    /**
+     * Objects that have been recovered via {@link org.apache.tapestry5.ValueEncoder#toValue(String)} during the
+     * processing of the loop. These are sent to the container via an event.
+     */
+    private List<Object> synchonizedValues;
 
 
     String defaultElement()
     {
         return resources.getElementName();
+    }
+
+    ValueEncoder defaultEncoder()
+    {
+        return defaultProvider.defaultValueEncoder("value", resources);
     }
 
     @SetupRender
@@ -272,6 +292,9 @@ public class Loop
 
         storeRenderStateInForm = formSupport != null && !volatileState;
 
+        if (storeRenderStateInForm)
+            formSupport.store(this, PREPARE_FOR_SUBMISSION);
+
         // Only render the body if there is something to iterate over
 
         boolean hasContent = iterator != null && iterator.hasNext();
@@ -279,16 +302,6 @@ public class Loop
         if (formSupport != null && hasContent)
         {
             formSupport.store(this, volatileState ? SETUP_FOR_VOLATILE : RESET_INDEX);
-
-            if (encoder != null)
-            {
-                List<Serializable> keyList = CollectionFactory.newList();
-
-                // We'll keep updating the _keyList while the Loop renders, the values will "lock
-                // down" when the Form serializes all the data.
-
-                formSupport.store(this, new PrepareForKeys(keyList));
-            }
         }
 
         cleanupBlock = hasContent ? null : empty;
@@ -298,21 +311,17 @@ public class Loop
         return hasContent;
     }
 
+
     /**
      * Returns the empty block, or null, after the render has finished. It will only be the empty block (which itself
      * may be null) if the source was null or empty.
      */
     Block cleanupRender()
     {
+        if (storeRenderStateInForm)
+            formSupport.store(this, NOTIFY_CONTAINER);
+
         return cleanupBlock;
-    }
-
-    private void prepareForKeys(List<Serializable> keys)
-    {
-        // Again, the encoder existed when we rendered, we better have another available
-        // when the enclosing Form is submitted.
-
-        encoder.prepareForKeys(keys);
     }
 
     private void setupForVolatile()
@@ -344,8 +353,9 @@ public class Loop
             }
             else
             {
-                Serializable primaryKey = encoder.toKey(value);
-                formSupport.store(this, new RestoreStateViaEncodedPrimaryKey(primaryKey));
+                String clientValue = encoder.toClient(value);
+
+                formSupport.store(this, new RestoreStateFromStoredClientValue(clientValue));
             }
         }
 
@@ -405,14 +415,28 @@ public class Loop
     /**
      * Restores state previously encoded by the Loop and stored into the Form.
      */
-    private void restoreStateViaEncodedPrimaryKey(Serializable primaryKey)
+    private void restoreStateFromStoredClientValue(String clientValue)
     {
-        // We assume that if a encoder is available when we rendered, that one will be available
-        // when the form is submitted. TODO: Check for this.
+        // We assume that if an encoder is available when we rendered, that one will be available
+        // when the form is submitted.
 
-        Object restoredValue = encoder.toValue(primaryKey);
+        Object restoredValue = encoder.toValue(clientValue);
 
         restoreState(restoredValue);
+
+        synchonizedValues.add(restoredValue);
+    }
+
+    private void prepareForSubmission()
+    {
+        synchonizedValues = CollectionFactory.newList();
+    }
+
+    private void notifyContainer()
+    {
+        Object[] values = synchonizedValues.toArray();
+
+        resources.triggerEvent(EventConstants.SYNCHRONIZE_VALUES, values, null);
     }
 
     // For testing:
