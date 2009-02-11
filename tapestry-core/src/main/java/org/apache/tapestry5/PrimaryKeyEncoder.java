@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -27,6 +27,12 @@ import java.util.List;
  * @param <K> the type of the primary key, used to identify the value (which must be serializable)
  * @param <V> the type of value identified by the key
  * @see org.apache.tapestry5.ValueEncoder
+ * @deprecated This interface overlaps with {@link org.apache.tapestry5.ValueEncoder} and has been deprecated in release
+ *             5.1. The interface itself will be removed in a later release of Tapestry. The components that used this
+ *             interface ({@link org.apache.tapestry5.corelib.components.AjaxFormLoop}, {@link
+ *             org.apache.tapestry5.corelib.components.Grid}, {@link org.apache.tapestry5.corelib.components.GridRows}
+ *             and {@link org.apache.tapestry5.corelib.components.Loop}) have been changed to expect ValueEncoder
+ *             instead, and an automatic coercion from PrimaryKeyEncoder to ValueEncoder has been provided.
  */
 public interface PrimaryKeyEncoder<K extends Serializable, V>
 {
@@ -55,4 +61,13 @@ public interface PrimaryKeyEncoder<K extends Serializable, V>
      * @return the value object for the key
      */
     V toValue(K key);
+
+    /**
+     * Returns the type of key. This is primarily used when Tapestry must convert an existing PrimaryKeyConverter into a
+     * {@link org.apache.tapestry5.ValueEncoder}.
+     *
+     * @return key type or null if not known
+     * @since 5.1.0.0
+     */
+    Class<K> getKeyType();
 }

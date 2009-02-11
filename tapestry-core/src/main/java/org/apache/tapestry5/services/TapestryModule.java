@@ -32,6 +32,7 @@ import org.apache.tapestry5.internal.renderers.*;
 import org.apache.tapestry5.internal.services.*;
 import org.apache.tapestry5.internal.transform.*;
 import org.apache.tapestry5.internal.translator.*;
+import org.apache.tapestry5.internal.util.PrimaryKeyEncoder2ValueEncoder;
 import org.apache.tapestry5.internal.util.RenderableAsBlock;
 import org.apache.tapestry5.internal.util.StringRenderable;
 import org.apache.tapestry5.ioc.*;
@@ -802,10 +803,10 @@ public final class TapestryModule
      * component) to {@link org.apache.tapestry5.ComponentResources} <li>String to {@link
      * org.apache.tapestry5.corelib.data.BlankOption} <li> {@link org.apache.tapestry5.ComponentResources} to {@link
      * org.apache.tapestry5.PropertyOverrides} <li>String to {@link org.apache.tapestry5.Renderable} <li>{@link
-     * org.apache.tapestry5.Renderable} to {@link org.apache.tapestry5.Block} <li>String to {@link
-     * java.text.DateFormat}</ul>
+     * org.apache.tapestry5.Renderable} to {@link org.apache.tapestry5.Block} <li>String to {@link java.text.DateFormat}
+     * <li>{@link org.apache.tapestry5.PrimaryKeyEncoder} to {@link org.apache.tapestry5.ValueEncoder}</ul>
      */
-    public static void contributeTypeCoercer(Configuration<CoercionTuple> configuration)
+    public static void contributeTypeCoercer(Configuration<CoercionTuple> configuration, @Builtin TypeCoercer coercer)
     {
         add(configuration, ComponentResources.class, PropertyOverrides.class,
             new Coercion<ComponentResources, PropertyOverrides>()
@@ -908,6 +909,8 @@ public final class TapestryModule
                 return new SimpleDateFormat(input);
             }
         });
+
+        add(configuration, PrimaryKeyEncoder.class, ValueEncoder.class, new PrimaryKeyEncoder2ValueEncoder(coercer));
     }
 
     /**
@@ -1026,7 +1029,7 @@ public final class TapestryModule
                                                                   UpdateListenerHub updateListenerHub,
 
                                                                   @ClasspathProvider AssetFactory classpathAssetFactory,
-                                                                  
+
                                                                   ClasspathURLConverter classpathURLConverter)
     {
         ValidationMessagesSourceImpl service = new ValidationMessagesSourceImpl(configuration,

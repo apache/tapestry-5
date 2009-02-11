@@ -1,4 +1,4 @@
-//  Copyright 2008 The Apache Software Foundation
+//  Copyright 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -123,4 +123,13 @@ public class EventConstants
      * also be visible in the {@link org.apache.tapestry5.PrimaryKeyEncoder encoder parameter}.
      */
     public static final String ADD_ROW = "addRow";
+
+    /**
+     * Event triggered by the {@link org.apache.tapestry5.corelib.components.Loop} component to inform its container of
+     * all the values that were supplied from the client during a form submission. The event handler method should have
+     * a single parameter, of type Object[] or type List, to receive the values.
+     *
+     * @since 5.1.0.0
+     */
+    public static final String SYNCHRONIZE_VALUES = "synchronizeValues";
 }

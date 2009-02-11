@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -26,10 +26,7 @@ import org.apache.tapestry5.internal.bindings.AbstractBinding;
 import org.apache.tapestry5.internal.services.ClientBehaviorSupport;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.internal.util.Defense;
-import org.apache.tapestry5.services.BeanModelSource;
-import org.apache.tapestry5.services.ComponentEventResultProcessor;
-import org.apache.tapestry5.services.FormSupport;
-import org.apache.tapestry5.services.Request;
+import org.apache.tapestry5.services.*;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -88,7 +85,7 @@ public class Grid implements GridModel
      * provided to override the default cell renderer for a particular column ... the components within the block can
      * use the property bound to the row parameter to know what they should render.
      */
-    @Parameter
+    @Parameter(principal = true)
     private Object row;
 
     /**
@@ -206,12 +203,12 @@ public class Grid implements GridModel
     private boolean inPlace;
 
     /**
-     * Changes how state is recorded into the form to store the {@linkplain org.apache.tapestry5.PrimaryKeyEncoder#toKey(Object)
-     * primary key} for each row (rather than the index), and restore the {@linkplain
-     * org.apache.tapestry5.PrimaryKeyEncoder#toValue(java.io.Serializable) row values} from the primary keys.
+     * Changes how state is recorded into the form to store the {@linkplain org.apache.tapestry5.ValueEncoder#toClient(Object)
+     * client value} for each row (rather than the index), and restore the {@linkplain
+     * org.apache.tapestry5.ValueEncoder#toValue(String)row values} from the client value.
      */
     @Parameter
-    private PrimaryKeyEncoder encoder;
+    private ValueEncoder encoder;
 
     /**
      * The name of the psuedo-zone that encloses the Grid.
@@ -245,7 +242,7 @@ public class Grid implements GridModel
                     "index=inherit:columnIndex",
                     "lean=inherit:lean",
                     "overrides=overrides",
-                    "zone=zone"})
+                    "zone=zone" })
     private GridColumns columns;
 
     @Component(
@@ -259,14 +256,14 @@ public class Grid implements GridModel
                     "overrides=overrides",
                     "volatile=inherit:volatile",
                     "encoder=inherit:encoder",
-                    "lean=inherit:lean"})
+                    "lean=inherit:lean" })
     private GridRows rows;
 
     @Component(parameters = {
             "source=dataSource",
             "rowsPerPage=rowsPerPage",
             "currentPage=currentPage",
-            "zone=zone"})
+            "zone=zone" })
     private GridPager pager;
 
     @Component(parameters = "to=pagerTop")
@@ -300,6 +297,14 @@ public class Grid implements GridModel
      */
     @Environmental
     private ComponentEventResultProcessor componentEventResultProcessor;
+
+    @Inject
+    private ComponentDefaultProvider defaultsProvider;
+
+    ValueEncoder defaultEncoder()
+    {
+        return defaultsProvider.defaultValueEncoder("row", resources);
+    }
 
     /**
      * A version of GridDataSource that caches the availableRows property. This addresses TAPESTRY-2245.

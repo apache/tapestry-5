@@ -15,6 +15,24 @@ Upgrade Notes
 
 Release 5.1.0.0
 
+* Primary Key Encoder
+
+  <<This is the change between releases that is most likely to affect your upgrade.>>
+
+  The {{{apidocs/org/apache/tapestry5/PrimaryKeyEncoder.html}PrimaryKeyEncoder}}
+  interface has been deprecated and will be removed in a later release.
+  See   {{{https://issues.apache.org/jira/browse/TAP5-165}TAP5-165}} for the rationale.
+
+  You may see type coercion errors on pages where you have specified the encoder parameter of
+  the Grid, Loop or AjaxFormLoop components as a PrimaryKeyEncoder.
+  These errors indicate that Tapestry was unable to automatically convert your PrimaryKeyEncoder instance into
+  a {{{apidocs/org/apache/tapestry5/ValueEncoder.html}ValueEncoder}}. Generally, the only change is to invoke the new constructor for
+  {{{apdiocs/org/apache/tapestry5/util/DefaultPrimaryKeyEncoder.html}DefaultPrimaryKeyEncoder}}, to identify
+  the type of key used.
+
+  If you don't use DefaultPrimaryKeyEncoder, you will see compile errors about the new method, getKeyType().
+  You will have to change your code to implement that new method.
+  
 * Performance Improvements
 
   As part of the changes related to
@@ -28,10 +46,11 @@ Release 5.1.0.0
 * Tapestry/Spring
 
   There have been some significant changes to the {{{tapestry-spring/}tapestry-spring}} module, to
-  support injection of Tapestry services into Springbeans.
+  support injection of Tapestry services into Spring beans. You may find you need to add some new configuration
+  to revert to the Tapestry 5.0 behavior.
 
 * Session Persisted Objects
-
+                      
   Tapestry is now more aggressive about automatically re-storing any session persisted object
   back into the session at the end of the request (this used to only apply to application state objects).  See the 
   {{{guide/persist.html}persistent page data}} notes for more details.
@@ -39,11 +58,16 @@ Release 5.1.0.0
 * Module Classes
 
   Many questionable practices in Tapestry module classes that used to produce warnings
-  have been changed to fail early with exceptions. The rationale is that the warnings would be ignored,
+  have been changed to fail early (that is, throw exceptions). The rationale is that the warnings
+  are almost always ignored,
   resulting in more difficult to diagnose runtime errors. 
 
   Extra public methods on module classes (methods that do not define services, contribute to services,
   or decorate or advise services) are now errors.
+
+
+
+
 
 
 
