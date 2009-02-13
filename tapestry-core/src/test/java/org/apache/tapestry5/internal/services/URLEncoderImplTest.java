@@ -24,36 +24,36 @@ public class URLEncoderImplTest extends Assert
 {
     private final URLEncoder encoder = new URLEncoderImpl();
 
-    @DataProvider(name = "encoder_inputs")
+    @DataProvider
     public Object[][] encoder_inputs()
     {
         return new Object[][]
                 {
-                        {"simple", "simple"},
-                        {"lettersAndNumbers123456", "lettersAndNumbers123456"},
-                        {"simplePunctuation-_.", "simplePunctuation-_."},
-                        {"a-lone-$", "a-lone-$$"},
-                        {"a-slash-/", "a-slash-$002f"},
-                        {"a-space_ _", "a-space_$0020_"},
-                        {"unicode-\u027C-", "unicode-$027c-"},
-                        {null, URLEncoderImpl.ENCODED_NULL},
-                        {"", URLEncoderImpl.ENCODED_BLANK}
+                        { "simple", "simple" },
+                        { "lettersAndNumbers123456", "lettersAndNumbers123456" },
+                        { "simplePunctuation-_.", "simplePunctuation-_." },
+                        { "a-lone-$", "a-lone-$$" },
+                        { "a-slash-/", "a-slash-$002f" },
+                        { "a-space_ _", "a-space_$0020_" },
+                        { "unicode-\u027C-", "unicode-$027c-" },
+                        { null, URLEncoderImpl.ENCODED_NULL },
+                        { "", URLEncoderImpl.ENCODED_BLANK }
                 };
     }
 
-    @DataProvider(name = "failures")
+    @DataProvider
     public Object[][] failures()
     {
         return new Object[][]
                 {
-                        {"trailing-dollar-$",
-                                "Input string 'trailing-dollar-$' is not valid; the '$' character at position 17 should be followed by another '$' or a four digit hex number (a unicode value)."},
-                        {"not-hex-after-$xyzq-",
-                                "Input string 'not-hex-after-$xyzq-' is not valid; the '$' character at position 15 should be followed by another '$' or a four digit hex number (a unicode value)."},
-                        {"not-enough-after-$-ab",
-                                "Input string 'not-enough-after-$-ab' is not valid; the '$' character at position 18 should be followed by another '$' or a four digit hex number (a unicode value)."},
-                        {"unsafe-@-",
-                                "Input string 'unsafe-@-' is not valid; the character '@' at position 8 is not valid."}
+                        { "trailing-dollar-$",
+                                "Input string 'trailing-dollar-$' is not valid; the '$' character at position 17 should be followed by another '$' or a four digit hex number (a unicode value)." },
+                        { "not-hex-after-$xyzq-",
+                                "Input string 'not-hex-after-$xyzq-' is not valid; the '$' character at position 15 should be followed by another '$' or a four digit hex number (a unicode value)." },
+                        { "not-enough-after-$-ab",
+                                "Input string 'not-enough-after-$-ab' is not valid; the '$' character at position 18 should be followed by another '$' or a four digit hex number (a unicode value)." },
+                        { "unsafe-@-",
+                                "Input string 'unsafe-@-' is not valid; the character '@' at position 8 is not valid." }
                 };
     }
 

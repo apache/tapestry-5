@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -38,6 +38,15 @@ public interface InternalComponentResourcesCommon
      * <p/>
      */
     void bindParameter(String parameterName, Binding binding);
+
+    /**
+     * Returns the binding for the given parameter name, or null.
+     *
+     * @param parameterName name of component parameter
+     * @return binding if bound, or null
+     * @since 5.1.0.0
+     */
+    Binding getBinding(String parameterName);
 
     /**
      * Returns the mixin instance for the fully qualfied mixin class name.

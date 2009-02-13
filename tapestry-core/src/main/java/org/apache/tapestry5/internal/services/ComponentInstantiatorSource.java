@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -41,7 +41,7 @@ public interface ComponentInstantiatorSource
      * @param classname FQCN to find (and perhaps transform and load)
      * @return an object which can instantiate an instance of the component
      */
-    Instantiator findInstantiator(String classname);
+    Instantiator getInstantiator(String classname);
 
     /**
      * Adds a controlled package. Only classes within controlled packages are subject to transformation.
@@ -51,7 +51,7 @@ public interface ComponentInstantiatorSource
     void addPackage(String packageName);
 
     /**
-     * Checks to see if a fully qualfied class name exists.
+     * Checks to see if a fully qualfied class name exists. This method appears to exist only for testing.
      *
      * @param className name of class to check
      * @return true if the class exists (there's a ".class" file), false otherwise

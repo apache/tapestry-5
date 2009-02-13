@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -546,7 +546,7 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
 
         ComponentPageElement cpe = new ComponentPageElementImpl(page, ins, elementResources);
 
-        cpe.addMixin(mixinIns);
+        cpe.addMixin("Bar", mixinIns);
 
         assertSame(cpe.getMixinByClassName(mixinClassName), mixin);
 
@@ -575,7 +575,7 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
 
         ComponentPageElement cpe = new ComponentPageElementImpl(page, ins, elementResources);
 
-        cpe.addMixin(mixinIns);
+        cpe.addMixin("Bar", mixinIns);
 
         try
         {
@@ -607,13 +607,11 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
         Instantiator ins = newInstantiator(component, model);
         Instantiator mixinInstantiator = newInstantiator(mixin, mixinModel);
 
-        train_getComponentClassName(mixinModel, "foo.Fred");
-
         replay();
 
         ComponentPageElement cpe = new ComponentPageElementImpl(page, ins, elementResources);
 
-        cpe.addMixin(mixinInstantiator);
+        cpe.addMixin("Bar", mixinInstantiator);
 
         try
         {
@@ -622,8 +620,8 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
         }
         catch (TapestryException ex)
         {
-            assertTrue(ex.getMessage().contains(
-                    "does not contain a mixin named 'Wilma' (setting parameter 'Wilma.barney')"));
+            assertMessageContains(ex,
+                                  "does not contain a mixin named 'Wilma'");
         }
 
         verify();

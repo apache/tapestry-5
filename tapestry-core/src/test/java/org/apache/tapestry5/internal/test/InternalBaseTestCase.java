@@ -308,9 +308,9 @@ public class InternalBaseTestCase extends TapestryTestCase implements Registry
     }
 
     protected final void train_newRootComponentElement(PageElementFactory elementFactory, String className,
-                                                       ComponentPageElement rootElement, Locale locale)
+                                                       ComponentPageElement rootElement)
     {
-        expect(elementFactory.newRootComponentElement(isA(Page.class), eq(className), eq(locale))).andReturn(
+        expect(elementFactory.newRootComponentElement(isA(Page.class), eq(className))).andReturn(
                 rootElement);
     }
 

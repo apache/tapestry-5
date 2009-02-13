@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import org.apache.tapestry5.internal.KeyValue;
 import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.ioc.Location;
 import org.apache.tapestry5.ioc.internal.services.StringLocation;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.model.MutableComponentModel;
@@ -65,6 +66,14 @@ public class ComponentWorker implements ComponentClassTransformWorker
                     .type(), type, annotation.inheritInformalParameters(), location);
 
             addParameters(embedded, annotation.parameters());
+
+
+            String names = annotation.publishParameters();
+            if (InternalUtils.isNonBlank(names))
+            {
+                embedded.setPublishedParameters(CollectionFactory.newList(TapestryInternalUtils.splitAtCommas(names)));
+            }
+
 
             transformation.makeReadOnly(fieldName);
 

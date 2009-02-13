@@ -1,4 +1,4 @@
-// Copyright 2006, 2008 The Apache Software Foundation
+// Copyright 2006, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -25,26 +25,26 @@ public class GlobPatternMatcherTest extends Assert
         return new GlobPatternMatcher(pattern).matches(input);
     }
 
-    @DataProvider(name = "matches")
+    @DataProvider
     public Object[][] matches()
     {
         return new Object[][]
                 {
-                        {"fred", "fred"},
-                        {"fred", "FRED"},
-                        {"fred", "*"},
-                        {"", "*"},
-                        {"fred.Barney", "*Barney"},
-                        {"fred.Barney", "*BARNEY"},
-                        {"fred.Barney", "fred*"},
-                        {"fred.Barney", "FRED*"},
-                        {"fredBarney", "*dB*"},
-                        {"fredBarney", "*DB*"},
-                        {"fred.Barney", "*Barney*"},
-                        {"fred.Barney", "*fred*"},
-                        {"fred.Barney", "*FRED*"},
-                        {"MyEntityDAO", ".*dao"},
-                        {"FredDAO", "(fred|barney)dao"}
+                        { "fred", "fred" },
+                        { "fred", "FRED" },
+                        { "fred", "*" },
+                        { "", "*" },
+                        { "fred.Barney", "*Barney" },
+                        { "fred.Barney", "*BARNEY" },
+                        { "fred.Barney", "fred*" },
+                        { "fred.Barney", "FRED*" },
+                        { "fredBarney", "*dB*" },
+                        { "fredBarney", "*DB*" },
+                        { "fred.Barney", "*Barney*" },
+                        { "fred.Barney", "*fred*" },
+                        { "fred.Barney", "*FRED*" },
+                        { "MyEntityDAO", ".*dao" },
+                        { "FredDAO", "(fred|barney)dao" }
                 };
     }
 
@@ -55,24 +55,24 @@ public class GlobPatternMatcherTest extends Assert
     }
 
 
-    @DataProvider(name = "mismatches")
+    @DataProvider
     public Object[][] mismatches()
     {
         return new Object[][]
                 {
-                        {"xfred", "fred"},
-                        {"fredx", "fred"},
-                        {"fred", "xfred"},
-                        {"fred", "fredx"},
-                        {"fred.Barneyx", "*Barney"},
-                        {"fred.Barney", "*Barneyx"},
-                        {"fred.Barney", "*xBarney"},
-                        {"xfred.Barney", "fred*"},
-                        {"fred.Barney", "fredx*"},
-                        {"fred.Barney", "xfred*"},
-                        {"fred.Barney", "*flint*"},
-                        {"MyEntityDAL", ".*dao"},
-                        {"WilmaDAO", "(fred|barney)dao"}
+                        { "xfred", "fred" },
+                        { "fredx", "fred" },
+                        { "fred", "xfred" },
+                        { "fred", "fredx" },
+                        { "fred.Barneyx", "*Barney" },
+                        { "fred.Barney", "*Barneyx" },
+                        { "fred.Barney", "*xBarney" },
+                        { "xfred.Barney", "fred*" },
+                        { "fred.Barney", "fredx*" },
+                        { "fred.Barney", "xfred*" },
+                        { "fred.Barney", "*flint*" },
+                        { "MyEntityDAL", ".*dao" },
+                        { "WilmaDAO", "(fred|barney)dao" }
                 };
     }
 

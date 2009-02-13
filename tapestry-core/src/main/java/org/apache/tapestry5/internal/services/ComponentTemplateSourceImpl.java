@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -28,6 +28,7 @@ import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.services.InvalidationEventHub;
 import org.apache.tapestry5.services.UpdateListener;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -60,7 +61,7 @@ public final class ComponentTemplateSourceImpl extends InvalidationEventHubImpl 
     {
         public Map<String, Location> getComponentIds()
         {
-            return null;
+            return Collections.emptyMap();
         }
 
         public Resource getResource()
@@ -70,7 +71,7 @@ public final class ComponentTemplateSourceImpl extends InvalidationEventHubImpl 
 
         public List<TemplateToken> getTokens()
         {
-            return null;
+            return Collections.emptyList();
         }
 
         public boolean isMissing()
@@ -79,7 +80,8 @@ public final class ComponentTemplateSourceImpl extends InvalidationEventHubImpl 
         }
     };
 
-    public ComponentTemplateSourceImpl(TemplateParser parser, PageTemplateLocator locator, ClasspathURLConverter classpathURLConverter)
+    public ComponentTemplateSourceImpl(TemplateParser parser, PageTemplateLocator locator,
+                                       ClasspathURLConverter classpathURLConverter)
     {
         this(parser, locator, new URLChangeTracker(classpathURLConverter));
     }

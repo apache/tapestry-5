@@ -15,6 +15,7 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.SymbolConstants;
+import org.apache.tapestry5.internal.pageload.PageLoaderImpl;
 import org.apache.tapestry5.internal.structure.ComponentPageElementResourcesSource;
 import org.apache.tapestry5.internal.structure.ComponentPageElementResourcesSourceImpl;
 import org.apache.tapestry5.ioc.ObjectLocator;
@@ -22,11 +23,7 @@ import org.apache.tapestry5.ioc.ScopeConstants;
 import org.apache.tapestry5.ioc.ServiceBinder;
 import org.apache.tapestry5.ioc.annotations.*;
 import org.apache.tapestry5.ioc.internal.services.CtClassSource;
-import org.apache.tapestry5.ioc.services.Builtin;
-import org.apache.tapestry5.ioc.services.ClassFactory;
-import org.apache.tapestry5.ioc.services.ClasspathURLConverter;
-import org.apache.tapestry5.ioc.services.PerthreadManager;
-import org.apache.tapestry5.ioc.services.PropertyShadowBuilder;
+import org.apache.tapestry5.ioc.services.*;
 import org.apache.tapestry5.services.*;
 import org.slf4j.Logger;
 
@@ -43,8 +40,7 @@ public class InternalModule
 
     private final RequestGlobals requestGlobals;
 
-    public InternalModule(UpdateListenerHub updateListenerHub, ComponentInstantiatorSource componentInstantiatorSource,
-                          RequestGlobals requestGlobals)
+    public InternalModule(UpdateListenerHub updateListenerHub, RequestGlobals requestGlobals)
     {
         this.updateListenerHub = updateListenerHub;
         this.requestGlobals = requestGlobals;
@@ -74,7 +70,6 @@ public class InternalModule
         binder.bind(InternalRequestGlobals.class, InternalRequestGlobalsImpl.class);
         binder.bind(EndOfRequestEventHub.class);
         binder.bind(PageActivationContextCollector.class);
-        binder.bind(PageLoader.class, PageLoaderImpl.class);
         binder.bind(ResponseCompressionAnalyzer.class, ResponseCompressionAnalyzerImpl.class);
         binder.bind(LinkFactory.class, LinkFactoryImpl.class);
     }
@@ -119,7 +114,7 @@ public class InternalModule
             @Inject
             @Symbol(SymbolConstants.APPLICATION_CATALOG)
             String appCatalog,
-            
+
             ClasspathURLConverter classpathURLConverter)
     {
         ComponentMessagesSourceImpl service = new ComponentMessagesSourceImpl(contextAssetFactory
@@ -137,7 +132,7 @@ public class InternalModule
                                                                         Logger logger,
 
                                                                         InternalRequestGlobals internalRequestGlobals,
-                                                                        
+
                                                                         ClasspathURLConverter classpathURLConverter)
     {
         ComponentInstantiatorSourceImpl source = new ComponentInstantiatorSourceImpl(logger, classFactory
@@ -155,6 +150,27 @@ public class InternalModule
 
         return transformer;
     }
+
+    public PageLoader buildPageLoader(@Autobuild PageLoaderImpl service,
+
+                                      @ComponentClasses
+                                      InvalidationEventHub classesHub,
+
+                                      @ComponentTemplates
+                                      InvalidationEventHub templatesHub,
+
+                                      @ComponentMessages
+                                      InvalidationEventHub messagesHub)
+    {
+        // TODO: We could combine these three using chain-of-command.
+
+        classesHub.addInvalidationListener(service);
+        templatesHub.addInvalidationListener(service);
+        messagesHub.addInvalidationListener(service);
+
+        return service;
+    }
+
 
     public PagePool buildPagePool(@Autobuild PagePoolImpl service,
 
@@ -244,4 +260,5 @@ public class InternalModule
     {
         return builder.build(componentInstantiatorSource, "classSource", CtClassSource.class);
     }
+
 }

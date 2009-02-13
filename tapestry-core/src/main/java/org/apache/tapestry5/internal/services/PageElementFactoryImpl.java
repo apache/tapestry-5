@@ -18,6 +18,7 @@ import org.apache.tapestry5.Binding;
 import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.internal.parser.AttributeToken;
 import org.apache.tapestry5.internal.parser.ExpansionToken;
 import org.apache.tapestry5.internal.structure.*;
@@ -33,7 +34,6 @@ import org.apache.tapestry5.services.BindingSource;
 import org.apache.tapestry5.services.ComponentClassResolver;
 
 import java.util.List;
-import java.util.Locale;
 
 public class PageElementFactoryImpl implements PageElementFactory
 {
@@ -46,8 +46,6 @@ public class PageElementFactoryImpl implements PageElementFactory
     private final BindingSource bindingSource;
 
     private final ComponentPageElementResourcesSource componentPageElementResourcesSource;
-
-    private static final String EXPANSION_START = "${";
 
     private static class LiteralStringProvider implements StringProvider
     {
@@ -106,7 +104,7 @@ public class PageElementFactoryImpl implements PageElementFactory
 
         while (true)
         {
-            int expansionx = expression.indexOf(EXPANSION_START, startx);
+            int expansionx = expression.indexOf(InternalConstants.EXPANSION_START, startx);
 
             // No more expansions, add in the rest of the string as a literal.
 
@@ -204,8 +202,7 @@ public class PageElementFactoryImpl implements PageElementFactory
 
                 try
                 {
-                    finalClassName = componentClassResolver
-                            .resolveComponentTypeToClassName(componentType);
+                    finalClassName = componentClassResolver.resolveComponentTypeToClassName(componentType);
                 }
                 catch (IllegalArgumentException ex)
                 {
@@ -213,8 +210,7 @@ public class PageElementFactoryImpl implements PageElementFactory
                 }
             }
 
-            Instantiator instantiator = componentInstantiatorSource
-                    .findInstantiator(finalClassName);
+            Instantiator instantiator = componentInstantiatorSource.getInstantiator(finalClassName);
 
             // This is actually a good place to check for recursive templates, here where we've
             // resolved
@@ -257,11 +253,12 @@ public class PageElementFactoryImpl implements PageElementFactory
         }
     }
 
-    public ComponentPageElement newRootComponentElement(Page page, String componentType, Locale locale)
+    public ComponentPageElement newRootComponentElement(Page page, String componentType)
     {
-        Instantiator instantiator = componentInstantiatorSource.findInstantiator(componentType);
+        Instantiator instantiator = componentInstantiatorSource.getInstantiator(componentType);
 
-        ComponentPageElementResources componentPageElementResources = componentPageElementResourcesSource.get(locale);
+        ComponentPageElementResources componentPageElementResources = componentPageElementResourcesSource.get(
+                page.getLocale());
 
         ComponentPageElement result = new ComponentPageElementImpl(page, instantiator, componentPageElementResources);
 
@@ -288,9 +285,11 @@ public class PageElementFactoryImpl implements PageElementFactory
 
     public void addMixinByClassName(ComponentPageElement component, String mixinClassName)
     {
-        Instantiator mixinInstantiator = componentInstantiatorSource.findInstantiator(mixinClassName);
+        Instantiator mixinInstantiator = componentInstantiatorSource.getInstantiator(mixinClassName);
 
-        component.addMixin(mixinInstantiator);
+        String mixinId = InternalUtils.lastTerm(mixinClassName);
+
+        component.addMixin(mixinId, mixinInstantiator);
     }
 
     public Binding newBinding(String parameterName, ComponentResources loadingComponentResources,
@@ -298,7 +297,7 @@ public class PageElementFactoryImpl implements PageElementFactory
                               String expression, Location location)
     {
 
-        if (expression.contains(EXPANSION_START))
+        if (expression.contains(InternalConstants.EXPANSION_START))
         {
             StringProvider provider = parseAttributeExpansionExpression(expression, loadingComponentResources,
                                                                         location);

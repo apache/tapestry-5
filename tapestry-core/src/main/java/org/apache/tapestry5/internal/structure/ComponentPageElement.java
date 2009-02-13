@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,6 +14,7 @@
 
 package org.apache.tapestry5.internal.structure;
 
+import org.apache.tapestry5.Binding;
 import org.apache.tapestry5.Block;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.ComponentResourcesCommon;
@@ -70,9 +71,18 @@ public interface ComponentPageElement extends ComponentResourcesCommon, Internal
     /**
      * Adds a mixin.
      *
+     * @param mixinId      a unique id for the mixin, the last term of the mixin's class name
      * @param instantiator used to instantiate an instance of the mixin
      */
-    void addMixin(Instantiator instantiator);
+    void addMixin(String mixinId, Instantiator instantiator);
+
+    /**
+     * @param mixinId       id of previously added mixin
+     * @param parameterName simple (unqualified) name of parameter
+     * @param binding       binding for parameter
+     * @since 5.1.0.0
+     */
+    void bindMixinParameter(String mixinId, String parameterName, Binding binding);
 
     /**
      * Retrieves a component page element by its id. The search is caseless.

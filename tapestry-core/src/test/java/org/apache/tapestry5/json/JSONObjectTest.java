@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -89,7 +89,7 @@ public class JSONObjectTest extends Assert
         assertEquals(object.getBoolean("mykey"), expected);
     }
 
-    @DataProvider(name = "boolean_inputs")
+    @DataProvider
     public Object[][] boolean_inputs()
     {
         return new Object[][] { { "true", true }, { "TRUE", true }, { "false", false }, { "FALSE", false },
@@ -198,7 +198,7 @@ public class JSONObjectTest extends Assert
         }
     }
 
-    @Test(dataProvider = "double_inputs")
+    @Test(dataProvider = "double_to_string_data")
     public void double_to_string(double input, String expected)
     {
         String actual = JSONObject.doubleToString(input);
@@ -206,14 +206,14 @@ public class JSONObjectTest extends Assert
         assertEquals(actual, expected);
     }
 
-    @DataProvider(name = "double_inputs")
-    public Object[][] double_inputs()
+    @DataProvider
+    public Object[][] double_to_string_data()
     {
         return new Object[][] { { 3d, "3" }, { -22.5d, "-22.5" }, { 0d, "0" }, { Double.NEGATIVE_INFINITY, "null" },
                 { Double.POSITIVE_INFINITY, "null" }, { Double.NaN, "null" }, };
     }
 
-    @Test(dataProvider = "get_double_inputs")
+    @Test(dataProvider = "get_double_data")
     public void get_double(Object value, double expected)
     {
         JSONObject object = new JSONObject();
@@ -223,8 +223,8 @@ public class JSONObjectTest extends Assert
         assertEquals(object.getDouble("key"), expected);
     }
 
-    @DataProvider(name = "get_double_inputs")
-    public Object[][] getDoubleInputs()
+    @DataProvider
+    public Object[][] get_double_data()
     {
         return new Object[][] { { new Double(3.5), 3.5d }, { new Long(1000), 1000d }, { "-101.7", -101.7d } };
     }
@@ -275,7 +275,7 @@ public class JSONObjectTest extends Assert
         assertEquals(object.getInt("intkey"), expected);
     }
 
-    @DataProvider(name = "get_int_inputs")
+    @DataProvider
     public Object[][] get_int_inputs()
     {
         return new Object[][] { { "3", 3 }, { new Long(97), 97 }, { "-8.76", -8 } };
