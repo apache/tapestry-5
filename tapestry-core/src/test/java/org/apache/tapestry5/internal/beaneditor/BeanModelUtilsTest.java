@@ -17,9 +17,9 @@ package org.apache.tapestry5.internal.beaneditor;
 import org.apache.tapestry5.beaneditor.BeanModel;
 import org.apache.tapestry5.beaneditor.PropertyModel;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
+import org.easymock.EasyMock;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
-import org.easymock.EasyMock;
 
 public class BeanModelUtilsTest extends InternalBaseTestCase
 {
@@ -35,7 +35,7 @@ public class BeanModelUtilsTest extends InternalBaseTestCase
                 { propertyNames, expected };
     }
 
-    @DataProvider(name = "split_inputs")
+    @DataProvider
     public Object[][] split_inputs()
     {
         return new Object[][]

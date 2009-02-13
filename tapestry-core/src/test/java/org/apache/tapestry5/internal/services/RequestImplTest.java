@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -125,11 +125,11 @@ public class RequestImplTest extends InternalBaseTestCase
         verify();
     }
 
-    @DataProvider(name = "xhr_inputs")
+    @DataProvider
     public Object[][] xhr_inputs()
     {
-        return new Object[][] {{null, false}, {"", false}, {"some other value", false},
-                {"XMLHttpRequest", true}};
+        return new Object[][] { { null, false }, { "", false }, { "some other value", false },
+                { "XMLHttpRequest", true } };
     }
 
     @Test

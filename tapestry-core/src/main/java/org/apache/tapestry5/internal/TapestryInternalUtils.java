@@ -383,13 +383,16 @@ public class TapestryInternalUtils
     }
 
     /**
-     * Splits a value around commas.
+     * Splits a value around commas.  Whitespace around the commas is removed, as is leading and trailing whitespace.
      *
      * @since 5.1.0.0
      */
     public static String[] splitAtCommas(String value)
     {
-        return COMMA_PATTERN.split(value);
+        if (value == null)
+            return new String[0];
+
+        return COMMA_PATTERN.split(value.trim());
     }
 
     /**

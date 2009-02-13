@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -24,8 +24,6 @@ import org.apache.tapestry5.internal.structure.Page;
 import org.apache.tapestry5.ioc.Location;
 import org.apache.tapestry5.runtime.RenderCommand;
 import org.apache.tapestry5.services.BindingSource;
-
-import java.util.Locale;
 
 /**
  * Used by the {@link org.apache.tapestry5.internal.services.PageLoader} to create page elements
@@ -69,10 +67,9 @@ public interface PageElementFactory
      *
      * @param page      the page that will contain the root component
      * @param className the fully qualified class name of the root component
-     * @param locale    the locale for the page
      * @return the root page element
      */
-    ComponentPageElement newRootComponentElement(Page page, String className, Locale locale);
+    ComponentPageElement newRootComponentElement(Page page, String className);
 
     /**
      * Adds a mixin to the element, resolving the mixin type to a mixin class.

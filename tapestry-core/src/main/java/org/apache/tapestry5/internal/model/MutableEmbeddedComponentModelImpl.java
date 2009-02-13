@@ -1,4 +1,4 @@
-// Copyright 2006, 2008 The Apache Software Foundation
+// Copyright 2006, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ package org.apache.tapestry5.internal.model;
 import org.apache.tapestry5.ioc.BaseLocatable;
 import org.apache.tapestry5.ioc.Location;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.model.MutableEmbeddedComponentModel;
 
@@ -37,6 +38,8 @@ public class MutableEmbeddedComponentModelImpl extends BaseLocatable implements 
     private final boolean inheritInformalParameters;
 
     private Map<String, String> parameters;
+
+    private List<String> publishedParameters = Collections.emptyList();
 
     /**
      * List of mixin class names.
@@ -121,5 +124,17 @@ public class MutableEmbeddedComponentModelImpl extends BaseLocatable implements 
     public boolean getInheritInformalParameters()
     {
         return inheritInformalParameters;
+    }
+
+    public void setPublishedParameters(List<String> parameterNames)
+    {
+        Defense.notNull(parameterNames, "parameterNames");
+
+        publishedParameters = parameterNames;
+    }
+
+    public List<String> getPublishedParameters()
+    {
+        return publishedParameters;
     }
 }

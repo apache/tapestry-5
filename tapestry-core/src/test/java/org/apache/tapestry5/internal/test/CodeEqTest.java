@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ public class CodeEqTest extends Assert
         assertEquals(CodeEq.strip(input), expected);
     }
 
-    @DataProvider(name = "stripValues")
+    @DataProvider
     public Object[][] stripValues()
     {
         return new Object[][]
@@ -58,7 +58,7 @@ public class CodeEqTest extends Assert
         assertEquals(ceq.matches(parameter), matches);
     }
 
-    @DataProvider(name = "matchValues")
+    @DataProvider
     public Object[][] matchValues()
     {
         return new Object[][]

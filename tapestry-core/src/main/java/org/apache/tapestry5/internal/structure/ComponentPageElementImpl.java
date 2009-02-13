@@ -18,7 +18,6 @@ import org.apache.tapestry5.*;
 import org.apache.tapestry5.annotations.*;
 import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.internal.InternalComponentResources;
-import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.internal.services.ComponentEventImpl;
 import org.apache.tapestry5.internal.services.EventImpl;
 import org.apache.tapestry5.internal.services.Instantiator;
@@ -663,12 +662,14 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
 
         if (existing != null)
             throw new TapestryException(StructureMessages.duplicateChildComponent(this, childId), child,
-                    new TapestryException(StructureMessages.originalChildComponent(this, childId, existing.getLocation()), existing, null));
+                                        new TapestryException(StructureMessages.originalChildComponent(this, childId,
+                                                                                                       existing.getLocation()),
+                                                              existing, null));
 
         children.put(childId, child);
     }
 
-    public void addMixin(Instantiator instantiator)
+    public void addMixin(String mixinId, Instantiator instantiator)
     {
         if (mixinIdToComponentResources == null)
         {
@@ -676,10 +677,8 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
             components = CollectionFactory.newList();
         }
 
-        String mixinClassName = instantiator.getModel().getComponentClassName();
-        String mixinName = TapestryInternalUtils.lastTerm(mixinClassName);
 
-        String mixinExtension = "$" + mixinName.toLowerCase();
+        String mixinExtension = "$" + mixinId.toLowerCase();
 
         InternalComponentResourcesImpl resources = new InternalComponentResourcesImpl(page, this, coreResources,
                                                                                       elementResources,
@@ -687,11 +686,29 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
                                                                                       nestedId + mixinExtension,
                                                                                       instantiator);
 
-        // TODO: Check for name collision?
+        if (mixinIdToComponentResources.containsKey(mixinId))
+            throw new RuntimeException(
+                    String.format("Component %s already has a '%s' mixin.", getCompleteId(), mixinId));
 
-        mixinIdToComponentResources.put(mixinName, resources);
+        mixinIdToComponentResources.put(mixinId, resources);
 
         components.add(resources.getComponent());
+    }
+
+    public void bindMixinParameter(String mixinId, String parameterName, Binding binding)
+    {
+        InternalComponentResources mixinResources = InternalUtils.get(mixinIdToComponentResources, mixinId);
+
+        if (mixinResources == null)
+            throw new TapestryException(
+                    StructureMessages.missingMixinForParameter(completeId, mixinId, parameterName), binding, null);
+
+        mixinResources.bindParameter(parameterName, binding);
+    }
+
+    public Binding getBinding(String parameterName)
+    {
+        return coreResources.getBinding(parameterName);
     }
 
     public void bindParameter(String parameterName, Binding binding)
@@ -702,15 +719,11 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
 
         if (dotx > 0)
         {
-            String mixinName = parameterName.substring(0, dotx);
-            InternalComponentResources mixinResources = InternalUtils.get(mixinIdToComponentResources, mixinName);
-
-            if (mixinResources == null) throw new TapestryException(
-                    StructureMessages.missingMixinForParameter(completeId, mixinName, parameterName), binding, null);
-
+            String mixinId = parameterName.substring(0, dotx);
             String simpleName = parameterName.substring(dotx + 1);
 
-            mixinResources.bindParameter(simpleName, binding);
+            bindMixinParameter(mixinId, simpleName, binding);
+
             return;
         }
 

@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -573,33 +573,33 @@ public class PropBindingFactoryTest extends InternalBaseTestCase
         verify();
     }
 
-    @DataProvider(name = "values")
+    @DataProvider
     public Object[][] values()
     {
         return new Object[][]
                 {
-                        {"true", true,},
-                        {"True", true,},
-                        {" true ", true,},
-                        {"false", false},
-                        {"null", null},
-                        {"3", 3l},
-                        {" 37 ", 37l},
-                        {" -227", -227l},
-                        {" 5.", 5d},
-                        {" -100.", -100d},
-                        {" -0.0 ", -0d},
-                        {"+50", 50l},
-                        {"+7..+20", new IntegerRange(7, 20)},
-                        {"+5.5", 5.5d},
-                        {"1..10", new IntegerRange(1, 10)},
-                        {" -20 .. -30 ", new IntegerRange(-20, -30)},
-                        {"0.", 0d},
-                        {" 227.75", 227.75d},
-                        {" -10123.67", -10123.67d},
-                        {"'Hello World'", "Hello World"},
-                        {" 'Whitespace Ignored' ", "Whitespace Ignored"},
-                        {" ' Inside ' ", " Inside "}
+                        { "true", true, },
+                        { "True", true, },
+                        { " true ", true, },
+                        { "false", false },
+                        { "null", null },
+                        { "3", 3l },
+                        { " 37 ", 37l },
+                        { " -227", -227l },
+                        { " 5.", 5d },
+                        { " -100.", -100d },
+                        { " -0.0 ", -0d },
+                        { "+50", 50l },
+                        { "+7..+20", new IntegerRange(7, 20) },
+                        { "+5.5", 5.5d },
+                        { "1..10", new IntegerRange(1, 10) },
+                        { " -20 .. -30 ", new IntegerRange(-20, -30) },
+                        { "0.", 0d },
+                        { " 227.75", 227.75d },
+                        { " -10123.67", -10123.67d },
+                        { "'Hello World'", "Hello World" },
+                        { " 'Whitespace Ignored' ", "Whitespace Ignored" },
+                        { " ' Inside ' ", " Inside " }
                 };
     }
 }

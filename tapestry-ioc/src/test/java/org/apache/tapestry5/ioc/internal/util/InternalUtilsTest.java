@@ -107,7 +107,7 @@ public class InternalUtilsTest extends IOCTestCase
     @Test
     public void array_size_when_non_null()
     {
-        Object[] array = {1, 2, 3};
+        Object[] array = { 1, 2, 3 };
 
         assertEquals(InternalUtils.size(array), 3);
     }
@@ -118,18 +118,18 @@ public class InternalUtilsTest extends IOCTestCase
         assertEquals(InternalUtils.stripMemberName(input), expected);
     }
 
-    @DataProvider(name = "memberNameData")
+    @DataProvider
     public Object[][] memberNameData()
     {
         return new Object[][] {
-                {"simple", "simple"},
-                {"_name", "name"},
-                {"$name", "name"},
-                {"ruby_style", "ruby_style"},
-                {"__$ruby_style_", "ruby_style"},
-                {"$_$__$__$_$___$_$_$_$$name$", "name"},
-                {"foo_", "foo"},
-                {"_foo_", "foo"}
+                { "simple", "simple" },
+                { "_name", "name" },
+                { "$name", "name" },
+                { "ruby_style", "ruby_style" },
+                { "__$ruby_style_", "ruby_style" },
+                { "$_$__$__$_$___$_$_$_$$name$", "name" },
+                { "foo_", "foo" },
+                { "_foo_", "foo" }
         };
     }
 
@@ -218,8 +218,8 @@ public class InternalUtilsTest extends IOCTestCase
     @DataProvider(name = "capitalize_inputs")
     public Object[][] capitalize_inputs()
     {
-        return new Object[][] {{"hello", "Hello"}, {"Goodbye", "Goodbye"}, {"", ""}, {"a", "A"},
-                {"A", "A"}};
+        return new Object[][] { { "hello", "Hello" }, { "Goodbye", "Goodbye" }, { "", "" }, { "a", "A" },
+                { "A", "A" } };
     }
 
     @Test
@@ -364,7 +364,7 @@ public class InternalUtilsTest extends IOCTestCase
 
         try
         {
-            InternalUtils.validateMarkerAnnotations(new Class[] {Inject.class, NotRetainedRuntime.class});
+            InternalUtils.validateMarkerAnnotations(new Class[] { Inject.class, NotRetainedRuntime.class });
             unreachable();
         }
         catch (IllegalArgumentException ex)

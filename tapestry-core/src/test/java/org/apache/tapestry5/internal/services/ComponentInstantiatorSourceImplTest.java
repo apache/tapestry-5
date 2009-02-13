@@ -51,7 +51,7 @@ public class ComponentInstantiatorSourceImplTest extends InternalBaseTestCase
     private static final ClassLoader contextLoader = Thread.currentThread().getContextClassLoader();
 
     private static final String SYNTH_COMPONENT_CLASSNAME = "org.apache.tapestry5.internal.transform.pages.SynthComponent";
-    
+
     private final ClasspathURLConverter converter = new ClasspathURLConverterImpl();
 
     private File extraClasspath;
@@ -240,7 +240,7 @@ public class ComponentInstantiatorSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        Instantiator inst = source.findInstantiator(classname);
+        Instantiator inst = source.getInstantiator(classname);
 
         Component target = inst.newInstance(resources);
 

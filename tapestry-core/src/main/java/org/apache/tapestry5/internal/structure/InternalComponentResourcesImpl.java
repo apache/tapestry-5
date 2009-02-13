@@ -304,7 +304,7 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
         return getParameterAccess(parameterName).getBoundType();
     }
 
-    private Binding getBinding(String parameterName)
+    public Binding getBinding(String parameterName)
     {
         return InternalUtils.get(bindings, parameterName);
     }

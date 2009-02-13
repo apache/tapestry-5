@@ -112,14 +112,14 @@ public class RequestSecurityManagerImplTest extends InternalBaseTestCase
         verify();
     }
 
-    @DataProvider(name = "base_URL_data")
+    @DataProvider
     public Object[][] base_URL_data()
     {
         return new Object[][] {
-                {true, true, null},
-                {false, false, null},
-                {true, false, "http://example.org"},
-                {false, true, "https://example.org"}
+                { true, true, null },
+                { false, false, null },
+                { true, false, "http://example.org" },
+                { false, true, "https://example.org" }
         };
     }
 

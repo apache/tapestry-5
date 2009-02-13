@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -625,7 +625,7 @@ public class TemplateParserImplTest extends InternalBaseTestCase
         assertEquals(token5.getComment(), "anon block content");
     }
 
-    @DataProvider(name = "parse_failure_data")
+    @DataProvider
     public Object[][] parse_failure_data()
     {
         return new Object[][] {
@@ -678,7 +678,7 @@ public class TemplateParserImplTest extends InternalBaseTestCase
         }
     }
 
-    @DataProvider(name = "doctype_parsed_correctly_data")
+    @DataProvider
     public Object[][] doctype_parsed_correctly_data()
     {
         return new Object[][] { { "xhtml1_strict_doctype.tml" }, { "xhtml1_transitional_doctype.tml" },
@@ -694,7 +694,7 @@ public class TemplateParserImplTest extends InternalBaseTestCase
         assertEquals(t.getText().trim(), "<Test>");
     }
 
-    @DataProvider(name = "doctype_token_added_correctly_data")
+    @DataProvider
     public Object[][] doctype_token_added_correctly_data()
     {
         return new Object[][] {

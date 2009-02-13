@@ -55,7 +55,7 @@ public class ClasspathAssetAliasManagerImplTest extends InternalBaseTestCase
         verify();
     }
 
-    @DataProvider(name = "to_client_url_data")
+    @DataProvider
     public Object[][] to_client_url_data()
     {
         return new Object[][] { { "foo/bar/Baz.txt", "classpath/1.0/foo/bar/Baz.txt" },
@@ -73,7 +73,7 @@ public class ClasspathAssetAliasManagerImplTest extends InternalBaseTestCase
         assertEquals(manager.toResourcePath(clientURL), expectedResourcePath);
     }
 
-    @DataProvider(name = "to_resource_path_data")
+    @DataProvider
     public Object[][] to_resource_path_data()
     {
         Object[][] data = to_client_url_data();

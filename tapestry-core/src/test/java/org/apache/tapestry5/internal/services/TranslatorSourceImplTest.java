@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -83,24 +83,24 @@ public class TranslatorSourceImplTest extends InternalBaseTestCase
     }
 
 
-    @DataProvider(name = "to_client_data")
+    @DataProvider
     public Object[][] to_client_data()
     {
         return new Object[][] {
 
-                {Byte.class, (byte) 65, "65"},
+                { Byte.class, (byte) 65, "65" },
 
-                {Integer.class, 997, "997"},
+                { Integer.class, 997, "997" },
 
-                {Long.class, 12345l, "12345"},
+                { Long.class, 12345l, "12345" },
 
-                {Double.class, 123.45d, "123.45"},
+                { Double.class, 123.45d, "123.45" },
 
-                {String.class, "abcd", "abcd"},
+                { String.class, "abcd", "abcd" },
 
-                {Short.class, (short) 95, "95"},
+                { Short.class, (short) 95, "95" },
 
-                {Float.class, (float) -22.7, "-22.7"}
+                { Float.class, (float) -22.7, "-22.7" }
         };
     }
 
@@ -114,24 +114,24 @@ public class TranslatorSourceImplTest extends InternalBaseTestCase
         assertEquals(actual, expected);
     }
 
-    @DataProvider(name = "parse_client_success_data")
+    @DataProvider
     public Object[][] parse_client_success_data()
     {
         return new Object[][] {
 
-                {Byte.class, " 23 ", (byte) 23},
+                { Byte.class, " 23 ", (byte) 23 },
 
-                {Short.class, " -121 ", (short) -121},
+                { Short.class, " -121 ", (short) -121 },
 
-                {Integer.class, " 123 ", 123},
+                { Integer.class, " 123 ", 123 },
 
-                {Long.class, "  -1234567 ", -1234567l},
+                { Long.class, "  -1234567 ", -1234567l },
 
-                {Double.class, " 3.14 ", 3.14d},
+                { Double.class, " 3.14 ", 3.14d },
 
-                {String.class, " abcdef ", " abcdef "},
+                { String.class, " abcdef ", " abcdef " },
 
-                {Float.class, " 28.95 ", (float) 28.95},
+                { Float.class, " 28.95 ", (float) 28.95 },
         };
     }
 
@@ -145,7 +145,7 @@ public class TranslatorSourceImplTest extends InternalBaseTestCase
         assertEquals(actual, expected);
     }
 
-    @DataProvider(name = "parse_client_failure_data")
+    @DataProvider
     public Object[][] parse_client_failure_data()
     {
         String intError = "You must provide an integer value for Fred.";
@@ -153,17 +153,17 @@ public class TranslatorSourceImplTest extends InternalBaseTestCase
 
         return new Object[][] {
 
-                {Byte.class, "fred", intError},
+                { Byte.class, "fred", intError },
 
-                {Integer.class, "fred", intError},
+                { Integer.class, "fred", intError },
 
-                {Long.class, "fred", intError},
+                { Long.class, "fred", intError },
 
-                {Double.class, "fred", floatError},
+                { Double.class, "fred", floatError },
 
-                {Float.class, "fred", floatError},
+                { Float.class, "fred", floatError },
 
-                {Short.class, "fred", intError}
+                { Short.class, "fred", intError }
         };
     }
 

@@ -101,7 +101,8 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
     }
 
     public ComponentInstantiatorSourceImpl(Logger logger, ClassLoader parent, ComponentClassTransformer transformer,
-                                           InternalRequestGlobals internalRequestGlobals, ClasspathURLConverter classpathURLConverter)
+                                           InternalRequestGlobals internalRequestGlobals,
+                                           ClasspathURLConverter classpathURLConverter)
     {
         this.parent = parent;
         this.transformer = transformer;
@@ -262,7 +263,7 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
     {
     }
 
-    public synchronized Instantiator findInstantiator(String className)
+    public synchronized Instantiator getInstantiator(String className)
     {
         Instantiator result = classNameToInstantiator.get(className);
 

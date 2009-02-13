@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -128,7 +128,7 @@ public class TypeCoercerImplTest extends IOCInternalTestCase
     }
 
     @SuppressWarnings("unchecked")
-    @DataProvider(name = "coercions_inputs")
+    @DataProvider
     public Object[][] coercions_inputs()
     {
         String bigDecimalValue = "12345656748352435842385234598234958234574358723485.35843534285293857298457234587";
@@ -144,97 +144,97 @@ public class TypeCoercerImplTest extends IOCInternalTestCase
         return new Object[][] {
                 // There's a lot of these!
 
-                {this, String.class, toString()},
+                { this, String.class, toString() },
 
-                {55l, Integer.class, 55},
+                { 55l, Integer.class, 55 },
 
-                {"", Boolean.class, false},
+                { "", Boolean.class, false },
 
-                {"  ", Boolean.class, false},
+                { "  ", Boolean.class, false },
 
-                {"x", Boolean.class, true},
+                { "x", Boolean.class, true },
 
-                {" z ", Boolean.class, true},
+                { " z ", Boolean.class, true },
 
-                {"false", Boolean.class, false},
+                { "false", Boolean.class, false },
 
-                {"  False ", Boolean.class, false},
+                { "  False ", Boolean.class, false },
 
-                {null, Boolean.class, false},
+                { null, Boolean.class, false },
 
-                {new Double(256), Integer.class, new Integer(256)},
+                { new Double(256), Integer.class, new Integer(256) },
 
-                {new Double(22.7), Integer.class, new Integer(22)},
+                { new Double(22.7), Integer.class, new Integer(22) },
 
-                {new Integer(0), Boolean.class, false},
+                { new Integer(0), Boolean.class, false },
 
-                {new Long(32838), Boolean.class, true},
+                { new Long(32838), Boolean.class, true },
 
-                {new Integer(127), Byte.class, new Byte("127")},
+                { new Integer(127), Byte.class, new Byte("127") },
 
-                {new Double(58), Short.class, new Short("58")},
+                { new Double(58), Short.class, new Short("58") },
 
-                {new Integer(33), Long.class, new Long(33)},
+                { new Integer(33), Long.class, new Long(33) },
 
-                {new Integer(22), Float.class, new Float(22)},
+                { new Integer(22), Float.class, new Float(22) },
 
-                {new Integer(1234), Double.class, new Double(1234)},
+                { new Integer(1234), Double.class, new Double(1234) },
 
-                {floatValue, Double.class, floatValue.doubleValue()},
+                { floatValue, Double.class, floatValue.doubleValue() },
 
-                {Collections.EMPTY_LIST, Boolean.class, false},
+                { Collections.EMPTY_LIST, Boolean.class, false },
 
-                {Collections.singleton(this), Boolean.class, true},
+                { Collections.singleton(this), Boolean.class, true },
 
-                {bigDecimalValue, BigDecimal.class, new BigDecimal(bigDecimalValue)},
+                { bigDecimalValue, BigDecimal.class, new BigDecimal(bigDecimalValue) },
 
-                {new BigDecimal(bigDecimalValue), Double.class, 1.2345656748352436E49},
+                { new BigDecimal(bigDecimalValue), Double.class, 1.2345656748352436E49 },
 
-                {bigIntegerValue, BigInteger.class, new BigInteger(bigIntegerValue)},
+                { bigIntegerValue, BigInteger.class, new BigInteger(bigIntegerValue) },
 
-                {new BigInteger("12345678"), Long.class, 12345678l},
+                { new BigInteger("12345678"), Long.class, 12345678l },
 
-                {-12345678l, BigInteger.class, new BigInteger("-12345678")},
+                { -12345678l, BigInteger.class, new BigInteger("-12345678") },
 
-                {object, List.class, Collections.singletonList(object)},
+                { object, List.class, Collections.singletonList(object) },
 
-                {null, Iterable.class, null},
+                { null, Iterable.class, null },
 
-                {null, List.class, null},
+                { null, List.class, null },
 
-                {null, Collection.class, null},
+                { null, Collection.class, null },
 
-                {null, String.class, null},
+                { null, String.class, null },
 
-                {new Object[] {"a", 123}, List.class, Arrays.asList("a", 123)},
+                { new Object[] { "a", 123 }, List.class, Arrays.asList("a", 123) },
 
-                {new String[] {"a", "b"}, List.class, Arrays.asList("a", "b")},
+                { new String[] { "a", "b" }, List.class, Arrays.asList("a", "b") },
 
-                {new byte[] {byte1, byte2}, List.class, Arrays.asList(byte1, byte2)},
+                { new byte[] { byte1, byte2 }, List.class, Arrays.asList(byte1, byte2) },
 
-                {new short[] {short1, short2}, List.class, Arrays.asList(short1, short2)},
+                { new short[] { short1, short2 }, List.class, Arrays.asList(short1, short2) },
 
-                {new int[] {1, 2}, List.class, Arrays.asList(1, 2)},
+                { new int[] { 1, 2 }, List.class, Arrays.asList(1, 2) },
 
-                {new long[] {123L, 321L}, List.class, Arrays.asList(123L, 321L)},
+                { new long[] { 123L, 321L }, List.class, Arrays.asList(123L, 321L) },
 
-                {new float[] {3.4f, 7.777f}, List.class, Arrays.asList(3.4f, 7.777f)},
+                { new float[] { 3.4f, 7.777f }, List.class, Arrays.asList(3.4f, 7.777f) },
 
-                {new double[] {3.4, 7.777}, List.class, Arrays.asList(3.4, 7.777)},
+                { new double[] { 3.4, 7.777 }, List.class, Arrays.asList(3.4, 7.777) },
 
-                {new char[] {'a', 'b'}, List.class, Arrays.asList('a', 'b')},
+                { new char[] { 'a', 'b' }, List.class, Arrays.asList('a', 'b') },
 
-                {new boolean[] {true, false}, List.class, Arrays.asList(true, false)},
+                { new boolean[] { true, false }, List.class, Arrays.asList(true, false) },
 
-                {"foo/bar/baz.txt", File.class, new File("foo/bar/baz.txt")},
+                { "foo/bar/baz.txt", File.class, new File("foo/bar/baz.txt") },
 
-                {new TimeInterval("2 h"), Long.class, 2 * 60 * 60 * 1000l},
+                { new TimeInterval("2 h"), Long.class, 2 * 60 * 60 * 1000l },
 
-                {"2 h", TimeInterval.class, new TimeInterval("120 m")},
+                { "2 h", TimeInterval.class, new TimeInterval("120 m") },
 
                 // null to arbitrary object is still null
 
-                {null, XMLReader.class, null}};
+                { null, XMLReader.class, null } };
     }
 
     @Test(dataProvider = "explain_inputs")
@@ -243,15 +243,15 @@ public class TypeCoercerImplTest extends IOCInternalTestCase
         assertEquals(coercer.explain(inputType, outputType), expected);
     }
 
-    @DataProvider(name = "explain_inputs")
+    @DataProvider
     public Object[][] explain_inputs()
     {
         return new Object[][] {
-                {StringBuffer.class, Integer.class, "Object --> String, String --> Long, Long --> Integer"},
-                {void.class, Map.class, "null --> null"}, {void.class, Boolean.class, "null --> Boolean"},
-                {String[].class, List.class, "Object[] --> java.util.List"},
-                {Float.class, Double.class, "Float --> Double"},
-                {Double.class, BigDecimal.class, "Object --> String, String --> java.math.BigDecimal"},
+                { StringBuffer.class, Integer.class, "Object --> String, String --> Long, Long --> Integer" },
+                { void.class, Map.class, "null --> null" }, { void.class, Boolean.class, "null --> Boolean" },
+                { String[].class, List.class, "Object[] --> java.util.List" },
+                { Float.class, Double.class, "Float --> Double" },
+                { Double.class, BigDecimal.class, "Object --> String, String --> java.math.BigDecimal" },
         };
     }
 
@@ -262,7 +262,7 @@ public class TypeCoercerImplTest extends IOCInternalTestCase
 
         Object[] result = coercer.coerce(input, Object[].class);
 
-        assertArraysEqual(result, new Object[] {input});
+        assertArraysEqual(result, new Object[] { input });
     }
 
     @Test

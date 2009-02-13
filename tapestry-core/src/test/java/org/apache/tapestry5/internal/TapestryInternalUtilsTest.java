@@ -57,13 +57,13 @@ public class TapestryInternalUtilsTest extends InternalBaseTestCase
     }
 
 
-    @Test(dataProvider = "to_user_presentable")
+    @Test(dataProvider = "to_user_presentable_data")
     public void to_user_presentable(String input, String expected)
     {
         assertEquals(TapestryInternalUtils.toUserPresentable(input), expected);
     }
 
-    @DataProvider(name = "to_user_presentable")
+    @DataProvider
     public Object[][] to_user_presentable_data()
     {
         return new Object[][] { { "hello", "Hello" }, { "userId", "User Id" }, { "useHTML", "Use HTML" },
@@ -372,14 +372,27 @@ public class TapestryInternalUtilsTest extends InternalBaseTestCase
         assertEquals(TapestryInternalUtils.toClassAttributeValue(classes), "fred barney wilma");
     }
 
-    @Test
-    public void split_at_commas()
+    @DataProvider
+    public Object[][] split_at_commas_data()
     {
-        assertArraysEqual(TapestryInternalUtils.splitAtCommas("foo"), "foo");
-        assertArraysEqual(TapestryInternalUtils.splitAtCommas("foo , bar"), "foo", "bar");
+        return new Object[][]
+                {
+                        { "foo", new String[] { "foo" } },
+                        { "foo, bar", new String[] { "foo", "bar" } },
+                        { "  foo, \nbar\t\t", new String[] { "foo", "bar" } },
+                        { null, new String[0] }
+                };
     }
 
-    @DataProvider(name = "to_base64_data")
+
+    @Test(dataProvider = "split_at_commas_data")
+    public void split_at_commas(String input, String[] output)
+    {
+        assertArraysEqual(TapestryInternalUtils.splitAtCommas(input), output);
+
+    }
+
+    @DataProvider
     public Object[][] to_base64_data()
     {
         return new Object[][] {

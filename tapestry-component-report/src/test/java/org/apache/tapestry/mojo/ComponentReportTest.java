@@ -1,4 +1,4 @@
-// Copyright 2008 The Apache Software Foundation
+// Copyright 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,26 +14,26 @@
 
 package org.apache.tapestry.mojo;
 
+import org.apache.maven.doxia.module.xhtml.XhtmlSink;
+import org.apache.maven.doxia.module.xhtml.decoration.render.RenderingContext;
+import org.apache.maven.model.Model;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.model.Model;
 import org.apache.maven.reporting.MavenReportException;
-import org.apache.maven.doxia.module.xhtml.decoration.render.RenderingContext;
-import org.apache.maven.doxia.module.xhtml.XhtmlSink;
-import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newMap;
 import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newList;
-import org.testng.annotations.Test;
-import org.testng.annotations.DataProvider;
-import org.testng.Assert;
+import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newMap;
 import org.codehaus.plexus.util.FileUtils;
+import org.testng.Assert;
+import org.testng.annotations.DataProvider;
+import org.testng.annotations.Test;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.lang.reflect.Field;
 
 /**
  * Tests {@link ComponentReport}.
@@ -42,7 +42,7 @@ public class ComponentReportTest extends Assert
 {
     @Test(dataProvider = "docData")
     public void doc_generation(final Map<String, ClassDescription> javadocResults, String createdFile,
-                                     String tapestryDoc, String[] expectedSummaryParts, String[] expectedFileParts)
+                               String tapestryDoc, String[] expectedSummaryParts, String[] expectedFileParts)
             throws MojoExecutionException, IOException, MavenReportException
     {
         String tempDir = System.getProperty("java.io.tmpdir");
@@ -79,10 +79,10 @@ public class ComponentReportTest extends Assert
         try
         {
             initializeMojo(report, ComponentReport.class,
-                    "rootPackage", "org.apache.tapestry5.corelib",
-                    "apidocs", "apidocs",
-                    "tapestryJavadoc", tapestryDoc,
-                    "generatedDocsDirectory", tempFolder
+                           "rootPackage", "org.apache.tapestry5.corelib",
+                           "apidocs", "apidocs",
+                           "tapestryJavadoc", tapestryDoc,
+                           "generatedDocsDirectory", tempFolder
             );
         }
         catch (NoSuchFieldException e)
@@ -144,24 +144,27 @@ public class ComponentReportTest extends Assert
         }
     }
 
-    @DataProvider(name = "docData")
-    private Object[][] testData() {
+    @DataProvider
+    private Object[][] docData()
+    {
         return new Object[][] {
                 {
-                    javadocDescriptionForForm(),
-                    "ref/org/apache/tapestry5/corelib/components/Form.xml",
-                    "http://tapestry.apache.org/tapestry5/apidocs",
-                    new String[]{"org.apache.tapestry5.corelib.components.Form"},
-                    new String[]{"<title>Component Reference: org.apache.tapestry5.corelib.components.Form</title>",
-                    "<a href=\"http://tapestry.apache.org/tapestry5/apidocs/org/apache/tapestry5/EventConstants.html#PREPARE\">"}
+                        javadocDescriptionForForm(),
+                        "ref/org/apache/tapestry5/corelib/components/Form.xml",
+                        "http://tapestry.apache.org/tapestry5/apidocs",
+                        new String[] { "org.apache.tapestry5.corelib.components.Form" },
+                        new String[] {
+                                "<title>Component Reference: org.apache.tapestry5.corelib.components.Form</title>",
+                                "<a href=\"http://tapestry.apache.org/tapestry5/apidocs/org/apache/tapestry5/EventConstants.html#PREPARE\">" }
                 },
                 {
-                    javadocDescriptionForForm(),
-                    "ref/org/apache/tapestry5/corelib/components/Form.xml",
-                    "../apidocs",
-                    new String[]{"org.apache.tapestry5.corelib.components.Form"},
-                    new String[]{"<title>Component Reference: org.apache.tapestry5.corelib.components.Form</title>",
-                    "<a href=\"../../../../../../../apidocs/org/apache/tapestry5/EventConstants.html#PREPARE\">"}
+                        javadocDescriptionForForm(),
+                        "ref/org/apache/tapestry5/corelib/components/Form.xml",
+                        "../apidocs",
+                        new String[] { "org.apache.tapestry5.corelib.components.Form" },
+                        new String[] {
+                                "<title>Component Reference: org.apache.tapestry5.corelib.components.Form</title>",
+                                "<a href=\"../../../../../../../apidocs/org/apache/tapestry5/EventConstants.html#PREPARE\">" }
                 },
 
         };
@@ -174,15 +177,15 @@ public class ComponentReportTest extends Assert
                 "org.apache.tapestry5.corelib.components.Form",
                 "java.lang.Object",
                 "When it renders, it fires a org.apache.tapestry5.EventConstants#PREPARE_FOR_RENDER\n" +
-                " notification, followed by a org.apache.tapestry5.EventConstants#PREPARE",
+                        " notification, followed by a org.apache.tapestry5.EventConstants#PREPARE",
                 false
         );
 
         ParameterDescription paramDesc = new ParameterDescription(
                 "validationId", "String", "", "prop", false, false, true,
                 "Prefix value used when searching for validation messages and constraints. " +
-                "The default is the Form component's\n" +
-                " id. This is overriden by org.apache.tapestry5.corelib.components.BeanEditForm."
+                        "The default is the Form component's\n" +
+                        " id. This is overriden by org.apache.tapestry5.corelib.components.BeanEditForm."
         );
         classDesc.getParameters().put(paramDesc.getName(), paramDesc);
 
