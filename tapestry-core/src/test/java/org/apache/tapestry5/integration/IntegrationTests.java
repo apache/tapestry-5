@@ -2573,4 +2573,14 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
                         "as well as in the component class ('textfield'). You should not provide a type attribute in " +
                         "the template when defining an embedded component within the component class.");
     }
+
+    public void publish_unknown_parameter()
+    {
+        start("Publish Unknown Parameter Demo");
+
+        assertTextPresent(
+                "Parameter 'xyzzyx' of component org.apache.tapestry5.integration.app1.components.BadPublishUnknown " +
+                        "is improperly published from embedded component 'publish1' (where it does not exist). " +
+                        "This may be a typo in the publishParameters attribute of the @Component annotation.");
+    }
 }
