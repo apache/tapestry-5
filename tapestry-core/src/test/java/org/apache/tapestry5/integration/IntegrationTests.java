@@ -859,7 +859,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         start("Recursive Demo");
 
         assertTextPresent("An unexpected application exception has occurred.",
-                          "The template for component org.apache.tapestry5.integration.app1.components.Recursive is recursive (contains another direct or indirect reference to component org.apache.tapestry5.integration.app1.components.Recursive). is not supported (components may not contain themselves).",
+                          "The template for component org.apache.tapestry5.integration.app1.components.Recursive is recursive (contains another direct or indirect reference to component org.apache.tapestry5.integration.app1.components.Recursive). This is not supported (components may not contain themselves).",
                           "component is <t:recursive>recursive</t:recursive>, so we\'ll see a failure.");
     }
 
@@ -2533,7 +2533,21 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     {
         start("Duplicate IDs");
 
-        assertTextPresent("Component DuplicateIds already contains a child component with id 'index'. Embedded component ids must be unique (excluding case, which is ignored).");
-        assertTextPresent("Component DuplicateIds declared original child component with id 'index' in DuplicateIds.tml on line 6.");
+        assertTextPresent(
+                "Component DuplicateIds already contains a child component with id 'index'. Embedded component ids must be unique (excluding case, which is ignored).");
+        assertTextPresent(
+                "Component DuplicateIds declared original child component with id 'index' in DuplicateIds.tml on line 6.");
+    }
+
+    /**
+     * TAP5-487
+     */
+    public void published_parameters()
+    {
+        start("Publish Parameters Demo");
+
+        assertText("p3-where", "PublishParametersDemo:publish1.publish2.publish3");
+        assertText("p3-number", "6");
+        assertText("p3-value", "{passed to publish1.value}");
     }
 }

@@ -509,8 +509,14 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
      * @param elementResources Provides access to common methods of various services
      */
 
-    ComponentPageElementImpl(Page page, ComponentPageElement container, String id, String elementName,
-                             Instantiator instantiator, Location location,
+    ComponentPageElementImpl(Page page,
+                             ComponentPageElement container,
+                             String id,
+                             String nestedId,
+                             String completeId,
+                             String elementName,
+                             Instantiator instantiator,
+                             Location location,
                              ComponentPageElementResources elementResources)
     {
         super(location);
@@ -518,6 +524,8 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
         this.page = page;
         this.container = container;
         this.id = id;
+        this.nestedId = nestedId;
+        this.completeId = completeId;
         this.elementName = elementName;
         this.elementResources = elementResources;
 
@@ -525,35 +533,6 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
                                                 ? null
                                                 : container.getComponentResources();
 
-        String pageName = this.page.getLogicalName();
-
-        // A page (really, the root component of a page) does not have a container.
-
-        if (container == null)
-        {
-            completeId = pageName;
-            nestedId = null;
-        }
-        else
-        {
-            String caselessId = id.toLowerCase();
-
-            String parentNestedId = container.getNestedId();
-
-            // The root element has no nested id.
-            // The children of the root element have an id.
-
-            if (parentNestedId == null)
-            {
-                nestedId = caselessId;
-                completeId = pageName + ":" + caselessId;
-            }
-            else
-            {
-                nestedId = parentNestedId + "." + caselessId;
-                completeId = container.getCompleteId() + "." + caselessId;
-            }
-        }
 
         coreResources = new InternalComponentResourcesImpl(this.page, this, containerResources,
                                                            this.elementResources,
@@ -570,10 +549,12 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
     /**
      * Constructor for the root component of a page.
      */
-    public ComponentPageElementImpl(Page page, Instantiator instantiator,
+    public ComponentPageElementImpl(Page page,
+                                    Instantiator instantiator,
                                     ComponentPageElementResources elementResources)
     {
-        this(page, null, null, null, instantiator, null, elementResources);
+        this(page, null, null, null, page.getName(), null, instantiator, null,
+             elementResources);
     }
 
     private void initializeRenderPhases()
@@ -631,10 +612,19 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
         renderPhasesInitalized = true;
     }
 
-    public ComponentPageElement newChild(String id, String elementName, Instantiator instantiator, Location location)
+    public ComponentPageElement newChild(String id, String nestedId, String completeId, String elementName,
+                                         Instantiator instantiator,
+                                         Location location)
     {
-        ComponentPageElementImpl child = new ComponentPageElementImpl(page, this, id, elementName, instantiator,
-                                                                      location, elementResources);
+        ComponentPageElementImpl child = new ComponentPageElementImpl(page,
+                                                                      this,
+                                                                      id,
+                                                                      nestedId,
+                                                                      completeId,
+                                                                      elementName,
+                                                                      instantiator,
+                                                                      location,
+                                                                      elementResources);
 
         addEmbeddedElement(child);
 
@@ -677,7 +667,6 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
             components = CollectionFactory.newList();
         }
 
-
         String mixinExtension = "$" + mixinId.toLowerCase();
 
         InternalComponentResourcesImpl resources = new InternalComponentResourcesImpl(page, this, coreResources,
@@ -685,10 +674,6 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
                                                                                       completeId + mixinExtension,
                                                                                       nestedId + mixinExtension,
                                                                                       instantiator);
-
-        if (mixinIdToComponentResources.containsKey(mixinId))
-            throw new RuntimeException(
-                    String.format("Component %s already has a '%s' mixin.", getCompleteId(), mixinId));
 
         mixinIdToComponentResources.put(mixinId, resources);
 
@@ -698,10 +683,6 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
     public void bindMixinParameter(String mixinId, String parameterName, Binding binding)
     {
         InternalComponentResources mixinResources = InternalUtils.get(mixinIdToComponentResources, mixinId);
-
-        if (mixinResources == null)
-            throw new TapestryException(
-                    StructureMessages.missingMixinForParameter(completeId, mixinId, parameterName), binding, null);
 
         mixinResources.bindParameter(parameterName, binding);
     }
@@ -713,52 +694,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
 
     public void bindParameter(String parameterName, Binding binding)
     {
-        // Maybe should use colon here? Depends on what works best in the template,
-        // don't want to lock this out as just
-        int dotx = parameterName.lastIndexOf('.');
-
-        if (dotx > 0)
-        {
-            String mixinId = parameterName.substring(0, dotx);
-            String simpleName = parameterName.substring(dotx + 1);
-
-            bindMixinParameter(mixinId, simpleName, binding);
-
-            return;
-        }
-
-        InternalComponentResources informalParameterResources = null;
-
-        // Does it match a formal parameter name of the core component? That takes precedence
-
-        if (coreResources.getComponentModel().getParameterModel(parameterName) != null)
-        {
-            coreResources.bindParameter(parameterName, binding);
-            return;
-        }
-
-        for (String mixinName : InternalUtils.sortedKeys(mixinIdToComponentResources))
-        {
-            InternalComponentResources resources = mixinIdToComponentResources.get(mixinName);
-            if (resources.getComponentModel().getParameterModel(parameterName) != null)
-            {
-                resources.bindParameter(parameterName, binding);
-                return;
-            }
-
-            if (informalParameterResources == null && resources.getComponentModel().getSupportsInformalParameters())
-                informalParameterResources = resources;
-        }
-
-        // An informal parameter
-
-        if (informalParameterResources == null && coreResources.getComponentModel().getSupportsInformalParameters())
-            informalParameterResources = coreResources;
-
-        // For the moment, informal parameters accumulate in the core component's resources, but
-        // that will likely change.
-
-        if (informalParameterResources != null) informalParameterResources.bindParameter(parameterName, binding);
+        coreResources.bindParameter(parameterName, binding);
     }
 
     public void addToBody(RenderCommand element)
@@ -1225,50 +1161,9 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
         blocks.put(blockId, block);
     }
 
-    public String getDefaultBindingPrefix(String parameterName)
-    {
-        int dotx = parameterName.lastIndexOf('.');
-
-        if (dotx > 0)
-        {
-            String mixinName = parameterName.substring(0, dotx);
-            InternalComponentResources mixinResources = InternalUtils.get(mixinIdToComponentResources, mixinName);
-
-            if (mixinResources == null) throw new TapestryException(
-                    StructureMessages.missingMixinForParameter(completeId, mixinName, parameterName), null, null);
-
-            String simpleName = parameterName.substring(dotx + 1);
-
-            ParameterModel pm = mixinResources.getComponentModel().getParameterModel(simpleName);
-
-            return pm != null ? pm.getDefaultBindingPrefix() : null;
-        }
-
-        // A formal parameter of the core component?
-
-        ParameterModel pm = coreResources.getComponentModel().getParameterModel(parameterName);
-
-        if (pm != null) return pm.getDefaultBindingPrefix();
-
-        // Search for mixin that it is a formal parameter of
-
-        for (String mixinName : InternalUtils.sortedKeys(mixinIdToComponentResources))
-        {
-            InternalComponentResources resources = mixinIdToComponentResources.get(mixinName);
-
-            pm = resources.getComponentModel().getParameterModel(parameterName);
-
-            if (pm != null) return pm.getDefaultBindingPrefix();
-        }
-
-        // Not a formal parameter of the core component or any mixin.
-
-        return null;
-    }
-
     public String getPageName()
     {
-        return page.getLogicalName();
+        return page.getName();
     }
 
     public boolean hasBody()

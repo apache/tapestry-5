@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -26,7 +26,6 @@ import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.runtime.RenderCommand;
 import org.apache.tapestry5.runtime.RenderQueue;
 import org.apache.tapestry5.services.BindingSource;
-import org.apache.tapestry5.services.ComponentClassResolver;
 import org.testng.annotations.Test;
 
 public class PageElementFactoryImplTest extends InternalBaseTestCase
@@ -36,15 +35,15 @@ public class PageElementFactoryImplTest extends InternalBaseTestCase
     @Test
     public void attribute()
     {
-        ComponentInstantiatorSource source = mockComponentInstantiatorSource();
-        ComponentClassResolver resolver = mockComponentClassResolver();
+        TypeCoercer typeCoercer = mockTypeCoercer();
+        BindingSource bindingSource = mockBindingSource();
         MarkupWriter writer = new MarkupWriterImpl(xmlModel);
         Location l = mockLocation();
         RenderQueue queue = mockRenderQueue();
 
         replay();
 
-        PageElementFactory factory = new PageElementFactoryImpl(source, resolver, null, null, null);
+        PageElementFactory factory = new PageElementFactoryImpl(typeCoercer, bindingSource);
         AttributeToken token = new AttributeToken(null, "name", "value", l);
 
         RenderCommand element = factory.newAttributeElement(null, token);
@@ -62,11 +61,8 @@ public class PageElementFactoryImplTest extends InternalBaseTestCase
     @Test
     public void unclosed_attribute_expression()
     {
-        ComponentInstantiatorSource source = mockComponentInstantiatorSource();
-        ComponentClassResolver resolver = mockComponentClassResolver();
         TypeCoercer typeCoercer = mockTypeCoercer();
         BindingSource bindingSource = mockBindingSource();
-        ComponentMessagesSource messagesSource = newMock(ComponentMessagesSource.class);
         ComponentResources resources = mockComponentResources();
         Location location = mockLocation();
 
@@ -74,7 +70,7 @@ public class PageElementFactoryImplTest extends InternalBaseTestCase
 
         replay();
 
-        PageElementFactory factory = new PageElementFactoryImpl(source, resolver, typeCoercer, bindingSource, null);
+        PageElementFactory factory = new PageElementFactoryImpl(typeCoercer, bindingSource);
 
         try
         {

@@ -95,7 +95,7 @@ public class LinkSourceImplTest extends InternalBaseTestCase
 
         train_get(pageCache, logicalName, page);
 
-        train_getLogicalName(page, logicalName);
+        train_getName(page, logicalName);
 
         train_collectPageActivationContext(collector, page, 3);
 
@@ -120,7 +120,7 @@ public class LinkSourceImplTest extends InternalBaseTestCase
         verify();
     }
 
-    private void testPageLinkCreation(String logicalName, boolean overrideContext,
+    private void testPageLinkCreation(String pageName, boolean overrideContext,
                                       Object... context)
     {
         Page page = mockPage();
@@ -129,13 +129,13 @@ public class LinkSourceImplTest extends InternalBaseTestCase
         LinkFactory factory = mockLinkFactory();
         Link link = mockLink();
 
-        train_getLogicalName(page, logicalName);
+        train_getName(page, pageName);
 
         if (!overrideContext)
             train_collectPageActivationContext(collector, page, context);
 
         PageRenderRequestParameters parameters =
-                new PageRenderRequestParameters(logicalName,
+                new PageRenderRequestParameters(pageName,
                                                 new ArrayEventContext(typeCoercer, context));
 
         expect(factory.createPageRenderLink(parameters)).andReturn(link);
@@ -204,8 +204,8 @@ public class LinkSourceImplTest extends InternalBaseTestCase
 
         train_getRenderingPage(queue, activePage);
 
-        train_getLogicalName(primaryPage, logicalName);
-        train_getLogicalName(activePage, "order/View");
+        train_getName(primaryPage, logicalName);
+        train_getName(activePage, "order/View");
 
         train_collectPageActivationContext(collector, activePage, "x", "y");
 
@@ -248,7 +248,7 @@ public class LinkSourceImplTest extends InternalBaseTestCase
 
         train_getRenderingPage(queue, null);
 
-        train_getLogicalName(primaryPage, logicalName);
+        train_getName(primaryPage, logicalName);
 
         train_collectPageActivationContext(collector, primaryPage, "a", "b");
 

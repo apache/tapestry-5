@@ -380,6 +380,7 @@ public class TapestryInternalUtilsTest extends InternalBaseTestCase
                         { "foo", new String[] { "foo" } },
                         { "foo, bar", new String[] { "foo", "bar" } },
                         { "  foo, \nbar\t\t", new String[] { "foo", "bar" } },
+                        { "", new String[0] },
                         { null, new String[0] }
                 };
     }
@@ -400,12 +401,6 @@ public class TapestryInternalUtilsTest extends InternalBaseTestCase
                 { 1L, "AQ" },
                 { 0xab54a98ceb1f0ad2L, "q1SpjOsfCtI" }
         };
-    }
-
-    @Test(dataProvider = "to_base64_data")
-    public void to_base64(long input, String expected)
-    {
-        assertEquals(TapestryInternalUtils.toBase64(input), expected);
     }
 
     @Test

@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -64,6 +64,9 @@ public class Index
     }
 
     private static final List<Item> ITEMS = CollectionFactory.newList(
+
+            new Item("PublishParametersDemo", "Publish Parameters Demo",
+                     "Use of @Component.publishParameters attribute."),
 
             new Item("LinkSubmitDemo", "LinkSubmit Demo", "JavaScript LinkSubmit component"),
 

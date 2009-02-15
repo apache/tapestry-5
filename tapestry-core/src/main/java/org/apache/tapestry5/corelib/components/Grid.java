@@ -41,8 +41,7 @@ import java.util.List;
  * editing properties of each row. This is currently workable but less than ideal -- if the order of rows provided by
  * the {@link org.apache.tapestry5.grid.GridDataSource} changes between render and form submission, then there's the
  * possibility that data will be applied to the wrong server-side objects. In general, when using Grid and Form
- * together, you want to provide the Grid with a {@link org.apache.tapestry5.PrimaryKeyEncoder} (via the encoder
- * parameter).
+ * together, you want to provide the Grid with a {@link org.apache.tapestry5.ValueEncoder} (via the encoder parameter).
  *
  * @see org.apache.tapestry5.beaneditor.BeanModel
  * @see org.apache.tapestry5.services.BeanModelSource
@@ -89,13 +88,7 @@ public class Grid implements GridModel
     private Object row;
 
     /**
-     * Optional output parameter used to identify the index (from zero) of the row being rendered.
-     */
-    @Parameter
-    private int rowIndex;
-
-    /**
-     * Optional output parmater used to identify the index of the column being rendered.
+     * Optional output parmeter used to identify the index of the column being rendered.
      */
     @Parameter
     private int columnIndex;
@@ -161,31 +154,6 @@ public class Grid implements GridModel
     @Parameter(value = "block:empty", defaultPrefix = BindingConstants.LITERAL)
     private Block empty;
 
-
-    /**
-     * If true, then the CSS class on each &lt;TD&gt; and &lt;TH&gt; cell will be omitted, which can reduce the amount
-     * of output from the component overall by a considerable amount. Leave this as false, the default, when you are
-     * leveraging the CSS to customize the look and feel of particular columns.
-     */
-    @Parameter
-    private boolean lean;
-
-    /**
-     * If true and the Grid is enclosed by a Form, then the normal state persisting logic is turned off. Defaults to
-     * false, enabling state persisting within Forms. If a Grid is present for some reason within a Form, but does not
-     * contain any form control components (such as {@link TextField}), then binding volatile to false will reduce the
-     * amount of client-side state that must be persisted.
-     */
-    @Parameter(name = "volatile")
-    private boolean volatileState;
-
-    /**
-     * The CSS class for the tr element for each data row. This can be used to highlight particular rows, or cycle
-     * between CSS values (for the "zebra effect"). If null or not bound, then no particular CSS class value is used.
-     */
-    @Parameter(cache = false)
-    private String rowClass;
-
     /**
      * CSS class for the &lt;table&gt; element.  In addition, informal parameters to the Grid are rendered in the table
      * element.
@@ -201,14 +169,6 @@ public class Grid implements GridModel
      */
     @Parameter
     private boolean inPlace;
-
-    /**
-     * Changes how state is recorded into the form to store the {@linkplain org.apache.tapestry5.ValueEncoder#toClient(Object)
-     * client value} for each row (rather than the index), and restore the {@linkplain
-     * org.apache.tapestry5.ValueEncoder#toValue(String)row values} from the client value.
-     */
-    @Parameter
-    private ValueEncoder encoder;
 
     /**
      * The name of the psuedo-zone that encloses the Grid.
@@ -247,16 +207,12 @@ public class Grid implements GridModel
 
     @Component(
             parameters = {
-                    "rowIndex=inherit:rowIndex",
                     "columnIndex=inherit:columnIndex",
-                    "rowClass=inherit:rowClass",
                     "rowsPerPage=rowsPerPage",
                     "currentPage=currentPage",
                     "row=row",
-                    "overrides=overrides",
-                    "volatile=inherit:volatile",
-                    "encoder=inherit:encoder",
-                    "lean=inherit:lean" })
+                    "overrides=overrides" },
+            publishParameters = "rowIndex,rowClass,volatile,encoder,lean")
     private GridRows rows;
 
     @Component(parameters = {

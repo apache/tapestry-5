@@ -21,31 +21,22 @@ import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.internal.parser.AttributeToken;
 import org.apache.tapestry5.internal.parser.ExpansionToken;
-import org.apache.tapestry5.internal.structure.*;
+import org.apache.tapestry5.internal.structure.ExpansionPageElement;
 import org.apache.tapestry5.ioc.Location;
 import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newList;
-import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.TapestryException;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
-import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.runtime.RenderCommand;
 import org.apache.tapestry5.runtime.RenderQueue;
 import org.apache.tapestry5.services.BindingSource;
-import org.apache.tapestry5.services.ComponentClassResolver;
 
 import java.util.List;
 
 public class PageElementFactoryImpl implements PageElementFactory
 {
-    private final ComponentInstantiatorSource componentInstantiatorSource;
-
-    private final ComponentClassResolver componentClassResolver;
-
     private final TypeCoercer typeCoercer;
 
     private final BindingSource bindingSource;
-
-    private final ComponentPageElementResourcesSource componentPageElementResourcesSource;
 
     private static class LiteralStringProvider implements StringProvider
     {
@@ -62,15 +53,10 @@ public class PageElementFactoryImpl implements PageElementFactory
         }
     }
 
-    public PageElementFactoryImpl(ComponentInstantiatorSource componentInstantiatorSource,
-                                  ComponentClassResolver resolver, TypeCoercer typeCoercer, BindingSource bindingSource,
-                                  ComponentPageElementResourcesSource componentPageElementResourcesSource)
+    public PageElementFactoryImpl(TypeCoercer typeCoercer, BindingSource bindingSource)
     {
-        this.componentInstantiatorSource = componentInstantiatorSource;
-        componentClassResolver = resolver;
         this.typeCoercer = typeCoercer;
         this.bindingSource = bindingSource;
-        this.componentPageElementResourcesSource = componentPageElementResourcesSource;
     }
 
     public RenderCommand newAttributeElement(ComponentResources componentResources, final AttributeToken token)
@@ -180,116 +166,6 @@ public class PageElementFactoryImpl implements PageElementFactory
                                                    BindingConstants.PROP, token.getExpression(), token.getLocation());
 
         return new ExpansionPageElement(binding, typeCoercer);
-    }
-
-    public ComponentPageElement newComponentElement(Page page, ComponentPageElement container, String id,
-                                                    String componentType, String componentClassName, String elementName,
-                                                    Location location)
-    {
-        try
-        {
-            String finalClassName = componentClassName;
-
-            // This awkwardness is making me think that the page loader should resolve the component
-            // type before invoking this method (we would then remove the componentType parameter).
-
-            if (InternalUtils.isNonBlank(componentType))
-            {
-                // The type actually overrides the specified class name. The class name is defined
-                // by the type of the field. In many scenarios, the field type is a common
-                // interface,
-                // and the type is used to determine the concrete class to instantiate.
-
-                try
-                {
-                    finalClassName = componentClassResolver.resolveComponentTypeToClassName(componentType);
-                }
-                catch (IllegalArgumentException ex)
-                {
-                    throw new TapestryException(ex.getMessage(), location, ex);
-                }
-            }
-
-            Instantiator instantiator = componentInstantiatorSource.getInstantiator(finalClassName);
-
-            // This is actually a good place to check for recursive templates, here where we've
-            // resolved
-            // the component type to a fully qualified class name.
-
-            checkForRecursion(finalClassName, container, location);
-
-            // The container for any components is the loading component, regardless of
-            // how the component elements are nested within the loading component's
-            // template.
-
-            ComponentPageElement result = container.newChild(id, elementName, instantiator, location);
-
-            page.addLifecycleListener(result);
-
-            addMixins(result, instantiator);
-
-            return result;
-        }
-        catch (RuntimeException ex)
-        {
-            throw new TapestryException(ex.getMessage(), location, ex);
-        }
-    }
-
-    private void checkForRecursion(String componentClassName, ComponentPageElement container, Location location)
-    {
-        // Container may be null for a root element;
-
-        if (container == null) return;
-
-        ComponentResources resources = container.getComponentResources();
-
-        while (resources != null)
-        {
-            if (resources.getComponentModel().getComponentClassName().equals(componentClassName))
-                throw new TapestryException(ServicesMessages.componentRecursion(componentClassName), location, null);
-
-            resources = resources.getContainerResources();
-        }
-    }
-
-    public ComponentPageElement newRootComponentElement(Page page, String componentType)
-    {
-        Instantiator instantiator = componentInstantiatorSource.getInstantiator(componentType);
-
-        ComponentPageElementResources componentPageElementResources = componentPageElementResourcesSource.get(
-                page.getLocale());
-
-        ComponentPageElement result = new ComponentPageElementImpl(page, instantiator, componentPageElementResources);
-
-        page.addLifecycleListener(result);
-
-        addMixins(result, instantiator);
-
-        return result;
-    }
-
-    private void addMixins(ComponentPageElement component, Instantiator instantiator)
-    {
-        ComponentModel model = instantiator.getModel();
-        for (String mixinClassName : model.getMixinClassNames())
-            addMixinByClassName(component, mixinClassName);
-    }
-
-    public void addMixinByTypeName(ComponentPageElement component, String mixinType)
-    {
-        String mixinClassName = componentClassResolver.resolveMixinTypeToClassName(mixinType);
-
-        addMixinByClassName(component, mixinClassName);
-    }
-
-    public void addMixinByClassName(ComponentPageElement component, String mixinClassName)
-    {
-        Instantiator mixinInstantiator = componentInstantiatorSource.getInstantiator(mixinClassName);
-
-        String mixinId = InternalUtils.lastTerm(mixinClassName);
-
-        component.addMixin(mixinId, mixinInstantiator);
     }
 
     public Binding newBinding(String parameterName, ComponentResources loadingComponentResources,

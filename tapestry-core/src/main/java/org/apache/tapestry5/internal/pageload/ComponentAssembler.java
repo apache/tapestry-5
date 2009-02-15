@@ -19,6 +19,7 @@ import org.apache.tapestry5.internal.structure.ComponentPageElement;
 import org.apache.tapestry5.internal.structure.Page;
 import org.apache.tapestry5.ioc.Location;
 import org.apache.tapestry5.model.ComponentModel;
+import org.apache.tapestry5.model.EmbeddedComponentModel;
 
 /**
  * Encapsulates a series of actions that are used to assemble a new page instance (or a comoponent within the page).
@@ -41,13 +42,15 @@ interface ComponentAssembler
      * Assembles a component embedded within another component, leaving the new component on the {@link
      * org.apache.tapestry5.internal.pageload.PageAssembly#createdElement} stack.
      *
-     * @param pageAssembly holds dynamic state while assembling the comopnent
-     * @param embeddedId   the unique id for the component within its container
-     * @param elementName  element name in the template for the component (or null if defined via a Tapestry namespaced
-     *                     element)
-     * @param location     location of the embedded component in its container's template
+     * @param pageAssembly      holds dynamic state while assembling the comopnent
+     * @param embeddedAssembler
+     * @param embeddedId        the unique id for the component within its container
+     * @param elementName       element name in the template for the component (or null if defined via a Tapestry
+     *                          namespaced element)
+     * @param location          location of the embedded component in its container's template
      */
-    void assembleEmbeddedComponent(PageAssembly pageAssembly, String embeddedId, String elementName,
+    void assembleEmbeddedComponent(PageAssembly pageAssembly, EmbeddedComponentAssembler embeddedAssembler,
+                                   String embeddedId, String elementName,
                                    Location location);
 
     /**
@@ -70,4 +73,32 @@ interface ComponentAssembler
      * @return unique id based on the type
      */
     String generateEmbeddedId(String componentType);
+
+    /**
+     * Creates an assembler for an embedded component within this component. Does some additional tracking of published
+     * parameters.
+     *
+     * @param embeddedId         unique id for the embedded component
+     * @param componentClassName class name to instantiate
+     * @param embeddedModel      model defining how the component is used (may be null)
+     * @param mixins             mixins for the component (as defined in the template)
+     * @param location           location of the component (i.e., it's location in the container template)
+     * @return assembler for the component
+     */
+    EmbeddedComponentAssembler createEmbeddedAssembler(String embeddedId, String componentClassName,
+                                                       EmbeddedComponentModel embeddedModel,
+                                                       String mixins,
+                                                       Location location);
+
+    /**
+     * Finds a binder for a published parameter, or returns null. That is, if the parameter name matches the name of a
+     * parameter of an emebdded components of this component, returns a parameter binder for the parameter. The caller
+     * will pass the {@link org.apache.tapestry5.internal.structure.ComponentPageElement} that corresponds to this
+     * component to the binder and the binder will, internally, redirect to the correct embedded ComponentPageElement.
+     *
+     * @param parameterName simple (unqualified) name of parameter
+     * @return binder, or null if the parameter name does not correspond to a published parameter of an embedded
+     *         component
+     */
+    ParameterBinder getBinder(String parameterName);
 }

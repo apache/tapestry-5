@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -38,7 +38,7 @@ public interface Page
      * Returns the short, logical name for the page. This is the page name as it might included in an action or page
      * render URL (though it will be converted to lower case when it is included).
      */
-    String getLogicalName();
+    String getName();
 
     /**
      * The locale for which the page is localized. This is set when the page is created and does not change.

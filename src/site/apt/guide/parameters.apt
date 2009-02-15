@@ -486,4 +486,24 @@ public class MyComponent
   builds around your class.  In any case, once the resources are injected,
   they can be queried.
  
-   
+Publishing Parameters
+
+  Often when creating new components from existing components, you want to expose some of the
+  functionality of the embedded component, in the form of exposing parameters of the embedded components
+  as parameters of the outer component.
+
+  In Tapestry 5.0, you would define a parameter of the outer component, and use the
+  "inherit:" binding prefix to connect the inner component's parameter to the outer component's parameter.
+  This is somewhat clumsy, as it involves creating an otherwise unused field just for the parameter; in practice
+  it also leads to duplication of the documentation of the parameter.
+
+  In Tapestry 5.1, you may use the publishParameters attribute of the
+  {{{../../apidocs/org/apache/tapestry5/annotations/Component.html}Component}}} annotation. List one
+  or more parameters seperated by commas: those parameters of the inner/embedded component become
+  parameters of the outer component.  You should not define a parameter field in the outer component.
+
+  There are still cases where you want to use the "inherit:" binding prefix. For example, if you have
+  several components that need to share a parameter, then you must do it the Tapestry 5.0 way: a true parameter
+  on the outer component, and "inherit:" bindings on the embedded components. You can follow a similar pattern
+  to rename a parameter in the outer component.
+

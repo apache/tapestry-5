@@ -14,47 +14,68 @@
 
 package org.apache.tapestry5.internal.pageload;
 
-import org.apache.tapestry5.Binding;
-import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.internal.services.ComponentInstantiatorSource;
-import org.apache.tapestry5.internal.services.PageElementFactory;
+import org.apache.tapestry5.internal.services.Instantiator;
 import org.apache.tapestry5.internal.structure.ComponentPageElement;
 import org.apache.tapestry5.ioc.Location;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.TapestryException;
 import org.apache.tapestry5.model.ComponentModel;
-import org.apache.tapestry5.model.ParameterModel;
+import org.apache.tapestry5.model.EmbeddedComponentModel;
+import org.apache.tapestry5.services.ComponentClassResolver;
 
+import java.util.Locale;
 import java.util.Map;
 
 public class EmbeddedComponentAssemblerImpl implements EmbeddedComponentAssembler
 {
-    private final Map<String, ComponentModel> mixinIdToComponentModel = CollectionFactory.newCaseInsensitiveMap();
-
     private final ComponentInstantiatorSource instantiatorSource;
+
+    private final ComponentAssemblerSource assemblerSource;
+
+    private final Locale locale;
 
     private final ComponentModel componentModel;
 
-    private final PageElementFactory elementFactory;
-
     private final Location location;
+
+    private final Map<String, ComponentModel> mixinIdToComponentModel = CollectionFactory.newCaseInsensitiveMap();
+
+    /**
+     * Maps parameter names (both simple, and qualified with the mixin id) to the corresponding QualifiedParameterName.
+     */
+    private final Map<String, ParameterBinder> parameterNameToBinder = CollectionFactory.newCaseInsensitiveMap();
+
+    // The id of the mixin to receive informal parameters.  If null, the component itself recieves them.
+    // If the component doesn't support them, they are quietly dropped.
+
+    private final String informalParametersMixinId;
 
     private Map<String, Boolean> bound;
 
-    interface BindingCreator
-    {
-        Binding newBinding(String parameterName, ComponentResources loadingComponentResources,
-                           ComponentResources embeddedComponentResources, String defaultBindingPrefix);
-    }
-
-    public EmbeddedComponentAssemblerImpl(ComponentInstantiatorSource instantiatorSource,
-                                          PageElementFactory elementFactory,
+    /**
+     * @param assemblerSource
+     * @param instantiatorSource     used to access component models
+     * @param componentClassResolver used to convert mixin types to component models
+     * @param componentClassName     class name of embedded component
+     * @param locale
+     * @param embeddedModel          embedded model (may be null for components defined in the template)
+     * @param templateMixins         list of mixins from the t:mixins element (possibly null)
+     * @param location               location of components element in its container's template
+     */
+    public EmbeddedComponentAssemblerImpl(ComponentAssemblerSource assemblerSource,
+                                          ComponentInstantiatorSource instantiatorSource,
+                                          ComponentClassResolver componentClassResolver,
                                           String componentClassName,
+                                          Locale locale, EmbeddedComponentModel embeddedModel,
+                                          String templateMixins,
                                           Location location)
     {
+        this.assemblerSource = assemblerSource;
         this.instantiatorSource = instantiatorSource;
-        this.elementFactory = elementFactory;
+        this.locale = locale;
         this.location = location;
 
         componentModel = getModel(componentClassName);
@@ -63,10 +84,85 @@ public class EmbeddedComponentAssemblerImpl implements EmbeddedComponentAssemble
 
         for (String className : componentModel.getMixinClassNames())
         {
-            addInstanceMixin(getModel(className));
+            addMixin(className);
         }
 
-        // Instance mixins will be added later.
+        // If there's an embedded model (i.e., there was an @Component annotation)
+        // then it may define some mixins.
+
+        if (embeddedModel != null)
+        {
+            for (String className : embeddedModel.getMixinClassNames())
+            {
+                addMixin(className);
+            }
+        }
+
+        // And the template may include a t:mixins element to define yet more mixin.
+
+        for (String mixinType : TapestryInternalUtils.splitAtCommas(templateMixins))
+        {
+            String className = componentClassResolver.resolveMixinTypeToClassName(mixinType);
+
+            addMixin(className);
+        }
+
+        informalParametersMixinId = prescanMixins();
+
+    }
+
+    private String prescanMixins()
+    {
+        String supportsInformals = null;
+
+        for (Map.Entry<String, ComponentModel> entry : mixinIdToComponentModel.entrySet())
+        {
+            String mixinId = entry.getKey();
+            ComponentModel mixinModel = entry.getValue();
+
+            updateParameterNameToQualified(mixinId, mixinModel);
+
+            if (supportsInformals == null && mixinModel.getSupportsInformalParameters())
+                supportsInformals = mixinId;
+        }
+
+        // The component comes last and overwrites simple names from the others.
+
+        updateParameterNameToQualified(null, componentModel);
+
+        return supportsInformals;
+    }
+
+    private void updateParameterNameToQualified(String mixinId, ComponentModel model)
+    {
+        for (String parameterName : model.getParameterNames())
+        {
+            String defaultBindingPrefix = model.getParameterModel(parameterName).getDefaultBindingPrefix();
+
+            ParameterBinderImpl binder = new ParameterBinderImpl(mixinId, parameterName, defaultBindingPrefix);
+
+            parameterNameToBinder.put(parameterName,
+                                      binder);
+
+            if (mixinId != null)
+                parameterNameToBinder.put(mixinId + "." + parameterName, binder);
+        }
+    }
+
+    private void addMixin(String className)
+    {
+        ComponentModel model = getModel(className);
+
+        String mixinId = InternalUtils.lastTerm(className);
+
+        if (mixinIdToComponentModel.containsKey(mixinId))
+            throw new TapestryException(
+                    String.format("Mixins applied to a component must be unique. Mixin '%s' has already been applied.",
+                                  mixinId),
+                    location, null);
+
+
+        mixinIdToComponentModel.put(mixinId, model);
     }
 
     private ComponentModel getModel(String className)
@@ -74,151 +170,50 @@ public class EmbeddedComponentAssemblerImpl implements EmbeddedComponentAssemble
         return instantiatorSource.getInstantiator(className).getModel();
     }
 
-    public void addInstanceMixin(ComponentModel mixinModel)
-    {
-        String mixinId = InternalUtils.lastTerm(mixinModel.getComponentClassName());
-
-        // TODO: Check for conflicts here?
-
-        mixinIdToComponentModel.put(mixinId, mixinModel);
-    }
-
-    public ParameterBinder createBinder(String parameterName, final String parameterValue, String defaultBindingPrefix)
-    {
-        BindingCreator creator = new BindingCreator()
-        {
-            public Binding newBinding(String parameterName, ComponentResources loadingComponentResources,
-                                      ComponentResources embeddedComponentResources, String defaultBindingPrefix)
-            {
-                return elementFactory.newBinding(parameterName, loadingComponentResources, embeddedComponentResources,
-                                                 defaultBindingPrefix, parameterValue, location);
-            }
-        };
-
-
-        return createBinder(parameterName, defaultBindingPrefix, creator);
-    }
-
-    public ParameterBinder createBinder(String parameterName, final Binding binding)
-    {
-        BindingCreator creator = new BindingCreator()
-        {
-            public Binding newBinding(String parameterName, ComponentResources loadingComponentResources,
-                                      ComponentResources embeddedComponentResources, String defaultBindingPrefix)
-            {
-                return binding;
-            }
-        };
-
-        return createBinder(parameterName, null, creator);
-    }
-
-
-    private ParameterBinder createBinder(String parameterName, String defaultBindingPrefix,
-                                         BindingCreator creator)
+    public ParameterBinder createParameterBinder(String parameterName)
     {
         int dotx = parameterName.indexOf('.');
-
-        if (dotx > 0)
-            return createQualifiedParameterBinder(parameterName.substring(0, dotx),
-                                                  parameterName.substring(dotx + 1),
-                                                  defaultBindingPrefix,
-                                                  creator);
-
-        // OK, see if its a parameter of the component (that takes precedence).
-
-        ParameterModel pmodel = componentModel.getParameterModel(parameterName);
-
-        if (pmodel != null)
-            return createBinder(null, parameterName, pmodel.getDefaultBindingPrefix(), creator);
-
-        String informalMixinId = null;
-
-        for (Map.Entry<String, ComponentModel> me : mixinIdToComponentModel.entrySet())
+        if (dotx >= 0)
         {
-            String mixinId = me.getKey();
-            ComponentModel model = me.getValue();
-
-            if (informalMixinId == null && model.getSupportsInformalParameters())
-                informalMixinId = mixinId;
-
-            pmodel = model.getParameterModel(parameterName);
-
-            if (pmodel != null)
-                return createBinder(mixinId, parameterName, pmodel.getDefaultBindingPrefix(), creator);
-        }
-
-        // OK, it doesn't match any formal parameter of the component or any mixin.
-
-        // If neither the component nor any of its mixins supports informal parameters,
-        // then return null to ignore the parameter.
-
-        if (informalMixinId == null && !componentModel.getSupportsInformalParameters()) return null;
-
-        // Add as an informal parameter either to a mixin (if an mixin supprting informatl parameters
-        // was found) or to the component itself (otherwise).
-
-        return createBinder(informalMixinId, parameterName, defaultBindingPrefix, creator);
-    }
-
-    private ParameterBinder createQualifiedParameterBinder(String mixinId, String parameterName,
-                                                           String defaultBindingPrefix,
-                                                           BindingCreator creator)
-    {
-        ComponentModel mixinModel = mixinIdToComponentModel.get(mixinId);
-
-        if (mixinModel == null)
-        {
-            String message = String.format(
-                    "Parameter '%s.%s' does not match any defined mixins for this component.  Available mixins: %s.",
-                    mixinId, parameterName,
-                    InternalUtils.sortedKeys(mixinIdToComponentModel));
-
-            throw new TapestryException(message, location, null);
-        }
-
-        return createBinder(mixinId, mixinModel, parameterName, defaultBindingPrefix, creator);
-    }
-
-    private ParameterBinder createBinder(String mixinId,
-                                         ComponentModel model,
-                                         String parameterName,
-                                         String defaultBindingPrefix,
-                                         BindingCreator creator)
-    {
-        ParameterModel pmodel = model.getParameterModel(parameterName);
-
-        // Ignore informal parameters for mixins that don't support them.
-
-        if (pmodel == null && !model.getSupportsInformalParameters())
-            return null;
-
-        final String bindingPrefix = pmodel == null ? defaultBindingPrefix : pmodel.getDefaultBindingPrefix();
-
-        return createBinder(mixinId, parameterName, bindingPrefix, creator);
-    }
-
-    private ParameterBinder createBinder(final String mixinId,
-                                         final String parameterName,
-                                         final String defaultBindingPrefix,
-                                         final BindingCreator creator)
-    {
-        return new ParameterBinder()
-        {
-            public void bind(ComponentPageElement container, ComponentPageElement embedded)
+            String mixinId = parameterName.substring(0, dotx);
+            if (!mixinIdToComponentModel.containsKey(mixinId))
             {
-                Binding binding =
-                        creator.newBinding(parameterName,
-                                           container.getComponentResources(),
-                                           embedded.getComponentResources(),
-                                           defaultBindingPrefix);
+                String message = String.format("Mixin id for parameter '%s' not found. Attached mixins: %s.",
+                                               parameterName,
+                                               InternalUtils.joinSorted(mixinIdToComponentModel.keySet()));
 
-                if (mixinId == null)
-                    embedded.bindParameter(parameterName, binding);
-                else
-                    embedded.bindMixinParameter(mixinId, parameterName, binding);
+                throw new TapestryException(message, location, null);
             }
-        };
+        }
+        else
+        {
+            // Unqualified parameter name. May be a reference not to a parameter of this component, but a published
+            // parameter of a component embedded in this component. The ComponentAssembler for this component
+            // will know.
+
+            ComponentAssembler assembler = assemblerSource.getAssembler(componentModel.getComponentClassName(), locale);
+
+            ParameterBinder binder = assembler.getBinder(parameterName);
+
+            if (binder != null) return binder;
+        }
+
+        final ParameterBinder binder = parameterNameToBinder.get(parameterName);
+
+        if (binder != null)
+            return binder;
+
+        // Informal parameter: Is there a mixin for that?
+
+        if (informalParametersMixinId != null)
+            return new ParameterBinderImpl(informalParametersMixinId, parameterName, null);
+
+        if (componentModel.getSupportsInformalParameters())
+            return new ParameterBinderImpl(null, parameterName, null);
+
+        // Otherwise, informal parameter and not supported by the component or any mixin.
+
+        return null;
     }
 
     public boolean isBound(String parameterName)
@@ -232,5 +227,26 @@ public class EmbeddedComponentAssemblerImpl implements EmbeddedComponentAssemble
             bound = CollectionFactory.newCaseInsensitiveMap();
 
         bound.put(parameterName, true);
+    }
+
+    public void addMixinsToElement(ComponentPageElement newElement)
+    {
+        for (Map.Entry<String, ComponentModel> entry : mixinIdToComponentModel.entrySet())
+        {
+            String mixinId = entry.getKey();
+            ComponentModel model = entry.getValue();
+
+            // TODO: Change mixinIdTo... to be to Instantiator instead, so we don't have to
+            // keep asking the IS for them.
+
+            Instantiator instantiator = instantiatorSource.getInstantiator(model.getComponentClassName());
+
+            newElement.addMixin(mixinId, instantiator);
+        }
+    }
+
+    public Location getLocation()
+    {
+        return location;
     }
 }

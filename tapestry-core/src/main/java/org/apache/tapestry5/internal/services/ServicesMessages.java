@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@ package org.apache.tapestry5.internal.services;
 
 import javassist.CtClass;
 import org.apache.tapestry5.internal.structure.ComponentPageElement;
+import org.apache.tapestry5.internal.structure.Page;
 import org.apache.tapestry5.ioc.Location;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.Resource;
@@ -43,11 +44,6 @@ class ServicesMessages
     static String markupWriterNoCurrentElement()
     {
         return MESSAGES.get("markup-writer-no-current-element");
-    }
-
-    static String noConstructorFound(Class instanceClass)
-    {
-        return MESSAGES.format("no-constructor-found", instanceClass.getName());
     }
 
     static String missingDeclaredField(CtClass ctClass, String fieldName)
@@ -95,11 +91,6 @@ class ServicesMessages
         return MESSAGES.format("content-inside-body-not-allowed", location);
     }
 
-    static String mayNotNestElementsInsideBody(String elementName)
-    {
-        return MESSAGES.format("may-not-nest-elements-inside-body", elementName);
-    }
-
     static String methodCompileError(TransformMethodSignature signature, String methodBody, Throwable cause)
     {
         return MESSAGES.format("method-compile-error", signature, methodBody, cause);
@@ -118,23 +109,6 @@ class ServicesMessages
     static String nonPrivateFields(String className, List<String> names)
     {
         return MESSAGES.format("non-private-fields", className, InternalUtils.joinSorted(names));
-    }
-
-    static String compTypeConflict(String embeddedId, String templateType, String modelType)
-    {
-        return MESSAGES.format("comp-type-conflict", embeddedId, templateType, modelType);
-    }
-
-    static String noTypeForEmbeddedComponent(String embeddedId, String componentClassName)
-    {
-        return MESSAGES.format("no-type-for-embedded-component", embeddedId, componentClassName);
-    }
-
-    static String embeddedComponentsNotInTemplate(Collection<String> ids, String componentClassName,
-                                                  Resource templateResource)
-    {
-        return MESSAGES.format("embedded-components-not-in-template", InternalUtils.joinSorted(ids),
-                               componentClassName, InternalUtils.lastTerm(componentClassName), templateResource);
     }
 
     static String bindingSourceFailure(String expression, Throwable cause)
@@ -362,9 +336,9 @@ class ServicesMessages
         return MESSAGES.format("resource-access-forbidden", URI);
     }
 
-    static String noMarkupFromPageRender(org.apache.tapestry5.internal.structure.Page page)
+    static String noMarkupFromPageRender(Page page)
     {
-        return MESSAGES.format("no-markup-from-page-render", page.getLogicalName());
+        return MESSAGES.format("no-markup-from-page-render", page.getName());
     }
 
     static String baseClassInWrongPackage(String parentClassName, String className, String suggestedPackage)

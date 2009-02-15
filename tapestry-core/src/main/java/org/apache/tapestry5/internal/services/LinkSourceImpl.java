@@ -19,7 +19,10 @@ import org.apache.tapestry5.internal.structure.Page;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
-import org.apache.tapestry5.services.*;
+import org.apache.tapestry5.services.ComponentEventRequestParameters;
+import org.apache.tapestry5.services.LinkCreationHub;
+import org.apache.tapestry5.services.LinkCreationListener;
+import org.apache.tapestry5.services.PageRenderRequestParameters;
 
 import java.util.List;
 
@@ -66,8 +69,8 @@ public class LinkSourceImpl implements LinkSource, LinkCreationHub
 
         ComponentEventRequestParameters parameters
                 = new ComponentEventRequestParameters(
-                activePage.getLogicalName(),
-                page.getLogicalName(),
+                activePage.getName(),
+                page.getName(),
                 toBlank(nestedId),
                 eventType,
                 new ArrayEventContext(typeCoercer, pageActivationContext),
@@ -91,7 +94,7 @@ public class LinkSourceImpl implements LinkSource, LinkCreationHub
     {
         Defense.notNull(page, "page");
 
-        String logicalPageName = page.getLogicalName();
+        String pageName = page.getName();
 
         // When override is true, we use the activation context even if empty.
 
@@ -100,7 +103,7 @@ public class LinkSourceImpl implements LinkSource, LinkCreationHub
                            : contextCollector.collectPageActivationContext(page);
 
         PageRenderRequestParameters parameters =
-                new PageRenderRequestParameters(logicalPageName,
+                new PageRenderRequestParameters(pageName,
                                                 new ArrayEventContext(typeCoercer, context));
 
         Link link = linkFactory.createPageRenderLink(parameters);
