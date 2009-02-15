@@ -280,15 +280,15 @@ class ComponentAssemblerImpl implements ComponentAssembler
                     throw new TapestryException(message, location, null);
                 }
 
-                if (embeddedComponentModel.getParameterModel(publishedParameterName) == null)
-                {
-                    String message = String.format(
-                            "Component %s does not include a parameter named '%s' to publish. Possible parameters: %s.",
-                            componentClassName, publishedParameterName,
-                            InternalUtils.joinSorted(embeddedComponentModel.getParameterNames()));
-
-                    throw new TapestryException(message, location, null);
-                }
+//                if (embeddedComponentModel.getParameterModel(publishedParameterName) == null)
+//                {
+//                    String message = String.format(
+//                            "Component %s does not include a parameter named '%s' to publish. Possible parameters: %s.",
+//                            componentClassName, publishedParameterName,
+//                            InternalUtils.joinSorted(embeddedComponentModel.getParameterNames()));
+//
+//                    throw new TapestryException(message, location, null);
+//                }
 
                 publishedParameterToEmbeddedId.put(publishedParameterName, embeddedId);
             }
