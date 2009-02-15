@@ -107,6 +107,10 @@
             </a>
             -- error checking for conflict between @Component.type and t:type.
         </li>
+        <li>
+            <a href="PublishUnknownParameterDemo">Publish Unknown Parameter Demo</a>
+            -- publishing a parameter which does not exist
+        </li>
     </ul>
 
 </html>

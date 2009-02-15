@@ -23,6 +23,11 @@ import org.apache.tapestry5.ioc.Locatable;
 interface EmbeddedComponentAssembler extends Locatable
 {
     /**
+     * Returns the assembler responsible for creating instances of this embedded component.
+     */
+    ComponentAssembler getComponentAssembler();
+
+    /**
      * Creates a binder that can later be used to bind the parameter. The parameter name may be unqualified ("value") or
      * have a mixin prefix ("mymixin.value").  In the former case, the correct mixin is located (though the more typical
      * case is to bind a parameter of the component itself, not a parameter of a mixin attached to the component). In

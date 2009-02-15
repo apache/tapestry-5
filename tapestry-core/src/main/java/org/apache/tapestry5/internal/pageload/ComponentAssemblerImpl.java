@@ -51,12 +51,9 @@ class ComponentAssemblerImpl implements ComponentAssembler
 
     private final IdAllocator allocator = new IdAllocator();
 
-    private final Map<String, String> publishedParameterToEmbeddedId = CollectionFactory.newCaseInsensitiveMap();
+    private Map<String, String> publishedParameterToEmbeddedId;
 
-    // Doesn't have to be case-insensitive, because the embeddedIds are always known alues from
-    // publishedParameterToEmbeddedId.
-
-    private final Map<String, String> embeddedIdToComponentClassName = CollectionFactory.newMap();
+    private Map<String, EmbeddedComponentAssembler> embeddedIdToAssembler;
 
     public ComponentAssemblerImpl(ComponentAssemblerSource assemblerSource,
                                   ComponentInstantiatorSource instantiatorSource,
@@ -263,12 +260,18 @@ class ComponentAssemblerImpl implements ComponentAssembler
                                                                                      mixins,
                                                                                      location);
 
+        if (embeddedIdToAssembler == null)
+            embeddedIdToAssembler = CollectionFactory.newMap();
+
+        embeddedIdToAssembler.put(embeddedId, embedded);
+
         if (embeddedModel != null)
         {
-            // ComponentModel embeddedComponentModel = instantiatorSource.getInstantiator(componentClassName).getModel();
-
             for (String publishedParameterName : embeddedModel.getPublishedParameters())
             {
+                if (publishedParameterToEmbeddedId == null)
+                    publishedParameterToEmbeddedId = CollectionFactory.newCaseInsensitiveMap();
+
                 String existingEmbeddedId = publishedParameterToEmbeddedId.get(publishedParameterName);
 
                 if (existingEmbeddedId != null)
@@ -283,35 +286,23 @@ class ComponentAssemblerImpl implements ComponentAssembler
                     throw new TapestryException(message, location, null);
                 }
 
-//                if (embeddedComponentModel.getParameterModel(publishedParameterName) == null)
-//                {
-//                    String message = String.format(
-//                            "Component %s does not include a parameter named '%s' to publish. Possible parameters: %s.",
-//                            componentClassName, publishedParameterName,
-//                            InternalUtils.joinSorted(embeddedComponentModel.getParameterNames()));
-//
-//                    throw new TapestryException(message, location, null);
-//                }
-
                 publishedParameterToEmbeddedId.put(publishedParameterName, embeddedId);
             }
 
         }
-
-        embeddedIdToComponentClassName.put(embeddedId, componentClassName);
 
         return embedded;
     }
 
     public ParameterBinder getBinder(final String parameterName)
     {
-        final String embeddedId = publishedParameterToEmbeddedId.get(parameterName);
+        final String embeddedId = InternalUtils.get(publishedParameterToEmbeddedId, parameterName);
 
         if (embeddedId == null) return null;
 
-        String componentClassName = embeddedIdToComponentClassName.get(embeddedId);
+        final EmbeddedComponentAssembler embededdedComponentAssembler = embeddedIdToAssembler.get(embeddedId);
 
-        final ComponentAssembler embeddedAssembler = assemblerSource.getAssembler(componentClassName, locale);
+        final ComponentAssembler embeddedAssembler = embededdedComponentAssembler.getComponentAssembler();
 
         final ParameterBinder embeddedBinder = embeddedAssembler.getBinder(parameterName);
 
@@ -336,6 +327,20 @@ class ComponentAssemblerImpl implements ComponentAssembler
             };
         }
 
+
+        final ParameterBinder innerBinder = embededdedComponentAssembler.createParameterBinder(parameterName);
+
+        if (innerBinder == null)
+        {
+            String message = String.format(
+                    "Parameter '%s' of component %s is improperly published from embedded component '%s' (where it does not exist). " +
+                            "This may be a typo in the publishParameters attribute of the @Component annotation.",
+                    parameterName,
+                    instantiator.getModel().getComponentClassName(),
+                    embeddedId);
+
+            throw new TapestryException(message, embededdedComponentAssembler.getLocation(), null);
+        }
         // The simple case, publishing a parameter of a subcomponent as if it were a parameter
         // of this component.
 
@@ -345,12 +350,12 @@ class ComponentAssemblerImpl implements ComponentAssembler
             {
                 ComponentPageElement subelement = element.getEmbeddedElement(embeddedId);
 
-                subelement.bindParameter(parameterName, binding);
+                innerBinder.bind(subelement, binding);
             }
 
             public String getDefaultBindingPrefix(String metaDefault)
             {
-                return embeddedAssembler.getModel().getParameterModel(parameterName).getDefaultBindingPrefix();
+                return innerBinder.getDefaultBindingPrefix(metaDefault);
             }
         };
     }

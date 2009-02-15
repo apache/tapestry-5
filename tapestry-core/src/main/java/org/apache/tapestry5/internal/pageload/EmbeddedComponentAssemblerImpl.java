@@ -41,7 +41,7 @@ public class EmbeddedComponentAssemblerImpl implements EmbeddedComponentAssemble
 
     private final Location location;
 
-    private final Map<String, ComponentModel> mixinIdToComponentModel = CollectionFactory.newCaseInsensitiveMap();
+    private final Map<String, Instantiator> mixinIdToInstantiator = CollectionFactory.newCaseInsensitiveMap();
 
     /**
      * Maps parameter names (both simple, and qualified with the mixin id) to the corresponding QualifiedParameterName.
@@ -69,7 +69,8 @@ public class EmbeddedComponentAssemblerImpl implements EmbeddedComponentAssemble
                                           ComponentInstantiatorSource instantiatorSource,
                                           ComponentClassResolver componentClassResolver,
                                           String componentClassName,
-                                          Locale locale, EmbeddedComponentModel embeddedModel,
+                                          Locale locale,
+                                          EmbeddedComponentModel embeddedModel,
                                           String templateMixins,
                                           Location location)
     {
@@ -113,12 +114,14 @@ public class EmbeddedComponentAssemblerImpl implements EmbeddedComponentAssemble
 
     private String prescanMixins()
     {
+        // Mixin id found to support informal parameters
+
         String supportsInformals = null;
 
-        for (Map.Entry<String, ComponentModel> entry : mixinIdToComponentModel.entrySet())
+        for (Map.Entry<String, Instantiator> entry : mixinIdToInstantiator.entrySet())
         {
             String mixinId = entry.getKey();
-            ComponentModel mixinModel = entry.getValue();
+            ComponentModel mixinModel = entry.getValue().getModel();
 
             updateParameterNameToQualified(mixinId, mixinModel);
 
@@ -151,23 +154,28 @@ public class EmbeddedComponentAssemblerImpl implements EmbeddedComponentAssemble
 
     private void addMixin(String className)
     {
-        ComponentModel model = getModel(className);
+        Instantiator mixinInstantiator = instantiatorSource.getInstantiator(className);
 
         String mixinId = InternalUtils.lastTerm(className);
 
-        if (mixinIdToComponentModel.containsKey(mixinId))
+        if (mixinIdToInstantiator.containsKey(mixinId))
             throw new TapestryException(
                     String.format("Mixins applied to a component must be unique. Mixin '%s' has already been applied.",
                                   mixinId),
                     location, null);
 
 
-        mixinIdToComponentModel.put(mixinId, model);
+        mixinIdToInstantiator.put(mixinId, mixinInstantiator);
     }
 
     private ComponentModel getModel(String className)
     {
         return instantiatorSource.getInstantiator(className).getModel();
+    }
+
+    public ComponentAssembler getComponentAssembler()
+    {
+        return assemblerSource.getAssembler(componentModel.getComponentClassName(), locale);
     }
 
     public ParameterBinder createParameterBinder(String parameterName)
@@ -176,11 +184,11 @@ public class EmbeddedComponentAssemblerImpl implements EmbeddedComponentAssemble
         if (dotx >= 0)
         {
             String mixinId = parameterName.substring(0, dotx);
-            if (!mixinIdToComponentModel.containsKey(mixinId))
+            if (!mixinIdToInstantiator.containsKey(mixinId))
             {
                 String message = String.format("Mixin id for parameter '%s' not found. Attached mixins: %s.",
                                                parameterName,
-                                               InternalUtils.joinSorted(mixinIdToComponentModel.keySet()));
+                                               InternalUtils.joinSorted(mixinIdToInstantiator.keySet()));
 
                 throw new TapestryException(message, location, null);
             }
@@ -231,15 +239,10 @@ public class EmbeddedComponentAssemblerImpl implements EmbeddedComponentAssemble
 
     public void addMixinsToElement(ComponentPageElement newElement)
     {
-        for (Map.Entry<String, ComponentModel> entry : mixinIdToComponentModel.entrySet())
+        for (Map.Entry<String, Instantiator> entry : mixinIdToInstantiator.entrySet())
         {
             String mixinId = entry.getKey();
-            ComponentModel model = entry.getValue();
-
-            // TODO: Change mixinIdTo... to be to Instantiator instead, so we don't have to
-            // keep asking the IS for them.
-
-            Instantiator instantiator = instantiatorSource.getInstantiator(model.getComponentClassName());
+            Instantiator instantiator = entry.getValue();
 
             newElement.addMixin(mixinId, instantiator);
         }

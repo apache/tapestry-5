@@ -1,0 +1,6 @@
+<t:container xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd"
+             xmlns:p="tapestry:parameter">
+
+    <span t:id="publish1"/>
+
+</t:container>
