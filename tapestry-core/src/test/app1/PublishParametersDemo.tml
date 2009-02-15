@@ -1,0 +1,8 @@
+<html t:type="Border"
+      xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+    <h1>Publish Parameters Demo</h1>
+
+    <t:publish1 value="{passed to publish1.value}"/>
+
+</html>

@@ -14,7 +14,6 @@
 
 package org.apache.tapestry5.internal;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.tapestry5.*;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.Resource;
@@ -25,7 +24,6 @@ import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.math.BigInteger;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -44,6 +42,8 @@ public class TapestryInternalUtils
     private static final Pattern COMMA_PATTERN = Pattern.compile("\\s*,\\s*");
 
     private static final int BUFFER_SIZE = 5000;
+
+    private static final String[] EMPTY_STRING_ARRAY = new String[0];
 
     /**
      * Capitalizes the string, and inserts a space before each upper case character (or sequence of upper case
@@ -389,8 +389,8 @@ public class TapestryInternalUtils
      */
     public static String[] splitAtCommas(String value)
     {
-        if (value == null)
-            return new String[0];
+        if (InternalUtils.isBlank(value))
+            return EMPTY_STRING_ARRAY;
 
         return COMMA_PATTERN.split(value.trim());
     }
@@ -419,26 +419,6 @@ public class TapestryInternalUtils
 
         // TAPESTRY-2415: WebLogic needs this flush() call.
         out.flush();
-    }
-
-    /**
-     * Encodes a long in Base64. Strips off the trailing "=" padding characters (if present).
-     *
-     * @param input value to encode
-     * @return encoded as Base64
-     * @since 5.1.1.0
-     */
-    public static String toBase64(long input)
-    {
-        BigInteger big = new BigInteger(Long.toString(input));
-
-        byte[] encoded = Base64.encodeBase64(big.toByteArray());
-
-        String asString = new String(encoded);
-
-        int lastx = asString.indexOf('=');
-
-        return lastx > 0 ? asString.substring(0, lastx) : asString;
     }
 
     public static boolean isEqual(EventContext left, EventContext right)

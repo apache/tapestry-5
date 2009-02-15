@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -44,7 +44,7 @@ public class PageImplTest extends InternalBaseTestCase
 
         assertSame(page.getLocale(), locale);
         assertSame(page.getRootElement(), root);
-        assertSame(page.getLogicalName(), LOGICAL_PAGE_NAME);
+        assertSame(page.getName(), LOGICAL_PAGE_NAME);
 
         verify();
     }

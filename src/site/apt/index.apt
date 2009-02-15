@@ -32,6 +32,33 @@ What is Apache Tapestry?
 
  Tapestry is released under the Apache Software Licence 2.0.
 
+New And Of Note
+
+  * Some significant performance improvements over Tapestry 5.0.18: the time to initially load a page,
+    and the time to render a page have decreased.
+
+  * Tapestry IoC services can now be easily <{{{tapestry-ioc/advice.html}advised}}> as well as
+   <{{{tapestry-ioc/decorator.html}decorated}}> (both of these refer to Aspect Oriented Techniques applied to
+    Tapestry IoC services).
+
+  * Tapestry Services can now be injected into Spring Beans, when using the Tapestry/Spring integration library.
+
+  * Tapestry now {{{guide/compress.html}compresses}} responses for clients that support compression.
+    Context and classpath assets
+    are now handled uniformly: versioned URLs, far-future expiration headers, and GZIP compression where applicable.
+
+  * Ordered and mapped configurations can now have overrides.
+
+  * Property expressions have been improved: You can now invoke methods with parameters, or create a list (very useful for link contexts).
+
+  * IoC Service contributions may now be made in terms of classes (that are automatically instantiated) as well as
+    instances.
+
+  * A simpler method of {{{apidocs/org/apache/tapestry5/ioc/services/ServiceOverride}overriding built-in services}}
+    has been added.
+
+  []
+  
 Roadmap
 
   Now that that 5.0 release is <finally> out and available, work is starting on a 5.1 release.
@@ -79,29 +106,7 @@ Third Party Libraries, Tutorials and Resources
 | {{{http://code.google.com/p/tapestry5-treegrid/}tapestry5-treegrid}} | Gabriel Landais |  Combination tree navigation and data grid, based on sstree. |
 *--+--+--+
 
-New And Of Note
 
-  * Tapestry IoC services can now be easily <{{{tapestry-ioc/advice.html}advised}}> as well as
-   <{{{tapestry-ioc/decorator.html}decorated}}> (both of these refer to Aspect Oriented Techniques applied to
-    Tapestry IoC services).
-
-  * Tapestry Services can now be injected into Spring Beans, when using the Tapestry/Spring integration library.
-
-  * Tapestry now {{{guide/compress.html}compresses}} responses for clients that support compression.
-    Context and classpath assets
-    are now handled uniformly: versioned URLs, far-future expiration headers, and GZIP compression where applicable.
-
-  * Ordered and mapped configurations can now have overrides.
-
-  * Property expressions have been improved: You can now invoke methods with parameters, or create a list (very useful for link contexts).
-
-  * IoC Service contributions may now be made in terms of classes (that are automatically instantiated) as well as
-    instances.
-
-  * A simpler method of {{{apidocs/org/apache/tapestry5/ioc/services/ServiceOverride}overriding built-in services}}
-    has been added.
-
-  []
 
 Adaptive API
 

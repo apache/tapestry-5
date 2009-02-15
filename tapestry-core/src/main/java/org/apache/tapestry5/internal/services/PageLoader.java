@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -34,13 +34,13 @@ public interface PageLoader
     /**
      * Loads the page in the given locale.
      *
-     * @param logicalPageName the <em>canonicalized</em> logical name of the page, which will be made available via
-     *                        {@link Page#getLogicalName()} and {@link ComponentResourcesCommon#getPageName()} (for any
-     *                        component within the page).
-     * @param locale          the locale to load the page and its components , which will be made available via {@link
-     *                        Page#getLocale()} and {@link ComponentResourcesCommon#getLocale()} (for any component
-     *                        within the page)
+     * @param pageName the <em>canonicalized</em> logical name of the page, which will be made available via {@link
+     *                 Page#getName()} and {@link ComponentResourcesCommon#getPageName()} (for any component within the
+     *                 page).
+     * @param locale   the locale to load the page and its components , which will be made available via {@link
+     *                 Page#getLocale()} and {@link ComponentResourcesCommon#getLocale()} (for any component within the
+     *                 page)
      * @see Page#getLocale()
      */
-    Page loadPage(String logicalPageName, Locale locale);
+    Page loadPage(String pageName, Locale locale);
 }

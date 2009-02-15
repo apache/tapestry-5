@@ -1985,7 +1985,7 @@ public final class TapestryModule
 
         Random random = new Random(System.currentTimeMillis());
 
-        configuration.add(SymbolConstants.APPLICATION_VERSION, TapestryInternalUtils.toBase64(random.nextLong()));
+        configuration.add(SymbolConstants.APPLICATION_VERSION, Long.toHexString(random.nextLong()));
 
         configuration.add(SymbolConstants.OMIT_GENERATOR_META, "false");
         configuration.add(SymbolConstants.GZIP_COMPRESSION_ENABLED, "true");

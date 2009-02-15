@@ -34,15 +34,14 @@ public interface ComponentResourcesCommon extends Locatable
 
     /**
      * Return a string consisting the concatinated ids of all containing components, separated by periods. In addition,
-     * nested ids are always all lower case. I.e., "foo.bar.baz". Returns null for the root component of a  page.
+     * nested ids are always all lower case. I.e., "foo.bar.baz". Returns null for the root component of a page.
      */
     String getNestedId();
 
 
     /**
      * Returns a string consisting of the logical name of the containing page, and the {@link #getNestedId() nested id}
-     * of this component, separated by a colon. I.e., "MyPage:foo.bar.baz". For a page, returns just the page's logical
-     * name.
+     * of this component, separated by a colon. I.e., "MyPage:foo.bar.baz". For a page, returns just the page's name.
      * <p/>
      * This value is often used to obtain an equivalent component instance in a later request.
      *

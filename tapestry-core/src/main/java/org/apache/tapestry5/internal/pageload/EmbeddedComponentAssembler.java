@@ -14,16 +14,14 @@
 
 package org.apache.tapestry5.internal.pageload;
 
-import org.apache.tapestry5.Binding;
-import org.apache.tapestry5.model.ComponentModel;
+import org.apache.tapestry5.internal.structure.ComponentPageElement;
+import org.apache.tapestry5.ioc.Locatable;
 
 /**
  * Encapsulates logic related to assembling an embedded component within a {@link org.apache.tapestry5.internal.pageload.ComponentAssembler}.
  */
-interface EmbeddedComponentAssembler
+interface EmbeddedComponentAssembler extends Locatable
 {
-    void addInstanceMixin(ComponentModel mixinModel);
-
     /**
      * Creates a binder that can later be used to bind the parameter. The parameter name may be unqualified ("value") or
      * have a mixin prefix ("mymixin.value").  In the former case, the correct mixin is located (though the more typical
@@ -32,23 +30,14 @@ interface EmbeddedComponentAssembler
      * <p/>
      * If the name of the parameter does not match a formal parameter of the component (or mixin) and the component (or
      * mixin) does not support informal parameters, then null is returned.
-     *
-     * @param parameterName        simple or qualified parameter name
-     * @param parameterValue       value of parameter (possibly having a binding prefix)
-     * @param defaultBindingPrefix default binding prefix to use if the parameter is informal
-     * @return object that can bind the parameter once the container and component have been instantiated, or null
-     */
-    ParameterBinder createBinder(String parameterName, String parameterValue, String defaultBindingPrefix);
-
-    /**
-     * Creates a ParameterBinding where the binding is already instantiated. Follows the same logic as {@link
-     * #createBinder(String, String, String)} in terms of finding the correct mixin and parameter name.
+     * <p/>
+     * This method should only be called at page-assembly time as it requires some data that is collected during
+     * ComponentAssembly construction in order to handle published parameters of embedded components.
      *
      * @param parameterName simple or qualified parameter name
-     * @param binding       binding for parameter
-     * @return object that can perform the binding, or null
+     * @return object that can bind the parameter
      */
-    ParameterBinder createBinder(String parameterName, Binding binding);
+    ParameterBinder createParameterBinder(String parameterName);
 
     /**
      * Checks to see if the parameter name  has been bound.
@@ -60,4 +49,12 @@ interface EmbeddedComponentAssembler
      * {@link org.apache.tapestry5.annotations.Component} annotation (even inherited bindings).
      */
     void setBound(String parameterName);
+
+
+    /**
+     * Adds mixins to the newly created embedded element.
+     *
+     * @param newElement new element requiring mixins
+     */
+    void addMixinsToElement(ComponentPageElement newElement);
 }

@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -125,7 +125,7 @@ public class PagePoolImpl implements PagePool, InvalidationListener, UpdateListe
 
     private PagePoolCache getPagePoolCache(Page page)
     {
-        return get(page.getLogicalName(), page.getLocale());
+        return get(page.getName(), page.getLocale());
     }
 
     private synchronized PagePoolCache get(String pageName, Locale locale)

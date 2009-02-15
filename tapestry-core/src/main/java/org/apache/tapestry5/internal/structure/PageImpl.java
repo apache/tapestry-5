@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@ import java.util.Locale;
 
 public class PageImpl implements Page
 {
-    private final String logicalPageName;
+    private final String name;
 
     private final Locale locale;
 
@@ -49,9 +49,9 @@ public class PageImpl implements Page
      */
     private PersistentFieldBundle fieldBundle;
 
-    public PageImpl(String logicalPageName, Locale locale, PersistentFieldManager persistentFieldManager)
+    public PageImpl(String name, Locale locale, PersistentFieldManager persistentFieldManager)
     {
-        this.logicalPageName = logicalPageName;
+        this.name = name;
         this.locale = locale;
         this.persistentFieldManager = persistentFieldManager;
     }
@@ -59,7 +59,7 @@ public class PageImpl implements Page
     @Override
     public String toString()
     {
-        return String.format("Page[%s %s]", logicalPageName, locale);
+        return String.format("Page[%s %s]", name, locale);
     }
 
     public ComponentPageElement getComponentElementByNestedId(String nestedId)
@@ -154,12 +154,12 @@ public class PageImpl implements Page
         if (!loadComplete)
             throw new RuntimeException(StructureMessages.persistChangeBeforeLoadComplete());
 
-        persistentFieldManager.postChange(logicalPageName, resources, fieldName, newValue);
+        persistentFieldManager.postChange(name, resources, fieldName, newValue);
     }
 
     public Object getFieldChange(String nestedId, String fieldName)
     {
-        if (fieldBundle == null) fieldBundle = persistentFieldManager.gatherChanges(logicalPageName);
+        if (fieldBundle == null) fieldBundle = persistentFieldManager.gatherChanges(name);
 
         return fieldBundle.getValue(nestedId, fieldName);
     }
@@ -171,7 +171,7 @@ public class PageImpl implements Page
 
     public void discardPersistentFieldChanges()
     {
-        persistentFieldManager.discardChanges(logicalPageName);
+        persistentFieldManager.discardChanges(name);
     }
 
     public void incrementDirtyCount()
@@ -179,8 +179,8 @@ public class PageImpl implements Page
         dirtyCount++;
     }
 
-    public String getLogicalName()
+    public String getName()
     {
-        return logicalPageName;
+        return name;
     }
 }

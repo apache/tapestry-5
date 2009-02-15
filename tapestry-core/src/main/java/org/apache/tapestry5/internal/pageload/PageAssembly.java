@@ -17,7 +17,9 @@ package org.apache.tapestry5.internal.pageload;
 import org.apache.tapestry5.internal.structure.BodyPageElement;
 import org.apache.tapestry5.internal.structure.ComponentPageElement;
 import org.apache.tapestry5.internal.structure.Page;
+import org.apache.tapestry5.ioc.Location;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.internal.util.TapestryException;
 import org.apache.tapestry5.ioc.util.Stack;
 import org.apache.tapestry5.runtime.RenderCommand;
 
@@ -30,17 +32,19 @@ import java.util.Set;
  */
 class PageAssembly
 {
-    public final Page page;
+    final Page page;
 
-    public final Stack<ComponentPageElement> activeElement = CollectionFactory.newStack();
+    final Stack<ComponentPageElement> activeElement = CollectionFactory.newStack();
 
-    public final Stack<BodyPageElement> bodyElement = CollectionFactory.newStack();
+    final Stack<BodyPageElement> bodyElement = CollectionFactory.newStack();
 
-    public final Stack<ComponentPageElement> createdElement = CollectionFactory.newStack();
+    final Stack<ComponentPageElement> createdElement = CollectionFactory.newStack();
 
-    public final Stack<EmbeddedComponentAssembler> embeddedAssembler = CollectionFactory.newStack();
+    final Stack<ComponentName> componentName = CollectionFactory.newStack();
 
-    public final List<PageAssemblyAction> deferred = CollectionFactory.newList();
+    final Stack<EmbeddedComponentAssembler> embeddedAssembler = CollectionFactory.newStack();
+
+    final List<PageAssemblyAction> deferred = CollectionFactory.newList();
 
     private final List<RenderCommand> composableRenderCommands = CollectionFactory.newList();
 
@@ -57,7 +61,7 @@ class PageAssembly
      *
      * @param command
      */
-    public void addRenderCommand(RenderCommand command)
+    void addRenderCommand(RenderCommand command)
     {
         flushComposableRenderCommands();
 
@@ -70,7 +74,7 @@ class PageAssembly
      *
      * @param command
      */
-    public void addComposableRenderCommand(RenderCommand command)
+    void addComposableRenderCommand(RenderCommand command)
     {
         composableRenderCommands.add(command);
     }
@@ -79,7 +83,7 @@ class PageAssembly
      * Adds any composed render commands to the top element of the bodyElement stack. Render commands may be combined as
      * a {@link org.apache.tapestry5.internal.pageload.CompositeRenderCommand}.
      */
-    public void flushComposableRenderCommands()
+    void flushComposableRenderCommands()
     {
         int count = composableRenderCommands.size();
 
@@ -102,7 +106,7 @@ class PageAssembly
         composableRenderCommands.clear();
     }
 
-    public boolean checkAndSetFlag(String flagName)
+    boolean checkAndSetFlag(String flagName)
     {
         boolean result = flags.contains(flagName);
 
@@ -110,6 +114,23 @@ class PageAssembly
             flags.add(flagName);
 
         return result;
+    }
+
+    void checkForRecursion(String componentClassName, Location location)
+    {
+        for (Object o : activeElement.getSnapshot())
+        {
+            ComponentPageElement e = (ComponentPageElement) o;
+
+            if (e.getComponentResources().getComponentModel().getComponentClassName().equals(componentClassName))
+            {
+                String message = String.format(
+                        "The template for component %s is recursive (contains another direct or indirect reference to component %<s). This is not supported (components may not contain themselves).",
+                        componentClassName);
+
+                throw new TapestryException(message, location, null);
+            }
+        }
     }
 }
 

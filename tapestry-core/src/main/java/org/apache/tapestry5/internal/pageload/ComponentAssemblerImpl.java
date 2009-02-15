@@ -14,7 +14,9 @@
 
 package org.apache.tapestry5.internal.pageload;
 
+import org.apache.tapestry5.Binding;
 import org.apache.tapestry5.internal.parser.ComponentTemplate;
+import org.apache.tapestry5.internal.services.ComponentInstantiatorSource;
 import org.apache.tapestry5.internal.services.Instantiator;
 import org.apache.tapestry5.internal.structure.*;
 import org.apache.tapestry5.ioc.Location;
@@ -23,14 +25,25 @@ import org.apache.tapestry5.ioc.internal.util.IdAllocator;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.TapestryException;
 import org.apache.tapestry5.model.ComponentModel;
+import org.apache.tapestry5.model.EmbeddedComponentModel;
 import org.apache.tapestry5.runtime.RenderCommand;
+import org.apache.tapestry5.services.ComponentClassResolver;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 class ComponentAssemblerImpl implements ComponentAssembler
 {
+    private final ComponentAssemblerSource assemblerSource;
+
+    private final ComponentInstantiatorSource instantiatorSource;
+
+    private final ComponentClassResolver componentClassResolver;
+
     private final Instantiator instantiator;
+
+    private final Locale locale;
 
     private final ComponentPageElementResources resources;
 
@@ -38,10 +51,25 @@ class ComponentAssemblerImpl implements ComponentAssembler
 
     private final IdAllocator allocator = new IdAllocator();
 
-    public ComponentAssemblerImpl(Instantiator instantiator, ComponentPageElementResources resources)
+    private final Map<String, String> publishedParameterToEmbeddedId = CollectionFactory.newCaseInsensitiveMap();
+
+    // Doesn't have to be case-insensitive, because the embeddedIds are always known alues from
+    // publishedParameterToEmbeddedId.
+
+    private final Map<String, String> embeddedIdToComponentClassName = CollectionFactory.newMap();
+
+    public ComponentAssemblerImpl(ComponentAssemblerSource assemblerSource,
+                                  ComponentInstantiatorSource instantiatorSource,
+                                  ComponentClassResolver componentClassResolver,
+                                  Instantiator instantiator,
+                                  ComponentPageElementResources resources, Locale locale)
     {
+        this.assemblerSource = assemblerSource;
+        this.instantiatorSource = instantiatorSource;
+        this.componentClassResolver = componentClassResolver;
         this.instantiator = instantiator;
         this.resources = resources;
+        this.locale = locale;
     }
 
     public ComponentPageElement assembleRootComponent(Page page)
@@ -52,7 +80,17 @@ class ComponentAssemblerImpl implements ComponentAssembler
         {
             ComponentPageElement newElement = new ComponentPageElementImpl(pageAssembly.page, instantiator, resources);
 
-            buildRecursively(pageAssembly, newElement);
+            pageAssembly.componentName.push(new ComponentName(pageAssembly.page.getName()));
+
+            pageAssembly.page.addLifecycleListener(newElement);
+
+            addRootComponentMixins(newElement);
+
+            pushNewElement(pageAssembly, newElement);
+
+            runActions(pageAssembly);
+
+            popNewElement(pageAssembly);
 
             for (PageAssemblyAction action : pageAssembly.deferred)
             {
@@ -64,22 +102,54 @@ class ComponentAssemblerImpl implements ComponentAssembler
         catch (RuntimeException ex)
         {
             throw new RuntimeException(String.format("Exception assembling root component of page %s: %s",
-                                                     pageAssembly.page.getLogicalName(),
+                                                     pageAssembly.page.getName(),
                                                      InternalUtils.toMessage(ex)),
                                        ex);
         }
     }
 
-    public void assembleEmbeddedComponent(PageAssembly pageAssembly, String embeddedId, String elementName,
+    private void addRootComponentMixins(ComponentPageElement element)
+    {
+        for (String className : instantiator.getModel().getMixinClassNames())
+        {
+            Instantiator mixinInstantiator = instantiatorSource.getInstantiator(className);
+
+            element.addMixin(InternalUtils.lastTerm(className), mixinInstantiator);
+        }
+    }
+
+    public void assembleEmbeddedComponent(PageAssembly pageAssembly, EmbeddedComponentAssembler embeddedAssembler,
+                                          String embeddedId, String elementName,
                                           Location location)
     {
         ComponentPageElement container = pageAssembly.activeElement.peek();
 
         try
         {
-            ComponentPageElement newElement = container.newChild(embeddedId, elementName, instantiator, location);
+            ComponentName containerName = pageAssembly.componentName.peek();
 
-            buildRecursively(pageAssembly, newElement);
+            ComponentName embeddedName = containerName.child(embeddedId.toLowerCase());
+
+            pageAssembly.componentName.push(embeddedName);
+
+            ComponentPageElement newElement = container.newChild(embeddedId,
+                                                                 embeddedName.nestedId,
+                                                                 embeddedName.completeId,
+                                                                 elementName,
+                                                                 instantiator,
+                                                                 location);
+
+            pageAssembly.page.addLifecycleListener(newElement);
+
+            pushNewElement(pageAssembly, newElement);
+
+            embeddedAssembler.addMixinsToElement(newElement);
+
+            runActions(pageAssembly);
+
+            popNewElement(pageAssembly);
+
+            pageAssembly.componentName.pop();
         }
         catch (RuntimeException ex)
         {
@@ -91,17 +161,6 @@ class ComponentAssemblerImpl implements ComponentAssembler
 
             throw new TapestryException(message, location, ex);
         }
-    }
-
-    private void buildRecursively(PageAssembly pageAssembly, ComponentPageElement newElement)
-    {
-        pageAssembly.page.addLifecycleListener(newElement);
-
-        pushNewElement(pageAssembly, newElement);
-
-        runActions(pageAssembly);
-
-        popNewElement(pageAssembly);
     }
 
     private void pushNewElement(PageAssembly pageAssembly, final ComponentPageElement componentElement)
@@ -191,6 +250,108 @@ class ComponentAssemblerImpl implements ComponentAssembler
 
         return allocator.allocateId(baseId);
     }
+
+    public EmbeddedComponentAssembler createEmbeddedAssembler(String embeddedId, String componentClassName,
+                                                              EmbeddedComponentModel embeddedModel, String mixins,
+                                                              Location location)
+    {
+        EmbeddedComponentAssemblerImpl embedded = new EmbeddedComponentAssemblerImpl(assemblerSource,
+                                                                                     instantiatorSource,
+                                                                                     componentClassResolver,
+                                                                                     componentClassName,
+                                                                                     locale, embeddedModel,
+                                                                                     mixins,
+                                                                                     location);
+
+        if (embeddedModel != null)
+        {
+            ComponentModel embeddedComponentModel = instantiatorSource.getInstantiator(componentClassName).getModel();
+
+            for (String publishedParameterName : embeddedModel.getPublishedParameters())
+            {
+                String existingEmbeddedId = publishedParameterToEmbeddedId.get(publishedParameterName);
+
+                if (existingEmbeddedId != null)
+                {
+                    String message = String.format(
+                            "Parameter '%s' can not be published by embedded component '%s' as it has already been published by embedded component '%s'.",
+                            publishedParameterName, embedded, existingEmbeddedId);
+
+                    throw new TapestryException(message, location, null);
+                }
+
+                if (embeddedComponentModel.getParameterModel(publishedParameterName) == null)
+                {
+                    String message = String.format(
+                            "Component %s does not include a parameter named '%s' to publish. Possible parameters: %s.",
+                            componentClassName, publishedParameterName,
+                            InternalUtils.joinSorted(embeddedComponentModel.getParameterNames()));
+
+                    throw new TapestryException(message, location, null);
+                }
+
+                publishedParameterToEmbeddedId.put(publishedParameterName, embeddedId);
+            }
+
+        }
+
+        embeddedIdToComponentClassName.put(embeddedId, componentClassName);
+
+        return embedded;
+    }
+
+    public ParameterBinder getBinder(final String parameterName)
+    {
+        final String embeddedId = publishedParameterToEmbeddedId.get(parameterName);
+
+        if (embeddedId == null) return null;
+
+        String componentClassName = embeddedIdToComponentClassName.get(embeddedId);
+
+        final ComponentAssembler embeddedAssembler = assemblerSource.getAssembler(componentClassName, locale);
+
+        final ParameterBinder embeddedBinder = embeddedAssembler.getBinder(parameterName);
+
+        // The complex case: a re-publish!  Yes you can go deep here if you don't
+        // value your sanity!
+
+        if (embeddedBinder != null)
+        {
+            return new ParameterBinder()
+            {
+                public void bind(ComponentPageElement element, Binding binding)
+                {
+                    ComponentPageElement subelement = element.getEmbeddedElement(embeddedId);
+
+                    embeddedBinder.bind(subelement, binding);
+                }
+
+                public String getDefaultBindingPrefix(String metaDefault)
+                {
+                    return embeddedBinder.getDefaultBindingPrefix(metaDefault);
+                }
+            };
+        }
+
+        // The simple case, publishing a parameter of a subcomponent as if it were a parameter
+        // of this component.
+
+        return new ParameterBinder()
+        {
+            public void bind(ComponentPageElement element, Binding binding)
+            {
+                ComponentPageElement subelement = element.getEmbeddedElement(embeddedId);
+
+                subelement.bindParameter(parameterName, binding);
+            }
+
+            public String getDefaultBindingPrefix(String metaDefault)
+            {
+                return embeddedAssembler.getModel().getParameterModel(parameterName).getDefaultBindingPrefix();
+            }
+        };
+    }
+
 
     @Override
     public String toString()

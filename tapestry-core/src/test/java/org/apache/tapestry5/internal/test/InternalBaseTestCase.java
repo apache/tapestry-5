@@ -40,7 +40,6 @@ import org.apache.tapestry5.runtime.RenderQueue;
 import org.apache.tapestry5.services.*;
 import org.apache.tapestry5.test.TapestryTestCase;
 import org.easymock.EasyMock;
-import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.isA;
 import org.slf4j.Logger;
 import org.testng.annotations.AfterMethod;
@@ -246,15 +245,6 @@ public class InternalBaseTestCase extends TapestryTestCase implements Registry
         expect(model.getParameterNames()).andReturn(Arrays.asList(names));
     }
 
-    protected final void train_newComponentElement(PageElementFactory elementFactory, ComponentPageElement container,
-                                                   String embeddedId, String embeddedType, String componentClassName,
-                                                   String elementName, Location location, ComponentPageElement embedded)
-    {
-        expect(elementFactory.newComponentElement(isA(Page.class), eq(container), eq(embeddedId), eq(embeddedType),
-                                                  eq(componentClassName), eq(elementName), eq(location))).andReturn(
-                embedded);
-    }
-
     protected final void train_getComponentType(EmbeddedComponentModel emodel, String componentType)
     {
         expect(emodel.getComponentType()).andReturn(componentType).atLeastOnce();
@@ -305,13 +295,6 @@ public class InternalBaseTestCase extends TapestryTestCase implements Registry
     protected final void train_getComponentModel(ComponentResources resources, ComponentModel model)
     {
         expect(resources.getComponentModel()).andReturn(model).atLeastOnce();
-    }
-
-    protected final void train_newRootComponentElement(PageElementFactory elementFactory, String className,
-                                                       ComponentPageElement rootElement)
-    {
-        expect(elementFactory.newRootComponentElement(isA(Page.class), eq(className))).andReturn(
-                rootElement);
     }
 
     protected final void train_getModel(Instantiator ins, ComponentModel model)
@@ -493,9 +476,9 @@ public class InternalBaseTestCase extends TapestryTestCase implements Registry
         expect(resolver.canonicalizePageName(pageName)).andReturn(canonicalized);
     }
 
-    protected final void train_getLogicalName(Page page, String logicalName)
+    protected final void train_getName(Page page, String pageName)
     {
-        expect(page.getLogicalName()).andReturn(logicalName).atLeastOnce();
+        expect(page.getName()).andReturn(pageName).atLeastOnce();
     }
 
     protected final void train_resolvePageNameToClassName(ComponentClassResolver resolver, String pageName,
