@@ -1,0 +1,6 @@
+<t:border xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd"
+          xmlns:p="tapestry:parameter">
+
+    <input t:type="passwordfield" t:id="input"/>
+
+</t:border>

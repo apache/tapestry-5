@@ -265,7 +265,7 @@ class ComponentAssemblerImpl implements ComponentAssembler
 
         if (embeddedModel != null)
         {
-            ComponentModel embeddedComponentModel = instantiatorSource.getInstantiator(componentClassName).getModel();
+            // ComponentModel embeddedComponentModel = instantiatorSource.getInstantiator(componentClassName).getModel();
 
             for (String publishedParameterName : embeddedModel.getPublishedParameters())
             {
@@ -274,8 +274,11 @@ class ComponentAssemblerImpl implements ComponentAssembler
                 if (existingEmbeddedId != null)
                 {
                     String message = String.format(
-                            "Parameter '%s' can not be published by embedded component '%s' as it has already been published by embedded component '%s'.",
-                            publishedParameterName, embedded, existingEmbeddedId);
+                            "Parameter '%s' of embedded component '%s' can not be published as a parameter of component %s, as it has previously been published by embedded component '%s'.",
+                            publishedParameterName,
+                            embeddedId,
+                            instantiator.getModel().getComponentClassName(),
+                            existingEmbeddedId);
 
                     throw new TapestryException(message, location, null);
                 }

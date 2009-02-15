@@ -198,7 +198,11 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
 
         if (result == null)
         {
+            // There's a window here where two threads may create the same assembler simultaneously;
+            // the extra assembler will be discarded.
+
             result = createAssembler(className, locale);
+
             cache.put(key, result);
         }
 
@@ -218,8 +222,8 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
         ComponentAssembler assembler = new ComponentAssemblerImpl(this, instantiatorSource, componentClassResolver,
                                                                   instantiator, resources, locale);
 
-        // "Program" the assembler by adding actions to it. The actions execute every time a new page instance
-        // is needed.
+        // "Program" the assembler by adding actions to it. The actions interact with a
+        // PageAssembly object (a fresh one for each new page being created). 
 
         programAssembler(assembler, template);
 
@@ -806,12 +810,6 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
 
         if (containerBinding == null) return;
 
-        String description = String.format("InheritedBinding[parameter %s %s (inherited from %s of %s)]",
-                                           parameterName,
-                                           embedded.getCompleteId(),
-                                           containerParameterName,
-                                           container.getCompleteId());
-
         // This helps with debugging, and re-orients any thrown exceptions
         // to the location of the inherited binding, rather than the container component's
         // binding.
@@ -916,7 +914,7 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
             {
                 ComponentResources resources = pageAssembly.activeElement.peek().getComponentResources();
 
-                // TODO: Add composably
+                // TODO: Add composability
 
                 RenderCommand command = elementFactory.newExpansionElement(resources, token);
 

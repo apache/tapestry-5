@@ -2550,4 +2550,27 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         assertText("p3-number", "6");
         assertText("p3-value", "{passed to publish1.value}");
     }
+
+    /**
+     * TAP5-487
+     */
+    public void conflicting_published_parameter_names_within_same_component()
+    {
+        start("Duplicate Published Parameter Name");
+
+        assertTextPresent(
+                "Parameter 'value' of embedded component 'passwordfield' can not be published as a parameter of " +
+                        "component org.apache.tapestry5.integration.app1.components.BadPublishDuplicate, " +
+                        "as it has previously been published by embedded component 'textfield'.");
+    }
+
+    public void embedded_type_conflict()
+    {
+        start("Embedded Component Type Conflict");
+
+        assertTextPresent(
+                "Embedded component 'input' provides a type attribute in the template ('passwordfield') " +
+                        "as well as in the component class ('textfield'). You should not provide a type attribute in " +
+                        "the template when defining an embedded component within the component class.");
+    }
 }
