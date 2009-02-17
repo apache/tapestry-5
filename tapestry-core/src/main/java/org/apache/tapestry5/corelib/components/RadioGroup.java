@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -63,8 +63,8 @@ public class RadioGroup implements Field
     private ValueEncoder encoder;
 
     /**
-     * The object that will perform input validation. The validate binding prefix is
-     * generally used to provide this object in a declarative fashion.
+     * The object that will perform input validation. The validate binding prefix is generally used to provide this
+     * object in a declarative fashion.
      */
     @Parameter(defaultPrefix = BindingConstants.VALIDATE)
     @SuppressWarnings("unchecked")
