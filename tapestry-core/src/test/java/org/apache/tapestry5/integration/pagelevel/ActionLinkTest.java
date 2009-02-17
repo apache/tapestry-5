@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -28,9 +28,9 @@ public class ActionLinkTest extends Assert
     @Test
     public void click_link()
     {
-        String appPackage = "org.apache.tapestry5.integration.app2";
-        String appName = "";
-        tester = new PageTester(appPackage, appName);
+
+        tester = new PageTester(TestConstants.APP2_PACKAGE, TestConstants.APP2_NAME);
+
         Document doc = tester.renderPage("TestPageForActionLink");
         Element link = doc.getElementById("link1");
         doc = tester.clickLink(link);

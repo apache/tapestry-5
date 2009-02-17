@@ -2595,4 +2595,29 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
                         "is improperly published from embedded component 'publish1' (where it does not exist). " +
                         "This may be a typo in the publishParameters attribute of the @Component annotation.");
     }
+
+    public void unknown_mixin_id()
+    {
+        start("Bad Mixin Id Demo");
+
+        assertTextPresent("Mixin id for parameter 'unknownmixinid.foo' not found. Attached mixins: RenderInformals.");
+    }
+
+    public void duplicate_mixin()
+    {
+        start("Duplicate Mixin Demo");
+
+        assertTextPresent(
+                "Failure creating embedded component 'form' of " +
+                        "org.apache.tapestry5.integration.app1.pages.DupeMixinDemo: " +
+                        "Mixins applied to a component must be unique. Mixin 'RenderInformals' has already been applied.");
+    }
+
+    public void unsupported_informal_block_parameter()
+    {
+        start("Unsupported Parameter Block Demo");
+
+        assertTextPresent("Exception assembling root component of page UnsupportedParameterBlockDemo:",
+                          "Component UnsupportedParameterBlockDemo:outputraw does not include a formal parameter 'unexpected' (and does not support informal parameters).");
+    }
 }

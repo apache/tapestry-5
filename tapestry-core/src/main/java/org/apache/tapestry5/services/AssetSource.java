@@ -26,7 +26,7 @@ import java.util.Locale;
  * <p/>
  * Assets are defined with a domain, and the domain is indicated by a prefix.  The two builtin domains are "context:"
  * (for files inside the web application context) and "classpath:" for files stored on the classpath (typically, inside
- * a JAR, such as a component library).
+ * a JAR, such as a component library). Other domains can be defined via contributions to the AssetSource service.
  * <p/>
  * Since 5.1.0.0, is is preferred that {@link org.apache.tapestry5.services.AssetFactory#createAsset(org.apache.tapestry5.ioc.Resource)}
  * return an instance of {@link org.apache.tapestry5.Asset2}.
@@ -51,11 +51,22 @@ public interface AssetSource
     Asset getAsset(Resource baseResource, String path, Locale locale);
 
     /**
+     * Finds the asset, either on the classpath or (if prefixed), within the indicated domain. The result is not
+     * localized. The underlying Asset may not exist.
+     *
+     * @param path to the resource to provide as an Asset
+     * @return Resource for the path (the Resource may not exist)
+     * @since 5.1.0.0
+     */
+    Resource resourceForPath(String path);
+
+    /**
      * Convienience for finding assets on the classpath.
      *
      * @param path   path to the base resource, relative to classpath root
      * @param locale to localize the resource to
      * @return the asset
+     * @throws RuntimeException if the asset can not be found
      */
     Asset getClasspathAsset(String path, Locale locale);
 
@@ -65,6 +76,7 @@ public interface AssetSource
      * @param path   path relative to the base resource (the context root)
      * @param locale to localize the resource to, or null for the locale for the current request
      * @return the asset
+     * @throws RuntimeException if the asset can not be found
      * @since 5.1.0.0
      */
     Asset getContextAsset(String path, Locale locale);
@@ -72,8 +84,9 @@ public interface AssetSource
     /**
      * Obtains a classpath alias in the current locale (as defined by the {@link ThreadLocale} service).
      *
-     * @param path
+     * @param path relative to the classpath root
      * @return the asset
+     * @throws RuntimeException if the asset can not be found
      */
     Asset getClasspathAsset(String path);
 }

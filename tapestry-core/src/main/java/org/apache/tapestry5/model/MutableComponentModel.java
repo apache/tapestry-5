@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -91,7 +91,15 @@ public interface MutableComponentModel extends ComponentModel
      *
      * @param renderPhase annotation class corresponding to the render phase
      * @see ComponentModel#getHandledRenderPhases()
-     * @since 5.0.19
+     * @since 5.0.19, 5.1.0.0
      */
     void addRenderPhase(Class renderPhase);
+
+    /**
+     * Identifies that the component includes an event handler for the indicated event type.
+     *
+     * @param eventType of handled event
+     * @since 5.1.0.0
+     */
+    void addEventHandler(String eventType);
 }

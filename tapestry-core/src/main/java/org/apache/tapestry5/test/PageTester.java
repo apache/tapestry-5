@@ -88,6 +88,10 @@ public class PageTester
      */
     public PageTester(String appPackage, String appName, String contextPath, Class... moduleClasses)
     {
+        Defense.notBlank(appPackage, "appPackage");
+        Defense.notBlank(appName, "appName");
+        Defense.notBlank(contextPath, "contextPath");
+
         SymbolProvider provider = new SingleKeySymbolProvider(InternalConstants.TAPESTRY_APP_PACKAGE_PARAM, appPackage);
 
         TapestryAppInitializer initializer = new TapestryAppInitializer(logger, provider, appName,

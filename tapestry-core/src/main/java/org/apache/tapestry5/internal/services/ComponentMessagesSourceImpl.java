@@ -14,9 +14,11 @@
 
 package org.apache.tapestry5.internal.services;
 
+import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.internal.util.URLChangeTracker;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.services.ClasspathURLConverter;
 import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.services.InvalidationEventHub;
@@ -28,9 +30,7 @@ public class ComponentMessagesSourceImpl implements ComponentMessagesSource, Upd
 {
     private final MessagesSource messagesSource;
 
-    private final Resource rootResource;
-
-    private final String appCatalog;
+    private final Resource appCatalogResource;
 
     private static class ComponentModelBundle implements MessagesBundle
     {
@@ -64,15 +64,18 @@ public class ComponentMessagesSourceImpl implements ComponentMessagesSource, Upd
         }
     }
 
-    public ComponentMessagesSourceImpl(Resource rootResource, String appCatalog, ClasspathURLConverter classpathURLConverter)
+    public ComponentMessagesSourceImpl(
+            @Symbol(SymbolConstants.APPLICATION_CATALOG)
+            Resource appCatalogResource,
+
+            ClasspathURLConverter classpathURLConverter)
     {
-        this(rootResource, appCatalog, new URLChangeTracker(classpathURLConverter));
+        this(appCatalogResource, new URLChangeTracker(classpathURLConverter));
     }
 
-    ComponentMessagesSourceImpl(Resource rootResource, String appCatalog, URLChangeTracker tracker)
+    ComponentMessagesSourceImpl(Resource appCatalogResource, URLChangeTracker tracker)
     {
-        this.rootResource = rootResource;
-        this.appCatalog = appCatalog;
+        this.appCatalogResource = appCatalogResource;
 
         messagesSource = new MessagesSourceImpl(tracker);
     }
@@ -84,12 +87,19 @@ public class ComponentMessagesSourceImpl implements ComponentMessagesSource, Upd
 
     public Messages getMessages(ComponentModel componentModel, Locale locale)
     {
-        final Resource appCatalogResource = rootResource.forFile(appCatalog);
-
         // If the application catalog exists, set it up as the root, otherwise use null.
 
         MessagesBundle appCatalogBundle = !appCatalogResource.exists() ? null
-                                                                       : new MessagesBundle()
+                                                                       : rootBundle();
+
+        MessagesBundle bundle = new ComponentModelBundle(componentModel, appCatalogBundle);
+
+        return messagesSource.getMessages(bundle, locale);
+    }
+
+    private MessagesBundle rootBundle()
+    {
+        return new MessagesBundle()
         {
             public Resource getBaseResource()
             {
@@ -98,7 +108,7 @@ public class ComponentMessagesSourceImpl implements ComponentMessagesSource, Upd
 
             public Object getId()
             {
-                return appCatalog;
+                return appCatalogResource.getPath();
             }
 
             public MessagesBundle getParent()
@@ -106,10 +116,6 @@ public class ComponentMessagesSourceImpl implements ComponentMessagesSource, Upd
                 return null;
             }
         };
-
-        MessagesBundle bundle = new ComponentModelBundle(componentModel, appCatalogBundle);
-
-        return messagesSource.getMessages(bundle, locale);
     }
 
     public InvalidationEventHub getInvalidationEventHub()

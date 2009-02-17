@@ -252,46 +252,59 @@ class ComponentAssemblerImpl implements ComponentAssembler
                                                               EmbeddedComponentModel embeddedModel, String mixins,
                                                               Location location)
     {
-        EmbeddedComponentAssemblerImpl embedded = new EmbeddedComponentAssemblerImpl(assemblerSource,
-                                                                                     instantiatorSource,
-                                                                                     componentClassResolver,
-                                                                                     componentClassName,
-                                                                                     locale, embeddedModel,
-                                                                                     mixins,
-                                                                                     location);
-
-        if (embeddedIdToAssembler == null)
-            embeddedIdToAssembler = CollectionFactory.newMap();
-
-        embeddedIdToAssembler.put(embeddedId, embedded);
-
-        if (embeddedModel != null)
+        try
         {
-            for (String publishedParameterName : embeddedModel.getPublishedParameters())
+            EmbeddedComponentAssemblerImpl embedded = new EmbeddedComponentAssemblerImpl(assemblerSource,
+                                                                                         instantiatorSource,
+                                                                                         componentClassResolver,
+                                                                                         componentClassName,
+                                                                                         locale, embeddedModel,
+                                                                                         mixins,
+                                                                                         location);
+
+
+            if (embeddedIdToAssembler == null)
+                embeddedIdToAssembler = CollectionFactory.newMap();
+
+            embeddedIdToAssembler.put(embeddedId, embedded);
+
+            if (embeddedModel != null)
             {
-                if (publishedParameterToEmbeddedId == null)
-                    publishedParameterToEmbeddedId = CollectionFactory.newCaseInsensitiveMap();
-
-                String existingEmbeddedId = publishedParameterToEmbeddedId.get(publishedParameterName);
-
-                if (existingEmbeddedId != null)
+                for (String publishedParameterName : embeddedModel.getPublishedParameters())
                 {
-                    String message = String.format(
-                            "Parameter '%s' of embedded component '%s' can not be published as a parameter of component %s, as it has previously been published by embedded component '%s'.",
-                            publishedParameterName,
-                            embeddedId,
-                            instantiator.getModel().getComponentClassName(),
-                            existingEmbeddedId);
+                    if (publishedParameterToEmbeddedId == null)
+                        publishedParameterToEmbeddedId = CollectionFactory.newCaseInsensitiveMap();
 
-                    throw new TapestryException(message, location, null);
+                    String existingEmbeddedId = publishedParameterToEmbeddedId.get(publishedParameterName);
+
+                    if (existingEmbeddedId != null)
+                    {
+                        String message = String.format(
+                                "Parameter '%s' of embedded component '%s' can not be published as a parameter of component %s, as it has previously been published by embedded component '%s'.",
+                                publishedParameterName,
+                                embeddedId,
+                                instantiator.getModel().getComponentClassName(),
+                                existingEmbeddedId);
+
+                        throw new TapestryException(message, location, null);
+                    }
+
+                    publishedParameterToEmbeddedId.put(publishedParameterName, embeddedId);
                 }
 
-                publishedParameterToEmbeddedId.put(publishedParameterName, embeddedId);
             }
 
+            return embedded;
         }
+        catch (Exception ex)
+        {
+            String message = String.format("Failure creating embedded component '%s' of %s: %s",
+                                           embeddedId,
+                                           instantiator.getModel().getComponentClassName(),
+                                           InternalUtils.toMessage(ex));
 
-        return embedded;
+            throw new TapestryException(message, location, ex);
+        }
     }
 
     public ParameterBinder getBinder(final String parameterName)

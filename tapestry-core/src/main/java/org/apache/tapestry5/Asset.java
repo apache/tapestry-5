@@ -33,7 +33,7 @@ public interface Asset
      * is returned from <code>toString()</code>.
      * <p/>
      * Tapestry's built-in asset types (context and classpath) always incorporate a version number as part of the path,
-     * and alternate implementation are encouraged to do so as well. In addition, Tapestry ensures that context and
+     * and alternate implementations are encouraged to do so as well. In addition, Tapestry ensures that context and
      * classpath assets have a far-future expires header (to ensure aggresive caching by the client).
      * <p/>
      */

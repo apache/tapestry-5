@@ -46,7 +46,7 @@ public class LocaleTest extends Assert
     public void change_language_in_browser()
     {
         tester.setPreferedLanguage(Locale.ENGLISH);
-        
+
         Document doc = tester.renderPage("TestPageForLocale");
 
         assertEquals(doc.getElementById("id1").getChildMarkup(), "English page");
@@ -54,17 +54,15 @@ public class LocaleTest extends Assert
         tester.setPreferedLanguage(Locale.CANADA_FRENCH);
 
         doc = tester.renderPage("TestPageForLocale");
-        
+
         assertEquals(doc.getElementById("id1").getChildMarkup(), "French page");
     }
 
     @BeforeMethod
     public void before()
     {
-        String appPackage = "org.apache.tapestry5.integration.app2";
         // LocaleAppModule.java has configured support for a certain locales.
-        String appName = "LocaleApp";
-        tester = new PageTester(appPackage, appName);
+        tester = new PageTester(TestConstants.APP2_PACKAGE, TestConstants.APP2_NAME);
     }
 
     @AfterMethod

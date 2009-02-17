@@ -27,4 +27,12 @@ public class InternalSymbols
      * resources related to the application.
      */
     public static final String APP_NAME = "tapestry.app-name";
+
+    /**
+     * The application package converted to a path ('.' becomes '/'). Useful for finding resources on the classpath
+     * relevant to the application.
+     *
+     * @since 5.1.0.0
+     */
+    public static final String APP_PACKAGE_PATH = "tapestry.app-package-path";
 }

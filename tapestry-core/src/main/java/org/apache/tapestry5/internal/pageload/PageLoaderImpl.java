@@ -75,22 +75,13 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
 
             Key key = (Key) o;
 
-            if (!className.equals(key.className))
-                return false;
-
-            return locale.equals(key.locale);
+            return className.equals(key.className) && locale.equals(key.locale);
         }
 
         @Override
         public int hashCode()
         {
             return 31 * className.hashCode() + locale.hashCode();
-        }
-
-        @Override
-        public String toString()
-        {
-            return String.format("Key[%s, %s]", className, locale);
         }
     }
 
@@ -417,7 +408,7 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
                 if (binder == null)
                 {
                     String message = String.format(
-                            "Component %s does not include a parameter '%s' (and does not support informal parameters).",
+                            "Component %s does not include a formal parameter '%s' (and does not support informal parameters).",
                             element.getCompleteId(),
                             parameterName);
 

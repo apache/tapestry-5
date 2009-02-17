@@ -409,11 +409,6 @@ public class InternalBaseTestCase extends TapestryTestCase implements Registry
         return newMock(LinkSource.class);
     }
 
-    protected final void train_createPageRenderLink(LinkSource source, Page page, Link link)
-    {
-        expect(source.createPageRenderLink(page, false)).andReturn(link);
-    }
-
     protected final void train_isLoaded(InternalComponentResources resources, boolean isLoaded)
     {
         expect(resources.isLoaded()).andReturn(isLoaded);
@@ -599,11 +594,6 @@ public class InternalBaseTestCase extends TapestryTestCase implements Registry
         return newMock(RequestSecurityManager.class);
     }
 
-    protected final void train_getBaseURL(RequestSecurityManager securityManager, Page page, String baseURL)
-    {
-        expect(securityManager.getBaseURL(page)).andReturn(baseURL).atLeastOnce();
-    }
-
     protected final ClientBehaviorSupport mockClientBehaviorSupport()
     {
         return newMock(ClientBehaviorSupport.class);
@@ -631,5 +621,10 @@ public class InternalBaseTestCase extends TapestryTestCase implements Registry
     protected final LocalizationSetter mockLocalizationSetter()
     {
         return newMock(LocalizationSetter.class);
+    }
+
+    protected final ComponentModelSource mockComponentModelSource()
+    {
+        return newMock(ComponentModelSource.class);
     }
 }

@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@ public class ComponentMessagesSourceImplTest extends InternalBaseTestCase
     // With control of the tracker, we can force changes as if underlying files were changed.
 
     private static final String SIMPLE_COMPONENT_CLASS_NAME = "org.apache.tapestry5.internal.services.SimpleComponent";
-    
+
     private final ClasspathURLConverter converter = new ClasspathURLConverterImpl();
 
     private final URLChangeTracker tracker = new URLChangeTracker(converter);
@@ -45,7 +45,7 @@ public class ComponentMessagesSourceImplTest extends InternalBaseTestCase
             "org/apache/tapestry5/internal/services/SimpleComponent.class");
 
     private final ComponentMessagesSourceImpl source = new ComponentMessagesSourceImpl(
-            simpleComponentResource, "AppCatalog.properties", tracker);
+            simpleComponentResource.forFile("AppCatalog.properties"), tracker);
 
     @Test
     public void simple_component()
@@ -208,9 +208,8 @@ public class ComponentMessagesSourceImplTest extends InternalBaseTestCase
 
         forceCacheClear();
 
-        ComponentMessagesSource source = new ComponentMessagesSourceImpl(simpleComponentResource,
-                                                                         "NoSuchAppCatalog.properties",
-                                                                         converter);
+        ComponentMessagesSource source = new ComponentMessagesSourceImpl(
+                simpleComponentResource.forFile("NoSuchAppCatalog.properties"), converter);
 
         Messages messages = source.getMessages(model, Locale.ENGLISH);
 

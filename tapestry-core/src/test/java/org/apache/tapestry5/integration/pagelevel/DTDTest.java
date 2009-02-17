@@ -42,9 +42,8 @@ public class DTDTest extends Assert
     @Test(dataProvider = "dtd_page_provider")
     public void verify_correct_dtds(String pageName, String expectedDTD, String checkText)
     {
-        String appPackage = "org.apache.tapestry5.integration.app2";
-        String appName = "";
-        PageTester tester = new PageTester(appPackage, appName);
+        PageTester tester = new PageTester(TestConstants.APP2_PACKAGE, TestConstants.APP2_NAME);
+
         Document doc = tester.renderPage(pageName);
         String txt = doc.toString();
         // use startsWith to make sure the DTD is getting into the right spot.

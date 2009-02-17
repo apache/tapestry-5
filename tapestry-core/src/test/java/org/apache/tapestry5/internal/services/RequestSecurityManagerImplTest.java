@@ -14,12 +14,9 @@
 
 package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.Link;
 import org.apache.tapestry5.MetaDataConstants;
-import org.apache.tapestry5.internal.structure.Page;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
-import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.services.BaseURLSource;
 import org.apache.tapestry5.services.MetaDataLocator;
 import org.apache.tapestry5.services.Request;
@@ -39,14 +36,13 @@ public class RequestSecurityManagerImplTest extends InternalBaseTestCase
         LinkSource linkSource = mockLinkSource();
         MetaDataLocator locator = mockMetaDataLocator();
         BaseURLSource source = mockBaseURLSource();
-        RequestPageCache cache = mockRequestPageCache();
 
         train_isSecure(request, true);
 
         replay();
 
         RequestSecurityManager manager
-                = new RequestSecurityManagerImpl(request, response, linkSource, locator, source, cache);
+                = new RequestSecurityManagerImpl(request, response, linkSource, locator, source);
 
         assertFalse(manager.checkForInsecureRequest(PAGE_NAME));
 
@@ -61,19 +57,15 @@ public class RequestSecurityManagerImplTest extends InternalBaseTestCase
         LinkSource linkSource = mockLinkSource();
         MetaDataLocator locator = mockMetaDataLocator();
         BaseURLSource source = mockBaseURLSource();
-        RequestPageCache cache = mockRequestPageCache();
-        Page page = mockPage();
 
         train_isSecure(request, false);
 
-        train_get(cache, PAGE_NAME, page);
-
-        train_isSecure(locator, page, false);
+        train_isSecure(locator, PAGE_NAME, false);
 
         replay();
 
         RequestSecurityManager manager
-                = new RequestSecurityManagerImpl(request, response, linkSource, locator, source, cache);
+                = new RequestSecurityManagerImpl(request, response, linkSource, locator, source);
 
         assertFalse(manager.checkForInsecureRequest(PAGE_NAME));
 
@@ -88,28 +80,29 @@ public class RequestSecurityManagerImplTest extends InternalBaseTestCase
         LinkSource linkSource = mockLinkSource();
         MetaDataLocator locator = mockMetaDataLocator();
         BaseURLSource source = mockBaseURLSource();
-        Page page = mockPage();
         Link link = mockLink();
-        RequestPageCache cache = mockRequestPageCache();
 
         train_isSecure(request, false);
 
-        train_get(cache, PAGE_NAME, page);
+        train_isSecure(locator, PAGE_NAME, true);
 
-        train_isSecure(locator, page, true);
-
-        train_createPageRenderLink(linkSource, page, link);
+        train_createPageRenderLink(linkSource, PAGE_NAME, link);
 
         response.sendRedirect(link);
 
         replay();
 
         RequestSecurityManager manager
-                = new RequestSecurityManagerImpl(request, response, linkSource, locator, source, cache);
+                = new RequestSecurityManagerImpl(request, response, linkSource, locator, source);
 
         assertTrue(manager.checkForInsecureRequest(PAGE_NAME));
 
         verify();
+    }
+
+    private void train_createPageRenderLink(LinkSource linkSource, String pageName, Link link)
+    {
+        expect(linkSource.createPageRenderLink(pageName, false)).andReturn(link);
     }
 
     @DataProvider
@@ -131,10 +124,10 @@ public class RequestSecurityManagerImplTest extends InternalBaseTestCase
         LinkSource linkSource = mockLinkSource();
         MetaDataLocator locator = mockMetaDataLocator();
         BaseURLSource source = mockBaseURLSource();
-        Page page = mockPage();
 
         train_isSecure(request, secureRequest);
-        train_isSecure(locator, page, securePage);
+
+        train_isSecure(locator, PAGE_NAME, securePage);
 
         if (expectedURL != null)
             train_getBaseURL(source, securePage, expectedURL);
@@ -142,22 +135,17 @@ public class RequestSecurityManagerImplTest extends InternalBaseTestCase
         replay();
 
         RequestSecurityManager manager
-                = new RequestSecurityManagerImpl(request, response, linkSource, locator, source, null);
+                = new RequestSecurityManagerImpl(request, response, linkSource, locator, source);
 
-        assertEquals(manager.getBaseURL(page), expectedURL);
+        assertEquals(manager.getBaseURL(PAGE_NAME), expectedURL);
 
         verify();
     }
 
-
-    private void train_isSecure(MetaDataLocator locator, Page page, boolean secure)
+    private static void train_isSecure(MetaDataLocator locator, String pageName, boolean securePage)
     {
-        Component component = mockComponent();
-        ComponentResources resources = mockInternalComponentResources();
-
-        train_getRootComponent(page, component);
-        train_getComponentResources(component, resources);
-
-        train_findMeta(locator, MetaDataConstants.SECURE_PAGE, resources, Boolean.class, secure);
+        expect(locator.findMeta(MetaDataConstants.SECURE_PAGE, pageName, Boolean.class)).andReturn(securePage);
     }
+
+
 }
