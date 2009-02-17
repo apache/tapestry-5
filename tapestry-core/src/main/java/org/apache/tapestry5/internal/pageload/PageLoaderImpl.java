@@ -89,8 +89,6 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
     {
         public void execute(PageAssembly pageAssembly)
         {
-            pageAssembly.flushComposableRenderCommands();
-
             pageAssembly.createdElement.pop();
             pageAssembly.bodyElement.pop();
             pageAssembly.embeddedAssembler.pop();
@@ -108,22 +106,6 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
         public String toString()
         {
             return "End";
-        }
-    };
-
-    private static final PageAssemblyAction END_ELEMENT_ACTION = new PageAssemblyAction()
-    {
-        public void execute(PageAssembly pageAssembly)
-        {
-            pageAssembly.addRenderCommand(END_ELEMENT);
-        }
-    };
-
-    private static final PageAssemblyAction FLUSH_COMPOSABLE_RENDER_COMMANDS_ACTION = new PageAssemblyAction()
-    {
-        public void execute(PageAssembly pageAssembly)
-        {
-            pageAssembly.flushComposableRenderCommands();
         }
     };
 
@@ -234,94 +216,99 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
 
     private void processTemplate(ComponentAssembler assembler, ComponentTemplate template)
     {
+        TokenStream stream = new TokenStreamImpl(template);
+
+        AssemblerContext context = new AssemblerContext(assembler, stream);
+
         if (template.isMissing())
         {
             // Pretend the template has a single <t:body> element.
 
-            body(assembler);
+            body(context);
 
             return;
         }
 
-        TokenStream stream = new TokenStreamImpl(template);
 
-        while (stream.more())
+        while (context.more())
         {
-            processTemplateToken(assembler, stream);
+            processTemplateToken(context);
         }
 
-        addFlushAction(assembler);
+        context.flushComposable();
     }
 
-    private void processTemplateToken(ComponentAssembler assembler, TokenStream stream)
+    private void processTemplateToken(AssemblerContext context)
     {
         // These tokens can appear at the top level, or at lower levels (this method is invoked
         // from token-processing loops inside element(), component(), etc.
 
-        switch (stream.peekType())
+        switch (context.peekType())
         {
             case TEXT:
 
-                text(assembler, stream.next(TextToken.class));
+                text(context);
                 break;
 
             case EXPANSION:
-                expansion(assembler, stream.next(ExpansionToken.class));
+                expansion(context);
                 break;
 
             case BODY:
-                stream.next();
+                context.next();
 
-                body(assembler);
+                body(context);
                 break;
 
             case START_ELEMENT:
                 // Will consume past matching end token
-                element(assembler, stream);
+                element(context);
                 break;
 
             case START_COMPONENT:
                 // Will consume past matching end token
-                component(assembler, stream);
+                component(context);
                 break;
 
             // ATTRIBUTE and END_ELEMENT can't happen at the top level, they're
             // handled at a lower level. (inside element(), component(), etc.)
 
             case COMMENT:
-                comment(assembler, stream.next(CommentToken.class));
+                comment(context);
                 break;
 
             case BLOCK:
                 // Will consume past matching end token
-                block(assembler, stream);
+                block(context);
                 break;
 
             case PARAMETER:
                 // Will consume past the matching end token
-                parameter(assembler, stream);
+                parameter(context);
                 break;
 
             case DTD:
-                dtd(assembler, stream.next(DTDToken.class));
+                dtd(context);
                 break;
 
             case DEFINE_NAMESPACE_PREFIX:
 
-                defineNamespacePrefix(assembler, stream.next(DefineNamespacePrefixToken.class));
+                defineNamespacePrefix(context);
                 break;
 
             case CDATA:
-                cdata(assembler, stream.next(CDATAToken.class));
+                cdata(context);
                 break;
 
             default:
-                throw new IllegalStateException("Not yet implemented: " + stream.peekType());
+                throw new IllegalStateException("Not yet implemented: " + context.peekType());
         }
     }
 
-    private void cdata(ComponentAssembler assembler, final CDATAToken token)
+    private void cdata(AssemblerContext context)
     {
+        final CDATAToken token = context.next(CDATAToken.class);
+
         RenderCommand command = new RenderCommand()
         {
             public void render(MarkupWriter writer, RenderQueue queue)
@@ -336,12 +323,14 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
             }
         };
 
-        addComposableCommand(assembler, command);
+        context.addComposable(command);
 
     }
 
-    private void defineNamespacePrefix(ComponentAssembler assembler, final DefineNamespacePrefixToken token)
+    private void defineNamespacePrefix(AssemblerContext context)
     {
+        final DefineNamespacePrefixToken token = context.next(DefineNamespacePrefixToken.class);
+
         RenderCommand command = new RenderCommand()
         {
             public void render(MarkupWriter writer, RenderQueue queue)
@@ -357,12 +346,14 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
         };
 
 
-        addComposableCommand(assembler, command);
+        context.addComposable(command);
     }
 
-    private void dtd(ComponentAssembler assembler, final DTDToken token)
+    private void dtd(AssemblerContext context)
     {
-        assembler.add(new PageAssemblyAction()
+        final DTDToken token = context.next(DTDToken.class);
+
+        context.add(new PageAssemblyAction()
         {
             public void execute(PageAssembly pageAssembly)
             {
@@ -374,23 +365,21 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
                     // It doesn't really matter where this ends up in the tree as long as its inside
                     // a portion that always renders.
 
-                    pageAssembly.addComposableRenderCommand(command);
+                    pageAssembly.addRenderCommand(command);
                 }
             }
         });
     }
 
-    private void parameter(ComponentAssembler assembler, TokenStream stream)
+    private void parameter(AssemblerContext context)
     {
-        final ParameterToken token = stream.next(ParameterToken.class);
+        final ParameterToken token = context.next(ParameterToken.class);
 
-        assembler.add(new PageAssemblyAction()
+        context.add(new PageAssemblyAction()
         {
             public void execute(PageAssembly pageAssembly)
             {
                 String parameterName = token.getName();
-
-                pageAssembly.flushComposableRenderCommands();
 
                 ComponentPageElement element = pageAssembly.createdElement.peek();
 
@@ -421,14 +410,14 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
             }
         });
 
-        consumeToEndElementAndPopBodyElement(assembler, stream);
+        consumeToEndElementAndPopBodyElement(context);
     }
 
-    private void block(ComponentAssembler assembler, TokenStream stream)
+    private void block(AssemblerContext context)
     {
-        final BlockToken token = stream.next(BlockToken.class);
+        final BlockToken token = context.next(BlockToken.class);
 
-        assembler.add(new PageAssemblyAction()
+        context.add(new PageAssemblyAction()
         {
             public void execute(PageAssembly pageAssembly)
             {
@@ -446,29 +435,27 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
                     element.addBlock(blockId, block);
 
                 // Start directing template content into the Block
-                pageAssembly.flushComposableRenderCommands();
                 pageAssembly.bodyElement.push(block);
             }
         });
 
-        consumeToEndElementAndPopBodyElement(assembler, stream);
+        consumeToEndElementAndPopBodyElement(context);
     }
 
-    private void consumeToEndElementAndPopBodyElement(ComponentAssembler assembler, TokenStream stream)
+    private void consumeToEndElementAndPopBodyElement(AssemblerContext context)
     {
         while (true)
         {
-            switch (stream.peekType())
+            switch (context.peekType())
             {
                 case END_ELEMENT:
 
-                    stream.next();
+                    context.next();
 
-                    assembler.add(new PageAssemblyAction()
+                    context.add(new PageAssemblyAction()
                     {
                         public void execute(PageAssembly pageAssembly)
                         {
-                            pageAssembly.flushComposableRenderCommands();
                             pageAssembly.bodyElement.pop();
                         }
                     });
@@ -476,90 +463,93 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
                     return;
 
                 default:
-                    processTemplateToken(assembler, stream);
+                    processTemplateToken(context);
             }
         }
     }
 
-    private void comment(ComponentAssembler assembler, CommentToken token)
+    private void comment(AssemblerContext context)
     {
+        CommentToken token = context.next(CommentToken.class);
+
         RenderCommand commentElement = new CommentPageElement(token.getComment());
 
-        addComposableCommand(assembler, commentElement);
+        context.addComposable(commentElement);
     }
 
-    private void component(ComponentAssembler assembler, TokenStream stream)
+    private void component(AssemblerContext context)
     {
-        StartComponentToken token = stream.next(StartComponentToken.class);
-
-        EmbeddedComponentAssembler embeddedAssembler = startComponent(assembler, token);
+        EmbeddedComponentAssembler embeddedAssembler = startComponent(context);
 
         while (true)
         {
-            switch (stream.peekType())
+            switch (context.peekType())
             {
                 case ATTRIBUTE:
 
-                    bindAttributeAsParameter(assembler, embeddedAssembler, stream.next(AttributeToken.class));
+                    bindAttributeAsParameter(context, embeddedAssembler);
 
                     break;
 
                 case END_ELEMENT:
 
-                    stream.next();
+                    context.next();
 
-                    assembler.add(POP_EMBEDDED_COMPONENT_ACTION);
+                    context.add(POP_EMBEDDED_COMPONENT_ACTION);
 
                     return;
 
                 default:
-                    processTemplateToken(assembler, stream);
+                    processTemplateToken(context);
             }
         }
-
     }
 
-    private void bindAttributeAsParameter(ComponentAssembler assembler, EmbeddedComponentAssembler embeddedAssembler,
-                                          AttributeToken token)
+    private void bindAttributeAsParameter(AssemblerContext context, EmbeddedComponentAssembler embeddedAssembler)
     {
-        addParameterBindingAction(assembler, embeddedAssembler, token.getName(), token.getValue(),
+        AttributeToken token = context.next(AttributeToken.class);
+
+        addParameterBindingAction(context, embeddedAssembler, token.getName(), token.getValue(),
                                   BindingConstants.LITERAL, token.getLocation());
     }
 
-    private void element(ComponentAssembler assembler, TokenStream stream)
+    private void element(AssemblerContext context)
     {
-        StartElementToken token = stream.next(StartElementToken.class);
+        StartElementToken token = context.next(StartElementToken.class);
 
         RenderCommand element = new StartElementPageElement(token.getNamespaceURI(), token.getName());
 
-        addComposableCommand(assembler, element);
+        context.addComposable(element);
 
         while (true)
         {
-            switch (stream.peekType())
+            switch (context.peekType())
             {
                 case ATTRIBUTE:
-                    attribute(assembler, stream.next(AttributeToken.class));
+                    attribute(context);
                     break;
 
                 case END_ELEMENT:
 
-                    assembler.add(END_ELEMENT_ACTION);
+                    context.next();
 
-                    stream.next();
+                    context.addComposable(END_ELEMENT);
 
                     // Pop out a level.
                     return;
 
                 default:
-                    processTemplateToken(assembler, stream);
+                    processTemplateToken(context);
             }
         }
 
     }
 
-    private EmbeddedComponentAssembler startComponent(ComponentAssembler assembler, StartComponentToken token)
+    private EmbeddedComponentAssembler startComponent(AssemblerContext context)
     {
+        StartComponentToken token = context.next(StartComponentToken.class);
+
+        ComponentAssembler assembler = context.assembler;
         String elementName = token.getElementName();
 
         // Initial guess: the type from the token (but this may be null in many cases).
@@ -631,9 +621,9 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
                                                   token.getMixins(),
                                                   token.getLocation());
 
-        addActionForEmbeddedComponent(assembler, embeddedAssembler, embeddedId, elementName, componentClassName);
+        addActionForEmbeddedComponent(context, embeddedAssembler, embeddedId, elementName, componentClassName);
 
-        addParameterBindingActions(assembler, embeddedAssembler, embeddedModel);
+        addParameterBindingActions(context, embeddedAssembler, embeddedModel);
 
         if (embeddedModel != null && embeddedModel.getInheritInformalParameters())
         {
@@ -683,7 +673,7 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
         }
     }
 
-    private void addParameterBindingActions(ComponentAssembler assembler,
+    private void addParameterBindingActions(AssemblerContext context,
                                             EmbeddedComponentAssembler embeddedAssembler,
                                             EmbeddedComponentModel embeddedModel)
     {
@@ -693,7 +683,7 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
         {
             String parameterValue = embeddedModel.getParameterValue(parameterName);
 
-            addParameterBindingAction(assembler,
+            addParameterBindingAction(context,
                                       embeddedAssembler,
                                       parameterName,
                                       parameterValue,
@@ -702,7 +692,7 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
         }
     }
 
-    private void addParameterBindingAction(ComponentAssembler assembler,
+    private void addParameterBindingAction(AssemblerContext context,
                                            final EmbeddedComponentAssembler embeddedAssembler,
                                            final String parameterName,
                                            final String parameterValue,
@@ -717,12 +707,12 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
         {
             String containerParameterName = parameterValue.substring(InternalConstants.INHERIT_BINDING_PREFIX.length());
 
-            addInheritedBindingAction(assembler, parameterName, containerParameterName);
+            addInheritedBindingAction(context, parameterName, containerParameterName);
             return;
         }
 
 
-        assembler.add(new PageAssemblyAction()
+        context.add(new PageAssemblyAction()
         {
             public void execute(PageAssembly pageAssembly)
             {
@@ -764,11 +754,11 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
      * @param parameterName
      * @param containerParameterName
      */
-    private void addInheritedBindingAction(ComponentAssembler assembler,
+    private void addInheritedBindingAction(AssemblerContext context,
                                            final String parameterName,
                                            final String containerParameterName)
     {
-        assembler.add(new PageAssemblyAction()
+        context.add(new PageAssemblyAction()
         {
             public void execute(PageAssembly pageAssembly)
             {
@@ -790,7 +780,8 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
         });
     }
 
-    private void connectInheritedParameter(ComponentPageElement container, ComponentPageElement embedded,
+    private void connectInheritedParameter(ComponentPageElement container,
+                                           ComponentPageElement embedded,
                                            String parameterName,
                                            String containerParameterName)
     {
@@ -810,19 +801,17 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
         embedded.bindParameter(parameterName, containerBinding);
     }
 
-    private void addActionForEmbeddedComponent(ComponentAssembler assembler,
+    private void addActionForEmbeddedComponent(AssemblerContext context,
                                                final EmbeddedComponentAssembler embeddedAssembler,
                                                final String embeddedId,
                                                final String elementName,
                                                final String componentClassName)
     {
-        assembler.add(new PageAssemblyAction()
+        context.add(new PageAssemblyAction()
         {
             public void execute(PageAssembly pageAssembly)
             {
                 pageAssembly.checkForRecursion(componentClassName, embeddedAssembler.getLocation());
-
-                pageAssembly.flushComposableRenderCommands();
 
                 Locale locale = pageAssembly.page.getLocale();
 
@@ -855,8 +844,10 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
     }
 
 
-    private void attribute(ComponentAssembler assembler, final AttributeToken token)
+    private void attribute(AssemblerContext context)
     {
+        final AttributeToken token = context.next(AttributeToken.class);
+
         String value = token.getValue();
 
         // No expansion makes this easier, more efficient.
@@ -864,12 +855,12 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
         {
             RenderCommand command = new RenderAttribute(token);
 
-            addComposableCommand(assembler, command);
+            context.addComposable(command);
 
             return;
         }
 
-        assembler.add(new PageAssemblyAction()
+        context.add(new PageAssemblyAction()
         {
             public void execute(PageAssembly pageAssembly)
             {
@@ -877,16 +868,14 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
 
                 RenderCommand command = elementFactory.newAttributeElement(resources, token);
 
-                // Still composable, BTW.
-
                 pageAssembly.addRenderCommand(command);
             }
         });
     }
 
-    private void body(ComponentAssembler assembler)
+    private void body(AssemblerContext context)
     {
-        assembler.add(new PageAssemblyAction()
+        context.add(new PageAssemblyAction()
         {
             public void execute(PageAssembly pageAssembly)
             {
@@ -897,15 +886,15 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
         });
     }
 
-    private void expansion(ComponentAssembler assembler, final ExpansionToken token)
+    private void expansion(AssemblerContext context)
     {
-        assembler.add(new PageAssemblyAction()
+        final ExpansionToken token = context.next(ExpansionToken.class);
+
+        context.add(new PageAssemblyAction()
         {
             public void execute(PageAssembly pageAssembly)
             {
                 ComponentResources resources = pageAssembly.activeElement.peek().getComponentResources();
-
-                // TODO: Add composability
 
                 RenderCommand command = elementFactory.newExpansionElement(resources, token);
 
@@ -914,25 +903,11 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
         });
     }
 
-    private void text(ComponentAssembler assembler, TextToken textToken)
+    private void text(AssemblerContext context)
     {
-        addComposableCommand(assembler, new TextPageElement(textToken.getText()));
-    }
+        TextToken textToken = context.next(TextToken.class);
 
-    private void addComposableCommand(ComponentAssembler assembler, final RenderCommand command)
-    {
-        assembler.add(new PageAssemblyAction()
-        {
-            public void execute(PageAssembly pageAssembly)
-            {
-                pageAssembly.addComposableRenderCommand(command);
-            }
-        });
-    }
-
-    private void addFlushAction(ComponentAssembler assembler)
-    {
-        assembler.add(FLUSH_COMPOSABLE_RENDER_COMMANDS_ACTION);
+        context.addComposable(new TextPageElement(textToken.getText()));
     }
 
 }

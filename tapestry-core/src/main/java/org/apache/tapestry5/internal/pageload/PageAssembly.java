@@ -46,8 +46,6 @@ class PageAssembly
 
     final List<PageAssemblyAction> deferred = CollectionFactory.newList();
 
-    private final List<RenderCommand> composableRenderCommands = CollectionFactory.newList();
-
     private final Set<String> flags = CollectionFactory.newSet();
 
     PageAssembly(Page page)
@@ -63,47 +61,7 @@ class PageAssembly
      */
     void addRenderCommand(RenderCommand command)
     {
-        flushComposableRenderCommands();
-
         bodyElement.peek().addToBody(command);
-    }
-
-    /**
-     * Adds the command to the list of composable commands. Composable commands are added to the top element of the body
-     * element stack when {@linkplain #flushComposableRenderCommands() flushed}.
-     *
-     * @param command
-     */
-    void addComposableRenderCommand(RenderCommand command)
-    {
-        composableRenderCommands.add(command);
-    }
-
-    /**
-     * Adds any composed render commands to the top element of the bodyElement stack. Render commands may be combined as
-     * a {@link org.apache.tapestry5.internal.pageload.CompositeRenderCommand}.
-     */
-    void flushComposableRenderCommands()
-    {
-        int count = composableRenderCommands.size();
-
-        switch (count)
-        {
-            case 0:
-                break;
-
-            case 1:
-                bodyElement.peek().addToBody(composableRenderCommands.get(0));
-                break;
-
-            default:
-                RenderCommand[] commands = composableRenderCommands.toArray(new RenderCommand[count]);
-
-                bodyElement.peek().addToBody(new CompositeRenderCommand(commands));
-                break;
-        }
-
-        composableRenderCommands.clear();
     }
 
     boolean checkAndSetFlag(String flagName)

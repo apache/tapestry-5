@@ -1,4 +1,4 @@
-// Copyright 2009 ${ORG}
+// Copyright 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ import org.apache.tapestry5.model.ComponentModel;
 /**
  * Access to component models (as provided via {@link org.apache.tapestry5.internal.services.ComponentInstantiatorSource}).
  * <p/>
- * <p>This is a good candidate to move into the public services package.
+ * This is a good candidate to move into the public services package.
  *
  * @since 5.1.0.0
  */
