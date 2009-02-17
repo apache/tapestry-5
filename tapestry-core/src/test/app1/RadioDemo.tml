@@ -6,7 +6,9 @@
   <p>Choose a department and position:</p>
 
   <t:form>
-    <t:radiogroup t:id="department">
+    <t:errors/>
+
+    <t:radiogroup t:id="department" t:validate="required">
       <t:loop source="departments" value="loopValue">
         <p>
           <t:radio t:id="radio" value="loopValue" label="prop:label" />
