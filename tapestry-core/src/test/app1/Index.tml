@@ -111,6 +111,18 @@
             <a href="PublishUnknownParameterDemo">Publish Unknown Parameter Demo</a>
             -- publishing a parameter which does not exist
         </li>
+        <li>
+            <a href="BadMixinIdDemo">Bad Mixin Id Demo</a>
+            -- error reporting when a parameter specifies a mixin id that does not exist
+        </li>
+        <li>
+            <a href="DupeMixinDemo">Duplicate Mixin Demo</a>
+            -- error reporting for adding a duplicate mixin to a component
+        </li>
+        <li>
+            <a href="UnsupportedParameterBlockDemo">Unsupported Parameter Block Demo</a>
+            -- informal block parameter to a component that does not support informal parameters
+        </li>
     </ul>
 
 </html>

@@ -14,12 +14,11 @@
 
 package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry5.Link;
 import org.apache.tapestry5.EventConstants;
 import org.apache.tapestry5.EventContext;
-import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.internal.structure.Page;
+import org.apache.tapestry5.Link;
 import org.apache.tapestry5.internal.InternalConstants;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.services.*;
 
 import java.util.Locale;
@@ -36,8 +35,6 @@ public class LinkFactoryImpl implements LinkFactory
 
     private final PersistentLocale persistentLocale;
 
-    private final RequestPageCache requestPageCache;
-
     private final ContextValueEncoder valueEncoder;
 
     private final URLEncoder urlEncoder;
@@ -48,7 +45,6 @@ public class LinkFactoryImpl implements LinkFactory
 
     public LinkFactoryImpl(Request request, Response response, RequestSecurityManager requestSecurityManager,
                            RequestPathOptimizer optimizer, PersistentLocale persistentLocale,
-                           RequestPageCache requestPageCache,
                            ContextValueEncoder valueEncoder, URLEncoder urlEncoder)
     {
         this.request = request;
@@ -56,7 +52,6 @@ public class LinkFactoryImpl implements LinkFactory
         this.requestSecurityManager = requestSecurityManager;
         this.optimizer = optimizer;
         this.persistentLocale = persistentLocale;
-        this.requestPageCache = requestPageCache;
         this.valueEncoder = valueEncoder;
         this.urlEncoder = urlEncoder;
     }
@@ -71,12 +66,10 @@ public class LinkFactoryImpl implements LinkFactory
         String containingPageName = parameters.getContainingPageName();
         String eventType = parameters.getEventType();
 
-        Page activePage = requestPageCache.get(activePageName);
-
         String nestedComponentId = parameters.getNestedComponentId();
         boolean hasComponentId = InternalUtils.isNonBlank(nestedComponentId);
 
-        String baseURL = requestSecurityManager.getBaseURL(activePage);
+        String baseURL = requestSecurityManager.getBaseURL(activePageName);
 
         if (baseURL != null)
             builder.append(baseURL);
@@ -140,10 +133,7 @@ public class LinkFactoryImpl implements LinkFactory
 
         String activePageName = parameters.getLogicalPageName();
 
-        Page activePage = requestPageCache.get(activePageName);
-
-
-        String baseURL = requestSecurityManager.getBaseURL(activePage);
+        String baseURL = requestSecurityManager.getBaseURL(activePageName);
 
         if (baseURL != null)
             builder.append(baseURL);

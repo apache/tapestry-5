@@ -804,9 +804,17 @@ public final class TapestryModule
      * org.apache.tapestry5.corelib.data.BlankOption} <li> {@link org.apache.tapestry5.ComponentResources} to {@link
      * org.apache.tapestry5.PropertyOverrides} <li>String to {@link org.apache.tapestry5.Renderable} <li>{@link
      * org.apache.tapestry5.Renderable} to {@link org.apache.tapestry5.Block} <li>String to {@link java.text.DateFormat}
-     * <li>{@link org.apache.tapestry5.PrimaryKeyEncoder} to {@link org.apache.tapestry5.ValueEncoder}</ul>
+     * <li>{@link org.apache.tapestry5.PrimaryKeyEncoder} to {@link org.apache.tapestry5.ValueEncoder} <li>String to
+     * {@link org.apache.tapestry5.ioc.Resource} (via {@link org.apache.tapestry5.services.AssetSource#resourceForPath(String)})
+     * </ul>
      */
-    public static void contributeTypeCoercer(Configuration<CoercionTuple> configuration, @Builtin TypeCoercer coercer)
+    public static void contributeTypeCoercer(Configuration<CoercionTuple> configuration,
+
+                                             @Builtin
+                                             TypeCoercer coercer,
+
+                                             @Core
+                                             final AssetSource assetSource)
     {
         add(configuration, ComponentResources.class, PropertyOverrides.class,
             new Coercion<ComponentResources, PropertyOverrides>()
@@ -907,6 +915,15 @@ public final class TapestryModule
             public DateFormat coerce(String input)
             {
                 return new SimpleDateFormat(input);
+            }
+        });
+
+
+        add(configuration, String.class, Resource.class, new Coercion<String, Resource>()
+        {
+            public Resource coerce(String input)
+            {
+                return assetSource.resourceForPath(input);
             }
         });
 
@@ -1975,7 +1992,7 @@ public final class TapestryModule
         configuration.add(SymbolConstants.CHARSET, "UTF-8");
 
         configuration.add(SymbolConstants.APPLICATION_CATALOG,
-                          "WEB-INF/${" + InternalSymbols.APP_NAME + "}.properties");
+                          "context:WEB-INF/${" + InternalSymbols.APP_NAME + "}.properties");
 
         configuration.add(SymbolConstants.EXCEPTION_REPORT_PAGE, "ExceptionReport");
 

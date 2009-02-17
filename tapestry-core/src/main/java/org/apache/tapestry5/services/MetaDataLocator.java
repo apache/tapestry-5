@@ -44,4 +44,16 @@ public interface MetaDataLocator
      *                          or as a symbol
      */
     <T> T findMeta(String key, ComponentResources resources, Class<T> expectedType);
+
+    /**
+     * Searches for the value for the corresponding key for a particular page name (the page will <em>not</em> be
+     * loaded).  The value, if located, will have symbols expanded, and will be type coerced to the desired type.
+     *
+     * @param key      the key used to locate the meta data (case insensitive)
+     * @param pageName the name of the page to search
+     * @return the value if found
+     * @throws RuntimeException if the value for the key is not present as meta data of the page, as an override, or as
+     *                          a symbol
+     */
+    <T> T findMeta(String key, String pageName, Class<T> expectedType);
 }

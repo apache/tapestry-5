@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -27,10 +27,9 @@ public class PrefixMethodTest extends Assert
     @Test
     public void prefix_method() throws Exception
     {
-        // REFACTOR this happens in a bunch of places
-        String appPackage = "org.apache.tapestry5.integration.app2";
-        String appName = "";
-        tester = new PageTester(appPackage, appName, PageTester.DEFAULT_CONTEXT_PATH, LocaleAppModule.class);
+        tester = new PageTester(TestConstants.APP2_PACKAGE, TestConstants.APP2_NAME, PageTester.DEFAULT_CONTEXT_PATH,
+                                LocaleAppModule.class);
+
         Document doc = tester.renderPage("TestPrefixMethod");
 
         // make sure you can use on methods that have injected fields

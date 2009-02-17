@@ -38,7 +38,7 @@ public class ActionRenderResponseGeneratorImpl implements ActionRenderResponseGe
 
     public void generateResponse(Page page) throws IOException
     {
-        Link link = linkSource.createPageRenderLink(page, false);
+        Link link = linkSource.createPageRenderLink(page.getName(), false);
 
         response.sendRedirect(link);
     }

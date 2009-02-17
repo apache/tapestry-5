@@ -17,10 +17,10 @@ package org.apache.tapestry5.internal.services;
 import org.apache.tapestry5.EventConstants;
 import org.apache.tapestry5.EventContext;
 import org.apache.tapestry5.Link;
-import org.apache.tapestry5.internal.EmptyEventContext;
 import org.apache.tapestry5.internal.structure.Page;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
+import org.apache.tapestry5.services.ComponentClassResolver;
 import org.apache.tapestry5.services.ComponentEventRequestParameters;
 import org.apache.tapestry5.services.LinkCreationListener;
 import org.apache.tapestry5.services.PageRenderRequestParameters;
@@ -30,8 +30,6 @@ import org.testng.annotations.Test;
 public class LinkSourceImplTest extends InternalBaseTestCase
 {
     private TypeCoercer typeCoercer;
-
-    private final EventContext EMPTY = new EmptyEventContext();
 
     @BeforeClass
     public void setup()
@@ -85,22 +83,20 @@ public class LinkSourceImplTest extends InternalBaseTestCase
     @Test
     public void create_page_render_link_by_name()
     {
-        String logicalName = "order/Edit";
+        String pageName = "order/Edit";
 
-        Page page = mockPage();
         PageActivationContextCollector collector = mockPageActivationContextCollector();
         RequestPageCache pageCache = mockRequestPageCache();
         LinkFactory factory = mockLinkFactory();
         Link link = mockLink();
+        ComponentClassResolver resolver = mockComponentClassResolver();
 
-        train_get(pageCache, logicalName, page);
+        train_canonicalizePageName(resolver, pageName, pageName);
 
-        train_getName(page, logicalName);
-
-        train_collectPageActivationContext(collector, page, 3);
+        train_collectPageActivationContext(collector, pageName, 3);
 
         EventContext pageActivationContext = new ArrayEventContext(typeCoercer, 3);
-        PageRenderRequestParameters parameters = new PageRenderRequestParameters(logicalName, pageActivationContext);
+        PageRenderRequestParameters parameters = new PageRenderRequestParameters(pageName, pageActivationContext);
 
         expect(factory.createPageRenderLink(parameters)).andReturn(link);
 
@@ -108,10 +104,10 @@ public class LinkSourceImplTest extends InternalBaseTestCase
 
 
         LinkSource source = new LinkSourceImpl(pageCache, null,
-                                               collector, factory, typeCoercer);
+                                               collector, factory, typeCoercer, resolver);
 
 
-        Link actual = source.createPageRenderLink(logicalName, false);
+        Link actual = source.createPageRenderLink(pageName, false);
 
         // Make sure the same link is returned.
 
@@ -123,19 +119,20 @@ public class LinkSourceImplTest extends InternalBaseTestCase
     private void testPageLinkCreation(String pageName, boolean overrideContext,
                                       Object... context)
     {
-        Page page = mockPage();
         PageActivationContextCollector collector = mockPageActivationContextCollector();
         LinkCreationListener listener = mockLinkCreationListener();
         LinkFactory factory = mockLinkFactory();
         Link link = mockLink();
+        ComponentClassResolver resolver = mockComponentClassResolver();
+        String canonical = "CanonicalPageName";
 
-        train_getName(page, pageName);
+        train_canonicalizePageName(resolver, pageName, canonical);
 
         if (!overrideContext)
-            train_collectPageActivationContext(collector, page, context);
+            train_collectPageActivationContext(collector, canonical, context);
 
         PageRenderRequestParameters parameters =
-                new PageRenderRequestParameters(pageName,
+                new PageRenderRequestParameters(canonical,
                                                 new ArrayEventContext(typeCoercer, context));
 
         expect(factory.createPageRenderLink(parameters)).andReturn(link);
@@ -145,13 +142,13 @@ public class LinkSourceImplTest extends InternalBaseTestCase
         replay();
 
         LinkSource source = new LinkSourceImpl(null, null,
-                                               collector, factory, typeCoercer);
+                                               collector, factory, typeCoercer, resolver);
 
         source.getLinkCreationHub().addListener(listener);
 
         Object[] passedContext = overrideContext ? context : new Object[0];
 
-        Link returnedLink = source.createPageRenderLink(page, overrideContext, passedContext);
+        Link returnedLink = source.createPageRenderLink(pageName, overrideContext, passedContext);
 
         assertSame(returnedLink, link);
 
@@ -185,14 +182,12 @@ public class LinkSourceImplTest extends InternalBaseTestCase
         testEventLinkCreation("order/Edit", "foo.bar",
                               EventConstants.ACTION,
                               true, "fred", "barney");
-
-        // assertEquals(link.getParameterValue(InternalConstants.PAGE_CONTEXT_NAME), "a/b");
     }
 
     @Test
     public void component_event_from_other_page()
     {
-        String logicalName = "blocks/AppDisplay";
+        String primaryPageName = "blocks/AppDisplay";
 
         Page primaryPage = mockPage();
         Page activePage = mockPage();
@@ -201,18 +196,17 @@ public class LinkSourceImplTest extends InternalBaseTestCase
         LinkFactory factory = mockLinkFactory();
         Link link = mockLink();
 
-
         train_getRenderingPage(queue, activePage);
 
-        train_getName(primaryPage, logicalName);
         train_getName(activePage, "order/View");
+        train_getName(primaryPage, primaryPageName);
 
-        train_collectPageActivationContext(collector, activePage, "x", "y");
+        train_collectPageActivationContext(collector, "order/View", "x", "y");
 
         EventContext pageActivationContext = new ArrayEventContext(typeCoercer, "x", "y");
         EventContext eventContext = new ArrayEventContext(typeCoercer, 3, 5, 9);
 
-        ComponentEventRequestParameters parameters = new ComponentEventRequestParameters("order/View", logicalName,
+        ComponentEventRequestParameters parameters = new ComponentEventRequestParameters("order/View", primaryPageName,
                                                                                          "gnip.gnop", "myevent",
                                                                                          pageActivationContext,
                                                                                          eventContext);
@@ -222,16 +216,18 @@ public class LinkSourceImplTest extends InternalBaseTestCase
         replay();
 
         LinkSource source = new LinkSourceImpl(null, queue,
-                                               collector, factory, typeCoercer);
+                                               collector, factory, typeCoercer, null);
 
         assertSame(source.createComponentEventLink(primaryPage, "gnip.gnop", "myevent", true, 3, 5, 9), link);
 
         verify();
     }
 
-    private void testEventLinkCreation(String logicalName, String nestedId,
+    private void testEventLinkCreation(String pageName,
+                                       String nestedId,
                                        String eventType,
-                                       boolean forForm, Object... context)
+                                       boolean forForm,
+                                       Object... context)
     {
         Page primaryPage = mockPage();
         PageRenderQueue queue = mockPageRenderQueue();
@@ -248,13 +244,13 @@ public class LinkSourceImplTest extends InternalBaseTestCase
 
         train_getRenderingPage(queue, null);
 
-        train_getName(primaryPage, logicalName);
+        train_getName(primaryPage, pageName);
 
-        train_collectPageActivationContext(collector, primaryPage, "a", "b");
+        train_collectPageActivationContext(collector, pageName, "a", "b");
 
 
         ComponentEventRequestParameters parameters =
-                new ComponentEventRequestParameters(logicalName, logicalName,
+                new ComponentEventRequestParameters(pageName, pageName,
                                                     nestedId, eventType,
                                                     pageEventContext, eventContext);
 
@@ -265,7 +261,7 @@ public class LinkSourceImplTest extends InternalBaseTestCase
         replay();
 
         LinkSource source = new LinkSourceImpl(null, queue,
-                                               collector, factory, typeCoercer);
+                                               collector, factory, typeCoercer, null);
 
         source.getLinkCreationHub().addListener(listener);
 
@@ -278,10 +274,10 @@ public class LinkSourceImplTest extends InternalBaseTestCase
         verify();
     }
 
-    protected final void train_collectPageActivationContext(PageActivationContextCollector collector, Page page,
+    protected final void train_collectPageActivationContext(PageActivationContextCollector collector, String pageName,
                                                             Object... context)
     {
-        expect(collector.collectPageActivationContext(page)).andReturn(context);
+        expect(collector.collectPageActivationContext(pageName)).andReturn(context);
     }
 
     protected final PageActivationContextCollector mockPageActivationContextCollector()

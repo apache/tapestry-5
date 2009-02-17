@@ -19,10 +19,7 @@ import org.apache.tapestry5.internal.structure.Page;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
-import org.apache.tapestry5.services.ComponentEventRequestParameters;
-import org.apache.tapestry5.services.LinkCreationHub;
-import org.apache.tapestry5.services.LinkCreationListener;
-import org.apache.tapestry5.services.PageRenderRequestParameters;
+import org.apache.tapestry5.services.*;
 
 import java.util.List;
 
@@ -40,17 +37,20 @@ public class LinkSourceImpl implements LinkSource, LinkCreationHub
 
     private final TypeCoercer typeCoercer;
 
+    private final ComponentClassResolver resolver;
+
     public LinkSourceImpl(
             RequestPageCache pageCache,
             PageRenderQueue pageRenderQueue,
             PageActivationContextCollector contextCollector,
-            LinkFactory linkFactory, TypeCoercer typeCoercer)
+            LinkFactory linkFactory, TypeCoercer typeCoercer, ComponentClassResolver resolver)
     {
         this.pageCache = pageCache;
         this.pageRenderQueue = pageRenderQueue;
         this.contextCollector = contextCollector;
         this.linkFactory = linkFactory;
         this.typeCoercer = typeCoercer;
+        this.resolver = resolver;
     }
 
     public Link createComponentEventLink(Page page, String nestedId, String eventType, boolean forForm,
@@ -65,11 +65,13 @@ public class LinkSourceImpl implements LinkSource, LinkCreationHub
         if (activePage == null)
             activePage = page;
 
-        Object[] pageActivationContext = contextCollector.collectPageActivationContext(activePage);
+        String activePageName = activePage.getName();
+
+        Object[] pageActivationContext = contextCollector.collectPageActivationContext(activePageName);
 
         ComponentEventRequestParameters parameters
                 = new ComponentEventRequestParameters(
-                activePage.getName(),
+                activePageName,
                 page.getName(),
                 toBlank(nestedId),
                 eventType,
@@ -90,20 +92,19 @@ public class LinkSourceImpl implements LinkSource, LinkCreationHub
         return input == null ? "" : input;
     }
 
-    public Link createPageRenderLink(Page page, boolean override, Object... pageActivationContext)
+    public Link createPageRenderLink(String pageName, boolean override, Object... pageActivationContext)
     {
-        Defense.notNull(page, "page");
+        // Resolve the page name to its canonical format (the best version for URLs). This also validates
+        // the page name.
 
-        String pageName = page.getName();
-
-        // When override is true, we use the activation context even if empty.
+        String canonical = resolver.canonicalizePageName(pageName);
 
         Object[] context = (override || pageActivationContext.length != 0)
                            ? pageActivationContext
-                           : contextCollector.collectPageActivationContext(page);
+                           : contextCollector.collectPageActivationContext(canonical);
 
         PageRenderRequestParameters parameters =
-                new PageRenderRequestParameters(pageName,
+                new PageRenderRequestParameters(canonical,
                                                 new ArrayEventContext(typeCoercer, context));
 
         Link link = linkFactory.createPageRenderLink(parameters);
@@ -112,14 +113,6 @@ public class LinkSourceImpl implements LinkSource, LinkCreationHub
             listener.createdPageRenderLink(link);
 
         return link;
-    }
-
-    public Link createPageRenderLink(String logicalPageName, boolean override, Object... context)
-    {
-        // This verifies that the page name is valid.
-        Page page = pageCache.get(logicalPageName);
-
-        return createPageRenderLink(page, override, context);
     }
 
     public LinkCreationHub getLinkCreationHub()

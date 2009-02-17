@@ -55,7 +55,7 @@ public class SubmitTest extends Assert
     public void not_a_submit()
     {
         Element submitButton = doc.getElementById("t1");
-        
+
         tester.clickSubmit(submitButton, fieldValues);
     }
 
@@ -79,9 +79,8 @@ public class SubmitTest extends Assert
     @BeforeMethod
     public void before()
     {
-        String appPackage = "org.apache.tapestry5.integration.app2";
-        String appName = "";
-        tester = new PageTester(appPackage, appName);
+        tester = new PageTester(TestConstants.APP2_PACKAGE, TestConstants.APP2_NAME);
+
         doc = tester.renderPage("TestPageForSubmit");
         fieldValues = CollectionFactory.newMap();
     }

@@ -109,7 +109,7 @@ public class TapestryAppInitializer
 
         // Add a synthetic module that contributes symbol sources.
 
-        addSyntheticSymbolSourceModule();
+        addSyntheticSymbolSourceModule(appPackage);
     }
 
     /**
@@ -128,25 +128,32 @@ public class TapestryAppInitializer
         builder.add(moduleClasses);
     }
 
-    private void addSyntheticSymbolSourceModule()
+    private void addSyntheticSymbolSourceModule(String appPackage)
     {
-        ContributionDef symbolSourceContribution = new SyntheticSymbolSourceContributionDef("ServletContext",
-                                                                                            appProvider,
-                                                                                            "before:ApplicationDefaults");
+        ContributionDef appPathContribution =
+                new SyntheticSymbolSourceContributionDef("AppPath",
+                                                         new SingleKeySymbolProvider(
+                                                                 InternalSymbols.APP_PACKAGE_PATH,
+                                                                 appPackage.replace('.', '/')));
 
-        ContributionDef aliasModeContribution = new SyntheticSymbolSourceContributionDef("AliasMode",
-                                                                                         new SingleKeySymbolProvider(
-                                                                                                 InternalSymbols.ALIAS_MODE,
-                                                                                                 aliasMode),
-                                                                                         "before:ServletContext");
+        ContributionDef symbolSourceContribution =
+                new SyntheticSymbolSourceContributionDef("ServletContext",
+                                                         appProvider,
+                                                         "before:ApplicationDefaults");
 
-        ContributionDef appNameContribution = new SyntheticSymbolSourceContributionDef("AppName",
-                                                                                       new SingleKeySymbolProvider(
-                                                                                               InternalSymbols.APP_NAME,
-                                                                                               appName),
-                                                                                       "before:ServletContext");
+        ContributionDef aliasModeContribution =
+                new SyntheticSymbolSourceContributionDef("AliasMode",
+                                                         new SingleKeySymbolProvider(InternalSymbols.ALIAS_MODE,
+                                                                                     aliasMode),
+                                                         "before:ServletContext");
 
-        builder.add(new SyntheticModuleDef(symbolSourceContribution, aliasModeContribution, appNameContribution));
+        ContributionDef appNameContribution =
+                new SyntheticSymbolSourceContributionDef("AppName",
+                                                         new SingleKeySymbolProvider(InternalSymbols.APP_NAME, appName),
+                                                         "before:ServletContext");
+
+        builder.add(new SyntheticModuleDef(symbolSourceContribution, aliasModeContribution, appNameContribution,
+                                           appPathContribution));
     }
 
     public Registry createRegistry()

@@ -16,7 +16,6 @@ package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.Link;
 import org.apache.tapestry5.MetaDataConstants;
-import org.apache.tapestry5.internal.structure.Page;
 import org.apache.tapestry5.services.BaseURLSource;
 import org.apache.tapestry5.services.MetaDataLocator;
 import org.apache.tapestry5.services.Request;
@@ -36,48 +35,41 @@ public class RequestSecurityManagerImpl implements RequestSecurityManager
 
     private final BaseURLSource baseURLSource;
 
-    private final RequestPageCache requestPageCache;
-
     public RequestSecurityManagerImpl(Request request, Response response, LinkSource linkSource,
-                                      MetaDataLocator locator, BaseURLSource baseURLSource,
-                                      RequestPageCache requestPageCache)
+                                      MetaDataLocator locator, BaseURLSource baseURLSource)
     {
         this.request = request;
         this.response = response;
         this.linkSource = linkSource;
         this.locator = locator;
         this.baseURLSource = baseURLSource;
-        this.requestPageCache = requestPageCache;
     }
 
     public boolean checkForInsecureRequest(String pageName) throws IOException
     {
-        // We don't (at this time) redirect from secure to insecure, just form insecure to secure.
+        // We don't (at this time) redirect from secure to insecure, just from insecure to secure.
 
         if (request.isSecure()) return false;
 
-        Page page = requestPageCache.get(pageName);
-
-        if (!isSecure(page)) return false;
+        if (!isSecure(pageName)) return false;
 
         // Page is secure but request is not, so redirect.
 
-        Link link = linkSource.createPageRenderLink(page, false);
+        Link link = linkSource.createPageRenderLink(pageName, false);
 
         response.sendRedirect(link);
 
         return true;
     }
 
-    private boolean isSecure(Page page)
+    private boolean isSecure(String pageName)
     {
-        return locator.findMeta(MetaDataConstants.SECURE_PAGE,
-                                page.getRootComponent().getComponentResources(), Boolean.class);
+        return locator.findMeta(MetaDataConstants.SECURE_PAGE, pageName, Boolean.class);
     }
 
-    public String getBaseURL(Page page)
+    public String getBaseURL(String pageName)
     {
-        boolean securePage = isSecure(page);
+        boolean securePage = isSecure(pageName);
 
         if (securePage == request.isSecure()) return null;
 

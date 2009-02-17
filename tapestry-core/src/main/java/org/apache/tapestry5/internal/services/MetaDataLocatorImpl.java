@@ -29,14 +29,24 @@ public class MetaDataLocatorImpl implements MetaDataLocator, InvalidationListene
 
     private final TypeCoercer typeCoercer;
 
+    private final ComponentModelSource modelSource;
+
     private final Map<String, Map<String, String>> defaultsByFolder = CollectionFactory.newCaseInsensitiveMap();
 
     private final Map<String, String> cache = CollectionFactory.newConcurrentMap();
 
-    public MetaDataLocatorImpl(SymbolSource symbolSource, TypeCoercer typeCoercer, Map<String, String> configuration)
+    private interface ValueLocator
+    {
+        String valueForKey(String key);
+    }
+
+    public MetaDataLocatorImpl(SymbolSource symbolSource, TypeCoercer typeCoercer, ComponentModelSource modelSource,
+                               Map<String, String> configuration
+    )
     {
         this.symbolSource = symbolSource;
         this.typeCoercer = typeCoercer;
+        this.modelSource = modelSource;
 
         loadDefaults(configuration);
     }
@@ -70,20 +80,43 @@ public class MetaDataLocatorImpl implements MetaDataLocator, InvalidationListene
         }
     }
 
-    public <T> T findMeta(String key, ComponentResources resources, Class<T> expectedType)
+    public <T> T findMeta(String key, final ComponentResources resources, Class<T> expectedType)
     {
-        String value = getSymbolExpandedValueFromCache(key, resources);
+        String value = getSymbolExpandedValueFromCache(key,
+                                                       resources.getCompleteId() + "/" + key,
+                                                       new ValueLocator()
+                                                       {
+                                                           public String valueForKey(String key)
+                                                           {
+                                                               return locate(key, resources);
+                                                           }
+                                                       });
 
         return typeCoercer.coerce(value, expectedType);
     }
 
-    private String getSymbolExpandedValueFromCache(String key, ComponentResources resources)
+    public <T> T findMeta(String key, final String pageName, Class<T> expectedType)
     {
-        String cacheKey = resources.getCompleteId() + "/" + key;
 
-        if (cache.containsKey(cacheKey)) return cache.get(cacheKey);
+        String value = getSymbolExpandedValueFromCache(key,
+                                                       pageName + "/" + key,
+                                                       new ValueLocator()
+                                                       {
+                                                           public String valueForKey(String key)
+                                                           {
+                                                               return modelSource.getPageModel(pageName).getMeta(key);
+                                                           }
+                                                       });
 
-        String value = locate(key, resources);
+        return typeCoercer.coerce(value, expectedType);
+    }
+
+    private String getSymbolExpandedValueFromCache(String key, String cacheKey, ValueLocator valueLocator)
+    {
+        if (cache.containsKey(cacheKey))
+            return cache.get(cacheKey);
+
+        String value = valueLocator.valueForKey(key);
 
         if (value == null)
         {
@@ -111,20 +144,20 @@ public class MetaDataLocatorImpl implements MetaDataLocator, InvalidationListene
 
             ComponentResources next = cursor.getContainerResources();
 
-            if (next == null) return locateInDefaults(key, cursor);
+            if (next == null) return locateInDefaults(key, cursor.getPageName());
 
             cursor = next;
         }
     }
 
-    private String locateInDefaults(String key, ComponentResources pageResources)
+    private String locateInDefaults(String key, String pageName)
     {
 
         // We're going to peel this apart, slash by slash. Thus for
         // "mylib/myfolder/mysubfolder/MyPage" we'll be checking: "mylib/myfolder/mysubfolder",
         // then "mylib/myfolder", then "mylib", then "".
 
-        String path = pageResources.getPageName();
+        String path = pageName;
 
         while (true)
         {

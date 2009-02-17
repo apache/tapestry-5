@@ -1,4 +1,4 @@
-//  Copyright 2008 The Apache Software Foundation
+//  Copyright 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,8 +15,13 @@
 package org.apache.tapestry5.integration;
 
 import org.apache.tapestry5.dom.Document;
+import org.apache.tapestry5.integration.pagelevel.TestConstants;
+import org.apache.tapestry5.internal.InternalSymbols;
+import org.apache.tapestry5.ioc.services.SymbolSource;
 import org.apache.tapestry5.test.PageTester;
 import org.testng.Assert;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.util.Collections;
@@ -27,13 +32,25 @@ import java.util.Map;
  */
 public class PageTesterTest extends Assert
 {
-    private static final String PACKAGE = "org.apache.tapestry5.integration.app2";
+    private PageTester tester;
+
+    @BeforeClass
+    public void setup()
+    {
+        tester = new PageTester(TestConstants.APP2_PACKAGE, TestConstants.APP2_NAME, "src/test/app2");
+    }
+
+    @AfterClass
+    public void cleanup()
+    {
+        tester.shutdown();
+
+        tester = null;
+    }
 
     @Test
     public void on_activate_chain_is_followed()
     {
-        PageTester tester = new PageTester(PACKAGE, "", "src/test/app2");
-
         Document launchDoc = tester.renderPage("Launch");
 
         Map<String, String> parameters = Collections.emptyMap();
@@ -44,7 +61,13 @@ public class PageTesterTest extends Assert
         Document finalDoc = tester.submitForm(launchDoc.getElementById("form"), parameters);
 
         assertEquals(finalDoc.getElementById("page-name").getChildMarkup(), "Final");
+    }
 
-        tester.shutdown();
+    @Test
+    public void application_path_is_defined_as_a_symbol()
+    {
+        SymbolSource source = tester.getRegistry().getService(SymbolSource.class);
+
+        assertEquals(source.valueForSymbol(InternalSymbols.APP_PACKAGE_PATH), "org/apache/tapestry5/integration/app2");
     }
 }

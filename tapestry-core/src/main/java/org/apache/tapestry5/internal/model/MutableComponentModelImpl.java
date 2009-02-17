@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -61,6 +61,8 @@ public final class MutableComponentModelImpl implements MutableComponentModel
     private Map<String, String> metaData;
 
     private Set<Class> handledRenderPhases;
+
+    private Map<String, Boolean> handledEvents;
 
     public MutableComponentModelImpl(String componentClassName, Logger logger, Resource baseResource,
                                      ComponentModel parentModel)
@@ -284,6 +286,14 @@ public final class MutableComponentModelImpl implements MutableComponentModel
         handledRenderPhases.add(renderPhase);
     }
 
+    public void addEventHandler(String eventType)
+    {
+        if (handledEvents == null)
+            handledEvents = CollectionFactory.newCaseInsensitiveMap();
+
+        handledEvents.put(eventType, true);
+    }
+
     public String getMeta(String key)
     {
         String result = InternalUtils.get(metaData, key);
@@ -304,5 +314,14 @@ public final class MutableComponentModelImpl implements MutableComponentModel
             result.addAll(handledRenderPhases);
 
         return result;
+    }
+
+    public boolean handlesEvent(String eventType)
+    {
+        if (InternalUtils.get(handledEvents, eventType) != null) return true;
+
+        return parentModel == null
+               ? false
+               : parentModel.handlesEvent(eventType);
     }
 }

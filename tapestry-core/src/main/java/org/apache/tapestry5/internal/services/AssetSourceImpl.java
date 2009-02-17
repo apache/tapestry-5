@@ -75,42 +75,54 @@ public class AssetSourceImpl implements AssetSource
 
     public Asset getContextAsset(String path, Locale locale)
     {
-        Defense.notBlank(path, "path");
-
-        Resource rootResource = prefixToRootResource.get(CONTEXT);
-
-        return findRelativeAsset(rootResource, path, locale);
+        return getAsset(prefixToRootResource.get(CONTEXT), path, locale);
     }
 
     public Asset getAsset(Resource baseResource, String path, Locale locale)
     {
-        Defense.notBlank(path, "path");
+        return getAssetInLocale(baseResource, path, defaulted(locale));
+    }
 
-        if (baseResource == null) baseResource = prefixToRootResource.get(CLASSPATH);
+    public Resource resourceForPath(String path)
+    {
+        return getUnlocalizedResource(null, path);
+    }
+
+    private Asset getAssetInLocale(Resource baseResource, String path, Locale locale)
+    {
+        return getLocalizedAssetFromResource(getUnlocalizedResource(baseResource, path), locale);
+    }
+
+    private Resource getUnlocalizedResource(Resource baseResource, String path)
+    {
+        Defense.notBlank(path, "path");
 
         int colonx = path.indexOf(':');
 
-        if (colonx < 0) return findRelativeAsset(baseResource, path, locale);
+        if (colonx < 0)
+        {
+            Resource root = baseResource != null ? baseResource : prefixToRootResource.get(CLASSPATH);
+
+            return root.forFile(path);
+        }
 
         String prefix = path.substring(0, colonx);
 
-        Resource rootResource = prefixToRootResource.get(prefix);
+        Resource root = prefixToRootResource.get(prefix);
 
-        if (rootResource == null)
+        if (root == null)
             throw new IllegalArgumentException(ServicesMessages.unknownAssetPrefix(path));
 
-        return findRelativeAsset(rootResource, path.substring(colonx + 1), locale);
+
+        return root.forFile(path.substring(colonx + 1));
     }
 
-    private Asset findRelativeAsset(Resource baseResource, String path, Locale locale)
+
+    private Asset getLocalizedAssetFromResource(Resource unlocalized, Locale locale)
     {
-        Resource unlocalized = baseResource.forFile(path);
-
-        Locale effectiveLocale = locale != null
-                                 ? locale
-                                 : threadLocale.getLocale();
-
-        Resource localized = unlocalized.forLocale(effectiveLocale);
+        Resource localized = locale == null
+                             ? unlocalized
+                             : unlocalized.forLocale(locale);
 
         if (localized == null)
             throw new RuntimeException(ServicesMessages.assetDoesNotExist(unlocalized));
@@ -129,6 +141,11 @@ public class AssetSourceImpl implements AssetSource
         }
 
         return result;
+    }
+
+    private Locale defaulted(Locale locale)
+    {
+        return locale != null ? locale : threadLocale.getLocale();
     }
 
     private Asset createAssetFromResource(Resource resource)

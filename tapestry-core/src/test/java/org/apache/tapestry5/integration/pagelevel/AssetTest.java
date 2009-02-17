@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -27,10 +27,10 @@ public class AssetTest extends Assert
     @Test
     public void submit_context_asset()
     {
-        String appPackage = "org.apache.tapestry5.integration.app2";
-        String appName = "";
-        tester = new PageTester(appPackage, appName, "src/test/app2");
+        tester = new PageTester(TestConstants.APP2_PACKAGE, TestConstants.APP2_NAME, "src/test/app2");
+
         Document doc = tester.renderPage("TestPageForAsset");
+
         assertTrue(doc.toString().contains("test.css"));
     }
 

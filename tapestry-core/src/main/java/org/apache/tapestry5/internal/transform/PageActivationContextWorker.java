@@ -1,4 +1,4 @@
-// Copyright 2008 The Apache Software Foundation
+// Copyright 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -24,7 +24,9 @@ import java.lang.reflect.Modifier;
 import java.util.List;
 
 /**
- * Provides the page activation context handlers.
+ * Provides the page activation context handlers.  This worker must be scheduled before {@link
+ * org.apache.tapestry5.internal.transform.OnEventWorker} in order for the added event handler methods to be properly
+ * picked up and processed.
  *
  * @see org.apache.tapestry5.annotations.PageActivationContext
  */
@@ -49,7 +51,7 @@ public class PageActivationContextWorker implements ComponentClassTransformWorke
                 TransformMethodSignature activate
                         = new TransformMethodSignature(Modifier.PROTECTED | Modifier.FINAL, "void",
                                                        "onActivate",
-                                                       new String[]{fieldType}, null);
+                                                       new String[] { fieldType }, null);
                 transformation.addTransformedMethod(activate, fieldName + " = $1;");
             }
 
