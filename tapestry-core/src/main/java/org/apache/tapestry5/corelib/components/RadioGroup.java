@@ -62,6 +62,14 @@ public class RadioGroup implements Field
     @Parameter(required = true, allowNull = false)
     private ValueEncoder encoder;
 
+    /**
+     * The object that will perform input validation. The validate binding prefix is
+     * generally used to provide this object in a declarative fashion.
+     */
+    @Parameter(defaultPrefix = BindingConstants.VALIDATE)
+    @SuppressWarnings("unchecked")
+    private FieldValidator<Object> validate;
+
     @Inject
     private ComponentDefaultProvider defaultProvider;
 
@@ -79,6 +87,9 @@ public class RadioGroup implements Field
 
     @Environmental
     private ValidationTracker tracker;
+
+    @Inject
+    private FieldValidationSupport fieldValidationSupport;
 
     private String controlName;
 
@@ -138,11 +149,20 @@ public class RadioGroup implements Field
 
     private void processSubmission()
     {
-        String clientValue = request.getParameter(controlName);
+        String rawValue = request.getParameter(controlName);
 
-        tracker.recordInput(this, clientValue);
+        tracker.recordInput(this, rawValue);
+        try
+        {
+            if (validate != null)
+                fieldValidationSupport.validate(rawValue, resources, validate);
+        }
+        catch (ValidationException ex)
+        {
+            tracker.recordError(this, ex.getMessage());
+        }
 
-        value = encoder.toValue(clientValue);
+        value = encoder.toValue(rawValue);
     }
 
     /**
@@ -222,11 +242,8 @@ public class RadioGroup implements Field
         return null;
     }
 
-    /**
-     * Returns false; RadioGroup does not support declarative validation.
-     */
     public boolean isRequired()
     {
-        return false;
+        return validate.isRequired();
     }
 }

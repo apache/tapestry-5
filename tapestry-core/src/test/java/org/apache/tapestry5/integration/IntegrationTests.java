@@ -1107,6 +1107,18 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     }
 
     @Test
+    public void radio_group_validator()
+    {
+        start("RadioDemo");
+
+        String update = SUBMIT;
+
+        // Verify that the "required" validator works.
+        clickAndWait(update);
+        assertTextPresent("You must provide a value for Department.");
+    }
+
+    @Test
     public void regexp_validator()
     {
         start("Regexp Demo");
