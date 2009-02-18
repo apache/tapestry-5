@@ -203,7 +203,7 @@ About Snapshots and Releases
   for 5.0.3-SNAPSHOT.  Maven keys off the -SNAPSHOT suffix and handles the dependency specially. It knows that snapshot releases can change frequently,
   so it will keep checking (at least once a day, maybe more often) to see if there's an updated version of the snapshot.
   
-  A nightly build process on Tapestry's continuous integration server creates new snapshots <em>every night</em>.
+  A nightly build process on Tapestry's continuous integration server creates new snapshots <every night>.
   
   Snapshots don't go in the central Maven repository (that's reserved for full releases). Instead, they  go into the Tapestry snapshots repository
   at {{{http://tapestry.formos.com/maven-snapshot-repository}http://tapestry.formos.com/maven-snapshot-repository}}.
