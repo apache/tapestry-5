@@ -62,6 +62,14 @@ public class Submit implements ClientElement
      */
     @Parameter
     private Object[] context;
+    
+    /**
+     * If provided, the component renders an input tag with type "image". Otherwise "submit".
+     * 
+     * @since 5.1.0.0
+     */
+    @Parameter(defaultPrefix = BindingConstants.ASSET)
+    private Asset image;
 
 
     @Environmental
@@ -115,9 +123,13 @@ public class Submit implements ClientElement
 
         // Save the element, to see if an id is later requested.
 
-        element = writer.element("input", "type", "submit", "name", name);
+        String type = image==null?"submit":"image";
+
+        element = writer.element("input", "type", type, "name", name);
 
         if (disabled) writer.attributes("disabled", "disabled");
+        
+        if(image!=null) writer.attributes("src", image.toClientURL());
 
         formSupport.store(this, new ProcessSubmission(name));
 

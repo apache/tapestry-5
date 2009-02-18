@@ -14,11 +14,15 @@
 
 package org.apache.tapestry5.integration.app2.pages;
 
+import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.annotations.Component;
+import org.apache.tapestry5.annotations.Path;
 import org.apache.tapestry5.annotations.Persist;
+import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.corelib.components.Form;
 import org.apache.tapestry5.corelib.components.Submit;
 import org.apache.tapestry5.corelib.components.TextField;
+import org.apache.tapestry5.ioc.annotations.Inject;
 
 public class TestPageForSubmit
 {
@@ -45,6 +49,11 @@ public class TestPageForSubmit
     @SuppressWarnings("unused")
     @Component(parameters = "value=value")
     private TextField t2;
+    
+    @Property
+    @Inject
+    @Path("${tapestry.spacer-image}")
+    private Asset spacerImage;
 
     @Persist
     private String value;
