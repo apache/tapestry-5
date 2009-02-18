@@ -17,6 +17,7 @@ package org.apache.tapestry5.integration.pagelevel;
 import org.apache.tapestry5.dom.Document;
 import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.services.SymbolSource;
 import org.apache.tapestry5.test.PageTester;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -37,6 +38,8 @@ public class SubmitTest extends Assert
     public void submit_form()
     {
         Element submitButton = doc.getElementById("capitalize1");
+        assertEquals("submit", submitButton.getAttribute("type"));
+        
         fieldValues.put("t1", "hello");
         doc = tester.clickSubmit(submitButton, fieldValues);
         assertTrue(doc.toString().contains("Value is: HELLO"));
@@ -74,6 +77,23 @@ public class SubmitTest extends Assert
         {
             assertEquals(ex.getMessage(), "Could not locate an ancestor element of type 'form'.");
         }
+    }
+    
+    @Test
+    public void render_image_type()
+    {
+        Element submitButton = doc.getElementById("submitImage");
+        
+        assertEquals("image", submitButton.getAttribute("type"));
+        
+        SymbolSource service = tester.getService(SymbolSource.class);
+        
+        String symbolValue = service.valueForSymbol("tapestry.spacer-image");
+        
+        String iconName = symbolValue.substring(symbolValue.lastIndexOf("/"));
+        
+        assertTrue(submitButton.getAttribute("src").contains(iconName));
+
     }
 
     @BeforeMethod
