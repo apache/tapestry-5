@@ -52,6 +52,14 @@ public class Submit implements ClientElement
      */
     @Parameter("false")
     private boolean disabled;
+    
+    /**
+     * The context for the link (optional parameter). This list of values will be converted into strings and included in
+     * the URI. The strings will be coerced back to whatever their values are and made available to event handler
+     * methods.
+     */
+    @Parameter
+    private Object[] context;
 
 
     @Environmental
@@ -131,7 +139,7 @@ public class Submit implements ClientElement
         {
             public void run()
             {
-                resources.triggerEvent(event, null, null);
+                resources.triggerEvent(event, context, null);
             }
         };
 
