@@ -17,6 +17,7 @@ package org.apache.tapestry5.internal.bindings;
 import org.apache.tapestry5.Binding;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.FieldTranslator;
+import org.apache.tapestry5.internal.services.StringInterner;
 import org.apache.tapestry5.ioc.Location;
 import org.apache.tapestry5.services.BindingFactory;
 import org.apache.tapestry5.services.FieldTranslatorSource;
@@ -29,15 +30,18 @@ public class TranslateBindingFactory implements BindingFactory
 {
     private final FieldTranslatorSource source;
 
-    public TranslateBindingFactory(FieldTranslatorSource source)
+    private final StringInterner interner;
+
+    public TranslateBindingFactory(FieldTranslatorSource source, StringInterner interner)
     {
         this.source = source;
+        this.interner = interner;
     }
 
     public Binding newBinding(String description, ComponentResources container,
                               final ComponentResources component, final String expression, Location location)
     {
-        return new InvariantBinding(location, FieldTranslator.class, description + ": " + expression)
+        return new InvariantBinding(location, FieldTranslator.class, interner.intern(description + ": " + expression))
         {
             public Object get()
             {

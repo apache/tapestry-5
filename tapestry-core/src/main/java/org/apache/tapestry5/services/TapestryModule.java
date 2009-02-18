@@ -1017,8 +1017,7 @@ public final class TapestryModule
 
     /**
      * Builds the PropBindingFactory as a chain of command. The terminator of the chain is responsible for ordinary
-     * property names (and property paths). Contributions to the service cover additional special cases, such as simple
-     * literal values.
+     * property names (and property paths).
      * <p/>
      * This mechanism has been replaced in 5.1 with a more sophisticated parser based on ANTLR. See <a
      * href="https://issues.apache.org/jira/browse/TAP5-79">TAP5-79</a> for details.  There are no longer any built-in
@@ -1028,10 +1027,8 @@ public final class TapestryModule
      *                      binding if applicable, or null otherwise
      */
     public BindingFactory buildPropBindingFactory(List<BindingFactory> configuration,
-                                                  PropertyConduitSource propertyConduitSource)
+                                                  @Autobuild PropBindingFactory service)
     {
-        PropBindingFactory service = new PropBindingFactory(propertyConduitSource);
-
         configuration.add(service);
 
         return chainBuilder.build(BindingFactory.class, configuration);
@@ -2283,6 +2280,4 @@ public final class TapestryModule
         return pipelineBuilder.build(logger, ComponentRequestHandler.class, ComponentRequestFilter.class,
                                      configuration, terminator);
     }
-
-
 }

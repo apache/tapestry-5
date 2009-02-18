@@ -123,11 +123,13 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
 
     private final PersistentFieldManager persistentFieldManager;
 
+    private final StringInterner interner;
+
     public PageLoaderImpl(ComponentInstantiatorSource instantiatorSource,
                           ComponentTemplateSource templateSource, PageElementFactory elementFactory,
                           ComponentPageElementResourcesSource resourcesSource,
                           ComponentClassResolver componentClassResolver,
-                          PersistentFieldManager persistentFieldManager)
+                          PersistentFieldManager persistentFieldManager, StringInterner interner)
     {
         this.instantiatorSource = instantiatorSource;
         this.templateSource = templateSource;
@@ -135,6 +137,7 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
         this.resourcesSource = resourcesSource;
         this.componentClassResolver = componentClassResolver;
         this.persistentFieldManager = persistentFieldManager;
+        this.interner = interner;
     }
 
     public void objectWasInvalidated()
@@ -384,9 +387,9 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
                 ComponentPageElement element = pageAssembly.createdElement.peek();
 
                 BlockImpl block = new BlockImpl(token.getLocation(),
-                                                String.format("Parameter %s of %s",
-                                                              parameterName,
-                                                              element.getCompleteId()));
+                                                interner.format("Parameter %s of %s",
+                                                                parameterName,
+                                                                element.getCompleteId()));
 
                 Binding binding = new LiteralBinding(token.getLocation(), "block parameter " + parameterName, block);
 
@@ -426,8 +429,8 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
                 ComponentPageElement element = pageAssembly.activeElement.peek();
 
                 String description = blockId == null
-                                     ? String.format("Anonymous within %s", element.getCompleteId())
-                                     : String.format("%s within %s", blockId, element.getCompleteId());
+                                     ? interner.format("Anonymous within %s", element.getCompleteId())
+                                     : interner.format("%s within %s", blockId, element.getCompleteId());
 
                 BlockImpl block = new BlockImpl(token.getLocation(), description);
 

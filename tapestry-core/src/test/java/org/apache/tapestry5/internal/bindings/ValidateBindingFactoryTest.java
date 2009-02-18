@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,6 +18,8 @@ import org.apache.tapestry5.Binding;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.FieldComponent;
 import org.apache.tapestry5.FieldValidator;
+import org.apache.tapestry5.internal.services.StringInterner;
+import org.apache.tapestry5.internal.services.StringInternerImpl;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.ioc.Location;
 import org.apache.tapestry5.ioc.internal.util.TapestryException;
@@ -28,6 +30,7 @@ import org.testng.annotations.Test;
 
 public class ValidateBindingFactoryTest extends InternalBaseTestCase
 {
+    private StringInterner interner = new StringInternerImpl();
 
     @Test
     public void not_a_field()
@@ -43,7 +46,7 @@ public class ValidateBindingFactoryTest extends InternalBaseTestCase
 
         replay();
 
-        BindingFactory factory = new ValidateBindingFactory(source);
+        BindingFactory factory = new ValidateBindingFactory(source, interner);
 
         try
         {
@@ -79,7 +82,7 @@ public class ValidateBindingFactoryTest extends InternalBaseTestCase
 
         replay();
 
-        BindingFactory factory = new ValidateBindingFactory(source);
+        BindingFactory factory = new ValidateBindingFactory(source, interner);
 
         Binding binding = factory.newBinding("descrip", container, component, expression, l);
 

@@ -18,11 +18,13 @@ import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.internal.pageload.PageLoaderImpl;
 import org.apache.tapestry5.internal.structure.ComponentPageElementResourcesSource;
 import org.apache.tapestry5.internal.structure.ComponentPageElementResourcesSourceImpl;
-import org.apache.tapestry5.ioc.MethodAdviceReceiver;
 import org.apache.tapestry5.ioc.ObjectLocator;
 import org.apache.tapestry5.ioc.ScopeConstants;
 import org.apache.tapestry5.ioc.ServiceBinder;
-import org.apache.tapestry5.ioc.annotations.*;
+import org.apache.tapestry5.ioc.annotations.Autobuild;
+import org.apache.tapestry5.ioc.annotations.Marker;
+import org.apache.tapestry5.ioc.annotations.Scope;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.services.CtClassSource;
 import org.apache.tapestry5.ioc.services.*;
 import org.apache.tapestry5.services.*;
@@ -251,12 +253,6 @@ public class InternalModule
         return builder.build(componentInstantiatorSource, "classSource", CtClassSource.class);
     }
 
-    @Match("PageLoader")
-    public static void adviseWithLogging(LoggingAdvisor advisor, Logger logger, MethodAdviceReceiver receiver)
-    {
-        advisor.addLoggingAdvice(logger, receiver);
-    }
-
     public PageActivationContextCollector buildPageActivationContextCollector(
             @Autobuild PageActivationContextCollectorImpl service)
     {
@@ -265,4 +261,13 @@ public class InternalModule
         return service;
     }
 
+    /**
+     * @since 5.1.0.0
+     */
+    public StringInterner buildStringInterner(@Autobuild StringInternerImpl service)
+    {
+        classesInvalidationEventHub.addInvalidationListener(service);
+
+        return service;
+    }
 }
