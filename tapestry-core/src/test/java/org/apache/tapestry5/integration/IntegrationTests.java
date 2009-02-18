@@ -1992,6 +1992,16 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         assertText("sum", "0.0");
     }
+    
+    @Test
+    public void submit_with_context()
+    {
+        start("Submit With Context");
+        
+        clickAndWait(SUBMIT);
+
+        assertTextPresent("Result: 10.14159");
+    }
 
     /**
      * TAPESTRY-2196

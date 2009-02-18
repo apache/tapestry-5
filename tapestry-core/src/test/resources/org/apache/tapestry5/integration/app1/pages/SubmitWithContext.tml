@@ -1,0 +1,12 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+    <h1>Submit With Context</h1>
+    
+    <p>  Result: ${result}.</p>
+    
+    <p>
+      <t:form>
+            <input t:type="submit" context="formContext" value="Send"/>
+    	</t:form>
+    </p>
+    
+</html>
