@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -29,9 +29,12 @@ public class BindingSourceImpl implements BindingSource
 {
     private final Map<String, BindingFactory> factories;
 
-    public BindingSourceImpl(Map<String, BindingFactory> factories)
+    private final StringInterner interner;
+
+    public BindingSourceImpl(Map<String, BindingFactory> factories, StringInterner interner)
     {
         this.factories = factories;
+        this.interner = interner;
     }
 
     public Binding newBinding(String description, ComponentResources container,
@@ -75,7 +78,7 @@ public class BindingSourceImpl implements BindingSource
 
         try
         {
-            return factory.newBinding(description, container, component, subexpression, location);
+            return factory.newBinding(interner.intern(description), container, component, subexpression, location);
         }
         catch (Exception ex)
         {

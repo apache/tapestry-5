@@ -192,6 +192,8 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
     private final TypeCoercer typeCoercer;
 
+    private final StringInterner interner;
+
     /**
      * Because of stuff like Hibernate, we sometimes start with a subclass in some inaccessible class loader and need to
      * work up to a base class from a common class loader.
@@ -298,7 +300,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
             values.add(conduitPropertyType);
             values.add(annotationProvider);
-            values.add(String.format("PropertyConduit[%s %s]", rootType.getName(), expression));
+            values.add(interner.format("PropertyConduit[%s %s]", rootType.getName(), expression));
             values.add(typeCoercer);
 
             BodyBuilder builder = new BodyBuilder().begin();
@@ -1051,11 +1053,12 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
     }
 
     public PropertyConduitSourceImpl(PropertyAccess access, @ComponentLayer ClassFactory classFactory,
-                                     TypeCoercer typeCoercer)
+                                     TypeCoercer typeCoercer, StringInterner interner)
     {
         this.access = access;
         this.classFactory = classFactory;
         this.typeCoercer = typeCoercer;
+        this.interner = interner;
 
         literalTrue = createLiteralConduit(Boolean.class, true);
         literalFalse = createLiteralConduit(Boolean.class, false);
@@ -1206,7 +1209,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
     private <T> PropertyConduit createLiteralConduit(Class<T> type, T value)
     {
         return new LiteralPropertyConduit(type, invariantAnnotationProvider,
-                                          String.format("LiteralPropertyConduit[%s]", value), typeCoercer, value);
+                                          interner.format("LiteralPropertyConduit[%s]", value), typeCoercer, value);
     }
 
     private Tree parse(String expression)

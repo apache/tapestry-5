@@ -18,6 +18,7 @@ import org.apache.tapestry5.Binding;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.Field;
 import org.apache.tapestry5.FieldValidator;
+import org.apache.tapestry5.internal.services.StringInterner;
 import org.apache.tapestry5.ioc.Location;
 import org.apache.tapestry5.ioc.internal.util.TapestryException;
 import org.apache.tapestry5.services.BindingFactory;
@@ -32,9 +33,12 @@ public class ValidateBindingFactory implements BindingFactory
 {
     private final FieldValidatorSource fieldValidatorSource;
 
-    public ValidateBindingFactory(FieldValidatorSource fieldValidatorSource)
+    private final StringInterner interner;
+
+    public ValidateBindingFactory(FieldValidatorSource fieldValidatorSource, StringInterner interner)
     {
         this.fieldValidatorSource = fieldValidatorSource;
+        this.interner = interner;
     }
 
     public Binding newBinding(String description, ComponentResources container,
@@ -48,7 +52,7 @@ public class ValidateBindingFactory implements BindingFactory
 
         final Field field = (Field) fieldAsObject;
 
-        return new InvariantBinding(location, FieldValidator.class, description + ": " + expression)
+        return new InvariantBinding(location, FieldValidator.class, interner.intern(description + ": " + expression))
         {
             public Object get()
             {

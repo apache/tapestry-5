@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ package org.apache.tapestry5.internal.bindings;
 import org.apache.tapestry5.Binding;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.FieldTranslator;
+import org.apache.tapestry5.internal.services.StringInternerImpl;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.ioc.Location;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
@@ -77,7 +78,7 @@ public class BindingFactoryTest extends InternalBaseTestCase
 
         replay();
 
-        BindingFactory factory = new TranslateBindingFactory(source);
+        BindingFactory factory = new TranslateBindingFactory(source, new StringInternerImpl());
 
         Binding binding = factory.newBinding(description, resources, resources, expression, l);
 
