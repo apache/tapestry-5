@@ -88,6 +88,14 @@
             </roles>
             <timezone>+1</timezone>
         </developer>
+		<developer>
+			<id>robertdzeigler</id>
+			<name>Robert Zeigler</name>
+			<email>robertdzeigler@apache.org</email>
+			<roles>
+				<role>Developer</role>
+			</roles>
+			<timezone>-6</timezone>
     </developers>
 
     <ciManagement>
