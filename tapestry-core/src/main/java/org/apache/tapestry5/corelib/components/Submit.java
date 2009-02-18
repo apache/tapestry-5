@@ -54,9 +54,11 @@ public class Submit implements ClientElement
     private boolean disabled;
     
     /**
-     * The context for the link (optional parameter). This list of values will be converted into strings and included in
-     * the URI. The strings will be coerced back to whatever their values are and made available to event handler
-     * methods.
+     * The list of values that will be converted into strings when the form is submitted. 
+     * The strings will be coerced back to whatever their values are and made available to event 
+     * handler method of this component. 
+     * 
+     * @since 5.1.0.0
      */
     @Parameter
     private Object[] context;
