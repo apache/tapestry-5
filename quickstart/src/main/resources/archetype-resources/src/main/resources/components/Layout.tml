@@ -9,18 +9,14 @@ Title      : Concrete
 Version    : 1.0
 Released   : 20080825
 Description: A Web 2.0 design with fluid width suitable for blogs and small websites.
-
 -->
-#set( $D = '$' )
+        #set( $D = '$' )
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd"
       xmlns:p="tapestry:parameter">
     <head>
         <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
         <title>${D}{title}</title>
-        <meta name="keywords" content=""/>
-        <meta name="description" content=""/>
-        <link href="default.css" rel="stylesheet" type="text/css" media="screen"/>
     </head>
     <body>
         <!-- start header -->
@@ -32,14 +28,8 @@ Description: A Web 2.0 design with fluid width suitable for blogs and small webs
             </div>
             <div id="menu">
                 <ul>
-                    <li class="current_page_item">
-                        <t:pagelink page="index">Home</t:pagelink>
-                    </li>
-                    <li>
-                        <a href="#">About</a>
-                    </li>
-                    <li class="last">
-                        <a href="#">Contact</a>
+                    <li t:type="loop" source="pageNames" value="pageName" class="prop:classForPageName">
+                        <t:pagelink page="prop:pageName">${D}{pageName}</t:pagelink>
                     </li>
                 </ul>
             </div>
@@ -51,79 +41,18 @@ Description: A Web 2.0 design with fluid width suitable for blogs and small webs
             <div id="sidebar">
                 <ul>
                     <li id="search" style="background: none;">
-                        <form id="searchform" method="get" action="">
-                            <div>
-                                <input type="text" name="s" id="s" size="15"/>
-                                <br/>
-                                <input type="submit" value="Search"/>
-                            </div>
-                        </form>
                     </li>
-                    <li id="categories">
-                        <h2>Categories</h2>
-                        <ul>
-                            <li>
-                                <a href="#">Lorem Ipsum</a>
-                                (1)
-                            </li>
-                            <li>
-                                <a href="#">Uncategorized</a>
-                                (4)
-                            </li>
-                        </ul>
-                    </li>
-                    <li>
-                        <h2>Lorem Ipsum Dolor</h2>
-                        <ul>
-                            <li>
-                                <a href="#">Nulla luctus eleifend purus</a>
-                            </li>
-                            <li>
-                                <a href="#">Praesent scelerisque scelerisque</a>
-                            </li>
-                            <li>
-                                <a href="#">Ut nonummy rutrum sem</a>
-                            </li>
-                            <li>
-                                <a href="#">Pellentesque tempus quis nulla</a>
-                            </li>
-                            <li>
-                                <a href="#">Fusce ultrices fringilla metus</a>
-                            </li>
-                            <li>
-                                <a href="#">Praesent mattis condimentum</a>
-                            </li>
-                        </ul>
-                    </li>
-                    <li>
-                        <h2>Lorem Ipsum Dolor</h2>
-                        <ul>
-                            <li>
-                                <a href="#">Nulla luctus eleifend purus</a>
-                            </li>
-                            <li>
-                                <a href="#">Praesent scelerisque scelerisque</a>
-                            </li>
-                            <li>
-                                <a href="#">Ut nonummy rutrum sem</a>
-                            </li>
-                            <li>
-                                <a href="#">Pellentesque tempus quis nulla</a>
-                            </li>
-                            <li>
-                                <a href="#">Fusce ultrices fringilla metus</a>
-                            </li>
-                            <li>
-                                <a href="#">Praesent mattis condimentum</a>
-                            </li>
-                        </ul>
+                    <li t:type="if" test="sidebar">
+                        <h2>${D}{sidebarTitle}</h2>
+                        <div class="sidebar-content">
+                            <t:delegate to="sidebar"/>
+                        </div>
                     </li>
                 </ul>
             </div>
             <!-- end sidebar -->
             <!-- start content -->
             <div id="content">
-
                 <div class="post">
                     <div class="title">
                         <h2>${D}{title}</h2>
@@ -132,64 +61,6 @@ Description: A Web 2.0 design with fluid width suitable for blogs and small webs
                         <t:body/>
                     </div>
                 </div>
-
-                <!-- The rest of the template is placeholder text that can easily be removed. -->
-
-
-                <div class="post">
-                    <div class="title">
-                        <h2>
-                            <a href="#">Etiam rhoncus volutpat</a>
-                        </h2>
-                        <p>
-                            <small>Posted on August 20th, 2007 by
-                                <a href="#">Free CSS Templates</a>
-                            </small>
-                        </p>
-                    </div>
-                    <div class="entry">
-                        <p>Maecenas pede nisl, elementum eu, ornare ac, malesuada at, erat. Proin gravida orci porttitor
-                            enim accumsan lacinia. Donec condimentum, urna non molestie semper, ligula enim ornare nibh,
-                            quis laoreet eros quam eget ante. Aliquam libero. Vivamus nisl nibh, iaculis vitae, viverra
-                            sit amet, ullamcorper vitae, turpis. Aliquam erat volutpat. Vestibulum dui sem, pulvinar
-                            sed, imperdiet nec, iaculis nec, leo. Fusce odio.
-                        </p>
-                        <p>Etiam arcu dui, faucibus eget, placerat vel, sodales eget, orci. Donec ornare neque ac sem.
-                            Mauris aliquet. Aliquam sem leo, vulputate sed, convallis at, ultricies quis, justo. Donec
-                            nonummy magna quis risus. Quisque eleifend. Phasellus tempor vehicula justo. Aliquam lacinia
-                            metus ut elit. Suspendisse iaculis mauris nec lorem.
-                            <br/>
-                        </p>
-                    </div>
-                    <p class="links">
-                        <a href="#" class="more">Read More</a>
-                        <a href="#" class="comments">No Comments</a>
-                    </p>
-                </div>
-                <div class="post">
-                    <div class="title">
-                        <h2>
-                            <a href="#">Praesent condimentum</a>
-                        </h2>
-                        <p>
-                            <small>Posted on August 20th, 2007 by
-                                <a href="#">Free CSS Templates</a>
-                            </small>
-                        </p>
-                    </div>
-                    <div class="entry">
-                        <p>Etiam arcu dui, faucibus eget, placerat vel, sodales eget, orci. Donec ornare neque ac sem.
-                            Mauris aliquet. Aliquam sem leo, vulputate sed, convallis at, ultricies quis, justo. Donec
-                            nonummy magna quis risus. Quisque eleifend. Phasellus tempor vehicula justo. Aliquam lacinia
-                            metus ut elit. Suspendisse iaculis mauris nec lorem.
-                            <br/>
-                        </p>
-                    </div>
-                    <p class="links">
-                        <a href="#" class="more">Read More</a>
-                        <a href="#" class="comments">No Comments</a>
-                    </p>
-                </div>
             </div>
             <!-- end content -->
             <br style="clear: both;"/>
@@ -197,9 +68,8 @@ Description: A Web 2.0 design with fluid width suitable for blogs and small webs
         <!-- end page -->
         <!-- start footer -->
         <div id="footer">
-
             <p class="legal">
-                &copy;2009 ${groupId}. All Rights Reserved.
+                &copy;2009 groupid. All Rights Reserved.
                 &nbsp;&nbsp;&bull;&nbsp;&nbsp;
                 Design by
                 <a href="http://www.freecsstemplates.org/">Free CSS Templates</a>

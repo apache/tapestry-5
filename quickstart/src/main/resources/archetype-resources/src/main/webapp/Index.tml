@@ -1,20 +1,24 @@
-<html t:type="layout" title="${artifactId} Home Page"
+<html t:type="layout" title="${artifactId} Index"
+      t:sidebarTitle="Current Time"
       xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd"
       xmlns:p="tapestry:parameter">
-#set( $D = '$' )
+    #set( $D = '$' )
     <!-- Most of the page content, including <head>, <body>, etc. tags, comes from Layout.tml -->
 
     <p>${D}{message:greeting}</p>
 
-    <p>
-        Just to prove this is live:
-    </p>
+    <p:sidebar>
 
-    <p>The current time is: ${D}{currentTime}.</p>
+        <p>
+            Just to prove this is live:
+        </p>
+
+        <p>The current time is: ${D}{currentTime}.</p>
 
 
-    <p>
-        [<t:pagelink t:page="Index">refresh</t:pagelink>]
-    </p>
+        <p>
+            [<t:pagelink t:page="Index">refresh</t:pagelink>]
+        </p>
+    </p:sidebar>
 
 </html>
