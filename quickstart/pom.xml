@@ -14,7 +14,7 @@
     <parent>
         <groupId>org.apache.tapestry</groupId>
         <artifactId>tapestry-project</artifactId>
-        <version>5.1.0.0-SNAPSHOT</version>
+        <version>5.1.0.0</version>
     </parent>
     <name>Tapestry 5 Quickstart Archetype</name>
     <inceptionYear>2007</inceptionYear>
@@ -38,10 +38,10 @@
 
                                     <tasks>
                                         <echo>Copying Archetype Catalog to /var/www/maven-snapshot-repository</echo>
-                                        <copy todir="/var/www/maven-snapshot-repository" overwrite="true">
-                                            <fileset dir="src/main/resources" includes="*catalog.xml"/>
+                                        <copy overwrite="true" todir="/var/www/maven-snapshot-repository">
+                                            <fileset dir="src/main/resources" includes="*catalog.xml"></fileset>
                                             <filterset>
-                                                <filter token="project.version" value="${project.version}"/>
+                                                <filter token="project.version" value="${project.version}"></filter>
                                             </filterset>
                                         </copy>
                                     </tasks>

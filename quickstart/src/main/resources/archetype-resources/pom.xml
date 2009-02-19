@@ -6,7 +6,7 @@
     <version>${version}</version>
     <packaging>war</packaging>
     <name>${artifactId} Tapestry 5 Application</name>
-#set( $D = '$' )    
+    #set( $D = '$' )
     <dependencies>
         <dependency>
             <groupId>org.apache.tapestry</groupId>
@@ -127,6 +127,6 @@ of a Tapestry Maven plugin is not required.   -->
     </pluginRepositories>
 
     <properties>
-        <tapestry-release-version>5.1.0.0-SNAPSHOT</tapestry-release-version>
+        <tapestry-release-version>5.1.0.0</tapestry-release-version>
     </properties>
 </project>
