@@ -8,7 +8,7 @@
     <parent>
         <groupId>org.apache.tapestry</groupId>
         <artifactId>tapestry-project</artifactId>
-        <version>5.1.0.0-SNAPSHOT</version>
+        <version>5.1.0.0</version>
     </parent>
     <name>Tapestry Inversion of Control Container</name>
     <description>
@@ -123,10 +123,10 @@
         </plugins>
     </reporting>
     <repositories>
-      <repository>
-	<!-- Needed to keep up with latest Javassist versions. -->
-	<id>jboss</id>
-	<url>http://repository.jboss.com/maven2</url>
-      </repository>
+        <repository>
+            <!-- Needed to keep up with latest Javassist versions. -->
+            <id>jboss</id>
+            <url>http://repository.jboss.com/maven2</url>
+        </repository>
     </repositories>
 </project>

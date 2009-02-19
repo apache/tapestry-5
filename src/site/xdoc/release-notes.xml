@@ -25,9 +25,399 @@
         </p>
 
 
-        <p>
-            <em>No releases yet for Tapestry 5.1, so no release notes.</em>
-        </p>
+        <h1>Release Notes - Tapestry 5 - Version 5.1.0.0</h1>
+
+        <h2>Bug
+        </h2>
+        <ul>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-217'>TAP5-217</a>] - Warnings related to service
+                configuration validations should be escalated to exceptions
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-292'>TAP5-292</a>] - Field injection does not
+                support injecting configurations or other service resources, only dependencies
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-298'>TAP5-298</a>] - JS error in Palette for
+                disabled options
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-330'>TAP5-330</a>] - Property expressions do not
+                recognize methods inherted from java.lang.Object such as toString()
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-334'>TAP5-334</a>] - Component fields should allow
+                @InjectService annotation, as well as @Inject
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-341'>TAP5-341</a>] - When a contribute method
+                requests the wrong configuration interface (say, Configuration instead of OrderedConfiguration) the
+                error message is confusing: &quot;No service implements the Configuration interface&quot;
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-349'>TAP5-349</a>] - Tapestry silently allows a
+                MarkupWriter to set a series of root elements, ignoring all but the last. A document should only have a
+                single root element and this situation should be an immediate exception.
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-355'>TAP5-355</a>] - TapestrySpring does not
+                support injection of Spring FactoryBeans
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-357'>TAP5-357</a>] - Tapestry documentation should
+                clearly/boldly identify the release number
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-359'>TAP5-359</a>] - Use of the email validator
+                with client-side validation displays a pop-up error message about client-side validator &quot;email&quot;
+                being missing
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-370'>TAP5-370</a>] - Error from DocumentLinker
+                about missing &lt;html&gt; tag, even for XML document w/o JavaScript
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-373'>TAP5-373</a>] - When JavaScript libraries are
+                moved to the &quot;top&quot; of the document, they should be added to the &lt;head&gt;, not the &lt;body&gt;
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-377'>TAP5-377</a>] - Broken links inside on project
+                site to pipeline description and to JIRA
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-378'>TAP5-378</a>] - Missing i18n files for
+                Brazilian Portuguese
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-385'>TAP5-385</a>] - Tapestry 5 often renders empty
+                elements incorrectly
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-391'>TAP5-391</a>] - Link from Form page to
+                checkbox page (on website) is incorrect
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-399'>TAP5-399</a>] - Modified application state
+                objects are not persisted back to the session at the end of the request
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-402'>TAP5-402</a>] - BeanDisplay properties that
+                render nothing cause layout errors (they should render a &amp;nbsp;)
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-403'>TAP5-403</a>] - OneShotLock tests fail under
+                JDK 1.6 because of JVM differences
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-405'>TAP5-405</a>] - Documentation should reference
+                Index instead of Start page
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-407'>TAP5-407</a>] - DocumentLinker should not use
+                the deprecated practice of HTML commenting out the &lt;script&gt; block
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-408'>TAP5-408</a>] - Objects that persist in the
+                session should automatically re-store themselves into the session at the end of the request
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-413'>TAP5-413</a>] - Invalidating the session may
+                cause an exception at the end of the request if there is a &quot;dirty&quot; ASO
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-416'>TAP5-416</a>] - Javascript error with IE and
+                Window Prototype
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-419'>TAP5-419</a>] - Logging of component class
+                transformations has typo in prefix
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-425'>TAP5-425</a>] - When attempting to reference a
+                property whose name is a single letter, Tapestry fails with a wierd exception
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-428'>TAP5-428</a>] - It should be possible to use
+                tapestry-spring in an environment where the Spring ApplicationContext is created externally (as was the
+                case in Tapestry 5.0)
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-431'>TAP5-431</a>] - When using an externally
+                configuration Spring ApplicationContext, beans of the context should be registered as services (as was
+                the case in Tapestry 5.0)
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-441'>TAP5-441</a>] - Tapestry should be using
+                ServletContext.getMimeType() to map from file extensions to MIME types
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-443'>TAP5-443</a>] - Clicking an action link when
+                using tapestry-upload always throws an exception
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-444'>TAP5-444</a>] - ToStringService uses @Override
+                annotation improperly
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-449'>TAP5-449</a>] - @CleanupRender Render phase
+                methods not always invoked
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-454'>TAP5-454</a>] - All classpath assets should
+                automatically have a version number (the application version number) in the URL
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-457'>TAP5-457</a>] - Illegal prefix for XML
+                namespace
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-464'>TAP5-464</a>] - The Invokable interface should
+                be moved to a public package (it is currently internal, even though some public interfaces reference it)
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-467'>TAP5-467</a>] -
+                ResponseCompressionAnalyzerImpl should trim spaces before comparing accepted-encoding to &quot;gzip&quot;
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-468'>TAP5-468</a>] - ResponseCompressionAnalyzer
+                should disregard the charset when comparing configured exluded mime types
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-470'>TAP5-470</a>] - The exception report should
+                only split system properties whose name ends in &quot;.path&quot;
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-471'>TAP5-471</a>] - MetaDataLocator throws an
+                exception if meta-data not found and no symbol provides a value; this should be documented
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-478'>TAP5-478</a>] - If you use Grid's add and
+                include parameters, the new column added with add must be also be mentioned in include
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-484'>TAP5-484</a>] - Quickstart should include a
+                test scope dependency on EasyMock
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-488'>TAP5-488</a>] - Typo in error message when
+                contributing to unknown service
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-489'>TAP5-489</a>] - The comment inside
+                AssetBinding concerning invariant is out of date, in that all Assets now use complete URLs
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-490'>TAP5-490</a>] - Link from Ajax guide page to
+                component reference is broken
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-505'>TAP5-505</a>] - JettyRunner is not able to
+                start on Windows machine if the web application path is absolute
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-507'>TAP5-507</a>] - Comments between the DOCTYPE
+                and the root element now cause render errors
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-528'>TAP5-528</a>] - The new quickstart layout
+                should be simplified to remove &quot;lorem ipson&quot; text
+            </li>
+        </ul>
+
+        <h2>Improvement
+        </h2>
+        <ul>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-24'>TAP5-24</a>] - Document changing the
+                (persisted) locale
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-60'>TAP5-60</a>] - Provide an alternate approach to
+                decorating services based on aspects
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-79'>TAP5-79</a>] - Improve Tapestry's property
+                expression language to include OGNL-like features
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-100'>TAP5-100</a>] - When rendering a partial
+                markup response, Tapestry should quote attributes with single quotes (so that each quote doesn't have to
+                be escaped in the JSON)
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-165'>TAP5-165</a>] - Components which use
+                PrimaryKeyEncoder should be changed to use ValueEncoder, and PrimaryKeyEncoder should be deprecated
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-181'>TAP5-181</a>] - Highlight duplicated IDs.
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-194'>TAP5-194</a>] - Handler method of Submit
+                component should accept a context
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-209'>TAP5-209</a>] - quickstart archetype should
+                provide a sample page .properties file
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-216'>TAP5-216</a>] - Many methods of the Page
+                interface could be moved to PageResources (which should be renamed to ComponentPageElementResources)
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-346'>TAP5-346</a>] - Maven resource filtering
+                pre-expands some Tapestry expansions: docs should warn of this
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-364'>TAP5-364</a>] - BeanEditForm should include
+                the same autofocus parameter that Form has
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-365'>TAP5-365</a>] - Localization support for
+                Japanese
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-371'>TAP5-371</a>] - Service contribution methods
+                should be able to include a parameter of type Logger (the service's logger), so as to give contributions
+                the option to log with the service
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-380'>TAP5-380</a>] - Add localization support for
+                Greek
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-382'>TAP5-382</a>] - PersistenceConstants should
+                have all persistence field strategies
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-383'>TAP5-383</a>] - Expose a LinkCreationHub
+                service to allow for listeners that wish to observe (and modify) new Link instances
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-386'>TAP5-386</a>] - Tapestry IoC documentation
+                improvements
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-390'>TAP5-390</a>] - Improve component reports by
+                providing links to javadocs of tapestry classes
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-392'>TAP5-392</a>] - tapestry-hibernate should be
+                split into two parts: tapestry-hibernate-core and tapestry-hibernate, with tapestry-hibernate-core being
+                usable outside of a Tapestry web application
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-393'>TAP5-393</a>] - Tapestry IOC should log the
+                names of any loaded module classes and clearly indicate module classes that could not be loaded
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-406'>TAP5-406</a>] - Remove IDEA and Eclipse
+                control files from the source tree
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-417'>TAP5-417</a>] - Tapestry Performance
+                Improvements
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-422'>TAP5-422</a>] - Tapestry should encode the
+                user's locale into the URL rather than as an HTTP cookie
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-429'>TAP5-429</a>] - Tapestry should throw an
+                exception when a contribute method of a module class does not match a known service
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-435'>TAP5-435</a>] - AjaxFormLoop does not include
+                a parameter for specifying the animation on adding a new element
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-442'>TAP5-442</a>] - Add a context: binding prefix
+                to make it super-easy to reference context assets from templates
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-445'>TAP5-445</a>] - Add ability to turn off GZIP
+                compression easily, for both static assets and dynamic page renders
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-447'>TAP5-447</a>] - ExceptionDisplay should render
+                uninteresting stack frames but include a client-side control to toggle their visibility
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-448'>TAP5-448</a>] - Assets should no longer
+                attempt to generate relative URIs
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-451'>TAP5-451</a>] - Upgrade Selenium dependencies
+                to new beta (which supports FireFox 3)
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-458'>TAP5-458</a>] - Tapestry quickstart should
+                include a basic, but visually pleasing, Layout component
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-459'>TAP5-459</a>] - Quickstart should include
+                provided scope dependency on the servlet API
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-462'>TAP5-462</a>] - FAQ: The Hibernate startup
+                question now has a really easy answer
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-465'>TAP5-465</a>] - Add a LazyAdvisor service that
+                can allow method invocations on services to be lazily evaluated
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-479'>TAP5-479</a>] - Quickstart archetype should
+                include a basic site.xml and index.apt
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-481'>TAP5-481</a>] - Quickstart archetype should
+                include a test scope dependency on tapestry-test
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-482'>TAP5-482</a>] - Maven repository location
+                http://archiva.openqa.org/repository/releases has a unwanted trailing slash in the master pom.xml
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-487'>TAP5-487</a>] - Easier way to expose
+                parameters of an embedded component in a containing component
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-496'>TAP5-496</a>] - Change If and Unless to render
+                thier template element if provided (i.e., when using t:type) as well as informal parameters
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-498'>TAP5-498</a>] - Upgrade Javassist dependency
+                to latest version, 3.9.0.GA
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-499'>TAP5-499</a>] - Cleanup and simplfy PageTester
+                to remove ComponentInvocation, InvocationTarget, etc.
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-503'>TAP5-503</a>] - Make Live Class and Template
+                Reloading feature work in OSGi
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-516'>TAP5-516</a>] - When rendering a PageLink, it
+                should not be necessary to load the target page instance just to see if there's a page activation
+                context
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-522'>TAP5-522</a>] - Reduce memory footprint by
+                sharing binding descriptions
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-523'>TAP5-523</a>] - Submit component should be
+                able to render an input field of type image
+            </li>
+        </ul>
+
+        <h2>New Feature
+        </h2>
+        <ul>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-66'>TAP5-66</a>] - Use namespaces in templates to
+                reference components in libraries
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-70'>TAP5-70</a>] - Tapestry should automatically
+                compress content sent to the client, if the client supports it
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-90'>TAP5-90</a>] - Context assets should be
+                versioned and provided with a far future expires header, just like classpath assets
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-95'>TAP5-95</a>] - Optimize page construction for
+                repeated construction of the same page
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-106'>TAP5-106</a>] - When filtering out stack
+                frames in ExceptionAnalyzer, frames for sun.reflect could easily be omitted
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-112'>TAP5-112</a>] - Define new namespace, p:, for
+                block parameters
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-139'>TAP5-139</a>] - @Autobuild annotation for
+                parameters, implicitly invokes ObjectLocator.autobuild()
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-140'>TAP5-140</a>] - The services used to handle
+                live reloading should be made public
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-215'>TAP5-215</a>] - Configuration interface should
+                support contributing a class (which is autobuilt) in addition to an instance
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-291'>TAP5-291</a>] - Now that field injection is
+                supported, we need an annotation for methods to invoke after the component is fully constructed
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-295'>TAP5-295</a>] - Option to startup Hibernate
+                early, rather than lazily on first request
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-316'>TAP5-316</a>] - Add service overriding
+                capabilities to tapestry-ioc, similar to what tapestry-core has (the Alias service)
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-427'>TAP5-427</a>] - Allow injection of Tapestry
+                services into Spring beans
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-430'>TAP5-430</a>] - Annotation for services to
+                indicate that the service should not be decorated
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-434'>TAP5-434</a>] - Add documentation about using
+                PersistentLocale service to effect a change in locale
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-436'>TAP5-436</a>] - Tapestry should verify that
+                all public methods of a module class are meaningful to Tapestry (build, decorate, contribute or bind),
+                other methods should cause an exception to be thrown as a likely typo in the name
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-437'>TAP5-437</a>] - The OrderedConfiguration and
+                MappedConfiguration interfaces should allow for override() methods (similar to add())
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-439'>TAP5-439</a>] - Add annotation, @ServiceId,
+                that can be placed on a builder method or service class to identify the service id to use
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-446'>TAP5-446</a>] - Tapestry should output a &lt;meta&gt;
+                tag to identify Tapestry as the generator (with an option to turn this off for applications that don't
+                want to advertise their technology)
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-472'>TAP5-472</a>] - Make it possible and easy to
+                use a content delivery network
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-476'>TAP5-476</a>] - Have a common handler/filter
+                pipeline for both component event and page render requests, to make it easier to add filters that apply
+                to both types of requests
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-491'>TAP5-491</a>] - Quickstart archetype build
+                should generate an archetype-catalog.xml into Tapestry360's maven-repository or
+                maven-snapshot-repository, to faciliate the use of the mvn archetype:generate goal
+            </li>
+        </ul>
+
+        <h2>Task
+        </h2>
+        <ul>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-372'>TAP5-372</a>] - Merge changes from 5.0.16 --&gt;
+                5.0.17 into trunk (5.1)
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-379'>TAP5-379</a>] - Add the Ars Machina Project to
+                the list of Tapestry 5-related packages
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-381'>TAP5-381</a>] - Documentation talks about a
+                &quot;tapestry.charset&quot; when there's no such configuration documented
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-480'>TAP5-480</a>] - Upgrade Surefire Plugin and
+                TestNG dependencies to latest version (2.4.3 and 5.8, respectively)
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-493'>TAP5-493</a>] - Translate
+                StructureStrings#original-child-component
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-494'>TAP5-494</a>] - Downgrade maven-site-plugin
+                from 2.0-beta-6 to 2.0-beta-5 because we prefer a site that actually works
+            </li>
+        </ul>
 
 
     </body>
