@@ -16,7 +16,10 @@ Quickstart Archetype
   
   From the command line, you execute the following command:
 
-  <<<mvn archetype:generate -DarchetypeCatalog=http://tapestry.formos.com/maven-snapshot-repository>>>
+  <<<mvn archetype:generate -DarchetypeCatalog=http://tapestry.formos.com/maven-repository>>>
+
+  Note: use the URL http://tapestry.formos.com/maven-snapshot-repository if you want to access a snapshot version of the archetype, rather
+  than the most recent released version.
 
   Maven uses the archetypeCatalog to get a list of available archetypes; in this case, the only option is the Tapestry Quickstart.
   It will then ask you to enter the groupId, artifactId, version, and package.

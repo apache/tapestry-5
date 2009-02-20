@@ -94,10 +94,14 @@ of testing facilities designed for use with TestNG (http://testng.org/), so it's
     </reporting>
 
     <repositories>
-        <!-- This can be commented out when the tapestry-release-version is a not a snapshot.
- The non-snapshot Tapestry artifacts are distributed through the central
- repository at ibiblio.     -->
 
+        <!-- This repository is only needed if the Tapestry released artifacts haven't made it to the central Maven repository yet. -->
+        <repository>
+            <id>tapestry</id>
+            <url>http://tapestry.formos.com/maven-repository/</url>
+        </repository>
+
+        <!-- This repository is only needed when the tapestry-release-version is a snapshot release. -->
         <repository>
             <id>tapestry-snapshots</id>
             <url>http://tapestry.formos.com/maven-snapshot-repository/</url>
@@ -127,6 +131,6 @@ of a Tapestry Maven plugin is not required.   -->
     </pluginRepositories>
 
     <properties>
-        <tapestry-release-version>5.1.0.0</tapestry-release-version>
+        <tapestry-release-version>5.1.0.1-SNAPSHOT</tapestry-release-version>
     </properties>
 </project>
