@@ -56,7 +56,7 @@ public class ComponentReport extends AbstractMavenReport
     private static final String REFERENCE_DIR = "ref";
 
     private final static String[] PARAMETER_HEADERS = {"Name", "Type", "Flags", "Default", "Default Prefix",
-            "Description"};
+    	"Since","Description"};
 
     private static final Pattern TAPESTRY5_PATTERN = Pattern.compile("(org\\.apache\\.tapestry5[#_\\w\\.]*)");
 
@@ -402,6 +402,13 @@ public class ComponentReport extends AbstractMavenReport
 
             addChild(addChild(container, "ul"), "li", className);
         }
+        
+        if(!"".equals(cd.getSince()))
+        {
+        	section = addSection(body, "Available since");
+        	
+        	addChild(section, "p", cd.getSince());
+        }
 
 
         if (!parameters.isEmpty())
@@ -440,6 +447,7 @@ public class ComponentReport extends AbstractMavenReport
                 addChild(row, "td", InternalUtils.join(flags));
                 addChild(row, "td", pd.getDefaultValue());
                 addChild(row, "td", pd.getDefaultPrefix());
+                addChild(row, "td", pd.getSince());
                 addChildWithJavadocs(row, "td", pd.getDescription(), javadocHref);
             }
         }
@@ -807,9 +815,10 @@ public class ComponentReport extends AbstractMavenReport
             String className = element.getAttributeValue("name");
             String superClassName = element.getAttributeValue("super-class");
             String supportsInformalParameters = element.getAttributeValue("supports-informal-parameters");
+            String since = element.getAttributeValue("since");
 
             ClassDescription cd = new ClassDescription(className, superClassName, description,
-                                                       Boolean.valueOf(supportsInformalParameters));
+                                                       Boolean.valueOf(supportsInformalParameters), since);
 
             result.put(className, cd);
 
@@ -839,9 +848,10 @@ public class ComponentReport extends AbstractMavenReport
             boolean allowNull = Boolean.parseBoolean(node.getAttributeValue("allowNull"));
             String defaultPrefix = node.getAttributeValue("default-prefix");
             String description = node.getValue();
+            String since = node.getAttributeValue("since");
 
             ParameterDescription pd = new ParameterDescription(name, type, defaultValue, defaultPrefix, required,
-                                                               allowNull, cache, description);
+                                                               allowNull, cache, description, since);
 
             cd.getParameters().put(name, pd);
         }
