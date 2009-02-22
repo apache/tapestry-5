@@ -31,10 +31,12 @@ public class ParameterDescription
     private final boolean cache;
 
     private final String description;
+    
+    private final String since;
 
     public ParameterDescription(String name, String type, String defaultValue,
                                 String defaultPrefix, boolean required, boolean allowNull, boolean cache,
-                                String description)
+                                String description, String since)
     {
         this.name = name;
         this.type = type;
@@ -44,6 +46,7 @@ public class ParameterDescription
         this.allowNull = allowNull;
         this.cache = cache;
         this.description = description;
+        this.since = since;
     }
 
     public boolean getCache()
@@ -85,4 +88,9 @@ public class ParameterDescription
     {
         return allowNull;
     }
+
+	public String getSince() 
+	{
+		return since;
+	}
 }

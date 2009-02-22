@@ -81,8 +81,8 @@ public class ParametersDoclet extends Doclet
             
             Map<String, String> annotationValues = findAnnotation(classDoc, "SupportsInformalParameters");
 
-            println("<class name=\"%s\" super-class=\"%s\"  supports-informal-parameters=\"%s\">", classDoc.qualifiedTypeName(),
-                    classDoc.superclass().qualifiedTypeName(), annotationValues!=null);
+            println("<class name=\"%s\" super-class=\"%s\"  supports-informal-parameters=\"%s\" since=\"%s\">", classDoc.qualifiedTypeName(),
+                    classDoc.superclass().qualifiedTypeName(), annotationValues!=null, getSinceTagValue(classDoc));
             print("<description>");
             printDescription(classDoc);
             println("</description>", classDoc.commentText());
@@ -100,10 +100,11 @@ public class ParametersDoclet extends Doclet
                 String name = annotationValues.get("name");
                 if (name == null) name = fd.name().replaceAll("^[$_]*", "");
 
-                print("<parameter name=\"%s\" type=\"%s\" default=\"%s\" required=\"%s\" cache=\"%s\" default-prefix=\"%s\">",
+                print("<parameter name=\"%s\" type=\"%s\" default=\"%s\" required=\"%s\" cache=\"%s\" " +
+                		          "default-prefix=\"%s\" since=\"%s\">",
                       name, fd.type().qualifiedTypeName(), get(annotationValues, "value", ""),
                       get(annotationValues, "required", "false"), get(annotationValues, "cache", "true"),
-                      get(annotationValues, "defaultPrefix", "prop"));
+                      get(annotationValues, "defaultPrefix", "prop"), getSinceTagValue(fd));
 
                 // Body of a parameter is the comment text.
 
@@ -113,6 +114,13 @@ public class ParametersDoclet extends Doclet
             }
 
             println("</class>");
+        }
+        
+        private String getSinceTagValue(Doc doc)
+        {
+        	Tag[] sinceTags = doc.tags("since");
+        	
+        	return 0<sinceTags.length? sinceTags[0].text():"";
         }
 
         private String get(Map<String, String> map, String key, String defaultValue)

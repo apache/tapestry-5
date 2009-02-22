@@ -178,14 +178,16 @@ public class ComponentReportTest extends Assert
                 "java.lang.Object",
                 "When it renders, it fires a org.apache.tapestry5.EventConstants#PREPARE_FOR_RENDER\n" +
                         " notification, followed by a org.apache.tapestry5.EventConstants#PREPARE",
-                false
+                false,
+                "5.1.0.0"
         );
 
         ParameterDescription paramDesc = new ParameterDescription(
                 "validationId", "String", "", "prop", false, false, true,
                 "Prefix value used when searching for validation messages and constraints. " +
                         "The default is the Form component's\n" +
-                        " id. This is overriden by org.apache.tapestry5.corelib.components.BeanEditForm."
+                        " id. This is overriden by org.apache.tapestry5.corelib.components.BeanEditForm.",
+                        "5.1.0.0"
         );
         classDesc.getParameters().put(paramDesc.getName(), paramDesc);
 
