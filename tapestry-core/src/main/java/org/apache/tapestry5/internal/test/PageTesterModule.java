@@ -61,9 +61,9 @@ public class PageTesterModule
         configuration.add(contribution);
     }
 
-    public static void contributeApplicationDefaults(MappedConfiguration<String, String> configuration)
+    public static void contributeFactoryDefaults(MappedConfiguration<String, String> configuration)
     {
-        configuration.add(SymbolConstants.FORCE_ABSOLUTE_URIS, "true");
+        configuration.override(SymbolConstants.FORCE_ABSOLUTE_URIS, "true");
     }
 
     public static void contributeRequestHandler(OrderedConfiguration<RequestFilter> configuration)
