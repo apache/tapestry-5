@@ -23,7 +23,6 @@ import org.apache.tapestry5.grid.*;
 import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.internal.beaneditor.BeanModelUtils;
 import org.apache.tapestry5.internal.bindings.AbstractBinding;
-import org.apache.tapestry5.internal.services.ClientBehaviorSupport;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.services.*;

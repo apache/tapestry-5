@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,9 +20,9 @@ import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.grid.GridDataSource;
 import org.apache.tapestry5.internal.InternalConstants;
-import org.apache.tapestry5.internal.services.ClientBehaviorSupport;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.services.ClientBehaviorSupport;
 
 /**
  * Generates a series of links used to jump to a particular page index within the overall data set.
@@ -137,8 +137,8 @@ public class GridPager
         }
 
         Object[] context = zone == null
-                           ? new Object[] {pageIndex}
-                           : new Object[] {pageIndex, zone};
+                           ? new Object[] { pageIndex }
+                           : new Object[] { pageIndex, zone };
 
         Link link = resources.createEventLink(EventConstants.ACTION, context);
 
@@ -176,7 +176,7 @@ public class GridPager
     {
         onAction(newPage);
 
-        resources.triggerEvent(InternalConstants.GRID_INPLACE_UPDATE, new Object[] {zone}, null);
+        resources.triggerEvent(InternalConstants.GRID_INPLACE_UPDATE, new Object[] { zone }, null);
 
         return true; // abort event
     }
