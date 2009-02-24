@@ -1,4 +1,4 @@
-// Copyright 2008 The Apache Software Foundation
+// Copyright 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ import org.apache.tapestry5.Link;
 import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.Parameter;
-import org.apache.tapestry5.internal.services.ClientBehaviorSupport;
+import org.apache.tapestry5.services.ClientBehaviorSupport;
 
 /**
  * Base class for link-generating components that are based on a component event request. Such events have an event

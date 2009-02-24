@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,8 +15,8 @@
 package org.apache.tapestry5.corelib.internal;
 
 import org.apache.tapestry5.Field;
-import org.apache.tapestry5.internal.services.ClientBehaviorSupport;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
+import org.apache.tapestry5.services.ClientBehaviorSupport;
 import org.testng.annotations.Test;
 
 public class FormSupportImplTest extends InternalBaseTestCase
