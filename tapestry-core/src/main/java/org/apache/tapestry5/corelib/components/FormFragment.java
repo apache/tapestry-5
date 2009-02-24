@@ -1,4 +1,4 @@
-// Copyright 2008 The Apache Software Foundation
+// Copyright 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -22,7 +22,6 @@ import org.apache.tapestry5.corelib.internal.ComponentActionSink;
 import org.apache.tapestry5.corelib.internal.FormSupportAdapter;
 import org.apache.tapestry5.corelib.internal.HiddenFieldPositioner;
 import org.apache.tapestry5.dom.Element;
-import org.apache.tapestry5.internal.services.ClientBehaviorSupport;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.*;
 import org.slf4j.Logger;
@@ -34,7 +33,6 @@ import org.slf4j.Logger;
  * org.apache.tapestry5.corelib.components.Form#FORM_DATA form data} for the fragment if it is invisible when the form
  * is submitted; alternately, client-side logic can simply remove the form fragment element (including its visible and
  * hidden fields) to prevent server-side processing.
- * <p/>
  * <p/>
  * The client-side element has a new property, formFragment, added to it.  The formFragment object has new methods to
  * control the client-side behavior of the fragment: <dl> <dt>hide()</dt> <dd>Hides the element, using the configured

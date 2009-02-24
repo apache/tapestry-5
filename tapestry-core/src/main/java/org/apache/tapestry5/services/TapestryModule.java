@@ -1540,10 +1540,10 @@ public final class TapestryModule
      * components as they render. <dl> <dt>DocumentLinker</dt> <dd>Provides {@link org.apache.tapestry5.internal.services.DocumentLinker}
      * <dt>RenderSupport</dt>  <dd>Provides {@link org.apache.tapestry5.RenderSupport}</dd>
      * <dt>InjectDefaultStyleheet</dt> <dd>Injects the default stylesheet</dd></dt> <dt>ClientBehaviorSupport</dt>
-     * <dd>Provides {@link org.apache.tapestry5.internal.services.ClientBehaviorSupport}</dd> <dt>Heartbeat</dt>
-     * <dd>Provides {@link org.apache.tapestry5.services.Heartbeat}</dd> <dt>DefaultValidationDecorator</dt>
-     * <dd>Provides {@link org.apache.tapestry5.ValidationDecorator} (as an instance of {@link
-     * org.apache.tapestry5.internal.DefaultValidationDecorator})</dd> </dl>
+     * <dd>Provides {@link ClientBehaviorSupport}</dd> <dt>Heartbeat</dt> <dd>Provides {@link
+     * org.apache.tapestry5.services.Heartbeat}</dd> <dt>DefaultValidationDecorator</dt> <dd>Provides {@link
+     * org.apache.tapestry5.ValidationDecorator} (as an instance of {@link org.apache.tapestry5.internal.DefaultValidationDecorator})</dd>
+     * </dl>
      */
     public void contributeMarkupRenderer(OrderedConfiguration<MarkupRendererFilter> configuration,
 
@@ -1693,10 +1693,10 @@ public final class TapestryModule
      * Contributes {@link PartialMarkupRendererFilter}s used when rendering a partial Ajax response. <dl>
      * <dt>DocumentLinker <dd>Provides {@link org.apache.tapestry5.internal.services.DocumentLinker} <dt>
      * PageRenderSupport     </dt> <dd>Provides {@link org.apache.tapestry5.RenderSupport}</dd>
-     * <dt>ClientBehaviorSupport</dt> <dd>Provides {@link org.apache.tapestry5.internal.services.ClientBehaviorSupport}</dd>
-     * <dt>Heartbeat</dt> <dd>Provides {@link org.apache.tapestry5.services.Heartbeat}</dd>
-     * <dt>DefaultValidationDecorator</dt> <dd>Provides {@link org.apache.tapestry5.ValidationDecorator} (as an instance
-     * of {@link org.apache.tapestry5.internal.DefaultValidationDecorator})</dd> </dl>
+     * <dt>ClientBehaviorSupport</dt> <dd>Provides {@link ClientBehaviorSupport}</dd> <dt>Heartbeat</dt> <dd>Provides
+     * {@link org.apache.tapestry5.services.Heartbeat}</dd> <dt>DefaultValidationDecorator</dt> <dd>Provides {@link
+     * org.apache.tapestry5.ValidationDecorator} (as an instance of {@link org.apache.tapestry5.internal.DefaultValidationDecorator})</dd>
+     * </dl>
      */
     public void contributePartialMarkupRenderer(OrderedConfiguration<PartialMarkupRendererFilter> configuration,
 

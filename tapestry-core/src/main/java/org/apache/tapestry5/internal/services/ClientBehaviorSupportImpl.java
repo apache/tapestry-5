@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import org.apache.tapestry5.corelib.data.InsertPosition;
 import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
+import org.apache.tapestry5.services.ClientBehaviorSupport;
 
 public class ClientBehaviorSupportImpl implements ClientBehaviorSupport
 {

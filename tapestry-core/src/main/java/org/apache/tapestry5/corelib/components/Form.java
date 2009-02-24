@@ -21,7 +21,6 @@ import org.apache.tapestry5.corelib.internal.FormSupportImpl;
 import org.apache.tapestry5.corelib.internal.InternalFormSupport;
 import org.apache.tapestry5.corelib.mixins.RenderInformals;
 import org.apache.tapestry5.dom.Element;
-import org.apache.tapestry5.internal.services.ClientBehaviorSupport;
 import org.apache.tapestry5.internal.services.ComponentResultProcessorWrapper;
 import org.apache.tapestry5.internal.services.HeartbeatImpl;
 import org.apache.tapestry5.internal.util.AutofocusValidationDecorator;
@@ -338,7 +337,7 @@ public class Form implements ClientElement, FormValidationControl
         environment.pop(ValidationTracker.class);
     }
 
-    @SuppressWarnings({"unchecked", "InfiniteLoopStatement"})
+    @SuppressWarnings({ "unchecked", "InfiniteLoopStatement" })
     @Log
     Object onAction(EventContext context) throws IOException
     {
