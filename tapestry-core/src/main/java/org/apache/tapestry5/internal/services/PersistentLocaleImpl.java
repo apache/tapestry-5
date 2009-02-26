@@ -14,30 +14,64 @@
 
 package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry5.ioc.ScopeConstants;
-import org.apache.tapestry5.ioc.annotations.Scope;
+import org.apache.tapestry5.SymbolConstants;
+import org.apache.tapestry5.internal.TapestryInternalUtils;
+import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.annotations.Symbol;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.Defense;
+import org.apache.tapestry5.ioc.services.PerthreadManager;
 import org.apache.tapestry5.services.PersistentLocale;
 
 import java.util.Locale;
+import java.util.Set;
 
-@Scope(ScopeConstants.PERTHREAD)
 public class PersistentLocaleImpl implements PersistentLocale
 {
-    private Locale locale;
+    private final PerthreadManager perThreadManager;
+
+    private final String supportedLocales;
+
+    private final Set<String> localeNames = CollectionFactory.newSet();
+
+    public PersistentLocaleImpl(PerthreadManager perThreadManager,
+
+                                @Inject @Symbol(SymbolConstants.SUPPORTED_LOCALES)
+                                String supportedLocales)
+    {
+        this.perThreadManager = perThreadManager;
+        this.supportedLocales = supportedLocales;
+
+        for (String name : TapestryInternalUtils.splitAtCommas(supportedLocales))
+        {
+            localeNames.add(name.toLowerCase());
+        }
+    }
 
     public void set(Locale locale)
     {
-        this.locale = Defense.notNull(locale, "locale");
+        Defense.notNull(locale, "locale");
+
+        if (!localeNames.contains(locale.toString().toLowerCase()))
+        {
+            String message = String.format(
+                    "Locale '%s' is not supported by this application. Supported locales are '%s'; this is configured via the %s symbol.",
+                    locale, supportedLocales, SymbolConstants.SUPPORTED_LOCALES);
+
+            throw new IllegalArgumentException(message);
+        }
+
+
+        perThreadManager.put(this, locale);
     }
 
     public Locale get()
     {
-        return locale;
+        return (Locale) perThreadManager.get(this);
     }
 
     public boolean isSet()
     {
-        return locale != null;
+        return get() != null;
     }
 }
