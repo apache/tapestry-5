@@ -47,7 +47,7 @@ Securing Multiple Pages
 ----
 public void contributeMetaDataLocator(MappedConfiguration<String,String> configuration)
 {
-  configuration.put("admin:" + MetaDataConstants.SECURE_PAGE, "true");
+    configuration.add("admin:" + MetaDataConstants.SECURE_PAGE, "true");
 }
 ----
 
@@ -63,7 +63,7 @@ public void contributeMetaDataLocator(MappedConfiguration<String,String> configu
 ---
 public void contributeMetaDataLocator(MappedConfiguration<String,String> configuration)
 {
-  configuration.put(TapestryConstants.SECURE_PAGE, "true");
+    configuration.add(MetaDataConstants.SECURE_PAGE, "true");
 }
 ----
 
