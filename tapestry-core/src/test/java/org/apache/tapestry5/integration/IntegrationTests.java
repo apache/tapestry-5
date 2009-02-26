@@ -2690,13 +2690,24 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
     private void assertBubbleMessage(String fieldId, String expected)
     {
-        String condition = String.format(
-                "selenium.browserbot.getCurrentWindow().document.getElementById('%s:errorpopup')",
-                fieldId);
+        String popupId = fieldId + ":errorpopup";
 
-        waitForCondition(condition, PAGE_LOAD_TIMEOUT);
+        waitForElementToAppear(popupId);
 
-        assertText(String.format("//div[@id='%s:errorpopup']/span", fieldId), expected);
+        assertText(String.format("//div[@id='%s']/span", popupId), expected);
+    }
 
+    /**
+     * TAP5-236
+     */
+    public void progressive_display()
+    {
+        start("ProgressiveDisplay Demo");
+
+        waitForElementToAppear("content1");
+        assertText("content1", "Progressive Display content #1.");
+
+        waitForElementToAppear("content2");
+        assertText("content2", "Music Library");
     }
 }

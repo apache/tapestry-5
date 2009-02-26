@@ -1,0 +1,28 @@
+<t:border xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd"
+          xmlns:p="tapestry:parameter">
+
+    <t:progressiveDisplay t:id="disp1">
+        <p id="content1">
+            Progressive Display content #1.
+        </p>
+    </t:progressiveDisplay>
+
+    <t:progressivedisplay t:id="disp2">
+
+        <p>
+            Progressive display content #2.
+        </p>
+
+        <h3 id="content2">Music Library</h3>
+
+        <p>Time is ${now}.</p>
+
+        <t:progressivedisplay update="slidedown">
+
+
+            <t:grid inplace="true" t:id="music" source="musicLibrary.tracks"/>
+
+        </t:progressivedisplay>
+    </t:progressivedisplay>
+
+</t:border>

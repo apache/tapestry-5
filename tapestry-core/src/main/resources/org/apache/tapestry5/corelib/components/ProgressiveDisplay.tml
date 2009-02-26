@@ -1,0 +1,6 @@
+<t:container xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd"
+             xmlns:p="tapestry:parameter">
+    <t:block id="defaultInitial">
+        <div class="t-loading">${message:progressive-display-loading}</div>
+    </t:block>
+</t:container>
