@@ -19,25 +19,25 @@ import org.apache.tapestry5.Translator;
 import org.apache.tapestry5.ValidationException;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.services.ThreadLocale;
 import org.apache.tapestry5.services.TranslatorSource;
-import org.apache.tapestry5.services.ValidationMessagesSource;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import java.util.Collection;
+import java.util.Locale;
 
 public class TranslatorSourceImplTest extends InternalBaseTestCase
 {
     private TranslatorSource source;
 
-    private ValidationMessagesSource messagesSource;
-
     @BeforeClass
     public void setup()
     {
         source = getService(TranslatorSource.class);
-        messagesSource = getService(ValidationMessagesSource.class);
+
+        getService(ThreadLocale.class).setLocale(Locale.ENGLISH);
     }
 
 
@@ -124,6 +124,8 @@ public class TranslatorSourceImplTest extends InternalBaseTestCase
                 { Short.class, " -121 ", (short) -121 },
 
                 { Integer.class, " 123 ", 123 },
+
+                { Integer.class, " 20,000 ", 20000 },
 
                 { Long.class, "  -1234567 ", -1234567l },
 

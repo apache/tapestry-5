@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -32,15 +32,8 @@ var Tapestry = {
      */
     FORM_PROCESS_SUBMIT_EVENT : "tapestry:formprocesssubmit",
 
-    /** Event, triggered on a field element, to cause observers validate the format of the input, and potentially
-     *  reformat it. The field will be passed to observers as the event memo.  This event will be followed by
-     *  FIELD_VALIDATE_EVENT, if the field's value is non-blank. Observers may invoke Element.showValidationMessage()
-     *  to identify that the field is in error (and decorate the field and show a popup error message).
-     */
-    FIELD_FORMAT_EVENT : "tapestry:fieldformat",
-
-    /** Event, triggered on a field element, to cause observers to validate the input. The field will be passed
-     * to observers as the event memo.    Observers may invoke Element.showValidationMessage()
+    /** Event, triggered on a field element, to cause observers to validate the input. The field's translated
+     * value will be passed to observers as the event memo.  Observers may invoke Element.showValidationMessage()
      *  to identify that the field is in error (and decorate the field and show a popup error message).
      */
     FIELD_VALIDATE_EVENT : "tapestry:fieldvalidate",
@@ -64,7 +57,7 @@ var Tapestry = {
     },
 
     /** Find all elements marked with the "t-invisible" CSS class and hide()s them, so that
-     * Prototype's visible() method operates correctly.                                    In addition,
+     * Prototype's visible() method operates correctly. In addition,
      * finds form control elements and adds additional listeners to them to support
      * form field input validation.
      *
@@ -434,6 +427,51 @@ var Tapestry = {
         var slashx = URL.lastIndexOf("/");
 
         return URL.substring(0, slashx + 1);
+    },
+
+    /**
+     * Convert a user-provided localized number to an ordinary number (not a string).
+     * Removes seperators and leading/trailing whitespace. Disallows the decimal point if isInteger is true.
+     * @param number string provided by user
+     * @param isInteger if true, disallow decimal point
+     */
+    formatLocalizedNumber : function(number, isInteger)
+    {
+        // We convert from localized string to a canonical string,
+        // stripping out  group seperators (normally commas). If isInteger is
+        // true, we don't allow a decimal point.
+
+        var minus = Tapestry.decimalFormatSymbols.minusSign;
+        var grouping = Tapestry.decimalFormatSymbols.groupingSeparator;
+        var decimal = Tapestry.decimalFormatSymbols.decimalSeparator;
+
+        var canonical = "";
+
+        number.strip().toArray().each(function(ch)
+        {
+            if (ch == minus)
+            {
+                canonical += "-";
+                return;
+            }
+
+            if (ch == grouping)
+            {
+                return;
+            }
+
+            if (ch == decimal)
+            {
+                if (isInteger) throw "Not an integer";
+
+                ch = ".";
+            }
+            else if (ch < "0" || ch > "9") throw "Invalid character";
+
+            canonical += ch;
+        });
+
+        return Number(canonical);
     }
 
 };
@@ -582,9 +620,6 @@ Element.addMethods(['INPUT', 'SELECT', 'TEXTAREA'],
     {
         element = $(element);
 
-        $T(element).validationError = true;
-        $T(element.form).validationError = true;
-
         element.getFieldEventManager().showValidationMessage(message);
 
         return element;
@@ -601,28 +636,6 @@ Element.addMethods(['INPUT', 'SELECT', 'TEXTAREA'],
         return element;
     },
 
-    /** Utility method to add a validator function as an observer as an event.
-     *
-     * @param element element to observe events on
-     * @param eventName name of event to observe
-     * @param validator function passed the field's value
-     */
-    addValidatorAsObserver : function(element, eventName, validator)
-    {
-        element.observe(eventName, function(event)
-        {
-            try
-            {
-                validator.call(this, $F(element));
-            }
-            catch (message)
-            {
-                element.showValidationMessage(message);
-            }
-        });
-
-        return element;
-    },
 
     /**
      * Adds a standard validator for the element, an observer of
@@ -634,20 +647,21 @@ Element.addMethods(['INPUT', 'SELECT', 'TEXTAREA'],
      */
     addValidator : function(element, validator)
     {
-        return element.addValidatorAsObserver(Tapestry.FIELD_VALIDATE_EVENT, validator);
-    },
+        element.observe(Tapestry.FIELD_VALIDATE_EVENT, function(event)
+        {
+            try
+            {
+                // event.memo is the translated value, ready to be validated.
+                // For numeric fields, this will be a number.
+                validator.call(this, event.memo);
+            }
+            catch (message)
+            {
+                element.showValidationMessage(message);
+            }
+        });
 
-    /**
-     * Adds a standard validator for the element, an observer of
-     * Tapestry.FIELD_FORMAT_EVENT. The validator function will be
-     * passed the current field value and should throw an error message if
-     * the field's value is not valid.
-     * @param element field element to validate
-     * @param validator function to be passed the field value
-     */
-    addFormatValidator : function(element, validator)
-    {
-        return element.addValidatorAsObserver(Tapestry.FIELD_FORMAT_EVENT, validator);
+        return element;
     }
 });
 
@@ -868,33 +882,29 @@ if (window.console && ! Prototype.Browser.WebKit)
 
 Tapestry.Validator = {
 
-    INT_REGEXP : /^(\+|-)?\d+$/,
-
-    FLOAT_REGEXP : /^(\+|-)?((\.\d+)|(\d+(\.\d*)?))$/,
-
     required : function(field, message)
     {
-        field.addFormatValidator(function(value)
+        $(field).getFieldEventManager().requiredCheck = function(value)
         {
-            if (value.strip() == '') throw message;
-        });
+            if (value.strip() == '')
+                $(field).showValidationMessage(message);
+        };
     },
 
-    /** Validate that the input is a numeric integer. */
-    integernumber : function(field, message)
+    /** Supplies a client-side numeric translator for the field. */
+    numericformat : function (field, message, isInteger)
     {
-        field.addFormatValidator(function(value)
+        $(field).getFieldEventManager().translator = function(input)
         {
-            if (value != '' && ! value.match(Tapestry.Validator.INT_REGEXP)) throw message;
-        });
-    },
-
-    decimalnumber : function(field, message)
-    {
-        field.addFormatValidator(function(value)
-        {
-            if (value != '' && ! value.match(Tapestry.Validator.FLOAT_REGEXP)) throw message;
-        });
+            try
+            {
+                return Tapestry.formatLocalizedNumber(input, isInteger);
+            }
+            catch (e)
+            {
+                $(field).showValidationMessage(message);
+            }
+        };
     },
 
     minlength : function(field, message, length)
@@ -1170,6 +1180,9 @@ Tapestry.FieldEventManager = Class.create({
         this.label = $(id + ':label');
         this.icon = $(id + ':icon');
 
+        this.translator = Prototype.K;
+        // this.requiredCheck = Prototype.emptyFunction;
+
         document.observe(Tapestry.FOCUS_CHANGE_EVENT, function(event)
         {
             // If changing focus *within the same form* then
@@ -1210,6 +1223,9 @@ Tapestry.FieldEventManager = Class.create({
      */
     showValidationMessage : function(message)
     {
+        $T(this.field).validationError = true;
+        $T(this.field.form).validationError = true;
+
         this.field.addClassName("t-error");
 
         if (this.label)
@@ -1238,30 +1254,38 @@ Tapestry.FieldEventManager = Class.create({
      */
     validateInput : function()
     {
-        if (this.field.disabled) return;
+        if (this.field.disabled) return false;
 
-        if (! this.field.isDeepVisible()) return;
+        if (! this.field.isDeepVisible()) return false;
 
         var t = $T(this.field);
 
+        var value = $F(this.field);
+
         t.validationError = false;
 
-        this.field.fire(Tapestry.FIELD_FORMAT_EVENT, this.field);
+        this.requiredCheck.call(this, value);
 
-        // If Format went ok, perhaps do the other validations.
-
-        if (! t.validationError)
+        if (!t.validationError)
         {
-            var value = $F(this.field);
+            var translated = this.translator(value);
 
-            if (value != '')
-                this.field.fire(Tapestry.FIELD_VALIDATE_EVENT, this.field);
+            // If Format went ok, perhaps do the other validations.
+
+            if (! t.validationError)
+            {
+                // Pass the translated value (a string or a number)
+                // to each event handler as event.memo.
+
+                if (translated != '')
+                    this.field.fire(Tapestry.FIELD_VALIDATE_EVENT, translated);
+            }
+
+            // Lastly, if no validation errors were found, remove the decorations.
+
+            if (! t.validationError)
+                this.field.removeDecorations();
         }
-
-        // Lastly, if no validation errors were found, remove the decorations.
-
-        if (! t.validationError)
-            this.field.removeDecorations();
 
         return t.validationError;
     }
