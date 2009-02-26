@@ -135,9 +135,11 @@ public class PageImplTest extends InternalBaseTestCase
     @Test
     public void attach_notification()
     {
-
         PageLifecycleListener listener1 = newPageLifecycle();
         PageLifecycleListener listener2 = newPageLifecycle();
+
+        listener1.restoreStateBeforePageAttach();
+        listener2.restoreStateBeforePageAttach();
 
         listener1.containingPageDidAttach();
         listener2.containingPageDidAttach();

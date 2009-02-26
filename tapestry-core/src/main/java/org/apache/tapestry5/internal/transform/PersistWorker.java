@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -41,6 +41,8 @@ public class PersistWorker implements ComponentClassTransformWorker
      * default when the page detaches</li> <ii>On changes to the active field, post the change via the {@link
      * org.apache.tapestry5.internal.InternalComponentResources} </li> <li>When the page attaches, pull the persisted
      * value for the field out of the {@link org.apache.tapestry5.services.PersistentFieldBundle}</li> </ul>
+     *
+     * @see org.apache.tapestry5.runtime.PageLifecycleListener#restoreStateBeforePageAttach()
      */
     private void makeFieldPersistent(String fieldName, ClassTransformation transformation,
                                      MutableComponentModel model)
@@ -78,7 +80,7 @@ public class PersistWorker implements ComponentClassTransformWorker
 
         transformation.addMethod(new TransformMethodSignature(Modifier.PRIVATE, "void", writeMethodName,
                                                               new String[]
-                                                                      {fieldType}, null), builder.toString());
+                                                                      { fieldType }, null), builder.toString());
 
         transformation.replaceWriteAccess(fieldName, writeMethodName);
 
@@ -111,7 +113,7 @@ public class PersistWorker implements ComponentClassTransformWorker
         builder.end();
 
         transformation.extendMethod(
-                TransformConstants.CONTAINING_PAGE_DID_ATTACH_SIGNATURE,
+                TransformConstants.RESTORE_STATE_BEFORE_PAGE_ATTACH_SIGNATURE,
                 builder.toString());
     }
 }
