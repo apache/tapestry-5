@@ -15,6 +15,6 @@
         <div t:id="pager"/>
     </t:block>
 
-    <t:block id="empty">There is no data to display.</t:block>
+    <t:block id="empty">${message:no-grid-data-to-display}</t:block>
 
 </div>
