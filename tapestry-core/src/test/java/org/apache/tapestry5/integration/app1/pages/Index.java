@@ -65,6 +65,9 @@ public class Index
 
     private static final List<Item> ITEMS = CollectionFactory.newList(
 
+            new Item("ClientNumericValidationDemo", "Client-Side Numeric Validation",
+                     "Client-side locale-specific validation"),
+
             new Item("PublishParametersDemo", "Publish Parameters Demo",
                      "Use of @Component.publishParameters attribute."),
 
@@ -320,7 +323,7 @@ public class Index
                      "Nice exception message for common problem of form fields outside forms"),
 
             new Item("SubmitWithContext", "Submit With Context",
-                              "Providing a context for Submit component")
+                     "Providing a context for Submit component")
     );
 
     static

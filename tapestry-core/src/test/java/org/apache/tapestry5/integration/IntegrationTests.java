@@ -1992,12 +1992,12 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         assertText("sum", "0.0");
     }
-    
+
     @Test
     public void submit_with_context()
     {
         start("Submit With Context");
-        
+
         clickAndWait(SUBMIT);
 
         assertTextPresent("Result: 10.14159");
@@ -2629,5 +2629,74 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         assertTextPresent("Exception assembling root component of page UnsupportedParameterBlockDemo:",
                           "Component UnsupportedParameterBlockDemo:outputraw does not include a formal parameter 'unexpected' (and does not support informal parameters).");
+    }
+
+    /**
+     * TAP5-211
+     */
+    public void client_side_numeric_validation()
+    {
+        start("Client-Side Numeric Validation", "reset");
+
+        assertText("outputLongValue", "1000");
+        assertText("outputDoubleValue", "1234.67");
+
+        assertFieldValue("longValue", "1000");
+        assertFieldValue("doubleValue", "1,234.67");
+
+        type("longValue", "2,000 ");
+        type("doubleValue", " -456,789.12");
+
+        clickAndWait(SUBMIT);
+
+        assertText("outputLongValue", "2000");
+        assertText("outputDoubleValue", "-456789.12");
+
+        assertFieldValue("longValue", "2000");
+        assertFieldValue("doubleValue", "-456,789.12");
+
+        clickAndWait("link=switch to German");
+
+        assertText("outputLongValue", "2000");
+        assertText("outputDoubleValue", "-456789.12");
+
+        assertFieldValue("longValue", "2000");
+        assertFieldValue("doubleValue", "-456.789,12");
+
+        type("longValue", "3.000");
+        type("doubleValue", "5.444.333,22");
+
+        clickAndWait(SUBMIT);
+
+        assertFieldValue("longValue", "3000");
+        assertFieldValue("doubleValue", "5.444.333,22");
+
+        assertText("outputLongValue", "3000");
+        assertText("outputDoubleValue", "5444333.22");
+
+        clickAndWait("link=reset");
+
+        type("longValue", "4000.");
+        click(SUBMIT);
+
+        assertBubbleMessage("longValue", "You must provide an integer value for Long Value.");
+
+        type("doubleValue", "abc");
+
+        click(SUBMIT);
+
+        assertBubbleMessage("doubleValue", "You must provide a numeric value for Double Value.");
+    }
+
+    private void assertBubbleMessage(String fieldId, String expected)
+    {
+        String condition = String.format(
+                "selenium.browserbot.getCurrentWindow().document.getElementById('%s:errorpopup')",
+                fieldId);
+
+        waitForCondition(condition, PAGE_LOAD_TIMEOUT);
+
+        assertText(String.format("//div[@id='%s:errorpopup']/span", fieldId), expected);
+
     }
 }

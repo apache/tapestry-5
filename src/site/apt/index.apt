@@ -34,6 +34,8 @@ What is Apache Tapestry?
 
 New And Of Note
 
+  * Client-side numeric validation is now locale-sensitive.
+
   * Some significant performance improvements over Tapestry 5.0.18: the time to initially load a page,
     and the time to render a page have decreased.
 

@@ -119,7 +119,7 @@ public class AppModule
 
     public static void contributeApplicationDefaults(MappedConfiguration<String, String> configuration)
     {
-        configuration.add(SymbolConstants.SUPPORTED_LOCALES, "en,fr");
+        configuration.add(SymbolConstants.SUPPORTED_LOCALES, "en,fr,de");
         configuration.add(SymbolConstants.PRODUCTION_MODE, "false");
         configuration.add(SymbolConstants.COMPRESS_WHITESPACE, "false");
 

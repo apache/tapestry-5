@@ -1,0 +1,23 @@
+<t:border xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd"
+          xmlns:p="tapestry:parameter">
+
+    <h1>Client-Side Locale-specific Numeric Validation</h1>
+
+    <t:beaneditform t:id="form" object="this"/>
+
+    <hr/>
+
+    <dl>
+        <dt>longValue</dt>
+        <dd id="outputLongValue">${longValue}</dd>
+        <dt>doubleValue</dt>
+        <dd id="outputDoubleValue">${doubleValue}</dd>
+    </dl>
+
+    <p>
+        <t:actionlink t:id="reset">reset</t:actionlink>
+        |
+        <t:actionlink t:id="german">switch to German</t:actionlink>
+    </p>
+
+</t:border>

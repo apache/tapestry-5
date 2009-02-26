@@ -4,7 +4,7 @@
 
 Upgrade Notes
 
-  This is a quick guide to changes since Tapestry 5.0.  This is meant to provide information
+  This is a quick guide to changes <since> Tapestry 5.0.18.  This is meant to provide information
   on any additions or changes that developers will face after upgrading from Tapestry 5.0 to Tapestry 5.1, or from one
   5.1 snapshot release to another.
 
@@ -12,6 +12,13 @@ Upgrade Notes
 
   You should also check the {{{release-notes.html}project-wide release notes}} for information
   about bugs fixes and other improvements.
+
+Release 5.1.0.1
+
+  Tapestry's client-side JavaScript relating to input field validation has changed somewhat
+  to account for
+  {{{https://issues.apache.org/jira/browse/TAP5-211}TAP5-211}}. This will only affect users
+  who have created their own client-side validations.
 
 Release 5.1.0.0
 

@@ -31,7 +31,9 @@ import org.apache.tapestry5.internal.gzip.GZipFilter;
 import org.apache.tapestry5.internal.renderers.*;
 import org.apache.tapestry5.internal.services.*;
 import org.apache.tapestry5.internal.transform.*;
-import org.apache.tapestry5.internal.translator.*;
+import org.apache.tapestry5.internal.translator.NumericTranslator;
+import org.apache.tapestry5.internal.translator.NumericTranslatorSupport;
+import org.apache.tapestry5.internal.translator.StringTranslator;
 import org.apache.tapestry5.internal.util.PrimaryKeyEncoder2ValueEncoder;
 import org.apache.tapestry5.internal.util.RenderableAsBlock;
 import org.apache.tapestry5.internal.util.StringRenderable;
@@ -294,6 +296,7 @@ public final class TapestryModule
         binder.bind(ApplicationStatePersistenceStrategy.class, SessionApplicationStatePersistenceStrategy.class).withId(
                 "SessionApplicationStatePersistenceStrategy");
         binder.bind(AssetPathConverter.class, IdentityAssetPathConverter.class);
+        binder.bind(NumericTranslatorSupport.class);
     }
 
     // ========================================================================
@@ -779,20 +782,25 @@ public final class TapestryModule
     }
 
     /**
-     * Contributes the basic set of named translators: <ul>  <li>string</li>  <li>byte</li> <li>integer</li>
-     * <li>long</li> <li>float</li> <li>double</li> <li>short</li> </ul>
+     * Contributes the basic set of translators: <ul>  <li>string</li>  <li>byte</li> <li>short</li> <li>integer</li>
+     * <li>long</li> <li>float</li> <li>double</li>  </ul>
      */
-    public static void contributeTranslatorSource(Configuration<Translator> configuration)
+    public static void contributeTranslatorSource(Configuration<Translator> configuration,
+                                                  NumericTranslatorSupport support)
     {
 
         configuration.add(new StringTranslator());
-        configuration.add(new ByteTranslator());
-        configuration.add(new IntegerTranslator());
-        configuration.add(new LongTranslator());
-        configuration.add(new FloatTranslator());
-        configuration.add(new DoubleTranslator());
-        configuration.add(new ShortTranslator());
+
+        Class[] types = new Class[] { Byte.class, Short.class, Integer.class, Long.class, Float.class, Double.class };
+
+        for (Class type : types)
+        {
+            String name = type.getSimpleName().toLowerCase();
+
+            configuration.add(new NumericTranslator(name, type, support));
+        }
     }
+
 
     /**
      * Adds coercions: <ul> <li>String to {@link org.apache.tapestry5.SelectModel} <li>String to {@link
@@ -1072,11 +1080,23 @@ public final class TapestryModule
 
     /**
      * Builds a proxy to the current {@link org.apache.tapestry5.RenderSupport} inside this thread's {@link
-     * Environment}.
+     * org.apache.tapestry5.services.Environment}.
      */
     public RenderSupport buildRenderSupport()
     {
         return environmentalBuilder.build(RenderSupport.class);
+    }
+
+    /**
+     * Builds a proxy to the current {@link org.apache.tapestry5.services.ClientBehaviorSupport} inside this thread's
+     * {@link org.apache.tapestry5.services.Environment}.
+     *
+     * @since 5.1.0.1
+     */
+
+    public ClientBehaviorSupport buildClientBehaviorSupport()
+    {
+        return environmentalBuilder.build(ClientBehaviorSupport.class);
     }
 
     /**
