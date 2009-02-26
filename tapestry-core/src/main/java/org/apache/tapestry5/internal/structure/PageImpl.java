@@ -141,6 +141,9 @@ public class PageImpl implements Page
         if (dirtyCount != 0) throw new IllegalStateException(StructureMessages.pageIsDirty(this));
 
         for (PageLifecycleListener listener : listeners)
+            listener.restoreStateBeforePageAttach();
+
+        for (PageLifecycleListener listener : listeners)
             listener.containingPageDidAttach();
     }
 

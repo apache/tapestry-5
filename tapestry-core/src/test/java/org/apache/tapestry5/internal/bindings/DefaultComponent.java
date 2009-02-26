@@ -1,4 +1,4 @@
-// Copyright 2006, 2008 The Apache Software Foundation
+// Copyright 2006, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -81,6 +81,10 @@ public class DefaultComponent implements Component
     }
 
     public void containingPageDidLoad()
+    {
+    }
+
+    public void restoreStateBeforePageAttach()
     {
     }
 }

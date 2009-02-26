@@ -67,6 +67,14 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
     private static final Block PLACEHOLDER_BLOCK = new PlaceholderBlock();
 
 
+    private static final ComponentCallback RESTORE_STATE_BEFORE_PAGE_ATTACH = new LifecycleNotificationComponentCallback()
+    {
+        public void run(Component component)
+        {
+            component.restoreStateBeforePageAttach();
+        }
+    };
+
     private static final ComponentCallback CONTAINING_PAGE_DID_ATTACH = new LifecycleNotificationComponentCallback()
     {
         public void run(Component component)
@@ -728,6 +736,11 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
         }
     }
 
+    public void restoreStateBeforePageAttach()
+    {
+        invoke(false, RESTORE_STATE_BEFORE_PAGE_ATTACH);
+    }
+
     public void containingPageDidAttach()
     {
         invoke(false, CONTAINING_PAGE_DID_ATTACH);
@@ -1210,4 +1223,6 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
     {
         return elementResources.createPageRenderLink(pageClass, override, context);
     }
+
+
 }
