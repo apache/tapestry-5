@@ -97,6 +97,16 @@
             </roles>
             <timezone>-6</timezone>
         </developer>
+        <developer>
+            <id>thiagohp</id>
+            <name>Thiago H. de Paula Figueiredo</name>
+            <email>thiagohp@apache.org</email>
+            <url>http://www.arsmachina.com.br/thiago</url>
+            <roles>
+                <role>Developer</role>
+            </roles>
+            <timezone>-3</timezone>
+        </developer>
     </developers>
 
     <ciManagement>
