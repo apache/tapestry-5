@@ -11,7 +11,7 @@ Response Compression
   This directly applies to both rendered pages and streamed assets from the classpath.
 
   Context assets will also be compressed ... but this requires referencing such assets using the
-  "asset:context:" prefix, so that generated URL is handled by Tapestry and not the servlet container.
+  "context:" binding prefix, so that generated URL is handled by Tapestry and not the servlet container.
 
 Compression Configuration
 
