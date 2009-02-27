@@ -16,26 +16,30 @@ package org.apache.tapestry5.ioc.internal.services;
 
 import org.apache.tapestry5.ioc.ObjectCreator;
 
-public class OneShotObjectCreator implements ObjectCreator
+/**
+ * An {@link org.apache.tapestry5.ioc.ObjectCreator} that delegates to another {@link
+ * org.apache.tapestry5.ioc.ObjectCreator} and caches the result.
+ */
+public class CachingObjectCreator implements ObjectCreator
 {
     private boolean cached;
 
     private Object cachedValue;
 
-    private ObjectCreator creator;
+    private ObjectCreator delegate;
 
-    public OneShotObjectCreator(ObjectCreator creator)
+    public CachingObjectCreator(ObjectCreator delegate)
     {
-        this.creator = creator;
+        this.delegate = delegate;
     }
 
     public synchronized Object createObject()
     {
         if (!cached)
         {
-            cachedValue = creator.createObject();
+            cachedValue = delegate.createObject();
             cached = true;
-            creator = null;
+            delegate = null;
         }
 
         return cachedValue;
