@@ -328,6 +328,15 @@ var Tapestry = {
         return new Ajax.Request(url, {
             onSuccess: function(response, jsonResponse)
             {
+                // When the page is unloaded, pending Ajax requests appear to terminate
+                // as succesful (but with no reply value). Since we're trying to navigate
+                // to a new page anyway, we just ignore those false success callbacks.
+                // We have a listener for the window's "beforeunload" event that sets
+                // this flag.
+
+                if (Tapestry.windowUnloaded)
+                    return;
+
                 if (! response.request.success())
                 {
                     Tapestry.ajaxError("Server request was unsuccesful. There may be a problem accessing the server.");
@@ -1327,7 +1336,6 @@ Tapestry.ElementEffect = {
 /**
  * Manages a &lt;div&lt; (or other element) for dynamic updates.
  *
- * @param element
  */
 Tapestry.ZoneManager = Class.create({
     // spec are the parameters for the Zone:
@@ -1715,3 +1723,9 @@ function $T(element)
 }
 
 Tapestry.onDOMLoaded(Tapestry.onDomLoadedCallback);
+
+// Ajax code needs to know to do nothing after the window is unloaded.
+Event.observe(window, "beforeunload", function()
+{
+    Tapestry.windowUnloaded = true;
+});

@@ -132,4 +132,13 @@ public class EventConstants
      * @since 5.1.0.0
      */
     public static final String SYNCHRONIZE_VALUES = "synchronizeValues";
+
+    /**
+     * Event triggered by {@link org.apache.tapestry5.corelib.components.ProgressiveDisplay} component to inform its
+     * container of what context (if any) is available. The event handler may return a renderable object or null. If
+     * null is returned, the component renders its own body as the partial markup response.
+     *
+     * @since 5.1.0.1
+     */
+    public static final String PROGRESSIVE_DISPLAY = "progressiveDisplay";
 }
