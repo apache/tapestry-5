@@ -20,9 +20,13 @@ import org.apache.tapestry5.annotations.IncludeJavaScriptLibrary;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.dom.Element;
+import org.apache.tapestry5.internal.services.ComponentResultProcessorWrapper;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.json.JSONObject;
+import org.apache.tapestry5.services.ComponentEventResultProcessor;
+
+import java.io.IOException;
 
 /**
  * A component used to implement the <a href="http://en.wikipedia.org/wiki/Progressive_enhancement">progressive
@@ -30,8 +34,10 @@ import org.apache.tapestry5.json.JSONObject;
  * ...") and an Ajax request then supplies the component's true body. This results in much faster page loads. You can
  * even nest these!
  * <p/>
- * The component simply does not render its body on initial render, but then supplies its body as the partial render
- * content in the Ajax request.
+ * The component simply does not render its body on initial render. On the subsequent action event request, it fires a
+ * {@link org.apache.tapestry5.EventConstants#PROGRESSIVE_DISPLAY} event to inform the container about the (optional)
+ * event context. The event handler method may return a renderable object; if not then the component's body is rendered
+ * as the partial markup response.
  *
  * @since 5.1.0.1
  */
@@ -46,11 +52,21 @@ public class ProgressiveDisplay
     @Parameter(defaultPrefix = BindingConstants.LITERAL, value = "block:defaultInitial")
     private Block initial;
 
+    /**
+     * If provided, this is the event context, which will be provided via the {@link
+     * org.apache.tapestry5.EventConstants#PROGRESSIVE_DISPLAY event}.
+     */
+    @Parameter
+    private Object[] context;
+
     @Inject
     private ComponentResources resources;
 
     @Environmental
     private RenderSupport renderSupport;
+
+    @Environmental
+    private ComponentEventResultProcessor resultProcessor;
 
     /**
      * Name of a function on the client-side Tapestry.ElementEffect object that is invoked after the elements's body
@@ -71,7 +87,7 @@ public class ProgressiveDisplay
 
         e.addClassName("t-zone");
 
-        Link link = resources.createEventLink(EventConstants.ACTION);
+        Link link = resources.createEventLink(EventConstants.ACTION, context);
 
         JSONObject spec = new JSONObject();
 
@@ -86,8 +102,15 @@ public class ProgressiveDisplay
         return initial;
     }
 
-    Block onAction()
+    Object onAction(EventContext context) throws IOException
     {
+        ComponentResultProcessorWrapper wrapper = new ComponentResultProcessorWrapper(resultProcessor);
+
+        resources.triggerContextEvent(EventConstants.PROGRESSIVE_DISPLAY, context, wrapper);
+
+        if (wrapper.isAborted())
+            return null;
+
         return resources.getBody();
     }
 
