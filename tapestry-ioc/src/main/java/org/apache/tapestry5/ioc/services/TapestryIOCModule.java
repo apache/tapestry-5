@@ -14,10 +14,9 @@
 
 package org.apache.tapestry5.ioc.services;
 
+import org.apache.tapestry5.IOCSymbols;
 import org.apache.tapestry5.ioc.*;
-import org.apache.tapestry5.ioc.annotations.Local;
-import org.apache.tapestry5.ioc.annotations.Marker;
-import org.apache.tapestry5.ioc.annotations.PreventServiceDecoration;
+import org.apache.tapestry5.ioc.annotations.*;
 import org.apache.tapestry5.ioc.internal.services.*;
 import org.apache.tapestry5.ioc.util.TimeInterval;
 
@@ -26,6 +25,9 @@ import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.*;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Defines the base set of services for the Tapestry IOC container.
@@ -60,6 +62,7 @@ public final class TapestryIOCModule
         binder.bind(ServiceOverride.class, ServiceOverrideImpl.class);
         binder.bind(LoggingAdvisor.class, LoggingAdvisorImpl.class);
         binder.bind(LazyAdvisor.class, LazyAdvisorImpl.class);
+        binder.bind(ThunkCreator.class, ThunkCreatorImpl.class);
     }
 
     /**
@@ -81,7 +84,7 @@ public final class TapestryIOCModule
     /**
      * Contributes the "perthread" scope.
      */
-    public void contributeServiceLifecycleSource(MappedConfiguration<String, ServiceLifecycle> configuration)
+    public static void contributeServiceLifecycleSource(MappedConfiguration<String, ServiceLifecycle> configuration)
     {
         configuration.addInstance(ScopeConstants.PERTHREAD, PerThreadServiceLifecycle.class);
     }
@@ -374,5 +377,45 @@ public final class TapestryIOCModule
         configuration.add("SystemProperties", new SystemPropertiesSymbolProvider(), "before:*");
         configuration.add("ApplicationDefaults", applicationDefaults, "after:SystemProperties");
         configuration.add("FactoryDefaults", factoryDefaults, "after:ApplicationDefaults");
+    }
+
+    public static ParallelExecutor buildDeferredExecution(
+            @Symbol(IOCSymbols.THREAD_POOL_CORE_SIZE)
+            int coreSize,
+
+            @Symbol(IOCSymbols.THREAD_POOL_MAX_SIZE)
+            int maxSize,
+
+            @Symbol(IOCSymbols.THREAD_POOL_KEEP_ALIVE)
+            @IntermediateType(TimeInterval.class)
+            int keepAliveMillis,
+
+            PerthreadManager perthreadManager,
+
+            RegistryShutdownHub shutdownHub,
+
+            ThunkCreator thunkCreator)
+    {
+
+        final ThreadPoolExecutor executorService = new ThreadPoolExecutor(coreSize, maxSize,
+                                                                          keepAliveMillis, TimeUnit.MILLISECONDS,
+                                                                          new LinkedBlockingQueue(maxSize));
+
+        shutdownHub.addRegistryShutdownListener(new RegistryShutdownListener()
+        {
+            public void registryDidShutdown()
+            {
+                executorService.shutdown();
+            }
+        });
+
+        return new ParallelExecutorImpl(executorService, thunkCreator, perthreadManager);
+    }
+
+    public static void contributeFactoryDefaults(MappedConfiguration<String, String> configuration)
+    {
+        configuration.add(IOCSymbols.THREAD_POOL_CORE_SIZE, "3");
+        configuration.add(IOCSymbols.THREAD_POOL_MAX_SIZE, "20");
+        configuration.add(IOCSymbols.THREAD_POOL_KEEP_ALIVE, "1 m");
     }
 }
