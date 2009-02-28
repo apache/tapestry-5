@@ -34,18 +34,15 @@ public class DocumentLinkerImpl implements DocumentLinker
 
     private final boolean developmentMode;
 
-    private final boolean scriptsAtTop;
-
     private final boolean omitGeneratorMetaTag;
 
     private final String tapestryBanner;
 
-    public DocumentLinkerImpl(boolean productionMode, boolean scriptsAtTop, boolean omitGeneratorMetaTag,
+    public DocumentLinkerImpl(boolean productionMode, boolean omitGeneratorMetaTag,
                               String tapestryVersion)
     {
 
         developmentMode = !productionMode;
-        this.scriptsAtTop = scriptsAtTop;
         this.omitGeneratorMetaTag = omitGeneratorMetaTag;
 
         tapestryBanner = String.format("Apache Tapestry Framework (version %s)", tapestryVersion);
@@ -115,9 +112,7 @@ public class DocumentLinkerImpl implements DocumentLinker
         if (!rootElementName.equals("html"))
             throw new RuntimeException(ServicesMessages.documentMissingHTMLRoot(rootElementName));
 
-        String childElement = scriptsAtTop ? "head" : "body";
-
-        Element container = findOrCreateElement(root, childElement, scriptsAtTop);
+        Element container = findOrCreateElement(root, "head", true);
 
         // TAPESTRY-2364
 

@@ -94,7 +94,10 @@ Basic JavaScript
   the library is needed.
 
   Even though the dragdrop.js library is stored inside a JAR file, Tapestry ensures that it can
-  be accessed from the client web browser.
+  be accessed from the client web browser. A Tapestry URL within the virtual folder "/assets" is created;
+  the file will be given a version number (the application version number if not specified more specifically)
+  and will be sent to the browser with a far-future expires header (to encourage the browser to cache the file
+  aggresively).
   
 * addScript()
 
@@ -333,6 +336,25 @@ Your own Ajax Components
 
   []
 
+
+Handling Slow Page Loads
+
+  If your page loads slowly (typically, because of scripts loaded from external sites), you may see a race
+  condition where the user can click on a link before an event handler for that link has been wired up.
+
+  The client-side function <<<Tapestry.waitForPage()>> can be used in an element's onclick handler to force
+  a wait for the page to fully load. In this race condition, the screen will dim and a message will appear
+  advising the  user to wait a moment; once the page is fully loaded, this modal dialog will be removed.
+
+  The correct usage is:
+
+----
+  <a href="..." onclick="javascript:Tapestry.waitForPage(event);"> ... </a>
+----
+
+  The constant
+  {{{../apidocs/org/apache/tapestry5/MarkupConstants.html}MarkupConstants.WAIT_FOR_PAGE}}
+  contains this snippet.
 
 The Standard Tapestry Library
 

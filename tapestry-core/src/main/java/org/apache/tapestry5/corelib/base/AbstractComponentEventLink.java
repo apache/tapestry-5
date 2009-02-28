@@ -16,6 +16,7 @@ package org.apache.tapestry5.corelib.base;
 
 import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.Link;
+import org.apache.tapestry5.MarkupConstants;
 import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.Parameter;
@@ -54,7 +55,7 @@ public abstract class AbstractComponentEventLink extends AbstractLink
 
         if (zone != null)
         {
-            writer.getElement().forceAttributes("href", "#");
+            writer.getElement().forceAttributes(MarkupConstants.ONCLICK, MarkupConstants.WAIT_FOR_PAGE);
 
             clientBehaviorSupport.linkZone(getClientId(), zone, link);
         }

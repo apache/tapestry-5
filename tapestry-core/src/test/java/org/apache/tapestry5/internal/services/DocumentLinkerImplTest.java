@@ -34,7 +34,7 @@ public class DocumentLinkerImplTest extends InternalBaseTestCase
 
         document.newRootElement("not-html").text("not an HTML document");
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(true, false, true, "1.2.3");
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(true, true, "1.2.3");
 
         // Only checked if there's something to link.
 
@@ -60,7 +60,7 @@ public class DocumentLinkerImplTest extends InternalBaseTestCase
 
         document.newRootElement("not-html").text("not an HTML document");
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(true, false, true, "1.2.3");
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(true, true, "1.2.3");
 
         // Only checked if there's something to link.
 
@@ -82,7 +82,7 @@ public class DocumentLinkerImplTest extends InternalBaseTestCase
     {
         Document document = new Document();
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(true, false, true, "1.2.3");
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(true, true, "1.2.3");
 
         linker.addScript("foo.js");
         linker.addScript("doSomething();");
@@ -99,7 +99,7 @@ public class DocumentLinkerImplTest extends InternalBaseTestCase
 
         document.newRootElement("html").element("body").element("p").text("Ready to be updated with scripts.");
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(true, false, true, "1.2.3");
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(true, true, "1.2.3");
 
         linker.addScriptLink("foo.js");
         linker.addScriptLink("bar/baz.js");
@@ -120,7 +120,7 @@ public class DocumentLinkerImplTest extends InternalBaseTestCase
 
         document.newRootElement("html").element("body").element("p").text("Ready to be marked with generator meta.");
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(true, false, false, "1.2.3");
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(true, false, "1.2.3");
 
         linker.updateDocument(document);
 
@@ -135,7 +135,7 @@ public class DocumentLinkerImplTest extends InternalBaseTestCase
 
         document.newRootElement("html");
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(true, true, true, "1.2.3");
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(true, true, "1.2.3");
 
         linker.addStylesheetLink("style.css", "print");
         linker.addScriptLink("foo.js");
@@ -148,32 +148,13 @@ public class DocumentLinkerImplTest extends InternalBaseTestCase
     }
 
     @Test
-    public void empty_document_with_scripts_at_bottom() throws Exception
-    {
-        Document document = new Document(new XMLMarkupModel());
-
-        document.newRootElement("html");
-
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(true, false, true, "1.2.3");
-
-        linker.addStylesheetLink("style.css", "print");
-        linker.addScriptLink("foo.js");
-        linker.addScriptLink("bar/baz.js");
-        linker.addScript("pageInitialization();");
-
-        linker.updateDocument(document);
-
-        check(document, "empty_document_with_scripts_at_bottom.txt");
-    }
-
-    @Test
     public void add_script_links_at_top() throws Exception
     {
         Document document = new Document(new XMLMarkupModel());
 
         document.newRootElement("html").element("body").element("p").text("Ready to be updated with scripts at top.");
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(true, true, true, "1.2.3");
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(true, true, "1.2.3");
 
         linker.addScriptLink("foo.js");
         linker.addScriptLink("bar/baz.js");
@@ -191,7 +172,7 @@ public class DocumentLinkerImplTest extends InternalBaseTestCase
 
         document.newRootElement("html").element("body").element("p").text("Ready to be updated with styles.");
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(true, false, true, "1.2.3");
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(true, true, "1.2.3");
 
         linker.addStylesheetLink("foo.css", null);
         linker.addStylesheetLink("bar/baz.css", "print");
@@ -208,7 +189,7 @@ public class DocumentLinkerImplTest extends InternalBaseTestCase
 
         document.newRootElement("html").element("body").element("p").text("Ready to be updated with styles.");
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(true, false, true, "1.2.3");
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(true, true, "1.2.3");
 
         linker.addStylesheetLink("foo.css", null);
         linker.addStylesheetLink("bar/baz.css", "print");
@@ -229,7 +210,7 @@ public class DocumentLinkerImplTest extends InternalBaseTestCase
         document.newRootElement("html").element("head").comment("existing head").getParent()
                 .element("body").text("body content");
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(true, false, true, "1.2.3");
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(true, true, "1.2.3");
 
         linker.addStylesheetLink("foo.css", null);
 
@@ -245,7 +226,7 @@ public class DocumentLinkerImplTest extends InternalBaseTestCase
 
         document.newRootElement("html").element("body").element("p").text("Ready to be updated with scripts.");
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(true, false, true, "1.2.3");
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(true, true, "1.2.3");
 
         for (int i = 0; i < 3; i++)
         {
@@ -266,7 +247,7 @@ public class DocumentLinkerImplTest extends InternalBaseTestCase
 
         document.newRootElement("html").element("body").element("p").text("Ready to be updated with scripts.");
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(true, false, true, "1.2.3");
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(true, true, "1.2.3");
 
         linker.addScript("doSomething();");
         linker.addScript("doSomethingElse();");
@@ -283,7 +264,7 @@ public class DocumentLinkerImplTest extends InternalBaseTestCase
 
         document.newRootElement("html").element("body").element("p").text("Ready to be updated with scripts.");
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(false, false, true, "1.2.3");
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(false, true, "1.2.3");
 
         linker.addScriptLink("foo.js");
 
@@ -302,7 +283,7 @@ public class DocumentLinkerImplTest extends InternalBaseTestCase
 
         document.newRootElement("html").element("notbody").element("p").text("Ready to be updated with scripts.");
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(true, false, true, "1.2.3");
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(true, true, "1.2.3");
 
         linker.addScriptLink("foo.js");
 
@@ -319,7 +300,7 @@ public class DocumentLinkerImplTest extends InternalBaseTestCase
 
         document.newRootElement("html").element("body").element("p").text("Ready to be updated with scripts.");
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(true, false, true, "1.2.3");
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(true, true, "1.2.3");
 
         linker.addScript("for (var i = 0; i < 5; i++)  { doIt(i); }");
 

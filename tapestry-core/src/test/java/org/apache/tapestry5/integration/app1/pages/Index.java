@@ -65,6 +65,8 @@ public class Index
 
     private static final List<Item> ITEMS = CollectionFactory.newList(
 
+            new Item("SlowAjaxDemo", "Slow Ajax Demo", "Handling of client-side Ajax before the page is fully loaded"),
+
             new Item("ProgressiveDemo", "ProgressiveDisplay Demo", "Progressive Enhancement via a component"),
 
             new Item("ClientNumericValidationDemo", "Client-Side Numeric Validation",

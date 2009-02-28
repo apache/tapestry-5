@@ -47,6 +47,56 @@ var Tapestry = {
     /** Time, in seconds, that console messages are visible. */
     CONSOLE_DURATION : 10,
 
+    // Initially, false, set to true once the page is fully loaded.
+
+    pageLoaded : false,
+
+    /**
+     * Invoked from onclick event handlers built into links and forms. Raises a dialog
+     * if the page is not yet fully loaded.
+     */
+    waitForPage : function(event)
+    {
+        if (Tapestry.pageLoaded) return;
+
+        // TODO: Figure out how to make this work in IE!
+
+        event.preventDefault();
+
+        var body = $$("BODY").first();
+
+        // The overlay is stretched to cover the full screen (including scrolling areas)
+        // and is used to fade out the background ... and prevent keypresses (its z-order helps there).
+
+        var overlay = new Element("div", { 'class' : 't-dialog-overlay' });
+        overlay.setOpacity(0.0);
+
+        // This seems to leave a few pixels at the bottom uncovered; a problem for another day.
+
+        overlay.style.height = body.getHeight() + "px";
+
+        body.insert({ top: overlay });
+
+        // Fade it in to 30% opacity
+
+        new Effect.Appear(overlay, {duration: 0.2, from: 0.0, to: 0.3});
+
+        var messageDiv = new Element("div", { 'class' : 't-page-loading-banner' }).update(Tapestry.Messages.pageIsLoading);
+        overlay.insert({ top: messageDiv });
+
+        var hideDialog = function()
+        {
+            new Effect.Fade(overlay, { duration: 0.2,
+                afterFinish: function()
+                {
+                    overlay.remove();
+                } });
+        };
+
+        document.observe("dom:loaded", hideDialog);
+    },
+
+
     // Adds a callback function that will be invoked when the DOM is loaded (which
     // occurs *before* window.onload, which has to wait for images and such to load
     // first.  This simply observes the dom:loaded event on the document object (support for
@@ -67,6 +117,10 @@ var Tapestry = {
      */
     onDomLoadedCallback : function()
     {
+        // Turn off click & submit protection inside Tapestry.waitForPage().
+
+        Tapestry.pageLoaded = true;
+
         Tapestry.ScriptManager.initialize();
 
         $$(".t-invisible").each(function(element)
@@ -482,6 +536,12 @@ var Tapestry = {
 
         return Number(canonical);
     }
+
+};
+
+Tapestry.Messages = {
+
+    pageIsLoading : "Please wait for the page to finish loading ..."
 
 };
 
@@ -1190,7 +1250,6 @@ Tapestry.FieldEventManager = Class.create({
         this.icon = $(id + ':icon');
 
         this.translator = Prototype.K;
-        // this.requiredCheck = Prototype.emptyFunction;
 
         document.observe(Tapestry.FOCUS_CHANGE_EVENT, function(event)
         {
@@ -1306,26 +1365,31 @@ Tapestry.FieldEventManager = Class.create({
 
 Tapestry.ElementEffect = {
 
+    /** Fades in the element. */
     show : function(element)
     {
         return new Effect.Appear(element);
     },
 
+    /** The classic yellow background fade. */
     highlight : function(element)
     {
         return new Effect.Highlight(element);
     },
 
+    /** Scrolls the content down. */
     slidedown : function (element)
     {
         return new Effect.SlideDown(element);
     },
 
+    /** Slids the content back up (opposite of slidedown). */
     slideup : function(element)
     {
         return new Effect.SlideUp(element);
     },
 
+    /** Fades the content out (opposite of show). */
     fade : function(element)
     {
         return new Effect.Fade(element);

@@ -215,12 +215,6 @@ public class AppModule
     If true, then the page may only be accessed via HTTPS.  The {{{../apidocs/org/apache/tapestry5/annotations/Secure.html}@Secure}}
     annotation will set this value to true.
 
-  [tapestry.script-at-top]
-    If true, then links for external JavaScript libraries will be placed at the top of the page,  inside the
-    \<head\> element, rather than in the default location (at the bottom of the \<body\> element). The \<script\> block for per-page
-    initialization will be placed at the bottom of the page in either case.  The default (scripts at the bottom)
-    was chosen in accordance with {{{http://developer.yahoo.com/performance/rules.html#js_bottom}Yahoo Peformance Best Practices}}. 
-
   [tapestry.scriptaculous]
     The path to the embedded copy of {{{http://script.aculo.us/}script.aculo.us}} packaged with Tapestry. This value may be overridden
     to use a different version of the script.aculo.us library. Tapestry's default version is 1.8.1

@@ -1,4 +1,4 @@
-<html><body><p>Ready to be updated with scripts.</p><script src="foo.js"></script><script>Tapestry.DEBUG_ENABLED = true;
+<html><head><script src="foo.js"></script></head><body><p>Ready to be updated with scripts.</p><script>Tapestry.DEBUG_ENABLED = true;
 Tapestry.onDOMLoaded(function() {
 });
 </script></body></html>
