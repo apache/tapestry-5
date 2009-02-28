@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<html><body><p>Ready to be updated with scripts.</p><script src="foo.js"/><script src="bar/baz.js"/><script>Tapestry.onDOMLoaded(function() {
+<html><head><script src="foo.js"/><script src="bar/baz.js"/></head><body><p>Ready to be updated with scripts.</p><script>Tapestry.onDOMLoaded(function() {
 pageInitialization();
 });
 </script></body></html>

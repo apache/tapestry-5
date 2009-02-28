@@ -1570,9 +1570,6 @@ public final class TapestryModule
                                          @Symbol(SymbolConstants.PRODUCTION_MODE)
                                          final boolean productionMode,
 
-                                         @Symbol(SymbolConstants.SCRIPTS_AT_TOP)
-                                         final boolean scriptsAtTop,
-
                                          @Path("${tapestry.default-stylesheet}")
                                          final Asset stylesheetAsset,
 
@@ -1595,7 +1592,7 @@ public final class TapestryModule
         {
             public void renderMarkup(MarkupWriter writer, MarkupRenderer renderer)
             {
-                DocumentLinkerImpl linker = new DocumentLinkerImpl(productionMode, scriptsAtTop, omitGeneratorMeta,
+                DocumentLinkerImpl linker = new DocumentLinkerImpl(productionMode, omitGeneratorMeta,
                                                                    tapestryVersion);
 
                 environment.push(DocumentLinker.class, linker);
@@ -2012,8 +2009,6 @@ public final class TapestryModule
                           "context:WEB-INF/${" + InternalSymbols.APP_NAME + "}.properties");
 
         configuration.add(SymbolConstants.EXCEPTION_REPORT_PAGE, "ExceptionReport");
-
-        configuration.add(SymbolConstants.SCRIPTS_AT_TOP, "false");
 
         configuration.add(SymbolConstants.MIN_GZIP_SIZE, "100");
 

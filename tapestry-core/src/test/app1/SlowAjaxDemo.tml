@@ -1,0 +1,29 @@
+<t:border title="Slow Ajax Demo" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd"
+          xmlns:p="tapestry:parameter">
+
+
+    <t:zone t:id="zone">
+        <t:if test="zoneMessage">
+            <p id="zoneOutput">${zoneMessage}</p>
+        </t:if>
+    </t:zone>
+
+    <ul>
+        <li>
+            <t:pagelink page="slowajaxdemo">refresh</t:pagelink>
+        </li>
+        <li>
+            <t:actionlink t:id="link" zone="zone">action</t:actionlink>
+        </li>
+        <li>
+            <t:form zone="zone">
+                <t:linksubmit>link submit</t:linksubmit>
+                <input type="submit" value="Ordinary Submit"/>
+            </t:form>
+        </li>
+    </ul>
+
+
+    <script src="${slowScriptLink}"/>
+
+</t:border>

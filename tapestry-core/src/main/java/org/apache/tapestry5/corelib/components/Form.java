@@ -271,6 +271,9 @@ public class Form implements ClientElement, FormValidationControl
                               "method", "post",
                               "action", link);
 
+        if (zone != null || clientValidation)
+            writer.attributes("onsubmit", MarkupConstants.WAIT_FOR_PAGE);
+
         resources.renderInformalParameters(writer);
 
         div = writer.element("div", "class", CSSClassConstants.INVISIBLE);

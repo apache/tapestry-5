@@ -96,6 +96,8 @@ public class SymbolConstants
      * If true, then links for external JavaScript libraries are placed at the top of the document (just inside the
      * &lt;body&gt; element).  If false, the default, then the libraries are placed at the bottom of the document.
      * Per-page initialization always goes at the bottom.
+     *
+     * @deprecated since 5.1.0.1; scripts are now always at the top (see TAP5-544)
      */
     public static final String SCRIPTS_AT_TOP = "tapestry.script-at-top";
 
@@ -136,8 +138,8 @@ public class SymbolConstants
 
     /**
      * If "true" (the default) then GZip compression is enabled for dynamic requests and for static assets. If you are
-     * using a server that handles GZip compression for you, or you don't want to ue the extra processing power necessary
-     * to GZIP requests, then override this to "false".
+     * using a server that handles GZip compression for you, or you don't want to ue the extra processing power
+     * necessary to GZIP requests, then override this to "false".
      *
      * @see #MIN_GZIP_SIZE
      * @since 5.1.0.0

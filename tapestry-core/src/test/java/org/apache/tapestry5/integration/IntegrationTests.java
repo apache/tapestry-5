@@ -2710,4 +2710,53 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         waitForElementToAppear("content2");
         assertText("content2", "Music Library");
     }
+
+    /**
+     * TAP5-544
+     */
+    public void slow_ajax_load_warning()
+    {
+        start("Slow Ajax Demo");
+
+        // ActionLink
+
+        click("link=action");
+
+        waitForElementToAppear("slow");
+
+        click("link=action");
+
+        waitForElementToAppear("zoneOutput");
+
+        assertText("zoneOutput", "Updated via an ActionLink");
+
+        // LinkSubmit
+
+        clickAndWait("link=refresh");
+
+        click("link=link submit");
+
+        waitForElementToAppear("slow");
+
+        click("link=link submit");
+
+        waitForElementToAppear("zoneOutput");
+
+        assertText("zoneOutput", "Updated via form submission.");
+
+
+        // Normal submit
+
+        clickAndWait("link=refresh");
+
+        click(SUBMIT);
+
+        waitForElementToAppear("slow");
+
+        click(SUBMIT);
+
+        waitForElementToAppear("zoneOutput");
+
+        assertText("zoneOutput", "Updated via form submission.");
+    }
 }

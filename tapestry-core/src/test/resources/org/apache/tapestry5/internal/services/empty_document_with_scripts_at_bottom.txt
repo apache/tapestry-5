@@ -1,5 +1,0 @@
-<?xml version="1.0"?>
-<html><head><link href="style.css" media="print" rel="stylesheet" type="text/css"/></head><body><script src="foo.js"/><script src="bar/baz.js"/><script>Tapestry.onDOMLoaded(function() {
-pageInitialization();
-});
-</script></body></html>

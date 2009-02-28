@@ -1,1 +1,1 @@
-<html><body><p>Ready to be updated with scripts.</p><script src="foo.js"></script><script src="bar/baz.js"></script><script src="biff.js"></script></body></html>
+<html><head><script src="foo.js"></script><script src="bar/baz.js"></script><script src="biff.js"></script></head><body><p>Ready to be updated with scripts.</p></body></html>
