@@ -22,6 +22,10 @@ import org.apache.tapestry5.ioc.services.LazyAdvisor;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+/**
+ * This tests {@link org.apache.tapestry5.ioc.internal.services.LazyAdvisorImpl}, but also tests a lot of {@link
+ * org.apache.tapestry5.ioc.internal.services.ThunkCreatorImpl} (which was refactored out of LazyAdvisorImpl).
+ */
 public class LazyAdvisorImplTest extends IOCInternalTestCase
 {
     private AspectDecorator aspectDecorator;
@@ -104,25 +108,6 @@ public class LazyAdvisorImplTest extends IOCInternalTestCase
 
         for (int i = 0; i < 2; i++)
             assertEquals(thunk.getGreeting(), "Hello!");
-
-        verify();
-    }
-
-    @Test
-    public void checked_exception_prevents_lazy() throws Exception
-    {
-        LazyService service = mockLazyService();
-        Greeter greeter = newMock(Greeter.class);
-
-        expect(service.notLazyCreateGreeter()).andReturn(greeter);
-
-        replay();
-
-        LazyService advised = advise(service);
-
-        Greeter actual = advised.notLazyCreateGreeter();
-
-        assertSame(actual, greeter);
 
         verify();
     }

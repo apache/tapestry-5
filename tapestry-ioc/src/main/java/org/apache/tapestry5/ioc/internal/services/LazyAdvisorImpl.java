@@ -86,11 +86,6 @@ public class LazyAdvisorImpl implements LazyAdvisor
 
         if (!method.getReturnType().isInterface()) return false;
 
-        for (Class extype : method.getExceptionTypes())
-        {
-            if (!RuntimeException.class.isAssignableFrom(extype)) return false;
-        }
-
         return true;
     }
 }
