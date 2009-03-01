@@ -17,8 +17,6 @@ package org.apache.tapestry5.ioc.internal.services;
 import org.apache.tapestry5.ioc.Greeter;
 import org.apache.tapestry5.ioc.annotations.NotLazy;
 
-import java.sql.SQLException;
-
 /**
  * Used to test {@link org.apache.tapestry5.ioc.services.LazyAdvisor}, as it has a mix of lazy and not lazy methods.
  */
@@ -37,6 +35,4 @@ public interface LazyService
 
     @NotLazy
     Greeter notLazyFromAnnotationGreeter();
-
-    Greeter notLazyCreateGreeter() throws SQLException;
 }
