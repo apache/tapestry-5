@@ -59,9 +59,11 @@ var Tapestry = {
     {
         if (Tapestry.pageLoaded) return;
 
-        // TODO: Figure out how to make this work in IE!
 
-        event.preventDefault();
+        event = event || window.event;
+        Event.extend(event);
+
+        event.stop();
 
         var body = $$("BODY").first();
 
@@ -77,9 +79,7 @@ var Tapestry = {
 
         body.insert({ top: overlay });
 
-        // Fade it in to 30% opacity
-
-        new Effect.Appear(overlay, {duration: 0.2, from: 0.0, to: 0.3});
+        new Effect.Appear(overlay, {duration: 0.2});
 
         var messageDiv = new Element("div", { 'class' : 't-page-loading-banner' }).update(Tapestry.Messages.pageIsLoading);
         overlay.insert({ top: messageDiv });
@@ -94,6 +94,11 @@ var Tapestry = {
         };
 
         document.observe("dom:loaded", hideDialog);
+
+        // An rare race condition.
+
+        if (Tapestry.pageLoaded)
+            hideDialog.call(null);
     },
 
 
