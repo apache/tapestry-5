@@ -480,18 +480,22 @@ DIV.t-loading {
 
 DIV.t-dialog-overlay {
     position: absolute;
-    top: 0;
-    left: 0;
+    top: 0px;
+    left: 0px;
     z-index: 90;
     width: 100%;
-    background: black;
+    background: transparent url("dialog-background.gif");
 }
 
 DIV.t-page-loading-banner {
-    float: left;
+    position: absolute;
+    top: 5px;
+    left: 5px;
     width: auto;
     font-weight: bold;
-    padding-right: 20px;
-    color: white;
-    background: transparent url(dark-ajax-loader.gif) no-repeat right top;
+    padding: 2px 4px 2px 24px;
+    color: black;
+    background: white url(ajax-loader.gif) no-repeat 4px center;
+    border-right: 2px solid black;
+    border-bottom: 2px solid black;
 }

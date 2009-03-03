@@ -16,7 +16,7 @@ Tapestry.stackFrameToggle = function(id)
 {
     var checkbox = $(id);
 
-    checkbox.observe("change", function()
+    checkbox.observe("click", function()
     {
         var newDisplay = checkbox.checked ? "none" : "list-item";
 
