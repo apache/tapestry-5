@@ -55,7 +55,7 @@ public class LazyAdvisorImpl implements LazyAdvisor
         {
             /**
              * When the method is invoked, we don't immediately proceed. Intead, we return a thunk instance
-             * that defers its behavior to the lazyily invoked invocation.
+             * that defers its behavior to the lazily invoked invocation.
              */
             public void advise(final Invocation invocation)
             {
@@ -69,9 +69,9 @@ public class LazyAdvisorImpl implements LazyAdvisor
                     }
                 };
 
-                ObjectCreator oneShot = new CachingObjectCreator(deferred);
+                ObjectCreator cachingObjectCreator = new CachingObjectCreator(deferred);
 
-                Object thunk = thunkCreator.createThunk(thunkType, oneShot, description);
+                Object thunk = thunkCreator.createThunk(thunkType, cachingObjectCreator, description);
 
                 invocation.overrideResult(thunk);
             }
