@@ -40,7 +40,7 @@
                         <t:loop source="systemProperties" value="propertyName">
                             <dt>${propertyName}</dt>
                             <dd>
-                                <t:if test="simpleProperty">
+                                <t:if test="! complexProperty">
                                     ${propertyValue}
                                     <p:else>
                                         <ul>

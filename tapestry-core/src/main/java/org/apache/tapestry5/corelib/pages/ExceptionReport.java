@@ -25,6 +25,7 @@ import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.Session;
 
 import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * Responsible for reporting runtime exceptions. This page is quite verbose and is usually overridden in a production
@@ -36,6 +37,10 @@ import java.util.List;
 public class ExceptionReport implements ExceptionReporter
 {
     private static final String PATH_SEPARATOR_PROPERTY = "path.separator";
+
+    // Match anything ending in .(something?)path.
+
+    private static final Pattern PATH_RECOGNIZER = Pattern.compile("\\..*path$");
 
     @Property
     private String attributeName;
@@ -100,9 +105,9 @@ public class ExceptionReport implements ExceptionReporter
         return System.getProperty(propertyName);
     }
 
-    public boolean isSimpleProperty()
+    public boolean isComplexProperty()
     {
-        return ! (propertyName.endsWith(".path") && getPropertyValue().contains(pathSeparator));
+        return PATH_RECOGNIZER.matcher(propertyName).find() && getPropertyValue().contains(pathSeparator);
     }
 
     public String[] getComplexPropertyValue()
