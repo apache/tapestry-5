@@ -113,6 +113,25 @@ public class LazyAdvisorImplTest extends IOCInternalTestCase
     }
 
     @Test
+    public void checked_exception_prevents_lazy() throws Exception
+    {
+        LazyService service = mockLazyService();
+        Greeter greeter = newMock(Greeter.class);
+
+        expect(service.notLazyCreateGreeter()).andReturn(greeter);
+
+        replay();
+
+        LazyService advised = advise(service);
+
+        Greeter actual = advised.notLazyCreateGreeter();
+
+        assertSame(actual, greeter);
+
+        verify();
+    }
+
+    @Test
     public void notlazy_annotation()
     {
         LazyService service = mockLazyService();
