@@ -2762,4 +2762,29 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         assertText("zoneOutput", "Updated via form submission.");
     }
+
+    /**
+     * TAP5-389
+     */
+    public void link_submit_inside_form_that_updates_a_zone()
+    {
+        start("LinkSubmit inside Zone");
+
+        String now = getText("now");
+
+        click("link=submit");
+
+        waitForElementToAppear("value:errorpopup");
+
+        type("value", "robot chicken");
+
+        click("link=submit");
+
+        waitForElementToAppear("outputvalue");
+
+        assertText("outputvalue", "robot chicken");
+
+        // Make sure it was a partial update
+        assertText("now", now);
+    }
 }

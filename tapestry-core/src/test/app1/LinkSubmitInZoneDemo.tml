@@ -1,0 +1,27 @@
+<t:border xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd"
+          xmlns:p="tapestry:parameter">
+
+    <h1>LinkSubmit inside Zone</h1>
+
+    <p>Current time:
+        <span id="now">${now}</span>
+    </p>
+
+
+    <t:zone t:id="output">
+        <t:if test="value">
+            <p>You entered
+                <span id="outputvalue">${value}</span>
+            </p>
+        </t:if>
+    </t:zone>
+
+
+    <t:form zone="output">
+        <t:errors/>
+        <t:textfield t:id="value"/>
+        <br/>
+        <t:linksubmit>submit</t:linksubmit>
+    </t:form>
+
+</t:border>
