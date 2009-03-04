@@ -124,10 +124,10 @@ public class IntegrationTest extends IOCInternalTestCase
             service.run();
             unreachable();
         }
-        catch (IllegalStateException ex)
+        catch (RuntimeException ex)
         {
-            assertEquals(ex.getMessage(),
-                         "Proxy for service Fred is no longer active because the IOC Registry has been shut down.");
+            assertMessageContains(ex,
+                                  "Proxy for service Fred is no longer active because the IOC Registry has been shut down.");
         }
 
         // Show that toString() still works, even for a shutdown proxy.
