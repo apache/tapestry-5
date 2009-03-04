@@ -14,7 +14,20 @@ Component Parameters
   Parameters are defined by placing a
   {{{../apidocs/org/apache/tapestry5/annotations/Parameter.html}Parameter}} annotation
   onto a private field.
-  
+
+  In Tapestry, a parameter is not a slot into which data is pushed: it is a <connection> between
+  a field of the component (marked with the @Parameter annotation) and a property or resource
+  of the component's container.  In most simple examples, the container is the page, but since components
+  can have themselves have templates, sometime the container of a component is another component.
+
+  The connection is called a <binding>. The binding is two-way: the component can read the bound property
+  by reading its parameter field. Likewise, a component that updates its parameter field will update
+  the bound property.
+
+  This is important in a lot of cases; for example a TextField component can read <and update> the property
+  bound to its value parameter. It reads the value when rendering, but updates the value when
+  the form is submitted.
+
   The component listed below is a looping component; it renders its body
   a number of times, defined by its start and end parameters (which set the boundaries
   of the loop).  The component can update a value parameter bound to a property of its container,
@@ -138,8 +151,16 @@ Binding Expressions
 | var        | Allows a render variable of the component to be read or updated.                 |
 *------------+----------------------------------------------------------------------------------+
 
+
+  Most of these binding prefixes allow parameters to be bound to read-only values; for instance
+  a parameter bound to "message:some-key" will see the message for "some-key" from its container's
+  message catalog in the field. If the component tries to update the parameter (by setting the value
+  of the field), a runtime exception will be thrown to indicate that the value is read-only.
+
+  Only prop: and var: binding prefixes are updateable.
+
   Parameters have a default prefix, usually "prop:", that is used when the prefix is not provided.
-  
+
   A <special prefix>, "inherit:", is used to support {{{#Inherited Parameter Bindings}Inherted Parameter Bindings}}.
 
 Render Variables
@@ -252,8 +273,8 @@ Context Bindings
 ---
 
   Tapestry will adjust the URL of the image so that it is processed by Tapestry, not the servlet container.
-  It will gain a URL that includes the applications version number, it will have a far-future expires header,
-  and (if the client supports it) it will be compressed before being sent to the client.
+  It will gain a URL that includes the application's version number, it will have a far-future expires header,
+  and (if the client supports it) its content will be compressed before being sent to the client.
 
 Supporting Informal Parameters
 
@@ -500,7 +521,7 @@ Publishing Parameters
   In Tapestry 5.1, you may use the publishParameters attribute of the
   {{{../../apidocs/org/apache/tapestry5/annotations/Component.html}Component}}} annotation. List one
   or more parameters seperated by commas: those parameters of the inner/embedded component become
-  parameters of the outer component.  You should not define a parameter field in the outer component.
+  parameters of the outer component.  You should <<not>> define a parameter field in the outer component.
 
   There are still cases where you want to use the "inherit:" binding prefix. For example, if you have
   several components that need to share a parameter, then you must do it the Tapestry 5.0 way: a true parameter
