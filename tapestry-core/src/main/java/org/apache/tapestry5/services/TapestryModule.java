@@ -2022,13 +2022,19 @@ public final class TapestryModule
 
 
     /**
-     * Adds content types for "css" and "js" file extensions. <dl> <dt>css</dt> <dd>text/css</dd> <dt>js</dt>
-     * <dd>text/javascript</dd> </dl>
+     * Adds content types: <dl> <dt>css</dt> <dd>text/css</dd> <dt>js</dt> <dd>text/javascript</dd> <dt>jpg, jpeg</dt>
+     * <dd>image/jpeg</dd> <dt>gif</dt> <dd>image/gif</dd> <dt>png</dtt> <dd>image/png</dd>
+     * <p/>
+     * </dl>
      */
     public void contributeResourceStreamer(MappedConfiguration<String, String> configuration)
     {
         configuration.add("css", "text/css");
         configuration.add("js", "text/javascript");
+        configuration.add("gif", "image/gif");
+        configuration.add("jpg", "image/jpeg");
+        configuration.add("jpeg", "image/jpeg");
+        configuration.add("png", "image/png");
     }
 
     /**
@@ -2234,13 +2240,15 @@ public final class TapestryModule
 
     /**
      * Contibutions are content types that do not benefit from compression. Adds the following content types: <ul>
-     * <li>image/jpeg</li> </ul>
+     * <li>image/jpeg</li> <li>image/gif <li>image/png </ul>
      *
      * @since 5.1.0.0
      */
     public static void contributeResponseCompressionAnalyzer(Configuration<String> configuration)
     {
         configuration.add("image/jpeg");
+        configuration.add("image/gif");
+        configuration.add("image/png");
     }
 
     /**
