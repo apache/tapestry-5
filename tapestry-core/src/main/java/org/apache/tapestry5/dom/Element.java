@@ -15,6 +15,7 @@
 package org.apache.tapestry5.dom;
 
 import org.apache.tapestry5.internal.TapestryInternalUtils;
+import org.apache.tapestry5.internal.util.PrintOutCollector;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
@@ -34,14 +35,19 @@ public final class Element extends Node
     class Attribute
     {
         private final String namespace;
-        private final String name;
-        private final String value;
 
-        public Attribute(String namespace, String name, String value)
+        private final String name;
+
+        private String value;
+
+        private Attribute nextAttribute;
+
+        public Attribute(String namespace, String name, String value, Attribute nextAttribute)
         {
             this.namespace = namespace;
             this.name = name;
             this.value = value;
+            this.nextAttribute = nextAttribute;
         }
 
 
@@ -54,13 +60,21 @@ public final class Element extends Node
             model.encodeQuoted(value, builder);
             builder.append(model.getAttributeQuote());
         }
+
+        public boolean matches(String namespace, String name)
+        {
+            return TapestryInternalUtils.isEqual(this.namespace, namespace) &&
+                    this.name.equalsIgnoreCase(name);
+        }
     }
 
     private final String name;
 
-    private Map<String, Attribute> attributes;
+    private Node firstChild;
 
-    private Element parent;
+    private Node lastChild;
+
+    private Attribute firstAttribute;
 
     private final Document document;
 
@@ -80,7 +94,7 @@ public final class Element extends Node
      */
     Element(Document container, String namespace, String name)
     {
-        super(container);
+        super(null);
 
         document = container;
         this.namespace = namespace;
@@ -94,7 +108,6 @@ public final class Element extends Node
     {
         super(parent);
 
-        this.parent = parent;
         this.namespace = namespace;
         this.name = name;
 
@@ -109,10 +122,12 @@ public final class Element extends Node
 
     /**
      * Returns the containing element for this element. This will be null for the root element of a document.
+     *
+     * @deprecated since 5.1.0.1, use {@link Node#getContainer()} instead
      */
     public Element getParent()
     {
-        return parent;
+        return container;
     }
 
     /**
@@ -141,9 +156,16 @@ public final class Element extends Node
 
         if (value == null) return this;
 
-        if (attributes == null) attributes = CollectionFactory.newMap();
+        for (Attribute attr = firstAttribute; attr != null; attr = attr.nextAttribute)
+        {
+            if (attr.matches(namespace, name))
+            {
+                attr.value = value;
+                return this;
+            }
+        }
 
-        if (!attributes.containsKey(name)) attributes.put(name, new Attribute(namespace, name, value));
+        firstAttribute = new Attribute(namespace, name, value, firstAttribute);
 
         return this;
     }
@@ -173,8 +195,6 @@ public final class Element extends Node
      */
     public Element forceAttributes(String... namesAndValues)
     {
-        if (attributes == null) attributes = CollectionFactory.newMap();
-
         int i = 0;
 
         while (i < namesAndValues.length)
@@ -182,16 +202,37 @@ public final class Element extends Node
             String name = namesAndValues[i++];
             String value = namesAndValues[i++];
 
-            if (value == null)
-            {
-                attributes.remove(name);
-                continue;
-            }
+            removeAttribute(name);
 
-            attributes.put(name, new Attribute(null, name, value));
+            if (value != null)
+                attribute(null, name, value);
         }
 
         return this;
+    }
+
+    private void removeAttribute(String name)
+    {
+        Attribute prior = null;
+        Attribute cursor = firstAttribute;
+
+        while (cursor != null)
+        {
+            if (cursor.name.equalsIgnoreCase(name))
+            {
+                Attribute next = cursor.nextAttribute;
+
+                if (prior == null)
+                    firstAttribute = next;
+                else
+                    prior.nextAttribute = next;
+
+                return;
+            }
+
+            prior = cursor;
+            cursor = cursor.nextAttribute;
+        }
     }
 
     /**
@@ -301,13 +342,12 @@ public final class Element extends Node
 
         builder.append("<").append(prefixedElementName);
 
-        List<String> keys = InternalUtils.sortedKeys(attributes);
+        // Output order used to be alpha sorted, but now it tends to be the inverse
+        // of the order in which attributes were added.
 
-        for (String key : keys)
+        for (Attribute attr = firstAttribute; attr != null; attr = attr.nextAttribute)
         {
-            Attribute attribute = attributes.get(key);
-
-            attribute.render(markupModel, builder, localNamespacePrefixToURI);
+            attr.render(markupModel, builder, localNamespacePrefixToURI);
         }
 
         // Next, emit namespace declarations for each namespace.
@@ -405,11 +445,9 @@ public final class Element extends Node
 
             if (id.equals(elementId)) return e;
 
-            for (Node n : e.getChildren())
+            for (Element child : e.childElements())
             {
-                Element child = n.asElement();
-
-                if (child != null) queue.addLast(child);
+                queue.addLast(child);
             }
         }
 
@@ -444,11 +482,10 @@ public final class Element extends Node
 
     private Element findChildWithElementName(String name)
     {
-        for (Node node : getChildren())
+        for (Element child : childElements())
         {
-            Element child = node.asElement();
-
-            if (child != null && child.getName().equals(name)) return child;
+            if (child.getName().equals(name))
+                return child;
         }
 
         // Not found.
@@ -456,25 +493,69 @@ public final class Element extends Node
         return null;
     }
 
+    private Iterable<Element> childElements()
+    {
+        return new Iterable<Element>()
+        {
+            public Iterator<Element> iterator()
+            {
+                return new Iterator<Element>()
+                {
+                    private Node cursor = firstChild;
+
+                    {
+                        advance();
+                    }
+
+                    private void advance()
+                    {
+                        while (cursor != null)
+                        {
+                            if (cursor instanceof Element) return;
+
+                            cursor = cursor.nextSibling;
+                        }
+                    }
+
+                    public boolean hasNext()
+                    {
+                        return cursor != null;
+                    }
+
+                    public Element next()
+                    {
+                        Element result = (Element) cursor;
+
+                        cursor = cursor.nextSibling;
+
+                        advance();
+
+                        return result;
+                    }
+
+                    public void remove()
+                    {
+                        throw new UnsupportedOperationException("remove() not supported.");
+                    }
+                };
+            }
+        };
+    }
+
     public String getAttribute(String attributeName)
     {
-        Attribute attribute = InternalUtils.get(attributes, attributeName);
+        for (Attribute attr = firstAttribute; attr != null; attr = attr.nextAttribute)
+        {
+            if (attr.name.equalsIgnoreCase(attributeName))
+                return attr.value;
+        }
 
-        return attribute == null ? null : attribute.value;
+        return null;
     }
 
     public String getName()
     {
         return name;
-    }
-
-    /**
-     * All other implementations of Node return null except this one.
-     */
-    @Override
-    Element asElement()
-    {
-        return this;
     }
 
     /**
@@ -565,7 +646,8 @@ public final class Element extends Node
      */
     public Element removeChildren()
     {
-        clearChildren();
+        firstChild = null;
+        lastChild = null;
 
         return this;
     }
@@ -602,11 +684,8 @@ public final class Element extends Node
 
         // And for any attributes that have a namespace.
 
-        if (attributes != null)
-        {
-            for (Attribute a : attributes.values())
-                addMappingIfNeeded(holder, a.namespace);
-        }
+        for (Attribute attr = firstAttribute; attr != null; attr = attr.nextAttribute)
+            addMappingIfNeeded(holder, attr.namespace);
 
         return holder.getResult();
     }
@@ -648,12 +727,12 @@ public final class Element extends Node
 
         List<Element> elements = CollectionFactory.newList(this);
 
-        Element cursor = parent;
+        Element cursor = container;
 
         while (cursor != null)
         {
             elements.add(cursor);
-            cursor = cursor.parent;
+            cursor = cursor.container;
         }
 
         // Reverse the list, so that later elements will overwrite earlier ones.
@@ -719,21 +798,182 @@ public final class Element extends Node
 
     private void queueChildren(Stack<Element> queue)
     {
-        List<Node> children = getChildren();
+        if (firstChild == null) return;
 
-        int count = children.size();
+        List<Element> childElements = CollectionFactory.newList();
 
-        // Push them in reverse order to get the correct
-        // traversal: the lowest index child is traversed first.
-
-        for (int i = count - 1; i >= 0; i--)
+        for (Node cursor = firstChild; cursor != null; cursor = cursor.nextSibling)
         {
-            Node n = children.get(i);
+            if (cursor instanceof Element)
+                childElements.add((Element) cursor);
+        }
 
-            if (n instanceof Element)
+        Collections.reverse(childElements);
+
+        for (Element e : childElements)
+            queue.push(e);
+    }
+
+    void addChild(Node child)
+    {
+        child.container = this;
+
+        if (lastChild == null)
+        {
+            firstChild = child;
+            lastChild = child;
+            return;
+        }
+
+        lastChild.nextSibling = child;
+        lastChild = child;
+    }
+
+    void insertChildAt(int index, Node newChild)
+    {
+        newChild.container = this;
+
+        if (index < 1)
+        {
+            newChild.nextSibling = firstChild;
+            firstChild = newChild;
+        }
+        else
+        {
+            Node cursor = firstChild;
+            for (int i = 1; i < index; i++)
             {
-                queue.push((Element) n);
+                cursor = cursor.nextSibling;
             }
+
+
+            newChild.nextSibling = cursor.nextSibling;
+            cursor.nextSibling = newChild;
+        }
+
+        if (index < 1)
+            firstChild = newChild;
+
+        if (newChild.nextSibling == null)
+            lastChild = newChild;
+    }
+
+    boolean hasChildren()
+    {
+        return firstChild != null;
+    }
+
+    void writeChildMarkup(Document document, PrintWriter writer, Map<String, String> namespaceURIToPrefix)
+    {
+        Node cursor = firstChild;
+
+        while (cursor != null)
+        {
+            cursor.toMarkup(document, writer, namespaceURIToPrefix);
+
+            cursor = cursor.nextSibling;
         }
     }
+
+    /**
+     * @return the concatenation of the String representations {@link #toString()} of its children.
+     */
+    public final String getChildMarkup()
+    {
+        PrintOutCollector collector = new PrintOutCollector();
+
+        writeChildMarkup(getDocument(), collector.getPrintWriter(), null);
+
+        return collector.getPrintOut();
+    }
+
+    /**
+     * Returns an unmodifiable list of children for this element. Only {@link org.apache.tapestry5.dom.Element}s will
+     * have children.  Also, note that unlike W3C DOM, attributes are not represented as {@link
+     * org.apache.tapestry5.dom.Node}s.
+     *
+     * @return unmodifiable list of children nodes
+     */
+    @SuppressWarnings("unchecked")
+    public List<Node> getChildren()
+    {
+        List<Node> result = CollectionFactory.newList();
+        Node cursor = firstChild;
+
+        while (cursor != null)
+        {
+            result.add(cursor);
+            cursor = cursor.nextSibling;
+        }
+
+        return result;
+    }
+
+    void remove(Node node)
+    {
+        Node prior = null;
+        Node cursor = firstChild;
+
+        while (cursor != null)
+        {
+            if (cursor == node)
+            {
+                Node afterNode = node.nextSibling;
+
+                if (prior != null)
+                    prior.nextSibling = afterNode;
+                else
+                    firstChild = afterNode;
+
+                if (afterNode == null)
+                    lastChild = afterNode;
+
+                return;
+            }
+
+            prior = cursor;
+            cursor = cursor.nextSibling;
+        }
+
+        throw new IllegalArgumentException("Node to remove was not present as a child of this element.");
+    }
+
+    void insertChildBefore(Node existing, Node node)
+    {
+        int index = indexOfNode(existing);
+
+        node.container = this;
+
+        insertChildAt(index, node);
+    }
+
+    void insertChildAfter(Node existing, Node node)
+    {
+        Node oldAfter = existing.nextSibling;
+
+        existing.nextSibling = node;
+        node.nextSibling = oldAfter;
+
+        if (oldAfter == null)
+            lastChild = node;
+
+        node.container = this;
+    }
+
+    int indexOfNode(Node node)
+    {
+        int index = 0;
+        Node cursor = firstChild;
+
+        while (cursor != null)
+        {
+            if (node == cursor) return index;
+
+            cursor = cursor.nextSibling;
+            index++;
+        }
+
+        throw new IllegalArgumentException("Node not a child of this element.");
+    }
+
 }

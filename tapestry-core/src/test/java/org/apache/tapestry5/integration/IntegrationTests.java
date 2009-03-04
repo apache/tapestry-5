@@ -1607,10 +1607,12 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         // - AbstractTextField.isRequired() and the logic inside ComponentFieldValidator.isRequired()
 
         assertSourcePresent(
-                "[Before label for Value]<label for=\"value\" id=\"value:label\">Value</label>[After label for Value]",
-                "[Before field Value]", "[After field Value (optional)]",
-                "[Before label for Required Value]<label for=\"requiredValue\" id=\"requiredValue:label\">Required Value</label>[After label for Required Value]",
-                "[Before field Required Value]", "[After field Required Value (required)]");
+                "[Before label for Value]<label id=\"value:label\" for=\"value\">Value</label>[After label for Value]",
+                "[Before field Value]",
+                "[After field Value (optional)]",
+                "[Before label for Required Value]<label id=\"requiredValue:label\" for=\"requiredValue\">Required Value</label>[After label for Required Value]",
+                "[Before field Required Value]",
+                "[After field Required Value (required)]");
     }
 
     /**
@@ -1665,7 +1667,8 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         assertTextPresent("Editor for org.apache.tapestry5.integration.app1.data.Track");
 
-        assertSourcePresent("<label for=\"title\" id=\"title:label\">Title</label>");
+        assertText("//label[@id='title:label']", "Title");
+        assertAttribute("//label[@id='title:label']/@for", "title");
     }
 
     /**

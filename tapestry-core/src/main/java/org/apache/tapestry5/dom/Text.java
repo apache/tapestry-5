@@ -24,7 +24,7 @@ public final class Text extends Node
 {
     private final StringBuilder buffer;
 
-    Text(Node container, String text)
+    Text(Element container, String text)
     {
         super(container);
 

@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -60,7 +60,9 @@ public class DefaultValidationDecoratorTest extends TapestryTestCase
 
         decorator.insideLabel(field, e);
 
-        assertEquals(writer.toString(), "<?xml version=\"1.0\"?>\n<label accesskey=\"f\" class=\"t-error\"/>");
+        assertEquals(writer.toString(),
+                     "<?xml version=\"1.0\"?>\n" +
+                             "<label class=\"t-error\" accesskey=\"f\"/>");
 
         verify();
     }
@@ -84,7 +86,8 @@ public class DefaultValidationDecoratorTest extends TapestryTestCase
 
         decorator.insideLabel(field, e);
 
-        assertEquals(writer.toString(), "<?xml version=\"1.0\"?>\n<label accesskey=\"f\" class=\"foo t-error\"/>");
+        assertEquals(writer.toString(), "<?xml version=\"1.0\"?>\n" +
+                "<label class=\"foo t-error\" accesskey=\"f\"/>");
 
         verify();
     }
@@ -109,7 +112,8 @@ public class DefaultValidationDecoratorTest extends TapestryTestCase
         decorator.insideField(field);
 
         assertEquals(writer.toString(),
-                     "<?xml version=\"1.0\"?>\n<input class=\"foo t-error\" name=\"ex\" size=\"30\" type=\"text\" value=\"freddy\"/>");
+                     "<?xml version=\"1.0\"?>\n" +
+                             "<input class=\"foo t-error\" size=\"30\" value=\"freddy\" name=\"ex\" type=\"text\"/>");
 
         verify();
     }

@@ -437,7 +437,7 @@ public class DOMTest extends InternalBaseTestCase
         root.attribute("alpha-only", "abcdef");
         root.attribute("entities", "\"<>&");
 
-        assertEquals(root.toString(), "<prime alpha-only=\"abcdef\" entities=\"&quot;&lt;&gt;&amp;\"/>");
+        assertEquals(root.toString(), "<prime entities=\"&quot;&lt;&gt;&amp;\" alpha-only=\"abcdef\"/>");
     }
 
     @Test
@@ -767,6 +767,5 @@ public class DOMTest extends InternalBaseTestCase
 
         assertListsEquals(elementNames, "parent", "child1", "child1a", "child1b", "child2", "child2a", "child2b",
                           "child2c");
-
     }
 }
