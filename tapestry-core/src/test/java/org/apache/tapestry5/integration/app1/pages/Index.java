@@ -65,6 +65,9 @@ public class Index
 
     private static final List<Item> ITEMS = CollectionFactory.newList(
 
+            new Item("LinkSubmitInZoneDemo", "LinkSubmit inside Zone",
+                     "Ensure that a LinkSubmit works correctly when its containing Form updates a Zone"),
+
             new Item("SlowAjaxDemo", "Slow Ajax Demo", "Handling of client-side Ajax before the page is fully loaded"),
 
             new Item("ProgressiveDemo", "ProgressiveDisplay Demo", "Progressive Enhancement via a component"),
