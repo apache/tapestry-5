@@ -144,8 +144,6 @@ public final class Document extends Node
 
             writer.print("?>\n");
         }
-
-        // TODO: lead-in comments, directives.
         if (dtd != null)
         {
             dtd.toMarkup(writer);
@@ -233,7 +231,7 @@ public final class Document extends Node
      */
     public Document comment(String text)
     {
-        newChild(new Comment(this, text));
+        newChild(new Comment(null, text));
 
         return this;
     }
@@ -245,21 +243,21 @@ public final class Document extends Node
      */
     public Document raw(String text)
     {
-        newChild(new Raw(this, text));
+        newChild(new Raw(null, text));
 
         return this;
     }
 
     /**
      * Adds and returns a new text node (the text node is returned so that {@link Text#write(String)} or [@link {@link
-     * Text#writef(String, Object[])} may be invoked .
+     * Text#writef(String, Object[])} may be invoked.
      *
      * @param text initial text for the node
      * @return the new Text node
      */
     public Text text(String text)
     {
-        return newChild(new Text(this, text));
+        return newChild(new Text(null, text));
     }
 
     /**
@@ -270,6 +268,6 @@ public final class Document extends Node
      */
     public CData cdata(String content)
     {
-        return newChild(new CData(this, content));
+        return newChild(new CData(null, content));
     }
 }
