@@ -1,4 +1,4 @@
-// Copyright 2008 The Apache Software Foundation
+// Copyright 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,12 +15,14 @@
 package org.apache.tapestry5.corelib.internal;
 
 import org.apache.tapestry5.ComponentAction;
-import org.apache.tapestry5.internal.util.Base64ObjectOutputStream;
 import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.runtime.Component;
+import org.apache.tapestry5.services.ClientDataEncoder;
+import org.apache.tapestry5.services.ClientDataSink;
 import org.slf4j.Logger;
 
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 
 /**
  * Used to collection component actions, with the ultimate goal being the creation of a MIME-encoded string of the
@@ -30,20 +32,17 @@ public class ComponentActionSink
 {
     private final Logger logger;
 
-    private final Base64ObjectOutputStream stream;
+    private final ObjectOutputStream stream;
 
-    public ComponentActionSink(Logger logger)
+    private final ClientDataSink sink;
+
+    public ComponentActionSink(Logger logger, ClientDataEncoder encoder)
     {
         this.logger = logger;
 
-        try
-        {
-            stream = new Base64ObjectOutputStream();
-        }
-        catch (IOException ex)
-        {
-            throw new RuntimeException(ex);
-        }
+        sink = encoder.createSink();
+
+        stream = sink.getObjectOutputStream();
     }
 
     public <T> void store(T component, ComponentAction<T> action)
@@ -69,17 +68,8 @@ public class ComponentActionSink
     }
 
 
-    public String toBase64()
+    public String getClientData()
     {
-        try
-        {
-            stream.close();
-        }
-        catch (IOException ex)
-        {
-            throw new RuntimeException(ex);
-        }
-
-        return stream.toBase64();
+        return sink.getClientData();
     }
 }

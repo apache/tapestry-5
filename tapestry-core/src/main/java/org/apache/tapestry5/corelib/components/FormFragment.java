@@ -105,6 +105,9 @@ public class FormFragment implements ClientElement
 
     private HiddenFieldPositioner hiddenFieldPositioner;
 
+    @Inject
+    private ClientDataEncoder clientDataEncoder;
+
     String defaultElement()
     {
         return resources.getElementName("div");
@@ -133,7 +136,7 @@ public class FormFragment implements ClientElement
 
         clientBehaviorSupport.addFormFragment(clientId, show, hide);
 
-        componentActions = new ComponentActionSink(logger);
+        componentActions = new ComponentActionSink(logger, clientDataEncoder);
 
         // Here's the magic of environmentals ... we can create a wrapper around
         // the normal FormSupport environmental that intercepts some of the behavior.
@@ -179,7 +182,7 @@ public class FormFragment implements ClientElement
 
                 "id", clientId + ":hidden",
 
-                "value", componentActions.toBase64()
+                "value", componentActions.getClientData()
         );
 
         writer.end(); // div

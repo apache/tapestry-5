@@ -299,6 +299,7 @@ public final class TapestryModule
                 "SessionApplicationStatePersistenceStrategy");
         binder.bind(AssetPathConverter.class, IdentityAssetPathConverter.class);
         binder.bind(NumericTranslatorSupport.class);
+        binder.bind(ClientDataEncoder.class, ClientDataEncoderImpl.class);
     }
 
     // ========================================================================
