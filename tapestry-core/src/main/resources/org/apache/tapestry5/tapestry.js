@@ -32,8 +32,9 @@ var Tapestry = {
      */
     FORM_PROCESS_SUBMIT_EVENT : "tapestry:formprocesssubmit",
 
-    /** Event, triggered on a field element, to cause observers to validate the input. The field's translated
-     * value will be passed to observers as the event memo.  Observers may invoke Element.showValidationMessage()
+    /** Event, triggered on a field element, to cause observers to validate the input. Passes a memo object with
+     * two keys: "value" (the raw input value) and "translated" (the parsed value, usually meaning a number
+     * parsed from a string).  Observers may invoke Element.showValidationMessage()
      *  to identify that the field is in error (and decorate the field and show a popup error message).
      */
     FIELD_VALIDATE_EVENT : "tapestry:fieldvalidate",
@@ -59,13 +60,9 @@ var Tapestry = {
     {
         if (Tapestry.pageLoaded) return;
 
+        Event.extend(event || window.event).stop();
 
-        event = event || window.event;
-        Event.extend(event);
-
-        event.stop();
-
-        var body = $$("BODY").first();
+        var body = $(document.body);
 
         // The overlay is stretched to cover the full screen (including scrolling areas)
         // and is used to fade out the background ... and prevent keypresses (its z-order helps there).
@@ -73,13 +70,9 @@ var Tapestry = {
         var overlay = new Element("div", { 'class' : 't-dialog-overlay' });
         overlay.setOpacity(0.0);
 
-        // This seems to leave a few pixels at the bottom uncovered; a problem for another day.
-
-        overlay.style.height = body.getHeight() + "px";
-
         body.insert({ top: overlay });
 
-        new Effect.Appear(overlay, {duration: 0.2});
+        new Effect.Appear(overlay, {duration: 0.2, from: 0.0});
 
         var messageDiv = new Element("div", { 'class' : 't-page-loading-banner' }).update(Tapestry.Messages.pageIsLoading);
         overlay.insert({ top: messageDiv });
@@ -260,7 +253,7 @@ var Tapestry = {
 
     createConsole : function(className)
     {
-        var body = $$("BODY").first();
+        var body = $(document.body);
 
         var console = new Element("div", { 'class': className });
 
@@ -725,9 +718,7 @@ Element.addMethods(['INPUT', 'SELECT', 'TEXTAREA'],
         {
             try
             {
-                // event.memo is the translated value, ready to be validated.
-                // For numeric fields, this will be a number.
-                validator.call(this, event.memo);
+                validator.call(this, event.memo.translated);
             }
             catch (message)
             {
@@ -1046,7 +1037,7 @@ Tapestry.ErrorPopup = Class.create({
             'id' : this.field.id + ":errorpopup",
             'class' : 't-error-popup' })).update(this.innerSpan).hide();
 
-        var body = $$('BODY').first();
+        var body = $(document.body);
 
         body.insert({ bottom: this.outerDiv });
 
@@ -1347,11 +1338,13 @@ Tapestry.FieldEventManager = Class.create({
 
             if (! t.validationError)
             {
-                // Pass the translated value (a string or a number)
-                // to each event handler as event.memo.
+                // If the value in the field is non blank, then validate
+                // its *translated* value (i.e., the parsed number). If it was
+                // blank but is required, the error has already been recorded.
 
-                if (translated != '')
-                    this.field.fire(Tapestry.FIELD_VALIDATE_EVENT, translated);
+                if (! value.blank())
+                    this.field.fire(Tapestry.FIELD_VALIDATE_EVENT,
+                    { value: value, translated: translated });
             }
 
             // Lastly, if no validation errors were found, remove the decorations.
