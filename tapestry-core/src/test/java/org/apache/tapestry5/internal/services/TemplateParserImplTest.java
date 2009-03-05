@@ -332,6 +332,26 @@ public class TemplateParserImplTest extends InternalBaseTestCase
         get(tokens, 4);
     }
 
+    /**
+     * @since 5.1.0.1
+     */
+    @Test
+    public void comment_element_ignored()
+    {
+        List<TemplateToken> tokens = tokens("comment_element_ignored.tml");
+
+        assertEquals(tokens.size(), 8);
+
+        get(tokens, 2);
+
+        TextToken t = get(tokens, 3);
+
+        assertEquals(t.getText().trim(), "fred's body");
+
+        EndElementToken end5 = get(tokens, 5);
+        EndElementToken end7 = get(tokens, 7);
+    }
+
     @Test
     public void root_element_is_component()
     {
@@ -654,7 +674,10 @@ public class TemplateParserImplTest extends InternalBaseTestCase
                 { "invalid_library_namespace_path.tml",
                         "The path portion of library namespace URI 'tapestry-library:subfolder/' is not valid", 2 },
 
-                { "content_within_body_element.tml", "", 2 }
+                { "content_within_body_element.tml", "", 2 },
+
+                { "comment_may_not_contain_elements.tml",
+                        "Unexpected XML parse event START_ELEMENT within a comment element.", 5 }
         };
     }
 
