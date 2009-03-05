@@ -168,6 +168,9 @@ public class FormInjector implements ClientElement
     @Inject
     private HiddenFieldLocationRules rules;
 
+    @Inject
+    private ClientDataEncoder clientDataEncoder;
+
     /**
      * Invoked via an Ajax request.  Triggers an action event and captures the return value. The return value from the
      * event notification is what will ultimately render (typically, its a Block).  However, we do a <em>lot</em> of
@@ -190,7 +193,7 @@ public class FormInjector implements ClientElement
 
         final Form form = (Form) componentSource.getComponent(formComponentId);
 
-        final ComponentActionSink actionSink = new ComponentActionSink(logger);
+        final ComponentActionSink actionSink = new ComponentActionSink(logger, clientDataEncoder);
 
         PartialMarkupRendererFilter filter = new PartialMarkupRendererFilter()
         {
@@ -233,7 +236,7 @@ public class FormInjector implements ClientElement
 
                         "name", Form.FORM_DATA,
 
-                        "value", actionSink.toBase64());
+                        "value", actionSink.getClientData());
             }
         };
 

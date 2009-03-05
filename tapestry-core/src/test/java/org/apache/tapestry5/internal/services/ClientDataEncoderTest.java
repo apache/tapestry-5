@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,68 +12,47 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.internal.util;
+package org.apache.tapestry5.internal.services;
 
-import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newMap;
-import org.testng.Assert;
+import org.apache.tapestry5.internal.test.InternalBaseTestCase;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.services.ClientDataEncoder;
+import org.apache.tapestry5.services.ClientDataSink;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.io.EOFException;
-import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Map;
 
-/**
- * Tests for {@link Base64InputStream} and {@link Base64OutputStream}, etc.
- */
-public class Base64Tests extends Assert
+public class ClientDataEncoderTest extends InternalBaseTestCase
 {
+    private ClientDataEncoder encoder;
+
+    @BeforeClass
+    public void setup()
+    {
+        encoder = getService(ClientDataEncoder.class);
+    }
+
+
     @SuppressWarnings("unchecked")
     @Test
     public void round_trip_is_equal() throws Exception
     {
-        Map input = newMap();
+        Map input = CollectionFactory.newMap();
 
         input.put("fred", "flintstone");
         input.put("barney", "rubble");
 
-        Base64OutputStream bos = new Base64OutputStream();
-        ObjectOutputStream oos = new ObjectOutputStream(bos);
+        ClientDataSink sink = encoder.createSink();
 
-        oos.writeObject(input);
+        sink.getObjectOutputStream().writeObject(input);
 
-        oos.close();
+        String clientData = sink.getClientData();
 
-        String base64 = bos.toBase64();
-
-        InputStream is = new Base64InputStream(base64);
-        ObjectInputStream ois = new ObjectInputStream(is);
-
-        Map output = (Map) ois.readObject();
-
-        assertEquals(output, input);
-        assertNotSame(output, input);
-    }
-
-    @Test
-    @SuppressWarnings("unchecked")
-    public void round_trip_is_equal_via_object_wrappers() throws Exception
-    {
-        Map input = newMap();
-
-        input.put("fred", "flintstone");
-        input.put("barney", "rubble");
-
-        Base64ObjectOutputStream os = new Base64ObjectOutputStream();
-
-        os.writeObject(input);
-
-        os.close();
-
-        String base64 = os.toBase64();
-
-        ObjectInputStream ois = new Base64ObjectInputStream(base64);
+        ObjectInputStream ois = encoder.decodeClientData(clientData);
 
         Map output = (Map) ois.readObject();
 
@@ -86,16 +65,18 @@ public class Base64Tests extends Assert
     {
         String[] values = { "fred", "barney", "wilma" };
 
-        Base64ObjectOutputStream os = new Base64ObjectOutputStream();
+        ClientDataSink sink = encoder.createSink();
+
+        ObjectOutputStream os = sink.getObjectOutputStream();
 
         for (String value : values)
             os.writeObject(value);
 
         os.close();
 
-        String base64 = os.toBase64();
+        String clientData = sink.getClientData();
 
-        ObjectInputStream ois = new Base64ObjectInputStream(base64);
+        ObjectInputStream ois = encoder.decodeClientData(clientData);
 
         for (int i = 0; i < 3; i++)
         {

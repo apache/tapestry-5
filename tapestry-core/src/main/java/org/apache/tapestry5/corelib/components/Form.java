@@ -24,7 +24,6 @@ import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.internal.services.ComponentResultProcessorWrapper;
 import org.apache.tapestry5.internal.services.HeartbeatImpl;
 import org.apache.tapestry5.internal.util.AutofocusValidationDecorator;
-import org.apache.tapestry5.internal.util.Base64ObjectInputStream;
 import org.apache.tapestry5.ioc.Location;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
@@ -204,6 +203,9 @@ public class Form implements ClientElement, FormValidationControl
     @Environmental
     private ClientBehaviorSupport clientBehaviorSupport;
 
+    @Inject
+    private ClientDataEncoder clientDataEncoder;
+
     private String name;
 
     String defaultValidationId()
@@ -235,7 +237,7 @@ public class Form implements ClientElement, FormValidationControl
     {
         Link link = resources.createFormEventLink(EventConstants.ACTION, context);
 
-        actionSink = new ComponentActionSink(logger);
+        actionSink = new ComponentActionSink(logger, clientDataEncoder);
 
         name = renderSupport.allocateClientId(resources);
 
@@ -325,7 +327,7 @@ public class Form implements ClientElement, FormValidationControl
         div.element("input",
                     "type", "hidden",
                     "name", FORM_DATA,
-                    "value", actionSink.toBase64());
+                    "value", actionSink.getClientData());
 
         if (autofocus)
             environment.pop(ValidationDecorator.class);
@@ -447,9 +449,11 @@ public class Form implements ClientElement, FormValidationControl
 
         // Due to Ajax (FormInjector) there may be multiple values here, so handle each one individually.
 
-        for (String actionsBase64 : values)
+        for (String clientEncodedActions : values)
         {
-            logger.debug("Processing actions: {}", actionsBase64);
+            if (InternalUtils.isBlank(clientEncodedActions)) continue;
+
+            logger.debug("Processing actions: {}", clientEncodedActions);
 
             ObjectInputStream ois = null;
 
@@ -457,7 +461,7 @@ public class Form implements ClientElement, FormValidationControl
 
             try
             {
-                ois = new Base64ObjectInputStream(actionsBase64);
+                ois = clientDataEncoder.decodeClientData(clientEncodedActions);
 
                 while (true)
                 {

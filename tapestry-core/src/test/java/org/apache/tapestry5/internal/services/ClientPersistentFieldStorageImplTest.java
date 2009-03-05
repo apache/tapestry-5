@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,21 +15,31 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.Link;
+import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.internal.util.Holder;
 import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newList;
+import org.apache.tapestry5.services.ClientDataEncoder;
 import org.apache.tapestry5.services.PersistentFieldChange;
 import org.apache.tapestry5.services.Request;
-import org.apache.tapestry5.test.TapestryTestCase;
 import org.easymock.EasyMock;
 import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.isA;
 import org.easymock.IAnswer;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.util.List;
 
-public class ClientPersistentFieldStorageImplTest extends TapestryTestCase
+public class ClientPersistentFieldStorageImplTest extends InternalBaseTestCase
 {
+    private ClientDataEncoder clientDataEncoder;
+
+    @BeforeClass
+    public void setup()
+    {
+        clientDataEncoder = getService(ClientDataEncoder.class);
+    }
+
     @Test
     public void no_client_data_in_request()
     {
@@ -38,7 +48,7 @@ public class ClientPersistentFieldStorageImplTest extends TapestryTestCase
 
         replay();
 
-        ClientPersistentFieldStorage storage = new ClientPersistentFieldStorageImpl(request);
+        ClientPersistentFieldStorage storage = new ClientPersistentFieldStorageImpl(request, clientDataEncoder);
 
         // Should do nothing.
 
@@ -77,7 +87,7 @@ public class ClientPersistentFieldStorageImplTest extends TapestryTestCase
 
         replay();
 
-        ClientPersistentFieldStorage storage1 = new ClientPersistentFieldStorageImpl(request);
+        ClientPersistentFieldStorage storage1 = new ClientPersistentFieldStorageImpl(request, clientDataEncoder);
 
         storage1.postChange(pageName, componentId, fieldName, value);
 
@@ -102,7 +112,7 @@ public class ClientPersistentFieldStorageImplTest extends TapestryTestCase
 
         replay();
 
-        ClientPersistentFieldStorage storage2 = new ClientPersistentFieldStorageImpl(request);
+        ClientPersistentFieldStorage storage2 = new ClientPersistentFieldStorageImpl(request, clientDataEncoder);
 
         List<PersistentFieldChange> changes2 = newList(storage2.gatherFieldChanges(pageName));
 
@@ -131,7 +141,7 @@ public class ClientPersistentFieldStorageImplTest extends TapestryTestCase
 
         replay();
 
-        ClientPersistentFieldStorage storage = new ClientPersistentFieldStorageImpl(request);
+        ClientPersistentFieldStorage storage = new ClientPersistentFieldStorageImpl(request, clientDataEncoder);
 
         for (int k = 0; k < 3; k++)
         {
@@ -163,7 +173,7 @@ public class ClientPersistentFieldStorageImplTest extends TapestryTestCase
 
         replay();
 
-        ClientPersistentFieldStorage storage = new ClientPersistentFieldStorageImpl(request);
+        ClientPersistentFieldStorage storage = new ClientPersistentFieldStorageImpl(request, clientDataEncoder);
 
         storage.postChange(pageName, componentId, fieldName, 99);
         storage.postChange(pageName, componentId, fieldName, null);
@@ -190,7 +200,7 @@ public class ClientPersistentFieldStorageImplTest extends TapestryTestCase
 
         replay();
 
-        ClientPersistentFieldStorage storage = new ClientPersistentFieldStorageImpl(request);
+        ClientPersistentFieldStorage storage = new ClientPersistentFieldStorageImpl(request, clientDataEncoder);
 
         storage.postChange(pageName, componentId, fieldName, 99);
 
@@ -220,7 +230,7 @@ public class ClientPersistentFieldStorageImplTest extends TapestryTestCase
 
         replay();
 
-        ClientPersistentFieldStorage storage = new ClientPersistentFieldStorageImpl(request);
+        ClientPersistentFieldStorage storage = new ClientPersistentFieldStorageImpl(request, clientDataEncoder);
 
         try
         {
@@ -245,7 +255,7 @@ public class ClientPersistentFieldStorageImplTest extends TapestryTestCase
 
         replay();
 
-        ClientPersistentFieldStorage storage = new ClientPersistentFieldStorageImpl(request);
+        ClientPersistentFieldStorage storage = new ClientPersistentFieldStorageImpl(request, clientDataEncoder);
 
         try
         {
