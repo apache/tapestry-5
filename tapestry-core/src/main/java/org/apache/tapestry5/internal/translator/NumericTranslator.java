@@ -21,7 +21,13 @@ import org.apache.tapestry5.services.FormSupport;
 
 import java.text.ParseException;
 
-public class NumericTranslator<T> extends AbstractTranslator<T>
+/**
+ * Uses a {@link org.apache.tapestry5.internal.translator.NumericTranslatorSupport} to provide proper locale-aware
+ * support for all the built-in numeric types.
+ *
+ * @since 5.1.0.1
+ */
+public class NumericTranslator<T extends Number> extends AbstractTranslator<T>
 {
     private final NumericTranslatorSupport support;
 

@@ -58,6 +58,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -783,7 +785,7 @@ public final class TapestryModule
 
     /**
      * Contributes the basic set of translators: <ul>  <li>string</li>  <li>byte</li> <li>short</li> <li>integer</li>
-     * <li>long</li> <li>float</li> <li>double</li>  </ul>
+     * <li>long</li> <li>float</li> <li>double</li>  <li>BigInteger</li> <li>BigDecimal</li></ul>
      */
     public static void contributeTranslatorSource(Configuration<Translator> configuration,
                                                   NumericTranslatorSupport support)
@@ -791,7 +793,8 @@ public final class TapestryModule
 
         configuration.add(new StringTranslator());
 
-        Class[] types = new Class[] { Byte.class, Short.class, Integer.class, Long.class, Float.class, Double.class };
+        Class[] types = new Class[] { Byte.class, Short.class, Integer.class, Long.class, Float.class, Double.class,
+                BigInteger.class, BigDecimal.class };
 
         for (Class type : types)
         {

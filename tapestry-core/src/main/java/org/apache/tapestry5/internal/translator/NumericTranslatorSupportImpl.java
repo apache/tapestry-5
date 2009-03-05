@@ -23,6 +23,7 @@ import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.ClientBehaviorSupport;
 import org.apache.tapestry5.services.Request;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -68,7 +69,7 @@ public class NumericTranslatorSupportImpl implements NumericTranslatorSupport
 
     }
 
-    public <T> void addValidation(Class<T> type, Field field, String message)
+    public <T extends Number> void addValidation(Class<T> type, Field field, String message)
     {
         if (request.getAttribute(DECIMAL_FORMAT_SYMBOLS_PROVIDED) == null)
         {
@@ -113,52 +114,81 @@ public class NumericTranslatorSupportImpl implements NumericTranslatorSupport
         return integerTypes.contains(type);
     }
 
-    public <T> T parseClient(Class<T> type, String clientValue) throws ParseException
+    public <T extends Number> T parseClient(Class<T> type, String clientValue) throws ParseException
     {
-        NumberFormat formatter = getParseFormatter(type);
+        NumericFormatter formatter = getParseFormatter(type);
 
         Number number = formatter.parse(clientValue.trim());
 
         return typeCoercer.coerce(number, type);
     }
 
-    private NumberFormat getParseFormatter(Class type)
+    private NumericFormatter getParseFormatter(Class type)
     {
         Locale locale = threadLocale.getLocale();
+        DecimalFormatSymbols symbols = getSymbols(locale);
 
-        boolean isInteger = isIntegerType(type);
+        if (type.equals(BigInteger.class))
+            return new BigIntegerNumericFormatter(symbols);
+
+        if (type.equals(BigDecimal.class))
+            return new BigDecimalNumericFormatter(symbols);
 
         // We don't cache NumberFormat instances because they are not thread safe.
         // Perhaps we should turn this service into a perthread so that we can cache
         // (for the duration of a request)?
 
-        return isInteger ? NumberFormat.getIntegerInstance(locale)
-                         : NumberFormat.getNumberInstance(locale);
+        // We don't cache the rest of these, because they are built on DecimalFormat which is
+        // not thread safe.
 
+        if (isIntegerType(type))
+        {
+            NumberFormat format = NumberFormat.getIntegerInstance(locale);
+            return new NumericFormatterImpl(format);
+        }
+
+        DecimalFormat df = (DecimalFormat) NumberFormat.getNumberInstance(locale);
+
+        if (type.equals(BigDecimal.class))
+            df.setParseBigDecimal(true);
+
+        return new NumericFormatterImpl(df);
     }
 
-    private NumberFormat getOutputFormatter(Class type)
+    private NumericFormatter getOutputFormatter(Class type)
     {
         Locale locale = threadLocale.getLocale();
 
-        boolean isInteger = isIntegerType(type);
-
-        if (!isInteger) return NumberFormat.getNumberInstance(locale);
-
         DecimalFormatSymbols symbols = getSymbols(locale);
 
-        return new DecimalFormat(toString(symbols.getZeroDigit()), symbols);
+        if (type.equals(BigInteger.class))
+            return new BigIntegerNumericFormatter(symbols);
+
+        if (type.equals(BigDecimal.class))
+            return new BigDecimalNumericFormatter(symbols);
+
+
+        // We don't cache the rest of these, because they are built on DecimalFormat which is
+        // not thread safe.
+
+        if (!isIntegerType(type))
+        {
+            NumberFormat format = NumberFormat.getNumberInstance(locale);
+
+            return new NumericFormatterImpl(format);
+        }
+
+        DecimalFormat df = new DecimalFormat(toString(symbols.getZeroDigit()), symbols);
+
+        return new NumericFormatterImpl(df);
     }
 
-    public <T> String toClient(Class<T> type, T value)
+    public <T extends Number> String toClient(Class<T> type, T value)
     {
-        // TODO: The default includes the comma (thousands grouping) seperators.
-        // I don't think most people want that!
-
-        return getOutputFormatter(type).format(value);
+        return getOutputFormatter(type).toClient(value);
     }
 
-    public <T> String getMessageKey(Class<T> type)
+    public <T extends Number> String getMessageKey(Class<T> type)
     {
         return isIntegerType(type)
                ? "integer-format-exception"

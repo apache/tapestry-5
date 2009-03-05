@@ -18,6 +18,8 @@ import org.apache.tapestry5.Field;
 import org.apache.tapestry5.Translator;
 import org.apache.tapestry5.ValidationException;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
+import org.apache.tapestry5.internal.translator.BigDecimalNumericFormatter;
+import org.apache.tapestry5.internal.translator.BigIntegerNumericFormatter;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.services.ThreadLocale;
 import org.apache.tapestry5.services.TranslatorSource;
@@ -25,6 +27,10 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.text.DecimalFormatSymbols;
+import java.text.ParseException;
 import java.util.Collection;
 import java.util.Locale;
 
@@ -94,13 +100,23 @@ public class TranslatorSourceImplTest extends InternalBaseTestCase
 
                 { Long.class, 12345l, "12345" },
 
-                { Double.class, 123.45d, "123.45" },
+                // Is this a bug?  We seem to be using a JDK- or locale-defined level of precision.
+                // Maybe translators need room for configuration just like validators, so that
+                // the correct decimal format string could be specified in the message catalog.
+
+                { Double.class, 3.1428571429d, "3.143" },
 
                 { String.class, "abcd", "abcd" },
 
                 { Short.class, (short) 95, "95" },
 
-                { Float.class, (float) -22.7, "-22.7" }
+                { Float.class, (float) -22.7, "-22.7" },
+
+                { BigInteger.class, new BigInteger("123456789012345678901234567890"),
+                        "123456789012345678901234567890" },
+
+                { BigDecimal.class, new BigDecimal("-9876543219876543321987654321.12345123451234512345"),
+                        "-9876543219876543321987654321.12345123451234512345" }
         };
     }
 
@@ -129,11 +145,17 @@ public class TranslatorSourceImplTest extends InternalBaseTestCase
 
                 { Long.class, "  -1234567 ", -1234567l },
 
-                { Double.class, " 3.14 ", 3.14d },
+                { Double.class, "3.1428571429", 3.1428571429d },
 
                 { String.class, " abcdef ", " abcdef " },
 
                 { Float.class, " 28.95 ", (float) 28.95 },
+
+                { BigInteger.class, " -123456789012345678901234567890",
+                        new BigInteger("-123456789012345678901234567890") },
+
+                { BigDecimal.class, "-9,876,543,219,876,543,321,987,654,321.12345123451234512345",
+                        new BigDecimal("-9876543219876543321987654321.12345123451234512345") }
         };
     }
 
@@ -232,4 +254,39 @@ public class TranslatorSourceImplTest extends InternalBaseTestCase
 
         verify();
     }
+
+    @Test
+    public void biginteger_with_localized_symbols() throws ParseException
+    {
+        DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.ENGLISH);
+        symbols.setGroupingSeparator('_');
+        symbols.setMinusSign('*');
+
+        BigIntegerNumericFormatter f = new BigIntegerNumericFormatter(symbols);
+
+        BigInteger big = new BigInteger("-123456");
+
+        assertEquals(f.parse("*123_456"), big);
+
+        assertEquals(f.toClient(big), "*123456");
+    }
+
+    @Test
+    public void bigdecimal_with_localized_symbols() throws ParseException
+    {
+        DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.ENGLISH);
+        symbols.setGroupingSeparator('_');
+        symbols.setMinusSign('*');
+        symbols.setDecimalSeparator('#');
+
+        BigDecimalNumericFormatter f = new BigDecimalNumericFormatter(symbols);
+
+        BigDecimal big = new BigDecimal("-123456.797956563434");
+
+        assertEquals(f.parse("*123_456#797956563434"), big);
+
+        assertEquals(f.toClient(big), "*123456#797956563434");
+    }
+
+
 }
