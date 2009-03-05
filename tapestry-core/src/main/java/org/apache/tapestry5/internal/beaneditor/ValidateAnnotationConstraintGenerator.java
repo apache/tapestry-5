@@ -34,7 +34,11 @@ public class ValidateAnnotationConstraintGenerator implements ValidationConstrai
         if (annotation == null)
             return null;
 
-        return Arrays.asList(annotation.value().split(","));
+        //TAP5-520: Commas within regular expressions like {n,m} or {n,} or a\,b .
+        //We use Negative Lookahead to avoid matching the case a\,b .
+        //We use Positive Lookahead to avoid matching cases {n,m} and {n,}.
+        //http://www.regular-expressions.info/lookaround.html
+        return Arrays.asList(annotation.value().split("(?<!\\\\),(?!([0-9]*\\}))"));
     }
 
 }
