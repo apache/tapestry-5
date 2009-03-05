@@ -36,7 +36,7 @@ public interface NumericTranslatorSupport
      * @throws ParseException
      * @see org.apache.tapestry5.Translator#parseClient(org.apache.tapestry5.Field, String, String)
      */
-    <T> T parseClient(Class<T> type, String clientValue) throws ParseException;
+    <T extends Number> T parseClient(Class<T> type, String clientValue) throws ParseException;
 
     /**
      * Converts a server-side value to a client-side string. Integer types are formatted simply; decimal types may be
@@ -47,7 +47,7 @@ public interface NumericTranslatorSupport
      * @param <T>
      * @return value formatted
      */
-    <T> String toClient(Class<T> type, T value);
+    <T extends Number> String toClient(Class<T> type, T value);
 
     /**
      * Returns the default message key for parse failures for the indicated type.
@@ -56,7 +56,7 @@ public interface NumericTranslatorSupport
      * @param <T>
      * @return a message key: either "integer-format-exception" or "number-format-exception"
      */
-    <T> String getMessageKey(Class<T> type);
+    <T extends Number> String getMessageKey(Class<T> type);
 
     /**
      * Adds client-side format validation for the field, appropriate to the indicated type.
@@ -66,5 +66,5 @@ public interface NumericTranslatorSupport
      * @param message message if the client-side value can't be parsed as a number
      * @param <T>
      */
-    <T> void addValidation(Class<T> type, Field field, String message);
+    <T extends Number> void addValidation(Class<T> type, Field field, String message);
 }
