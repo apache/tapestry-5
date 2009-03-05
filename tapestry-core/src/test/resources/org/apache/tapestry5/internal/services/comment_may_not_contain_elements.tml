@@ -1,0 +1,7 @@
+<t:container xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd"
+             xmlns:p="tapestry:parameter">
+    <t:comment>
+        Text is ok.
+        <t:pagelink>elements are not</t:pagelink>
+    </t:comment>
+</t:container>

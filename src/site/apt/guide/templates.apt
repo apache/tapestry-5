@@ -211,6 +211,16 @@ Tapestry Elements
   <parameter namespace> approach is more concise and readable.
 
 
+* \<comment\>
+
+  Delinates a server-side comment. Unlike ordinary XML/HTML comments (\<!-- .... --\>) which may be includes in the response,
+  server-side comments are not ever part of the response (the are completely excised from the template). This element
+  provides a way to store development sensitive data inside templates that will never be exposed to clients.
+
+  Comment elements may contain text and XML/HTML comments, but not any nested elements.
+
+  Support for the comment element was adding in Tapestry release 5.1.
+
 Expansions
 
   Another option when rendering output is the use of  <expansions>.  Expansions

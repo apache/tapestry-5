@@ -21,7 +21,6 @@ import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.LocationImpl;
 import org.apache.tapestry5.ioc.internal.util.TapestryException;
-import org.codehaus.plexus.util.xml.pull.MXParser;
 import org.codehaus.stax2.DTDInfo;
 import org.codehaus.stax2.XMLInputFactory2;
 import org.codehaus.stax2.XMLStreamReader2;
@@ -186,7 +185,7 @@ public class StaxTemplateParser
         int eventType = reader.getEventType();
 
         throw new IllegalStateException(
-                String.format("Unexpected XML parse event %s.", MXParser.TYPES[eventType - 1]));
+                String.format("Unexpected XML parse event %s.", EVENT_NAMES[eventType]));
     }
 
     private void dtd() throws XMLStreamException
@@ -215,11 +214,9 @@ public class StaxTemplateParser
      */
     void element(TemplateParserState initialState) throws XMLStreamException
     {
-
         processTextBuffer(initialState);
 
         TemplateParserState state = checkForXMLSpaceAttribute(initialState);
-
 
         if (!processStartElement(state)) return;
 
@@ -308,6 +305,13 @@ public class StaxTemplateParser
                 return true;
             }
 
+            if (name.equals("comment"))
+            {
+                ignoredComment();
+
+                return false;
+            }
+
             possibleTapestryComponent(null, reader.getLocalName().replace('.', '/'));
 
             return true;
@@ -334,6 +338,36 @@ public class StaxTemplateParser
         // Let element() take it from here (body plus end element token).
 
         return true;
+    }
+
+    private void ignoredComment() throws XMLStreamException
+    {
+        while (active)
+        {
+            switch (reader.next())
+            {
+                // The matching end element.
+
+                case END_ELEMENT:
+                    return;
+
+                // Ignore any characters or  XML comments inside the comment.
+
+                case COMMENT:
+                case CDATA:
+                case CHARACTERS:
+                case SPACE:
+                    break;
+
+                default:
+                    int eventType = reader.getEventType();
+
+                    throw new IllegalStateException(
+                            String.format("Unexpected XML parse event %s within a comment element.",
+                                          EVENT_NAMES[eventType]));
+
+            }
+        }
     }
 
     private String nullForBlank(String input)
