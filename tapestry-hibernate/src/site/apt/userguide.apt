@@ -27,7 +27,7 @@ public class ViewPerson
 +----+   
 
 +----+
-<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd">
 <body>
   The person's name is: ${person.name}
 </body>

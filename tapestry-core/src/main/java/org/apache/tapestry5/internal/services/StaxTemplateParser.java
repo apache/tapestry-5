@@ -31,6 +31,7 @@ import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -54,6 +55,11 @@ public class StaxTemplateParser
      * Used as the namespace URI for Tapestry templates.
      */
     public static final String TAPESTRY_SCHEMA_5_0_0 = "http://tapestry.apache.org/schema/tapestry_5_0_0.xsd";
+
+    public static final String TAPESTRY_SCHEMA_5_1_0 = "http://tapestry.apache.org/schema/tapestry_5_1_0.xsd";
+
+    private static final Set<String> TAPESTRY_SCHEMA_URIS = CollectionFactory.newSet(TAPESTRY_SCHEMA_5_0_0,
+                                                                                     TAPESTRY_SCHEMA_5_1_0);
 
     /**
      * Special namespace used to denote Block parameters to components, as a (preferred) alternative to the t:parameter
@@ -276,7 +282,18 @@ public class StaxTemplateParser
         String uri = reader.getNamespaceURI();
         String name = reader.getLocalName();
 
-        if (TAPESTRY_SCHEMA_5_0_0.equals(uri))
+        if (TAPESTRY_SCHEMA_5_1_0.equals(uri))
+        {
+
+            if (name.equals("comment"))
+            {
+                ignoredComment();
+
+                return false;
+            }
+        }
+
+        if (TAPESTRY_SCHEMA_URIS.contains(uri))
         {
 
             if (name.equalsIgnoreCase("body"))
@@ -303,13 +320,6 @@ public class StaxTemplateParser
 
                 // Default handling for the body of the parameter is acceptible.
                 return true;
-            }
-
-            if (name.equals("comment"))
-            {
-                ignoredComment();
-
-                return false;
             }
 
             possibleTapestryComponent(null, reader.getLocalName().replace('.', '/'));
@@ -425,7 +435,7 @@ public class StaxTemplateParser
 
             String value = reader.getAttributeValue(i);
 
-            if (TAPESTRY_SCHEMA_5_0_0.equals(uri))
+            if (TAPESTRY_SCHEMA_URIS.contains(uri))
             {
                 if (localName.equalsIgnoreCase(ID_ATTRIBUTE_NAME))
                 {
@@ -488,7 +498,7 @@ public class StaxTemplateParser
 
             // These URIs are strictly part of the server-side Tapestry template and are not ever sent to the client.
 
-            if (uri.equals(TAPESTRY_SCHEMA_5_0_0)) continue;
+            if (TAPESTRY_SCHEMA_URIS.contains(uri)) continue;
 
             if (uri.equals(TAPESTRY_PARAMETERS_URI)) continue;
 

@@ -20,7 +20,7 @@ Layout Component
 * Layout.tml
 
 ----
-<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd">
     <head>
         <title>My Nifty Web Application</title>
     </head>
@@ -75,7 +75,7 @@ public class Layout
 * Index.tml
 
 ----
-<html t:type="layout" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+<html t:type="layout" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd">
 
    <h1>Welcome to the Nifty Web Application!</h1>
 
