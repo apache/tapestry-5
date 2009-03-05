@@ -182,7 +182,7 @@ public enum Honorific
   <<src/main/webapp/address/CreateAddress.tml:>>
   
 ---
-<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd">
   <head>
     <title>Create New Address</title>
   </head>

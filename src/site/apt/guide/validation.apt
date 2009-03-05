@@ -153,7 +153,7 @@ Configuring Fields and Labels
 	The template for page contains a minimal amount of Tapestry instrumentation:
 	
 +---+
-<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd">
     <head>
         <title>Login</title>
     </head>

@@ -99,7 +99,7 @@ Binding Parameters
   {{{templates.html}template}}:
   
 +---+
-<html t:type="layout" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+<html t:type="layout" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd">
     <p> Merry Christmas: <t:count end="3"> Ho! </t:count>
     </p>
 </html>
@@ -296,7 +296,7 @@ Parameters Are Bi-Directional
   to its own instance variable.
   
 +---+
-<t:layout xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+<t:layout xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd">
     <p> Countdown:
         <t:count start="5" end="1" value="index"> 
           ${index} ...  
