@@ -61,7 +61,7 @@ public class ValidateAnnotationConstraintGeneratorTest extends InternalBaseTestC
     public void multiple_constraints()
     {
         PropertyConduit conduit = mockPropertyConduit();
-        Validate validate = newValidate("required,minlength=3");
+        Validate validate = newValidate("required,minlength=3,regexp=^([a-zA-Z0-9]{2,4})+$");
 
         train_getAnnotation(conduit, Validate.class, validate);
 
@@ -69,7 +69,26 @@ public class ValidateAnnotationConstraintGeneratorTest extends InternalBaseTestC
 
         ValidationConstraintGenerator gen = new ValidateAnnotationConstraintGenerator();
 
-        assertEquals(gen.buildConstraints(null, conduit), Arrays.asList("required", "minlength=3"));
+        assertEquals(gen.buildConstraints(null, conduit), Arrays.asList("required", "minlength=3", "regexp=^([a-zA-Z0-9]{2,4})+$"));
+
+        verify();
+    }
+    
+
+    @Test
+    public void regex_ranges_constraints()
+    {
+        PropertyConduit conduit = mockPropertyConduit();
+        Validate validate = newValidate("regexp=^([a]{50,125}[0-9]{2,4})+$,required,567matcher,regexp=a\\,b,regexp=a{1,}");
+
+        train_getAnnotation(conduit, Validate.class, validate);
+
+        replay();
+
+        ValidationConstraintGenerator gen = new ValidateAnnotationConstraintGenerator();
+
+        assertEquals(gen.buildConstraints(null, conduit), 
+                Arrays.asList("regexp=^([a]{50,125}[0-9]{2,4})+$","required", "567matcher", "regexp=a\\,b", "regexp=a{1,}"));
 
         verify();
     }
