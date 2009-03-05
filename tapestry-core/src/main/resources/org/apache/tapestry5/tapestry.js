@@ -442,9 +442,8 @@ var Tapestry = {
     /**
      * Used to reconstruct a complete URL from a path that is (or may be) relative to window.location.
      * This is used when determining if a JavaScript library or CSS stylesheet has already been loaded.
-     * Recognizes complete URLs (which are returned unchanged) and absolute paths (which are prefixed
-     * with the window.location protocol and host).  Otherwise the correct path is built.  The
-     * path may be prefixed with "./" and "../", which will be resolved correctly.
+     * Recognizes complete URLs (which are returned unchanged), otherwise the URLs are expected to be
+     * absolute paths.
      *
      * @param path
      * @return complete URL as string
@@ -456,31 +455,14 @@ var Tapestry = {
             return path;
         }
 
-        if (path.startsWith("/"))
-        {
-            var l = window.location;
-            return l.protocol + "//" + l.host + path;
+        if (! path.startsWith("/")) {
+            Tapestry.error("External path " + path + " does not start with a leading slash.");
+
+            return path;
         }
 
-        var rootPath = this.stripToLastSlash(window.location.href);
-
-        while (true)
-        {
-            if (path.startsWith("../"))
-            {
-                rootPath = this.stripToLastSlash(rootPath.substr(0, rootPath.length - 1));
-                path = path.substring(3);
-                continue;
-            }
-
-            if (path.startsWith("./"))
-            {
-                path = path.substr(2);
-                continue;
-            }
-
-            return rootPath + path;
-        }
+        var l = window.location;
+        return l.protocol + "//" + l.host + path;
     },
 
     stripToLastSlash : function(URL)
@@ -1653,7 +1635,7 @@ Tapestry.ScriptManager = {
     initialize : function()
     {
 
-        // Check to see if document.script is supported; if not (for example, FireFox),
+        // Check to see if document.scripts is supported; if not (for example, FireFox),
         // we can fake it.
 
         this.emulated = false;
@@ -1683,7 +1665,7 @@ Tapestry.ScriptManager = {
         {
             var existing = element[prop];
 
-            if (existing.blank()) return false;
+            if (! existing || existing.blank()) return false;
 
             var complete =
                     Prototype.Browser.IE ? Tapestry.rebuildURL(existing) : existing;
