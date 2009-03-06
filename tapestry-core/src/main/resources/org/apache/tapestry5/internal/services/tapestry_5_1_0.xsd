@@ -13,10 +13,11 @@
             </xs:documentation>
         </xs:annotation>
     </xs:element>
-    <xs:element name="comment">
+    <xs:element name="remove">
         <xs:annotation>
             <xs:documentation>
-                A server-side comment.
+                A block of the template to be removed. This can be used as a comment, or to temporarily
+                delete a portion of the template (including markup, expansions and embedded components).
             </xs:documentation>
         </xs:annotation>
     </xs:element>
