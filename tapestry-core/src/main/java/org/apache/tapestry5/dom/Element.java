@@ -154,20 +154,45 @@ public final class Element extends Node
     {
         Defense.notBlank(name, "name");
 
-        if (value == null) return this;
+        updateAttribute(namespace, name, value, false);
 
-        for (Attribute attr = firstAttribute; attr != null; attr = attr.nextAttribute)
+        return this;
+    }
+
+    private void updateAttribute(String namespace, String name, String value, boolean force)
+    {
+        if (!force && value == null) return;
+
+        Attribute prior = null;
+        Attribute cursor = firstAttribute;
+
+        while (cursor != null)
         {
-            if (attr.matches(namespace, name))
+            if (cursor.matches(namespace, name))
             {
-                attr.value = value;
-                return this;
+                if (!force) return;
+
+                if (value != null)
+                {
+                    cursor.value = value;
+                    return;
+                }
+
+                // Remove this Attribute node from the linked list
+
+                if (prior == null)
+                    firstAttribute = cursor.nextAttribute;
+                else
+                    prior.nextAttribute = cursor.nextAttribute;
+
+                return;
             }
+
+            prior = cursor;
+            cursor = cursor.nextAttribute;
         }
 
         firstAttribute = new Attribute(namespace, name, value, firstAttribute);
-
-        return this;
     }
 
 
@@ -202,37 +227,10 @@ public final class Element extends Node
             String name = namesAndValues[i++];
             String value = namesAndValues[i++];
 
-            removeAttribute(name);
-
-            if (value != null)
-                attribute(null, name, value);
+            updateAttribute(namespace, name, value, true);
         }
 
         return this;
-    }
-
-    private void removeAttribute(String name)
-    {
-        Attribute prior = null;
-        Attribute cursor = firstAttribute;
-
-        while (cursor != null)
-        {
-            if (cursor.name.equalsIgnoreCase(name))
-            {
-                Attribute next = cursor.nextAttribute;
-
-                if (prior == null)
-                    firstAttribute = next;
-                else
-                    prior.nextAttribute = next;
-
-                return;
-            }
-
-            prior = cursor;
-            cursor = cursor.nextAttribute;
-        }
     }
 
     /**

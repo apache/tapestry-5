@@ -111,9 +111,8 @@ public class DefaultValidationDecoratorTest extends TapestryTestCase
 
         decorator.insideField(field);
 
-        assertEquals(writer.toString(),
-                     "<?xml version=\"1.0\"?>\n" +
-                             "<input class=\"foo t-error\" size=\"30\" value=\"freddy\" name=\"ex\" type=\"text\"/>");
+        assertEquals(writer.toString(), "<?xml version=\"1.0\"?>\n" +
+                "<input size=\"30\" value=\"freddy\" class=\"foo t-error\" name=\"ex\" type=\"text\"/>");
 
         verify();
     }
