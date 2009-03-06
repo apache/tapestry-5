@@ -768,4 +768,64 @@ public class DOMTest extends InternalBaseTestCase
         assertListsEquals(elementNames, "parent", "child1", "child1a", "child1b", "child2", "child2a", "child2b",
                           "child2c");
     }
+
+    /**
+     * TAP5-559
+     */
+    @Test
+    public void later_updates_to_same_attribute_are_ignored()
+    {
+        Document d = new Document();
+
+        Element root = d.newRootElement("parent");
+
+        root.attribute("baggins", "bilbo");
+
+        // This will be ignored.
+
+        root.attribute("baggins", "frodo");
+
+
+        assertEquals(d.toString(), "<parent baggins=\"bilbo\"></parent>");
+    }
+
+    @Test
+    public void force_attributes_changes_attribute_value()
+    {
+        Document d = new Document();
+
+
+        Element root = d.newRootElement("parent");
+
+        root.attribute("baggins", "bilbo");
+
+        // This will be ignored.
+
+        root.forceAttributes("baggins", "frodo");
+
+
+        assertEquals(d.toString(), "<parent baggins=\"frodo\"></parent>");
+    }
+
+    @Test
+    public void force_attributes_to_null_removes_attribute()
+    {
+        Document d = new Document();
+
+
+        Element root = d.newRootElement("parent");
+
+        root.attributes("baggins", "frodo",
+                        "friend", "sam");
+
+        root.forceAttributes("friend", null);
+
+        assertEquals(root.toString(), "<parent baggins=\"frodo\"></parent>");
+
+        root.forceAttributes("baggins", null,
+                             "enemy", "gollum");
+
+        assertEquals(root.toString(), "<parent enemy=\"gollum\"></parent>");
+    }
+
 }
