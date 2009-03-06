@@ -268,6 +268,8 @@ public class StaxTemplateParser
      * <p/>
      * A parameter element via &lt;p:name&gt;
      * <p/>
+     * A &lt;t:remove&gt; element (in the 5.1 schema)
+     * <p/>
      * A &lt;t:block&gt; element
      * <p/>
      * The body &lt;t:body&gt;
@@ -285,9 +287,9 @@ public class StaxTemplateParser
         if (TAPESTRY_SCHEMA_5_1_0.equals(uri))
         {
 
-            if (name.equals("comment"))
+            if (name.equals("remove"))
             {
-                ignoredComment();
+                removeContent();
 
                 return false;
             }
@@ -350,32 +352,29 @@ public class StaxTemplateParser
         return true;
     }
 
-    private void ignoredComment() throws XMLStreamException
+    private void removeContent() throws XMLStreamException
     {
+        int depth = 1;
+
         while (active)
         {
             switch (reader.next())
             {
+                case START_ELEMENT:
+                    depth++;
+                    break;
+
                 // The matching end element.
 
                 case END_ELEMENT:
-                    return;
+                    depth--;
 
-                // Ignore any characters or  XML comments inside the comment.
+                    if (depth == 0) return;
 
-                case COMMENT:
-                case CDATA:
-                case CHARACTERS:
-                case SPACE:
                     break;
 
                 default:
-                    int eventType = reader.getEventType();
-
-                    throw new IllegalStateException(
-                            String.format("Unexpected XML parse event %s within a comment element.",
-                                          EVENT_NAMES[eventType]));
-
+                    // Ignore anything else (text, comments, etc.)
             }
         }
     }
