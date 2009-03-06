@@ -17,7 +17,6 @@ package org.apache.tapestry5.corelib.components;
 import org.apache.tapestry5.*;
 import org.apache.tapestry5.annotations.*;
 import org.apache.tapestry5.corelib.internal.AjaxFormLoopContext;
-import org.apache.tapestry5.internal.services.ComponentClassCache;
 import org.apache.tapestry5.internal.services.PageRenderQueue;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.internal.util.Defense;
@@ -100,6 +99,7 @@ public class AjaxFormLoop
 
     /**
      * Required parameter used to convert server-side objects (provided from the source) into client-side ids and back.
+     * A default encoder may be calculated from the type of property bound to the value parameter.
      */
     @Parameter(required = true, allowNull = false)
     private ValueEncoder<Object> encoder;
@@ -136,13 +136,18 @@ public class AjaxFormLoop
     private TypeCoercer typeCoercer;
 
     @Inject
-    private ComponentClassCache componentClassCache;
-
+    private ComponentDefaultProvider defaultProvider;
 
     @Inject
     private PageRenderQueue pageRenderQueue;
 
     private boolean renderingInjector;
+
+    ValueEncoder defaultEncoder()
+    {
+        return defaultProvider.defaultValueEncoder("value", resources);
+    }
+
 
     private final AjaxFormLoopContext formLoopContext = new AjaxFormLoopContext()
     {
