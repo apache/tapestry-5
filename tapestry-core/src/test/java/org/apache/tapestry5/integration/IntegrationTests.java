@@ -2787,4 +2787,28 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         // Make sure it was a partial update
         assertText("now", now);
     }
+
+    /**
+     * TAP5-108
+     */
+    public void update_multiple_zones_at_once()
+    {
+        start("Multiple Zone Update Demo");
+
+        String now = getText("now");
+
+
+        click("update");
+
+        waitForElementToAppear("fredName");
+
+        assertText("fredName", "Fred Flintstone");
+        assertText("dino", "His dog, Dino.");
+
+        // Ideally, we'd add checks that the JavaScript for the Palette in the Barney Zone was
+        // updated.
+
+        // Make sure it was a partial update
+        assertText("now", now);
+    }
 }

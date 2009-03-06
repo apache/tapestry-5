@@ -15,6 +15,7 @@
 package org.apache.tapestry5.services;
 
 import org.apache.tapestry5.*;
+import org.apache.tapestry5.ajax.MultiZoneUpdate;
 import org.apache.tapestry5.annotations.*;
 import org.apache.tapestry5.beaneditor.Validate;
 import org.apache.tapestry5.corelib.data.BlankOption;
@@ -49,6 +50,8 @@ import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.runtime.ComponentResourcesAware;
 import org.apache.tapestry5.runtime.RenderCommand;
+import org.apache.tapestry5.runtime.RenderQueue;
+import org.apache.tapestry5.services.ajax.MultiZoneUpdateEventResultProcessor;
 import org.apache.tapestry5.util.StringToEnumCoercion;
 import org.apache.tapestry5.validator.*;
 import org.slf4j.Logger;
@@ -818,7 +821,7 @@ public final class TapestryModule
      * org.apache.tapestry5.Renderable} to {@link org.apache.tapestry5.Block} <li>String to {@link java.text.DateFormat}
      * <li>{@link org.apache.tapestry5.PrimaryKeyEncoder} to {@link org.apache.tapestry5.ValueEncoder} <li>String to
      * {@link org.apache.tapestry5.ioc.Resource} (via {@link org.apache.tapestry5.services.AssetSource#resourceForPath(String)})
-     * </ul>
+     * <li>{@link org.apache.tapestry5.Renderable} to {@link org.apache.tapestry5.runtime.RenderCommand}</li> </ul>
      */
     public static void contributeTypeCoercer(Configuration<CoercionTuple> configuration,
 
@@ -936,6 +939,20 @@ public final class TapestryModule
             public Resource coerce(String input)
             {
                 return assetSource.resourceForPath(input);
+            }
+        });
+
+        add(configuration, Renderable.class, RenderCommand.class, new Coercion<Renderable, RenderCommand>()
+        {
+            public RenderCommand coerce(final Renderable input)
+            {
+                return new RenderCommand()
+                {
+                    public void render(MarkupWriter writer, RenderQueue queue)
+                    {
+                        input.render(writer);
+                    }
+                };
             }
         });
 
@@ -1473,9 +1490,9 @@ public final class TapestryModule
      * response</dd> <dt>String</dt> <dd>Interprets the value as a logical page name and sends a client response to
      * redirect to that page</dd> <dt>{@link org.apache.tapestry5.Link}</dt> <dd>Sends a JSON response to redirect to
      * the link</dd> <dt>{@link Class}</dt> <dd>Treats the class as a page class and sends a redirect for a page render
-     * for that page</dd> </dl>
+     * for that page</dd> <dt>{@link org.apache.tapestry5.ajax.MultiZoneUpdate}</dt> <dd>Sends a single JSON response to
+     * update the content of multiple zones</dl>
      */
-
     public static void contributeAjaxComponentEventResultProcessor(
             MappedConfiguration<Class, ComponentEventResultProcessor> configuration)
     {
@@ -1487,6 +1504,7 @@ public final class TapestryModule
         configuration.addInstance(String.class, AjaxPageNameComponentEventResultProcessor.class);
         configuration.addInstance(Link.class, AjaxLinkComponentEventResultProcessor.class);
         configuration.addInstance(Class.class, AjaxPageClassComponentEventResultProcessor.class);
+        configuration.addInstance(MultiZoneUpdate.class, MultiZoneUpdateEventResultProcessor.class);
     }
 
     /**

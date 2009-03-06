@@ -7,7 +7,7 @@ Tapestry Ajax Support
   Tapestry includes sophisticated JavaScript and Ajax support, based on the
   {{{http://www.prototypejs.org/}Prototype}} and
   {{{http://script.aculo.us/}Scriptaculous}} libraries.  These libraries are
-  all packaged with Tapestry itself ... no extra download required.
+  all packaged with Tapestry itself ... no extra download is required.
 
   The goal for Tapestry is to have many basic and useful components available within the
   application itself, and make it easy for other JavaScript widgets to be encapsulated as
@@ -222,22 +222,24 @@ Ajax Components and Mixins
 * Zone
 
   Initial support for Zones is now in place.  Zones are Tapestry's approach to performing partial updates to
-  the client side.  A Zone component renders as a \<div\> element with the "t-zone" CSS class.  It also
-  adds some JavaScript to the page to "wire up" a Tapestry.Zone object to control updating
+  the client side.  A Zone component renders as a\<div\> element with the "t-zone" CSS class (it can actually render
+  as any element you chose, but for discussion's sake, we'll assume the \<div\> default).  It also
+  adds some JavaScript to the page to "wire up" a Tapestry.ZoneManager object to control updating
   the \<div\> element.
 
-  A Zone can be updated via an ActionLink component.  ActionLink supports a zone parameter, which is the id
+  A Zone can be updated via an ActionLink or EventLink component, or by a Form.  All of these components
+   support a zone parameter, which is the id
   of the Zone's \<div\>. Clicking such a link will invoke an event handler method on the server as normal ...
    except that the return value of the event handler method is used to send a <partial page response>
    to the client, and the content of that response is used to update the Zone's \<div\> in place.
 
 ** Zone div vs. update div
 
-  In many situations, a Zone is a kind of "wrapper" or "container" for dynamic content, that provides
+  In many situations, a Zone is a kind of "wrapper" or "container" for dynamic content; one that provides
   a look and feel ... a bit of wrapping markup to create a border.  In that situtation,
   the Zone \<div\> may contain an update \<div\>.
 
-  An update \<div\> is a \<div\> with the CSS class "t-zone-update", <inside> the Zone's \<div\>.
+  An update \<div\> is specifcally a \<div\> element with the CSS class "t-zone-update", <inside> the Zone's \<div\>.
 
   When an update occurs, the update \<div\>'s content will be changed, rather than the entire Zone \<div\>.
 
@@ -251,7 +253,7 @@ Ajax Components and Mixins
 
   With a Zone update, the return value is used to render a <partial response> within the <same request>.
 
-  This return value should be an injected component or block.  The value will be rendered, and that
+  This return value is typically an injected component or block.  The value will be rendered, and that
   markup will be used on the client side to update the Zone's \<div\>.
 
   An event handler may return a
@@ -259,6 +261,33 @@ Ajax Components and Mixins
 
   Returning a page name (as a String), or a page class, or a page instance will also send a redirect
   to the indicated page.
+
+** Multiple Zone Updates
+
+  An event handler may cause multiple zones to be updated on the client side. To accomplish this, return
+  a {{{../apidocs/org/apache/tapestry5/ajax/MultiZoneUpdate.html}MultiZoneUpdate}} object configured
+  with the zones to update.  You must know the client-side id for each zone to update (the best
+  way for this is to lock down the zone's id using the id parameter of the Zone component).
+
+  The renderer for each zone can be a block or component, or a
+  {{{../apidocs/org/apache/tapestry5/Renderable.html}Renderable}} or
+  {{{../apidocs/org/apache/tapestry5/runtime/RenderCommand.html}RenderCommand}} ... or an object,
+  such as String, that can be coerced to either of these.  Typically, you will inject a Block or Component and return that:
+  
+----
+  @Inject
+  private Form registrationForm;
+
+  @Inject Block registrationHelp;
+
+  Object onActionFromRegister()
+  {
+    return new MultiZoneUpdate("userInput", registrationForm).add("helpPanel", registrationHelp);
+  }
+----
+
+  This implies that there are two zones, "userInput" and "helpPanel", somewhere in the rendered page,
+  waiting to receive the updated content.
 
 ** Graceful Degradation
 
@@ -342,7 +371,7 @@ Handling Slow Page Loads
   If your page loads slowly (typically, because of scripts loaded from external sites), you may see a race
   condition where the user can click on a link before an event handler for that link has been wired up.
 
-  The client-side function <<<Tapestry.waitForPage()>> can be used in an element's onclick handler to force
+  The client-side function <<<Tapestry.waitForPage()>>> can be used in an element's onclick handler to force
   a wait for the page to fully load. In this race condition, the screen will dim and a message will appear
   advising the  user to wait a moment; once the page is fully loaded, this modal dialog will be removed.
 

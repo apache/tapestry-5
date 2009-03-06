@@ -26,8 +26,8 @@ import org.apache.tapestry5.services.ClientBehaviorSupport;
 
 /**
  * A Zone is portion of the output page designed for easy dynamic updating via Ajax or other client-side effects.  A
- * Zone renders out as a &lt;div&gt; element and may have content initially, or may only get its content as a result of
- * client side activity.
+ * Zone renders out as a &lt;div&gt; element (or whatever is specified in the template) and may have content initially,
+ * or may only get its content as a result of client side activity.
  * <p/>
  * Often, Zones are initially invisible, in which case the visible parameter may be set to false (it defaults to true).
  * <p/>
@@ -66,6 +66,13 @@ public class Zone implements ClientElement
     private String update;
 
     /**
+     * The element name to render for the zone; this defaults to the element actually used in the template, or "div" if
+     * no specific element was specified.
+     */
+    @Parameter(required = true, allowNull = false, defaultPrefix = BindingConstants.LITERAL)
+    private String elementName;
+
+    /**
      * If bound, then the id attribute of the rendered element will be this exact value. If not bound, then a unique id
      * is generated for the element.
      */
@@ -88,12 +95,17 @@ public class Zone implements ClientElement
     @Inject
     private ComponentResources resources;
 
+    String defaultElementName()
+    {
+        return resources.getElementName("div");
+    }
+
     void beginRender(MarkupWriter writer)
     {
         if (!resources.isBound("id"))
             clientId = renderSupport.allocateClientId(resources);
 
-        Element e = writer.element("div", "id", clientId);
+        Element e = writer.element(elementName, "id", clientId);
 
         resources.renderInformalParameters(writer);
 

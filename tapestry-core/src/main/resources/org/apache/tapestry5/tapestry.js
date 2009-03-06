@@ -413,17 +413,30 @@ var Tapestry = {
      * (an <a> or <form>) configured to update a zone. Writes errors to the AjaxConsole
      * if the zone and ZoneManager can not be resolved.
      *
-     * @param element   triggering element
+     * @param element   triggering element (id or instance)
      * @return Tapestry.ZoneManager instance for updated zone, or null if not found.
      */
     findZoneManager : function(element)
     {
         var zoneId = $T(element).zoneId;
-        var zoneElement = $(zoneId);
+
+        return Tapestry.findZoneManagerForZone(zoneId);
+    },
+
+    /**
+     * Obtains the Tapestry.ZoneManager object associated with a zone element (usually
+     * a <div>). Writes errors to the Ajax console if the element or manager
+     * can not be resolved.
+     * @param zoneElement  zone element (id or instance)
+     * @return Tapestry.ZoneManager instance for zone, or null if not found
+     */
+    findZoneManagerForZone : function(zoneElement)
+    {
+        var element = $(zoneElement);
 
         if (!zoneElement)
         {
-            Tapestry.ajaxError("Unable to locate Ajax Zone '#{id}' for dynamic update.", { id:zoneId});
+            Tapestry.ajaxError("Unable to locate Ajax Zone '#{id}' for dynamic update.", { id:zoneElement});
             return null;
         }
 
@@ -431,13 +444,12 @@ var Tapestry = {
 
         if (!manager)
         {
-            Tapestry.ajaxError("Ajax Zone '#{id}' does not have an associated Tapestry.ZoneManager object.", { id :zoneId });
+            Tapestry.ajaxError("Ajax Zone '#{id}' does not have an associated Tapestry.ZoneManager object.", element);
             return null;
         }
 
         return manager;
     },
-
 
     /**
      * Used to reconstruct a complete URL from a path that is (or may be) relative to window.location.
@@ -455,7 +467,8 @@ var Tapestry = {
             return path;
         }
 
-        if (! path.startsWith("/")) {
+        if (! path.startsWith("/"))
+        {
             Tapestry.error("External path " + path + " does not start with a leading slash.");
 
             return path;
@@ -1433,7 +1446,23 @@ Tapestry.ZoneManager = Class.create({
     {
         Tapestry.loadScriptsInReply(reply, function()
         {
-            this.show(reply.content);
+            // In a multi-zone update, the reply.content may be blank or missing.
+
+            reply.content && this.show(reply.content);
+
+            // zones is an object of zone ids and zone content that will be present
+            // in a multi-zone update response.
+
+            Object.keys(reply.zones).each(function (zoneId)
+            {
+                var manager = Tapestry.findZoneManagerForZone(zoneId);
+
+                if (manager)
+                {
+                    var zoneContent = reply.zones[zoneId];
+                    manager.show(zoneContent);
+                }
+            });
         }.bind(this));
     },
 
@@ -1699,6 +1728,8 @@ Tapestry.ScriptManager = {
                 var assetURL = Tapestry.rebuildURL(s);
 
                 if (Tapestry.ScriptManager.contains(document.scripts, "src", assetURL)) return; // continue to next script
+
+                // IE needs the type="text/javascript" as well.
 
                 var element = new Element('script', { src: assetURL, type: 'text/javascript' });
 
