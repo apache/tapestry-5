@@ -1,0 +1,51 @@
+<t:border xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd"
+          xmlns:p="tapestry:parameter">
+
+    <h1>Multi-Zone Update Demo</h1>
+
+
+    <span id="now">${now}</span>
+
+    <div class="t-data-grid" style="{width: 100%;}">
+
+        <table class="t-data-grid">
+            <thead>
+
+                <tr>
+                    <th>Fred</th>
+                    <th>Barney</th>
+                    <th>Dino</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                <tr>
+                    <td t:type="zone" t:id="fredZone" id="fred">
+                        Placeholder
+                    </td>
+                    <td t:type="zone" t:id="barneyZone" id="barney">
+                        Placeholder
+                    </td>
+                    <td t:type="zone" t:id="dinoZone" id="dino">
+                        Placeholder
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <t:actionlink t:id="update" zone="fred">update</t:actionlink>
+
+    <t:block id="fredBlock">
+        <span id="fredName">Fred Flintstone</span>
+    </t:block>
+
+    <t:block id="barneyBlock">
+        <t:form>
+            <t:palette t:id="options" model="options" encoder="encoder"/>
+            <input type="submit"/>
+
+        </t:form>
+    </t:block>
+
+</t:border>

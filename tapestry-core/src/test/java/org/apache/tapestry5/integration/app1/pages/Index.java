@@ -65,6 +65,9 @@ public class Index
 
     private static final List<Item> ITEMS = CollectionFactory.newList(
 
+            new Item("MultiZoneUpdateDemo", "Multiple Zone Update Demo",
+                     "A single request can now update multiple Zones"),
+
             new Item("LinkSubmitInZoneDemo", "LinkSubmit inside Zone",
                      "Ensure that a LinkSubmit works correctly when its containing Form updates a Zone"),
 
