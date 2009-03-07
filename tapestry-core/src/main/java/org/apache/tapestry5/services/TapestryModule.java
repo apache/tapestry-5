@@ -1974,7 +1974,8 @@ public final class TapestryModule
         configuration.add(SymbolConstants.FILE_CHECK_INTERVAL, "1 s");
         configuration.add(SymbolConstants.FILE_CHECK_UPDATE_TIMEOUT, "50 ms");
 
-        // This should be overridden for particular applications.
+        // This should be overridden for particular applications. These are the locales for
+        // which we have (at least some) localized messages.
         configuration.add(SymbolConstants.SUPPORTED_LOCALES,
                           "en,it,es,zh_CN,pt_PT,de,ru,hr,fi_FI,sv_SE,fr_FR,da,pt_BR,ja,el");
 
@@ -2028,7 +2029,7 @@ public final class TapestryModule
         configuration.add(SymbolConstants.CHARSET, "UTF-8");
 
         configuration.add(SymbolConstants.APPLICATION_CATALOG,
-                          "context:WEB-INF/${" + InternalSymbols.APP_NAME + "}.properties");
+                          String.format("context:WEB-INF/${%s}.properties", InternalSymbols.APP_NAME));
 
         configuration.add(SymbolConstants.EXCEPTION_REPORT_PAGE, "ExceptionReport");
 
@@ -2040,6 +2041,8 @@ public final class TapestryModule
 
         configuration.add(SymbolConstants.OMIT_GENERATOR_META, "false");
         configuration.add(SymbolConstants.GZIP_COMPRESSION_ENABLED, "true");
+
+        configuration.add(SymbolConstants.SECURE_ENABLED, String.format("${%s}", SymbolConstants.PRODUCTION_MODE));
     }
 
 

@@ -20,6 +20,10 @@ Release 5.1.0.1
   {{{https://issues.apache.org/jira/browse/TAP5-211}TAP5-211}}. This will only affect users
   who have created their own client-side validations.
 
+  The handling of the
+  {{{apidocs/org/apache/tapestry5/annotations/Secure.html}Secure}} annotation is now only enabled
+  in production mode (by default).
+
 Release 5.1.0.0
 
 * Primary Key Encoder

@@ -16,6 +16,8 @@ package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.Link;
 import org.apache.tapestry5.MetaDataConstants;
+import org.apache.tapestry5.SymbolConstants;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.BaseURLSource;
 import org.apache.tapestry5.services.MetaDataLocator;
 import org.apache.tapestry5.services.Request;
@@ -35,18 +37,26 @@ public class RequestSecurityManagerImpl implements RequestSecurityManager
 
     private final BaseURLSource baseURLSource;
 
+    private final boolean securityEnabled;
+
     public RequestSecurityManagerImpl(Request request, Response response, LinkSource linkSource,
-                                      MetaDataLocator locator, BaseURLSource baseURLSource)
+                                      MetaDataLocator locator, BaseURLSource baseURLSource,
+
+                                      @Symbol(SymbolConstants.SECURE_ENABLED)
+                                      boolean securityEnabled)
     {
         this.request = request;
         this.response = response;
         this.linkSource = linkSource;
         this.locator = locator;
         this.baseURLSource = baseURLSource;
+        this.securityEnabled = securityEnabled;
     }
 
     public boolean checkForInsecureRequest(String pageName) throws IOException
     {
+        if (!securityEnabled) return false;
+
         // We don't (at this time) redirect from secure to insecure, just from insecure to secure.
 
         if (request.isSecure()) return false;
@@ -69,6 +79,8 @@ public class RequestSecurityManagerImpl implements RequestSecurityManager
 
     public String getBaseURL(String pageName)
     {
+        if (!securityEnabled) return null;
+
         boolean securePage = isSecure(pageName);
 
         if (securePage == request.isSecure()) return null;

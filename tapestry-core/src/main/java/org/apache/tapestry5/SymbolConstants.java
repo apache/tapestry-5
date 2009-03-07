@@ -145,4 +145,13 @@ public class SymbolConstants
      * @since 5.1.0.0
      */
     public static final String GZIP_COMPRESSION_ENABLED = "tapestry.gzip-compression-enabled";
+
+    /**
+     * If "true" (which itself defaults to production mode), then the {@link org.apache.tapestry5.annotations.Secure}
+     * annotation will be honored.  If "false" (i.e., development mode), then the annotation and related HTTP/HTTPS
+     * logic is ignored.
+     *
+     * @since 5.1.0.1
+     */
+    public static final String SECURE_ENABLED = "tapestry.secure-enabled";
 }
