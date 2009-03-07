@@ -1,0 +1,13 @@
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd"
+      xmlns:p="tapestry:parameter">
+    <t:willBeLost/>
+    <t:content>
+        <body t:type="layout">
+            <p>Page content</p>
+        </body>
+    </t:content>
+
+    <t:content>
+        This is not even seen!
+    </t:content>
+</html>

@@ -24,14 +24,28 @@ class TemplateParserState
 {
     private final boolean compressWhitespace;
 
-    TemplateParserState(boolean compressWhitespace)
+    private final boolean collectingContent;
+
+    TemplateParserState()
+    {
+        compressWhitespace = false;
+        collectingContent = false;
+    }
+
+    private TemplateParserState(boolean compressWhitespace, boolean collectingContent)
     {
         this.compressWhitespace = compressWhitespace;
+        this.collectingContent = collectingContent;
     }
 
     TemplateParserState compressWhitespace(boolean flag)
     {
-        return new TemplateParserState(flag);
+        return new TemplateParserState(flag, collectingContent);
+    }
+
+    TemplateParserState collectingContent()
+    {
+        return new TemplateParserState(compressWhitespace, true);
     }
 
     boolean isCompressWhitespace()
@@ -39,9 +53,18 @@ class TemplateParserState
         return compressWhitespace;
     }
 
+    /**
+     * Is content being collected, inside a &lt;t:content&gt; element?
+     */
+    public boolean isCollectingContent()
+    {
+        return collectingContent;
+    }
+
     @Override
     public String toString()
     {
-        return String.format("TemplateParserState[compressWhitespace=%s]", compressWhitespace);
+        return String.format("TemplateParserState[compressWhitespace=%s, collectingContent=%s]", compressWhitespace,
+                             collectingContent);
     }
 }

@@ -13,6 +13,14 @@
             </xs:documentation>
         </xs:annotation>
     </xs:element>
+    <xs:element name="content">
+        <xs:annotation>
+            <xs:documentation>
+                Marks a portion of the template as the relevant portion; anything outside of the element is discarded.
+                content elements may not be nested inside other content elements.
+            </xs:documentation>
+        </xs:annotation>
+    </xs:element>
     <xs:element name="remove">
         <xs:annotation>
             <xs:documentation>

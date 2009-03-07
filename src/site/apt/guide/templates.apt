@@ -106,7 +106,7 @@ Tapestry Namespace
 
   For backwards compatibility, you may continue to use the old namespace URI:
   http://tapestry.apache.org/schema/tapestry_5_1_0.xsd.  However,
-  the Tapestry remove element will not work.
+  the elements added as part of Tapestry 5.1 (\<t:remove\> and \<t:content\>) will not work.
 
 Tapestry Elements
 
@@ -215,6 +215,18 @@ Tapestry Elements
   <parameter namespace> approach is more concise and readable.
 
 
+* \<content\>
+
+  Marks a portion of the template as the actual template content; any markup outside the \<t:content\> element
+  is ignored. This is useful for eliminating portions of the template that exist to support WYSIWYG preview of
+  the template.
+
+  \<t:content\> elements may not nest.
+
+  Support for the \<t:content\> element was adding in Tapestry release 5.1. You must use the
+  http://tapestry.apache.org/schema/tapestry_5_1_0.xsd namespace URI for content to be recognized (otherwise
+  you will see an error about a missing "content" component).
+
 * \<remove\>
 
   Marks a portion of the template for removal; it is as if the remove element and everything inside it
@@ -223,7 +235,7 @@ Tapestry Elements
   is concerned, the contents of the \<remove\> element do not exist (including validating consistency between
   components defined or injected in the Java class and the template).
 
-  Support for the remove element was adding in Tapestry release 5.1. You must use the
+  Support for the \<t:remove\> element was adding in Tapestry release 5.1. You must use the
   http://tapestry.apache.org/schema/tapestry_5_1_0.xsd namespace URI for remove to be recognized (otherwise
   you will see an error about a missing "remove" component).
 

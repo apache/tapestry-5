@@ -134,9 +134,11 @@ public class StaxTemplateParser
 
     public ComponentTemplate parse(boolean compressWhitespace)
     {
+        TemplateParserState initialParserState = new TemplateParserState().compressWhitespace(compressWhitespace);
+
         try
         {
-            root(new TemplateParserState(compressWhitespace));
+            root(initialParserState);
 
             reader.close();
         }
@@ -270,6 +272,8 @@ public class StaxTemplateParser
      * <p/>
      * A &lt;t:remove&gt; element (in the 5.1 schema)
      * <p/>
+     * A &lt;t:content&gt; element (in the 5.1 schema)
+     * <p/>
      * A &lt;t:block&gt; element
      * <p/>
      * The body &lt;t:body&gt;
@@ -290,6 +294,13 @@ public class StaxTemplateParser
             if (name.equals("remove"))
             {
                 removeContent();
+
+                return false;
+            }
+
+            if (name.equals("content"))
+            {
+                limitContent(state);
 
                 return false;
             }
@@ -350,6 +361,47 @@ public class StaxTemplateParser
         // Let element() take it from here (body plus end element token).
 
         return true;
+    }
+
+    /**
+     * Triggered by &lt;t:content&gt; element; limits template content to just what's inside.
+     */
+
+    private void limitContent(TemplateParserState state) throws XMLStreamException
+    {
+        if (state.isCollectingContent())
+            throw new IllegalStateException(
+                    "The <content> element may not be nested within another <content> element.");
+
+
+        TemplateParserState newState = state.collectingContent();
+
+        // Clear out any tokens that precede the <t:content> element
+
+        tokens.clear();
+
+        while (active)
+        {
+            switch (reader.next())
+            {
+                case START_ELEMENT:
+                    element(newState);
+                    break;
+
+                case END_ELEMENT:
+
+                    // The active flag is global, once we hit it, the entire parse is aborted, leaving
+                    // tokens with just tokens defined inside <t:content>.
+
+                    active = false;
+
+                    break;
+
+                default:
+                    textContent(state);
+            }
+        }
+
     }
 
     private void removeContent() throws XMLStreamException

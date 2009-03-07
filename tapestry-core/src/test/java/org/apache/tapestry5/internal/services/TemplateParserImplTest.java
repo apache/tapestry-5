@@ -674,7 +674,10 @@ public class TemplateParserImplTest extends InternalBaseTestCase
                 { "invalid_library_namespace_path.tml",
                         "The path portion of library namespace URI 'tapestry-library:subfolder/' is not valid", 2 },
 
-                { "content_within_body_element.tml", "", 2 }
+                { "content_within_body_element.tml", "Content inside a Tapestry body element is not allowed", 2 },
+
+                { "nested_content_element.tml",
+                        "The <content> element may not be nested within another <content> element.", 3 }
         };
     }
 
@@ -823,5 +826,30 @@ public class TemplateParserImplTest extends InternalBaseTestCase
 
         TextToken token5 = get(tokens, 5);
         assertEquals(token5.getText(), "\nis maintained.\n");
+    }
+
+    /**
+     * TAP5-563
+     */
+    @Test
+    public void content_element() throws Exception
+    {
+        List<TemplateToken> tokens = tokens("content_element.tml");
+
+        assertEquals(tokens.size(), 5);
+
+        StartComponentToken token0 = get(tokens, 0);
+        assertEquals(token0.getElementName(), "body");
+        assertEquals(token0.getComponentType(), "layout");
+
+        StartElementToken token1 = get(tokens, 1);
+        assertEquals(token1.getName(), "p");
+
+        TextToken token2 = get(tokens, 2);
+
+        assertEquals(token2.getText(), "Page content");
+
+        EndElementToken token3 = get(tokens, 3);
+        EndElementToken token4 = get(tokens, 4);
     }
 }
