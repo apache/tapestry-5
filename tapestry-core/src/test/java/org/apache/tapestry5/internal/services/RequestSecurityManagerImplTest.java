@@ -42,7 +42,7 @@ public class RequestSecurityManagerImplTest extends InternalBaseTestCase
         replay();
 
         RequestSecurityManager manager
-                = new RequestSecurityManagerImpl(request, response, linkSource, locator, source);
+                = new RequestSecurityManagerImpl(request, response, linkSource, locator, source, true);
 
         assertFalse(manager.checkForInsecureRequest(PAGE_NAME));
 
@@ -65,7 +65,7 @@ public class RequestSecurityManagerImplTest extends InternalBaseTestCase
         replay();
 
         RequestSecurityManager manager
-                = new RequestSecurityManagerImpl(request, response, linkSource, locator, source);
+                = new RequestSecurityManagerImpl(request, response, linkSource, locator, source, true);
 
         assertFalse(manager.checkForInsecureRequest(PAGE_NAME));
 
@@ -93,7 +93,7 @@ public class RequestSecurityManagerImplTest extends InternalBaseTestCase
         replay();
 
         RequestSecurityManager manager
-                = new RequestSecurityManagerImpl(request, response, linkSource, locator, source);
+                = new RequestSecurityManagerImpl(request, response, linkSource, locator, source, true);
 
         assertTrue(manager.checkForInsecureRequest(PAGE_NAME));
 
@@ -135,7 +135,7 @@ public class RequestSecurityManagerImplTest extends InternalBaseTestCase
         replay();
 
         RequestSecurityManager manager
-                = new RequestSecurityManagerImpl(request, response, linkSource, locator, source);
+                = new RequestSecurityManagerImpl(request, response, linkSource, locator, source, true);
 
         assertEquals(manager.getBaseURL(PAGE_NAME), expectedURL);
 

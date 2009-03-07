@@ -34,6 +34,10 @@ What is Apache Tapestry?
 
 New And Of Note
 
+  * An Ajax event requst may now return a
+    {{{apidocs/org/apache/tapestry5/ajax/MultiZoneUpdate.html}MultiZoneUpdate}} instance
+    to update multiple zones in the client web browser.
+
   * Client-side numeric validation is now locale-sensitive.
 
   * Some significant performance improvements over Tapestry 5.0.18: the time to initially load a page,

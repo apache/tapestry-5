@@ -211,6 +211,11 @@ public class AppModule
     The time interval that Tapestry will wait for a page instance to become available before deciding whether to create
     an entirely new page instance.  The default is "10 ms".
 
+  [tapestry.secure-enabled]
+    If true, then  {{{../apidocs/org/apache/tapestry5/annotations/Secure.html}@Secure}} annotation is honored; if
+    false, no security checks or redirects take place. This defaults to tapestry.production-mode, meaning that in development
+    mode it will (by default) be disabled.
+
   [tapestry.secure-page]
     If true, then the page may only be accessed via HTTPS.  The {{{../apidocs/org/apache/tapestry5/annotations/Secure.html}@Secure}}
     annotation will set this value to true.
