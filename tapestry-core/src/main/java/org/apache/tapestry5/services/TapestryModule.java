@@ -1961,7 +1961,7 @@ public final class TapestryModule
     }
 
     /**
-     * Contributes factory defaults that map be overridden.
+     * Contributes factory defaults that may be overridden.
      *
      * @see TapestryModule#contributeClasspathAssetAliasManager(org.apache.tapestry5.ioc.MappedConfiguration, String,
      *      String, String)
