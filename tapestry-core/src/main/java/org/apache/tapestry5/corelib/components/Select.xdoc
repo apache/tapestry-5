@@ -26,7 +26,8 @@
 </html>]]></source>
 
                 <p>
-                    When the model parameter is a string, it is split apart at the commas.
+                    When the model parameter is a string, it is split apart at the commas.  When the model parameter is
+                    a List of Strings, each element is considered a selection option.
                 </p>
 
                 <p>
@@ -36,9 +37,8 @@
 
                 <p>
                     Here the label displayed to the user is the same as the value used to update the property, but that
-                    doesn't
-                    have to be the case. By specifying a value and a label, we can control the server side value without
-                    changing how the UI appears to the user:
+                    doesn't have to be the case. By specifying a value and a label, we can control the server side value
+                    without changing how the UI appears to the user:
                 </p>
 
                 <source>
