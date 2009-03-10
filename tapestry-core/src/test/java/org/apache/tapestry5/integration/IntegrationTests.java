@@ -2811,4 +2811,28 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         // Make sure it was a partial update
         assertText("now", now);
     }
+
+    /**
+     * TAP5-74
+     */
+    public void component_extends_parent_template()
+    {
+        start("Template Override Demo");
+
+        // From the parent template (could be overridden, but is not).
+
+        assertText("title", "Template Override Demo");
+
+        // Overriden by <t:replace> in the child component
+
+        assertText("pagecontent", "Content from TemplateOverrideDemo.tml");
+    }
+
+    public void extend_without_base_template()
+    {
+        start("Invalid Template Extend Demo");
+
+        assertTextPresent(
+                "Component org.apache.tapestry5.integration.app1.pages.InvalidTemplateExtend uses an extension template, but does not have a parent component.");
+    }
 }

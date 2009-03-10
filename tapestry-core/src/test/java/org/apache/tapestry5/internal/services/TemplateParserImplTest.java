@@ -51,9 +51,7 @@ public class TemplateParserImplTest extends InternalBaseTestCase
 
     private synchronized List<TemplateToken> tokens(String file)
     {
-        Resource resource = getResource(file);
-
-        return getParser().parseTemplate(resource).getTokens();
+        return parse(file).getTokens();
     }
 
     private Resource getResource(String file)
@@ -73,6 +71,11 @@ public class TemplateParserImplTest extends InternalBaseTestCase
         Object raw = l.get(index);
 
         return (T) raw;
+    }
+
+    private void checkType(List<TemplateToken> l, int index, TokenType expected)
+    {
+        assertEquals(l.get(index).getTokenType(), expected);
     }
 
     private void checkLine(Locatable l, int expectedLineNumber)
@@ -677,7 +680,21 @@ public class TemplateParserImplTest extends InternalBaseTestCase
                 { "content_within_body_element.tml", "Content inside a Tapestry body element is not allowed", 2 },
 
                 { "nested_content_element.tml",
-                        "The <content> element may not be nested within another <content> element.", 3 }
+                        "The <content> element may not be nested within another <content> element.", 3 },
+
+                { "container_must_be_root.tml", "Element <container> is only valid as the root element of a template.",
+                        3 },
+
+                { "extend_must_be_root.tml", "Element <extend> is only valid as the root element of a template.", 3 },
+
+                { "replace_must_be_under_extend.tml",
+                        "The <replace> element may only appear directly within an extend element.", 3 },
+
+                { "only_replace_within_extend.tml", "Child element of <extend> must be <replace>.", 2 },
+
+                { "missing_id_in_replace_element.tml", "The <replace> element must have an id attribute.", 3 },
+
+                { "extension_point_must_have_id.tml", "The <extension-point> element must have an id attribute.", 3 }
         };
     }
 
@@ -849,7 +866,58 @@ public class TemplateParserImplTest extends InternalBaseTestCase
 
         assertEquals(token2.getText(), "Page content");
 
-        EndElementToken token3 = get(tokens, 3);
-        EndElementToken token4 = get(tokens, 4);
+        checkType(tokens, 3, TokenType.END_ELEMENT);
+        checkType(tokens, 4, TokenType.END_ELEMENT);
+    }
+
+    @Test
+    public void overrides() throws Exception
+    {
+        ComponentTemplate template = parse("overrides.tml");
+
+        assertTrue(template.isExtension());
+
+        assertEquals(template.getTokens().size(), 0);
+
+        List<TemplateToken> alpha = template.getExtensionPointTokens("alpha");
+
+        assertEquals(alpha.size(), 1);
+
+        TextToken alpha0 = get(alpha, 0);
+        assertEquals(alpha0.getText(), "beta");
+
+        List<TemplateToken> gamma = template.getExtensionPointTokens("gamma");
+        assertEquals(gamma.size(), 3);
+
+        StartElementToken gamma0 = get(gamma, 0);
+        assertEquals(gamma0.getName(), "p");
+
+        TextToken gamma1 = get(gamma, 1);
+
+        assertEquals(gamma1.getText(), "Hi!");
+
+        checkType(gamma, 2, TokenType.END_ELEMENT);
+    }
+
+    @Test
+    public void extension_point() throws Exception
+    {
+        ComponentTemplate template = parse("extension_point.tml");
+
+        ExtensionPointToken expansion = get(template.getTokens(), 2);
+
+        assertEquals(expansion.getExtentionPointId(), "title");
+
+        List<TemplateToken> title = template.getExtensionPointTokens("title");
+
+        assertEquals(title.size(), 3);
+
+        StartElementToken title0 = get(title, 0);
+        assertEquals(title0.getName(), "h1");
+
+        TextToken title1 = get(title, 1);
+        assertEquals(title1.getText(), "Default Title");
+
+        checkType(title, 2, TokenType.END_ELEMENT);
     }
 }

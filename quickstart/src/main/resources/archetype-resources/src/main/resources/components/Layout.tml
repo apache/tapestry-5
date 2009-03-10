@@ -12,7 +12,7 @@ Description: A Web 2.0 design with fluid width suitable for blogs and small webs
 -->
         #set( $D = '$' )
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd"
+      xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd"
       xmlns:p="tapestry:parameter">
     <head>
         <meta http-equiv="content-type" content="text/html; charset=utf-8"/>

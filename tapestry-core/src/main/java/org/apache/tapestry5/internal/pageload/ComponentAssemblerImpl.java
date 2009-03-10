@@ -15,11 +15,11 @@
 package org.apache.tapestry5.internal.pageload;
 
 import org.apache.tapestry5.Binding;
-import org.apache.tapestry5.internal.parser.ComponentTemplate;
 import org.apache.tapestry5.internal.services.ComponentInstantiatorSource;
 import org.apache.tapestry5.internal.services.Instantiator;
 import org.apache.tapestry5.internal.structure.*;
 import org.apache.tapestry5.ioc.Location;
+import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.IdAllocator;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
@@ -204,14 +204,14 @@ class ComponentAssemblerImpl implements ComponentAssembler
     }
 
 
-    public void validateEmbeddedIds(ComponentTemplate template)
+    public void validateEmbeddedIds(Map<String, Location> componentIds, Resource templateResource)
     {
         Map<String, Boolean> embeddedIds = CollectionFactory.newCaseInsensitiveMap();
 
         for (String id : getModel().getEmbeddedComponentIds())
             embeddedIds.put(id, true);
 
-        for (String id : template.getComponentIds().keySet())
+        for (String id : componentIds.keySet())
         {
             allocator.allocateId(id);
             embeddedIds.remove(id);
@@ -229,7 +229,7 @@ class ComponentAssemblerImpl implements ComponentAssembler
                             InternalUtils.joinSorted(embeddedIds.keySet()),
                             className,
                             InternalUtils.lastTerm(className),
-                            template.getResource()));
+                            templateResource));
         }
     }
 
@@ -373,6 +373,10 @@ class ComponentAssemblerImpl implements ComponentAssembler
         };
     }
 
+    public Locale getLocale()
+    {
+        return locale;
+    }
 
     @Override
     public String toString()

@@ -1,0 +1,7 @@
+<t:extend xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd"
+          xmlns:p="tapestry:parameter">
+    <t:replace id="exentsion">
+        This component does not extend from another component, so it is not valid for it to use the &lt;t:extend&gt;
+        element.
+    </t:replace>
+</t:extend>

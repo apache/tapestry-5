@@ -56,8 +56,12 @@ public class StaxTemplateParser
      */
     public static final String TAPESTRY_SCHEMA_5_0_0 = "http://tapestry.apache.org/schema/tapestry_5_0_0.xsd";
 
+    /**
+     * Adds several new elements.
+     */
     public static final String TAPESTRY_SCHEMA_5_1_0 = "http://tapestry.apache.org/schema/tapestry_5_1_0.xsd";
 
+    // Might want to change this from a Set to a map from URI to version number (if we hit a 3rd version of the namespace URI).
     private static final Set<String> TAPESTRY_SCHEMA_URIS = CollectionFactory.newSet(TAPESTRY_SCHEMA_5_0_0,
                                                                                      TAPESTRY_SCHEMA_5_1_0);
 
@@ -107,6 +111,8 @@ public class StaxTemplateParser
             "END_DOCUMENT", "ENTITY_REFERENCE", "ATTRIBUTE", "DTD", "CDATA",
             "NAMESPACE", "NOTATION_DECLARATION", "ENTITY_DECLARATION" };
 
+    private static final Set<String> MUST_BE_ROOT = CollectionFactory.newSet("extend", "container");
+
     private final Resource resource;
 
     private final XMLStreamReader2 reader;
@@ -115,10 +121,21 @@ public class StaxTemplateParser
 
     private final List<TemplateToken> tokens = CollectionFactory.newList();
 
+    // This starts pointing at tokens but occasionally shifts to a list inside the overrides Map.
+    private List<TemplateToken> tokenAccumulator = tokens;
+
     /**
      * Primarily used as a set of componentIds (to check for duplicates and conflicts).
      */
     private final Map<String, Location> componentIds = CollectionFactory.newCaseInsensitiveMap();
+
+    /**
+     * Map from override id to a list of tokens; this actually works both for overrides defined by this template and
+     * overrides provided by this template.
+     */
+    private Map<String, List<TemplateToken>> overrides;
+
+    private boolean extension;
 
     private Location textStartLocation;
 
@@ -157,7 +174,7 @@ public class StaxTemplateParser
                                         ex);
         }
 
-        return new ComponentTemplateImpl(resource, tokens, componentIds);
+        return new ComponentTemplateImpl(resource, tokens, componentIds, extension, overrides);
     }
 
     void root(TemplateParserState state) throws XMLStreamException
@@ -174,7 +191,7 @@ public class StaxTemplateParser
 
                 case START_ELEMENT:
 
-                    element(state);
+                    rootElement(state);
 
                     break;
 
@@ -186,6 +203,83 @@ public class StaxTemplateParser
                     textContent(state);
             }
         }
+    }
+
+    private void rootElement(TemplateParserState initialState) throws XMLStreamException
+    {
+        TemplateParserState state = setupForElement(initialState);
+
+        String uri = reader.getNamespaceURI();
+        String name = reader.getLocalName();
+
+        if (TAPESTRY_SCHEMA_5_1_0.equals(uri))
+        {
+            if (name.equals("extend"))
+            {
+                extend(state);
+                return;
+            }
+        }
+
+        if (TAPESTRY_SCHEMA_URIS.contains(uri))
+        {
+            if (name.equals("container"))
+            {
+                container(state);
+                return;
+            }
+        }
+
+
+        element(state);
+    }
+
+    private void extend(TemplateParserState state) throws XMLStreamException
+    {
+        extension = true;
+
+        while (active)
+        {
+            switch (reader.next())
+            {
+                case START_ELEMENT:
+
+                    if (reader.getNamespaceURI().equals(TAPESTRY_SCHEMA_5_1_0) && reader.getLocalName().equals(
+                            "replace"))
+                    {
+                        replace(state);
+                        break;
+                    }
+
+                    throw new RuntimeException("Child element of <extend> must be <replace>.");
+
+                case END_ELEMENT:
+
+                    return;
+
+                // Ignore spaces and characters inside <extend>.
+
+                case COMMENT:
+                case SPACE:
+                    break;
+
+                // Other content (characters, etc.) are forbidden.
+
+                case CHARACTERS:
+                    if (InternalUtils.isBlank(reader.getText()))
+                        break;
+
+                default:
+                    unexpectedEventType();
+            }
+        }
+    }
+
+    private void replace(TemplateParserState state) throws XMLStreamException
+    {
+        String id = getRequiredIdAttribute();
+
+        addContentToOverride(setupForElement(state), id);
     }
 
     private void unexpectedEventType()
@@ -200,8 +294,8 @@ public class StaxTemplateParser
     {
         DTDInfo dtdInfo = reader.getDTDInfo();
 
-        tokens.add(new DTDToken(dtdInfo.getDTDRootName(), dtdInfo.getDTDPublicId(), dtdInfo.getDTDSystemId(),
-                                getLocation()));
+        tokenAccumulator.add(new DTDToken(dtdInfo.getDTDRootName(), dtdInfo.getDTDPublicId(), dtdInfo.getDTDSystemId(),
+                                          getLocation()));
     }
 
     private Location getLocation()
@@ -222,9 +316,7 @@ public class StaxTemplateParser
      */
     void element(TemplateParserState initialState) throws XMLStreamException
     {
-        processTextBuffer(initialState);
-
-        TemplateParserState state = checkForXMLSpaceAttribute(initialState);
+        TemplateParserState state = setupForElement(initialState);
 
         if (!processStartElement(state)) return;
 
@@ -255,6 +347,14 @@ public class StaxTemplateParser
                     textContent(state);
             }
         }
+    }
+
+    private TemplateParserState setupForElement(TemplateParserState initialState)
+    {
+        processTextBuffer(initialState);
+
+        TemplateParserState state = checkForXMLSpaceAttribute(initialState);
+        return state;
     }
 
     /**
@@ -304,12 +404,27 @@ public class StaxTemplateParser
 
                 return false;
             }
+
+            if (name.equals("extension-point"))
+            {
+                extensionPoint(state);
+
+                return false;
+            }
+
+            if (name.equals("replace"))
+            {
+                throw new RuntimeException("The <replace> element may only appear directly within an extend element.");
+            }
+
+            if (MUST_BE_ROOT.contains(name))
+                mustBeRoot(name);
         }
 
         if (TAPESTRY_SCHEMA_URIS.contains(uri))
         {
 
-            if (name.equalsIgnoreCase("body"))
+            if (name.equals("body"))
             {
                 body();
                 return false;
@@ -317,8 +432,7 @@ public class StaxTemplateParser
 
             if (name.equals("container"))
             {
-                container(state);
-                return false;
+                mustBeRoot(name);
             }
 
             if (name.equals("block"))
@@ -364,6 +478,79 @@ public class StaxTemplateParser
     }
 
     /**
+     * Handles an extension point, putting a RenderExtension token in position in the template.
+     *
+     * @param state
+     * @throws XMLStreamException
+     */
+    private void extensionPoint(TemplateParserState state) throws XMLStreamException
+    {
+        // An extension point adds a token that represents where the override (either the default
+        // provided in the parent template, or the true override from a child template) is positioned.
+
+        String id = getRequiredIdAttribute();
+
+        tokenAccumulator.add(new ExtensionPointToken(id, getLocation()));
+
+        addContentToOverride(state, id);
+    }
+
+    private String getRequiredIdAttribute()
+    {
+        String id = getSingleParameter("id");
+
+        if (InternalUtils.isBlank(id))
+            throw new RuntimeException(String.format("The <%s> element must have an id attribute.",
+                                                     reader.getLocalName()));
+
+        return id;
+    }
+
+    private void addContentToOverride(TemplateParserState state, String id)
+            throws XMLStreamException
+    {
+        List<TemplateToken> savedTokenAccumulator = tokenAccumulator;
+
+        tokenAccumulator = CollectionFactory.newList();
+
+        // TODO: id should probably be unique; i.e., you either define an override or you
+        // provide an override, but you don't do both in the same template.
+
+        if (overrides == null)
+            overrides = CollectionFactory.newCaseInsensitiveMap();
+
+        overrides.put(id, tokenAccumulator);
+
+        while (active)
+        {
+            switch (reader.next())
+            {
+                case START_ELEMENT:
+                    element(state);
+                    break;
+
+                case END_ELEMENT:
+
+                    processTextBuffer(state);
+
+                    // Restore everthing to how it was before the extention-point was reached.
+
+                    tokenAccumulator = savedTokenAccumulator;
+                    return;
+
+                default:
+                    textContent(state);
+            }
+        }
+    }
+
+    private void mustBeRoot(String name)
+    {
+        throw new RuntimeException(
+                String.format("Element <%s> is only valid as the root element of a template.", name));
+    }
+
+    /**
      * Triggered by &lt;t:content&gt; element; limits template content to just what's inside.
      */
 
@@ -379,6 +566,16 @@ public class StaxTemplateParser
         // Clear out any tokens that precede the <t:content> element
 
         tokens.clear();
+
+        // I'm not happy about this; you really shouldn't define overrides just to clear them out,
+        // but it is consistent. Perhaps this should be an error if overrides is non-empty.
+
+        overrides = null;
+
+        // Make sure that if the <t:content> appears inside a <t:replace> or <t:extension-point>, that
+        // it is still handled correctly.
+
+        tokenAccumulator = tokens;
 
         while (active)
         {
@@ -526,16 +723,16 @@ public class StaxTemplateParser
 
         if (isComponent)
         {
-            tokens.add(new StartComponentToken(elementName, id, type, mixins, location));
+            tokenAccumulator.add(new StartComponentToken(elementName, id, type, mixins, location));
         }
         else
         {
-            tokens.add(new StartElementToken(reader.getNamespaceURI(), elementName, location));
+            tokenAccumulator.add(new StartElementToken(reader.getNamespaceURI(), elementName, location));
         }
 
         addDefineNamespaceTokens();
 
-        tokens.addAll(attributeTokens);
+        tokenAccumulator.addAll(attributeTokens);
 
         if (id != null)
             componentIds.put(id, location);
@@ -555,8 +752,8 @@ public class StaxTemplateParser
 
             if (uri.startsWith(LIB_NAMESPACE_URI_PREFIX)) continue;
 
-            tokens.add(new DefineNamespacePrefixToken(uri, reader.getNamespacePrefix(i),
-                                                      getLocation()));
+            tokenAccumulator.add(new DefineNamespacePrefixToken(uri, reader.getNamespacePrefix(i),
+                                                                getLocation()));
         }
     }
 
@@ -585,7 +782,7 @@ public class StaxTemplateParser
     {
         processTextBuffer(state);
 
-        tokens.add(new EndElementToken(getLocation()));
+        tokenAccumulator.add(new EndElementToken(getLocation()));
     }
 
     /**
@@ -599,7 +796,7 @@ public class StaxTemplateParser
         if (InternalUtils.isBlank(parameterName))
             throw new TapestryException(ServicesMessages.parameterElementNameRequired(), getLocation(), null);
 
-        tokens.add(new ParameterToken(parameterName, getLocation()));
+        tokenAccumulator.add(new ParameterToken(parameterName, getLocation()));
     }
 
     /**
@@ -611,7 +808,7 @@ public class StaxTemplateParser
             throw new TapestryException(ServicesMessages.parameterElementDoesNotAllowAttributes(), getLocation(),
                                         null);
 
-        tokens.add(new ParameterToken(reader.getLocalName(), getLocation()));
+        tokenAccumulator.add(new ParameterToken(reader.getLocalName(), getLocation()));
     }
 
 
@@ -621,7 +818,7 @@ public class StaxTemplateParser
      */
     private void body() throws XMLStreamException
     {
-        tokens.add(new BodyToken(getLocation()));
+        tokenAccumulator.add(new BodyToken(getLocation()));
 
         while (active)
         {
@@ -675,7 +872,7 @@ public class StaxTemplateParser
 
         validateId(blockId, "invalid-block-id");
 
-        tokens.add(new BlockToken(blockId, getLocation()));
+        tokenAccumulator.add(new BlockToken(blockId, getLocation()));
 
         while (active)
         {
@@ -780,7 +977,7 @@ public class StaxTemplateParser
     {
         processTextBuffer(state);
 
-        tokens.add(new CDATAToken(reader.getText(), getLocation()));
+        tokenAccumulator.add(new CDATAToken(reader.getText(), getLocation()));
     }
 
     private void comment(TemplateParserState state)
@@ -791,7 +988,7 @@ public class StaxTemplateParser
 
         String comment = reader.getText().trim();
 
-        tokens.add(new CommentToken(comment, getLocation()));
+        tokenAccumulator.add(new CommentToken(comment, getLocation()));
     }
 
     /**
@@ -861,7 +1058,7 @@ public class StaxTemplateParser
             {
                 String prefix = text.substring(startx, matchStart);
 
-                tokens.add(new TextToken(prefix, textStartLocation));
+                tokenAccumulator.add(new TextToken(prefix, textStartLocation));
             }
 
             // Group 1 includes the real text of the expansion, with whitespace around the
@@ -869,7 +1066,7 @@ public class StaxTemplateParser
 
             String expression = matcher.group(1);
 
-            tokens.add(new ExpansionToken(expression, textStartLocation));
+            tokenAccumulator.add(new ExpansionToken(expression, textStartLocation));
 
             startx = matcher.end();
         }
@@ -877,7 +1074,7 @@ public class StaxTemplateParser
         // Catch anything after the final regexp match.
 
         if (startx < text.length())
-            tokens.add(new TextToken(text.substring(startx, text.length()), textStartLocation));
+            tokenAccumulator.add(new TextToken(text.substring(startx, text.length()), textStartLocation));
     }
 
 }
