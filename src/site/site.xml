@@ -109,6 +109,7 @@
             <item name="Service Status" href="guide/servicestatus.html"/>
             <item name="Type Coercion" href="guide/coercion.html"/>
             <item name="Unit testing pages/components" href="guide/unit-testing-pages.html"/>
+            <item name="URL rewriting" href="guide/url-rewriting.html"/>
         </menu>
 
         <menu name="Tapestry Cookbook">
