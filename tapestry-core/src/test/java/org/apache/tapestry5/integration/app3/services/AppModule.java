@@ -15,9 +15,14 @@
 package org.apache.tapestry5.integration.app3.services;
 
 import org.apache.tapestry5.SymbolConstants;
+import org.apache.tapestry5.integration.app3.pages.URLRewriteSuccess;
 import org.apache.tapestry5.ioc.Configuration;
 import org.apache.tapestry5.ioc.MappedConfiguration;
+import org.apache.tapestry5.ioc.OrderedConfiguration;
 import org.apache.tapestry5.services.BeanBlockContribution;
+import org.apache.tapestry5.services.Request;
+import org.apache.tapestry5.urlrewriter.SimpleRequestWrapper;
+import org.apache.tapestry5.urlrewriter.URLRewriterRule;
 
 public class AppModule
 {
@@ -30,4 +35,59 @@ public class AppModule
     {
         configuration.add(SymbolConstants.GZIP_COMPRESSION_ENABLED, "false");
     }
+    
+    public static void contributeURLRewriterRequestFilter(OrderedConfiguration<URLRewriterRule> configuration) {
+        
+        URLRewriterRule rule1 = new URLRewriterRule() {
+
+            public Request process(Request request)
+            {
+                final String path = request.getPath();
+                if (path.equals("/struts")) 
+                {
+                    request = new SimpleRequestWrapper(request, "/jsf");
+                }
+                return request;
+                
+            }
+            
+        };
+        
+        URLRewriterRule rule2 = new URLRewriterRule() {
+
+            public Request process(Request request)
+            {
+                final String path = request.getPath();
+                if (path.equals("/jsf")) 
+                {
+                    request = new SimpleRequestWrapper(request, "/tapestry");
+                }
+                return request;
+                
+            }
+            
+        };
+        
+        URLRewriterRule rule3 = new URLRewriterRule() {
+
+            public Request process(Request request)
+            {
+                String path = request.getPath();
+                if (path.equals("/tapestry")) 
+                {
+                    path = "/" + URLRewriteSuccess.class.getSimpleName();
+                    request = new SimpleRequestWrapper(request, path);
+                }
+                return request;
+                
+            }
+            
+        };
+        
+        configuration.add("rule1", rule1);
+        configuration.add("rule2", rule2, "after:rule1");
+        configuration.add("rule3", rule3, "after:rule2");
+        
+    }
+    
 }

@@ -9,5 +9,6 @@
             Message:
             <span id="message">${message}</span>
         </p>
+        <a href="struts">Struts</a> (will be rewritten into <code>/urlrewritesuccess)</code>.
     </body>
 </html>

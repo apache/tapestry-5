@@ -52,6 +52,8 @@ import org.apache.tapestry5.runtime.ComponentResourcesAware;
 import org.apache.tapestry5.runtime.RenderCommand;
 import org.apache.tapestry5.runtime.RenderQueue;
 import org.apache.tapestry5.services.ajax.MultiZoneUpdateEventResultProcessor;
+import org.apache.tapestry5.urlrewriter.URLRewriterRequestFilter;
+import org.apache.tapestry5.urlrewriter.URLRewriterRule;
 import org.apache.tapestry5.util.StringToEnumCoercion;
 import org.apache.tapestry5.validator.*;
 import org.slf4j.Logger;
@@ -746,7 +748,9 @@ public final class TapestryModule
                                          @IntermediateType(TimeInterval.class)
                                          long updateTimeout,
 
-                                         UpdateListenerHub updateListenerHub)
+                                         UpdateListenerHub updateListenerHub,
+                                         
+                                         URLRewriterRequestFilter urlRewriterRequestFilter)
     {
         RequestFilter staticFilesFilter = new StaticFilesFilter(context);
 
@@ -777,6 +781,8 @@ public final class TapestryModule
 
         configuration.add("CheckForUpdates",
                           new CheckForUpdatesFilter(updateListenerHub, checkInterval, updateTimeout), "before:*");
+        
+        configuration.add("URLRewriter", urlRewriterRequestFilter, "before:StaticFiles");
 
         configuration.add("StaticFiles", staticFilesFilter);
 
@@ -2327,5 +2333,12 @@ public final class TapestryModule
     {
         return pipelineBuilder.build(logger, ComponentRequestHandler.class, ComponentRequestFilter.class,
                                      configuration, terminator);
+    }
+    
+    /**
+     * @since 5.1.0.1
+     */
+    public static URLRewriterRequestFilter buildURLRewriterRequestFilter(List<URLRewriterRule> contributions) {
+        return new URLRewriterRequestFilter(contributions);
     }
 }
