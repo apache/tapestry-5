@@ -1,0 +1,8 @@
+<html t:type="layout" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd"
+      xmlns:p="tapestry:parameter">
+    <body>
+        <t:extension-point id="title">
+            <h1>Default Title</h1>
+        </t:extension-point>
+    </body>
+</html>

@@ -14,12 +14,15 @@
 
 package org.apache.tapestry5.internal.pageload;
 
-import org.apache.tapestry5.internal.parser.ComponentTemplate;
 import org.apache.tapestry5.internal.structure.ComponentPageElement;
 import org.apache.tapestry5.internal.structure.Page;
 import org.apache.tapestry5.ioc.Location;
+import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.model.EmbeddedComponentModel;
+
+import java.util.Locale;
+import java.util.Map;
 
 /**
  * Encapsulates a series of actions that are used to assemble a new page instance (or a comoponent within the page).
@@ -64,7 +67,7 @@ interface ComponentAssembler
      * Validates that all component ids defined by the model are accounted for in the template. In addition, takes care
      * of id pre-allocation.
      */
-    void validateEmbeddedIds(ComponentTemplate template);
+    void validateEmbeddedIds(Map<String, Location> componentIds, Resource templateResource);
 
     /**
      * Generates an id for an otherwise anonymous component, based on the component's type.
@@ -101,4 +104,9 @@ interface ComponentAssembler
      *         component
      */
     ParameterBinder getBinder(String parameterName);
+
+    /**
+     * Returns the locale for which the component is being assembled.
+     */
+    Locale getLocale();
 }

@@ -28,6 +28,7 @@ import org.apache.tapestry5.ioc.Location;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.TapestryException;
+import org.apache.tapestry5.ioc.util.Stack;
 import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.model.EmbeddedComponentModel;
 import org.apache.tapestry5.runtime.RenderCommand;
@@ -35,6 +36,8 @@ import org.apache.tapestry5.runtime.RenderQueue;
 import org.apache.tapestry5.services.ComponentClassResolver;
 import org.apache.tapestry5.services.InvalidationListener;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -212,14 +215,7 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
      */
     private void programAssembler(ComponentAssembler assembler, ComponentTemplate template)
     {
-        assembler.validateEmbeddedIds(template);
-
-        processTemplate(assembler, template);
-    }
-
-    private void processTemplate(ComponentAssembler assembler, ComponentTemplate template)
-    {
-        TokenStream stream = new TokenStreamImpl(template);
+        TokenStream stream = createTokenStream(assembler, template);
 
         AssemblerContext context = new AssemblerContext(assembler, stream);
 
@@ -239,6 +235,139 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
         }
 
         context.flushComposable();
+    }
+
+    /**
+     * Creates the TokenStream by pre-processing the templates, looking for {@link org.apache.tapestry5.internal.parser.ExtensionPointToken}s
+     * and replacing them with appropriate overrides. Also validates that all embedded ids are accounted for.
+     */
+    private TokenStream createTokenStream(ComponentAssembler assembler, ComponentTemplate template)
+    {
+        List<TemplateToken> tokens = CollectionFactory.newList();
+
+        Stack<TemplateToken> queue = CollectionFactory.newStack();
+
+        List<ComponentTemplate> overrideSearch = buildOverrideSearch(assembler, template);
+
+        // The base template is the first non-extension template upwards in the hierarchy
+        // from this component.
+
+        ComponentTemplate baseTemplate = getLast(overrideSearch);
+
+        pushAll(queue, baseTemplate.getTokens());
+
+        while (!queue.isEmpty())
+        {
+            TemplateToken token = queue.pop();
+
+            // When an ExtensionPoint is found, it is replaced with the tokens of its override.
+
+            if (token.getTokenType().equals(TokenType.EXTENSION_POINT))
+            {
+                ExtensionPointToken extensionPointToken = (ExtensionPointToken) token;
+
+                queueOverrideTokensForExtensionPoint(extensionPointToken, queue, overrideSearch);
+
+            }
+            else
+            {
+                tokens.add(token);
+            }
+        }
+
+        // Build up a map of component ids to locations
+
+        Collections.reverse(overrideSearch);
+
+        Map<String, Location> componentIds = CollectionFactory.newCaseInsensitiveMap();
+
+        for (ComponentTemplate ct : overrideSearch)
+        {
+            componentIds.putAll(ct.getComponentIds());
+        }
+
+        // Validate that every emebedded component id in the template (or inherited from an extended template)
+        // is accounted for.
+
+        assembler.validateEmbeddedIds(componentIds, template.getResource());
+
+        return new TokenStreamImpl(tokens);
+    }
+
+    private static <T> T getLast(List<T> list)
+    {
+        int count = list.size();
+
+        return list.get(count - 1);
+    }
+
+    private void queueOverrideTokensForExtensionPoint(ExtensionPointToken extensionPointToken,
+                                                      Stack<TemplateToken> queue,
+                                                      List<ComponentTemplate> overrideSearch)
+    {
+        String extentionPointId = extensionPointToken.getExtentionPointId();
+
+        // Work up from the component, through its base classes, towards the last non-extension template.
+
+        for (ComponentTemplate t : overrideSearch)
+        {
+            List<TemplateToken> tokens = t.getExtensionPointTokens(extentionPointId);
+
+            if (tokens != null)
+            {
+                pushAll(queue, tokens);
+                return;
+            }
+        }
+
+        // Sanity check: since an extension point defines its own default, it's going to be hard to
+        // not find an override, somewhere, for it.
+
+        throw new TapestryException(
+                String.format("Could not find an override for extension point '%s'.", extentionPointId),
+                extensionPointToken.getLocation(), null);
+    }
+
+    private List<ComponentTemplate> buildOverrideSearch(ComponentAssembler assembler, ComponentTemplate template)
+    {
+        List<ComponentTemplate> result = CollectionFactory.newList();
+        result.add(template);
+
+        ComponentModel model = assembler.getModel();
+
+        ComponentTemplate lastTemplate = template;
+
+        while (lastTemplate.isExtension())
+        {
+            ComponentModel parentModel = model.getParentModel();
+
+            if (parentModel == null)
+            {
+                throw new RuntimeException(String.format(
+                        "Component %s uses an extension template, but does not have a parent component.",
+                        model.getComponentClassName()));
+            }
+
+            ComponentTemplate parentTemplate = templateSource.getTemplate(parentModel, assembler.getLocale());
+
+            result.add(parentTemplate);
+
+            lastTemplate = parentTemplate;
+
+            model = parentModel;
+        }
+
+        return result;
+    }
+
+    /**
+     * Push all the tokens onto the stack, in reverse order, so that the last token is deepest and the first token is
+     * most shallow (first to come off the queue).
+     */
+    private void pushAll(Stack<TemplateToken> queue, List<TemplateToken> tokens)
+    {
+        for (int i = tokens.size() - 1; i >= 0; i--)
+            queue.push(tokens.get(i));
     }
 
     private void processTemplateToken(AssemblerContext context)

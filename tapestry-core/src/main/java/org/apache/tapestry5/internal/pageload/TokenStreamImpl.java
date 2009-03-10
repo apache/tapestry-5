@@ -14,7 +14,6 @@
 
 package org.apache.tapestry5.internal.pageload;
 
-import org.apache.tapestry5.internal.parser.ComponentTemplate;
 import org.apache.tapestry5.internal.parser.TemplateToken;
 import org.apache.tapestry5.internal.parser.TokenType;
 
@@ -26,9 +25,9 @@ class TokenStreamImpl implements TokenStream
 
     private int index = 0;
 
-    public TokenStreamImpl(ComponentTemplate template)
+    TokenStreamImpl(List<TemplateToken> tokens)
     {
-        tokens = template.getTokens();
+        this.tokens = tokens;
     }
 
     public boolean more()

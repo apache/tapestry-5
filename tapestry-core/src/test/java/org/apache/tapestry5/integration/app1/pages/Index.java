@@ -65,6 +65,9 @@ public class Index
 
     private static final List<Item> ITEMS = CollectionFactory.newList(
 
+            new Item("TemplateOverrideDemo", "Template Override Demo",
+                     "Child component extends and overrides parent template."),
+
             new Item("MultiZoneUpdateDemo", "Multiple Zone Update Demo",
                      "A single request can now update multiple Zones"),
 

@@ -1,0 +1,7 @@
+<t:extend xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd"
+          xmlns:p="tapestry:parameter">
+    <t:replace id="alpha">beta</t:replace>
+    <t:replace id="gamma">
+        <p>Hi!</p>
+    </t:replace>
+</t:extend>

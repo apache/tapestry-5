@@ -1,6 +1,6 @@
 <html t:type="layout" title="${artifactId} Index"
       t:sidebarTitle="Current Time"
-      xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd"
+      xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd"
       xmlns:p="tapestry:parameter">
     #set( $D = '$' )
     <!-- Most of the page content, including <head>, <body>, etc. tags, comes from Layout.tml -->

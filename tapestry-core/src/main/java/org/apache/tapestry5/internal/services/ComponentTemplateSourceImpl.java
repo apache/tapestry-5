@@ -78,6 +78,16 @@ public final class ComponentTemplateSourceImpl extends InvalidationEventHubImpl 
         {
             return true;
         }
+
+        public List<TemplateToken> getExtensionPointTokens(String extensionPointId)
+        {
+            return null;
+        }
+
+        public boolean isExtension()
+        {
+            return false;
+        }
     };
 
     public ComponentTemplateSourceImpl(TemplateParser parser, PageTemplateLocator locator,

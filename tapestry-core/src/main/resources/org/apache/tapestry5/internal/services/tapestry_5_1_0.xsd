@@ -13,6 +13,47 @@
             </xs:documentation>
         </xs:annotation>
     </xs:element>
+    <xs:element name="extend">
+        <xs:annotation>
+            <xs:documentation>
+                Root element of a template that extends its parent template, replacing portions of the template.
+            </xs:documentation>
+        </xs:annotation>
+    </xs:element>
+    <xs:element name="extension-point">
+        <xs:annotation>
+            <xs:documentation>
+                Defines a portion of a parent component template that may be replaced in a child component.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:attribute name="name" type="xs:string" use="required">
+                <xs:annotation>
+                    <xs:documentation>
+                        Unique id for the replaceable block.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:attribute>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="replacement">
+        <xs:annotation>
+            <xs:documentation>
+                A replacement, in a child component template, for an extension-point in the parent component template.
+                This element must be an immediate child of the root element, which will be extend.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:attribute name="name" type="xs:string" use="required">
+                <xs:annotation>
+                    <xs:documentation>
+                        Unique id for the replaceable block, which must match an id of an inheritable extension-point
+                        block.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:attribute>
+        </xs:complexType>
+    </xs:element>
     <xs:element name="content">
         <xs:annotation>
             <xs:documentation>

@@ -123,6 +123,10 @@
             <a href="UnsupportedParameterBlockDemo">Unsupported Parameter Block Demo</a>
             -- informal block parameter to a component that does not support informal parameters
         </li>
+        <li>
+            <a href="InvalidTemplateExtend">Invalid Template Extend Demo</a>
+            -- template uses extend, but component doesn't have a super-class
+        </li>
     </ul>
 
 </html>
