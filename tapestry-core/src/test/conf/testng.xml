@@ -33,6 +33,7 @@ tests run at the same time as Selenium-based integration tests.  See TAPESTRY-25
             <package name="org.apache.tapestry5.json"/>
             <package name="org.apache.tapestry5.runtime"/>
             <package name="org.apache.tapestry5.services"/>
+            <package name="org.apache.tapestry5.urlrewriter"/>
             <package name="org.apache.tapestry5.util"/>
             <package name="org.apache.tapestry5.validator"/>
         </packages>
