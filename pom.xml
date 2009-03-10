@@ -159,7 +159,10 @@
         <!-- Tutorials -->
 
         <module>tapestry-tutorial1</module>
+
+        <!-- Temporarily removed until 5.2
         <module>tapestry-webflow</module>
+        -->
 
     </modules>
 
