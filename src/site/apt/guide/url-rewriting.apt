@@ -1,0 +1,130 @@
+ ---
+ Tapestry URL Rewriting Support
+ ---
+ 
+Tapestry URL Rewriting Support
+ 
+  Since 5.1.0.1, Tapestry has some basic support for URL rewriting. It is based in
+  a chain of <<<URLRewriterRule>>> interfaces. These rules are executed before
+  all the Tapestry request handling, so it does not even know that the received
+  request is not the original one.
+   
+  Each URL rewriter rule, in its
+  <<<Request process>>>, can choose between returning another <<<Request>>>,
+  effectively rewriting it, or returning the received request unchanged,
+  meaning that this rule does not apply to that request.
+  
+  To create new <<<Request>>>s easier, Tapestry provides the 
+  <<<SimpleRequestWrapper>>> class. It wraps an <<<Request>>>, delegating all
+  methods except <<<getPath()>>> and <<<getServerName()>>>. More request 
+  wrappers may be added in the future on demand.
+  
+Configuration
+
+  Tapestry's URL rewriting support is configured by Tapestry-Ioc through contribution
+  of <<<URLRewriterRule>>>s to the <<<URLRewriterRequestFilter>>> service.
+  The following example is part of the Tapestry's tests.
+  
+Simple example of rule chaining 
+
+  This example just rewrites all requests to <<</struts>>> to <<</tapestry>>>.
+  In your <<<AppModule>>> or any other Tapestry-IoC module class: 
+  
++-----------------------------------------------------------------------+
+
+public static void contributeURLRewriterRequestFilter(OrderedConfiguration<URLRewriterRule> configuration) 
+{
+    
+    URLRewriterRule rule = new URLRewriterRule() {
+
+        public Request process(Request request)
+        {
+            final String path = request.getPath();
+            if (path.equals("/struts"))
+            {
+                request = new SimpleRequestWrapper(request, "/tapestry");
+            }
+            
+            return request;
+            
+        }
+        
+    };
+    
+}
+
++-----------------------------------------------------------------------+
+  
+Example of rule chaining 
+
+  In your <<<AppModule>>> or any other Tapestry-IoC module class. 
+  
++-----------------------------------------------------------------------+
+
+public static void contributeURLRewriterRequestFilter(OrderedConfiguration<URLRewriterRule> configuration) 
+{
+    
+    URLRewriterRule rule1 = new URLRewriterRule() {
+
+        public Request process(Request request)
+        {
+            final String path = request.getPath();
+            if (path.equals("/struts")) 
+            {
+                request = new SimpleRequestWrapper(request, "/jsf");
+            }
+            
+            return request;
+            
+        }
+        
+    };
+    
+    URLRewriterRule rule2 = new URLRewriterRule() {
+
+        public Request process(Request request)
+        {
+            final String path = request.getPath();
+            if (path.equals("/jsf")) 
+            {
+                request = new SimpleRequestWrapper(request, "/tapestry");
+            }
+            return request;
+            
+        }
+        
+    };
+    
+    URLRewriterRule rule3 = new URLRewriterRule() {
+
+        public Request process(Request request)
+        {
+            String path = request.getPath();
+            if (path.equals("/tapestry")) 
+            {
+                path = "/urlrewritesuccess";
+                request = new SimpleRequestWrapper(request, path);
+            }
+            return request;
+            
+        }
+        
+    };
+    
+    configuration.add("rule1", rule1);
+    configuration.add("rule2", rule2, "after:rule1");
+    configuration.add("rule3", rule3, "after:rule2");
+    
+}
+
++-----------------------------------------------------------------------+
+
+  This examples shows the URL rewriting chaining: the first rule 
+  rewrites requests to <<</struts>>> and rewrites them to <<</jsf>>>
+  and leaves requests to other URLs unchanged.
+  The second rewrites <<</jsf>>> to <<</tapestry>>> and the 
+  third rewrites <<</tapestry>>> to <<</urlrewritesuccess>>>.
+  
+  The result is that any request to <<</struts>>> end up being handled by the
+  same class that handles <<</urlrewritesuccess>>>, while the browser, the user and 
+  Tapestry still sees <<</struts>>>.
