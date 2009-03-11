@@ -104,7 +104,6 @@ public final class TapestryModule
 
     private final EndOfRequestEventHub endOfRequestEventHub;
 
-
     /**
      * We inject all sorts of common dependencies (including builders) into the module itself (note: even though some of
      * these service are defined by the module itself, that's ok because services are always lazy proxies).  This isn't
@@ -304,6 +303,7 @@ public final class TapestryModule
         binder.bind(AssetPathConverter.class, IdentityAssetPathConverter.class);
         binder.bind(NumericTranslatorSupport.class);
         binder.bind(ClientDataEncoder.class, ClientDataEncoderImpl.class);
+        binder.bind(ComponentEventLinkEncoder.class, ComponentEventLinkEncoderImpl.class);
     }
 
     // ========================================================================
@@ -748,7 +748,7 @@ public final class TapestryModule
                                          long updateTimeout,
 
                                          UpdateListenerHub updateListenerHub,
-                                         
+
                                          URLRewriterRequestFilter urlRewriterRequestFilter)
     {
         RequestFilter staticFilesFilter = new StaticFilesFilter(context);
@@ -780,7 +780,7 @@ public final class TapestryModule
 
         configuration.add("CheckForUpdates",
                           new CheckForUpdatesFilter(updateListenerHub, checkInterval, updateTimeout), "before:*");
-        
+
         configuration.add("URLRewriter", urlRewriterRequestFilter, "before:StaticFiles");
 
         configuration.add("StaticFiles", staticFilesFilter);
@@ -2048,6 +2048,7 @@ public final class TapestryModule
         configuration.add(SymbolConstants.GZIP_COMPRESSION_ENABLED, "true");
 
         configuration.add(SymbolConstants.SECURE_ENABLED, String.format("${%s}", SymbolConstants.PRODUCTION_MODE));
+        configuration.add(SymbolConstants.ENCODE_LOCALE_INTO_PATH, "true");
     }
 
 
@@ -2333,11 +2334,12 @@ public final class TapestryModule
         return pipelineBuilder.build(logger, ComponentRequestHandler.class, ComponentRequestFilter.class,
                                      configuration, terminator);
     }
-    
+
     /**
      * @since 5.1.0.1
      */
-    public static URLRewriterRequestFilter buildURLRewriterRequestFilter(List<URLRewriterRule> contributions) {
+    public static URLRewriterRequestFilter buildURLRewriterRequestFilter(List<URLRewriterRule> contributions)
+    {
         return new URLRewriterRequestFilter(contributions);
     }
 }

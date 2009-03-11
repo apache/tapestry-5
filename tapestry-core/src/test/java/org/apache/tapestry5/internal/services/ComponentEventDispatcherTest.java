@@ -48,7 +48,13 @@ public class ComponentEventDispatcherTest extends InternalBaseTestCase
 
         replay();
 
-        Dispatcher dispatcher = new ComponentEventDispatcher(null, null, null, null);
+        Dispatcher dispatcher = new ComponentEventDispatcher(null,
+                                                             new ComponentEventLinkEncoderImpl(null, contextPathEncoder,
+                                                                                               null, request, response,
+                                                                                               null,
+                                                                                               null,
+                                                                                               null,
+                                                                                               null, null, true));
 
         assertFalse(dispatcher.dispatch(request, response));
 
@@ -62,7 +68,7 @@ public class ComponentEventDispatcherTest extends InternalBaseTestCase
     }
 
     /**
-     * @see https://issues.apache.org/jira/browse/TAPESTRY-1949
+     * @see {@link https://issues.apache.org/jira/browse/TAPESTRY-1949}
      */
     @Test
     public void event_on_page_with_name_and_dotted_parameters() throws Exception
@@ -154,7 +160,15 @@ public class ComponentEventDispatcherTest extends InternalBaseTestCase
 
         replay();
 
-        Dispatcher dispatcher = new ComponentEventDispatcher(resolver, contextPathEncoder, ls, handler);
+        Dispatcher dispatcher = new ComponentEventDispatcher(handler, new ComponentEventLinkEncoderImpl(resolver,
+                                                                                                        contextPathEncoder,
+                                                                                                        ls, request,
+                                                                                                        response,
+                                                                                                        null,
+                                                                                                        null,
+                                                                                                        null,
+                                                                                                        null,
+                                                                                                        null, true));
 
         assertTrue(dispatcher.dispatch(request, response));
 
@@ -189,7 +203,15 @@ public class ComponentEventDispatcherTest extends InternalBaseTestCase
 
         replay();
 
-        Dispatcher dispatcher = new ComponentEventDispatcher(resolver, contextPathEncoder, ls, handler);
+        Dispatcher dispatcher = new ComponentEventDispatcher(handler, new ComponentEventLinkEncoderImpl(resolver,
+                                                                                                        contextPathEncoder,
+                                                                                                        ls, request,
+                                                                                                        response,
+                                                                                                        null,
+                                                                                                        null,
+                                                                                                        null,
+                                                                                                        null,
+                                                                                                        null, true));
 
         assertTrue(dispatcher.dispatch(request, response));
 
@@ -211,7 +233,15 @@ public class ComponentEventDispatcherTest extends InternalBaseTestCase
 
         replay();
 
-        Dispatcher dispatcher = new ComponentEventDispatcher(resolver, null, ls, null);
+        Dispatcher dispatcher = new ComponentEventDispatcher(null, new ComponentEventLinkEncoderImpl(resolver,
+                                                                                                     contextPathEncoder,
+                                                                                                     ls, request,
+                                                                                                     response,
+                                                                                                     null,
+                                                                                                     null,
+                                                                                                     null,
+                                                                                                     null,
+                                                                                                     null, true));
 
         assertFalse(dispatcher.dispatch(request, response));
 
@@ -251,8 +281,11 @@ public class ComponentEventDispatcherTest extends InternalBaseTestCase
 
         replay();
 
-        Dispatcher dispatcher = new ComponentEventDispatcher(resolver, contextPathEncoder, localizationSetter,
-                                                             handler);
+        Dispatcher dispatcher = new ComponentEventDispatcher(
+                handler, new ComponentEventLinkEncoderImpl(resolver, contextPathEncoder, localizationSetter, request,
+                                                           response, null, null,
+                                                           null,
+                                                           null, null, true));
 
         assertTrue(dispatcher.dispatch(request, response));
 

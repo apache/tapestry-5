@@ -25,13 +25,11 @@ import java.util.List;
 
 public class LinkSourceImpl implements LinkSource, LinkCreationHub
 {
-    private final RequestPageCache pageCache;
-
     private final PageRenderQueue pageRenderQueue;
 
     private final PageActivationContextCollector contextCollector;
 
-    private final LinkFactory linkFactory;
+    private final ComponentEventLinkEncoder linkEncoder;
 
     private final List<LinkCreationListener> listeners = CollectionFactory.newThreadSafeList();
 
@@ -39,18 +37,17 @@ public class LinkSourceImpl implements LinkSource, LinkCreationHub
 
     private final ComponentClassResolver resolver;
 
-    public LinkSourceImpl(
-            RequestPageCache pageCache,
-            PageRenderQueue pageRenderQueue,
-            PageActivationContextCollector contextCollector,
-            LinkFactory linkFactory, TypeCoercer typeCoercer, ComponentClassResolver resolver)
+    public LinkSourceImpl(PageRenderQueue pageRenderQueue,
+                          PageActivationContextCollector contextCollector,
+                          TypeCoercer typeCoercer,
+                          ComponentClassResolver resolver,
+                          ComponentEventLinkEncoder linkEncoder)
     {
-        this.pageCache = pageCache;
         this.pageRenderQueue = pageRenderQueue;
         this.contextCollector = contextCollector;
-        this.linkFactory = linkFactory;
         this.typeCoercer = typeCoercer;
         this.resolver = resolver;
+        this.linkEncoder = linkEncoder;
     }
 
     public Link createComponentEventLink(Page page, String nestedId, String eventType, boolean forForm,
@@ -79,7 +76,7 @@ public class LinkSourceImpl implements LinkSource, LinkCreationHub
                 new ArrayEventContext(typeCoercer, eventContext));
 
 
-        Link link = linkFactory.createComponentEventLink(parameters, forForm);
+        Link link = linkEncoder.createComponentEventLink(parameters, forForm);
 
         for (LinkCreationListener listener : listeners)
             listener.createdComponentEventLink(link);
@@ -107,7 +104,7 @@ public class LinkSourceImpl implements LinkSource, LinkCreationHub
                 new PageRenderRequestParameters(canonical,
                                                 new ArrayEventContext(typeCoercer, context));
 
-        Link link = linkFactory.createPageRenderLink(parameters);
+        Link link = linkEncoder.createPageRenderLink(parameters);
 
         for (LinkCreationListener listener : listeners)
             listener.createdPageRenderLink(link);

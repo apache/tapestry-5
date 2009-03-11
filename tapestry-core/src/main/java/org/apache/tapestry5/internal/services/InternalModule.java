@@ -80,7 +80,6 @@ public class InternalModule
         binder.bind(InternalRequestGlobals.class, InternalRequestGlobalsImpl.class);
         binder.bind(EndOfRequestEventHub.class);
         binder.bind(ResponseCompressionAnalyzer.class, ResponseCompressionAnalyzerImpl.class);
-        binder.bind(LinkFactory.class, LinkFactoryImpl.class);
         binder.bind(ComponentModelSource.class);
     }
 

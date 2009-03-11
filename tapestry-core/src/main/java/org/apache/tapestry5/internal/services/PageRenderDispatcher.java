@@ -14,7 +14,6 @@
 
 package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry5.EventContext;
 import org.apache.tapestry5.services.*;
 
 import java.io.IOException;
@@ -26,93 +25,22 @@ import java.io.IOException;
  */
 public class PageRenderDispatcher implements Dispatcher
 {
-    private final ComponentClassResolver componentClassResolver;
-
-    private final ContextPathEncoder contextPathEncoder;
-
-    private final LocalizationSetter localizationSetter;
-
     private final ComponentRequestHandler componentRequestHandler;
 
-    public PageRenderDispatcher(ComponentClassResolver componentClassResolver,
-                                ContextPathEncoder contextPathEncoder,
-                                LocalizationSetter localizationSetter,
-                                ComponentRequestHandler componentRequestHandler)
+    private final ComponentEventLinkEncoder linkEncoder;
+
+    public PageRenderDispatcher(ComponentRequestHandler componentRequestHandler, ComponentEventLinkEncoder linkEncoder)
     {
-        this.componentClassResolver = componentClassResolver;
-        this.contextPathEncoder = contextPathEncoder;
-        this.localizationSetter = localizationSetter;
         this.componentRequestHandler = componentRequestHandler;
+        this.linkEncoder = linkEncoder;
     }
 
     public boolean dispatch(Request request, final Response response) throws IOException
     {
 
-        // The extended name may include a page activation context. The trick is
-        // to figure out where the logical page name stops and where the
-        // activation context begins. Further, strip out the leading slash.
+        PageRenderRequestParameters parameters = linkEncoder.decodePageRenderRequest(request);
 
-        String path = request.getPath();
-
-        // TAPESTRY-1343: Sometimes path is the empty string (it should always be at least a slash,
-        // but Tomcat may return the empty string for a root context request).
-
-        String extendedName = path.length() == 0 ? path : path.substring(1);
-
-        // Ignore trailing slashes in the path.
-        while (extendedName.endsWith("/"))
-            extendedName = extendedName.substring(0, extendedName.length() - 1);
-
-        int slashx = extendedName.indexOf('/');
-
-        // So, what can we have left?
-        // 1. A page name
-        // 2. A locale followed by a page name
-        // 3. A page name followed by activation context
-        // 4. A locale name, page name, activation context
-        // 5. Just activation context (for root Index page)
-        // 6. A locale name followed by activation context
-
-        String possibleLocaleName = slashx > 0
-                                    ? extendedName.substring(0, slashx)
-                                    : extendedName;
-
-        if (localizationSetter.setLocaleFromLocaleName(possibleLocaleName))
-        {
-            extendedName = slashx > 0
-                           ? extendedName.substring(slashx + 1)
-                           : "";
-        }
-
-        slashx = extendedName.length();
-        boolean atEnd = true;
-
-        while (slashx > 0)
-        {
-            String pageName = extendedName.substring(0, slashx);
-            String pageActivationContext = atEnd ? "" :
-                                           extendedName.substring(slashx + 1);
-
-            if (process(pageName, pageActivationContext)) return true;
-
-            // Work backwards, splitting at the next slash.
-            slashx = extendedName.lastIndexOf('/', slashx - 1);
-
-            atEnd = false;
-        }
-
-        // OK, maybe its all page activation context for the root Index page.
-
-        return process("", extendedName);
-    }
-
-    private boolean process(String pageName, String pageActivationContext) throws IOException
-    {
-        if (!componentClassResolver.isPageName(pageName)) return false;
-
-        EventContext activationContext = contextPathEncoder.decodePath(pageActivationContext);
-
-        PageRenderRequestParameters parameters = new PageRenderRequestParameters(pageName, activationContext);
+        if (parameters == null) return false;
 
         componentRequestHandler.handlePageRender(parameters);
 
