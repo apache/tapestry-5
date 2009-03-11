@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,12 +19,14 @@ import java.util.List;
 import java.util.Locale;
 
 import org.apache.tapestry5.ioc.test.TestBase;
+import org.apache.tapestry5.services.DelegatingRequest;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.Session;
 import org.testng.annotations.Test;
 
 /**
- * Tests {@linkplain org.apache.tapestry5.urlrewritter.SimpleRequestWrapper}.
+ * Tests {@linkplain org.apache.tapestry5.urlrewritter.SimpleRequestWrapper}
+ * and {@link DelegatingRequest}.
  */
 public class SimpleRequestWrapperTest extends TestBase
 {

@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ import org.testng.annotations.Test;
  * listening on localhost:80.
  */
 @SuppressWarnings({ "JavaDoc" })
-@Test(timeOut = 50000000, sequential = true)
+@Test(timeOut = 30000, sequential = true)
 public class IntegrationTests extends AbstractIntegrationTestSuite
 {
     public IntegrationTests()
