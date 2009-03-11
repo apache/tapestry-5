@@ -25,6 +25,132 @@
         </p>
 
 
+        <h1>Release Notes - Tapestry 5 - Version 5.1.0.1</h1>
+
+        <h2>Bug
+        </h2>
+        <ul>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-211'>TAP5-211</a>] - Client-side validation of
+                numeric user input does not take into account the user's locale which causes spurious client- and
+                server-side exceptions when users enter numbers &quot;naturally&quot;
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-374'>TAP5-374</a>] - Persistent (@Persist) fields
+                not set correctly between requests if they are initialised from pageAttached() method
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-512'>TAP5-512</a>] - Documentation on how to secure
+                pages contains errors in the sample code
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-520'>TAP5-520</a>] - Using regular expressions with
+                the @Validate annotation causes odd parse errors if the regexp includes common characters (including
+                commas)
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-530'>TAP5-530</a>] - Documentation should identify
+                how to boot-strap the quickstart archetype from the Tapestry360 Maven repository (not snapshot
+                repository)
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-535'>TAP5-535</a>] - PageTester should use
+                overrides of FactoryDefaults, not contributions to ApplicationDefaults
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-537'>TAP5-537</a>] - PersistentLocale.setLocale()
+                allows the application to set a locale that isn't supported, and the subsequent URL may not be
+                interpreted correctly
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-552'>TAP5-552</a>] - Common compressed image files
+                should be configured to not re-compress when sent to client: GIF, PNG
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-555'>TAP5-555</a>] -
+                Tapestry.ScriptManager.contains throws error if &lt;script&gt; tag in &lt;head&gt; has no href
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-559'>TAP5-559</a>] - Informal parameters have
+                started to overwrite previously rendered attributes
+            </li>
+        </ul>
+
+        <h2>Improvement
+        </h2>
+        <ul>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-84'>TAP5-84</a>] - Change proxy generation to use
+                volatile fields rather than synchronized blocks
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-108'>TAP5-108</a>] - A component event handler for
+                Ajax requests should have a mechanism to update mutiple zones on the client
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-345'>TAP5-345</a>] - AjaxFormLoop should be able to
+                deduce a default ValueEncoder from the type of its value parameter
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-367'>TAP5-367</a>] - The Grid component's &quot;There
+                is no data to display.&quot; message should come from a message catalog, to support global overrides and
+                localization
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-418'>TAP5-418</a>] - Control over creation of page
+                render and component event requests should be encapsulated into an overridable service
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-502'>TAP5-502</a>] - Improve the description of
+                parameter passing and binding in the documentation
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-525'>TAP5-525</a>] - The Component Report should
+                indicate in which Tapestry version a parameter or a component was introduced
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-527'>TAP5-527</a>] - Input validation documentation
+                is missing clear list of available validators and their correct notation to use.
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-536'>TAP5-536</a>] - Move ClientBehaviorSupport to
+                the public services package
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-540'>TAP5-540</a>] - Allow exact parsing of numeric
+                client input by creating a BigDecimal Translator and enabling parseBigDecimal in DecimalFormat
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-543'>TAP5-543</a>] - ProgressiveDisplay component
+                should support a context parameter and fire an event to inform the container what data is to be
+                displayed
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-544'>TAP5-544</a>] - Improve JavaScript handling to
+                prevent the user from clicking Ajax-oriented links and forms before the page is &quot;ready&quot;
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-545'>TAP5-545</a>] - Upgrade to Scriptaculous 1.8.2
+                (released Nov 2008)
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-547'>TAP5-547</a>] - In the exception report page,
+                JVM system property org.apache.catalina.jsp_classpath should be displayed as a list, like other .path
+                value
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-550'>TAP5-550</a>] - Reduce eden space memory
+                footprint by avoiding Lists and Maps within Elements
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-564'>TAP5-564</a>] - Add StringPropertySelectModel
+            </li>
+        </ul>
+
+        <h2>New Feature
+        </h2>
+        <ul>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-43'>TAP5-43</a>] - Add configuration to turn off
+                @Secure when in development
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-74'>TAP5-74</a>] - Provide a way that a component
+                sub-class can merge its template with that of its container
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-92'>TAP5-92</a>] - Add new element, t:remove, that
+                removes a portion of a template
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-236'>TAP5-236</a>] - Implement a progressive
+                enhancement component that loads its content via Ajax
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-485'>TAP5-485</a>] - Tracking issue for changes
+                required by com.formos.tapestry:tapestry-template
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-542'>TAP5-542</a>] - Add ParallelExecutor service
+                to allow operations to be performed asynchronously in a thread pool
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-560'>TAP5-560</a>] - Add a service responsible for
+                encoding client data (as gzipp'ed base 64) and decoding that data
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-563'>TAP5-563</a>] - Ability to limit the
+                template's effective content to just a small section (similar to Tapestry 4's $content$ marker)
+            </li>
+        </ul>
+
+
         <h1>Release Notes - Tapestry 5 - Version 5.1.0.0</h1>
 
         <h2>Bug
