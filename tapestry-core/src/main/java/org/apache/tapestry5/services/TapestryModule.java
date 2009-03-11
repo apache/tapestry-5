@@ -52,7 +52,6 @@ import org.apache.tapestry5.runtime.ComponentResourcesAware;
 import org.apache.tapestry5.runtime.RenderCommand;
 import org.apache.tapestry5.runtime.RenderQueue;
 import org.apache.tapestry5.services.ajax.MultiZoneUpdateEventResultProcessor;
-import org.apache.tapestry5.urlrewriter.URLRewriterRequestFilter;
 import org.apache.tapestry5.urlrewriter.URLRewriterRule;
 import org.apache.tapestry5.util.StringToEnumCoercion;
 import org.apache.tapestry5.validator.*;

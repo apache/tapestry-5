@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,21 +13,16 @@
 // limitations under the License.
 package org.apache.tapestry5.urlrewriter;
 
-import java.util.List;
-import java.util.Locale;
-
 import org.apache.tapestry5.ioc.internal.util.Defense;
+import org.apache.tapestry5.services.DelegatingRequest;
 import org.apache.tapestry5.services.Request;
-import org.apache.tapestry5.services.Session;
 
 /**
  * Class that wraps a {@linkplain Request}. It delegates all methods except ones related to URL
  * rewriting.
  */
-public class SimpleRequestWrapper implements Request
+public class SimpleRequestWrapper extends DelegatingRequest
 {
-
-    final private Request request;
 
     final private String path;
 
@@ -45,11 +40,11 @@ public class SimpleRequestWrapper implements Request
      */
     public SimpleRequestWrapper(Request request, String serverName, String path)
     {
-        Defense.notNull(request, "request");
+        
+        super(request);
         Defense.notNull(serverName, "serverName");
         Defense.notNull(path, "path");
 
-        this.request = request;
         this.serverName = serverName;
         this.path = path;
 
@@ -66,100 +61,28 @@ public class SimpleRequestWrapper implements Request
      */
     public SimpleRequestWrapper(Request request, String path) {
         
+        super(request);
+        
         Defense.notNull(request, "request");
         final String serverName = request.getServerName();
         Defense.notNull(serverName, "serverName");
         Defense.notNull(path, "path");
 
-        this.request = request;
         this.serverName = serverName;
         this.path = path;
         
     }
     
+    @Override
     public String getPath()
     {
         return path;
     }
 
+    @Override
     public String getServerName()
     {
         return serverName;
-    }
-
-    public Object getAttribute(String name)
-    {
-        return request.getAttribute(name);
-    }
-
-    public String getContextPath()
-    {
-        return request.getContextPath();
-    }
-
-    public long getDateHeader(String name)
-    {
-        return request.getDateHeader(name);
-    }
-
-    public String getHeader(String name)
-    {
-        return request.getHeader(name);
-    }
-
-    public List<String> getHeaderNames()
-    {
-        return request.getHeaderNames();
-    }
-
-    public Locale getLocale()
-    {
-        return request.getLocale();
-    }
-
-    public String getMethod()
-    {
-        return request.getMethod();
-    }
-
-    public String getParameter(String name)
-    {
-        return request.getParameter(name);
-    }
-
-    public List<String> getParameterNames()
-    {
-        return request.getParameterNames();
-    }
-
-    public String[] getParameters(String name)
-    {
-        return request.getParameters(name);
-    }
-
-    public Session getSession(boolean create)
-    {
-        return request.getSession(create);
-    }
-
-    public boolean isRequestedSessionIdValid()
-    {
-        return request.isRequestedSessionIdValid();
-    }
-
-    public boolean isSecure()
-    {
-        return request.isSecure();
-    }
-
-    public boolean isXHR()
-    {
-        return request.isXHR();
-    }
-
-    public void setAttribute(String name, Object value)
-    {
-        request.setAttribute(name, value);
     }
 
 }

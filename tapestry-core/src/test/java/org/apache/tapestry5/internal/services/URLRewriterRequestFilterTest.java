@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -11,24 +11,24 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-package org.apache.tapestry5.urlrewriter;
+package org.apache.tapestry5.internal.services;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
+import org.apache.tapestry5.internal.services.URLRewriterRequestFilter;
 import org.apache.tapestry5.ioc.test.TestBase;
+import org.apache.tapestry5.services.DelegatingRequest;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.RequestHandler;
 import org.apache.tapestry5.services.Response;
-import org.apache.tapestry5.services.Session;
-import org.apache.tapestry5.urlrewriter.URLRewriterRequestFilter;
+import org.apache.tapestry5.urlrewriter.SimpleRequestWrapper;
 import org.apache.tapestry5.urlrewriter.URLRewriterRule;
 import org.testng.annotations.Test;
 
 /**
- * Tests {@linkplain org.apache.tapestry5.internal.services.URLRewriterRequestFilter}.
+ * Tests {@linkplain org.org.apache.tapestry5.internal.services.URLRewriterRequestFilter}.
  */
 public class URLRewriterRequestFilterTest extends TestBase
 {
@@ -130,103 +130,6 @@ public class URLRewriterRequestFilterTest extends TestBase
         }
 
         assertTrue(ok);
-
-    }
-
-    final private static class DelegatingRequest implements Request
-    {
-
-        private Request request;
-        
-        public void setRequest(Request request)
-        {
-            this.request = request;
-        }
-
-        public Object getAttribute(String name)
-        {
-            return request.getAttribute(name);
-        }
-
-        public String getContextPath()
-        {
-            return request.getContextPath();
-        }
-
-        public long getDateHeader(String name)
-        {
-            return request.getDateHeader(name);
-        }
-
-        public String getHeader(String name)
-        {
-            return request.getHeader(name);
-        }
-
-        public List<String> getHeaderNames()
-        {
-            return request.getHeaderNames();
-        }
-
-        public Locale getLocale()
-        {
-            return request.getLocale();
-        }
-
-        public String getMethod()
-        {
-            return request.getMethod();
-        }
-
-        public String getParameter(String name)
-        {
-            return request.getParameter(name);
-        }
-
-        public List<String> getParameterNames()
-        {
-            return request.getParameterNames();
-        }
-
-        public String[] getParameters(String name)
-        {
-            return request.getParameters(name);
-        }
-
-        public String getPath()
-        {
-            return request.getPath();
-        }
-
-        public String getServerName()
-        {
-            return request.getServerName();
-        }
-
-        public Session getSession(boolean create)
-        {
-            return request.getSession(create);
-        }
-
-        public boolean isRequestedSessionIdValid()
-        {
-            return request.isRequestedSessionIdValid();
-        }
-
-        public boolean isSecure()
-        {
-            return request.isSecure();
-        }
-
-        public boolean isXHR()
-        {
-            return request.isXHR();
-        }
-
-        public void setAttribute(String name, Object value)
-        {
-            request.setAttribute(name, value);
-        }
 
     }
 
