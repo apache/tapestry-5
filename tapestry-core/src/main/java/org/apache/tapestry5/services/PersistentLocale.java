@@ -19,19 +19,23 @@ import java.util.Locale;
 /**
  * Manages the persistent locale stored in the browser (inside the URL).
  *
- * @see org.apache.tapestry5.internal.services.LocalizationSetter#setLocaleFromLocaleName(String)
- * @see org.apache.tapestry5.internal.services.ComponentEventDispatcher
- * @see org.apache.tapestry5.internal.services.PageRenderDispatcher
+ * @see LocalizationSetter#setLocaleFromLocaleName(String)
+ * @see org.apache.tapestry5.services.LocalizationSetter
+ * @see org.apache.tapestry5.services.ComponentEventLinkEncoder
  */
 public interface PersistentLocale
 {
     /**
-     * Sets the locale cookie that will be persisted in the URL.
+     * Sets the locale value that will be encoded into the response. This must match a locale configured via {@link
+     * org.apache.tapestry5.SymbolConstants#SUPPORTED_LOCALES}.
+     *
+     * @throws IllegalArgumentException if the locale is not valid
      */
     void set(Locale locale);
 
     /**
-     * Gets the locale cookie obtained from the request URL.
+     * Gets the locale obtained from the request, or null if the response did not indicate a specific locale (in which
+     * case the active locale may have been determined from request headers).
      */
     Locale get();
 

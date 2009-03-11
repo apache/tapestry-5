@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.internal.services;
+package org.apache.tapestry5.services;
 
 /**
  * Sets the thread's locale given a desired locale. Note that the desired locale is just a hint. It wil try to honor it

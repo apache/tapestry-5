@@ -154,4 +154,16 @@ public class SymbolConstants
      * @since 5.1.0.1
      */
     public static final String SECURE_ENABLED = "tapestry.secure-enabled";
+
+    /**
+     * If "true" (the default), then the {@link org.apache.tapestry5.services.PersistentLocale} will be encoded into the
+     * {@link org.apache.tapestry5.Link} path by the {@link org.apache.tapestry5.services.ComponentEventLinkEncoder}
+     * service. If overriden to "false" this does not occur, but you should provide a {@link
+     * org.apache.tapestry5.services.LinkCreationListener} (registered with the {@link
+     * org.apache.tapestry5.services.LinkCreationHub}) in order to add the locale as a query parameter (or provide some
+     * alternate means of persisting the locale between requests).
+     *
+     * @since 5.1.0.1
+     */
+    public static final String ENCODE_LOCALE_INTO_PATH = "tapestry.encode-locale-into-path";
 }
