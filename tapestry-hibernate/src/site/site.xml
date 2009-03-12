@@ -44,6 +44,7 @@
             <item name="Configuration" href="../tapestry-hibernate-core/conf.html"/>
             <item name="User guide" href="userguide.html"/>
             <item name="Download" href="http://tapestry.apache.org/download.html"/>
+            <item name="Hibernate statistics" href="statistics.html"/>
         </menu>
 
         <menu ref="reports"/>

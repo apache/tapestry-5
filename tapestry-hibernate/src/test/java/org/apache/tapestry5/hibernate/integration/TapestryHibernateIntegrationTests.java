@@ -15,6 +15,7 @@
 package org.apache.tapestry5.hibernate.integration;
 
 import org.apache.tapestry5.test.AbstractIntegrationTestSuite;
+import org.example.app0.entities.User;
 import org.testng.annotations.Test;
 
 @Test(sequential = true, groups = "integration")
@@ -116,6 +117,19 @@ public class TapestryHibernateIntegrationTests extends AbstractIntegrationTestSu
         clickAndWait("link=First Name");
 
         assertText("//td[@class='firstName t-sort-column-descending']", "Joe_9");
+    }
+    
+
+    @Test
+    public void hibernate_statistics()
+    {
+    	open(BASE_URL + "hibernate/Statistics");
+    	
+    	assertTextPresent("Hibernate Statistics");
+    	
+    	assertTextPresent("Entities Statistics");
+    	
+    	assertTextPresent(User.class.getName());
     }
 
 

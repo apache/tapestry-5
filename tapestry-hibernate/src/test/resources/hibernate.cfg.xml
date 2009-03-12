@@ -36,6 +36,8 @@
     <property name="hibernate.c3p0.timeout">300</property>
     <property name="hibernate.c3p0.max_statements">50</property>
     <property name="hibernate.c3p0.idle_test_period">3000</property>
+    
+    <property name="hibernate.generate_statistics">true</property>
   </session-factory>
 
 
