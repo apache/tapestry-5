@@ -29,6 +29,7 @@ import org.apache.tapestry5.ioc.services.PropertyAccess;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.services.AliasContribution;
 import org.apache.tapestry5.services.ComponentClassTransformWorker;
+import org.apache.tapestry5.services.LibraryMapping;
 import org.apache.tapestry5.services.PersistentFieldStrategy;
 import org.apache.tapestry5.services.ValueEncoderFactory;
 import org.hibernate.Session;
@@ -126,4 +127,13 @@ public class HibernateModule
 
         configuration.addInstance("CommitAfter", CommitAfterWorker.class, "after:Log");
     }
+    
+    /**
+     * Contribution to the {@link org.apache.tapestry5.services.ComponentClassResolver} service configuration.
+     */
+    public static void contributeComponentClassResolver(Configuration<LibraryMapping> configuration)
+    {
+        configuration.add(new LibraryMapping("hibernate", "org.apache.tapestry5.hibernate"));
+    }
+
 }

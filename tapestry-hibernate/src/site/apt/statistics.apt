@@ -1,0 +1,34 @@
+  ----
+  Hibernate Statistics
+  ----
+  
+Hibernate Statistics
+
+  If you enable Hibernate statistics by setting the property <hibernate.generate_statistics> to <true>, 
+  Hibernate will expose a number of useful metrics. The page "Statistics" is used to expose these metrics. 
+  This page is only available in development mode.
+  
+[images/hibernate-statistics.png] Hibernate Statistics
+  
+[images/hibernate-statistics-2.png] Hibernate Statistics
+  
+
+Hibernate Configuration to enable the Statistics
+  
++----+
+<!DOCTYPE hibernate-configuration PUBLIC
+    "-//Hibernate/Hibernate Configuration DTD//EN"
+    "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+    
+<hibernate-configuration>
+
+    ...
+
+    <property name="hibernate.generate_statistics">true</property>
+    
+  </session-factory>
+
+</hibernate-configuration>
++----+
+
+  
