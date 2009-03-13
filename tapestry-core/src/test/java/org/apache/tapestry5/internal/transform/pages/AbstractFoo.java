@@ -16,9 +16,6 @@ package org.apache.tapestry5.internal.transform.pages;
 
 import org.apache.tapestry5.internal.services.FooInterface;
 
-/**
- *
- */
 public abstract class AbstractFoo implements FooInterface
 {
 

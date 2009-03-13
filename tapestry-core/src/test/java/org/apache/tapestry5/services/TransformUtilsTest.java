@@ -20,9 +20,6 @@ import org.testng.annotations.Test;
 
 import java.util.Map;
 
-/**
- *
- */
 public class TransformUtilsTest extends Assert
 {
     @Test

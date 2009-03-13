@@ -14,9 +14,6 @@
 
 package org.apache.tapestry5.internal.services;
 
-/**
- *
- */
 public interface GetterMethodsInterface
 {
     boolean getBoolean();
@@ -38,4 +35,5 @@ public interface GetterMethodsInterface
     int[] getIntArray();
 
     Object[] getObjectArray();
+
 }
