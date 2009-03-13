@@ -2835,4 +2835,15 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         assertTextPresent(
                 "Component org.apache.tapestry5.integration.app1.pages.InvalidTemplateExtend uses an extension template, but does not have a parent component.");
     }
+
+    /**
+     * TAP5-578
+     */
+    public void abstract_component_class()
+    {
+        start("Abstract Component Demo");
+
+        assertTextPresent("java.lang.RuntimeException",
+                          "Component class org.apache.tapestry5.integration.app1.components.AbstractComponent is abstract and can not be instantiated.");
+    }
 }

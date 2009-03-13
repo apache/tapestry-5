@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -58,9 +58,7 @@ public interface RenderSupport
 
     /**
      * Adds some number of script links as strings representations of URLs.  The scripts are passed down to the client
-     * as-is. Note that Tapestry generates relative URLs for assets because the base URL varies dependending on the page
-     * and its activation context; scripts added with this method will not be adjusted in anyway. Typically, this is
-     * used to reference a script stored outside the web application entirely.
+     * as-is.  Typically, this is used to reference a script stored outside the web application entirely.
      *
      * @param scriptURLs URL strings of scripts
      */
@@ -77,7 +75,7 @@ public interface RenderSupport
 
     /**
      * Adds a link to a CSS stylesheet. As with JavaScript libraries, each stylesheet is added at most once. Stylesheets
-     * added this way will be ordered before any other content in the &lt;head&gt; element of the document. The
+     * added this way will be ordered before any other content, in the &lt;head&gt; element of the document. The
      * &lt;head&gt; element will be created, if necessary.
      *
      * @param stylesheet the asset referencing the stylesheet

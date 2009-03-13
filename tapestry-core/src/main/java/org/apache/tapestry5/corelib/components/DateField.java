@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -49,9 +49,9 @@ import java.util.Locale;
  */
 // TODO: More testing; see https://issues.apache.org/jira/browse/TAPESTRY-1844
 @IncludeStylesheet("${tapestry.datepicker}/css/datepicker.css")
-@IncludeJavaScriptLibrary({"${tapestry.datepicker}/js/datepicker.js",
+@IncludeJavaScriptLibrary({ "${tapestry.datepicker}/js/datepicker.js",
         "datefield.js"
-        })
+})
 public class DateField extends AbstractField
 {
     /**
@@ -112,7 +112,7 @@ public class DateField extends AbstractField
 
     @Inject
     private FieldValidationSupport fieldValidationSupport;
-    
+
     @Inject
     private Messages messages;
 
@@ -210,7 +210,7 @@ public class DateField extends AbstractField
         String clientId = getClientId();
         String triggerId = clientId + ":trigger";
 
-        writer.element(INPUT_PARAMETER,
+        writer.element("input",
 
                        "type", hideTextField ? "hidden" : "text",
 

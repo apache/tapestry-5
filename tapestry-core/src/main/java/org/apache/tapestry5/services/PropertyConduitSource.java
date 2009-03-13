@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -24,9 +24,9 @@ import org.apache.tapestry5.PropertyConduit;
 public interface PropertyConduitSource
 {
     /**
-     * Returns property conduit instance for the given expression. PropertyConduitSource caches the conduits it returns,
-     * so despite the name, this method does not always create a <em>new</em> conduit. The cache is cleared if a change
-     * to component classes is observed.
+     * Returns a property conduit instance for the given expression. PropertyConduitSource caches the conduits it
+     * returns, so despite the name, this method does not always create a <em>new</em> conduit. The cache is cleared if
+     * a change to component classes is observed.
      * <p/>
      * Callers of this method should observe notifications from the {@link org.apache.tapestry5.services.InvalidationEventHub}
      * for {@link org.apache.tapestry5.services.ComponentClasses} and discard any aquired conduits; failure to do so
