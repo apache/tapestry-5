@@ -65,6 +65,8 @@ public class Index
 
     private static final List<Item> ITEMS = CollectionFactory.newList(
 
+            new Item("AbstractComponentDemo", "Abstract Component Demo", "Error when a component is abstract"),
+
             new Item("TemplateOverrideDemo", "Template Override Demo",
                      "Child component extends and overrides parent template."),
 

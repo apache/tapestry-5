@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -126,7 +126,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
      */
     private static final MethodSignature NEW_INSTANCE_SIGNATURE = new MethodSignature(Component.class, "newInstance",
                                                                                       new Class[] {
-                                                                                              InternalComponentResources.class},
+                                                                                              InternalComponentResources.class },
                                                                                       null);
 
     /**
@@ -1420,6 +1420,24 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
     public Instantiator createInstantiator()
     {
+        if (Modifier.isAbstract(ctClass.getModifiers()))
+        {
+            return new Instantiator()
+            {
+                public Component newInstance(InternalComponentResources resources)
+                {
+                    throw new RuntimeException(
+                            String.format("Component class %s is abstract and can not be instantiated.",
+                                          ctClass.getName()));
+                }
+
+                public ComponentModel getModel()
+                {
+                    return componentModel;
+                }
+            };
+        }
+
         String componentClassName = ctClass.getName();
 
         String name = ClassFabUtils.generateClassName("Instantiator");
@@ -1611,7 +1629,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         String fieldType = getFieldType(fieldName);
 
         TransformMethodSignature sig = new TransformMethodSignature(Modifier.PRIVATE, "void", methodName,
-                                                                    new String[] {fieldType}, null);
+                                                                    new String[] { fieldType }, null);
 
         String message = ServicesMessages.readOnlyField(ctClass.getName(), fieldName);
 

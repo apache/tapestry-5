@@ -26,7 +26,7 @@ public interface LocalizationSetter
      * Determines if the provided potential locale name (presumably, extracted from a request URL) is a supported locale
      * name.  A call to this method will always set the {@link org.apache.tapestry5.ioc.services.ThreadLocale} (either
      * to the provided locale, if supported, or to the default locale).  If the locale name is supported, it will also
-     * set the {@link org.apache.tapestry5.services.PersistentLocale} (which may effect how page and event links are
+     * set the {@link org.apache.tapestry5.services.PersistentLocale} (which may affect how page and event links are
      * generated, to persist the selected locale across requests).
      * <p/>
      * Note that locale names <strong>are</strong> case sensitive.
