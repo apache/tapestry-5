@@ -14,9 +14,6 @@
 
 package org.apache.tapestry5.ioc;
 
-/**
- *
- */
 public interface StringHolder
 {
     void setValue(String value);
