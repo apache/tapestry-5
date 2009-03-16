@@ -127,6 +127,24 @@ public class DocumentLinkerImplTest extends InternalBaseTestCase
 
         check(document, "include_generator_meta.txt");
     }
+    
+    /**
+     * TAP5-584
+     */
+    @Test
+    public void omit_generator_meta_on_no_html_root() throws Exception
+    {
+        Document document = new Document(new XMLMarkupModel());
+
+        document.newRootElement("no_html").text("Generator meta only added if root is html tag.");
+
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(true, false, "1.2.3");
+
+        linker.updateDocument(document);
+
+
+        check(document, "omit_generator_meta_on_no_html_root.txt");
+    }
 
     @Test
     public void empty_document_with_scripts_at_top() throws Exception
