@@ -87,8 +87,12 @@ public class DocumentLinkerImpl implements DocumentLinker
 
         if (!stylesheets.isEmpty())
             addStylesheetsToHead(root, includedStylesheets);
+        
+        //only add the generator meta only to html documents
+        
+        boolean isHtmlRoot = root.getName().equals("html");
 
-        if (!omitGeneratorMetaTag)
+        if (!omitGeneratorMetaTag && isHtmlRoot)
         {
             Element head = findOrCreateElement(root, "head", true);
             head.element("meta",
