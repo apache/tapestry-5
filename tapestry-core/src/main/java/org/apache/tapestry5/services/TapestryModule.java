@@ -62,6 +62,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.URL;
@@ -738,24 +739,25 @@ public final class TapestryModule
      */
     public void contributeRequestHandler(OrderedConfiguration<RequestFilter> configuration, Context context,
 
-                                         // @Inject not needed because its a long, not a String
-                                         @Symbol(SymbolConstants.FILE_CHECK_INTERVAL)
-                                         @IntermediateType(TimeInterval.class)
-                                         long checkInterval,
+            // @Inject not needed because its a long, not a String
+            @Symbol(SymbolConstants.FILE_CHECK_INTERVAL)
+            @IntermediateType(TimeInterval.class)
+            long checkInterval,
 
-                                         @Symbol(SymbolConstants.FILE_CHECK_UPDATE_TIMEOUT)
-                                         @IntermediateType(TimeInterval.class)
-                                         long updateTimeout,
+            @Symbol(SymbolConstants.FILE_CHECK_UPDATE_TIMEOUT)
+            @IntermediateType(TimeInterval.class)
+            long updateTimeout,
 
-                                         UpdateListenerHub updateListenerHub,
+            UpdateListenerHub updateListenerHub,
 
-                                         URLRewriterRequestFilter urlRewriterRequestFilter)
+            URLRewriterService urlRewriterService)
     {
         RequestFilter staticFilesFilter = new StaticFilesFilter(context);
 
         RequestFilter storeIntoGlobals = new RequestFilter()
         {
-            public boolean service(Request request, Response response, RequestHandler handler) throws IOException
+            public boolean service(Request request, Response response, RequestHandler handler)
+                    throws IOException
             {
                 requestGlobals.storeRequestResponse(request, response);
 
@@ -765,7 +767,8 @@ public final class TapestryModule
 
         RequestFilter fireEndOfRequestEvent = new RequestFilter()
         {
-            public boolean service(Request request, Response response, RequestHandler handler) throws IOException
+            public boolean service(Request request, Response response, RequestHandler handler)
+                    throws IOException
             {
                 try
                 {
@@ -778,20 +781,37 @@ public final class TapestryModule
             }
         };
 
-        configuration.add("CheckForUpdates",
-                          new CheckForUpdatesFilter(updateListenerHub, checkInterval, updateTimeout), "before:*");
+        configuration.add("CheckForUpdates", new CheckForUpdatesFilter(updateListenerHub,
+                checkInterval, updateTimeout), "before:*");
 
-        configuration.add("URLRewriter", urlRewriterRequestFilter, "before:StaticFiles");
+        // we just need the URLRewriterRequestFilter if we have URL rewriter rules, of course.
+        if (urlRewriterService.getRules().isEmpty() == false)
+        {
+
+            URLRewriterRequestFilter urlRewriterRequestFilter = new URLRewriterRequestFilter(
+                    urlRewriterService);
+            configuration.add("URLRewriter", urlRewriterRequestFilter, "before:StaticFiles");
+
+        }
 
         configuration.add("StaticFiles", staticFilesFilter);
 
         configuration.addInstance("ErrorFilter", RequestErrorFilter.class);
 
-        configuration.add("StoreIntoGlobals", storeIntoGlobals, "after:StaticFiles", "before:ErrorFilter");
+        configuration.add(
+                "StoreIntoGlobals",
+                storeIntoGlobals,
+                "after:StaticFiles",
+                "before:ErrorFilter");
 
-        configuration.add("EndOfRequest", fireEndOfRequestEvent, "after:StoreIntoGlobals", "before:ErrorFilter");
+        configuration.add(
+                "EndOfRequest",
+                fireEndOfRequestEvent,
+                "after:StoreIntoGlobals",
+                "before:ErrorFilter");
+        
     }
-
+    
     /**
      * Contributes the basic set of translators: <ul>  <li>string</li>  <li>byte</li> <li>short</li> <li>integer</li>
      * <li>long</li> <li>float</li> <li>double</li>  <li>BigInteger</li> <li>BigDecimal</li></ul>
@@ -2336,10 +2356,45 @@ public final class TapestryModule
     }
 
     /**
-     * @since 5.1.0.1
+     * @since 5.1.0.2
      */
-    public static URLRewriterRequestFilter buildURLRewriterRequestFilter(List<URLRewriterRule> contributions)
+    public static URLRewriterService buildURLRewriterService(List<URLRewriterRule> contributions)
     {
-        return new URLRewriterRequestFilter(contributions);
+        return new URLRewriterServiceImpl(contributions);
     }
+    
+    /**
+     * @throws Exception 
+     * @since 5.1.0.2
+     */
+    public static ComponentEventLinkEncoder decorateComponentEventLinkEncoder(
+            ComponentEventLinkEncoder encoder, URLRewriterService urlRewriterService,
+            Request request, HttpServletRequest httpServletRequest, Response response,
+            AspectDecorator aspectDecorator) throws Exception {
+        
+        // no rules, no link rewriting.
+        if (urlRewriterService.getRules().isEmpty()) 
+        {
+            return null;
+        }
+        
+        ComponentEventLinkEncoderMethodAdvice advice = 
+            new ComponentEventLinkEncoderMethodAdvice(urlRewriterService, request, httpServletRequest, response);
+        
+        Class<ComponentEventLinkEncoder> clasz = ComponentEventLinkEncoder.class;
+        Method createPageRenderLink = 
+            clasz.getMethod("createPageRenderLink", PageRenderRequestParameters.class);
+        Method createComponentEventLink = 
+            clasz.getMethod("createComponentEventLink", ComponentEventRequestParameters.class, boolean.class);
+        
+        final AspectInterceptorBuilder<ComponentEventLinkEncoder> builder = 
+            aspectDecorator.createBuilder(clasz, encoder, "Link rewriting");
+        
+        builder.adviseMethod(createComponentEventLink, advice);
+        builder.adviseMethod(createPageRenderLink, advice);
+        
+        return builder.build();
+        
+    }
+    
 }

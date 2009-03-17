@@ -6,5 +6,8 @@
         <p>
             End of maze. URL rewriting works :).
         </p>
+        <p>
+        	Login: ${login}
+        </p>
     </body>
 </html>

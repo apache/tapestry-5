@@ -77,13 +77,15 @@ public class AbstractIntegrationTestSuite extends Assert implements Selenium
     private Selenium selenium;
 
     private SeleniumServer server;
+    
+    private String[] virtualHosts;
 
     /**
      * Initializes the suite using {@link #DEFAULT_WEB_APP_ROOT}.
      */
     public AbstractIntegrationTestSuite()
     {
-        this(DEFAULT_WEB_APP_ROOT, DEFAULT_WEB_BROWSER_COMMAND);
+        this(DEFAULT_WEB_APP_ROOT, DEFAULT_WEB_BROWSER_COMMAND, new String[0]);
     }
 
     /**
@@ -98,11 +100,13 @@ public class AbstractIntegrationTestSuite extends Assert implements Selenium
      * @param webAppRoot     web application root (default src/main/webapp)
      * @param browserCommand browser command to pass to selenium. Default is *firefox, syntax for custom browsers is
      *                       *custom &lt;path_to_browser&gt;, e.g. *custom /usr/lib/mozilla-firefox/firefox
+     * @param virtualHosts an array with virtual hosts
      */
-    protected AbstractIntegrationTestSuite(String webAppRoot, String browserCommand)
+    protected AbstractIntegrationTestSuite(String webAppRoot, String browserCommand, String... virtualHosts)
     {
         webappRoot = webAppRoot;
         seleniumBrowserCommand = browserCommand;
+        this.virtualHosts = virtualHosts;
     }
 
     protected final void assertSourcePresent(String... expected)
@@ -259,7 +263,7 @@ public class AbstractIntegrationTestSuite extends Assert implements Selenium
     @BeforeClass(alwaysRun = true)
     public void setup() throws Exception
     {
-        jettyRunner = new JettyRunner(TapestryTestConstants.MODULE_BASE_DIR, "/", JETTY_PORT, webappRoot);
+        jettyRunner = new JettyRunner(TapestryTestConstants.MODULE_BASE_DIR, "/", JETTY_PORT, webappRoot, virtualHosts);
 
         server = new SeleniumServer();
 

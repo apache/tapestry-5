@@ -17,24 +17,52 @@ import org.apache.tapestry5.test.AbstractIntegrationTestSuite;
 import org.testng.annotations.Test;
 
 /**
- * Note: If these tests fail with BindException when starting Jetty, it could be Skype. At least on my system, Skype is
- * listening on localhost:80.
+ * Note: If these tests fail with BindException when starting Jetty, it could be Skype. At least on
+ * my system, Skype is listening on localhost:80.
  */
-@SuppressWarnings({ "JavaDoc" })
 @Test(timeOut = 30000, sequential = true)
 public class IntegrationTests extends AbstractIntegrationTestSuite
 {
+    final public static String DOMAIN = "somenicedomain.com";
+
+    final public static String LOGIN = "login";
+
+    final public static String SUBDOMAIN = LOGIN + "." + DOMAIN;
+
     public IntegrationTests()
     {
-        super("src/test/app3");
+        super("src/test/app5", DEFAULT_WEB_BROWSER_COMMAND, SUBDOMAIN, DOMAIN, "localhost");
     }
-    
+
     @Test
-    public void test_url_rewriter() {
-        
+    public void test_link_rewriting_without_virtual_host()
+    {
+
+        open(BASE_URL);
+        final String url = String.format("http://%s:%d/", SUBDOMAIN, JETTY_PORT);
+        assertAttribute("//a[@class='self']/@href", "/index");
+        assertAttribute("//a[@class='dummy']/@href", "/notdummy");
+        assertAttribute("//a[@class='subdomain']/@href", url);
+
+    }
+
+    @Test
+    public void test_url_rewriting_with_virtual_host()
+    {
+
+        final String url = String.format("http://%s:%d", SUBDOMAIN, JETTY_PORT);
+        open(url);
+        assertTextPresent("End of maze. URL rewriting works :).");
+        assertTextPresent("Login: " + LOGIN);
+
+    }
+
+    @Test
+    public void test_url_rewriter_without_virtual_host()
+    {
+
         open("struts");
         assertTextPresent("End of maze. URL rewriting works :).");
 
     }
-
 }

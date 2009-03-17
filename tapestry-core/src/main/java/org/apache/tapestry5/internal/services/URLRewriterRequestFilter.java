@@ -14,14 +14,12 @@
 package org.apache.tapestry5.internal.services;
 
 import java.io.IOException;
-import java.util.List;
 
 import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.RequestFilter;
 import org.apache.tapestry5.services.RequestHandler;
 import org.apache.tapestry5.services.Response;
-import org.apache.tapestry5.urlrewriter.URLRewriterRule;
 
 /**
  * <code>RequestFilter</code> that applies the URL rewriting rules to requests.
@@ -31,35 +29,23 @@ import org.apache.tapestry5.urlrewriter.URLRewriterRule;
 public class URLRewriterRequestFilter implements RequestFilter
 {
 
-    final private List<URLRewriterRule> rules;
+    final private URLRewriterService urlRewriterService;
 
     /**
      * Single constructor of this class.
-     * 
-     * @param rules
-     *            a <code>List</code> of <code>URLRewriterRule</code>. It cannot be null.
+     * @param urlRewriterService um {@link URLRewriterService}. It cannot be null.
      */
-    public URLRewriterRequestFilter(List<URLRewriterRule> rules)
+    public URLRewriterRequestFilter(URLRewriterService urlRewriterService)
     {
-        Defense.notNull(rules, "rules");
-        this.rules = rules;
+        Defense.notNull(urlRewriterService, "urlRewriterService");
+        this.urlRewriterService = urlRewriterService;
     }
 
     public boolean service(Request request, Response response, RequestHandler handler)
             throws IOException
     {
 
-        for (URLRewriterRule rule : rules)
-        {
-
-            request = rule.process(request);
-            if (request == null) 
-            { 
-                throw new NullPointerException(
-                    "URLRewriterRule.process() returned null."); 
-            }
-
-        }
+        request = urlRewriterService.process(request);
 
         return handler.service(request, response);
 

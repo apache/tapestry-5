@@ -46,6 +46,8 @@ public class JettyRunner
     private final String warPath;
 
     private final Server jetty;
+    
+    private final String[] virtualHosts;
 
     /**
      * Creates and starts a new instance of Jetty. This should be done from a test case setup method.
@@ -54,13 +56,16 @@ public class JettyRunner
      * @param contextPath the context path for the deployed application
      * @param port        the port number used to access the application
      * @param warPath     the path to the exploded web application (typically, "src/main/webapp")
+     * @param virtualHosts an array with virtual hosts
      */
-    public JettyRunner(File workingDir, String contextPath, int port, String warPath)
+    public JettyRunner(File workingDir, String contextPath, int port, String warPath,
+    		String ... virtualHosts)
     {
         this.workingDir = workingDir;
         this.contextPath = contextPath;
         this.port = port;
         this.warPath = warPath;
+        this.virtualHosts = virtualHosts;
 
         jetty = createAndStart();
     }
@@ -136,6 +141,10 @@ public class JettyRunner
             server.setRequestLog(log);
 
             WebApplicationContext context = server.addWebApplication(contextPath, webappPath);
+            
+            for (String virtualHost : virtualHosts) {
+				context.addVirtualHost(virtualHost);
+			}
 
             context.setDefaultsDescriptor(webDefaults);
 
