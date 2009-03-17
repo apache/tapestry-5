@@ -2846,4 +2846,24 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         assertTextPresent("java.lang.RuntimeException",
                           "Component class org.apache.tapestry5.integration.app1.components.AbstractComponent is abstract and can not be instantiated.");
     }
+
+    /**
+     * TAP5-573
+     */
+    public void zone_namespace_interaction_fixed()
+    {
+        start("Zone/Namespace Interaction");
+
+        String outerNow = getText("outernow");
+        String innerNow = getText("innernow");
+
+        click(SUBMIT);
+
+        waitForElementToAppear("message");
+
+        // Make sure it was just an Ajax update.
+        assertEquals(getText("outernow"), outerNow);
+
+        assertFalse(getText("innernow").equals(innerNow));
+    }
 }

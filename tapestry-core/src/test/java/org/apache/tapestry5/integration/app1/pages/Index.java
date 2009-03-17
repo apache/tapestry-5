@@ -65,6 +65,8 @@ public class Index
 
     private static final List<Item> ITEMS = CollectionFactory.newList(
 
+            new Item("ZoneUpdateNamespace", "Zone/Namespace Interaction", "Prove that TAP5-573 is fixed"),
+
             new Item("AbstractComponentDemo", "Abstract Component Demo", "Error when a component is abstract"),
 
             new Item("TemplateOverrideDemo", "Template Override Demo",
