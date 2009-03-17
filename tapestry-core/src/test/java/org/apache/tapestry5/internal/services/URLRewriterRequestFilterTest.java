@@ -17,8 +17,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.tapestry5.internal.services.URLRewriterRequestFilter;
 import org.apache.tapestry5.ioc.test.TestBase;
+import org.apache.tapestry5.internal.services.URLRewriterService;
 import org.apache.tapestry5.services.DelegatingRequest;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.RequestHandler;
@@ -28,7 +28,8 @@ import org.apache.tapestry5.urlrewriter.URLRewriterRule;
 import org.testng.annotations.Test;
 
 /**
- * Tests {@linkplain org.org.apache.tapestry5.internal.services.URLRewriterRequestFilter}.
+ * Tests {@linkplain org.org.apache.tapestry5.internal.services.URLRewriterRequestFilter}
+ * and also {@link URLRewriterServiceImpl}.
  */
 public class URLRewriterRequestFilterTest extends TestBase
 {
@@ -80,7 +81,8 @@ public class URLRewriterRequestFilterTest extends TestBase
         List<URLRewriterRule> rules = new ArrayList<URLRewriterRule>();
         rules.add(rule1);
         rules.add(rule2);
-        URLRewriterRequestFilter filter = new URLRewriterRequestFilter(rules);
+        URLRewriterService service = new URLRewriterServiceImpl(rules);
+        URLRewriterRequestFilter filter = new URLRewriterRequestFilter(service);
 
         expect(handler.service(rule2.getRequest(), response)).andReturn(false);
 
@@ -109,11 +111,13 @@ public class URLRewriterRequestFilterTest extends TestBase
                 return null;
             }
         };
-
+        
         List<URLRewriterRule> list = new ArrayList<URLRewriterRule>();
         list.add(rule);
+        
+        URLRewriterService urlRewriterService = new URLRewriterServiceImpl(list);
 
-        URLRewriterRequestFilter filter = new URLRewriterRequestFilter(list);
+        URLRewriterRequestFilter filter = new URLRewriterRequestFilter(urlRewriterService);
         Request request = newMock(Request.class);
         Response response = newMock(Response.class);
         RequestHandler requestHandler = newMock(RequestHandler.class);

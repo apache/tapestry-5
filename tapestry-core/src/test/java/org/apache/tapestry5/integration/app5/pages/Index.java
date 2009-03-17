@@ -11,9 +11,11 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-package org.apache.tapestry5.integration.app3.pages;
 
-public class URLRewriteSuccess
+package org.apache.tapestry5.integration.app5.pages;
+
+
+public class Index
 {
-
+  
 }
