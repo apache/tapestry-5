@@ -81,6 +81,14 @@ public class InternalModule
         binder.bind(EndOfRequestEventHub.class);
         binder.bind(ResponseCompressionAnalyzer.class, ResponseCompressionAnalyzerImpl.class);
         binder.bind(ComponentModelSource.class);
+        binder.bind(AssetResourceLocator.class);
+    }
+
+    public static VirtualAssetStreamer buildVirtualAssetStreamer(@Autobuild VirtualAssetStreamerImpl service, ResourceCache cache)
+    {
+        cache.addInvalidationListener(service);
+
+        return service;
     }
 
     /**

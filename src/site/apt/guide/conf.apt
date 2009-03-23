@@ -119,6 +119,11 @@ public class AppModule
   [tapestry.charset]
     The character encoding used when generating output (or parsing input).  The default is "UTF-8".
 
+  [tapestry.combine-scripts]
+    If "true", then all JavaScript libraries required for a particular page render will be combined into a single
+    request (the contents of the libraries are dynamically combined by Tapestry).  Defaults to "true" in
+    production mode.
+
   [tapestry.compress-whitespace]
     A flag (true or false).  When true (the default) whitespace in component templates is compressed by default
     (this can be fine-tuned using the standard xml:space attribute on an element in the template).

@@ -15,8 +15,10 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.internal.TapestryInternalUtils;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.services.ResponseCompressionAnalyzer;
+import org.apache.tapestry5.SymbolConstants;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collection;
@@ -28,9 +30,14 @@ public class ResponseCompressionAnalyzerImpl implements ResponseCompressionAnaly
 
     private final Map<String, Boolean> notCompressable = CollectionFactory.newCaseInsensitiveMap();
 
-    public ResponseCompressionAnalyzerImpl(HttpServletRequest request, Collection<String> configuration)
+    private final boolean gzipCompressionEnabled;
+
+    public ResponseCompressionAnalyzerImpl(HttpServletRequest request, Collection<String> configuration,
+                                           @Symbol(SymbolConstants.GZIP_COMPRESSION_ENABLED)
+                                           boolean gzipCompressionEnabled)
     {
         this.request = request;
+        this.gzipCompressionEnabled = gzipCompressionEnabled;
 
         for (String contentType : configuration)
             notCompressable.put(contentType, true);
@@ -38,6 +45,8 @@ public class ResponseCompressionAnalyzerImpl implements ResponseCompressionAnaly
 
     public boolean isGZipSupported()
     {
+        if (!gzipCompressionEnabled) return false;
+
         String supportedEncodings = request.getHeader("Accept-Encoding");
 
         if (supportedEncodings == null) return false;

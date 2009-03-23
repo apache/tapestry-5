@@ -20,7 +20,6 @@ import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.ioc.util.TimeInterval;
 import org.apache.tapestry5.services.Context;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.Response;
@@ -33,8 +32,6 @@ import java.util.Map;
 
 public class ResourceStreamerImpl implements ResourceStreamer
 {
-    private static final long TEN_YEARS = new TimeInterval("10y").milliseconds();
-
     private final ResourceCache resourceCache;
 
     private final Request request;
@@ -49,8 +46,6 @@ public class ResourceStreamerImpl implements ResourceStreamer
 
     private final int compressionCutoff;
 
-    private final boolean compressionEnabled;
-
     public ResourceStreamerImpl(Request request,
 
                                 Response response,
@@ -64,11 +59,7 @@ public class ResourceStreamerImpl implements ResourceStreamer
                                 ResponseCompressionAnalyzer analyzer,
 
                                 @Symbol(SymbolConstants.MIN_GZIP_SIZE)
-                                int compressionCutoff,
-
-                                @Symbol(SymbolConstants.GZIP_COMPRESSION_ENABLED)
-                                boolean compressionEnabled)
-
+                                int compressionCutoff) 
     {
         this.request = request;
         this.response = response;
@@ -77,7 +68,6 @@ public class ResourceStreamerImpl implements ResourceStreamer
         this.configuration = configuration;
         this.analyzer = analyzer;
         this.compressionCutoff = compressionCutoff;
-        this.compressionEnabled = compressionEnabled;
     }
 
     public void streamResource(Resource resource) throws IOException
@@ -91,12 +81,11 @@ public class ResourceStreamerImpl implements ResourceStreamer
         long lastModified = streamble.getLastModified();
 
         response.setDateHeader("Last-Modified", lastModified);
-        response.setDateHeader("Expires", lastModified + TEN_YEARS);
+        response.setDateHeader("Expires", lastModified + InternalConstants.TEN_YEARS);
 
         String contentType = identifyContentType(resource, streamble);
 
-        boolean compress = compressionEnabled &&
-                analyzer.isGZipSupported() &&
+        boolean compress = analyzer.isGZipSupported() &&
                 streamble.getSize(false) >= compressionCutoff &&
                 analyzer.isCompressable(contentType);
 

@@ -14,12 +14,11 @@
 
 package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.ioc.Resource;
-import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.ioc.annotations.Symbol;
-import org.apache.tapestry5.ioc.internal.util.ClasspathResource;
-import org.apache.tapestry5.services.*;
+import org.apache.tapestry5.services.ClasspathAssetAliasManager;
+import org.apache.tapestry5.services.Dispatcher;
+import org.apache.tapestry5.services.Request;
+import org.apache.tapestry5.services.Response;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -36,34 +35,22 @@ public class AssetDispatcher implements Dispatcher
 {
     private final ResourceStreamer streamer;
 
-    private final ClasspathAssetAliasManager aliasManager;
-
     private final ResourceCache resourceCache;
 
-    private final String applicationAssetPrefix;
-
-    private final AssetFactory contextAssetFactory;
+    private final AssetResourceLocator assetResourceLocator;
 
     static final String IF_MODIFIED_SINCE_HEADER = "If-Modified-Since";
 
     public AssetDispatcher(ResourceStreamer streamer,
 
-                           ClasspathAssetAliasManager aliasManager,
-
                            ResourceCache resourceCache,
 
-                           @Inject @Symbol(SymbolConstants.APPLICATION_VERSION)
-                           String applicationVersion,
-
-                           @ContextProvider
-                           AssetFactory contextAssetFactory)
+                           AssetResourceLocator assetResourceLocator)
     {
         this.streamer = streamer;
-        this.aliasManager = aliasManager;
         this.resourceCache = resourceCache;
-        this.contextAssetFactory = contextAssetFactory;
+        this.assetResourceLocator = assetResourceLocator;
 
-        applicationAssetPrefix = RequestConstants.ASSET_PATH_PREFIX + RequestConstants.CONTEXT_FOLDER + applicationVersion + "/";
     }
 
     public boolean dispatch(Request request, Response response) throws IOException
@@ -77,7 +64,7 @@ public class AssetDispatcher implements Dispatcher
 
         // ClassLoaders like their paths to start with a leading slash.
 
-        Resource resource = findResourceAndValidateDigest(response, path);
+        Resource resource = assetResourceLocator.findResourceForPath(path);
 
         if (resource == null) return true;
 
@@ -115,69 +102,5 @@ public class AssetDispatcher implements Dispatcher
         streamer.streamResource(resource);
 
         return true;
-    }
-
-    /**
-     * @param response used to send errors back to the client
-     * @param path     the URI path
-     * @return the resource for the path, with the digest stripped out of the URL, or null if the digest is invalid (and
-     *         an error has been sent back to the client)
-     * @throws IOException
-     */
-    private Resource findResourceAndValidateDigest(Response response, String path) throws IOException
-    {
-        if (path.startsWith(applicationAssetPrefix))
-            return findContextResource(path.substring(applicationAssetPrefix.length()));
-
-        String resourcePath = aliasManager.toResourcePath(path);
-
-        Resource resource = new ClasspathResource(resourcePath);
-
-        if (!resourceCache.requiresDigest(resource)) return resource;
-
-        String file = resource.getFile();
-
-        // Somehow this code got real ugly, but it's all about preventing NPEs when a resource
-        // that should have a digest doesn't.
-
-        boolean valid = false;
-        Resource result = resource;
-
-        int lastdotx = file.lastIndexOf('.');
-
-        if (lastdotx > 0)
-        {
-            int prevdotx = file.lastIndexOf('.', lastdotx - 1);
-
-            if (prevdotx > 0)
-            {
-
-                String requestDigest = file.substring(prevdotx + 1, lastdotx);
-
-                // Strip the digest out of the file name.
-
-                String realFile = file.substring(0, prevdotx) + file.substring(lastdotx);
-
-                result = resource.forFile(realFile);
-
-                String actualDigest = resourceCache.getDigest(result);
-
-                valid = requestDigest.equals(actualDigest);
-            }
-        }
-
-        if (!valid)
-        {
-            response.sendError(HttpServletResponse.SC_FORBIDDEN, ServicesMessages
-                    .wrongAssetDigest(result));
-            result = null;
-        }
-
-        return result;
-    }
-
-    private Resource findContextResource(String contextPath)
-    {
-        return contextAssetFactory.getRootResource().forFile(contextPath);
     }
 }
