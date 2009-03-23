@@ -122,6 +122,7 @@ public class AppModule
         configuration.add(SymbolConstants.SUPPORTED_LOCALES, "en,fr,de");
         configuration.add(SymbolConstants.PRODUCTION_MODE, "false");
         configuration.add(SymbolConstants.COMPRESS_WHITESPACE, "false");
+        configuration.add(SymbolConstants.COMBINE_SCRIPTS, "true");
 
         configuration.add("app.injected-symbol", "Symbol contributed to ApplicationDefaults");
     }

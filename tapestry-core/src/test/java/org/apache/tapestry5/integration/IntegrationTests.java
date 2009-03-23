@@ -821,10 +821,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     {
         start("Client Validation Demo");
 
-        // The lack of a leading slash indicates that the path was optimized, see TAPESTRY-1502
-
-        assertAttributeSeries("//script[%d]/@src", 1, "/assets/scriptaculous/UNKNOWN/prototype.js",
-                              "/assets/scriptaculous/UNKNOWN/scriptaculous.js");
+        // Used to ensure that the <script> tag was present, but that's hard to do with script combining enabled.
 
         clickAndWait("link=Clear Data");
 
@@ -2856,6 +2853,10 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         String outerNow = getText("outernow");
         String innerNow = getText("innernow");
+
+        // If we're too fast that innernow doesn't change because its all within a single second.
+        
+        sleep(1050);
 
         click(SUBMIT);
 

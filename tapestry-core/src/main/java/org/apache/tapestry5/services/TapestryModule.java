@@ -739,18 +739,18 @@ public final class TapestryModule
      */
     public void contributeRequestHandler(OrderedConfiguration<RequestFilter> configuration, Context context,
 
-            // @Inject not needed because its a long, not a String
-            @Symbol(SymbolConstants.FILE_CHECK_INTERVAL)
-            @IntermediateType(TimeInterval.class)
-            long checkInterval,
+                                         // @Inject not needed because its a long, not a String
+                                         @Symbol(SymbolConstants.FILE_CHECK_INTERVAL)
+                                         @IntermediateType(TimeInterval.class)
+                                         long checkInterval,
 
-            @Symbol(SymbolConstants.FILE_CHECK_UPDATE_TIMEOUT)
-            @IntermediateType(TimeInterval.class)
-            long updateTimeout,
+                                         @Symbol(SymbolConstants.FILE_CHECK_UPDATE_TIMEOUT)
+                                         @IntermediateType(TimeInterval.class)
+                                         long updateTimeout,
 
-            UpdateListenerHub updateListenerHub,
+                                         UpdateListenerHub updateListenerHub,
 
-            URLRewriterService urlRewriterService)
+                                         URLRewriterService urlRewriterService)
     {
         RequestFilter staticFilesFilter = new StaticFilesFilter(context);
 
@@ -782,7 +782,7 @@ public final class TapestryModule
         };
 
         configuration.add("CheckForUpdates", new CheckForUpdatesFilter(updateListenerHub,
-                checkInterval, updateTimeout), "before:*");
+                                                                       checkInterval, updateTimeout), "before:*");
 
         // we just need the URLRewriterRequestFilter if we have URL rewriter rules, of course.
         if (urlRewriterService.getRules().isEmpty() == false)
@@ -809,9 +809,9 @@ public final class TapestryModule
                 fireEndOfRequestEvent,
                 "after:StoreIntoGlobals",
                 "before:ErrorFilter");
-        
+
     }
-    
+
     /**
      * Contributes the basic set of translators: <ul>  <li>string</li>  <li>byte</li> <li>short</li> <li>integer</li>
      * <li>long</li> <li>float</li> <li>double</li>  <li>BigInteger</li> <li>BigDecimal</li></ul>
@@ -1535,10 +1535,10 @@ public final class TapestryModule
     /**
      * The MasterDispatcher is a chain-of-command of individual Dispatchers, each handling (like a servlet) a particular
      * kind of incoming request. <dl> <dt>RootPath</dt> <dd>Renders the start page for the "/" request</dd>
-     * <dt>Asset</dt> <dd>Provides access to classpath assets</dd> <dt>PageRender</dt> <dd>Identifies the {@link
-     * org.apache.tapestry5.services.PageRenderRequestParameters} and forwards onto {@link
-     * PageRenderRequestHandler}</dd> <dt>ComponentEvent</dt> <dd>Identifies the {@link ComponentEventRequestParameters}
-     * and forwards onto the {@link ComponentEventRequestHandler}</dd> </dl>
+     * <dt>Asset</dt> <dd>Provides access to classpath assets</dd> <dt>VirtualAsset</dt> <dd>Provides access to combined
+     * scripts</dd> <dt>PageRender</dt> <dd>Identifies the {@link org.apache.tapestry5.services.PageRenderRequestParameters}
+     * and forwards onto {@link PageRenderRequestHandler}</dd> <dt>ComponentEvent</dt> <dd>Identifies the {@link
+     * ComponentEventRequestParameters} and forwards onto the {@link ComponentEventRequestHandler}</dd> </dl>
      */
     public static void contributeMasterDispatcher(OrderedConfiguration<Dispatcher> configuration)
     {
@@ -1552,6 +1552,7 @@ public final class TapestryModule
 
         configuration.addInstance("Asset", AssetDispatcher.class, "before:ComponentEvent");
 
+        configuration.addInstance("VirtualAsset", VirtualAssetDispatcher.class, "before:Asset");
 
         configuration.addInstance("ComponentEvent", ComponentEventDispatcher.class, "before:PageRender");
 
@@ -1629,18 +1630,27 @@ public final class TapestryModule
                                          @Inject @Symbol(SymbolConstants.TAPESTRY_VERSION)
                                          final String tapestryVersion,
 
+                                         @Symbol(SymbolConstants.COMBINE_SCRIPTS)
+                                         final boolean combineScripts,
+
                                          final ValidationMessagesSource validationMessagesSource,
 
                                          final SymbolSource symbolSource,
 
-                                         final AssetSource assetSource)
+                                         final AssetSource assetSource,
+
+                                         final ClientDataEncoder clientDataEncoder)
     {
         MarkupRendererFilter documentLinker = new MarkupRendererFilter()
         {
             public void renderMarkup(MarkupWriter writer, MarkupRenderer renderer)
             {
-                DocumentLinkerImpl linker = new DocumentLinkerImpl(productionMode, omitGeneratorMeta,
-                                                                   tapestryVersion);
+                DocumentLinkerImpl linker = new DocumentLinkerImpl(productionMode,
+                                                                   omitGeneratorMeta,
+                                                                   tapestryVersion,
+                                                                   combineScripts,
+                                                                   request.getContextPath(),
+                                                                   clientDataEncoder);
 
                 environment.push(DocumentLinker.class, linker);
 
@@ -2067,7 +2077,11 @@ public final class TapestryModule
         configuration.add(SymbolConstants.OMIT_GENERATOR_META, "false");
         configuration.add(SymbolConstants.GZIP_COMPRESSION_ENABLED, "true");
 
-        configuration.add(SymbolConstants.SECURE_ENABLED, String.format("${%s}", SymbolConstants.PRODUCTION_MODE));
+        String matchProductionMode = String.format("${%s}", SymbolConstants.PRODUCTION_MODE);
+
+        configuration.add(SymbolConstants.SECURE_ENABLED, matchProductionMode);
+        configuration.add(SymbolConstants.COMBINE_SCRIPTS, matchProductionMode);
+
         configuration.add(SymbolConstants.ENCODE_LOCALE_INTO_PATH, "true");
     }
 
@@ -2362,39 +2376,40 @@ public final class TapestryModule
     {
         return new URLRewriterServiceImpl(contributions);
     }
-    
+
     /**
-     * @throws Exception 
+     * @throws Exception
      * @since 5.1.0.2
      */
     public static ComponentEventLinkEncoder decorateComponentEventLinkEncoder(
             ComponentEventLinkEncoder encoder, URLRewriterService urlRewriterService,
             Request request, HttpServletRequest httpServletRequest, Response response,
-            AspectDecorator aspectDecorator) throws Exception {
-        
+            AspectDecorator aspectDecorator) throws Exception
+    {
+
         // no rules, no link rewriting.
-        if (urlRewriterService.getRules().isEmpty()) 
+        if (urlRewriterService.getRules().isEmpty())
         {
             return null;
         }
-        
-        ComponentEventLinkEncoderMethodAdvice advice = 
-            new ComponentEventLinkEncoderMethodAdvice(urlRewriterService, request, httpServletRequest, response);
-        
+
+        ComponentEventLinkEncoderMethodAdvice advice =
+                new ComponentEventLinkEncoderMethodAdvice(urlRewriterService, request, httpServletRequest, response);
+
         Class<ComponentEventLinkEncoder> clasz = ComponentEventLinkEncoder.class;
-        Method createPageRenderLink = 
-            clasz.getMethod("createPageRenderLink", PageRenderRequestParameters.class);
-        Method createComponentEventLink = 
-            clasz.getMethod("createComponentEventLink", ComponentEventRequestParameters.class, boolean.class);
-        
-        final AspectInterceptorBuilder<ComponentEventLinkEncoder> builder = 
-            aspectDecorator.createBuilder(clasz, encoder, "Link rewriting");
-        
+        Method createPageRenderLink =
+                clasz.getMethod("createPageRenderLink", PageRenderRequestParameters.class);
+        Method createComponentEventLink =
+                clasz.getMethod("createComponentEventLink", ComponentEventRequestParameters.class, boolean.class);
+
+        final AspectInterceptorBuilder<ComponentEventLinkEncoder> builder =
+                aspectDecorator.createBuilder(clasz, encoder, "Link rewriting");
+
         builder.adviseMethod(createComponentEventLink, advice);
         builder.adviseMethod(createPageRenderLink, advice);
-        
+
         return builder.build();
-        
+
     }
-    
+
 }

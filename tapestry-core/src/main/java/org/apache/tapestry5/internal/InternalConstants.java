@@ -14,6 +14,8 @@
 
 package org.apache.tapestry5.internal;
 
+import org.apache.tapestry5.ioc.util.TimeInterval;
+
 public final class InternalConstants
 {
     /**
@@ -118,4 +120,5 @@ public final class InternalConstants
      * Special prefix for parameters that are inherited from named parameters of their container.
      */
     public static final String INHERIT_BINDING_PREFIX = "inherit:";
+    public static final long TEN_YEARS = new TimeInterval("10y").milliseconds();
 }

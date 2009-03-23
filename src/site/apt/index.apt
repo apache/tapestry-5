@@ -34,6 +34,8 @@ What is Apache Tapestry?
 
 New And Of Note
 
+  * Tapestry now automatically combines multiple JavaScript libraries into a single request.
+
   * An Ajax event requst may now return a
     {{{apidocs/org/apache/tapestry5/ajax/MultiZoneUpdate.html}MultiZoneUpdate}} instance
     to update multiple zones in the client web browser.

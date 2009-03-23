@@ -34,6 +34,7 @@ public class AssetDispatcherTest extends InternalBaseTestCase
     private static final String SMILEY_PATH = "org/apache/tapestry5/integration/app1/pages/smiley.png";
 
     private static final Resource SMILEY = new ClasspathResource(SMILEY_PATH);
+    private static final String APPLICATION_VERSION = "1.2.3";
 
     @Test
     public void not_an_asset_request() throws Exception
@@ -44,7 +45,7 @@ public class AssetDispatcherTest extends InternalBaseTestCase
 
         replay();
 
-        Dispatcher d = new AssetDispatcher(null, null, null, "1.2.3", null);
+        Dispatcher d = new AssetDispatcher(null, null, null);
 
         assertFalse(d.dispatch(request, null));
 
@@ -59,6 +60,7 @@ public class AssetDispatcherTest extends InternalBaseTestCase
         ClasspathAssetAliasManager aliasManager = mockClasspathAssetAliasManager();
         ResourceCache cache = mockResourceCache();
         ResourceStreamer streamer = mockResourceStreamer();
+        AssetResourceLocator locator = new AssetResourceLocatorImpl(aliasManager, cache, APPLICATION_VERSION, null, response);
 
         train_getPath(request, SMILEY_CLIENT_URL);
 
@@ -72,7 +74,7 @@ public class AssetDispatcherTest extends InternalBaseTestCase
 
         replay();
 
-        Dispatcher d = new AssetDispatcher(streamer, aliasManager, cache, "1.2.3", null);
+        Dispatcher d = new AssetDispatcher(streamer, cache, locator);
 
         assertTrue(d.dispatch(request, response));
 
@@ -87,6 +89,7 @@ public class AssetDispatcherTest extends InternalBaseTestCase
         ClasspathAssetAliasManager aliasManager = mockClasspathAssetAliasManager();
         ResourceCache cache = mockResourceCache();
         ResourceStreamer streamer = mockResourceStreamer();
+        AssetResourceLocator locator = new AssetResourceLocatorImpl(aliasManager, cache, APPLICATION_VERSION, null, response);
 
         String clientURL = "/assets/app1/pages/smiley_png";
         String resourcePath = "org/apache/tapestry5/integration/app1/pages/smiley_png";
@@ -101,7 +104,7 @@ public class AssetDispatcherTest extends InternalBaseTestCase
 
         replay();
 
-        Dispatcher d = new AssetDispatcher(streamer, aliasManager, cache, "1.2.3", null);
+        Dispatcher d = new AssetDispatcher(streamer, cache, locator);
 
         assertTrue(d.dispatch(request, response));
 
@@ -116,6 +119,7 @@ public class AssetDispatcherTest extends InternalBaseTestCase
         ClasspathAssetAliasManager aliasManager = mockClasspathAssetAliasManager();
         ResourceCache cache = mockResourceCache();
         ResourceStreamer streamer = mockResourceStreamer();
+        AssetResourceLocator locator = new AssetResourceLocatorImpl(aliasManager, cache, APPLICATION_VERSION, null, response);
 
         String clientURL = "/assets/app1/pages/smiley.WRONG.png";
         String resourcePath = "org/apache/tapestry5/integration/app1/pages/smiley.WRONG.png";
@@ -132,7 +136,7 @@ public class AssetDispatcherTest extends InternalBaseTestCase
 
         replay();
 
-        Dispatcher d = new AssetDispatcher(streamer, aliasManager, cache, "1.2.3", null);
+        Dispatcher d = new AssetDispatcher(streamer, cache, locator);
 
         assertTrue(d.dispatch(request, response));
 
@@ -147,6 +151,7 @@ public class AssetDispatcherTest extends InternalBaseTestCase
         ClasspathAssetAliasManager aliasManager = mockClasspathAssetAliasManager();
         ResourceCache cache = mockResourceCache();
         ResourceStreamer streamer = mockResourceStreamer();
+        AssetResourceLocator locator = new AssetResourceLocatorImpl(aliasManager, cache, APPLICATION_VERSION, null, response);
 
         String clientURL = RequestConstants.ASSET_PATH_PREFIX + "app1/pages/smiley.RIGHT.png";
         String resourcePath = "org/apache/tapestry5/integration/app1/pages/smiley.RIGHT.png";
@@ -165,7 +170,7 @@ public class AssetDispatcherTest extends InternalBaseTestCase
 
         replay();
 
-        Dispatcher d = new AssetDispatcher(streamer, aliasManager, cache, "1.2.3", null);
+        Dispatcher d = new AssetDispatcher(streamer, cache, locator);
 
         assertTrue(d.dispatch(request, response));
 
@@ -185,6 +190,7 @@ public class AssetDispatcherTest extends InternalBaseTestCase
         ClasspathAssetAliasManager aliasManager = mockClasspathAssetAliasManager();
         ResourceCache cache = mockResourceCache();
         ResourceStreamer streamer = mockResourceStreamer();
+        AssetResourceLocator locator = new AssetResourceLocatorImpl(aliasManager, cache, APPLICATION_VERSION, null, response);
 
         train_getPath(request, SMILEY_CLIENT_URL);
 
@@ -196,7 +202,7 @@ public class AssetDispatcherTest extends InternalBaseTestCase
 
         replay();
 
-        Dispatcher d = new AssetDispatcher(streamer, aliasManager, cache, "1.2.3", null);
+        Dispatcher d = new AssetDispatcher(streamer, cache, locator);
 
         assertTrue(d.dispatch(request, response));
 
@@ -212,6 +218,7 @@ public class AssetDispatcherTest extends InternalBaseTestCase
         ResourceCache cache = mockResourceCache();
         ResourceStreamer streamer = mockResourceStreamer();
         long now = System.currentTimeMillis();
+        AssetResourceLocator locator = new AssetResourceLocatorImpl(aliasManager, cache, APPLICATION_VERSION, null, response);
 
         train_getPath(request, SMILEY_CLIENT_URL);
 
@@ -227,7 +234,7 @@ public class AssetDispatcherTest extends InternalBaseTestCase
 
         replay();
 
-        Dispatcher d = new AssetDispatcher(streamer, aliasManager, cache, "1.2.3", null);
+        Dispatcher d = new AssetDispatcher(streamer, cache, locator);
 
         assertTrue(d.dispatch(request, response));
 
@@ -242,7 +249,7 @@ public class AssetDispatcherTest extends InternalBaseTestCase
         ClasspathAssetAliasManager aliasManager = mockClasspathAssetAliasManager();
         ResourceCache cache = mockResourceCache();
         ResourceStreamer streamer = mockResourceStreamer();
-        long now = System.currentTimeMillis();
+        AssetResourceLocator locator = new AssetResourceLocatorImpl(aliasManager, cache, APPLICATION_VERSION, null, response);
 
         train_getPath(request, SMILEY_CLIENT_URL);
 
@@ -257,7 +264,7 @@ public class AssetDispatcherTest extends InternalBaseTestCase
 
         replay();
 
-        Dispatcher d = new AssetDispatcher(streamer, aliasManager, cache, "1.2.3", null);
+        Dispatcher d = new AssetDispatcher(streamer, cache, locator);
 
         assertTrue(d.dispatch(request, response));
 
@@ -273,6 +280,7 @@ public class AssetDispatcherTest extends InternalBaseTestCase
         ResourceCache cache = mockResourceCache();
         ResourceStreamer streamer = mockResourceStreamer();
         long now = System.currentTimeMillis();
+        AssetResourceLocator locator = new AssetResourceLocatorImpl(aliasManager, cache, APPLICATION_VERSION, null, response);
 
         train_getPath(request, SMILEY_CLIENT_URL);
 
@@ -288,7 +296,7 @@ public class AssetDispatcherTest extends InternalBaseTestCase
 
         replay();
 
-        Dispatcher d = new AssetDispatcher(streamer, aliasManager, cache, "1.2.3", null);
+        Dispatcher d = new AssetDispatcher(streamer, cache, locator);
 
         assertTrue(d.dispatch(request, response));
 

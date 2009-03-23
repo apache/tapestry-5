@@ -41,7 +41,7 @@ public class ResponseCompressionAnalyzerImplTest extends Assert
     {
         List<String> configuration = CollectionFactory.newList("is/inlist");
 
-        ResponseCompressionAnalyzer analyzer = new ResponseCompressionAnalyzerImpl(null, configuration);
+        ResponseCompressionAnalyzer analyzer = new ResponseCompressionAnalyzerImpl(null, configuration, true);
 
         assertEquals(analyzer.isCompressable(contentType), expected);
     }

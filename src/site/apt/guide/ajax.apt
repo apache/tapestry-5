@@ -161,6 +161,15 @@ public class MyComponent
   This saves you the effort of injecting the asset and making the call to RenderSupport.
   Chances are you will <still> inject RenderSupport so as to add some initialization JavaScript.
 
+Combining Scripts
+
+  In production mode, Tapestry automatically <combines> JavaScript libraries. A single request
+  (for a <virtual asset>) will retrieve the combined content of all referenced JavaScript library files.
+
+  This is a very useful feature, as it reduces the number of requests needed to present a page to the user.
+
+  As elsewhere, if the client browser supports gzip compression, the combined JavaScript will be compressed.
+
 Ajax Components and Mixins
 
 * Autocomplete Mixin

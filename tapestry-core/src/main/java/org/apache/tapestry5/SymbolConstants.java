@@ -33,14 +33,16 @@ public class SymbolConstants
     public static final String FORCE_ABSOLUTE_URIS = "tapestry.force-absolute-uris";
 
     /**
-     * If set to true, then action requests will render a page markup response immediately, rather than sending a
-     * redirect to render the response.
+     * If set to "true", then action requests will render a page markup response immediately, rather than sending a
+     * redirect to render the response.  "Action request" is an outdated term for "component event request" (i.e., most
+     * links and all form submissions).
      */
     public static final String SUPPRESS_REDIRECT_FROM_ACTION_REQUESTS = "tapestry.suppress-redirect-from-action-requests";
 
     /**
      * The list of locales supported by the application; locales identified in the incoming request are "narrowed" to
-     * one of these values.
+     * one of these values. The first locale name in the list is the default locale used when no proper match can be
+     * found.
      */
     public static final String SUPPORTED_LOCALES = "tapestry.supported-locales";
 
@@ -52,12 +54,14 @@ public class SymbolConstants
 
     /**
      * Time interval defining how often Tapestry will check for updates to local files (including classes). This number
-     * can be raised in a production environment.
+     * can be raised in a production environment. The default is "1 s" (one second), which is appropriate for
+     * development.
      */
     public static final String FILE_CHECK_INTERVAL = "tapestry.file-check-interval";
 
     /**
-     * Time interval that sets how long Tapestry will wait to obtain the exclusive lock needed to check local files.
+     * Time interval that sets how long Tapestry will wait to obtain the exclusive lock needed to check local files. The
+     * default is "50 ms".
      */
     public static final String FILE_CHECK_UPDATE_TIMEOUT = "tapestry.file-check-update-timeout";
 
@@ -74,7 +78,7 @@ public class SymbolConstants
     public static final String APPLICATION_CATALOG = "tapestry.app-catalog";
 
     /**
-     * The  charset used when rendering page markup; the charset is also used as ther request encoding when handling
+     * The  charset used when rendering page markup; the charset is also used as the request encoding when handling
      * incoming requests. The default is "UTF-8".
      */
     public static final String CHARSET = "tapestry.charset";
@@ -112,7 +116,7 @@ public class SymbolConstants
 
     /**
      * Minimum output stream size, in bytes, before output is compressed using GZIP. Shorter streams are not compressed.
-     * Tapestry buffers this amount and switches to a GZIP output stream as needed.
+     * Tapestry buffers this amount and switches to a GZIP output stream as needed. The default is "100".
      *
      * @see #GZIP_COMPRESSION_ENABLED
      * @since 5.1.0.0
@@ -122,7 +126,8 @@ public class SymbolConstants
     /**
      * Version number integrated into URLs for context assets. This should be changed for each release, otherwise
      * out-of-date files may be used from the client's local cache (due to far-future expired headers). The default
-     * value is semi-random and different for each execution.
+     * value is semi-random and different for each execution, which will adversely affect client caching, but is reasonable
+     * for development.
      *
      * @since 5.1.0.0
      */
@@ -130,7 +135,7 @@ public class SymbolConstants
 
     /**
      * Used to omit the normal Tapestry framework generator meta tag. The meta tag is rendered by default, but clients
-     * who do not wish to advertise their use of Tapstry may set this symbol to "true".
+     * who do not wish to advertise their use of Tapestry may set this symbol to "true".
      *
      * @since 5.1.0.0
      */
@@ -166,4 +171,13 @@ public class SymbolConstants
      * @since 5.1.0.1
      */
     public static final String ENCODE_LOCALE_INTO_PATH = "tapestry.encode-locale-into-path";
+
+    /**
+     * If "true" then JavaScript files will be combined into a single virtual JavaScript file. Defaults to "true" is
+     * production mode.
+     *
+     * @since 5.1.0.2
+     */
+    public static final String COMBINE_SCRIPTS = "tapestry.combine-scripts";
+
 }
