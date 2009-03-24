@@ -1337,9 +1337,13 @@ Tapestry.FieldEventManager = Class.create({
 
         t.validationError = false;
 
-        this.requiredCheck.call(this, value);
+        if (this.requiredCheck)
+            this.requiredCheck.call(this, value);
 
-        if (!t.validationError)
+        // Don't try to validate blank values; if the field is required, that error is already
+        // noted and presented to the user.
+        
+        if (!t.validationError && ! value.blank())
         {
             var translated = this.translator(value);
 
@@ -1347,20 +1351,14 @@ Tapestry.FieldEventManager = Class.create({
 
             if (! t.validationError)
             {
-                // If the value in the field is non blank, then validate
-                // its *translated* value (i.e., the parsed number). If it was
-                // blank but is required, the error has already been recorded.
-
-                if (! value.blank())
-                    this.field.fire(Tapestry.FIELD_VALIDATE_EVENT,
-                    { value: value, translated: translated });
+                this.field.fire(Tapestry.FIELD_VALIDATE_EVENT, { value: value, translated: translated });
             }
-
-            // Lastly, if no validation errors were found, remove the decorations.
-
-            if (! t.validationError)
-                this.field.removeDecorations();
         }
+
+        // Lastly, if no validation errors were found, remove the decorations.
+
+        if (! t.validationError)
+            this.field.removeDecorations();
 
         return t.validationError;
     }
@@ -1746,7 +1744,7 @@ Tapestry.ScriptManager = {
 
                 // Check to see if the script is already loaded, either as a virtual script, or as
                 // an individual <script src=""> element.
-                
+
                 if (Tapestry.ScriptManager.virtualScripts.member(assetURL)) return;
                 if (Tapestry.ScriptManager.contains(document.scripts, "src", assetURL)) return;
 
