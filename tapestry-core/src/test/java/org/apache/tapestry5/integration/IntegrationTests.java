@@ -2867,4 +2867,26 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         assertFalse(getText("innernow").equals(innerNow));
     }
+
+    @Test
+    public void client_validation_for_numeric_fields_that_are_not_required()
+    {
+       start("Form Zone Demo");
+
+        type("longValue", "alpha");
+
+        click(SUBMIT);
+
+        waitForElementToAppear("longValue:errorpopup");
+
+        assertText("//div[@id='longValue:errorpopup']/span", "You must provide an integer value for Long Value.");
+
+        type("longValue", "37");
+
+        click(SUBMIT);
+
+        waitForElementToAppear("outputvalue");
+
+        assertText("outputvalue", "37");
+    }
 }
