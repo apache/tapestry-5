@@ -113,6 +113,8 @@ public class RequestImpl implements Request
             }
         }
 
+        if (!create && session != null && session.isInvalidated()) return null;
+
         return session;
     }
 

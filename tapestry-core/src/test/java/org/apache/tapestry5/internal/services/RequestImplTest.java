@@ -175,6 +175,7 @@ public class RequestImplTest extends InternalBaseTestCase
     /**
      * TAPESTRY-1713
      */
+    @Test
     public void get_path_for_websphere_with_nonempty_path()
     {
         HttpServletRequest sr = mockHttpServletRequest();
@@ -189,6 +190,33 @@ public class RequestImplTest extends InternalBaseTestCase
 
         verify();
     }
+
+    @Test
+    public void get_session_returns_null_if_invalid()
+    {
+        HttpServletRequest sr = mockHttpServletRequest();
+        HttpSession hsession = mockHttpSession();
+
+        train_getSession(sr, true, hsession);
+
+        hsession.invalidate();
+
+        replay();
+
+        Request request = new RequestImpl(sr, CHARSET, null);
+
+        Session session = request.getSession(true);
+
+        session.invalidate();
+
+        assertNull(request.getSession(false));
+
+        assertSame(request.getSession(true), session);
+
+        verify(); 
+    }
+
+
 
     protected final void train_getPathInfo(HttpServletRequest request, String pathInfo)
     {
