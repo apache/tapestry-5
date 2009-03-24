@@ -19,6 +19,7 @@ import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.testng.annotations.Test;
 
 import java.util.List;
+import java.util.Collection;
 
 /**
  * Tests for a number of DOM node classes, including {@link org.apache.tapestry5.dom.Element} and {@link
@@ -828,4 +829,24 @@ public class DOMTest extends InternalBaseTestCase
         assertEquals(root.toString(), "<parent enemy=\"gollum\"></parent>");
     }
 
+    @Test
+    public void get_attributes()
+    {
+        Document d = new Document();
+
+        Element root = d.newRootElement("parent");
+
+        assertTrue(root.getAttributes().isEmpty());
+
+        root.attribute("fred", "flintstone");
+
+        Collection<Attribute> attributes = root.getAttributes();
+
+        assertEquals(attributes.size(), 1);
+
+        Attribute attribute = attributes.iterator().next();
+
+        assertEquals(attribute.getName(), "fred");
+        assertEquals(attribute.getValue(), "flintstone");
+    }
 }
