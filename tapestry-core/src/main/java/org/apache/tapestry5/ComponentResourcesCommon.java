@@ -210,6 +210,9 @@ public interface ComponentResourcesCommon extends Locatable
      * @param context  the activation context for the page. If omitted, the activation context is obtained from the
      *                 target page
      * @return link for a render request to the targetted page
+     * @deprecated Use {@link org.apache.tapestry5.services.PageRenderLinkSource#createPageRenderLink(String)} or {@link
+     *             org.apache.tapestry5.services.PageRenderLinkSource#createPageRenderLinkWithContext(String, Object[])}
+     *             instead
      */
     Link createPageLink(String pageName, boolean override, Object... context);
 
@@ -223,6 +226,9 @@ public interface ComponentResourcesCommon extends Locatable
      * @param context   the activation context for the page. If omitted, the activation context is obtained from the
      *                  target page
      * @return link for a render request to the targetted page
+     * @deprecated Use {@link org.apache.tapestry5.services.PageRenderLinkSource#createPageRenderLink(Class)} or {@link
+     *             org.apache.tapestry5.services.PageRenderLinkSource#createPageRenderLinkWithContext(Class, Object[])}
+     *             instead
      */
     Link createPageLink(Class pageClass, boolean override, Object... context);
 }
