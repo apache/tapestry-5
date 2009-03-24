@@ -17,10 +17,7 @@ package org.apache.tapestry5.internal.services;
 import org.apache.tapestry5.Link;
 import org.apache.tapestry5.internal.EmptyEventContext;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
-import org.apache.tapestry5.services.ComponentEventLinkEncoder;
-import org.apache.tapestry5.services.PageRenderRequestParameters;
-import org.apache.tapestry5.services.Request;
-import org.apache.tapestry5.services.Response;
+import org.apache.tapestry5.services.*;
 import org.testng.annotations.Test;
 
 /**
@@ -37,6 +34,7 @@ public class ComponentEventLinkEncoderImplTest extends InternalBaseTestCase
         Request request = mockRequest();
         Response response = mockResponse();
         RequestPathOptimizer optimizer = mockRequestPathOptimizer();
+        ContextPathEncoder contextPathEncoder = getService(ContextPathEncoder.class);
 
         expect(manager.getBaseURL("MyPage")).andReturn(null);
         train_getContextPath(request, "/myapp");
@@ -45,7 +43,8 @@ public class ComponentEventLinkEncoderImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentEventLinkEncoder encoder = new ComponentEventLinkEncoderImpl(null, null, null, request, response,
+        ComponentEventLinkEncoder encoder = new ComponentEventLinkEncoderImpl(null, contextPathEncoder, null, request,
+                                                                              response,
                                                                               manager, optimizer, null, null, null,
                                                                               false);
 

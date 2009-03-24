@@ -326,16 +326,12 @@ public class ComponentEventLinkEncoderImpl implements ComponentEventLinkEncoder
 
     public void appendContext(EventContext context, StringBuilder builder)
     {
-        for (int i = 0; i < context.getCount(); i++)
+        String encoded = contextPathEncoder.encodeIntoPath(context);
+
+        if (encoded.length() > 0)
         {
-            Object raw = context.get(Object.class, i);
-
-            String valueEncoded = raw == null ? null : valueEncoder.toClient(raw);
-            String urlEncoded = urlEncoder.encode(valueEncoded);
-
             builder.append(SLASH);
-
-            builder.append(urlEncoded);
+            builder.append(encoded);
         }
     }
 }
