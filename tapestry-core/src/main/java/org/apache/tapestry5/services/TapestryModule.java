@@ -305,6 +305,7 @@ public final class TapestryModule
         binder.bind(NumericTranslatorSupport.class);
         binder.bind(ClientDataEncoder.class, ClientDataEncoderImpl.class);
         binder.bind(ComponentEventLinkEncoder.class, ComponentEventLinkEncoderImpl.class);
+        binder.bind(PageRenderLinkSource.class, PageRenderLinkSourceImpl.class);
     }
 
     // ========================================================================

@@ -378,32 +378,16 @@
                 How do I create a link to a page from a service?
             </question>
             <answer>
-                <p>You can't inject a <a href="../apidocs/org/apache/tapestry5/ComponentResources.html">ComponentResources</a>
-                into a service, because a service isn't a component. So how do you create a link to a page?</p>
-                <p>
-                    The answer is to obtain the ComponentResources of a known page, and let it
-                    generate the link. You can do this by injecting the
-                    <a href="../apidocs/org/apache/tapestry5/services/ComponentSource.html">ComponentSource</a>
-                    service. From the ComponentSource you can obtain a page (as an instance of
-                    <a href="../apidocs/org/apache/tapestry5/runtime/Component.html">Component</a>,
-                    and ask that component for its ComponentResources.
-                </p>
-                <pre>
-                    Component index = componentSource.getPage(Index.class);
-                    ComponentResources resources = index.getComponentResources();
-                    return index.createPageLink(Index.class, false);
-                </pre>
-                <p>
-                    In the above example, we get the Index page (it's handy to use its class name,
-                    in case the class name if refactored). We then ask the component, via its resources,
-                    to build a link to itself (we could use an page name or page class as the first argument).
+                <p>You can't inject a
+                    <a href="../apidocs/org/apache/tapestry5/ComponentResources.html">ComponentResources</a>
+                    into a service, because a service isn't a component. So how do you create a link to a page?
                 </p>
                 <p>
-                    If you wanted to pass a page activation context, you could do that as well:
+                    The
+                    <a href="../apidocs/org/apache/tapestry5/services/PageRenderLinkSource.html">PageRenderLinkSource
+                    </a>
+                    service can be injected and lets you create page render links.
                 </p>
-                <pre>
-                    return index.createPageLink(Index.class, false, customer);
-                </pre>
             </answer>
         </faq>
     </part>
