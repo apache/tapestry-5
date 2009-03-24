@@ -41,6 +41,10 @@
                 </p>
 
                 <p>
+                    This example presumes that the Payment page includes a property named "cardNumber".
+                </p>
+
+                <p>
                     The "required" validation requires no extra configuration. On the other hand, "regexp"
                     needs to know the regular expression to enforce ... and it should also have a
                     user presentable message.
