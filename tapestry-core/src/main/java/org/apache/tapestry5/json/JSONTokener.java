@@ -84,29 +84,6 @@ class JSONTokener
     }
 
     /**
-     * Get the hex value of a character (base16).
-     *
-     * @param c A character between '0' and '9' or between 'A' and 'F' or between 'a' and 'f'.
-     * @return An int between 0 and 15, or -1 if c was not a hex digit.
-     */
-    static int dehexchar(char c)
-    {
-        if (c >= '0' && c <= '9')
-        {
-            return c - '0';
-        }
-        if (c >= 'A' && c <= 'F')
-        {
-            return c - ('A' - 10);
-        }
-        if (c >= 'a' && c <= 'f')
-        {
-            return c - ('a' - 10);
-        }
-        return -1;
-    }
-
-    /**
      * Determine if the source string still contains characters that next() can consume.
      *
      * @return true if not yet at the end of the source.
@@ -129,23 +106,6 @@ class JSONTokener
         }
 
         return 0;
-    }
-
-    /**
-     * Consume the next character, and check that it matches a specified character.
-     *
-     * @param c The character to match.
-     * @return The character.
-     * @throws RuntimeException if the character does not match.
-     */
-    public char next(char c)
-    {
-        char n = next();
-        if (n != c)
-        {
-            throw syntaxError("Expected '" + c + "' and instead saw '" + n + "'");
-        }
-        return n;
     }
 
     /**
@@ -289,55 +249,6 @@ class JSONTokener
         }
     }
 
-    /**
-     * Get the text up but not including the specified character or the end of line, whichever comes first.
-     *
-     * @param d A delimiter character.
-     * @return A string.
-     */
-    public String nextTo(char d)
-    {
-        StringBuffer sb = new StringBuffer();
-        for (; ;)
-        {
-            char c = next();
-            if (c == d || c == 0 || c == '\n' || c == '\r')
-            {
-                if (c != 0)
-                {
-                    back();
-                }
-                return sb.toString().trim();
-            }
-            sb.append(c);
-        }
-    }
-
-    /**
-     * Get the text up but not including one of the specified delimeter characters or the end of line, whichever comes
-     * first.
-     *
-     * @param delimiters A set of delimiter characters.
-     * @return A string, trimmed.
-     */
-    public String nextTo(String delimiters)
-    {
-        char c;
-        StringBuffer sb = new StringBuffer();
-        for (; ;)
-        {
-            c = next();
-            if (delimiters.indexOf(c) >= 0 || c == 0 || c == '\n' || c == '\r')
-            {
-                if (c != 0)
-                {
-                    back();
-                }
-                return sb.toString().trim();
-            }
-            sb.append(c);
-        }
-    }
 
     /**
      * Get the next value. The value can be a Boolean, Double, Integer, JSONArray, JSONObject, Long, or String, or the
@@ -460,48 +371,6 @@ class JSONTokener
             }
         }
         return s;
-    }
-
-    /**
-     * Skip characters until the next character is the requested character. If the requested character is not found, no
-     * characters are skipped.
-     *
-     * @param to A character to skip to.
-     * @return The requested character, or zero if the requested character is not found.
-     */
-    public char skipTo(char to)
-    {
-        char c;
-        int index = this.index;
-        do
-        {
-            c = next();
-            if (c == 0)
-            {
-                this.index = index;
-                return c;
-            }
-        } while (c != to);
-        back();
-        return c;
-    }
-
-    /**
-     * Skip characters until past the requested string. If it is not found, we are left at the end of the source.
-     *
-     * @param to A string to skip past.
-     */
-    public boolean skipPast(String to)
-    {
-        index = source.indexOf(to, index);
-        if (index < 0)
-        {
-            index = source.length();
-            return false;
-        }
-        index += to.length();
-        return true;
-
     }
 
     /**

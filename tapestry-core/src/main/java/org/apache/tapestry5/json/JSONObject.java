@@ -39,7 +39,9 @@ package org.apache.tapestry5.json;
  */
 
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -96,18 +98,6 @@ public final class JSONObject
      */
     private static final class Null
     {
-
-        /**
-         * There is only intended to be a single instance of the NULL object, so the clone method returns itself.
-         *
-         * @return NULL.
-         */
-        @Override
-        protected final Object clone()
-        {
-            return this;
-        }
-
         /**
          * A Null object is equal to the null value and to itself.
          *
@@ -701,7 +691,7 @@ public final class JSONObject
     }
 
     private static final Class[] ALLOWED = new Class[] { String.class, Boolean.class, Number.class, JSONObject.class,
-            JSONArray.class, Null.class };
+            JSONArray.class, JSONString.class, Null.class };
 
     /**
      * Throw an exception if the object is an NaN or infinite number, or not a type which may be stored.
@@ -725,10 +715,27 @@ public final class JSONObject
             }
         }
 
-        if (!found) throw new RuntimeException(String
-                .format(
-                "JSONObject properties may be String, Boolean, Number, JSONObject or JSONArray. Type %s is not allowed.",
-                actual.getName()));
+        if (!found)
+        {
+            List<String> typeNames = CollectionFactory.newList();
+
+            for (Class c : ALLOWED)
+            {
+                String name = c.getName();
+
+                if (name.startsWith("java.lang."))
+                    name = name.substring(10);
+
+                typeNames.add(name);
+            }
+
+            String message = String.format(
+                    "JSONObject properties may be one of %s. Type %s is not allowed.",
+                    InternalUtils.joinSorted(typeNames),
+                    actual.getName());
+
+            throw new RuntimeException(message);
+        }
 
         if (value instanceof Double)
         {
@@ -819,7 +826,6 @@ public final class JSONObject
             {
                 throw new RuntimeException(e);
             }
-
         }
 
         if (value instanceof Number)
@@ -829,9 +835,9 @@ public final class JSONObject
 
         if (value instanceof Boolean || value instanceof JSONObject || value instanceof JSONArray)
         {
-            return value
-                    .toString();
+            return value.toString();
         }
+
         return quote(value.toString());
     }
 

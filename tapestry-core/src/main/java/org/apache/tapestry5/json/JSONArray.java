@@ -133,7 +133,7 @@ public final class JSONArray
             if (tokenizer.nextClean() == ',')
             {
                 tokenizer.back();
-                list.add(null);
+                list.add(JSONObject.NULL);
             }
             else
             {
@@ -367,7 +367,7 @@ public final class JSONArray
      *
      * @param index The subscript.
      * @param value The value to put into the array. The value should be a Boolean, Double, Integer, JSONArray,
-     *              JSONObject, Long, or String, or the JSONObject.NULL object.
+     *              JSONObject, JSONString, Long, or String, or the JSONObject.NULL singeton.
      * @return
      * @throws RuntimeException If the index is negative or if the the value is an invalid number.
      */
