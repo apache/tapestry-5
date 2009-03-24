@@ -32,41 +32,6 @@ import java.util.*;
  */
 public final class Element extends Node
 {
-    class Attribute
-    {
-        private final String namespace;
-
-        private final String name;
-
-        private String value;
-
-        private Attribute nextAttribute;
-
-        public Attribute(String namespace, String name, String value, Attribute nextAttribute)
-        {
-            this.namespace = namespace;
-            this.name = name;
-            this.value = value;
-            this.nextAttribute = nextAttribute;
-        }
-
-
-        void render(MarkupModel model, StringBuilder builder, Map<String, String> namespaceURIToPrefix)
-        {
-            builder.append(" ");
-            builder.append(toPrefixedName(namespaceURIToPrefix, namespace, name));
-            builder.append("=");
-            builder.append(model.getAttributeQuote());
-            model.encodeQuoted(value, builder);
-            builder.append(model.getAttributeQuote());
-        }
-
-        public boolean matches(String namespace, String name)
-        {
-            return TapestryInternalUtils.isEqual(this.namespace, namespace) &&
-                    this.name.equalsIgnoreCase(name);
-        }
-    }
 
     private final String name;
 
@@ -192,7 +157,7 @@ public final class Element extends Node
             cursor = cursor.nextAttribute;
         }
 
-        firstAttribute = new Attribute(namespace, name, value, firstAttribute);
+        firstAttribute = new Attribute(this, namespace, name, value, firstAttribute);
     }
 
 
@@ -399,7 +364,7 @@ public final class Element extends Node
         }
     }
 
-    private String toPrefixedName(Map<String, String> namespaceURIToPrefix, String namespace, String name)
+    String toPrefixedName(Map<String, String> namespaceURIToPrefix, String namespace, String name)
     {
         if (namespace == null || namespace.equals("")) return name;
 
@@ -544,7 +509,7 @@ public final class Element extends Node
     {
         for (Attribute attr = firstAttribute; attr != null; attr = attr.nextAttribute)
         {
-            if (attr.name.equalsIgnoreCase(attributeName))
+            if (attr.getName().equalsIgnoreCase(attributeName))
                 return attr.value;
         }
 
@@ -683,7 +648,7 @@ public final class Element extends Node
         // And for any attributes that have a namespace.
 
         for (Attribute attr = firstAttribute; attr != null; attr = attr.nextAttribute)
-            addMappingIfNeeded(holder, attr.namespace);
+            addMappingIfNeeded(holder, attr.getNamespace());
 
         return holder.getResult();
     }
@@ -974,4 +939,23 @@ public final class Element extends Node
         throw new IllegalArgumentException("Node not a child of this element.");
     }
 
+    /**
+     * Returns the attributes for this Element as a (often empty) collection of {@link
+     * org.apache.tapestry5.dom.Attribute}s. The order of the attributes within the collection is not specified.
+     * Modifying the collection will not affect the attributes (use {@link #forceAttributes(String[])} to change
+     * existing attribute values, and {@link #attribute(String, String, String)} to add new attribute values.
+     *
+     * @return attribute collection
+     */
+    public Collection<Attribute> getAttributes()
+    {
+        Collection<Attribute> result = CollectionFactory.newList();
+
+        for (Attribute a = firstAttribute; a != null; a = a.nextAttribute)
+        {
+            result.add(a);
+        }
+
+        return result;
+    }
 }
