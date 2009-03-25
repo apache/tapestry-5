@@ -273,7 +273,7 @@ public class Form implements ClientElement, FormValidationControl
                               "method", "post",
                               "action", link);
 
-        if (zone != null || clientValidation)
+        if ((zone != null || clientValidation) && !request.isXHR())
             writer.attributes("onsubmit", MarkupConstants.WAIT_FOR_PAGE);
 
         resources.renderInformalParameters(writer);
