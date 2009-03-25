@@ -1,4 +1,4 @@
-// Copyright 2006, 2008 The Apache Software Foundation
+// Copyright 2006, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,14 +15,14 @@
 package org.apache.tapestry5.ioc.internal;
 
 import org.apache.tapestry5.ioc.ObjectCreator;
-import org.apache.tapestry5.ioc.ServiceLifecycle;
+import org.apache.tapestry5.ioc.ServiceLifecycle2;
 import org.apache.tapestry5.ioc.ServiceResources;
 
 /**
  * The basic implementation of a service lifecycle, which simply uses the {@link org.apache.tapestry5.ioc.ObjectCreator}
  * to create an instance of the service when asked.
  */
-public class SingletonServiceLifecycle implements ServiceLifecycle
+public class SingletonServiceLifecycle implements ServiceLifecycle2
 {
     public Object createService(ServiceResources resources, ObjectCreator creator)
     {
@@ -32,5 +32,10 @@ public class SingletonServiceLifecycle implements ServiceLifecycle
     public boolean isSingleton()
     {
         return true;
+    }
+
+    public boolean requiresProxy()
+    {
+        return false;
     }
 }

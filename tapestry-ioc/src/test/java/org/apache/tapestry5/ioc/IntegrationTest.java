@@ -232,10 +232,32 @@ public class IntegrationTest extends IOCInternalTestCase
         }
         catch (Exception ex)
         {
-            assertMessageContains(ex, "Exception constructing service 'UnknownScope'", "Unknown service scope 'magic'");
+            assertMessageContains(ex, "Error building service proxy for service 'UnknownScope'",
+                                  "Unknown service scope 'magic'");
         }
 
         r.shutdown();
+    }
+
+    @Test
+    public void scope_mismatch()
+    {
+        Registry r = buildRegistry(ScopeMismatchModule.class);
+
+        try
+        {
+            r.getService(StringBuilder.class);
+            unreachable();
+        }
+        catch (Exception ex)
+        {
+            assertMessageContains(ex,
+                                  "Error building service proxy for service 'ScopeRequiresAProxyAndNoInterfaceIsProvided'",
+                                  "Service scope 'perthread' requires a proxy");
+        }
+
+        r.shutdown();
+
     }
 
     @Test

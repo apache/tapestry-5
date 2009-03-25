@@ -832,4 +832,29 @@ public class InternalUtils
             }
         };
     }
+
+    /** @since 5.1.0.2 */
+    public static ServiceLifecycle2 toServiceLifecycle2(final ServiceLifecycle lifecycle)
+    {
+        if (lifecycle instanceof ServiceLifecycle2)
+            return (ServiceLifecycle2) lifecycle;
+
+        return new ServiceLifecycle2()
+        {
+            public boolean requiresProxy()
+            {
+                return true;
+            }
+
+            public Object createService(ServiceResources resources, ObjectCreator creator)
+            {
+                return lifecycle.createService(resources, creator);
+            }
+
+            public boolean isSingleton()
+            {
+                return lifecycle.isSingleton();
+            }
+        };
+    }
 }

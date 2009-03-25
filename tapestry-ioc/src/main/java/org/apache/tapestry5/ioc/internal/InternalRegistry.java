@@ -49,7 +49,7 @@ public interface InternalRegistry extends Registry, RegistryShutdownHub, Operati
      * @return the lifecycle corresponding to the scope
      * @throws RuntimeException if the lifecycle name does not match a known lifecycle
      */
-    ServiceLifecycle getServiceLifecycle(String scope);
+    ServiceLifecycle2 getServiceLifecycle(String scope);
 
     /**
      * Searches for decorators for a particular service. The resulting {@link org.apache.tapestry5.ioc.def.DecoratorDef}s
