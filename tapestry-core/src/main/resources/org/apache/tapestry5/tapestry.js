@@ -192,7 +192,7 @@ var Tapestry = {
 
             if (initf == undefined)
             {
-                Tapestry.error("Function Tapestry.Initializer.#{name}() does not exist.", { name:functionName });
+                Tapestry.error(Tapestry.Messages.missingInitializer, { name:functionName });
                 return;
             }
 
@@ -353,7 +353,7 @@ var Tapestry = {
 
         Tapestry.ajaxError("Communication with the server failed: " + message);
 
-        Tapestry.debug("Ajax failure: Status #{status} for #{request.url}: " + message, response);
+        Tapestry.debug(Tapestry.Messages.ajaxFailure + message, response);
     },
 
     /**
@@ -391,7 +391,7 @@ var Tapestry = {
 
                 if (! response.request.success())
                 {
-                    Tapestry.ajaxError("Server request was unsuccesful. There may be a problem accessing the server.");
+                    Tapestry.ajaxError(Tapestry.Messages.ajaxRequestUnsuccessful);
                     return;
                 }
 
@@ -402,7 +402,7 @@ var Tapestry = {
                 }
                 catch (e)
                 {
-                    Tapestry.ajaxError("Client exception processing response: " + e);
+                    Tapestry.ajaxError(Tapestry.Messages.clientException + e);
                 }
             },
             onException: Tapestry.ajaxFailureHandler,
@@ -436,7 +436,7 @@ var Tapestry = {
 
         if (!zoneElement)
         {
-            Tapestry.ajaxError("Unable to locate Ajax Zone '#{id}' for dynamic update.", { id:zoneElement});
+            Tapestry.ajaxError(Tapestry.Messages.missingZone, { id:zoneElement});
             return null;
         }
 
@@ -444,7 +444,7 @@ var Tapestry = {
 
         if (!manager)
         {
-            Tapestry.ajaxError("Ajax Zone '#{id}' does not have an associated Tapestry.ZoneManager object.", element);
+            Tapestry.ajaxError(Tapestry.Messages.noZoneManager, element);
             return null;
         }
 
@@ -469,7 +469,7 @@ var Tapestry = {
 
         if (! path.startsWith("/"))
         {
-            Tapestry.error("External path " + path + " does not start with a leading slash.");
+            Tapestry.error(Tapestry.Messages.pathDoesNotStartWithSlash, { path: path });
 
             return path;
         }
@@ -518,11 +518,11 @@ var Tapestry = {
 
             if (ch == decimal)
             {
-                if (isInteger) throw "Not an integer";
+                if (isInteger) throw Tapestry.Messages.notAnInteger;
 
                 ch = ".";
             }
-            else if (ch < "0" || ch > "9") throw "Invalid character";
+            else if (ch < "0" || ch > "9") throw Tapestry.Messages.invalidCharacter;
 
             canonical += ch;
         });
@@ -546,11 +546,6 @@ var Tapestry = {
     }
 };
 
-Tapestry.Messages = {
-
-    pageIsLoading : "Please wait for the page to finish loading ..."
-
-};
 
 Element.addMethods(
 {
@@ -871,7 +866,7 @@ Tapestry.Initializer = {
 
             if (vfunc == undefined)
             {
-                Tapestry.error("Function Tapestry.Validator.#{name}() does not exist for field '#{fieldName}'.", {name:name, fieldName:field.id});
+                Tapestry.error(Tapestry.Messages.missingValidator, {name:name, fieldName:field.id});
                 return;
             }
 
@@ -1342,7 +1337,7 @@ Tapestry.FieldEventManager = Class.create({
 
         // Don't try to validate blank values; if the field is required, that error is already
         // noted and presented to the user.
-        
+
         if (!t.validationError && ! value.blank())
         {
             var translated = this.translator(value);
