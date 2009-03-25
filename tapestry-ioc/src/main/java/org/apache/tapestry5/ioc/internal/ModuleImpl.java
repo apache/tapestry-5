@@ -255,17 +255,26 @@ public class ModuleImpl implements Module
 
                     Class serviceInterface = def.getServiceInterface();
 
+                    ServiceLifecycle2 lifecycle = registry.getServiceLifecycle(def.getServiceScope());
+
+
                     // For non-proxyable services, we immediately create the service implementation
                     // and return it. There's no interface to proxy, which throws out the possibility of
                     // deferred instantiation, service lifecycles, and decorators.
 
                     if (!serviceInterface.isInterface())
+                    {
+                        if (lifecycle.requiresProxy())
+                            throw new IllegalArgumentException(String.format(
+                                    "Service scope '%s' requires a proxy, but the service does not have a service interface (necessary to create a proxy). Provide a service interface or select a different service scope.",
+                                    def.getServiceScope()));
+
                         return creator.createObject();
+                    }
 
                     creator = new OperationTrackingObjectCreator(registry, "Invoking " + creator.toString(), creator);
 
-                    creator = new LifecycleWrappedServiceCreator(registry, def.getServiceScope(), resources, creator);
-
+                    creator = new LifecycleWrappedServiceCreator(lifecycle, resources, creator);
 
                     // Marked services (or services inside marked modules) are not decorated.
                     // TapestryIOCModule prevents decoration of its services. Note that all decorators will decorate

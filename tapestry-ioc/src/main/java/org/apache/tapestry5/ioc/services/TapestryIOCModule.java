@@ -18,6 +18,8 @@ import org.apache.tapestry5.IOCSymbols;
 import org.apache.tapestry5.ioc.*;
 import org.apache.tapestry5.ioc.annotations.*;
 import org.apache.tapestry5.ioc.internal.services.*;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.util.TimeInterval;
 
 import java.io.File;
@@ -70,13 +72,20 @@ public final class TapestryIOCModule
      * accessed via this service (and its mapped configuration). Only proxiable services (those with explicit service
      * interfaces) can be managed in terms of a lifecycle.
      */
-    public static ServiceLifecycleSource build(final Map<String, ServiceLifecycle> configuration)
+    public static ServiceLifecycleSource build(Map<String, ServiceLifecycle> configuration)
     {
+        final Map<String, ServiceLifecycle2> lifecycles = CollectionFactory.newCaseInsensitiveMap();
+
+        for (String name : configuration.keySet())
+        {
+            lifecycles.put(name, InternalUtils.toServiceLifecycle2(configuration.get(name)));
+        }
+
         return new ServiceLifecycleSource()
         {
             public ServiceLifecycle get(String scope)
             {
-                return configuration.get(scope);
+                return lifecycles.get(scope);
             }
         };
     }

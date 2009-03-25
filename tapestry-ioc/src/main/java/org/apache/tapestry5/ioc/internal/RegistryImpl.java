@@ -72,7 +72,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
      */
     private final Map<String, Module> serviceIdToModule = CollectionFactory.newCaseInsensitiveMap();
 
-    private final Map<String, ServiceLifecycle> lifecycles = CollectionFactory.newCaseInsensitiveMap();
+    private final Map<String, ServiceLifecycle2> lifecycles = CollectionFactory.newCaseInsensitiveMap();
 
     private final PerthreadManager perthreadManager;
 
@@ -590,7 +590,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         return result;
     }
 
-    public ServiceLifecycle getServiceLifecycle(String scope)
+    public ServiceLifecycle2 getServiceLifecycle(String scope)
     {
         lock.check();
 
@@ -599,12 +599,14 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         if (result == null)
         {
             ServiceLifecycleSource source = getService("ServiceLifecycleSource", ServiceLifecycleSource.class);
+
             result = source.get(scope);
         }
 
-        if (result == null) throw new RuntimeException(IOCMessages.unknownScope(scope));
+        if (result == null)
+            throw new RuntimeException(IOCMessages.unknownScope(scope));
 
-        return result;
+        return InternalUtils.toServiceLifecycle2(result);
     }
 
     public List<ServiceDecorator> findDecoratorsForService(ServiceDef serviceDef)
