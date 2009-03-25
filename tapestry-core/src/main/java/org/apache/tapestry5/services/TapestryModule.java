@@ -306,6 +306,7 @@ public final class TapestryModule
         binder.bind(ClientDataEncoder.class, ClientDataEncoderImpl.class);
         binder.bind(ComponentEventLinkEncoder.class, ComponentEventLinkEncoderImpl.class);
         binder.bind(PageRenderLinkSource.class, PageRenderLinkSourceImpl.class);
+        binder.bind(JavascriptStack.class, JavascriptStackImpl.class);
     }
 
     // ========================================================================
@@ -1640,7 +1641,9 @@ public final class TapestryModule
 
                                          final AssetSource assetSource,
 
-                                         final ClientDataEncoder clientDataEncoder)
+                                         final ClientDataEncoder clientDataEncoder,
+
+                                         final JavascriptStack javascriptStack)
     {
         MarkupRendererFilter documentLinker = new MarkupRendererFilter()
         {
@@ -1669,17 +1672,7 @@ public final class TapestryModule
             {
                 DocumentLinker linker = environment.peekRequired(DocumentLinker.class);
 
-                RenderSupportImpl support = new RenderSupportImpl(linker, symbolSource, assetSource,
-
-                                                                  // Core scripts added to any page that uses scripting
-
-                                                                  "${tapestry.scriptaculous}/prototype.js",
-                                                                  "${tapestry.scriptaculous}/scriptaculous.js",
-                                                                  "${tapestry.scriptaculous}/effects.js",
-
-                                                                  // Uses functions defined by the prior three
-
-                                                                  "org/apache/tapestry5/tapestry.js");
+                RenderSupportImpl support = new RenderSupportImpl(linker, symbolSource, assetSource, javascriptStack);
 
                 environment.push(RenderSupport.class, support);
 
@@ -1814,7 +1807,7 @@ public final class TapestryModule
                 DocumentLinker linker = environment.peekRequired(DocumentLinker.class);
 
                 RenderSupportImpl support = new RenderSupportImpl(linker, symbolSource, assetSource,
-                                                                  idAllocator);
+                                                                  idAllocator, new EmptyJavascriptStack());
 
                 environment.push(RenderSupport.class, support);
 
