@@ -50,7 +50,8 @@ import java.util.Set;
  * with colons between the names and values, and commas between the values and names. The internal form is an object
  * having <code>get</code> and <code>opt</code> methods for accessing the values by name, and <code>put</code> methods
  * for adding or replacing values by name. The values can be any of these types: <code>Boolean</code>,
- * <code>JSONArray</code>, <code>JSONObject</code>, <code>Number</code>, <code>String</code>, or the
+ * {@link org.apache.tapestry5.json.JSONArray}, {@link org.apache.tapestry5.json.JSONLiteral},
+ *  <code>JSONObject</code>, <code>Number</code>, <code>String</code>, or the
  * <code>JSONObject.NULL</code> object. A JSONObject constructor can be used to convert an external form JSON text into
  * an internal form whose values can be retrieved with the <code>get</code> and <code>opt</code> methods, or to convert
  * values into a JSON text using the <code>put</code> and <code>toString</code> methods. A <code>get</code> method
@@ -68,7 +69,7 @@ import java.util.Set;
  * <p/>
  * produces the string <code>{"JSON": "Hello, World"}</code>.
  * <p/>
- * The texts produced by the <code>toString</code> methods strictly conform to the JSON sysntax rules. The constructors
+ * The texts produced by the <code>toString</code> methods strictly conform to the JSON syntax rules. The constructors
  * are more forgiving in the texts they will accept: <ul> <li>An extra <code>,</code>&nbsp;<small>(comma)</small> may
  * appear just before the closing brace.</li> <li>Strings may be quoted with <code>'</code>&nbsp;<small>(single
  * quote)</small>.</li> <li>Strings do not need to be quoted at all if they do not begin with a quote or single quote,
@@ -84,6 +85,10 @@ import java.util.Set;
  * standards and to make use of JDK 1.5 features such as generics. Further, since the interest of Tapestry is primarily
  * constructing JSON (and not parsing it), many of the non-essential methods have been removed (since the original code
  * came with no tests).
+ * <p/>
+ * Finally, support for the {@link org.apache.tapestry5.json.JSONLiteral} type has been added, which allow the exact
+ * output to be controlled; useful when a JSONObject is being used as a configuration object, and must contain values
+ * that are not simple data, such as an inline function.
  *
  * @author JSON.org
  * @version 2
@@ -586,7 +591,7 @@ public final class JSONObject
      *
      * @param key   A key string.
      * @param value An object which is the value. It should be of one of these types: Boolean, Double, Integer,
-     *              JSONArray, JSONObject, Long, String, or the JSONObject.NULL object.
+     *              JSONArray, JSONObject, JSONLiteral, Long, String, or the JSONObject.NULL object.
      * @return this.
      * @throws RuntimeException If the value is non-finite number or if the key is null.
      */
@@ -691,7 +696,7 @@ public final class JSONObject
     }
 
     private static final Class[] ALLOWED = new Class[] { String.class, Boolean.class, Number.class, JSONObject.class,
-            JSONArray.class, JSONString.class, Null.class };
+            JSONArray.class, JSONString.class, JSONLiteral.class, Null.class };
 
     /**
      * Throw an exception if the object is an NaN or infinite number, or not a type which may be stored.
@@ -833,7 +838,7 @@ public final class JSONObject
             return numberToString((Number) value);
         }
 
-        if (value instanceof Boolean || value instanceof JSONObject || value instanceof JSONArray)
+        if (value instanceof Boolean || value instanceof JSONObject || value instanceof JSONArray || value instanceof JSONLiteral)
         {
             return value.toString();
         }

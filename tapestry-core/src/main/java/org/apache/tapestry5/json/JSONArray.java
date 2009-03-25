@@ -346,8 +346,8 @@ public final class JSONArray
     /**
      * Append an object value. This increases the array's length by one.
      *
-     * @param value An object value. The value should be a Boolean, Double, Integer, JSONArray, JSONObject, Long, or
-     *              String, or the JSONObject.NULL object.
+     * @param value An object value. The value should be a Boolean, Double, Integer, JSONArray, JSONObject, JSONLiteral,
+     *              Long, or String, or the JSONObject.NULL singleton.
      * @return
      */
     public JSONArray put(Object value)
