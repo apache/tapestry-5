@@ -857,4 +857,14 @@ public class JSONObjectTest extends Assert
     {
         assertEquals(JSONObject.NULL.toString(), "null");
     }
+
+    @Test
+    public void json_literal()
+    {
+        JSONObject obj = new JSONObject();
+
+        obj.put("callback", new JSONLiteral("function(x) { $('bar').show(); }"));
+
+        assertEquals(obj.toString(), "{\"callback\":function(x) { $('bar').show(); }}");
+    }
 }
