@@ -120,9 +120,10 @@ public class LinkSubmit implements ClientElement
 
                            "id", clientId,
 
-                           MarkupConstants.ONCLICK, MarkupConstants.WAIT_FOR_PAGE,
-
                            "href", "#");
+
+            if (!request.isXHR())
+                writer.attributes(MarkupConstants.ONCLICK, MarkupConstants.WAIT_FOR_PAGE);
 
             resources.renderInformalParameters(writer);
         }
