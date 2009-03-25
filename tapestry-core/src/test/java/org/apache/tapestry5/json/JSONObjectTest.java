@@ -18,9 +18,9 @@ import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.math.BigDecimal;
 
 /**
  * Tests JSONObject, particularily in terms of parsing and writing JSON streams.
@@ -561,10 +561,8 @@ public class JSONObjectTest extends Assert
         }
         catch (RuntimeException ex)
         {
-            assertEquals(ex.getMessage(), "JSONObject properties may be one of Boolean, Number, String, " +
-                    "org.apache.tapestry5.json.JSONArray, org.apache.tapestry5.json.JSONObject, " +
-                    "org.apache.tapestry5.json.JSONObject$Null, " +
-                    "org.apache.tapestry5.json.JSONString. Type java.util.HashMap is not allowed.");
+            assertEquals(ex.getMessage(),
+                         "JSONObject properties may be one of Boolean, Number, String, org.apache.tapestry5.json.JSONArray, org.apache.tapestry5.json.JSONLiteral, org.apache.tapestry5.json.JSONObject, org.apache.tapestry5.json.JSONObject$Null, org.apache.tapestry5.json.JSONString. Type java.util.HashMap is not allowed.");
         }
     }
 
@@ -760,7 +758,8 @@ public class JSONObjectTest extends Assert
 
         try
         {
-            array.getJSONArray(1); unreachable();
+            array.getJSONArray(1);
+            unreachable();
         }
         catch (RuntimeException ex)
         {
@@ -782,7 +781,11 @@ public class JSONObjectTest extends Assert
     {
         JSONArray array = new JSONArray("fred", "barney", "wilma");
 
-        try { array.getJSONObject(1); unreachable(); }
+        try
+        {
+            array.getJSONObject(1);
+            unreachable();
+        }
         catch (RuntimeException ex)
         {
             assertEquals(ex.getMessage(), "JSONArray[1] is not a JSONObject.");
@@ -806,7 +809,8 @@ public class JSONObjectTest extends Assert
 
         try
         {
-            array.put(-1, "fred"); unreachable();
+            array.put(-1, "fred");
+            unreachable();
         }
         catch (RuntimeException ex)
         {
@@ -817,7 +821,7 @@ public class JSONObjectTest extends Assert
     @Test
     public void put_overrides_existing_value_in_array()
     {
-        JSONArray array  = new JSONArray("fred", "barney", "wilma");
+        JSONArray array = new JSONArray("fred", "barney", "wilma");
 
         array.put(2, "betty");
 
@@ -827,7 +831,7 @@ public class JSONObjectTest extends Assert
     @Test
     public void put_pads_short_array_with_nulls()
     {
-        JSONArray array  = new JSONArray("fred", "barney", "wilma");
+        JSONArray array = new JSONArray("fred", "barney", "wilma");
 
         array.put(4, "bambam");
 
