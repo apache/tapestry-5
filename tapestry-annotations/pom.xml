@@ -9,7 +9,7 @@
     <parent>
         <groupId>org.apache.tapestry</groupId>
         <artifactId>tapestry-project</artifactId>
-        <version>5.1.0.2-SNAPSHOT</version>
+        <version>5.1.0.2</version>
     </parent>
     <name>Tapestry Annotations</name>
     <description>
