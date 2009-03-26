@@ -333,9 +333,6 @@ Ajax Components and Mixins
    existing objects), Tapestry makes no attempt to validate the function names ... however, if the names
    are not valid, then the default show and highlight methods will be used.
 
-   Currently, the partial page content that is rendered may <<not>> use an Environmental services.  This is expected
-   to change soon.
-
 ** Coming Soon
 
   * Extending a Form with a Zone
@@ -373,6 +370,29 @@ Your own Ajax Components
   * A {{{../apidocs/org/apache/tapestry5/StreamResponse.html}StreamResponse}}, which will be sent as the response.
 
   []
+
+Client-side Logging
+
+ Tapestry uses a modified version of the {{{http://www.gscottolson.com/blackbirdjs/}Blackbird}} JavaScript
+ console. The Tapestry object includes three functions: debug, warn and error.
+
+ Each of these functions take a message and an optional pattern; if the pattern is provided,
+ the message is {{{http://prototypejs.org/api/string/interpolate}interpolated}} on the pattern. The final
+ message is displayed in the Blackbird console, which will make itself visible automatically.
+
+ In production mode, debug messages will be filtered out (they will not be visible until the user
+ presses F2 to display the console, and then clicks the greyed out icon for debug messages). In development
+ mode, debug messages are not filtered out.
+
+ Example usage:
+
+---
+
+ Tapestry.debug("Field id is #{id}, value is #{value}", field);
+
+ Tapestry.error("Server is not available.");
+
+--- 
 
 
 Handling Slow Page Loads

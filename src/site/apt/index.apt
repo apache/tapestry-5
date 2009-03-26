@@ -34,6 +34,8 @@ What is Apache Tapestry?
 
 New And Of Note
 
+  * Tapestry now uses the {{{http://www.gscottolson.com/blackbirdjs/}Blackbird}} JavaScript console.
+
   * Tapestry now automatically combines multiple JavaScript libraries into a single request.
 
   * An Ajax event requst may now return a

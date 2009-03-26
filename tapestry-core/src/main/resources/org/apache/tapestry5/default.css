@@ -424,52 +424,6 @@ UL.t-data-list LI {
     list-style-type: square;
 }
 
-/* The console is used to show debugging messages. */
-DIV.t-console {
-    position: fixed;
-    z-index: 1;
-    top: 2px;
-    left: 2px;
-}
-
-DIV.t-console DIV {
-    font-weight: bold;
-    padding: 0px 2px;
-}
-
-DIV.t-console DIV.t-err {
-    background-color: red;
-    color: white;
-}
-
-DIV.t-console DIV.t-warn {
-    background-color: yellow;
-    color: black;
-}
-
-DIV.t-console DIV.t-debug {
-    background-color: silver;
-    color: black;
-}
-
-DIV.t-ajax-console {
-    font-weight: bold;
-    font-size: large;
-    cursor: pointer;
-    width: 100%;
-    text-align: left;
-    position: fixed;
-    z-index: 0;
-    left: 0px;
-    top: 0px;
-}
-
-DIV.t-ajax-console DIV.t-err {
-    background-color: red;
-    padding: 5px 2px 10px 2px;
-    color: yellow;
-}
-
 DIV.t-loading {
     display: inline;
     width: auto;

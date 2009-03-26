@@ -49,7 +49,8 @@ public class JavascriptStackImpl implements JavascriptStack
 
                     // Uses functions defined by the prior three
 
-                    "org/apache/tapestry5/tapestry.js"
+                    "org/apache/tapestry5/tapestry.js",
+                    "${tapestry.blackbird}/blackbird.js"
             };
 
     public JavascriptStackImpl(SymbolSource symbolSource, AssetSource assetSource, ThreadLocale threadLocale)
