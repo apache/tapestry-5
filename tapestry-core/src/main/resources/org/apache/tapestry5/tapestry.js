@@ -1721,3 +1721,4 @@ Event.observe(window, "beforeunload", function()
 {
     Tapestry.windowUnloaded = true;
 });
+
