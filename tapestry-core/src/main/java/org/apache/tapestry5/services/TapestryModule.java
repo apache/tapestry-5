@@ -394,17 +394,22 @@ public final class TapestryModule
                                                             String scriptaculousPath,
 
                                                             @Symbol("tapestry.datepicker.path")
-                                                            String datepickerPath)
+                                                            String datepickerPath,
+
+                                                            @Symbol("tapestry.blackbird.path")
+                                                            String blackbirdPath)
     {
         // TAPESTRY-2159:  All the classpath assets are inside a version numbered folder (i.e., 5.0.12).
         // For scriptaculous, etc., this version is not the version of the library, but the version
-        // bundled with Tapestry.
+        // of Tapestry.
 
         configuration.add("tapestry/" + tapestryVersion, "org/apache/tapestry5");
 
         configuration.add("scriptaculous/" + tapestryVersion, scriptaculousPath);
 
         configuration.add("datepicker/" + tapestryVersion, datepickerPath);
+
+        configuration.add("blackbird/" + tapestryVersion, blackbirdPath);
 
         configuration.add("app/" + applicationVersion, appPackage.replace('.', '/'));
 
@@ -1626,6 +1631,9 @@ public final class TapestryModule
                                          @Path("${tapestry.spacer-image}")
                                          final Asset spacerImage,
 
+                                         @Path("${tapestry.blackbird.path}/blackbird.css")
+                                         final Asset blackbirdStylesheetAsset,
+
                                          @Symbol(SymbolConstants.OMIT_GENERATOR_META)
                                          final boolean omitGeneratorMeta,
 
@@ -1688,7 +1696,10 @@ public final class TapestryModule
         {
             public void renderMarkup(MarkupWriter writer, MarkupRenderer renderer)
             {
-                environment.peek(RenderSupport.class).addStylesheetLink(stylesheetAsset, null);
+                RenderSupport renderSupport = environment.peek(RenderSupport.class);
+
+                renderSupport.addStylesheetLink(stylesheetAsset, null);
+                renderSupport.addStylesheetLink(blackbirdStylesheetAsset, null);
 
                 renderer.renderMarkup(writer);
             }
@@ -2050,6 +2061,9 @@ public final class TapestryModule
 
         configuration.add("tapestry.datepicker.path", "org/apache/tapestry5/datepicker_106");
         configuration.add("tapestry.datepicker", "classpath:${tapestry.datepicker.path}");
+
+        configuration.add("tapestry.blackbird.path", "org/apache/tapestry5/blackbird_1_0");
+        configuration.add("tapestry.blackbird", "classpath:${tapestry.blackbird.path}");
 
         configuration.add(SymbolConstants.PERSISTENCE_STRATEGY, PersistenceConstants.SESSION);
 

@@ -2364,13 +2364,11 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         click("link=Failure on the server side");
 
+        waitForElementToAppear("blackbird");
+
         // Wait for the console to appear
 
-        waitForCondition("selenium.browserbot.getCurrentWindow().$$('DIV.t-ajax-console DIV.t-err').first()",
-                         PAGE_LOAD_TIMEOUT);
-
-        assertText("//DIV[@class='t-ajax-console']/DIV[@class='t-err']",
-                   "Communication with the server failed: Server-side exception.");
+        assertTextPresent("Communication with the server failed: Server-side exception.");
     }
 
     /**
@@ -2398,20 +2396,21 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
      */
     public void unhandled_client_events_throw_exceptions()
     {
-        start("Unhandled Event Demo");
-
-        click("link=ajax");
-
-        waitForCondition("selenium.browserbot.getCurrentWindow().$$('DIV.t-ajax-console DIV.t-err').first()",
-                         PAGE_LOAD_TIMEOUT);
-
-        assertText("//DIV[@class='t-ajax-console']/DIV[@class='t-err']",
-                   "Communication with the server failed: Request event 'action' (on component UnhandledEventDemo:ajax) was not handled; you must provide a matching event handler method in the component or in one of its containers.");
-
         start("Unhandled Event Demo", "traditional");
 
         assertTextPresent(
                 "Request event 'action' (on component UnhandledEventDemo:traditional) was not handled; you must provide a matching event handler method in the component or in one of its containers.");
+
+        start("Unhandled Event Demo");
+
+        click("link=ajax");
+
+        // Concerned about a timing issue here.
+
+        waitForElementToAppear("blackbird");
+
+        assertTextPresent(
+                "Communication with the server failed: Request event 'action' (on component UnhandledEventDemo:ajax) was not handled; you must provide a matching event handler method in the component or in one of its containers.");
     }
 
     /**
@@ -2855,7 +2854,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         String innerNow = getText("innernow");
 
         // If we're too fast that innernow doesn't change because its all within a single second.
-        
+
         sleep(1050);
 
         click(SUBMIT);
@@ -2871,7 +2870,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     @Test
     public void client_validation_for_numeric_fields_that_are_not_required()
     {
-       start("Form Zone Demo");
+        start("Form Zone Demo");
 
         type("longValue", "alpha");
 

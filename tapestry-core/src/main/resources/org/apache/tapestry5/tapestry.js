@@ -211,93 +211,27 @@ var Tapestry = {
     /** Formats and displays an error message on the console. */
     error : function (message, substitutions)
     {
-        Tapestry.updateConsole("t-err", message, substitutions);
+        Tapestry.invokeLogger(message, substitutions, Tapestry.Logging.error);
     },
 
     /** Formats and displays a warning on the console. */
     warn : function (message, substitutions)
     {
-        Tapestry.updateConsole("t-warn", message, substitutions);
+        Tapestry.invokeLogger(message, substitutions, Tapestry.Logging.warn);
     },
 
-    /** Formats and displays a debug message on the console, if Tapestry.DEBUG_ENABLED is true. */
+    /** Formats and displays a debug message on the console. */
     debug : function (message, substitutions)
     {
-        if (Tapestry.DEBUG_ENABLED)
-            Tapestry.updateConsole("t-debug", message, substitutions);
+        Tapestry.invokeLogger(message, substitutions, Tapestry.Logging.debug);
     },
 
-    /** Formats a message and updates the console. The console is virtual
-     *  when FireBug is not present, the messages float in the upper-left corner
-     *  of the page and fade out after a short period.  The background color identifies
-     *  the severity of the message (red for error, yellow for warnings, grey for debug).
-     *  Messages can be clicked, which removes the immediately.
-     *
-     * When FireBug is present, the error(), warn() and debug() methods do not invoke
-     * this; instead those functions are rewritten to write entries into the FireBug console.
-     *
-     * @param className to use for the div element in the console
-     * @param message message template
-     * @param substitutions interpolated into the message (if provided)
-     */
-    updateConsole : function (className, message, substitutions)
+    invokeLogger : function(message, substitutions, blackbirdFunction)
     {
         if (substitutions != undefined)
             message = message.interpolate(substitutions);
 
-        if (Tapestry.console == undefined)
-            Tapestry.console = Tapestry.createConsole("t-console");
-
-        Tapestry.writeToConsole(Tapestry.console, className, message);
-    },
-
-    createConsole : function(className)
-    {
-        var body = $(document.body);
-
-        var console = new Element("div", { 'class': className });
-
-        body.insert({ top: console });
-
-        return console;
-    },
-
-    writeToConsole : function(console, className, message, slideDown)
-    {
-        var div = new Element("div", { 'class': className }).update(message).hide();
-
-        console.insert({ top: div });
-
-        new Effect.Appear(div, { duration: .25 });
-
-        var effect = new Effect.Fade(div, { delay: Tapestry.CONSOLE_DURATION,
-            afterFinish: function()
-            {
-                div.remove();
-            }});
-
-        div.observe("click", function()
-        {
-            effect.cancel();
-            div.remove();
-        });
-    },
-
-    /** Adds a new entry to the Ajax console (which is never displayed using FireBug's console, since
-     * we want to present the message clearly to the user).
-     * @param className of the new entry to the console, typically "t-err"
-     * @param message to display in the console
-     * @param substitutions optional substitutions to interpolate into mesasge
-     */
-    updateAjaxConsole : function (className, message, substitutions)
-    {
-        if (Tapestry.ajaxConsole == undefined)
-            Tapestry.ajaxConsole = Tapestry.createConsole("t-ajax-console");
-
-        if (substitutions != undefined)
-            message = message.interpolate(substitutions);
-
-        Tapestry.writeToConsole(Tapestry.ajaxConsole, className, message);
+        blackbirdFunction.call(this, message);
     },
 
     /**
@@ -351,20 +285,9 @@ var Tapestry = {
     {
         var message = response.getHeader("X-Tapestry-ErrorMessage");
 
-        Tapestry.ajaxError("Communication with the server failed: " + message);
+        Tapestry.error("Communication with the server failed: " + message);
 
         Tapestry.debug(Tapestry.Messages.ajaxFailure + message, response);
-    },
-
-    /**
-     * Writes a message to the Ajax console.
-     *
-     * @param message error message to display
-     * @param substitutions optional substitutions to interpolate into message
-     */
-    ajaxError : function(message, substitutions)
-    {
-        Tapestry.updateAjaxConsole("t-err", message, substitutions);
     },
 
     /**
@@ -391,7 +314,7 @@ var Tapestry = {
 
                 if (! response.request.success())
                 {
-                    Tapestry.ajaxError(Tapestry.Messages.ajaxRequestUnsuccessful);
+                    Tapestry.error(Tapestry.Messages.ajaxRequestUnsuccessful);
                     return;
                 }
 
@@ -402,7 +325,7 @@ var Tapestry = {
                 }
                 catch (e)
                 {
-                    Tapestry.ajaxError(Tapestry.Messages.clientException + e);
+                    Tapestry.error(Tapestry.Messages.clientException + e);
                 }
             },
             onException: Tapestry.ajaxFailureHandler,
@@ -436,7 +359,7 @@ var Tapestry = {
 
         if (!zoneElement)
         {
-            Tapestry.ajaxError(Tapestry.Messages.missingZone, { id:zoneElement});
+            Tapestry.error(Tapestry.Messages.missingZone, { id:zoneElement});
             return null;
         }
 
@@ -444,7 +367,7 @@ var Tapestry = {
 
         if (!manager)
         {
-            Tapestry.ajaxError(Tapestry.Messages.noZoneManager, element);
+            Tapestry.error(Tapestry.Messages.noZoneManager, element);
             return null;
         }
 
@@ -923,26 +846,6 @@ Tapestry.Initializer = {
 
     }
 };
-
-// When FireBug is available, rewrite the error(), warn() and debug()
-// methods to make use of it.
-if (window.console && ! Prototype.Browser.WebKit)
-{
-    var createlog = function (log)
-    {
-        return function(message, substitutions)
-        {
-            if (substitutions != undefined)
-                message = message.interpolate(substitutions);
-
-            log.call(this, message);
-        };
-    };
-
-    Tapestry.error = createlog(window.console.error);
-    Tapestry.warn = createlog(window.console.warn);
-    Tapestry.debug = createlog(window.console.debug);
-}
 
 // Collection of field based functions related to validation. Each
 // function takes a field, a message and an optional constraint value.
@@ -1791,7 +1694,7 @@ Tapestry.ScriptManager = {
  * <p>This mechanism acts as a namespace, and so helps prevent name
  * conflicts that would occur if properties were stored directly on DOM elements, and makes debugging a bit easier
  * (the Tapestry-specific properties are all in one place!).
- * For the moment, added methods are stored directly on the object, and are not prefixed in any way, valuing
+ * For the moment, added methods are stored directly on the object, and are not prefixed in any way, valueing
  * readability over preventing naming conflicts.
  *
  * @param element an element instance or element id
