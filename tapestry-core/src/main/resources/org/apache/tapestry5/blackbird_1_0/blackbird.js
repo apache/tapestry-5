@@ -30,37 +30,37 @@
 
     function constructUI()
     {
-        bbird = new Element("div", { id: 't-console', title: 'F2 toggles / Shift-F2 moves' }).hide();
-        var header = new Element("div", { class: 'header' });
-        var left = new Element("div", { class : 'left' });
+        bbird = new Element("div", { 'id': 't-console', 'title': 'F2 toggles / Shift-F2 moves' }).hide();
+        var header = new Element("div", { 'class': 'header' });
+        var left = new Element("div", { 'class' : 'left' });
 
-        left.insert(filters = new Element("div", { class: 'filters' }));
+        left.insert(filters = new Element("div", { 'class': 'filters' }));
 
         for (var type in messageTypes)
         {
             var className = messageTypes[type] ? type : type + "Disabled";
 
-            filters.insert(new Element("span", {class: className, title: "filter by " + type, type: type }));
+            filters.insert(new Element("span", {'class': className, 'title': "filter by " + type, 'type': type }));
         }
 
-        var right = new Element("div", { class: 'right'});
+        var right = new Element("div", { 'class': 'right'});
 
-        right.insert(controls = new Element("div", { class: 'controls'}));
+        right.insert(controls = new Element("div", { 'class': 'controls'}));
 
-        controls.insert(size = new Element("span", { title: 'contract', op: 'resize' }));
+        controls.insert(size = new Element("span", { 'title': 'contract', 'op': 'resize' }));
 
-        controls.insert(new Element("span", { class: 'clear', title: 'clear', op: 'clear' }));
-        controls.insert(new Element("span", { class: 'close', title: 'close', op: 'close' }));
+        controls.insert(new Element("span", { 'class': 'clear', 'title': 'clear', 'op': 'clear' }));
+        controls.insert(new Element("span", { 'class': 'close', 'title': 'close', 'op': 'close' }));
 
         header.insert(left);
         header.insert(right);
 
         bbird.insert(header);
 
-        var main = new Element("div", { class: 'main' });
-        main.insert(new Element("div", {class:'left'}));
+        var main = new Element("div", { 'class': 'main' });
+        main.insert(new Element("div", {'class':'left'}));
 
-        var mainBody = new Element("div", { class: 'mainBody' });
+        var mainBody = new Element("div", { 'class': 'mainBody' });
 
         mainBody.insert(outputList = new Element("ol"));
 
@@ -72,23 +72,23 @@
         cache = undefined;
 
         main.insert(mainBody);
-        main.insert(new Element("div", { class: 'right' }));
+        main.insert(new Element("div", { 'class': 'right' }));
 
         bbird.insert(main);
 
-        var footer = new Element("div", { class: 'footer'});
+        var footer = new Element("div", { 'class': 'footer'});
 
-        footer.insert(left = new Element("div", { class: 'left' }));
+        footer.insert(left = new Element("div", { 'class': 'left' }));
 
         left.insert();
 
         var label = new Element("label")
-        label.insert(checkbox = new Element("input", { type: 'checkbox' }));
+        label.insert(checkbox = new Element("input", { 'type': 'checkbox' }));
         label.insert("Visible on page load");
 
         left.insert(label);
 
-        footer.insert(new Element("div", { class: 'right' }));
+        footer.insert(new Element("div", { 'class': 'right' }));
 
         bbird.insert(footer);
 
@@ -117,9 +117,9 @@
 
         content = ( content.constructor == Array ) ? content.join('') : content;
 
-        var newMsg = new Element("li", { class: type});
+        var newMsg = new Element("li", { 'class': type});
 
-        newMsg.insert(new Element("span", { class: 'icon'}));
+        newMsg.insert(new Element("span", { 'class': 'icon'}));
         newMsg.insert(content);
 
         if (outputList)
