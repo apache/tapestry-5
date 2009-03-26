@@ -25,6 +25,100 @@
         </p>
 
 
+        <h1>Release Notes - Tapestry 5 - Version 5.1.0.2</h1>
+
+        <h2>Bug
+        </h2>
+        <ul>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-39'>TAP5-39</a>] - Add JSON support for literals
+                (often, inline function definitions) that are used to configure some client-side objects (even if they
+                aren't truly JSON)
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-573'>TAP5-573</a>] - NullPointerException during
+                AJAX form submit
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-578'>TAP5-578</a>] - If a component class is
+                abstract, trying to instantiate it (by including it in a template) yields an inscrutable
+                InstantiationError
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-590'>TAP5-590</a>] - A JavaScript error for
+                non-required fields will force Ajax form submits to be handled as a full-page request instead
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-593'>TAP5-593</a>] - Calling
+                ApplicationStateManager.exists() will throw an exception when the session has been invalidated
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-598'>TAP5-598</a>] - Hard-coded messages inside
+                tapestry.js are not localized
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-600'>TAP5-600</a>] - The new Blackbird console
+                makes Safari JavaScript completely non-functional
+            </li>
+        </ul>
+
+        <h2>Improvement
+        </h2>
+        <ul>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-265'>TAP5-265</a>] - Add a Hidden component, used
+                to synchronize a value between the server and the client
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-398'>TAP5-398</a>] - Tapestry should check that the
+                service scope is consistent with the service (throwing an exception if the scope requires a service
+                interface and the service doesn't provide one)
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-566'>TAP5-566</a>] - TextField documentation should
+                explain why the required value parameter is not bound in the example
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-581'>TAP5-581</a>] - Quickstart archetype should
+                include testng.xml and webdefault.xml
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-584'>TAP5-584</a>] - Omit generator meta (from head
+                element) when root element is not html
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-586'>TAP5-586</a>] - The JavaScript waitForPage()
+                handler does not need to be added when rendering a partial Ajax response
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-589'>TAP5-589</a>] - Add a method to DOM Element
+                class to allow the collection of Attributes to be obtained
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-591'>TAP5-591</a>] - FAQ: Creating a page render
+                Link from a service
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-605'>TAP5-605</a>] - There should be a simple way
+                to override automatic JavaScript libraries and Stylesheets
+            </li>
+        </ul>
+
+        <h2>New Feature
+        </h2>
+        <ul>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-288'>TAP5-288</a>] - Replace JavaScript client-side
+                logging with Blackbird
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-549'>TAP5-549</a>] - JavaScript libraries should be
+                combined into a single request
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-557'>TAP5-557</a>] - Provide support for URL
+                rewriting
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-562'>TAP5-562</a>] - tapestry-hibernate should
+                provide a built-in status page to show basic Hibernate statistics inlcuding cache hits, etc.
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-594'>TAP5-594</a>] - Add simple
+                PageRenderLinkSource service to allow services to create Links to pages
+            </li>
+        </ul>
+
+        <h2>Task
+        </h2>
+        <ul>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-510'>TAP5-510</a>] - Improve code coverage of JSON
+                unit tests
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-575'>TAP5-575</a>] - Add svn:eol-style=native to
+                source files
+            </li>
+        </ul>
+
         <h1>Release Notes - Tapestry 5 - Version 5.1.0.1</h1>
 
         <h2>Bug
