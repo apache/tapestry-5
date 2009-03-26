@@ -18,8 +18,7 @@ import org.apache.tapestry5.*;
 import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.internal.bindings.InvariantBinding;
 import org.apache.tapestry5.ioc.Messages;
-import static org.apache.tapestry5.ioc.internal.util.Defense.notBlank;
-import static org.apache.tapestry5.ioc.internal.util.Defense.notNull;
+import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.ioc.services.PropertyAccess;
 import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.services.*;
@@ -53,7 +52,6 @@ public class ComponentDefaultProviderImpl implements ComponentDefaultProvider
         }
     };
 
-
     public ComponentDefaultProviderImpl(PropertyAccess propertyAccess, BindingSource bindingSource,
                                         ValueEncoderSource valueEncoderSource,
                                         FieldTranslatorSource fieldTranslatorSource,
@@ -68,7 +66,7 @@ public class ComponentDefaultProviderImpl implements ComponentDefaultProvider
 
     public String defaultLabel(ComponentResources resources)
     {
-        notNull(resources, "resources");
+        Defense.notNull(resources, "resources");
 
         String componentId = resources.getId();
         String key = componentId + "-label";
@@ -82,8 +80,8 @@ public class ComponentDefaultProviderImpl implements ComponentDefaultProvider
 
     public Binding defaultBinding(String parameterName, ComponentResources resources)
     {
-        notBlank(parameterName, "parameterName");
-        notNull(resources, "resources");
+        Defense.notBlank(parameterName, "parameterName");
+        Defense.notNull(resources, "resources");
 
         String componentId = resources.getId();
 
@@ -105,11 +103,11 @@ public class ComponentDefaultProviderImpl implements ComponentDefaultProvider
                 componentId);
     }
 
-    @SuppressWarnings({"unchecked"})
+    @SuppressWarnings({ "unchecked" })
     public ValueEncoder defaultValueEncoder(String parameterName, ComponentResources resources)
     {
-        notBlank(parameterName, "parameterName");
-        notNull(resources, "resources");
+        Defense.notBlank(parameterName, "parameterName");
+        Defense.notNull(resources, "resources");
 
         Class parameterType = resources.getBoundType(parameterName);
 

@@ -1,0 +1,19 @@
+<t:border xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd"
+          xmlns:p="tapestry:parameter">
+    <h1>Hidden Demo</h1>
+
+    <p>
+        <t:pagelink page="hiddendemo" context="12345">setup</t:pagelink>
+    </p>
+
+    <t:if test="stored">
+
+        <t:form t:id="form">
+            <t:hidden t:id="stored"/>
+            <input type="submit" value="Submit"/>
+        </t:form>
+
+    </t:if>
+
+
+</t:border>

@@ -2895,4 +2895,14 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         assertText("outputvalue", "37");
     }
+
+    @Test
+    public void hidden_field()
+    {
+        start("Hidden Demo", "setup");
+
+        clickAndWait(SUBMIT);
+
+        assertText("stored", "12345");
+    }
 }
