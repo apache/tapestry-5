@@ -15,7 +15,7 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.Asset;
-import org.apache.tapestry5.services.JavascriptStack;
+import org.apache.tapestry5.services.ClientInfrastructure;
 
 import java.util.Collections;
 import java.util.List;
@@ -26,9 +26,14 @@ import java.util.List;
  *
  * @since 5.1.0.2
  */
-public class EmptyJavascriptStack implements JavascriptStack
+public class EmptyClientInfrastructure implements ClientInfrastructure
 {
-    public List<Asset> getStack()
+    public List<Asset> getJavascriptStack()
+    {
+        return Collections.emptyList();
+    }
+
+    public List<Asset> getStylesheetStack()
     {
         return Collections.emptyList();
     }

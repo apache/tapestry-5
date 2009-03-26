@@ -19,8 +19,9 @@ import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.services.SymbolSource;
 import org.apache.tapestry5.ioc.services.ThreadLocale;
 import org.apache.tapestry5.services.AssetSource;
-import org.apache.tapestry5.services.JavascriptStack;
+import org.apache.tapestry5.services.ClientInfrastructure;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
@@ -29,7 +30,7 @@ import java.util.Locale;
  *
  * @since 5.1.0.2
  */
-public class JavascriptStackImpl implements JavascriptStack
+public class ClientInfrastructureImpl implements ClientInfrastructure
 {
     private final SymbolSource symbolSource;
 
@@ -37,9 +38,9 @@ public class JavascriptStackImpl implements JavascriptStack
 
     private final ThreadLocale threadLocale;
 
-    private final List<Asset> coreResources = CollectionFactory.newList();
+    private final List<Asset> javascriptStack, stylesheetStack;
 
-    private static final String[] CORE_RESOURCES = new String[]
+    private static final String[] CORE_JAVASCRIPT = new String[]
             {
                     // Core scripts added to any page that uses scripting
 
@@ -53,16 +54,32 @@ public class JavascriptStackImpl implements JavascriptStack
                     "${tapestry.blackbird}/blackbird.js"
             };
 
-    public JavascriptStackImpl(SymbolSource symbolSource, AssetSource assetSource, ThreadLocale threadLocale)
+    private static final String[] CORE_STYLESHEET = new String[]
+            {
+                    "${tapestry.default-stylesheet}",
+                    "${tapestry.blackbird}/blackbird.css"
+            };
+
+    public ClientInfrastructureImpl(SymbolSource symbolSource, AssetSource assetSource, ThreadLocale threadLocale)
     {
         this.symbolSource = symbolSource;
         this.assetSource = assetSource;
         this.threadLocale = threadLocale;
 
-        for (String path : CORE_RESOURCES)
+        javascriptStack = convertToAssets(CORE_JAVASCRIPT);
+        stylesheetStack = convertToAssets(CORE_STYLESHEET);
+    }
+
+    private List<Asset> convertToAssets(String[] paths)
+    {
+        List<Asset> assets = CollectionFactory.newList();
+
+        for (String path : paths)
         {
-            coreResources.add(expand(path, null));
+            assets.add(expand(path, null));
         }
+
+        return Collections.unmodifiableList(assets);
     }
 
     private Asset expand(String path, Locale locale)
@@ -72,9 +89,9 @@ public class JavascriptStackImpl implements JavascriptStack
         return assetSource.getAsset(null, expanded, locale);
     }
 
-    public List<Asset> getStack()
+    public List<Asset> getJavascriptStack()
     {
-        List<Asset> result = CollectionFactory.newList(coreResources);
+        List<Asset> result = CollectionFactory.newList(javascriptStack);
 
         Asset messages = assetSource.getAsset(null, "org/apache/tapestry5/tapestry-messages.js",
                                               threadLocale.getLocale());
@@ -82,5 +99,10 @@ public class JavascriptStackImpl implements JavascriptStack
         result.add(messages);
 
         return result;
+    }
+
+    public List<Asset> getStylesheetStack()
+    {
+        return stylesheetStack;
     }
 }

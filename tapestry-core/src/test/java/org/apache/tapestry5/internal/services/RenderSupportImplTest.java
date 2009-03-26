@@ -20,7 +20,7 @@ import org.apache.tapestry5.RenderSupport;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.ioc.services.SymbolSource;
 import org.apache.tapestry5.services.AssetSource;
-import org.apache.tapestry5.services.JavascriptStack;
+import org.apache.tapestry5.services.ClientInfrastructure;
 import org.testng.annotations.Test;
 
 import java.util.Arrays;
@@ -28,6 +28,8 @@ import java.util.Arrays;
 public class RenderSupportImplTest extends InternalBaseTestCase
 {
     private static final String ASSET_URL = "/assets/foo/bar.pdf";
+
+    private static final EmptyClientInfrastructure EMPTY_CLIENT_INFRASTRUCTURE = new EmptyClientInfrastructure();
 
     @Test
     public void add_script_link_by_asset()
@@ -40,7 +42,7 @@ public class RenderSupportImplTest extends InternalBaseTestCase
 
         replay();
 
-        RenderSupport support = new RenderSupportImpl(linker, null, null, new EmptyJavascriptStack());
+        RenderSupport support = new RenderSupportImpl(linker, null, null, EMPTY_CLIENT_INFRASTRUCTURE);
 
         support.addScriptLink(asset);
 
@@ -56,7 +58,7 @@ public class RenderSupportImplTest extends InternalBaseTestCase
 
         replay();
 
-        RenderSupport support = new RenderSupportImpl(linker, null, null, new EmptyJavascriptStack());
+        RenderSupport support = new RenderSupportImpl(linker, null, null, EMPTY_CLIENT_INFRASTRUCTURE);
 
         support.addScriptLink(ASSET_URL);
 
@@ -81,7 +83,7 @@ public class RenderSupportImplTest extends InternalBaseTestCase
         AssetSource assetSource = mockAssetSource();
         SymbolSource symbolSource = mockSymbolSource();
 
-        JavascriptStack stack = mockJavascriptStack(coreAsset1, coreAsset2);
+        ClientInfrastructure infrastructure = mockJavascriptStack(coreAsset1, coreAsset2);
 
         train_toClientURL(coreAsset1, coreURL1);
         linker.addScriptLink(coreURL1);
@@ -94,7 +96,7 @@ public class RenderSupportImplTest extends InternalBaseTestCase
 
         replay();
 
-        RenderSupport support = new RenderSupportImpl(linker, symbolSource, assetSource, stack);
+        RenderSupport support = new RenderSupportImpl(linker, symbolSource, assetSource, infrastructure);
 
         support.addScriptLink(asset);
 
@@ -110,14 +112,14 @@ public class RenderSupportImplTest extends InternalBaseTestCase
         SymbolSource symbolSource = mockSymbolSource();
         AssetSource assetSource = mockAssetSource();
         Asset coreAsset = mockAsset(coreScript);
-        JavascriptStack stack = mockJavascriptStack(coreAsset);
+        ClientInfrastructure infrastructure = mockJavascriptStack(coreAsset);
 
         linker.addScriptLink(coreScript);
         linker.addScript("Tapestry.Foo(\"bar\");");
 
         replay();
 
-        RenderSupport support = new RenderSupportImpl(linker, symbolSource, assetSource, stack);
+        RenderSupport support = new RenderSupportImpl(linker, symbolSource, assetSource, infrastructure);
 
         support.addScript("Tapestry.Foo(\"%s\");", "bar");
 
@@ -135,7 +137,7 @@ public class RenderSupportImplTest extends InternalBaseTestCase
         AssetSource assetSource = mockAssetSource();
         Asset coreAsset = mockAsset(coreScript);
 
-        JavascriptStack stack = mockJavascriptStack(coreAsset);
+        ClientInfrastructure infrastructure = mockJavascriptStack(coreAsset);
 
         linker.addScriptLink(coreScript);
 
@@ -145,20 +147,20 @@ public class RenderSupportImplTest extends InternalBaseTestCase
 
         replay();
 
-        RenderSupport support = new RenderSupportImpl(linker, symbolSource, assetSource, stack);
+        RenderSupport support = new RenderSupportImpl(linker, symbolSource, assetSource, infrastructure);
 
         support.addScript(script);
 
         verify();
     }
 
-    protected final JavascriptStack mockJavascriptStack(Asset... asset)
+    protected final ClientInfrastructure mockJavascriptStack(Asset... asset)
     {
-        JavascriptStack stack = newMock(JavascriptStack.class);
+        ClientInfrastructure infrastructure = newMock(ClientInfrastructure.class);
 
-        expect(stack.getStack()).andReturn(Arrays.asList(asset)).atLeastOnce();
+        expect(infrastructure.getJavascriptStack()).andReturn(Arrays.asList(asset)).atLeastOnce();
 
-        return stack;
+        return infrastructure;
     }
 
     protected final Asset mockAsset(String assetURL)
@@ -190,7 +192,7 @@ public class RenderSupportImplTest extends InternalBaseTestCase
 
         replay();
 
-        RenderSupport support = new RenderSupportImpl(linker, source, assetSource, new EmptyJavascriptStack());
+        RenderSupport support = new RenderSupportImpl(linker, source, assetSource, EMPTY_CLIENT_INFRASTRUCTURE);
 
         support.addClasspathScriptLink(path);
 
@@ -209,7 +211,7 @@ public class RenderSupportImplTest extends InternalBaseTestCase
 
         replay();
 
-        RenderSupport support = new RenderSupportImpl(linker, null, null, new EmptyJavascriptStack());
+        RenderSupport support = new RenderSupportImpl(linker, null, null, EMPTY_CLIENT_INFRASTRUCTURE);
 
         support.addStylesheetLink(asset, media);
 
@@ -226,7 +228,7 @@ public class RenderSupportImplTest extends InternalBaseTestCase
 
         replay();
 
-        RenderSupport support = new RenderSupportImpl(linker, null, null, new EmptyJavascriptStack());
+        RenderSupport support = new RenderSupportImpl(linker, null, null, EMPTY_CLIENT_INFRASTRUCTURE);
 
         support.addStylesheetLink(ASSET_URL, media);
 
@@ -242,7 +244,7 @@ public class RenderSupportImplTest extends InternalBaseTestCase
 
         replay();
 
-        RenderSupportImpl support = new RenderSupportImpl(linker, null, null, new EmptyJavascriptStack());
+        RenderSupportImpl support = new RenderSupportImpl(linker, null, null, EMPTY_CLIENT_INFRASTRUCTURE);
 
         support.addInit("foo", "fred");
         support.addInit("foo", "barney");
@@ -261,7 +263,7 @@ public class RenderSupportImplTest extends InternalBaseTestCase
 
         replay();
 
-        RenderSupportImpl support = new RenderSupportImpl(linker, null, null, new EmptyJavascriptStack());
+        RenderSupportImpl support = new RenderSupportImpl(linker, null, null, EMPTY_CLIENT_INFRASTRUCTURE);
 
         support.addInit("foo", "fred", "barney");
 
@@ -279,7 +281,7 @@ public class RenderSupportImplTest extends InternalBaseTestCase
 
         replay();
 
-        RenderSupportImpl support = new RenderSupportImpl(linker, null, null, new EmptyJavascriptStack());
+        RenderSupportImpl support = new RenderSupportImpl(linker, null, null, EMPTY_CLIENT_INFRASTRUCTURE);
 
         support.autofocus(FieldFocusPriority.OPTIONAL, "foo");
 
@@ -297,7 +299,7 @@ public class RenderSupportImplTest extends InternalBaseTestCase
 
         replay();
 
-        RenderSupportImpl support = new RenderSupportImpl(linker, null, null, new EmptyJavascriptStack());
+        RenderSupportImpl support = new RenderSupportImpl(linker, null, null, EMPTY_CLIENT_INFRASTRUCTURE);
 
         support.autofocus(FieldFocusPriority.OPTIONAL, "foo");
         support.autofocus(FieldFocusPriority.OPTIONAL, "bar");
@@ -316,7 +318,7 @@ public class RenderSupportImplTest extends InternalBaseTestCase
 
         replay();
 
-        RenderSupportImpl support = new RenderSupportImpl(linker, null, null, new EmptyJavascriptStack());
+        RenderSupportImpl support = new RenderSupportImpl(linker, null, null, EMPTY_CLIENT_INFRASTRUCTURE);
 
         support.autofocus(FieldFocusPriority.OPTIONAL, "foo");
         support.autofocus(FieldFocusPriority.REQUIRED, "bar");

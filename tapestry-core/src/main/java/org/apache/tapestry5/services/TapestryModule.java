@@ -306,7 +306,7 @@ public final class TapestryModule
         binder.bind(ClientDataEncoder.class, ClientDataEncoderImpl.class);
         binder.bind(ComponentEventLinkEncoder.class, ComponentEventLinkEncoderImpl.class);
         binder.bind(PageRenderLinkSource.class, PageRenderLinkSourceImpl.class);
-        binder.bind(JavascriptStack.class, JavascriptStackImpl.class);
+        binder.bind(ClientInfrastructure.class, ClientInfrastructureImpl.class);
     }
 
     // ========================================================================
@@ -1625,14 +1625,8 @@ public final class TapestryModule
                                          @Symbol(SymbolConstants.PRODUCTION_MODE)
                                          final boolean productionMode,
 
-                                         @Path("${tapestry.default-stylesheet}")
-                                         final Asset stylesheetAsset,
-
                                          @Path("${tapestry.spacer-image}")
                                          final Asset spacerImage,
-
-                                         @Path("${tapestry.blackbird.path}/blackbird.css")
-                                         final Asset blackbirdStylesheetAsset,
 
                                          @Symbol(SymbolConstants.OMIT_GENERATOR_META)
                                          final boolean omitGeneratorMeta,
@@ -1651,7 +1645,7 @@ public final class TapestryModule
 
                                          final ClientDataEncoder clientDataEncoder,
 
-                                         final JavascriptStack javascriptStack)
+                                         final ClientInfrastructure clientInfrastructure)
     {
         MarkupRendererFilter documentLinker = new MarkupRendererFilter()
         {
@@ -1680,7 +1674,8 @@ public final class TapestryModule
             {
                 DocumentLinker linker = environment.peekRequired(DocumentLinker.class);
 
-                RenderSupportImpl support = new RenderSupportImpl(linker, symbolSource, assetSource, javascriptStack);
+                RenderSupportImpl support = new RenderSupportImpl(linker, symbolSource, assetSource,
+                                                                  clientInfrastructure);
 
                 environment.push(RenderSupport.class, support);
 
@@ -1698,8 +1693,10 @@ public final class TapestryModule
             {
                 RenderSupport renderSupport = environment.peek(RenderSupport.class);
 
-                renderSupport.addStylesheetLink(stylesheetAsset, null);
-                renderSupport.addStylesheetLink(blackbirdStylesheetAsset, null);
+                for (Asset stylesheet : clientInfrastructure.getStylesheetStack())
+                {
+                    renderSupport.addStylesheetLink(stylesheet, null);
+                }
 
                 renderer.renderMarkup(writer);
             }
@@ -1818,7 +1815,7 @@ public final class TapestryModule
                 DocumentLinker linker = environment.peekRequired(DocumentLinker.class);
 
                 RenderSupportImpl support = new RenderSupportImpl(linker, symbolSource, assetSource,
-                                                                  idAllocator, new EmptyJavascriptStack());
+                                                                  idAllocator, new EmptyClientInfrastructure());
 
                 environment.push(RenderSupport.class, support);
 
@@ -2002,9 +1999,6 @@ public final class TapestryModule
 
     /**
      * Contributes factory defaults that may be overridden.
-     *
-     * @see TapestryModule#contributeClasspathAssetAliasManager(org.apache.tapestry5.ioc.MappedConfiguration, String,
-     *      String, String)
      */
     public static void contributeFactoryDefaults(MappedConfiguration<String, String> configuration)
     {

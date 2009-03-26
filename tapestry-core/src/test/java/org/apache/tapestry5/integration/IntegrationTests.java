@@ -2286,10 +2286,19 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     private void waitForElementToAppear(String elementId)
     {
 
-        String condition = String.format("selenium.browserbot.getCurrentWindow().document.getElementById('%s')",
+        String condition = String.format("selenium.browserbot.getCurrentWindow().$(\"%s\")",
                                          elementId);
 
         waitForCondition(condition, PAGE_LOAD_TIMEOUT);
+    }
+
+    private void waitForCSSSelectedElementToAppear(String cssRule)
+    {
+        String condition = String.format("selenium.browserbot.getCurrentWindow().$$(\"%s\").size() > 0",
+                                         cssRule);
+
+        waitForCondition(condition, PAGE_LOAD_TIMEOUT);
+
     }
 
     /**
@@ -2364,9 +2373,9 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         click("link=Failure on the server side");
 
-        waitForElementToAppear("blackbird");
-
         // Wait for the console to appear
+
+        waitForCSSSelectedElementToAppear("#t-console li");
 
         assertTextPresent("Communication with the server failed: Server-side exception.");
     }
@@ -2405,9 +2414,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         click("link=ajax");
 
-        // Concerned about a timing issue here.
-
-        waitForElementToAppear("blackbird");
+        waitForCSSSelectedElementToAppear("#t-console li");
 
         assertTextPresent(
                 "Communication with the server failed: Request event 'action' (on component UnhandledEventDemo:ajax) was not handled; you must provide a matching event handler method in the component or in one of its containers.");

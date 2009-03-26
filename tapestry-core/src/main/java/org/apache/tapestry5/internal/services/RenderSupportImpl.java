@@ -24,7 +24,7 @@ import org.apache.tapestry5.ioc.services.SymbolSource;
 import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.AssetSource;
-import org.apache.tapestry5.services.JavascriptStack;
+import org.apache.tapestry5.services.ClientInfrastructure;
 
 public class RenderSupportImpl implements RenderSupport
 {
@@ -36,7 +36,7 @@ public class RenderSupportImpl implements RenderSupport
 
     private final AssetSource assetSource;
 
-    private final JavascriptStack javascriptStack;
+    private final ClientInfrastructure clientInfrastructure;
 
     private boolean stackAssetsAdded;
 
@@ -56,9 +56,9 @@ public class RenderSupportImpl implements RenderSupport
      * @param javascriptStack
      */
     public RenderSupportImpl(DocumentLinker linker, SymbolSource symbolSource,
-                             AssetSource assetSource, JavascriptStack javascriptStack)
+                             AssetSource assetSource, ClientInfrastructure clientInfrastructure)
     {
-        this(linker, symbolSource, assetSource, new IdAllocator(), javascriptStack);
+        this(linker, symbolSource, assetSource, new IdAllocator(), clientInfrastructure);
     }
 
     /**
@@ -73,14 +73,15 @@ public class RenderSupportImpl implements RenderSupport
      */
 
     public RenderSupportImpl(DocumentLinker linker, SymbolSource symbolSource,
-                             AssetSource assetSource, IdAllocator idAllocator, JavascriptStack javascriptStack)
+                             AssetSource assetSource, IdAllocator idAllocator,
+                             ClientInfrastructure clientInfrastructure)
 
     {
         this.linker = linker;
         this.symbolSource = symbolSource;
         this.assetSource = assetSource;
         this.idAllocator = idAllocator;
-        this.javascriptStack = javascriptStack;
+        this.clientInfrastructure = clientInfrastructure;
     }
 
     public String allocateClientId(String id)
@@ -237,7 +238,7 @@ public class RenderSupportImpl implements RenderSupport
     {
         if (!stackAssetsAdded)
         {
-            for (Asset script : javascriptStack.getStack())
+            for (Asset script : clientInfrastructure.getJavascriptStack())
             {
                 linker.addScriptLink(script.toClientURL());
             }
