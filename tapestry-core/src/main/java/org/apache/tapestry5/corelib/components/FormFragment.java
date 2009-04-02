@@ -129,9 +129,7 @@ public class FormFragment implements ClientElement
     {
         FormSupport formSupport = environment.peekRequired(FormSupport.class);
 
-        String id = resources.getId();
-
-        clientId = resources.isBound("id") ? idParameter : renderSupport.allocateClientId(id);
+        clientId = resources.isBound("id") ? idParameter : renderSupport.allocateClientId(resources);
 
         hiddenFieldPositioner = new HiddenFieldPositioner(writer, rules);
 
