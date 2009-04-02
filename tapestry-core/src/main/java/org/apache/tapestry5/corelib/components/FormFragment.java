@@ -75,6 +75,14 @@ public class FormFragment implements ClientElement
     @Parameter(defaultPrefix = BindingConstants.LITERAL)
     private String element;
 
+    /**
+     * If bound, then the id attribute of the rendered element will be this exact value. If not bound, then a unique id
+     * is generated for the element.
+     */
+    @Parameter(name = "id", defaultPrefix = BindingConstants.LITERAL)
+    private String idParameter;
+
+
     @Inject
     private Environment environment;
 
@@ -123,7 +131,7 @@ public class FormFragment implements ClientElement
 
         String id = resources.getId();
 
-        clientId = renderSupport.allocateClientId(id);
+        clientId = resources.isBound("id") ? idParameter : renderSupport.allocateClientId(id);
 
         hiddenFieldPositioner = new HiddenFieldPositioner(writer, rules);
 
