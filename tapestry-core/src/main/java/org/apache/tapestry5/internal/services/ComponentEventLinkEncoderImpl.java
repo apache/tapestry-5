@@ -120,11 +120,22 @@ public class ComponentEventLinkEncoderImpl implements ComponentEventLinkEncoder
         encodeLocale(builder);
 
         builder.append(SLASH);
-        builder.append(activePageName.toLowerCase());
+        builder.append(encodePageName(activePageName));
 
         appendContext(parameters.getActivationContext(), builder);
 
         return new LinkImpl(builder.toString(), baseURL == null, false, response, optimizer);
+    }
+
+    private String encodePageName(String pageName)
+    {
+        if (pageName.equalsIgnoreCase("index")) return "";
+
+        String encoded = pageName.toLowerCase();
+
+        if (!encoded.endsWith("/index")) return encoded;
+
+        return encoded.substring(0, encoded.length() - 6);
     }
 
     private void encodeLocale(StringBuilder builder)
@@ -164,7 +175,7 @@ public class ComponentEventLinkEncoderImpl implements ComponentEventLinkEncoder
         encodeLocale(builder);
 
         builder.append(SLASH);
-        builder.append(activePageName.toLowerCase());
+        builder.append(encodePageName(activePageName));
 
         if (hasComponentId)
         {
@@ -175,7 +186,7 @@ public class ComponentEventLinkEncoderImpl implements ComponentEventLinkEncoder
         if (!hasComponentId || !eventType.equals(EventConstants.ACTION))
         {
             builder.append(":");
-            builder.append(eventType.toLowerCase());
+            builder.append(encodePageName(eventType));
         }
 
         appendContext(parameters.getEventContext(), builder);
@@ -198,7 +209,7 @@ public class ComponentEventLinkEncoderImpl implements ComponentEventLinkEncoder
         // need to differentiate that.
 
         if (!containingPageName.equalsIgnoreCase(activePageName))
-            result.addParameter(InternalConstants.CONTAINER_PAGE_NAME, containingPageName.toLowerCase());
+            result.addParameter(InternalConstants.CONTAINER_PAGE_NAME, encodePageName(containingPageName));
 
         return result;
     }

@@ -56,4 +56,66 @@ public class ComponentEventLinkEncoderImplTest extends InternalBaseTestCase
 
         verify();
     }
+
+    @Test
+    public void index_stripped_off()
+    {
+        RequestSecurityManager manager = mockRequestSecurityManager();
+        Request request = mockRequest();
+        Response response = mockResponse();
+        RequestPathOptimizer optimizer = mockRequestPathOptimizer();
+        ContextPathEncoder contextPathEncoder = getService(ContextPathEncoder.class);
+
+        expect(manager.getBaseURL("admin/Index")).andReturn(null);
+        train_getContextPath(request, "");
+
+        train_encodeURL(response, "/admin", "MAGIC");
+
+        replay();
+
+        ComponentEventLinkEncoder encoder = new ComponentEventLinkEncoderImpl(null, contextPathEncoder, null, request,
+                                                                              response,
+                                                                              manager, optimizer, null, null, null,
+                                                                              false);
+
+        PageRenderRequestParameters parameters = new PageRenderRequestParameters("admin/Index",
+                                                                                 new EmptyEventContext());
+
+        Link link = encoder.createPageRenderLink(parameters);
+
+        assertEquals(link.toAbsoluteURI(), "MAGIC");
+
+        verify();
+    }
+
+    @Test
+    public void root_index_page_gone()
+    {
+        RequestSecurityManager manager = mockRequestSecurityManager();
+        Request request = mockRequest();
+        Response response = mockResponse();
+        RequestPathOptimizer optimizer = mockRequestPathOptimizer();
+        ContextPathEncoder contextPathEncoder = getService(ContextPathEncoder.class);
+
+        expect(manager.getBaseURL("Index")).andReturn(null);
+        train_getContextPath(request, "");
+
+        train_encodeURL(response, "/", "MAGIC");
+
+        replay();
+
+        ComponentEventLinkEncoder encoder = new ComponentEventLinkEncoderImpl(null, contextPathEncoder, null, request,
+                                                                              response,
+                                                                              manager, optimizer, null, null, null,
+                                                                              false);
+
+        PageRenderRequestParameters parameters = new PageRenderRequestParameters("Index", new EmptyEventContext());
+
+        Link link = encoder.createPageRenderLink(parameters);
+
+        assertEquals(link.toAbsoluteURI(), "MAGIC");
+
+        verify();
+
+    }
 }
