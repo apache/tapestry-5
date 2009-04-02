@@ -15,6 +15,7 @@
 package org.apache.tapestry5.internal.beaneditor;
 
 import org.apache.tapestry5.beaneditor.BeanModel;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 
 /**
  * Utilities used in a few places to modify an existing {@link BeanModel}.
@@ -23,9 +24,8 @@ public final class BeanModelUtils
 {
 
     /**
-     * Performs standard set of modifications to a {@link org.apache.tapestry5.beaneditor.BeanModel}. First propreties
-     * are included, then new properties may be added, then properties may be excluded (removed), then the final list of
-     * is properties reordered.
+     * Performs standard set of modifications to a {@link org.apache.tapestry5.beaneditor.BeanModel}. First new
+     * properties may be added, then properties removed, then properties reordered.
      *
      * @param model                to modifiy
      * @param addPropertyNames     comma seperated list of property names to add, or null
@@ -37,18 +37,25 @@ public final class BeanModelUtils
                               String excludePropertyNames,
                               String reorderPropertyNames)
     {
-        if (includePropertyNames != null) include(model, includePropertyNames);
-
         if (addPropertyNames != null) add(model, addPropertyNames);
-        
+
+        if (includePropertyNames != null) include(model, join(includePropertyNames, addPropertyNames));
+
         if (excludePropertyNames != null) exclude(model, excludePropertyNames);
 
         if (reorderPropertyNames != null) reorder(model, reorderPropertyNames);
     }
 
+    private static final String join(String firstList, String optionalSecondList)
+    {
+        if (InternalUtils.isBlank(optionalSecondList)) return firstList;
+
+        return firstList + "," + optionalSecondList;
+    }
+
     /**
      * Adds empty properties to the bean model.  New properties are added with a <em>null</em> {@link
-     * org.apache.tapestry5.PropertyConduit}.
+     * org.apache.tapestry5.PropertyConduit}. `
      *
      * @param model         to be modified
      * @param propertyNames comma-separated list of property names

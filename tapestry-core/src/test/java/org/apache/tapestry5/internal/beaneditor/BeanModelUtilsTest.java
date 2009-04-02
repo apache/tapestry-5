@@ -101,9 +101,9 @@ public class BeanModelUtilsTest extends InternalBaseTestCase
 
         EasyMock.checkOrder(model, true);
 
-        expect(model.include("sam")).andReturn(model);
-
         expect(model.add("fred", null)).andReturn(fred);
+
+        expect(model.include("sam", "fred")).andReturn(model);
 
         replay();
 
