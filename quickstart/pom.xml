@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.apache.tapestry</groupId>
     <artifactId>quickstart</artifactId>
-    <packaging>maven-plugin</packaging>
+    <packaging>jar</packaging>
     <dependencies>
         <dependency>
             <groupId>org.easymock</groupId>

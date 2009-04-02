@@ -106,7 +106,7 @@ public class Hidden
     {
         String encoded = request.getParameter(controlName);
 
-        Object decoded = encoder.toClient(encoded);
+        Object decoded = encoder.toValue(encoded);
 
         value = decoded;
     }
