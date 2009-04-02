@@ -45,8 +45,9 @@ public @interface Parameter
     boolean required() default false;
 
     /**
-     * If true, and the parameter <em>is</em> bound, then the value for the parameter must not be null. The default is
-     * to allow nulls. This is different than required, in that the parameter may be bound, but bound to a null value.
+     * If false, and the parameter <em>is</em> bound, then the value for the parameter must not be null. The default is
+     * true, to allow nulls. This is different than required, in that the parameter may be bound, but bound to a null
+     * value.
      */
     boolean allowNull() default true;
 
