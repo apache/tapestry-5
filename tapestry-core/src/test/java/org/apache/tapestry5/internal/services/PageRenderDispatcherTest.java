@@ -57,8 +57,8 @@ public class PageRenderDispatcherTest extends InternalBaseTestCase
                                                 new ComponentEventLinkEncoderImpl(resolver, contextPathEncoder, ls,
                                                                                   request, response,
                                                                                   null, null,
-                                                                                  null, null,
-                                                                                  null, true));
+                                                                                  null,
+                                                                                  true));
 
         assertFalse(d.dispatch(request, response));
 
@@ -86,8 +86,8 @@ public class PageRenderDispatcherTest extends InternalBaseTestCase
                                                 new ComponentEventLinkEncoderImpl(resolver, contextPathEncoder, ls,
                                                                                   request, response,
                                                                                   null, null,
-                                                                                  null, null,
-                                                                                  null, true));
+                                                                                  null,
+                                                                                  true));
 
         assertFalse(d.dispatch(request, response));
 
@@ -114,8 +114,8 @@ public class PageRenderDispatcherTest extends InternalBaseTestCase
                                                 new ComponentEventLinkEncoderImpl(resolver, contextPathEncoder, ls,
                                                                                   request, response,
                                                                                   null, null,
-                                                                                  null, null,
-                                                                                  null, true));
+                                                                                  null,
+                                                                                  true));
 
         assertFalse(d.dispatch(request, response));
 
@@ -160,8 +160,8 @@ public class PageRenderDispatcherTest extends InternalBaseTestCase
                                                 new ComponentEventLinkEncoderImpl(resolver, contextPathEncoder, ls,
                                                                                   request, response,
                                                                                   null, null,
-                                                                                  null, null,
-                                                                                  null, true));
+                                                                                  null,
+                                                                                  true));
 
         assertTrue(d.dispatch(request, response));
 
@@ -213,8 +213,8 @@ public class PageRenderDispatcherTest extends InternalBaseTestCase
                                                 new ComponentEventLinkEncoderImpl(resolver, contextPathEncoder, ls,
                                                                                   request, response,
                                                                                   null, null,
-                                                                                  null, null,
-                                                                                  null, true));
+                                                                                  null,
+                                                                                  true));
 
         assertTrue(d.dispatch(request, response));
 
@@ -269,8 +269,8 @@ public class PageRenderDispatcherTest extends InternalBaseTestCase
                                                 new ComponentEventLinkEncoderImpl(resolver, contextPathEncoder, ls,
                                                                                   request, response,
                                                                                   null, null,
-                                                                                  null, null,
-                                                                                  null, true));
+                                                                                  null,
+                                                                                  true));
 
         assertTrue(d.dispatch(request, response));
 

@@ -45,10 +45,6 @@ public class ComponentEventLinkEncoderImpl implements ComponentEventLinkEncoder
 
     private final PersistentLocale persistentLocale;
 
-    private final ContextValueEncoder valueEncoder;
-
-    private final URLEncoder urlEncoder;
-
     private final boolean encodeLocaleIntoPath;
 
     private static final int BUFFER_SIZE = 100;
@@ -81,11 +77,14 @@ public class ComponentEventLinkEncoderImpl implements ComponentEventLinkEncoder
     private static final int CONTEXT = 11;
 
     public ComponentEventLinkEncoderImpl(ComponentClassResolver componentClassResolver,
-                                         ContextPathEncoder contextPathEncoder, LocalizationSetter localizationSetter,
-                                         Request request, Response response,
-                                         RequestSecurityManager requestSecurityManager, RequestPathOptimizer optimizer,
-                                         PersistentLocale persistentLocale, ContextValueEncoder valueEncoder,
-                                         URLEncoder urlEncoder,
+                                         ContextPathEncoder contextPathEncoder,
+                                         LocalizationSetter localizationSetter,
+                                         Request request,
+                                         Response response,
+                                         RequestSecurityManager requestSecurityManager,
+                                         RequestPathOptimizer optimizer,
+                                         PersistentLocale persistentLocale,
+
                                          @Symbol(SymbolConstants.ENCODE_LOCALE_INTO_PATH)
                                          boolean encodeLocaleIntoPath)
     {
@@ -97,8 +96,6 @@ public class ComponentEventLinkEncoderImpl implements ComponentEventLinkEncoder
         this.requestSecurityManager = requestSecurityManager;
         this.optimizer = optimizer;
         this.persistentLocale = persistentLocale;
-        this.valueEncoder = valueEncoder;
-        this.urlEncoder = urlEncoder;
         this.encodeLocaleIntoPath = encodeLocaleIntoPath;
     }
 
@@ -175,7 +172,7 @@ public class ComponentEventLinkEncoderImpl implements ComponentEventLinkEncoder
         encodeLocale(builder);
 
         builder.append(SLASH);
-        builder.append(encodePageName(activePageName));
+        builder.append(activePageName.toLowerCase());
 
         if (hasComponentId)
         {

@@ -17,11 +17,11 @@ import org.apache.tapestry5.test.AbstractIntegrationTestSuite;
 import org.testng.annotations.Test;
 
 /**
- * Note: If these tests fail with BindException when starting Jetty, it could be Skype. At least on
- * my system, Skype is listening on localhost:80.
- * 
- * The commented-out tests needs to have somenicecomain.com and login.somenicedomain.com
- * redirected to localhost in order to work.
+ * Note: If these tests fail with BindException when starting Jetty, it could be Skype. At least on my system, Skype is
+ * listening on localhost:80.
+ * <p/>
+ * The commented-out tests needs to have somenicecomain.com and login.somenicedomain.com redirected to localhost in
+ * order to work.
  */
 @Test(timeOut = 30000, sequential = true)
 public class IntegrationTests extends AbstractIntegrationTestSuite
@@ -42,9 +42,9 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     {
 
         open(BASE_URL);
-        assertAttribute("//a[@class='self']/@href", "/index");
+        assertAttribute("//a[@class='self']/@href", "/");
         assertAttribute("//a[@class='dummy']/@href", "/notdummy");
-        
+
 //        final String url = String.format("http://%s:%d/", SUBDOMAIN, JETTY_PORT);
 //        assertAttribute("//a[@class='subdomain']/@href", url);
 

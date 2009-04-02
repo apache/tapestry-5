@@ -174,4 +174,18 @@ public class RequestPathOptimizerImplTest extends InternalBaseTestCase
         verify();
     }
 
+    @Test
+    public void simple_slash_is_not_optimized()
+    {
+        Request request = mockRequest();
+
+        replay();
+
+        RequestPathOptimizer optimizer = new RequestPathOptimizerImpl(request, false);
+
+        assertSame(optimizer.optimizePath("/"), "/");
+
+        verify();
+    }
+
 }

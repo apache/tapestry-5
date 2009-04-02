@@ -54,7 +54,7 @@ public class ComponentEventDispatcherTest extends InternalBaseTestCase
                                                                                                null,
                                                                                                null,
                                                                                                null,
-                                                                                               null, null, true));
+                                                                                               true));
 
         assertFalse(dispatcher.dispatch(request, response));
 
@@ -167,8 +167,7 @@ public class ComponentEventDispatcherTest extends InternalBaseTestCase
                                                                                                         null,
                                                                                                         null,
                                                                                                         null,
-                                                                                                        null,
-                                                                                                        null, true));
+                                                                                                        true));
 
         assertTrue(dispatcher.dispatch(request, response));
 
@@ -210,8 +209,7 @@ public class ComponentEventDispatcherTest extends InternalBaseTestCase
                                                                                                         null,
                                                                                                         null,
                                                                                                         null,
-                                                                                                        null,
-                                                                                                        null, true));
+                                                                                                        true));
 
         assertTrue(dispatcher.dispatch(request, response));
 
@@ -240,8 +238,7 @@ public class ComponentEventDispatcherTest extends InternalBaseTestCase
                                                                                                      null,
                                                                                                      null,
                                                                                                      null,
-                                                                                                     null,
-                                                                                                     null, true));
+                                                                                                     true));
 
         assertFalse(dispatcher.dispatch(request, response));
 
@@ -285,7 +282,7 @@ public class ComponentEventDispatcherTest extends InternalBaseTestCase
                 handler, new ComponentEventLinkEncoderImpl(resolver, contextPathEncoder, localizationSetter, request,
                                                            response, null, null,
                                                            null,
-                                                           null, null, true));
+                                                           true));
 
         assertTrue(dispatcher.dispatch(request, response));
 

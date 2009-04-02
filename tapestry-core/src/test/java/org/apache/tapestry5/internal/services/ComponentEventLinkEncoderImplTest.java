@@ -45,7 +45,7 @@ public class ComponentEventLinkEncoderImplTest extends InternalBaseTestCase
 
         ComponentEventLinkEncoder encoder = new ComponentEventLinkEncoderImpl(null, contextPathEncoder, null, request,
                                                                               response,
-                                                                              manager, optimizer, null, null, null,
+                                                                              manager, optimizer, null,
                                                                               false);
 
         PageRenderRequestParameters parameters = new PageRenderRequestParameters("MyPage", new EmptyEventContext());
@@ -75,7 +75,7 @@ public class ComponentEventLinkEncoderImplTest extends InternalBaseTestCase
 
         ComponentEventLinkEncoder encoder = new ComponentEventLinkEncoderImpl(null, contextPathEncoder, null, request,
                                                                               response,
-                                                                              manager, optimizer, null, null, null,
+                                                                              manager, optimizer, null,
                                                                               false);
 
         PageRenderRequestParameters parameters = new PageRenderRequestParameters("admin/Index",
@@ -106,7 +106,7 @@ public class ComponentEventLinkEncoderImplTest extends InternalBaseTestCase
 
         ComponentEventLinkEncoder encoder = new ComponentEventLinkEncoderImpl(null, contextPathEncoder, null, request,
                                                                               response,
-                                                                              manager, optimizer, null, null, null,
+                                                                              manager, optimizer, null,
                                                                               false);
 
         PageRenderRequestParameters parameters = new PageRenderRequestParameters("Index", new EmptyEventContext());
