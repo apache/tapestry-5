@@ -214,7 +214,7 @@ public class StaxTemplateParser
 
         if (TAPESTRY_SCHEMA_5_1_0.equals(uri))
         {
-            if (name.equals("extend"))
+            if (name.equalsIgnoreCase("extend"))
             {
                 extend(state);
                 return;
@@ -223,7 +223,7 @@ public class StaxTemplateParser
 
         if (TAPESTRY_SCHEMA_URIS.contains(uri))
         {
-            if (name.equals("container"))
+            if (name.equalsIgnoreCase("container"))
             {
                 container(state);
                 return;
@@ -244,7 +244,8 @@ public class StaxTemplateParser
             {
                 case START_ELEMENT:
 
-                    if (reader.getNamespaceURI().equals(TAPESTRY_SCHEMA_5_1_0) && reader.getLocalName().equals(
+                    if (reader.getNamespaceURI().equals(
+                            TAPESTRY_SCHEMA_5_1_0) && reader.getLocalName().equalsIgnoreCase(
                             "replace"))
                     {
                         replace(state);
@@ -391,28 +392,28 @@ public class StaxTemplateParser
         if (TAPESTRY_SCHEMA_5_1_0.equals(uri))
         {
 
-            if (name.equals("remove"))
+            if (name.equalsIgnoreCase("remove"))
             {
                 removeContent();
 
                 return false;
             }
 
-            if (name.equals("content"))
+            if (name.equalsIgnoreCase("content"))
             {
                 limitContent(state);
 
                 return false;
             }
 
-            if (name.equals("extension-point"))
+            if (name.equalsIgnoreCase("extension-point"))
             {
                 extensionPoint(state);
 
                 return false;
             }
 
-            if (name.equals("replace"))
+            if (name.equalsIgnoreCase("replace"))
             {
                 throw new RuntimeException("The <replace> element may only appear directly within an extend element.");
             }
@@ -424,24 +425,24 @@ public class StaxTemplateParser
         if (TAPESTRY_SCHEMA_URIS.contains(uri))
         {
 
-            if (name.equals("body"))
+            if (name.equalsIgnoreCase("body"))
             {
                 body();
                 return false;
             }
 
-            if (name.equals("container"))
+            if (name.equalsIgnoreCase("container"))
             {
                 mustBeRoot(name);
             }
 
-            if (name.equals("block"))
+            if (name.equalsIgnoreCase("block"))
             {
                 block(state);
                 return false;
             }
 
-            if (name.equals("parameter"))
+            if (name.equalsIgnoreCase("parameter"))
             {
                 classicParameter();
 
@@ -903,7 +904,7 @@ public class StaxTemplateParser
 
             if (isXMLSpaceAttribute(qName)) continue;
 
-            if (qName.getLocalPart().equals(attributeName))
+            if (qName.getLocalPart().equalsIgnoreCase(attributeName))
             {
                 result = reader.getAttributeValue(i);
                 continue;

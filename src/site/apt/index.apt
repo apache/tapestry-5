@@ -38,7 +38,7 @@ New And Of Note
 
   * Tapestry now automatically combines multiple JavaScript libraries into a single request.
 
-  * An Ajax event requst may now return a
+  * An Ajax event request may now return a
     {{{apidocs/org/apache/tapestry5/ajax/MultiZoneUpdate.html}MultiZoneUpdate}} instance
     to update multiple zones in the client web browser.
 
@@ -53,7 +53,7 @@ New And Of Note
 
   * Tapestry Services can now be injected into Spring Beans, when using the Tapestry/Spring integration library.
 
-  * Tapestry now {{{guide/compress.html}compresses}} responses for clients that support compression.
+  * Tapestry now {{{guide/compress.html}compresses}} responses for clients that support GZIP compression.
     Context and classpath assets
     are now handled uniformly: versioned URLs, far-future expiration headers, and GZIP compression where applicable.
 
@@ -71,52 +71,16 @@ New And Of Note
   
 Roadmap
 
-  Now that that 5.0 release is <finally> out and available, work is starting on a 5.1 release.
+  Now that that 5.0 release is <finally> out and available, work is rounding out on the 5.1 release.
 
   The goal is to produce such releases on a regular schedule, every 4 - 6 months.
 
-  High priorities for 5.1 include Spring Web Flow integration, and support for developing Tapestry applications as Portlets.
+  High priorities for 5.2 include Spring Web Flow integration, and support for developing Tapestry applications as Portlets.
 
 Third Party Libraries, Tutorials and Resources
 
-  Tapestry 5 has inspired a number of people to create third party libraries, providing a mix of new components
-  and new and improved integrations.
-
-*--+--+--+
-| <<Name>> | <<Author>> | <<Description>>
-*--+--+--+
-| {{{http://code.google.com/p/tapestry5-appfuse/}AppFuse for Tapestry 5}} |   Serge Eby | Application template, with basic authentication and Hibernate and Spring integration pre-configured |
-*--+--+--+
-| {{{http://www.arsmachina.com.br}Ars Machina}} |   Thiago H. de Paula Figueiredo |  Tapestry/Hibernate extensions for Generic DAOs, standard CRUD interfaces, and user access logging and tracking |
-*--+--+--+
-| {{{http://www.chenillekit.org/}Chenille Kit}} |  Massimo Lusetti  |   Collection of modules, services, utilities and components (many of which require only tapestry-ioc) \
-*--+--+--+
-| {{{http://equanda.org/equanda-tapestry5/}equanda-tapestry5}} |   Joachim Van der Auwera |      Components useful for building enterprise applications. Includes Accordion, Tabs, Formtraversal. Amongst other things, these focus on easy input of data without the need for a mouse.
-*--+--+--+
-| {{{http://code.google.com/p/gc-tapestry-components/}Godcode Components}} |   Chris Lewis |         A mixed collection of components providing simple but time-saving functionality, as well as more exotic ones; built on top of the prototype and script.aculo.us javascript libraries. |
-*--+--+--+
-| <<{{{http://jumpstart.doublenegative.com.au/}JumpStart}}>> |   Geoff Callender | A "living tutorial" in the form of a base Tapestry application ready to be expanded and customized. |
-*--+--+--+
-| {{{http://interldap.org}InterLDAP}} | Linagora / Francois Armand | LDAP content management system for non tech users. |
-*--+--+--+
-| {{{http://code.google.com/p/loom-t5/}loom-t5}} | Chris Scheid | Eclipse plugin. |
-*--+--+--+
-| {{{http://code.google.com/p/shams/}Shams Examples, Components}} |  Mohammad H. Shamsi |   A set of Tapestry 5 Examples, Tutorials, Components, and Documents for beginners. |
-*--+--+--+
-| {{{http://www.infoq.com/articles/tapestry5-intro}Tapestry for Nonbelievers}} |      Renat Zubairov & Igor Drobiazko | Simple introduction to using Tapestry and creating components |
-*--+--+--+
-| {{{http://code.google.com/p/tapestry5-components/}T5Components}} | Sven Homburg | Ajax-enabled components based on Prototype and Scriptaculous. |
-*--+--+--+
-| {{{http://tacos.sourceforge.net/tacos5/tacos-seam/}tacos-seam}} | Igor Drobiazko | Intregrates with {{{http://www.jboss.com/products/seam}JBoss Seam}}. |
-*--+--+--+
-| {{{http://www.localhost.nu/java/tapestry5-acegi/}tapestry5-acegi}} | Robin Helgelin  | Integration with the Acegi path-based security framework. |
-*--+--+--+
-| {{{http://tapestry.formos.com/nightly/tapestry-templating/}tapestry-templating}} | Howard M. Lewis Ship |  Use Tapestry pages off-line to generate content (such as email) |
-*--+--+--+
-| {{{http://code.google.com/p/tapestry5-treegrid/}tapestry5-treegrid}} | Gabriel Landais |  Combination tree navigation and data grid, based on sstree. |
-*--+--+--+
-
-
+  A number of Third Party Libraries, Tutorials and Resources are listed on
+  the {{{http://tapestry.apache.org/}Tapestry Home Page}}.
 
 Adaptive API
 
