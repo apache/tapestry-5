@@ -223,7 +223,8 @@ public class AppModule
 
   [tapestry.secure-page]
     If true, then the page may only be accessed via HTTPS.  The {{{../apidocs/org/apache/tapestry5/annotations/Secure.html}@Secure}}
-    annotation will set this value to true.
+    annotation will set this value to true.  This symbol is the default for all pages; set it to "true" to force
+    the entire application to be secure.
 
   [tapestry.scriptaculous]
     The path to the embedded copy of {{{http://script.aculo.us/}script.aculo.us}} packaged with Tapestry. This value may be overridden

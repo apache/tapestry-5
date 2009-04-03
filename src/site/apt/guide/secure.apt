@@ -121,6 +121,12 @@ Base URL Support
   Tapestry implementation.
 
 
+Development Mode
+
+  When working in development mode, the Secure annotation is ignored. This is controlled by the
+  tapestry.secure-enabled {{{conf.html}configuration symbol}}.
+
+
 Application Server Configuration
 
    Setting up HTTPS support varies from application server to application server.
