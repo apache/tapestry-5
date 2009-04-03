@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.services.BeanBlockSource;
+import org.apache.tapestry5.services.Core;
 import org.apache.tapestry5.services.Environment;
 import org.apache.tapestry5.services.PropertyOutputContext;
 
@@ -59,13 +60,26 @@ public abstract class AbstractPropertyOutput
     @Parameter(required = true)
     private Object object;
 
-    @Inject
+    /**
+     * Source for property display blocks. This defaults to the default implementation of {@link
+     * org.apache.tapestry5.services.BeanBlockSource}.
+     */
+    @Parameter(required = true, allowNull = false)
     private BeanBlockSource beanBlockSource;
+
+    @Inject
+    @Core
+    private BeanBlockSource defaultBeanBlockSource;
 
     @Inject
     private Environment environment;
 
     private boolean mustPopEnvironment;
+
+    BeanBlockSource defaultBeanBlockSource()
+    {
+        return defaultBeanBlockSource;
+    }
 
     protected PropertyModel getPropertyModel()
     {
