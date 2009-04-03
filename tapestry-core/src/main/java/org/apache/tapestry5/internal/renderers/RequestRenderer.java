@@ -73,10 +73,10 @@ public class RequestRenderer implements ObjectRenderer<Request>
 
         parameters(request, writer);
         headers(request, writer);
-        context(request, writer);
+        context(writer);
     }
 
-    private void context(Request request, MarkupWriter writer)
+    private void context(MarkupWriter writer)
     {
         List<String> attributeNames = context.getAttributeNames();
 

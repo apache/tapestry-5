@@ -14,15 +14,15 @@
 
 package org.apache.tapestry5.internal.test;
 
+import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.Session;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.ArrayList;
 
 public class TestableRequestImpl implements TestableRequest
 {
@@ -216,9 +216,12 @@ public class TestableRequestImpl implements TestableRequest
         attributes.put(name, value);
     }
 
+    /**
+     * Returns "localhost" which is sufficient for testing purposes.
+     */
     public String getServerName()
     {
-        return nyi("getServerName");
+        return "localhost";
     }
 
     /**
