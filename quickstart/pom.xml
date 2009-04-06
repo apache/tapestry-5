@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.apache.tapestry</groupId>
     <artifactId>quickstart</artifactId>
-    <packaging>jar</packaging>
+    <packaging>maven-plugin</packaging>
     <dependencies>
         <dependency>
             <groupId>org.easymock</groupId>
@@ -21,6 +21,26 @@
     <url>http://tapestry.apache.org/tapestry5/${pom.artifactId}/</url>
     <description>Archetype for creating a basic Tapestry 5 application.</description>
 
+    <build>
+        <resources>
+            <resource>
+                <filtering>false</filtering>
+                <directory>${basedir}/src/main/resources</directory>
+                <excludes>
+                    <exclude>archetype-catalog.xml</exclude>
+                    <exclude>**/.*</exclude>
+                </excludes>
+            </resource>
+        </resources>
+
+        <extensions>
+            <extension>
+                <groupId>org.apache.maven.archetype</groupId>
+                <artifactId>archetype-packaging</artifactId>
+            </extension>
+        </extensions>
+    </build>
+
     <profiles>
         <profile>
             <id>ci</id>
@@ -37,7 +57,7 @@
                                 <configuration>
 
                                     <tasks>
-                                        <echo>Copying Archetype Catalog to /var/www/maven-snapshot-repository</echo>
+                                        <echo>Copying Archetype Catalog to repository</echo>
                                         <copy overwrite="true" todir="/var/www/maven-snapshot-repository">
                                             <fileset dir="src/main/resources" includes="*catalog.xml"></fileset>
                                             <filterset>

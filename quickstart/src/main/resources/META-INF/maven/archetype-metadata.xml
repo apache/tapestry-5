@@ -51,6 +51,9 @@
 
         <fileSet filtered="true" packaged="false">
             <directory>src/test/resources</directory>
+        </fileSet>
+
+        <fileSet filtered="true" packaged="false">
             <directory>src/test/conf</directory>
         </fileSet>
 
