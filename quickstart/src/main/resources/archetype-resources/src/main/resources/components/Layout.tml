@@ -69,7 +69,7 @@ Description: A Web 2.0 design with fluid width suitable for blogs and small webs
         <!-- start footer -->
         <div id="footer">
             <p class="legal">
-                &copy;2009 groupid. All Rights Reserved.
+                &copy;2009 ${groupId}. All Rights Reserved.
                 &nbsp;&nbsp;&bull;&nbsp;&nbsp;
                 Design by
                 <a href="http://www.freecsstemplates.org/">Free CSS Templates</a>

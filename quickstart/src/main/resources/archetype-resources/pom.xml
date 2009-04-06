@@ -31,6 +31,8 @@ of testing facilities designed for use with TestNG (http://testng.org/), so it's
             <scope>test</scope>
         </dependency>
 
+        <!-- May conflict with RunJettyRun inside Eclipse. tapestry-test brings in Selenium, which
+             is based on Jetty 5.1; RunJettyRun uses Jetty 6. -->
         <dependency>
             <groupId>org.apache.tapestry</groupId>
             <artifactId>tapestry-test</artifactId>
