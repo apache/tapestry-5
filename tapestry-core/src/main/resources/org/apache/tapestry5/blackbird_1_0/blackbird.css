@@ -62,27 +62,27 @@
     _width: 272px;
 }
 
-#t-console.bbSmall .header {
+#t-console.bbSmall .t-header {
     _width: 272px;
 }
 
-#t-console.bbSmall .header div.left, #t-console.bbSmall .footer div.left {
+#t-console.bbSmall .t-header div.t-left, #t-console.bbSmall .t-footer div.t-left {
     width: 150px;
 }
 
-#t-console.bbSmall .main {
+#t-console.bbSmall .t-main {
     _width: 272px;
 }
 
-#t-console.bbSmall .main div {
+#t-console.bbSmall .t-main div {
     height: 200px;
 }
 
-#t-console.bbSmall .main div.mainBody {
+#t-console.bbSmall .t-main div.t-mainBody {
     width: 272px;
 }
 
-#t-console.bbSmall .footer {
+#t-console.bbSmall .t-footer {
     _width: 272px;
 }
 
@@ -91,31 +91,31 @@
     _width: 472px;
 }
 
-#t-console.bbLarge .header {
+#t-console.bbLarge .t-header {
     _width: 472px;
 }
 
-#t-console.bbLarge .header div.left, #t-console.bbLarge .footer div.left {
+#t-console.bbLarge .t-header div.t-left, #t-console.bbLarge .t-footer div.t-left {
     width: 350px;
 }
 
-#t-console.bbLarge .main {
+#t-console.bbLarge .t-main {
     _width: 472px;
 }
 
-#t-console.bbLarge .main div {
+#t-console.bbLarge .t-main div {
     height: 500px;
 }
 
-#t-console.bbLarge .main div.mainBody {
+#t-console.bbLarge .t-main div.t-mainBody {
     width: 472px;
 }
 
-#t-console.bbLarge .footer {
+#t-console.bbLarge .t-footer {
     _width: 472px;
 }
 
-#t-console .header span {
+#t-console .t-header span {
     position: relative;
     width: 16px;
     height: 16px;
@@ -125,86 +125,86 @@
     background-repeat: no-repeat;
 }
 
-#t-console .header span.error {
+#t-console .t-header span.error {
     background-position: 0px 0px;
 }
 
-#t-console .header span.errorDisabled {
+#t-console .t-header span.errorDisabled {
     background-position: -16px 0px;
 }
 
-#t-console .header span.warn {
+#t-console .t-header span.warn {
     background-position: 0px -16px;
 }
 
-#t-console .header span.warnDisabled {
+#t-console .t-header span.warnDisabled {
     background-position: -16px -16px;
 }
 
-#t-console .header span.info {
+#t-console .t-header span.info {
     background-position: 0px -32px;
 }
 
-#t-console .header span.infoDisabled {
+#t-console .t-header span.infoDisabled {
     background-position: -16px -32px;
 }
 
-#t-console .header span.debug {
+#t-console .t-header span.debug {
     background-position: 0px -48px;
 }
 
-#t-console .header span.debugDisabled {
+#t-console .t-header span.debugDisabled {
     background-position: -16px -48px;
 }
 
-#t-console .header span.profile {
+#t-console .t-header span.profile {
     background-position: 0px -64px;
 }
 
-#t-console .header span.profileDisabled {
+#t-console .t-header span.profileDisabled {
     background-position: -16px -64px;
 }
 
-#t-console .header span.close {
+#t-console .t-header span.t-close {
     background-position: 0px -80px;
 }
 
-#t-console .header span.clear {
+#t-console .t-header span.t-clear {
     background-position: -16px -80px;
 }
 
-#t-console .header span.small {
+#t-console .t-header span.t-small {
     background-position: 0px -96px;
 }
 
-#t-console .header span.large {
+#t-console .t-header span.t-large {
     background-position: -16px -96px;
 }
 
-#t-console .header > div, #t-console .main > div, #t-console .footer > div {
+#t-console .t-header > div, #t-console .t-main > div, #t-console .t-footer > div {
     background-image: url(blackbird_panel.png);
     background-repeat: no-repeat;
 }
 
-#t-console .header div {
+#t-console .t-header div {
     float: left;
     _background-color: #000;
 }
 
-#t-console .header div.left {
+#t-console .t-header div.t-left {
     background-position: top left;
     height: 40px;
     _height: 16px;
 }
 
-#t-console .header .left div.filters {
+#t-console .t-header .t-left div.t-filters {
     margin-left: -4px;
     padding: 16px 0 0 19px;
     float: left;
     _padding: 6px 8px;
 }
 
-#t-console .header div.right {
+#t-console .t-header div.t-right {
     background-position: top right;
     height: 40px;
     width: 150px;
@@ -212,37 +212,37 @@
     _height: 16px;
 }
 
-#t-console .header .right div.controls {
+#t-console .t-header .t-right div.t-controls {
     padding: 16px 24px 0 0;
     float: right;
     _padding: 6px 8px;
 }
 
-#t-console .header .right .controls span {
+#t-console .t-header .t-right .t-controls span {
     margin: 0;
 }
 
-#t-console .header .right .controls span.clear {
+#t-console .t-header .t-right .t-controls span.t-clear {
     margin-right: 8px;
 }
 
-#t-console .main div {
+#t-console .t-main div {
     float: left;
 }
 
-#t-console .main div.left {
+#t-console .t-main div.t-left {
     background-position: 0 -30px;
     width: 11px;
     _width: 0;
 }
 
-#t-console .main div.mainBody {
+#t-console .t-main div.t-mainBody {
     background-position: 40% -40px;
     _background-color: #000;
     _filter: alpha(opacity = '93');
 }
 
-#t-console .main .mainBody ol {
+#t-console .t-main .t-mainBody ol {
     line-height: 1.45;
     height: 100%;
     overflow: auto;
@@ -252,7 +252,7 @@
     padding: 0;
 }
 
-#t-console .main .mainBody ol li {
+#t-console .t-main .t-mainBody ol li {
     padding: 1px 4px 1px 30px;
     border-bottom: 1px solid #333;
     color: #CCC;
@@ -260,7 +260,7 @@
     _text-indent: -2px;
 }
 
-#t-console .main .mainBody ol li span {
+#t-console .t-main .t-mainBody ol li span {
     background: url(blackbird_icons.png) no-repeat 0 0;
     border: 1px solid #333;
     height: 16px;
@@ -271,27 +271,27 @@
     _display: inline;
 }
 
-#t-console .main .mainBody ol li.error span {
+#t-console .t-main .t-mainBody ol li.error span {
     background-position: 0 0;
 }
 
-#t-console .main .mainBody ol li.warn span {
+#t-console .t-main .t-mainBody ol li.warn span {
     background-position: 0 -16px;
 }
 
-#t-console .main .mainBody ol li.info span {
+#t-console .t-main .t-mainBody ol li.info span {
     background-position: 0 -32px;
 }
 
-#t-console .main .mainBody ol li.debug span {
+#t-console .t-main .t-mainBody ol li.debug span {
     background-position: 0 -48px;
 }
 
-#t-console .main .mainBody ol li.profile span {
+#t-console .t-main .t-mainBody ol li.profile span {
     background-position: 0 -64px;
 }
 
-#t-console .main .mainBody ol li.profile {
+#t-console .t-main .t-mainBody ol li.profile {
     color: #DDD;
     font-style: italic;
 }
@@ -300,25 +300,25 @@
     display: none;
 }
 
-#t-console .main div.right {
+#t-console .t-main div.t-right {
     background: url(blackbird_panel.png) no-repeat 100% -30px;
     width: 17px;
     _width: 0;
 }
 
-#t-console .footer div {
+#t-console .t-footer div {
     height: 50px;
     float: left;
     _background-color: #000;
     _height: 30px;
 }
 
-#t-console .footer div.left {
+#t-console .t-footer div.t-left {
     background-position: bottom left;
     _width: 100% !important;
 }
 
-#t-console .footer div.left label {
+#t-console .t-footer div.t-left label {
     display: block;
     color: #BBB;
     margin: 8px 0 0 16px;
@@ -327,12 +327,12 @@
     _margin: 4px 0 0 8px;
 }
 
-#t-console .footer div.left label input {
+#t-console .t-footer div.t-left label input {
     padding: 0;
     vertical-align: middle;
 }
 
-#t-console .footer div.right {
+#t-console .t-footer div.t-right {
     background-position: bottom right;
     width: 150px;
     _width: 0;

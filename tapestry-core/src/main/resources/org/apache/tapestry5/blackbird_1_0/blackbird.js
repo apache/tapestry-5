@@ -31,10 +31,10 @@
     function constructUI()
     {
         bbird = new Element("div", { 'id': 't-console', 'title': 'F2 toggles / Shift-F2 moves' }).hide();
-        var header = new Element("div", { 'class': 'header' });
-        var left = new Element("div", { 'class' : 'left' });
+        var header = new Element("div", { 'class': 't-header' });
+        var left = new Element("div", { 'class' : 't-left' });
 
-        left.insert(filters = new Element("div", { 'class': 'filters' }));
+        left.insert(filters = new Element("div", { 'class': 't-filters' }));
 
         for (var type in messageTypes)
         {
@@ -43,24 +43,24 @@
             filters.insert(new Element("span", {'class': className, 'title': "filter by " + type, 'type': type }));
         }
 
-        var right = new Element("div", { 'class': 'right'});
+        var right = new Element("div", { 'class': 't-right'});
 
-        right.insert(controls = new Element("div", { 'class': 'controls'}));
+        right.insert(controls = new Element("div", { 'class': 't-controls'}));
 
         controls.insert(size = new Element("span", { 'title': 'contract', 'op': 'resize' }));
 
-        controls.insert(new Element("span", { 'class': 'clear', 'title': 'clear', 'op': 'clear' }));
-        controls.insert(new Element("span", { 'class': 'close', 'title': 'close', 'op': 'close' }));
+        controls.insert(new Element("span", { 'class': 't-clear', 'title': 'clear', 'op': 'clear' }));
+        controls.insert(new Element("span", { 'class': 't-close', 'title': 'close', 'op': 'close' }));
 
         header.insert(left);
         header.insert(right);
 
         bbird.insert(header);
 
-        var main = new Element("div", { 'class': 'main' });
-        main.insert(new Element("div", {'class':'left'}));
+        var main = new Element("div", { 'class': 't-main' });
+        main.insert(new Element("div", {'class': 't-left'}));
 
-        var mainBody = new Element("div", { 'class': 'mainBody' });
+        var mainBody = new Element("div", { 'class': 't-mainBody' });
 
         mainBody.insert(outputList = new Element("ol"));
 
@@ -72,13 +72,13 @@
         cache = undefined;
 
         main.insert(mainBody);
-        main.insert(new Element("div", { 'class': 'right' }));
+        main.insert(new Element("div", { 'class': 't-right' }));
 
         bbird.insert(main);
 
-        var footer = new Element("div", { 'class': 'footer'});
+        var footer = new Element("div", { 'class': 't-footer'});
 
-        footer.insert(left = new Element("div", { 'class': 'left' }));
+        footer.insert(left = new Element("div", { 'class': 't-left' }));
 
         left.insert();
 
@@ -88,7 +88,7 @@
 
         left.insert(label);
 
-        footer.insert(new Element("div", { 'class': 'right' }));
+        footer.insert(new Element("div", { 'class': 't-right' }));
 
         bbird.insert(footer);
 
@@ -277,7 +277,7 @@
         classes[ 1 ] = ( big === 0 ) ? 'bbSmall' : 'bbLarge'
 
         size.title = ( big === 1 ) ? 'small' : 'large';
-        size.className = size.title;
+        size.className = "t-" + size.title;
 
         state.size = big;
 
