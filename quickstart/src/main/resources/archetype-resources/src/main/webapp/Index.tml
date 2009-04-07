@@ -17,7 +17,7 @@
 
 
         <p>
-            [<t:pagelink t:page="Index">refresh</t:pagelink>]
+            [<t:pagelink page="Index">refresh</t:pagelink>]
         </p>
     </p:sidebar>
 
