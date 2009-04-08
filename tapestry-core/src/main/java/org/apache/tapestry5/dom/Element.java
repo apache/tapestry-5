@@ -157,6 +157,10 @@ public final class Element extends Node
             cursor = cursor.nextAttribute;
         }
 
+        //  Don't add a Attribute if the value is null.
+
+        if (value == null) return;
+
         firstAttribute = new Attribute(this, namespace, name, value, firstAttribute);
     }
 
@@ -181,7 +185,8 @@ public final class Element extends Node
     }
 
     /**
-     * Forces changes to a number of attributes. The new attributes <em>overwrite</em> previous values.
+     * Forces changes to a number of attributes. The new attributes <em>overwrite</em> previous values. Overriding an
+     * attribute's value to null will remove the attribute entirely.
      */
     public Element forceAttributes(String... namesAndValues)
     {

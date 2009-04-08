@@ -14,6 +14,8 @@
 
 package org.apache.tapestry5.dom;
 
+import org.apache.tapestry5.ioc.internal.util.Defense;
+
 public abstract class AbstractMarkupModel implements MarkupModel
 {
     private final boolean useApostropheForAttributes;
@@ -91,6 +93,8 @@ public abstract class AbstractMarkupModel implements MarkupModel
 
     public void encodeQuoted(String content, StringBuilder builder)
     {
+        Defense.notNull(content, "content");
+
         int length = content.length();
 
         for (int i = 0; i < length; i++)

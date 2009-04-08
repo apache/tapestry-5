@@ -18,8 +18,8 @@ import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.testng.annotations.Test;
 
-import java.util.List;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Tests for a number of DOM node classes, including {@link org.apache.tapestry5.dom.Element} and {@link
@@ -848,5 +848,20 @@ public class DOMTest extends InternalBaseTestCase
 
         assertEquals(attribute.getName(), "fred");
         assertEquals(attribute.getValue(), "flintstone");
+    }
+
+    /**
+     * TAP5-636
+     */
+    @Test
+    public void force_null_for_first_attribute_is_noop()
+    {
+        Document d = new Document();
+
+        Element root = d.newRootElement("root");
+
+        root.forceAttributes("null", null);
+
+        assertEquals(root.toString(), "<root></root>");
     }
 }
