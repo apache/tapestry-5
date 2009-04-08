@@ -2307,7 +2307,7 @@ public final class TapestryModule
 
     /**
      * Contibutions are content types that do not benefit from compression. Adds the following content types: <ul>
-     * <li>image/jpeg</li> <li>image/gif <li>image/png </ul>
+     * <li>image/jpeg</li> <li>image/gif <li>image/png <li>application/json (see https://issues.apache.org/jira/browse/TAP5-469)</ul>
      *
      * @since 5.1.0.0
      */
@@ -2316,6 +2316,7 @@ public final class TapestryModule
         configuration.add("image/jpeg");
         configuration.add("image/gif");
         configuration.add("image/png");
+        configuration.add("application/json");
     }
 
     /**
