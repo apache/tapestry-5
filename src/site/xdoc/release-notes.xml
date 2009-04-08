@@ -25,6 +25,95 @@
         </p>
 
 
+        <h1>Release Notes - Tapestry 5 - Version 5.1.0.3</h1>
+
+        <h2>Bug
+        </h2>
+        <ul>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-469'>TAP5-469</a>] - ResponseCompressionAnalyzer:
+                application/json responses should be uncompressable by default
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-596'>TAP5-596</a>] - Misleading description of
+                allowNull parameter of Parameter annotation in javadoc
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-602'>TAP5-602</a>] - Contributing to TypeCoercer
+                with service fails even with @InjectService
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-603'>TAP5-603</a>] - BeanEditForm ordering
+                behaviour inconsistent with documentation
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-608'>TAP5-608</a>] - Quickstart archetype is broken
+                for 5.1.0.2: missing META-INF/maven/archetype.xml
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-610'>TAP5-610</a>] - URLs are not being fully
+                optimized, &quot;/index&quot; is not being stripped off when it should
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-615'>TAP5-615</a>] - Tapestry template parse should
+                ignore the case of any Tapestry-specific elements (such as t:body, t:content, etc.)
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-616'>TAP5-616</a>] - Hidden component does not
+                properly decode submitted data
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-621'>TAP5-621</a>] - When using PageTester, an
+                exception in the page is hidden by an exception rendering the exception report page
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-625'>TAP5-625</a>] - The quickstart archetype
+                should not put the Apache copyright into the web.xml (or other files)
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-626'>TAP5-626</a>] - The copyright message in
+                Layout.tml is &quot;groupid&quot; not the expanded groupId value
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-630'>TAP5-630</a>] - Blackbird error console class
+                names are too generic and can easily conflict
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-636'>TAP5-636</a>] - Using Element.forceAttribute()
+                with a null value can cause a later NPE during rendering under some circumstances
+            </li>
+        </ul>
+
+        <h2>Improvement
+        </h2>
+        <ul>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-432'>TAP5-432</a>] - Allow setting the id of a
+                FormFragment component
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-483'>TAP5-483</a>] - Maven warning in build:
+                [WARNING] Using platform encoding (MacRoman actually) to copy filtered resources, i.e. build is platform
+                dependent!
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-614'>TAP5-614</a>] - Spacer image should have a
+                blank alt attribute to meet w3c accessability standards
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-634'>TAP5-634</a>] - Google App Engine Support:
+                ability to disable code that creates new threads
+            </li>
+        </ul>
+
+        <h2>New Feature
+        </h2>
+        <ul>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-548'>TAP5-548</a>] - Textual messages inside
+                tapestry.js should be split out into a seperate .js file that is localizable
+            </li>
+        </ul>
+
+        <h2>Task
+        </h2>
+        <ul>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-617'>TAP5-617</a>] - Move cobertura from
+                2.2-SNAPSHOT to 2.2
+            </li>
+        </ul>
+
+        <h2>Wish
+        </h2>
+        <ul>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-619'>TAP5-619</a>] - Add parameter to
+                PropertyEditor to allow custom BeanBlockSource to be used in place of the default one
+            </li>
+        </ul>
+
+
         <h1>Release Notes - Tapestry 5 - Version 5.1.0.2</h1>
 
         <h2>Bug
