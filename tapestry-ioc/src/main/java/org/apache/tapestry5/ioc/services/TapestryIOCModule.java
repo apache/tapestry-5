@@ -399,12 +399,18 @@ public final class TapestryIOCModule
             @IntermediateType(TimeInterval.class)
             int keepAliveMillis,
 
+            @Symbol(IOCSymbols.THREAD_POOL_ENABLED)
+            boolean threadPoolEnabled,
+
             PerthreadManager perthreadManager,
 
             RegistryShutdownHub shutdownHub,
 
             ThunkCreator thunkCreator)
     {
+
+        if (!threadPoolEnabled)
+            return new NonParallelExecutor();
 
         final ThreadPoolExecutor executorService = new ThreadPoolExecutor(coreSize, maxSize,
                                                                           keepAliveMillis, TimeUnit.MILLISECONDS,
@@ -426,5 +432,6 @@ public final class TapestryIOCModule
         configuration.add(IOCSymbols.THREAD_POOL_CORE_SIZE, "3");
         configuration.add(IOCSymbols.THREAD_POOL_MAX_SIZE, "20");
         configuration.add(IOCSymbols.THREAD_POOL_KEEP_ALIVE, "1 m");
+        configuration.add(IOCSymbols.THREAD_POOL_ENABLED, "true");
     }
 }

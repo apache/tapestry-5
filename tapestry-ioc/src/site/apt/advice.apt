@@ -42,7 +42,7 @@ Service Advisors
 
   This is a method that is placed in a module class. Note the terminology: <advise> is the verb ("to advise a method")
   and <advice> is the noun ("with this advice"). The
-  {{{../../apidocs/org/apache/tapestry5/ioc/MethodAdviceReceiver.html}MethodAdviceReceiver}}
+  {{{../apidocs/org/apache/tapestry5/ioc/MethodAdviceReceiver.html}MethodAdviceReceiver}}
   is a wrapper around the service being advised: you can add advice to some or all methods of the service, and also
   obtain the interface of the service.  It is automatically passed into service advisor methods.
 
@@ -55,16 +55,16 @@ Service Advisors
 
   Service advisor methods are always void methods (this is different than {{{decorator.html}service decorator methods}}).
 
-  The {{{../../apidocs/org/apache/tapestry5/ioc/annotations/Match.html}@Match}}
+  The {{{../apidocs/org/apache/tapestry5/ioc/annotations/Match.html}@Match}}
   annotation indicates that this advice applies to all services (both your own, and those defined by Tapestry).
   You will want to narrow down which services are actually targetted in most cases.
 
   Note that some services, especially those built-in to Tapestry IoC, are marked as
-  {{{../../apidocs/org/apache/tapestry5/ioc/annotations/PreventServiceDecoration.html}not subject to decoration}},
+  {{{../apidocs/org/apache/tapestry5/ioc/annotations/PreventServiceDecoration.html}not subject to decoration}},
   this applies to service advice as well as service decoration.
 
-  The {{{../../apidocs/org/apache/tapestry5/ioc/MethodAdvice.html}MethodAdvice}} interface is very simple; it receives an
-  {{{../../apidocs/org/apache/tapestry5/ioc/Invocation.html}Invocation}} representing a method call. Invocation
+  The {{{../apidocs/org/apache/tapestry5/ioc/MethodAdvice.html}MethodAdvice}} interface is very simple; it receives an
+  {{{../apidocs/org/apache/tapestry5/ioc/Invocation.html}Invocation}} representing a method call. Invocation
   has methods for inspecting the type and value of the parameters, and for overriding the values of the parameters.
 
   The call to proceed() allows the invocation to continue; that is, the original method is invoked.  If the method has been advised
@@ -98,7 +98,11 @@ Service Advisors
   };
 ----
 
-Logging Advice
+Built-in Advice
+
+Tapestry includes two built-in advisor services.
+
+* Logging Advice
 
   Logging advice is built into Tapestry.  You can apply logging advice to your services very easily:
 
@@ -110,9 +114,16 @@ Logging Advice
   }
 ---
 
-  {{{../../apidocs/org/apache/tapestry5/ioc/services/LoggingAdvisor.html}LoggingAdvisor}} is
+  {{{../apidocs/org/apache/tapestry5/ioc/services/LoggingAdvisor.html}LoggingAdvisor}} is
   a built-in Tapestry IoC service.  This demonstrates how services can be injected into
   service advisor methods.   The Logger parameter is the logger for the service being advised.
+
+* Lazy Advice
+
+  {{{../apidocs/org/apache/tapestry5/ioc/services/LazyAdvisor.html}LazyAdvisor}}
+  makes method invocations lazy: methods that return an interface (rather than a value)
+  will not execute immediately; instead, the method invocation is postponed
+  until a method of the return value is invoked.
 
 Matching And Orderering
 
@@ -123,7 +134,7 @@ Matching And Orderering
 
   In many cases, the order in which the advice is given is very important; for example, you may want
   logging first, then transaction management, then security checks.  The
-  {{{../../apidocs/org/apache/tapestry5/ioc/annotations/Order.html}@Order}} annotation allows you
+  {{{../apidocs/org/apache/tapestry5/ioc/annotations/Order.html}@Order}} annotation allows you
   to explictly set the order.  
 
 Decorators and Advice
@@ -134,5 +145,4 @@ Decorators and Advice
   It is not recommended that you mix advice and decoration.  If you do, decoration take precendence; all decorators
   will be in effect before any advice (internally, they are two seperate steps, with advice being processed and the
   result of that used by the decorators).
-
 

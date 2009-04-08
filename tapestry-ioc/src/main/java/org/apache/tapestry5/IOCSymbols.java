@@ -36,4 +36,13 @@ public class IOCSymbols
      * Default is one minute (an epoch in application time).
      */
     public static final String THREAD_POOL_KEEP_ALIVE = "tapestry.thread-pool.keep-alive";
+
+    /**
+     * By default, the {@link org.apache.tapestry5.ioc.services.ParallelExecutor} service uses a thread pool. In
+     * environments (such as Google Application Engine) where thread creation is not allowed, this can be set to
+     * "false", and deferred logic will, instead, execute immediately.
+     *
+     * @since 5.1.0.3
+     */
+    public static final String THREAD_POOL_ENABLED = "tapestry.thread-pool-enabled";
 }

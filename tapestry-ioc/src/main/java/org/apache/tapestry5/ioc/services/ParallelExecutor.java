@@ -22,6 +22,7 @@ import java.util.concurrent.Future;
  * A service that allows work to occur in parallel using a thread pool. The thread pool is started lazily, and is
  * shutdown when the Registry is shutdown.
  *
+ * @see org.apache.tapestry5.IOCSymbols
  * @since 5.1.0.1
  */
 public interface ParallelExecutor
