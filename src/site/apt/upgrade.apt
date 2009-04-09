@@ -13,6 +13,20 @@ Upgrade Notes
   You should also check the {{{release-notes.html}project-wide release notes}} for information
   about bugs fixes and other improvements.
 
+Release 5.1.0.4
+
+  Tapestry's alpha URL rewriting support (available from 5.1.0.1) has undergone some API changes:
+
+    * The core url rewriting service to which rules are contributed has changed from URLRewriterService to 
+      URLRewriter, with a corresponding change to the service id.  Modules contributing to this service will need to
+      update the corresponding contribution method names.
+
+    * The signature of the "process" method of the URLRewriterRule interface now requires an additional parameter
+      of type org.apache.tapestry5.urlrewriter.URLRewriteContext.
+
+    * URLRewriteRule implementations must now also implement the "applicability" method which determines whether
+      rules should be applied to incoming requests, outgoing urls (links), or both.
+
 Release 5.1.0.1
 
   Tapestry's client-side JavaScript relating to input field validation has changed somewhat

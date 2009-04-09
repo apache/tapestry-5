@@ -56,7 +56,7 @@ public class RenderQueueImpl implements RenderQueue
         int commandCount = 0;
         int maxDepth = 0;
 
-        // Seems to make sense to use one try/finally around the whole process, rather than
+        // Seems to make sense to use one try/finally around the whole processInbound, rather than
         // around each call to render() since the end result (in a failure scenario) is the same.
 
         try

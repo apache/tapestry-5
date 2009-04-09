@@ -12,23 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.internal.services;
+package org.apache.tapestry5.services;
 
-import java.util.List;
-
-import org.apache.tapestry5.services.Request;
-import org.apache.tapestry5.urlrewriter.URLRewriterRule;
+import org.apache.tapestry5.urlrewriter.URLRewriteContext;
 
 
 /**
  * Service that implements URL and link rewriting.
  *
+ *
  * @since 5.1.0.2
  */
-public interface URLRewriterService
+public interface URLRewriter
 {
     /**
-     * Processes a {@linkplain org.apache.tapestry5.services.Request}. 
+     * Processes an incoming {@linkplain org.apache.tapestry5.services.Request}.
      * This method must check if they need to rewrite this request. If no, it must return the received
      * request unchanged. This method cannot return null.
      * 
@@ -36,13 +34,27 @@ public interface URLRewriterService
      *            a {@link org.apache.tapestry5.services.Request}.
      * @return request a {@link org.apache.tapestry5.services.Request}. It cannot be null.
      */
-    Request process(Request request);
+    Request processRequest(Request request);
+
+    /**
+     * Processes rules for rewriting links.
+     * @param request the request to examine
+     * @param context the context providing additional information for rewriting
+     * @return the original request if the URLRewriter does nothing, a modified request otherwise, but never null
+     */
+    Request processLink(Request request, URLRewriteContext context);
     
     /**
-     * Returns the registered rewriter rules.
+     *
      * 
-     * @return a {@link List} of {@link URLRewriterRule}.
+     * @return true if the urlrewriter has any rules for rewriting inbound request urls
      */
-    List<URLRewriterRule> getRules();
-    
+    boolean hasRequestRules();
+
+
+    /**
+     * @return true if the URLRewriter has any rules for rewriting outbound links.
+     */
+    boolean hasLinkRules();
+
 }

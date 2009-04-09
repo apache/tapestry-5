@@ -30,6 +30,7 @@ public interface URLRewriterRule
      *            a {@link org.apache.tapestry5.services.Request}.
      * @return request a {@link org.apache.tapestry5.services.Request}.
      */
-    Request process(Request request);
+    Request process(Request request,URLRewriteContext context);
 
+    RewriteRuleApplicability applicability();
 }

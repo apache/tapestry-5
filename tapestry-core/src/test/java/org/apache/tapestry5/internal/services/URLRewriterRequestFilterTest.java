@@ -18,18 +18,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.tapestry5.ioc.test.TestBase;
-import org.apache.tapestry5.internal.services.URLRewriterService;
-import org.apache.tapestry5.services.DelegatingRequest;
-import org.apache.tapestry5.services.Request;
-import org.apache.tapestry5.services.RequestHandler;
-import org.apache.tapestry5.services.Response;
+import org.apache.tapestry5.services.URLRewriter;
+import org.apache.tapestry5.services.*;
 import org.apache.tapestry5.urlrewriter.SimpleRequestWrapper;
 import org.apache.tapestry5.urlrewriter.URLRewriterRule;
+import org.apache.tapestry5.urlrewriter.RewriteRuleApplicability;
+import org.apache.tapestry5.urlrewriter.URLRewriteContext;
 import org.testng.annotations.Test;
 
 /**
- * Tests {@linkplain org.org.apache.tapestry5.internal.services.URLRewriterRequestFilter}
- * and also {@link URLRewriterServiceImpl}.
+ * Tests {@linkplain org.apache.tapestry5.internal.services.URLRewriterRequestFilter}
+ * and also {@link URLRewriterImpl}.
  */
 public class URLRewriterRequestFilterTest extends TestBase
 {
@@ -39,7 +38,7 @@ public class URLRewriterRequestFilterTest extends TestBase
 
         private DelegatingRequest delegetingRequest = new DelegatingRequest();
 
-        public Request process(Request request)
+        public Request process(Request request, URLRewriteContext context)
         {
             final String serverName = request.getServerName().replace("JSF", "tapestry");
             final String path = request.getPath().replace(".JSF", "");
@@ -48,10 +47,16 @@ public class URLRewriterRequestFilterTest extends TestBase
             return delegetingRequest;
         }
 
+        public RewriteRuleApplicability applicability() {
+            return RewriteRuleApplicability.BOTH;
+        }
+
         Request getRequest()
         {
             return delegetingRequest;
         }
+
+
 
     }
 
@@ -61,11 +66,15 @@ public class URLRewriterRequestFilterTest extends TestBase
 
         URLRewriterRule rule1 = new URLRewriterRule()
         {
-            public Request process(Request request)
+            public Request process(Request request,URLRewriteContext context)
             {
                 final String serverName = request.getServerName().toUpperCase();
                 final String path = request.getPath().toUpperCase();
                 return new SimpleRequestWrapper(request, serverName, path);
+            }
+
+            public RewriteRuleApplicability applicability() {
+                return RewriteRuleApplicability.BOTH;
             }
         };
 
@@ -81,7 +90,7 @@ public class URLRewriterRequestFilterTest extends TestBase
         List<URLRewriterRule> rules = new ArrayList<URLRewriterRule>();
         rules.add(rule1);
         rules.add(rule2);
-        URLRewriterService service = new URLRewriterServiceImpl(rules);
+        URLRewriter service = new URLRewriterImpl(rules);
         URLRewriterRequestFilter filter = new URLRewriterRequestFilter(service);
 
         expect(handler.service(rule2.getRequest(), response)).andReturn(false);
@@ -106,18 +115,22 @@ public class URLRewriterRequestFilterTest extends TestBase
 
         URLRewriterRule rule = new URLRewriterRule()
         {
-            public Request process(Request request)
+            public Request process(Request request,URLRewriteContext context)
             {
                 return null;
+            }
+
+            public RewriteRuleApplicability applicability() {
+                return RewriteRuleApplicability.BOTH;
             }
         };
         
         List<URLRewriterRule> list = new ArrayList<URLRewriterRule>();
         list.add(rule);
         
-        URLRewriterService urlRewriterService = new URLRewriterServiceImpl(list);
+        URLRewriter urlRewriter = new URLRewriterImpl(list);
 
-        URLRewriterRequestFilter filter = new URLRewriterRequestFilter(urlRewriterService);
+        URLRewriterRequestFilter filter = new URLRewriterRequestFilter(urlRewriter);
         Request request = newMock(Request.class);
         Response response = newMock(Response.class);
         RequestHandler requestHandler = newMock(RequestHandler.class);
@@ -134,6 +147,7 @@ public class URLRewriterRequestFilterTest extends TestBase
         }
 
         assertTrue(ok);
+
 
     }
 

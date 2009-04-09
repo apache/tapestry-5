@@ -52,7 +52,6 @@ import org.apache.tapestry5.runtime.ComponentResourcesAware;
 import org.apache.tapestry5.runtime.RenderCommand;
 import org.apache.tapestry5.runtime.RenderQueue;
 import org.apache.tapestry5.services.ajax.MultiZoneUpdateEventResultProcessor;
-import org.apache.tapestry5.urlrewriter.URLRewriterRule;
 import org.apache.tapestry5.util.StringToEnumCoercion;
 import org.apache.tapestry5.validator.*;
 import org.slf4j.Logger;
@@ -307,6 +306,7 @@ public final class TapestryModule
         binder.bind(ComponentEventLinkEncoder.class, ComponentEventLinkEncoderImpl.class);
         binder.bind(PageRenderLinkSource.class, PageRenderLinkSourceImpl.class);
         binder.bind(ClientInfrastructure.class, ClientInfrastructureImpl.class);
+        binder.bind(URLRewriter.class,URLRewriterImpl.class);
     }
 
     // ========================================================================
@@ -501,7 +501,7 @@ public final class TapestryModule
         add(configuration, TransformConstants.AFTER_RENDER_SIGNATURE, AfterRender.class, true);
         add(configuration, TransformConstants.CLEANUP_RENDER_SIGNATURE, CleanupRender.class, true);
 
-        // Ideally, these should be ordered pretty late in the process to make sure there are no
+        // Ideally, these should be ordered pretty late in the processInbound to make sure there are no
         // side effects with other workers that do work inside the page lifecycle methods.
 
         add(configuration, PageLoaded.class, TransformConstants.CONTAINING_PAGE_DID_LOAD_SIGNATURE, "pageLoaded");
@@ -757,7 +757,7 @@ public final class TapestryModule
 
                                          UpdateListenerHub updateListenerHub,
 
-                                         URLRewriterService urlRewriterService)
+                                         URLRewriter urlRewriter)
     {
         RequestFilter staticFilesFilter = new StaticFilesFilter(context);
 
@@ -792,11 +792,11 @@ public final class TapestryModule
                                                                        checkInterval, updateTimeout), "before:*");
 
         // we just need the URLRewriterRequestFilter if we have URL rewriter rules, of course.
-        if (urlRewriterService.getRules().isEmpty() == false)
+        if (urlRewriter.hasRequestRules())
         {
 
             URLRewriterRequestFilter urlRewriterRequestFilter = new URLRewriterRequestFilter(
-                    urlRewriterService);
+                    urlRewriter);
             configuration.add("URLRewriter", urlRewriterRequestFilter, "before:StaticFiles");
 
         }
@@ -2373,43 +2373,42 @@ public final class TapestryModule
     }
 
     /**
-     * @since 5.1.0.2
-     */
-    public static URLRewriterService buildURLRewriterService(List<URLRewriterRule> contributions)
-    {
-        return new URLRewriterServiceImpl(contributions);
-    }
-
-    /**
      * @throws Exception
      * @since 5.1.0.2
      */
     public static ComponentEventLinkEncoder decorateComponentEventLinkEncoder(
-            ComponentEventLinkEncoder encoder, URLRewriterService urlRewriterService,
+            ComponentEventLinkEncoder encoder, URLRewriter urlRewriter,
             Request request, HttpServletRequest httpServletRequest, Response response,
             AspectDecorator aspectDecorator) throws Exception
     {
 
         // no rules, no link rewriting.
-        if (urlRewriterService.getRules().isEmpty())
+        if (!urlRewriter.hasLinkRules())
         {
             return null;
         }
 
-        ComponentEventLinkEncoderMethodAdvice advice =
-                new ComponentEventLinkEncoderMethodAdvice(urlRewriterService, request, httpServletRequest, response);
+        ComponentEventLinkEncoderMethodAdvice pageLinkAdvice =
+                new ComponentEventLinkEncoderMethodAdvice(urlRewriter, request, httpServletRequest, response,true);
+
+        ComponentEventLinkEncoderMethodAdvice eventLinkAdvice =
+                new ComponentEventLinkEncoderMethodAdvice(urlRewriter, request, httpServletRequest, response,false);
+
 
         Class<ComponentEventLinkEncoder> clasz = ComponentEventLinkEncoder.class;
+
         Method createPageRenderLink =
                 clasz.getMethod("createPageRenderLink", PageRenderRequestParameters.class);
+
         Method createComponentEventLink =
                 clasz.getMethod("createComponentEventLink", ComponentEventRequestParameters.class, boolean.class);
+
 
         final AspectInterceptorBuilder<ComponentEventLinkEncoder> builder =
                 aspectDecorator.createBuilder(clasz, encoder, "Link rewriting");
 
-        builder.adviseMethod(createComponentEventLink, advice);
-        builder.adviseMethod(createPageRenderLink, advice);
+        builder.adviseMethod(createComponentEventLink, eventLinkAdvice);
+        builder.adviseMethod(createPageRenderLink, pageLinkAdvice);
 
         return builder.build();
 

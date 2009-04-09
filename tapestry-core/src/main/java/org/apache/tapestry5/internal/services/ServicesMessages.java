@@ -416,4 +416,14 @@ class ServicesMessages
     {
         return MESSAGES.get("literal-conduit-not-updateable");
     }
+
+    static String requestRewriteReturnedNull()
+    {
+        return MESSAGES.get("request-rewrite-returned-null");
+    }
+
+    static String linkRewriteReturnedNull()
+    {
+        return MESSAGES.get("link-rewrite-returned-null");
+    }
 }

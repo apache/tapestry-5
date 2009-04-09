@@ -69,4 +69,25 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         assertTextPresent("End of maze. URL rewriting works :).");
 
     }
+
+    @Test
+    public void test_url_rewriter_using_context() throws InterruptedException
+    {
+        open("/RewriteWithContext");
+        assertAttribute("//a[@class='page']/@href","/rpage/2sseccusetirwer");
+        assertAttribute("//a[@class='event']/@href", "/cevent/txetnochtiwetirwer:kcilc");
+        assertAttribute("//a[@class='action']/@href","/cevent/txetnochtiwetirwer.knilgnitcaeht");
+
+        clickAndWait("//a[@class='page']");
+        assertTextPresent("URL Rewriting that relies on the RewriteContext evidently works.");
+
+        //note that we should be able to get back to rewritewithcontext via rpage encoding/decoding...
+        open("/rpage/txetnochtiwetirwer");
+        clickAndWait("//a[@class='event']");
+        assertTextPresent("URL Rewriting that relies on the RewriteContext evidently works.");
+
+        open("/rpage/txetnochtiwetirwer");
+        clickAndWait("//a[@class='action']");
+        assertTextPresent("URL Rewriting that relies on the RewriteContext evidently works.");
+    }
 }

@@ -16,10 +16,7 @@ package org.apache.tapestry5.internal.services;
 import java.io.IOException;
 
 import org.apache.tapestry5.ioc.internal.util.Defense;
-import org.apache.tapestry5.services.Request;
-import org.apache.tapestry5.services.RequestFilter;
-import org.apache.tapestry5.services.RequestHandler;
-import org.apache.tapestry5.services.Response;
+import org.apache.tapestry5.services.*;
 
 /**
  * <code>RequestFilter</code> that applies the URL rewriting rules to requests.
@@ -29,23 +26,23 @@ import org.apache.tapestry5.services.Response;
 public class URLRewriterRequestFilter implements RequestFilter
 {
 
-    final private URLRewriterService urlRewriterService;
+    final private URLRewriter urlRewriter;
 
     /**
      * Single constructor of this class.
-     * @param urlRewriterService um {@link URLRewriterService}. It cannot be null.
+     * @param urlRewriter um {@link URLRewriter}. It cannot be null.
      */
-    public URLRewriterRequestFilter(URLRewriterService urlRewriterService)
+    public URLRewriterRequestFilter(URLRewriter urlRewriter)
     {
-        Defense.notNull(urlRewriterService, "urlRewriterService");
-        this.urlRewriterService = urlRewriterService;
+        Defense.notNull(urlRewriter, "urlRewriter");
+        this.urlRewriter = urlRewriter;
     }
 
     public boolean service(Request request, Response response, RequestHandler handler)
             throws IOException
     {
 
-        request = urlRewriterService.process(request);
+        request = urlRewriter.processRequest(request);
 
         return handler.service(request, response);
 

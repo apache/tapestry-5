@@ -149,7 +149,7 @@ public class ComponentTemplateSourceImplTest extends InternalBaseTestCase
 
         verify();
 
-        // Now, change the file and process an UpdateEvent.
+        // Now, change the file and processInbound an UpdateEvent.
 
         touch(f);
 

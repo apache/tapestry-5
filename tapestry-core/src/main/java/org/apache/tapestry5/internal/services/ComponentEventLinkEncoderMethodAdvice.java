@@ -20,64 +20,75 @@ import org.apache.tapestry5.Link;
 import org.apache.tapestry5.ioc.Invocation;
 import org.apache.tapestry5.ioc.MethodAdvice;
 import org.apache.tapestry5.ioc.internal.util.Defense;
-import org.apache.tapestry5.services.ComponentEventLinkEncoder;
-import org.apache.tapestry5.services.Request;
-import org.apache.tapestry5.services.Response;
+import org.apache.tapestry5.services.*;
 import org.apache.tapestry5.urlrewriter.SimpleRequestWrapper;
+import org.apache.tapestry5.urlrewriter.URLRewriteContext;
 
 /**
  * Advices
  * {@linkplain ComponentEventLinkEncoder#createComponentEventLink(org.apache.tapestry5.services.ComponentEventRequestParameters, boolean)}
  * and
  * {@linkplain ComponentEventLinkEncoder#createPageRenderLink(org.apache.tapestry5.services.PageRenderRequestParameters)}
- * to rewrites the returned links using {@linkplain URLRewriterService}.
+ * to rewrites the returned links using {@linkplain URLRewriter}.
  */
 public class ComponentEventLinkEncoderMethodAdvice implements MethodAdvice
 {
 
-    final private URLRewriterService urlRewriterService;
+    private final URLRewriter urlRewriter;
 
-    final private Request request;
+    private final Request request;
 
-    final private HttpServletRequest httpServletRequest;
+    private final HttpServletRequest httpServletRequest;
 
-    final private Response response;
+    private final Response response;
+
+    private final boolean forPageLink;
+
+    /**
+     * Index of the invocation parameter that contains either the ComponentEventRequestParameter
+     * or the PageRenderRequestParameter objects.
+     */
+    private static final int CONTEXT_PARAMETER_INDEX =0;
 
     /**
      * Single constructor of this class.
      * 
-     * @param urlRewriterService
-     *            an {@link URLRewriterService}. It cannot be null.
+     * @param urlRewriter
+     *            an {@link URLRewriter}. It cannot be null.
      * @param request
      *            a {@link Request}. It cannot be null.
      * @param httpServletRequest
      *            an {@link HttpServletRequest}. It cannot be null.
      * @param response
      *            a {@link Response}. It cannot be null.
+     * @param forPageLink
+     *            true if the advice is for page link creation, false for component event link creation.
      */
-    public ComponentEventLinkEncoderMethodAdvice(URLRewriterService urlRewriterService,
-            Request request, HttpServletRequest httpServletRequest, Response response)
+    public ComponentEventLinkEncoderMethodAdvice(URLRewriter urlRewriter,
+            Request request, HttpServletRequest httpServletRequest, Response response,
+            boolean forPageLink)
     {
 
-        Defense.notNull(urlRewriterService, "urlRewriterService");
+        Defense.notNull(urlRewriter, "urlRewriter");
         Defense.notNull(request, "request");
         Defense.notNull(httpServletRequest, "httpServletRequest");
         Defense.notNull(response, "response");
 
         this.httpServletRequest = httpServletRequest;
-        this.urlRewriterService = urlRewriterService;
+        this.urlRewriter = urlRewriter;
         this.request = request;
         this.response = response;
-
+        this.forPageLink = forPageLink;
     }
 
     public void advise(Invocation invocation)
     {
         invocation.proceed();
+        String name = invocation.getMethodName();
 
         Link link = (Link) invocation.getResult();
-
-        Link newLink = rewriteIfNeeded(link);
+        URLRewriteContext context = setupContext(invocation);
+        Link newLink = rewriteIfNeeded(link,context);
 
         if (newLink != null)
         {
@@ -86,18 +97,60 @@ public class ComponentEventLinkEncoderMethodAdvice implements MethodAdvice
 
     }
 
+    private URLRewriteContext setupContext(final Invocation invocation) {
+
+        if (forPageLink) {
+            return new URLRewriteContext()
+            {
+
+                public boolean isIncoming()
+                {
+                    return false;
+                }
+
+                public PageRenderRequestParameters getPageParameters()
+                {
+                    return (PageRenderRequestParameters) invocation.getParameter(CONTEXT_PARAMETER_INDEX);
+                }
+
+                public ComponentEventRequestParameters getComponentEventParameters()
+                {
+                    return null;
+                }
+            };
+        }
+        return new URLRewriteContext()
+        {
+
+            public boolean isIncoming()
+            {
+                return false;
+            }
+
+            public PageRenderRequestParameters getPageParameters()
+            {
+                return null;
+            }
+
+            public ComponentEventRequestParameters getComponentEventParameters()
+            {
+                return (ComponentEventRequestParameters) invocation.getParameter(CONTEXT_PARAMETER_INDEX);
+            }
+        };
+    }
+
     /**
      * Returns a rewritten Link or null.
      * 
      * @param link
      *            a {@link Link}.
      */
-    Link rewriteIfNeeded(Link link)
+    Link rewriteIfNeeded(Link link, URLRewriteContext context)
     {
         Link newLink = null;
         SimpleRequestWrapper fakeRequest = new SimpleRequestWrapper(request, link.toAbsoluteURI());
 
-        Request rewritten = urlRewriterService.process(fakeRequest);
+        Request rewritten = urlRewriter.processLink(fakeRequest,context);
 
         // if the original request is equal to the rewritten one, no
         // rewriting is needed
