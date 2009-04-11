@@ -37,7 +37,8 @@ Simple example of rule chaining
 public static void contributeURLRewriter(OrderedConfiguration<URLRewriterRule> configuration)
 {
     
-    URLRewriterRule rule = new URLRewriterRule() {
+    URLRewriterRule rule = new URLRewriterRule() 
+    {
 
         public Request process(Request request, URLRewriteContext context)
         {
@@ -199,14 +200,16 @@ public static void contributeURLRewriter(OrderedConfiguration<URLRewriterRule> c
 public static void contributeURLRewriter(OrderedConfiguration<URLRewriterRule> configuration)
 {
 
-    URLRewriterRule rule = new URLRewriterRule() {
+    URLRewriterRule rule = new URLRewriterRule() 
+    {
 
         public Request process(Request request, URLRewriteContext context)
         {
             if (context.isIncoming())
             {
                 //these look like component event requests, which we didn't rewrite, so ignore.
-                if (request.getPath().contains(".") || request.getPath().contains(":")) {
+                if (request.getPath().contains(".") || request.getPath().contains(":")) 
+                {
                     return request;
                 }
                 String pageName = request.getPath().substring(1,request.getPath().indexOf('/',1));
@@ -215,7 +218,8 @@ public static void contributeURLRewriter(OrderedConfiguration<URLRewriterRule> c
             else
             {
                //if this is a component event, getPageParameters() will return null.
-               if (context.getPageParameters() != null) {
+               if (context.getPageParameters() != null) 
+               {
                     String path = request.getPath();
                     String pageName = context.getPageParameters().getLogicalPageName().toLowerCase();
                     String newPageName = pageName.replaceAll("page$","");
@@ -250,5 +254,5 @@ public static void contributeURLRewriter(OrderedConfiguration<URLRewriterRule> c
 
   Note that <<<getPageParameters()>>> will only return non-null when <<<process>>> is called due to
   page link creation, and <<<getComponentEventParameters()>>> will only return non-null when
-  <<<process>> is called as a result of creating component event links.
+  <<<process>>> is called as a result of creating component event links.
 
