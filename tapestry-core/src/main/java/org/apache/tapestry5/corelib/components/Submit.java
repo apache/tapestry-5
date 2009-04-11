@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -25,9 +25,9 @@ import org.apache.tapestry5.services.Heartbeat;
 import org.apache.tapestry5.services.Request;
 
 /**
- * Corresponds to &lt;input type="submit"&gt; or &lt;input type="image"&gt;, a client-side element that can force the enclosing form to submit. The
- * submit responsible for the form submission will post a notification that allows the application to know that it was
- * the responsible entity. The notification is named "selected" and has no context.
+ * Corresponds to &lt;input type="submit"&gt; or &lt;input type="image"&gt;, a client-side element that can force the
+ * enclosing form to submit. The submit responsible for the form submission will post a notification that allows the
+ * application to know that it was the responsible entity. The notification is named "selected" and has no context.
  */
 @SupportsInformalParameters
 public class Submit implements ClientElement
@@ -52,18 +52,19 @@ public class Submit implements ClientElement
      */
     @Parameter("false")
     private boolean disabled;
-    
+
     /**
-     * The list of values that will be made available to event handler method of this component when the form is submitted. 
-     * 
+     * The list of values that will be made available to event handler method of this component when the form is
+     * submitted.
+     *
      * @since 5.1.0.0
      */
     @Parameter
     private Object[] context;
-    
+
     /**
      * If provided, the component renders an input tag with type "image". Otherwise "submit".
-     * 
+     *
      * @since 5.1.0.0
      */
     @Parameter(defaultPrefix = BindingConstants.ASSET)
@@ -121,13 +122,13 @@ public class Submit implements ClientElement
 
         // Save the element, to see if an id is later requested.
 
-        String type = image==null?"submit":"image";
+        String type = image == null ? "submit" : "image";
 
         element = writer.element("input", "type", type, "name", name);
 
         if (disabled) writer.attributes("disabled", "disabled");
-        
-        if(image!=null) writer.attributes("src", image.toClientURL());
+
+        if (image != null) writer.attributes("src", image.toClientURL());
 
         formSupport.store(this, new ProcessSubmission(name));
 

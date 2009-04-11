@@ -6,17 +6,17 @@
         <t:delegate to="availableRenderer"/>
     </div>
     <div class="t-palette-controls">
-        <button id="${clientId}:select" disabled="disabled">
+        <button id="${clientId}-select" disabled="disabled">
             <img src="${select}" alt="${message:select-label}"/>
         </button>
-        <button id="${clientId}:deselect" disabled="disabled">
+        <button id="${clientId}-deselect" disabled="disabled">
             <img src="${deselect}" alt="${message:deselect-label}"/>
         </button>
         <t:if test="reorder">
-            <button id="${clientId}:up" disabled="disabled">
+            <button id="${clientId}-up" disabled="disabled">
                 <img src="${moveUp}" alt="${message:up-label}"/>
             </button>
-            <button id="${clientId}:down" disabled="disabled">
+            <button id="${clientId}-down" disabled="disabled">
                 <img src="${moveDown}" alt="${message:down-label}"/>
             </button>
         </t:if>

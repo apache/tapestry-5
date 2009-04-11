@@ -27,6 +27,16 @@ Release 5.1.0.4
     * URLRewriteRule implementations must now also implement the "applicability" method which determines whether
       rules should be applied to incoming requests, outgoing urls (links), or both.
 
+    []
+
+* {{{https://issues.apache.org/jira/browse/TAP5-622}TAP5-622}}
+
+    The client-side ids for labels and error icons have slightly different names; the ':' seperator (i.e. "textfield:label")
+    has been changed to a '-' (i.e., "textfield-label"). This should only affect users who have significantly
+    overridden client-side validation.
+
+    The same approach has been taken with the many client-side elements used by the Palette and DateField components.
+
 Release 5.1.0.1
 
   Tapestry's client-side JavaScript relating to input field validation has changed somewhat

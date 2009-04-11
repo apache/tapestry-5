@@ -306,7 +306,7 @@ public final class TapestryModule
         binder.bind(ComponentEventLinkEncoder.class, ComponentEventLinkEncoderImpl.class);
         binder.bind(PageRenderLinkSource.class, PageRenderLinkSourceImpl.class);
         binder.bind(ClientInfrastructure.class, ClientInfrastructureImpl.class);
-        binder.bind(URLRewriter.class,URLRewriterImpl.class);
+        binder.bind(URLRewriter.class, URLRewriterImpl.class);
     }
 
     // ========================================================================
@@ -1637,8 +1637,6 @@ public final class TapestryModule
                                          @Symbol(SymbolConstants.COMBINE_SCRIPTS)
                                          final boolean combineScripts,
 
-                                         final ValidationMessagesSource validationMessagesSource,
-
                                          final SymbolSource symbolSource,
 
                                          final AssetSource assetSource,
@@ -1742,10 +1740,7 @@ public final class TapestryModule
         {
             public void renderMarkup(MarkupWriter writer, MarkupRenderer renderer)
             {
-                Messages messages = validationMessagesSource.getValidationMessages(threadLocale.getLocale());
-
-                ValidationDecorator decorator = new DefaultValidationDecorator(environment, messages, spacerImage,
-                                                                               writer);
+                ValidationDecorator decorator = new DefaultValidationDecorator(environment, spacerImage, writer);
 
                 environment.push(ValidationDecorator.class, decorator);
 
@@ -1781,9 +1776,7 @@ public final class TapestryModule
 
                                                 final SymbolSource symbolSource,
 
-                                                final AssetSource assetSource,
-
-                                                final ValidationMessagesSource validationMessagesSource)
+                                                final AssetSource assetSource)
     {
         PartialMarkupRendererFilter documentLinker = new PartialMarkupRendererFilter()
         {
@@ -1808,7 +1801,7 @@ public final class TapestryModule
             {
                 String uid = Long.toHexString(System.currentTimeMillis());
 
-                String namespace = ":" + uid;
+                String namespace = "-" + uid;
 
                 IdAllocator idAllocator = new IdAllocator(namespace);
 
@@ -1867,10 +1860,7 @@ public final class TapestryModule
         {
             public void renderMarkup(MarkupWriter writer, JSONObject reply, PartialMarkupRenderer renderer)
             {
-                Messages messages = validationMessagesSource.getValidationMessages(threadLocale.getLocale());
-
-                ValidationDecorator decorator = new DefaultValidationDecorator(environment, messages, spacerImage,
-                                                                               writer);
+                ValidationDecorator decorator = new DefaultValidationDecorator(environment, spacerImage, writer);
 
                 environment.push(ValidationDecorator.class, decorator);
 
@@ -2389,10 +2379,10 @@ public final class TapestryModule
         }
 
         ComponentEventLinkEncoderMethodAdvice pageLinkAdvice =
-                new ComponentEventLinkEncoderMethodAdvice(urlRewriter, request, httpServletRequest, response,true);
+                new ComponentEventLinkEncoderMethodAdvice(urlRewriter, request, httpServletRequest, response, true);
 
         ComponentEventLinkEncoderMethodAdvice eventLinkAdvice =
-                new ComponentEventLinkEncoderMethodAdvice(urlRewriter, request, httpServletRequest, response,false);
+                new ComponentEventLinkEncoderMethodAdvice(urlRewriter, request, httpServletRequest, response, false);
 
 
         Class<ComponentEventLinkEncoder> clasz = ComponentEventLinkEncoder.class;

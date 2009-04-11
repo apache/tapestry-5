@@ -208,7 +208,7 @@ public class DateField extends AbstractField
         if (value == null) value = formatCurrentValue();
 
         String clientId = getClientId();
-        String triggerId = clientId + ":trigger";
+        String triggerId = clientId + "-trigger";
 
         writer.element("input",
 

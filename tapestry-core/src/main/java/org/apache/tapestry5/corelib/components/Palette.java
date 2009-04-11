@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -74,8 +74,11 @@ public class Palette extends AbstractField
     {
         public void render(MarkupWriter writer)
         {
-            writer.element("select", "id", getClientId() + ":avail", "multiple", "multiple", "size", getSize(), "name",
-                           getControlName() + ":avail");
+            writer.element("select",
+                           "id", getClientId() + "-avail",
+                           "multiple", "multiple",
+                           "size", getSize(),
+                           "name", getControlName() + "-avail");
 
             writeDisabled(writer, isDisabled());
 
@@ -135,8 +138,11 @@ public class Palette extends AbstractField
     {
         public void render(MarkupWriter writer)
         {
-            writer.element("select", "id", getClientId(), "multiple", "multiple", "size", getSize(), "name",
-                           getControlName());
+            writer.element("select",
+                           "id", getClientId(),
+                           "multiple", "multiple",
+                           "size", getSize(),
+                           "name", getControlName());
 
             writeDisabled(writer, isDisabled());
 
@@ -275,7 +281,7 @@ public class Palette extends AbstractField
     @Override
     protected void processSubmission(String elementName)
     {
-        String parameterValue = request.getParameter(elementName + ":values");
+        String parameterValue = request.getParameter(elementName + "-values");
         JSONArray values = new JSONArray(parameterValue);
 
         // Use a couple of local variables to cut down on access via bindings
@@ -330,7 +336,10 @@ public class Palette extends AbstractField
 
         renderSupport.addScript("new Tapestry.Palette('%s', %s, %s);", clientId, reorder, naturalOrder);
 
-        writer.element("input", "type", "hidden", "id", clientId + ":values", "name", getControlName() + ":values",
+        writer.element("input",
+                       "type", "hidden",
+                       "id", clientId + "-values",
+                       "name", getControlName() + "-values",
                        "value", selectedValues);
         writer.end();
     }

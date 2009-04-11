@@ -208,7 +208,7 @@ public class FormInjector implements ClientElement
 
                 String uid = Long.toHexString(System.currentTimeMillis());
 
-                IdAllocator idAllocator = new IdAllocator(":" + uid);
+                IdAllocator idAllocator = new IdAllocator("-" + uid);
 
                 clientId = renderSupport.allocateClientId(resources);
 

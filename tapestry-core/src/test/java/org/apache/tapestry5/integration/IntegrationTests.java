@@ -392,15 +392,15 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     {
         start("SimpleForm");
 
-        assertText("//label[@id='disabled:label']", "Disabled");
+        assertText("//label[@id='disabled-label']", "Disabled");
 
         // This demonstrates TAPESTRY-1642:
-        assertText("//label[@id='email:label']", "User Email");
+        assertText("//label[@id='email-label']", "User Email");
 
-        assertText("//label[@id='message:label']", "Incident Message");
-        assertText("//label[@id='operatingSystem:label']", "Operating System");
-        assertText("//label[@id='department:label']", "Department");
-        assertText("//label[@id='urgent:label']", "Urgent Processing Requested");
+        assertText("//label[@id='message-label']", "Incident Message");
+        assertText("//label[@id='operatingSystem-label']", "Operating System");
+        assertText("//label[@id='department-label']", "Department");
+        assertText("//label[@id='urgent-label']", "Urgent Processing Requested");
 
         assertFieldValue("email", "");
         assertFieldValue("message", "");
@@ -944,26 +944,26 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         assertText("//div[@class='t-palette-available']/div[@class='t-palette-title']", "Languages Offered");
         assertText("//div[@class='t-palette-selected']/div[@class='t-palette-title']", "Selected Languages");
 
-        addSelection("languages:avail", "label=Haskell");
-        addSelection("languages:avail", "label=Javascript");
-        click("languages:select");
+        addSelection("languages-avail", "label=Haskell");
+        addSelection("languages-avail", "label=Javascript");
+        click("languages-select");
 
         clickAndWait(SUBMIT);
         assertTextPresent("Selected Languages: [HASKELL, JAVASCRIPT]");
 
         addSelection("languages", "label=Javascript");
-        click("languages:deselect");
+        click("languages-deselect");
 
-        addSelection("languages:avail", "label=Perl");
-        removeSelection("languages:avail", "label=Javascript");
-        addSelection("languages:avail", "label=Erlang");
-        addSelection("languages:avail", "label=Java");
-        addSelection("languages:avail", "label=Lisp");
-        addSelection("languages:avail", "label=Ml");
-        addSelection("languages:avail", "label=Python");
-        addSelection("languages:avail", "label=Ruby");
+        addSelection("languages-avail", "label=Perl");
+        removeSelection("languages-avail", "label=Javascript");
+        addSelection("languages-avail", "label=Erlang");
+        addSelection("languages-avail", "label=Java");
+        addSelection("languages-avail", "label=Lisp");
+        addSelection("languages-avail", "label=Ml");
+        addSelection("languages-avail", "label=Python");
+        addSelection("languages-avail", "label=Ruby");
 
-        click("languages:select");
+        click("languages-select");
 
         clickAndWait(SUBMIT);
 
@@ -977,12 +977,12 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         addSelection("languages", "label=Ruby");
 
         for (int i = 0; i < 6; i++)
-            click("languages:up");
+            click("languages-up");
 
         removeSelection("languages", "label=Ruby");
         addSelection("languages", "label=Perl");
 
-        click("languages:down");
+        click("languages-down");
 
         clickAndWait(SUBMIT);
 
@@ -1000,10 +1000,10 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         /* force of the options to be disabled rather than creating the model with it disabled in the page.
          * it is possible to get into this state by creating a model with disabled options.
          */
-        getEval("this.browserbot.findElement('//select[@id=\"languages:avail\"]/option[1]').disabled = 'disabled';");
+        getEval("this.browserbot.findElement('//select[@id=\"languages-avail\"]/option[1]').disabled = 'disabled';");
 
         // causes an error in the js console but does not throw an exception here. optimally, this would make the test case fail.
-        doubleClick("//select[@id=\"languages:avail\"]/option[1]");
+        doubleClick("//select[@id=\"languages-avail\"]/option[1]");
     }
 
     @Test
@@ -1241,7 +1241,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         clickAndWait("link=french");
 
-        click("birthday:trigger");
+        click("birthday-trigger");
 
         waitForCondition("selenium.browserbot.getCurrentWindow().$$('DIV.datePicker').first().isDeepVisible() == true",
                          PAGE_LOAD_TIMEOUT);
@@ -1423,11 +1423,11 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
                 "//input[@id='datefield']",
 
-                "//select[@id='palette:avail']",
+                "//select[@id='palette-avail']",
 
-                "//button[@id='palette:select']",
+                "//button[@id='palette-select']",
 
-                "//button[@id='palette:deselect']",
+                "//button[@id='palette-deselect']",
 
                 "//select[@id='palette']",
 
@@ -1604,10 +1604,10 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         // - AbstractTextField.isRequired() and the logic inside ComponentFieldValidator.isRequired()
 
         assertSourcePresent(
-                "[Before label for Value]<label id=\"value:label\" for=\"value\">Value</label>[After label for Value]",
+                "[Before label for Value]<label id=\"value-label\" for=\"value\">Value</label>[After label for Value]",
                 "[Before field Value]",
                 "[After field Value (optional)]",
-                "[Before label for Required Value]<label id=\"requiredValue:label\" for=\"requiredValue\">Required Value</label>[After label for Required Value]",
+                "[Before label for Required Value]<label id=\"requiredValue-label\" for=\"requiredValue\">Required Value</label>[After label for Required Value]",
                 "[Before field Required Value]",
                 "[After field Required Value (required)]");
     }
@@ -1664,8 +1664,8 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         assertTextPresent("Editor for org.apache.tapestry5.integration.app1.data.Track");
 
-        assertText("//label[@id='title:label']", "Title");
-        assertAttribute("//label[@id='title:label']/@for", "title");
+        assertText("//label[@id='title-label']", "Title");
+        assertAttribute("//label[@id='title-label']/@for", "title");
     }
 
     /**

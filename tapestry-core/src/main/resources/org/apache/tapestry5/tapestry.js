@@ -67,23 +67,36 @@ var Tapestry = {
         // The overlay is stretched to cover the full screen (including scrolling areas)
         // and is used to fade out the background ... and prevent keypresses (its z-order helps there).
 
-        var overlay = new Element("div", { 'class' : 't-dialog-overlay' });
+        var overlay = new Element("div", {
+            'class' : 't-dialog-overlay'
+        });
         overlay.setOpacity(0.0);
 
-        body.insert({ top: overlay });
+        body.insert({
+            top: overlay
+        });
 
-        new Effect.Appear(overlay, {duration: 0.2, from: 0.0});
+        new Effect.Appear(overlay, {
+            duration: 0.2,
+            from: 0.0
+        });
 
-        var messageDiv = new Element("div", { 'class' : 't-page-loading-banner' }).update(Tapestry.Messages.pageIsLoading);
-        overlay.insert({ top: messageDiv });
+        var messageDiv = new Element("div", {
+            'class' : 't-page-loading-banner'
+        }).update(Tapestry.Messages.pageIsLoading);
+        overlay.insert({
+            top: messageDiv
+        });
 
         var hideDialog = function()
         {
-            new Effect.Fade(overlay, { duration: 0.2,
+            new Effect.Fade(overlay, {
+                duration: 0.2,
                 afterFinish: function()
                 {
                     overlay.remove();
-                } });
+                }
+            });
         };
 
         document.observe("dom:loaded", hideDialog);
@@ -192,7 +205,9 @@ var Tapestry = {
 
             if (initf == undefined)
             {
-                Tapestry.error(Tapestry.Messages.missingInitializer, { name:functionName });
+                Tapestry.error(Tapestry.Messages.missingInitializer, {
+                    name:functionName
+                });
                 return;
             }
 
@@ -200,7 +215,9 @@ var Tapestry = {
             {
                 if (! Object.isArray(parameterList))
                 {
-                    parameterList = [parameterList];
+                    parameterList = [
+                        parameterList
+                    ];
                 }
 
                 initf.apply(this, parameterList);
@@ -329,7 +346,8 @@ var Tapestry = {
                 }
             },
             onException: Tapestry.ajaxFailureHandler,
-            onFailure: Tapestry.ajaxFailureHandler });
+            onFailure: Tapestry.ajaxFailureHandler
+        });
     },
 
     /** Obtains the Tapestry.ZoneManager object associated with a triggering element
@@ -359,7 +377,9 @@ var Tapestry = {
 
         if (!zoneElement)
         {
-            Tapestry.error(Tapestry.Messages.missingZone, { id:zoneElement});
+            Tapestry.error(Tapestry.Messages.missingZone, {
+                id:zoneElement
+            });
             return null;
         }
 
@@ -392,7 +412,9 @@ var Tapestry = {
 
         if (! path.startsWith("/"))
         {
-            Tapestry.error(Tapestry.Messages.pathDoesNotStartWithSlash, { path: path });
+            Tapestry.error(Tapestry.Messages.pathDoesNotStartWithSlash, {
+                path: path
+            });
 
             return path;
         }
@@ -580,7 +602,11 @@ Element.addMethods('FORM',
     }
 });
 
-Element.addMethods(['INPUT', 'SELECT', 'TEXTAREA'],
+Element.addMethods([
+    'INPUT',
+    'SELECT',
+    'TEXTAREA'
+],
 {
     /**
      * Invoked on a form element (INPUT, SELECT, etc.), gets or creates the
@@ -709,7 +735,6 @@ Tapestry.Initializer = {
     },
 
 
-
     /**
      * Convert a form or link into a trigger of an Ajax update that
      * updates the indicated Zone.
@@ -747,7 +772,9 @@ Tapestry.Initializer = {
                     zoneManager.processReply(transport.responseJSON);
                 };
 
-                element.sendAjaxRequest(url, { onSuccess : successHandler });
+                element.sendAjaxRequest(url, {
+                    onSuccess : successHandler
+                });
             });
 
             return;
@@ -789,7 +816,10 @@ Tapestry.Initializer = {
 
             if (vfunc == undefined)
             {
-                Tapestry.error(Tapestry.Messages.missingValidator, {name:name, fieldName:field.id});
+                Tapestry.error(Tapestry.Messages.missingValidator, {
+                    name:name,
+                    fieldName:field.id
+                });
                 return;
             }
 
@@ -942,11 +972,14 @@ Tapestry.ErrorPopup = Class.create({
         this.innerSpan = new Element("span");
         this.outerDiv = $(new Element("div", {
             'id' : this.field.id + ":errorpopup",
-            'class' : 't-error-popup' })).update(this.innerSpan).hide();
+            'class' : 't-error-popup'
+        })).update(this.innerSpan).hide();
 
         var body = $(document.body);
 
-        body.insert({ bottom: this.outerDiv });
+        body.insert({
+            bottom: this.outerDiv
+        });
 
         this.outerDiv.absolutize();
 
@@ -963,7 +996,10 @@ Tapestry.ErrorPopup = Class.create({
             Event.stop(event);  // Should be domevent.stop(), but that fails under IE
         }.bindAsEventListener(this));
 
-        this.queue = { position: 'end', scope: this.field.id };
+        this.queue = {
+            position: 'end',
+            scope: this.field.id
+        };
 
         Event.observe(window, "resize", this.repositionBubble.bind(this));
 
@@ -1007,7 +1043,8 @@ Tapestry.ErrorPopup = Class.create({
             top: (fieldPos[1] + this.BUBBLE_VERT_OFFSET) + "px",
             left: (fieldPos[0] + this.BUBBLE_HORIZONTAL_OFFSET) + "px",
             width: this.BUBBLE_WIDTH,
-            height: this.BUBBLE_HEIGHT });
+            height: this.BUBBLE_HEIGHT
+        });
     },
 
     fadeIn : function()
@@ -1041,11 +1078,13 @@ Tapestry.ErrorPopup = Class.create({
     {
         if (this.animation) return;
 
-        this.animation = new Effect.Fade(this.outerDiv, { queue : this.queue,
+        this.animation = new Effect.Fade(this.outerDiv, {
+            queue : this.queue,
             afterFinish: function()
             {
                 this.animation = null;
-            }.bind(this) });
+            }.bind(this)
+        });
     },
 
     hide : function()
@@ -1149,8 +1188,8 @@ Tapestry.FieldEventManager = Class.create({
         this.field = $(field);
 
         var id = this.field.id;
-        this.label = $(id + ':label');
-        this.icon = $(id + ':icon');
+        this.label = $(id + '-label');
+        this.icon = $(id + '-icon');
 
         this.translator = Prototype.K;
 
@@ -1249,7 +1288,10 @@ Tapestry.FieldEventManager = Class.create({
 
             if (! t.validationError)
             {
-                this.field.fire(Tapestry.FIELD_VALIDATE_EVENT, { value: value, translated: translated });
+                this.field.fire(Tapestry.FIELD_VALIDATE_EVENT, {
+                    value: value,
+                    translated: translated
+                });
             }
         }
 
@@ -1313,7 +1355,9 @@ Tapestry.ZoneManager = Class.create({
     initialize: function(spec)
     {
         if (Object.isString(spec))
-            spec = { element: spec }
+            spec = {
+                element: spec
+            }
 
         this.element = $(spec.element);
         this.showFunc = Tapestry.ElementEffect[spec.show] || Tapestry.ElementEffect.show;
@@ -1399,7 +1443,9 @@ Tapestry.FormFragment = Class.create({
     initialize: function(spec)
     {
         if (Object.isString(spec))
-            spec = { element: spec };
+            spec = {
+                element: spec
+            };
 
         this.element = $(spec.element);
 
@@ -1485,7 +1531,9 @@ Tapestry.FormInjector = Class.create({
                 // to create the new element, that gets inserted
                 // before or after the FormInjector's element.
 
-                var newElement = new Element(this.element.tagName, { 'class' : this.element.className });
+                var newElement = new Element(this.element.tagName, {
+                    'class' : this.element.className
+                });
 
                 // Insert the new element before or after the existing element.
 
@@ -1648,9 +1696,14 @@ Tapestry.ScriptManager = {
 
                 // IE needs the type="text/javascript" as well.
 
-                var element = new Element('script', { src: assetURL, type: 'text/javascript' });
+                var element = new Element('script', {
+                    src: assetURL,
+                    type: 'text/javascript'
+                });
 
-                head.insert({bottom:element});
+                head.insert({
+                    bottom:element
+                });
 
                 added.push(element);
 
@@ -1674,14 +1727,20 @@ Tapestry.ScriptManager = {
 
             if (Tapestry.ScriptManager.contains(document.styleSheets, 'href', assetURL)) return; // continue
 
-            var element = new Element('link', { type: 'text/css', rel: 'stylesheet', href: assetURL });
+            var element = new Element('link', {
+                type: 'text/css',
+                rel: 'stylesheet',
+                href: assetURL
+            });
 
             // Careful about media types, some browser will break if it ends up as 'null'.
 
             if (s.media != undefined)
                 element.writeAttribute('media', s.media);
 
-            head.insert({bottom: element});
+            head.insert({
+                bottom: element
+            });
 
         });
     }
