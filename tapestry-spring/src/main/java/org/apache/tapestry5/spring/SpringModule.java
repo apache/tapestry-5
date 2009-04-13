@@ -53,6 +53,8 @@ public class SpringModule
                 logger.info(String.format("Spring version %s with %,d defined beans.",
                                           SpringVersion.getVersion(),
                                           springContext.getBeanDefinitionCount()));
+
+                initializer.initializeApplication(context);
             }
         };
 
