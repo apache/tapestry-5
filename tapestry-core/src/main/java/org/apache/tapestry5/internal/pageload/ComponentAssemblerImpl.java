@@ -89,10 +89,19 @@ class ComponentAssemblerImpl implements ComponentAssembler
 
             popNewElement(pageAssembly);
 
-            for (PageAssemblyAction action : pageAssembly.deferred)
+            // Execute the deferred actions in reverse order to how they were added. This makes
+            // sense, as (currently) all deferred actions are related to inheriting informal parameters;
+            // those are added deepest component to shallowed (root) component, but should be executed
+            // in the opposite order to ensure that chained inherited parameters resolve correctly.
+
+            int count = pageAssembly.deferred.size();
+            for (int i = count - 1; i >= 0; i--)
             {
+                PageAssemblyAction action = pageAssembly.deferred.get(i);
+
                 action.execute(pageAssembly);
             }
+
 
             return pageAssembly.createdElement.peek();
         }

@@ -1,0 +1,11 @@
+<t:container xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd"
+             xmlns:p="tapestry:parameter">
+
+    <dt>${componentResources.nestedId}</dt>
+    <dd id="${componentResources.nestedId}">
+        ${value}
+    </dd>
+
+    <t:inheritMiddle t:id="middle" mvalue="inherit:value"/>
+
+</t:container>

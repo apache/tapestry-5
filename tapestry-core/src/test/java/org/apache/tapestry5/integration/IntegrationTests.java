@@ -2905,4 +2905,13 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         assertText("stored", "12345");
     }
+
+    @Test
+    public void multi_level_parameter_inheritance()
+    {
+        start("Multi-Level Inherit Demo");
+
+        assertText("prop.middle.bottom", "bound value");
+        assertText("literal.middle.bottom", "some text");
+    }
 }

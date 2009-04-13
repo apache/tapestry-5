@@ -65,6 +65,9 @@ public class Index
 
     private static final List<Item> ITEMS = CollectionFactory.newList(
 
+            new Item("MultiLevelInheritDemo", "Multi-Level Inherit Demo",
+                     "Use of inherit: binding prefix across three levels"),
+
             new Item("HiddenDemo", "Hidden Demo", "Demo the use of the Hidden component."),
 
             new Item("FormZoneDemo", "Form Zone Demo", "Use a form to update a zone."),

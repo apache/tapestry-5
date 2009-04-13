@@ -900,6 +900,8 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
                 final ComponentPageElement container = pageAssembly.activeElement.peek();
                 final ComponentPageElement embedded = pageAssembly.createdElement.peek();
 
+                // Parameters are normally bound bottom to top. Inherited parameters run differently, and should be
+                // top to bottom. 
                 pageAssembly.deferred.add(new PageAssemblyAction()
                 {
                     public void execute(PageAssembly pageAssembly)
