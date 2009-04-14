@@ -19,10 +19,7 @@ import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.services.Session;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 public class TestableRequestImpl implements TestableRequest
 {
@@ -47,12 +44,6 @@ public class TestableRequestImpl implements TestableRequest
     public TestableRequestImpl(String contextPath)
     {
         this.contextPath = contextPath;
-    }
-
-    private <T> T nyi(String methodName)
-    {
-        throw new RuntimeException(
-                String.format("Request: method %s() not yet implemented by TestableRequestImpl.", methodName));
     }
 
     public TestableRequest clear()
@@ -112,19 +103,23 @@ public class TestableRequestImpl implements TestableRequest
 
     public long getDateHeader(String name)
     {
-        nyi("getDateHeader");
-
         return 0;
     }
 
+    /**
+     * Returns null.
+     */
     public String getHeader(String name)
     {
-        return nyi("getHeader");
+        return null;
     }
 
+    /**
+     * Returns an empty list.
+     */
     public List<String> getHeaderNames()
     {
-        return nyi("getHeaderNames");
+        return Collections.emptyList();
     }
 
     public Locale getLocale()

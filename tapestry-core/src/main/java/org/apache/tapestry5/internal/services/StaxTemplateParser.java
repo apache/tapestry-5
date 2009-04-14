@@ -354,8 +354,7 @@ public class StaxTemplateParser
     {
         processTextBuffer(initialState);
 
-        TemplateParserState state = checkForXMLSpaceAttribute(initialState);
-        return state;
+        return checkForXMLSpaceAttribute(initialState);
     }
 
     /**
