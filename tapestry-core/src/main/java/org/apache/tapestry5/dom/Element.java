@@ -893,8 +893,13 @@ public final class Element extends Node
                 else
                     firstChild = afterNode;
 
-                if (afterNode == null)
-                    lastChild = afterNode;
+                // If node was the final node in the element then handle deletion.
+                // It's even possible node was the only node in the container.
+
+                if (lastChild == node)
+                {
+                    lastChild = prior != null ? prior : null;
+                }
 
                 return;
             }

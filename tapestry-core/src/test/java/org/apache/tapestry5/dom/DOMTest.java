@@ -14,6 +14,8 @@
 
 package org.apache.tapestry5.dom;
 
+import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.internal.services.MarkupWriterImpl;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.testng.annotations.Test;
@@ -863,5 +865,35 @@ public class DOMTest extends InternalBaseTestCase
         root.forceAttributes("null", null);
 
         assertEquals(root.toString(), "<root></root>");
+    }
+
+    @Test
+    public void remove_while_rendering()
+    {
+        MarkupWriter writer = new MarkupWriterImpl(new XMLMarkupModel());
+
+        writer.element("ul");
+
+        for (int i = 0; i < 4; i++)
+        {
+            Element e = writer.element("li");
+
+            if (i != 2)
+            {
+                writer.write(String.valueOf(i));
+            }
+
+            writer.end();
+
+            if (e.getChildren().isEmpty())
+            {
+                e.remove();
+            }
+        }
+
+        writer.end();
+
+        assertEquals(writer.toString(), "<?xml version=\"1.0\"?>\n" +
+                "<ul><li>0</li><li>1</li><li>3</li></ul>");
     }
 }
