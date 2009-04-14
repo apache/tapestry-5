@@ -269,6 +269,13 @@ var Tapestry = {
 
         if (redirectURL)
         {
+            // Check for complete URL.
+            if (/^https?:/.test(redirectURL))
+            {
+                window.location = redirectURL;
+                return;
+            }
+
             window.location.pathname = redirectURL;
 
             // Don't bother loading scripts or invoking the callback.

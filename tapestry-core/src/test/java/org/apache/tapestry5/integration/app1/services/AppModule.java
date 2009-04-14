@@ -124,6 +124,8 @@ public class AppModule
         configuration.add(SymbolConstants.COMPRESS_WHITESPACE, "false");
         configuration.add(SymbolConstants.COMBINE_SCRIPTS, "true");
 
+        configuration.add(SymbolConstants.SECURE_ENABLED, "true");
+
         configuration.add("app.injected-symbol", "Symbol contributed to ApplicationDefaults");
     }
 
