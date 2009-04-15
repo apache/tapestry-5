@@ -128,9 +128,10 @@
 
 
         <menu name="Deployment Notes">
+            <item name="Glassfish" href="glassfish.html"/>
+            <item name="JBoss" href="jboss.html"/>
             <item name="Jetty" href="jetty.html"/>
             <item name="Tomcat" href="tomcat.html"/>
-            <item name="JBoss" href="jboss.html"/>
             <item name="WebSphere" href="websphere.html"/>
         </menu>
 
