@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -52,17 +52,17 @@ public interface Cookies
     void writeCookieValue(String name, String value, String path);
 
     /**
-     * As with {@link #writeCookieValue(String, String)} but an explicit path may be set.
+     * As with {@link #writeCookieValue(String, String)} but an explicit domain may be set.
      */
     void writeDomainCookieValue(String name, String value, String domain);
 
     /**
-     * As with {@link #writeCookieValue(String, String)} but an explicit path may be set.
+     * As with {@link #writeCookieValue(String, String)} but an explicit domain and maximum age may be set.
      */
     void writeDomainCookieValue(String name, String value, String domain, int maxAge);
 
     /**
-     * As with {@link #writeCookieValue(String, String, String)} but an explicit domain may be set.
+     * As with {@link #writeCookieValue(String, String, String)} but an explicit domain and path may be set.
      */
     void writeCookieValue(String name, String value, String path, String domain);
 
