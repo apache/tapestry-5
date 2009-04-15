@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
 
 package org.apache.tapestry.mojo;
 
-import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newMap;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 
 import java.util.Map;
 
@@ -25,15 +25,17 @@ public class ClassDescription
     private final String className;
 
     private final String description;
-    
+
     private final boolean supportsInformalParameters;
 
-    private final Map<String, ParameterDescription> parameters = newMap();
-    
+    private final Map<String, ParameterDescription> parameters = CollectionFactory.newCaseInsensitiveMap();
+
+    private final Map<String, String> publishedParameters = CollectionFactory.newCaseInsensitiveMap();
+
     private final String since;
 
-    public ClassDescription(String className, String superClassName, String description, 
-    		boolean supportsInformalParameters, String since)
+    public ClassDescription(String className, String superClassName, String description,
+                            boolean supportsInformalParameters, String since)
     {
         this.className = className;
         this.superClassName = superClassName;
@@ -62,13 +64,23 @@ public class ClassDescription
         return superClassName;
     }
 
-	public boolean isSupportsInformalParameters()
-	{
-		return supportsInformalParameters;
-	}
+    public boolean isSupportsInformalParameters()
+    {
+        return supportsInformalParameters;
+    }
 
-	public String getSince() {
-		return since;
-	}
+    public String getSince()
+    {
+        return since;
+    }
+
+    /**
+     * Case insensitive map, keyed on parameter name, value is class name of component from which the parameter is
+     * published.
+     */
+    public Map<String, String> getPublishedParameters()
+    {
+        return publishedParameters;
+    }
 
 }

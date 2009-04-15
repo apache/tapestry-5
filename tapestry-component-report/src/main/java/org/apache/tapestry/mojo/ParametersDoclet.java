@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -78,11 +78,12 @@ public class ParametersDoclet extends Doclet
             }
 
             if (!found) return;
-            
+
             Map<String, String> annotationValues = findAnnotation(classDoc, "SupportsInformalParameters");
 
-            println("<class name=\"%s\" super-class=\"%s\"  supports-informal-parameters=\"%s\" since=\"%s\">", classDoc.qualifiedTypeName(),
-                    classDoc.superclass().qualifiedTypeName(), annotationValues!=null, getSinceTagValue(classDoc));
+            println("<class name='%s' super-class='%s'  supports-informal-parameters='%s' since='%s'>",
+                    classDoc.qualifiedTypeName(),
+                    classDoc.superclass().qualifiedTypeName(), annotationValues != null, getSinceTagValue(classDoc));
             print("<description>");
             printDescription(classDoc);
             println("</description>", classDoc.commentText());
@@ -93,34 +94,69 @@ public class ParametersDoclet extends Doclet
 
                 if (!fd.isPrivate()) continue;
 
-                annotationValues = findAnnotation(fd, "Parameter");
+                Map<String, String> parameterAnnotationsValues = findAnnotation(fd, "Parameter");
 
-                if (annotationValues == null) continue;
+                if (parameterAnnotationsValues != null)
+                {
+                    emitParameter(fd, parameterAnnotationsValues);
 
-                String name = annotationValues.get("name");
-                if (name == null) name = fd.name().replaceAll("^[$_]*", "");
+                    continue;
+                }
 
-                print("<parameter name=\"%s\" type=\"%s\" default=\"%s\" required=\"%s\" cache=\"%s\" " +
-                		          "default-prefix=\"%s\" since=\"%s\">",
-                      name, fd.type().qualifiedTypeName(), get(annotationValues, "value", ""),
-                      get(annotationValues, "required", "false"), get(annotationValues, "cache", "true"),
-                      get(annotationValues, "defaultPrefix", "prop"), getSinceTagValue(fd));
+                Map<String, String> componentAnnotationValues = findAnnotation(fd, "Component");
 
-                // Body of a parameter is the comment text.
+                if (componentAnnotationValues != null)
+                {
+                    emitPublishedParameters(fd, componentAnnotationValues);
 
-                printDescription(fd);
+                    continue;
+                }
 
-                println("\n</parameter>");
             }
+
 
             println("</class>");
         }
-        
+
+        private void emitPublishedParameters(FieldDoc fd, Map<String, String> componentAnnotationValues)
+        {
+            String names = get(componentAnnotationValues, "publishParameters", "");
+
+            if (names == null || names.equals("")) return;
+
+            String embeddedTypeName = fd.type().qualifiedTypeName();
+
+            for (String name : names.split("\\s*,\\s*"))
+            {
+                print("<published-parameter name='%s' component-class='%s'/>",
+                      name,
+                      embeddedTypeName);
+            }
+        }
+
+        private void emitParameter(FieldDoc fd, Map<String, String> parameterAnnotationValues)
+        {
+            String name = parameterAnnotationValues.get("name");
+            if (name == null) name = fd.name().replaceAll("^[$_]*", "");
+
+            print("<parameter name='%s' type='%s' default='%s' required='%s' cache='%s' " +
+                    "default-prefix='%s' since='%s'>",
+                  name, fd.type().qualifiedTypeName(), get(parameterAnnotationValues, "value", ""),
+                  get(parameterAnnotationValues, "required", "false"), get(parameterAnnotationValues, "cache", "true"),
+                  get(parameterAnnotationValues, "defaultPrefix", "prop"), getSinceTagValue(fd));
+
+            // Body of a parameter is the comment text.
+
+            printDescription(fd);
+
+            println("\n</parameter>");
+        }
+
         private String getSinceTagValue(Doc doc)
         {
-        	Tag[] sinceTags = doc.tags("since");
-        	
-        	return 0<sinceTags.length? sinceTags[0].text():"";
+            Tag[] sinceTags = doc.tags("since");
+
+            return 0 < sinceTags.length ? sinceTags[0].text() : "";
         }
 
         private String get(Map<String, String> map, String key, String defaultValue)
@@ -132,10 +168,10 @@ public class ParametersDoclet extends Doclet
 
         private Map<String, String> findAnnotation(ProgramElementDoc doc, String name)
         {
-        	for (AnnotationDesc annotation : doc.annotations())
+            for (AnnotationDesc annotation : doc.annotations())
             {
                 if (annotation.annotationType().qualifiedTypeName().equals(
-                        "org.apache.tapestry5.annotations."+name))
+                        "org.apache.tapestry5.annotations." + name))
                 {
                     Map<String, String> result = new HashMap<String, String>();
 
