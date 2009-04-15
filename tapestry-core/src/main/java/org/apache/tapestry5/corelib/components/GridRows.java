@@ -57,10 +57,11 @@ public class GridRows
     private int startRow;
 
     private boolean recordStateByIndex;
+
     private boolean recordStateByEncoder;
 
     /**
-     * This action is used when a {@link org.apache.tapestry5.PrimaryKeyEncoder} is not.
+     * This action is used when a {@link org.apache.tapestry5.ValueEncoder} is not provided.
      */
     static class SetupForRowByIndex implements ComponentAction<GridRows>
     {
@@ -158,8 +159,10 @@ public class GridRows
     private boolean lean;
 
     /**
-     * If true and the Loop is enclosed by a Form, then the normal state saving logic is turned off. Defaults to false,
-     * enabling state saving logic within Forms.
+     * If true and the component is enclosed by a Form, then the normal state saving logic is turned off. Defaults to
+     * false, enabling state saving logic within Forms. This can be set to false when form elements within the Grid are
+     * not related to the current row of the grid, or where another component (such as {@link
+     * org.apache.tapestry5.corelib.components.Hidden}) is used to maintain row state.
      */
     @Parameter(name = "volatile")
     private boolean volatileState;
