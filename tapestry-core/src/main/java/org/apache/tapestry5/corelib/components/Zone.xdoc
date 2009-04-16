@@ -1,0 +1,78 @@
+<document>
+    <body>
+        <section name="Related Components">
+            <ul>
+                <li>
+                    <a href="AjaxFormLoop.html">AjaxFormLoop</a>
+                </li>
+                <li>
+                    <a href="FormFragment.html">FormFragment</a>
+                </li>
+            </ul>
+        </section>
+        <section name="Examples">
+
+            <subsection name="ZoneDemo.tml (partial)">
+
+                <source><![CDATA[
+<t:zone t:id="counterZone" id="counterZone">
+  <p>You have clicked the link <strong>${clickCount}</strong> times.</p>
+</t:zone>
+
+<p>
+<t:actionlink t:id="clicker" zone="counterZone">increment the count</t:actionlink>
+</p>
+
+]]></source>
+
+                <p>It's pretty standard to bind the id parameter of a zone; the zone parameter of ActionLink
+                    and Form are the<em>client-side element id</em>, not the component id. They are often,
+                    but not always, the same. Binding the id parameter ensures that a particular, fixed value
+                    is used.
+                </p>
+
+                <p>
+                    Binding the zone parameter of the ActionLink is what triggers the partial-render and update logic.
+                </p>
+
+            </subsection>
+
+            <subsection name="ZoneDemo.java">
+                <source><![CDATA[
+public class ZoneDemo
+{
+  @Property
+  @Persist
+  private int clickCount;
+
+  @InjectComponent
+  private Zone counterZone;
+
+  Object onActionFromClicker()
+  {
+    clickCount++;
+
+    return counterZone.getBody();
+  }
+}
+]]></source>
+
+                <p>
+                    The event handler method for the clicker component increments the count, then
+                    returns the body of the zone. The body will be re-rendered (reflecting the new count),
+                    and sent to the client, which will update the zone in place, and trigger and animation
+                    (by default, a simple yellow fade) to draw the user's attention.
+                </p>
+
+                <p>
+                    Not shown here, but fully valid, is to include JavaScript libraries and generate
+                    initialization JavaScript. This fully consistent with ordinary full-page renders.
+                </p>
+
+
+            </subsection>
+
+
+        </section>
+    </body>
+</document>

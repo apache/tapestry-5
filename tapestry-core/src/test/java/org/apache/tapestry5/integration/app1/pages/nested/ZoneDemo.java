@@ -15,6 +15,7 @@
 package org.apache.tapestry5.integration.app1.pages.nested;
 
 import org.apache.tapestry5.Block;
+import org.apache.tapestry5.RenderSupport;
 import org.apache.tapestry5.ValueEncoder;
 import org.apache.tapestry5.annotations.*;
 import org.apache.tapestry5.corelib.components.BeanEditForm;
@@ -50,6 +51,9 @@ public class ZoneDemo
 
     @InjectPage
     private SecurePage securePage;
+
+    @Environmental
+    private RenderSupport renderSupport;
 
     public String[] getNames()
     {
@@ -144,5 +148,12 @@ public class ZoneDemo
     Object onActionFromSecureRedirect()
     {
         return securePage;
+    }
+
+    void afterRender()
+    {
+        renderSupport.addScript(
+                "$('%s').observe(Tapestry.ZONE_UPDATED_EVENT, function() { $('zone-update-message').update('Zone updated.'); });",
+                output.getClientId());
     }
 }

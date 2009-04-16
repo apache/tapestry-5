@@ -32,15 +32,18 @@ var Tapestry = {
      */
     FORM_PROCESS_SUBMIT_EVENT : "tapestry:formprocesssubmit",
 
-    /** Event, triggered on a field element, to cause observers to validate the input. Passes a memo object with
+    /** Event, fired on a field element, to cause observers to validate the input. Passes a memo object with
      * two keys: "value" (the raw input value) and "translated" (the parsed value, usually meaning a number
      * parsed from a string).  Observers may invoke Element.showValidationMessage()
      *  to identify that the field is in error (and decorate the field and show a popup error message).
      */
     FIELD_VALIDATE_EVENT : "tapestry:fieldvalidate",
 
-    /** Event, triggered on the document object, which identifies the current focus input element. */
+    /** Event, fired on the document object, which identifies the current focus input element. */
     FOCUS_CHANGE_EVENT : "tapestry:focuschange",
+
+    /** Event, fired on a zone element when the zone is updated with new content. */
+    ZONE_UPDATED_EVENT : "tapestry:zoneupdated",
 
     /** When false, the default, the Tapestry.debug() function will be a no-op. */
     DEBUG_ENABLED : false,
@@ -101,7 +104,7 @@ var Tapestry = {
 
         document.observe("dom:loaded", hideDialog);
 
-        // An rare race condition.
+        // A rare race condition.
 
         if (Tapestry.pageLoaded)
             hideDialog.call(null);
@@ -243,12 +246,12 @@ var Tapestry = {
         Tapestry.invokeLogger(message, substitutions, Tapestry.Logging.debug);
     },
 
-    invokeLogger : function(message, substitutions, blackbirdFunction)
+    invokeLogger : function(message, substitutions, loggingFunction)
     {
         if (substitutions != undefined)
             message = message.interpolate(substitutions);
 
-        blackbirdFunction.call(this, message);
+        loggingFunction.call(this, message);
     },
 
     /**
@@ -1386,8 +1389,14 @@ Tapestry.ZoneManager = Class.create({
     },
 
     // Updates the content of the div controlled by this Zone, then
-    // invokes the show function (if not visible) or the update function (if visible).
+    // invokes the show function (if not visible) or the update function (if visible),
 
+    /**
+     * Updates the zone's content, and invokes either the update function (to highlight the change)
+     * or the show function (to reveal a hidden element). Lastly, fires the Tapestry.ZONE_UPDATED_EVENT
+     * to let listeners know that the zone was updated.
+     * @param content
+     */
     show: function(content)
     {
         this.updateElement.update(content);
@@ -1395,6 +1404,8 @@ Tapestry.ZoneManager = Class.create({
         var func = this.element.visible() ? this.updateFunc : this.showFunc;
 
         func.call(this, this.element);
+
+        this.element.fire(Tapestry.ZONE_UPDATED_EVENT);
     },
 
     /**

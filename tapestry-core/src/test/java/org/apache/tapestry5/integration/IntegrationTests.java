@@ -2897,6 +2897,22 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     }
 
     @Test
+    public void zone_updated_event_triggered_on_client()
+    {
+        start("Zone Demo");
+
+        assertText("zone-update-message", "");
+
+        click("link=Direct JSON response");
+
+        // Give it some time to process.                                                
+
+        sleep(100);
+
+        assertText("zone-update-message", "Zone updated.");
+    }
+
+    @Test
     public void hidden_field()
     {
         start("Hidden Demo", "setup");
