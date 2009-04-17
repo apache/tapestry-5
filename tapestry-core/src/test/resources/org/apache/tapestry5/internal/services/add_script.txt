@@ -1,4 +1,4 @@
-<html><head></head><body><p>Ready to be updated with scripts.</p><script>Tapestry.onDOMLoaded(function() {
+<html><head></head><body><p>Ready to be updated with scripts.</p><script type="text/javascript">Tapestry.onDOMLoaded(function() {
 doSomething();
 doSomethingElse();
 });

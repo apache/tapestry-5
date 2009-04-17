@@ -21,10 +21,10 @@ import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.services.ClientDataEncoder;
 import org.apache.tapestry5.services.ClientDataSink;
 
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.List;
 import java.util.Set;
-import java.io.ObjectOutputStream;
-import java.io.IOException;
 
 public class DocumentLinkerImpl implements DocumentLinker
 {
@@ -183,7 +183,7 @@ public class DocumentLinkerImpl implements DocumentLinker
 
         if (blockNeeded)
         {
-            Element e = body.element("script");
+            Element e = body.element("script", "type", "text/javascript");
 
             if (developmentMode)
                 e.raw("Tapestry.DEBUG_ENABLED = true;\n");
@@ -212,6 +212,7 @@ public class DocumentLinkerImpl implements DocumentLinker
 
         for (String scriptURL : scripts)
             container.element("script",
+                              "type", "text/javascript",
                               "src", scriptURL);
     }
 
