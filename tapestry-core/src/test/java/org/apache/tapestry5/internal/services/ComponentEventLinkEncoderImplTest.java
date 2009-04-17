@@ -17,7 +17,9 @@ package org.apache.tapestry5.internal.services;
 import org.apache.tapestry5.Link;
 import org.apache.tapestry5.internal.EmptyEventContext;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
+import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.services.*;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 /**
@@ -27,6 +29,14 @@ import org.testng.annotations.Test;
  */
 public class ComponentEventLinkEncoderImplTest extends InternalBaseTestCase
 {
+    private TypeCoercer typeCoercer;
+
+    @BeforeClass
+    public void setup()
+    {
+        typeCoercer = getService(TypeCoercer.class);
+    }
+
     @Test
     public void locale_not_encoded()
     {
@@ -69,7 +79,7 @@ public class ComponentEventLinkEncoderImplTest extends InternalBaseTestCase
         expect(manager.getBaseURL("admin/Index")).andReturn(null);
         train_getContextPath(request, "");
 
-        train_encodeURL(response, "/admin", "MAGIC");
+        train_encodeURL(response, "/admin/abc", "MAGIC");
 
         replay();
 
@@ -79,7 +89,8 @@ public class ComponentEventLinkEncoderImplTest extends InternalBaseTestCase
                                                                               false);
 
         PageRenderRequestParameters parameters = new PageRenderRequestParameters("admin/Index",
-                                                                                 new EmptyEventContext());
+                                                                                 new ArrayEventContext(typeCoercer,
+                                                                                                       "abc"));
 
         Link link = encoder.createPageRenderLink(parameters);
 

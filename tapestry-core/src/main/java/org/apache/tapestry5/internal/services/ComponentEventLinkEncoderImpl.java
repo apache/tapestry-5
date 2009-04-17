@@ -117,9 +117,12 @@ public class ComponentEventLinkEncoderImpl implements ComponentEventLinkEncoder
         encodeLocale(builder);
 
         builder.append(SLASH);
-        builder.append(encodePageName(activePageName));
 
-        appendContext(parameters.getActivationContext(), builder);
+        String encodedPageName = encodePageName(activePageName);
+
+        builder.append(encodedPageName);
+
+        appendContext(encodedPageName.length() > 0, parameters.getActivationContext(), builder);
 
         return new LinkImpl(builder.toString(), baseURL == null, false, response, optimizer);
     }
@@ -186,7 +189,7 @@ public class ComponentEventLinkEncoderImpl implements ComponentEventLinkEncoder
             builder.append(encodePageName(eventType));
         }
 
-        appendContext(parameters.getEventContext(), builder);
+        appendContext(true, parameters.getEventContext(), builder);
 
         Link result = new LinkImpl(builder.toString(), baseURL == null, forForm, response, optimizer);
 
@@ -196,7 +199,7 @@ public class ComponentEventLinkEncoderImpl implements ComponentEventLinkEncoder
         {
             // Reuse the builder
             builder.setLength(0);
-            appendContext(pageActivationContext, builder);
+            appendContext(true, pageActivationContext, builder);
 
             // Omit that first slash
             result.addParameter(InternalConstants.PAGE_CONTEXT_NAME, builder.substring(1));
@@ -332,13 +335,15 @@ public class ComponentEventLinkEncoderImpl implements ComponentEventLinkEncoder
         return new PageRenderRequestParameters(pageName, activationContext);
     }
 
-    public void appendContext(EventContext context, StringBuilder builder)
+    public void appendContext(boolean seperatorRequired, EventContext context, StringBuilder builder)
     {
         String encoded = contextPathEncoder.encodeIntoPath(context);
 
         if (encoded.length() > 0)
         {
-            builder.append(SLASH);
+            if (seperatorRequired)
+                builder.append(SLASH);
+
             builder.append(encoded);
         }
     }
