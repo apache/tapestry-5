@@ -694,7 +694,11 @@ public class TemplateParserImplTest extends InternalBaseTestCase
 
                 { "missing_id_in_replace_element.tml", "The <replace> element must have an id attribute.", 3 },
 
-                { "extension_point_must_have_id.tml", "The <extension-point> element must have an id attribute.", 3 }
+                { "extension_point_must_have_id.tml", "The <extension-point> element must have an id attribute.", 3 },
+
+                { "misplaced_parameter.tml", "Block parameters are only allowed directly within component elements.",
+                        5 },
+
         };
     }
 

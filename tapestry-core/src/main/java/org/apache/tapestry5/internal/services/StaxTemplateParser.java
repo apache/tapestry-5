@@ -314,15 +314,130 @@ public class StaxTemplateParser
 
     /**
      * Processes an element through to its matching end tag.
+     * <p/>
+     * An element can be:
+     * <p/>
+     * a Tapestry component via &lt;t:type&gt;
+     * <p/>
+     * a Tapestry component via t:type="type"  and/or t:id="id"
+     * <p/>
+     * a Tapestry component via a library namespace
+     * <p/>
+     * A parameter element via &lt;t:parameter&gt;
+     * <p/>
+     * A parameter element via &lt;p:name&gt;
+     * <p/>
+     * A &lt;t:remove&gt; element (in the 5.1 schema)
+     * <p/>
+     * A &lt;t:content&gt; element (in the 5.1 schema)
+     * <p/>
+     * A &lt;t:block&gt; element
+     * <p/>
+     * The body &lt;t:body&gt;
+     * <p/>
+     * An ordinary element
      */
     void element(TemplateParserState initialState) throws XMLStreamException
     {
         TemplateParserState state = setupForElement(initialState);
 
-        if (!processStartElement(state)) return;
+        String uri = reader.getNamespaceURI();
+        String name = reader.getLocalName();
 
-        // Now start working through the body of the element, recursively.
+        if (TAPESTRY_SCHEMA_5_1_0.equals(uri))
+        {
 
+            if (name.equalsIgnoreCase("remove"))
+            {
+                removeContent();
+
+                return;
+            }
+
+            if (name.equalsIgnoreCase("content"))
+            {
+                limitContent(state);
+
+                return;
+            }
+
+            if (name.equalsIgnoreCase("extension-point"))
+            {
+                extensionPoint(state);
+
+                return;
+            }
+
+            if (name.equalsIgnoreCase("replace"))
+            {
+                throw new RuntimeException("The <replace> element may only appear directly within an extend element.");
+            }
+
+            if (MUST_BE_ROOT.contains(name))
+                mustBeRoot(name);
+        }
+
+        if (TAPESTRY_SCHEMA_URIS.contains(uri))
+        {
+
+            if (name.equalsIgnoreCase("body"))
+            {
+                body();
+                return;
+            }
+
+            if (name.equalsIgnoreCase("container"))
+            {
+                mustBeRoot(name);
+            }
+
+            if (name.equalsIgnoreCase("block"))
+            {
+                block(state);
+                return;
+            }
+
+            if (name.equalsIgnoreCase("parameter"))
+            {
+                classicParameter(state);
+
+                return;
+            }
+
+            possibleTapestryComponent(state, null, reader.getLocalName().replace('.', '/'));
+
+            return;
+        }
+
+        if (uri != null && uri.startsWith(LIB_NAMESPACE_URI_PREFIX))
+        {
+            libraryNamespaceComponent(state);
+
+            return;
+        }
+
+        if (TAPESTRY_PARAMETERS_URI.equals(uri))
+        {
+            parameterElement(state);
+
+            return;
+        }
+
+        // Just an ordinary element ... unless it has t:id or t:type
+
+        possibleTapestryComponent(state, reader.getLocalName(), null);
+    }
+
+    /**
+     * Processes a body of an element including text and (recursively) nested elements. Adds an {@link
+     * org.apache.tapestry5.internal.parser.TokenType#END_ELEMENT} token before returning.
+     *
+     * @param state
+     * @throws XMLStreamException
+     */
+    private void processBody(TemplateParserState state)
+            throws XMLStreamException
+    {
         while (active)
         {
             switch (reader.next())
@@ -358,126 +473,6 @@ public class StaxTemplateParser
     }
 
     /**
-     * An element can be:
-     * <p/>
-     * a Tapestry component via &lt;t:type&gt;
-     * <p/>
-     * a Tapestry component via t:type="type"  and/or t:id="id"
-     * <p/>
-     * a Tapestry component via a library namespace
-     * <p/>
-     * A parameter element via &lt;t:parameter&gt;
-     * <p/>
-     * A parameter element via &lt;p:name&gt;
-     * <p/>
-     * A &lt;t:remove&gt; element (in the 5.1 schema)
-     * <p/>
-     * A &lt;t:content&gt; element (in the 5.1 schema)
-     * <p/>
-     * A &lt;t:block&gt; element
-     * <p/>
-     * The body &lt;t:body&gt;
-     * <p/>
-     * An ordinary element
-     *
-     * @return true if processing of the elements body should continue normally, or false if the elements body (and end
-     *         tag) have already been consumed
-     */
-    private boolean processStartElement(TemplateParserState state) throws XMLStreamException
-    {
-        String uri = reader.getNamespaceURI();
-        String name = reader.getLocalName();
-
-        if (TAPESTRY_SCHEMA_5_1_0.equals(uri))
-        {
-
-            if (name.equalsIgnoreCase("remove"))
-            {
-                removeContent();
-
-                return false;
-            }
-
-            if (name.equalsIgnoreCase("content"))
-            {
-                limitContent(state);
-
-                return false;
-            }
-
-            if (name.equalsIgnoreCase("extension-point"))
-            {
-                extensionPoint(state);
-
-                return false;
-            }
-
-            if (name.equalsIgnoreCase("replace"))
-            {
-                throw new RuntimeException("The <replace> element may only appear directly within an extend element.");
-            }
-
-            if (MUST_BE_ROOT.contains(name))
-                mustBeRoot(name);
-        }
-
-        if (TAPESTRY_SCHEMA_URIS.contains(uri))
-        {
-
-            if (name.equalsIgnoreCase("body"))
-            {
-                body();
-                return false;
-            }
-
-            if (name.equalsIgnoreCase("container"))
-            {
-                mustBeRoot(name);
-            }
-
-            if (name.equalsIgnoreCase("block"))
-            {
-                block(state);
-                return false;
-            }
-
-            if (name.equalsIgnoreCase("parameter"))
-            {
-                classicParameter();
-
-                // Default handling for the body of the parameter is acceptible.
-                return true;
-            }
-
-            possibleTapestryComponent(null, reader.getLocalName().replace('.', '/'));
-
-            return true;
-        }
-
-        if (uri != null && uri.startsWith(LIB_NAMESPACE_URI_PREFIX))
-        {
-            libraryNamespaceComponent();
-
-            return true;
-        }
-
-        if (TAPESTRY_PARAMETERS_URI.equals(uri))
-        {
-            parameterElement();
-
-            return true;
-        }
-
-        // Just an ordinary element ... unless it has t:id or t:type
-
-        possibleTapestryComponent(reader.getLocalName(), null);
-
-        // Let element() take it from here (body plus end element token).
-
-        return true;
-    }
-
-    /**
      * Handles an extension point, putting a RenderExtension token in position in the template.
      *
      * @param state
@@ -492,7 +487,7 @@ public class StaxTemplateParser
 
         tokenAccumulator.add(new ExtensionPointToken(id, getLocation()));
 
-        addContentToOverride(state, id);
+        addContentToOverride(state.insideComponent(false), id);
     }
 
     private String getRequiredIdAttribute()
@@ -561,7 +556,7 @@ public class StaxTemplateParser
                     "The <content> element may not be nested within another <content> element.");
 
 
-        TemplateParserState newState = state.collectingContent();
+        TemplateParserState newState = state.collectingContent().insideComponent(false);
 
         // Clear out any tokens that precede the <t:content> element
 
@@ -637,7 +632,7 @@ public class StaxTemplateParser
     /**
      * Added in release 5.1.
      */
-    private void libraryNamespaceComponent()
+    private void libraryNamespaceComponent(TemplateParserState state) throws XMLStreamException
     {
         String uri = reader.getNamespaceURI();
 
@@ -648,14 +643,15 @@ public class StaxTemplateParser
         if (!LIBRARY_PATH_PATTERN.matcher(path).matches())
             throw new RuntimeException(ServicesMessages.invalidPathForLibraryNamespace(uri));
 
-        possibleTapestryComponent(null, path + "/" + reader.getLocalName());
+        possibleTapestryComponent(state, null, path + "/" + reader.getLocalName());
     }
 
     /**
      * @param elementName
      * @param identifiedType the type of the element, usually null, but may be the component type derived from element
      */
-    private void possibleTapestryComponent(String elementName, String identifiedType)
+    private void possibleTapestryComponent(TemplateParserState state, String elementName, String identifiedType)
+            throws XMLStreamException
     {
         String id = null;
         String type = identifiedType;
@@ -736,6 +732,8 @@ public class StaxTemplateParser
 
         if (id != null)
             componentIds.put(id, location);
+
+        processBody(state.insideComponent(isComponent));
     }
 
     private void addDefineNamespaceTokens()
@@ -789,26 +787,40 @@ public class StaxTemplateParser
      * Handler for Tapestry 5.0's "classic" &lt;t:parameter&gt; element. This turns into a {@link
      * org.apache.tapestry5.internal.parser.ParameterToken} and the body and end element are provided normally.
      */
-    private void classicParameter()
+    private void classicParameter(TemplateParserState state) throws XMLStreamException
     {
         String parameterName = getSingleParameter("name");
 
         if (InternalUtils.isBlank(parameterName))
             throw new TapestryException(ServicesMessages.parameterElementNameRequired(), getLocation(), null);
 
+        ensureParameterWithinComponent(state);
+
         tokenAccumulator.add(new ParameterToken(parameterName, getLocation()));
+
+        processBody(state.insideComponent(false));
+    }
+
+    private void ensureParameterWithinComponent(TemplateParserState state)
+    {
+        if (!state.isInsideComponent())
+            throw new RuntimeException("Block parameters are only allowed directly within component elements.");
     }
 
     /**
      * Tapestry 5.1 uses a special namespace (usually mapped to "p:") and the name becomes the parameter element.
      */
-    private void parameterElement()
+    private void parameterElement(TemplateParserState state) throws XMLStreamException
     {
+        ensureParameterWithinComponent(state);
+
         if (reader.getAttributeCount() > 0)
             throw new TapestryException(ServicesMessages.parameterElementDoesNotAllowAttributes(), getLocation(),
                                         null);
 
         tokenAccumulator.add(new ParameterToken(reader.getLocalName(), getLocation()));
+
+        processBody(state.insideComponent(false));
     }
 
 
@@ -874,23 +886,7 @@ public class StaxTemplateParser
 
         tokenAccumulator.add(new BlockToken(blockId, getLocation()));
 
-        while (active)
-        {
-            switch (reader.next())
-            {
-                case START_ELEMENT:
-                    element(state);
-                    break;
-
-                case END_ELEMENT:
-                    endElement(state);
-                    return;
-
-                default:
-                    textContent(state);
-            }
-        }
-
+        processBody(state.insideComponent(false));
     }
 
     private String getSingleParameter(String attributeName)

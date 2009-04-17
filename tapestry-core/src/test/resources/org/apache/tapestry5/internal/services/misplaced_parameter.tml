@@ -1,0 +1,9 @@
+<t:container xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd"
+             xmlns:p="tapestry:parameter">
+
+    <not-a-component>
+        <p:foo/>
+    </not-a-component>
+
+</t:container>
+

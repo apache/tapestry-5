@@ -26,26 +26,40 @@ class TemplateParserState
 
     private final boolean collectingContent;
 
+    private final boolean insideComponent;
+
     TemplateParserState()
     {
         compressWhitespace = false;
         collectingContent = false;
+        insideComponent = false;
     }
 
-    private TemplateParserState(boolean compressWhitespace, boolean collectingContent)
+    private TemplateParserState(boolean compressWhitespace, boolean collectingContent, boolean insideComponent)
     {
         this.compressWhitespace = compressWhitespace;
         this.collectingContent = collectingContent;
+        this.insideComponent = insideComponent;
     }
 
     TemplateParserState compressWhitespace(boolean flag)
     {
-        return new TemplateParserState(flag, collectingContent);
+        return flag == compressWhitespace ? this : new TemplateParserState(flag, collectingContent, insideComponent);
     }
 
     TemplateParserState collectingContent()
     {
-        return new TemplateParserState(compressWhitespace, true);
+        return collectingContent ? this : new TemplateParserState(compressWhitespace, true, insideComponent);
+    }
+
+    TemplateParserState insideComponent(boolean flag)
+    {
+        return flag == insideComponent ? this : new TemplateParserState(compressWhitespace, collectingContent, flag);
+    }
+
+    boolean isInsideComponent()
+    {
+        return insideComponent;
     }
 
     boolean isCompressWhitespace()
@@ -64,7 +78,7 @@ class TemplateParserState
     @Override
     public String toString()
     {
-        return String.format("TemplateParserState[compressWhitespace=%s, collectingContent=%s]", compressWhitespace,
-                             collectingContent);
+        return String.format("TemplateParserState[compressWhitespace=%s, collectingContent=%s, insideComponent=%s]",
+                             compressWhitespace, collectingContent, insideComponent);
     }
 }
