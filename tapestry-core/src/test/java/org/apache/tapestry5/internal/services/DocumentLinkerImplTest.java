@@ -15,8 +15,8 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.dom.Document;
-import org.apache.tapestry5.dom.XMLMarkupModel;
 import org.apache.tapestry5.dom.Element;
+import org.apache.tapestry5.dom.XMLMarkupModel;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.testng.annotations.Test;
 
@@ -379,5 +379,26 @@ public class DocumentLinkerImplTest extends InternalBaseTestCase
         String assetURL = script.getAttribute("src");
 
         assertEquals(assetURL, "/context/foo.js");
+    }
+
+    @Test
+    public void added_scripts_go_before_existing_script() throws Exception
+    {
+        Document document = new Document();
+
+        Element head = document.newRootElement("html").element("head");
+
+        head.element("meta");
+        head.element("script");
+
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(true, true, "1.2.3", true, "/context", null);
+
+        linker.addScriptLink("/foo.js");
+
+        linker.updateDocument(document);
+
+        assertEquals(document.toString(), readFile("added_scripts_go_before_existing_script.txt"));
+
+
     }
 }

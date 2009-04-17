@@ -16,6 +16,7 @@ package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.dom.Document;
 import org.apache.tapestry5.dom.Element;
+import org.apache.tapestry5.dom.Node;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.services.ClientDataEncoder;
@@ -204,16 +205,25 @@ public class DocumentLinkerImpl implements DocumentLinker
      */
     protected void addScriptLinksForIncludedScripts(Element container, List<String> scripts)
     {
+        Element existing = findExistingElement(container, "script");
+
+        Element scriptContainer = container.element("script-container");
+
         if (combineScripts)
         {
-            addCombinedScriptLink(container, scripts);
-            return;
+            addCombinedScriptLink(scriptContainer, scripts);
+        }
+        else
+        {
+            for (String scriptURL : scripts)
+                scriptContainer.element("script",
+                                        "type", "text/javascript",
+                                        "src", scriptURL);
         }
 
-        for (String scriptURL : scripts)
-            container.element("script",
-                              "type", "text/javascript",
-                              "src", scriptURL);
+        if (existing != null) scriptContainer.moveBefore(existing);
+
+        scriptContainer.pop();
     }
 
     private void addCombinedScriptLink(Element container, List<String> scripts)
@@ -236,7 +246,9 @@ public class DocumentLinkerImpl implements DocumentLinker
 
             String virtualURL = fullAssetPrefix + RequestConstants.VIRTUAL_FOLDER + dataSink.getClientData() + ".js";
 
-            container.element("script", "src", virtualURL);
+            container.element("script",
+                              "type", "text/javascript",
+                              "src", virtualURL);
         }
         catch (IOException ex)
         {
@@ -269,7 +281,32 @@ public class DocumentLinkerImpl implements DocumentLinker
 
         Element head = findOrCreateElement(root, "head", true);
 
+        Element existing = findExistingElement(head, "link");
+
+        // Create a temporary container element.
+        Element container = head.element("stylesheet-link-container");
+
         for (int i = 0; i < count; i++)
-            stylesheets.get(i).add(head, i);
+            stylesheets.get(i).add(container);
+
+        if (existing != null)
+            container.moveBefore(existing);
+
+        container.pop();
+    }
+
+    Element findExistingElement(Element container, String elementName)
+    {
+        for (Node n : container.getChildren())
+        {
+            if (n instanceof Element)
+            {
+                Element e = (Element) n;
+
+                if (e.getName().equalsIgnoreCase(elementName)) return e;
+            }
+        }
+
+        return null;
     }
 }
