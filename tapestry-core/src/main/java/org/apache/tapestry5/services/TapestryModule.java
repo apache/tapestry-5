@@ -18,6 +18,7 @@ import org.apache.tapestry5.*;
 import org.apache.tapestry5.ajax.MultiZoneUpdate;
 import org.apache.tapestry5.annotations.*;
 import org.apache.tapestry5.beaneditor.Validate;
+import org.apache.tapestry5.corelib.LoopFormState;
 import org.apache.tapestry5.corelib.data.BlankOption;
 import org.apache.tapestry5.corelib.data.GridPagerPosition;
 import org.apache.tapestry5.corelib.data.InsertPosition;
@@ -913,6 +914,8 @@ public final class TapestryModule
         add(configuration, String.class, InsertPosition.class, StringToEnumCoercion.create(InsertPosition.class));
 
         add(configuration, String.class, BlankOption.class, StringToEnumCoercion.create(BlankOption.class));
+
+        add(configuration, String.class, LoopFormState.class, StringToEnumCoercion.create(LoopFormState.class));
 
         add(configuration, List.class, SelectModel.class, new Coercion<List, SelectModel>()
         {

@@ -16,6 +16,7 @@ package org.apache.tapestry5.corelib.components;
 
 import org.apache.tapestry5.*;
 import org.apache.tapestry5.annotations.*;
+import org.apache.tapestry5.corelib.LoopFormState;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.services.ComponentDefaultProvider;
@@ -32,7 +33,8 @@ import java.util.List;
  * fact, a series of commands for starting and ending heartbeats, and advancing through the iterator, are still stored.
  * For a non-volatile Loop inside the form, the Loop stores a series of commands that start and end heartbeats and store
  * state (either as full objects when there the encoder parameter is not bound, or as client-side objects when there is
- * an encoder).
+ * an encoder). For a Loop that doesn't need to be aware of the enclosing Form (if any), the formState parameter should
+ * be bound to 'none'.
  * <p/>
  * When the Loop is used inside a Form, it will generate an {@link org.apache.tapestry5.EventConstants#SYNCHRONIZE_VALUES}
  * event to inform its container what values were submitted and in what order.
@@ -218,10 +220,23 @@ public class Loop
 
     /**
      * If true and the Loop is enclosed by a Form, then the normal state saving logic is turned off. Defaults to false,
-     * enabling state saving logic within Forms.
+     * enabling state saving logic within Forms. With the addition of the formState parameter, volatile simply sets a
+     * default for formState is formState is not specified.
+     *
+     * @deprecated in release 5.1.0.4, use the formState parameter instead.
      */
-    @Parameter(name = "volatile")
+    @Parameter(name = "volatile", principal = true)
+    @Deprecated
     private boolean volatileState;
+
+    /**
+     * Controls what information, if any, is encoded into an enclosing Form. The default value for this is set by the
+     * deprecated volatile parameter. The normal default is {@link org.apache.tapestry5.corelib.LoopFormState#VALUES},
+     * but changes to {@link org.apache.tapestry5.corelib.LoopFormState#ITERATION} if volatile is true. This parameter
+     * is only used if the component is enclosed by a Form.
+     */
+    @Parameter(allowNull = false, defaultPrefix = BindingConstants.LITERAL)
+    private LoopFormState formState;
 
     @Environmental(false)
     private FormSupport formSupport;
@@ -256,7 +271,7 @@ public class Loop
     @Environmental
     private Heartbeat heartbeat;
 
-    private boolean storeRenderStateInForm;
+    private boolean storeValuesInForm, storeIncrementsInForm, storeHeartbeatsInForm;
 
     @Inject
     private ComponentResources resources;
@@ -272,6 +287,11 @@ public class Loop
      */
     private List<Object> synchonizedValues;
 
+
+    LoopFormState defaultFormState()
+    {
+        return volatileState ? LoopFormState.ITERATION : LoopFormState.VALUES;
+    }
 
     String defaultElement()
     {
@@ -290,18 +310,25 @@ public class Loop
 
         iterator = source == null ? null : source.iterator();
 
-        storeRenderStateInForm = formSupport != null && !volatileState;
+        boolean insideForm = formSupport != null;
 
-        if (storeRenderStateInForm)
+
+        storeValuesInForm = insideForm && formState == LoopFormState.VALUES;
+        storeIncrementsInForm = insideForm && formState == LoopFormState.ITERATION;
+
+        storeHeartbeatsInForm = insideForm && formState != LoopFormState.NONE;
+
+        if (storeValuesInForm)
             formSupport.store(this, PREPARE_FOR_SUBMISSION);
 
         // Only render the body if there is something to iterate over
 
         boolean hasContent = iterator != null && iterator.hasNext();
 
-        if (formSupport != null && hasContent)
+        if (insideForm && hasContent)
         {
-            formSupport.store(this, volatileState ? SETUP_FOR_VOLATILE : RESET_INDEX);
+            if (storeValuesInForm) formSupport.store(this, RESET_INDEX);
+            if (storeIncrementsInForm) formSupport.store(this, SETUP_FOR_VOLATILE);
         }
 
         cleanupBlock = hasContent ? null : empty;
@@ -318,7 +345,7 @@ public class Loop
      */
     Block cleanupRender()
     {
-        if (storeRenderStateInForm)
+        if (storeValuesInForm)
             formSupport.store(this, NOTIFY_CONTAINER);
 
         return cleanupBlock;
@@ -345,7 +372,7 @@ public class Loop
     {
         value = iterator.next();
 
-        if (storeRenderStateInForm)
+        if (storeValuesInForm)
         {
             if (encoder == null)
             {
@@ -359,7 +386,10 @@ public class Loop
             }
         }
 
-        if (formSupport != null && volatileState) formSupport.store(this, ADVANCE_VOLATILE);
+        if (storeIncrementsInForm)
+        {
+            formSupport.store(this, ADVANCE_VOLATILE);
+        }
 
         startHeartbeat();
 
@@ -385,7 +415,10 @@ public class Loop
 
         endHeartbeat();
 
-        if (formSupport != null) formSupport.store(this, END_HEARTBEAT);
+        if (storeHeartbeatsInForm)
+        {
+            formSupport.store(this, END_HEARTBEAT);
+        }
 
         return !iterator.hasNext();
     }
