@@ -138,7 +138,8 @@ public interface RenderSupport
 
     /**
      * Invoked to set focus on a rendered field. Takes into account priority, meaning that a field with errors will take
-     * precendence over a merely required field, and over a field that is optional.
+     * precendence over a merely required field, and over a field that is optional.  The value {@link
+     * org.apache.tapestry5.FieldFocusPriority#OVERRIDE} can be used to force a particular field to receive focus.
      *
      * @param priority focus is set only if the provided priority is greater than the current priority
      * @param fieldId  id of client-side element to take focus

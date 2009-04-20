@@ -16,6 +16,8 @@ package org.apache.tapestry5;
 
 /**
  * Used to determine which field on a page should receive focus, based on its status.
+ *
+ * @see org.apache.tapestry5.RenderSupport#autofocus(FieldFocusPriority, String)
  */
 public enum FieldFocusPriority
 {
@@ -32,5 +34,13 @@ public enum FieldFocusPriority
     /**
      * A field that contains a validation error, the highest priority.
      */
-    IN_ERROR
+    IN_ERROR,
+
+    /**
+     * Used to allow field focus to be manually overridden; this would be selected in user code and is higher priorty
+     * than {@link #IN_ERROR}.
+     *
+     * @since 5.1.0.4
+     */
+    OVERRIDE;
 }
