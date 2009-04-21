@@ -861,6 +861,9 @@ public final class TapestryModule
                                              @Builtin
                                              TypeCoercer coercer,
 
+                                             @Builtin
+                                             final ThreadLocale threadLocale,
+
                                              @Core
                                              final AssetSource assetSource)
     {
@@ -964,7 +967,7 @@ public final class TapestryModule
         {
             public DateFormat coerce(String input)
             {
-                return new SimpleDateFormat(input);
+                return new SimpleDateFormat(input, threadLocale.getLocale());
             }
         });
 
