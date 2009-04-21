@@ -14,8 +14,8 @@
 
 package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.internal.InternalConstants;
+import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.json.JSONArray;
@@ -158,7 +158,10 @@ public class VirtualAssetStreamerImpl implements VirtualAssetStreamer, Invalidat
     {
         ByteArrayOutputStream result = new ByteArrayOutputStream();
 
-        ObjectInputStream inputStream = clientDataEncoder.decodeClientData(clientData);
+        ObjectInputStream inputStream = clientDataEncoder.decodeEncodedClientData(clientData);
+
+        OutputStreamWriter osw = new OutputStreamWriter(result, "UTF-8");
+        PrintWriter writer = new PrintWriter(osw, true);
 
         JSONArray paths = new JSONArray();
 
@@ -167,6 +170,11 @@ public class VirtualAssetStreamerImpl implements VirtualAssetStreamer, Invalidat
         for (int i = 0; i < count; i++)
         {
             String path = inputStream.readUTF();
+
+            // Make sure the final statement in the previous file was terminated; likewise
+            // any unterminated comment. Ugly, but necessary.
+
+            writer.format("\n/* %s */;\n", path);
 
             streamPath(path, result);
 
@@ -179,12 +187,7 @@ public class VirtualAssetStreamerImpl implements VirtualAssetStreamer, Invalidat
 
         // Need to add some text to the result.
 
-        String marker = String.format("\nTapestry.markScriptLibrariesLoaded(%s);\n", paths);
-
-        // TODO: What if the files are in a mix of encodings?  Is it necessary to read each file
-        // using a Reader (to convert to UTF-8 internall) before writing to result?
-
-        result.write(marker.getBytes("UTF-8"));
+        writer.format("\n;/**/\nTapestry.markScriptLibrariesLoaded(%s);\n", paths);
 
         return result;
     }

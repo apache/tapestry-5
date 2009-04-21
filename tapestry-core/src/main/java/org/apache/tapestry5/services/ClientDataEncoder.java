@@ -41,4 +41,14 @@ public interface ClientDataEncoder
      * @return stream of decoded data
      */
     ObjectInputStream decodeClientData(String clientData) throws IOException;
+
+    /**
+     * Decoes client data obtained via {@link ClientDataSink#getEncodedClientData()}.
+     *
+     * @param clientData URLEncoded client data
+     * @return stream of objects
+     * @throws IOException
+     * @since 5.1.0.4
+     */
+    ObjectInputStream decodeEncodedClientData(String clientData) throws IOException;
 }

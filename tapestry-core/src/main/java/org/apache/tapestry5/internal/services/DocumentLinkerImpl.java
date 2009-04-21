@@ -244,7 +244,7 @@ public class DocumentLinkerImpl implements DocumentLinker
                 stream.writeUTF(scriptURL.substring(contextPathLength));
             }
 
-            String virtualURL = fullAssetPrefix + RequestConstants.VIRTUAL_FOLDER + dataSink.getClientData() + ".js";
+            String virtualURL = fullAssetPrefix + RequestConstants.VIRTUAL_FOLDER + dataSink.getEncodedClientData() + ".js";
 
             container.element("script",
                               "type", "text/javascript",

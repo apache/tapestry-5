@@ -18,12 +18,22 @@ import org.apache.tapestry5.dom.Document;
 import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.dom.XMLMarkupModel;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
+import org.apache.tapestry5.services.URLEncoder;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.io.ObjectInputStream;
 
 public class DocumentLinkerImplTest extends InternalBaseTestCase
 {
+
+    private URLEncoder urlEncoder;
+
+    @BeforeClass
+    public void setup()
+    {
+        urlEncoder = getService(URLEncoder.class);
+    }
 
     private void check(Document document, String file) throws Exception
     {
@@ -337,7 +347,7 @@ public class DocumentLinkerImplTest extends InternalBaseTestCase
 
         document.newRootElement("html").element("body").element("p").text("Ready to be updated with scripts.");
 
-        ClientDataEncoderImpl encoder = new ClientDataEncoderImpl();
+        ClientDataEncoderImpl encoder = new ClientDataEncoderImpl(urlEncoder);
 
         DocumentLinkerImpl linker = new DocumentLinkerImpl(true, true, "1.2.3", true, "/context", encoder);
 
@@ -354,7 +364,7 @@ public class DocumentLinkerImplTest extends InternalBaseTestCase
 
         String clientData = fileName.substring(0, fileName.length() - 3);
 
-        ObjectInputStream stream = encoder.decodeClientData(clientData);
+        ObjectInputStream stream = encoder.decodeEncodedClientData(clientData);
 
         assertEquals(stream.readInt(), 2);
         assertEquals(stream.readUTF(), "/assets/foo.js");

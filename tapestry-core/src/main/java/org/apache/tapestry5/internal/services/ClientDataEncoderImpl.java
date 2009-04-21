@@ -17,6 +17,7 @@ package org.apache.tapestry5.internal.services;
 import org.apache.tapestry5.internal.util.Base64InputStream;
 import org.apache.tapestry5.services.ClientDataEncoder;
 import org.apache.tapestry5.services.ClientDataSink;
+import org.apache.tapestry5.services.URLEncoder;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -25,11 +26,18 @@ import java.util.zip.GZIPInputStream;
 
 public class ClientDataEncoderImpl implements ClientDataEncoder
 {
+    private final URLEncoder urlEncoder;
+
+    public ClientDataEncoderImpl(URLEncoder urlEncoder)
+    {
+        this.urlEncoder = urlEncoder;
+    }
+
     public ClientDataSink createSink()
     {
         try
         {
-            return new ClientDataSinkImpl();
+            return new ClientDataSinkImpl(urlEncoder);
         }
         catch (IOException ex)
         {
@@ -53,5 +61,10 @@ public class ClientDataEncoderImpl implements ClientDataEncoder
         {
             throw new RuntimeException(ex);
         }
+    }
+
+    public ObjectInputStream decodeEncodedClientData(String clientData) throws IOException
+    {
+        return decodeClientData(urlEncoder.decode(clientData));
     }
 }

@@ -40,4 +40,11 @@ public interface ClientDataSink
      * @see org.apache.tapestry5.services.ClientDataEncoder#decodeClientData(String)
      */
     String getClientData();
+
+    /**
+     * Returns the client data encoded (for inclusion in a URL) via {@link org.apache.tapestry5.services.URLEncoder}.
+     *
+     * @since 5.1.0.4
+     */
+    String getEncodedClientData();
 }
