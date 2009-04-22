@@ -6,7 +6,7 @@ Content Type and Markup Output
 
   Tapestry reads {{{templates.html}well-formed XML template files}} and renders its output as XML, with minor caveats:
 
-  * The \<?xml\?> XML declaration is omitted.
+  * The \<?xml?\> XML declaration is omitted.
 
   * Most element render with an open and close tag, even if empty.
 

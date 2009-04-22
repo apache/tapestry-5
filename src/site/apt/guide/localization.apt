@@ -6,7 +6,7 @@ Localization
 
   Localization is all about getting the right text to the user, in the right language.
   
-  Localization support is well integrated into Tapestry.  Tapestry allows you to easily seperate the text you present to your users
+  Localization support is well integrated into Tapestry.  Tapestry allows you to easily separate the text you present to your users
   from the rest of your application ... pull it out of your Java code and even out of your component templates.  You can then translate
   your messages into other languages and let Tapestry put everthing together.
   
@@ -63,7 +63,7 @@ Accessing Localized Messages
   
   * Using the {{{parameters.html}message: binding prefix}} in a component template
   
-  * By injecting the comopnent's Messages object
+  * By injecting the component's Messages object
   
   []
   

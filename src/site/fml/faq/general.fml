@@ -197,7 +197,7 @@
                 </pre>
 
                 <p>
-                    This helps the compiler check your code for typos, and minimizes the difficult of change when
+                    This helps the compiler check your code for typos, and minimizes the difficulty of change when
                     refactoring the names of components.
                 </p>
 

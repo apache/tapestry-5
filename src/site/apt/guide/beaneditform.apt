@@ -116,9 +116,9 @@ Customizing the BeanModel
   
   The BeanEditForm component has several parameters for this purpose:
 
-  * add: A command seperated list of property names to add to the model.
+  * add: A comma separated list of property names to add to the model.
 
-  * include: A comma seperated list of property names to keep with the model (others are excluded).
+  * include: A comma separated list of property names to keep with the model (others are excluded).
 
   * exclude: A comma separated list of property names to exclude from the model.
   

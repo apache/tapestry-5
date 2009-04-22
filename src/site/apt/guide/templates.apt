@@ -209,7 +209,7 @@ Tapestry Elements
 * \<parameter\>             <(deprecated)>
 
   A \<parameter\> element is a special kind of block.  It is placed inside the body of an embedded component.  The block defined by the
-  \<parameter\> is passsed to the component.  \<parameter\> includes a mandatory name attribute to identify which parameter of the component
+  \<parameter\> is passed to the component.  \<parameter\> includes a mandatory name attribute to identify which parameter of the component
   to bind.  
 
   Example:
@@ -299,7 +299,7 @@ Component Elements
   
   * id: A unique id for the component (within its container).
   
-  * mixins: An optional comma seperated list of mixins for the the component.
+  * mixins: An optional comma separated list of mixins for the the component.
   
   [] 
   
@@ -505,7 +505,7 @@ Template Inheritance
 
   This can work across multiple levels of inheritance.
 
-  Overuse of this feature is <em>not recommended</em>: in general use of composition, rather than inheritance,
+  Overuse of this feature is <not recommended>: in general use of composition, rather than inheritance,
   will be easier to understand and maintain. There are certain specific cases where overrides will allow
   a for much wider and easier reuse of a component. 
 

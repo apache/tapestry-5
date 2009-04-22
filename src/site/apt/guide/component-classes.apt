@@ -89,7 +89,7 @@ Pages vs. Components
   and <root>.<<components>>.<ComponentType> for components.
   
   In Tapestry 4, there was a much greater distinction between pages
-  and components, which showed up as seperate interfaces and a hierarchy of
+  and components, which showed up as separate interfaces and a hierarchy of
   abstract implementations to extend your classes from.
   
   In Tapestry 5, the "page" is still somewhat present, but is really

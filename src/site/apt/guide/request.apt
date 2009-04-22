@@ -127,7 +127,7 @@ Master Dispatcher Service
 RequestGlobals Service
 
   The RequestGlobals service 
-  has a lifecycle of perthread; this means that a seperate instance exists for every thread, and therefore,
+  has a lifecycle of perthread; this means that a separate instance exists for every thread, and therefore,
   for every request.  The terminators of the two handler pipelines store the request/response pairs into the RequestGlobals service.
   
 Request Service

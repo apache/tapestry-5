@@ -17,7 +17,7 @@ Property Expressions
 
   The most basic form of a property expression is a simple property name, such as "userName".
 
-  A series of property names may be specified, seperated by commas:  "user.name", which is equivalent
+  A series of property names may be specified, separated by commas:  "user.name", which is equivalent
   to either <<<getUser().getName()>>> or <<<getUser().setName()>>>, depending on context.
 
   The "." is called the "dereference operator".  A second operator is "?." or the "safe dereference operator".

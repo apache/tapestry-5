@@ -116,7 +116,7 @@ Page Lifecycle Methods
   There are a few situations where it is useful for a component to perform some operations, usually some kind of initialization or
   caching, based on the lifecycle of the page.
   
-  The page lifecycle is quite simple.  When first needed, a page is loaded.  Loading a page involves instantitating the components of the page
+  The page lifecycle is quite simple.  When first needed, a page is loaded.  Loading a page involves instantiating the components of the page
   and connecting them together.
   
   Once a page is loaded, it is <attached> to the current request.  Remember that there will be many threads, each handling its own request.

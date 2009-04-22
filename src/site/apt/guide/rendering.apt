@@ -11,7 +11,7 @@ Component Rendering
  Components would invoke render() on the objects in their template, including
  other components. 
  
- {{{http://blog.rapidred.com/}Bruce Tate}} has said "if you get veritgo, don't
+ {{{http://blog.rapidred.com/}Bruce Tate}} has said "if you get vertigo, don't
  stand at the edge of a JavaServer Faces stack trace and look down". The same applies
  to Tapestry 4. Once you have heavily nested, looping components, the stack trace
  can get quite deep. 
@@ -51,7 +51,7 @@ Rendering Phases
   
   These methods are <<optional>>, a default behavior is associated with each phase.
  
-  The large number of phases reflects the use of {{{mixin.html}component mixins}} which
+  The large number of phases reflects the use of {{{mixins.html}component mixins}} which
   also plug into the render phases. Several of the phases 
   exist almost exclusively for mixins.
   
@@ -263,7 +263,7 @@ public class Count
 Rendering Components
 
   Instead of returning true or false, a render phase method may return a component. The component may have been injected via the
-  {{{.../apidocs/org/apache/tapestry5/annotations/Component.html}Component}} annotation, or may have been passed to the
+  {{{../apidocs/org/apache/tapestry5/annotations/Component.html}Component}} annotation, or may have been passed to the
   as a parameter.
   
   In any case, returning a component will queue that component to be rendered <<before>> the active component continues rendering.
@@ -309,7 +309,7 @@ Method Conflicts and Ordering
 
   The After<XXX> phases exists to balance the Begin<XXX> and Before<XXX> phases.  Often elements will
   be started inside an earlier phase and then the elements will be ended (closed)
-  inside the correspopnding After<XXX> phase (with the body and template of the component rendering
+  inside the corresponding After<XXX> phase (with the body and template of the component rendering
   between).
   
   In order to ensure that operations occur in the correct, and natural order, the

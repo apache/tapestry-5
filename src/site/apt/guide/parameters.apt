@@ -460,7 +460,7 @@ Parameter Caching
   
 Parameter Type Coercion
 
-  Tapestry includes a mechanism for {{{coercion.html}coecing types automatically}}. Most often, this is used to
+  Tapestry includes a mechanism for {{{coercion.html}coercing types automatically}}. Most often, this is used to
   convert literal strings into appropriate values, but in many cases, more complex conversions
   will occur.
   
@@ -519,8 +519,8 @@ Publishing Parameters
   it also leads to duplication of the documentation of the parameter.
 
   In Tapestry 5.1, you may use the publishParameters attribute of the
-  {{{../../apidocs/org/apache/tapestry5/annotations/Component.html}Component}}} annotation. List one
-  or more parameters seperated by commas: those parameters of the inner/embedded component become
+  {{{../apidocs/org/apache/tapestry5/annotations/Component.html}Component}} annotation. List one
+  or more parameters separated by commas: those parameters of the inner/embedded component become
   parameters of the outer component.  You should <<not>> define a parameter field in the outer component.
 
   There are still cases where you want to use the "inherit:" binding prefix. For example, if you have

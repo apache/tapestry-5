@@ -209,7 +209,7 @@ public class AppModule
     Tapestry will wait a short period of time (the soft wait interval) to see if an existing page instance
     is made available.  It will then create a new page instance (unless the hard limit has been reached).
 
-    The default is 5 page instances.    Remember that page pooling is done seperately for each
+    The default is 5 page instances.    Remember that page pooling is done separately for each
     page (and localization of the page).
 
   [tapestry.page-pool.soft-wait]

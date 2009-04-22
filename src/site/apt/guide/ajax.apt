@@ -84,7 +84,7 @@ Basic JavaScript
 +---+
 
   The Asset is injected, using the $\{tapestry.scriptaculous\}
-  {{{../tapestry-ioc/symbols.apt}symbol}} to reference the location
+  {{{../tapestry-ioc/symbols.html}symbol}} to reference the location
   of the Scriptaculous library.
 
   The RenderSupport is accessed as an Environmental service.
@@ -231,7 +231,7 @@ Ajax Components and Mixins
 * Zone
 
   Initial support for Zones is now in place.  Zones are Tapestry's approach to performing partial updates to
-  the client side.  A Zone component renders as a\<div\> element with the "t-zone" CSS class (it can actually render
+  the client side.  A Zone component renders as a \<div\> element with the "t-zone" CSS class (it can actually render
   as any element you chose, but for discussion's sake, we'll assume the \<div\> default).  It also
   adds some JavaScript to the page to "wire up" a Tapestry.ZoneManager object to control updating
   the \<div\> element.

@@ -42,7 +42,7 @@ Inject Annotation
 * Block Injection
 
   For field type {{{../apidocs/org/apache/tapestry5/Block.html}Block}}, the value of the Inject annotation is the
-  id of the {{{templates.apt}\<block\> element}} within the component's template.  Normally, the id of the block is determined from the field name
+  id of the {{{templates.html}\<block\> element}} within the component's template.  Normally, the id of the block is determined from the field name
   (after stripping out leading "_" and "$" characters).  Where that is not appropriate, an
   {{{../apidocs/org/apache/tapestry5/annotations/Id.html}Id}} annotation can be supplied:
   

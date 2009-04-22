@@ -268,7 +268,7 @@ Class and Method Naming Conventions
  An object that provides supporting operations to other objects; this is a kind of "loose aggregation".
 
  [Parameters]
- An data object that holds a number of related values that would otherwise be seperate
+ A data object that holds a number of related values that would otherwise be separate
  parameter values to a method. This tends to streamline code (especially when using
  a Filter interface) and allows the parameters to be changed without changing the method signature.
 
