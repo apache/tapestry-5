@@ -716,7 +716,7 @@ public class ComponentReport extends AbstractMavenReport
 
         file = new File(file, String.format("%s-%s.jar", pluginArtifactId, pluginVersion));
 
-        return file.getAbsolutePath();
+        return toArgumentPath(Arrays.asList(file.getAbsolutePath()));
     }
 
     @SuppressWarnings("unchecked")
