@@ -16,6 +16,7 @@ package org.apache.tapestry5.corelib.components;
 
 import org.apache.tapestry5.*;
 import org.apache.tapestry5.annotations.Environmental;
+import org.apache.tapestry5.annotations.Events;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.grid.GridDataSource;
@@ -27,6 +28,7 @@ import org.apache.tapestry5.services.ClientBehaviorSupport;
 /**
  * Generates a series of links used to jump to a particular page index within the overall data set.
  */
+@Events(InternalConstants.GRID_INPLACE_UPDATE + " (internal event)")
 public class GridPager
 {
     /**

@@ -141,4 +141,12 @@ public class EventConstants
      * @since 5.1.0.1
      */
     public static final String PROGRESSIVE_DISPLAY = "progressiveDisplay";
+
+    /**
+     * Event triggered by an {@link org.apache.tapestry5.corelib.mixins.Autocomplete} mixin to request completions of
+     * the current input. The context is the partial string provided by the cient.
+     *
+     * @SINCE 5.1.0.4
+     */
+    public static final String PROVIDE_COMPLETIONS = "providecompletions";
 }

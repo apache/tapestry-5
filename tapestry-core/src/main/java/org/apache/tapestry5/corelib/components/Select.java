@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,10 +15,7 @@
 package org.apache.tapestry5.corelib.components;
 
 import org.apache.tapestry5.*;
-import org.apache.tapestry5.annotations.BeforeRenderTemplate;
-import org.apache.tapestry5.annotations.Environmental;
-import org.apache.tapestry5.annotations.Mixin;
-import org.apache.tapestry5.annotations.Parameter;
+import org.apache.tapestry5.annotations.*;
 import org.apache.tapestry5.corelib.base.AbstractField;
 import org.apache.tapestry5.corelib.data.BlankOption;
 import org.apache.tapestry5.corelib.mixins.RenderDisabled;
@@ -42,6 +39,7 @@ import java.util.Locale;
  * can be overriden by binding the encoder parameter, or extended by contributing a {@link ValueEncoderFactory} into the
  * service's configuration.
  */
+@Events(EventConstants.VALIDATE)
 public class Select extends AbstractField
 {
     private class Renderer extends SelectModelRenderer
@@ -133,7 +131,7 @@ public class Select extends AbstractField
         return TapestryInternalUtils.isEqual(clientValue, selectedClientValue);
     }
 
-    @SuppressWarnings({"unchecked"})
+    @SuppressWarnings({ "unchecked" })
     @Override
     protected void processSubmission(String elementName)
     {

@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,12 +17,14 @@ package org.apache.tapestry5.corelib.components;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.EventConstants;
 import org.apache.tapestry5.Link;
+import org.apache.tapestry5.annotations.Events;
 import org.apache.tapestry5.corelib.base.AbstractComponentEventLink;
 import org.apache.tapestry5.ioc.annotations.Inject;
 
 /**
  * Component that triggers an action on the server with a subsequent full page refresh.
  */
+@Events(EventConstants.ACTION)
 public class ActionLink extends AbstractComponentEventLink
 {
     @Inject

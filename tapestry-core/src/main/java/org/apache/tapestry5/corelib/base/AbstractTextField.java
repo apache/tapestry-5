@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -43,6 +43,7 @@ import java.util.Locale;
  * and may provide a non-null value as the parsed value.  Returning null allows the normal translator to operate.  The
  * event handler may also throw {@link org.apache.tapestry5.ValidationException}.
  */
+@Events({ EventConstants.TO_CLIENT, EventConstants.VALIDATE, EventConstants.PARSE_CLIENT })
 public abstract class AbstractTextField extends AbstractField
 {
     /**
@@ -148,7 +149,7 @@ public abstract class AbstractTextField extends AbstractField
         return createDefaultParameterBinding("value");
     }
 
-    @SuppressWarnings({"unchecked"})
+    @SuppressWarnings({ "unchecked" })
     @BeginRender
     void begin(MarkupWriter writer)
     {
@@ -189,7 +190,7 @@ public abstract class AbstractTextField extends AbstractField
      */
     protected abstract void writeFieldTag(MarkupWriter writer, String value);
 
-    @SuppressWarnings({"unchecked"})
+    @SuppressWarnings({ "unchecked" })
     @Override
     protected void processSubmission(String elementName)
     {

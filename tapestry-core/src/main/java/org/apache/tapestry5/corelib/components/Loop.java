@@ -40,6 +40,7 @@ import java.util.List;
  * event to inform its container what values were submitted and in what order.
  */
 @SupportsInformalParameters
+@Events(EventConstants.SYNCHRONIZE_VALUES)
 public class Loop
 {
     /**

@@ -332,6 +332,8 @@ public class ComponentReport extends AbstractMavenReport
 
         String current = cd.getSuperClassName();
 
+        Map<String, String> events = CollectionFactory.newCaseInsensitiveMap(cd.getEvents());
+
         while (true)
         {
             ClassDescription superDescription = descriptions.get(current);
@@ -340,6 +342,7 @@ public class ComponentReport extends AbstractMavenReport
 
             parents.add(current);
             parameters.putAll(superDescription.getParameters());
+            events.putAll(superDescription.getEvents());
 
             current = superDescription.getSuperClassName();
         }
@@ -466,6 +469,23 @@ public class ComponentReport extends AbstractMavenReport
 
         if (cd.isSupportsInformalParameters())
             addChild(section, "p", "Informal parameters: supported");
+
+
+        if (!events.isEmpty())
+        {
+            section = addSection(body, "Component Events");
+
+            Element ul = addChild(section, "ul");
+
+            for (String name : InternalUtils.sortedKeys(events))
+            {
+                String value = events.get(name);
+
+                String text = value.length() > 0 ? name + ": " + value : name;
+
+                addChild(ul, "li", text);
+            }
+        }
 
         addExternalDocumentation(body, docSearchPath, className);
 
@@ -867,9 +887,25 @@ public class ComponentReport extends AbstractMavenReport
 
             readParameters(cd, element);
             readPublishedParameters(cd, element);
+            readEvents(cd, element);
         }
 
         return result;
+    }
+
+    private void readEvents(ClassDescription cd, Element classElement)
+    {
+        Elements elements = classElement.getChildElements("event");
+
+        for (int i = 0; i < elements.size(); i++)
+        {
+            Element node = elements.get(i);
+
+            String name = node.getAttributeValue("name");
+            String description = node.getValue();
+
+            cd.getEvents().put(name, description);
+        }
     }
 
     private void readParameters(ClassDescription cd, Element classElement)

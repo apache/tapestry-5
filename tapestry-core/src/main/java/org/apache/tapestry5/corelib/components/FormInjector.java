@@ -16,6 +16,7 @@ package org.apache.tapestry5.corelib.components;
 
 import org.apache.tapestry5.*;
 import org.apache.tapestry5.annotations.Environmental;
+import org.apache.tapestry5.annotations.Events;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.corelib.data.InsertPosition;
@@ -44,6 +45,7 @@ import java.io.IOException;
  * before or after (per configuration) the existing FormInjector element.
  */
 @SupportsInformalParameters
+@Events(EventConstants.ACTION)
 public class FormInjector implements ClientElement
 {
     public static final String INJECT_EVENT = "inject";

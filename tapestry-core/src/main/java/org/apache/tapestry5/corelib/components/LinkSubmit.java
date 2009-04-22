@@ -15,10 +15,7 @@
 package org.apache.tapestry5.corelib.components;
 
 import org.apache.tapestry5.*;
-import org.apache.tapestry5.annotations.Environmental;
-import org.apache.tapestry5.annotations.IncludeJavaScriptLibrary;
-import org.apache.tapestry5.annotations.Parameter;
-import org.apache.tapestry5.annotations.SupportsInformalParameters;
+import org.apache.tapestry5.annotations.*;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.FormSupport;
 import org.apache.tapestry5.services.Heartbeat;
@@ -31,6 +28,7 @@ import org.apache.tapestry5.services.Request;
  */
 @SupportsInformalParameters
 @IncludeJavaScriptLibrary("linksubmit.js")
+@Events(EventConstants.SELECTED + " by default, may be overridden")
 public class LinkSubmit implements ClientElement
 {
     /**

@@ -114,8 +114,43 @@ public class ParametersDoclet extends Doclet
 
             }
 
+            emitEvents(classDoc);
+
 
             println("</class>");
+        }
+
+        private void emitEvents(ClassDoc classDoc)
+        {
+            for (AnnotationDesc annotation : classDoc.annotations())
+            {
+                if (!annotation.annotationType().qualifiedTypeName().equals(
+                        "org.apache.tapestry5.annotations.Events"))
+                {
+                    continue;
+                }
+
+                // Events has only a single attribute: value(), so we know its the first element
+                // in the array.
+
+                ElementValuePair pair = annotation.elementValues()[0];
+
+                AnnotationValue annotationValue = pair.value();
+                AnnotationValue[] values = (AnnotationValue[]) annotationValue.value();
+
+
+                for (AnnotationValue eventValue : values)
+                {
+                    String event = (String) eventValue.value();
+                    int ws = event.indexOf(' ');
+
+                    String name = ws < 0 ? event : event.substring(0, ws);
+                    String description = ws < 0 ? "" : event.substring(ws + 1).trim();
+
+                    print("<event name='%s'>%s</event>", name, description);
+                }
+                break;
+            }
         }
 
         private void emitPublishedParameters(FieldDoc fd, Map<String, String> componentAnnotationValues)

@@ -15,6 +15,7 @@
 package org.apache.tapestry5.upload.internal.services;
 
 import org.apache.commons.fileupload.FileUploadException;
+import org.apache.tapestry5.annotations.Events;
 import org.apache.tapestry5.internal.services.ComponentResultProcessorWrapper;
 import org.apache.tapestry5.ioc.annotations.Primary;
 import org.apache.tapestry5.runtime.Component;
@@ -28,6 +29,7 @@ import java.io.IOException;
  * Determines if there was an {@link org.apache.commons.fileupload.FileUploadException} processing the request and, if
  * so, triggers an exception event on the page. If the page fails to respond to the event, then
  */
+@Events(UploadEvents.UPLOAD_EXCEPTION + " when a exception occur processing the upload")
 public class UploadExceptionFilter implements ComponentEventRequestFilter
 {
     private final MultipartDecoder decoder;

@@ -15,10 +15,7 @@
 package org.apache.tapestry5.corelib.components;
 
 import org.apache.tapestry5.*;
-import org.apache.tapestry5.annotations.Component;
-import org.apache.tapestry5.annotations.Parameter;
-import org.apache.tapestry5.annotations.Property;
-import org.apache.tapestry5.annotations.SupportsInformalParameters;
+import org.apache.tapestry5.annotations.*;
 import org.apache.tapestry5.beaneditor.BeanModel;
 import org.apache.tapestry5.internal.beaneditor.BeanModelUtils;
 import org.apache.tapestry5.ioc.annotations.Inject;
@@ -36,6 +33,9 @@ import org.apache.tapestry5.services.BeanModelSource;
  * the corresponding Block is renderered, rather than any of the built in property editor blocks. This allows you to
  * override specific properties with your own customized UI, for cases where the default UI is insufficient, or no
  * built-in editor type is appropriate.
+ * <p/>
+ * BeanEditForm contains a {@link org.apache.tapestry5.corelib.components.Form} component and will trigger all the
+ * events of a Form.
  *
  * @see org.apache.tapestry5.beaneditor.BeanModel
  * @see org.apache.tapestry5.services.BeanModelSource
@@ -43,6 +43,7 @@ import org.apache.tapestry5.services.BeanModelSource;
  * @see org.apache.tapestry5.beaneditor.DataType
  */
 @SupportsInformalParameters
+@Events(EventConstants.PREPARE)
 public class BeanEditForm implements ClientElement, FormValidationControl
 {
 

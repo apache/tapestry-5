@@ -32,6 +32,8 @@ public class ClassDescription
 
     private final Map<String, String> publishedParameters = CollectionFactory.newCaseInsensitiveMap();
 
+    private final Map<String, String> events = CollectionFactory.newCaseInsensitiveMap();
+
     private final String since;
 
     public ClassDescription(String className, String superClassName, String description,
@@ -83,4 +85,11 @@ public class ClassDescription
         return publishedParameters;
     }
 
+    /**
+     * Case insentive map, keyes on event name, value is optional description (often blank).
+     */
+    public Map<String, String> getEvents()
+    {
+        return events;
+    }
 }

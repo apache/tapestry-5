@@ -53,6 +53,7 @@ import java.util.List;
  * </pre>
  */
 @IncludeJavaScriptLibrary({ "${tapestry.scriptaculous}/controls.js", "autocomplete.js" })
+@Events(EventConstants.PROVIDE_COMPLETIONS)
 public class Autocomplete
 {
     static final String EVENT_NAME = "autocomplete";
@@ -189,7 +190,7 @@ public class Autocomplete
             }
         };
 
-        resources.triggerEvent("providecompletions", new Object[] { input }, callback);
+        resources.triggerEvent(EventConstants.PROVIDE_COMPLETIONS, new Object[] { input }, callback);
 
         ContentType contentType = responseRenderer.findContentType(this);
 

@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -36,6 +36,7 @@ import java.util.List;
  * Renders out the column headers for the grid, including links (where appropriate) to control column sorting.
  */
 @SupportsInformalParameters
+@Events(InternalConstants.GRID_INPLACE_UPDATE + " (internal event)")
 public class GridColumns
 {
     /**
@@ -67,8 +68,8 @@ public class GridColumns
 
     @SuppressWarnings("unused")
     @Component(
-            parameters = {"event=sort", "disabled=sortDisabled", "context=columnContext", "class=sortLinkClass",
-                    "zone=inherit:zone"})
+            parameters = { "event=sort", "disabled=sortDisabled", "context=columnContext", "class=sortLinkClass",
+                    "zone=inherit:zone" })
     private EventLink sort, sort2;
 
     @Inject
@@ -179,7 +180,7 @@ public class GridColumns
     {
         onSort(columnId);
 
-        resources.triggerEvent(InternalConstants.GRID_INPLACE_UPDATE, new Object[] {zone}, null);
+        resources.triggerEvent(InternalConstants.GRID_INPLACE_UPDATE, new Object[] { zone }, null);
 
         // Event is handled, don't trigger further event handler methods.
 
@@ -205,7 +206,7 @@ public class GridColumns
     {
         if (zone == null) return columnModel.getId();
 
-        return new Object[] {columnModel.getId(), zone};
+        return new Object[] { columnModel.getId(), zone };
     }
 
     public String getIconLabel()

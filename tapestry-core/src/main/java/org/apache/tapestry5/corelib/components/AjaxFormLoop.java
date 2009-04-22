@@ -40,9 +40,10 @@ import java.util.Iterator;
  * <p/>
  * The removeRow event will receive the client-side value for the row being iterated.
  *
- * @see org.apache.tapestry5.EventConstants#ADD_ROW
- * @see org.apache.tapestry5.EventConstants#REMOVE_ROW
+ * @see EventConstants#ADD_ROW
+ * @see EventConstants#REMOVE_ROW
  */
+@Events({ EventConstants.ADD_ROW, EventConstants.REMOVE_ROW })
 public class AjaxFormLoop
 {
     /**

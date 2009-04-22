@@ -59,6 +59,9 @@ import java.io.ObjectInputStream;
  * context is encoded into the form's action URI (the parameter is not read when the form is submitted, instead the
  * values encoded into the form are used).
  */
+@Events({ EventConstants.PREPARE_FOR_RENDER, EventConstants.PREPARE, EventConstants.PREPARE_FOR_SUBMIT,
+        EventConstants.VALIDATE_FORM,
+        EventConstants.SUBMIT, EventConstants.FAILURE, EventConstants.SUCCESS })
 public class Form implements ClientElement, FormValidationControl
 {
     /**
