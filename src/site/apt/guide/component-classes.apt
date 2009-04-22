@@ -210,8 +210,9 @@ public class Countdown
 }
 +---+
 
-  The above defines a component whose embedded id is "count" (this id is derived from the name of the field).  The type
-  of component is org.example.app.components.Count.  
+  The above defines a component whose embedded id is "count" (this id is derived from the name of the field and an element
+  with that id must be present in the corresponding template, otherwise an error is displayed (see below)).  The type of the
+  component is org.example.app.components.Count.  
   The start and end parameters of the Count component are bound to literal values, and the value
   parameter of the Count component is bound to the countValue property of the Countdown component.
   
@@ -230,4 +231,5 @@ public class Countdown
   using the id() attribute of the Component annotation.
   
   If you define a component in the component class, and there is no corresponding  element in the template,
-  Tapestry will log an error.
+  Tapestry will log an error. In the example above that would be the case if the template for the Countdown page
+  didn't contain an element with <<<&lt;t:count t:id="count"&gt;>>>.

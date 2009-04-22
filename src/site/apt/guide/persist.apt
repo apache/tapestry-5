@@ -11,7 +11,7 @@ Persistent Page Data
   
   However, you often want to store some persistent data on a page, and have access
   to it in later requests.  Long term storage of data should go in a database of some form, but
-  server-side state for the duration of the current request should go in the HttpSession (though Tapestyr
+  server-side state for the duration of the current request should go in the HttpSession (though Tapestry
   provides a few other options as well).
   
   This is accomplished with the 
