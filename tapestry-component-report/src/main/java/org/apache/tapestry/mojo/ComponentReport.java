@@ -57,6 +57,8 @@ public class ComponentReport extends AbstractMavenReport
 
     private static final Pattern TAPESTRY5_PATTERN = Pattern.compile("(org\\.apache\\.tapestry5[#_\\w\\.]*)");
 
+    private static final char QUOTE = '"';
+
     /**
      * Identifies the application root package.
      *
@@ -807,7 +809,7 @@ public class ComponentReport extends AbstractMavenReport
 
     private String toArgumentPath(List<String> paths)
     {
-        StringBuilder builder = new StringBuilder();
+        StringBuilder builder = new StringBuilder(5000).append(QUOTE);
 
         String sep = "";
 
@@ -819,7 +821,7 @@ public class ComponentReport extends AbstractMavenReport
             sep = SystemUtils.PATH_SEPARATOR;
         }
 
-        return builder.toString();
+        return builder.append(QUOTE).toString();
     }
 
     public Map<String, ClassDescription> readXML(String path) throws MavenReportException
