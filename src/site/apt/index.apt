@@ -21,7 +21,7 @@ What is Apache Tapestry?
  Tapestry is architected to scale from tiny, single-page applications all the way up to
  massive applications consisting of hundreds of individual pages, developed by
  large, diverse teams. Tapestry easily integrates with any kind of backend, including JEE, 
- HiveMind, Spring and Hibernate.
+  Spring and Hibernate.
  
  It's more than what you <can> do with Tapestry ... it's also <how> you do it!  Tapestry is a vastly productive environment.
  Java developers love it because they can make <Java code> changes and see them immediately ... no redeploy, no restart! And it's blazingly fast to boot

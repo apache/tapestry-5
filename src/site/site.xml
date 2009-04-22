@@ -79,7 +79,6 @@
         <menu name="User Guide">
             <item name="Ajax &amp; JavaScript" href="guide/ajax.html"/>
             <item name="Aliases" href="guide/alias.html"/>
-            <item name="Application State" href="guide/appstate.html"/>
             <item name="Assets" href="guide/assets.html"/>
             <item name="BeanEditForm Guide" href="guide/beaneditform.html"/>
             <item name="Class Reloading" href="guide/reload.html"/>
@@ -102,7 +101,8 @@
             <item name="Logging" href="guide/logging.html"/>
             <item name="Page Lifecycle" href="guide/lifecycle.html"/>
             <item name="Page Navigation" href="guide/pagenav.html"/>
-            <item name="Persistent Data" href="guide/persist.html"/>
+            <item name="Persistent Page Data" href="guide/persist.html"/>
+            <item name="Persistent State" href="guide/appstate.html"/>
             <item name="Property Expressions" href="guide/propexp.html"/>
             <item name="Project Layout" href="guide/project-layout.html"/>
             <item name="Request Processing" href="guide/request.html"/>

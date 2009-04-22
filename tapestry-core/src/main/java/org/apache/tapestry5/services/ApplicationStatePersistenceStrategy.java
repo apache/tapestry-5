@@ -15,29 +15,29 @@
 package org.apache.tapestry5.services;
 
 /**
- * Used by {@link ApplicationStateManager} to manage a specific kind of ASO persistence. The stategy is responsible for
- * managing ASO instances within its domain.
+ * Used by {@link ApplicationStateManager} to manage a specific kind of Session State Object (SSO) persistence. The
+ * stategy is responsible for managing SSO instances within its domain.
  *
  * @see org.apache.tapestry5.services.ApplicationStatePersistenceStrategySource
  */
 public interface ApplicationStatePersistenceStrategy
 {
     /**
-     * Gets the ASO from the domain. If the ASO does not already exist, it is created and stored, then returned.
+     * Gets the SSO from the domain. If the ASO does not already exist, it is created and stored, then returned.
      */
-    <T> T get(Class<T> asoClass, ApplicationStateCreator<T> creator);
+    <T> T get(Class<T> ssoClass, ApplicationStateCreator<T> creator);
 
     /**
-     * Stores a new ASO, possibly replacing the existing one.
+     * Stores a new SSO, possibly replacing the existing one.
      *
      * @param <T>
-     * @param asoClass
-     * @param aso      instance to store, or null to delete existing
+     * @param ssoClass
+     * @param sso      instance to store, or null to delete existing
      */
-    <T> void set(Class<T> asoClass, T aso);
+    <T> void set(Class<T> ssoClass, T sso);
 
     /**
-     * Returns true if the ASO already exists, false if null.
+     * Returns true if the SSO already exists, false if null.
      */
-    <T> boolean exists(Class<T> asoClass);
+    <T> boolean exists(Class<T> ssoClass);
 }

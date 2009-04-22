@@ -32,7 +32,7 @@ public class SessionApplicationStatePersistenceStrategyTest extends InternalBase
         Session session = mockSession();
         Class asoClass = ReadOnlyBean.class;
         Object aso = new ReadOnlyBean();
-        String key = "aso:" + asoClass.getName();
+        String key = "sso:" + asoClass.getName();
         ApplicationStateCreator creator = mockApplicationStateCreator();
 
         train_getSession(request, true, session);
@@ -73,7 +73,7 @@ public class SessionApplicationStatePersistenceStrategyTest extends InternalBase
         Session session = mockSession();
         Class asoClass = ReadOnlyBean.class;
         Object aso = new ReadOnlyBean();
-        String key = "aso:" + asoClass.getName();
+        String key = "sso:" + asoClass.getName();
         ApplicationStateCreator creator = mockApplicationStateCreator();
 
         // First for exists()
@@ -115,7 +115,7 @@ public class SessionApplicationStatePersistenceStrategyTest extends InternalBase
         Session session = mockSession();
         Class asoClass = ReadOnlyBean.class;
         Object aso = new ReadOnlyBean();
-        String key = "aso:" + asoClass.getName();
+        String key = "sso:" + asoClass.getName();
 
         train_getSession(request, true, session);
         session.setAttribute(key, aso);

@@ -6,7 +6,7 @@ Tapestry IoC Configurations
 
   One of the key concepts on Tapestry IoC is <distributed configuration>. This is a
   concept borrowed from the Eclipse Plugin API and evidenced in 
-  HiveMind prior to Tapestry 5 IoC.
+  Apache HiveMind prior to Tapestry 5 IoC.
   
   So ... nice term, what does it mean?
   

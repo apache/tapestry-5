@@ -26,33 +26,33 @@ public class ApplicationStateManagerImpl implements ApplicationStateManager
 
     static class ApplicationStateAdapter<T>
     {
-        private final Class<T> asoClass;
+        private final Class<T> ssoClass;
 
         private final ApplicationStatePersistenceStrategy strategy;
 
         private final ApplicationStateCreator<T> creator;
 
-        ApplicationStateAdapter(Class<T> asoClass, ApplicationStatePersistenceStrategy strategy,
+        ApplicationStateAdapter(Class<T> ssoClass, ApplicationStatePersistenceStrategy strategy,
                                 ApplicationStateCreator<T> creator)
         {
-            this.asoClass = asoClass;
+            this.ssoClass = ssoClass;
             this.strategy = strategy;
             this.creator = creator;
         }
 
         T getOrCreate()
         {
-            return strategy.get(asoClass, creator);
+            return strategy.get(ssoClass, creator);
         }
 
-        void set(T aso)
+        void set(T sso)
         {
-            strategy.set(asoClass, aso);
+            strategy.set(ssoClass, sso);
         }
 
         boolean exists()
         {
-            return strategy.exists(asoClass);
+            return strategy.exists(ssoClass);
         }
     }
 
@@ -86,7 +86,7 @@ public class ApplicationStateManagerImpl implements ApplicationStateManager
     }
 
     @SuppressWarnings("unchecked")
-    private <T> ApplicationStateAdapter<T> newAdapter(final Class<T> asoClass, String strategyName,
+    private <T> ApplicationStateAdapter<T> newAdapter(final Class<T> ssoClass, String strategyName,
                                                       ApplicationStateCreator<T> creator)
     {
         if (creator == null)
@@ -95,52 +95,52 @@ public class ApplicationStateManagerImpl implements ApplicationStateManager
             {
                 public T create()
                 {
-                    return locator.autobuild(asoClass);
+                    return locator.autobuild(ssoClass);
                 }
             };
         }
 
         ApplicationStatePersistenceStrategy strategy = source.get(strategyName);
 
-        return new ApplicationStateAdapter(asoClass, strategy, creator);
+        return new ApplicationStateAdapter(ssoClass, strategy, creator);
     }
 
     @SuppressWarnings("unchecked")
-    private <T> ApplicationStateAdapter<T> getAdapter(Class<T> asoClass)
+    private <T> ApplicationStateAdapter<T> getAdapter(Class<T> ssoClass)
     {
-        ApplicationStateAdapter<T> result = classToAdapter.get(asoClass);
+        ApplicationStateAdapter<T> result = classToAdapter.get(ssoClass);
 
         // Not found is completely OK, we'll define it on the fly.
 
         if (result == null)
         {
-            result = newAdapter(asoClass, DEFAULT_STRATEGY, null);
-            classToAdapter.put(asoClass, result);
+            result = newAdapter(ssoClass, DEFAULT_STRATEGY, null);
+            classToAdapter.put(ssoClass, result);
         }
 
         return result;
     }
 
-    public <T> T get(Class<T> asoClass)
+    public <T> T get(Class<T> ssoClass)
     {
-        return getAdapter(asoClass).getOrCreate();
+        return getAdapter(ssoClass).getOrCreate();
     }
 
-    public <T> T getIfExists(Class<T> asoClass)
+    public <T> T getIfExists(Class<T> ssoClass)
     {
-        ApplicationStateAdapter<T> adapter = getAdapter(asoClass);
+        ApplicationStateAdapter<T> adapter = getAdapter(ssoClass);
 
         return adapter.exists() ? adapter.getOrCreate() : null;
     }
 
-    public <T> void set(Class<T> asoClass, T aso)
+    public <T> void set(Class<T> ssoClass, T sso)
     {
-        getAdapter(asoClass).set(aso);
+        getAdapter(ssoClass).set(sso);
     }
 
-    public <T> boolean exists(Class<T> asoClass)
+    public <T> boolean exists(Class<T> ssoClass)
     {
-        return getAdapter(asoClass).exists();
+        return getAdapter(ssoClass).exists();
     }
 
 }

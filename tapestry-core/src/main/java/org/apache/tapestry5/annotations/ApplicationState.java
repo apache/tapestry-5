@@ -25,13 +25,17 @@ import java.lang.annotation.Target;
  * org.apache.tapestry5.services.ApplicationStateManager}.  <em>Application</em> is something of a misnomer, as it
  * implies that the object is stored as global, application-wide state (i.e., in the {@link
  * javax.servlet.ServletContext}). In fact, the built-in strategies for ASO management are <em>very</em> user specific,
- * ultimately storing data in the {@link org.apache.tapestry5.services.Session}.
+ * ultimately storing data in the {@link org.apache.tapestry5.services.Session}. Because of the confusion this naming
+ * causes, this annotation has been deprecated, and the new {@link org.apache.tapestry5.annotations.SessionState}
+ * annotation should be used instead.
  * <p/>
- * An ASO file may have a companion field, of type boolean, used to see if the ASO has been created yet. If another
+ * An ASO field may have a companion field, of type boolean, used to see if the ASO has been created yet. If another
  * field exists with the same name, suffixed with "Exists" (i.e., "aso" for the ASO field, and "asoExists" for the
  * companion field) and the type of that field is boolean, then access to the field will determine whether the ASO has
  * already been created. This is necessary because even a null check ("aso != null") may force the ASO to be created.
  * Instead, check the companion boolean field ("asoExists").
+ *
+ * @deprecated Use {@link org.apache.tapestry5.annotations.SessionState} instead
  */
 @Target(FIELD)
 @Documented
@@ -39,8 +43,8 @@ import java.lang.annotation.Target;
 public @interface ApplicationState
 {
     /**
-     * If true (the default), then referencing an field marked with the annotation will create the ASO.  If false, then
-     * accessing the field will not create the ASO, it will only allow access to it if it already exists.
+     * If true (the default), then referencing an field marked with the annotation will create the SSO.  If false, then
+     * accessing the field will not create the SSO, it will only allow access to it if it already exists.
      */
     boolean create() default true;
 }

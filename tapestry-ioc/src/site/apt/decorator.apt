@@ -38,7 +38,7 @@ Tapestry IoC Decorators
   Decorators often are used in the context of <cross-cutting concerns>, such as logging or
   transaction management. This approach is a kind of <aspect oriented design>.
   
-  One such cross cutting concern is lazy initialization of services.  In HiveMind, services
+  One such cross cutting concern is lazy initialization of services.  In Apache HiveMind, services
   are created only as needed, when a method of a service interface is first invoked.
   This concern is supplied by the Tapestry IoC framework itself, but similar
   concerns are easily implemented as decorations.

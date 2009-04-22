@@ -24,7 +24,7 @@ import org.apache.tapestry5.services.Session;
  */
 public class SessionApplicationStatePersistenceStrategy implements ApplicationStatePersistenceStrategy
 {
-    static final String PREFIX = "aso:";
+    static final String PREFIX = "sso:";
 
     private final Request request;
 
@@ -39,38 +39,38 @@ public class SessionApplicationStatePersistenceStrategy implements ApplicationSt
     }
 
     @SuppressWarnings("unchecked")
-    public <T> T get(Class<T> asoClass, ApplicationStateCreator<T> creator)
+    public <T> T get(Class<T> ssoClass, ApplicationStateCreator<T> creator)
     {
         Session session = getSession();
 
-        String key = buildKey(asoClass);
+        String key = buildKey(ssoClass);
 
-        T aso = (T) session.getAttribute(key);
+        T sso = (T) session.getAttribute(key);
 
-        if (aso == null)
+        if (sso == null)
         {
-            aso = creator.create();
-            session.setAttribute(key, aso);
+            sso = creator.create();
+            session.setAttribute(key, sso);
         }
 
-        return aso;
+        return sso;
     }
 
-    private <T> String buildKey(Class<T> asoClass)
+    private <T> String buildKey(Class<T> ssoClass)
     {
-        return PREFIX + asoClass.getName();
+        return PREFIX + ssoClass.getName();
     }
 
-    public <T> void set(Class<T> asoClass, T aso)
+    public <T> void set(Class<T> ssoClass, T sso)
     {
-        String key = buildKey(asoClass);
+        String key = buildKey(ssoClass);
 
-        getSession().setAttribute(key, aso);
+        getSession().setAttribute(key, sso);
     }
 
-    public <T> boolean exists(Class<T> asoClass)
+    public <T> boolean exists(Class<T> ssoClass)
     {
-        String key = buildKey(asoClass);
+        String key = buildKey(ssoClass);
 
         Session session = request.getSession(false);
 
