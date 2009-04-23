@@ -25,6 +25,121 @@
         </p>
 
 
+        <h1>Release Notes - Tapestry 5 - Version 5.1.0.4</h1>
+
+        <h2>Bug
+        </h2>
+        <ul>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-130'>TAP5-130</a>] - Tapestry component report
+                fails if the project's path name contains spaces
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-353'>TAP5-353</a>] - Description of volatile
+                parameter for the Grid component is misleading, should be clear that application is responsible for the
+                tracking the row
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-500'>TAP5-500</a>] - Small typo in javadoc comments
+                for Cookies service.
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-501'>TAP5-501</a>] - In the Component interface
+                javadoc the sentence &quot;This interface is likely to change without notice.&quot; should be deleted or
+                the interface be moved to an internal package
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-524'>TAP5-524</a>] - Published parameters exposed
+                from embedded components not included in Component Reference
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-571'>TAP5-571</a>] - Misplaced &lt;t:parameter&gt;
+                results in an inscrutable exception
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-613'>TAP5-613</a>] - Returning a Link to a secure
+                page from an ajax event handler method causes the redirect to be invalid if the event is sent from an
+                insecure page
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-622'>TAP5-622</a>] - Client ids should not contain
+                the ':' character, as that can confuse WebKit-based browsers
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-631'>TAP5-631</a>] - Contributed
+                ApplicationInitializer not always executed when using tapestry-spring
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-640'>TAP5-640</a>] - DOM manipulation during
+                rendering can NPE
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-641'>TAP5-641</a>] - Inherited parameters that are
+                themselves inherited will appear null
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-644'>TAP5-644</a>] - When using PageTester, an
+                exception in the page is hidden by an exception rendering the exception report page (pt. 2)
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-646'>TAP5-646</a>] - When Tapestry is combining
+                JavaScript files, it should check for a JS file that ends with an unterminated comment, and add the
+                comment terminator
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-647'>TAP5-647</a>] - Quickstart archetype should
+                not include the tapestry-test dependency, as the Jetty embedded inside Selenium gets in the way of
+                RunJettyRun inside Eclipse
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-648'>TAP5-648</a>] - Tapestry should be more
+                careful about where, inside the &lt;head&gt;, it adds new elements
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-649'>TAP5-649</a>] - Forms containing loop
+                components which contain no form elements still encode into t:formdata hidden field
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-652'>TAP5-652</a>] - Script tag is missing required
+                attribute type
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-653'>TAP5-653</a>] - Appending a context to an URL
+                of the Index page results in too many slashes
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-659'>TAP5-659</a>] - In some servlet containers,
+                access to virtual assets can result in a GZIP-related exception
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-660'>TAP5-660</a>] - Type coercion from String to
+                DateFormat will always coerce using the server's default locale, rather than the current per-thread
+                locale
+            </li>
+        </ul>
+
+        <h2>Improvement
+        </h2>
+        <ul>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-274'>TAP5-274</a>] - Application State Object is a
+                misleading term; rename @ApplicationState to @SessionState
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-612'>TAP5-612</a>] - URLRewriting should
+                distinguish between incoming and outgoing requests
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-629'>TAP5-629</a>] - Ensure blackbird console
+                appears on top of other page elements
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-654'>TAP5-654</a>] - Improve component classes
+                documentation to be clearer about relationship between @Component and t:id
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-655'>TAP5-655</a>] - Quickstart archetype should
+                set the application version number to match the module version number
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-657'>TAP5-657</a>] - The FieldFocusPriority enum
+                should include an additional value, OVERRIDE, to indicate a manually focused field (with highest
+                priority)
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-661'>TAP5-661</a>] - A number of minor
+                documentation typos
+            </li>
+        </ul>
+
+        <h2>New Feature
+        </h2>
+        <ul>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-624'>TAP5-624</a>] - Support for javascript
+                callbacks on zone update
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-642'>TAP5-642</a>] - Document how to configure
+                Glassfish 2.1 to deploy Tapestry applications
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-662'>TAP5-662</a>] - Component documentation should
+                identify the events that may be triggered by a component
+            </li>
+        </ul>
+
+
         <h1>Release Notes - Tapestry 5 - Version 5.1.0.3</h1>
 
         <h2>Bug
