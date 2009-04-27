@@ -161,16 +161,16 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
     {
         final Class type;
 
-        final String variableName;
+        final String termReference;
 
         /**
-         * @param type         type of variable
-         * @param variableName name of variable
+         * @param type          type of variable
+         * @param termReference name of variable, or a constant value
          */
-        private GeneratedTerm(Class type, String variableName)
+        private GeneratedTerm(Class type, String termReference)
         {
             this.type = type;
-            this.variableName = variableName;
+            this.termReference = termReference;
         }
     }
 
@@ -378,24 +378,24 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
             navBuilder.begin();
 
-            String previousVariableName = "$1";
+            String previousReference = "$1";
             Class activeType = rootType;
 
             Tree node = tree;
 
             while (!isLeaf(node))
             {
-                GeneratedTerm term = processDerefNode(navBuilder, activeType, node, previousVariableName);
+                GeneratedTerm term = processDerefNode(navBuilder, activeType, node, previousReference);
 
                 activeType = term.type;
 
-                previousVariableName = term.variableName;
+                previousReference = term.termReference;
 
                 // Second term is the continuation, possibly another chained DEREF, etc.
                 node = node.getChild(1);
             }
 
-            navBuilder.addln("return %s;", previousVariableName);
+            navBuilder.addln("return %s;", previousReference);
 
             navBuilder.end();
 
@@ -514,7 +514,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
             {
                 GeneratedTerm generatedTerm = subexpression(builder, node.getChild(i));
 
-                builder.addln("%s.add(($w) %s);", listName, generatedTerm.variableName);
+                builder.addln("%s.add(($w) %s);", listName, generatedTerm.termReference);
             }
 
             return listName;
@@ -525,7 +525,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
             String flagName = nextVariableName(Boolean.class);
             GeneratedTerm term = subexpression(builder, node.getChild(0));
 
-            builder.addln("boolean %s = invert(($w) %s);", flagName, term.variableName);
+            builder.addln("boolean %s = invert(($w) %s);", flagName, term.termReference);
 
             return flagName;
         }
@@ -539,7 +539,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
          */
         private GeneratedTerm subexpression(BodyBuilder builder, Tree node)
         {
-            String previousVariableName = "root";
+            String previousReference = "root";
             Class activeType = rootType;
 
             while (node != null)
@@ -549,7 +549,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
                     case TRUE:
                     case FALSE:
 
-                        previousVariableName = node.getType() == TRUE ? "true" : "false";
+                        previousReference = node.getType() == TRUE ? "true" : "false";
                         activeType = boolean.class;
 
                         node = null;
@@ -559,7 +559,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
                         long integerValue = Long.parseLong(node.getText());
 
-                        previousVariableName = String.format("%dL", integerValue);
+                        previousReference = String.format("%dL", integerValue);
                         activeType = long.class;
 
                         node = null;
@@ -570,7 +570,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
                         double decimalValue = Double.parseDouble(node.getText());
 
-                        previousVariableName = String.format("%fd", decimalValue);
+                        previousReference = String.format("%fd", decimalValue);
                         activeType = double.class;
 
                         node = null;
@@ -581,7 +581,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
                         String stringValue = node.getText();
                         // Injecting is easier; don't have to fuss with escaping quotes or such.
-                        previousVariableName = addInjection(String.class, stringValue);
+                        previousReference = addInjection(String.class, stringValue);
                         activeType = String.class;
 
                         node = null;
@@ -591,9 +591,9 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
                     case DEREF:
                     case SAFEDEREF:
 
-                        GeneratedTerm generated = processDerefNode(builder, activeType, node, previousVariableName);
+                        GeneratedTerm generated = processDerefNode(builder, activeType, node, previousReference);
 
-                        previousVariableName = generated.variableName;
+                        previousReference = generated.termReference;
                         activeType = generated.type;
 
                         node = node.getChild(1);
@@ -603,10 +603,10 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
                     case IDENTIFIER:
                     case INVOKE:
 
-                        generated = addAccessForPropertyOrMethod(builder, activeType, node, previousVariableName,
+                        generated = addAccessForPropertyOrMethod(builder, activeType, node, previousReference,
                                                                  NullHandling.IGNORE);
 
-                        previousVariableName = generated.variableName;
+                        previousReference = generated.termReference;
                         activeType = generated.type;
 
                         node = null;
@@ -615,7 +615,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
                     case NOT:
 
-                        previousVariableName = createNotOp(builder, node);
+                        previousReference = createNotOp(builder, node);
                         activeType = boolean.class;
 
                         node = null;
@@ -624,7 +624,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
                     case LIST:
 
-                        previousVariableName = createListConstructor(builder, node);
+                        previousReference = createListConstructor(builder, node);
                         activeType = List.class;
 
                         node = null;
@@ -638,7 +638,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
                 }
             }
 
-            return new GeneratedTerm(activeType, previousVariableName);
+            return new GeneratedTerm(activeType, previousReference);
         }
 
 
@@ -753,7 +753,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
                 // child(0) is the method name, child(1) is the first parameter, etc.
 
                 GeneratedTerm generatedTerm = subexpression(bodyBuilder, node.getChild(i + childOffset));
-                String variableName = generatedTerm.variableName;
+                String currentReference = generatedTerm.termReference;
 
                 Class actualType = generatedTerm.type;
 
@@ -765,7 +765,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
                 {
                     String coerced = nextVariableName(parameterType);
 
-                    String call = String.format("coerce(($w) %s, %s)", variableName,
+                    String call = String.format("coerce(($w) %s, %s)", currentReference,
                                                 addInjection(Class.class, parameterType));
 
                     String parameterTypeName = ClassFabUtils.toJavaClassName(parameterType);
@@ -773,7 +773,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
                     bodyBuilder.addln("%s %s = %s;",
                                       parameterTypeName, coerced, ClassFabUtils.castReference(call, parameterTypeName));
 
-                    variableName = coerced;
+                    currentReference = coerced;
                 }
                 else
                 {
@@ -782,7 +782,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
                 if (i > 0) builder.append(", ");
 
-                builder.append(variableName);
+                builder.append(currentReference);
 
                 if (needsUnwrap)
                 {
