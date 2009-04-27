@@ -4,7 +4,7 @@
     <groupId>org.apache.tapestry</groupId>
     <artifactId>tapestry-project</artifactId>
     <packaging>pom</packaging>
-    <version>5.1.0.4</version>
+    <version>5.1.0.5-SNAPSHOT</version>
     <name>Tapestry 5 Project</name>
     <description>Master project for the modules of Tapestry 5.</description>
     <inceptionYear>2006</inceptionYear>

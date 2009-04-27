@@ -338,3 +338,7 @@
     width: 150px;
     _width: 0;
 }
+
+body.t-fix-ie6-background {
+    background-image: url(spacer.gif);
+}

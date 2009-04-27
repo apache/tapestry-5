@@ -6,7 +6,8 @@
  Version: 1.0
 
  The MIT License - Copyright (c) 2008 Blackbird Project
- Some modifications to work with Tapestry & Prototype: March 2009
+
+ Heavily modified for Tapestry to rename namespace, make use of Prototype: March 2009
  */
 ( function()
 {
@@ -103,7 +104,7 @@
         {
             if (bodyTag.currentStyle.backgroundImage == 'none')
             {
-                bodyTag.style.backgroundImage = 'url(about:blank)';
+                bodyTag.addClassName('t-fix-ie6-background');
             }
             if (bodyTag.currentStyle.backgroundAttachment == 'scroll')
             {
