@@ -49,9 +49,9 @@ Grammar
 ---
 expression : keyword | rangeOp | constant | propertyChain | list | notOp;
 
-keyword : 'null' | 'true' | 'false' | 'this';
+keyword : 'null' | 'this';
 
-constant : <integer> | <decimal> | <string>;
+constant : 'true' | 'false' | <integer> | <decimal> | <string>;
 
 rangeOp :  rangeOpArg '..' rangeOpArg;
 

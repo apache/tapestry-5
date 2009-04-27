@@ -384,7 +384,7 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
     }
 
     @Test
-    public void no_operator_in_subexpression()
+    public void not_operator_in_subexpression()
     {
         PropertyConduit conduit = source.create(Switch.class, "label(! value)");
 
@@ -445,5 +445,17 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
             assertEquals(ex.getMessage(),
                          "Error parsing property expression 'fred {': Unable to parse input at character position 6.");
         }
+    }
+
+    @Test
+    public void boolean_constant_as_method_parameter()
+    {
+        Bedrock bedrock = new Bedrock();
+
+        PropertyConduit trueConduit = source.create(Bedrock.class, "toName(true)");
+        PropertyConduit falseConduit = source.create(Bedrock.class, "toName(false)");
+
+        assertEquals(trueConduit.get(bedrock), "Fred");
+        assertEquals(falseConduit.get(bedrock), "Barney");
     }
 }
