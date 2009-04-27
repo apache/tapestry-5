@@ -105,7 +105,7 @@ Tapestry Namespace
   prefix.
 
   For backwards compatibility, you may continue to use the old namespace URI:
-  http://tapestry.apache.org/schema/tapestry_5_1_0.xsd.  However,
+  http://tapestry.apache.org/schema/tapestry_5_0_0.xsd.  However,
   the following elements added, as part of Tapestry 5.1, will not work:
 
   * \<t:remove\>
