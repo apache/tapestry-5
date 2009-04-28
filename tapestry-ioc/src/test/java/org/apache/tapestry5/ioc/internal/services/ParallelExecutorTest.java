@@ -39,9 +39,9 @@ public class ParallelExecutorTest extends IOCInternalTestCase
         {
             final String value = String.format("Value[%d]", i);
 
-            Invokable inv = new Invokable()
+            Invokable<StringHolder> inv = new Invokable<StringHolder>()
             {
-                public Object invoke()
+                public StringHolder invoke()
                 {
                     StringHolder holder = new StringHolderImpl();
                     holder.setValue(value);
@@ -67,9 +67,9 @@ public class ParallelExecutorTest extends IOCInternalTestCase
     {
         ParallelExecutor parallelExecutor = getService(ParallelExecutor.class);
 
-        Invokable inv = new Invokable()
+        Invokable<StringHolder> inv = new Invokable<StringHolder>()
         {
-            public Object invoke()
+            public StringHolder invoke()
             {
                 throw new RuntimeException("Future failure!");
             }
