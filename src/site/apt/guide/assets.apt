@@ -27,7 +27,7 @@ Injecting Assets
   private Asset banner;
 +----+
 
-  Assets are located within <domains>; these domains are identified by the prefix on the Inject annotation's value.
+  Assets are located within <domains>; these domains are identified by the prefix on the Path annotation's value.
   
   If the prefix is omitted, the value will be interpreted as a path relative to the Java class file itself, within
   the "classpath:" domain. This is often used when creating component libraries, where the assets used by the components
@@ -37,7 +37,25 @@ Injecting Assets
   to access the underlying files, and those APIs, unlike Tapestry, are case sensitive. Be aware that some <operating systems> (such as Windows)
   are case insenitive, which may mask errors that will be revealed at deployment (if the deployment operating system is case sensitive,
   such as Linux).
-  
+
+Assets in Templates
+
+  Assets can also be referenced directly in templates.  Two binding prefixes exist for this:  "asset:" and "context:".
+  The "asset:" prefix can obtain assets from the classpath (the default) or from the web context (by specifying
+  the "context:" domain explicitly):
+
+----
+  <img src="asset:context:image/tapestry_banner.gif" alt="Banner"/>
+----
+
+  Because accessing context assets is so common, the "context:" binding prefix was introduced:
+
+----
+  <img src="context:image/tapestry_banner.gif" alt="Banner"/>
+----
+
+
+
 Relative Assets
 
   You can use relative paths with domains (if you omit the prefix):
@@ -117,5 +135,15 @@ Simplified Paths
   and therefore will be aggresively cached in the client browser. Changing the version number changes the path the browser
   sees, which forces the browser to load the new and changed version of the asset.
 
+  In addition, context assets will use the URL prefix <<</assets/ctx/>>><app-version><<</>>>.
 
-  
+
+Performance Notes
+
+  Assets are expected to be entirely static (not changing while the application is deployed). When Tapestry generates a URL
+  for an asset, either on the classpath or from the context, the URL includes a version number (as discussed in the previous section).
+  Further, the asset will get a <far future expires header>, which will encourage the client browser to cache the
+  asset.
+
+  In addition, Tapestry will {{{compress.html}GZIP compress}} the content of <all> assets (if the asset
+  is compressable, and the client supports it).
