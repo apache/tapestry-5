@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -460,7 +460,7 @@ public class BeanModelSourceImplTest extends InternalBaseTestCase
 
         assertSame(propertyModel.getPropertyType(), String[].class);
 
-        String[] value = {"foo", "bar"};
+        String[] value = { "foo", "bar" };
 
         StringArrayBean bean = new StringArrayBean();
 
@@ -549,6 +549,30 @@ public class BeanModelSourceImplTest extends InternalBaseTestCase
         assertFalse(property.isSortable());
         assertSame(property.getPropertyType(), Object.class);
         assertEquals(property.getLabel(), "Placeholder");
+
+        verify();
+    }
+
+    @Test
+    public void add_missing_property_is_failure()
+    {
+        Messages messages = mockMessages();
+
+        stub_contains(messages, false);
+
+        replay();
+
+        BeanModel model = source.create(SimpleBean.class, true, messages);
+
+        try
+        {
+            model.add("doesNotExist");
+            unreachable();
+        }
+        catch (PropertyExpressionException ex)
+        {
+            assertMessageContains(ex, "does not contain a property named 'doesNotExist'");
+        }
 
         verify();
     }

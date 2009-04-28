@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -70,7 +70,9 @@ public interface BeanModel<T>
 
     /**
      * Adds a new property to the model, returning its mutable model for further refinement. The property is added to
-     * the <em>end</em> of the list of properties.
+     * the <em>end</em> of the list of properties. The property must be real (but may have been excluded if there was no
+     * {@linkplain org.apache.tapestry5.beaneditor.DataType datatype} associated with the property). To add a synthetic
+     * property, use {@link #add(String, org.apache.tapestry5.PropertyConduit)}
      *
      * @param propertyName name of property to add
      * @return the new property model (for further configuration)
@@ -79,7 +81,7 @@ public interface BeanModel<T>
     PropertyModel add(String propertyName);
 
     /**
-     * Adds a new property to the model, ordered before or after an existing property.
+     * Adds a new property to the model (as with {@link #add(String)}), ordered before or after an existing property.
      *
      * @param position             controls whether the new property is ordered before or after the existing property
      * @param existingPropertyName the name of an existing property (this must exist)
@@ -104,7 +106,7 @@ public interface BeanModel<T>
                       PropertyConduit conduit);
 
     /**
-     * Adds a new property to the model, returning its mutable model for further refinement.
+     * Adds a new, synthetic property to the model, returning its mutable model for further refinement.
      *
      * @param propertyName name of property to add
      * @param conduit      the conduit used to read or update the property; this may be null for a synthetic or
