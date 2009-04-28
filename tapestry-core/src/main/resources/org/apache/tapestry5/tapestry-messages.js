@@ -34,5 +34,7 @@ Tapestry.Messages = {
 
     notAnInteger : "Not an integer",
 
-    invalidCharacter : "Invalid character"
+    invalidCharacter : "Invalid character",
+
+    communicationFailed : "Communication with the server failed: "
 };

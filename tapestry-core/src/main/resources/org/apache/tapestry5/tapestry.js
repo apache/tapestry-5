@@ -312,7 +312,7 @@ var Tapestry = {
     {
         var message = response.getHeader("X-Tapestry-ErrorMessage");
 
-        Tapestry.error("Communication with the server failed: " + message);
+        Tapestry.error(Tapestry.Messages.communicationFailed + message);
 
         Tapestry.debug(Tapestry.Messages.ajaxFailure + message, response);
     },
