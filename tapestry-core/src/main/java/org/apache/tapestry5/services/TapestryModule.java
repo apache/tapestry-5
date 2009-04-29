@@ -97,8 +97,6 @@ public final class TapestryModule
 
     private final Response response;
 
-    private final ThreadLocale threadLocale;
-
     private final RequestGlobals requestGlobals;
 
     private final EnvironmentalShadowBuilder environmentalBuilder;
@@ -131,8 +129,6 @@ public final class TapestryModule
 
                           Response response,
 
-                          ThreadLocale threadLocale,
-
                           EnvironmentalShadowBuilder environmentalBuilder,
 
                           EndOfRequestEventHub endOfRequestEventHub)
@@ -147,7 +143,6 @@ public final class TapestryModule
         this.propertyAccess = propertyAccess;
         this.request = request;
         this.response = response;
-        this.threadLocale = threadLocale;
         this.environmentalBuilder = environmentalBuilder;
         this.endOfRequestEventHub = endOfRequestEventHub;
     }
@@ -502,7 +497,7 @@ public final class TapestryModule
         add(configuration, TransformConstants.AFTER_RENDER_SIGNATURE, AfterRender.class, true);
         add(configuration, TransformConstants.CLEANUP_RENDER_SIGNATURE, CleanupRender.class, true);
 
-        // Ideally, these should be ordered pretty late in the processInbound to make sure there are no
+        // Ideally, these should be ordered pretty late in the process to make sure there are no
         // side effects with other workers that do work inside the page lifecycle methods.
 
         add(configuration, PageLoaded.class, TransformConstants.CONTAINING_PAGE_DID_LOAD_SIGNATURE, "pageLoaded");

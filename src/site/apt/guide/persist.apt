@@ -11,13 +11,14 @@ Persistent Page Data
   
   However, you often want to store some persistent data on a <single> page, and have access
   to it in later requests.  Long term storage of data should go in a database of some form, but
-  server-side state for the duration of the as users interaction with the application should go in the HttpSession (though Tapestry
+  server-side state for the duration of the as user's interaction with the application should go
+  in the HttpSession (though Tapestry
   provides a few other options as well).
 
   <<Note:>> To store values that may be accessed across multiple pages, uses
   a {{{appstate.html}session state object}}.
   
-  Making a field persiste is accomplished with the 
+  Making a field persistent is accomplished with the 
   {{{../apidocs/org/apache/tapestry5/annotations/Persist.html}Persist annotation}}. Again, this does <not>
   refer to database persistence, it refers to session persistance.
   

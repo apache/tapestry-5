@@ -25,6 +25,66 @@
         </p>
 
 
+        <h1>Release Notes - Tapestry 5 - Version 5.1.0.5</h1>
+
+        <h2>Bug
+        </h2>
+        <ul>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-604'>TAP5-604</a>] -
+                ValidationMessages_da.properties contains invalid format strings
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-664'>TAP5-664</a>] - Incorrect &quot;legacy&quot;
+                URI specified in the templates documentation
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-665'>TAP5-665</a>] - IE 6 on a tapestry SSL page
+                complains about non-secure items (caused by blackbird js-logging component)
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-666'>TAP5-666</a>] - Property expression can not
+                pass a boolean constant into a method
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-668'>TAP5-668</a>] - BeanModel documentation should
+                be more clear that a property must exist when using add(String).
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-670'>TAP5-670</a>] - ParallelExecutorTest can't be
+                compiled due to cast errors
+            </li>
+        </ul>
+
+        <h2>Improvement
+        </h2>
+        <ul>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-214'>TAP5-214</a>] - Document use of asset: and
+                context: to reference assets directly from a template file
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-506'>TAP5-506</a>] - Italian localization for
+                DateField component
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-531'>TAP5-531</a>] - Add cookbook documentation to
+                show how to use the delegate component for switch-like behaviour
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-579'>TAP5-579</a>] - Finnish internationalization
+                is missing some of the keys in 5.1
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-651'>TAP5-651</a>] - If component documentation:
+                identify the use of the p: namespace
+            </li>
+        </ul>
+
+        <h2>New Feature
+        </h2>
+        <ul>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-223'>TAP5-223</a>] - Allow properties files (on
+                classpath or in the context) to be used as SymbolProviders
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-580'>TAP5-580</a>] - Add get() method to TestBase
+                to allow read access to private fields of objects via reflection
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAP5-601'>TAP5-601</a>] - Add German translation for
+                client-side JavaScript messages
+            </li>
+        </ul>
+
+
         <h1>Release Notes - Tapestry 5 - Version 5.1.0.4</h1>
 
         <h2>Bug
