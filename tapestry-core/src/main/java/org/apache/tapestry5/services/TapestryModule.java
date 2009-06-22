@@ -26,6 +26,8 @@ import org.apache.tapestry5.grid.GridDataSource;
 import org.apache.tapestry5.internal.*;
 import org.apache.tapestry5.internal.beaneditor.PrimitiveFieldConstraintGenerator;
 import org.apache.tapestry5.internal.beaneditor.ValidateAnnotationConstraintGenerator;
+import org.apache.tapestry5.internal.beaneditor.MessagesConstraintGenerator;
+import org.apache.tapestry5.internal.beaneditor.EnvironmentMessages;
 import org.apache.tapestry5.internal.bindings.*;
 import org.apache.tapestry5.internal.grid.CollectionGridDataSource;
 import org.apache.tapestry5.internal.grid.NullDataSource;
@@ -1001,6 +1003,7 @@ public final class TapestryModule
     {
         configuration.add("PrimitiveField", new PrimitiveFieldConstraintGenerator());
         configuration.add("ValidateAnnotation", new ValidateAnnotationConstraintGenerator());
+        configuration.addInstance("Messages", MessagesConstraintGenerator.class);
     }
 
     private static <S, T> void add(Configuration<CoercionTuple> configuration, Class<S> sourceType, Class<T> targetType,
@@ -1396,7 +1399,7 @@ public final class TapestryModule
      * Supports an ordered configuration of {@link org.apache.tapestry5.services.PartialMarkupRendererFilter}s.
      *
      * @see #contributePartialMarkupRenderer(org.apache.tapestry5.ioc.OrderedConfiguration, org.apache.tapestry5.Asset,
-     *      org.apache.tapestry5.ioc.services.SymbolSource, AssetSource, ValidationMessagesSource)
+     *      org.apache.tapestry5.ioc.services.SymbolSource, AssetSource)
      */
     public PartialMarkupRenderer buildPartialMarkupRenderer(Logger logger,
                                                             List<PartialMarkupRendererFilter> configuration,
@@ -2403,6 +2406,52 @@ public final class TapestryModule
 
         return builder.build();
 
+    }
+
+    /**
+     * Decorate FieldValidatorDefaultSource to setup the EnvironmentMessages object and place it in the environment.
+     * Although this could have been implemented directly in the default implementation of the service, doing it
+     * as service decoration ensures that the environment will be properly setup even if a user overrides the default
+     * service implementation.
+     * @param defaultSource The serivce to decorate
+     * @param environment
+     * @return
+     */
+    public static FieldValidatorDefaultSource decorateFieldValidatorDefaultSource(
+           final FieldValidatorDefaultSource defaultSource, final Environment environment)
+    {
+        return new FieldValidatorDefaultSource()
+        {
+
+            public FieldValidator createDefaultValidator(
+                    Field field,
+                    String overrideId,
+                    Messages overrideMessages,
+                    Locale locale,
+                    Class propertyType,
+                    AnnotationProvider propertyAnnotations)
+            {
+                environment.push(EnvironmentMessages.class,new EnvironmentMessages(overrideMessages,overrideId));
+                FieldValidator fieldValidator = defaultSource.createDefaultValidator(field,
+                                                                       overrideId,
+                                                                       overrideMessages,
+                                                                       locale,
+                                                                       propertyType,
+                                                                       propertyAnnotations);
+                environment.pop(EnvironmentMessages.class);
+                return fieldValidator;
+            }
+
+            public FieldValidator createDefaultValidator(ComponentResources resources, String parameterName)
+            {
+
+                EnvironmentMessages em = new EnvironmentMessages(resources.getContainerMessages(),resources.getId());
+                environment.push(EnvironmentMessages.class,em);
+                FieldValidator fieldValidator = defaultSource.createDefaultValidator(resources, parameterName);
+                environment.pop(EnvironmentMessages.class);
+                return fieldValidator;
+            }
+        };
     }
 
 }

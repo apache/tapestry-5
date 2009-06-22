@@ -239,13 +239,16 @@ Errors and Decorations
   This is nice and seamless; the same look and feel and behavior for both the built-in validators, and for errors generated based on
   application logic.
 
-Centralizing Validation with @Validate
+Centralizing Validation with @Validate and Property Files
 
   The {{{../apidocs/org/apache/tapestry5/beaneditor/Validate.html}Validate}} annotation can take the place of the
   validate parameter of TextField, PasswordField, TextArea and other components.  When the validate parameter
   is not bound, the component will check for the @Validate annotation and use its value as the validation definition.
 
   The annotation may be placed on the getter or setter method, or on the field itself.
+
+  Validation constraints can also be specified in the properties file of the containing page or component.
+  The key takes the form <propertyId>-validate.  For example: username-validate=required,minlength=6.
 
 Customizing Validation Messages
 

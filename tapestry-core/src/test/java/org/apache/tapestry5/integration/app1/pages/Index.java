@@ -347,7 +347,11 @@ public class Index
                      "Nice exception message for common problem of form fields outside forms"),
 
             new Item("SubmitWithContext", "Submit With Context",
-                     "Providing a context for Submit component")
+                     "Providing a context for Submit component"),
+
+            new Item("MessageConstraintGeneratorDemo",
+                     "Validation Constraints From Messages",
+                     "Providing validators to apply from a properties file")
     );
 
     static

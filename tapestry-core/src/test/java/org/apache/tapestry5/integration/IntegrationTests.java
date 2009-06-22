@@ -2930,4 +2930,31 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         assertText("prop.middle.bottom", "bound value");
         assertText("literal.middle.bottom", "some text");
     }
+
+    @Test
+    public void validation_constraints_from_messages() throws InterruptedException
+    {
+        start("Validation Constraints From Messages");
+
+        click(SUBMIT);
+
+        assertBubbleMessage("name","You must provide a value for Name.");
+        assertBubbleMessage("age","You must provide a value for Age.");
+
+        type("name","behemoth");
+        type("age","0");
+        select("type","label=Snake");
+
+        click(SUBMIT);
+        assertBubbleMessage("age","Age requires a value of at least 1.");
+
+        type("age","121");
+        click(SUBMIT);
+        assertBubbleMessage("age","Age requires a value no larger than 120.");
+
+        type("age","5");
+        clickAndWait(SUBMIT);
+
+
+    }
 }

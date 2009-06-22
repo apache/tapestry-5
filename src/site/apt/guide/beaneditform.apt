@@ -73,7 +73,9 @@ Using the BeanEditForm Component
   Default validation for fields is primary determined by property type.
   
   If desired, additional validation may be specified using the 
-  {{{../apidocs/org/apache/tapestry5/beaneditor/Validate.html}Validate}} annotation.
+  {{{../apidocs/org/apache/tapestry5/beaneditor/Validate.html}Validate}} annotation. 
+
+  * As of 5.2, validation may also be specified via the containing component's property file, using a key in the form of propertyId-validate (eg: name-validate=required).
   
 * Property ordering
 

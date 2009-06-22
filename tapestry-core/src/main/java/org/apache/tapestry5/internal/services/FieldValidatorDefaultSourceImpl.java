@@ -17,12 +17,14 @@ package org.apache.tapestry5.internal.services;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.Field;
 import org.apache.tapestry5.FieldValidator;
+import org.apache.tapestry5.internal.beaneditor.EnvironmentMessages;
 import org.apache.tapestry5.ioc.AnnotationProvider;
 import org.apache.tapestry5.ioc.Messages;
 import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newList;
 import org.apache.tapestry5.services.FieldValidatorDefaultSource;
 import org.apache.tapestry5.services.FieldValidatorSource;
 import org.apache.tapestry5.services.ValidationConstraintGenerator;
+import org.apache.tapestry5.services.Environment;
 
 import java.util.List;
 import java.util.Locale;
@@ -66,7 +68,6 @@ public class FieldValidatorDefaultSourceImpl implements FieldValidatorDefaultSou
 
             validators.add(validator);
         }
-
         return validators.size() == 1 ? validators.get(0) : new CompositeFieldValidator(validators);
     }
 
