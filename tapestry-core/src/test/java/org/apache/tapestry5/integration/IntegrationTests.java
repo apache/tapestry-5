@@ -1787,6 +1787,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         start("Form Fragment Demo", "Clear");
 
         type("name", "Fred");
+
         // Really, you can't type in the field because it is not visible, but
         // this checks that invisible fields are not processed.
         type("email", "this field is ignored");
@@ -2932,7 +2933,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     }
 
     @Test
-    public void validation_constraints_from_messages() throws InterruptedException
+    public void validation_constraints_from_messages()
     {
         start("Validation Constraints From Messages");
 

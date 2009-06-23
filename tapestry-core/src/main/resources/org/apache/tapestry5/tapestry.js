@@ -1469,7 +1469,7 @@ Tapestry.FormFragment = Class.create({
 
         $T(this.element).formFragment = this;
 
-        this.hidden = $(spec.element + ":hidden");
+        this.hidden = $(spec.element + "-hidden");
 
         this.showFunc = Tapestry.ElementEffect[spec.show] || Tapestry.ElementEffect.slidedown;
         this.hideFunc = Tapestry.ElementEffect[spec.hide] || Tapestry.ElementEffect.slideup;

@@ -186,7 +186,7 @@ public class FormFragment implements ClientElement
 
                 "name", Form.FORM_DATA,
 
-                "id", clientId + ":hidden",
+                "id", clientId + "-hidden",
 
                 "value", componentActions.getClientData()
         );

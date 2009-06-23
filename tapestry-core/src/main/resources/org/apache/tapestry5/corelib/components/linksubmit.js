@@ -25,7 +25,7 @@ Tapestry.LinkSubmit = Class.create({
     createHidden : function()
     {
         var hidden = new Element("input", { "type":"hidden",
-            "name": this.element.id + ":hidden",
+            "name": this.element.id + "-hidden",
             "value": this.element.id});
 
         this.element.insert({after:hidden});
