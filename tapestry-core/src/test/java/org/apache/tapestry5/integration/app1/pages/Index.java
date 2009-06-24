@@ -351,7 +351,12 @@ public class Index
 
             new Item("MessageConstraintGeneratorDemo",
                      "Validation Constraints From Messages",
-                     "Providing validators to apply from a properties file")
+                     "Providing validators to apply from a properties file"),
+
+            new Item("RenderClientIdDemo",
+                     "RenderClientId Mixin",
+                     "Force render of client-side id of a client element via the RenderClientId mixin")
+
     );
 
     static

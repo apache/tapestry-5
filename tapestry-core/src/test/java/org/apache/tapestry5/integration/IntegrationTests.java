@@ -2958,4 +2958,12 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
 
     }
+
+    @Test
+    public void renderclientid_mixin()
+    {
+        start("RenderClientId Mixin");
+
+        assertText("divwithid","Div Content");
+    }
 }
