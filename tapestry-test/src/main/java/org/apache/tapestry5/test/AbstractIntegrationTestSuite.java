@@ -1103,4 +1103,36 @@ public class AbstractIntegrationTestSuite extends Assert implements Selenium
     {
         start(new String[] { linkText });
     }
+
+    /**
+     * @since 5.2.0.0
+     */
+	public void addCustomRequestHeader(String key, String value) 
+    {
+        selenium.addCustomRequestHeader(key, value);
+    }
+	
+    /**
+     * @since 5.2.0.0
+     */
+	public String captureNetworkTraffic(String type) 
+    {
+        return selenium.captureNetworkTraffic(type);
+    }
+	
+    /**
+     * @since 5.2.0.0
+     */
+	public void deselectPopUp() 
+    {
+        selenium.deselectPopUp();
+    }
+	
+    /**
+     * @since 5.2.0.0
+     */
+	public void selectPopUp(String windowID) 
+    {
+        selenium.selectPopUp(windowID);
+    }
 }
