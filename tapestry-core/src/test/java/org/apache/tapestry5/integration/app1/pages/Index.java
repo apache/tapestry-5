@@ -355,7 +355,11 @@ public class Index
 
             new Item("RenderClientIdDemo",
                      "RenderClientId Mixin",
-                     "Force render of client-side id of a client element via the RenderClientId mixin")
+                     "Force render of client-side id of a client element via the RenderClientId mixin"),
+
+            new Item("SessionAttributeDemo",
+                     "SessionAttribute Demo",
+                     "Annotation to map a field to a specific session attribute")
 
     );
 

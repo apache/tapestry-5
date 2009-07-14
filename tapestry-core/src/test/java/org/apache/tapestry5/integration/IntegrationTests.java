@@ -2966,4 +2966,18 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         assertText("divwithid","Div Content");
     }
+
+    @Test
+    public void session_attribute()
+    {
+        start("SessionAttribute Demo");
+
+        assertTextPresent("Foo");
+        assertTextPresent("Bar");
+        
+        clickAndWait("link=Read SessionAttribute");
+  
+        assertTextPresent("read Foo");
+        assertTextPresent("read Bar");
+    }
 }
