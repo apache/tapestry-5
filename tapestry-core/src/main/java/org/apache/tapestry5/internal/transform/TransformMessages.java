@@ -1,4 +1,4 @@
-// Copyright 2008 The Apache Software Foundation
+// Copyright 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.MessagesImpl;
 import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.services.TransformMethodSignature;
+import org.apache.tapestry5.annotations.MixinClasses;
 
 class TransformMessages
 {
@@ -50,5 +51,11 @@ class TransformMessages
     static String illegalNumberOfPageActivationContextHandlers(List<String> fields)
     {
         return MESSAGES.format("illegal-number-of-page-activation-context-handlers", InternalUtils.joinSorted(fields));
+    }
+
+
+    public static String badMixinConstraintLength(MixinClasses mixin, String fieldName)
+    {
+        return MESSAGES.format("bad-mixin-constraint-length",mixin.value().length,fieldName,mixin.order().length);
     }
 }

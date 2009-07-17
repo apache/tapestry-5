@@ -187,7 +187,7 @@ public class AbstractIntegrationTestSuite extends Assert implements Selenium
     {
         for (String item : text)
         {
-            if (isTextPresent(item)) return;
+            if (isTextPresent(item)) continue;
 
             System.err.printf("Text pattern '%s' not found in:\n%s\n\n", item, selenium
                     .getHtmlSource());

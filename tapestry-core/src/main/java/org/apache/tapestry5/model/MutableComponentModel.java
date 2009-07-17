@@ -34,8 +34,25 @@ public interface MutableComponentModel extends ComponentModel
      * @param defaultBindingPrefix the default binding prefix for this parameter @throws IllegalArgumentException if a
      *                             parameter with the given name has already been defined for this model
      * @see Parameter
+     * @deprecated Use {@link #addParameter(String, boolean, boolean, String, boolean)} instead.
      */
     void addParameter(String name, boolean required, boolean allowNull, String defaultBindingPrefix);
+
+    /**
+     * Adds a new formal parameter to the model. Each parameter has a unique name (though access to parameters is case
+     * insensitive).
+     *
+     * @param name                 new, unique name for the parameter
+     * @param required             if true, the parameter must be bound
+     * @param allowNull            if true, then parameter may be bound to null, if false a null check will be added
+     * @param defaultBindingPrefix the default binding prefix for this parameter @throws IllegalArgumentException if a
+     *                             parameter with the given name has already been defined for this model
+     * @param cached               if true, the parameter value should be cached within the component during rendering
+     * @see org.apache.tapestry5.annotations.Parameter
+     * @since 5.2.0.0
+     */
+    public void addParameter(String name, boolean required, boolean allowNull, String defaultBindingPrefix,boolean cached);
+
 
     /**
      * Defines a new embedded component.
@@ -66,9 +83,10 @@ public interface MutableComponentModel extends ComponentModel
     String setFieldPersistenceStrategy(String fieldName, String strategy);
 
     /**
-     * Adds a mixin to the component's implementation.
+     * Adds a mixin to the component's implementation, optionally specifying ordering constraints, as per OrderedConfiguration.
+     * @since 5.2.0.0
      */
-    void addMixinClassName(String mixinClassName);
+    void addMixinClassName(String mixinClassName, String... order);
 
     /**
      * Sets the internal flag to indicate that this model (and all models that extend from it) support informal

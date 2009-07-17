@@ -72,8 +72,9 @@ public interface ComponentPageElement extends ComponentResourcesCommon, Internal
      *
      * @param mixinId      a unique id for the mixin, the last term of the mixin's class name
      * @param instantiator used to instantiate an instance of the mixin
+     * @param order        Ordering strings used to determine the order of mixin execution.
      */
-    void addMixin(String mixinId, Instantiator instantiator);
+    void addMixin(String mixinId, Instantiator instantiator, String... order);
 
     /**
      * @param mixinId       id of previously added mixin

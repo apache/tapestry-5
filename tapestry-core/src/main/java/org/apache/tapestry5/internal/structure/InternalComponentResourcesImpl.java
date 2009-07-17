@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,8 +15,7 @@
 package org.apache.tapestry5.internal.structure;
 
 import org.apache.tapestry5.*;
-import org.apache.tapestry5.internal.InternalComponentResources;
-import org.apache.tapestry5.internal.ParameterAccess;
+import org.apache.tapestry5.internal.*;
 import org.apache.tapestry5.internal.services.Instantiator;
 import org.apache.tapestry5.ioc.AnnotationProvider;
 import org.apache.tapestry5.ioc.Location;
@@ -37,6 +36,7 @@ import java.lang.annotation.Annotation;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * The bridge between a component and its {@link ComponentPageElement}, that supplies all kinds of resources to the
@@ -65,6 +65,10 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
 
     // Case insensitive map from parameter name to ParameterAccess
     private Map<String, ParameterAccess> access;
+
+    // Case-insensitive map from container-parameter name to ParameterAccess, for BindParameter.
+    // Should only ever be used for mixins.
+    private Map<String, ParameterAccess> containerParameterAccess;
 
     private Messages messages;
 
@@ -324,6 +328,16 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
         return element.getMixinByClassName(mixinClassName);
     }
 
+    public boolean isMixingIn(String mixinClassName)
+    {
+        return element.isMixingIn(mixinClassName);
+    }
+
+    public void deferLoadAction(Runnable action)
+    {
+        element.deferLoadAction(action);
+    }
+
     public void renderInformalParameters(MarkupWriter writer)
     {
         if (bindings == null) return;
@@ -474,6 +488,50 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
         return result;
     }
 
+    public ParameterAccess getContainerBoundParameterAccess(final String boundParameterName, String... parentParameterNames)
+    {
+        if (containerParameterAccess == null) containerParameterAccess = CollectionFactory.newCaseInsensitiveMap();
+
+        ParameterAccess result = containerParameterAccess.get(boundParameterName);
+        if (result == null)
+        {
+            final InternalComponentResources res = (InternalComponentResources) getContainerResources();
+            //Ideally, this check would occur at class fabrication time. But there's not currently a way
+            //to tell if a component class is a mixin class, short of checking for "mixins" in the FQCN.
+            //So we check to make sure that this component class name is in the set of mixins defined for the container
+            //resources.
+            if (!res.isMixingIn(this.getComponentModel().getComponentClassName())) {
+                //then we're not a mixin, we're a component in the tree.
+                throw new TapestryException(StructureMessages.bindParameterOnlyOnMixin(boundParameterName, this),this,null);
+            }
+            //Have to be careful here. Problem is that if the mixin is not @MixinAfter, its PAGE_DID_LOAD will be called
+            //before the core component's. That can potentially result in missing default bindings if we
+            //call getParameterAcces at the wrong time (the unbound parameter access will be cached...).
+            String parentParameterName = findParentParameterName(parentParameterNames);
+            if (parentParameterName == null)
+            {
+                throw new TapestryException(
+                        StructureMessages.noSuchCoreComponentParameter(this,boundParameterName,parentParameterNames), 
+                        this,null);
+            }
+            result = createContainerParameterAccess(parentParameterName);
+            containerParameterAccess.put(boundParameterName,result);
+        }
+        return result;
+    }
+
+    private String findParentParameterName(String... queries)
+    {
+        for(String query : queries)
+        {
+            if(getContainerResources().getComponentModel().getParameterModel(query) != null)
+            {
+                return query;
+            }
+        }
+        return null;
+    }
+
     private ParameterAccess createParameterAccess(final String parameterName)
     {
         final Binding binding = getBinding(parameterName);
@@ -482,8 +540,11 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
 
         final boolean allowNull = parameterModel == null ? true : parameterModel.isAllowNull();
 
+        final boolean cache = parameterModel == null ? false : parameterModel.isCached();
+
         return new ParameterAccess()
         {
+
             public boolean isBound()
             {
                 return binding != null;
@@ -529,15 +590,24 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
 
             public <T> void write(T parameterValue)
             {
-                if (binding == null) return;
+
+                if (binding == null)
+                {
+                    //have to fire in case there's a mixin watching value;
+                    //even if it's not bound to any other value,
+                    //the mixin needs to know that the value internal to the component
+                    //was changed.
+                    fireParameterChanged(parameterName, parameterValue);
+                    return;
+                }
 
                 Class bindingType = binding.getBindingType();
-
                 try
                 {
                     Object coerced = elementResources.coerce(parameterValue, bindingType);
 
                     binding.set(coerced);
+                    fireParameterChanged(parameterName,coerced);
                 }
                 catch (Exception ex)
                 {
@@ -561,6 +631,113 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
             {
                 return binding == null ? null : binding.getAnnotation(annotationClass);
             }
+
+            private Set<ParameterChangeListener> listeners;
+
+            public void registerParameterChangeListener(ParameterChangeListener listener)
+            {
+                Defense.notNull(listener,"listener");
+                if (listeners == null) listeners = CollectionFactory.newSet();
+                listeners.add(listener);
+            }
+
+            public void unregisterParameterChangeListener(ParameterChangeListener listener)
+            {
+                if (listeners == null) return;
+                listeners.remove(listener);
+            }
+
+            public boolean shouldCache()
+            {
+                return cache;
+            }
+
+            protected void fireParameterChanged(String parameterName, Object newValue)
+            {
+                ParameterChangedEvent event = new ParameterChangedEvent(parameterName,newValue);
+                for(ParameterChangeListener l : listeners)
+                {
+                    l.parameterChanged(event);
+                }
+            }
+
         };
+    }
+
+    private ParameterAccess createContainerParameterAccess(final String parentParameterName)
+    {
+
+        return new ParameterAccess()
+        {
+
+            private ParameterAccess access()
+            {
+                return element.getComponentResources().getParameterAccess(parentParameterName);
+            }
+
+            public boolean isBound()
+            {
+                return element.getBinding(parentParameterName) != null;
+            }
+
+            public Object read(String desiredTypeName)
+            {
+                return access().read(desiredTypeName);
+            }
+
+            public <T> T read(Class<T> expectedType)
+            {
+                return access().read(expectedType);
+            }
+
+            public <T> void write(T parameterValue)
+            {
+                access().write(parameterValue);
+            }
+
+            public boolean isInvariant()
+            {
+                return access().isInvariant();
+            }
+
+            public Class getBoundType()
+            {
+                return access().getBoundType();
+            }
+
+            public void registerParameterChangeListener(final ParameterChangeListener listener)
+            {
+                //if it's not bound, try defering.
+                if (isBound())
+                {
+                    access().registerParameterChangeListener(listener);
+                } else
+                {
+                    //try waiting for it. If it's not bound after load, then it's not bound at all.
+                    element.deferLoadAction(new Runnable() {
+                        public void run()
+                        {
+                            access().registerParameterChangeListener(listener);
+                        }
+                    });
+                }
+            }
+
+            public void unregisterParameterChangeListener(ParameterChangeListener listener)
+            {
+                access().unregisterParameterChangeListener(listener);
+            }
+
+            public boolean shouldCache()
+            {
+                return access().shouldCache();
+            }
+
+            public <T extends Annotation> T getAnnotation(Class<T> annotationClass)
+            {
+                return access().getAnnotation(annotationClass);
+            }
+        };
+
     }
 }

@@ -1,4 +1,4 @@
-// Copyright 2006, 2008 The Apache Software Foundation
+// Copyright 2006, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -26,12 +26,20 @@ public class ParameterModelImpl implements ParameterModel
 
     private final String defaultBindingPrefix;
 
-    public ParameterModelImpl(String name, boolean required, boolean allowNull, String defaultBindingPrefix)
+    private final boolean cached;
+
+    public ParameterModelImpl(
+            String name,
+            boolean required,
+            boolean allowNull,
+            String defaultBindingPrefix,
+            boolean cached)
     {
         this.name = name;
         this.required = required;
         this.allowNull = allowNull;
         this.defaultBindingPrefix = defaultBindingPrefix;
+        this.cached = cached;
     }
 
     public String getName()
@@ -52,5 +60,10 @@ public class ParameterModelImpl implements ParameterModel
     public boolean isAllowNull()
     {
         return allowNull;
+    }
+
+    public boolean isCached()
+    {
+        return cached;
     }
 }

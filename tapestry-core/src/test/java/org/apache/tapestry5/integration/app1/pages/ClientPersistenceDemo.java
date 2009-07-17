@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,8 +15,10 @@
 package org.apache.tapestry5.integration.app1.pages;
 
 import org.apache.tapestry5.annotations.Persist;
+
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.Request;
+import org.apache.tapestry5.services.Session;
 
 public class ClientPersistenceDemo
 {
@@ -33,7 +35,7 @@ public class ClientPersistenceDemo
 
     public boolean getSessionExists()
     {
-        return request.getSession(false) != null;
+        return session() != null;
     }
 
     void onActionFromStoreString()
@@ -49,5 +51,18 @@ public class ClientPersistenceDemo
             {
             }
         };
+    }
+
+    void onActionFromNixSession()
+    {
+        if (getSessionExists() && !session().isInvalidated())
+        {
+            session().invalidate();
+        }
+    }
+
+    private Session session()
+    {
+        return request.getSession(false);
     }
 }

@@ -10,8 +10,12 @@
   <p>
     Session: [${sessionExists}]
   </p>
-  
-  
+
+
+  <p>
+    <t:actionlink t:id="nixSession">nix session</t:actionlink>
+  </p>
+
   <p>
     <t:actionlink t:id="storeString">store string</t:actionlink>
   </p>
@@ -23,5 +27,6 @@
   <p>
     <t:pagelink page="clientpersistencedemo">refresh</t:pagelink>
   </p>
+
 
 </html>

@@ -82,11 +82,10 @@ class PageAssembly
 
             if (e.getComponentResources().getComponentModel().getComponentClassName().equals(componentClassName))
             {
-                String message = String.format(
-                        "The template for component %s is recursive (contains another direct or indirect reference to component %<s). This is not supported (components may not contain themselves).",
-                        componentClassName);
-
-                throw new TapestryException(message, location, null);
+                throw new TapestryException(
+                        PageloadMessages.recursiveTemplate(componentClassName),
+                        location, 
+                        null);
             }
         }
     }

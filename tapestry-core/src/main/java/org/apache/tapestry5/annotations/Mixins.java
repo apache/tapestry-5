@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -33,7 +33,11 @@ public @interface Mixins
 {
 
     /**
-     * One or more mixin type names, from which actual mixin class names can be resolved.
+     * One or more mixin type names and optional constraints, from which actual mixin class names can be resolved.
+     * For specifying constraints, do:
+     * mixinname::constraint1;constraint2
+     * For instance:
+     * mixina::before:mixinb;after:mixinc;after:mixind
      */
     String[] value();
 }

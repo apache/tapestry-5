@@ -303,10 +303,7 @@ public class StaxTemplateParser
     {
         int lineNumber = reader.getLocation().getLineNumber();
 
-        if (cachedLocation != null && cachedLocation.getLine() != lineNumber)
-            cachedLocation = null;
-
-        if (cachedLocation == null)
+        if (cachedLocation == null || cachedLocation.getLine() != lineNumber)
             cachedLocation = new LocationImpl(resource, lineNumber);
 
         return cachedLocation;

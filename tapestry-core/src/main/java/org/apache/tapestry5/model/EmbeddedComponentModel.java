@@ -69,4 +69,11 @@ public interface EmbeddedComponentModel extends Locatable
      * @since 5.1.0.0
      */
     List<String> getPublishedParameters();
+
+    /**
+     * @param mixinClassName
+     * @return the ordering constraints for the specified mixin, or null.
+     * @Since 5.2.0.0
+     */
+    String[] getConstraintsForMixin(String mixinClassName);
 }

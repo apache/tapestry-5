@@ -1,4 +1,4 @@
-// Copyright 2008 The Apache Software Foundation
+// Copyright 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -77,4 +77,25 @@ public interface ParameterAccess extends AnnotationProvider
      * @see org.apache.tapestry5.Binding#getBindingType()
      */
     Class getBoundType();
+
+    /**
+     * Registers the given ParameterChangeListener. Registering a listener which is already 
+     * registered is silently ignored.
+     * @param listener
+     * @since 5.2.0.0
+     */
+    void registerParameterChangeListener(ParameterChangeListener listener);
+
+    /**
+     * Unregisters the given listener. Unregistering a listener that isn't registered is not an error.
+     * @since 5.2.0.0
+     */
+    void unregisterParameterChangeListener(ParameterChangeListener listener);
+
+    /**
+     * @return true if the parameter value should be cached within a component during rendering
+     * @since 5.2.0.0
+     */
+    boolean shouldCache();
+
 }

@@ -18,10 +18,12 @@ import org.apache.tapestry5.ioc.Location;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.MessagesImpl;
+import org.apache.tapestry5.ComponentResources;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+import java.util.Arrays;
 
 final class StructureMessages
 {
@@ -118,5 +120,22 @@ final class StructureMessages
     static String persistChangeBeforeLoadComplete()
     {
         return MESSAGES.get("persist-change-before-load-complete");
+    }
+
+    static String noSuchCoreComponentParameter(ComponentResources mixinResources,
+                                               String boundId, String...parameters)
+    {
+        return MESSAGES.format("no-such-core-component-parameter",
+                boundId,
+                mixinResources.getComponentModel().getComponentClassName(),
+                mixinResources.getContainerResources().getComponentModel().getComponentClassName(),
+                InternalUtils.joinSorted(Arrays.asList(parameters)),
+                InternalUtils.joinSorted(Arrays.asList(mixinResources.getContainerResources().getComponentModel().getDeclaredParameterNames())));
+    }
+
+    public static String bindParameterOnlyOnMixin(String boundParameterName, InternalComponentResourcesImpl internalComponentResources)
+    {
+        return MESSAGES.format("bind-parameter-only-on-mixin",boundParameterName,
+                internalComponentResources.getComponentModel().getComponentClassName());
     }
 }

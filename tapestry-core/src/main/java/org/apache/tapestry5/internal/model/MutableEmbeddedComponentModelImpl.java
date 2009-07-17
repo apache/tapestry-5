@@ -46,6 +46,8 @@ public class MutableEmbeddedComponentModelImpl extends BaseLocatable implements 
      */
     private List<String> mixinClassNames;
 
+    private Map<String,String[]> mixinConstraints;
+
     public MutableEmbeddedComponentModelImpl(String id, String componentType, String componentClassName,
                                              String declaredClass, boolean inheritInformalParameters, Location location)
     {
@@ -106,11 +108,12 @@ public class MutableEmbeddedComponentModelImpl extends BaseLocatable implements 
         return Collections.unmodifiableList(mixinClassNames);
     }
 
-    public void addMixin(String mixinClassName)
+    public void addMixin(String mixinClassName, String... constraints)
     {
         if (mixinClassNames == null)
         {
             mixinClassNames = CollectionFactory.newList();
+            mixinConstraints = CollectionFactory.newCaseInsensitiveMap();
         }
         else
         {
@@ -119,6 +122,7 @@ public class MutableEmbeddedComponentModelImpl extends BaseLocatable implements 
         }
 
         mixinClassNames.add(mixinClassName);
+        mixinConstraints.put(mixinClassName,constraints);
     }
 
     public boolean getInheritInformalParameters()
@@ -136,5 +140,10 @@ public class MutableEmbeddedComponentModelImpl extends BaseLocatable implements 
     public List<String> getPublishedParameters()
     {
         return publishedParameters;
+    }
+
+    public String[] getConstraintsForMixin(String mixinClassName)
+    {
+        return InternalUtils.get(mixinConstraints,mixinClassName);
     }
 }

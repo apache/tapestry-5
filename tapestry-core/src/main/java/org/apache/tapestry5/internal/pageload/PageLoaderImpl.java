@@ -305,13 +305,13 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
                                                       Stack<TemplateToken> queue,
                                                       List<ComponentTemplate> overrideSearch)
     {
-        String extentionPointId = extensionPointToken.getExtentionPointId();
+        String extensionPointId = extensionPointToken.getExtensionPointId();
 
         // Work up from the component, through its base classes, towards the last non-extension template.
 
         for (ComponentTemplate t : overrideSearch)
         {
-            List<TemplateToken> tokens = t.getExtensionPointTokens(extentionPointId);
+            List<TemplateToken> tokens = t.getExtensionPointTokens(extensionPointId);
 
             if (tokens != null)
             {
@@ -324,7 +324,7 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
         // not find an override, somewhere, for it.
 
         throw new TapestryException(
-                String.format("Could not find an override for extension point '%s'.", extentionPointId),
+                PageloadMessages.couldNotFindOverride(extensionPointId),
                 extensionPointToken.getLocation(), null);
     }
 
@@ -343,9 +343,7 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
 
             if (parentModel == null)
             {
-                throw new RuntimeException(String.format(
-                        "Component %s uses an extension template, but does not have a parent component.",
-                        model.getComponentClassName()));
+                throw new RuntimeException(PageloadMessages.noParentForExtension(model));
             }
 
             ComponentTemplate parentTemplate = templateSource.getTemplate(parentModel, assembler.getLocale());
@@ -433,7 +431,7 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
                 break;
 
             default:
-                throw new IllegalStateException("Not yet implemented: " + context.peekType());
+                throw new IllegalStateException(PageloadMessages.tokenNotImplemented(context.peekType()));
         }
     }
 
@@ -528,12 +526,10 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
 
                 if (binder == null)
                 {
-                    String message = String.format(
-                            "Component %s does not include a formal parameter '%s' (and does not support informal parameters).",
-                            element.getCompleteId(),
-                            parameterName);
-
-                    throw new TapestryException(message, token.getLocation(), null);
+                    throw new TapestryException(
+                            PageloadMessages.parameterNotSupported(element.getCompleteId(), parameterName), 
+                            token.getLocation(),
+                            null);
                 }
 
                 binder.bind(pageAssembly.createdElement.peek(), binding);
@@ -706,15 +702,10 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
 
             if (InternalUtils.isNonBlank(modelType) && embeddedType != null)
             {
-                String message = String.format(
-                        "Embedded component '%s' provides a type attribute in the template ('%s') " +
-                                "as well as in the component class ('%s'). " +
-                                "You should not provide a type attribute in the template when defining an embedded component " +
-                                "within the component class.",
-                        embeddedId, embeddedType, modelType
-                );
-
-                throw new TapestryException(message, token, null);
+                throw new TapestryException(
+                        PageloadMessages.redundantEmbeddedComponentTypes(embeddedId,embeddedType,modelType),
+                        token,
+                        null);
             }
 
             embeddedType = modelType;
@@ -882,7 +873,7 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
      * Adds a deferred action to the PageAssembly, to handle connecting the embedded components' parameter to the
      * container component's parameter once everything else has been built.
      *
-     * @param assembler
+     * @param context
      * @param parameterName
      * @param containerParameterName
      */

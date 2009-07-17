@@ -49,8 +49,7 @@ class CompositeRenderCommand implements RenderCommand
         private void nyi(String methodName)
         {
             throw new IllegalStateException(
-                    String.format("RenderQueue method %s() is not implemented for composited render commands.",
-                                  methodName));
+                    PageloadMessages.compositeRenderCommandMethodNotImplemented(methodName));
         }
     };
 

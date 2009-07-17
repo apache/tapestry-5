@@ -25,16 +25,16 @@ import org.apache.tapestry5.ioc.Location;
  */
 public class ExtensionPointToken extends TemplateToken
 {
-    private final String extentionPointId;
+    private final String extensionPointId;
 
-    public ExtensionPointToken(String extentionPointId, Location location)
+    public ExtensionPointToken(String extensionPointId, Location location)
     {
         super(TokenType.EXTENSION_POINT, location);
-        this.extentionPointId = extentionPointId;
+        this.extensionPointId = extensionPointId;
     }
 
-    public String getExtentionPointId()
+    public String getExtensionPointId()
     {
-        return extentionPointId;
+        return extensionPointId;
     }
 }

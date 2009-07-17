@@ -93,7 +93,7 @@ public class AutocompleteField extendes TextField
   attribute of the annotation will be used to determine the mixin class name:
   
 +---+
-public class AutocompleteField extendes TextField
+public class AutocompleteField extends TextField
 {
   @Mixin("Autocomplete")
   private Object autocompleteMixin;
@@ -123,7 +123,76 @@ Mixin Parameters
   private TextField userId;
 +-----+
 
+Binding the parameter of the core component
+
+  It is sometimes desirable to access the current value of a parameter defined in the component associated with the
+  mixin. For example: normally, when the textfield component is marked disabled, it renders a text field with a disabled
+  attribute, but you want it to output the (plaintext) value when disabled.  A mixin for this purpose would need access
+  to at least the disabled, and value parameters, and possibly the translate parameter (for a client-side representation).
+  You can access the disabled parameter via @InjectContainer and checking isDisabled on the field, but textfield
+  currently provides no access to value or translate.  In this case, you can bind the core-component parameter using the
+  @BindParameter annotation:
+
++-----+
+  public class MyMixin
+  {
+    @BindParameter
+    private boolean disabled;
+
+    @BindParameter
+    private FieldTranslator translate;
+
+    @BindParameter
+    private Object value;
+
+    Boolean beginRender(MarkupWriter writer)
+    {
+        ...
+        if (disabled)
+        {
+           ...
+           String stringValue = translate.toClient(value));
+           ...
+        }
+        ...
+    }
+    ....
++-----+
+
+  Tapestry will "link" the disabled, translate, and value fields above to parameters of the same name on the
+  associated component.  The fields are not parameters to the mixin, but local copies
+  of the component parameter.  They are cached only if the associated component parameter is cached.  They are read-write,
+  and Tapestry handles synchronizing the value between mixins and the associated component such that even with a cached
+  parameter, components and mixins will share the same value for a given parameter/bound-parameter during render.
+  Only declared parameters of the associated components may be bound.
   
+  By default, Tapestry will bind the parameter with the same name as the field. You can explicitly declare the parameter
+  to bind via the value attribute:
+
++-----+
+  @BindParameter("translate")
+  private FieldTranslator translator;
++-----+
+
+  In same cases, a mixin will be used on different components using different names for a similar parameter type.
+  For instance, BeanEditor has an "object" parameter; most form fields have a "value" parameter, and Grid has a
+  "source" parameter.  These parameters have different names but share the feature of being the "principle" parameter
+  on which the components are acting.  A mixin useable by all three components can specify multiple potential
+  parameter values to bind.  The first value that matches a declared parameter of the associated component will be used:
+
++-----+
+public class MyMixin
+{
+  ...
+  @BindParameter({"value","object","source"})
+  private Object principalObject;
+  ...
+}
++-----+
+
+  "MyMixin" can be used on a textfield (principalObject is bound to "value"), on BeanEditor or BeanDisplay
+  (principalObject is bound to "object"), or on Grid or Loop (principalObject is bound to "source").
+
 Render Phase Ordering
 
   All mixins for a component execute their render phase methods <before> the component's render phase
@@ -132,5 +201,44 @@ Render Phase Ordering
   
   Exception: Mixins whose class is annotated with
   {{{../apidocs/org/apache/tapestry5/annotations/MixinAfter.html}MixinAfter}} are ordered
-  <after> the component, not before.  
-  
+  <after> the component, not before.
+
+  Withing a given phase and class (@MixinAfter vs. mixin before), mixin ordering is determined by the ordering
+  constraints specified in the mixin definitions.  The constraint definitions follow the same conventions as
+  {{{../tapestry-ioc/order.html}ordered service configurations}}.  How you specify the constraints depends
+  on how the mixin is specified.
+
+  Implementation Mixin:
+
++-----+
+  @Mixin("Autocomplete",order={"before:DiscardBody","after:RenderDisabled"}
+  private TextField userId;
++-----+
+
+  Template-specified instance mixins:
+
++-----+
+  \<input t:id="myfield" t:mixins="autocomplete::before:discardbody;after:renderdisabled,
+          defaultfromcookie::before:autocomplete"/\>
++-----+
+
+  @Mixins-specified instance mixins:
+
++-----+
+  @Component(...)
+  @Mixins("Autocomplete::before:discardbody;after:renderdisabled","DefaultFromCookie::before:autocomplete"))
+  private TextField userId;
++-----+
+
+  @MixinClasses-specified instance mixins:
+
++-----+
+  @Component(...)
+  @MixinClasses(value={Autocomplete.class,DefaultFromCookie.class},
+                order={"before:discardbody;after:renderdisabled","before:autocomplete")
++-----+
+
+  The ordering is always specified in terms of the order of the "forward" rendering process (setupRender,
+  beginRender, etc.). When the "reverse" rendering phases (afterRender, etc.) occur, the mixin order is exactly reversed.
+  Mixins which have no associated ordering constraints will be ordered in a manner which is consistent with the
+  specified constraints for all other mixins, but is otherwise unspecified.

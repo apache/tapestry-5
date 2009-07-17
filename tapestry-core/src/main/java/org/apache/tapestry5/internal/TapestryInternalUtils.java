@@ -17,6 +17,7 @@ package org.apache.tapestry5.internal;
 import org.apache.tapestry5.*;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.ioc.Orderable;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
@@ -474,4 +475,28 @@ public class TapestryInternalUtils
             }
         };
     }
+
+    /**
+     *
+     * @param mixinDef the original mixin definition.
+     * @return an Orderable whose id is the mixin name.
+     */
+    public static Orderable<String> mixinTypeAndOrder(String mixinDef) {
+        int idx = mixinDef.indexOf("::");
+        if (idx == -1)
+        {
+            return new Orderable(mixinDef,mixinDef);
+        }
+        String type = mixinDef.substring(0,idx);
+        String[] constraints = splitMixinConstraints(mixinDef.substring(idx+2));
+
+        return new Orderable(type,type,constraints);
+    }
+
+
+    public static String[] splitMixinConstraints(String s)
+    {
+        return InternalUtils.isBlank(s)?null:s.split(";");
+    }
+
 }

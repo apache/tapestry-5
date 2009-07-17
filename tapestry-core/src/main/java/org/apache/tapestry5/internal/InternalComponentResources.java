@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -62,4 +62,14 @@ public interface InternalComponentResources extends ComponentResources, Internal
      * @return object used to read and update the parameter
      */
     ParameterAccess getParameterAccess(String parameterName);
+
+    /**
+     * Gets access object suitable for handling mixin fields which are bound to a parameter of the core component
+     * @param boundParameterName the name of the mixin field that should be linked to the core component's field.
+     * @param parentParameterNames the list of parameter names to try in the parent. The first name that matches a
+     *          declared parameter name in the core component will be used. This allows BindParameter to be used with
+     *          mixins that have a similar parameter type with different parameter names (eg:
+     * @since 5.2.0.0
+     */
+    ParameterAccess getContainerBoundParameterAccess(String boundParameterName, String... parentParameterNames);
 }

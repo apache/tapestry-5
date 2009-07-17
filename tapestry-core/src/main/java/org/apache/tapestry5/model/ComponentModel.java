@@ -167,4 +167,11 @@ public interface ComponentModel
      * @return true if event handler present
      */
     boolean handlesEvent(String eventType);
+
+    /**
+     * @param mixinClassName class name of the mixin for which the ordering is desired
+     * @return the ordering constraint(s) for the mixin, potentially null.
+     * @since 5.2.0.0
+     */
+    String[] getOrderForMixin(String mixinClassName);
 }

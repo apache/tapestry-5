@@ -20,9 +20,11 @@ import org.apache.tapestry5.annotations.Mixins;
 import org.apache.tapestry5.internal.KeyValue;
 import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.ioc.Location;
+import org.apache.tapestry5.ioc.Orderable;
 import org.apache.tapestry5.ioc.internal.services.StringLocation;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.ioc.internal.util.TapestryException;
 import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.model.MutableEmbeddedComponentModel;
@@ -95,8 +97,20 @@ public class ComponentWorker implements ComponentClassTransformWorker
 
         if (annotation == null) return;
 
-        for (Class c : annotation.value())
-            model.addMixin(c.getName());
+        boolean orderEmpty = annotation.order().length == 0;
+
+        if (!orderEmpty && annotation.order().length != annotation.value().length)
+            throw new TapestryException(TransformMessages.badMixinConstraintLength(annotation,fieldName),
+                    model,null);
+
+
+        for (int i=0; i<annotation.value().length;i++)
+        {
+            String[] constraints = orderEmpty?
+                    new String[0]:
+                    TapestryInternalUtils.splitMixinConstraints(annotation.order()[i]);
+            model.addMixin(annotation.value()[i].getName(), constraints);
+        }
     }
 
     private void addMixinTypes(String fieldName, ClassTransformation transformation,
@@ -108,8 +122,9 @@ public class ComponentWorker implements ComponentClassTransformWorker
 
         for (String typeName : annotation.value())
         {
-            String mixinClassName = resolver.resolveMixinTypeToClassName(typeName);
-            model.addMixin(mixinClassName);
+            Orderable<String> typeAndOrder = TapestryInternalUtils.mixinTypeAndOrder(typeName);
+            String mixinClassName = resolver.resolveMixinTypeToClassName(typeAndOrder.getTarget());
+            model.addMixin(mixinClassName,typeAndOrder.getConstraints());
         }
     }
 

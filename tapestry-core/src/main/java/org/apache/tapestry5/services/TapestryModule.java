@@ -484,6 +484,12 @@ public final class TapestryModule
 
         configuration.addInstance("Parameter", ParameterWorker.class, "after:Inject*");
 
+        //bind parameter should always go after parameter to make sure all parameters
+        //have been properly setup.
+
+        configuration.addInstance("BindParameter",BindParameterWorker.class, "after:Parameter");
+
+
         // Workers for the component rendering state machine methods; this is in typical
         // execution order.
 

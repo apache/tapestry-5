@@ -57,6 +57,19 @@ public interface InternalComponentResourcesCommon
     Component getMixinByClassName(String mixinClassName);
 
     /**
+     * Returns true if the mixin named by mixinClassName is associated with the core component
+     * @param mixinClassName fully qualified class name
+     * @since 5.2.0.0
+     */
+    boolean isMixingIn(String mixinClassName);
+
+    /**
+     * Registers an action that should be executed immediately after page load.
+     * @since 5.2.0.0
+     */
+    void deferLoadAction(Runnable action);
+
+    /**
      * Constructs a map linking informal parameters to the corresponding bindings.
      *
      * @return map, possible empty

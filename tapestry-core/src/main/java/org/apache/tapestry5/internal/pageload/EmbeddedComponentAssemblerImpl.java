@@ -15,10 +15,12 @@
 package org.apache.tapestry5.internal.pageload;
 
 import org.apache.tapestry5.internal.TapestryInternalUtils;
+
 import org.apache.tapestry5.internal.services.ComponentInstantiatorSource;
 import org.apache.tapestry5.internal.services.Instantiator;
 import org.apache.tapestry5.internal.structure.ComponentPageElement;
 import org.apache.tapestry5.ioc.Location;
+import org.apache.tapestry5.ioc.Orderable;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.TapestryException;
@@ -42,6 +44,7 @@ public class EmbeddedComponentAssemblerImpl implements EmbeddedComponentAssemble
     private final Location location;
 
     private final Map<String, Instantiator> mixinIdToInstantiator = CollectionFactory.newCaseInsensitiveMap();
+    private final Map<String, String[]> mixinsIdToOrderConstraints = CollectionFactory.newCaseInsensitiveMap();
 
     /**
      * Maps parameter names (both simple, and qualified with the mixin id) to the corresponding QualifiedParameterName.
@@ -85,7 +88,7 @@ public class EmbeddedComponentAssemblerImpl implements EmbeddedComponentAssemble
 
         for (String className : componentModel.getMixinClassNames())
         {
-            addMixin(className);
+            addMixin(className,componentModel.getOrderForMixin(className));
         }
 
         // If there's an embedded model (i.e., there was an @Component annotation)
@@ -95,17 +98,18 @@ public class EmbeddedComponentAssemblerImpl implements EmbeddedComponentAssemble
         {
             for (String className : embeddedModel.getMixinClassNames())
             {
-                addMixin(className);
+                addMixin(className,embeddedModel.getConstraintsForMixin(className));
             }
         }
 
         // And the template may include a t:mixins element to define yet more mixin.
-
-        for (String mixinType : TapestryInternalUtils.splitAtCommas(templateMixins))
+        // Template strings specified as:
+        for (String mixinDef : TapestryInternalUtils.splitAtCommas(templateMixins))
         {
-            String className = componentClassResolver.resolveMixinTypeToClassName(mixinType);
+            Orderable<String> order = TapestryInternalUtils.mixinTypeAndOrder(mixinDef);
+            String className = componentClassResolver.resolveMixinTypeToClassName(order.getId());
 
-            addMixin(className);
+            addMixin(className,order.getConstraints());
         }
 
         informalParametersMixinId = prescanMixins();
@@ -152,7 +156,7 @@ public class EmbeddedComponentAssemblerImpl implements EmbeddedComponentAssemble
         }
     }
 
-    private void addMixin(String className)
+    private void addMixin(String className, String... order)
     {
         Instantiator mixinInstantiator = instantiatorSource.getInstantiator(className);
 
@@ -160,12 +164,12 @@ public class EmbeddedComponentAssemblerImpl implements EmbeddedComponentAssemble
 
         if (mixinIdToInstantiator.containsKey(mixinId))
             throw new TapestryException(
-                    String.format("Mixins applied to a component must be unique. Mixin '%s' has already been applied.",
-                                  mixinId),
+                    PageloadMessages.uniqueMixinRequired(mixinId),
                     location, null);
 
 
         mixinIdToInstantiator.put(mixinId, mixinInstantiator);
+        mixinsIdToOrderConstraints.put(mixinId, order);
     }
 
     private ComponentModel getModel(String className)
@@ -186,11 +190,10 @@ public class EmbeddedComponentAssemblerImpl implements EmbeddedComponentAssemble
             String mixinId = parameterName.substring(0, dotx);
             if (!mixinIdToInstantiator.containsKey(mixinId))
             {
-                String message = String.format("Mixin id for parameter '%s' not found. Attached mixins: %s.",
-                                               parameterName,
-                                               InternalUtils.joinSorted(mixinIdToInstantiator.keySet()));
-
-                throw new TapestryException(message, location, null);
+                throw new TapestryException(
+                        PageloadMessages.mixinidForParamnotfound(parameterName, mixinIdToInstantiator.keySet()),
+                        location, 
+                        null);
             }
         }
         else
@@ -244,7 +247,7 @@ public class EmbeddedComponentAssemblerImpl implements EmbeddedComponentAssemble
             String mixinId = entry.getKey();
             Instantiator instantiator = entry.getValue();
 
-            newElement.addMixin(mixinId, instantiator);
+            newElement.addMixin(mixinId, instantiator, mixinsIdToOrderConstraints.get(mixinId));
         }
     }
 

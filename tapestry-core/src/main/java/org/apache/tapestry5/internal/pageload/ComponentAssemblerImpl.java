@@ -107,10 +107,11 @@ class ComponentAssemblerImpl implements ComponentAssembler
         }
         catch (RuntimeException ex)
         {
-            throw new RuntimeException(String.format("Exception assembling root component of page %s: %s",
-                                                     pageAssembly.page.getName(),
-                                                     InternalUtils.toMessage(ex)),
-                                       ex);
+            throw new RuntimeException(
+                                PageloadMessages.exceptionAssemblingRootComponent(
+                                        pageAssembly.page.getName(),
+                                        InternalUtils.toMessage(ex)),
+                                ex);
         }
     }
 
@@ -120,7 +121,9 @@ class ComponentAssemblerImpl implements ComponentAssembler
         {
             Instantiator mixinInstantiator = instantiatorSource.getInstantiator(className);
 
-            element.addMixin(InternalUtils.lastTerm(className), mixinInstantiator);
+            ComponentModel model = instantiator.getModel();
+            element.addMixin(InternalUtils.lastTerm(className),
+                    mixinInstantiator,model.getOrderForMixin(className));
         }
     }
 
@@ -159,13 +162,15 @@ class ComponentAssemblerImpl implements ComponentAssembler
         }
         catch (RuntimeException ex)
         {
-            String message = String.format("Exception assembling embedded component '%s' (of type %s, within %s): %s",
-                                           embeddedId,
-                                           instantiator.getModel().getComponentClassName(),
-                                           container.getCompleteId(),
-                                           InternalUtils.toMessage(ex));
-
-            throw new TapestryException(message, location, ex);
+            throw new TapestryException(
+                            PageloadMessages.exceptionAssemblingEmbeddedComponent(
+                                    embeddedId,
+                                    instantiator.getModel().getComponentClassName(),
+                                    container.getCompleteId(),
+                                    InternalUtils.toMessage(ex)
+                            ),
+                            location,
+                            ex);
         }
     }
 
@@ -232,9 +237,7 @@ class ComponentAssemblerImpl implements ComponentAssembler
             String className = getModel().getComponentClassName();
 
             throw new RuntimeException(
-                    String.format(
-                            "Embedded component(s) %s are defined within component class %s (or a super-class of %s), " +
-                                    "but are not present in the component template (%s).",
+                    PageloadMessages.embeddedComponentsNotInTemplate(
                             InternalUtils.joinSorted(embeddedIds.keySet()),
                             className,
                             InternalUtils.lastTerm(className),
@@ -263,6 +266,11 @@ class ComponentAssemblerImpl implements ComponentAssembler
     {
         try
         {
+
+            if (InternalUtils.isBlank(componentClassName))
+            {
+                throw new TapestryException(PageloadMessages.missingComponentType(),location,null);
+            }
             EmbeddedComponentAssemblerImpl embedded = new EmbeddedComponentAssemblerImpl(assemblerSource,
                                                                                          instantiatorSource,
                                                                                          componentClassResolver,
@@ -288,14 +296,12 @@ class ComponentAssemblerImpl implements ComponentAssembler
 
                     if (existingEmbeddedId != null)
                     {
-                        String message = String.format(
-                                "Parameter '%s' of embedded component '%s' can not be published as a parameter of component %s, as it has previously been published by embedded component '%s'.",
-                                publishedParameterName,
-                                embeddedId,
-                                instantiator.getModel().getComponentClassName(),
-                                existingEmbeddedId);
-
-                        throw new TapestryException(message, location, null);
+                        throw new TapestryException(
+                                PageloadMessages.parameterAlreadyPublished(
+                                        publishedParameterName,
+                                        embeddedId,
+                                        instantiator.getModel().getComponentClassName(),
+                                        existingEmbeddedId) , location, null);
                     }
 
                     publishedParameterToEmbeddedId.put(publishedParameterName, embeddedId);
@@ -307,12 +313,14 @@ class ComponentAssemblerImpl implements ComponentAssembler
         }
         catch (Exception ex)
         {
-            String message = String.format("Failure creating embedded component '%s' of %s: %s",
-                                           embeddedId,
-                                           instantiator.getModel().getComponentClassName(),
-                                           InternalUtils.toMessage(ex));
-
-            throw new TapestryException(message, location, ex);
+            throw new TapestryException(
+                    PageloadMessages.failureCreatingEmbeddedComponent(
+                            embeddedId,
+                            instantiator.getModel().getComponentClassName(),
+                            InternalUtils.toMessage(ex)
+                    ),
+                    location,
+                    ex);
         }
     }
 
@@ -354,9 +362,7 @@ class ComponentAssemblerImpl implements ComponentAssembler
 
         if (innerBinder == null)
         {
-            String message = String.format(
-                    "Parameter '%s' of component %s is improperly published from embedded component '%s' (where it does not exist). " +
-                            "This may be a typo in the publishParameters attribute of the @Component annotation.",
+            String message = PageloadMessages.publishedParameterNonexistant(
                     parameterName,
                     instantiator.getModel().getComponentClassName(),
                     embeddedId);

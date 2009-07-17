@@ -24,11 +24,8 @@ import org.apache.tapestry5.internal.services.Instantiator;
 import org.apache.tapestry5.internal.util.NotificationEventCallback;
 import org.apache.tapestry5.ioc.BaseLocatable;
 import org.apache.tapestry5.ioc.Location;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.internal.util.Defense;
 import static org.apache.tapestry5.ioc.internal.util.Defense.notBlank;
-import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.ioc.internal.util.TapestryException;
+import org.apache.tapestry5.ioc.internal.util.*;
 import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.model.ParameterModel;
 import org.apache.tapestry5.runtime.Component;
@@ -474,6 +471,12 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
 
     private final String id;
 
+    private Orderer<Component> mixinBeforeOrderer;
+
+    private Orderer<Component> mixinAfterOrderer;
+
+    private List<Runnable> deferredLoadActions;
+
     private boolean loaded;
 
     /**
@@ -667,7 +670,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
         children.put(childId, child);
     }
 
-    public void addMixin(String mixinId, Instantiator instantiator)
+    public void addMixin(String mixinId, Instantiator instantiator, String... order)
     {
         if (mixinIdToComponentResources == null)
         {
@@ -684,8 +687,19 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
                                                                                       instantiator);
 
         mixinIdToComponentResources.put(mixinId, resources);
-
-        components.add(resources.getComponent());
+        //note that since we're using explicit ordering now,
+        //we don't add anything to components until we page load; instead, we add
+        //to the orderers.
+        if (order == null) order = new String[0];
+        if (resources.getComponentModel().isMixinAfter())
+        {
+            if (mixinAfterOrderer == null) mixinAfterOrderer = new Orderer<Component>(getLogger());
+            mixinAfterOrderer.add(mixinId,resources.getComponent(),order);
+        } else
+        {
+            if (mixinBeforeOrderer == null) mixinBeforeOrderer =new Orderer<Component>(getLogger());
+            mixinBeforeOrderer.add(mixinId,resources.getComponent(),order);
+        }
     }
 
     public void bindMixinParameter(String mixinId, String parameterName, Binding binding)
@@ -753,37 +767,26 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
 
     public void containingPageDidLoad()
     {
-        // If this component has mixins, add the core component to the end of the list, after the
+        // If this component has mixins, order them according to:
         // mixins.
 
         if (components != null)
         {
             List<Component> ordered = CollectionFactory.newList();
 
-            Iterator<Component> i = components.iterator();
-
-            // Add all the normal components to the final list.
-
-            while (i.hasNext())
-            {
-                Component mixin = i.next();
-
-                if (mixin.getComponentResources().getComponentModel().isMixinAfter()) continue;
-
-                ordered.add(mixin);
-
-                // Remove from list, leaving just the late executing mixins
-
-                i.remove();
-            }
+            if (mixinBeforeOrderer != null)
+                ordered.addAll(mixinBeforeOrderer.getOrdered());
 
             ordered.add(coreComponent);
 
             // Add the remaining, late executing mixins
-
-            ordered.addAll(components);
+            if (mixinAfterOrderer != null)
+                ordered.addAll(mixinAfterOrderer.getOrdered());
 
             components = ordered;
+            //no need to keep the orderers around.
+            mixinBeforeOrderer = null;
+            mixinAfterOrderer = null;
         }
 
         loaded = true;
@@ -792,10 +795,19 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
         // that is invoked first, before we check for unbound parameters.
 
         invoke(false, CONTAINING_PAGE_DID_LOAD);
-
+        executeDeferredLoadActions();
         verifyRequiredParametersAreBound();
     }
 
+    private void executeDeferredLoadActions()
+    {
+        if (deferredLoadActions == null) return;
+        for(Runnable action : deferredLoadActions)
+        {
+            action.run();
+        }
+        deferredLoadActions = null;//having executed them, we have no need now to store them.
+    }
 
     public void enqueueBeforeRenderBody(RenderQueue queue)
     {
@@ -857,24 +869,38 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
 
     public Component getMixinByClassName(String mixinClassName)
     {
-        Component result = null;
+        Component result = mixinForClassName(mixinClassName);
 
-        if (mixinIdToComponentResources != null)
-        {
-            for (InternalComponentResources resources : mixinIdToComponentResources.values())
-            {
-                if (resources.getComponentModel().getComponentClassName().equals(mixinClassName))
-                {
-                    result = resources.getComponent();
-                    break;
-                }
-            }
-        }
 
         if (result == null) throw new TapestryException(StructureMessages.unknownMixin(completeId, mixinClassName),
                                                         getLocation(), null);
 
         return result;
+    }
+
+    private Component mixinForClassName(String mixinClassName)
+    {
+
+        if (mixinIdToComponentResources == null) return null;
+        for (InternalComponentResources resources : mixinIdToComponentResources.values())
+        {
+            if (resources.getComponentModel().getComponentClassName().equals(mixinClassName))
+            {
+                return resources.getComponent();
+            }
+        }
+        return null;
+    }
+
+    public boolean isMixingIn(String mixinClassName)
+    {
+        return mixinForClassName(mixinClassName) != null;
+    }
+
+    public void deferLoadAction(Runnable action)
+    {
+        if (deferredLoadActions == null) deferredLoadActions = CollectionFactory.newList();
+        deferredLoadActions.add(action);
     }
 
     public ComponentResources getMixinResources(String mixinId)

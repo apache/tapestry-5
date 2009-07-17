@@ -45,7 +45,7 @@ class TokenStreamImpl implements TokenStream
     private void checkMore()
     {
         if (!more())
-            throw new IllegalStateException("No more template tokens.");
+            throw new IllegalStateException(PageloadMessages.noMoreTokens());
     }
 
     public <T extends TemplateToken> T next(Class<T> type)

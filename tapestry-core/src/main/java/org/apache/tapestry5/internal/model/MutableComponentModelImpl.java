@@ -54,6 +54,8 @@ public final class MutableComponentModelImpl implements MutableComponentModel
 
     private List<String> mixinClassNames;
 
+    private Map<String, String[]> mixinOrders;
+
     private boolean informalParametersSupported;
 
     private boolean mixinAfter;
@@ -104,7 +106,7 @@ public final class MutableComponentModelImpl implements MutableComponentModel
         return componentClassName;
     }
 
-    public void addParameter(String name, boolean required, boolean allowNull, String defaultBindingPrefix)
+    public void addParameter(String name, boolean required, boolean allowNull, String defaultBindingPrefix, boolean cached)
     {
         Defense.notBlank(name, "name");
         Defense.notBlank(defaultBindingPrefix, "defaultBindingPrefix");
@@ -117,7 +119,16 @@ public final class MutableComponentModelImpl implements MutableComponentModel
         if (parameters.containsKey(name))
             throw new IllegalArgumentException(ModelMessages.duplicateParameter(name, componentClassName));
 
-        parameters.put(name, new ParameterModelImpl(name, required, allowNull, defaultBindingPrefix));
+        parameters.put(name, new ParameterModelImpl(name, required, allowNull, defaultBindingPrefix,cached));
+    }
+
+    public void addParameter(String name, boolean required, boolean allowNull, String defaultBindingPrefix)
+    {
+        //assume /false/ for the default because:
+        //if the parameter is actually cached, the only effect will be to reduce that optimization in certain
+        //scenarios (mixin BindParameter).  But if the value is NOT cached but we say it is,
+        //we'll get incorrect behavior.
+        addParameter(name,required,allowNull,defaultBindingPrefix,false);
     }
 
     public ParameterModel getParameterModel(String parameterName)
@@ -220,11 +231,16 @@ public final class MutableComponentModelImpl implements MutableComponentModel
         return parentModel == null;
     }
 
-    public void addMixinClassName(String mixinClassName)
+    public void addMixinClassName(String mixinClassName, String... order)
     {
         if (mixinClassNames == null) mixinClassNames = CollectionFactory.newList();
 
         mixinClassNames.add(mixinClassName);
+        if (order != null && order.length > 0)
+        {
+            if (mixinOrders == null) mixinOrders = CollectionFactory.newCaseInsensitiveMap();
+            mixinOrders.put(mixinClassName,order);
+        }
     }
 
     public List<String> getMixinClassNames()
@@ -323,5 +339,10 @@ public final class MutableComponentModelImpl implements MutableComponentModel
         return parentModel == null
                ? false
                : parentModel.handlesEvent(eventType);
+    }
+
+    public String[] getOrderForMixin(String mixinClassName)
+    {
+        return InternalUtils.get(mixinOrders,mixinClassName);
     }
 }

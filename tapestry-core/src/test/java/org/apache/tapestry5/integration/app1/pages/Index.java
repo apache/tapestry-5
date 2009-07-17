@@ -357,6 +357,26 @@ public class Index
                      "RenderClientId Mixin",
                      "Force render of client-side id of a client element via the RenderClientId mixin"),
 
+            new Item("BindParameterDemo",
+                     "BindParameter mixin annotation",
+                     "Accessing component parameter values from a mixin"),
+
+            new Item("BindParameterNoSuchParameter",
+                     "BindParameter error handling",
+                     "BindParameter throws exception if the containing component doesn't have a matching parameter"),
+
+            new Item("BindParameterOnComponent",
+                      "BindParameter on component",
+                      "Verify that BindParameter can only be used on mixin fields"),
+
+            new Item("MixinOrderingDemo",
+                     "Mixin Ordering Demo",
+                     "Various mixin-ordering scenarios"),
+
+            new Item("MissingComponentClassException",
+                     "Missing Component Class Exception",
+                     "Meaningful exception message thrown when component class can't be determined from template or field in containing component."),
+
             new Item("SessionAttributeDemo",
                      "SessionAttribute Demo",
                      "Annotation to map a field to a specific session attribute")

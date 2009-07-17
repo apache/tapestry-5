@@ -41,6 +41,16 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         super("src/test/app1");
     }
 
+
+    @Test(enabled = false)
+    public static void main(String[] args) throws Exception {
+        IntegrationTests it = new IntegrationTests();
+        it.setup();
+        while(true) {
+            Thread.sleep(1000);
+        }
+    }
+
     @Test
     public void assets() throws Exception
     {
@@ -133,12 +143,13 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     @Test
     public void exception_report()
     {
+        //mismatched tag.
         start("BadTemplate Page");
 
         assertTextPresent("org.apache.tapestry5.ioc.internal.util.TapestryException",
-                          "Failure parsing template classpath:org/apache/tapestry5/integration/app1/pages/BadTemplate.tml, line 7, column 15",
-                          "<t:foobar>content from template</t:foobar>",
-                          "Element <t:foobar> is in the Tapestry namespace, but is not a recognized Tapestry template element.");
+                          "Failure parsing template classpath:org/apache/tapestry5/integration/app1/pages/BadTemplate.tml: Unexpected close tag </foobar>; expected </t:foobar>",
+                          "classpath:org/apache/tapestry5/integration/app1/pages/BadTemplate.tml, line 6",
+                          "<t:foobar>content from template</foobar>");
     }
 
     @Test
@@ -566,7 +577,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         // The XPath support is too weak for //div[@class='t-beandisplay-value'][%d], so we
         // just look for the text itself.
 
-        assertTextPresent("Howard", "Lewis Ship", "1966", "Martian", "U. S. Citizen", "***********", "line1", "line2",
+        assertTextPresent("Howard", "Lewis Ship", "1966", "Martian", "U.S. Citizen", "***********", "line1", "line2",
                           "line3");
     }
 
@@ -581,10 +592,11 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         type("firstName", "Howard");
         type("lastName", "Lewis Ship");
         type("password", "supersecret");
+        check("citizen");
 
         clickAndWait("//input[@type=\'submit\']");
 
-        assertTextPresent("Howard", "Lewis Ship", "0", "100% He-Man", "U. S. Citizen");
+        assertTextPresent("Howard", "Lewis Ship", "0", "100% He-Man", "U.S. Citizen");
     }
 
     @Test
@@ -847,7 +859,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         clickAndWait(SUBMIT);
 
-        assertTextPresent("Howard", "Lewis Ship", "1966", "U. S. Citizen");
+        assertTextPresent("Howard", "Lewis Ship", "1966", "U.S. Citizen");
     }
 
     @Test
@@ -865,7 +877,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     {
         start("Renderable Demo");
 
-        assertTextPresent("Renderable Demo", "[proves it works.]");
+        assertTextPresent("Renderable Demo", "[This proves it works.]");
     }
 
     @Test
@@ -912,6 +924,9 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     public void client_persistence()
     {
         start("Client Persistence Demo");
+        //can't assume session won't exist because other tests use form components w/ defaults, which means
+        //session creation to store the ValidationTracker. So we explicitly clear the session here.
+        clickAndWait("link=nix session");
 
         assertTextPresent("Persisted value: []", "Session: [false]");
 
@@ -1045,16 +1060,17 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         goBack();
         waitForPageToLoad();
 
-        // This has been failing?  Why?
-
-        // clickAndWait("link=URL");
-        // assertTextPresent("Google");
-        // goBack();
-        // waitForPageToLoad();
+        /*
+        clickAndWait("link=URL");
+        assertTextPresent("Google>");
+        goBack();
+        waitForPageToLoad();
+        */
 
         clickAndWait("link=bad");
         assertTextPresent("An unexpected application exception has occurred.",
-                          "An event handler for component org.apache.tapestry5.integration.app1.pages.Index returned the value 20 (from method org.apache.tapestry5.integration.app1.pages.Index.onActionFromBadReturnType() (at Index.java:34)). Return type java.lang.Integer can not be handled.");
+                          "A component event handler method returned the value 20. Return type java.lang.Integer can not be handled.",
+                          "context:ReturnTypes.tml, line 50");
     }
 
     @Test
@@ -1260,7 +1276,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         start("BeanEditor / Date Demo", "clear");
 
         type("name", "Howard Lewis Ship");
-        type("date", "12/24/66");
+        type("date", "12/24/1966");
 
         clickAndWait(SUBMIT);
 
@@ -1635,7 +1651,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         clickAndWait("link=force invalid event context");
 
         assertTextPresent("An unexpected application exception has occurred.",
-                          "org.apache.tapestry5.ioc.internal.util.TapestryException",
+                          "org.apache.tapestry5.runtime.ComponentEventException",
                           "java.lang.NumberFormatException");
     }
 
@@ -2362,7 +2378,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         assertTextPresent("org.apache.tapestry5.internal.services.RenderQueueException",
                           "Render queue error in SetupRender[FormFieldOutsideForm:textfield]: The Textfield component must be enclosed by a Form component.",
-                          "context:FormFieldOutsideForm.tml, line 5, column 45");
+                          "context:FormFieldOutsideForm.tml, line 5");
     }
 
     /**
@@ -2965,6 +2981,130 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         start("RenderClientId Mixin");
 
         assertText("divwithid","Div Content");
+    }
+
+    @Test
+    public void bindparameter()
+    {
+        start("BindParameter mixin annotation");
+        //implicit parameter name
+        assertEchoMixins("testmixin","mypropertyvalue",0,-1,-1,1,true);
+        assertText("mypropertyoutput","mypropertyvalue");
+
+        //explicit parameter name
+        assertEchoMixins("testmixin2","10",-1,0,-1,2,true);
+        assertText("mypropertyoutput2","10");
+
+        //multiple parameter names; first one found wins.
+        assertEchoMixins("testmixin3","hello",-1,-1,0,3,true);
+
+        //multiple mixins
+        assertEchoMixins("multimixins","supervalue",0,1,2,3,true);
+        assertText("mypropertyoutput4","supervalue");
+
+        //finally, binding to default bindings (which is tricky because of page load invocation order)
+        assertEchoMixins("defaultbinding","goodbye",0,-1,-1,1,false);
+        assertText("mypropertyoutput5","goodbye");
+    }
+
+    @Test
+    public void bindparameter_nomatchingparameter()
+    {
+        start("BindParameter error handling");
+
+        assertTextPresent("An unexpected application exception has occurred.",
+               "Failed to BindParameter 'boundParameter' in mixin 'org.apache.tapestry5.integration.app1.mixins.EchoValue2': "
+                       + "component 'org.apache.tapestry5.corelib.components.Any' does not provide a matching parameter "
+                       + "(looking for: value). Available parameters: [clientId, element]");
+
+    }
+
+    @Test
+    public void bindparameter_on_componentfield_throws_exception()
+    {
+        start("BindParameter on component");
+
+        assertTextPresent("An unexpected application exception has occurred.",
+        "@BindParameter was used on 'value' in component class 'org.apache.tapestry5.integration.app1.components.BindParameterComponent', but @BindParameter should only be used in mixins");
+    }
+
+    @Test
+    public void mixin_ordering()
+    {
+        //echo => <original>-before, temporaryvaluefromechovaluemixin, <original>-after
+        //echo2 => echo2-<original>-before, "3", echo2-<original>-after
+        //echo3 => echo3-<original>-before, "world", echo3-<original>-after
+        //order1: echo, echo2, echo3
+        start("Mixin Ordering Demo");
+
+        assertMixinOrder(1,0,1,2,3,true);
+        //order2: echo3, echo2, echo
+        assertMixinOrder(2,2,3,0,1,true);
+        //order3: echo2, echo3, echo
+        assertMixinOrder(3,3,0,2,1,true);
+        //order4: echo3, echo, echo2
+        assertMixinOrder(4,3,1,0,2,true);
+        //order5: echo2, echo, echo3
+        assertMixinOrder(5,2,0,1,3,true);
+        //order6: echo, echo3, echo2, TextOnlyOnDisabled
+        assertMixinOrder(6,0,3,1,2,false);
+        //make sure mixin after and mixin before constraints don't interfere...
+        //order7: echo, echo2 <corecomponent> echoafter2, echoafter
+        assertMixinOrder(7,0,1,-1,2,true);
+        assertText("order7_before_but_after","afterrender_for_mixinafter_isreally_justbefore_corecomponent_afterrender-before");
+        assertText("order7_after_but_before","afterrender_for_mixinafter_isreally_justbefore_corecomponent_afterrender-after");
+        //echoafter2 should have for its value at the point it renders
+        //the value that echo2 sets, since the core component isn't changing its value.
+        assertText("order7_before_but_after2","3-before");
+        assertText("order7_after_but_before2","3-after");
+    }
+
+    private void assertMixinOrder(int orderNum, int echo1From, int echo2From, int echo3From, int fieldFrom, boolean isField)
+    {
+        assertEchoMixins("order" + orderNum,"batman", echo1From,echo2From,echo3From,fieldFrom,isField);
+    }
+
+    /**
+     * asserts that the "echo value" mixins are properly functioning (ie @BindParameter, and mixin ordering).
+     * each integer value specifies the echo mixin number (echovalue => 1, echovalue2 => 2, echovalue3 => 3; 0 is the original value)
+     * from which the specified echo mixin is expected to "receive" its value. So if echo1From is 2, then the "original value"
+     * printed by echo1 is expected to be the value set by echo2. If a given "from" is < 0, checking the corresponding mixin values is disabled.
+     */
+
+    private void assertEchoMixins(String fieldName, String originalValue, int echo1From, int echo2From, int echo3From, int fieldFrom, boolean isField)
+    {
+        String[] vals = {originalValue,"temporaryvaluefromechovaluemixin","3","world"};
+        String before = fieldName + "_before";
+        String after = fieldName + "_after";
+        if (echo1From > -1)
+        {
+            assertText(before,vals[echo1From] + "-before");
+            assertText(after,vals[echo1From] + "-after");
+        }
+        if (echo2From > -1)
+        {
+            assertText(before + "2","echo2-" + vals[echo2From] + "-before");
+            assertText(after + "2","echo2-" + vals[echo2From] + "-after");
+        }
+        if (echo3From > -1)
+        {
+            assertText(before + "3","echo3-" + vals[echo3From] + "-before");
+            assertText(after + "3","echo3-" + vals[echo3From] + "-after");
+        }
+        if (isField)
+            assertFieldValue(fieldName,vals[fieldFrom]);
+        else
+            assertText(fieldName,vals[fieldFrom]);
+    }
+
+
+    @Test
+    public void missing_componentclass()
+    {
+        start("Missing Component Class Exception");
+        assertTextPresent(
+                "An unexpected application exception has occurred",
+                "Failure creating embedded component 'componentwithnotype' of org.apache.tapestry5.integration.app1.pages.MissingComponentClassException: You must specify the type via t:type, the element, or @Component");
     }
 
     @Test

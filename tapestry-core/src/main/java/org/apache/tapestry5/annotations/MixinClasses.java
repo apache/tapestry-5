@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -32,4 +32,15 @@ import java.lang.annotation.Target;
 public @interface MixinClasses
 {
     Class[] value();
+
+    /**
+     * Specifies the ordering constraints for each mixin specified by value. Order may be a 0-length array signifying
+     * no ordering for any mixin specified by value.  Otherwise, it must be the same length as value.
+     * Each String can specify multiple constraints, separated by ; (before:mixina;after:mixinb).
+     * Alternatively, the entry may be null or the empty string to specify no ordering constraints for that particular
+     * mixin.
+     * @since 5.2.0.0
+     */
+    String[] order() default {};
+
 }

@@ -910,7 +910,7 @@ public class TemplateParserImplTest extends InternalBaseTestCase
 
         ExtensionPointToken expansion = get(template.getTokens(), 2);
 
-        assertEquals(expansion.getExtentionPointId(), "title");
+        assertEquals(expansion.getExtensionPointId(), "title");
 
         List<TemplateToken> title = template.getExtensionPointTokens("title");
 
