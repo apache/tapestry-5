@@ -20,12 +20,16 @@ import java.lang.annotation.Retention;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Target;
 
+import static org.apache.tapestry5.ioc.annotations.AnnotationUseContext.*;
+import org.apache.tapestry5.ioc.annotations.UseWith;
+
 /**
  * Used to define an <em>embedded component</em> within another component.
  */
 @Target(FIELD)
 @Documented
 @Retention(RUNTIME)
+@UseWith({COMPONENT,PAGE})
 public @interface Component
 {
 

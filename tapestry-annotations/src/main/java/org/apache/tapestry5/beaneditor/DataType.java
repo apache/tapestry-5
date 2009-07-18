@@ -14,6 +14,9 @@
 
 package org.apache.tapestry5.beaneditor;
 
+import org.apache.tapestry5.ioc.annotations.UseWith;
+import static org.apache.tapestry5.ioc.annotations.AnnotationUseContext.*;
+
 import java.lang.annotation.*;
 
 /**
@@ -24,6 +27,7 @@ import java.lang.annotation.*;
 @Target({ ElementType.FIELD, ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
+@UseWith({BEAN,COMPONENT,MIXIN,PAGE})
 public @interface DataType
 {
     String value();

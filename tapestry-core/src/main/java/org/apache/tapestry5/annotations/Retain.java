@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,6 +20,9 @@ import java.lang.annotation.Retention;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Target;
 
+import static org.apache.tapestry5.ioc.annotations.AnnotationUseContext.*;
+import org.apache.tapestry5.ioc.annotations.UseWith;
+
 /**
  * Marker annotation placed on fields whose value should be retained past the end of the request. This is most often
  * associated with fields that are <em>lazily loaded</em>. By marking such fields with the Retain annotation, the fields
@@ -34,6 +37,7 @@ import java.lang.annotation.Target;
 @Target(FIELD)
 @Retention(RUNTIME)
 @Documented
+@UseWith({COMPONENT,MIXIN,PAGE})
 public @interface Retain
 {
 

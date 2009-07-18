@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,6 +16,8 @@ package org.apache.tapestry5.annotations;
 
 import java.lang.annotation.*;
 
+import static org.apache.tapestry5.ioc.annotations.AnnotationUseContext.*;
+import org.apache.tapestry5.ioc.annotations.UseWith;
 
 /**
  * Used to automatically include a CSS stylesheet when rendering the page.  The value is an asset reference; relative
@@ -34,6 +36,7 @@ import java.lang.annotation.*;
 @Target({ ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
+@UseWith({COMPONENT, MIXIN, PAGE})
 public @interface IncludeStylesheet
 {
     /**

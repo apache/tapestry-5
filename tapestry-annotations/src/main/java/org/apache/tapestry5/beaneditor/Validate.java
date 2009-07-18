@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,11 +14,16 @@
 
 package org.apache.tapestry5.beaneditor;
 
+import org.apache.tapestry5.ioc.annotations.UseWith;
+import org.apache.tapestry5.ioc.annotations.AnnotationUseContext;
+
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Target;
+
+import static org.apache.tapestry5.ioc.annotations.AnnotationUseContext.*;
 
 /**
  * Used to attach validation constraints directly to a property (either the getter or the setter method). The annotation
@@ -31,6 +36,7 @@ import java.lang.annotation.Target;
 @Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RUNTIME)
 @Documented
+@UseWith({BEAN,COMPONENT,MIXIN,PAGE})
 public @interface Validate
 {
     String value();

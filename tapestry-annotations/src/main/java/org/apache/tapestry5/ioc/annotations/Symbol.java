@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,6 +21,8 @@ import java.lang.annotation.Retention;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Target;
 
+import static org.apache.tapestry5.ioc.annotations.AnnotationUseContext.*;
+
 /**
  * Used to inject a symbol value, via a symbol name. This is used much like {@link
  * org.apache.tapestry5.ioc.annotations.Value} annotation, except that symbols are not expanded ... the entire value is
@@ -30,6 +32,7 @@ import java.lang.annotation.Target;
         { PARAMETER, FIELD })
 @Retention(RUNTIME)
 @Documented
+@UseWith({COMPONENT,MIXIN,PAGE,SERVICE})
 public @interface Symbol
 {
     /**

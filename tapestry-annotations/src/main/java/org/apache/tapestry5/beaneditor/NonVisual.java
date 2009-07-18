@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,6 +14,9 @@
 
 package org.apache.tapestry5.beaneditor;
 
+import org.apache.tapestry5.ioc.annotations.UseWith;
+import org.apache.tapestry5.ioc.annotations.AnnotationUseContext;
+
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -27,6 +30,7 @@ import java.lang.annotation.Target;
 @Target({ ElementType.FIELD, ElementType.METHOD })
 @Retention(RUNTIME)
 @Documented
+@UseWith(AnnotationUseContext.BEAN)
 public @interface NonVisual
 {
 

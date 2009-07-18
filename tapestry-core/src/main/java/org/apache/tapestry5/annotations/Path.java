@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -22,6 +22,9 @@ import java.lang.annotation.Retention;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Target;
 
+import static org.apache.tapestry5.ioc.annotations.AnnotationUseContext.*;
+import org.apache.tapestry5.ioc.annotations.UseWith;
+
 /**
  * Used in conjunction with the {@link Inject} annotation to inject an {@link Asset} based on a path.
  */
@@ -29,6 +32,7 @@ import java.lang.annotation.Target;
         { FIELD, PARAMETER })
 @Documented
 @Retention(RUNTIME)
+@UseWith({COMPONENT,MIXIN,PAGE,SERVICE})
 public @interface Path
 {
     /**

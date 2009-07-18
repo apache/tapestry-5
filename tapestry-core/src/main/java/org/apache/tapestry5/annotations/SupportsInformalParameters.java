@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
 package org.apache.tapestry5.annotations;
 
 import org.apache.tapestry5.model.ComponentModel;
+import org.apache.tapestry5.ioc.annotations.UseWith;
 
 import java.lang.annotation.Documented;
 import static java.lang.annotation.ElementType.TYPE;
@@ -22,6 +23,8 @@ import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Target;
+
+import static org.apache.tapestry5.ioc.annotations.AnnotationUseContext.*;
 
 /**
  * Used to identify a component that can support informal parameters. By default, components do not support informal
@@ -33,6 +36,7 @@ import java.lang.annotation.Target;
 @Retention(RUNTIME)
 @Documented
 @Inherited
+@UseWith({COMPONENT,MIXIN})
 public @interface SupportsInformalParameters
 {
 

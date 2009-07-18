@@ -29,6 +29,7 @@ import java.lang.annotation.Target;
 @Target({ TYPE, METHOD })
 @Retention(RUNTIME)
 @Documented
+@UseWith({AnnotationUseContext.SERVICE, AnnotationUseContext.MODULE})
 public @interface ServiceId
 {
     /**

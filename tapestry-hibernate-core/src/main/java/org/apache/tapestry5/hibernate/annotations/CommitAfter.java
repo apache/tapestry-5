@@ -14,11 +14,16 @@
 
 package org.apache.tapestry5.hibernate.annotations;
 
+import org.apache.tapestry5.ioc.annotations.UseWith;
+import org.apache.tapestry5.ioc.annotations.AnnotationUseContext;
+
 import java.lang.annotation.Documented;
 import static java.lang.annotation.ElementType.METHOD;
 import java.lang.annotation.Retention;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Target;
+
+import static org.apache.tapestry5.ioc.annotations.AnnotationUseContext.*;
 
 /**
  * Marks a method of a service (or a component method) as transactional: the active transaction should {@linkplain
@@ -31,6 +36,7 @@ import java.lang.annotation.Target;
 @Target(METHOD)
 @Retention(RUNTIME)
 @Documented
+@UseWith({COMPONENT, MIXIN, PAGE})
 public @interface CommitAfter
 {
 

@@ -16,15 +16,19 @@ package org.apache.tapestry5.annotations;
 
 import java.lang.annotation.*;
 
+import static org.apache.tapestry5.ioc.annotations.AnnotationUseContext.*;
+import org.apache.tapestry5.ioc.annotations.UseWith;
+
 /**
  * Annotation applied to components to document what events a component may trigger. This is primarily used when
- * generating component reference documentation. It is expressly <em>not</em> checked used at runtime.
+ * generating component reference documentation. It is expressly <em>not</em> checked or used at runtime.
  *
  * @since 5.1.0.4
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.SOURCE)
 @Documented
+@UseWith({COMPONENT, MIXIN})
 public @interface Events
 {
     /**

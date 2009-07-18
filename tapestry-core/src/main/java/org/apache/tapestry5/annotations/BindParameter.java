@@ -19,6 +19,10 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
+import static org.apache.tapestry5.ioc.annotations.AnnotationUseContext.MIXIN;
+import org.apache.tapestry5.ioc.annotations.UseWith;
+
+
 /**
  * Designates a field in a mixin which is bound to the parameter of the containing
  * component corresponding to the value of the annotation. If no value is specified,
@@ -34,6 +38,7 @@ import java.lang.annotation.RetentionPolicy;
  */
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
+@UseWith(MIXIN)
 public @interface BindParameter
 {
 

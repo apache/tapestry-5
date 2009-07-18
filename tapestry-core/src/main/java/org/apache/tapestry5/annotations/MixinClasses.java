@@ -20,6 +20,9 @@ import java.lang.annotation.Retention;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Target;
 
+import static org.apache.tapestry5.ioc.annotations.AnnotationUseContext.COMPONENT;
+import org.apache.tapestry5.ioc.annotations.UseWith;
+
 /**
  * Used to attach one or more instance mixins to an embedded component. Each mixin is specified as a specific class.
  * This annotation is only recognized when used in conjuction with the {@link Component} annotation.
@@ -29,6 +32,7 @@ import java.lang.annotation.Target;
 @Target(FIELD)
 @Documented
 @Retention(RUNTIME)
+@UseWith(COMPONENT)
 public @interface MixinClasses
 {
     Class[] value();

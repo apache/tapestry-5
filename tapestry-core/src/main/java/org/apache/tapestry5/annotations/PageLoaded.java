@@ -1,7 +1,7 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
+// you may not use tis file except in compliance with the License.
 // You may obtain a copy of the License at
 //
 //     http://www.apache.org/licenses/LICENSE-2.0
@@ -20,6 +20,9 @@ import java.lang.annotation.Retention;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Target;
 
+import static org.apache.tapestry5.ioc.annotations.AnnotationUseContext.*;
+import org.apache.tapestry5.ioc.annotations.UseWith;
+
 /**
  * Method annotation used for methods that should be invoked once the page is fully loaded. This is useful for one-time
  * component initializations that can't be done at instantance initialzation time, such as refrerences to embedded
@@ -31,6 +34,7 @@ import java.lang.annotation.Target;
 @Target(METHOD)
 @Retention(RUNTIME)
 @Documented
+@UseWith({COMPONENT,MIXIN,PAGE})
 public @interface PageLoaded
 {
 

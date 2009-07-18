@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,12 +15,15 @@
 package org.apache.tapestry5.annotations;
 
 import org.apache.tapestry5.BindingConstants;
+import org.apache.tapestry5.ioc.annotations.UseWith;
 
 import java.lang.annotation.Documented;
 import static java.lang.annotation.ElementType.FIELD;
 import java.lang.annotation.Retention;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Target;
+
+import static org.apache.tapestry5.ioc.annotations.AnnotationUseContext.*;
 
 /**
  * Annotation placed on a field to indicate that it is, in fact, a component parameter. Parameters may be optional or
@@ -29,6 +32,7 @@ import java.lang.annotation.Target;
 @Target(FIELD)
 @Documented
 @Retention(RUNTIME)
+@UseWith({COMPONENT,MIXIN})
 public @interface Parameter
 {
 

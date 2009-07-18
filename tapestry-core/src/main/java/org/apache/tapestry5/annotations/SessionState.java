@@ -20,6 +20,9 @@ import java.lang.annotation.Retention;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Target;
 
+import static org.apache.tapestry5.ioc.annotations.AnnotationUseContext.*;
+import org.apache.tapestry5.ioc.annotations.UseWith;
+
 /**
  * Marker annotation for a field that is a <em>session state object</em> (SSO) as controlled by the {@link
  * org.apache.tapestry5.services.ApplicationStateManager}. An SSO stored as global session object (i.e., in the {@link
@@ -41,6 +44,7 @@ import java.lang.annotation.Target;
 @Target(FIELD)
 @Documented
 @Retention(RUNTIME)
+@UseWith({COMPONENT,MIXIN,PAGE})
 public @interface SessionState
 {
     /**

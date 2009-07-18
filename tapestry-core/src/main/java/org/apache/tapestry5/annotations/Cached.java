@@ -1,4 +1,4 @@
-// Copyright 2008 The Apache Software Foundation
+// Copyright 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,6 +16,9 @@ package org.apache.tapestry5.annotations;
 
 import java.lang.annotation.*;
 
+import static org.apache.tapestry5.ioc.annotations.AnnotationUseContext.*;
+import org.apache.tapestry5.ioc.annotations.UseWith;
+
 /**
  * Indicates that a method should only be evaluated once and the result cached. All further calls to the method will
  * return the cached result. Note that this annotation is inheritence-safe; if a subclass calls a superclass method that
@@ -29,6 +32,7 @@ import java.lang.annotation.*;
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
+@UseWith({COMPONENT,MIXIN,PAGE})
 public @interface Cached
 {
     /**
