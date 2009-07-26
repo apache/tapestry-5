@@ -3120,4 +3120,16 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         assertTextPresent("read Foo");
         assertTextPresent("read Bar");
     }
+    
+    @Test
+    public void calendar_field_inside_bean_editor()
+    {
+        start("BeanEditor / Calendar Demo", "clear");
+
+        type("calendar", "04/06/1978");
+
+        clickAndWait(SUBMIT);
+
+        assertTextPresent("Apr 6, 1978");
+    }
 }

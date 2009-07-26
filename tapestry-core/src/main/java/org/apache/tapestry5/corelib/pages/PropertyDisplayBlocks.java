@@ -22,6 +22,8 @@ import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.PropertyOutputContext;
 
 import java.text.DateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
 
 public class PropertyDisplayBlocks
@@ -47,6 +49,13 @@ public class PropertyDisplayBlocks
     {
         return dateFormat;
     }
+    
+    public Date getCalendarDate() 
+    {
+        Calendar calendar = (Calendar) context.getPropertyValue();
+        return calendar.getTime();
+     }
+
 
     public PropertyOutputContext getContext()
     {

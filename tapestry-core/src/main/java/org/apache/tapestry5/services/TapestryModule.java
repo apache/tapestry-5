@@ -570,6 +570,7 @@ public final class TapestryModule
         configuration.add(Enum.class, "enum");
         configuration.add(Boolean.class, "boolean");
         configuration.add(Date.class, "date");
+        configuration.add(Calendar.class, "calendar");
     }
 
     public static void contributeBeanBlockSource(Configuration<BeanBlockContribution> configuration)
@@ -580,6 +581,7 @@ public final class TapestryModule
         addEditBlock(configuration, "boolean");
         addEditBlock(configuration, "date");
         addEditBlock(configuration, "password");
+        addEditBlock(configuration, "calendar");
 
         // longtext uses a text area, not a text field
 
@@ -587,6 +589,7 @@ public final class TapestryModule
 
         addDisplayBlock(configuration, "enum");
         addDisplayBlock(configuration, "date");
+        addDisplayBlock(configuration, "calendar");
 
         // Password and long text have special output needs.
         addDisplayBlock(configuration, "password");
@@ -1000,6 +1003,16 @@ public final class TapestryModule
         });
 
         add(configuration, PrimaryKeyEncoder.class, ValueEncoder.class, new PrimaryKeyEncoder2ValueEncoder(coercer));
+        
+        add(configuration, Date.class, Calendar.class, new Coercion<Date, Calendar>()
+        {
+            public Calendar coerce(Date input)
+            {
+                Calendar calendar = Calendar.getInstance(threadLocale.getLocale());
+                calendar.setTime(input);
+                return calendar;
+            }
+        });
     }
 
     /**

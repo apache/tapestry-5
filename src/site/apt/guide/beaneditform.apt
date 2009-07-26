@@ -25,6 +25,8 @@ Using the BeanEditForm Component
   * Boolean: as a checkbox
 
   * Date: as a JavaScript calendar
+  
+  * Calendar: as a JavaScript calendar
 
   []
   

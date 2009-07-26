@@ -379,7 +379,10 @@ public class Index
 
             new Item("SessionAttributeDemo",
                      "SessionAttribute Demo",
-                     "Annotation to map a field to a specific session attribute")
+                     "Annotation to map a field to a specific session attribute"),
+
+            new Item("BeanEditCalendarDemo", "BeanEditor / Calendar Demo",
+                     "Use of calendar properties inside BeanEditor and BeanDisplay")
 
     );
 
