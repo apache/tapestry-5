@@ -19,6 +19,8 @@ import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.services.ComponentClassResolver;
 import org.apache.tapestry5.services.PageRenderLinkSource;
 import org.apache.tapestry5.Link;
+import org.apache.tapestry5.EventContext;
+import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.testng.annotations.Test;
 
 public class PageRenderLinkSourceImplTest extends InternalBaseTestCase
@@ -53,10 +55,21 @@ public class PageRenderLinkSourceImplTest extends InternalBaseTestCase
         ComponentClassResolver resolver = mockComponentClassResolver();
         LinkSource source = mockLinkSource();
         Link link = mockLink();
+        EventContext eventContext = mockEventContext();
 
         train_resolvePageClassNameToPageName(resolver, PAGE_CLASS.getName(), PAGE_NAME);
 
         expect(source.createPageRenderLink(PAGE_NAME, true, "fred", "barney")).andReturn(link);
+
+        train_resolvePageClassNameToPageName(resolver, PAGE_CLASS.getName(), PAGE_NAME);
+
+        train_getCount(eventContext, 2);        
+
+        train_get(eventContext, Object.class, 0, "ted");
+
+        train_get(eventContext, Object.class, 1, "barney");
+
+        expect(source.createPageRenderLink(PAGE_NAME, true, "ted", "barney")).andReturn(link);
 
         replay();
 
@@ -64,7 +77,10 @@ public class PageRenderLinkSourceImplTest extends InternalBaseTestCase
 
         assertSame(service.createPageRenderLinkWithContext(PAGE_CLASS, "fred", "barney"), link);
 
+        assertSame(service.createPageRenderLinkWithContext(PAGE_CLASS, eventContext), link);
+
         verify();
 
     }
+
 }

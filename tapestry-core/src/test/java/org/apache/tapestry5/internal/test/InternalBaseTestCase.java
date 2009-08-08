@@ -433,7 +433,7 @@ public class InternalBaseTestCase extends TapestryTestCase implements Registry
      * Reads the content of a file into a string. Each line is trimmed of line separators and leading/trailing
      * whitespace.
      *
-     * @param trim trim each line of whitespace
+     * @param file trim each line of whitespace
      */
     protected final String readFile(String file) throws Exception
     {

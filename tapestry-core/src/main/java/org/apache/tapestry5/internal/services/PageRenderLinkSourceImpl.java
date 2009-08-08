@@ -17,6 +17,7 @@ package org.apache.tapestry5.internal.services;
 import org.apache.tapestry5.services.PageRenderLinkSource;
 import org.apache.tapestry5.services.ComponentClassResolver;
 import org.apache.tapestry5.Link;
+import org.apache.tapestry5.EventContext;
 
 public class PageRenderLinkSourceImpl implements PageRenderLinkSource
 {
@@ -50,8 +51,23 @@ public class PageRenderLinkSourceImpl implements PageRenderLinkSource
         return createPageRenderLinkWithContext(toPageName(pageClass), context);
     }
 
+    public Link createPageRenderLinkWithContext(Class pageClass, EventContext eventContext)
+    {
+        return createPageRenderLinkWithContext(toPageName(pageClass), eventContext);
+    }
+
     public Link createPageRenderLinkWithContext(String pageName, Object... context)
     {
         return linkSource.createPageRenderLink(pageName, true, context);
     }
+
+    public Link createPageRenderLinkWithContext(String pageName, EventContext eventContext)
+    {
+        int numberOfValues = eventContext.getCount();
+        Object[] pageActivationContext = new Object[numberOfValues];
+        for(int i = 0; i < numberOfValues; i++)
+            pageActivationContext[i] = eventContext.get(Object.class, i);
+        return linkSource.createPageRenderLink(pageName, true, pageActivationContext);
+    }
+
 }

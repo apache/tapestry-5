@@ -15,6 +15,7 @@
 package org.apache.tapestry5.services;
 
 import org.apache.tapestry5.Link;
+import org.apache.tapestry5.EventContext;
 
 /**
  * A service that allows other services to create page render links (which are otherwise created by components, via
@@ -36,10 +37,19 @@ public interface PageRenderLinkSource
      * Creates a page render link using an override of the page's passivation context (possibly an empty one).
      *
      * @param pageName name of page to create link to
-     * @param context  zero or more values to encode as the passiviation context
+     * @param context zero or more values to encode as the passiviation context
      * @return render link for the page
      */
     Link createPageRenderLinkWithContext(String pageName, Object... context);
+
+    /**
+     * Creates a page render link using an override of the page's passivation context.
+     *
+     * @param pageName name of page to create link to
+     * @param eventContext the EventContext to encode as the passiviation context
+     * @return render link for the page
+     */
+    public Link createPageRenderLinkWithContext(String pageName, EventContext eventContext);
 
     /**
      * Creates a page render link using the page's class to identify the target page, and using the pages normal
@@ -55,9 +65,19 @@ public interface PageRenderLinkSource
      * page's passivation context (possibly an empty one).
      *
      * @param pageClass
-     * @param context   zero or more values to encode as the passiviation context
+     * @param context zero or more values to encode as the passiviation context
      * @return render link for the page
      */
     Link createPageRenderLinkWithContext(Class pageClass, Object... context);
+
+    /**
+     * Creates a page render link using the page's class to identify the target page, and using an override of the
+     * page's passivation context
+     *
+     * @param pageClass
+     * @param eventContext the EventContext to encode as the passiviation context
+     * @return render link for the page
+     */
+    Link createPageRenderLinkWithContext(Class pageClass, EventContext eventContext);
 
 }
