@@ -8,13 +8,13 @@ Chapter 2: Your First Tapestry Application
   
   What we'll do is create an empty shell application using Maven, then import the application into Eclipse to do the rest of the work.
     
-  Before proceeding, we have to decide on three things:  A Maven <group id> and <artifact id> for our project and a <root package name>. 
+  Before proceeding, we have to decide on four things:  A Maven <group id> and <artifact id> for our project, a <version>, and a <base package name>.
   
   Maven uses the group id and artifact id to provide a unique identity for the application, and Tapestry needs to have a base package name so it knows where to look for pages and components.
   
   For this example, we'll use the group id <<org.apache.tapestry>>, artifact id <<tapestry-tutorial1>>, version <<1.0-SNAPSHOT>> and we'll use <<org.apache.tapestry5.tutorial>> as the base package.
   
-  Our final command line is thus:
+  Our final command line is:
 
 ----
 mvn archetype:generate -DarchetypeCatalog=http://tapestry.formos.com/maven-repository
