@@ -15,8 +15,10 @@
 package org.apache.tapestry5.corelib.components;
 
 import org.apache.tapestry5.*;
+import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.Parameter;
+import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.ComponentDefaultProvider;
 import org.apache.tapestry5.services.FormSupport;
@@ -29,7 +31,8 @@ import org.apache.tapestry5.services.Request;
  *
  * @since 5.1.0.2
  */
-public class Hidden
+@SupportsInformalParameters
+public class Hidden implements ClientElement
 {
     /**
      * The value to read (when rendering) or update (when the form is submitted).
@@ -44,7 +47,11 @@ public class Hidden
     @Parameter(required = true)
     private ValueEncoder encoder;
 
+    private String clientId;
+
     private String controlName;
+
+    private Element hiddenInputElement;
 
     @Environmental(false)
     private FormSupport formSupport;
@@ -60,6 +67,7 @@ public class Hidden
 
     @Inject
     private Request request;
+
 
     ValueEncoder defaultEncoder()
     {
@@ -88,14 +96,18 @@ public class Hidden
 
         controlName = formSupport.allocateControlName(resources.getId());
 
+        clientId = null;
+
         formSupport.store(this, new ProcessSubmission(controlName));
 
         String encoded = encoder.toClient(value);
 
-        writer.element("input",
+        hiddenInputElement = writer.element("input",
                        "type", "hidden",
                        "name", controlName,
                        "value", encoded);
+        resources.renderInformalParameters(writer);
+
         writer.end();
 
         return false;
@@ -109,6 +121,15 @@ public class Hidden
         Object decoded = encoder.toValue(encoded);
 
         value = decoded;
+    }
+
+    public String getClientId() {
+        if (clientId == null)
+        {
+            clientId = renderSupport.allocateClientId(resources);
+            hiddenInputElement.forceAttributes("id", clientId);
+        }
+        return clientId;
     }
 
     public String getControlName()
