@@ -61,7 +61,7 @@ var Tapestry = {
      */
     waitForPage : function(event)
     {
-        if (Tapestry.pageLoaded) return;
+        if (Tapestry.pageLoaded) return true;
 
         Event.extend(event || window.event).stop();
 
@@ -107,7 +107,16 @@ var Tapestry = {
         // A rare race condition.
 
         if (Tapestry.pageLoaded)
+        {
             hideDialog.call(null);
+
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+
     },
 
 
