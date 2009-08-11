@@ -48,6 +48,7 @@ public interface PageRenderLinkSource
      * @param pageName name of page to create link to
      * @param eventContext the EventContext to encode as the passiviation context
      * @return render link for the page
+     * @since 5.2.0.0
      */
     public Link createPageRenderLinkWithContext(String pageName, EventContext eventContext);
 
@@ -77,6 +78,7 @@ public interface PageRenderLinkSource
      * @param pageClass
      * @param eventContext the EventContext to encode as the passiviation context
      * @return render link for the page
+     * @since 5.2.0.0
      */
     Link createPageRenderLinkWithContext(Class pageClass, EventContext eventContext);
 

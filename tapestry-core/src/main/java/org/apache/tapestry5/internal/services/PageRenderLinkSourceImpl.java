@@ -63,10 +63,13 @@ public class PageRenderLinkSourceImpl implements PageRenderLinkSource
 
     public Link createPageRenderLinkWithContext(String pageName, EventContext eventContext)
     {
-        int numberOfValues = eventContext.getCount();
-        Object[] pageActivationContext = new Object[numberOfValues];
-        for(int i = 0; i < numberOfValues; i++)
+        int count = eventContext.getCount();
+
+        Object[] pageActivationContext = new Object[count];
+
+        for(int i = 0; i < count; i++)
             pageActivationContext[i] = eventContext.get(Object.class, i);
+
         return linkSource.createPageRenderLink(pageName, true, pageActivationContext);
     }
 

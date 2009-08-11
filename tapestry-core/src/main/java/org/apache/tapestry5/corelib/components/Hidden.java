@@ -106,6 +106,7 @@ public class Hidden implements ClientElement
                        "type", "hidden",
                        "name", controlName,
                        "value", encoded);
+
         resources.renderInformalParameters(writer);
 
         writer.end();
@@ -123,12 +124,14 @@ public class Hidden implements ClientElement
         value = decoded;
     }
 
-    public String getClientId() {
+    public String getClientId()
+    {
         if (clientId == null)
         {
             clientId = renderSupport.allocateClientId(resources);
             hiddenInputElement.forceAttributes("id", clientId);
         }
+
         return clientId;
     }
 
