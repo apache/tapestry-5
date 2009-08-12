@@ -2562,6 +2562,20 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     }
 
     /**
+     * TAP5-719
+     */
+    public void link_submit_without_validator()
+    {
+        start("LinkSubmit Without Validator Demo");
+
+        type("searchField", "Anders Haraldsson");
+
+        clickAndWait("link=Search");
+
+        assertTextPresent("Result: Anders Haraldsson not found!");
+    }
+
+    /**
      * TAP5-309
      */
     public void conflict_between_property_annotation_and_existing_method()
