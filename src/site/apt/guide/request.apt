@@ -136,5 +136,11 @@ Request Service
   {{{../../tapestry-ioc/shadow.html}shadow}}
   of the RequestGlobals services' request property. That is, any methods invoked
   on this service are delegated to the request object stored inside the RequestGlobals.
+  
+Overview
+  
+  The following diagram provides an overview of how the different pipelines, filters and dispatchers interact when processing an incoming request.
+  
+[../images/tapestry_request_processing_800.png] Tapestry Request Processing 
    
   
