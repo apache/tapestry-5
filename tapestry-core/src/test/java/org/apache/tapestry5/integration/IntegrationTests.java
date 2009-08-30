@@ -3146,4 +3146,13 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         assertTextPresent("Apr 6, 1978");
     }
+    
+    @Test
+    public void trigger_demo()
+    {
+        start("Trigger Demo");
+
+        assertAttribute(String.format("//script[@src='%s']/@src", "some_additional_scripts.js"), "some_additional_scripts.js");
+        assertTextPresent("Event 'provideAdditionalMarkup' handled.");
+    }
 }

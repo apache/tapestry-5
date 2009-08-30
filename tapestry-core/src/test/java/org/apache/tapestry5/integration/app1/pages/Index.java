@@ -385,7 +385,10 @@ public class Index
                      "Annotation to map a field to a specific session attribute"),
 
             new Item("BeanEditCalendarDemo", "BeanEditor / Calendar Demo",
-                     "Use of calendar properties inside BeanEditor and BeanDisplay")
+                     "Use of calendar properties inside BeanEditor and BeanDisplay"),
+
+                     new Item("TriggerDemo", "Trigger Demo",
+                              "Use of Trigger component")
 
     );
 
