@@ -3155,4 +3155,18 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         assertAttribute(String.format("//script[@src='%s']/@src", "some_additional_scripts.js"), "some_additional_scripts.js");
         assertTextPresent("Event 'provideAdditionalMarkup' handled.");
     }
+    
+    @Test
+    public void image_submit_triggers_selected_event()
+    {
+        start("Submit with an Image Demo");
+        
+        type("value", "barney gumble");
+        
+        clickAndWait("//input[@type='image']");
+        
+        assertText("outputvalue", "barney gumble");
+        
+        assertText("eventfired", "true");
+    }
 }

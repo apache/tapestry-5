@@ -1,0 +1,22 @@
+<t:border xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd"
+          xmlns:p="tapestry:parameter">
+
+    <h1>Submit with an image</h1>
+
+    <t:if test="value">
+        <p>You entered
+            <span id="outputvalue">${value}</span>
+        </p>
+        <p>"selected" event was fired: <span id="eventfired">${eventfired}</span>
+        </p>
+    </t:if>
+
+
+    <t:form>
+        <t:errors/>
+        <t:textfield t:id="value"/>
+        <br/>
+        <t:submit t:id="mySubmit" t:image="context:images/tapestry_banner.gif" />
+    </t:form>
+
+</t:border>
