@@ -180,4 +180,11 @@ public class SymbolConstants
      */
     public static final String COMBINE_SCRIPTS = "tapestry.combine-scripts";
 
+    /**
+     * If "true" then Blackbird JavaScript console is enabled.
+     *
+     * @since 5.2.0.0
+     */
+    public static final String BLACKBIRD_ENABLED = "tapestry.blackbird-enabled";
+
 }

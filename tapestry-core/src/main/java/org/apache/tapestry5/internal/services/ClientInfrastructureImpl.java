@@ -15,6 +15,8 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.Asset;
+import org.apache.tapestry5.SymbolConstants;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.services.SymbolSource;
 import org.apache.tapestry5.ioc.services.ThreadLocale;
@@ -38,7 +40,9 @@ public class ClientInfrastructureImpl implements ClientInfrastructure
 
     private final ThreadLocale threadLocale;
 
-    private final List<Asset> javascriptStack, stylesheetStack;
+    private final List<Asset> javascriptStack, stylesheetStack, javascriptStackTestMode, stylesheetStackTestMode;
+    
+    private final boolean isBlackbirdEnabled;
 
     private static final String[] CORE_JAVASCRIPT = new String[]
             {
@@ -50,24 +54,46 @@ public class ClientInfrastructureImpl implements ClientInfrastructure
 
                     // Uses functions defined by the prior three
 
-                    "org/apache/tapestry5/tapestry.js",
+                    "org/apache/tapestry5/tapestry.js"
+            };
+
+    private static final String[] CORE_JAVASCRIPT_TEST_MODE = new String[]
+            {
+                    // Only available in test mode
+
                     "${tapestry.blackbird}/blackbird.js"
             };
+    
 
     private static final String[] CORE_STYLESHEET = new String[]
             {
-                    "${tapestry.default-stylesheet}",
+                    "${tapestry.default-stylesheet}"
+            };
+    
+
+    private static final String[] CORE_STYLESHEET_TEST_MODE = new String[]
+            {
+                    // Only available in test mode
+        
                     "${tapestry.blackbird}/blackbird.css"
             };
 
-    public ClientInfrastructureImpl(SymbolSource symbolSource, AssetSource assetSource, ThreadLocale threadLocale)
+    public ClientInfrastructureImpl(SymbolSource symbolSource,
+                                    AssetSource assetSource,
+                                    ThreadLocale threadLocale,
+                                    @Symbol(SymbolConstants.BLACKBIRD_ENABLED)
+                                    boolean isBlackbirdEnabled)
     {
         this.symbolSource = symbolSource;
         this.assetSource = assetSource;
         this.threadLocale = threadLocale;
+        this.isBlackbirdEnabled = isBlackbirdEnabled;
 
         javascriptStack = convertToAssets(CORE_JAVASCRIPT);
         stylesheetStack = convertToAssets(CORE_STYLESHEET);
+        
+        javascriptStackTestMode = convertToAssets(CORE_JAVASCRIPT_TEST_MODE);
+        stylesheetStackTestMode = convertToAssets(CORE_STYLESHEET_TEST_MODE);
     }
 
     private List<Asset> convertToAssets(String[] paths)
@@ -91,7 +117,7 @@ public class ClientInfrastructureImpl implements ClientInfrastructure
 
     public List<Asset> getJavascriptStack()
     {
-        List<Asset> result = CollectionFactory.newList(javascriptStack);
+        List<Asset> result = createStack(javascriptStack, javascriptStackTestMode);
 
         Asset messages = assetSource.getAsset(null, "org/apache/tapestry5/tapestry-messages.js",
                                               threadLocale.getLocale());
@@ -102,7 +128,19 @@ public class ClientInfrastructureImpl implements ClientInfrastructure
     }
 
     public List<Asset> getStylesheetStack()
+    {   
+        return createStack(stylesheetStack, stylesheetStackTestMode);
+    }
+    
+    private List<Asset> createStack(List<Asset> stack, List<Asset> optionalStack)
     {
-        return stylesheetStack;
+        List<Asset> result = CollectionFactory.newList(stack);
+        
+        if(isBlackbirdEnabled)
+        {
+            result.addAll(optionalStack);
+        }
+        
+        return result;
     }
 }

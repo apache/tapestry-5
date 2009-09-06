@@ -2100,6 +2100,8 @@ public final class TapestryModule
         configuration.add(SymbolConstants.COMBINE_SCRIPTS, matchProductionMode);
 
         configuration.add(SymbolConstants.ENCODE_LOCALE_INTO_PATH, "true");
+        
+        configuration.add(SymbolConstants.BLACKBIRD_ENABLED, "false");
     }
 
 

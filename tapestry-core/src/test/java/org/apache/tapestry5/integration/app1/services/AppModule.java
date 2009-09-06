@@ -127,6 +127,8 @@ public class AppModule
         configuration.add(SymbolConstants.SECURE_ENABLED, "true");
 
         configuration.add("app.injected-symbol", "Symbol contributed to ApplicationDefaults");
+        
+        configuration.add(SymbolConstants.BLACKBIRD_ENABLED, "true");
     }
 
     public static void contributeIgnoredPathsFilter(Configuration<String> configuration)
