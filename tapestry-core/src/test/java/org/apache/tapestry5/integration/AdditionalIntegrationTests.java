@@ -80,4 +80,19 @@ public class AdditionalIntegrationTests extends AbstractIntegrationTestSuite
         // Fuckin Selenium
         // assertAttribute("//a[2]/@href", "login");
     }
+    
+    public void ajax_server_side_exception()
+    {
+        start("Console demo");
+        
+        assertTextPresent("Demonstrates Tapestry console");
+
+        click("link=Failure on the server side");
+
+        // Wait for the console to appear
+
+        waitForCSSSelectedElementToAppear(".t-console div.t-err");
+
+        assertTextPresent("Communication with the server failed: Server-side exception.");
+    }
 }

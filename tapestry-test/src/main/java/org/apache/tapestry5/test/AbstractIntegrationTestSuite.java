@@ -246,6 +246,15 @@ public class AbstractIntegrationTestSuite extends Assert implements Selenium
             assertFieldValue(id, values[i]);
         }
     }
+    
+    protected void waitForCSSSelectedElementToAppear(String cssRule)
+    {
+        String condition = String.format("selenium.browserbot.getCurrentWindow().$$(\"%s\").size() > 0",
+                                         cssRule);
+
+        waitForCondition(condition, PAGE_LOAD_TIMEOUT);
+
+    }
 
     @AfterClass(alwaysRun = true)
     public void cleanup() throws Exception

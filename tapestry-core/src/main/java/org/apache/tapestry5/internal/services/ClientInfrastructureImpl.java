@@ -40,7 +40,9 @@ public class ClientInfrastructureImpl implements ClientInfrastructure
 
     private final ThreadLocale threadLocale;
 
-    private final List<Asset> javascriptStack, stylesheetStack, javascriptStackTestMode, stylesheetStackTestMode;
+    private final List<Asset> javascriptStack, stylesheetStack;
+    
+    private final Asset consoleJavascript, consoleStylesheet;
     
     private final boolean isBlackbirdEnabled;
 
@@ -54,31 +56,15 @@ public class ClientInfrastructureImpl implements ClientInfrastructure
 
                     // Uses functions defined by the prior three
 
-                    "org/apache/tapestry5/tapestry.js"
+                    "org/apache/tapestry5/tapestry.js",
             };
-
-    private static final String[] CORE_JAVASCRIPT_TEST_MODE = new String[]
-            {
-                    // Only available in test mode
-
-                    "${tapestry.blackbird}/blackbird.js"
-            };
-    
 
     private static final String[] CORE_STYLESHEET = new String[]
             {
-                    "${tapestry.default-stylesheet}"
-            };
-    
-
-    private static final String[] CORE_STYLESHEET_TEST_MODE = new String[]
-            {
-                    // Only available in test mode
-        
-                    "${tapestry.blackbird}/blackbird.css"
+                    "${tapestry.default-stylesheet}",
             };
 
-    public ClientInfrastructureImpl(SymbolSource symbolSource,
+    public ClientInfrastructureImpl(SymbolSource symbolSource, 
                                     AssetSource assetSource,
                                     ThreadLocale threadLocale,
                                     @Symbol(SymbolConstants.BLACKBIRD_ENABLED)
@@ -92,8 +78,8 @@ public class ClientInfrastructureImpl implements ClientInfrastructure
         javascriptStack = convertToAssets(CORE_JAVASCRIPT);
         stylesheetStack = convertToAssets(CORE_STYLESHEET);
         
-        javascriptStackTestMode = convertToAssets(CORE_JAVASCRIPT_TEST_MODE);
-        stylesheetStackTestMode = convertToAssets(CORE_STYLESHEET_TEST_MODE);
+        consoleJavascript = expand("${tapestry.blackbird}/blackbird.js", "org/apache/tapestry5/tapestry-console.js", null);
+        consoleStylesheet = expand("${tapestry.blackbird}/blackbird.css", "org/apache/tapestry5/tapestry-console.css", null);
     }
 
     private List<Asset> convertToAssets(String[] paths)
@@ -114,33 +100,36 @@ public class ClientInfrastructureImpl implements ClientInfrastructure
 
         return assetSource.getAsset(null, expanded, locale);
     }
+    
+    private Asset expand(String blackbirdPath, String consolePath, Locale locale)
+    {
+        String path = isBlackbirdEnabled? blackbirdPath: consolePath;
+
+        return expand(path, locale);
+    }
 
     public List<Asset> getJavascriptStack()
     {
-        List<Asset> result = createStack(javascriptStack, javascriptStackTestMode);
-
         Asset messages = assetSource.getAsset(null, "org/apache/tapestry5/tapestry-messages.js",
                                               threadLocale.getLocale());
 
-        result.add(messages);
-
-        return result;
+        return createStack(javascriptStack, messages, consoleJavascript);
     }
 
     public List<Asset> getStylesheetStack()
-    {   
-        return createStack(stylesheetStack, stylesheetStackTestMode);
+    {
+        return createStack(stylesheetStack, consoleStylesheet);
     }
     
-    private List<Asset> createStack(List<Asset> stack, List<Asset> optionalStack)
+    public List<Asset> createStack(List<Asset> stack, Asset... assets)
     {
         List<Asset> result = CollectionFactory.newList(stack);
         
-        if(isBlackbirdEnabled)
+        for (Asset next : assets)
         {
-            result.addAll(optionalStack);
+            result.add(next);
         }
-        
+
         return result;
     }
 }

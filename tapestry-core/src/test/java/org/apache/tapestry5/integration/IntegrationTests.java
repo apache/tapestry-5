@@ -2309,14 +2309,6 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         waitForCondition(condition, PAGE_LOAD_TIMEOUT);
     }
 
-    private void waitForCSSSelectedElementToAppear(String cssRule)
-    {
-        String condition = String.format("selenium.browserbot.getCurrentWindow().$$(\"%s\").size() > 0",
-                                         cssRule);
-
-        waitForCondition(condition, PAGE_LOAD_TIMEOUT);
-
-    }
 
     /**
      * TAPESTRY-2610

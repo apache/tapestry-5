@@ -28,13 +28,14 @@ import org.testng.annotations.Test;
 public class ClientInfrastructureImplTest  extends InternalBaseTestCase
 {
     @Test
-    public void production_mode() throws Exception
+    public void tapestry_console() throws Exception
     {
         SymbolSource symbolSource = mockSymbolSource();
         AssetSource assetSource = mockAssetSource();
         ThreadLocale threadLocale = mockThreadLocale();
         
-        train_constructor(symbolSource, assetSource, threadLocale);
+        train_constructor(symbolSource, assetSource, threadLocale, 
+                "org/apache/tapestry5/tapestry-console.js", "org/apache/tapestry5/tapestry-console.css");
 
         replay();
         
@@ -46,21 +47,20 @@ public class ClientInfrastructureImplTest  extends InternalBaseTestCase
         
         verify();
         
-        //blackbird is the only one asset to be excluded in production mode
-        //for now it is ok to check only sizes of stacks
-        assertEquals(stack.size(), 5);
+        assertEquals(stack.size(), 6);
         
-        assertEquals(stylesheetStack.size(), 1);
+        assertEquals(stylesheetStack.size(), 2);
     }
     
     @Test
-    public void test_mode() throws Exception
+    public void blackbird() throws Exception
     {
         SymbolSource symbolSource = mockSymbolSource();
         AssetSource assetSource = mockAssetSource();
         ThreadLocale threadLocale = mockThreadLocale();
         
-        train_constructor(symbolSource, assetSource, threadLocale);
+        train_constructor(symbolSource, assetSource, threadLocale, 
+                "${tapestry.blackbird}/blackbird.js", "${tapestry.blackbird}/blackbird.css");
 
         replay();
         
@@ -72,18 +72,25 @@ public class ClientInfrastructureImplTest  extends InternalBaseTestCase
         
         verify();
         
-        //blackbird is the only one asset to be excluded in production mode
-        //for now it is ok to check only sizes of stacks
         assertEquals(javascriptStack.size(), 6);
         
         assertEquals(stylesheetStack.size(), 2);
     }
     
-    private void train_constructor(SymbolSource symbolSource, AssetSource assetSource, ThreadLocale threadLocale)
+    private void train_constructor(SymbolSource symbolSource, AssetSource assetSource, ThreadLocale threadLocale,
+            String javascriptPath, String stylesheetPath)
     {
-        expect(symbolSource.expandSymbols(isA(String.class))).andReturn("expanded").anyTimes();
-        expect(assetSource.getAsset(null, "expanded",null)).andReturn(mockAsset()).anyTimes();
+        train_expand(symbolSource, assetSource, isA(String.class), 5);
+        train_expand(symbolSource, assetSource, javascriptPath, 1);
+        train_expand(symbolSource, assetSource, stylesheetPath, 1);
         train_getLocale(threadLocale, Locale.ENGLISH);
         expect(assetSource.getAsset(null, "org/apache/tapestry5/tapestry-messages.js",Locale.ENGLISH)).andReturn(mockAsset());
     }
+    
+    private void train_expand(SymbolSource symbolSource, AssetSource assetSource, String path, int times)
+    {
+        expect(symbolSource.expandSymbols(path)).andReturn("expanded").times(times);
+        expect(assetSource.getAsset(null, "expanded",null)).andReturn(mockAsset()).times(times);
+    }
+    
 }
