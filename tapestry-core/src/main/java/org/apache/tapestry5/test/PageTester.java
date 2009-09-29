@@ -231,7 +231,7 @@ public class PageTester
         if (InternalUtils.isBlank(result))
             throw new RuntimeException(
                     String.format("The %s attribute of the <%s> element was blank or missing.",
-                                  element.getName(), attributeName));
+                                  attributeName, element.getName()));
 
         return result;
     }
