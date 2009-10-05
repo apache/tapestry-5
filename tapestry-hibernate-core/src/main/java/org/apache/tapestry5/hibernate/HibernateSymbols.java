@@ -38,4 +38,11 @@ public class HibernateSymbols
      * Override to "false" to handle entity value encoding explicitly.
      */
     public static final String PROVIDE_ENTITY_VALUE_ENCODERS = "tapestry.hibernate.provide-entity-value-encoders";
+
+    /**
+     * If true, then "entity" persistence strategy is used to store Hibernate entities as {@code Session State Objects}.
+     * 
+     * @since 5.2.0.0
+     */
+    public static final String ENTITY_SESSION_STATE_PERSISTENCE_STRATEGY_ENABLED = "tapestry.hibernate.entity-session-state-persistence-strategy-enabled";
 }

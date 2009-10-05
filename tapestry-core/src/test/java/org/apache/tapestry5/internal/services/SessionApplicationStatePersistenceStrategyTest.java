@@ -88,6 +88,7 @@ public class SessionApplicationStatePersistenceStrategyTest extends InternalBase
 
         train_create(creator, aso);
 
+        train_getSession(request, true, session);
         session.setAttribute(key, aso);
 
         // Then for exists() after

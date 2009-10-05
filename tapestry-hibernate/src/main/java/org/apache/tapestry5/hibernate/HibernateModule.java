@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,9 +14,12 @@
 
 package org.apache.tapestry5.hibernate;
 
+import java.util.Iterator;
+
 import org.apache.tapestry5.ValueEncoder;
 import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.internal.hibernate.CommitAfterWorker;
+import org.apache.tapestry5.internal.hibernate.EntityApplicationStatePersistenceStrategy;
 import org.apache.tapestry5.internal.hibernate.EntityPersistentFieldStrategy;
 import org.apache.tapestry5.internal.hibernate.HibernateEntityValueEncoder;
 import org.apache.tapestry5.ioc.Configuration;
@@ -28,14 +31,14 @@ import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.services.PropertyAccess;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.services.AliasContribution;
+import org.apache.tapestry5.services.ApplicationStateContribution;
+import org.apache.tapestry5.services.ApplicationStatePersistenceStrategy;
 import org.apache.tapestry5.services.ComponentClassTransformWorker;
 import org.apache.tapestry5.services.LibraryMapping;
 import org.apache.tapestry5.services.PersistentFieldStrategy;
 import org.apache.tapestry5.services.ValueEncoderFactory;
 import org.hibernate.Session;
 import org.hibernate.mapping.PersistentClass;
-
-import java.util.Iterator;
 
 /**
  * Supplements the services defined by {@link org.apache.tapestry5.hibernate.HibernateCoreModule} with additional
@@ -46,7 +49,8 @@ public class HibernateModule
 {
     public static void contributeFactoryDefaults(MappedConfiguration<String, String> configuration)
     {
-        configuration.add(HibernateConstants.PROVIDE_ENTITY_VALUE_ENCODERS_SYMBOL, "true");
+        configuration.add(HibernateSymbols.PROVIDE_ENTITY_VALUE_ENCODERS, "true");
+        configuration.add(HibernateSymbols.ENTITY_SESSION_STATE_PERSISTENCE_STRATEGY_ENABLED, "false");
     }
 
     /**
@@ -76,7 +80,7 @@ public class HibernateModule
      */
     @SuppressWarnings("unchecked")
     public static void contributeValueEncoderSource(MappedConfiguration<Class, ValueEncoderFactory> configuration,
-                                                    @Symbol(HibernateConstants.PROVIDE_ENTITY_VALUE_ENCODERS_SYMBOL)
+                                                    @Symbol(HibernateSymbols.PROVIDE_ENTITY_VALUE_ENCODERS)
                                                     boolean provideEncoders,
                                                     final HibernateSessionSource sessionSource,
                                                     final Session session,
@@ -113,7 +117,45 @@ public class HibernateModule
     public static void contributePersistentFieldManager(
             MappedConfiguration<String, PersistentFieldStrategy> configuration)
     {
-        configuration.addInstance("entity", EntityPersistentFieldStrategy.class);
+        configuration.addInstance(HibernatePersistenceConstants.ENTITY, EntityPersistentFieldStrategy.class);
+    }
+    
+    /**
+     * Contributes the following strategy: <dl> <dt>entity</dt> <dd>Stores the id of the entity and reloads from the {@link
+     * Session}</dd> </dl>
+     */
+    public void contributeApplicationStatePersistenceStrategySource(
+            MappedConfiguration<String, ApplicationStatePersistenceStrategy> configuration)
+    {
+        configuration.addInstance(HibernatePersistenceConstants.ENTITY, EntityApplicationStatePersistenceStrategy.class);
+    }
+    
+    /**
+     * Contributes {@link ApplicationStateContribution}s for all registered Hibernate entity classes.
+     * 
+     * @param configuration Configuration to contribute
+     * @param entitySessionStatePersistenceStrategyEnabled indicates if contribution should take place
+     * @param sessionSource creates Hibernate session
+     */
+    public static void contributeApplicationStateManager(MappedConfiguration<Class, ApplicationStateContribution> configuration,
+    		                                      @Symbol(HibernateSymbols.ENTITY_SESSION_STATE_PERSISTENCE_STRATEGY_ENABLED)
+                                                  boolean entitySessionStatePersistenceStrategyEnabled,
+    		                                      HibernateSessionSource sessionSource)
+    {
+    	
+    	if(!entitySessionStatePersistenceStrategyEnabled)
+    		return;
+
+        org.hibernate.cfg.Configuration config = sessionSource.getConfiguration();
+        Iterator<PersistentClass> mappings = config.getClassMappings();
+        while (mappings.hasNext())
+        {
+
+            final PersistentClass persistentClass = mappings.next();
+            final Class entityClass = persistentClass.getMappedClass();
+            
+            configuration.add(entityClass, new ApplicationStateContribution(HibernatePersistenceConstants.ENTITY));
+        }
     }
 
     /**

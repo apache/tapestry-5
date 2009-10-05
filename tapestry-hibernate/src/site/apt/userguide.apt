@@ -74,6 +74,49 @@ public class ViewPerson
   
   This persistence strategy works with any Hibernate entity that is associated with a valid Hibernate Session by persisting only the id
   of the entity. Notice that no onPassivate() method is needed; when the page renders the entity is loaded by the id stored in the session.
+  
+Using @SessionState with entities
+
+  The default strategy for persisting Session State Objects is "session". Storing a Hibernate entity into a <HttpSession> is problematic 
+  because the stored entity is detached from the Hibernate session. Similar to @Persist("entity") you may use the "entity" persistence 
+  strategy to persist Hibernate entities as SSOs:
+  
++----+
+public class Index
+{
+  @SessionState
+  @Property
+  private Person person;
+  
+  ...
+  
+}
++----+  
+
+	For this purpose you need to set the value of the symbol <HibernateSymbols.ENTITY_SESSION_STATE_PERSISTENCE_STRATEGY_ENABLED> 
+	to <true>:
+	
++----+
+public class AppModule
+{
+    public static void contributeApplicationDefaults(MappedConfiguration<String, String> configuration)
+    {
+        configuration.add(HibernateSymbols.ENTITY_SESSION_STATE_PERSISTENCE_STRATEGY_ENABLED, "true");
+    }
+}
++----+  
+
+	Alternatively you can apply the "entity" persistence strategy to a single Hibernate entity:
+	
++----+
+public class AppModule
+{
+    public void contributeApplicationStateManager(MappedConfiguration<Class, ApplicationStateContribution> configuration)
+    {
+    	configuration.add(Person.class, new ApplicationStateContribution(HibernatePersistenceConstants.ENTITY));
+    }
+}
++----+  
 
 Committing Changes
 
