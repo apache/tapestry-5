@@ -14,7 +14,9 @@
 
 package org.apache.tapestry5.integration.app1.pages;
 
+import org.apache.tapestry5.PersistenceConstants;
 import org.apache.tapestry5.annotations.InjectComponent;
+import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.beaneditor.Validate;
 import org.apache.tapestry5.corelib.components.Zone;
@@ -26,9 +28,18 @@ public class LinkSubmitInZoneDemo
     @Property
     @Validate("required")
     private String value;
+    
+    @Property
+    @Persist(PersistenceConstants.FLASH)
+    private boolean eventfired;
 
     @InjectComponent
     private Zone output;
+    
+    void onSelectedFromMySubmit()
+    {
+        eventfired = true;
+    }
 
     Object onSuccess()
     {

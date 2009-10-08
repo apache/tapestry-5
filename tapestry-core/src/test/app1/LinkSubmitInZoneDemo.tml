@@ -13,6 +13,8 @@
             <p>You entered
                 <span id="outputvalue">${value}</span>
             </p>
+            <p>"selected" event was fired: <span id="eventfired">${eventfired}</span>
+            </p>
         </t:if>
     </t:zone>
 
@@ -21,7 +23,7 @@
         <t:errors/>
         <t:textfield t:id="value"/>
         <br/>
-        <t:linksubmit>submit</t:linksubmit>
+        <t:linksubmit t:id="mySubmit">submit</t:linksubmit>
     </t:form>
 
 </t:border>
