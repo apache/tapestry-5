@@ -31,21 +31,21 @@ public class TapestryHibernateIntegrationTests extends AbstractIntegrationTestSu
     {
         open("/encodeentities");
 
-        assertEquals(0, getText("//span[@id='name']").length());
+        assertEquals(getText("//span[@id='name']").length(), 0);
 
         // need to create an entity in order to link with one
         clickAndWait("link=create an entity");
-        assertEquals("name", getText("//span[@id='name']"));
+        assertEquals(getText("//span[@id='name']"), "name");
 
         // should return null for missing objects
         open("/encodeentities/9999");
-        assertEquals(0, getText("//span[@id='name']").length());
+        assertEquals(getText("//span[@id='name']").length(), 0);
     }
 
     public void persist_entities()
     {
         open("/persistentity");
-        assertEquals(0, getText("//span[@id='name']").length());
+        assertEquals(getText("//span[@id='name']").length(), 0);
 
         clickAndWait("link=create entity");
         assertText("//span[@id='name']", "name");
@@ -72,7 +72,7 @@ public class TapestryHibernateIntegrationTests extends AbstractIntegrationTestSu
     public void sso_entities()
     {
     	open("/ssoentity");
-        assertEquals(0, getText("//span[@id='name']").length());
+        assertEquals(getText("//span[@id='name']").length(), 0);
         assertText("//span[@id='persistedEntityClassName']", User.class.getName());
         
         clickAndWait("link=persist entity");
