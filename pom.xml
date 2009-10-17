@@ -8,6 +8,13 @@
     <description>Master project for the modules of Tapestry 5.</description>
     <inceptionYear>2006</inceptionYear>
     <url>http://tapestry.apache.org/tapestry5.1/</url>
+
+    <parent>
+	<groupId>org.apache</groupId>
+	<artifactId>apache</artifactId>
+	<version>6</version>
+    </parent>
+
     <issueManagement>
         <system>Jira</system>
         <url>https://issues.apache.org/jira/browse/TAP5</url>
@@ -432,21 +439,9 @@
         </pluginRepository>
     </pluginRepositories>
 
-    <!-- Be sure to have the following in your ~/.m2/settings.xml
-
-      <servers>
-      <server> <id>tapestry</id> <username>hlship</username>  </server>
-      </servers>
-
-      Adjust for your personal apache.org user name. Otherwise (especially on Windows),
-      Maven and ssh trip over the user name when remote logging in.
-
-      The <id> element below is used to rendevous with server data from settings.xml
-      in order to determine meta-information such as remote username.
-
-      Don't put your password in settings.xml; just upload to apache.org your
-      public key and make sure to ssh-add before invoking Maven.
-
+    <!-- 
+      Check out http://maven.apache.org/developers/committer-settings.html
+      to review the settings you need to have in your ~/.m2/settings.xml
     -->
 
     <distributionManagement>
@@ -454,15 +449,6 @@
             <id>tapestry</id>
             <url>scpexe://people.apache.org/www/tapestry.apache.org/tapestry5.1/</url>
         </site>
-        <repository>
-            <id>tapestry</id>
-            <url>scpexe://people.apache.org/home/hlship/public_html/tapestry-ibiblio-rsynch-repository
-            </url>
-        </repository>
-        <snapshotRepository>
-            <id>tapestry-snapshot</id>
-            <url>scpexe://people.apache.org/home/hlship/public_html/tapestry-snapshot-repository</url>
-        </snapshotRepository>
     </distributionManagement>
 
 
