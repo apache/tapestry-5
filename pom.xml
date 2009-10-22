@@ -170,6 +170,8 @@
         <module>tapestry-webflow</module>
         -->
 
+        <module>tapestry-beanvalidator</module>
+
     </modules>
 
 
