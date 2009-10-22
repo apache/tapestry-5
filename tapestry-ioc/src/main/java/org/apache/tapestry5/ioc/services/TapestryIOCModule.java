@@ -14,6 +14,9 @@
 
 package org.apache.tapestry5.ioc.services;
 
+import static org.apache.tapestry5.ioc.OrderConstraintBuilder.after;
+import static org.apache.tapestry5.ioc.OrderConstraintBuilder.before;
+
 import org.apache.tapestry5.IOCSymbols;
 import org.apache.tapestry5.ioc.*;
 import org.apache.tapestry5.ioc.annotations.*;
@@ -112,9 +115,9 @@ public final class TapestryIOCModule
     {
         configuration.add("AnnotationBasedContributions", null);
 
-        configuration.addInstance("Value", ValueObjectProvider.class, "before:AnnotationBasedContributions");
-        configuration.addInstance("Symbol", SymbolObjectProvider.class, "before:AnnotationBasedContributions");
-        configuration.add("Autobuild", new AutobuildObjectProvider(), "before:AnnotationBasedContributions");
+        configuration.addInstance("Value", ValueObjectProvider.class, before("AnnotationBasedContributions").build());
+        configuration.addInstance("Symbol", SymbolObjectProvider.class, before("AnnotationBasedContributions").build());
+        configuration.add("Autobuild", new AutobuildObjectProvider(), before("AnnotationBasedContributions").build());
 
 
         ObjectProvider wrapper = new ObjectProvider()
@@ -125,7 +128,7 @@ public final class TapestryIOCModule
             }
         };
 
-        configuration.add("ServiceOverride", wrapper, "after:AnnotationBasedContributions");
+        configuration.add("ServiceOverride", wrapper, after("AnnotationBasedContributions").build());
     }
 
     /**
