@@ -158,6 +158,14 @@ public class Form implements ClientElement, FormValidationControl
      */
     @Parameter
     private String validationId;
+    
+    /**
+     * Object to validate during the form submission process. The value of this parameter is pushed as a 
+     * {@link org.apache.tapestry5.services.BeanValidationContext} into the environment. This parameter should
+     * only be used in combination with the Bean Validation Library.
+     */
+    @Parameter
+    private Object validate;
 
     @Inject
     private Logger logger;
@@ -214,6 +222,11 @@ public class Form implements ClientElement, FormValidationControl
     String defaultValidationId()
     {
         return resources.getId();
+    }
+    
+    Object defaultValidate()
+    {
+        return resources.getContainer();
     }
 
     public ValidationTracker getDefaultTracker()
@@ -355,6 +368,12 @@ public class Form implements ClientElement, FormValidationControl
 
         environment.push(ValidationTracker.class, tracker);
         environment.push(FormSupport.class, formSupport);
+        environment.push(BeanValidationContext.class, new BeanValidationContext(){
+
+            public Object getObject()
+            {
+                return validate;
+            }});
 
         Heartbeat heartbeat = new HeartbeatImpl();
 
@@ -416,6 +435,8 @@ public class Form implements ClientElement, FormValidationControl
             // stored back into the session.
 
             tracker = environment.pop(ValidationTracker.class);
+            
+            environment.pop(BeanValidationContext.class);
         }
     }
 
