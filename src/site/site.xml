@@ -60,6 +60,7 @@
 
         <menu name="Tapestry 5 Modules">
             <item name="tapestry5-annotations" href="tapestry5-annotations/"/>
+            <item name="tapestry-beanvalidator" href="tapestry-beanvalidator/"/>
             <item name="tapestry-core" href="tapestry-core/"/>
             <item name="tapestry-hibernate" href="tapestry-hibernate/"/>
             <item name="tapestry-hibernate-core" href="tapestry-hibernate-core/"/>
