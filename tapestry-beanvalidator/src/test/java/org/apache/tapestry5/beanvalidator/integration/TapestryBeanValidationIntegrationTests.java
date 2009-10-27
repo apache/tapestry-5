@@ -13,10 +13,7 @@
 // limitations under the License.
 package org.apache.tapestry5.beanvalidator.integration;
 
-import java.util.Locale;
-
 import org.apache.tapestry5.test.AbstractIntegrationTestSuite;
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 @Test(sequential = true, groups = "integration")
@@ -25,13 +22,6 @@ public class TapestryBeanValidationIntegrationTests extends AbstractIntegrationT
     public TapestryBeanValidationIntegrationTests()
     {
         super("src/test/webapp");
-    }
-    
-    @BeforeClass
-    public void setDefaultLocale()
-    {
-    	//Hibernate validator uses Locale.getDefault()
-    	Locale.setDefault(Locale.ENGLISH);
     }
 
     public void form_validation() throws Exception
@@ -70,5 +60,14 @@ public class TapestryBeanValidationIntegrationTests extends AbstractIntegrationT
     	clickAndWait(SUBMIT);
     	
         assertTextPresent("User Name size must be between 7 and 10", "User Name must match \"[0-9]+\"");
+    }
+    
+    public void inject_validator() throws Exception
+    {
+    	start("Inject Validator Demo");
+    	
+    	clickAndWait(SUBMIT);
+
+    	assertTextPresent("User Name may not be null");
     }
 }

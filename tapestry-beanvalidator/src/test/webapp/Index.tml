@@ -12,6 +12,9 @@
             <li>
                 <t:pagelink page="BeanEditFormValidationDemo">BeanEditForm Validation Demo</t:pagelink>
             </li>
+            <li>
+                <t:pagelink page="InjectValidatorDemo">Inject Validator Demo</t:pagelink>
+            </li>
         </ul>
     </body>
 </html>
