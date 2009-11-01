@@ -14,6 +14,12 @@
 
 package org.apache.tapestry5.integration;
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.InputStream;
+import java.net.URL;
+
 import org.apache.tapestry5.corelib.components.Form;
 import org.apache.tapestry5.corelib.mixins.RenderDisabled;
 import org.apache.tapestry5.integration.app1.data.RegistrationData;
@@ -21,12 +27,6 @@ import org.apache.tapestry5.integration.app1.pages.RenderErrorDemo;
 import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.test.AbstractIntegrationTestSuite;
 import org.testng.annotations.Test;
-
-import java.io.BufferedInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.InputStream;
-import java.net.URL;
 
 /**
  * Note: If these tests fail with BindException when starting Jetty, it could be Skype. At least on my system, Skype is
@@ -1019,6 +1019,16 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         // causes an error in the js console but does not throw an exception here. optimally, this would make the test case fail.
         doubleClick("//select[@id=\"languages-avail\"]/option[1]");
+    }
+    
+    @Test
+    public void palette_component_client_validation()
+    {
+        start("Palette Demo", "reset");
+
+        click(SUBMIT);
+
+        assertBubbleMessage("languages", "You must provide a value for Languages.");
     }
 
     @Test
