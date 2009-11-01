@@ -2032,17 +2032,17 @@ public final class TapestryModule
                           VersionUtils.readVersionNumber(
                                   "META-INF/maven/org.apache.tapestry/tapestry-core/pom.properties"));
 
-        configuration.add("tapestry.default-cookie-max-age", "7 d");
+        configuration.add(SymbolConstants.COOKIE_MAX_AGE, "7 d");
 
-        configuration.add("tapestry.start-page-name", "start");
+        configuration.add(SymbolConstants.START_PAGE_NAME, "start");
 
-        configuration.add("tapestry.default-stylesheet", "classpath:/org/apache/tapestry5/default.css");
+        configuration.add(SymbolConstants.DEFAULT_STYLESHEET, "classpath:/org/apache/tapestry5/default.css");
         configuration.add("tapestry.spacer-image", "classpath:/org/apache/tapestry5/spacer.gif");
 
-        configuration.add("tapestry.page-pool.soft-limit", "5");
-        configuration.add("tapestry.page-pool.soft-wait", "10 ms");
-        configuration.add("tapestry.page-pool.hard-limit", "20");
-        configuration.add("tapestry.page-pool.active-window", "10 m");
+        configuration.add(SymbolConstants.PAGE_POOL_SOFT_LIMIT, "5");
+        configuration.add(SymbolConstants.PAGE_POOL_SOFT_WAIT, "10 ms");
+        configuration.add(SymbolConstants.PAGE_POOL_HARD_LIMIT, "20");
+        configuration.add(SymbolConstants.PAGE_POOL_ACTIVE_WINDOW, "10 m");
 
         configuration.add(SymbolConstants.SUPPRESS_REDIRECT_FROM_ACTION_REQUESTS, "false");
 
@@ -2063,16 +2063,16 @@ public final class TapestryModule
         // releases to be accidentally left lying around). There's also a ClasspathAliasManager
         // contribution based on the path.
 
-        configuration.add("tapestry.scriptaculous", "classpath:${tapestry.scriptaculous.path}");
+        configuration.add(SymbolConstants.SCRIPTACULOUS, "classpath:${tapestry.scriptaculous.path}");
         configuration.add("tapestry.scriptaculous.path", "org/apache/tapestry5/scriptaculous_1_8_2");
 
         // Likewise for WebFX DatePicker, currently version 1.0.6
 
         configuration.add("tapestry.datepicker.path", "org/apache/tapestry5/datepicker_106");
-        configuration.add("tapestry.datepicker", "classpath:${tapestry.datepicker.path}");
+        configuration.add(SymbolConstants.DATEPICKER, "classpath:${tapestry.datepicker.path}");
 
         configuration.add("tapestry.blackbird.path", "org/apache/tapestry5/blackbird_1_0");
-        configuration.add("tapestry.blackbird", "classpath:${tapestry.blackbird.path}");
+        configuration.add(SymbolConstants.BLACKBIRD, "classpath:${tapestry.blackbird.path}");
 
         configuration.add(SymbolConstants.PERSISTENCE_STRATEGY, PersistenceConstants.SESSION);
 
