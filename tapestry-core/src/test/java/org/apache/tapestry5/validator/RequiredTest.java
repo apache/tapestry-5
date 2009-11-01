@@ -14,6 +14,8 @@
 
 package org.apache.tapestry5.validator;
 
+import java.util.Arrays;
+
 import org.apache.tapestry5.Field;
 import org.apache.tapestry5.ValidationException;
 import org.apache.tapestry5.ioc.MessageFormatter;
@@ -64,6 +66,42 @@ public class RequiredTest extends TapestryTestCase
         {
             assertEquals(ex.getMessage(), "{message}");
         }
+
+        verify();
+    }
+
+    @Test
+    public void empty_collection_value()
+    {
+        MessageFormatter formatter = mockMessageFormatter();
+        Field field = mockFieldWithLabel("My Field");
+
+        train_format(formatter, "{message}", "My Field");
+
+        replay();
+
+        try
+        {
+            new Required().validate(field, null, formatter, Arrays.asList());
+            unreachable();
+        }
+        catch (ValidationException ex)
+        {
+            assertEquals(ex.getMessage(), "{message}");
+        }
+
+        verify();
+    }
+
+    @Test
+    public void not_empty_collection_value() throws Exception
+    {
+        MessageFormatter formatter = mockMessageFormatter();
+        Field field = mockField();
+
+        replay();
+
+        new Required().validate(field, null, formatter, Arrays.asList("A", "B"));
 
         verify();
     }
