@@ -2318,6 +2318,15 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         waitForCondition(condition, PAGE_LOAD_TIMEOUT);
     }
+    
+    private void waitForElementToDisappear(String elementId)
+    {
+
+        String condition = String.format("selenium.browserbot.getCurrentWindow().$(\"%s\").hide()",
+                                         elementId);
+
+        waitForCondition(condition, PAGE_LOAD_TIMEOUT);
+    }
 
 
     /**
@@ -3172,5 +3181,48 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         assertText("outputvalue", "barney gumble");
         
         assertText("eventfired", "true");
+    }
+    
+    /**
+     * TAP5-138
+     */
+    @Test
+    public void select_zone()
+    {
+        start("Select Zone Demo");
+        
+        type("carMaker", "BMW");
+        
+        waitForElementToAppear("carModelContainer");
+        
+        click(SUBMIT);
+        
+        String condition = String.format("selenium.browserbot.getCurrentWindow().$$(\"%s\")", "t-error-popup");
+
+        waitForCondition(condition, PAGE_LOAD_TIMEOUT);
+        
+        assertText(String.format("//div[@class='%s']/span", "t-error-popup"), "You must provide a value for Car Model.");
+        
+        type("carModel", "7 Series");
+        
+        clickAndWait(SUBMIT);
+        
+        assertTextPresent("Car Maker: BMW");
+        
+        assertTextPresent("Car Model: 7 Series");
+        
+        waitForElementToDisappear("carModelContainer");
+        
+        type("carMaker", "MERCEDES");
+        
+        waitForElementToAppear("carModelContainer");
+      
+        type("carModel", "E-Class");
+        
+        clickAndWait(SUBMIT);
+        
+        assertTextPresent("Car Maker: MERCEDES");
+        
+        assertTextPresent("Car Model: E-Class");
     }
 }

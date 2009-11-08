@@ -387,9 +387,11 @@ public class Index
             new Item("BeanEditCalendarDemo", "BeanEditor / Calendar Demo",
                      "Use of calendar properties inside BeanEditor and BeanDisplay"),
 
-                     new Item("TriggerDemo", "Trigger Demo",
-                              "Use of Trigger component"),
-            new Item("ImageSubmitDemo", "Submit with an Image Demo", "Make sure that submit with the image parameter set triggers the 'selected' event.")
+            new Item("TriggerDemo", "Trigger Demo", "Use of Trigger component"),
+            
+            new Item("ImageSubmitDemo", "Submit with an Image Demo", "Make sure that submit with the image parameter set triggers the 'selected' event."),
+            
+            new Item("SelectZoneDemo", "Select Zone Demo", "Use a Select component to update a zone.")
 
     );
 
