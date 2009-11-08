@@ -28,19 +28,19 @@ package org.apache.tapestry5.internal.antlr;
 	
 // Integer constant
 fragment INTEGER
-	:	;	
+	:	{this.getClass(); /* Fix java.lang.VerifyError: Stack size too large */};	
 	
 // Read a property or invoke a method.
 fragment DEREF 
-	:	;
+	:	{this.getClass(); /* Fix java.lang.VerifyError: Stack size too large */};	
 	
 // Range operator, ".." between two integers.	
 fragment RANGEOP
-	:	;
+	:	{this.getClass(); /* Fix java.lang.VerifyError: Stack size too large */};	
 	
 // Decimal number	
 fragment DECIMAL
-	:	;
+	:	{this.getClass(); /* Fix java.lang.VerifyError: Stack size too large */};	
 			
 fragment LETTER 
 	:	('a'..'z'|'A'..'Z');
