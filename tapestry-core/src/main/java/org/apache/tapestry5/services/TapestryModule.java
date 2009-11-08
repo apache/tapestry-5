@@ -1979,7 +1979,7 @@ public final class TapestryModule
      * <p/>
      * The extensions must be all lower case.
      * <p/>
-     * This contributes "class" and "tml" (the template extension).
+     * This contributes "class", "properties" and "tml" (the template extension).
      *
      * @param configuration collection of extensions
      */
@@ -1988,6 +1988,9 @@ public final class TapestryModule
         // Java class files always require a digest.
         configuration.add("class");
 
+        // Even though properties don't contain sensible data we should protect them.
+        configuration.add("properties");
+        
         // Likewise, we don't want people fishing for templates.
         configuration.add(InternalConstants.TEMPLATE_EXTENSION);
     }
