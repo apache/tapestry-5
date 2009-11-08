@@ -128,6 +128,13 @@ public class Select extends AbstractField
     @Parameter(required = true, principal = true, autoconnect = true)
     private Object value;
     
+    /**
+     * Binding the zone parameter will cause any change of Select's value to be handled as an Ajax request that updates the
+     * indicated zone. The component will trigger the event {@link EventConstants#VALUE_CHANGED} to inform its
+     * container that Select's value has changed.
+     * 
+     * @since 5.2.0.0
+     */
     @Parameter(defaultPrefix = BindingConstants.LITERAL)
     private String zone;
 
