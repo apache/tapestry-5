@@ -138,6 +138,31 @@ Simplified Paths
   In addition, context assets will use the URL prefix <<</assets/ctx/>>><app-version><<</>>>.
 
 
+Securing Assets
+
+  Securing assets is an important consideration for any web application.  Many assets, such as hibernate configuration
+  files, sit in the classpath and are exposable via the Asset service, which is not desirable.  To protect these and
+  other sensitive assets, Tapestry provides the AssetProtectionDispatcher.  This dispatcher sits in front of the
+  AssetDispatcher, the service responsible for streaming assets to the client, and watches for Asset requests.
+  When an asset request comes in, the protection dispatcher checks for authorization to view the file against a
+  contributed list of AssetPathAuthorizer implementations.  Determination of whether the client can view the requested
+  resource is then made based on whether any of the contributed AssetPathAuthorizer implementations explicitly allowed
+  or denied access to the resource.
+
+  Tapestry provides two AssetPathAuthorizer implemenations "out of the box" to which users may contribute: RegexAuthorizer
+  and WhitelistAuthorizer.  RegexAuthorizer uses regular expressions to determine assets which are viewable by the
+  client; any assets that match one of its (contributed) regular expressions are authorized. Anything not matched is
+  passed through to the WhitelistAuthorizer.  WhitelistAuthorizer uses an exact-matching whitelist.  Anything matching
+  exactly one its contributions is allowed; all other asset requests are denied.  The default tapestry configuration
+  contributes nothing to WhitelistAuthorizer (access will be denied to all asset requests passed through to it), and
+  explicitly allows access to css, jpg, jpeg, js, png, and gif files associated with tapestry (tapestry.js, blackbird
+  files, date picker files, etc.).  The default contribution also enables access to the css, jpg, jpeg, js, png, and gif
+  files provided by the popular chenille-kit 3rd party library. The default configuration denies access to all other
+  assets.  To enable access to your application's assets, either contribute a custom AssetPathAnalyzer, or contribute
+  appropriate regular expression or exact path contributions to RegexAuthorizer or WhitelistAuthorizer, respectively.
+  See TapestryModule.contribteRegexAuthorizer for examples.
+
+
 Performance Notes
 
   Assets are expected to be entirely static (not changing while the application is deployed). When Tapestry generates a URL
