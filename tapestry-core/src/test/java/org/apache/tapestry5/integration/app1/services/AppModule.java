@@ -238,4 +238,22 @@ public class AppModule
     {
         configuration.add("ReverseStringsWorker", new ReverseStringsWorker());
     }
+
+    public static void contributeRegexAuthorizer(Configuration<String> configuration) {
+        //use this rather than a blanket regex (^.*.jpg$, etc.); want to be sure that tests pass from the default
+        //configuration setup, (eg: this way, I realized that the "virtual" assets folder
+        //needed to be opened up in the tapestry-provided contributions) rather than from some blanket configuration in the appmodule
+        //opening up all css, js, etc. files.
+        //would contribute to whitelist except that the resource path between ctxt and the rest of the path can change.
+        configuration.add("^ctx/[^/]+/css/app\\.css$");
+        configuration.add("^ctx/[^/]+/layout/style\\.css$");
+        configuration.add("^ctx/[^/]+/layout/images/bg\\.gif$");
+        configuration.add("^ctx/[^/]+/layout/images/header\\.gif$");
+        configuration.add("^ctx/[^/]+/layout/images/rightsmall\\.gif$");
+        configuration.add("^ctx/[^/]+/layout/images/rightbig\\.gif$");
+        configuration.add("^ctx/[^/]+/layout/images/bottom\\.gif$");
+        configuration.add("^ctx/[^/]+/layout/images/footer\\.gif$");
+        configuration.add("^ctx/[^/]+/images/tapestry_banner\\.gif$");
+        configuration.add("^ctx/[^/]+/images/asf_logo_wide\\.gif$");
+    }
 }
