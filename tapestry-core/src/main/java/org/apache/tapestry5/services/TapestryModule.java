@@ -305,6 +305,9 @@ public final class TapestryModule
         binder.bind(PageRenderLinkSource.class, PageRenderLinkSourceImpl.class);
         binder.bind(ClientInfrastructure.class, ClientInfrastructureImpl.class);
         binder.bind(URLRewriter.class, URLRewriterImpl.class);
+        binder.bind(Dispatcher.class, AssetProtectionDispatcher.class).withId("AssetProtectionDispatcher");
+        binder.bind(AssetPathAuthorizer.class, WhitelistAuthorizer.class).withId("WhitelistAuthorizer");
+        binder.bind(AssetPathAuthorizer.class, RegexAuthorizer.class).withId("RegexAuthorizer");
     }
 
     // ========================================================================
@@ -1572,12 +1575,16 @@ public final class TapestryModule
      * and forwards onto {@link PageRenderRequestHandler}</dd> <dt>ComponentEvent</dt> <dd>Identifies the {@link
      * ComponentEventRequestParameters} and forwards onto the {@link ComponentEventRequestHandler}</dd> </dl>
      */
-    public static void contributeMasterDispatcher(OrderedConfiguration<Dispatcher> configuration)
+    public static void contributeMasterDispatcher(OrderedConfiguration<Dispatcher> configuration,
+                                                  @InjectService("AssetProtectionDispatcher") Dispatcher assetProt)
     {
         // Looks for the root path and renders the start page. This is maintained for compatibility
         // with earlier versions of Tapestry 5, it is recommended that an Index page be used instead.
 
         configuration.addInstance("RootPath", RootPathDispatcher.class, "before:Asset");
+
+        //this goes before asset to make sure that only allowed assets are streamed to the client.
+        configuration.add("AssetProtection", assetProt, "before:Asset");
 
         // This goes first because an asset to be streamed may have an file extension, such as
         // ".html", that will confuse the later dispatchers.
@@ -1590,6 +1597,7 @@ public final class TapestryModule
 
         configuration.addInstance("PageRender", PageRenderDispatcher.class);
     }
+
 
     /**
      * Contributes a default object renderer for type Object, plus specialized renderers for {@link
@@ -2478,6 +2486,43 @@ public final class TapestryModule
                 return fieldValidator;
             }
         };
+    }
+
+    /**
+     * Contributes the default set of AssetPathAuthorizers into the AssetProtectionDispatcher.
+     * @param whitelist authorization based on explicit whitelisting.
+     * @param regex authorization based on pattern matching.
+     * @param conf
+     */
+    public static void contributeAssetProtectionDispatcher(
+            @InjectService("WhitelistAuthorizer") AssetPathAuthorizer whitelist,
+            @InjectService("RegexAuthorizer") AssetPathAuthorizer regex,
+            OrderedConfiguration<AssetPathAuthorizer> conf)
+    {
+        //putting whitelist after everything ensures that, in fact, nothing falls through.
+        //also ensures that whitelist gives other authorizers the chance to act...
+        conf.add("regex",regex,"before:whitelist");
+        conf.add("whitelist", whitelist,"after:*");
+    }
+
+    public void contributeRegexAuthorizer(Configuration<String> regex,
+                @Symbol("tapestry.scriptaculous.path") String scriptPath,
+                @Symbol("tapestry.blackbird.path") String blackbirdPath,
+                @Symbol("tapestry.datepicker.path") String datepickerPath)
+    {
+        //allow any js, jpg, jpeg, png, or css under org/chenillekit/tapstry. The funky bit of ([^/.]+/)* is what allows
+        //multiple paths, while not allowing any of those paths to contains ./ or ../ thereby preventing paths like:
+        //org/chenillekit/tapestry/../../../foo.js
+        String pathPattern = "([^/.]+/)*[^/.]+\\.((css)|(js)|(jpg)|(jpeg)|(png)|(gif))$";
+        regex.add("^org/chenillekit/tapestry/" + pathPattern);
+
+        regex.add("^org/apache/tapestry5/" + pathPattern);
+
+        regex.add(blackbirdPath + "/" + pathPattern);
+        regex.add(datepickerPath + "/" + pathPattern);
+        regex.add(scriptPath + "/" + pathPattern);
+        //allow access to virtual assets. Critical for tapestry-combined js files.
+        regex.add("virtual/" + pathPattern);
     }
 
 }
