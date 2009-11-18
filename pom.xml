@@ -9,6 +9,13 @@
     <description>Master project for the modules of Tapestry 5.</description>
     <inceptionYear>2006</inceptionYear>
     <url>http://tapestry.apache.org/tapestry5/</url>
+
+    <parent>
+        <groupId>org.apache</groupId>
+        <artifactId>apache</artifactId>
+        <version>6</version>
+    </parent>
+
     <issueManagement>
         <system>Jira</system>
         <url>https://issues.apache.org/jira/browse/TAP5</url>
@@ -426,15 +433,6 @@
             <id>tapestry</id>
             <url>scpexe://people.apache.org/www/tapestry.apache.org/tapestry5/</url>
         </site>
-        <repository>
-            <id>tapestry</id>
-            <url>scpexe://people.apache.org/home/hlship/public_html/tapestry-ibiblio-rsynch-repository
-            </url>
-        </repository>
-        <snapshotRepository>
-            <id>tapestry-snapshot</id>
-            <url>scpexe://people.apache.org/home/hlship/public_html/tapestry-snapshot-repository</url>
-        </snapshotRepository>
     </distributionManagement>
 
 
