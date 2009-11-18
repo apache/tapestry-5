@@ -444,6 +444,17 @@ public class DOMTest extends InternalBaseTestCase
     }
 
     @Test
+    public void apostrophes_are_escaped() {
+        Document d = new Document(new XMLMarkupModel(true));
+
+        Element root = d.newRootElement("prime");
+
+        root.attribute("apostrophie", "some'thing");
+
+        assertEquals(root.toString(), "<prime apostrophie='some&#39;thing'/>");
+    }
+
+    @Test
     public void add_class_names()
     {
         Document d = new Document(new XMLMarkupModel());

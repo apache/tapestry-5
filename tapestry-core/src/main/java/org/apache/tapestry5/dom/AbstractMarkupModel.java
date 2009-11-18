@@ -133,7 +133,8 @@ public abstract class AbstractMarkupModel implements MarkupModel
 
                     if (useApostropheForAttributes)
                     {
-                        builder.append("&apos;");
+                        //TAP5-714
+                        builder.append("&#39;");
                         continue;
                     }
 
