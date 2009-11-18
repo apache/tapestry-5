@@ -11,7 +11,7 @@
     </parent>
     <name>Tapestry 5 Quickstart Archetype</name>
     <inceptionYear>2007</inceptionYear>
-    <url>http://tapestry.apache.org/tapestry5/${pom.artifactId}/</url>
+    <url>http://tapestry.apache.org/tapestry5/${project.artifactId}/</url>
     <description>Archetype for creating a basic Tapestry 5 application, including Eclipse control
         files.
     </description>
