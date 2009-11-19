@@ -2786,6 +2786,8 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         waitForElementToAppear("outputvalue");
 
         assertText("outputvalue", "robot chicken");
+        
+        assertText("eventfired", "true");
 
         // Make sure it was a partial update
         assertText("now", now);
