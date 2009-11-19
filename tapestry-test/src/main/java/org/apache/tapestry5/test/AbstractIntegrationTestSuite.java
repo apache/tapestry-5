@@ -25,7 +25,7 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 
 /**
- * A base class for creating integration tests. Ths encapsulates starting up an in-process copy of Jetty, and in-process
+ * A base class for creating integration tests. This encapsulates starting up an in-process copy of Jetty, and in-process
  * copy of {@link SeleniumServer}, and a Selenium client.
  * <p/>
  * Unless you are <em>very, very clever</em>, you will want to run the tests sequentially. TestNG tends to run them in
@@ -1094,7 +1094,7 @@ public class AbstractIntegrationTestSuite extends Assert implements Selenium
 
     /**
      * This does NOT invoke {@link com.thoughtworks.selenium.Selenium#start(String)}; it invokes {@link
-     * #start(String[])}.  This is necesasry due to the introduction of the start() method.
+     * #start(String[])}.  This is necessary due to the introduction of the start() method.
      *
      * @param linkText text of link to click
      * @since 5.1.0.0
