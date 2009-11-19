@@ -18,13 +18,15 @@ import com.thoughtworks.selenium.CommandProcessor;
 import com.thoughtworks.selenium.DefaultSelenium;
 import com.thoughtworks.selenium.HttpCommandProcessor;
 import com.thoughtworks.selenium.Selenium;
+
+import org.openqa.selenium.server.RemoteControlConfiguration;
 import org.openqa.selenium.server.SeleniumServer;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 
 /**
- * A base class for creating integration tests. Ths encapsulates starting up an in-process copy of Jetty, and in-process
+ * A base class for creating integration tests. This encapsulates starting up an in-process copy of Jetty, and in-process
  * copy of {@link SeleniumServer}, and a Selenium client.
  * <p/>
  * Unless you are <em>very, very clever</em>, you will want to run the tests sequentially. TestNG tends to run them in
@@ -263,7 +265,7 @@ public class AbstractIntegrationTestSuite extends Assert implements Selenium
 
         server.start();
 
-        CommandProcessor cp = new HttpCommandProcessor("localhost", SeleniumServer.DEFAULT_PORT,
+        CommandProcessor cp = new HttpCommandProcessor("localhost", RemoteControlConfiguration.DEFAULT_PORT,
                                                        seleniumBrowserCommand, BASE_URL);
 
         selenium = new DefaultSelenium(new ErrorReportingCommandProcessor(cp));
@@ -899,11 +901,6 @@ public class AbstractIntegrationTestSuite extends Assert implements Selenium
         selenium.addLocationStrategy(strategyName, functionDefinition);
     }
 
-    public void captureEntirePageScreenshot(String filename)
-    {
-        selenium.captureEntirePageScreenshot(filename);
-    }
-
     public void setContext(String context)
     {
         selenium.setContext(context);
@@ -948,5 +945,177 @@ public class AbstractIntegrationTestSuite extends Assert implements Selenium
 
         for (String s : linkText)
             clickAndWait(String.format("link=%s", s));
+    }   
+    
+    /**
+     * @since 5.0.19
+     */
+    public void setExtensionJs(String extensionJs)
+    {
+        selenium.setExtensionJs(extensionJs);
     }
+
+    /**
+     * @since 5.0.19
+     */
+    public void start(Object optionsObject)
+    {
+        selenium.start(optionsObject);
+    }
+
+    /**
+     * @since 5.0.19
+     */
+    public void showContextualBanner()
+    {
+        selenium.showContextualBanner();
+    }
+
+    /**
+     * @since 5.0.19
+     */
+    public void showContextualBanner(String className, String methodName)
+    {
+        selenium.showContextualBanner(className, methodName);
+    }
+
+    /**
+     * @since 5.0.19
+     */
+    public void mouseDownRight(String locator)
+    {
+        selenium.mouseDownRight(locator);
+    }
+
+    /**
+     * @since 5.0.19
+     */
+    public void mouseDownRightAt(String locator, String coordString)
+    {
+        selenium.mouseDownRightAt(locator, coordString);
+    }
+
+    /**
+     * @since 5.0.19
+     */
+    public void captureEntirePageScreenshot(String filename, String kwargs)
+    {
+        selenium.captureEntirePageScreenshot(filename, kwargs);
+    }
+
+    /**
+     * @since 5.0.19
+     */
+    public void rollup(String rollupName, String kwargs)
+    {
+        selenium.rollup(rollupName, kwargs);
+    }
+
+    /**
+     * @since 5.1.0.0
+     */
+    public void addScript(String scriptContent, String scriptTagId)
+    {
+        selenium.addScript(scriptContent, scriptTagId);
+    }
+
+    /**
+     * @since 5.0.19
+     */
+    public void removeScript(String scriptTagId)
+    {
+        selenium.removeScript(scriptTagId);
+    }
+
+    /**
+     * @since 5.0.19
+     */
+    public void useXpathLibrary(String libraryName)
+    {
+        selenium.useXpathLibrary(libraryName);
+    }
+
+    /**
+     * @since 5.0.19
+     */
+    public String captureScreenshotToString()
+    {
+        return selenium.captureScreenshotToString();
+    }
+
+    /**
+     * @since 5.0.19
+     */
+    public String captureEntirePageScreenshotToString(String kwargs)
+    {
+        return selenium.captureEntirePageScreenshotToString(kwargs);
+    }
+
+    /**
+     * @since 5.0.19
+     */
+    public String retrieveLastRemoteControlLogs()
+    {
+        return selenium.retrieveLastRemoteControlLogs();
+    }
+
+    /**
+     * @since 5.0.19
+     */
+    public void mouseUpRight(String locator)
+    {
+        selenium.mouseUpRight(locator);
+    }
+
+    /**
+     * @since 5.0.19
+     */
+    public void mouseUpRightAt(String locator, String coordString)
+    {
+        selenium.mouseUpRightAt(locator, coordString);
+    }
+
+    /**
+     * This does NOT invoke {@link com.thoughtworks.selenium.Selenium#start(String)}; it invokes {@link
+     * #start(String[])}.  This is necessary due to the introduction of the start() method.
+     *
+     * @param linkText text of link to click
+     * @since 5.0.19
+     */
+    public void start(String linkText)
+    {
+        start(new String[] { linkText });
+    }
+    
+    /**
+     * @since 5.0.19
+     */
+   	public void addCustomRequestHeader(String key, String value) 
+   	{
+   		selenium.addCustomRequestHeader(key, value);
+    }
+   	
+    /**
+     * @since 5.0.19
+     */   	
+   	public String captureNetworkTraffic(String type) 
+   	{
+   		return selenium.captureNetworkTraffic(type);
+    }
+   	
+    /**
+     * @since 5.0.19
+     */   	
+   	public void deselectPopUp() 
+   	{
+   		selenium.deselectPopUp();
+   	}
+   	
+    /**
+     * @since 5.0.19
+     */   	
+   	public void selectPopUp(String windowID) 
+   	{
+   		selenium.selectPopUp(windowID);
+   	}    
 }

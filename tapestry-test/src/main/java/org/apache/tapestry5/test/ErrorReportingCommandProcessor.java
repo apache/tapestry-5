@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@ public class ErrorReportingCommandProcessor implements CommandProcessor
         StringBuilder builder = new StringBuilder();
 
         builder.append(BORDER);
-        builder.append("\nSeleninum failure processing comamnd ");
+        builder.append("\nSelenium failure processing command ");
         builder.append(command);
         builder.append("(");
 
@@ -161,4 +161,35 @@ public class ErrorReportingCommandProcessor implements CommandProcessor
         delegate.stop();
     }
 
+    /**
+     * @since 5.0.19
+     */
+    public String getRemoteControlServerLocation()
+    {
+        return delegate.getRemoteControlServerLocation();
+    }
+
+    /**
+     * @since 5.0.19
+     */
+    public void setExtensionJs(String extensionJs)
+    {
+        delegate.setExtensionJs(extensionJs);
+    }
+
+    /**
+     * @since 5.0.19
+     */
+    public void start(String optionsString)
+    {
+        delegate.start(optionsString);
+    }
+
+    /**
+     * @since 5.0.19
+     */
+    public void start(Object optionsObject)
+    {
+        delegate.start(optionsObject);
+    }
 }
