@@ -24,6 +24,7 @@ import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.services.ThreadLocale;
 import org.apache.tapestry5.services.TranslatorSource;
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -42,7 +43,11 @@ public class TranslatorSourceImplTest extends InternalBaseTestCase
     public void setup()
     {
         source = getService(TranslatorSource.class);
-
+    }
+    
+    @BeforeMethod
+    public void setupThreadLocale()
+    {
         getService(ThreadLocale.class).setLocale(Locale.ENGLISH);
     }
 
