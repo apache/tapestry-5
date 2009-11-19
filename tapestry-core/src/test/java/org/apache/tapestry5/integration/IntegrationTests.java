@@ -2932,4 +2932,21 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         assertText("prop.middle.bottom", "bound value");
         assertText("literal.middle.bottom", "some text");
     }
+    
+    /**
+     * TAP5-711
+     */
+    @Test
+    public void image_submit_triggers_selected_event()
+    {
+        start("Submit with an Image Demo");
+        
+        type("value", "barney gumble");
+        
+        clickAndWait("//input[@type='image']");
+        
+        assertText("outputvalue", "barney gumble");
+        
+        assertText("eventfired", "true");
+    }
 }

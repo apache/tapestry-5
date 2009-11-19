@@ -146,7 +146,7 @@ public class Submit implements ClientElement
     {
         if (disabled) return;
 
-        String value = request.getParameter(elementName);
+        String value = request.getParameter(image == null ? elementName : elementName + ".x");
 
         if (value == null) return;
 
@@ -164,21 +164,6 @@ public class Submit implements ClientElement
 
         if (defer) formSupport.defer(sendNotification);
         else heartbeat.defer(sendNotification);
-    }
-
-    // For testing:
-
-    void setDefer(boolean defer)
-    {
-        this.defer = defer;
-    }
-
-    void setup(ComponentResources resources, FormSupport formSupport, Heartbeat heartbeat, RenderSupport renderSupport)
-    {
-        this.resources = resources;
-        this.formSupport = formSupport;
-        this.heartbeat = heartbeat;
-        this.renderSupport = renderSupport;
     }
 
     /**

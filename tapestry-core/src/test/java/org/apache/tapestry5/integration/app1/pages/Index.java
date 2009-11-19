@@ -347,7 +347,10 @@ public class Index
                      "Nice exception message for common problem of form fields outside forms"),
 
             new Item("SubmitWithContext", "Submit With Context",
-                     "Providing a context for Submit component")
+                     "Providing a context for Submit component"),
+            
+            new Item("ImageSubmitDemo", "Submit with an Image Demo", "Make sure that submit with the image parameter set triggers the 'selected' event.")
+
     );
 
     static
