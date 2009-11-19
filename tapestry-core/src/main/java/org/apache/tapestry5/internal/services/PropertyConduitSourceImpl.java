@@ -42,6 +42,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class PropertyConduitSourceImpl implements PropertyConduitSource, InvalidationListener
@@ -570,7 +571,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
                         double decimalValue = Double.parseDouble(node.getText());
 
-                        previousReference = String.format("%fd", decimalValue);
+                        previousReference = String.format(Locale.ENGLISH, "%fd", decimalValue);
                         activeType = double.class;
 
                         node = null;
