@@ -12,24 +12,17 @@ Chapter 2: Your First Tapestry Application
   
   Maven uses the group id and artifact id to provide a unique identity for the application, and Tapestry needs to have a base package name so it knows where to look for pages and components.
   
-  For this example, we'll use the group id <<org.apache.tapestry>> and the artifact id <<tapestry-tutorial1>>, and we'll use <<org.apache.tapestry5.tutorial>> as the base package.
+  For this example, we'll use the group id <<org.apache.tapestry>>, artifact id <<tapestry-tutorial1>>, version <<1.0-SNAPSHOT>> and we'll use <<org.apache.tapestry5.tutorial>> as the base package.
   
   Our final command line is thus:
 
 ----
-mvn archetype:create
-  -DarchetypeGroupId=org.apache.tapestry
-  -DarchetypeArtifactId=quickstart
-  -DgroupId=org.apache.tapestry
-  -DartifactId=tutorial1
-  -DpackageName=org.apache.tapestry5.tutorial
+mvn archetype:generate -DarchetypeCatalog=http://tapestry.formos.com/maven-repository
 ----
 
-  We've shown this as several lines, but it would normally be entered as a single long line.
-  
-  As a command, it's quite a doozy!  If you are going to create lots of projects, creating a wrapper script for this is a smart idea.
-  
-  Execute this in a temporary directory, it will create a sub-directory: tapestry-tutorial1.
+  It will then prompt you to pick the archetype - choose quickstart, enter the group id, artifact id, version and package when prompted.
+
+  Execute this in a temporary directory, it will create a sub-directory: tutorial1.
     
   The first time you execute this command, Maven will spend quite a while downloading all kinds of JARs into
   your local repository, which can take a minute or more. Later, once all that is already available locally,
