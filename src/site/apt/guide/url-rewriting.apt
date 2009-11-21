@@ -225,6 +225,7 @@ public static void contributeURLRewriter(OrderedConfiguration<URLRewriterRule> c
                     String newPageName = pageName.replaceAll("page$","");
                     return new SimpleRequest(request,path.replaceAll(pageName,newPageName);
                }
+               return request;
             }
 
         }
