@@ -97,6 +97,9 @@ public class Index
 
             new Item("LinkSubmitDemo", "LinkSubmit Demo", "JavaScript LinkSubmit component"),
 
+            new Item("LinkSubmitWithoutValidatorDemo", "LinkSubmit Without Validator Demo",
+                    "Demonstrates that the LinkSubmit component is working without a validator on any of fields in the form"),
+
             new Item("PerFormValidationMessageDemo", "Per-Form Validation Messages",
                      "Per-form configuration of validation messages and constraints."),
 

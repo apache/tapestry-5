@@ -27,7 +27,7 @@ public class MarkupConstants
      * allowing the click event to occur. Refrences a client-side JavaScript function that displays a standard "wait for
      * page to load" modal dialog.
      */
-    public static final String WAIT_FOR_PAGE = "javascript:Tapestry.waitForPage(event);";
+    public static final String WAIT_FOR_PAGE = "javascript:return Tapestry.waitForPage(event);";
 
     /**
      * Name of attribute for intercepting the user clicking a link.
