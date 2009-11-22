@@ -259,14 +259,23 @@ public class AbstractIntegrationTestSuite extends Assert implements Selenium
     @AfterClass(alwaysRun = true)
     public void cleanup() throws Exception
     {
-        selenium.stop();
-        selenium = null;
+    	if (selenium!=null) 
+    	{
+    		selenium.stop();
+    		selenium = null;
+    	}
 
-        server.stop();
-        server = null;
+    	if (server!=null)
+    	{
+    		server.stop();
+    		server = null;
+    	}
 
-        jettyRunner.stop();
-        jettyRunner = null;
+    	if (jettyRunner!=null)
+    	{
+    		jettyRunner.stop();
+    		jettyRunner = null;
+    	}
     }
 
     @BeforeClass(alwaysRun = true)
