@@ -919,7 +919,7 @@ Tapestry.Validator = {
     {
         $(field).getFieldEventManager().requiredCheck = function(value)
         {
-            if (value.strip() == '')
+        	if ((Object.isString(value) && value.strip() == '') || value == null)
                 $(field).showValidationMessage(message);
         };
     },
@@ -1311,7 +1311,7 @@ Tapestry.FieldEventManager = Class.create({
         // Don't try to validate blank values; if the field is required, that error is already
         // noted and presented to the user.
 
-        if (!t.validationError && ! value.blank())
+        if (!t.validationError && ! (Object.isString(value) && value.blank()))
         {
             var translated = this.translator(value);
 

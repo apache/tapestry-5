@@ -34,7 +34,7 @@ public final class Required extends AbstractValidator<Void, Object>
     public void validate(Field field, Void constraintValue, MessageFormatter formatter, Object value)
             throws ValidationException
     {
-        if (value == null || InternalUtils.isBlank(value.toString()))
+        if (value == null || InternalUtils.isEmptyCollection(value) || InternalUtils.isBlank(value.toString()))
             throw new ValidationException(buildMessage(formatter, field));
     }
 

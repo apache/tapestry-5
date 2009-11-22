@@ -477,6 +477,20 @@ public class InternalUtils
     {
         return input == null || input.length() == 0 || input.trim().length() == 0;
     }
+    
+    /**
+     * Returns true if the input is an empty collection.
+     */
+
+    public static boolean isEmptyCollection(Object input)
+    {
+        if(input instanceof Collection)
+        {
+            return ((Collection)input).isEmpty();
+        }
+        
+        return false;
+    }
 
     public static boolean isNonBlank(String input)
     {
