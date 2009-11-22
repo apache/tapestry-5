@@ -352,7 +352,10 @@ public class Index
             new Item("SubmitWithContext", "Submit With Context",
                      "Providing a context for Submit component"),
             
-            new Item("ImageSubmitDemo", "Submit with an Image Demo", "Make sure that submit with the image parameter set triggers the 'selected' event.")
+            new Item("ImageSubmitDemo", "Submit with an Image Demo", "Make sure that submit with the image parameter set triggers the 'selected' event."),
+            
+            new Item("SelectZoneDemo", "Select Zone Demo", "Use a Select component to update a zone.")
+
 
     );
 

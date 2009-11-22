@@ -763,6 +763,11 @@ Tapestry.Initializer = {
      */
     linkZone : function(element, zoneId, url)
     {
+    	Tapestry.Initializer.updateZoneOnEvent("click", element, zoneId, url);
+    },
+    
+    updateZoneOnEvent : function(eventName, element, zoneId, url)
+    {
         element = $(element);
 
         // Update the element with the id of zone div. This may be changed dynamically on the client
@@ -799,17 +804,24 @@ Tapestry.Initializer = {
             return;
         }
 
-        // Otherwise, assume it's just an ordinary link.
+        // Otherwise, assume it's just an ordinary link or input field.
 
-        element.observe("click", function(event)
+        element.observe(eventName, function(event)
         {
             Event.stop(event);
 
             var zoneObject = Tapestry.findZoneManager(element);
 
             if (!zoneObject) return;
+            
+            var newUrl = url;
 
-            zoneObject.updateFromURL(url);
+            if(element.tagName == "SELECT" && element.value)
+            {
+            	newUrl+='&t:selectvalue='+element.value;
+            }
+
+            zoneObject.updateFromURL(newUrl);
         });
     },
 

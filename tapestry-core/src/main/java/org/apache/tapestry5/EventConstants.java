@@ -149,4 +149,13 @@ public class EventConstants
      * @SINCE 5.1.0.4
      */
     public static final String PROVIDE_COMPLETIONS = "providecompletions";
+    
+    /**
+     * Event triggered by {@link org.apache.tapestry5.corelib.components.Select} component to inform its
+     * container that Select's value has changed.
+     *
+     * @since 5.2.0.0
+     */
+    public static final String VALUE_CHANGED = "valuechanged";
+    
 }
