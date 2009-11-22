@@ -1005,6 +1005,19 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         // causes an error in the js console but does not throw an exception here. optimally, this would make the test case fail.
         doubleClick("//select[@id=\"languages-avail\"]/option[1]");
     }
+    
+    /**
+     * TAP5-868.
+     */
+    @Test
+    public void palette_component_client_validation()
+    {
+        start("Palette Demo", "reset");
+
+        click(SUBMIT);
+
+        assertBubbleMessage("languages", "You must provide a value for Languages.");
+    }
 
     @Test
     public void event_handler_return_types()
