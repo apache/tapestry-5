@@ -102,7 +102,7 @@
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
-            <version>5.7</version>
+            <version>${testng-version}</version>
             <classifier>jdk15</classifier>
             <scope>test</scope>
         </dependency>

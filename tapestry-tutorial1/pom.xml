@@ -42,7 +42,7 @@ of testing facilities designed for use with TestNG (http://testng.org/), so it's
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
-            <version>5.7</version>
+            <version>${testng-version}</version>
             <classifier>jdk15</classifier>
             <scope>test</scope>
         </dependency>
