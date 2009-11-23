@@ -1970,6 +1970,10 @@ public final class TapestryModule
     {
         // Java class files always require a digest.
         configuration.add("class");
+        
+        // Even though properties don't contain sensible data we should protect them.
+        configuration.add("properties");
+
 
         // Likewise, we don't want people fishing for templates.
         configuration.add(InternalConstants.TEMPLATE_EXTENSION);
