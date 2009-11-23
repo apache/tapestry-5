@@ -36,21 +36,16 @@ public class OneShotLock
     {
         if (lock)
         {
-            // This is how I would think it would be:
+            // The depth to find the caller of the check() or lock() method varies between JDKs.
 
-            // [0] is getStackTrace()
-            // [1] is innerCheck()
-            // [2] is check() or lock()
-            // [3] is caller of check() or lock()
 
-            // ... so why do we get element 4?  Found this via trial and error.  Some extra stack frame
-            // gets in there somehow, as in, getStackTrace() must be calling something (probably native)
-            // that creates the actual array, and includes itself as [0], getStackTrace() as [1], etc.
-            // Maybe it's something to do with synchronized?
+            StackTraceElement[] elements = Thread.currentThread().getStackTrace();
 
-            StackTraceElement element = Thread.currentThread().getStackTrace()[4];
+            int i = 0;
+            while (!elements[i].getMethodName().equals("innerCheck"))
+                i++;
 
-            throw new IllegalStateException(UtilMessages.oneShotLock(element));
+            throw new IllegalStateException(UtilMessages.oneShotLock(elements[i + 2]));
         }
     }
 
