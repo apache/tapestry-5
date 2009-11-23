@@ -133,7 +133,7 @@ public class Select extends AbstractField
      * indicated zone. The component will trigger the event {@link EventConstants#VALUE_CHANGED} to inform its
      * container that Select's value has changed.
      * 
-     * @since 5.2.0.0
+     * @since 5.1.0.6
      */
     @Parameter(defaultPrefix = BindingConstants.LITERAL)
     private String zone;
