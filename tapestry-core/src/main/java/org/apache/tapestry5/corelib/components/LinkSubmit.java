@@ -87,7 +87,7 @@ public class LinkSubmit implements ClientElement
     {
         this.clientId = clientId;
 
-        String hiddenFieldName = this.clientId + ":hidden";
+        String hiddenFieldName = this.clientId + "-hidden";
 
         if (request.getParameter(hiddenFieldName) != null)
         {

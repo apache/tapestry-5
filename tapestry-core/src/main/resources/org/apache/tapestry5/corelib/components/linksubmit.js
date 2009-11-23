@@ -1,4 +1,4 @@
-//  Copyright 2008 The Apache Software Foundation
+//  Copyright 2008,2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -25,13 +25,12 @@ Tapestry.LinkSubmit = Class.create({
     createHidden : function()
     {
         var hidden = new Element("input", { "type":"hidden",
-        	"id": this.element.id + ":hidden",
-            "name": this.element.id + ":hidden",
+        	"id": this.element.id + "-hidden",
+            "name": this.element.id + "-hidden",
             "value": this.element.id});
 
-        if (this.form.select("input#" + this.element.id + ":hidden").length == 0)
+        if (this.form.select("input#" + this.element.id + "-hidden").length == 0)
             this.element.insert({after:hidden});
-
     },
 
     onClick : function(event)
