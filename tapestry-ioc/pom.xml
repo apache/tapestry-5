@@ -27,7 +27,7 @@
         <dependency>
             <groupId>javassist</groupId>
             <artifactId>javassist</artifactId>
-            <version>3.9.0.GA</version>
+            <version>3.8.0.GA</version>
         </dependency>
 
         <dependency>
@@ -117,7 +117,6 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>cobertura-maven-plugin</artifactId>
-                <!-- Version 2.1 is broken. -->
                 <version>${cobertura-plugin-version}</version>
             </plugin>
         </plugins>
