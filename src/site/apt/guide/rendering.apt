@@ -295,7 +295,7 @@ Method Conflicts and Ordering
 
   The order in which the mixins of a given class (@MixinAfter or mixins before) execute is determined
   by the ordering constraints specified for the mixins. If no constrains are provided, the order is undefined.
-  See {{{mixins.html}component mixins} for more details.
+  See {{{mixins.html}component mixins}} for more details.
 
 * Parents before Child
 
