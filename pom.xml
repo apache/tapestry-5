@@ -113,6 +113,15 @@
             </roles>
             <timezone>-3</timezone>
         </developer>
+        <developer>
+            <id>uli</id>
+            <name>Ulrich St&auml;rk</name>
+            <email>uli@apache.org</email>
+            <roles>
+                <role>Developer</role>
+            </roles>
+            <timezone>+1</timezone>
+        </developer>
     </developers>
 
     <ciManagement>
