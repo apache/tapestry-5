@@ -138,7 +138,7 @@
         </menu>
 
         <menu name="Resources">
-            <item name="Wiki" href="http://wiki.apache.org/tapestry"/>
+            <item name="Wiki" href="http://wiki.apache.org/tapestry/FrontPage"/>
             <item name="Wiki HowTos" href="http://wiki.apache.org/tapestry/Tapestry5HowTos"/>
         </menu>
 
