@@ -127,7 +127,7 @@ public class SessionImpl implements Session
 
             if (analyzer.isDirty(attributeValue))
             {
-                // TAP5-384: Jetty & Tomcat work by object identity, will not update the attribute
+                // TAP5-834: Jetty & Tomcat work by object identity, will not update the attribute
                 // and fire the session binding event unless there's a real change. So we set the
                 // attribute to null and then to the new value and that should force the necessary
                 // notification.
