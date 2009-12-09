@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -37,7 +37,8 @@ public class SessionImpl implements Session
     private boolean invalidated = false;
 
     /**
-     * Cache of attribute objects read from, or written to, the real session. This is needed for end-of-request
+     * Cache of attribute objects read from, or written to, the real session.
+     * This is needed for end-of-request
      * processing.
      */
     private final Map<String, Object> sessionAttributeCache = CollectionFactory.newMap();
@@ -122,11 +123,18 @@ public class SessionImpl implements Session
 
             Object attributeValue = entry.getValue();
 
-            if (attributeValue == null)
-                continue;
+            if (attributeValue == null) continue;
 
             if (analyzer.isDirty(attributeValue))
+            {
+                // TAP5-384: Jetty & Tomcat work by object identity, will not update the attribute
+                // and fire the session binding event unless there's a real change. So we set the
+                // attribute to null and then to the new value and that should force the necessary
+                // notification.
+                
+                session.setAttribute(attributeName, null);
                 session.setAttribute(attributeName, attributeValue);
+            }
         }
     }
 }

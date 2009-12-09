@@ -1,4 +1,4 @@
-// Copyright 2008 The Apache Software Foundation
+// Copyright 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,12 +18,20 @@ import javax.servlet.http.HttpSessionBindingEvent;
 import javax.servlet.http.HttpSessionBindingListener;
 
 /**
- * Base implementation of {@link org.apache.tapestry5.OptimizedSessionPersistedObject}.  Subclasses should invoke {@link
- * #markDirty()} when internal state of the object changes.
- *
+ * Base implementation of
+ * {@link org.apache.tapestry5.OptimizedSessionPersistedObject}. Subclasses
+ * should invoke {@link #markDirty()} when internal state of the object changes.
+ * <p>
+ * Note that (due to TAP5-834), the object will receive a spurious
+ * <code>valueUnbound()</code> notification when dirty. Tapestry sets dirty
+ * session attributes to null, then to the persisted object, to force a
+ * <code>valueBound()</code> notification, and that unfortunately also sends the
+ * <code>valueUnbound()</code>.
+ * 
  * @since 5.1.1.0
  */
-public abstract class BaseOptimizedSessionPersistedObject implements OptimizedSessionPersistedObject, HttpSessionBindingListener
+public abstract class BaseOptimizedSessionPersistedObject implements
+        OptimizedSessionPersistedObject, HttpSessionBindingListener
 {
     private transient boolean dirty;
 
@@ -33,8 +41,10 @@ public abstract class BaseOptimizedSessionPersistedObject implements OptimizedSe
     }
 
     /**
-     * Invoked by the servlet container when the value is stored (or re-stored) as an attribute of the session. This
-     * clears the dirty flag. Subclasses may override this method, but should invoke this implementation.
+     * Invoked by the servlet container when the value is stored (or re-stored)
+     * as an attribute of the session. This
+     * clears the dirty flag. Subclasses may override this method, but should
+     * invoke this implementation.
      */
     public void valueBound(HttpSessionBindingEvent event)
     {
@@ -49,7 +59,8 @@ public abstract class BaseOptimizedSessionPersistedObject implements OptimizedSe
     }
 
     /**
-     * Invoked by the subclass whenever the internal state of the object changes. Typically, this is invoked from
+     * Invoked by the subclass whenever the internal state of the object
+     * changes. Typically, this is invoked from
      * mutator methods.
      */
     protected final void markDirty()
