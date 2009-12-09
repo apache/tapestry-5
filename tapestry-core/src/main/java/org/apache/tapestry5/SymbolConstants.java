@@ -275,4 +275,13 @@ public class SymbolConstants
      */
     public static final String BLACKBIRD  = "tapestry.blackbird";
 
+    /**
+     * Whether assets in the web application's context directory are available by default.
+     * If true (the default), tapestry will provide conributions to the appropriate services (RegexAuthorizer) to allow access
+     * to .js, .jpg, .jpeg, .png, .gif, and .css assets that reside within the application context.
+     * If false, no such contributions will be made, and access to those resources will be restricted
+     * without explicit user contributions.
+     */
+    public static final String CONTEXT_ASSETS_AVAILABLE ="tapestry.context-assets-available";
+
 }

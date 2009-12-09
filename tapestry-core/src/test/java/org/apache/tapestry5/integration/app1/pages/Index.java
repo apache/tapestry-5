@@ -391,7 +391,9 @@ public class Index
             
             new Item("ImageSubmitDemo", "Submit with an Image Demo", "Make sure that submit with the image parameter set triggers the 'selected' event."),
             
-            new Item("SelectZoneDemo", "Select Zone Demo", "Use a Select component to update a zone.")
+            new Item("SelectZoneDemo", "Select Zone Demo", "Use a Select component to update a zone."),
+
+            new Item("AssetProtectionDemo", "Asset Protection Demo", "AssetProtectionDispatcher is properly contributed and functioning")
 
     );
 

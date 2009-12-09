@@ -2113,6 +2113,8 @@ public final class TapestryModule
         configuration.add(SymbolConstants.ENCODE_LOCALE_INTO_PATH, "true");
         
         configuration.add(SymbolConstants.BLACKBIRD_ENABLED, "false");
+
+        configuration.add(SymbolConstants.CONTEXT_ASSETS_AVAILABLE, "true");
     }
 
 
@@ -2508,13 +2510,16 @@ public final class TapestryModule
     public void contributeRegexAuthorizer(Configuration<String> regex,
                 @Symbol("tapestry.scriptaculous.path") String scriptPath,
                 @Symbol("tapestry.blackbird.path") String blackbirdPath,
-                @Symbol("tapestry.datepicker.path") String datepickerPath)
+                @Symbol("tapestry.datepicker.path") String datepickerPath,
+                @Symbol(SymbolConstants.CONTEXT_ASSETS_AVAILABLE) boolean contextAvailable,
+                @Symbol(SymbolConstants.APPLICATION_VERSION) String appVersion)
     {
-        //allow any js, jpg, jpeg, png, or css under org/chenillekit/tapstry. The funky bit of ([^/.]+/)* is what allows
+        //allow any js, jpg, jpeg, png, or css under org/apache/tapestry5, along with
+        //resources for blackbird, scriptaculous, and the date picker.
+        // The funky bit of ([^/.]+/)* is what allows
         //multiple paths, while not allowing any of those paths to contains ./ or ../ thereby preventing paths like:
-        //org/chenillekit/tapestry/../../../foo.js
+        //org/apache/tapestry5/../../../foo.js
         String pathPattern = "([^/.]+/)*[^/.]+\\.((css)|(js)|(jpg)|(jpeg)|(png)|(gif))$";
-        regex.add("^org/chenillekit/tapestry/" + pathPattern);
 
         regex.add("^org/apache/tapestry5/" + pathPattern);
 
@@ -2523,6 +2528,10 @@ public final class TapestryModule
         regex.add(scriptPath + "/" + pathPattern);
         //allow access to virtual assets. Critical for tapestry-combined js files.
         regex.add("virtual/" + pathPattern);
+
+        if (contextAvailable) {
+            regex.add(RequestConstants.CONTEXT_FOLDER + appVersion + "/" + pathPattern);
+        }
     }
 
 }
