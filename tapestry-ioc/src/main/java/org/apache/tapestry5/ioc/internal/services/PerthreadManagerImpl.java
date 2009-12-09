@@ -14,17 +14,23 @@
 
 package org.apache.tapestry5.ioc.internal.services;
 
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.internal.util.DummyLock;
+import org.apache.tapestry5.ioc.internal.util.JDKUtils;
 import org.apache.tapestry5.ioc.services.PerthreadManager;
 import org.apache.tapestry5.ioc.services.ThreadCleanupListener;
 import org.slf4j.Logger;
 
-import java.util.List;
-import java.util.Map;
-
 public class PerthreadManagerImpl implements PerthreadManager
 {
     private static final String LISTENERS_KEY = "PerthreadManager.listenerList";
+
+    private final Lock lock;
 
     private static class MapHolder extends ThreadLocal<Map>
     {
@@ -41,15 +47,29 @@ public class PerthreadManagerImpl implements PerthreadManager
 
     public PerthreadManagerImpl(Logger logger)
     {
-        this.logger = logger;
+        this(logger, JDKUtils.JDK_1_5);
     }
 
-
-    private synchronized Map getPerthreadMap()
+    PerthreadManagerImpl(Logger logger, boolean useSynchronization)
     {
-        return holder.get();
+        this.logger = logger;
+
+        lock = useSynchronization ? new ReentrantLock() : new DummyLock();
     }
 
+    private Map getPerthreadMap()
+    {
+        try
+        {
+            lock.lock();
+            
+            return holder.get();
+        }
+        finally
+        {
+            lock.unlock();
+        }
+    }
 
     private List<ThreadCleanupListener> getListeners()
     {
@@ -64,14 +84,14 @@ public class PerthreadManagerImpl implements PerthreadManager
         return result;
     }
 
-
     public void addThreadCleanupListener(ThreadCleanupListener listener)
     {
         getListeners().add(listener);
     }
 
     /**
-     * Instructs the hub to notify all its listeners (for the current thread). It also discards its list of listeners.
+     * Instructs the hub to notify all its listeners (for the current thread).
+     * It also discards its list of listeners.
      */
     public void cleanup()
     {
@@ -91,12 +111,19 @@ public class PerthreadManagerImpl implements PerthreadManager
             }
         }
 
-        // Listeners should not re-add themselves or store any per-thread state here,
+        // Listeners should not re-add themselves or store any per-thread state
+        // here,
         // it will be lost.
 
-        synchronized (this)
+        try
         {
+            lock.lock();
+            
             holder.remove();
+        }
+        finally
+        {
+            lock.unlock();
         }
     }
 
