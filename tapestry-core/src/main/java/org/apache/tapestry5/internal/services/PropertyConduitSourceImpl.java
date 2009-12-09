@@ -48,11 +48,12 @@ import java.util.Map;
 public class PropertyConduitSourceImpl implements PropertyConduitSource, InvalidationListener
 {
     private static final MethodSignature GET_SIGNATURE = new MethodSignature(Object.class, "get",
-                                                                             new Class[] { Object.class }, null);
+            new Class[]
+            { Object.class }, null);
 
     private static final MethodSignature SET_SIGNATURE = new MethodSignature(void.class, "set",
-                                                                             new Class[] { Object.class, Object.class },
-                                                                             null);
+            new Class[]
+            { Object.class, Object.class }, null);
 
     private static final Method RANGE;
 
@@ -105,7 +106,8 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
     }
 
     /**
-     * Describes all the gory details of one term (one property or method invocation) from within the expression.
+     * Describes all the gory details of one term (one property or method
+     * invocation) from within the expression.
      */
     private interface ExpressionTermInfo extends AnnotationProvider
     {
@@ -116,7 +118,8 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
         Method getReadMethod();
 
         /**
-         * The method to invoke to write the property value, or null. Always null for method terms (which are inherently
+         * The method to invoke to write the property value, or null. Always
+         * null for method terms (which are inherently
          * read-only).
          */
         Method getWriteMethod();
@@ -127,12 +130,14 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
         Class getType();
 
         /**
-         * True if an explicit cast to the return type is needed (typically because of generics).
+         * True if an explicit cast to the return type is needed (typically
+         * because of generics).
          */
         boolean isCastRequired();
 
         /**
-         * Returns a user-presentable name identifying the property or method name.
+         * Returns a user-presentable name identifying the property or method
+         * name.
          */
         String getDescription();
     }
@@ -148,7 +153,8 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
         FORBID,
 
         /**
-         * Add code to check for null and short-circuit (i.e., the "?." safe-dereference operator)
+         * Add code to check for null and short-circuit (i.e., the "?."
+         * safe-dereference operator)
          */
         ALLOW,
 
@@ -165,8 +171,10 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
         final String termReference;
 
         /**
-         * @param type          type of variable
-         * @param termReference name of variable, or a constant value
+         * @param type
+         *            type of variable
+         * @param termReference
+         *            name of variable, or a constant value
          */
         private GeneratedTerm(Class type, String termReference)
         {
@@ -184,7 +192,8 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
     private final StringInterner interner;
 
     /**
-     * Because of stuff like Hibernate, we sometimes start with a subclass in some inaccessible class loader and need to
+     * Because of stuff like Hibernate, we sometimes start with a subclass in
+     * some inaccessible class loader and need to
      * work up to a base class from a common class loader.
      */
     private final Map<Class, Class> classToEffectiveClass = CollectionFactory.newConcurrentMap();
@@ -219,9 +228,9 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
     private final PropertyConduit literalNull;
 
-
     /**
-     * Encapsulates the process of building a PropertyConduit instance from an expression.
+     * Encapsulates the process of building a PropertyConduit instance from an
+     * expression.
      */
     class PropertyConduitBuilder
     {
@@ -306,11 +315,9 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
                 builder.addln("%s = $%d;", p.getFieldName(), index++);
             }
 
-
             builder.end();
 
             Class[] arrayOfTypes = types.toArray(new Class[0]);
-
 
             classFab.addConstructor(arrayOfTypes, null, builder.toString());
 
@@ -319,10 +326,8 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
         private String addInjection(Class fieldType, Object fieldValue)
         {
-            String fieldName =
-                    String.format("injected_%s_%d",
-                                  toSimpleName(fieldType),
-                                  parameters.size());
+            String fieldName = String.format("injected_%s_%d", toSimpleName(fieldType), parameters
+                    .size());
 
             classFab.addField(fieldName, Modifier.PRIVATE | Modifier.FINAL, fieldType);
 
@@ -331,8 +336,8 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
             return fieldName;
         }
 
-
-        private void createNoOp(ClassFab classFab, MethodSignature signature, String format, Object... values)
+        private void createNoOp(ClassFab classFab, MethodSignature signature, String format,
+                Object... values)
         {
             String message = String.format(format, values);
 
@@ -354,23 +359,24 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
             builder.addln("%s root = (%<s) $1;", ClassFabUtils.toJavaClassName(rootType));
 
-            builder.addln(
-                    "if (root == null) throw new NullPointerException(\"Root object of property expression '%s' is null.\");",
-                    expression);
+            builder
+                    .addln(
+                            "if (root == null) throw new NullPointerException(\"Root object of property expression '%s' is null.\");",
+                            expression);
 
             builder.addln("return root;");
 
             builder.end();
 
-            MethodSignature sig = new MethodSignature(rootType, "getRoot", new Class[] { Object.class }, null);
+            MethodSignature sig = new MethodSignature(rootType, "getRoot", new Class[]
+            { Object.class }, null);
 
             classFab.addMethod(Modifier.PRIVATE, sig, builder.toString());
         }
 
         private void addRootVariable(BodyBuilder builder)
         {
-            builder.addln("%s root = getRoot($1);",
-                          ClassFabUtils.toJavaClassName(rootType));
+            builder.addln("%s root = getRoot($1);", ClassFabUtils.toJavaClassName(rootType));
         }
 
         private void createAccessors()
@@ -386,13 +392,15 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
             while (!isLeaf(node))
             {
-                GeneratedTerm term = processDerefNode(navBuilder, activeType, node, previousReference);
+                GeneratedTerm term = processDerefNode(navBuilder, activeType, node,
+                        previousReference, "$1");
 
                 activeType = term.type;
 
                 previousReference = term.termReference;
 
-                // Second term is the continuation, possibly another chained DEREF, etc.
+                // Second term is the continuation, possibly another chained
+                // DEREF, etc.
                 node = node.getChild(1);
             }
 
@@ -400,23 +408,26 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
             navBuilder.end();
 
-            MethodSignature sig = new MethodSignature(activeType, "navigate", new Class[] { rootType },
-                                                      null);
+            MethodSignature sig = new MethodSignature(activeType, "navigate", new Class[]
+            { rootType }, null);
 
             classFab.addMethod(Modifier.PRIVATE, sig, navBuilder.toString());
 
             createGetterAndSetter(activeType, sig, node);
         }
 
-        private void createGetterAndSetter(Class activeType, MethodSignature navigateMethod, Tree node)
+        private void createGetterAndSetter(Class activeType, MethodSignature navigateMethod,
+                Tree node)
         {
             switch (node.getType())
             {
                 case IDENTIFIER:
                 case INVOKE:
 
-                    // So, a this point, we have the navigation method written and it covers all but the terminal
-                    // de-reference.  node is an IDENTIFIER or INVOKE. We're ready to use the navigation
+                    // So, a this point, we have the navigation method written
+                    // and it covers all but the terminal
+                    // de-reference. node is an IDENTIFIER or INVOKE. We're
+                    // ready to use the navigation
                     // method to implement get() and set().
 
                     ExpressionTermInfo info = infoForPropertyOrMethod(activeType, node);
@@ -431,10 +442,11 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
                 case RANGEOP:
 
-                    // As currently implemented, RANGEOP can only appear as the top level, which
+                    // As currently implemented, RANGEOP can only appear as the
+                    // top level, which
                     // means we didn't need the navigate method after all.
 
-                    createRangeOpGetter(node);
+                    createRangeOpGetter(node, "root");
                     createNoOpSetter();
 
                     conduitPropertyType = IntegerRange.class;
@@ -443,7 +455,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
                 case LIST:
 
-                    createListGetter(node);
+                    createListGetter(node, "root");
                     createNoOpSetter();
 
                     conduitPropertyType = List.class;
@@ -451,7 +463,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
                     return;
 
                 case NOT:
-                    createNotOpGetter(node);
+                    createNotOpGetter(node, "root");
                     createNoOpSetter();
 
                     conduitPropertyType = boolean.class;
@@ -463,47 +475,47 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
             }
         }
 
-        private void createRangeOpGetter(Tree node)
+        private void createRangeOpGetter(Tree node, String rootName)
         {
             BodyBuilder builder = new BodyBuilder().begin();
 
             addRootVariable(builder);
 
-            builder.addln("return %s;", createMethodInvocation(builder, node, 0, RANGE));
+            builder.addln("return %s;", createMethodInvocation(builder, node, rootName, 0, RANGE));
 
             builder.end();
 
             classFab.addMethod(Modifier.PUBLIC, GET_SIGNATURE, builder.toString());
         }
 
-        private void createNotOpGetter(Tree node)
+        private void createNotOpGetter(Tree node, String rootName)
         {
             BodyBuilder builder = new BodyBuilder().begin();
 
             addRootVariable(builder);
 
-            builder.addln("return ($w) %s;", createMethodInvocation(builder, node, 0, INVERT));
+            builder.addln("return ($w) %s;", createMethodInvocation(builder, node, rootName, 0,
+                    INVERT));
 
             builder.end();
 
             classFab.addMethod(Modifier.PUBLIC, GET_SIGNATURE, builder.toString());
         }
 
-
-        public void createListGetter(Tree node)
+        public void createListGetter(Tree node, String rootName)
         {
             BodyBuilder builder = new BodyBuilder().begin();
 
             addRootVariable(builder);
 
-            builder.addln("return %s;", createListConstructor(builder, node));
+            builder.addln("return %s;", createListConstructor(builder, node, rootName));
 
             builder.end();
 
             classFab.addMethod(Modifier.PUBLIC, GET_SIGNATURE, builder.toString());
         }
 
-        private String createListConstructor(BodyBuilder builder, Tree node)
+        private String createListConstructor(BodyBuilder builder, Tree node, String rootName)
         {
             String listName = nextVariableName(List.class);
 
@@ -513,7 +525,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
             for (int i = 0; i < count; i++)
             {
-                GeneratedTerm generatedTerm = subexpression(builder, node.getChild(i));
+                GeneratedTerm generatedTerm = subexpression(builder, node.getChild(i), rootName);
 
                 builder.addln("%s.add(($w) %s);", listName, generatedTerm.termReference);
             }
@@ -521,10 +533,10 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
             return listName;
         }
 
-        private String createNotOp(BodyBuilder builder, Tree node)
+        private String createNotOp(BodyBuilder builder, Tree node, String rootName)
         {
             String flagName = nextVariableName(Boolean.class);
-            GeneratedTerm term = subexpression(builder, node.getChild(0));
+            GeneratedTerm term = subexpression(builder, node.getChild(0), rootName);
 
             builder.addln("boolean %s = invert(($w) %s);", flagName, term.termReference);
 
@@ -532,15 +544,22 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
         }
 
         /**
-         * Evalutates the node as a sub expression, storing the result into a new variable, whose name is returned.
-         *
-         * @param builder to receive generated code
-         * @param node    root of tree of nodes to be evaluated
-         * @return GeneratedTerm identifying the name of the variable and its type
+         * Evalutates the node as a sub expression, storing the result into a
+         * new variable, whose name is returned.
+         * 
+         * @param builder
+         *            to receive generated code
+         * @param node
+         *            root of tree of nodes to be evaluated
+         * @param rootName
+         *            name of variable holding reference to root object of
+         *            expression
+         * @return GeneratedTerm identifying the name of the variable and its
+         *         type
          */
-        private GeneratedTerm subexpression(BodyBuilder builder, Tree node)
+        private GeneratedTerm subexpression(BodyBuilder builder, Tree node, String rootName)
         {
-            String previousReference = "root";
+            String previousReference = rootName;
             Class activeType = rootType;
 
             while (node != null)
@@ -581,7 +600,8 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
                     case STRING:
 
                         String stringValue = node.getText();
-                        // Injecting is easier; don't have to fuss with escaping quotes or such.
+                        // Injecting is easier; don't have to fuss with escaping
+                        // quotes or such.
                         previousReference = addInjection(String.class, stringValue);
                         activeType = String.class;
 
@@ -592,7 +612,8 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
                     case DEREF:
                     case SAFEDEREF:
 
-                        GeneratedTerm generated = processDerefNode(builder, activeType, node, previousReference);
+                        GeneratedTerm generated = processDerefNode(builder, activeType, node,
+                                previousReference, rootName);
 
                         previousReference = generated.termReference;
                         activeType = generated.type;
@@ -604,8 +625,8 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
                     case IDENTIFIER:
                     case INVOKE:
 
-                        generated = addAccessForPropertyOrMethod(builder, activeType, node, previousReference,
-                                                                 NullHandling.IGNORE);
+                        generated = addAccessForPropertyOrMethod(builder, activeType, node,
+                                previousReference, rootName, NullHandling.IGNORE);
 
                         previousReference = generated.termReference;
                         activeType = generated.type;
@@ -616,7 +637,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
                     case NOT:
 
-                        previousReference = createNotOp(builder, node);
+                        previousReference = createNotOp(builder, node, rootName);
                         activeType = boolean.class;
 
                         node = null;
@@ -625,7 +646,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
                     case LIST:
 
-                        previousReference = createListConstructor(builder, node);
+                        previousReference = createListConstructor(builder, node, rootName);
                         activeType = List.class;
 
                         node = null;
@@ -633,21 +654,20 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
                         break;
 
                     default:
-                        throw unexpectedNodeType(node, TRUE, FALSE, INTEGER, DECIMAL, STRING, DEREF, SAFEDEREF,
-                                                 IDENTIFIER, INVOKE,
-                                                 LIST);
+                        throw unexpectedNodeType(node, TRUE, FALSE, INTEGER, DECIMAL, STRING,
+                                DEREF, SAFEDEREF, IDENTIFIER, INVOKE, LIST);
                 }
             }
 
             return new GeneratedTerm(activeType, previousReference);
         }
 
-
-        private void createSetter(MethodSignature navigateMethod,
-                                  ExpressionTermInfo info)
+        private void createSetter(MethodSignature navigateMethod, ExpressionTermInfo info)
         {
-            // A write method will only be identified if the info is a writable property.
-            // Other alternatives: a method as the final term, or a read-only property.
+            // A write method will only be identified if the info is a writable
+            // property.
+            // Other alternatives: a method as the final term, or a read-only
+            // property.
 
             Method method = info.getWriteMethod();
 
@@ -661,17 +681,19 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
             addRootVariable(builder);
 
-            builder.addln("%s target = navigate(root);",
-                          ClassFabUtils.toJavaClassName(navigateMethod.getReturnType()));
+            builder.addln("%s target = navigate(root);", ClassFabUtils
+                    .toJavaClassName(navigateMethod.getReturnType()));
 
-            // I.e. due to ?. operator. The navigate method will already have checked for nulls
+            // I.e. due to ?. operator. The navigate method will already have
+            // checked for nulls
             // if they are not allowed.
 
             builder.addln("if (target == null) return;");
 
             String propertyTypeName = ClassFabUtils.toJavaClassName(info.getType());
 
-            builder.addln("target.%s(%s);", method.getName(), ClassFabUtils.castReference("$2", propertyTypeName));
+            builder.addln("target.%s(%s);", method.getName(), ClassFabUtils.castReference("$2",
+                    propertyTypeName));
 
             builder.end();
 
@@ -680,20 +702,18 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
         private void createNoOpSetter()
         {
-            createNoOp(classFab, SET_SIGNATURE, "Expression '%s' for class %s is read-only.", expression,
-                       rootType.getName());
+            createNoOp(classFab, SET_SIGNATURE, "Expression '%s' for class %s is read-only.",
+                    expression, rootType.getName());
         }
 
-        private void createGetter(MethodSignature navigateMethod,
-                                  Tree node,
-                                  ExpressionTermInfo info)
+        private void createGetter(MethodSignature navigateMethod, Tree node, ExpressionTermInfo info)
         {
             Method method = info.getReadMethod();
 
             if (method == null)
             {
-                createNoOp(classFab, GET_SIGNATURE, "Expression %s for class %s is write-only.", expression,
-                           rootType.getName());
+                createNoOp(classFab, GET_SIGNATURE, "Expression %s for class %s is write-only.",
+                        expression, rootType.getName());
                 return;
             }
 
@@ -701,46 +721,70 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
             addRootVariable(builder);
 
-            builder.addln("%s target = navigate(root);", ClassFabUtils.toJavaClassName(navigateMethod.getReturnType()));
+            builder.addln("%s target = navigate(root);", ClassFabUtils
+                    .toJavaClassName(navigateMethod.getReturnType()));
 
-            // I.e. due to ?. operator. The navigate method will already have checked for nulls
+            // I.e. due to ?. operator. The navigate method will already have
+            // checked for nulls
             // if they are not allowed.
 
             builder.addln("if (target == null) return null;");
 
-            builder.addln("return ($w) target.%s;", createMethodInvocation(builder, node, method));
+            builder.addln("return ($w) target.%s;", createMethodInvocation(builder, node, "root",
+                    method));
 
             builder.end();
 
             classFab.addMethod(Modifier.PUBLIC, GET_SIGNATURE, builder.toString());
         }
 
-
         /**
          * Creates a method invocation call for the given node (an INVOKE node).
-         *
-         * @param bodyBuilder may receive new code to define variables for some sub-expressions
-         * @param node        the INVOKE node; child #1 and up are parameter expressions to the method being invoked
-         * @param method      defines the name and parameter types of the method to invoke
-         * @return method invocation string (the name of the method and any parameters, ready to be added to a method
+         * 
+         * @param bodyBuilder
+         *            may receive new code to define variables for some
+         *            sub-expressions
+         * @param node
+         *            the INVOKE node; child #1 and up are parameter expressions
+         *            to the method being invoked
+         * @param rootName
+         *            name of variable holding reference to root object of
+         *            expression * @param method
+         *            defines the name and parameter types of the method to
+         *            invoke
+         * @return method invocation string (the name of the method and any
+         *         parameters, ready to be added to a method
          *         body)
          */
-        private String createMethodInvocation(BodyBuilder bodyBuilder, Tree node, Method method)
+        private String createMethodInvocation(BodyBuilder bodyBuilder, Tree node, String rootName,
+                Method method)
         {
-            return createMethodInvocation(bodyBuilder, node, 1, method);
+            return createMethodInvocation(bodyBuilder, node, rootName, 1, method);
         }
 
         /**
          * Creates a method invocation call for the given node
-         *
-         * @param bodyBuilder may receive new code to define variables for some sub-expressions
-         * @param node        the node containing child nodes for the parameters
-         * @param childOffset the offset to the first parameter (for example, this is 1 for an INVOKE node)
-         * @param method      defines the name and parameter types of the method to invoke
-         * @return method invocation string (the name of the method and any parameters, ready to be added to a method
+         * 
+         * @param bodyBuilder
+         *            may receive new code to define variables for some
+         *            sub-expressions
+         * @param node
+         *            the node containing child nodes for the parameters
+         * @param rootName
+         *            name of variable holding reference to root object of
+         *            expression
+         * @param childOffset
+         *            the offset to the first parameter (for example, this is 1
+         *            for an INVOKE node)
+         * @param method
+         *            defines the name and parameter types of the method to
+         *            invoke
+         * @return method invocation string (the name of the method and any
+         *         parameters, ready to be added to a method
          *         body)
          */
-        private String createMethodInvocation(BodyBuilder bodyBuilder, Tree node, int childOffset, Method method)
+        private String createMethodInvocation(BodyBuilder bodyBuilder, Tree node, String rootName,
+                int childOffset, Method method)
         {
             Class[] parameterTypes = method.getParameterTypes();
 
@@ -751,9 +795,11 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
             for (int i = 0; i < parameterTypes.length; i++)
             {
-                // child(0) is the method name, child(1) is the first parameter, etc.
+                // child(0) is the method name, child(1) is the first parameter,
+                // etc.
 
-                GeneratedTerm generatedTerm = subexpression(bodyBuilder, node.getChild(i + childOffset));
+                GeneratedTerm generatedTerm = subexpression(bodyBuilder, node.getChild(i
+                        + childOffset), rootName);
                 String currentReference = generatedTerm.termReference;
 
                 Class actualType = generatedTerm.type;
@@ -767,16 +813,15 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
                     String coerced = nextVariableName(parameterType);
 
                     String call = String.format("coerce(($w) %s, %s)", currentReference,
-                                                addInjection(Class.class, parameterType));
+                            addInjection(Class.class, parameterType));
 
                     String parameterTypeName = ClassFabUtils.toJavaClassName(parameterType);
 
-                    bodyBuilder.addln("%s %s = %s;",
-                                      parameterTypeName, coerced, ClassFabUtils.castReference(call, parameterTypeName));
+                    bodyBuilder.addln("%s %s = %s;", parameterTypeName, coerced, ClassFabUtils
+                            .castReference(call, parameterTypeName));
 
                     currentReference = coerced;
-                }
-                else
+                } else
                 {
                     needsUnwrap = parameterType.isPrimitive() && !actualType.isPrimitive();
                 }
@@ -787,19 +832,20 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
                 if (needsUnwrap)
                 {
-                    builder.append(".").append(ClassFabUtils.getUnwrapMethodName(parameterType)).append("()");
+                    builder.append(".").append(ClassFabUtils.getUnwrapMethodName(parameterType))
+                            .append("()");
                 }
             }
 
             return builder.append(")").toString();
         }
 
-
         /**
-         * Extends the navigate method for a node, which will be a DEREF or SAFEDERF.
+         * Extends the navigate method for a node, which will be a DEREF or
+         * SAFEDERF.
          */
         private GeneratedTerm processDerefNode(BodyBuilder builder, Class activeType, Tree node,
-                                               String previousVariableName)
+                String previousVariableName, String rootName)
         {
             // The first child is the term.
 
@@ -807,22 +853,20 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
             boolean allowNull = node.getType() == SAFEDEREF;
 
-
-            // Returns the type of the method/property ... this is the wrapped (i.e. java.lang.Integer) type if
-            // the real type is primitive. It also reflects generics information that may have been associated
+            // Returns the type of the method/property ... this is the wrapped
+            // (i.e. java.lang.Integer) type if
+            // the real type is primitive. It also reflects generics information
+            // that may have been associated
             // with the underlying method.
 
-
             return addAccessForPropertyOrMethod(builder, activeType, term, previousVariableName,
-                                                allowNull ? NullHandling.ALLOW : NullHandling.FORBID);
+                    rootName, allowNull ? NullHandling.ALLOW : NullHandling.FORBID);
         }
 
         private String nextVariableName(Class type)
         {
-            return String.format("var_%s_%d",
-                                 toSimpleName(type), variableIndex++);
+            return String.format("var_%s_%d", toSimpleName(type), variableIndex++);
         }
-
 
         private String toSimpleName(Class type)
         {
@@ -830,9 +874,8 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
             return InternalUtils.lastTerm(type.getName());
         }
 
-        private GeneratedTerm addAccessForPropertyOrMethod(BodyBuilder builder, Class activeType, Tree term,
-                                                           String previousVariableName,
-                                                           NullHandling nullHandling)
+        private GeneratedTerm addAccessForPropertyOrMethod(BodyBuilder builder, Class activeType,
+                Tree term, String previousVariableName, String rootName, NullHandling nullHandling)
         {
             assertNodeType(term, IDENTIFIER, INVOKE);
 
@@ -843,11 +886,8 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
             Method method = info.getReadMethod();
 
             if (method == null)
-                throw new PropertyExpressionException(
-                        ServicesMessages.writeOnlyProperty(info.getDescription(), activeType, expression),
-                        expression,
-                        null);
-
+                throw new PropertyExpressionException(ServicesMessages.writeOnlyProperty(info
+                        .getDescription(), activeType, expression), expression, null);
 
             // If a primitive type, convert to wrapper type
 
@@ -858,7 +898,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
             final String variableName = nextVariableName(wrappedType);
 
-            String invocation = createMethodInvocation(builder, term, method);
+            String invocation = createMethodInvocation(builder, term, rootName, method);
 
             builder.add("%s %s = ", wrapperTypeName, variableName);
 
@@ -868,8 +908,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
             if (termType.isPrimitive())
             {
                 builder.add(" ($w) ");
-            }
-            else if (info.isCastRequired())
+            } else if (info.isCastRequired())
             {
                 builder.add(" (%s) ", wrapperTypeName);
             }
@@ -884,9 +923,9 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
                 case FORBID:
                     // Perform a null check on intermediate terms.
-                    builder.addln("if (%s == null) %s.nullTerm(\"%s\", \"%s\", $1);",
-                                  variableName, PropertyConduitSourceImpl.class.getName(), info.getDescription(),
-                                  expression);
+                    builder.addln("if (%s == null) %s.nullTerm(\"%s\", \"%s\", $1);", variableName,
+                            PropertyConduitSourceImpl.class.getName(), info.getDescription(),
+                            expression);
                     break;
 
                 default:
@@ -915,20 +954,19 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
             for (int i = 0; i < expected.length; i++)
                 tokenNames.add(PropertyExpressionParser.tokenNames[expected[i]]);
 
-            String message =
-                    String.format("Node %s (within expression '%s') was type %s, but was expected to be (one of) %s.",
-                                  node.toStringTree(),
-                                  expression,
-                                  PropertyExpressionParser.tokenNames[node.getType()],
-                                  InternalUtils.joinSorted(tokenNames));
+            String message = String
+                    .format(
+                            "Node %s (within expression '%s') was type %s, but was expected to be (one of) %s.",
+                            node.toStringTree(), expression,
+                            PropertyExpressionParser.tokenNames[node.getType()], InternalUtils
+                                    .joinSorted(tokenNames));
 
             return new PropertyExpressionException(message, expression, null);
         }
 
         private ExpressionTermInfo infoForPropertyOrMethod(Class activeType, Tree node)
         {
-            if (node.getType() == INVOKE)
-                return infoForInvokeNode(activeType, node);
+            if (node.getType() == INVOKE) return infoForInvokeNode(activeType, node);
 
             return infoForPropertyNode(activeType, node);
         }
@@ -940,9 +978,10 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
             ClassPropertyAdapter classAdapter = access.getAdapter(activeType);
             final PropertyAdapter adapter = classAdapter.getPropertyAdapter(propertyName);
 
-            if (adapter == null) throw new PropertyExpressionException(
-                    ServicesMessages.noSuchProperty(activeType, propertyName, expression,
-                                                    classAdapter.getPropertyNames()), expression, null);
+            if (adapter == null)
+                throw new PropertyExpressionException(ServicesMessages.noSuchProperty(activeType,
+                        propertyName, expression, classAdapter.getPropertyNames()), expression,
+                        null);
 
             return new ExpressionTermInfo()
             {
@@ -989,10 +1028,11 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
                 final Method method = findMethod(activeType, methodName, parameterCount);
 
                 if (method.getReturnType().equals(void.class))
-                    throw new PropertyExpressionException(
-                            ServicesMessages.methodIsVoid(methodName, activeType, expression), expression, null);
+                    throw new PropertyExpressionException(ServicesMessages.methodIsVoid(methodName,
+                            activeType, expression), expression, null);
 
-                final Class genericType = GenericsUtils.extractGenericReturnType(activeType, method);
+                final Class genericType = GenericsUtils
+                        .extractGenericReturnType(activeType, method);
 
                 return new ExpressionTermInfo()
                 {
@@ -1029,19 +1069,19 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
             }
             catch (NoSuchMethodException ex)
             {
-                throw new PropertyExpressionException(
-                        ServicesMessages.methodNotFound(methodName, activeType, expression), expression, ex);
+                throw new PropertyExpressionException(ServicesMessages.methodNotFound(methodName,
+                        activeType, expression), expression, ex);
             }
         }
 
-        private Method findMethod(Class activeType, String methodName, int parameterCount) throws NoSuchMethodException
+        private Method findMethod(Class activeType, String methodName, int parameterCount)
+                throws NoSuchMethodException
         {
             for (Method method : activeType.getMethods())
             {
 
-                if (method.getParameterTypes().length == parameterCount && method.getName().equalsIgnoreCase(
-                        methodName))
-                    return method;
+                if (method.getParameterTypes().length == parameterCount
+                        && method.getName().equalsIgnoreCase(methodName)) return method;
             }
 
             // TAP5-330
@@ -1052,8 +1092,8 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
         }
     }
 
-    public PropertyConduitSourceImpl(PropertyAccess access, @ComponentLayer ClassFactory classFactory,
-                                     TypeCoercer typeCoercer, StringInterner interner)
+    public PropertyConduitSourceImpl(PropertyAccess access, @ComponentLayer
+    ClassFactory classFactory, TypeCoercer typeCoercer, StringInterner interner)
     {
         this.access = access;
         this.classFactory = classFactory;
@@ -1100,8 +1140,10 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
     }
 
     /**
-     * Clears its caches when the component class loader is invalidated; this is because it will be common to generate
-     * conduits rooted in a component class (which will no longer be valid and must be released to the garbage
+     * Clears its caches when the component class loader is invalidated; this is
+     * because it will be common to generate
+     * conduits rooted in a component class (which will no longer be valid and
+     * must be released to the garbage
      * collector).
      */
     public void objectWasInvalidated()
@@ -1110,14 +1152,18 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
         classToEffectiveClass.clear();
     }
 
-
     /**
-     * Builds a subclass of {@link BasePropertyConduit} that implements the get() and set() methods and overrides the
-     * constructor. In a worst-case race condition, we may build two (or more) conduits for the same
-     * rootClass/expression, and it will get sorted out when the conduit is stored into the cache.
-     *
-     * @param rootClass  class of root object for expression evaluation
-     * @param expression expression to be evaluated
+     * Builds a subclass of {@link BasePropertyConduit} that implements the
+     * get() and set() methods and overrides the
+     * constructor. In a worst-case race condition, we may build two (or more)
+     * conduits for the same
+     * rootClass/expression, and it will get sorted out when the conduit is
+     * stored into the cache.
+     * 
+     * @param rootClass
+     *            class of root object for expression evaluation
+     * @param expression
+     *            expression to be evaluated
      * @return the conduit
      */
     private PropertyConduit build(final Class rootClass, String expression)
@@ -1161,8 +1207,10 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
                 Tree fromNode = tree.getChild(0);
                 Tree toNode = tree.getChild(1);
 
-                // If the range is defined as integers (not properties, etc.) then
-                // it is possible to calcualte the value here, once, and not build
+                // If the range is defined as integers (not properties, etc.)
+                // then
+                // it is possible to calcualte the value here, once, and not
+                // build
                 // a new class.
 
                 if (fromNode.getType() != INTEGER || toNode.getType() != INTEGER) break;
@@ -1208,8 +1256,8 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
     private <T> PropertyConduit createLiteralConduit(Class<T> type, T value)
     {
-        return new LiteralPropertyConduit(type, invariantAnnotationProvider,
-                                          interner.format("LiteralPropertyConduit[%s]", value), typeCoercer, value);
+        return new LiteralPropertyConduit(type, invariantAnnotationProvider, interner.format(
+                "LiteralPropertyConduit[%s]", value), typeCoercer, value);
     }
 
     private Tree parse(String expression)
@@ -1240,9 +1288,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
         catch (Exception ex)
         {
             throw new RuntimeException(String.format("Error parsing property expression '%s': %s.",
-                                                     expression,
-                                                     ex.getMessage()),
-                                       ex);
+                    expression, ex.getMessage()), ex);
         }
     }
 
@@ -1251,8 +1297,9 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
      */
     public static void nullTerm(String term, String expression, Object root)
     {
-        String message = String.format("Property '%s' (within property expression '%s', of %s) is null.",
-                                       term, expression, root);
+        String message = String.format(
+                "Property '%s' (within property expression '%s', of %s) is null.", term,
+                expression, root);
 
         throw new NullPointerException(message);
     }

@@ -33,7 +33,8 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- * Most of the testing occurs inside {@link PropBindingFactoryTest} (due to historical reasons).
+ * Most of the testing occurs inside {@link PropBindingFactoryTest} (due to
+ * historical reasons).
  */
 public class PropertyConduitSourceImplTest extends InternalBaseTestCase
 {
@@ -88,7 +89,6 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
 
         assertEquals(ir, new IntegerRange(72, 99));
     }
-
 
     @Test
     public void literal_conduits_are_not_updateable()
@@ -175,7 +175,8 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
     }
 
     /**
-     * Or call this the "Hibernate" case; Hibernate creates sub-classes of entity classes in its own class loader to do
+     * Or call this the "Hibernate" case; Hibernate creates sub-classes of
+     * entity classes in its own class loader to do
      * all sorts of proxying. This trips up Javassist.
      */
     @Test
@@ -232,7 +233,8 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
         }
         catch (NullPointerException ex)
         {
-            assertEquals(ex.getMessage(), "Root object of property expression 'value.get()' is null.");
+            assertEquals(ex.getMessage(),
+                    "Root object of property expression 'value.get()' is null.");
         }
     }
 
@@ -251,8 +253,9 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
         }
         catch (NullPointerException ex)
         {
-            assertMessageContains(ex, "Property 'simple' (within property expression 'simple.lastName', of",
-                                  ") is null.");
+            assertMessageContains(ex,
+                    "Property 'simple' (within property expression 'simple.lastName', of",
+                    ") is null.");
         }
     }
 
@@ -309,7 +312,8 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
     @Test
     public void method_invocation_with_string_argument()
     {
-        PropertyConduit conduit = source.create(EchoBean.class, "echoString(storedString, 'B4', 'AFTER')");
+        PropertyConduit conduit = source.create(EchoBean.class,
+                "echoString(storedString, 'B4', 'AFTER')");
         EchoBean bean = new EchoBean();
 
         bean.setStoredString("Moe");
@@ -320,7 +324,8 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
     @Test
     public void method_invocation_using_dereference()
     {
-        PropertyConduit conduit = source.create(EchoBean.class, "echoString(storedString, stringSource.value, 'beta')");
+        PropertyConduit conduit = source.create(EchoBean.class,
+                "echoString(storedString, stringSource.value, 'beta')");
         EchoBean bean = new EchoBean();
 
         StringSource source = new StringSource("alpha");
@@ -360,7 +365,8 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
     @Test
     public void list_as_method_argument()
     {
-        PropertyConduit conduit = source.create(EchoBean.class, "echoList([ 1, 2.0, storedString ])");
+        PropertyConduit conduit = source.create(EchoBean.class,
+                "echoList([ 1, 2.0, storedString ])");
         EchoBean bean = new EchoBean();
 
         bean.setStoredString("Bart");
@@ -427,8 +433,9 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
         }
         catch (RuntimeException ex)
         {
-            assertEquals(ex.getMessage(),
-                         "Error parsing property expression 'getValue(': line 1:0 no viable alternative at input 'getValue'.");
+            assertEquals(
+                    ex.getMessage(),
+                    "Error parsing property expression 'getValue(': line 1:0 no viable alternative at input 'getValue'.");
         }
     }
 
@@ -443,7 +450,7 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
         catch (RuntimeException ex)
         {
             assertEquals(ex.getMessage(),
-                         "Error parsing property expression 'fred {': Unable to parse input at character position 6.");
+                    "Error parsing property expression 'fred {': Unable to parse input at character position 6.");
         }
     }
 
@@ -457,5 +464,19 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
 
         assertEquals(trueConduit.get(bedrock), "Fred");
         assertEquals(falseConduit.get(bedrock), "Barney");
+    }
+
+    /** TAP5-747 */
+    @Test
+    public void dereference_result_of_method_invocation()
+    {
+        ComplexObject co = new ComplexObject();
+        PropertyConduit pc = source.create(ComplexObject.class, "get(nestedIndex).name");
+
+        assertEquals(pc.get(co), "zero");
+
+        co.setNestedIndex(1);
+
+        assertEquals(pc.get(co), "one");
     }
 }
