@@ -15,6 +15,7 @@
 package org.apache.tapestry5.corelib.components;
 
 import org.apache.tapestry5.*;
+import org.apache.tapestry5.ajax.MultiZoneUpdate;
 import org.apache.tapestry5.annotations.*;
 import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.internal.services.ComponentResultProcessorWrapper;
@@ -26,16 +27,21 @@ import org.apache.tapestry5.services.ComponentEventResultProcessor;
 import java.io.IOException;
 
 /**
- * A component used to implement the <a href="http://en.wikipedia.org/wiki/Progressive_enhancement">progressive
- * enhancement</a> web design strategy; the component renders itself with a simplified initial content (i.e., "loading
- * ...") and an Ajax request then supplies the component's true body. This results in much faster page loads. You can
+ * A component used to implement the <a
+ * href="http://en.wikipedia.org/wiki/Progressive_enhancement">progressive
+ * enhancement</a> web design strategy; the component renders itself with a
+ * simplified initial content (i.e., "loading
+ * ...") and an Ajax request then supplies the component's true body. This
+ * results in much faster page loads. You can
  * even nest these!
  * <p/>
- * The component simply does not render its body on initial render. On the subsequent action event request, it fires a
- * {@link org.apache.tapestry5.EventConstants#PROGRESSIVE_DISPLAY} event to inform the container about the (optional)
- * event context. The event handler method may return a renderable object; if not then the component's body is rendered
- * as the partial markup response.
- *
+ * The component simply does not render its body on initial render. On the
+ * subsequent action event request, it fires a
+ * {@link org.apache.tapestry5.EventConstants#PROGRESSIVE_DISPLAY} event to
+ * inform the container about the (optional) event context. The event handler
+ * method may return a renderable object; if not then the component's body is
+ * rendered as the partial markup response.
+ * 
  * @since 5.1.0.1
  */
 @SupportsInformalParameters
@@ -44,15 +50,16 @@ import java.io.IOException;
 public class ProgressiveDisplay
 {
     /**
-     * The initial content to display until the real content arrives. Defaults to "Loading ..." and an Ajax activity
+     * The initial content to display until the real content arrives. Defaults
+     * to "Loading ..." and an Ajax activity
      * icon.
      */
     @Parameter(defaultPrefix = BindingConstants.LITERAL, value = "block:defaultInitial")
     private Block initial;
 
     /**
-     * If provided, this is the event context, which will be provided via the {@link
-     * org.apache.tapestry5.EventConstants#PROGRESSIVE_DISPLAY event}.
+     * If provided, this is the event context, which will be provided via the
+     * {@link org.apache.tapestry5.EventConstants#PROGRESSIVE_DISPLAY event}.
      */
     @Parameter
     private Object[] context;
@@ -67,8 +74,10 @@ public class ProgressiveDisplay
     private ComponentEventResultProcessor resultProcessor;
 
     /**
-     * Name of a function on the client-side Tapestry.ElementEffect object that is invoked after the elements's body
-     * content has been updated. If not specified, then the basic "highlight" method is used, which performs a classic
+     * Name of a function on the client-side Tapestry.ElementEffect object that
+     * is invoked after the elements's body
+     * content has been updated. If not specified, then the basic "highlight"
+     * method is used, which performs a classic
      * "yellow fade" to indicate to the user that and update has taken place.
      */
     @Parameter(defaultPrefix = BindingConstants.LITERAL)
@@ -89,8 +98,7 @@ public class ProgressiveDisplay
 
         JSONObject spec = new JSONObject();
 
-        if (InternalUtils.isNonBlank(update))
-            spec.put("update", update.toLowerCase());
+        if (InternalUtils.isNonBlank(update)) spec.put("update", update.toLowerCase());
 
         spec.put("element", clientId);
         spec.put("url", link.toAbsoluteURI());
@@ -102,14 +110,14 @@ public class ProgressiveDisplay
 
     Object onAction(EventContext context) throws IOException
     {
-        ComponentResultProcessorWrapper wrapper = new ComponentResultProcessorWrapper(resultProcessor);
+        ComponentResultProcessorWrapper wrapper = new ComponentResultProcessorWrapper(
+                resultProcessor);
 
         resources.triggerContextEvent(EventConstants.PROGRESSIVE_DISPLAY, context, wrapper);
 
-        if (wrapper.isAborted())
-            return null;
+        if (wrapper.isAborted()) return null;
 
-        return resources.getBody();
+        return getBody();
     }
 
     boolean beforeRenderBody()
@@ -120,5 +128,18 @@ public class ProgressiveDisplay
     void afterRender(MarkupWriter writer)
     {
         writer.end();
+    }
+
+    /**
+     * Returns the body of the ProgressiveDisplay, which is sometimes (in the
+     * context of a {@linkplain MultiZoneUpdate multi-zone update})
+     * the content to be included.
+     * 
+     * @since 5.2.0
+     * @return body of component
+     */
+    public Block getBody()
+    {
+        return resources.getBody();
     }
 }
