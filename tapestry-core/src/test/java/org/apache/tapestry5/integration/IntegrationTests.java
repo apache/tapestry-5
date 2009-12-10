@@ -3030,4 +3030,17 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         assertTextPresent("Car Model: E-Class");
     }
 
+    /** TAP5-815 */
+    @Test
+    public void testAssetProtection()
+    {
+        start("Asset Protection Demo");
+        clickAndWait("link=Unavailable File");
+        assertTextPresent("404");
+
+        start("Asset Protection Demo");
+        clickAndWait("link=Available File");
+        assertTextPresent("This file should be available to clients.");
+    }
+
 }

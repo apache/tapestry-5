@@ -75,7 +75,7 @@ public class AssetProtectionDispatcherTest extends Assert
         Response response = createMock(Response.class);
         expect(request.getPath()).andReturn(RequestConstants.ASSET_PATH_PREFIX + "/cayenne.xml");
         expect(request.getPath()).andReturn(RequestConstants.ASSET_PATH_PREFIX + "/org/apache/tapestry/default.css");
-        response.sendError(HttpServletResponse.SC_FORBIDDEN, "/cayenne.xml");
+        response.sendError(HttpServletResponse.SC_NOT_FOUND, "/cayenne.xml");
         
         ClasspathAssetAliasManager manager = createMock(ClasspathAssetAliasManager.class);
         expect(manager.toResourcePath(RequestConstants.ASSET_PATH_PREFIX + "/cayenne.xml")).andReturn("/cayenne.xml");

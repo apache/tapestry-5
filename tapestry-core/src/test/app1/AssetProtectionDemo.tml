@@ -1,0 +1,4 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd">
+    <a href="${asset:context:availablefile.txt}">Available File</a>
+    <a href="${asset:context:unavailablefile.txt}">Unavailable File</a>
+</html>
