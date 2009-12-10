@@ -77,7 +77,7 @@ public class AssetProtectionDispatcher implements Dispatcher
                     if (auth.accessDenied(resourcePath))
                     {
                         logger.debug("Denying access to " + resourcePath);
-                        response.sendError(HttpServletResponse.SC_FORBIDDEN,resourcePath);
+                        response.sendError(HttpServletResponse.SC_NOT_FOUND,resourcePath);
                         return true;
                     }
                 }

@@ -1,0 +1,4 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd">
+    <a href="${asset:classpath:/org/apache/tapestry5/integration/app1/pages/availablefile.txt}">Available File</a>
+    <a href="${asset:classpath:/org/apache/tapestry5/integration/app1/pages/unavailablefile.txt}">Unavailable File</a>
+</html>

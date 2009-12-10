@@ -314,7 +314,10 @@ public class Index
                      "Access to informal parameters names and values"),
 
             new Item("FormFieldOutsideForm", "Form Field Outside Form",
-                     "Nice exception message for common problem of form fields outside forms")
+                     "Nice exception message for common problem of form fields outside forms"),
+
+            new Item("AssetProtectionDemo", "Asset Protection Demo", "AssetProtectionDispatcher is properly contributed and functioning")
+
     );
 
     static

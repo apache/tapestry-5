@@ -2186,11 +2186,10 @@ public final class TapestryModule
                 @Symbol("tapestry.scriptaculous.path") String scriptPath,
                 @Symbol("tapestry.datepicker.path") String datepickerPath)
     {
-        //allow any js, jpg, jpeg, png, or css under org/chenillekit/tapstry. The funky bit of ([^/.]+/)* is what allows
+        //allow any js, jpg, jpeg, png, or css under org/apache/tapstry5. The funky bit of ([^/.]+/)* is what allows
         //multiple paths, while not allowing any of those paths to contains ./ or ../ thereby preventing paths like:
-        //org/chenillekit/tapestry/../../../foo.js
+        //org/apache/tapestry5/../../../foo.js
         String pathPattern = "([^/.]+/)*[^/.]+\\.((css)|(js)|(jpg)|(jpeg)|(png)|(gif))$";
-        regex.add("^org/chenillekit/tapestry/" + pathPattern);
 
         regex.add("^org/apache/tapestry5/" + pathPattern);
 

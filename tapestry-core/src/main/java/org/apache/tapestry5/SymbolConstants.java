@@ -98,4 +98,5 @@ public class SymbolConstants
      * Per-page initialization always goes at the bottom.
      */
     public static final String SCRIPTS_AT_TOP = "tapestry.script-at-top";
+
 }
