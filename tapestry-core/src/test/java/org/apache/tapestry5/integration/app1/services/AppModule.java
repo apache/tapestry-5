@@ -261,7 +261,8 @@ public class AppModule
 
     public static void contributeWhitelistAuthorizer(
             Configuration<String> configuration,
-            @Symbol(SymbolConstants.APPLICATION_VERSION) String appVersion) {
+            @Symbol(SymbolConstants.APPLICATION_VERSION) String appVersion) 
+    {
         configuration.add("ctx/" + appVersion + "/availablefile.txt");
     }
 }

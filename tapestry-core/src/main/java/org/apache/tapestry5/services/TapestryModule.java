@@ -2529,7 +2529,8 @@ public final class TapestryModule
         //allow access to virtual assets. Critical for tapestry-combined js files.
         regex.add("virtual/" + pathPattern);
 
-        if (contextAvailable) {
+        if (contextAvailable) 
+        {
             regex.add(RequestConstants.CONTEXT_FOLDER + appVersion + "/" + pathPattern);
         }
     }
