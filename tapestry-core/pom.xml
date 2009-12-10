@@ -53,12 +53,6 @@
             </exclusions>
         </dependency>
 
-        <dependency>
-            <groupId>org.codehaus.woodstox</groupId>
-            <artifactId>woodstox-core-asl</artifactId>
-            <version>4.0.3</version>
-        </dependency>
-
     </dependencies>
 
     <build>

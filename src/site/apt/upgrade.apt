@@ -4,14 +4,19 @@
 
 Upgrade Notes
 
-  This is a quick guide to changes <since> Tapestry 5.0.18.  This is meant to provide information
-  on any additions or changes that developers will face after upgrading from Tapestry 5.0 to Tapestry 5.1, or from one
-  5.1 snapshot release to another.
-
+  This is a quick guide to changes <since> Tapestry 5.1.0.5.  This is meant to provide information
+  on any additions or changes that developers will face after upgrading to Tapestry 5.2.
+  
   It is always advised to perform a full and complete build after upgrading.
 
   You should also check the {{{release-notes.html}project-wide release notes}} for information
   about bugs fixes and other improvements.
+
+Release 5.2.0
+
+  Tapestry no longer uses a StAX parser (it uses a normal SAX parser) to parse template. This change
+  reduces the number of dependencies for Tapestry, and is a stepping stone to compatibility with
+  Google App Engine.
 
 Release 5.1.0.4
 

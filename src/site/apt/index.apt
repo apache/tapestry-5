@@ -34,39 +34,6 @@ What is Apache Tapestry?
 
 New And Of Note
 
-  * Tapestry now uses the {{{http://www.gscottolson.com/blackbirdjs/}Blackbird}} JavaScript console.
-
-  * Tapestry now automatically combines multiple JavaScript libraries into a single request.
-
-  * An Ajax event request may now return a
-    {{{apidocs/org/apache/tapestry5/ajax/MultiZoneUpdate.html}MultiZoneUpdate}} instance
-    to update multiple zones in the client web browser.
-
-  * Client-side numeric validation is now locale-sensitive.
-
-  * Some significant performance improvements over Tapestry 5.0.18: the time to initially load a page,
-    and the time to render a page have decreased.
-
-  * Tapestry IoC services can now be easily <{{{tapestry-ioc/advice.html}advised}}> as well as
-   <{{{tapestry-ioc/decorator.html}decorated}}> (both of these refer to Aspect Oriented Techniques applied to
-    Tapestry IoC services).
-
-  * Tapestry Services can now be injected into Spring Beans, when using the Tapestry/Spring integration library.
-
-  * Tapestry now {{{guide/compress.html}compresses}} responses for clients that support GZIP compression.
-    Context and classpath assets
-    are now handled uniformly: versioned URLs, far-future expiration headers, and GZIP compression where applicable.
-
-  * Ordered and mapped configurations can now have overrides.
-
-  * Property expressions have been improved: You can now invoke methods with parameters, or create a list (very useful for link contexts).
-
-  * IoC Service contributions may now be made in terms of classes (that are automatically instantiated) as well as
-    instances.
-
-  * A simpler method of {{{apidocs/org/apache/tapestry5/ioc/services/ServiceOverride}overriding built-in services}}
-    has been added.
-
   []
   
 Roadmap

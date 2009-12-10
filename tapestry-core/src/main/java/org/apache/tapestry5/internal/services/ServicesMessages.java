@@ -71,19 +71,9 @@ class ServicesMessages
         return MESSAGES.format("class-not-transformed", className);
     }
 
-    static String newParserError(Resource resource, Throwable cause)
-    {
-        return MESSAGES.format("new-parser-error", resource, cause);
-    }
-
     static String missingTemplateResource(Resource resource)
     {
         return MESSAGES.format("missing-template-resource", resource);
-    }
-
-    static String templateParseError(Resource resource, Throwable cause)
-    {
-        return MESSAGES.format("template-parse-error", resource, cause);
     }
 
     static String contentInsideBodyNotAllowed(Location location)

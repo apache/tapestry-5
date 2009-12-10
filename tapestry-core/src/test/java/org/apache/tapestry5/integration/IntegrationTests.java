@@ -29,10 +29,12 @@ import org.apache.tapestry5.test.AbstractIntegrationTestSuite;
 import org.testng.annotations.Test;
 
 /**
- * Note: If these tests fail with BindException when starting Jetty, it could be Skype. At least on my system, Skype is
+ * Note: If these tests fail with BindException when starting Jetty, it could be
+ * Skype. At least on my system, Skype is
  * listening on localhost:80.
  */
-@SuppressWarnings({ "JavaDoc" })
+@SuppressWarnings(
+{ "JavaDoc" })
 @Test(timeOut = 50000, sequential = true)
 public class IntegrationTests extends AbstractIntegrationTestSuite
 {
@@ -41,12 +43,12 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         super("src/test/app1");
     }
 
-
     @Test(enabled = false)
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) throws Exception
+    {
         IntegrationTests it = new IntegrationTests();
         it.setup();
-        while(true) 
+        while (true)
         {
             Thread.sleep(1000);
         }
@@ -64,11 +66,11 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         // Read the byte stream for the asset and compare to the real copy.
 
         compareDownloadedAsset(getAttribute("//img[@id='icon']/@src"),
-                               "src/test/app1/images/tapestry_banner.gif");
+                "src/test/app1/images/tapestry_banner.gif");
         compareDownloadedAsset(getAttribute("//img[@id='button']/@src"),
-                               "src/test/resources/org/apache/tapestry5/integration/app1/pages/nested/tapestry-button.png");
+                "src/test/resources/org/apache/tapestry5/integration/app1/pages/nested/tapestry-button.png");
         compareDownloadedAsset(getAttribute("//img[@id='viaContext']/@src"),
-                               "src/test/app1/images/asf_logo_wide.gif");
+                "src/test/app1/images/asf_logo_wide.gif");
     }
 
     private void compareDownloadedAsset(String assetURL, String localPath) throws Exception
@@ -85,7 +87,8 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     }
 
     /**
-     * Tests the ability to inject a Block, and the ability to use the block to control rendering.
+     * Tests the ability to inject a Block, and the ability to use the block to
+     * control rendering.
      */
     @Test
     public void block_rendering() throws Exception
@@ -144,13 +147,15 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     @Test
     public void exception_report()
     {
-        //mismatched tag.
+        // mismatched tag.
         start("BadTemplate Page");
 
-        assertTextPresent("org.apache.tapestry5.ioc.internal.util.TapestryException",
-                          "Failure parsing template classpath:org/apache/tapestry5/integration/app1/pages/BadTemplate.tml: Unexpected close tag </foobar>; expected </t:foobar>",
-                          "classpath:org/apache/tapestry5/integration/app1/pages/BadTemplate.tml, line 6",
-                          "<t:foobar>content from template</foobar>");
+        assertTextPresent(
+                "org.apache.tapestry5.ioc.internal.util.TapestryException",
+                "Failure parsing template classpath:org/apache/tapestry5/integration/app1/pages/BadTemplate.tml",
+                "The element type \"t:foobar\" must be terminated by the matching end-tag \"</t:foobar>\"",
+                "classpath:org/apache/tapestry5/integration/app1/pages/BadTemplate.tml, line 6",
+                "<t:foobar>content from template</foobar>");
     }
 
     @Test
@@ -162,8 +167,10 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     }
 
     /**
-     * {@link org.apache.tapestry5.internal.transform.InjectContainerWorker} is largely tested by the forms tests
-     * ({@link RenderDisabled} is built on it). test is for the failure case, where a mixin class is used with the wrong
+     * {@link org.apache.tapestry5.internal.transform.InjectContainerWorker} is
+     * largely tested by the forms tests
+     * ({@link RenderDisabled} is built on it). test is for the failure case,
+     * where a mixin class is used with the wrong
      * type of component.
      */
     @Test
@@ -173,8 +180,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         // And exception message:
 
-        assertTextPresent(
-                "Component InjectContainerMismatch is not assignable to field org.apache.tapestry5.corelib.mixins.RenderDisabled.field (of type org.apache.tapestry5.Field).");
+        assertTextPresent("Component InjectContainerMismatch is not assignable to field org.apache.tapestry5.corelib.mixins.RenderDisabled.field (of type org.apache.tapestry5.Field).");
     }
 
     @Test
@@ -195,13 +201,15 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         // is a test for a named @Inject:
         assertTextPresent("<Proxy for Request(org.apache.tapestry5.services.Request)>");
 
-        // is a test for an anonymous @Inject and ComponentResourcesInjectionProvider
+        // is a test for an anonymous @Inject and
+        // ComponentResourcesInjectionProvider
         assertTextPresent("ComponentResources[InjectDemo]");
 
         // Another test, DefaultInjectionProvider
         assertTextPresent("<Proxy for BindingSource(org.apache.tapestry5.services.BindingSource)>");
 
-        // Prove that injection using a marker annotation (to match against a marked service) works.
+        // Prove that injection using a marker annotation (to match against a
+        // marked service) works.
 
         assertTextPresent("Injection via Marker: Bonjour!");
 
@@ -213,7 +221,8 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     {
         start("InstanceMixin");
 
-        final String[] dates = { "Jun 13, 1999", "Jul 15, 2001", "Dec 4, 2005" };
+        final String[] dates =
+        { "Jun 13, 1999", "Jul 15, 2001", "Dec 4, 2005" };
 
         for (String date : dates)
         {
@@ -286,7 +295,8 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         clickAndWait(SUBMIT);
 
         assertFieldValue("userName", "howard");
-        // Verify that password fields do not render a non-blank password, even when it is known.
+        // Verify that password fields do not render a non-blank password, even
+        // when it is known.
         assertFieldValue("password", "");
 
         assertTextPresent("[howard]");
@@ -312,8 +322,10 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         clickAndWait("enabled");
 
-        // After clicking the link (which submits the form), the page re-renders and shows us
-        // the optional component from inside the NeverRender, resurrected to render on the page
+        // After clicking the link (which submits the form), the page re-renders
+        // and shows us
+        // the optional component from inside the NeverRender, resurrected to
+        // render on the page
         // after all.
 
         assertText("//span[@id='container']/span", "Optional Text");
@@ -326,9 +338,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     {
         start("RenderPhaseOrder");
 
-
-        assertTextPresent(
-                "[BEGIN-TRACER-MIXIN BEGIN-ABSTRACT-TRACER BEGIN-TRACER BODY AFTER-TRACER AFTER-ABSTRACT-TRACER AFTER-TRACER-MIXIN]");
+        assertTextPresent("[BEGIN-TRACER-MIXIN BEGIN-ABSTRACT-TRACER BEGIN-TRACER BODY AFTER-TRACER AFTER-ABSTRACT-TRACER AFTER-TRACER-MIXIN]");
     }
 
     @Test
@@ -365,7 +375,8 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         // Make sure the decoration went away.
 
-        // Sorry, not sure how to do that, since the attributes don't exist, we get xpath errors.
+        // Sorry, not sure how to do that, since the attributes don't exist, we
+        // get xpath errors.
 
         // assertText("//label[1]/@class", "");
         // assertText("//label[2]/@class", "");
@@ -396,7 +407,8 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     }
 
     /**
-     * Tests for forms and form submissions and basic form control components. also tests a few other things, such as
+     * Tests for forms and form submissions and basic form control components.
+     * also tests a few other things, such as
      * computed default bindings and invisible instrumentation.
      */
     @Test
@@ -436,11 +448,14 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         assertFieldValue("message", "Message for you, sir!");
         assertFieldValue("urgent", "off");
 
-        // Tried to use "email:" and "exact:email:" but Selenium 0.8.1 doesn't seem to accept that.
+        // Tried to use "email:" and "exact:email:" but Selenium 0.8.1 doesn't
+        // seem to accept that.
 
-        assertTextPresent("[foo@bar.baz]", "[Message for you, sir!]", "[false]", "[winnt]", "[RESEARCH_AND_DESIGN]");
+        assertTextPresent("[foo@bar.baz]", "[Message for you, sir!]", "[false]", "[winnt]",
+                "[RESEARCH_AND_DESIGN]");
 
-        // Haven't figured out how to get selenium to check that fields are disabled.
+        // Haven't figured out how to get selenium to check that fields are
+        // disabled.
     }
 
     @Test
@@ -531,7 +546,8 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     }
 
     /**
-     * Tests the bean editor. Along the way, tests a bunch about validation, loops, blocks, and application state
+     * Tests the bean editor. Along the way, tests a bunch about validation,
+     * loops, blocks, and application state
      * objects.
      */
     @Test
@@ -553,7 +569,6 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         assertAttribute("//input[@type='submit']/@value", "Register");
 
-
         type("firstName", "a");
         type("lastName", "b");
         type("birthYear", "");
@@ -565,8 +580,8 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         clickAndWait(SUBMIT);
 
         assertTextPresent("You must provide at least 3 characters for First Name.",
-                          "You must provide at least 5 characters for Last Name.",
-                          "You must provide a value for Year of Birth.");
+                "You must provide at least 5 characters for Last Name.",
+                "You must provide a value for Year of Birth.");
 
         type("firstName", "Howard");
         type("lastName", "Lewis Ship");
@@ -575,11 +590,12 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         clickAndWait(SUBMIT);
 
-        // The XPath support is too weak for //div[@class='t-beandisplay-value'][%d], so we
+        // The XPath support is too weak for
+        // //div[@class='t-beandisplay-value'][%d], so we
         // just look for the text itself.
 
-        assertTextPresent("Howard", "Lewis Ship", "1966", "Martian", "U.S. Citizen", "***********", "line1", "line2",
-                          "line3");
+        assertTextPresent("Howard", "Lewis Ship", "1966", "Martian", "U.S. Citizen", "***********",
+                "line1", "line2", "line3");
     }
 
     @Test
@@ -587,8 +603,10 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     {
         start("BeanEdit Remove/Reorder", "Clear Data");
 
-        // Looks like a bug in Selenium; we can see //label[1] but not //label[2].
-        // assertTextSeries("//label[%d]", 1, "Last Name", "First Name", "Sex", "U.S. Citizen");
+        // Looks like a bug in Selenium; we can see //label[1] but not
+        // //label[2].
+        // assertTextSeries("//label[%d]", 1, "Last Name", "First Name", "Sex",
+        // "U.S. Citizen");
 
         type("firstName", "Howard");
         type("lastName", "Lewis Ship");
@@ -608,7 +626,6 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         assertTextPresent("[pageLoaded() was invoked.]");
     }
 
-
     /**
      * Basic Grid rendering, with a column render override. Also tests sorting.
      */
@@ -619,11 +636,13 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         // "Sort Rating" via the header cell override (TAPESTRY-2081)
 
-        assertTextSeries("//th[%d]", 1, "Title", "Album", "Artist", "Genre", "Play Count", "Sort Rating");
+        assertTextSeries("//th[%d]", 1, "Title", "Album", "Artist", "Genre", "Play Count",
+                "Sort Rating");
 
         // Strange: I thought tr[1] was the header row ???
 
-        assertTextSeries("//tr[1]/td[%d]", 1, "Bug Juice", "Late Lounge (2 of 2)", "45 Dip", "Electronica", "4", "-");
+        assertTextSeries("//tr[1]/td[%d]", 1, "Bug Juice", "Late Lounge (2 of 2)", "45 Dip",
+                "Electronica", "4", "-");
 
         // Here were checking that the page splits are correct
 
@@ -640,20 +659,21 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         // Here's one with a customized rating cell
 
-        assertTextSeries("//tr[25]/td[%d]", 1, "Smoked", "London (Original Motion Picture Soundtrack)",
-                         "The Crystal Method", "Soundtrack", "30", "****");
+        assertTextSeries("//tr[25]/td[%d]", 1, "Smoked",
+                "London (Original Motion Picture Soundtrack)", "The Crystal Method", "Soundtrack",
+                "30", "****");
 
         clickAndWait("link=69");
 
         assertText("//tr[22]/td[1]", "radioioAmbient");
 
-        // Sort ascending (and we're on the last page, with the highest ratings).
+        // Sort ascending (and we're on the last page, with the highest
+        // ratings).
 
         clickAndWait("link=Sort Rating");
 
-
-        assertTextSeries("//tr[22]/td[%d]", 1, "Mona Lisa Overdrive", "Labyrinth", "Juno Reactor", "Dance", "31",
-                         "*****");
+        assertTextSeries("//tr[22]/td[%d]", 1, "Mona Lisa Overdrive", "Labyrinth", "Juno Reactor",
+                "Dance", "31", "*****");
 
         // Toggle to sort descending
 
@@ -663,9 +683,11 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         clickAndWait("link=Title");
 
-        // The lack of a leading slash indicates that the path was optimized, see TAPESTRY-1502
+        // The lack of a leading slash indicates that the path was optimized,
+        // see TAPESTRY-1502
 
-        assertAttribute("//img[@class='t-sort-icon']/@src", "/assets/tapestry/UNKNOWN/corelib/components/sort-asc.png");
+        assertAttribute("//img[@class='t-sort-icon']/@src",
+                "/assets/tapestry/UNKNOWN/corelib/components/sort-asc.png");
         assertAttribute("//img[@class='t-sort-icon']/@alt", "[Asc]");
 
         clickAndWait("link=1");
@@ -675,14 +697,15 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         clickAndWait("link=Title");
 
         assertAttribute("//img[@class='t-sort-icon']/@src",
-                        "/assets/tapestry/UNKNOWN/corelib/components/sort-desc.png");
+                "/assets/tapestry/UNKNOWN/corelib/components/sort-desc.png");
         assertAttribute("//img[@class='t-sort-icon']/@alt", "[Desc]");
 
         clickAndWait("link=reset the Grid");
 
         // Back to where we started.
 
-        assertTextSeries("//tr[1]/td[%d]", 1, "Bug Juice", "Late Lounge (2 of 2)", "45 Dip", "Electronica", "4", "-");
+        assertTextSeries("//tr[1]/td[%d]", 1, "Bug Juice", "Late Lounge (2 of 2)", "45 Dip",
+                "Electronica", "4", "-");
     }
 
     @Test
@@ -758,7 +781,8 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         clickAndWait("link=go");
 
         assertTextSeries("//li[%d]", 1, "betty", "wilma", "betty/wilma", "\u82B1\u5B50");
-        assertTextSeries("//ul[2]/li[%d]", 1, "fred", "barney", "clark kent", "fred/barney", "\u592A\u90CE");
+        assertTextSeries("//ul[2]/li[%d]", 1, "fred", "barney", "clark kent", "fred/barney",
+                "\u592A\u90CE");
     }
 
     @Test
@@ -820,13 +844,17 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     {
         start("Page Context in Form");
 
-        assertTextSeries("//li[%d]", 1, "betty", "wilma", "context with spaces", "context/with/slashes");
-        assertFieldValue("t:ac", "betty/wilma/context$0020with$0020spaces/context$002fwith$002fslashes");
+        assertTextSeries("//li[%d]", 1, "betty", "wilma", "context with spaces",
+                "context/with/slashes");
+        assertFieldValue("t:ac",
+                "betty/wilma/context$0020with$0020spaces/context$002fwith$002fslashes");
 
         clickAndWait(SUBMIT);
 
-        assertTextSeries("//li[%d]", 1, "betty", "wilma", "context with spaces", "context/with/slashes");
-        assertFieldValue("t:ac", "betty/wilma/context$0020with$0020spaces/context$002fwith$002fslashes");
+        assertTextSeries("//li[%d]", 1, "betty", "wilma", "context with spaces",
+                "context/with/slashes");
+        assertFieldValue("t:ac",
+                "betty/wilma/context$0020with$0020spaces/context$002fwith$002fslashes");
     }
 
     @Test
@@ -834,7 +862,8 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     {
         start("Client Validation Demo");
 
-        // Used to ensure that the <script> tag was present, but that's hard to do with script combining enabled.
+        // Used to ensure that the <script> tag was present, but that's hard to
+        // do with script combining enabled.
 
         clickAndWait("link=Clear Data");
 
@@ -842,10 +871,12 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         click(SUBMIT);
 
-        // Looks like more weaknesses in Selenium, can only manage the first match not the others.
-        assertTextSeries("//div[@class='t-error-popup'][%d]/span", 1, "You must provide a value for First Name."
-                         //, "Everyone has to have a last name!",
-                         //       "Year of Birth requires a value of at least 1900."
+        // Looks like more weaknesses in Selenium, can only manage the first
+        // match not the others.
+        assertTextSeries("//div[@class='t-error-popup'][%d]/span", 1,
+                "You must provide a value for First Name."
+        // , "Everyone has to have a last name!",
+        // "Year of Birth requires a value of at least 1900."
         );
 
         type("firstName", "Howard");
@@ -868,9 +899,10 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     {
         start("Recursive Demo");
 
-        assertTextPresent("An unexpected application exception has occurred.",
-                          "The template for component org.apache.tapestry5.integration.app1.components.Recursive is recursive (contains another direct or indirect reference to component org.apache.tapestry5.integration.app1.components.Recursive). This is not supported (components may not contain themselves).",
-                          "component is <t:recursive>recursive</t:recursive>, so we\'ll see a failure.");
+        assertTextPresent(
+                "An unexpected application exception has occurred.",
+                "The template for component org.apache.tapestry5.integration.app1.components.Recursive is recursive (contains another direct or indirect reference to component org.apache.tapestry5.integration.app1.components.Recursive). This is not supported (components may not contain themselves).",
+                "component is <t:recursive>recursive</t:recursive>, so we\'ll see a failure.");
     }
 
     @Test
@@ -892,25 +924,28 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         clickAndWait("link=No Context");
         assertText("methodNames",
-                   "[parent.eventHandlerZero(), parent.onAction(), child.eventHandlerZeroChild()]");
+                "[parent.eventHandlerZero(), parent.onAction(), child.eventHandlerZeroChild()]");
 
         clickAndWait(clear);
         clickAndWait("link=Single context value");
 
-        assertText("methodNames",
-                   "[parent.eventHandlerOne(String), parent.eventHandlerZero(), parent.onAction(String), parent.onAction(), child.eventHandlerOneChild(), child.eventHandlerZeroChild()]");
+        assertText(
+                "methodNames",
+                "[parent.eventHandlerOne(String), parent.eventHandlerZero(), parent.onAction(String), parent.onAction(), child.eventHandlerOneChild(), child.eventHandlerZeroChild()]");
 
         clickAndWait(clear);
         clickAndWait("link=Two value context");
 
-        assertText("methodNames",
-                   "[parent.eventHandlerOne(String), parent.eventHandlerZero(), parent.onAction(String), parent.onAction(), child.eventHandlerOneChild(), child.eventHandlerZeroChild()]");
+        assertText(
+                "methodNames",
+                "[parent.eventHandlerOne(String), parent.eventHandlerZero(), parent.onAction(String), parent.onAction(), child.eventHandlerOneChild(), child.eventHandlerZeroChild()]");
 
         clickAndWait(clear);
         clickAndWait("link=Two value context (from fred)");
 
-        assertText("methodNames",
-                   "[parent.eventHandlerOne(String), parent.eventHandlerZero(), parent.onAction(String), parent.onAction(), child.eventHandlerForFred(), child.eventHandlerOneChild(), child.eventHandlerZeroChild(), child.onActionFromFred(String), child.onActionFromFred()]");
+        assertText(
+                "methodNames",
+                "[parent.eventHandlerOne(String), parent.eventHandlerZero(), parent.onAction(String), parent.onAction(), child.eventHandlerForFred(), child.eventHandlerOneChild(), child.eventHandlerZeroChild(), child.onActionFromFred(String), child.onActionFromFred()]");
     }
 
     @Test
@@ -918,15 +953,18 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     {
         start("Inherited Bindings Demo");
 
-        assertTextPresent("Bound: [ value: the-bound-value, bound: true ]", "Unbound: [ value: null, bound: false ]");
+        assertTextPresent("Bound: [ value: the-bound-value, bound: true ]",
+                "Unbound: [ value: null, bound: false ]");
     }
 
     @Test
     public void client_persistence()
     {
         start("Client Persistence Demo");
-        //can't assume session won't exist because other tests use form components w/ defaults, which means
-        //session creation to store the ValidationTracker. So we explicitly clear the session here.
+        // can't assume session won't exist because other tests use form
+        // components w/ defaults, which means
+        // session creation to store the ValidationTracker. So we explicitly
+        // clear the session here.
         clickAndWait("link=nix session");
 
         assertTextPresent("Persisted value: []", "Session: [false]");
@@ -945,7 +983,8 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         assertAttribute("//div[@id='single']/@class", "red");
         assertAttribute("//div[@id='consecutive']/@class", "goober-red");
         assertAttribute("//div[@id='trailer']/@class", "goober-green");
-        assertText("//div[@id='formal']", "ALERT-expansions work inside formal component parameters as well");
+        assertText("//div[@id='formal']",
+                "ALERT-expansions work inside formal component parameters as well");
 
         // An unrelated test, but fills in a bunch of minor gaps.
 
@@ -957,8 +996,10 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     {
         start("Palette Demo", "reset");
 
-        assertText("//div[@class='t-palette-available']/div[@class='t-palette-title']", "Languages Offered");
-        assertText("//div[@class='t-palette-selected']/div[@class='t-palette-title']", "Selected Languages");
+        assertText("//div[@class='t-palette-available']/div[@class='t-palette-title']",
+                "Languages Offered");
+        assertText("//div[@class='t-palette-selected']/div[@class='t-palette-title']",
+                "Selected Languages");
 
         addSelection("languages-avail", "label=Haskell");
         addSelection("languages-avail", "label=Javascript");
@@ -988,7 +1029,8 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         check("reorder");
         clickAndWait(SUBMIT);
 
-        assertText("//div[@class='t-palette-selected']/div[@class='t-palette-title']", "Selected / Ranked Languages");
+        assertText("//div[@class='t-palette-selected']/div[@class='t-palette-title']",
+                "Selected / Ranked Languages");
 
         addSelection("languages", "label=Ruby");
 
@@ -1013,15 +1055,19 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     {
         start("Palette Demo", "reset");
 
-        /* force of the options to be disabled rather than creating the model with it disabled in the page.
-         * it is possible to get into this state by creating a model with disabled options.
+        /*
+         * force of the options to be disabled rather than creating the model
+         * with it disabled in the page.
+         * it is possible to get into this state by creating a model with
+         * disabled options.
          */
         getEval("this.browserbot.findElement('//select[@id=\"languages-avail\"]/option[1]').disabled = 'disabled';");
 
-        // causes an error in the js console but does not throw an exception here. optimally, this would make the test case fail.
+        // causes an error in the js console but does not throw an exception
+        // here. optimally, this would make the test case fail.
         doubleClick("//select[@id=\"languages-avail\"]/option[1]");
     }
-    
+
     @Test
     public void palette_component_client_validation()
     {
@@ -1072,16 +1118,17 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         waitForPageToLoad();
 
         /*
-        clickAndWait("link=URL");
-        assertTextPresent("Google>");
-        goBack();
-        waitForPageToLoad();
-        */
+         * clickAndWait("link=URL");
+         * assertTextPresent("Google>");
+         * goBack();
+         * waitForPageToLoad();
+         */
 
         clickAndWait("link=bad");
-        assertTextPresent("An unexpected application exception has occurred.",
-                          "A component event handler method returned the value 20. Return type java.lang.Integer can not be handled.",
-                          "context:ReturnTypes.tml, line 50");
+        assertTextPresent(
+                "An unexpected application exception has occurred.",
+                "A component event handler method returned the value 20. Return type java.lang.Integer can not be handled.",
+                "context:ReturnTypes.tml, line 50");
     }
 
     @Test
@@ -1180,8 +1227,8 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         waitForPageToLoad("30000");
 
-        assertTextSeries("//li[%d]", 1, "First Name: [Howard]", "Last Name: [Lewis Ship]", "Path: [/var/www]",
-                         "Role: [GRANT]");
+        assertTextSeries("//li[%d]", 1, "First Name: [Howard]", "Last Name: [Lewis Ship]",
+                "Path: [/var/www]", "Role: [GRANT]");
     }
 
     @Test
@@ -1213,7 +1260,8 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         // The first input field is the form's hidden field.
 
-        // Note the difference: same data sorted differently (there's a default sort).
+        // Note the difference: same data sorted differently (there's a default
+        // sort).
 
         assertFieldValue("title", "ToDo # 14");
         assertFieldValueSeries("title_%d", 0, "ToDo # 15", "ToDo # 16", "ToDo # 17", "ToDo # 18");
@@ -1242,12 +1290,12 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     {
         start("Missing Template Demo");
 
-        assertTextPresent(
-                "Page MissingTemplate did not generate any markup when rendered. This could be because its template file could not be located, or because a render phase method in the page prevented rendering.");
+        assertTextPresent("Page MissingTemplate did not generate any markup when rendered. This could be because its template file could not be located, or because a render phase method in the page prevented rendering.");
     }
 
     /**
-     * This can test some output and parsing capability of the DateField component, but not the interesting client-side
+     * This can test some output and parsing capability of the DateField
+     * component, but not the interesting client-side
      * behavior.
      */
     @Test
@@ -1270,8 +1318,9 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         click("birthday-trigger");
 
-        waitForCondition("selenium.browserbot.getCurrentWindow().$$('DIV.datePicker').first().isDeepVisible() == true",
-                         PAGE_LOAD_TIMEOUT);
+        waitForCondition(
+                "selenium.browserbot.getCurrentWindow().$$('DIV.datePicker').first().isDeepVisible() == true",
+                PAGE_LOAD_TIMEOUT);
 
         assertText("//A[@class='topLabel']", "1966 d\u00e9cembre");
 
@@ -1279,7 +1328,8 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     }
 
     /**
-     * This also checks that the date type is displayed correctly by BeanDisplay and Grid.
+     * This also checks that the date type is displayed correctly by BeanDisplay
+     * and Grid.
      */
     @Test
     public void date_field_inside_bean_editor()
@@ -1291,7 +1341,8 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         clickAndWait(SUBMIT);
 
-        // Notice the date output format; that is controlled by the date Block on the
+        // Notice the date output format; that is controlled by the date Block
+        // on the
         // PropertyDisplayBlocks page.
 
         assertTextPresent("Howard Lewis Ship", "Dec 24, 1966");
@@ -1368,7 +1419,8 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         assertTextPresent("No name has been selected.");
 
-        // Hate doing this, but selecting by the text isn't working, perhaps because of the
+        // Hate doing this, but selecting by the text isn't working, perhaps
+        // because of the
         // HTML entities.
         click("select_0");
 
@@ -1388,8 +1440,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     {
         open(BASE_URL + "invalidsuperclass");
 
-        assertTextPresent(
-                "Base class org.apache.tapestry5.integration.app1.WrongPackageForBaseClass (super class of org.apache.tapestry5.integration.app1.pages.InvalidSuperClass) is not in a controlled package and is therefore not valid. You should try moving the class to package org.apache.tapestry5.integration.app1.base.");
+        assertTextPresent("Base class org.apache.tapestry5.integration.app1.WrongPackageForBaseClass (super class of org.apache.tapestry5.integration.app1.pages.InvalidSuperClass) is not in a controlled package and is therefore not valid. You should try moving the class to package org.apache.tapestry5.integration.app1.base.");
     }
 
     @Test
@@ -1410,7 +1461,8 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     {
         start("ComponentParameter Demo");
 
-        // This component is inside a block, and is only rendered because it is passed as a parameter, of type ActionLink,
+        // This component is inside a block, and is only rendered because it is
+        // passed as a parameter, of type ActionLink,
         // to an ActionLinkIndirect component.
 
         clickAndWait("link=click me");
@@ -1434,31 +1486,32 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     {
         start("Disabled Fields");
 
-        String[] paths = new String[] { "//input[@id='textfield']",
+        String[] paths = new String[]
+        { "//input[@id='textfield']",
 
-                "//input[@id='passwordfield']",
+        "//input[@id='passwordfield']",
 
-                "//textarea[@id='textarea']",
+        "//textarea[@id='textarea']",
 
-                "//input[@id='checkbox']",
+        "//input[@id='checkbox']",
 
-                "//select[@id='select']",
+        "//select[@id='select']",
 
-                "//input[@id='radio1']",
+        "//input[@id='radio1']",
 
-                "//input[@id='radio2']",
+        "//input[@id='radio2']",
 
-                "//input[@id='datefield']",
+        "//input[@id='datefield']",
 
-                "//select[@id='palette-avail']",
+        "//select[@id='palette-avail']",
 
-                "//button[@id='palette-select']",
+        "//button[@id='palette-select']",
 
-                "//button[@id='palette-deselect']",
+        "//button[@id='palette-deselect']",
 
-                "//select[@id='palette']",
+        "//select[@id='palette']",
 
-                "//input[@id='submit']" };
+        "//input[@id='submit']" };
 
         for (String path : paths)
         {
@@ -1513,7 +1566,8 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     {
         start("Lean Grid Demo", "2");
 
-        // Use page 2 to ensure that the row index is the row in the Grid, not the row index of the data
+        // Use page 2 to ensure that the row index is the row in the Grid, not
+        // the row index of the data
 
         assertText("//th[7]", "Indexes (6)");
         assertText("//tr[1]/td[7]", "0,6");
@@ -1623,20 +1677,21 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     {
         start("Override Validation Decorator");
 
-        // This is sub-optimal, as it doesn't esnure that the before/after field values really do wrap around
+        // This is sub-optimal, as it doesn't esnure that the before/after field
+        // values really do wrap around
         // the field (they do, but that's hard to prove!).
 
         // Along the way we are also testing:
         // - primitive types are automatically required
-        // - AbstractTextField.isRequired() and the logic inside ComponentFieldValidator.isRequired()
+        // - AbstractTextField.isRequired() and the logic inside
+        // ComponentFieldValidator.isRequired()
 
         assertSourcePresent(
                 "[Before label for Value]<label id=\"value-label\" for=\"value\">Value</label>[After label for Value]",
                 "[Before field Value]",
                 "[After field Value (optional)]",
                 "[Before label for Required Value]<label id=\"requiredValue-label\" for=\"requiredValue\">Required Value</label>[After label for Required Value]",
-                "[Before field Required Value]",
-                "[After field Required Value (required)]");
+                "[Before field Required Value]", "[After field Required Value (required)]");
     }
 
     /**
@@ -1647,23 +1702,22 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     {
         start("Exception Event Demo", "enable", "force invalid activation context");
 
-        assertTextPresent(
-                "Exception: Exception in method org.apache.tapestry5.integration.app1.pages.ExceptionEventDemo.onActivate(float)");
+        assertTextPresent("Exception: Exception in method org.apache.tapestry5.integration.app1.pages.ExceptionEventDemo.onActivate(float)");
 
         clickAndWait("link=force invalid event context");
 
-        assertTextPresent(
-                "Exception: Exception in method org.apache.tapestry5.integration.app1.pages.ExceptionEventDemo.onActionFromFail(float)");
+        assertTextPresent("Exception: Exception in method org.apache.tapestry5.integration.app1.pages.ExceptionEventDemo.onActionFromFail(float)");
 
-        // Revert to normal handling: return null from the onException() event handler method.
+        // Revert to normal handling: return null from the onException() event
+        // handler method.
 
         clickAndWait("link=disable");
 
         clickAndWait("link=force invalid event context");
 
         assertTextPresent("An unexpected application exception has occurred.",
-                          "org.apache.tapestry5.runtime.ComponentEventException",
-                          "java.lang.NumberFormatException");
+                "org.apache.tapestry5.runtime.ComponentEventException",
+                "java.lang.NumberFormatException");
     }
 
     /**
@@ -1716,10 +1770,11 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         assertTextPresent("An unexpected application exception has occurred");
 
-        // Just sample a smattering of the vast amount of data in the exception report.
+        // Just sample a smattering of the vast amount of data in the exception
+        // report.
 
-        assertTextPresent("RenderErrorDemo", "class " + RenderErrorDemo.class.getName(), "RenderErrorDemo:border",
-                          "RenderErrorDemo:echo");
+        assertTextPresent("RenderErrorDemo", "class " + RenderErrorDemo.class.getName(),
+                "RenderErrorDemo:border", "RenderErrorDemo:echo");
     }
 
     /**
@@ -1741,8 +1796,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     {
         start("Render Phase Method Exception Demo");
 
-        assertTextPresent(
-                "Render queue error in BeginRender[RenderPhaseMethodExceptionDemo]: java.sql.SQLException: Simulated JDBC exception while rendering.");
+        assertTextPresent("Render queue error in BeginRender[RenderPhaseMethodExceptionDemo]: java.sql.SQLException: Simulated JDBC exception while rendering.");
     }
 
     /**
@@ -1830,7 +1884,9 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         click("subscribeToEmail");
         click("on");
 
-        waitForCondition("selenium.browserbot.getCurrentWindow().$('code').isDeepVisible() == true", PAGE_LOAD_TIMEOUT);
+        waitForCondition(
+                "selenium.browserbot.getCurrentWindow().$('code').isDeepVisible() == true",
+                PAGE_LOAD_TIMEOUT);
 
         type("name", "Barney");
         type("email", "rubble@bedrock.gov");
@@ -1838,8 +1894,9 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         click("off");
 
-        waitForCondition("selenium.browserbot.getCurrentWindow().$('code').isDeepVisible() == false",
-                         PAGE_LOAD_TIMEOUT);
+        waitForCondition(
+                "selenium.browserbot.getCurrentWindow().$('code').isDeepVisible() == false",
+                PAGE_LOAD_TIMEOUT);
 
         clickAndWait(SUBMIT);
 
@@ -1856,14 +1913,16 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         assertTextPresent(Form.class.getName() + "[form--form]");
     }
 
-
     /**
-     * This may need to be disabled or dropped from the test suite, I don't know that Selenium, especially Selenium
-     * running headless on the CI server, can handle the transition to HTTPS: there's warnings that pop up about
+     * This may need to be disabled or dropped from the test suite, I don't know
+     * that Selenium, especially Selenium
+     * running headless on the CI server, can handle the transition to HTTPS:
+     * there's warnings that pop up about
      * certificates.
      * <p/>
      * <p/>
-     * Verified: Selenium can't handle this, even with a user manually OK-ing the certificate warning dialogs.
+     * Verified: Selenium can't handle this, even with a user manually OK-ing
+     * the certificate warning dialogs.
      */
     @Test(enabled = false)
     public void secure_page_access()
@@ -1927,7 +1986,8 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     }
 
     /**
-     * TAPESTRY-2150.  Also demonstrates how to add a ValueEncoder for an entity object, to allow seamless encoding of
+     * TAPESTRY-2150. Also demonstrates how to add a ValueEncoder for an entity
+     * object, to allow seamless encoding of
      * the entity's id into the URL.
      */
     @Test
@@ -2039,10 +2099,10 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     {
         start("Protected Fields Demo", "Trigger the Exception");
 
-        assertTextPresent("An unexpected application exception has occurred.",
-                          "Class org.apache.tapestry5.integration.app1.pages.ProtectedFields contains field(s) (_field) that are not private. You should change these fields to private, and add accessor methods if needed.");
+        assertTextPresent(
+                "An unexpected application exception has occurred.",
+                "Class org.apache.tapestry5.integration.app1.pages.ProtectedFields contains field(s) (_field) that are not private. You should change these fields to private, and add accessor methods if needed.");
     }
-
 
     /**
      * TAPESTRY-2078
@@ -2052,8 +2112,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     {
         start("Class Transformation Exception Demo");
 
-        assertTextPresent(
-                "Class org.apache.tapestry5.integration.app1.pages.Datum contains field(s) (_value) that are not private. You should change these fields to private, and add accessor methods if needed.");
+        assertTextPresent("Class org.apache.tapestry5.integration.app1.pages.Datum contains field(s) (_value) that are not private. You should change these fields to private, and add accessor methods if needed.");
     }
 
     /**
@@ -2143,7 +2202,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         assertEquals(time2_2, time2_1);
 
         assertFalse(time2_1.equals(time1_1),
-                    "After update the nanoseconds time did not change, meaning @Cache was broken.");
+                "After update the nanoseconds time did not change, meaning @Cache was broken.");
     }
 
     @Test
@@ -2159,9 +2218,8 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         sleep(100);
 
         assertEquals(getText("lastupdate"), timestamp,
-                     "Timestamp should not have changed because updates are in-place.");
+                "Timestamp should not have changed because updates are in-place.");
     }
-
 
     @Test
     public void method_advice()
@@ -2175,8 +2233,9 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         assertText("version", "5");
 
         // @ReverseStrings filtered the checked exception to a string result
-        assertText("cranky",
-                   "Invocation of method getCranky() failed with org.apache.tapestry5.integration.app1.services.DearGodWhyMeException.");
+        assertText(
+                "cranky",
+                "Invocation of method getCranky() failed with org.apache.tapestry5.integration.app1.services.DearGodWhyMeException.");
 
         // Now to check advice on a setter that manipulates parameters
 
@@ -2203,7 +2262,8 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         assertText("//div[@id='content']//h1", "Nested BeanDisplay");
 
-        // As usual, Selenium is fighting me in terms of extracting data, so the above check just ensures
+        // As usual, Selenium is fighting me in terms of extracting data, so the
+        // above check just ensures
         // we made it past the form submit without error.
     }
 
@@ -2215,18 +2275,15 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     {
         start("Null Parameter Demo");
 
-        assertTextPresent(
-                "Parameter 'object' of component NullParameterDemo:beandisplay is bound to null.");
+        assertTextPresent("Parameter 'object' of component NullParameterDemo:beandisplay is bound to null.");
     }
-
 
     @Test
     public void component_classes_may_not_be_directly_instantiated()
     {
         start("Instantiate Page");
 
-        assertTextPresent(
-                "Component class org.apache.tapestry5.integration.app1.pages.Music may not be instantiated directly.");
+        assertTextPresent("Component class org.apache.tapestry5.integration.app1.pages.Music may not be instantiated directly.");
     }
 
     /**
@@ -2268,8 +2325,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     {
         open(BASE_URL + "validform.form");
 
-        assertTextPresent(
-                "Forms require that the request method be POST and that the t:formdata query parameter have values.");
+        assertTextPresent("Forms require that the request method be POST and that the t:formdata query parameter have values.");
     }
 
     /**
@@ -2279,8 +2335,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     {
         start("Field Annotation Conflict");
 
-        assertTextPresent(
-                "Field flashDemo of class org.apache.tapestry5.integration.app1.pages.FieldAnnotationConflict is already claimed by @org.apache.tapestry5.annotations.InjectPage and can not be claimed by @org.apache.tapestry5.annotations.Parameter.");
+        assertTextPresent("Field flashDemo of class org.apache.tapestry5.integration.app1.pages.FieldAnnotationConflict is already claimed by @org.apache.tapestry5.annotations.InjectPage and can not be claimed by @org.apache.tapestry5.annotations.Parameter.");
     }
 
     /**
@@ -2307,7 +2362,8 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         waitForElementToAppear("amount:errorpopup");
         waitForElementToAppear("quantity:errorpopup");
 
-        assertText("//div[@id='amount:errorpopup']/span", "You must provide a numeric value for Amount.");
+        assertText("//div[@id='amount:errorpopup']/span",
+                "You must provide a numeric value for Amount.");
         assertText("//div[@id='quantity:errorpopup']/span", "Provide quantity as a number.");
     }
 
@@ -2315,20 +2371,19 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     {
 
         String condition = String.format("selenium.browserbot.getCurrentWindow().$(\"%s\")",
-                                         elementId);
+                elementId);
 
         waitForCondition(condition, PAGE_LOAD_TIMEOUT);
     }
-    
+
     private void waitForElementToDisappear(String elementId)
     {
 
         String condition = String.format("selenium.browserbot.getCurrentWindow().$(\"%s\").hide()",
-                                         elementId);
+                elementId);
 
         waitForCondition(condition, PAGE_LOAD_TIMEOUT);
     }
-
 
     /**
      * TAPESTRY-2610
@@ -2338,7 +2393,8 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         start("Informal Parameters Demo");
 
         assertTextSeries("//dl[@id='informals']/dt[%d]", 1, "barney", "fred", "pageName");
-        assertTextSeries("//dl[@id='informals']/dd[%d]", 1, "rubble", "flintstone", "InformalParametersDemo");
+        assertTextSeries("//dl[@id='informals']/dd[%d]", 1, "rubble", "flintstone",
+                "InformalParametersDemo");
     }
 
     /**
@@ -2348,16 +2404,15 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     {
         start("Failed Field Injection Demo");
 
-        assertTextPresent(
-                "Error obtaining injected value for field org.apache.tapestry5.integration.app1.pages.FailedInjectDemo.buffer: No service implements the interface java.lang.StringBuffer.");
+        assertTextPresent("Error obtaining injected value for field org.apache.tapestry5.integration.app1.pages.FailedInjectDemo.buffer: No service implements the interface java.lang.StringBuffer.");
 
         refresh();
         waitForPageToLoad(PAGE_LOAD_TIMEOUT);
 
-        // Before this bug was fixed, this message would not appear; instead on complaining about _$resources would appear which was very confusing.
+        // Before this bug was fixed, this message would not appear; instead on
+        // complaining about _$resources would appear which was very confusing.
 
-        assertTextPresent(
-                "Error obtaining injected value for field org.apache.tapestry5.integration.app1.pages.FailedInjectDemo.buffer: No service implements the interface java.lang.StringBuffer.");
+        assertTextPresent("Error obtaining injected value for field org.apache.tapestry5.integration.app1.pages.FailedInjectDemo.buffer: No service implements the interface java.lang.StringBuffer.");
     }
 
     /**
@@ -2388,9 +2443,10 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     {
         start("Form Field Outside Form");
 
-        assertTextPresent("org.apache.tapestry5.internal.services.RenderQueueException",
-                          "Render queue error in SetupRender[FormFieldOutsideForm:textfield]: The Textfield component must be enclosed by a Form component.",
-                          "context:FormFieldOutsideForm.tml, line 5");
+        assertTextPresent(
+                "org.apache.tapestry5.internal.services.RenderQueueException",
+                "Render queue error in SetupRender[FormFieldOutsideForm:textfield]: The Textfield component must be enclosed by a Form component.",
+                "context:FormFieldOutsideForm.tml, line 5");
     }
 
     /**
@@ -2436,8 +2492,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     {
         start("Unhandled Event Demo", "traditional");
 
-        assertTextPresent(
-                "Request event 'action' (on component UnhandledEventDemo:traditional) was not handled; you must provide a matching event handler method in the component or in one of its containers.");
+        assertTextPresent("Request event 'action' (on component UnhandledEventDemo:traditional) was not handled; you must provide a matching event handler method in the component or in one of its containers.");
 
         start("Unhandled Event Demo");
 
@@ -2445,8 +2500,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         waitForCSSSelectedElementToAppear("#t-console li");
 
-        assertTextPresent(
-                "Communication with the server failed: Request event 'action' (on component UnhandledEventDemo:ajax) was not handled; you must provide a matching event handler method in the component or in one of its containers.");
+        assertTextPresent("Communication with the server failed: Request event 'action' (on component UnhandledEventDemo:ajax) was not handled; you must provide a matching event handler method in the component or in one of its containers.");
     }
 
     /**
@@ -2466,8 +2520,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     {
         start("Components Not In Template Demo");
 
-        assertTextPresent(
-                "Embedded component(s) form are defined within component class org.apache.tapestry5.integration.app1.pages.ComponentsNotInTemplateDemo");
+        assertTextPresent("Embedded component(s) form are defined within component class org.apache.tapestry5.integration.app1.pages.ComponentsNotInTemplateDemo");
     }
 
     /**
@@ -2533,7 +2586,6 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         assertTextPresent("You must provide at least 10 characters for User Id.");
 
-
         clickAndWait("//input[@type='submit' and @value='Register']");
 
         assertTextPresent("Enter a unique user id, such as your initials.");
@@ -2555,7 +2607,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         click("link=Fred");
 
         waitForCondition("selenium.browserbot.getCurrentWindow().$('name:errorpopup')",
-                         PAGE_LOAD_TIMEOUT);
+                PAGE_LOAD_TIMEOUT);
 
         assertTextPresent("You must provide a value for Name.");
 
@@ -2604,10 +2656,8 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     {
         start("Duplicate IDs");
 
-        assertTextPresent(
-                "Component DuplicateIds already contains a child component with id 'index'. Embedded component ids must be unique (excluding case, which is ignored).");
-        assertTextPresent(
-                "Component DuplicateIds declared original child component with id 'index' in DuplicateIds.tml on line 6.");
+        assertTextPresent("Component DuplicateIds already contains a child component with id 'index'. Embedded component ids must be unique (excluding case, which is ignored).");
+        assertTextPresent("Component DuplicateIds declared original child component with id 'index' in DuplicateIds.tml on line 6.");
     }
 
     /**
@@ -2629,30 +2679,27 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     {
         start("Duplicate Published Parameter Name");
 
-        assertTextPresent(
-                "Parameter 'value' of embedded component 'passwordfield' can not be published as a parameter of " +
-                        "component org.apache.tapestry5.integration.app1.components.BadPublishDuplicate, " +
-                        "as it has previously been published by embedded component 'textfield'.");
+        assertTextPresent("Parameter 'value' of embedded component 'passwordfield' can not be published as a parameter of "
+                + "component org.apache.tapestry5.integration.app1.components.BadPublishDuplicate, "
+                + "as it has previously been published by embedded component 'textfield'.");
     }
 
     public void embedded_type_conflict()
     {
         start("Embedded Component Type Conflict");
 
-        assertTextPresent(
-                "Embedded component 'input' provides a type attribute in the template ('passwordfield') " +
-                        "as well as in the component class ('textfield'). You should not provide a type attribute in " +
-                        "the template when defining an embedded component within the component class.");
+        assertTextPresent("Embedded component 'input' provides a type attribute in the template ('passwordfield') "
+                + "as well as in the component class ('textfield'). You should not provide a type attribute in "
+                + "the template when defining an embedded component within the component class.");
     }
 
     public void publish_unknown_parameter()
     {
         start("Publish Unknown Parameter Demo");
 
-        assertTextPresent(
-                "Parameter 'xyzzyx' of component org.apache.tapestry5.integration.app1.components.BadPublishUnknown " +
-                        "is improperly published from embedded component 'publish1' (where it does not exist). " +
-                        "This may be a typo in the publishParameters attribute of the @Component annotation.");
+        assertTextPresent("Parameter 'xyzzyx' of component org.apache.tapestry5.integration.app1.components.BadPublishUnknown "
+                + "is improperly published from embedded component 'publish1' (where it does not exist). "
+                + "This may be a typo in the publishParameters attribute of the @Component annotation.");
     }
 
     public void unknown_mixin_id()
@@ -2666,18 +2713,18 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     {
         start("Duplicate Mixin Demo");
 
-        assertTextPresent(
-                "Failure creating embedded component 'form' of " +
-                        "org.apache.tapestry5.integration.app1.pages.DupeMixinDemo: " +
-                        "Mixins applied to a component must be unique. Mixin 'RenderInformals' has already been applied.");
+        assertTextPresent("Failure creating embedded component 'form' of "
+                + "org.apache.tapestry5.integration.app1.pages.DupeMixinDemo: "
+                + "Mixins applied to a component must be unique. Mixin 'RenderInformals' has already been applied.");
     }
 
     public void unsupported_informal_block_parameter()
     {
         start("Unsupported Parameter Block Demo");
 
-        assertTextPresent("Exception assembling root component of page UnsupportedParameterBlockDemo:",
-                          "Component UnsupportedParameterBlockDemo:outputraw does not include a formal parameter 'unexpected' (and does not support informal parameters).");
+        assertTextPresent(
+                "Exception assembling root component of page UnsupportedParameterBlockDemo:",
+                "Component UnsupportedParameterBlockDemo:outputraw does not include a formal parameter 'unexpected' (and does not support informal parameters).");
     }
 
     /**
@@ -2793,7 +2840,6 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         assertText("zoneOutput", "Updated via form submission.");
 
-
         // Normal submit
 
         clickAndWait("link=refresh");
@@ -2829,7 +2875,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         waitForElementToAppear("outputvalue");
 
         assertText("outputvalue", "robot chicken");
-        
+
         assertText("eventfired", "true");
 
         // Make sure it was a partial update
@@ -2845,7 +2891,6 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         String now = getText("now");
 
-
         click("update");
 
         waitForElementToAppear("fredName");
@@ -2853,7 +2898,8 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         assertText("fredName", "Fred Flintstone");
         assertText("dino", "His dog, Dino.");
 
-        // Ideally, we'd add checks that the JavaScript for the Palette in the Barney Zone was
+        // Ideally, we'd add checks that the JavaScript for the Palette in the
+        // Barney Zone was
         // updated.
 
         // Make sure it was a partial update
@@ -2880,8 +2926,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     {
         start("Invalid Template Extend Demo");
 
-        assertTextPresent(
-                "Component org.apache.tapestry5.integration.app1.pages.InvalidTemplateExtend uses an extension template, but does not have a parent component.");
+        assertTextPresent("Component org.apache.tapestry5.integration.app1.pages.InvalidTemplateExtend uses an extension template, but does not have a parent component.");
     }
 
     /**
@@ -2891,8 +2936,9 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     {
         start("Abstract Component Demo");
 
-        assertTextPresent("java.lang.RuntimeException",
-                          "Component class org.apache.tapestry5.integration.app1.components.AbstractComponent is abstract and can not be instantiated.");
+        assertTextPresent(
+                "java.lang.RuntimeException",
+                "Component class org.apache.tapestry5.integration.app1.components.AbstractComponent is abstract and can not be instantiated.");
     }
 
     /**
@@ -2905,7 +2951,8 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         String outerNow = getText("outernow");
         String innerNow = getText("innernow");
 
-        // If we're too fast that innernow doesn't change because its all within a single second.
+        // If we're too fast that innernow doesn't change because its all within
+        // a single second.
 
         sleep(1050);
 
@@ -2930,7 +2977,8 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         waitForElementToAppear("longValue:errorpopup");
 
-        assertText("//div[@id='longValue:errorpopup']/span", "You must provide an integer value for Long Value.");
+        assertText("//div[@id='longValue:errorpopup']/span",
+                "You must provide an integer value for Long Value.");
 
         type("longValue", "37");
 
@@ -2950,7 +2998,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         click("link=Direct JSON response");
 
-        // Give it some time to process.                                                
+        // Give it some time to process.
 
         sleep(100);
 
@@ -2983,23 +3031,22 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         click(SUBMIT);
 
-        assertBubbleMessage("name","You must provide a value for Name.");
-        assertBubbleMessage("age","You must provide a value for Age.");
+        assertBubbleMessage("name", "You must provide a value for Name.");
+        assertBubbleMessage("age", "You must provide a value for Age.");
 
-        type("name","behemoth");
-        type("age","0");
-        select("type","label=Snake");
+        type("name", "behemoth");
+        type("age", "0");
+        select("type", "label=Snake");
 
         click(SUBMIT);
-        assertBubbleMessage("age","Age requires a value of at least 1.");
+        assertBubbleMessage("age", "Age requires a value of at least 1.");
 
-        type("age","121");
+        type("age", "121");
         click(SUBMIT);
-        assertBubbleMessage("age","Age requires a value no larger than 120.");
+        assertBubbleMessage("age", "Age requires a value no larger than 120.");
 
-        type("age","5");
+        type("age", "5");
         clickAndWait(SUBMIT);
-
 
     }
 
@@ -3008,31 +3055,32 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     {
         start("RenderClientId Mixin");
 
-        assertText("divwithid","Div Content");
+        assertText("divwithid", "Div Content");
     }
 
     @Test
     public void bindparameter()
     {
         start("BindParameter mixin annotation");
-        //implicit parameter name
-        assertEchoMixins("testmixin","mypropertyvalue",0,-1,-1,1,true);
-        assertText("mypropertyoutput","mypropertyvalue");
+        // implicit parameter name
+        assertEchoMixins("testmixin", "mypropertyvalue", 0, -1, -1, 1, true);
+        assertText("mypropertyoutput", "mypropertyvalue");
 
-        //explicit parameter name
-        assertEchoMixins("testmixin2","10",-1,0,-1,2,true);
-        assertText("mypropertyoutput2","10");
+        // explicit parameter name
+        assertEchoMixins("testmixin2", "10", -1, 0, -1, 2, true);
+        assertText("mypropertyoutput2", "10");
 
-        //multiple parameter names; first one found wins.
-        assertEchoMixins("testmixin3","hello",-1,-1,0,3,true);
+        // multiple parameter names; first one found wins.
+        assertEchoMixins("testmixin3", "hello", -1, -1, 0, 3, true);
 
-        //multiple mixins
-        assertEchoMixins("multimixins","supervalue",0,1,2,3,true);
-        assertText("mypropertyoutput4","supervalue");
+        // multiple mixins
+        assertEchoMixins("multimixins", "supervalue", 0, 1, 2, 3, true);
+        assertText("mypropertyoutput4", "supervalue");
 
-        //finally, binding to default bindings (which is tricky because of page load invocation order)
-        assertEchoMixins("defaultbinding","goodbye",0,-1,-1,1,false);
-        assertText("mypropertyoutput5","goodbye");
+        // finally, binding to default bindings (which is tricky because of page
+        // load invocation order)
+        assertEchoMixins("defaultbinding", "goodbye", 0, -1, -1, 1, false);
+        assertText("mypropertyoutput5", "goodbye");
     }
 
     @Test
@@ -3040,10 +3088,11 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     {
         start("BindParameter error handling");
 
-        assertTextPresent("An unexpected application exception has occurred.",
-               "Failed to BindParameter 'boundParameter' in mixin 'org.apache.tapestry5.integration.app1.mixins.EchoValue2': "
-                       + "component 'org.apache.tapestry5.corelib.components.Any' does not provide a matching parameter "
-                       + "(looking for: value). Available parameters: [clientId, element]");
+        assertTextPresent(
+                "An unexpected application exception has occurred.",
+                "Failed to BindParameter 'boundParameter' in mixin 'org.apache.tapestry5.integration.app1.mixins.EchoValue2': "
+                        + "component 'org.apache.tapestry5.corelib.components.Any' does not provide a matching parameter "
+                        + "(looking for: value). Available parameters: [clientId, element]");
 
     }
 
@@ -3052,79 +3101,91 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     {
         start("BindParameter on component");
 
-        assertTextPresent("An unexpected application exception has occurred.",
-        "@BindParameter was used on 'value' in component class 'org.apache.tapestry5.integration.app1.components.BindParameterComponent', but @BindParameter should only be used in mixins");
+        assertTextPresent(
+                "An unexpected application exception has occurred.",
+                "@BindParameter was used on 'value' in component class 'org.apache.tapestry5.integration.app1.components.BindParameterComponent', but @BindParameter should only be used in mixins");
     }
 
     @Test
     public void mixin_ordering()
     {
-        //echo => <original>-before, temporaryvaluefromechovaluemixin, <original>-after
-        //echo2 => echo2-<original>-before, "3", echo2-<original>-after
-        //echo3 => echo3-<original>-before, "world", echo3-<original>-after
-        //order1: echo, echo2, echo3
+        // echo => <original>-before, temporaryvaluefromechovaluemixin,
+        // <original>-after
+        // echo2 => echo2-<original>-before, "3", echo2-<original>-after
+        // echo3 => echo3-<original>-before, "world", echo3-<original>-after
+        // order1: echo, echo2, echo3
         start("Mixin Ordering Demo");
 
-        assertMixinOrder(1,0,1,2,3,true);
-        //order2: echo3, echo2, echo
-        assertMixinOrder(2,2,3,0,1,true);
-        //order3: echo2, echo3, echo
-        assertMixinOrder(3,3,0,2,1,true);
-        //order4: echo3, echo, echo2
-        assertMixinOrder(4,3,1,0,2,true);
-        //order5: echo2, echo, echo3
-        assertMixinOrder(5,2,0,1,3,true);
-        //order6: echo, echo3, echo2, TextOnlyOnDisabled
-        assertMixinOrder(6,0,3,1,2,false);
-        //make sure mixin after and mixin before constraints don't interfere...
-        //order7: echo, echo2 <corecomponent> echoafter2, echoafter
-        assertMixinOrder(7,0,1,-1,2,true);
-        assertText("order7_before_but_after","afterrender_for_mixinafter_isreally_justbefore_corecomponent_afterrender-before");
-        assertText("order7_after_but_before","afterrender_for_mixinafter_isreally_justbefore_corecomponent_afterrender-after");
-        //echoafter2 should have for its value at the point it renders
-        //the value that echo2 sets, since the core component isn't changing its value.
-        assertText("order7_before_but_after2","3-before");
-        assertText("order7_after_but_before2","3-after");
+        assertMixinOrder(1, 0, 1, 2, 3, true);
+        // order2: echo3, echo2, echo
+        assertMixinOrder(2, 2, 3, 0, 1, true);
+        // order3: echo2, echo3, echo
+        assertMixinOrder(3, 3, 0, 2, 1, true);
+        // order4: echo3, echo, echo2
+        assertMixinOrder(4, 3, 1, 0, 2, true);
+        // order5: echo2, echo, echo3
+        assertMixinOrder(5, 2, 0, 1, 3, true);
+        // order6: echo, echo3, echo2, TextOnlyOnDisabled
+        assertMixinOrder(6, 0, 3, 1, 2, false);
+        // make sure mixin after and mixin before constraints don't interfere...
+        // order7: echo, echo2 <corecomponent> echoafter2, echoafter
+        assertMixinOrder(7, 0, 1, -1, 2, true);
+        assertText("order7_before_but_after",
+                "afterrender_for_mixinafter_isreally_justbefore_corecomponent_afterrender-before");
+        assertText("order7_after_but_before",
+                "afterrender_for_mixinafter_isreally_justbefore_corecomponent_afterrender-after");
+        // echoafter2 should have for its value at the point it renders
+        // the value that echo2 sets, since the core component isn't changing
+        // its value.
+        assertText("order7_before_but_after2", "3-before");
+        assertText("order7_after_but_before2", "3-after");
     }
 
-    private void assertMixinOrder(int orderNum, int echo1From, int echo2From, int echo3From, int fieldFrom, boolean isField)
+    private void assertMixinOrder(int orderNum, int echo1From, int echo2From, int echo3From,
+            int fieldFrom, boolean isField)
     {
-        assertEchoMixins("order" + orderNum,"batman", echo1From,echo2From,echo3From,fieldFrom,isField);
+        assertEchoMixins("order" + orderNum, "batman", echo1From, echo2From, echo3From, fieldFrom,
+                isField);
     }
 
     /**
-     * asserts that the "echo value" mixins are properly functioning (ie @BindParameter, and mixin ordering).
-     * each integer value specifies the echo mixin number (echovalue => 1, echovalue2 => 2, echovalue3 => 3; 0 is the original value)
-     * from which the specified echo mixin is expected to "receive" its value. So if echo1From is 2, then the "original value"
-     * printed by echo1 is expected to be the value set by echo2. If a given "from" is < 0, checking the corresponding mixin values is disabled.
+     * asserts that the "echo value" mixins are properly functioning (ie
+     * @BindParameter, and mixin ordering).
+     * each integer value specifies the echo mixin number (echovalue => 1,
+     * echovalue2 => 2, echovalue3 => 3; 0 is the original value)
+     * from which the specified echo mixin is expected to "receive" its value.
+     * So if echo1From is 2, then the "original value"
+     * printed by echo1 is expected to be the value set by echo2. If a given
+     * "from" is < 0, checking the corresponding mixin values is disabled.
      */
 
-    private void assertEchoMixins(String fieldName, String originalValue, int echo1From, int echo2From, int echo3From, int fieldFrom, boolean isField)
+    private void assertEchoMixins(String fieldName, String originalValue, int echo1From,
+            int echo2From, int echo3From, int fieldFrom, boolean isField)
     {
-        String[] vals = {originalValue,"temporaryvaluefromechovaluemixin","3","world"};
+        String[] vals =
+        { originalValue, "temporaryvaluefromechovaluemixin", "3", "world" };
         String before = fieldName + "_before";
         String after = fieldName + "_after";
         if (echo1From > -1)
         {
-            assertText(before,vals[echo1From] + "-before");
-            assertText(after,vals[echo1From] + "-after");
+            assertText(before, vals[echo1From] + "-before");
+            assertText(after, vals[echo1From] + "-after");
         }
         if (echo2From > -1)
         {
-            assertText(before + "2","echo2-" + vals[echo2From] + "-before");
-            assertText(after + "2","echo2-" + vals[echo2From] + "-after");
+            assertText(before + "2", "echo2-" + vals[echo2From] + "-before");
+            assertText(after + "2", "echo2-" + vals[echo2From] + "-after");
         }
         if (echo3From > -1)
         {
-            assertText(before + "3","echo3-" + vals[echo3From] + "-before");
-            assertText(after + "3","echo3-" + vals[echo3From] + "-after");
+            assertText(before + "3", "echo3-" + vals[echo3From] + "-before");
+            assertText(after + "3", "echo3-" + vals[echo3From] + "-after");
         }
         if (isField)
-            assertFieldValue(fieldName,vals[fieldFrom]);
+            assertFieldValue(fieldName, vals[fieldFrom]);
         else
-            assertText(fieldName,vals[fieldFrom]);
+            assertText(fieldName, vals[fieldFrom]);
     }
-
 
     @Test
     public void missing_componentclass()
@@ -3142,13 +3203,13 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         assertTextPresent("Foo");
         assertTextPresent("Bar");
-        
+
         clickAndWait("link=Read SessionAttribute");
-  
+
         assertTextPresent("read Foo");
         assertTextPresent("read Bar");
     }
-    
+
     @Test
     public void calendar_field_inside_bean_editor()
     {
@@ -3160,30 +3221,31 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         assertTextPresent("Apr 6, 1978");
     }
-    
+
     @Test
     public void trigger_demo()
     {
         start("Trigger Demo");
 
-        assertAttribute(String.format("//script[@src='%s']/@src", "some_additional_scripts.js"), "some_additional_scripts.js");
+        assertAttribute(String.format("//script[@src='%s']/@src", "some_additional_scripts.js"),
+                "some_additional_scripts.js");
         assertTextPresent("Event 'provideAdditionalMarkup' handled.");
     }
-    
+
     @Test
     public void image_submit_triggers_selected_event()
     {
         start("Submit with an Image Demo");
-        
+
         type("value", "barney gumble");
-        
+
         clickAndWait("//input[@type='image']");
-        
+
         assertText("outputvalue", "barney gumble");
-        
+
         assertText("eventfired", "true");
     }
-    
+
     /**
      * TAP5-138
      */
@@ -3191,39 +3253,41 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     public void select_zone()
     {
         start("Select Zone Demo");
-        
+
         type("carMaker", "BMW");
-        
+
         waitForElementToAppear("carModelContainer");
-        
+
         click(SUBMIT);
-        
-        String condition = String.format("selenium.browserbot.getCurrentWindow().$$(\"%s\")", "t-error-popup");
+
+        String condition = String.format("selenium.browserbot.getCurrentWindow().$$(\"%s\")",
+                "t-error-popup");
 
         waitForCondition(condition, PAGE_LOAD_TIMEOUT);
-        
-        assertText(String.format("//div[@class='%s']/span", "t-error-popup"), "You must provide a value for Car Model.");
-        
+
+        assertText(String.format("//div[@class='%s']/span", "t-error-popup"),
+                "You must provide a value for Car Model.");
+
         type("carModel", "7 Series");
-        
+
         clickAndWait(SUBMIT);
-        
+
         assertTextPresent("Car Maker: BMW");
-        
+
         assertTextPresent("Car Model: 7 Series");
-        
+
         waitForElementToDisappear("carModelContainer");
-        
+
         type("carMaker", "MERCEDES");
-        
+
         waitForElementToAppear("carModelContainer");
-      
+
         type("carModel", "E-Class");
-        
+
         clickAndWait(SUBMIT);
-        
+
         assertTextPresent("Car Maker: MERCEDES");
-        
+
         assertTextPresent("Car Model: E-Class");
     }
 

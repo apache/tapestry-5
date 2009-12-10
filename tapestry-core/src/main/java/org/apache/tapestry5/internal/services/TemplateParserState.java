@@ -15,7 +15,7 @@
 package org.apache.tapestry5.internal.services;
 
 /**
- * Used to track behaviors inside {@link org.apache.tapestry5.internal.services.StaxTemplateParser}. Internal state is
+ * Used to track behaviors inside {@link org.apache.tapestry5.internal.services.SaxTemplateParser}. Internal state is
  * immutable, the set-like methods return a new immutable instance.
  *
  * @since 5.1.0.0
