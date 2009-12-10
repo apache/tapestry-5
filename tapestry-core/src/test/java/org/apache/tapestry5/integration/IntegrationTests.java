@@ -46,7 +46,8 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     public static void main(String[] args) throws Exception {
         IntegrationTests it = new IntegrationTests();
         it.setup();
-        while(true) {
+        while(true) 
+        {
             Thread.sleep(1000);
         }
     }

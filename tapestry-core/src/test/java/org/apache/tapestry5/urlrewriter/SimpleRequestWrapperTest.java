@@ -165,10 +165,12 @@ public class SimpleRequestWrapperTest extends TestBase
         
         boolean exceptionRaised = false;
 
-        try {
+        try 
+        {
             new SimpleRequestWrapper(request, serverName, path);
         }
-        catch (RuntimeException e) {
+        catch (RuntimeException e) 
+        {
             exceptionRaised = true;
         }
 
@@ -182,10 +184,12 @@ public class SimpleRequestWrapperTest extends TestBase
         
         boolean exceptionRaised = false;
 
-        try {
+        try 
+        {
             new SimpleRequestWrapper(request, path);
         }
-        catch (RuntimeException e) {
+        catch (RuntimeException e) 
+        {
             exceptionRaised = true;
         }
 
