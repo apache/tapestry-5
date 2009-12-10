@@ -17,7 +17,7 @@
     var outputList;
     var cache = [];
 
-    var state = getState();
+    var state = { pos:null, size:null, load:null };
     var classes = {};
     var profiler = {};
 
@@ -82,12 +82,6 @@
         footer.insert(left = new Element("div", { 'class': 't-left' }));
 
         left.insert();
-
-        var label = new Element("label")
-        label.insert(checkbox = new Element("input", { 'type': 'checkbox' }));
-        label.insert("Visible on page load");
-
-        left.insert(label);
 
         footer.insert(new Element("div", { 'class': 't-right' }));
 
@@ -215,14 +209,6 @@
         outputList.className = disabledTypes.join('Hidden ');
     }
 
-    function clickVis(evt)
-    {
-        var el = evt.element();
-
-        state.load = el.checked;
-        saveState();
-    }
-
 
     function scrollToBottom()
     { //scroll list output to the bottom
@@ -288,24 +274,12 @@
 
     function saveState()
     {
-        var expiration = new Date();
-        expiration.setDate(expiration.getDate() + 14);
-        document.cookie =
-        [ 'blackbird=', Object.toJSON(state), '; expires=', expiration.toUTCString() ,';' ].join('');
-
         var newClass = [];
         for (word in classes)
         {
             newClass.push(classes[ word ]);
         }
         bbird.className = newClass.join(' ');
-    }
-
-    function getState()
-    {
-        var re = new RegExp(/blackbird=({[^;]+})(;|\b|$)/);
-        var match = re.exec(document.cookie);
-        return ( match && match[ 1 ] ) ? eval('(' + match[ 1 ] + ')') : { pos:null, size:null, load:null };
     }
 
     //event handler for 'keyup' event for window
@@ -409,21 +383,13 @@
 
                 backgroundImage();
 
-                checkbox.observe("click", clickVis.bindAsEventListener());
-
                 filters.observe("click", clickFilter.bindAsEventListener());
                 controls.observe("click", clickControl.bindAsEventListener());
 
                 document.observe("keyup", readKey.bindAsEventListener());
 
                 resize(state.size);
-                reposition(state.pos);
-
-                if (state.load)
-                {
-                    show();
-                    $(checkbox).checked = true;
-                }
+                reposition(state.pos);              
 
                 scrollToBottom();
 
