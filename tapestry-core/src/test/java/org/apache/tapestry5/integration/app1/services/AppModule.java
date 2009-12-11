@@ -259,9 +259,8 @@ public class AppModule
     }
 
     public static void contributeWhitelistAuthorizer(
-            Configuration<String> configuration,
-            @Symbol(SymbolConstants.APPLICATION_VERSION) String appVersion) 
+            Configuration<String> configuration)
     {
-        configuration.add(RequestConstants.CONTEXT_FOLDER + appVersion + "/availablefile.txt");
+        configuration.add("org/apache/tapestry5/integration/app1/pages/availablefile2.txt");
     }
 }

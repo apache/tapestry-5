@@ -2458,7 +2458,12 @@ public final class TapestryModule
 
         if (contextAvailable) 
         {
-            regex.add(RequestConstants.CONTEXT_FOLDER + appVersion + "/" + pathPattern);
+            //we allow everything underneath the context folder, as long as it's not
+            //at or below WEB-INF.
+            //necessary since context assets are now handled via AssetDispatcher so that
+            //they can be compressed, combined, etc.
+            String contextPathPattern = "/(?!WEB-INF)([^/.]+/)*[^/]+$";
+            regex.add(RequestConstants.CONTEXT_FOLDER + appVersion + contextPathPattern);
         }
 
     }

@@ -3032,14 +3032,32 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
     /** TAP5-815 */
     @Test
-    public void testAssetProtection()
+    public void testAssetProtection() throws InterruptedException
     {
-        start("Asset Protection Demo");
-        clickAndWait("link=Unavailable File");
-        assertTextPresent("404");
 
+        //context resourcs should be available by default.
         start("Asset Protection Demo");
         clickAndWait("link=Available File");
+        assertTextPresent("This file should be available to clients.");
+
+        start("Asset Protection Demo");
+        clickAndWait("link=Unavailable CSS");
+        assertTextPresent("HTTP ERROR: 404");
+
+        start("Asset Protection Demo");
+        clickAndWait("link=WEB-INF");
+        assertTextPresent("HTTP ERROR: 404");
+
+        start("Asset Protection Demo");
+        clickAndWait("link=WEB-INF/");
+        assertTextPresent("HTTP ERROR: 404");
+
+        start("Asset Protection Demo");
+        clickAndWait("link=Unavailable File");
+        assertTextPresent("HTTP ERROR: 404");
+
+        start("Asset Protection Demo");
+        clickAndWait("link=Available File2");
         assertTextPresent("This file should be available to clients.");
     }
 
