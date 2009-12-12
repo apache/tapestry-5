@@ -3293,7 +3293,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
     /** TAP5-815 */
     @Test
-    public void testAssetProtection()
+    public void asset_protection()
     {
         //context resourcs should be available by default.
         start("Asset Protection Demo");
@@ -3319,5 +3319,27 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         start("Asset Protection Demo");
         clickAndWait("link=Available File2");
         assertTextPresent("This file should be available to clients.");
+
+        start("Asset Protection Demo");
+        clickAndWait("link=META-INF");
+        assertTextPresent("HTTP ERROR: 404");
+
+        start("Asset Protection Demo");
+        clickAndWait("link=META-INF/");
+        assertTextPresent("HTTP ERROR: 404");
+
+        start("Asset Protection Demo");
+        clickAndWait("link=unavailable2.txt");
+        assertTextPresent("HTTP ERROR: 404");
+
+        //tml files...
+        start("Asset Protection Demo");
+        clickAndWait("link=tml file");
+        assertTextPresent("HTTP ERROR: 404");
+
+        //nested tml files...
+        start("Asset Protection Demo");
+        clickAndWait("link=nested tml file");
+        assertTextPresent("HTTP ERROR: 404");
     }
 }

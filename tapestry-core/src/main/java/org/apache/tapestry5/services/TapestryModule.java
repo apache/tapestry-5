@@ -2935,7 +2935,7 @@ public final class TapestryModule
             //at or below WEB-INF.
             //necessary since context assets are now handled via AssetDispatcher so that
             //they can be compressed, combined, etc.
-            String contextPathPattern = "/(?!WEB-INF)([^/.]+/)*[^/]+$";
+            String contextPathPattern = "/(?!(WEB-INF)|(META-INF))([^/.]+/)*[^/]+(?<!\\.tml)$";
             regex.add(RequestConstants.CONTEXT_FOLDER + appVersion + contextPathPattern);
         }
     }
