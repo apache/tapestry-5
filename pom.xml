@@ -322,6 +322,12 @@
                     </configuration>
                 </plugin>
             </plugins>
+            <plugin>
+                <artifactId>maven-release-plugin</artifactId>
+                <configuration>
+                    <tagBase>https://svn.apache.org/repos/asf/tapestry/tapestry5/tags/releases/</tagBase>
+                </configuration>
+            </plugin>
         </pluginManagement>
     </build>
     <profiles>
