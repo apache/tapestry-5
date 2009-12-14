@@ -203,7 +203,6 @@
     <build>
         <pluginManagement>
 
-
             <plugins>
 
                 <plugin>
@@ -289,6 +288,12 @@
                     <configuration>
                         <!-- Will be true for profile "deploy" -->
                         <updateReleaseInfo>${update-release-info}</updateReleaseInfo>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-release-plugin</artifactId>
+                    <configuration>
+                        <tagBase>https://svn.apache.org/repos/asf/tapestry/tapestry5/tags/releases/</tagBase>
                     </configuration>
                 </plugin>
             </plugins>
