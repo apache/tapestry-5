@@ -139,4 +139,27 @@ public abstract class TapestryCoreTestCase extends SeleniumTestCase
         }
     }
 
+    protected final void waitForElementToAppear(String elementId)
+    {
+
+        String condition = String.format("window.$(\"%s\")", elementId);
+
+        waitForCondition(condition, PAGE_LOAD_TIMEOUT);
+    }
+
+    protected final void waitForElementToDisappear(String elementId)
+    {
+        String condition = String.format("window.$(\"%s\").hide()", elementId);
+
+        waitForCondition(condition, PAGE_LOAD_TIMEOUT);
+    }
+
+    protected final void assertBubbleMessage(String fieldId, String expected)
+    {
+        String popupId = fieldId + ":errorpopup";
+
+        waitForElementToAppear(popupId);
+
+        assertText(String.format("//div[@id='%s']/span", popupId), expected);
+    }
 }

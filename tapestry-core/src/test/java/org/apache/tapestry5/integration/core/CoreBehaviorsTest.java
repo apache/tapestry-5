@@ -23,6 +23,45 @@ public class CoreBehaviorsTest extends TapestryCoreTestCase
 {
 
     @Test
+    public void access_to_page_name()
+    {
+        openBaseURL();
+
+        assertText("activePageName", "Index");
+
+        clickAndWait("link=Grid Demo");
+
+        assertText("activePageName", "GridDemo");
+    }
+
+    /**
+     * also verifies the use of meta data to set the default strategy.
+     */
+    @Test
+    public void flash_persistence()
+    {
+        clickThru("FlashDemo");
+
+        assertTextPresent("[]");
+
+        clickAndWait("link=show the message");
+
+        assertTextPresent("[You clicked the link!]");
+
+        clickAndWait("link=refresh the page");
+
+        assertTextPresent("[]");
+    }
+
+    @Test
+    public void component_parameter_default_from_method() throws Exception
+    {
+        clickThru("ParameterDefault");
+
+        assertTextPresent("Echo component default: [ParameterDefault:echo]");
+    }
+
+    @Test
     public void embedded_components()
     {
         clickThru("Countdown Page");
@@ -1166,5 +1205,32 @@ public class CoreBehaviorsTest extends TapestryCoreTestCase
         assertTextPresent(
                 "An unexpected application exception has occurred",
                 "Failure creating embedded component 'componentwithnotype' of org.apache.tapestry5.integration.app1.pages.MissingComponentClassException: You must specify the type via t:type, the element, or @Component");
+    }
+
+    @Test
+    public void session_attribute()
+    {
+        clickThru("SessionAttribute Demo");
+
+        assertTextPresent("Foo");
+        assertTextPresent("Bar");
+
+        clickAndWait("link=Read SessionAttribute");
+
+        assertTextPresent("read Foo");
+        assertTextPresent("read Bar");
+    }
+
+    /** TAP5-815 */
+    @Test
+    public void testAssetProtection()
+    {
+        clickThru("Asset Protection Demo", "Unavailable File");
+
+        assertTextPresent("404");
+
+        clickThru("Asset Protection Demo", "Available File");
+
+        assertTextPresent("This file should be available to clients.");
     }
 }
