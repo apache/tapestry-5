@@ -152,4 +152,104 @@ public class GridTests extends TapestryCoreTestCase
 
         assertTextPresent("There is no data to display.");
     }
+
+    @Test
+    public void grid_inside_form()
+    {
+        clickThru("Grid Form Demo", "reset", "2");
+
+        // The first input field is the form's hidden field.
+
+        assertFieldValue("title", "ToDo # 6");
+        assertFieldValueSeries("title_%d", 0, "ToDo # 7", "ToDo # 8", "ToDo # 9", "ToDo # 10");
+
+        type("title_0", "Cure Cancer");
+        select("urgency_0", "Top Priority");
+
+        type("title_1", "Pay Phone Bill");
+        select("urgency_1", "Low");
+
+        clickAndWait(SUBMIT);
+
+        assertFieldValueSeries("title_%d", 0, "Cure Cancer", "Pay Phone Bill");
+        assertFieldValueSeries("urgency_%d", 0, "HIGH", "LOW");
+    }
+
+    @Test
+    public void grid_inside_form_with_encoder()
+    {
+        clickThru("Grid Form Encoder Demo", "reset", "2");
+
+        // The first input field is the form's hidden field.
+
+        // Note the difference: same data sorted differently (there's a default
+        // sort).
+
+        assertFieldValue("title", "ToDo # 14");
+        assertFieldValueSeries("title_%d", 0, "ToDo # 15", "ToDo # 16", "ToDo # 17", "ToDo # 18");
+
+        type("title_0", "Cure Cancer");
+        select("urgency_0", "Top Priority");
+
+        type("title_1", "Pay Phone Bill");
+        select("urgency_1", "Low");
+
+        clickAndWait(SUBMIT);
+
+        // Because of the sort, the updated items shift to page #1
+
+        clickAndWait("link=1");
+
+        assertFieldValue("title", "Cure Cancer");
+        assertFieldValue("title_0", "Pay Phone Bill");
+
+        assertFieldValue("urgency", "HIGH");
+        assertFieldValue("urgency_0", "LOW");
+    }
+
+    /**
+     * TAPESTRY-2021
+     */
+    @Test
+    public void lean_grid()
+    {
+        clickThru("Lean Grid Demo");
+
+        assertTextSeries("//th[%d]", 1, "Title", "Album", "Artist", "Genre", "Play Count", "Rating");
+
+        // Selenium makes it pretty hard to check for a missing class.
+
+        // assertText("//th[1]/@class", "");
+    }
+
+    /**
+     * TAPESTRY-1310
+     */
+    @Test
+    public void grid_row_and_column_indexes()
+    {
+        clickThru("Lean Grid Demo", "2");
+
+        // Use page 2 to ensure that the row index is the row in the Grid, not
+        // the row index of the data
+
+        assertText("//th[7]", "Indexes (6)");
+        assertText("//tr[1]/td[7]", "0,6");
+        assertText("//tr[2]/td[7]", "1,6");
+    }
+
+    /**
+     * TAPESTRY-1416
+     */
+
+    @Test
+    public void adding_new_columns_to_grid_programattically()
+    {
+        clickThru("Added Grid Columns Demo", "Title Length");
+
+        assertTextSeries("//th[%d]", 1, "Title", "View", "Title Length", "Dummy");
+
+        // The rendered &nbsp; becomes just a blank string.
+        assertTextSeries("//tr[1]/td[%d]", 1, "7", "view", "1", "");
+    }
 }

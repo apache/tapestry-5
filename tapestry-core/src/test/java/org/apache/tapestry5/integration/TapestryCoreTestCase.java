@@ -162,4 +162,14 @@ public abstract class TapestryCoreTestCase extends SeleniumTestCase
 
         assertText(String.format("//div[@id='%s']/span", popupId), expected);
     }
+
+    protected final void assertFieldValueSeries(String idFormat, int startIndex, String... values)
+    {
+        for (int i = 0; i < values.length; i++)
+        {
+            String id = String.format(idFormat, startIndex + i);
+
+            assertFieldValue(id, values[i]);
+        }
+    }
 }

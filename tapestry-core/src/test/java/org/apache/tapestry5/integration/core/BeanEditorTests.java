@@ -97,4 +97,71 @@ public class BeanEditorTests extends TapestryCoreTestCase
 
         assertTextPresent("Howard", "Lewis Ship", "0", "100% He-Man", "U.S. Citizen");
     }
+
+    @Test
+    public void multiple_beaneditor_components()
+    {
+        clickThru("MultiBeanEdit Demo", "Clear Data");
+
+        type("firstName", "Howard");
+        type("lastName", "Lewis Ship");
+        type("path", "/var/www");
+        clickAndWait("//input[@value='Set Access']");
+
+        assertTextSeries("//li[%d]", 1, "First Name: [Howard]", "Last Name: [Lewis Ship]",
+                "Path: [/var/www]", "Role: [GRANT]");
+    }
+
+    /**
+     * This also checks that the date type is displayed correctly by BeanDisplay
+     * and Grid.
+     */
+    @Test
+    public void date_field_inside_bean_editor()
+    {
+        clickThru("BeanEditor / Date Demo", "clear");
+
+        type("name", "Howard Lewis Ship");
+        type("date", "12/24/1966");
+
+        clickAndWait(SUBMIT);
+
+        // Notice the date output format; that is controlled by the date Block
+        // on the
+        // PropertyDisplayBlocks page.
+
+        assertTextPresent("Howard Lewis Ship", "Dec 24, 1966");
+    }
+
+    /**
+     * TAPESTRY-2013
+     */
+    @Test
+    public void bean_editor_overrides()
+    {
+        clickThru("BeanEditor Override", "Clear Data");
+
+        assertTextPresent("[FirstName Property Editor Override]");
+    }
+
+    /**
+     * TAPESTRY-1869
+     */
+    @Test
+    public void null_fields_and_bean_editor()
+    {
+        clickThru("Number BeanEditor Demo");
+
+        clickAndWait(SUBMIT);
+
+        // Hard to check for anything here.
+
+        clickAndWait("link=Back to form");
+
+        type("value", "237");
+
+        clickAndWait(SUBMIT);
+
+        assertText("//dd[@class='value']", "237");
+    }
 }

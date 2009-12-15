@@ -21,7 +21,7 @@ import org.testng.annotations.Test;
 /**
  * Tests related to the {@link Zone} component.
  */
-public class ZoneTest extends TapestryCoreTestCase
+public class ZoneTests extends TapestryCoreTestCase
 {
     /**
      * TAP5-138
@@ -67,4 +67,23 @@ public class ZoneTest extends TapestryCoreTestCase
         assertTextPresent("Car Model: E-Class");
     }
 
+    @Test
+    public void zone_updates()
+    {
+        clickThru("Zone Demo");
+
+        assertTextPresent("No name has been selected.");
+
+        // Hate doing this, but selecting by the text isn't working, perhaps
+        // because of the
+        // HTML entities.
+        click("select_0");
+
+        // And that's as far as we can go currently, because
+        // of limitations in Selenium 0.8.3 and bugs in Selenium 0.9.2.
+
+        // assertTextPresent("Selected: Mr. &lt;Roboto&gt;");
+
+        click("link=Direct JSON response");
+    }
 }

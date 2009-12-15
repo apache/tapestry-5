@@ -19,7 +19,7 @@ import org.apache.tapestry5.integration.TapestryCoreTestCase;
 import org.apache.tapestry5.integration.app1.pages.RenderErrorDemo;
 import org.testng.annotations.Test;
 
-public class CoreBehaviorsTest extends TapestryCoreTestCase
+public class CoreBehaviorsTests extends TapestryCoreTestCase
 {
 
     @Test
@@ -1232,5 +1232,38 @@ public class CoreBehaviorsTest extends TapestryCoreTestCase
         clickThru("Asset Protection Demo", "Available File");
 
         assertTextPresent("This file should be available to clients.");
+    }
+
+    /**
+     * TAPESTRY-1598
+     */
+    @Test
+    public void value_encoder_via_type_coercer()
+    {
+        clickThru("Magic ValueEncoder Demo");
+
+        select("number", "25");
+
+        clickAndWait(SUBMIT);
+
+        String locator = "//span[@id='selectednumber']";
+
+        assertText(locator, "25");
+
+        select("number", "100");
+        clickAndWait(SUBMIT);
+
+        assertText(locator, "100");
+    }
+
+    /**
+     * TAPESTRY-2184
+     */
+    @Test
+    public void create_action_link_while_not_rendering()
+    {
+        clickThru("Action via Link Demo", "via explicit Link creation");
+
+        assertText("message", "from getActionURL()");
     }
 }
