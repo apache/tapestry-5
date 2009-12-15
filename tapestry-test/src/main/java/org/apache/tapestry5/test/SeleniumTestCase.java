@@ -843,4 +843,46 @@ public class SeleniumTestCase extends Assert implements Selenium
     // End of delegate methods
     // ---------------------------------------------------------------------
 
+    protected final void unreachable()
+    {
+        throw new AssertionError("This statement should not be reachable.");
+    }
+
+    protected final void openBaseURL()
+    {
+        open(baseURL);
+    }
+
+    /**
+     * Asserts the text of an element, identified by the locator.
+     * 
+     * @param locator
+     *            identifies the element whose text value is to be asserted
+     * @param expected
+     *            expected value for the element's text
+     */
+    protected final void assertText(String locator, String expected)
+    {
+        String actual = null;
+
+        try
+        {
+            actual = getText(locator);
+        }
+        catch (RuntimeException ex)
+        {
+            System.err.printf("Error accessing %s: %s, in:\n\n%s\n\n", locator, ex.getMessage(),
+                    getHtmlSource());
+
+            throw ex;
+        }
+
+        if (actual.equals(expected))
+            return;
+
+        System.err.printf("Text for %s should be '%s' but is '%s', in:\n\n%s\n\n", locator,
+                expected, actual, getHtmlSource());
+
+        throw new AssertionError(String.format("%s was '%s' not '%s'", locator, actual, expected));
+    }
 }
