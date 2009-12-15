@@ -847,6 +847,7 @@ public class CoreBehaviorsTest extends TapestryCoreTestCase
     /**
      * TAPESTRY-2567
      */
+    @Test
     public void field_annotation_conflict()
     {
         clickThru("Field Annotation Conflict");
@@ -857,6 +858,7 @@ public class CoreBehaviorsTest extends TapestryCoreTestCase
     /**
      * TAPESTRY-2610
      */
+    @Test
     public void access_to_informal_parameters()
     {
         clickThru("Informal Parameters Demo");
@@ -869,6 +871,7 @@ public class CoreBehaviorsTest extends TapestryCoreTestCase
     /**
      * TAPESTRY-2517
      */
+    @Test
     public void cached_exception_for_loading_failed_page()
     {
         clickThru("Failed Field Injection Demo");
@@ -887,10 +890,281 @@ public class CoreBehaviorsTest extends TapestryCoreTestCase
     /**
      * TAPESTRTY-2644
      */
+    @Test
     public void create_page_link_via_page_class()
     {
         clickThru("PageLink via Class Demo");
 
         assertTextPresent("Demonstrates the use of the @Inject annotation.");
+    }
+
+    /**
+     * TAP5-256
+     */
+    @Test
+    public void exception_when_attaching_page()
+    {
+        clickThru("Page Attach Failure");
+
+        assertTextPresent("Failure inside pageAttached().");
+    }
+
+    /**
+     * TAP5-284
+     */
+    @Test
+    public void default_method_for_parameter_returns_primitive()
+    {
+        clickThru("Primitive Default Demo");
+
+        assertText("value", "99");
+    }
+
+    /**
+     * TAP5-285
+     */
+    @Test
+    public void unhandled_client_events_throw_exceptions()
+    {
+        clickThru("Unhandled Event Demo", "traditional");
+
+        assertTextPresent("Request event 'action' (on component UnhandledEventDemo:traditional) was not handled; you must provide a matching event handler method in the component or in one of its containers.");
+
+        clickThru("Unhandled Event Demo");
+
+        click("link=ajax");
+
+        waitForCSSSelectedElementToAppear("#t-console li");
+
+        assertTextPresent("Communication with the server failed: Request event 'action' (on component UnhandledEventDemo:ajax) was not handled; you must provide a matching event handler method in the component or in one of its containers.");
+    }
+
+    /**
+     * TAP5-105
+     */
+    @Test
+    public void component_in_class_but_not_template_is_an_exception()
+    {
+        clickThru("Components Not In Template Demo");
+
+        assertTextPresent("Embedded component(s) form are defined within component class org.apache.tapestry5.integration.app1.pages.ComponentsNotInTemplateDemo");
+    }
+
+    /**
+     * TAP5-309
+     */
+    @Test
+    public void conflict_between_property_annotation_and_existing_method()
+    {
+        clickThru("Getter Method Already Exists");
+
+        assertTextPresent("Unable to add new method public final java.lang.String getName() as it already exists.");
+    }
+
+    /**
+     * TAP5-181
+     */
+    @Test
+    public void duplicate_ids_highlight_both_locations()
+    {
+        clickThru("Duplicate IDs");
+
+        assertTextPresent("Component DuplicateIds already contains a child component with id 'index'. Embedded component ids must be unique (excluding case, which is ignored).");
+        assertTextPresent("Component DuplicateIds declared original child component with id 'index' in DuplicateIds.tml on line 6.");
+    }
+
+    /**
+     * TAP5-487
+     */
+    @Test
+    public void published_parameters()
+    {
+        clickThru("Publish Parameters Demo");
+
+        assertText("p3-where", "PublishParametersDemo:publish1.publish2.publish3");
+        assertText("p3-number", "6");
+        assertText("p3-value", "{passed to publish1.value}");
+    }
+
+    /**
+     * TAP5-487
+     */
+    @Test
+    public void conflicting_published_parameter_names_within_same_component()
+    {
+        clickThru("Duplicate Published Parameter Name");
+
+        assertTextPresent("Parameter 'value' of embedded component 'passwordfield' can not be published as a parameter of "
+                + "component org.apache.tapestry5.integration.app1.components.BadPublishDuplicate, "
+                + "as it has previously been published by embedded component 'textfield'.");
+    }
+
+    @Test
+    public void embedded_type_conflict()
+    {
+        clickThru("Embedded Component Type Conflict");
+
+        assertTextPresent("Embedded component 'input' provides a type attribute in the template ('passwordfield') "
+                + "as well as in the component class ('textfield'). You should not provide a type attribute in "
+                + "the template when defining an embedded component within the component class.");
+    }
+
+    @Test
+    public void publish_unknown_parameter()
+    {
+        clickThru("Publish Unknown Parameter Demo");
+
+        assertTextPresent("Parameter 'xyzzyx' of component org.apache.tapestry5.integration.app1.components.BadPublishUnknown "
+                + "is improperly published from embedded component 'publish1' (where it does not exist). "
+                + "This may be a typo in the publishParameters attribute of the @Component annotation.");
+    }
+
+    @Test
+    public void unknown_mixin_id()
+    {
+        clickThru("Bad Mixin Id Demo");
+
+        assertTextPresent("Mixin id for parameter 'unknownmixinid.foo' not found. Attached mixins: RenderInformals.");
+    }
+
+    @Test
+    public void duplicate_mixin()
+    {
+        clickThru("Duplicate Mixin Demo");
+
+        assertTextPresent("Failure creating embedded component 'form' of "
+                + "org.apache.tapestry5.integration.app1.pages.DupeMixinDemo: "
+                + "Mixins applied to a component must be unique. Mixin 'RenderInformals' has already been applied.");
+    }
+
+    @Test
+    public void unsupported_informal_block_parameter()
+    {
+        clickThru("Unsupported Parameter Block Demo");
+
+        assertTextPresent(
+                "Exception assembling root component of page UnsupportedParameterBlockDemo:",
+                "Component UnsupportedParameterBlockDemo:outputraw does not include a formal parameter 'unexpected' (and does not support informal parameters).");
+    }
+
+    /**
+     * TAP5-74
+     */
+    @Test
+    public void component_extends_parent_template()
+    {
+        clickThru("Template Override Demo");
+
+        // From the parent template (could be overridden, but is not).
+
+        assertText("title", "Template Override Demo");
+
+        // Overriden by <t:replace> in the child component
+
+        assertText("pagecontent", "Content from TemplateOverrideDemo.tml");
+    }
+
+    @Test
+    public void extend_without_base_template()
+    {
+        clickThru("Invalid Template Extend Demo");
+
+        assertTextPresent("Component org.apache.tapestry5.integration.app1.pages.InvalidTemplateExtend uses an extension template, but does not have a parent component.");
+    }
+
+    /**
+     * TAP5-578
+     */
+    @Test
+    public void abstract_component_class()
+    {
+        clickThru("Abstract Component Demo");
+
+        assertTextPresent(
+                "java.lang.RuntimeException",
+                "Component class org.apache.tapestry5.integration.app1.components.AbstractComponent is abstract and can not be instantiated.");
+    }
+
+    @Test
+    public void multi_level_parameter_inheritance()
+    {
+        clickThru("Multi-Level Inherit Demo");
+
+        assertText("prop.middle.bottom", "bound value");
+        assertText("literal.middle.bottom", "some text");
+    }
+
+    @Test
+    public void bindparameter()
+    {
+        clickThru("BindParameter mixin annotation");
+        // implicit parameter name
+        assertEchoMixins("testmixin", "mypropertyvalue", 0, -1, -1, 1, true);
+        assertText("mypropertyoutput", "mypropertyvalue");
+
+        // explicit parameter name
+        assertEchoMixins("testmixin2", "10", -1, 0, -1, 2, true);
+        assertText("mypropertyoutput2", "10");
+
+        // multiple parameter names; first one found wins.
+        assertEchoMixins("testmixin3", "hello", -1, -1, 0, 3, true);
+
+        // multiple mixins
+        assertEchoMixins("multimixins", "supervalue", 0, 1, 2, 3, true);
+        assertText("mypropertyoutput4", "supervalue");
+
+        // finally, binding to default bindings (which is tricky because of page
+        // load invocation order)
+        assertEchoMixins("defaultbinding", "goodbye", 0, -1, -1, 1, false);
+        assertText("mypropertyoutput5", "goodbye");
+    }
+
+    /**
+     * asserts that the "echo value" mixins are properly functioning (ie
+     * 
+     * @BindParameter, and mixin ordering).
+     *                 each integer value specifies the echo mixin number (echovalue => 1,
+     *                 echovalue2 => 2, echovalue3 => 3; 0 is the original value)
+     *                 from which the specified echo mixin is expected to "receive" its value.
+     *                 So if echo1From is 2, then the "original value"
+     *                 printed by echo1 is expected to be the value set by echo2. If a given
+     *                 "from" is < 0, checking the corresponding mixin values is disabled.
+     */
+
+    private void assertEchoMixins(String fieldName, String originalValue, int echo1From,
+            int echo2From, int echo3From, int fieldFrom, boolean isField)
+    {
+        String[] vals =
+        { originalValue, "temporaryvaluefromechovaluemixin", "3", "world" };
+        String before = fieldName + "_before";
+        String after = fieldName + "_after";
+        if (echo1From > -1)
+        {
+            assertText(before, vals[echo1From] + "-before");
+            assertText(after, vals[echo1From] + "-after");
+        }
+        if (echo2From > -1)
+        {
+            assertText(before + "2", "echo2-" + vals[echo2From] + "-before");
+            assertText(after + "2", "echo2-" + vals[echo2From] + "-after");
+        }
+        if (echo3From > -1)
+        {
+            assertText(before + "3", "echo3-" + vals[echo3From] + "-before");
+            assertText(after + "3", "echo3-" + vals[echo3From] + "-after");
+        }
+        if (isField)
+            assertFieldValue(fieldName, vals[fieldFrom]);
+        else
+            assertText(fieldName, vals[fieldFrom]);
+    }
+
+    @Test
+    public void missing_componentclass()
+    {
+        clickThru("Missing Component Class Exception");
+        assertTextPresent(
+                "An unexpected application exception has occurred",
+                "Failure creating embedded component 'componentwithnotype' of org.apache.tapestry5.integration.app1.pages.MissingComponentClassException: You must specify the type via t:type, the element, or @Component");
     }
 }

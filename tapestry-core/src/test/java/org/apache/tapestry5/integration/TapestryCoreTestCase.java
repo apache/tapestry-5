@@ -117,4 +117,26 @@ public abstract class TapestryCoreTestCase extends SeleniumTestCase
             // Ignore.
         }
     }
+
+    protected void waitForCSSSelectedElementToAppear(String cssRule)
+    {
+        String condition = String.format("window.$$(\"%s\").size() > 0", cssRule);
+
+        waitForCondition(condition, PAGE_LOAD_TIMEOUT);
+    }
+
+    protected final void assertFieldValue(String locator, String expected)
+    {
+        try
+        {
+            assertEquals(getValue(locator), expected);
+        }
+        catch (AssertionError ex)
+        {
+            System.err.printf("%s:\n%s\n\n", ex.getMessage(), getHtmlSource());
+
+            throw ex;
+        }
+    }
+
 }

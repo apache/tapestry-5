@@ -1623,43 +1623,8 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         assertTextPresent("Communication with the server failed: Server-side exception.");
     }
 
-    /**
-     * TAP5-256
-     */
-    public void exception_when_attaching_page()
-    {
-        start("Page Attach Failure");
 
-        assertTextPresent("Failure inside pageAttached().");
-    }
 
-    /**
-     * TAP5-284
-     */
-    public void default_method_for_parameter_returns_primitive()
-    {
-        start("Primitive Default Demo");
-
-        assertText("value", "99");
-    }
-
-    /**
-     * TAP5-285
-     */
-    public void unhandled_client_events_throw_exceptions()
-    {
-        start("Unhandled Event Demo", "traditional");
-
-        assertTextPresent("Request event 'action' (on component UnhandledEventDemo:traditional) was not handled; you must provide a matching event handler method in the component or in one of its containers.");
-
-        start("Unhandled Event Demo");
-
-        click("link=ajax");
-
-        waitForCSSSelectedElementToAppear("#t-console li");
-
-        assertTextPresent("Communication with the server failed: Request event 'action' (on component UnhandledEventDemo:ajax) was not handled; you must provide a matching event handler method in the component or in one of its containers.");
-    }
 
     /**
      * TAP5-281
@@ -1671,15 +1636,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         assertTextPresent("Form components may not be placed inside other Form components.");
     }
 
-    /**
-     * TAP5-105
-     */
-    public void component_in_class_but_not_template_is_an_exception()
-    {
-        start("Components Not In Template Demo");
 
-        assertTextPresent("Embedded component(s) form are defined within component class org.apache.tapestry5.integration.app1.pages.ComponentsNotInTemplateDemo");
-    }
 
     /**
      * TAP5-87
@@ -1797,93 +1754,18 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         assertTextPresent("Result: Anders Haraldsson not found!");
     }
 
-    /**
-     * TAP5-309
-     */
-    public void conflict_between_property_annotation_and_existing_method()
-    {
-        start("Getter Method Already Exists");
+ 
 
-        assertTextPresent("Unable to add new method public final java.lang.String getName() as it already exists.");
-    }
 
-    /**
-     * TAP5-181
-     */
-    public void duplicate_ids_highlight_both_locations()
-    {
-        start("Duplicate IDs");
 
-        assertTextPresent("Component DuplicateIds already contains a child component with id 'index'. Embedded component ids must be unique (excluding case, which is ignored).");
-        assertTextPresent("Component DuplicateIds declared original child component with id 'index' in DuplicateIds.tml on line 6.");
-    }
 
-    /**
-     * TAP5-487
-     */
-    public void published_parameters()
-    {
-        start("Publish Parameters Demo");
+  
 
-        assertText("p3-where", "PublishParametersDemo:publish1.publish2.publish3");
-        assertText("p3-number", "6");
-        assertText("p3-value", "{passed to publish1.value}");
-    }
 
-    /**
-     * TAP5-487
-     */
-    public void conflicting_published_parameter_names_within_same_component()
-    {
-        start("Duplicate Published Parameter Name");
+   
+  
 
-        assertTextPresent("Parameter 'value' of embedded component 'passwordfield' can not be published as a parameter of "
-                + "component org.apache.tapestry5.integration.app1.components.BadPublishDuplicate, "
-                + "as it has previously been published by embedded component 'textfield'.");
-    }
-
-    public void embedded_type_conflict()
-    {
-        start("Embedded Component Type Conflict");
-
-        assertTextPresent("Embedded component 'input' provides a type attribute in the template ('passwordfield') "
-                + "as well as in the component class ('textfield'). You should not provide a type attribute in "
-                + "the template when defining an embedded component within the component class.");
-    }
-
-    public void publish_unknown_parameter()
-    {
-        start("Publish Unknown Parameter Demo");
-
-        assertTextPresent("Parameter 'xyzzyx' of component org.apache.tapestry5.integration.app1.components.BadPublishUnknown "
-                + "is improperly published from embedded component 'publish1' (where it does not exist). "
-                + "This may be a typo in the publishParameters attribute of the @Component annotation.");
-    }
-
-    public void unknown_mixin_id()
-    {
-        start("Bad Mixin Id Demo");
-
-        assertTextPresent("Mixin id for parameter 'unknownmixinid.foo' not found. Attached mixins: RenderInformals.");
-    }
-
-    public void duplicate_mixin()
-    {
-        start("Duplicate Mixin Demo");
-
-        assertTextPresent("Failure creating embedded component 'form' of "
-                + "org.apache.tapestry5.integration.app1.pages.DupeMixinDemo: "
-                + "Mixins applied to a component must be unique. Mixin 'RenderInformals' has already been applied.");
-    }
-
-    public void unsupported_informal_block_parameter()
-    {
-        start("Unsupported Parameter Block Demo");
-
-        assertTextPresent(
-                "Exception assembling root component of page UnsupportedParameterBlockDemo:",
-                "Component UnsupportedParameterBlockDemo:outputraw does not include a formal parameter 'unexpected' (and does not support informal parameters).");
-    }
+   
 
     /**
      * TAP5-211
@@ -2064,40 +1946,10 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         assertText("now", now);
     }
 
-    /**
-     * TAP5-74
-     */
-    public void component_extends_parent_template()
-    {
-        start("Template Override Demo");
 
-        // From the parent template (could be overridden, but is not).
 
-        assertText("title", "Template Override Demo");
+ 
 
-        // Overriden by <t:replace> in the child component
-
-        assertText("pagecontent", "Content from TemplateOverrideDemo.tml");
-    }
-
-    public void extend_without_base_template()
-    {
-        start("Invalid Template Extend Demo");
-
-        assertTextPresent("Component org.apache.tapestry5.integration.app1.pages.InvalidTemplateExtend uses an extension template, but does not have a parent component.");
-    }
-
-    /**
-     * TAP5-578
-     */
-    public void abstract_component_class()
-    {
-        start("Abstract Component Demo");
-
-        assertTextPresent(
-                "java.lang.RuntimeException",
-                "Component class org.apache.tapestry5.integration.app1.components.AbstractComponent is abstract and can not be instantiated.");
-    }
 
     /**
      * TAP5-573
@@ -2173,14 +2025,6 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         assertText("stored", "12345");
     }
 
-    @Test
-    public void multi_level_parameter_inheritance()
-    {
-        start("Multi-Level Inherit Demo");
-
-        assertText("prop.middle.bottom", "bound value");
-        assertText("literal.middle.bottom", "some text");
-    }
 
     @Test
     public void validation_constraints_from_messages()
@@ -2216,30 +2060,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         assertText("divwithid", "Div Content");
     }
 
-    @Test
-    public void bindparameter()
-    {
-        start("BindParameter mixin annotation");
-        // implicit parameter name
-        assertEchoMixins("testmixin", "mypropertyvalue", 0, -1, -1, 1, true);
-        assertText("mypropertyoutput", "mypropertyvalue");
-
-        // explicit parameter name
-        assertEchoMixins("testmixin2", "10", -1, 0, -1, 2, true);
-        assertText("mypropertyoutput2", "10");
-
-        // multiple parameter names; first one found wins.
-        assertEchoMixins("testmixin3", "hello", -1, -1, 0, 3, true);
-
-        // multiple mixins
-        assertEchoMixins("multimixins", "supervalue", 0, 1, 2, 3, true);
-        assertText("mypropertyoutput4", "supervalue");
-
-        // finally, binding to default bindings (which is tricky because of page
-        // load invocation order)
-        assertEchoMixins("defaultbinding", "goodbye", 0, -1, -1, 1, false);
-        assertText("mypropertyoutput5", "goodbye");
-    }
+  
 
     @Test
     public void bindparameter_nomatchingparameter()
@@ -2346,14 +2167,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
             assertText(fieldName, vals[fieldFrom]);
     }
 
-    @Test
-    public void missing_componentclass()
-    {
-        start("Missing Component Class Exception");
-        assertTextPresent(
-                "An unexpected application exception has occurred",
-                "Failure creating embedded component 'componentwithnotype' of org.apache.tapestry5.integration.app1.pages.MissingComponentClassException: You must specify the type via t:type, the element, or @Component");
-    }
+  
 
     @Test
     public void session_attribute()
