@@ -1379,8 +1379,6 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
         // assertSourcePresent("<![CDATA[< & >]]>");
     }
 
-  
-
     /**
      * This may need to be disabled or dropped from the test suite, I don't know
      * that Selenium, especially Selenium
@@ -1418,4 +1416,35 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
         assertText("//h1", "Tapestry 5 Integration Application 1");
     }
 
+    /** TAP5-815 */
+    @Test
+    public void test_asset_protection()
+    {
+        // Have to watch out for minor differences in error messages from one version of Jetty to the next.
+        
+        // context resources should be available by default.
+        clickThru("Asset Protection Demo");
+        clickAndWait("link=Available File");
+        assertTextPresent("This file should be available to clients.");
+
+        clickThru("Asset Protection Demo");
+        clickAndWait("link=Unavailable CSS");
+        assertTextPresent("HTTP ERROR 404");
+
+        clickThru("Asset Protection Demo");
+        clickAndWait("link=WEB-INF");
+        assertTextPresent("HTTP ERROR 404");
+
+        clickThru("Asset Protection Demo");
+        clickAndWait("link=WEB-INF/");
+        assertTextPresent("HTTP ERROR 404");
+
+        clickThru("Asset Protection Demo");
+        clickAndWait("link=Unavailable File");
+        assertTextPresent("HTTP ERROR 404");
+
+        clickThru("Asset Protection Demo");
+        clickAndWait("link=Available File2");
+        assertTextPresent("This file should be available to clients.");
+    }
 }
