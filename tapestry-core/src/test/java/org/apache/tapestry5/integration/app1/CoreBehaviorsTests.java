@@ -1230,18 +1230,6 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
         assertTextPresent("read Bar");
     }
 
-    /** TAP5-815 */
-    @Test
-    public void testAssetProtection()
-    {
-        clickThru("Asset Protection Demo", "Unavailable File");
-
-        assertTextPresent("404");
-
-        clickThru("Asset Protection Demo", "Available File");
-
-        assertTextPresent("This file should be available to clients.");
-    }
 
     /**
      * TAPESTRY-1598
