@@ -885,4 +885,38 @@ public class SeleniumTestCase extends Assert implements Selenium
 
         throw new AssertionError(String.format("%s was '%s' not '%s'", locator, actual, expected));
     }
+
+    protected final void assertTextPresent(String... text)
+    {
+        for (String item : text)
+        {
+            if (isTextPresent(item))
+                continue;
+
+            System.err.printf("Text pattern '%s' not found in:\n%s\n\n", item, getHtmlSource());
+
+            throw new AssertionError("Page did not contain '" + item + "'.");
+        }
+    }
+
+    /**
+     * Assets that each string provided is present somewhere in the current document.
+     * 
+     * @param expected
+     *            string expected to be present
+     */
+    protected final void assertSourcePresent(String... expected)
+    {
+        String source = getHtmlSource();
+
+        for (String snippet : expected)
+        {
+            if (source.contains(snippet))
+                continue;
+
+            System.err.printf("Source content '%s' not found in:\n%s\n\n", snippet, source);
+
+            throw new AssertionError("Page did not contain source '" + snippet + "'.");
+        }
+    }
 }

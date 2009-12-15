@@ -86,31 +86,6 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         assertEquals(downloaded, actual);
     }
 
-    /**
-     * Tests the ability to inject a Block, and the ability to use the block to
-     * control rendering.
-     */
-    @Test
-    public void block_rendering() throws Exception
-    {
-        start("BlockDemo");
-
-        assertTextPresent("[]");
-
-        select("//select[@id='blockName']", "fred");
-        waitForPageToLoad(PAGE_LOAD_TIMEOUT);
-
-        assertTextPresent("[Block fred.]");
-
-        select("//select[@id='blockName']", "barney");
-        waitForPageToLoad(PAGE_LOAD_TIMEOUT);
-
-        assertTextPresent("[Block barney.]");
-
-        // TAPESETRY-1583
-
-        assertTextPresent("before it is defined: [Block wilma].");
-    }
 
     @Test
     public void component_parameter_default_from_method() throws Exception
