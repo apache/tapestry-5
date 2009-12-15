@@ -57,4 +57,17 @@ public class GeneralComponentTests extends TapestryCoreTestCase
 
         assertText(contextSpan, "1");
     }
+
+    /**
+     * TAPESTRY-2333
+     */
+    @Test
+    public void action_links_on_custom_url()
+    {
+        open(getBaseURL() + "nested/actiondemo/");
+
+        clickAndWait("link=2");
+
+        assertTextPresent("Number: 2");
+    }
 }

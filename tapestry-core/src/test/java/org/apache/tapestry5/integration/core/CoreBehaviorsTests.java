@@ -14,9 +14,18 @@
 
 package org.apache.tapestry5.integration.core;
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.InputStream;
+import java.net.URL;
+
 import org.apache.tapestry5.corelib.mixins.RenderDisabled;
 import org.apache.tapestry5.integration.TapestryCoreTestCase;
 import org.apache.tapestry5.integration.app1.pages.RenderErrorDemo;
+import org.apache.tapestry5.internal.TapestryInternalUtils;
+import org.apache.tapestry5.test.TapestryTestConstants;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 public class CoreBehaviorsTests extends TapestryCoreTestCase
@@ -1328,10 +1337,85 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     }
 
     @Test
-    public void renderclientid_mixin()
+    public void bindparameter_nomatchingparameter()
     {
-        clickThru("RenderClientId Mixin");
+        clickThru("BindParameter error handling");
 
-        assertText("divwithid", "Div Content");
+        assertTextPresent(
+                "An unexpected application exception has occurred.",
+                "Failed to BindParameter 'boundParameter' in mixin 'org.apache.tapestry5.integration.app1.mixins.EchoValue2': "
+                        + "component 'org.apache.tapestry5.corelib.components.Any' does not provide a matching parameter "
+                        + "(looking for: value). Available parameters: [clientId, element]");
+
     }
+
+    @Test
+    public void bindparameter_on_componentfield_throws_exception()
+    {
+        clickThru("BindParameter on component");
+
+        assertTextPresent(
+                "An unexpected application exception has occurred.",
+                "@BindParameter was used on 'value' in component class 'org.apache.tapestry5.integration.app1.components.BindParameterComponent', but @BindParameter should only be used in mixins");
+    }
+
+    @Test
+    public void trigger_demo()
+    {
+        clickThru("Trigger Demo");
+
+        assertAttribute(String.format("//script[@src='%s']/@src", "some_additional_scripts.js"),
+                "some_additional_scripts.js");
+        assertTextPresent("Event 'provideAdditionalMarkup' handled.");
+    }
+
+    @Test
+    public void xml_content() throws Exception
+    {
+        open(getBaseURL() + "xmlcontent");
+
+        // Commented out ... Selenium can't seem to handle an XML response.
+
+        // assertSourcePresent("<![CDATA[< & >]]>");
+    }
+
+  
+
+    /**
+     * This may need to be disabled or dropped from the test suite, I don't know
+     * that Selenium, especially Selenium
+     * running headless on the CI server, can handle the transition to HTTPS:
+     * there's warnings that pop up about
+     * certificates.
+     * <p/>
+     * Verified: Selenium can't handle this, even with a user manually OK-ing the certificate
+     * warning dialogs.
+     */
+    @Test(enabled = false)
+    public void secure_page_access()
+    {
+        start("Secure Page Demo");
+
+        assertText("secure", "secure");
+
+        assertText("message", "Triggered from Index");
+
+        clickAndWait("link=click");
+
+        assertText("secure", "secure");
+
+        assertText("message", "Link clicked");
+
+        clickAndWait(SUBMIT);
+
+        assertText("secure", "secure");
+        assertText("message", "Form submitted");
+
+        clickAndWait("link=Back to index");
+
+        // Back to the insecure home page.
+
+        assertText("//h1", "Tapestry 5 Integration Application 1");
+    }
+
 }

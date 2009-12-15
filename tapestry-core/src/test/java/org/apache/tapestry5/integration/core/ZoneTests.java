@@ -14,6 +14,7 @@
 
 package org.apache.tapestry5.integration.core;
 
+import org.apache.tapestry5.corelib.components.Form;
 import org.apache.tapestry5.corelib.components.Zone;
 import org.apache.tapestry5.integration.TapestryCoreTestCase;
 import org.testng.annotations.Test;
@@ -193,6 +194,14 @@ public class ZoneTests extends TapestryCoreTestCase
 
         // Make sure it was a partial update
         assertText("now", now);
+    }
+
+    @Test
+    public void zone_inject_component_from_template()
+    {
+        clickThru("Inject Component Demo");
+
+        assertTextPresent(Form.class.getName() + "[form--form]");
     }
 
 }

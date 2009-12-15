@@ -290,4 +290,21 @@ public class GridTests extends TapestryCoreTestCase
         assertEquals(count, "7", "Expected seven rows: the header and six data rows.");
     }
 
+    /**
+     * TAPESTRY-1901
+     */
+    @Test
+    public void delete_rows_from_grid()
+    {
+        clickThru("Delete From Grid", "setup the database", "2");
+
+        for (int i = 6; i <= 10; i++)
+            clickAndWait("link=ToDo #" + i);
+
+        // A rather clumsy way to ensure we're back on the first page.
+
+        for (int i = 1; i <= 5; i++)
+            assertTextPresent("ToDo #" + i);
+    }
+
 }

@@ -54,7 +54,10 @@ public class SeleniumTestCase extends Assert implements Selenium
         baseURL = null;
     }
 
-    /** Returns the base URL for the application. */
+    /**
+     * Returns the base URL for the application. This is of the typically
+     * <code>http://localhost:9999/</code> (i.e., it includes a trailing slash).
+     */
     public String getBaseURL()
     {
         return baseURL;

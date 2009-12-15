@@ -700,4 +700,82 @@ public class FormTests extends TapestryCoreTestCase
         assertText("name-value", "Betty");
         assertText("last-clicked", "Barney");
     }
+
+    @Test
+    public void calendar_field_inside_bean_editor()
+    {
+        clickThru("BeanEditor / Calendar Demo", "clear");
+
+        type("calendar", "04/06/1978");
+
+        clickAndWait(SUBMIT);
+
+        assertTextPresent("Apr 6, 1978");
+    }
+
+    @Test
+    public void image_submit_triggers_selected_event()
+    {
+        clickThru("Submit with an Image Demo");
+
+        type("value", "barney gumble");
+
+        clickAndWait("//input[@type='image']");
+
+        assertText("outputvalue", "barney gumble");
+
+        assertText("eventfired", "true");
+    }
+
+    /**
+     * Tests for forms and form submissions and basic form control components.
+     * also tests a few other things, such as
+     * computed default bindings and invisible instrumentation.
+     */
+    @Test
+    public void simple_form()
+    {
+        clickThru("SimpleForm");
+
+        assertText("//label[@id='disabled-label']", "Disabled");
+
+        // This demonstrates TAPESTRY-1642:
+        assertText("//label[@id='email-label']", "User Email");
+
+        assertText("//label[@id='message-label']", "Incident Message");
+        assertText("//label[@id='operatingSystem-label']", "Operating System");
+        assertText("//label[@id='department-label']", "Department");
+        assertText("//label[@id='urgent-label']", "Urgent Processing Requested");
+
+        assertFieldValue("email", "");
+        assertFieldValue("message", "");
+        assertFieldValue("operatingSystem", "osx");
+        assertFieldValue("department", "");
+        assertFieldValue("urgent", "on");
+
+        clickAndWait(SUBMIT);
+
+        assertTextPresent("department: []");
+
+        type("email", "foo@bar.baz");
+        type("message", "Message for you, sir!");
+        select("operatingSystem", "Windows NT");
+        select("department", "R&D");
+        click("urgent");
+
+        clickAndWait(SUBMIT);
+
+        assertFieldValue("email", "foo@bar.baz");
+        assertFieldValue("message", "Message for you, sir!");
+        assertFieldValue("urgent", "off");
+
+        // Tried to use "email:" and "exact:email:" but Selenium 0.8.1 doesn't
+        // seem to accept that.
+
+        assertTextPresent("[foo@bar.baz]", "[Message for you, sir!]", "[false]", "[winnt]",
+                "[RESEARCH_AND_DESIGN]");
+
+        // Haven't figured out how to get selenium to check that fields are
+        // disabled.
+    }
 }

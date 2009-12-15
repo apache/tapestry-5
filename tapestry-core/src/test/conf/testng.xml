@@ -14,7 +14,7 @@
     time as Selenium-based integration tests. See TAPESTRY-2561.
   -->
 <suite name="Tapestry Core" annotations="1.5" verbose="2">
-  <test name="Component Unit Tests" enabled="false">
+  <test name="Component Unit Tests" enabled="true">
     <packages>
       <package name="org.apache.tapestry5.integration.pagelevel"/>
       <package name="org.apache.tapestry5.corelib.base"/>
@@ -22,7 +22,7 @@
       <package name="org.apache.tapestry5.corelib.internal"/>
     </packages>
   </test>
-  <test name="Public APIs" enabled="false">
+  <test name="Public APIs" enabled="true">
     <packages>
       <package name="org.apache.tapestry5"/>
       <package name="org.apache.tapestry5.dom"/>
@@ -34,7 +34,7 @@
       <package name="org.apache.tapestry5.validator"/>
     </packages>
   </test>
-  <test name="Internal APIs" enabled="false">
+  <test name="Internal APIs" enabled="true">
     <packages>
       <package name="org.apache.tapestry5.internal"/>
       <package name="org.apache.tapestry5.internal.beaneditor"/>
@@ -51,11 +51,7 @@
     </packages>
   </test>
   <!--  We break these out by which of the test applications they apply to. We have a bunch. -->
-  <!--
-    <test name="Integration Tests"> <packages> <package name="org.apache.tapestry5.integration"/>
-    </packages> </test>
-  -->
-  <test name="Core Integration Tests">
+  <test name="Core Integration Tests" enabled="true">
     <parameter name="tapestry.web-app-folder" value="src/test/app1"/>
     <classes>
       <class name="org.apache.tapestry5.test.SeleniumLauncher"/>
