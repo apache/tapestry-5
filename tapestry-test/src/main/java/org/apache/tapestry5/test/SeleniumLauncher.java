@@ -48,12 +48,12 @@ import com.thoughtworks.selenium.Selenium;
  * <pre>
  * &lt;test name="My Integration Tests"&gt;
  *   &lt;!-- parameters go here, if needed --&gt;
- *   &lt;classes&gt;
- *     &lt;class name="org.apache.tapestry5.test.SeleniumLauncher"/&gt;
- *   &lt;/classes&gt;
  *   &lt;packages&gt;
  *     &lt;!-- list of packages containing test suites goes here --&gt;
  *   &lt;/packages&gt;
+ *   &lt;classes&gt;
+ *     &lt;class name="org.apache.tapestry5.test.SeleniumLauncher"/&gt;
+ *   &lt;/classes&gt;
  * &lt;/test&gt;
  * </pre>
  * 
@@ -91,7 +91,8 @@ public class SeleniumLauncher
      * <td>contextPath</td>
      * <td>tapestry.context-path</td>
      * <td><em>empty string</em></td>
-     * <td>Context path (defaults to root)</td>
+     * <td>Context path (defaults to root). As elsewhere, the context path should be blank, or start
+     * with a slash (but not end with one).</td>
      * </tr>
      * <tr>
      * <td>port</td>
@@ -147,12 +148,15 @@ public class SeleniumLauncher
         CommandProcessor cp = new HttpCommandProcessor("localhost",
                 RemoteControlConfiguration.DEFAULT_PORT, browserStartCommand, baseURL);
 
-        selenium = new DefaultSelenium(new ErrorReportingCommandProcessor(cp));
+        ErrorReporter errorReporter = new ErrorReporterImpl(cp, testContext);
+
+        selenium = new DefaultSelenium(new ErrorReportingCommandProcessor(cp, errorReporter));
 
         selenium.start();
 
         testContext.setAttribute(TapestryTestConstants.BASE_URL_ATTRIBUTE, baseURL);
         testContext.setAttribute(TapestryTestConstants.SELENIUM_ATTRIBUTE, selenium);
+        testContext.setAttribute(TapestryTestConstants.ERROR_REPORTER_ATTRIBUTE, errorReporter);
     }
 
     /** Shuts down the stack at the end of the test. */

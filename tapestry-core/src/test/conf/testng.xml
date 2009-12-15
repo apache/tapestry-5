@@ -53,11 +53,41 @@
   <!--  We break these out by which of the test applications they apply to. We have a bunch. -->
   <test name="Core Integration Tests" enabled="true">
     <parameter name="tapestry.web-app-folder" value="src/test/app1"/>
+    <packages>
+      <package name="org.apache.tapestry5.integration.app1"/>
+    </packages>
     <classes>
       <class name="org.apache.tapestry5.test.SeleniumLauncher"/>
     </classes>
+  </test>
+  <test name="Additional Integration Tests" enabled="true">
+    <parameter name="tapestry.web-app-folder" value="src/test/app3"/>
+
     <packages>
-      <package name="org.apache.tapestry5.integration.core"/>
+      <package name="org.apache.tapestry5.integration.app3"/>
+    </packages>
+    <classes>
+      <class name="org.apache.tapestry5.test.SeleniumLauncher"/>
+    </classes>
+  </test>
+  <test name="Immediate Mode Integration Tests" enabled="true">
+    <parameter name="tapestry.web-app-folder" value="src/test/app4"/>
+
+    <packages>
+      <package name="org.apache.tapestry5.integration.app4"/>
+    </packages>
+    <classes>
+      <class name="org.apache.tapestry5.test.SeleniumLauncher"/>
+    </classes>
+  </test>
+  <test name="Live Reload Tests" enabled="true">
+    <packages>
+      <package name="org.apache.tapestry5.integration.reload"/>
+    </packages>
+  </test>
+  <test name="PageTester Tests" enabled="true">
+    <packages>
+      <package name="org.apache.tapestry5.integration.pagetester"/>
     </packages>
   </test>
 </suite>

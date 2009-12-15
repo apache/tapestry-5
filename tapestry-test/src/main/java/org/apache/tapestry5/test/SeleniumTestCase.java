@@ -19,8 +19,10 @@ import java.lang.reflect.Method;
 import org.testng.Assert;
 import org.testng.ITestContext;
 import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Optional;
 
 import com.thoughtworks.selenium.Selenium;
 
@@ -40,11 +42,19 @@ public class SeleniumTestCase extends Assert implements Selenium
 
     private String baseURL;
 
+    private ErrorReporter errorReporter;
+
+    private ITestContext testContext;
+
     @BeforeClass
     public void setup(ITestContext context)
     {
+        this.testContext = context;
+
         delegate = (Selenium) context.getAttribute(TapestryTestConstants.SELENIUM_ATTRIBUTE);
         baseURL = (String) context.getAttribute(TapestryTestConstants.BASE_URL_ATTRIBUTE);
+        errorReporter = (ErrorReporter) context
+                .getAttribute(TapestryTestConstants.ERROR_REPORTER_ATTRIBUTE);
     }
 
     @AfterClass
@@ -52,6 +62,15 @@ public class SeleniumTestCase extends Assert implements Selenium
     {
         delegate = null;
         baseURL = null;
+    }
+
+    /**
+     * Delegates to {@link ErrorReporter#writeErrorReport()} to capture the current page markup in a
+     * file for later analysis.
+     */
+    protected void writeErrorReport()
+    {
+        errorReporter.writeErrorReport();
     }
 
     /**
@@ -66,10 +85,18 @@ public class SeleniumTestCase extends Assert implements Selenium
     @BeforeMethod
     public void indicateTestMethodName(Method testMethod)
     {
+        testContext.setAttribute(TapestryTestConstants.CURRENT_TEST_METHOD_ATTRIBUTE, testMethod);
+
         String className = testMethod.getDeclaringClass().getSimpleName();
         String testName = testMethod.getName().replace("_", " ");
 
         delegate.setContext(className + ": " + testName);
+    }
+
+    @AfterMethod
+    public void cleanupTestMethod()
+    {
+        testContext.setAttribute(TapestryTestConstants.CURRENT_TEST_METHOD_ATTRIBUTE, null);
     }
 
     // ---------------------------------------------------------------------
@@ -848,6 +875,8 @@ public class SeleniumTestCase extends Assert implements Selenium
 
     protected final void unreachable()
     {
+        writeErrorReport();
+
         throw new AssertionError("This statement should not be reachable.");
     }
 
@@ -883,8 +912,7 @@ public class SeleniumTestCase extends Assert implements Selenium
         if (actual.equals(expected))
             return;
 
-        System.err.printf("Text for %s should be '%s' but is '%s', in:\n\n%s\n\n", locator,
-                expected, actual, getHtmlSource());
+        writeErrorReport();
 
         throw new AssertionError(String.format("%s was '%s' not '%s'", locator, actual, expected));
     }
@@ -896,7 +924,7 @@ public class SeleniumTestCase extends Assert implements Selenium
             if (isTextPresent(item))
                 continue;
 
-            System.err.printf("Text pattern '%s' not found in:\n%s\n\n", item, getHtmlSource());
+            writeErrorReport();
 
             throw new AssertionError("Page did not contain '" + item + "'.");
         }
@@ -917,7 +945,7 @@ public class SeleniumTestCase extends Assert implements Selenium
             if (source.contains(snippet))
                 continue;
 
-            System.err.printf("Source content '%s' not found in:\n%s\n\n", snippet, source);
+            writeErrorReport();
 
             throw new AssertionError("Page did not contain source '" + snippet + "'.");
         }

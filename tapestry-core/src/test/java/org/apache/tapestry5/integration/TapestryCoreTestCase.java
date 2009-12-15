@@ -91,8 +91,9 @@ public abstract class TapestryCoreTestCase extends SeleniumTestCase
         }
         catch (RuntimeException ex)
         {
-            System.err.printf("Error accessing %s: %s, in:\n\n%s\n\n", locator, ex.getMessage(),
-                    getHtmlSource());
+            System.err.printf("Error accessing %s: %s", locator, ex.getMessage());
+
+            writeErrorReport();
 
             throw ex;
         }
@@ -100,8 +101,7 @@ public abstract class TapestryCoreTestCase extends SeleniumTestCase
         if (actual.equals(expected))
             return;
 
-        System.err.printf("Text for attribute %s should be '%s' but is '%s', in:\n\n%s\n\n",
-                locator, expected, actual, getHtmlSource());
+        writeErrorReport();
 
         throw new AssertionError(String.format("%s was '%s' not '%s'", locator, actual, expected));
     }

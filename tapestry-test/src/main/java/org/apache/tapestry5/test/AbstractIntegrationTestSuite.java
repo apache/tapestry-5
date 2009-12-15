@@ -21,6 +21,7 @@ import com.thoughtworks.selenium.Selenium;
 import org.openqa.selenium.server.RemoteControlConfiguration;
 import org.openqa.selenium.server.SeleniumServer;
 import org.testng.Assert;
+import org.testng.ITestContext;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 
@@ -294,7 +295,7 @@ public class AbstractIntegrationTestSuite extends Assert implements Selenium
     }
 
     @BeforeClass(alwaysRun = true)
-    public void setup() throws Exception
+    public void setup(ITestContext testContext) throws Exception
     {
         jettyRunner = new JettyRunner(TapestryTestConstants.MODULE_BASE_DIR, "/", JETTY_PORT,
                 webappRoot, virtualHosts);
@@ -306,7 +307,9 @@ public class AbstractIntegrationTestSuite extends Assert implements Selenium
         CommandProcessor cp = new HttpCommandProcessor("localhost",
                 RemoteControlConfiguration.DEFAULT_PORT, seleniumBrowserCommand, BASE_URL);
 
-        selenium = new DefaultSelenium(new ErrorReportingCommandProcessor(cp));
+        ErrorReporter errorReporter = new ErrorReporterImpl(cp, testContext);
+
+        selenium = new DefaultSelenium(new ErrorReportingCommandProcessor(cp, errorReporter));
 
         selenium.start();
     }

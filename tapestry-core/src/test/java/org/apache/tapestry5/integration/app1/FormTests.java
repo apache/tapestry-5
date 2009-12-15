@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.integration.core;
+package org.apache.tapestry5.integration.app1;
 
 import org.apache.tapestry5.corelib.components.Form;
 import org.apache.tapestry5.integration.TapestryCoreTestCase;
@@ -163,10 +163,11 @@ public class FormTests extends TapestryCoreTestCase
     @Test
     public void radio_group_validator()
     {
-        clickThru("RadioDemo");
+        clickThru("RadioDemo", "reset");
 
         // Verify that the "required" validator works.
         clickAndWait(SUBMIT);
+
         assertTextPresent("You must provide a value for Department.");
     }
 

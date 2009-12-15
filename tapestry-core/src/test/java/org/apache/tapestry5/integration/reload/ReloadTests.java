@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.integration;
+package org.apache.tapestry5.integration.reload;
 
 import javassist.*;
 import org.apache.tapestry5.internal.TapestryInternalUtils;
@@ -22,7 +22,8 @@ import org.testng.annotations.Test;
 import java.io.*;
 
 /**
- * Integration tests designed to test Tapestry's ability to dynamically reload component classes, templates and message
+ * Integration tests designed to test Tapestry's ability to dynamically reload component classes,
+ * templates and message
  * catalogs.
  */
 public class ReloadTests extends AbstractIntegrationTestSuite
@@ -59,7 +60,8 @@ public class ReloadTests extends AbstractIntegrationTestSuite
         System.err.println("Created: " + webappDir);
     }
 
-    private void createIndexClass(int number) throws NotFoundException, CannotCompileException, IOException
+    private void createIndexClass(int number) throws NotFoundException, CannotCompileException,
+            IOException
     {
         ClassPool pool = new ClassPool(null);
 
@@ -76,13 +78,15 @@ public class ReloadTests extends AbstractIntegrationTestSuite
         ctClass.writeFile(classesDir.getAbsolutePath());
     }
 
-
     /**
      * Copies a source file (from the classpath) to a directory as a new file name.
-     *
-     * @param sourceFile source file (within in the reload package)
-     * @param dir        directory to copy to
-     * @param targetFile name of file   to be created or overwritten
+     * 
+     * @param sourceFile
+     *            source file (within in the reload package)
+     * @param dir
+     *            directory to copy to
+     * @param targetFile
+     *            name of file to be created or overwritten
      */
     private void copy(String sourceFile, File dir, String targetFile) throws IOException
     {
@@ -90,7 +94,7 @@ public class ReloadTests extends AbstractIntegrationTestSuite
 
         FileOutputStream fos = new FileOutputStream(output);
 
-        InputStream in = getClass().getResourceAsStream("reload/" + sourceFile);
+        InputStream in = getClass().getResourceAsStream(sourceFile);
 
         copy(in, fos);
 

@@ -17,15 +17,19 @@ package org.apache.tapestry5.test;
 import com.thoughtworks.selenium.CommandProcessor;
 
 /**
- * A wrapper around a standard command processor that adds additional exception reporting when a failure occurs.
+ * A wrapper around a standard command processor that adds additional exception reporting when a
+ * failure occurs.
  */
 public class ErrorReportingCommandProcessor implements CommandProcessor
 {
     private final CommandProcessor delegate;
 
-    public ErrorReportingCommandProcessor(final CommandProcessor delegate)
+    private final ErrorReporter errorReporter;
+
+    public ErrorReportingCommandProcessor(CommandProcessor delegate, ErrorReporter errorReporter)
     {
         this.delegate = delegate;
+        this.errorReporter = errorReporter;
     }
 
     private static final String BORDER = "**********************************************************************";
@@ -41,7 +45,8 @@ public class ErrorReportingCommandProcessor implements CommandProcessor
 
         for (int i = 0; i < args.length; i++)
         {
-            if (i > 0) builder.append(", ");
+            if (i > 0)
+                builder.append(", ");
             builder.append('"');
             builder.append(args[i]);
             builder.append('"');
@@ -50,14 +55,11 @@ public class ErrorReportingCommandProcessor implements CommandProcessor
         builder.append("): ");
         builder.append(ex.toString());
 
-        builder.append("\n\nPage source:\n\n");
-
-        builder.append(delegate.getString("getHtmlSource", new String[] { }));
-
-        builder.append("\n");
         builder.append(BORDER);
 
         System.err.println(builder.toString());
+
+        errorReporter.writeErrorReport();
     }
 
     public String doCommand(String command, String[] args)

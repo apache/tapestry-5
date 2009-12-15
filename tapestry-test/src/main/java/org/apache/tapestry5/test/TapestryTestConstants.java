@@ -15,6 +15,7 @@
 package org.apache.tapestry5.test;
 
 import java.io.File;
+import java.lang.reflect.Method;
 
 import org.testng.ITestContext;
 
@@ -52,10 +53,24 @@ public class TapestryTestConstants
     public static final String SELENIUM_ATTRIBUTE = "tapestry.selenium";
 
     /**
+     * {@link ITestContext} attribute holding an instance of {@link ErrorReporter}.
+     * 
+     * @see SeleniumLauncher#startup(String, String, int, String, ITestContext)
+     * @since 5.2.0
+     */
+    public static final String ERROR_REPORTER_ATTRIBUTE = "tapestry.error-reporter";
+
+    /**
      * {@link ITestContext} attribute holding the application's base URL.
      * 
      * @see SeleniumLauncher#startup(String, String, int, String, ITestContext)
      * @since 5.2.0
      */
     public static final String BASE_URL_ATTRIBUTE = "tapestry.base-url";
+
+    /**
+     * {@link ITestContext} attribute updated to store the current test method
+     * (as a {@link Method} instance).
+     */
+    public static final String CURRENT_TEST_METHOD_ATTRIBUTE = "tapestry.current-test-method";
 }

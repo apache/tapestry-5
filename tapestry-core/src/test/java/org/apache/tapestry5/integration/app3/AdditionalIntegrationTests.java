@@ -12,33 +12,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.integration;
+package org.apache.tapestry5.integration.app3;
 
-import org.apache.tapestry5.test.AbstractIntegrationTestSuite;
+import org.apache.tapestry5.integration.TapestryCoreTestCase;
 import org.testng.annotations.Test;
 
 /**
- * Additional integration tests that do not fit with the main group due to the need for special configuration.
+ * Additional integration tests that do not fit with the main group due to the need for special
+ * configuration.
  */
-@Test(timeOut = 50000, sequential = true, groups = {"integration"})
-public class AdditionalIntegrationTests extends AbstractIntegrationTestSuite
+public class AdditionalIntegrationTests extends TapestryCoreTestCase
 {
-
-    public AdditionalIntegrationTests()
-    {
-        super("src/test/app3");
-    }
-
-
     /**
      * Test to prove that a redirect from the start page works correctly.
-     *
+     * 
      * @see https://issues.apache.org/jira/browse/TAPESTRY-1627
      */
     @Test
     public void redirect_for_root() throws Exception
     {
-        open(BASE_URL);
+        openBaseURL();
 
         assertText("//h1", "Login Page");
     }
@@ -46,7 +39,7 @@ public class AdditionalIntegrationTests extends AbstractIntegrationTestSuite
     @Test
     public void bean_block_overrides()
     {
-        start("BeanDisplay Override Demo");
+        clickThru("BeanDisplay Override Demo");
 
         assertText("//dd[@class='no']", "Nay");
         assertText("//dd[@class='yes']", "Yea");
@@ -58,7 +51,7 @@ public class AdditionalIntegrationTests extends AbstractIntegrationTestSuite
     @Test
     public void activation_context_for_root_index_page()
     {
-        open(BASE_URL + "it$0020worked");
+        open(getBaseURL() + "it$0020worked");
 
         assertText("//h1", "Index");
 
@@ -66,12 +59,12 @@ public class AdditionalIntegrationTests extends AbstractIntegrationTestSuite
     }
 
     /**
-     * TAPESTR-2217
+     * TAPESTRY-2217
      */
     @Test
     public void page_document_generator()
     {
-        start("PageDocumentGenerator demo");
+        clickThru("PageDocumentGenerator demo");
 
         // In generated document: not optimized
         assertAttribute("//a[1]/@href", "/login");
@@ -80,11 +73,11 @@ public class AdditionalIntegrationTests extends AbstractIntegrationTestSuite
         // Fuckin Selenium
         // assertAttribute("//a[2]/@href", "login");
     }
-    
+
     public void ajax_server_side_exception()
     {
-        start("Console demo");
-        
+        clickThru("Console demo");
+
         assertTextPresent("Demonstrates Tapestry console");
 
         click("link=Failure on the server side");

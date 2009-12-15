@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.integration.core;
+package org.apache.tapestry5.integration.app1;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
