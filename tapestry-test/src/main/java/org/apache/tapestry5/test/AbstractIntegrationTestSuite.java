@@ -25,24 +25,27 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 
 /**
- * A base class for creating integration tests. Ths encapsulates starting up an in-process copy of Jetty, and in-process
+ * A base class for creating integration tests. Ths encapsulates starting up an in-process copy of
+ * Jetty, and in-process
  * copy of {@link SeleniumServer}, and a Selenium client.
  * <p/>
- * Unless you are <em>very, very clever</em>, you will want to run the tests sequentially. TestNG tends to run them in
- * an arbitrary order unless you explicitly set the order. If you have managed to get TestNG to run tests in parallel,
- * you may see further problems caused by a single client jumping all over your web application in an unpredictable
- * order.
+ * Unless you are <em>very, very clever</em>, you will want to run the tests sequentially. TestNG
+ * tends to run them in an arbitrary order unless you explicitly set the order. If you have managed
+ * to get TestNG to run tests in parallel, you may see further problems caused by a single client
+ * jumping all over your web application in an unpredictable order.
  * <p/>
- * This class implements the {@link Selenium} interface, and delegates all those methods to the {@link DefaultSelenium}
- * instance it creates. It also extends the normal exception reporting for any failed command or query to produce a more
- * detailed report to the main console.
- *
+ * This class implements the {@link Selenium} interface, and delegates all those methods to the
+ * {@link DefaultSelenium} instance it creates. It also extends the normal exception reporting for
+ * any failed command or query to produce a more detailed report to the main console.
+ * 
  * @see org.apache.tapestry5.test.JettyRunner
+ * @deprecated Use {@link SeleniumLauncher} and {@link SeleniumTestCase} instead.
  */
 public class AbstractIntegrationTestSuite extends Assert implements Selenium
 {
     /**
-     * Default directory containing the web application to be tested (this conforms to Maven's default folder).
+     * Default directory containing the web application to be tested (this conforms to Maven's
+     * default folder).
      */
     public static final String DEFAULT_WEB_APP_ROOT = "src/main/webapp";
 
@@ -67,7 +70,6 @@ public class AbstractIntegrationTestSuite extends Assert implements Selenium
 
     public static final String SUBMIT = "//input[@type='submit']";
 
-
     private String webappRoot;
 
     private final String seleniumBrowserCommand;
@@ -77,7 +79,7 @@ public class AbstractIntegrationTestSuite extends Assert implements Selenium
     private Selenium selenium;
 
     private SeleniumServer server;
-    
+
     private String[] virtualHosts;
 
     /**
@@ -89,7 +91,8 @@ public class AbstractIntegrationTestSuite extends Assert implements Selenium
     }
 
     /**
-     * @param webAppRoot the directory containing the web application to be tested.
+     * @param webAppRoot
+     *            the directory containing the web application to be tested.
      */
     protected AbstractIntegrationTestSuite(String webAppRoot)
     {
@@ -97,12 +100,17 @@ public class AbstractIntegrationTestSuite extends Assert implements Selenium
     }
 
     /**
-     * @param webAppRoot     web application root (default src/main/webapp)
-     * @param browserCommand browser command to pass to selenium. Default is *firefox, syntax for custom browsers is
-     *                       *custom &lt;path_to_browser&gt;, e.g. *custom /usr/lib/mozilla-firefox/firefox
-     * @param virtualHosts an array with virtual hosts
+     * @param webAppRoot
+     *            web application root (default src/main/webapp)
+     * @param browserCommand
+     *            browser command to pass to selenium. Default is *firefox, syntax for custom
+     *            browsers is
+     *            *custom &lt;path_to_browser&gt;, e.g. *custom /usr/lib/mozilla-firefox/firefox
+     * @param virtualHosts
+     *            an array with virtual hosts
      */
-    protected AbstractIntegrationTestSuite(String webAppRoot, String browserCommand, String... virtualHosts)
+    protected AbstractIntegrationTestSuite(String webAppRoot, String browserCommand,
+            String... virtualHosts)
     {
         webappRoot = webAppRoot;
         seleniumBrowserCommand = browserCommand;
@@ -115,7 +123,8 @@ public class AbstractIntegrationTestSuite extends Assert implements Selenium
 
         for (String snippet : expected)
         {
-            if (source.contains(snippet)) continue;
+            if (source.contains(snippet))
+                continue;
 
             System.err.printf("Source content '%s' not found in:\n%s\n\n", snippet, source);
 
@@ -125,9 +134,11 @@ public class AbstractIntegrationTestSuite extends Assert implements Selenium
 
     /**
      * Used when the locator identifies an attribute, not an element.
-     *
-     * @param locator  identifies the attribute whose value is to be asserted
-     * @param expected expected value for the attribute
+     * 
+     * @param locator
+     *            identifies the attribute whose value is to be asserted
+     * @param expected
+     *            expected value for the attribute
      */
     protected final void assertAttribute(String locator, String expected)
     {
@@ -140,24 +151,27 @@ public class AbstractIntegrationTestSuite extends Assert implements Selenium
         catch (RuntimeException ex)
         {
             System.err.printf("Error accessing %s: %s, in:\n\n%s\n\n", locator, ex.getMessage(),
-                              selenium.getHtmlSource());
+                    selenium.getHtmlSource());
 
             throw ex;
         }
 
-        if (actual.equals(expected)) return;
+        if (actual.equals(expected))
+            return;
 
-        System.err.printf("Text for attribute %s should be '%s' but is '%s', in:\n\n%s\n\n", locator, expected, actual,
-                          getHtmlSource());
+        System.err.printf("Text for attribute %s should be '%s' but is '%s', in:\n\n%s\n\n",
+                locator, expected, actual, getHtmlSource());
 
         throw new AssertionError(String.format("%s was '%s' not '%s'", locator, actual, expected));
     }
 
     /**
      * Asserts the text of an element, identified by the locator.
-     *
-     * @param locator  identifies the element whose text value is to be asserted
-     * @param expected expected value for the element's text
+     * 
+     * @param locator
+     *            identifies the element whose text value is to be asserted
+     * @param expected
+     *            expected value for the element's text
      */
     protected final void assertText(String locator, String expected)
     {
@@ -170,15 +184,16 @@ public class AbstractIntegrationTestSuite extends Assert implements Selenium
         catch (RuntimeException ex)
         {
             System.err.printf("Error accessing %s: %s, in:\n\n%s\n\n", locator, ex.getMessage(),
-                              selenium.getHtmlSource());
+                    selenium.getHtmlSource());
 
             throw ex;
         }
 
-        if (actual.equals(expected)) return;
+        if (actual.equals(expected))
+            return;
 
-        System.err.printf("Text for %s should be '%s' but is '%s', in:\n\n%s\n\n", locator, expected, actual,
-                          getHtmlSource());
+        System.err.printf("Text for %s should be '%s' but is '%s', in:\n\n%s\n\n", locator,
+                expected, actual, getHtmlSource());
 
         throw new AssertionError(String.format("%s was '%s' not '%s'", locator, actual, expected));
     }
@@ -187,7 +202,8 @@ public class AbstractIntegrationTestSuite extends Assert implements Selenium
     {
         for (String item : text)
         {
-            if (isTextPresent(item)) continue;
+            if (isTextPresent(item))
+                continue;
 
             System.err.printf("Text pattern '%s' not found in:\n%s\n\n", item, selenium
                     .getHtmlSource());
@@ -236,7 +252,6 @@ public class AbstractIntegrationTestSuite extends Assert implements Selenium
         }
     }
 
-
     protected final void assertFieldValueSeries(String idFormat, int startIndex, String... values)
     {
         for (int i = 0; i < values.length; i++)
@@ -246,11 +261,11 @@ public class AbstractIntegrationTestSuite extends Assert implements Selenium
             assertFieldValue(id, values[i]);
         }
     }
-    
+
     protected void waitForCSSSelectedElementToAppear(String cssRule)
     {
-        String condition = String.format("selenium.browserbot.getCurrentWindow().$$(\"%s\").size() > 0",
-                                         cssRule);
+        String condition = String.format(
+                "selenium.browserbot.getCurrentWindow().$$(\"%s\").size() > 0", cssRule);
 
         waitForCondition(condition, PAGE_LOAD_TIMEOUT);
 
@@ -259,36 +274,37 @@ public class AbstractIntegrationTestSuite extends Assert implements Selenium
     @AfterClass(alwaysRun = true)
     public void cleanup() throws Exception
     {
-    	if (selenium!=null) 
-    	{
-    		selenium.stop();
-    		selenium = null;
-    	}
+        if (selenium != null)
+        {
+            selenium.stop();
+            selenium = null;
+        }
 
-    	if (server!=null)
-    	{
-    		server.stop();
-    		server = null;
-    	}
+        if (server != null)
+        {
+            server.stop();
+            server = null;
+        }
 
-    	if (jettyRunner!=null)
-    	{
-    		jettyRunner.stop();
-    		jettyRunner = null;
-    	}
+        if (jettyRunner != null)
+        {
+            jettyRunner.stop();
+            jettyRunner = null;
+        }
     }
 
     @BeforeClass(alwaysRun = true)
     public void setup() throws Exception
     {
-        jettyRunner = new JettyRunner(TapestryTestConstants.MODULE_BASE_DIR, "/", JETTY_PORT, webappRoot, virtualHosts);
+        jettyRunner = new JettyRunner(TapestryTestConstants.MODULE_BASE_DIR, "/", JETTY_PORT,
+                webappRoot, virtualHosts);
 
         server = new SeleniumServer();
 
         server.start();
 
-        CommandProcessor cp = new HttpCommandProcessor("localhost", RemoteControlConfiguration.DEFAULT_PORT,
-                                                       seleniumBrowserCommand, BASE_URL);
+        CommandProcessor cp = new HttpCommandProcessor("localhost",
+                RemoteControlConfiguration.DEFAULT_PORT, seleniumBrowserCommand, BASE_URL);
 
         selenium = new DefaultSelenium(new ErrorReportingCommandProcessor(cp));
 
@@ -520,7 +536,8 @@ public class AbstractIntegrationTestSuite extends Assert implements Selenium
         return selenium.getWhetherThisFrameMatchFrameExpression(currentFrameString, target);
     }
 
-    public boolean getWhetherThisWindowMatchWindowExpression(String currentWindowString, String target)
+    public boolean getWhetherThisWindowMatchWindowExpression(String currentWindowString,
+            String target)
     {
         return selenium.getWhetherThisWindowMatchWindowExpression(currentWindowString, target);
     }
@@ -758,7 +775,8 @@ public class AbstractIntegrationTestSuite extends Assert implements Selenium
         selenium.dragAndDrop(locator, movementsString);
     }
 
-    public void dragAndDropToObject(String locatorOfObjectToBeDragged, String locatorOfDragDestinationObject)
+    public void dragAndDropToObject(String locatorOfObjectToBeDragged,
+            String locatorOfDragDestinationObject)
     {
         selenium.dragAndDropToObject(locatorOfObjectToBeDragged, locatorOfDragDestinationObject);
     }
@@ -959,10 +977,11 @@ public class AbstractIntegrationTestSuite extends Assert implements Selenium
     }
 
     /**
-     * Used to start a typical test, by opening to the base URL and clicking through a series of links.
+     * Used to start a typical test, by opening to the base URL and clicking through a series of
+     * links.
      * <p/>
-     * Note: Selenium 1.0-beta-2 has introduced a method start(String) which is distinct from this implementation (which
-     * dates back to Tapestry 5.0 and Selenium 1.0-beta-1).
+     * Note: Selenium 1.0-beta-2 has introduced a method start(String) which is distinct from this
+     * implementation (which dates back to Tapestry 5.0 and Selenium 1.0-beta-1).
      */
     protected final void start(String... linkText)
     {
@@ -1111,45 +1130,47 @@ public class AbstractIntegrationTestSuite extends Assert implements Selenium
     }
 
     /**
-     * This does NOT invoke {@link com.thoughtworks.selenium.Selenium#start(String)}; it invokes {@link
-     * #start(String[])}.  This is necesasry due to the introduction of the start() method.
-     *
-     * @param linkText text of link to click
+     * This does NOT invoke {@link com.thoughtworks.selenium.Selenium#start(String)}; it invokes
+     * {@link #start(String[])}. This is necesasry due to the introduction of the start() method.
+     * 
+     * @param linkText
+     *            text of link to click
      * @since 5.1.0.0
      */
     public void start(String linkText)
     {
-        start(new String[] { linkText });
+        start(new String[]
+        { linkText });
     }
 
     /**
      * @since 5.2.0.0
      */
-	public void addCustomRequestHeader(String key, String value) 
+    public void addCustomRequestHeader(String key, String value)
     {
         selenium.addCustomRequestHeader(key, value);
     }
-	
+
     /**
      * @since 5.2.0.0
      */
-	public String captureNetworkTraffic(String type) 
+    public String captureNetworkTraffic(String type)
     {
         return selenium.captureNetworkTraffic(type);
     }
-	
+
     /**
      * @since 5.2.0.0
      */
-	public void deselectPopUp() 
+    public void deselectPopUp()
     {
         selenium.deselectPopUp();
     }
-	
+
     /**
      * @since 5.2.0.0
      */
-	public void selectPopUp(String windowID) 
+    public void selectPopUp(String windowID)
     {
         selenium.selectPopUp(windowID);
     }

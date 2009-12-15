@@ -24,10 +24,12 @@ import java.io.File;
 import static java.lang.String.format;
 
 /**
- * Used to start up an instance of the Jetty servlet container in-process, as part of an integration test suite. The
+ * Used to start up an instance of the Jetty servlet container in-process, as part of an integration
+ * test suite. The
  * started Jetty is reliant on the file <code>src/test/conf/webdefault.xml</code>.
- *
+ * 
  * @see AbstractIntegrationTestSuite
+ * @deprecated Use {@link Jetty7Runner} instead
  */
 public class JettyRunner
 {
@@ -46,20 +48,26 @@ public class JettyRunner
     private final String warPath;
 
     private final Server jetty;
-    
+
     private final String[] virtualHosts;
 
     /**
-     * Creates and starts a new instance of Jetty. This should be done from a test case setup method.
-     *
-     * @param workingDir  current directory (used for any relative files)
-     * @param contextPath the context path for the deployed application
-     * @param port        the port number used to access the application
-     * @param warPath     the path to the exploded web application (typically, "src/main/webapp")
-     * @param virtualHosts an array with virtual hosts
+     * Creates and starts a new instance of Jetty. This should be done from a test case setup
+     * method.
+     * 
+     * @param workingDir
+     *            current directory (used for any relative files)
+     * @param contextPath
+     *            the context path for the deployed application
+     * @param port
+     *            the port number used to access the application
+     * @param warPath
+     *            the path to the exploded web application (typically, "src/main/webapp")
+     * @param virtualHosts
+     *            an array with virtual hosts
      */
     public JettyRunner(File workingDir, String contextPath, int port, String warPath,
-    		String ... virtualHosts)
+            String... virtualHosts)
     {
         this.workingDir = workingDir;
         this.contextPath = contextPath;
@@ -101,26 +109,24 @@ public class JettyRunner
         return format("<JettyRunner %s:%d (%s)>", contextPath, port, warPath);
     }
 
-
     private Server createAndStart()
     {
         try
         {
 
-        	File warPathFile = new File(warPath);
-        	
-            String webappPath = warPathFile.isAbsolute()
-                                ? warPath
-                                : new File(workingDir, this.warPath).getPath();
+            File warPathFile = new File(warPath);
+
+            String webappPath = warPathFile.isAbsolute() ? warPath : new File(workingDir,
+                    this.warPath).getPath();
             String webDefaults = new File(workingDir, "src/test/conf/webdefault.xml").getPath();
 
             File keystoreFile = new File(workingDir, "src/test/conf/keystore");
             String keystore = keystoreFile.getPath();
 
-            System.out.printf("Starting Jetty instance on port %d (%s mapped to %s)\n", port, contextPath, webappPath);
+            System.out.printf("Starting Jetty instance on port %d (%s mapped to %s)\n", port,
+                    contextPath, webappPath);
 
             Server server = new Server();
-
 
             SocketListener socketListener = new SocketListener();
             socketListener.setPort(port);
@@ -141,10 +147,11 @@ public class JettyRunner
             server.setRequestLog(log);
 
             WebApplicationContext context = server.addWebApplication(contextPath, webappPath);
-            
-            for (String virtualHost : virtualHosts) {
-				context.addVirtualHost(virtualHost);
-			}
+
+            for (String virtualHost : virtualHosts)
+            {
+                context.addVirtualHost(virtualHost);
+            }
 
             context.setDefaultsDescriptor(webDefaults);
 
