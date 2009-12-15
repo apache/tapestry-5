@@ -23,6 +23,8 @@ public abstract class TapestryCoreTestCase extends SeleniumTestCase
      */
     public static final String PAGE_LOAD_TIMEOUT = "15000";
 
+    public static final String SUBMIT = "//input[@type='submit']";
+
     /**
      * Click a link identified by a locator, then wait for the resulting page to load.
      * This is not useful for Ajax updates, just normal full-page refreshes.
@@ -34,6 +36,15 @@ public abstract class TapestryCoreTestCase extends SeleniumTestCase
     {
         click(locator);
 
+        waitForPageToLoad();
+    }
+
+    /**
+     * Waits for the page to load (up to 15 seconds). This is invoked after clicking on an element
+     * that forces a full page refresh.
+     */
+    protected final void waitForPageToLoad()
+    {
         waitForPageToLoad(PAGE_LOAD_TIMEOUT);
     }
 
@@ -48,7 +59,62 @@ public abstract class TapestryCoreTestCase extends SeleniumTestCase
         for (String text : linkText)
         {
             click("link=" + text);
-            waitForPageToLoad(PAGE_LOAD_TIMEOUT);
+            waitForPageToLoad();
+        }
+    }
+
+    protected final void assertTextSeries(String idFormat, int startIndex, String... values)
+    {
+        for (int i = 0; i < values.length; i++)
+        {
+            String id = String.format(idFormat, startIndex + i);
+
+            assertText(id, values[i]);
+        }
+    }
+
+    /**
+     * Used when the locator identifies an attribute, not an element.
+     * 
+     * @param locator
+     *            identifies the attribute whose value is to be asserted
+     * @param expected
+     *            expected value for the attribute
+     */
+    protected final void assertAttribute(String locator, String expected)
+    {
+        String actual = null;
+
+        try
+        {
+            actual = getAttribute(locator);
+        }
+        catch (RuntimeException ex)
+        {
+            System.err.printf("Error accessing %s: %s, in:\n\n%s\n\n", locator, ex.getMessage(),
+                    getHtmlSource());
+
+            throw ex;
+        }
+
+        if (actual.equals(expected))
+            return;
+
+        System.err.printf("Text for attribute %s should be '%s' but is '%s', in:\n\n%s\n\n",
+                locator, expected, actual, getHtmlSource());
+
+        throw new AssertionError(String.format("%s was '%s' not '%s'", locator, actual, expected));
+    }
+
+    protected final void sleep(long millis)
+    {
+        try
+        {
+            Thread.sleep(millis);
+        }
+        catch (InterruptedException ex)
+        {
+            // Ignore.
         }
     }
 }
