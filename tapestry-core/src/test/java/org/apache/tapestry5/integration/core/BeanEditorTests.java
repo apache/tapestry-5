@@ -17,6 +17,7 @@ package org.apache.tapestry5.integration.core;
 import org.apache.tapestry5.corelib.components.BeanEditForm;
 import org.apache.tapestry5.corelib.components.BeanEditor;
 import org.apache.tapestry5.integration.TapestryCoreTestCase;
+import org.apache.tapestry5.integration.app1.data.RegistrationData;
 import org.testng.annotations.Test;
 
 /**
@@ -163,5 +164,38 @@ public class BeanEditorTests extends TapestryCoreTestCase
         clickAndWait(SUBMIT);
 
         assertText("//dd[@class='value']", "237");
+    }
+
+    // TAPESTRY-2460
+
+    @Test
+    public void nested_bean_editor_and_bean_display()
+    {
+        clickThru("Nested BeanEditor");
+
+        type("name", "Parent");
+        type("age", "60");
+
+        type("name_0", "Child");
+        type("age_0", "40");
+
+        clickAndWait(SUBMIT);
+
+        assertText("//div[@id='content']//h1", "Nested BeanDisplay");
+
+        // As usual, Selenium is fighting me in terms of extracting data, so the
+        // above check just ensures
+        // we made it past the form submit without error.
+    }
+
+    /**
+     * TAPESTRY-2592
+     */
+    @Test
+    public void bean_editor_pushes_bean_edit_context()
+    {
+        clickThru("BeanEditor BeanEditContext");
+
+        assertTextPresent("Bean class from context is: " + RegistrationData.class.getName());
     }
 }

@@ -86,4 +86,113 @@ public class ZoneTests extends TapestryCoreTestCase
 
         click("link=Direct JSON response");
     }
+
+    /**
+     * TAP5-187
+     */
+    @Test
+    public void zone_redirect_by_class()
+    {
+        clickThru("Zone Demo");
+
+        clickAndWait("link=Perform a redirect to another page");
+
+        assertText("activePageName", "nested/AssetDemo");
+    }
+
+    /**
+     * TAP5-108
+     */
+    @Test
+    public void update_multiple_zones_at_once()
+    {
+        clickThru("Multiple Zone Update Demo");
+
+        String now = getText("now");
+
+        click("update");
+
+        waitForElementToAppear("fredName");
+
+        assertText("fredName", "Fred Flintstone");
+        assertText("dino", "His dog, Dino.");
+
+        // Ideally, we'd add checks that the JavaScript for the Palette in the
+        // Barney Zone was
+        // updated.
+
+        // Make sure it was a partial update
+        assertText("now", now);
+    }
+
+    /**
+     * TAP5-573
+     */
+    @Test
+    public void zone_namespace_interaction_fixed()
+    {
+        clickThru("Zone/Namespace Interaction");
+
+        String outerNow = getText("outernow");
+        String innerNow = getText("innernow");
+
+        // If we're too fast that innernow doesn't change because its all within
+        // a single second.
+
+        sleep(1050);
+
+        click(SUBMIT);
+
+        waitForElementToAppear("message");
+
+        // Make sure it was just an Ajax update.
+        assertEquals(getText("outernow"), outerNow);
+
+        assertFalse(getText("innernow").equals(innerNow));
+    }
+
+    @Test
+    public void zone_updated_event_triggered_on_client()
+    {
+        clickThru("Zone Demo");
+
+        assertText("zone-update-message", "");
+
+        click("link=Direct JSON response");
+
+        // Give it some time to process.
+
+        sleep(100);
+
+        assertText("zone-update-message", "Zone updated.");
+    }
+
+    /**
+     * TAP5-389
+     */
+    @Test
+    public void link_submit_inside_form_that_updates_a_zone()
+    {
+        clickThru("LinkSubmit inside Zone");
+
+        String now = getText("now");
+
+        click("link=submit");
+
+        waitForElementToAppear("value:errorpopup");
+
+        type("value", "robot chicken");
+
+        click("link=submit");
+
+        waitForElementToAppear("outputvalue");
+
+        assertText("outputvalue", "robot chicken");
+
+        assertText("eventfired", "true");
+
+        // Make sure it was a partial update
+        assertText("now", now);
+    }
+
 }

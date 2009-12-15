@@ -1266,4 +1266,72 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
 
         assertText("message", "from getActionURL()");
     }
+
+    /**
+     * TAPESTRY-2244
+     */
+    @Test
+    public void cached()
+    {
+        clickThru("Cached Annotation");
+
+        assertText("value", "000");
+        assertText("value2size", "111");
+
+        assertText("//span[@class='watch'][1]", "0");
+        assertText("//span[@class='watch'][2]", "0");
+        assertText("//span[@class='watch'][3]", "1");
+
+        clickAndWait("link=Back to index");
+
+        // TAPESTRY-2338: Make sure the data is cleared.
+
+        clickAndWait("link=Cached Annotation");
+
+        assertText("value", "000");
+        assertText("value2size", "111");
+
+        assertText("//span[@class='watch'][1]", "0");
+        assertText("//span[@class='watch'][2]", "0");
+        assertText("//span[@class='watch'][3]", "1");
+    }
+
+    /**
+     * TAPESTRY-2244
+     */
+    @Test
+    public void override_method_with_cached()
+    {
+        clickThru("Cached Annotation2");
+
+        assertText("value", "111");
+
+        clickAndWait("link=Back to index");
+
+        // TAPESTRY-2338: Make sure the data is cleared.
+
+        clickAndWait("link=Cached Annotation2");
+
+        assertText("value", "111");
+    }
+
+    /**
+     * TAPESTRY-2542
+     */
+    @Test
+    public void has_body()
+    {
+        clickThru("Has Body Demo");
+
+        assertText("nobody", "false");
+        assertText("somebody", "true");
+    }
+
+    @Test
+    public void renderclientid_mixin()
+    {
+        clickThru("RenderClientId Mixin");
+
+        assertText("divwithid", "Div Content");
+    }
 }

@@ -252,4 +252,42 @@ public class GridTests extends TapestryCoreTestCase
         // The rendered &nbsp; becomes just a blank string.
         assertTextSeries("//tr[1]/td[%d]", 1, "7", "view", "1", "");
     }
+
+    @Test
+    public void inplace_grid()
+    {
+        clickThru("In-Place Grid Demo");
+
+        String timestamp = getText("lastupdate");
+
+        click("link=2");
+        sleep(100);
+        click("link=Album");
+        sleep(100);
+
+        assertEquals(getText("lastupdate"), timestamp,
+                "Timestamp should not have changed because updates are in-place.");
+    }
+
+    /**
+     * TAPESTRY-2502
+     */
+    @Test
+    public void short_grid()
+    {
+        clickThru("Short Grid");
+
+        for (int i = 0; i < 6; i++)
+        {
+            String locator = String.format("grid.%d.0", i + 1);
+            String expected = String.format("Index #%d", i);
+
+            assertEquals(getTable(locator), expected);
+        }
+
+        String count = getEval("window.document.getElementById('grid').rows.length");
+
+        assertEquals(count, "7", "Expected seven rows: the header and six data rows.");
+    }
+
 }

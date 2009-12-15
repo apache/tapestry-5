@@ -419,4 +419,285 @@ public class FormTests extends TapestryCoreTestCase
 
         assertTextPresent("Result: 10.14159");
     }
+
+    /**
+     * TAPESTRY-2563
+     */
+    @Test
+    public void form_action_via_get()
+    {
+        open(getBaseURL() + "validform.form");
+
+        assertTextPresent("Forms require that the request method be POST and that the t:formdata query parameter have values.");
+    }
+
+    /**
+     * TAPESTRY-2352
+     */
+    @Test
+    public void client_field_format_validation()
+    {
+        clickThru("Client Format Validation");
+
+        type("amount", "abc");
+        type("quantity", "abc");
+
+        click(SUBMIT);
+
+        waitForElementToAppear("amount:errorpopup");
+        waitForElementToAppear("quantity:errorpopup");
+
+        assertText("//div[@id='amount:errorpopup']/span",
+                "You must provide a numeric value for Amount.");
+        assertText("//div[@id='quantity:errorpopup']/span", "Provide quantity as a number.");
+    }
+
+    /**
+     * TAPESTRY-2438
+     */
+    @Test
+    public void validation_exception_thrown_from_validate_form_event_handler()
+    {
+        clickThru("ValidationForm ValidationException Demo");
+
+        clickAndWait(SUBMIT);
+
+        assertTextPresent("From event handler method.");
+
+        assertText("event", "failure");
+    }
+
+    @Test
+    public void form_field_outside_form()
+    {
+        clickThru("Form Field Outside Form");
+
+        assertTextPresent(
+                "org.apache.tapestry5.internal.services.RenderQueueException",
+                "Render queue error in SetupRender[FormFieldOutsideForm:textfield]: The Textfield component must be enclosed by a Form component.",
+                "context:FormFieldOutsideForm.tml, line 5");
+    }
+
+    /**
+     * TAP5-281
+     */
+    @Test
+    public void nested_form_check()
+    {
+        clickThru("Nested Form Demo");
+
+        assertTextPresent("Form components may not be placed inside other Form components.");
+    }
+
+    /**
+     * TAP5-87
+     */
+    @Test
+    public void blank_password_does_not_update()
+    {
+        clickThru("Blank Password Demo");
+
+        type("password", "secret");
+
+        clickAndWait(SUBMIT);
+
+        assertFieldValue("password", "");
+
+        assertText("visiblepassword", "secret");
+
+        clickAndWait(SUBMIT);
+
+        assertFieldValue("password", "");
+
+        assertText("visiblepassword", "secret");
+    }
+
+    /**
+     * TAP5-228: And to think I almost blew off the integration tests!
+     */
+    @Test
+    public void per_form_validation_messages_and_constraints()
+    {
+        clickThru("Per-Form Validation Messages");
+
+        clickAndWait("//input[@type='submit' and @value='Login']");
+
+        assertTextPresent("Enter the unique user id you provided when you registerred.");
+
+        type("userId", "aaa");
+
+        clickAndWait("//input[@type='submit' and @value='Login']");
+
+        assertTextPresent("You must provide at least 10 characters for User Id.");
+
+        clickAndWait("//input[@type='submit' and @value='Register']");
+
+        assertTextPresent("Enter a unique user id, such as your initials.");
+
+        type("userId_0", "aaa");
+
+        clickAndWait("//input[@type='submit' and @value='Register']");
+
+        assertTextPresent("You must provide at least 20 characters for User Id.");
+    }
+
+    /**
+     * TAP5-719
+     */
+    @Test
+    public void link_submit_without_validator()
+    {
+        clickThru("LinkSubmit Without Validator Demo");
+
+        type("searchField", "Anders Haraldsson");
+
+        clickAndWait("link=Search");
+
+        assertTextPresent("Result: Anders Haraldsson not found!");
+    }
+
+    /**
+     * TAP5-211
+     */
+    @Test
+    public void client_side_numeric_validation()
+    {
+        clickThru("Client-Side Numeric Validation", "reset");
+
+        assertText("outputLongValue", "1000");
+        assertText("outputDoubleValue", "1234.67");
+
+        assertFieldValue("longValue", "1000");
+        assertFieldValue("doubleValue", "1,234.67");
+
+        type("longValue", "2,000 ");
+        type("doubleValue", " -456,789.12");
+
+        clickAndWait(SUBMIT);
+
+        assertText("outputLongValue", "2000");
+        assertText("outputDoubleValue", "-456789.12");
+
+        assertFieldValue("longValue", "2000");
+        assertFieldValue("doubleValue", "-456,789.12");
+
+        clickAndWait("link=switch to German");
+
+        assertText("outputLongValue", "2000");
+        assertText("outputDoubleValue", "-456789.12");
+
+        assertFieldValue("longValue", "2000");
+        assertFieldValue("doubleValue", "-456.789,12");
+
+        type("longValue", "3.000");
+        type("doubleValue", "5.444.333,22");
+
+        clickAndWait(SUBMIT);
+
+        assertFieldValue("longValue", "3000");
+        assertFieldValue("doubleValue", "5.444.333,22");
+
+        assertText("outputLongValue", "3000");
+        assertText("outputDoubleValue", "5444333.22");
+
+        clickAndWait("link=reset");
+
+        type("longValue", "4000.");
+        click(SUBMIT);
+
+        assertBubbleMessage("longValue", "You must provide an integer value for Long Value.");
+
+        type("doubleValue", "abc");
+
+        click(SUBMIT);
+
+        assertBubbleMessage("doubleValue", "You must provide a numeric value for Double Value.");
+    }
+
+    @Test
+    public void client_validation_for_numeric_fields_that_are_not_required()
+    {
+        clickThru("Form Zone Demo");
+
+        type("longValue", "alpha");
+
+        click(SUBMIT);
+
+        waitForElementToAppear("longValue:errorpopup");
+
+        assertText("//div[@id='longValue:errorpopup']/span",
+                "You must provide an integer value for Long Value.");
+
+        type("longValue", "37");
+
+        click(SUBMIT);
+
+        waitForElementToAppear("outputvalue");
+
+        assertText("outputvalue", "37");
+    }
+
+    @Test
+    public void hidden_field()
+    {
+        clickThru("Hidden Demo", "setup");
+
+        clickAndWait(SUBMIT);
+
+        assertText("stored", "12345");
+    }
+
+    @Test
+    public void validation_constraints_from_messages()
+    {
+        clickThru("Validation Constraints From Messages");
+
+        click(SUBMIT);
+
+        assertBubbleMessage("name", "You must provide a value for Name.");
+        assertBubbleMessage("age", "You must provide a value for Age.");
+
+        type("name", "behemoth");
+        type("age", "0");
+        select("type", "label=Snake");
+
+        click(SUBMIT);
+        assertBubbleMessage("age", "Age requires a value of at least 1.");
+
+        type("age", "121");
+        click(SUBMIT);
+        assertBubbleMessage("age", "Age requires a value no larger than 120.");
+
+        type("age", "5");
+        clickAndWait(SUBMIT);
+    }
+
+    /**
+     * TAP5-157
+     */
+    @Test
+    public void link_submit_component()
+    {
+        clickThru("LinkSubmit Demo");
+
+        click("link=Fred");
+
+        waitForCondition("selenium.browserbot.getCurrentWindow().$('name:errorpopup')",
+                PAGE_LOAD_TIMEOUT);
+
+        assertTextPresent("You must provide a value for Name.");
+
+        type("name", "Wilma");
+
+        clickAndWait("link=Fred");
+
+        assertText("name-value", "Wilma");
+        assertText("last-clicked", "Fred");
+
+        type("name", "Betty");
+        clickAndWait("link=Barney");
+
+        assertText("name-value", "Betty");
+        assertText("last-clicked", "Barney");
+    }
 }

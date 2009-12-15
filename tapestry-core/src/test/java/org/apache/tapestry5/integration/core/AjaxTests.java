@@ -102,4 +102,84 @@ public class AjaxTests extends TapestryCoreTestCase
         assertText("sum", "0.0");
     }
 
+    /**
+     * TAP5-240
+     */
+    @Test
+    public void ajax_server_side_exception()
+    {
+        clickThru("Zone Demo");
+
+        click("link=Failure on the server side");
+
+        // Wait for the console to appear
+
+        waitForCSSSelectedElementToAppear("#t-console li");
+
+        assertTextPresent("Communication with the server failed: Server-side exception.");
+    }
+
+    /**
+     * TAP5-544
+     */
+    @Test
+    public void slow_ajax_load_warning()
+    {
+        clickThru("Slow Ajax Demo");
+
+        // ActionLink
+
+        click("link=action");
+
+        waitForElementToAppear("slow");
+
+        click("link=action");
+
+        waitForElementToAppear("zoneOutput");
+
+        assertText("zoneOutput", "Updated via an ActionLink");
+
+        // LinkSubmit
+
+        clickAndWait("link=refresh");
+
+        click("link=link submit");
+
+        waitForElementToAppear("slow");
+
+        click("link=link submit");
+
+        waitForElementToAppear("zoneOutput");
+
+        assertText("zoneOutput", "Updated via form submission.");
+
+        // Normal submit
+
+        clickAndWait("link=refresh");
+
+        click(SUBMIT);
+
+        waitForElementToAppear("slow");
+
+        click(SUBMIT);
+
+        waitForElementToAppear("zoneOutput");
+
+        assertText("zoneOutput", "Updated via form submission.");
+    }
+
+    /**
+     * TAP5-236
+     */
+    @Test
+    public void progressive_display()
+    {
+        clickThru("ProgressiveDisplay Demo");
+
+        waitForElementToAppear("content1");
+        assertText("content1", "Progressive Display content #1.");
+
+        waitForElementToAppear("content2");
+        assertText("content2", "Music Library");
+    }
 }
