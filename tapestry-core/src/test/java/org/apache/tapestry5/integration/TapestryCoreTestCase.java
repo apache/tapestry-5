@@ -24,10 +24,24 @@ public abstract class TapestryCoreTestCase extends SeleniumTestCase
     public static final String PAGE_LOAD_TIMEOUT = "15000";
 
     /**
+     * Click a link identified by a locator, then wait for the resulting page to load.
+     * This is not useful for Ajax updates, just normal full-page refreshes.
+     * 
+     * @param locator
+     *            identifies the link to click
+     */
+    protected final void clickAndWait(String locator)
+    {
+        click(locator);
+
+        waitForPageToLoad(PAGE_LOAD_TIMEOUT);
+    }
+
+    /**
      * Opens the base URL, then clicks through a series of links to get to a desired application
      * state.
      */
-    public void clickThru(String... linkText)
+    protected final void clickThru(String... linkText)
     {
         openBaseURL();
 
