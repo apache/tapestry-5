@@ -34,13 +34,13 @@ What is Apache Tapestry?
 
 New And Of Note
 
+  * A {{{guide/testing.html}guide to integration testing}} is now available.
+
   []
   
 Roadmap
 
-  Now that that 5.0 release is <finally> out and available, work is rounding out on the 5.1 release.
-
-  The goal is to produce such releases on a regular schedule, every 4 - 6 months.
+  The goal is to produce new releases on a regular schedule, every 4 - 6 months.
 
   High priorities for 5.2 include Spring Web Flow integration, and support for developing Tapestry applications as Portlets.
 

@@ -1,0 +1,109 @@
+ ---
+ Integration Testing
+ ---
+ 
+Integration Testing
+ 
+  Tapestry's Integration Testing is based on {{{http://testng.org}TestNG}} and {{{http://seleniumhq.org/}Selenium}}. In many cases, you can achieve
+  great results using Tapestry's built-in
+  {{{unit-testing-pages.html}PageTester class}}, but when you want to run your application
+  live, in a web browser, nothing is as good as Selenium.
+  
+  Much like with PageTester, an integration test consists of running the application through
+  its paces, filling in fields, submitting forms, clicking links and making assertions about
+  the rendered result.  The difference is that nothing is simulated ... it's a real web browser
+  (typically FireFox, but your choice) communicating to a real instance of your application
+  running inside a servlet container (typically {{{http://www.eclipse.org/jetty/}Jetty 7}}, but your choice).
+  
+  The support for this is defined by the {{{../tapestry-test/index.html}tapestry-test module}}.
+  
+Launcher and Test Cases
+
+  When testing your application, you will write some number of <test cases> for it.  Test cases
+  are subclasses of
+  {{{../apidocs/org/apache/tapestry5/test/SeleniumTestCase.html}SeleniumTestCase}}.
+  
+  You are free to organize test cases however you like; often there is one test case per page,
+  but other alternatives are to organize test cases to correspond to project requires or
+  user cases.
+  
+  Test cases expect that the <stack> be already set up. The stack is the running instance of the
+  Selenium client, the SeleniumServer (which is responsible for starting and running the web browser),
+  and an instance of Jetty for your web application.
+  
+  The {{{../apidocs/org/apache/tapestry5/test/SeleniumLauncher.html}SeleniumLauncher}} class is
+  responsible for this. By default, it launches an instance of Jetty7, and expect your web application's
+  context to be in the default location: <<<src/main/webapp>>>.
+  
+Configuration using TestNG
+
+  You must create a TestNG <test> to setup the launcher and identify the test cases. Inside your
+  <<<testng.xml>>>, add the following:
+  
+-----
+  <test name="Integration Tests" enabled="true">
+    <packages>
+      <package name="com.example.myapp.tests"/>
+    </packages>
+    <classes>
+      <class name="org.apache.tapestry5.test.SeleniumLauncher"/>
+    </classes>
+  </test>
+-----
+
+  This assumes that package <<<com.example.myapp.tests>>> contains one or more integration tests.
+  
+  You can configuration quite a bit about the launcher by adding \<parameter\> elements to the
+  TestNG \<test\> element.  For example, you can run your tests in Internet Explorer (instead of the
+  default web browser, FireFox) by adding:
+  
+-----
+      <parameter name="tapestry.browser-start-command" value="*ie"/>
+-----
+
+  In fact, if you want to run your integration tests in <both> FireFox and Internet Explorer, just create
+  two TestNG \<test\>s that run on the same packages, but with different browser start commands. Note
+  that you may find it more effective to identify just a subset of tests to run on multiple browsers (typically the ones that make the most use of JavaScript and Ajax).
+  
+  See the {{{../apidocs/org/apache/tapestry5/test/SeleniumLauncher.html}SeleniumLauncher}} API documentation
+  for details on what can be configured. If you have extraordinary needs in setting up the web application,
+  you may also subclass SeleniumLauncher.
+  
+Writing basic Integration Tests
+
+  A full tutorial on how to use Selenium is beyond the scope of this document.
+  
+  The SeleniumTestCase base class includes all the methods of the Selenium interface, plus a number
+  of additional utility methods.
+  
+  This is a sample from Tapestry's test suite:
+  
+----
+    @Test
+    public void access_to_page_name()
+    {
+        openBaseURL();
+
+        assertText("activePageName", "Index");
+
+        clickAndWait("link=Grid Demo");
+
+        assertText("activePageName", "GridDemo");
+    }
+----
+
+  This opens the Base URL for the application and asserts that an element with id <<<activePageName>>> has
+  the value <<<Index>>>.  It then clicks a link labeled <<<Grid Demo>>> and waits for the new page to load,
+  and checks the new page's <<<activePageName>>> element.  
+  
+  Remember that the order in which test cases, or test methods within test cases, are executed is
+  arbitrary <unless> you explicitly define the order. 
+  
+Exception Reporting
+
+  When assertions fail, or other errors occur, Tapestry will create a file in the TestNG test output directory
+  containing the contents of the page (via the Selenium <<<getHTMLSource>>> command) to help you analyze
+  what went wrong.
+  
+  Console output during the test can be quite verbose, with significant logging by SeleniumServer and by
+  Jetty and your running application.
