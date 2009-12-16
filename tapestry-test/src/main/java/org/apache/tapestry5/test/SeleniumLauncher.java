@@ -113,7 +113,7 @@ public class SeleniumLauncher
      * @param port
      * @param browserStartCommand
      * @param testContext
-     *            TODO
+     *            Used to share objects between the launcher and the test suites
      * @throws Exception
      */
     // Note: Made this method synchronized since there's no guarantee the same thread that invokes

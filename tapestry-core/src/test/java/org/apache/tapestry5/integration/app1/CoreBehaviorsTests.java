@@ -14,18 +14,9 @@
 
 package org.apache.tapestry5.integration.app1;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.InputStream;
-import java.net.URL;
-
 import org.apache.tapestry5.corelib.mixins.RenderDisabled;
 import org.apache.tapestry5.integration.TapestryCoreTestCase;
 import org.apache.tapestry5.integration.app1.pages.RenderErrorDemo;
-import org.apache.tapestry5.internal.TapestryInternalUtils;
-import org.apache.tapestry5.test.TapestryTestConstants;
-import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 public class CoreBehaviorsTests extends TapestryCoreTestCase
