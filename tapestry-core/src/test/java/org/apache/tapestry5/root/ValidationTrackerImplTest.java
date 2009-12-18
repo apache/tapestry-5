@@ -12,8 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5;
+package org.apache.tapestry5.root;
 
+import org.apache.tapestry5.Field;
+import org.apache.tapestry5.ValidationTracker;
+import org.apache.tapestry5.ValidationTrackerImpl;
 import org.apache.tapestry5.test.TapestryTestCase;
 import org.testng.annotations.Test;
 

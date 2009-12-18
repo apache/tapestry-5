@@ -97,7 +97,7 @@ public class SeleniumLauncher
      * <tr>
      * <td>port</td>
      * <td>tapestry.port</td>
-     * <td>9999</td>
+     * <td>9090</td>
      * <td>Port number for web server to listen to</td>
      * </tr>
      * <tr>
@@ -131,7 +131,7 @@ public class SeleniumLauncher
     @Optional("")
     String contextPath,
 
-    @Optional("9999")
+    @Optional("9090")
     int port,
 
     @Optional("*firefox")

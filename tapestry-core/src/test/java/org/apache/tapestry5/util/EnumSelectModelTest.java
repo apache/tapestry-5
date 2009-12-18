@@ -16,8 +16,8 @@ package org.apache.tapestry5.util;
 
 import org.apache.tapestry5.OptionModel;
 import org.apache.tapestry5.SelectModel;
-import org.apache.tapestry5.Stooge;
 import org.apache.tapestry5.ioc.Messages;
+import org.apache.tapestry5.root.Stooge;
 import org.apache.tapestry5.test.TapestryTestCase;
 import org.testng.annotations.Test;
 

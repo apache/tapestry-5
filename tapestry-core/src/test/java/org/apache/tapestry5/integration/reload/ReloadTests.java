@@ -14,12 +14,22 @@
 
 package org.apache.tapestry5.integration.reload;
 
-import javassist.*;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
+import javassist.CannotCompileException;
+import javassist.ClassPool;
+import javassist.CtClass;
+import javassist.CtMethod;
+import javassist.NotFoundException;
+
 import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.test.AbstractIntegrationTestSuite;
 import org.testng.annotations.Test;
-
-import java.io.*;
 
 /**
  * Integration tests designed to test Tapestry's ability to dynamically reload component classes,

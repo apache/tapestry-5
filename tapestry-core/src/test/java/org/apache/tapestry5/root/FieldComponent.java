@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+//  Copyright 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,9 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5;
+package org.apache.tapestry5.root;
 
-public enum Stooge
+import org.apache.tapestry5.Field;
+import org.apache.tapestry5.runtime.Component;
+
+/**
+ * Used in a few places where we need a mock for {@link org.apache.tapestry5.Field} and {@link
+ * org.apache.tapestry5.runtime.Component} simultanesouly.
+ */
+public interface FieldComponent extends Field, Component
 {
-    MOE, LARRY, CURLY_JOE
 }
