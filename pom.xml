@@ -313,7 +313,6 @@
                         <updateReleaseInfo>${update-release-info}</updateReleaseInfo>
                     </configuration>
                 </plugin>
-
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-resources-plugin</artifactId>
@@ -321,13 +320,13 @@
                         <encoding>UTF-8</encoding>
                     </configuration>
                 </plugin>
+                <plugin>
+                    <artifactId>maven-release-plugin</artifactId>
+                    <configuration>
+                        <tagBase>https://svn.apache.org/repos/asf/tapestry/tapestry5/tags/releases/</tagBase>
+                    </configuration>
+                </plugin>
             </plugins>
-            <plugin>
-                <artifactId>maven-release-plugin</artifactId>
-                <configuration>
-                    <tagBase>https://svn.apache.org/repos/asf/tapestry/tapestry5/tags/releases/</tagBase>
-                </configuration>
-            </plugin>
         </pluginManagement>
     </build>
     <profiles>
