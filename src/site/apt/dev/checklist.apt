@@ -43,7 +43,7 @@ Generate the Release Notes
   
   Select the correct version, in HTML format.
   
-  Paste the notes to the <<top>> of tapestry-project/src/site/xdoc/release-notes.xdoc
+  Paste the notes to the <<top>> of tapestry-project/src/site/xdoc/release-notes.xml
   
   Wrap the title ("Release Notes - Tapestry - Version 5.0.x") inside an \<h1\> element.
 
