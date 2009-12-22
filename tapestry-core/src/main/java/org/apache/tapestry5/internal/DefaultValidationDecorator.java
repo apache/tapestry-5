@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@ package org.apache.tapestry5.internal;
 
 import org.apache.tapestry5.*;
 import org.apache.tapestry5.dom.Element;
+import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.services.Environment;
 import org.apache.tapestry5.services.FormSupport;
 
@@ -28,16 +29,22 @@ public final class DefaultValidationDecorator extends BaseValidationDecorator
 
     private final Asset spacerAsset;
 
+    private final Messages validationMessages;
+
     private final MarkupWriter markupWriter;
 
     /**
-     * @param environment  used to locate objects and services during the render
-     * @param spacerAsset  asset for a one-pixel spacer image used as a placeholder for the error marker icon
+     * @param environment        used to locate objects and services during the render
+     * @param validationMessages obtained from {@link org.apache.tapestry5.services.ValidationMessagesSource}, used to
+     *                           obtain the label for the icon
+     * @param spacerAsset        asset for a one-pixel spacer image used as a placeholder for the error marker icon
      * @param markupWriter
      */
-    public DefaultValidationDecorator(Environment environment, Asset spacerAsset, MarkupWriter markupWriter)
+    public DefaultValidationDecorator(Environment environment, Messages validationMessages, Asset spacerAsset,
+                                      MarkupWriter markupWriter)
     {
         this.environment = environment;
+        this.validationMessages = validationMessages;
         this.spacerAsset = spacerAsset;
         this.markupWriter = markupWriter;
     }
@@ -74,14 +81,18 @@ public final class DefaultValidationDecorator extends BaseValidationDecorator
 
         if (inError || clientValidationEnabled)
         {
-            String iconId = field.getClientId() + "-icon";
+            String iconId = field.getClientId() + ":icon";
 
             String cssClass = inError ? "t-error-icon" : "t-error-icon t-invisible";
 
             markupWriter.element("img",
+
                                  "src", spacerAsset.toClientURL(),
+
                                  "alt", "",
+
                                  "class", cssClass,
+
                                  "id", iconId);
             markupWriter.end();
         }

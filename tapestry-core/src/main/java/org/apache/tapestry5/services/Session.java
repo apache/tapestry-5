@@ -1,4 +1,4 @@
-// Copyright 2006, 2008 The Apache Software Foundation
+// Copyright 2006 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -64,26 +64,4 @@ public interface Session
      * @throws IllegalStateException if this method is called on an already invalidated session
      */
     void invalidate();
-
-    /**
-     * Checks to see if the session has been invalidated.  Note: this only catches calls to {@link #invalidate()}, not
-     * calls to {@link javax.servlet.http.HttpSession#invalidate()}.
-     *
-     * @since 5.1.0.0
-     */
-    boolean isInvalidated();
-
-    /**
-     * Re-stores dirty objects back into the session.  This is necessary to support clustering, because (in most
-     * application servers) session objects are only broadcast around the cluster from setAttribute().  If a mutable
-     * session object is read and changed, those changes will be limited to a single server in the cluster, which can
-     * cause confusing application failures in the event of a failover.      Does nothing if there are no changes, or
-     * the session has been invalidated.
-     *
-     * @see org.apache.tapestry5.OptimizedSessionPersistedObject
-     * @see org.apache.tapestry5.internal.services.OptimizedApplicationStateObjectAnalyzer
-     * @see org.apache.tapestry5.annotations.ImmutableSessionPersistedObject
-     * @since 5.1.0.0
-     */
-    void restoreDirtyObjects();
 }

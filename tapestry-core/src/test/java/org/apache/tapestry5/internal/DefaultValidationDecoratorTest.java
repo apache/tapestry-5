@@ -1,4 +1,4 @@
-// Copyright 2007, 2009 The Apache Software Foundation
+// Copyright 2007 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -34,7 +34,7 @@ public class DefaultValidationDecoratorTest extends TapestryTestCase
 
         replay();
 
-        ValidationDecorator decorator = new DefaultValidationDecorator(env, null, null);
+        ValidationDecorator decorator = new DefaultValidationDecorator(env, null, null, null);
 
         decorator.insideLabel(null, null);
 
@@ -56,13 +56,11 @@ public class DefaultValidationDecoratorTest extends TapestryTestCase
 
         Element e = writer.element("label", "accesskey", "f");
 
-        ValidationDecorator decorator = new DefaultValidationDecorator(env, null, null);
+        ValidationDecorator decorator = new DefaultValidationDecorator(env, null, null, null);
 
         decorator.insideLabel(field, e);
 
-        assertEquals(writer.toString(),
-                     "<?xml version=\"1.0\"?>\n" +
-                             "<label class=\"t-error\" accesskey=\"f\"/>");
+        assertEquals(writer.toString(), "<?xml version=\"1.0\"?>\n<label accesskey=\"f\" class=\"t-error\"/>");
 
         verify();
     }
@@ -82,12 +80,11 @@ public class DefaultValidationDecoratorTest extends TapestryTestCase
 
         Element e = writer.element("label", "accesskey", "f", "class", "foo");
 
-        ValidationDecorator decorator = new DefaultValidationDecorator(env, null, null);
+        ValidationDecorator decorator = new DefaultValidationDecorator(env, null, null, null);
 
         decorator.insideLabel(field, e);
 
-        assertEquals(writer.toString(), "<?xml version=\"1.0\"?>\n" +
-                "<label class=\"foo t-error\" accesskey=\"f\"/>");
+        assertEquals(writer.toString(), "<?xml version=\"1.0\"?>\n<label accesskey=\"f\" class=\"foo t-error\"/>");
 
         verify();
     }
@@ -107,12 +104,12 @@ public class DefaultValidationDecoratorTest extends TapestryTestCase
 
         writer.element("input", "type", "text", "name", "ex", "class", "foo", "value", "freddy", "size", "30");
 
-        ValidationDecorator decorator = new DefaultValidationDecorator(env, null, writer);
+        ValidationDecorator decorator = new DefaultValidationDecorator(env, null, null, writer);
 
         decorator.insideField(field);
 
-        assertEquals(writer.toString(), "<?xml version=\"1.0\"?>\n" +
-                "<input size=\"30\" value=\"freddy\" class=\"foo t-error\" name=\"ex\" type=\"text\"/>");
+        assertEquals(writer.toString(),
+                     "<?xml version=\"1.0\"?>\n<input class=\"foo t-error\" name=\"ex\" size=\"30\" type=\"text\" value=\"freddy\"/>");
 
         verify();
     }
@@ -129,7 +126,7 @@ public class DefaultValidationDecoratorTest extends TapestryTestCase
 
         replay();
 
-        ValidationDecorator decorator = new DefaultValidationDecorator(env, null, null);
+        ValidationDecorator decorator = new DefaultValidationDecorator(env, null, null, null);
 
         decorator.insideField(field);
 
@@ -148,7 +145,7 @@ public class DefaultValidationDecoratorTest extends TapestryTestCase
 
         replay();
 
-        ValidationDecorator decorator = new DefaultValidationDecorator(env, null, null);
+        ValidationDecorator decorator = new DefaultValidationDecorator(env, null, null, null);
 
         decorator.insideLabel(field, null);
 

@@ -1,4 +1,4 @@
-//  Copyright 2008, 2009 The Apache Software Foundation
+//  Copyright 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@ import org.apache.tapestry5.internal.structure.ComponentPageElement;
 import org.apache.tapestry5.internal.structure.Page;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
-import org.apache.tapestry5.model.ComponentModel;
 import org.easymock.EasyMock;
 import org.easymock.IAnswer;
 import org.testng.annotations.BeforeClass;
@@ -41,7 +40,7 @@ public class PageActivationContextCollectorImplTest extends InternalBaseTestCase
     @Test
     public void page_with_array_activation_context()
     {
-        tryWithContext("MyPage", new Object[] { 3, "four", null, "$100" },
+        tryWithContext(new Object[] {3, "four", null, "$100"},
                        3, "four", null, "$100");
     }
 
@@ -50,36 +49,27 @@ public class PageActivationContextCollectorImplTest extends InternalBaseTestCase
     {
         Object value = 99;
 
-        tryWithContext("MyPage", value, value);
+        tryWithContext(value, value);
     }
 
     @Test
     public void page_with_list_context()
     {
-        tryWithContext("MyPage", Arrays.asList(1, 2, 3),
+        tryWithContext(Arrays.asList(1, 2, 3),
                        1, 2, 3);
     }
 
     @Test
     public void page_with_empty_context()
     {
-        tryWithContext("MyPage", new String[0]);
+        tryWithContext(new String[0]);
     }
 
     @Test
     public void page_with_no_context()
     {
-        String pageName = "mypage";
-        ComponentModel model = mockComponentModel();
-        ComponentModelSource modelSource = mockComponentModelSource();
-        RequestPageCache pageCache = mockRequestPageCache();
         Page page = mockPage();
         ComponentPageElement element = mockComponentPageElement();
-        expect(modelSource.getPageModel(pageName)).andReturn(model);
-
-        expect(model.handlesEvent(EventConstants.PASSIVATE)).andReturn(true);
-
-        train_get(pageCache, pageName, page);
 
         train_getRootElement(page, element);
 
@@ -90,50 +80,17 @@ public class PageActivationContextCollectorImplTest extends InternalBaseTestCase
         replay();
 
         PageActivationContextCollector collector
-                = new PageActivationContextCollectorImpl(coercer, pageCache, modelSource);
+                = new PageActivationContextCollectorImpl(coercer);
 
-        Object[] actual = collector.collectPageActivationContext(pageName);
+        Object[] actual = collector.collectPageActivationContext(page);
 
         assertEquals(actual.length, 0);
     }
 
-    @Test
-    public void page_does_not_handle_passivate_event()
+    private void tryWithContext(final Object context, Object... expected)
     {
-        String pageName = "mypage";
-        ComponentModel model = mockComponentModel();
-        ComponentModelSource modelSource = mockComponentModelSource();
-        RequestPageCache pageCache = mockRequestPageCache();
-
-        expect(modelSource.getPageModel(pageName)).andReturn(model);
-
-        expect(model.handlesEvent(EventConstants.PASSIVATE)).andReturn(false);
-
-        replay();
-
-        PageActivationContextCollector collector
-                = new PageActivationContextCollectorImpl(coercer, pageCache, modelSource);
-
-        Object[] actual = collector.collectPageActivationContext(pageName);
-
-        assertEquals(actual.length, 0);
-
-    }
-
-
-    private void tryWithContext(String pageName, final Object context, Object... expected)
-    {
-        ComponentModelSource modelSource = mockComponentModelSource();
-        RequestPageCache pageCache = mockRequestPageCache();
-        ComponentPageElement element = mockComponentPageElement();
-        ComponentModel model = mockComponentModel();
         Page page = mockPage();
-
-        expect(modelSource.getPageModel(pageName)).andReturn(model);
-
-        expect(model.handlesEvent(EventConstants.PASSIVATE)).andReturn(true);
-
-        train_get(pageCache, pageName, page);
+        ComponentPageElement element = mockComponentPageElement();
 
         train_getRootElement(page, element);
 
@@ -156,9 +113,9 @@ public class PageActivationContextCollectorImplTest extends InternalBaseTestCase
         replay();
 
         PageActivationContextCollector collector
-                = new PageActivationContextCollectorImpl(coercer, pageCache, modelSource);
+                = new PageActivationContextCollectorImpl(coercer);
 
-        Object[] actual = collector.collectPageActivationContext(pageName);
+        Object[] actual = collector.collectPageActivationContext(page);
 
         assertArraysEqual(actual, expected);
     }

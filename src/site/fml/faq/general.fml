@@ -197,7 +197,7 @@
                 </pre>
 
                 <p>
-                    This helps the compiler check your code for typos, and minimizes the difficulty of change when
+                    This helps the compiler check your code for typos, and minimizes the difficult of change when
                     refactoring the names of components.
                 </p>
 
@@ -323,71 +323,22 @@
                     early, before accepting any requests.
                 </p>
                 <p>
-                    Starting with release 5.1, this is as simple as contributing
-                    an override of the
-                    <a href="../guide/conf.html">configuration symbol</a>
-                    tapestry.hibernate.early-startup to "true". Tapestry will load Hibernate at startup.
-                    Watch the console for errors as they are logged, but otherwise ignored.
-                </p>
-            </answer>
-        </faq>
-        <faq id="maven-filter">
-            <question>
-                Why do Maven project names and other details show up in my pages?
-            </question>
-            <answer>
-                <p>
-                    Tapestry and Maven both use the same syntax for dynamic portions of files:
-                    the
-                    <code>${...}</code>
-                    syntax. When Maven is copying resources from
-                    src/main/resources, and when filtering is enabled (which is not the default),
-                    then any expansions in
-                    <em>Tapestry templates</em>
-                    that match against
-                    Maven project properties are substituted. If you look at the deployed
-                    application, you'll see that
-                    <code>${name}</code>
-                    is gone, replaced with the
-                    project name!
-                </p>
-                <p>
-                    The solution is to update your pom.xml to ignore any .tml files when copying and filtering:
+                    The trick is to force the Tapestry services that wrap around Hibernate to initialize at
+                    startup. The following can be added to your AppModule:
                 </p>
                 <pre>
-                    &lt;resource&gt;
-                    &lt;directory&gt;src/main/resources&lt;/directory&gt;
-                    &lt;excludes&gt;
-                    &lt;exclude&gt;**/*.tml&lt;/exclude&gt;
-                    &lt;/excludes&gt;
-                    &lt;filtering&gt;true&lt;/filtering&gt;
-                    &lt;/resource&gt;
-
-                    &lt;resource&gt;
-                    &lt;directory&gt;src/main/resources&lt;/directory&gt;
-                    &lt;includes&gt;
-                    &lt;include&gt;**/*.tml&lt;/include&gt;
-                    &lt;/includes&gt;
-                    &lt;filtering&gt;false&lt;/filtering&gt;
-                    &lt;/resource&gt;
+                    public void contributeRegistryStartup(OrderedConfiguration&lt;Runnable&gt; configuration, final
+                    HibernateSessionSource sessionSource)
+                    {
+                    configuration.add("HibernateStartup", new Runnable()
+                    {
+                    public void run()
+                    {
+                    sessionSource.getConfiguration();
+                    }
+                    });
+                    }
                 </pre>
-            </answer>
-        </faq>
-        <faq id="create-page-link-from-service">
-            <question>
-                How do I create a link to a page from a service?
-            </question>
-            <answer>
-                <p>You can't inject a
-                    <a href="../apidocs/org/apache/tapestry5/ComponentResources.html">ComponentResources</a>
-                    into a service, because a service isn't a component. So how do you create a link to a page?
-                </p>
-                <p>
-                    The
-                    <a href="../apidocs/org/apache/tapestry5/services/PageRenderLinkSource.html">PageRenderLinkSource
-                    </a>
-                    service can be injected and lets you create page render links.
-                </p>
             </answer>
         </faq>
     </part>

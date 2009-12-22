@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -51,7 +51,9 @@ public class TemplateParserImplTest extends InternalBaseTestCase
 
     private synchronized List<TemplateToken> tokens(String file)
     {
-        return parse(file).getTokens();
+        Resource resource = getResource(file);
+
+        return getParser().parseTemplate(resource).getTokens();
     }
 
     private Resource getResource(String file)
@@ -71,11 +73,6 @@ public class TemplateParserImplTest extends InternalBaseTestCase
         Object raw = l.get(index);
 
         return (T) raw;
-    }
-
-    private void checkType(List<TemplateToken> l, int index, TokenType expected)
-    {
-        assertEquals(l.get(index).getTokenType(), expected);
     }
 
     private void checkLine(Locatable l, int expectedLineNumber)
@@ -335,26 +332,6 @@ public class TemplateParserImplTest extends InternalBaseTestCase
         get(tokens, 4);
     }
 
-    /**
-     * @since 5.1.0.1
-     */
-    @Test
-    public void comment_element_ignored()
-    {
-        List<TemplateToken> tokens = tokens("comment_element_ignored.tml");
-
-        assertEquals(tokens.size(), 8);
-
-        get(tokens, 2);
-
-        TextToken t = get(tokens, 3);
-
-        assertEquals(t.getText().trim(), "fred's body");
-
-        EndElementToken end5 = get(tokens, 5);
-        EndElementToken end7 = get(tokens, 7);
-    }
-
     @Test
     public void root_element_is_component()
     {
@@ -411,6 +388,21 @@ public class TemplateParserImplTest extends InternalBaseTestCase
         // javac bug requires use of isInstance() instead of instanceof
         // https://bugs.eclipse.org/bugs/show_bug.cgi?id=113218
         assertTrue(BodyToken.class.isInstance(get(tokens, 2)));
+    }
+
+    @Test
+    public void content_within_body_element()
+    {
+        List<TemplateToken> tokens = parse("content_within_body_element.tml").getTokens();
+
+        assertEquals(tokens.size(), 5);
+
+        // javac bug is requires use of isInstance() instead of instanceof
+        // https://bugs.eclipse.org/bugs/show_bug.cgi?id=113218
+
+        assertTrue(BodyToken.class.isInstance(get(tokens, 2)));
+        assertTrue(TextToken.class.isInstance(get(tokens, 3)));
+        assertTrue(EndElementToken.class.isInstance(get(tokens, 4)));
     }
 
     @Test
@@ -584,44 +576,10 @@ public class TemplateParserImplTest extends InternalBaseTestCase
         assertEquals(token8.getTokenType(), TokenType.END_ELEMENT);
     }
 
-    /**
-     * TAP5-112
-     */
-    @Test
-    public void parameter_namespace_element()
-    {
-        List<TemplateToken> tokens = tokens("parameter_namespace_element.tml");
-
-        ParameterToken token4 = get(tokens, 4);
-        assertEquals(token4.getName(), "fred");
-
-        CommentToken token6 = get(tokens, 6);
-        assertEquals(token6.getComment(), "fred content");
-
-        TemplateToken token8 = get(tokens, 8);
-
-        assertEquals(token8.getTokenType(), TokenType.END_ELEMENT);
-    }
-
     @Test
     public void complex_component_type()
     {
         List<TemplateToken> tokens = tokens("complex_component_type.tml");
-
-        assertEquals(tokens.size(), 4);
-
-        StartComponentToken token1 = get(tokens, 1);
-
-        assertEquals(token1.getComponentType(), "subfolder/nifty");
-    }
-
-    /**
-     * TAP5-66
-     */
-    @Test
-    public void component_inside_library_namespace()
-    {
-        List<TemplateToken> tokens = tokens("component_inside_library_namespace.tml");
 
         assertEquals(tokens.size(), 4);
 
@@ -648,57 +606,31 @@ public class TemplateParserImplTest extends InternalBaseTestCase
         assertEquals(token5.getComment(), "anon block content");
     }
 
-    @DataProvider
+    @DataProvider(name = "parse_failure_data")
     public Object[][] parse_failure_data()
     {
         return new Object[][] {
 
-                { "mixin_requires_id_or_type.tml",
+                {"mixin_requires_id_or_type.tml",
                         "You may not specify mixins for element <span> because it does not represent a component (which requires either an id attribute or a type attribute).",
-                        2 },
+                        2},
 
-                { "unexpected_attribute_in_parameter_element.tml",
+                {"illegal_nesting_within_body_element.tml", "Element 'xyz' is nested within a Tapestry body element",
+                        2},
+
+                {"unexpected_attribute_in_parameter_element.tml",
                         "Element <parameter> does not support an attribute named 'grok'. The only allowed attribute name is 'name'.",
-                        4 },
+                        4},
 
-                { "name_attribute_of_parameter_element_omitted.tml",
-                        "The name attribute of the <parameter> element must be specified.", 4 },
+                {"name_attribute_of_parameter_element_omitted.tml",
+                        "The name attribute of the <parameter> element must be specified.", 4},
 
-                { "name_attribute_of_parameter_element_blank.tml",
-                        "The name attribute of the <parameter> element must be specified.", 4 },
+                {"name_attribute_of_parameter_element_blank.tml",
+                        "The name attribute of the <parameter> element must be specified.", 4},
 
-                { "unexpected_attribute_in_block_element.tml",
+                {"unexpected_attribute_in_block_element.tml",
                         "Element <block> does not support an attribute named 'name'. The only allowed attribute name is 'id'.",
-                        3 },
-
-                { "parameter_namespace_with_attributes.tml",
-                        ServicesMessages.parameterElementDoesNotAllowAttributes(), 4 },
-
-                { "invalid_library_namespace_path.tml",
-                        "The path portion of library namespace URI 'tapestry-library:subfolder/' is not valid", 2 },
-
-                { "content_within_body_element.tml", "Content inside a Tapestry body element is not allowed", 2 },
-
-                { "nested_content_element.tml",
-                        "The <content> element may not be nested within another <content> element.", 3 },
-
-                { "container_must_be_root.tml", "Element <container> is only valid as the root element of a template.",
-                        3 },
-
-                { "extend_must_be_root.tml", "Element <extend> is only valid as the root element of a template.", 3 },
-
-                { "replace_must_be_under_extend.tml",
-                        "The <replace> element may only appear directly within an extend element.", 3 },
-
-                { "only_replace_within_extend.tml", "Child element of <extend> must be <replace>.", 2 },
-
-                { "missing_id_in_replace_element.tml", "The <replace> element must have an id attribute.", 3 },
-
-                { "extension_point_must_have_id.tml", "The <extension-point> element must have an id attribute.", 3 },
-
-                { "misplaced_parameter.tml", "Block parameters are only allowed directly within component elements.",
-                        5 },
-
+                        3},
         };
     }
 
@@ -722,11 +654,11 @@ public class TemplateParserImplTest extends InternalBaseTestCase
         }
     }
 
-    @DataProvider
+    @DataProvider(name = "doctype_parsed_correctly_data")
     public Object[][] doctype_parsed_correctly_data()
     {
-        return new Object[][] { { "xhtml1_strict_doctype.tml" }, { "xhtml1_transitional_doctype.tml" },
-                { "xhtml1_frameset_doctype.tml" } };
+        return new Object[][] {{"xhtml1_strict_doctype.tml"}, {"xhtml1_transitional_doctype.tml"},
+                {"xhtml1_frameset_doctype.tml"}};
     }
 
     @Test(dataProvider = "doctype_parsed_correctly_data")
@@ -738,31 +670,31 @@ public class TemplateParserImplTest extends InternalBaseTestCase
         assertEquals(t.getText().trim(), "<Test>");
     }
 
-    @DataProvider
+    @DataProvider(name = "doctype_token_added_correctly_data")
     public Object[][] doctype_token_added_correctly_data()
     {
         return new Object[][] {
 
-                { "xhtml1_strict_doctype.tml", "html", "-//W3C//DTD XHTML 1.0 Strict//EN",
-                        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd" },
+                {"xhtml1_strict_doctype.tml", "html", "-//W3C//DTD XHTML 1.0 Strict//EN",
+                        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"},
 
-                { "xhtml1_transitional_doctype.tml", "html", "-//W3C//DTD XHTML 1.0 Transitional//EN",
-                        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd" },
+                {"xhtml1_transitional_doctype.tml", "html", "-//W3C//DTD XHTML 1.0 Transitional//EN",
+                        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"},
 
-                { "xhtml1_frameset_doctype.tml", "html", "-//W3C//DTD XHTML 1.0 Frameset//EN",
-                        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd" },
+                {"xhtml1_frameset_doctype.tml", "html", "-//W3C//DTD XHTML 1.0 Frameset//EN",
+                        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd"},
 
-                { "html4_strict_doctype.tml", "HTML", "-//W3C//DTD HTML 4.01//EN",
-                        "http://www.w3.org/TR/html4/strict.dtd" },
+                {"html4_strict_doctype.tml", "HTML", "-//W3C//DTD HTML 4.01//EN",
+                        "http://www.w3.org/TR/html4/strict.dtd"},
 
-                { "html4_transitional_doctype.tml", "HTML", "-//W3C//DTD HTML 4.01 Transitional//EN",
-                        "http://www.w3.org/TR/html4/loose.dtd" },
+                {"html4_transitional_doctype.tml", "HTML", "-//W3C//DTD HTML 4.01 Transitional//EN",
+                        "http://www.w3.org/TR/html4/loose.dtd"},
 
-                { "html4_frameset_doctype.tml", "HTML", "-//W3C//DTD HTML 4.01 Frameset//EN",
-                        "http://www.w3.org/TR/html4/frameset.dtd" },
+                {"html4_frameset_doctype.tml", "HTML", "-//W3C//DTD HTML 4.01 Frameset//EN",
+                        "http://www.w3.org/TR/html4/frameset.dtd"},
 
-                { "system_doctype.xml", "foo", null,
-                        "src/test/resources/org/apache/tapestry5/internal/services/simple.dtd" } };
+                {"system_doctype.xml", "foo", null,
+                        "src/test/resources/org/apache/tapestry5/internal/services/simple.dtd"}};
     }
 
     @Test(dataProvider = "doctype_token_added_correctly_data")
@@ -771,10 +703,10 @@ public class TemplateParserImplTest extends InternalBaseTestCase
         System.setProperty("user.dir", TapestryTestConstants.MODULE_BASE_DIR_PATH);
 
         List<TemplateToken> tokens = tokens(fileName);
-        DTDToken t0 = get(tokens, 0);
-        assertEquals(t0.getName(), name);
-        assertEquals(t0.getPublicId(), publicId);
-        assertEquals(t0.getSystemId(), systemId);
+        DTDToken t2 = get(tokens, 0);
+        assertEquals(t2.getName(), name);
+        assertEquals(t2.getPublicId(), publicId);
+        assertEquals(t2.getSystemId(), systemId);
     }
 
     @Test
@@ -847,81 +779,5 @@ public class TemplateParserImplTest extends InternalBaseTestCase
 
         TextToken token5 = get(tokens, 5);
         assertEquals(token5.getText(), "\nis maintained.\n");
-    }
-
-    /**
-     * TAP5-563
-     */
-    @Test
-    public void content_element() throws Exception
-    {
-        List<TemplateToken> tokens = tokens("content_element.tml");
-
-        assertEquals(tokens.size(), 5);
-
-        StartComponentToken token0 = get(tokens, 0);
-        assertEquals(token0.getElementName(), "body");
-        assertEquals(token0.getComponentType(), "layout");
-
-        StartElementToken token1 = get(tokens, 1);
-        assertEquals(token1.getName(), "p");
-
-        TextToken token2 = get(tokens, 2);
-
-        assertEquals(token2.getText(), "Page content");
-
-        checkType(tokens, 3, TokenType.END_ELEMENT);
-        checkType(tokens, 4, TokenType.END_ELEMENT);
-    }
-
-    @Test
-    public void overrides() throws Exception
-    {
-        ComponentTemplate template = parse("overrides.tml");
-
-        assertTrue(template.isExtension());
-
-        assertEquals(template.getTokens().size(), 0);
-
-        List<TemplateToken> alpha = template.getExtensionPointTokens("alpha");
-
-        assertEquals(alpha.size(), 1);
-
-        TextToken alpha0 = get(alpha, 0);
-        assertEquals(alpha0.getText(), "beta");
-
-        List<TemplateToken> gamma = template.getExtensionPointTokens("gamma");
-        assertEquals(gamma.size(), 3);
-
-        StartElementToken gamma0 = get(gamma, 0);
-        assertEquals(gamma0.getName(), "p");
-
-        TextToken gamma1 = get(gamma, 1);
-
-        assertEquals(gamma1.getText(), "Hi!");
-
-        checkType(gamma, 2, TokenType.END_ELEMENT);
-    }
-
-    @Test
-    public void extension_point() throws Exception
-    {
-        ComponentTemplate template = parse("extension_point.tml");
-
-        ExtensionPointToken expansion = get(template.getTokens(), 2);
-
-        assertEquals(expansion.getExtensionPointId(), "title");
-
-        List<TemplateToken> title = template.getExtensionPointTokens("title");
-
-        assertEquals(title.size(), 3);
-
-        StartElementToken title0 = get(title, 0);
-        assertEquals(title0.getName(), "h1");
-
-        TextToken title1 = get(title, 1);
-        assertEquals(title1.getText(), "Default Title");
-
-        checkType(title, 2, TokenType.END_ELEMENT);
     }
 }

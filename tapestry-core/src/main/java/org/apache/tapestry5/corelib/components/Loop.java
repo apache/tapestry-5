@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,10 +16,8 @@ package org.apache.tapestry5.corelib.components;
 
 import org.apache.tapestry5.*;
 import org.apache.tapestry5.annotations.*;
-import org.apache.tapestry5.corelib.LoopFormState;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.services.ComponentDefaultProvider;
 import org.apache.tapestry5.services.FormSupport;
 import org.apache.tapestry5.services.Heartbeat;
 
@@ -33,14 +31,9 @@ import java.util.List;
  * fact, a series of commands for starting and ending heartbeats, and advancing through the iterator, are still stored.
  * For a non-volatile Loop inside the form, the Loop stores a series of commands that start and end heartbeats and store
  * state (either as full objects when there the encoder parameter is not bound, or as client-side objects when there is
- * an encoder). For a Loop that doesn't need to be aware of the enclosing Form (if any), the formState parameter should
- * be bound to 'none'.
- * <p/>
- * When the Loop is used inside a Form, it will generate an {@link org.apache.tapestry5.EventConstants#SYNCHRONIZE_VALUES}
- * event to inform its container what values were submitted and in what order.
+ * an encoder).
  */
 @SupportsInformalParameters
-@Events(EventConstants.SYNCHRONIZE_VALUES)
 public class Loop
 {
     /**
@@ -151,58 +144,57 @@ public class Loop
     /**
      * Restores the value using a stored primary key via {@link PrimaryKeyEncoder#toValue(Serializable)}.
      */
-    static class RestoreStateFromStoredClientValue implements ComponentAction<Loop>
+    static class RestoreStateViaEncodedPrimaryKey implements ComponentAction<Loop>
     {
-        private final String clientValue;
+        private static final long serialVersionUID = -2422790241589517336L;
 
-        public RestoreStateFromStoredClientValue(final String clientValue)
+        private final Serializable primaryKey;
+
+        public RestoreStateViaEncodedPrimaryKey(final Serializable primaryKey)
         {
-            this.clientValue = clientValue;
+            this.primaryKey = primaryKey;
         }
 
         public void execute(Loop component)
         {
-            component.restoreStateFromStoredClientValue(clientValue);
+            component.restoreStateViaEncodedPrimaryKey(primaryKey);
         }
 
         @Override
         public String toString()
         {
-            return String.format("Loop.RestoreStateFromStoredClientValue[%s]", clientValue);
+            return String.format("Loop.RestoreStateViaEncodedPrimaryKey[%s]", primaryKey);
         }
     }
 
     /**
-     * Start of processing event that allows the Loop to set up internal bookeeping, to track which values have come up
-     * in the form submission.
+     * Stores a list of keys to be passed to {@link PrimaryKeyEncoder#prepareForKeys(List)}.
      */
-    static final ComponentAction<Loop> PREPARE_FOR_SUBMISSION = new ComponentAction<Loop>()
+    static class PrepareForKeys implements ComponentAction<Loop>
     {
+        private static final long serialVersionUID = -6515255627142956828L;
+
+        /**
+         * The variable is final, the contents are mutable while the Loop renders.
+         */
+        private final List<Serializable> keys;
+
+        public PrepareForKeys(final List<Serializable> keys)
+        {
+            this.keys = keys;
+        }
+
         public void execute(Loop component)
         {
-            component.prepareForSubmission();
+            component.prepareForKeys(keys);
         }
 
         @Override
         public String toString()
         {
-            return "Loop.PrepareForSubmission";
+            return "Loop.PrepareForKeys" + keys;
         }
-    };
-
-    static final ComponentAction<Loop> NOTIFY_CONTAINER = new ComponentAction<Loop>()
-    {
-        public void execute(Loop component)
-        {
-            component.notifyContainer();
-        }
-
-        @Override
-        public String toString()
-        {
-            return "Loop.NotifyContainer";
-        }
-    };
+    }
 
     /**
      * Defines the collection of values for the loop to iterate over. If not specified, defaults to a property of the
@@ -212,32 +204,18 @@ public class Loop
     private Iterable<?> source;
 
     /**
-     * Optional value converter; if provided (or defaulted) and inside a form and not volatile, then each iterated value
-     * is converted and stored into the form. A default for this is calculated from the type of the property bound to
-     * the value parameter.
+     * Optional primary key converter; if provided and inside a form and not volatile, then each iterated value is
+     * converted and stored into the form.
      */
     @Parameter
-    private ValueEncoder<Object> encoder;
+    private PrimaryKeyEncoder<Serializable, Object> encoder;
 
     /**
      * If true and the Loop is enclosed by a Form, then the normal state saving logic is turned off. Defaults to false,
-     * enabling state saving logic within Forms. With the addition of the formState parameter, volatile simply sets a
-     * default for formState is formState is not specified.
-     *
-     * @deprecated in release 5.1.0.4, use the formState parameter instead.
+     * enabling state saving logic within Forms.
      */
-    @Parameter(name = "volatile", principal = true)
-    @Deprecated
+    @Parameter(name = "volatile")
     private boolean volatileState;
-
-    /**
-     * Controls what information, if any, is encoded into an enclosing Form. The default value for this is set by the
-     * deprecated volatile parameter. The normal default is {@link org.apache.tapestry5.corelib.LoopFormState#VALUES},
-     * but changes to {@link org.apache.tapestry5.corelib.LoopFormState#ITERATION} if volatile is true. This parameter
-     * is only used if the component is enclosed by a Form.
-     */
-    @Parameter(allowNull = false, defaultPrefix = BindingConstants.LITERAL)
-    private LoopFormState formState;
 
     @Environmental(false)
     private FormSupport formSupport;
@@ -252,7 +230,7 @@ public class Loop
     /**
      * The current value, set before the component renders its body.
      */
-    @Parameter(principal = true)
+    @Parameter
     private Object value;
 
     /**
@@ -272,36 +250,17 @@ public class Loop
     @Environmental
     private Heartbeat heartbeat;
 
-    private boolean storeValuesInForm, storeIncrementsInForm, storeHeartbeatsInForm;
+    private boolean storeRenderStateInForm;
 
     @Inject
     private ComponentResources resources;
 
-    @Inject
-    private ComponentDefaultProvider defaultProvider;
-
     private Block cleanupBlock;
 
-    /**
-     * Objects that have been recovered via {@link org.apache.tapestry5.ValueEncoder#toValue(String)} during the
-     * processing of the loop. These are sent to the container via an event.
-     */
-    private List<Object> synchonizedValues;
-
-
-    LoopFormState defaultFormState()
-    {
-        return volatileState ? LoopFormState.ITERATION : LoopFormState.VALUES;
-    }
 
     String defaultElement()
     {
         return resources.getElementName();
-    }
-
-    ValueEncoder defaultEncoder()
-    {
-        return defaultProvider.defaultValueEncoder("value", resources);
     }
 
     @SetupRender
@@ -311,25 +270,25 @@ public class Loop
 
         iterator = source == null ? null : source.iterator();
 
-        boolean insideForm = formSupport != null;
-
-
-        storeValuesInForm = insideForm && formState == LoopFormState.VALUES;
-        storeIncrementsInForm = insideForm && formState == LoopFormState.ITERATION;
-
-        storeHeartbeatsInForm = insideForm && formState != LoopFormState.NONE;
-
-        if (storeValuesInForm)
-            formSupport.store(this, PREPARE_FOR_SUBMISSION);
+        storeRenderStateInForm = formSupport != null && !volatileState;
 
         // Only render the body if there is something to iterate over
 
         boolean hasContent = iterator != null && iterator.hasNext();
 
-        if (insideForm && hasContent)
+        if (formSupport != null && hasContent)
         {
-            if (storeValuesInForm) formSupport.store(this, RESET_INDEX);
-            if (storeIncrementsInForm) formSupport.store(this, SETUP_FOR_VOLATILE);
+            formSupport.store(this, volatileState ? SETUP_FOR_VOLATILE : RESET_INDEX);
+
+            if (encoder != null)
+            {
+                List<Serializable> keyList = CollectionFactory.newList();
+
+                // We'll keep updating the _keyList while the Loop renders, the values will "lock
+                // down" when the Form serializes all the data.
+
+                formSupport.store(this, new PrepareForKeys(keyList));
+            }
         }
 
         cleanupBlock = hasContent ? null : empty;
@@ -339,17 +298,21 @@ public class Loop
         return hasContent;
     }
 
-
     /**
      * Returns the empty block, or null, after the render has finished. It will only be the empty block (which itself
      * may be null) if the source was null or empty.
      */
     Block cleanupRender()
     {
-        if (storeValuesInForm)
-            formSupport.store(this, NOTIFY_CONTAINER);
-
         return cleanupBlock;
+    }
+
+    private void prepareForKeys(List<Serializable> keys)
+    {
+        // Again, the encoder existed when we rendered, we better have another available
+        // when the enclosing Form is submitted.
+
+        encoder.prepareForKeys(keys);
     }
 
     private void setupForVolatile()
@@ -373,7 +336,7 @@ public class Loop
     {
         value = iterator.next();
 
-        if (storeValuesInForm)
+        if (storeRenderStateInForm)
         {
             if (encoder == null)
             {
@@ -381,16 +344,12 @@ public class Loop
             }
             else
             {
-                String clientValue = encoder.toClient(value);
-
-                formSupport.store(this, new RestoreStateFromStoredClientValue(clientValue));
+                Serializable primaryKey = encoder.toKey(value);
+                formSupport.store(this, new RestoreStateViaEncodedPrimaryKey(primaryKey));
             }
         }
 
-        if (storeIncrementsInForm)
-        {
-            formSupport.store(this, ADVANCE_VOLATILE);
-        }
+        if (formSupport != null && volatileState) formSupport.store(this, ADVANCE_VOLATILE);
 
         startHeartbeat();
 
@@ -416,10 +375,7 @@ public class Loop
 
         endHeartbeat();
 
-        if (storeHeartbeatsInForm)
-        {
-            formSupport.store(this, END_HEARTBEAT);
-        }
+        if (formSupport != null) formSupport.store(this, END_HEARTBEAT);
 
         return !iterator.hasNext();
     }
@@ -449,28 +405,14 @@ public class Loop
     /**
      * Restores state previously encoded by the Loop and stored into the Form.
      */
-    private void restoreStateFromStoredClientValue(String clientValue)
+    private void restoreStateViaEncodedPrimaryKey(Serializable primaryKey)
     {
-        // We assume that if an encoder is available when we rendered, that one will be available
-        // when the form is submitted.
+        // We assume that if a encoder is available when we rendered, that one will be available
+        // when the form is submitted. TODO: Check for this.
 
-        Object restoredValue = encoder.toValue(clientValue);
+        Object restoredValue = encoder.toValue(primaryKey);
 
         restoreState(restoredValue);
-
-        synchonizedValues.add(restoredValue);
-    }
-
-    private void prepareForSubmission()
-    {
-        synchonizedValues = CollectionFactory.newList();
-    }
-
-    private void notifyContainer()
-    {
-        Object[] values = synchonizedValues.toArray();
-
-        resources.triggerEvent(EventConstants.SYNCHRONIZE_VALUES, values, null);
     }
 
     // For testing:

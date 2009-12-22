@@ -1,4 +1,4 @@
-// Copyright 2007, 2009 The Apache Software Foundation
+// Copyright 2007 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,49 +14,38 @@
 
 package org.apache.tapestry5.ioc.internal.services;
 
-import org.apache.tapestry5.ioc.*;
-import org.apache.tapestry5.ioc.annotations.PreventServiceDecoration;
-import org.apache.tapestry5.ioc.services.ClassFabUtils;
+import org.apache.tapestry5.ioc.AnnotationProvider;
+import org.apache.tapestry5.ioc.ObjectLocator;
+import org.apache.tapestry5.ioc.ObjectProvider;
 import org.apache.tapestry5.ioc.services.MasterObjectProvider;
 
 import java.util.List;
 
-@PreventServiceDecoration
 public class MasterObjectProviderImpl implements MasterObjectProvider
 {
     private final List<ObjectProvider> configuration;
 
-    private final OperationTracker tracker;
-
-    public MasterObjectProviderImpl(List<ObjectProvider> configuration, OperationTracker tracker)
+    public MasterObjectProviderImpl(List<ObjectProvider> configuration)
     {
         this.configuration = configuration;
-        this.tracker = tracker;
     }
 
-    public <T> T provide(final Class<T> objectType, final AnnotationProvider annotationProvider,
-                         final ObjectLocator locator,
-                         final boolean required)
+    public <T> T provide(Class<T> objectType, AnnotationProvider annotationProvider, ObjectLocator locator,
+                         boolean required)
     {
-        return tracker.invoke(String.format("Resolving object of type %s using MasterObjectProvider",
-                                            ClassFabUtils.toJavaClassName(objectType)), new Invokable<T>()
+        for (ObjectProvider provider : configuration)
         {
-            public T invoke()
-            {
-                for (ObjectProvider provider : configuration)
-                {
-                    T result = provider.provide(objectType, annotationProvider, locator);
+            T result = provider.provide(objectType, annotationProvider, locator);
 
-                    if (result != null) return result;
-                }
+            if (result != null) return result;
+        }
 
-                // If required, then we must obtain it the hard way, by
-                // seeing if there's a single service that implements the interface.
+        // If required, then we must obtain it the hard way, by
+        // seeing if there's a single service that implements the interface.
 
-                if (required) return locator.getService(objectType);
+        if (required) return locator.getService(objectType);
 
-                return null;
-            }
-        });
+        return null;
     }
+
 }

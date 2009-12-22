@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -73,7 +73,7 @@ public class OnEventWorker implements ComponentClassTransformWorker
         builder.begin();
 
         for (TransformMethodSignature method : methods)
-            addCodeForMethod(builder, method, transformation, model);
+            addCodeForMethod(builder, method, transformation);
 
         builder.end(); // try
 
@@ -92,7 +92,7 @@ public class OnEventWorker implements ComponentClassTransformWorker
 
 
     private void addCodeForMethod(BodyBuilder builder, TransformMethodSignature method,
-                                  ClassTransformation transformation, MutableComponentModel model)
+                                  ClassTransformation transformation)
     {
         // $1 is the event
 
@@ -129,10 +129,6 @@ public class OnEventWorker implements ComponentClassTransformWorker
         else builder.addln(");");
 
         builder.end();
-
-        // Indicate that the eventType is handled.
-
-        model.addEventHandler(eventType);
     }
 
     private String extractComponentId(TransformMethodSignature method, OnEvent annotation)

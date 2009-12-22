@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2009 The Apache Software Foundation
+// Copyright 2006, 2007 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -30,10 +30,9 @@ public interface ModuleDef
     Set<String> getServiceIds();
 
     /**
-     * Returns a service definition via the service's id. Ideally, the returned value should be an instance of {@link
-     * org.apache.tapestry5.ioc.def.ServiceDef2}, and will be converted to such if necessary.
+     * Returns a service definition via the service's id.
      *
-     * @param serviceId the id of the service to retrieve  (case is ignored)
+     * @param serviceId the id of the service to retrieve
      * @return service definition or null if it doesn't exist
      */
     ServiceDef getServiceDef(String serviceId);
@@ -51,8 +50,6 @@ public interface ModuleDef
     /**
      * Returns the class that will be instantiated. Annotated instance methods of this class are invoked to build
      * services, to decorate/intercept services, and make contributions to other services.
-     * <p/>
-     * Note: this name is maintained for compatibilty; the term "module builder" is now just "module class".
      */
     Class getBuilderClass();
 

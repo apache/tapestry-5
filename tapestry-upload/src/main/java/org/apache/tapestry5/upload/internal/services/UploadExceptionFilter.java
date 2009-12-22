@@ -1,4 +1,4 @@
-//  Copyright 2008, 2009 The Apache Software Foundation
+//  Copyright 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,9 +15,7 @@
 package org.apache.tapestry5.upload.internal.services;
 
 import org.apache.commons.fileupload.FileUploadException;
-import org.apache.tapestry5.annotations.Events;
 import org.apache.tapestry5.internal.services.ComponentResultProcessorWrapper;
-import org.apache.tapestry5.ioc.annotations.Primary;
 import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.services.*;
 import org.apache.tapestry5.upload.services.MultipartDecoder;
@@ -29,7 +27,6 @@ import java.io.IOException;
  * Determines if there was an {@link org.apache.commons.fileupload.FileUploadException} processing the request and, if
  * so, triggers an exception event on the page. If the page fails to respond to the event, then
  */
-@Events(UploadEvents.UPLOAD_EXCEPTION + " when a exception occur processing the upload")
 public class UploadExceptionFilter implements ComponentEventRequestFilter
 {
     private final MultipartDecoder decoder;
@@ -38,8 +35,7 @@ public class UploadExceptionFilter implements ComponentEventRequestFilter
 
     private ComponentSource componentSource;
 
-    public UploadExceptionFilter(MultipartDecoder decoder,
-                                 @Traditional @Primary ComponentEventResultProcessor resultProcessor,
+    public UploadExceptionFilter(MultipartDecoder decoder, @Traditional ComponentEventResultProcessor resultProcessor,
                                  ComponentSource componentSource)
     {
         this.decoder = decoder;
@@ -58,7 +54,7 @@ public class UploadExceptionFilter implements ComponentEventRequestFilter
 
             ComponentResultProcessorWrapper callback = new ComponentResultProcessorWrapper(resultProcessor);
 
-            page.getComponentResources().triggerEvent(UploadEvents.UPLOAD_EXCEPTION, new Object[] { uploadException },
+            page.getComponentResources().triggerEvent(UploadEvents.UPLOAD_EXCEPTION, new Object[] {uploadException},
                                                       callback);
 
             // If an event handler exists and returns a value, then the callback will be aborted and a response

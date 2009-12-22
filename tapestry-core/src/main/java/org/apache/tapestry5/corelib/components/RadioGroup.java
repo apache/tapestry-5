@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@ package org.apache.tapestry5.corelib.components;
 
 import org.apache.tapestry5.*;
 import org.apache.tapestry5.annotations.Environmental;
-import org.apache.tapestry5.annotations.Events;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.ioc.annotations.Inject;
@@ -25,7 +24,6 @@ import org.apache.tapestry5.services.Environment;
 import org.apache.tapestry5.services.FormSupport;
 import org.apache.tapestry5.services.Request;
 
-@Events(EventConstants.VALIDATE)
 public class RadioGroup implements Field
 {
     /**
@@ -64,14 +62,6 @@ public class RadioGroup implements Field
     @Parameter(required = true, allowNull = false)
     private ValueEncoder encoder;
 
-    /**
-     * The object that will perform input validation. The validate binding prefix is generally used to provide this
-     * object in a declarative fashion.
-     */
-    @Parameter(defaultPrefix = BindingConstants.VALIDATE)
-    @SuppressWarnings("unchecked")
-    private FieldValidator<Object> validate;
-
     @Inject
     private ComponentDefaultProvider defaultProvider;
 
@@ -89,9 +79,6 @@ public class RadioGroup implements Field
 
     @Environmental
     private ValidationTracker tracker;
-
-    @Inject
-    private FieldValidationSupport fieldValidationSupport;
 
     private String controlName;
 
@@ -151,20 +138,11 @@ public class RadioGroup implements Field
 
     private void processSubmission()
     {
-        String rawValue = request.getParameter(controlName);
+        String clientValue = request.getParameter(controlName);
 
-        tracker.recordInput(this, rawValue);
-        try
-        {
-            if (validate != null)
-                fieldValidationSupport.validate(rawValue, resources, validate);
-        }
-        catch (ValidationException ex)
-        {
-            tracker.recordError(this, ex.getMessage());
-        }
+        tracker.recordInput(this, clientValue);
 
-        value = encoder.toValue(rawValue);
+        value = encoder.toValue(clientValue);
     }
 
     /**
@@ -244,8 +222,11 @@ public class RadioGroup implements Field
         return null;
     }
 
+    /**
+     * Returns false; RadioGroup does not support declarative validation.
+     */
     public boolean isRequired()
     {
-        return validate.isRequired();
+        return false;
     }
 }

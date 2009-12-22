@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,14 +19,16 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.doxia.sink.Sink;
-import org.apache.maven.doxia.siterenderer.Renderer;
 import org.apache.maven.model.Resource;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.AbstractMavenReport;
 import org.apache.maven.reporting.MavenReportException;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newList;
+import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newMap;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.codehaus.doxia.sink.Sink;
+import org.codehaus.doxia.site.renderer.SiteRenderer;
 import org.codehaus.plexus.util.cli.CommandLineException;
 import org.codehaus.plexus.util.cli.CommandLineUtils;
 import org.codehaus.plexus.util.cli.Commandline;
@@ -34,8 +36,6 @@ import org.codehaus.plexus.util.cli.DefaultConsumer;
 
 import java.io.*;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * The component report generates documentation about components and parameters within the current project.
@@ -44,7 +44,7 @@ import java.util.regex.Pattern;
  * @requiresDependencyResolution compile
  * @execute phase="generate-sources"
  */
-@SuppressWarnings({ "unchecked" })
+@SuppressWarnings({"unchecked"})
 public class ComponentReport extends AbstractMavenReport
 {
     /**
@@ -52,12 +52,9 @@ public class ComponentReport extends AbstractMavenReport
      */
     private static final String REFERENCE_DIR = "ref";
 
-    private final static String[] PARAMETER_HEADERS = { "Name", "Type", "Flags", "Default", "Default Prefix",
-            "Since", "Description" };
+    private final static String[] PARAMETER_HEADERS = {"Name", "Type", "Flags", "Default", "Default Prefix",
+            "Description"};
 
-    private static final Pattern TAPESTRY5_PATTERN = Pattern.compile("(org\\.apache\\.tapestry5[#_\\w\\.]*)");
-
-    private static final char QUOTE = '"';
 
     /**
      * Identifies the application root package.
@@ -81,7 +78,7 @@ public class ComponentReport extends AbstractMavenReport
      *
      * @component
      */
-    private Renderer siteRenderer;
+    private SiteRenderer siteRenderer;
 
     /**
      * Location of the generated site.
@@ -120,16 +117,6 @@ public class ComponentReport extends AbstractMavenReport
      */
     private String apidocs;
 
-    /**
-     * Where to find tapestry javadocs. This is used for generating documentation links for each parameter type.
-     * <p/>
-     * By default, this is set to "http://tapestry.apache.org/tapestry5/apidocs". A relative path can also be supplied
-     * (a sensible value would be 'apidocs') and is resolved from the documentation root.
-     *
-     * @parameter default-value="http://tapestry.apache.org/tapestry5/apidocs"
-     */
-    private String tapestryJavadoc;
-
     @Override
     protected String getOutputDirectory()
     {
@@ -143,7 +130,7 @@ public class ComponentReport extends AbstractMavenReport
     }
 
     @Override
-    protected Renderer getSiteRenderer()
+    protected SiteRenderer getSiteRenderer()
     {
         return siteRenderer;
     }
@@ -234,7 +221,7 @@ public class ComponentReport extends AbstractMavenReport
 
                 sink.listItem();
 
-                sink.link(toHtml(toPath(className)));
+                sink.link(toPath(className) + ".html");
 
                 sink.text(className);
                 sink.link_();
@@ -262,24 +249,6 @@ public class ComponentReport extends AbstractMavenReport
         return className.replace('.', '/');
     }
 
-    private String toHtml(String filename)
-    {
-        int pos = filename.lastIndexOf("#");
-        if (pos < 0)
-            return filename + ".html";
-        else
-        {
-            return filename.substring(0, pos) + ".html" + filename.substring(pos);
-        }
-    }
-
-    private String extractSimpleName(String className)
-    {
-        int dotx = className.lastIndexOf(".");
-
-        return className.substring(dotx + 1);
-    }
-
     private String extractSubpackage(String className)
     {
         int dotx = className.indexOf(".", rootPackage.length() + 1);
@@ -291,7 +260,7 @@ public class ComponentReport extends AbstractMavenReport
         return className.substring(rootPackage.length() + 1, dotx);
     }
 
-    protected List<File> createDocSearchPath()
+    private List<File> createDocSearchPath()
     {
         List<File> result = CollectionFactory.newList();
 
@@ -327,12 +296,10 @@ public class ComponentReport extends AbstractMavenReport
 
         ClassDescription cd = descriptions.get(className);
 
-        Map<String, ParameterDescription> parameters = CollectionFactory.newMap(cd.getParameters());
-        List<String> parents = CollectionFactory.newList();
+        Map<String, ParameterDescription> parameters = newMap(cd.getParameters());
+        List<String> parents = newList();
 
         String current = cd.getSuperClassName();
-
-        Map<String, String> events = CollectionFactory.newCaseInsensitiveMap(cd.getEvents());
 
         while (true)
         {
@@ -342,25 +309,9 @@ public class ComponentReport extends AbstractMavenReport
 
             parents.add(current);
             parameters.putAll(superDescription.getParameters());
-            events.putAll(superDescription.getEvents());
 
             current = superDescription.getSuperClassName();
         }
-
-        // Now, mix in the published parameters.
-
-        for (Map.Entry<String, String> entry : cd.getPublishedParameters().entrySet())
-        {
-            String name = entry.getKey();
-            String embeddedClassName = entry.getValue();
-
-            // TODO: Don't handle the case where the @Component.type attribute was used!
-
-            ParameterDescription pd = locatePublishedParameterDescription(name, embeddedClassName, descriptions);
-
-            parameters.put(name, pd);
-        }
-
 
         Collections.reverse(parents);
 
@@ -373,6 +324,8 @@ public class ComponentReport extends AbstractMavenReport
         root.appendChild(body);
 
         Element section = addSection(body, className);
+
+        addChild(section, "p", cd.getDescription());
 
 
         StringBuilder javadocURL = new StringBuilder(200);
@@ -387,14 +340,7 @@ public class ComponentReport extends AbstractMavenReport
 
         String pathToRefRoot = javadocURL.toString();
 
-        javadocURL.append("../");
-
-        String javadocHref = tapestryJavadoc.contains("://") ?
-                             tapestryJavadoc : javadocURL.toString() + tapestryJavadoc;
-
-        javadocURL.append(apidocs).append("/").append(toHtml(toPath(className)));
-
-        addChildWithJavadocs(section, "p", cd.getDescription(), javadocHref);
+        javadocURL.append("../").append(apidocs).append("/").append(toPath(className)).append(".html");
 
         addLink(addChild(section, "p"), javadocURL.toString(), "[JavaDoc]");
 
@@ -410,19 +356,12 @@ public class ComponentReport extends AbstractMavenReport
 
                 Element li = addChild(ul, "li");
 
-                addLink(li, toHtml(name), name);
+                addLink(li, name + ".html", name);
 
                 container = li;
             }
 
             addChild(addChild(container, "ul"), "li", className);
-        }
-
-        if (!"".equals(cd.getSince()))
-        {
-            section = addSection(body, "Available since");
-
-            addChild(section, "p", cd.getSince());
         }
 
 
@@ -440,7 +379,7 @@ public class ComponentReport extends AbstractMavenReport
             for (String header : PARAMETER_HEADERS)
                 addChild(headerRow, "th", header);
 
-            List<String> flags = CollectionFactory.newList();
+            List<String> flags = newList();
 
             for (String name : InternalUtils.sortedKeys(parameters))
             {
@@ -458,34 +397,16 @@ public class ComponentReport extends AbstractMavenReport
                 table.appendChild(row);
 
                 addChild(row, "td", pd.getName());
-                addChildWithJavadocs(row, "td", pd.getType(), javadocHref);
+                addChild(row, "td", pd.getType());
                 addChild(row, "td", InternalUtils.join(flags));
                 addChild(row, "td", pd.getDefaultValue());
                 addChild(row, "td", pd.getDefaultPrefix());
-                addChild(row, "td", pd.getSince());
-                addChildWithJavadocs(row, "td", pd.getDescription(), javadocHref);
+                addChild(row, "td", pd.getDescription());
             }
         }
 
         if (cd.isSupportsInformalParameters())
             addChild(section, "p", "Informal parameters: supported");
-
-
-        if (!events.isEmpty())
-        {
-            section = addSection(body, "Component Events");
-
-            Element ul = addChild(section, "ul");
-
-            for (String name : InternalUtils.sortedKeys(events))
-            {
-                String value = events.get(name);
-
-                String text = value.length() > 0 ? name + ": " + value : name;
-
-                addChild(ul, "li", text);
-            }
-        }
 
         addExternalDocumentation(body, docSearchPath, className);
 
@@ -507,37 +428,6 @@ public class ComponentReport extends AbstractMavenReport
         writer.print(document.toXML());
 
         writer.close();
-    }
-
-    private ParameterDescription locatePublishedParameterDescription(String name, String componentClassName,
-                                                                     Map<String, ClassDescription> descriptions)
-    {
-        String current = componentClassName;
-
-        while (current != null)
-        {
-            ClassDescription cd = descriptions.get(componentClassName);
-
-            if (cd == null) break;
-
-            String indirectClassName = cd.getPublishedParameters().get(name);
-
-            if (indirectClassName != null)
-            {
-                current = indirectClassName;
-                continue;
-            }
-
-            ParameterDescription pd = cd.getParameters().get(name);
-
-            if (pd != null) return pd;
-
-            current = cd.getSuperClassName();
-        }
-
-        throw new IllegalArgumentException(
-                String.format("Published parameter '%s' (from embedded component class %s) does not exist.",
-                              name, componentClassName));
     }
 
     private void addExternalDocumentation(Element body, List<File> docSearchPath, String className)
@@ -622,7 +512,7 @@ public class ComponentReport extends AbstractMavenReport
     }
 
 
-    protected Map<String, ClassDescription> runJavadoc() throws MavenReportException
+    private Map<String, ClassDescription> runJavadoc() throws MavenReportException
     {
         getLog().info("Running JavaDoc to collect component parameter data ...");
 
@@ -639,7 +529,7 @@ public class ComponentReport extends AbstractMavenReport
 
         String parametersPath = workDirectory + File.separator + "component-parameters.xml";
 
-        String[] arguments = { "-private", "-o", parametersPath,
+        String[] arguments = {"-private", "-o", parametersPath,
 
                 "-subpackages", rootPackage,
 
@@ -649,11 +539,11 @@ public class ComponentReport extends AbstractMavenReport
 
                 "-sourcepath", sourcePath(),
 
-                "-classpath", classPath() };
+                "-classpath", classPath()};
 
         String argumentsFile = writeArgumentsFile(arguments);
 
-        command.addArguments(new String[] { "@" + argumentsFile });
+        command.addArguments(new String[] {"@" + argumentsFile});
 
         executeCommand(command);
 
@@ -736,7 +626,7 @@ public class ComponentReport extends AbstractMavenReport
 
         file = new File(file, String.format("%s-%s.jar", pluginArtifactId, pluginVersion));
 
-        return toArgumentPath(Arrays.asList(file.getAbsolutePath()));
+        return file.getAbsolutePath();
     }
 
     @SuppressWarnings("unchecked")
@@ -749,7 +639,7 @@ public class ComponentReport extends AbstractMavenReport
 
     private String artifactsToArgumentPath(List<Artifact> artifacts) throws MavenReportException
     {
-        List<String> paths = CollectionFactory.newList();
+        List<String> paths = newList();
 
         for (Artifact artifact : artifacts)
         {
@@ -829,7 +719,7 @@ public class ComponentReport extends AbstractMavenReport
 
     private String toArgumentPath(List<String> paths)
     {
-        StringBuilder builder = new StringBuilder(5000).append(QUOTE);
+        StringBuilder builder = new StringBuilder();
 
         String sep = "";
 
@@ -841,7 +731,7 @@ public class ComponentReport extends AbstractMavenReport
             sep = SystemUtils.PATH_SEPARATOR;
         }
 
-        return builder.append(QUOTE).toString();
+        return builder.toString();
     }
 
     public Map<String, ClassDescription> readXML(String path) throws MavenReportException
@@ -865,7 +755,7 @@ public class ComponentReport extends AbstractMavenReport
 
     private Map<String, ClassDescription> buildMapFromDocument(Document doc)
     {
-        Map<String, ClassDescription> result = CollectionFactory.newMap();
+        Map<String, ClassDescription> result = newMap();
 
         Elements elements = doc.getRootElement().getChildElements("class");
 
@@ -878,34 +768,16 @@ public class ComponentReport extends AbstractMavenReport
             String className = element.getAttributeValue("name");
             String superClassName = element.getAttributeValue("super-class");
             String supportsInformalParameters = element.getAttributeValue("supports-informal-parameters");
-            String since = element.getAttributeValue("since");
 
             ClassDescription cd = new ClassDescription(className, superClassName, description,
-                                                       Boolean.valueOf(supportsInformalParameters), since);
+                                                       Boolean.valueOf(supportsInformalParameters));
 
             result.put(className, cd);
 
             readParameters(cd, element);
-            readPublishedParameters(cd, element);
-            readEvents(cd, element);
         }
 
         return result;
-    }
-
-    private void readEvents(ClassDescription cd, Element classElement)
-    {
-        Elements elements = classElement.getChildElements("event");
-
-        for (int i = 0; i < elements.size(); i++)
-        {
-            Element node = elements.get(i);
-
-            String name = node.getAttributeValue("name");
-            String description = node.getValue();
-
-            cd.getEvents().put(name, description);
-        }
     }
 
     private void readParameters(ClassDescription cd, Element classElement)
@@ -928,29 +800,12 @@ public class ComponentReport extends AbstractMavenReport
             boolean allowNull = Boolean.parseBoolean(node.getAttributeValue("allowNull"));
             String defaultPrefix = node.getAttributeValue("default-prefix");
             String description = node.getValue();
-            String since = node.getAttributeValue("since");
 
             ParameterDescription pd = new ParameterDescription(name, type, defaultValue, defaultPrefix, required,
-                                                               allowNull, cache, description, since);
+                                                               allowNull, cache, description);
 
             cd.getParameters().put(name, pd);
         }
-    }
-
-    private void readPublishedParameters(ClassDescription cd, Element classElement)
-    {
-        Elements elements = classElement.getChildElements("published-parameter");
-
-        for (int i = 0; i < elements.size(); i++)
-        {
-            Element element = elements.get(i);
-
-            Attribute name = element.getAttribute("name");
-            Attribute embeddedTypeName = element.getAttribute("component-class");
-
-            cd.getPublishedParameters().put(name.getValue(), embeddedTypeName.getValue());
-        }
-
     }
 
     private Element addSection(Element container, String name)
@@ -988,73 +843,5 @@ public class ComponentReport extends AbstractMavenReport
         child.appendChild(text);
 
         return child;
-    }
-
-    private Element addChildWithJavadocs(Element container, String elementName, String text, String javadocHref)
-    {
-        final String[] parts = splitWithGroup(TAPESTRY5_PATTERN, text);
-        if (parts.length <= 1)
-        {
-            return addChild(container, elementName, text);
-        }
-
-        final Element element = addChild(container, elementName);
-
-        for (int i = 0; i < parts.length; i++)
-        {
-            String part = parts[i];
-            element.appendChild(part);
-            i++;
-            if (i < parts.length)
-            {
-                part = parts[i];
-                if (part.endsWith("."))
-                {
-                    part = part.substring(0, part.length() - 1);
-                    addLink(element, javadocHref + "/" + toHtml(toPath(part)), extractSimpleName(part));
-                    element.appendChild(".");
-                }
-                else
-                {
-                    addLink(element, javadocHref + "/" + toHtml(toPath(part)), extractSimpleName(part));
-                }
-            }
-        }
-        return element;
-    }
-
-    /**
-     * Splits a {@link CharSequence} using the given pattern while including after each part the matched group.<p/>
-     * Mostly copied from {@link Pattern#split(CharSequence)}.
-     */
-    private String[] splitWithGroup(Pattern pattern, CharSequence input)
-    {
-        int index = 0;
-        List<String> matchList = CollectionFactory.newList();
-        Matcher m = pattern.matcher(input);
-
-        // Add segments before each match found
-        while (m.find())
-        {
-            String match = input.subSequence(index, m.start()).toString();
-            String group = input.subSequence(m.start(), m.end()).toString();
-            matchList.add(match);
-            matchList.add(group);
-            index = m.end();
-        }
-
-        // If no match was found, return this
-        if (index == 0)
-            return new String[] { input.toString() };
-
-        // Add remaining segment
-        matchList.add(input.subSequence(index, input.length()).toString());
-
-        // Construct result
-        int resultSize = matchList.size();
-        while (resultSize > 0 && matchList.get(resultSize - 1).equals(""))
-            resultSize--;
-        String[] result = new String[resultSize];
-        return matchList.subList(0, resultSize).toArray(result);
     }
 }

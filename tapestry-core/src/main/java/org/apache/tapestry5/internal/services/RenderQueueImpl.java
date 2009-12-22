@@ -56,7 +56,7 @@ public class RenderQueueImpl implements RenderQueue
         int commandCount = 0;
         int maxDepth = 0;
 
-        // Seems to make sense to use one try/finally around the whole processInbound, rather than
+        // Seems to make sense to use one try/finally around the whole process, rather than
         // around each call to render() since the end result (in a failure scenario) is the same.
 
         try
@@ -89,7 +89,7 @@ public class RenderQueueImpl implements RenderQueue
         long endNanos = System.nanoTime();
 
         long elapsedNanos = endNanos - startNanos;
-        double elapsedSeconds = ((double) elapsedNanos) / 1000000000d;
+        double elapsedSeconds = ((float) elapsedNanos) / 1000000000F;
 
         logger.debug(TapestryMarkers.RENDER_COMMANDS,
                      String.format("Executed %,d rendering commands (max queue depth: %,d) in %.3f seconds",

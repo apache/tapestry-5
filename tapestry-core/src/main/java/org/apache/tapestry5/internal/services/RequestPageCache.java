@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -30,10 +30,10 @@ public interface RequestPageCache
      * is used to obtain the page (from the page pool).  Note that under certain circumstances, a page may have multiple
      * names (even beyond simple case-insensitivity), and RequestPageCache caches correctly.
      *
-     * @param pageName the name of the page to retrieve (this is the logical page name, not the fully qualified class
-     *                 name)
+     * @param logicalPageName the name of the page to retrieve (this is the logical page name, not the fully qualified
+     *                        class name)
      * @return a page instance reserved for this request
      * @throws IllegalArgumentException if the name can not be resolved to a page instance
      */
-    Page get(String pageName);
+    Page get(String logicalPageName);
 }

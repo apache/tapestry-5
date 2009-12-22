@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,8 +14,9 @@
 
 package org.apache.tapestry5.ioc.services;
 
-import org.apache.tapestry5.ioc.internal.util.Defense;
-import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import static org.apache.tapestry5.ioc.internal.util.Defense.notBlank;
+import static org.apache.tapestry5.ioc.internal.util.Defense.notNull;
+import static org.apache.tapestry5.ioc.internal.util.InternalUtils.size;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -46,8 +47,8 @@ public class MethodSignature
 
     public MethodSignature(Class returnType, String name, Class[] parameterTypes, Class[] exceptionTypes)
     {
-        this.returnType = Defense.notNull(returnType, "returnType");
-        this.name = Defense.notBlank(name, "name");
+        this.returnType = notNull(returnType, "returnType");
+        this.name = notBlank(name, "name");
 
         // Can be null!
         this.parameterTypes = parameterTypes;
@@ -95,12 +96,12 @@ public class MethodSignature
 
             hashCode = 31 * hashCode + name.hashCode();
 
-            int count = InternalUtils.size(parameterTypes);
+            int count = size(parameterTypes);
 
             for (int i = 0; i < count; i++)
                 hashCode = 31 * hashCode + parameterTypes[i].hashCode();
 
-            count = InternalUtils.size(exceptionTypes);
+            count = size(exceptionTypes);
 
             for (int i = 0; i < count; i++)
                 hashCode = 31 * hashCode + exceptionTypes[i].hashCode();
@@ -133,8 +134,8 @@ public class MethodSignature
 
     private boolean mismatch(Class[] a1, Class[] a2)
     {
-        int a1Count = InternalUtils.size(a1);
-        int a2Count = InternalUtils.size(a2);
+        int a1Count = size(a1);
+        int a2Count = size(a2);
 
         if (a1Count != a2Count) return true;
 
@@ -159,7 +160,7 @@ public class MethodSignature
         buffer.append(name);
         buffer.append("(");
 
-        for (int i = 0; i < InternalUtils.size(parameterTypes); i++)
+        for (int i = 0; i < size(parameterTypes); i++)
         {
             if (i > 0) buffer.append(", ");
 
@@ -168,7 +169,7 @@ public class MethodSignature
 
         buffer.append(")");
 
-        int _exceptionCount = InternalUtils.size(exceptionTypes);
+        int _exceptionCount = size(exceptionTypes);
         String _exceptionNames[] = new String[_exceptionCount];
         for (int i = 0; i < _exceptionCount; i++)
         {
@@ -189,7 +190,7 @@ public class MethodSignature
     }
 
     /**
-     * Returns a string consisting of the name of the method and its parameter types. This is similar to {@link
+     * Returns a string consisting of the name of the method and its parameter values. This is similar to {@link
      * #toString()}, but omits the return type and information about thrown exceptions. A unique id is used by {@link
      * MethodIterator} to identify overlapping methods (methods with the same name and parameter types but with
      * different thrown exceptions).
@@ -201,7 +202,7 @@ public class MethodSignature
         StringBuilder buffer = new StringBuilder(name);
         buffer.append("(");
 
-        for (int i = 0; i < InternalUtils.size(parameterTypes); i++)
+        for (int i = 0; i < size(parameterTypes); i++)
         {
             if (i > 0) buffer.append(",");
 
@@ -237,8 +238,8 @@ public class MethodSignature
     @SuppressWarnings("unchecked")
     private boolean exceptionsEncompass(Class[] otherExceptions)
     {
-        int ourCount = InternalUtils.size(exceptionTypes);
-        int otherCount = InternalUtils.size(otherExceptions);
+        int ourCount = size(exceptionTypes);
+        int otherCount = size(otherExceptions);
 
         // If we have no exceptions, then ours encompass theirs only if they
         // have no exceptions, either.

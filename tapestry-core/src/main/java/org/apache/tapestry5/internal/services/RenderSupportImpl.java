@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -24,7 +24,9 @@ import org.apache.tapestry5.ioc.services.SymbolSource;
 import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.AssetSource;
-import org.apache.tapestry5.services.ClientInfrastructure;
+
+import java.util.Arrays;
+import java.util.List;
 
 public class RenderSupportImpl implements RenderSupport
 {
@@ -36,9 +38,9 @@ public class RenderSupportImpl implements RenderSupport
 
     private final AssetSource assetSource;
 
-    private final ClientInfrastructure clientInfrastructure;
+    private final List<String> coreScripts;
 
-    private boolean stackAssetsAdded;
+    private boolean coreAssetsAdded;
 
     private final JSONObject init = new JSONObject();
 
@@ -47,41 +49,39 @@ public class RenderSupportImpl implements RenderSupport
     private String focusFieldId;
 
     /**
-     * @param linker          Used to assemble JavaScript includes and snippets
-     * @param symbolSource    Used to example symbols (in {@linkplain #addClasspathScriptLink(String...) in classpath
-     *                        scripts)
-     * @param assetSource     Used to convert classpath scripts to {@link org.apache.tapestry5.Asset}s
-     * @param coreScripts     core scripts (evaluated as classpaths scripts) that are added to any page that includes a
-     *                        script link or script block
-     * @param javascriptStack
+     * @param linker       Used to assemble JavaScript includes and snippets
+     * @param symbolSource Used to example symbols (in {@linkplain #addClasspathScriptLink(String...) in classpath
+     *                     scripts)
+     * @param assetSource  Used to convert classpath scripts to {@link org.apache.tapestry5.Asset}s
+     * @param coreScripts  core scripts (evaluated as classpaths scripts) that are added to any page that includes a
+     *                     script link or script block
      */
     public RenderSupportImpl(DocumentLinker linker, SymbolSource symbolSource,
-                             AssetSource assetSource, ClientInfrastructure clientInfrastructure)
+                             AssetSource assetSource, String... coreScripts)
     {
-        this(linker, symbolSource, assetSource, new IdAllocator(), clientInfrastructure);
+        this(linker, symbolSource, assetSource, new IdAllocator(), coreScripts);
     }
 
     /**
-     * @param linker          Used to assemble JavaScript includes and snippets
-     * @param symbolSource    Used to example symbols (in {@linkplain #addClasspathScriptLink(String...) in classpath
-     *                        scripts)
-     * @param assetSource     Used to convert classpath scripts to {@link org.apache.tapestry5.Asset}s
-     * @param idAllocator     Used to allocate unique client ids during the render
-     * @param coreScripts     core scripts (evaluated as classpaths scripts) that are added to any page that includes a
-     *                        script link or script block
-     * @param javascriptStack
+     * @param linker       Used to assemble JavaScript includes and snippets
+     * @param symbolSource Used to example symbols (in {@linkplain #addClasspathScriptLink(String...) in classpath
+     *                     scripts)
+     * @param assetSource  Used to convert classpath scripts to {@link org.apache.tapestry5.Asset}s
+     * @param idAllocator  Used to allocate unique client ids during the render
+     * @param coreScripts  core scripts (evaluated as classpaths scripts) that are added to any page that includes a
+     *                     script link or script block
      */
 
     public RenderSupportImpl(DocumentLinker linker, SymbolSource symbolSource,
-                             AssetSource assetSource, IdAllocator idAllocator,
-                             ClientInfrastructure clientInfrastructure)
+                             AssetSource assetSource, IdAllocator idAllocator, String... coreScripts)
 
     {
         this.linker = linker;
         this.symbolSource = symbolSource;
         this.assetSource = assetSource;
         this.idAllocator = idAllocator;
-        this.clientInfrastructure = clientInfrastructure;
+
+        this.coreScripts = Arrays.asList(coreScripts);
     }
 
     public String allocateClientId(String id)
@@ -96,7 +96,7 @@ public class RenderSupportImpl implements RenderSupport
 
     public void addScriptLink(Asset... scriptAssets)
     {
-        addStack();
+        addCore();
 
         for (Asset asset : scriptAssets)
         {
@@ -108,7 +108,7 @@ public class RenderSupportImpl implements RenderSupport
 
     public void addScriptLink(String... scriptURLs)
     {
-        addStack();
+        addCore();
 
         for (String url : scriptURLs)
         {
@@ -118,7 +118,7 @@ public class RenderSupportImpl implements RenderSupport
 
     public void addClasspathScriptLink(String... classpaths)
     {
-        addStack();
+        addCore();
 
         for (String path : classpaths)
             addScriptLinkFromClasspath(path);
@@ -137,7 +137,7 @@ public class RenderSupportImpl implements RenderSupport
     {
         Defense.notBlank(script, "script");
 
-        addStack();
+        addCore();
 
         linker.addScript(script);
     }
@@ -234,16 +234,14 @@ public class RenderSupportImpl implements RenderSupport
         linker.addStylesheetLink(stylesheetURL, media);
     }
 
-    private void addStack()
+    private void addCore()
     {
-        if (!stackAssetsAdded)
+        if (!coreAssetsAdded)
         {
-            for (Asset script : clientInfrastructure.getJavascriptStack())
-            {
-                linker.addScriptLink(script.toClientURL());
-            }
+            for (String path : coreScripts)
+                addScriptLinkFromClasspath(path);
 
-            stackAssetsAdded = true;
+            coreAssetsAdded = true;
         }
     }
 }

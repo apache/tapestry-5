@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,10 +14,11 @@
 
 package org.apache.tapestry5.internal;
 
-import org.apache.tapestry5.*;
+import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.OptionModel;
+import org.apache.tapestry5.SelectModel;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.ioc.Messages;
-import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.services.ClassFactory;
 import org.apache.tapestry5.ioc.services.PropertyAccess;
@@ -57,17 +58,17 @@ public class TapestryInternalUtilsTest extends InternalBaseTestCase
     }
 
 
-    @Test(dataProvider = "to_user_presentable_data")
+    @Test(dataProvider = "to_user_presentable")
     public void to_user_presentable(String input, String expected)
     {
         assertEquals(TapestryInternalUtils.toUserPresentable(input), expected);
     }
 
-    @DataProvider
+    @DataProvider(name = "to_user_presentable")
     public Object[][] to_user_presentable_data()
     {
-        return new Object[][] { { "hello", "Hello" }, { "userId", "User Id" }, { "useHTML", "Use HTML" },
-                { "underscored_name", "Underscored Name" }, };
+        return new Object[][] {{"hello", "Hello"}, {"userId", "User Id"}, {"useHTML", "Use HTML"},
+                {"underscored_name", "Underscored Name"},};
     }
 
     @Test
@@ -370,72 +371,5 @@ public class TapestryInternalUtilsTest extends InternalBaseTestCase
         List<String> classes = CollectionFactory.newList("fred", "barney", "wilma");
 
         assertEquals(TapestryInternalUtils.toClassAttributeValue(classes), "fred barney wilma");
-    }
-
-    @DataProvider
-    public Object[][] split_at_commas_data()
-    {
-        return new Object[][]
-                {
-                        { "foo", new String[] { "foo" } },
-                        { "foo, bar", new String[] { "foo", "bar" } },
-                        { "  foo, \nbar\t\t", new String[] { "foo", "bar" } },
-                        { "", new String[0] },
-                        { null, new String[0] }
-                };
-    }
-
-
-    @Test(dataProvider = "split_at_commas_data")
-    public void split_at_commas(String input, String[] output)
-    {
-        assertArraysEqual(TapestryInternalUtils.splitAtCommas(input), output);
-
-    }
-
-    @DataProvider
-    public Object[][] to_base64_data()
-    {
-        return new Object[][] {
-                { 0L, "AA" },
-                { 1L, "AQ" },
-                { 0xab54a98ceb1f0ad2L, "q1SpjOsfCtI" }
-        };
-    }
-
-    @Test
-    public void to_asset2_no_wrapper_needed()
-    {
-        Asset2 asset2 = mockAsset2();
-
-        replay();
-
-        assertSame(TapestryInternalUtils.toAsset2(asset2), asset2);
-
-        verify();
-    }
-
-    @Test
-    public void asset_to_asset2_wrapper()
-    {
-        Asset asset = mockAsset();
-        Resource resource = mockResource();
-        String clientURL = "clientURL";
-
-        train_toClientURL(asset, clientURL);
-
-        expect(asset.getResource()).andReturn(resource);
-
-        replay();
-
-        Asset2 asset2 = TapestryInternalUtils.toAsset2(asset);
-
-        assertFalse(asset2.isInvariant());
-
-        assertSame(asset2.toClientURL(), clientURL);
-        assertSame(asset2.toString(), asset.toString());
-        assertSame(asset2.getResource(), resource);
-
-        verify();
     }
 }

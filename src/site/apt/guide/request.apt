@@ -127,7 +127,7 @@ Master Dispatcher Service
 RequestGlobals Service
 
   The RequestGlobals service 
-  has a lifecycle of perthread; this means that a separate instance exists for every thread, and therefore,
+  has a lifecycle of perthread; this means that a seperate instance exists for every thread, and therefore,
   for every request.  The terminators of the two handler pipelines store the request/response pairs into the RequestGlobals service.
   
 Request Service
@@ -136,11 +136,5 @@ Request Service
   {{{../../tapestry-ioc/shadow.html}shadow}}
   of the RequestGlobals services' request property. That is, any methods invoked
   on this service are delegated to the request object stored inside the RequestGlobals.
-  
-Overview
-  
-  The following diagram provides an overview of how the different pipelines, filters and dispatchers interact when processing an incoming request.
-  
-[../images/tapestry_request_processing_800.png] Tapestry Request Processing 
    
   

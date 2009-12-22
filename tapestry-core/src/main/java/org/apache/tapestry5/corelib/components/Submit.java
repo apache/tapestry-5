@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@ package org.apache.tapestry5.corelib.components;
 
 import org.apache.tapestry5.*;
 import org.apache.tapestry5.annotations.Environmental;
-import org.apache.tapestry5.annotations.Events;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.dom.Element;
@@ -26,12 +25,11 @@ import org.apache.tapestry5.services.Heartbeat;
 import org.apache.tapestry5.services.Request;
 
 /**
- * Corresponds to &lt;input type="submit"&gt; or &lt;input type="image"&gt;, a client-side element that can force the
- * enclosing form to submit. The submit responsible for the form submission will post a notification that allows the
- * application to know that it was the responsible entity. The notification is named "selected" and has no context.
+ * Corresponds to &lt;input type="submit"&gt;, a client-side element that can force the enclosing form to submit. The
+ * submit responsible for the form submission will post a notification that allows the application to know that it was
+ * the responsible entity. The notification is named "selected" and has no context.
  */
 @SupportsInformalParameters
-@Events(EventConstants.SELECTED + " by default, may be overridden")
 public class Submit implements ClientElement
 {
     /**
@@ -54,23 +52,6 @@ public class Submit implements ClientElement
      */
     @Parameter("false")
     private boolean disabled;
-
-    /**
-     * The list of values that will be made available to event handler method of this component when the form is
-     * submitted.
-     *
-     * @since 5.1.0.0
-     */
-    @Parameter
-    private Object[] context;
-
-    /**
-     * If provided, the component renders an input tag with type "image". Otherwise "submit".
-     *
-     * @since 5.1.0.0
-     */
-    @Parameter(defaultPrefix = BindingConstants.ASSET)
-    private Asset image;
 
 
     @Environmental
@@ -124,13 +105,9 @@ public class Submit implements ClientElement
 
         // Save the element, to see if an id is later requested.
 
-        String type = image == null ? "submit" : "image";
-
-        element = writer.element("input", "type", type, "name", name);
+        element = writer.element("input", "type", "submit", "name", name);
 
         if (disabled) writer.attributes("disabled", "disabled");
-
-        if (image != null) writer.attributes("src", image.toClientURL());
 
         formSupport.store(this, new ProcessSubmission(name));
 
@@ -146,7 +123,7 @@ public class Submit implements ClientElement
     {
         if (disabled) return;
 
-        String value = request.getParameter(image == null ? elementName : elementName + ".x");
+        String value = request.getParameter(elementName);
 
         if (value == null) return;
 
@@ -154,7 +131,7 @@ public class Submit implements ClientElement
         {
             public void run()
             {
-                resources.triggerEvent(event, context, null);
+                resources.triggerEvent(event, null, null);
             }
         };
 
@@ -164,6 +141,21 @@ public class Submit implements ClientElement
 
         if (defer) formSupport.defer(sendNotification);
         else heartbeat.defer(sendNotification);
+    }
+
+    // For testing:
+
+    void setDefer(boolean defer)
+    {
+        this.defer = defer;
+    }
+
+    void setup(ComponentResources resources, FormSupport formSupport, Heartbeat heartbeat, RenderSupport renderSupport)
+    {
+        this.resources = resources;
+        this.formSupport = formSupport;
+        this.heartbeat = heartbeat;
+        this.renderSupport = renderSupport;
     }
 
     /**

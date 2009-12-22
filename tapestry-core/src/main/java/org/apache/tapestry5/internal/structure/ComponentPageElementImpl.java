@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,14 +18,18 @@ import org.apache.tapestry5.*;
 import org.apache.tapestry5.annotations.*;
 import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.internal.InternalComponentResources;
+import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.internal.services.ComponentEventImpl;
 import org.apache.tapestry5.internal.services.EventImpl;
 import org.apache.tapestry5.internal.services.Instantiator;
 import org.apache.tapestry5.internal.util.NotificationEventCallback;
 import org.apache.tapestry5.ioc.BaseLocatable;
 import org.apache.tapestry5.ioc.Location;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.internal.util.Defense;
 import static org.apache.tapestry5.ioc.internal.util.Defense.notBlank;
-import org.apache.tapestry5.ioc.internal.util.*;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.ioc.internal.util.TapestryException;
 import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.model.ParameterModel;
 import org.apache.tapestry5.runtime.Component;
@@ -63,14 +67,6 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
 
     private static final Block PLACEHOLDER_BLOCK = new PlaceholderBlock();
 
-
-    private static final ComponentCallback RESTORE_STATE_BEFORE_PAGE_ATTACH = new LifecycleNotificationComponentCallback()
-    {
-        public void run(Component component)
-        {
-            component.restoreStateBeforePageAttach();
-        }
-    };
 
     private static final ComponentCallback CONTAINING_PAGE_DID_ATTACH = new LifecycleNotificationComponentCallback()
     {
@@ -377,8 +373,6 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
     }
 
 
-    private final ComponentPageElementResources elementResources;
-
     private class CleanupRenderPhase extends AbstractPhase
     {
         private CleanupRenderPhase()
@@ -451,6 +445,8 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
 
     private final String elementName;
 
+    private final PageResources pageResources;
+
     private final Logger eventLogger;
 
     private final String completeId;
@@ -470,12 +466,6 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
     private final InternalComponentResources coreResources;
 
     private final String id;
-
-    private Orderer<Component> mixinBeforeOrderer;
-
-    private Orderer<Component> mixinAfterOrderer;
-
-    private List<Runnable> deferredLoadActions;
 
     private boolean loaded;
 
@@ -502,7 +492,6 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
     private RenderCommand setupRenderPhase, beginRenderPhase, beforeRenderTemplatePhase, beforeRenderBodyPhase,
             afterRenderBodyPhase, afterRenderTemplatePhase, afterRenderPhase, cleanupRenderPhase;
 
-
     private final RenderPhaseEventHandler sharedEventHandler = new RenderPhaseEventHandler();
 
     private final EventImpl sharedEvent;
@@ -510,49 +499,68 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
     /**
      * Constructor for other components embedded within the root component or at deeper levels of the hierarchy.
      *
-     * @param page             ultimately containing this component
-     * @param container        component immediately containing this component (may be null for a root component)
-     * @param id               unique (within the container) id for this component (may be null for a root component)
-     * @param elementName      the name of the element which represents this component in the template, or null for
-     *                         &lt;comp&gt; element or a page component
-     * @param instantiator     used to create the new component instance and access the component's model
-     * @param location         location of the element (within a template), used as part of exception reporting
-     * @param elementResources Provides access to common methods of various services
+     * @param page          ultimately containing this component
+     * @param container     component immediately containing this component (may be null for a root component)
+     * @param id            unique (within the container) id for this component (may be null for a root component)
+     * @param elementName   the name of the element which represents this component in the template, or null for
+     *                      &lt;comp&gt; element or a page component
+     * @param instantiator  used to create the new component instance and access the component's model
+     * @param location      location of the element (within a template), used as part of exception reporting
+     * @param pageResources Provides access to common methods of various services
      */
 
-    ComponentPageElementImpl(Page page,
-                             ComponentPageElement container,
-                             String id,
-                             String nestedId,
-                             String completeId,
-                             String elementName,
-                             Instantiator instantiator,
-                             Location location,
-                             ComponentPageElementResources elementResources)
+    ComponentPageElementImpl(Page page, ComponentPageElement container, String id, String elementName,
+                             Instantiator instantiator, Location location, PageResources pageResources)
     {
         super(location);
 
         this.page = page;
         this.container = container;
         this.id = id;
-        this.nestedId = nestedId;
-        this.completeId = completeId;
         this.elementName = elementName;
-        this.elementResources = elementResources;
+        this.pageResources = pageResources;
 
         ComponentResources containerResources = container == null
                                                 ? null
                                                 : container.getComponentResources();
 
+        String pageName = this.page.getLogicalName();
 
-        coreResources = new InternalComponentResourcesImpl(this.page, this, containerResources,
-                                                           this.elementResources,
+        // A page (really, the root component of a page) does not have a container.
+
+        if (container == null)
+        {
+            completeId = pageName;
+            nestedId = null;
+        }
+        else
+        {
+            String caselessId = id.toLowerCase();
+
+            String parentNestedId = container.getNestedId();
+
+            // The root element has no nested id.
+            // The children of the root element have an id.
+
+            if (parentNestedId == null)
+            {
+                nestedId = caselessId;
+                completeId = pageName + ":" + caselessId;
+            }
+            else
+            {
+                nestedId = parentNestedId + "." + caselessId;
+                completeId = container.getCompleteId() + "." + caselessId;
+            }
+        }
+
+        coreResources = new InternalComponentResourcesImpl(this.page, this, containerResources, this.pageResources,
                                                            completeId, nestedId, instantiator);
 
         coreComponent = coreResources.getComponent();
 
         Logger logger = coreResources.getLogger();
-        eventLogger = elementResources.getEventLogger(logger);
+        eventLogger = pageResources.getEventLogger(logger);
 
         sharedEvent = new EventImpl(sharedEventHandler, eventLogger);
     }
@@ -560,12 +568,9 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
     /**
      * Constructor for the root component of a page.
      */
-    public ComponentPageElementImpl(Page page,
-                                    Instantiator instantiator,
-                                    ComponentPageElementResources elementResources)
+    public ComponentPageElementImpl(Page page, Instantiator instantiator, PageResources pageResources)
     {
-        this(page, null, null, null, page.getName(), null, instantiator, null,
-             elementResources);
+        this(page, null, null, null, instantiator, null, pageResources);
     }
 
     private void initializeRenderPhases()
@@ -623,19 +628,10 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
         renderPhasesInitalized = true;
     }
 
-    public ComponentPageElement newChild(String id, String nestedId, String completeId, String elementName,
-                                         Instantiator instantiator,
-                                         Location location)
+    public ComponentPageElement newChild(String id, String elementName, Instantiator instantiator, Location location)
     {
-        ComponentPageElementImpl child = new ComponentPageElementImpl(page,
-                                                                      this,
-                                                                      id,
-                                                                      nestedId,
-                                                                      completeId,
-                                                                      elementName,
-                                                                      instantiator,
-                                                                      location,
-                                                                      elementResources);
+        ComponentPageElementImpl child = new ComponentPageElementImpl(page, this, id, elementName, instantiator,
+                                                                      location, pageResources);
 
         addEmbeddedElement(child);
 
@@ -662,15 +658,12 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
         ComponentPageElement existing = children.get(childId);
 
         if (existing != null)
-            throw new TapestryException(StructureMessages.duplicateChildComponent(this, childId), child,
-                                        new TapestryException(StructureMessages.originalChildComponent(this, childId,
-                                                                                                       existing.getLocation()),
-                                                              existing, null));
+            throw new TapestryException(StructureMessages.duplicateChildComponent(this, childId), child, null);
 
         children.put(childId, child);
     }
 
-    public void addMixin(String mixinId, Instantiator instantiator, String... order)
+    public void addMixin(Instantiator instantiator)
     {
         if (mixinIdToComponentResources == null)
         {
@@ -678,45 +671,76 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
             components = CollectionFactory.newList();
         }
 
-        String mixinExtension = "$" + mixinId.toLowerCase();
+        String mixinClassName = instantiator.getModel().getComponentClassName();
+        String mixinName = TapestryInternalUtils.lastTerm(mixinClassName);
+
+        String mixinExtension = "$" + mixinName.toLowerCase();
 
         InternalComponentResourcesImpl resources = new InternalComponentResourcesImpl(page, this, coreResources,
-                                                                                      elementResources,
+                                                                                      pageResources,
                                                                                       completeId + mixinExtension,
                                                                                       nestedId + mixinExtension,
                                                                                       instantiator);
 
-        mixinIdToComponentResources.put(mixinId, resources);
-        //note that since we're using explicit ordering now,
-        //we don't add anything to components until we page load; instead, we add
-        //to the orderers.
-        if (order == null) order = new String[0];
-        if (resources.getComponentModel().isMixinAfter())
-        {
-            if (mixinAfterOrderer == null) mixinAfterOrderer = new Orderer<Component>(getLogger());
-            mixinAfterOrderer.add(mixinId,resources.getComponent(),order);
-        } else
-        {
-            if (mixinBeforeOrderer == null) mixinBeforeOrderer =new Orderer<Component>(getLogger());
-            mixinBeforeOrderer.add(mixinId,resources.getComponent(),order);
-        }
-    }
+        // TODO: Check for name collision?
 
-    public void bindMixinParameter(String mixinId, String parameterName, Binding binding)
-    {
-        InternalComponentResources mixinResources = InternalUtils.get(mixinIdToComponentResources, mixinId);
+        mixinIdToComponentResources.put(mixinName, resources);
 
-        mixinResources.bindParameter(parameterName, binding);
-    }
-
-    public Binding getBinding(String parameterName)
-    {
-        return coreResources.getBinding(parameterName);
+        components.add(resources.getComponent());
     }
 
     public void bindParameter(String parameterName, Binding binding)
     {
-        coreResources.bindParameter(parameterName, binding);
+        // Maybe should use colon here? Depends on what works best in the template,
+        // don't want to lock this out as just
+        int dotx = parameterName.lastIndexOf('.');
+
+        if (dotx > 0)
+        {
+            String mixinName = parameterName.substring(0, dotx);
+            InternalComponentResources mixinResources = InternalUtils.get(mixinIdToComponentResources, mixinName);
+
+            if (mixinResources == null) throw new TapestryException(
+                    StructureMessages.missingMixinForParameter(completeId, mixinName, parameterName), binding, null);
+
+            String simpleName = parameterName.substring(dotx + 1);
+
+            mixinResources.bindParameter(simpleName, binding);
+            return;
+        }
+
+        InternalComponentResources informalParameterResources = null;
+
+        // Does it match a formal parameter name of the core component? That takes precedence
+
+        if (coreResources.getComponentModel().getParameterModel(parameterName) != null)
+        {
+            coreResources.bindParameter(parameterName, binding);
+            return;
+        }
+
+        for (String mixinName : InternalUtils.sortedKeys(mixinIdToComponentResources))
+        {
+            InternalComponentResources resources = mixinIdToComponentResources.get(mixinName);
+            if (resources.getComponentModel().getParameterModel(parameterName) != null)
+            {
+                resources.bindParameter(parameterName, binding);
+                return;
+            }
+
+            if (informalParameterResources == null && resources.getComponentModel().getSupportsInformalParameters())
+                informalParameterResources = resources;
+        }
+
+        // An informal parameter
+
+        if (informalParameterResources == null && coreResources.getComponentModel().getSupportsInformalParameters())
+            informalParameterResources = coreResources;
+
+        // For the moment, informal parameters accumulate in the core component's resources, but
+        // that will likely change.
+
+        if (informalParameterResources != null) informalParameterResources.bindParameter(parameterName, binding);
     }
 
     public void addToBody(RenderCommand element)
@@ -750,11 +774,6 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
         }
     }
 
-    public void restoreStateBeforePageAttach()
-    {
-        invoke(false, RESTORE_STATE_BEFORE_PAGE_ATTACH);
-    }
-
     public void containingPageDidAttach()
     {
         invoke(false, CONTAINING_PAGE_DID_ATTACH);
@@ -767,26 +786,37 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
 
     public void containingPageDidLoad()
     {
-        // If this component has mixins, order them according to:
+        // If this component has mixins, add the core component to the end of the list, after the
         // mixins.
 
         if (components != null)
         {
             List<Component> ordered = CollectionFactory.newList();
 
-            if (mixinBeforeOrderer != null)
-                ordered.addAll(mixinBeforeOrderer.getOrdered());
+            Iterator<Component> i = components.iterator();
+
+            // Add all the normal components to the final list.
+
+            while (i.hasNext())
+            {
+                Component mixin = i.next();
+
+                if (mixin.getComponentResources().getComponentModel().isMixinAfter()) continue;
+
+                ordered.add(mixin);
+
+                // Remove from list, leaving just the late executing mixins
+
+                i.remove();
+            }
 
             ordered.add(coreComponent);
 
             // Add the remaining, late executing mixins
-            if (mixinAfterOrderer != null)
-                ordered.addAll(mixinAfterOrderer.getOrdered());
+
+            ordered.addAll(components);
 
             components = ordered;
-            //no need to keep the orderers around.
-            mixinBeforeOrderer = null;
-            mixinAfterOrderer = null;
         }
 
         loaded = true;
@@ -795,19 +825,10 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
         // that is invoked first, before we check for unbound parameters.
 
         invoke(false, CONTAINING_PAGE_DID_LOAD);
-        executeDeferredLoadActions();
+
         verifyRequiredParametersAreBound();
     }
 
-    private void executeDeferredLoadActions()
-    {
-        if (deferredLoadActions == null) return;
-        for(Runnable action : deferredLoadActions)
-        {
-            action.run();
-        }
-        deferredLoadActions = null;//having executed them, we have no need now to store them.
-    }
 
     public void enqueueBeforeRenderBody(RenderQueue queue)
     {
@@ -869,38 +890,24 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
 
     public Component getMixinByClassName(String mixinClassName)
     {
-        Component result = mixinForClassName(mixinClassName);
+        Component result = null;
 
+        if (mixinIdToComponentResources != null)
+        {
+            for (InternalComponentResources resources : mixinIdToComponentResources.values())
+            {
+                if (resources.getComponentModel().getComponentClassName().equals(mixinClassName))
+                {
+                    result = resources.getComponent();
+                    break;
+                }
+            }
+        }
 
         if (result == null) throw new TapestryException(StructureMessages.unknownMixin(completeId, mixinClassName),
                                                         getLocation(), null);
 
         return result;
-    }
-
-    private Component mixinForClassName(String mixinClassName)
-    {
-
-        if (mixinIdToComponentResources == null) return null;
-        for (InternalComponentResources resources : mixinIdToComponentResources.values())
-        {
-            if (resources.getComponentModel().getComponentClassName().equals(mixinClassName))
-            {
-                return resources.getComponent();
-            }
-        }
-        return null;
-    }
-
-    public boolean isMixingIn(String mixinClassName)
-    {
-        return mixinForClassName(mixinClassName) != null;
-    }
-
-    public void deferLoadAction(Runnable action)
-    {
-        if (deferredLoadActions == null) deferredLoadActions = CollectionFactory.newList();
-        deferredLoadActions.add(action);
     }
 
     public ComponentResources getMixinResources(String mixinId)
@@ -1005,7 +1012,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
         if (!renderPhasesInitalized)
             initializeRenderPhases();
 
-        // TODO: An error if the render flag is already set (recursive rendering not
+        // TODO: An error if the _render flag is already set (recursive rendering not
         // allowed or advisable).
 
         // Once we start rendering, the page is considered dirty, until we cleanup post render.
@@ -1038,6 +1045,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
 
     private EventContext createParameterContext(final Object... values)
     {
+
         return new EventContext()
         {
             public int getCount()
@@ -1047,7 +1055,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
 
             public <T> T get(Class<T> desiredType, int index)
             {
-                return elementResources.coerce(values[index], desiredType);
+                return pageResources.coerce(values[index], desiredType);
             }
         };
     }
@@ -1100,7 +1108,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
                 Logger logger = component.getEventLogger();
 
                 ComponentEvent event = new ComponentEventImpl(currentEventType, componentId, currentContext, wrapped,
-                                                              elementResources, logger);
+                                                              pageResources, logger);
 
                 logger.debug(TapestryMarkers.EVENT_DISPATCH, "Dispatch event: {}", event);
 
@@ -1200,9 +1208,50 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
         blocks.put(blockId, block);
     }
 
+    public String getDefaultBindingPrefix(String parameterName)
+    {
+        int dotx = parameterName.lastIndexOf('.');
+
+        if (dotx > 0)
+        {
+            String mixinName = parameterName.substring(0, dotx);
+            InternalComponentResources mixinResources = InternalUtils.get(mixinIdToComponentResources, mixinName);
+
+            if (mixinResources == null) throw new TapestryException(
+                    StructureMessages.missingMixinForParameter(completeId, mixinName, parameterName), null, null);
+
+            String simpleName = parameterName.substring(dotx + 1);
+
+            ParameterModel pm = mixinResources.getComponentModel().getParameterModel(simpleName);
+
+            return pm != null ? pm.getDefaultBindingPrefix() : null;
+        }
+
+        // A formal parameter of the core component?
+
+        ParameterModel pm = coreResources.getComponentModel().getParameterModel(parameterName);
+
+        if (pm != null) return pm.getDefaultBindingPrefix();
+
+        // Search for mixin that it is a formal parameter of
+
+        for (String mixinName : InternalUtils.sortedKeys(mixinIdToComponentResources))
+        {
+            InternalComponentResources resources = mixinIdToComponentResources.get(mixinName);
+
+            pm = resources.getComponentModel().getParameterModel(parameterName);
+
+            if (pm != null) return pm.getDefaultBindingPrefix();
+        }
+
+        // Not a formal parameter of the core component or any mixin.
+
+        return null;
+    }
+
     public String getPageName()
     {
-        return page.getName();
+        return page.getLogicalName();
     }
 
     public boolean hasBody()
@@ -1224,31 +1273,4 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
     {
         return eventLogger;
     }
-
-    public Link createEventLink(String eventType, Object... context)
-    {
-        return elementResources.createComponentEventLink(coreResources, eventType, false, context);
-    }
-
-    public Link createActionLink(String eventType, boolean forForm, Object... context)
-    {
-        return elementResources.createComponentEventLink(coreResources, eventType, forForm, context);
-    }
-
-    public Link createFormEventLink(String eventType, Object... context)
-    {
-        return elementResources.createComponentEventLink(coreResources, eventType, true, context);
-    }
-
-    public Link createPageLink(String pageName, boolean override, Object... context)
-    {
-        return elementResources.createPageRenderLink(pageName, override, context);
-    }
-
-    public Link createPageLink(Class pageClass, boolean override, Object... context)
-    {
-        return elementResources.createPageRenderLink(pageClass, override, context);
-    }
-
-
 }

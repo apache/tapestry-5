@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,14 +14,14 @@
 
 package org.apache.tapestry5.internal.services;
 
+import org.apache.tapestry5.internal.events.InvalidationListener;
+import org.apache.tapestry5.internal.events.UpdateListener;
 import org.apache.tapestry5.internal.structure.Page;
 import org.apache.tapestry5.ioc.annotations.IntermediateType;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.services.ThreadLocale;
 import org.apache.tapestry5.ioc.util.TimeInterval;
-import org.apache.tapestry5.services.InvalidationListener;
-import org.apache.tapestry5.services.UpdateListener;
 import org.slf4j.Logger;
 
 import java.util.Locale;
@@ -42,8 +42,8 @@ import java.util.Map;
  * A <em>hard limit</em> on the number of page instances is enforced. This number may not be exceeded. Requesting a page
  * instance when at the hard limit will result in a runtime exception.
  * <p/>
- * As an {@link org.apache.tapestry5.services.UpdateListener}, the service will reduce the size of each page's pool by
- * eliminating pages that haven't been used recently.
+ * As an {@link org.apache.tapestry5.internal.events.UpdateListener}, the service will reduce the size of each page's
+ * pool by eliminating pages that haven't been used recently.
  *
  * @see org.apache.tapestry5.internal.services.PagePoolCache
  */
@@ -125,7 +125,7 @@ public class PagePoolImpl implements PagePool, InvalidationListener, UpdateListe
 
     private PagePoolCache getPagePoolCache(Page page)
     {
-        return get(page.getName(), page.getLocale());
+        return get(page.getLogicalName(), page.getLocale());
     }
 
     private synchronized PagePoolCache get(String pageName, Locale locale)

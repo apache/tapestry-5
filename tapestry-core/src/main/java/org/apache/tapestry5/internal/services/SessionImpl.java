@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,48 +14,30 @@
 
 package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newList;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.services.Session;
-import org.apache.tapestry5.services.SessionPersistedObjectAnalyzer;
 
 import javax.servlet.http.HttpSession;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
-import java.util.Map;
 
 /**
  * A thin wrapper around {@link HttpSession}.
  */
 public class SessionImpl implements Session
 {
-    private final SessionPersistedObjectAnalyzer analyzer;
-
     private final HttpSession session;
 
-    private boolean invalidated = false;
-
-    /**
-     * Cache of attribute objects read from, or written to, the real session.
-     * This is needed for end-of-request
-     * processing.
-     */
-    private final Map<String, Object> sessionAttributeCache = CollectionFactory.newMap();
-
-    public SessionImpl(HttpSession session, SessionPersistedObjectAnalyzer analyzer)
+    public SessionImpl(HttpSession session)
     {
         this.session = session;
-        this.analyzer = analyzer;
     }
 
     public Object getAttribute(String name)
     {
-        Object result = session.getAttribute(name);
-
-        sessionAttributeCache.put(name, result);
-
-        return result;
+        return session.getAttribute(name);
     }
 
     public List<String> getAttributeNames()
@@ -66,13 +48,11 @@ public class SessionImpl implements Session
     public void setAttribute(String name, Object value)
     {
         session.setAttribute(name, value);
-
-        sessionAttributeCache.put(name, value);
     }
 
     public List<String> getAttributeNames(String prefix)
     {
-        List<String> result = CollectionFactory.newList();
+        List<String> result = newList();
 
         Enumeration e = session.getAttributeNames();
         while (e.hasMoreElements())
@@ -94,16 +74,7 @@ public class SessionImpl implements Session
 
     public void invalidate()
     {
-        invalidated = true;
-
         session.invalidate();
-
-        sessionAttributeCache.clear();
-    }
-
-    public boolean isInvalidated()
-    {
-        return invalidated;
     }
 
     public void setMaxInactiveInterval(int seconds)
@@ -111,30 +82,4 @@ public class SessionImpl implements Session
         session.setMaxInactiveInterval(seconds);
     }
 
-    public void restoreDirtyObjects()
-    {
-        if (invalidated) return;
-
-        if (sessionAttributeCache.isEmpty()) return;
-
-        for (Map.Entry<String, Object> entry : sessionAttributeCache.entrySet())
-        {
-            String attributeName = entry.getKey();
-
-            Object attributeValue = entry.getValue();
-
-            if (attributeValue == null) continue;
-
-            if (analyzer.isDirty(attributeValue))
-            {
-                // TAP5-834: Jetty & Tomcat work by object identity, will not update the attribute
-                // and fire the session binding event unless there's a real change. So we set the
-                // attribute to null and then to the new value and that should force the necessary
-                // notification.
-                
-                session.setAttribute(attributeName, null);
-                session.setAttribute(attributeName, attributeValue);
-            }
-        }
-    }
 }

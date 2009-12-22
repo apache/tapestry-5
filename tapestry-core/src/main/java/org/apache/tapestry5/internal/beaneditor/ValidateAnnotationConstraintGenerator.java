@@ -20,22 +20,12 @@ import org.apache.tapestry5.services.ValidationConstraintGenerator;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.regex.Pattern;
 
 /**
  * Checks for the {@link Validate} annotation, and extracts its value to form the result.
  */
 public class ValidateAnnotationConstraintGenerator implements ValidationConstraintGenerator
 {
-
-    static final String VALIDATOR_PATTERN="(?<!\\\\),(?!([0-9]*\\}))";
-
-    private final Pattern validatorPattern;
-
-    public ValidateAnnotationConstraintGenerator()
-    {
-        validatorPattern = Pattern.compile(VALIDATOR_PATTERN);
-    }
 
     public List<String> buildConstraints(Class propertyType, AnnotationProvider annotationProvider)
     {
@@ -44,11 +34,7 @@ public class ValidateAnnotationConstraintGenerator implements ValidationConstrai
         if (annotation == null)
             return null;
 
-        //TAP5-520: Commas within regular expressions like {n,m} or {n,} or a\,b .
-        //We use Negative Lookahead to avoid matching the case a\,b .
-        //We use Positive Lookahead to avoid matching cases {n,m} and {n,}.
-        //http://www.regular-expressions.info/lookaround.html
-        return Arrays.asList(validatorPattern.split(annotation.value()));
+        return Arrays.asList(annotation.value().split(","));
     }
 
 }

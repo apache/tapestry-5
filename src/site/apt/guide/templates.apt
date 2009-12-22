@@ -91,7 +91,7 @@ Tapestry Namespace
   Component templates should include the Tapestry namespace, defining it in the root element of the template.
 
 +----+
-<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd">
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
     <head>
         <title>Hello World Page</title>
     </head>
@@ -103,22 +103,6 @@ Tapestry Namespace
 
   This defines the namespace using the standard prefix, "t:".  The examples on this page all assume the use of the standard 
   prefix.
-
-  For backwards compatibility, you may continue to use the old namespace URI:
-  http://tapestry.apache.org/schema/tapestry_5_0_0.xsd.  However,
-  the following elements added, as part of Tapestry 5.1, will not work:
-
-  * \<t:remove\>
-
-  * \<t:content\>
-  
-  * \<t:extension-point\>
-
-  * \<t:extend\>
-
-  * \<t:replace\>
-
-  []
 
 Tapestry Elements
 
@@ -140,7 +124,7 @@ Tapestry Elements
   around the page specific content:
   
 +---+
-<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd">
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
     <head>
         <title>My Tapestry Application</title>
     </head>
@@ -153,7 +137,7 @@ Tapestry Elements
   A page would use this component as follow:
   
 +---+
-<t:layout xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd">
+<t:layout xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
 
   My Page Specific Content
 
@@ -183,7 +167,7 @@ Tapestry Elements
    tags, for example, a component that renders several columns within a table row:
    
 +---+
-<t:container xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd">
+<t:container xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
   <td>${label}</td>
   <td>${value}</td>
 </t:container>
@@ -197,7 +181,7 @@ Tapestry Elements
 * \<block\>
 
   A block is a container of a portion of the component template. A block does not normally render; any component or contents you put inside
-  a block will not ordinarily be rendered.  However, by injecting the block you have precise control over when and if the content renders.
+  a block will not ordinarily be rendered.  However, by injected the block, you can have precise control over when and if the content renders.   
   
   A block may be anonymous, or it may have an id (specified with the id attribute).  Non-anonymous blocks may be 
   {{{inject.html}injected}} into the component.
@@ -206,10 +190,10 @@ Tapestry Elements
 
   Note that the id parameter is <not> placed in the Tapestry namespace (since the element always <is> in the Tapestry namespace).
 
-* \<parameter\>             <(deprecated)>
+* \<parameter\>
 
   A \<parameter\> element is a special kind of block.  It is placed inside the body of an embedded component.  The block defined by the
-  \<parameter\> is passed to the component.  \<parameter\> includes a mandatory name attribute to identify which parameter of the component
+  \<parameter\> is passsed to the component.  \<parameter\> includes a mandatory name attribute to identify which parameter of the component
   to bind.  
 
   Example:
@@ -223,33 +207,6 @@ Tapestry Elements
 </t:if>
 +---+
 
-  The parameter element has been deprecated (but is still fully supported, for backwards compatibility). The
-  <parameter namespace> approach is more concise and readable.
-
-
-* \<content\>
-
-  Marks a portion of the template as the actual template content; any markup outside the \<t:content\> element
-  is ignored. This is useful for eliminating portions of the template that exist to support WYSIWYG preview of
-  the template.
-
-  \<t:content\> elements may not nest.
-
-  Support for the \<t:content\> element was adding in Tapestry release 5.1. You must use the
-  http://tapestry.apache.org/schema/tapestry_5_1_0.xsd namespace URI for content to be recognized (otherwise
-  you will see an error about a missing "content" component).
-
-* \<remove\>
-
-  Marks a portion of the template for removal; it is as if the remove element and everything inside it
-  simply was not part of the template. This is used as a kind of server-side only comment (normal HTML/XML comments
-  are included in a page render response), or to temporarily eliminate a portion of the template. As far as Tapestry
-  is concerned, the contents of the \<remove\> element do not exist (including validating consistency between
-  components defined or injected in the Java class and the template).
-
-  Support for the \<t:remove\> element was adding in Tapestry release 5.1. You must use the
-  http://tapestry.apache.org/schema/tapestry_5_1_0.xsd namespace URI for remove to be recognized (otherwise
-  you will see an error about a missing "remove" component).
 
 Expansions
 
@@ -276,7 +233,7 @@ Expansions
   
   Under the covers, expansions are the same as
   {{{parameters.html}parameter bindings}}.  The default
-  binding prefix for expansions is "prop:" (that is, the name of a property or a {{{propexp.html}property expression}}), but
+  binding prefix for expansions is "prop:" (that is, the name of a property), but
   other binding prefixes are useful, especially "message:" (to access a localized
   message from the component's message catalog).
   
@@ -299,7 +256,7 @@ Component Elements
   
   * id: A unique id for the component (within its container).
   
-  * mixins: An optional comma separated list of mixins for the the component.
+  * mixins: An optional comma seperated list of mixins for the the component.
   
   [] 
   
@@ -336,37 +293,10 @@ Component Elements
    In some cases, components require some kind of enclosure; for example, all of the field components will throw a runtime exception
    if not enclosed by a Form component.
    
-   It is possible to place Tapestry components in sub-packages.  For example, your application may have a package org.example.myapp.components.ajax.Dialog.
+   It is possible to place Tapestry components in subclasses.  For example, your application may have a package org.example.myapp.components.ajax.Dialog.
    This component's normal type name is "ajax/dialog" (because it is in the ajax subfolder). This name is problematic, as
    it is not valid to define an XML element with an element name <<<\<t:ajax/dialog\>>>>.  Instead,
    replace the slashes with periods: <<<\<t:ajax.dialog\>>>>.
-
-Library Namespaces
-
-   If you are using many components from a common Tapestry component library, you can use a special namespace to
-   simplify references to those components.
-
-   The special namespace URI <<<tapestry-library:path>>> can be defined; the path is a prefix used in conjuction
-   with component element names.
-
-   Borrowing from the above example, all of the following are equivalent:
-
-----
-<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd" xmlns:a="tapestry-library:ajax">
-
-  <t:ajax.dialog/>
-
-  <span t:type="ajax/dialog"/>
-
-  <a:dialog/>
-
-  . . .
----
-
-  In other words, the path, <<<ajax>>>, from the namespace URI takes the place of the path prefixes <<<ajax.>>>
-  seen in the first element, or <<<ajax/>>> seen in the second.  As far as Tapestry is concerned, they are all
-  equivalent.
-
    
 Invisible Instrumentation
 
@@ -408,34 +338,8 @@ Invisible Instrumentation
 
   Here, the loop component "merges into" the \<tr\> element.  It will render out a \<tr\> for each item object in the items list.
   It will write a dynamic class attribute into each \<tr\>.
-
-Parameter Namespace
-
-  Parameter namespaces are a new feature introduced in Tapestry 5.1. They are a more concise way of passing parameter blocks
-  to components.
-
-  You must define a special namespace, usually given the prefix "p":
-
----
-<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd" xmlns:p="tapestry:parameter">
-  . . .
----
-
-  With the "tapestry:parameter" namespace defined, you can pass block using the "p:" prefix and an element name
-  that matches the parameter name:
-
-----
-<t:if test="loggedIn">
-  Hello, ${userName}!
-  <p:else>
-    Click <a t:type="actionlink" t:id="login">here</a> to log in.
-  </p:else>
-</t:if>
-----  
-
-  Namespaced parameter elements are not allowed to have any attributes. The element name itself is used to identify
-  the parameter of the component to bind.
-
+        
+   
 Whitespace in Templates
 
   Tapestry strips out unnecessary whitespace from templates as they are parsed.
@@ -495,47 +399,6 @@ Whitespace in Templates
   what whitespace is preserved and what is compressed.
   
   
-Template Inheritance
 
-  Tapestry 5.1 adds a significant new feature: template inheritance. Previously, a component which extended
-  another component had to inherit the parent component's entire template, or copy-and-paste the template.
-
-  Parent template can now mark replaceable sections as \<t:extension-point\>s, and sub-components can
-  extend the parent template and \<t:replace\> those sections.
-
-  This can work across multiple levels of inheritance.
-
-  Overuse of this feature is <not recommended>: in general use of composition, rather than inheritance,
-  will be easier to understand and maintain. There are certain specific cases where overrides will allow
-  a for much wider and easier reuse of a component. 
-
-* \<t:extension-point\>
-
-  Marks a point in a template that may be replaced.  A unique id (case insensitive) is used in the template
-  and its sub-templates to link extension points to possible overrides.
-
-----
-
-  <t:extension-point id="title">
-    <h1>${defaultTitle}</h1>
-  </t:extension-point>
-----
-
-* \<t:extend\>
-
-  Root element of a child template that extends from its parent template.  The \<t:extend\> attribute
-  may only appear as the root element and may only contain \<t:replace\> elements.
-
-* \<t:replace\>
-
-  Replaces an extension point from a parent template.  \<t:replace\> may only appear as the immediate
-  child of a root \<t:extend\> element.
-
----
-<t:extend xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd">
-  <t:replace id="title">
-    <h1><img src="${context:images/icon.jpg}"/>
-    Customer Service</h1>
-  </t:replace>
-</t:extend>
----  
+  
+  

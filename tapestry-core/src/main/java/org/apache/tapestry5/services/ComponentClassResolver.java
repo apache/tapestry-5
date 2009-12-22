@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -39,11 +39,11 @@ public interface ComponentClassResolver
      * Converts a logical page name (such as might be encoded into a URL) into a fully qualified class name. The case of
      * the page name is irrelevant.
      *
-     * @param pageName page name
+     * @param logicalPageName logical page name
      * @return fully qualified class name for the page
      * @throws IllegalArgumentException if the name does not match a known page class
      */
-    String resolvePageNameToClassName(String pageName);
+    String resolvePageNameToClassName(String logicalPageName);
 
     /**
      * For a particular path, determines if the path is a logical page name. The check is case insensitive.
@@ -54,13 +54,13 @@ public interface ComponentClassResolver
     boolean isPageName(String pageName);
 
     /**
-     * Returns a list of all  page names, in sorted order.
+     * Returns a list of all logical page names, in sorted order.
      */
     List<String> getPageNames();
 
     /**
-     * Converts a fully qualified page class name into a page name (often, for inclusion as part of the URI). This value
-     * may later be passed to {@link #resolvePageNameToClassName(String)}.
+     * Converts a fully qualified page class name into a logical class name (often, for inclusion as part of the URI).
+     * This value may later be passed to {@link #resolvePageNameToClassName(String)}.
      *
      * @param pageClassName fully qualified name of a page class
      * @return equivalent logical page name
@@ -69,8 +69,8 @@ public interface ComponentClassResolver
     String resolvePageClassNameToPageName(String pageClassName);
 
     /**
-     * Returns the canonical form of a page name. The canonical form uses character case matching the underlying class
-     * name.
+     * Returns the canonical form of a logical page name. The canonical form uses character case matching the underlying
+     * class name.
      *
      * @throws IllegalArgumentException if the page name does not match a logical page name
      */

@@ -18,7 +18,6 @@ import org.apache.tapestry5.*;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.ioc.MessageFormatter;
 import org.apache.tapestry5.ioc.Messages;
-import org.apache.tapestry5.root.FieldComponent;
 import org.apache.tapestry5.services.FieldTranslatorSource;
 import org.apache.tapestry5.services.FormSupport;
 import org.apache.tapestry5.services.TranslatorSource;

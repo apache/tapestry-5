@@ -20,9 +20,6 @@ import java.lang.annotation.Retention;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Target;
 
-import static org.apache.tapestry5.ioc.annotations.AnnotationUseContext.*;
-import org.apache.tapestry5.ioc.annotations.UseWith;
-
 /**
  * Marker annotation for methods associated with the AfterRender phase. This corresponds closely to {@link
  * org.apache.tapestry5.annotations.BeginRender}, but occurs after the template and body of the component have been
@@ -33,7 +30,6 @@ import org.apache.tapestry5.ioc.annotations.UseWith;
 @Target(ElementType.METHOD)
 @Retention(RUNTIME)
 @Documented
-@UseWith({COMPONENT,MIXIN,PAGE})
 public @interface AfterRender
 {
 

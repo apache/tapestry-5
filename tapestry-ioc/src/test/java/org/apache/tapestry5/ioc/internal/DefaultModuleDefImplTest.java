@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.ClassFactory;
 import org.apache.tapestry5.ioc.test.IOCTestCase;
+import static org.easymock.EasyMock.and;
 import static org.easymock.EasyMock.contains;
 import org.slf4j.Logger;
 import org.testng.annotations.AfterClass;
@@ -102,42 +103,6 @@ public class DefaultModuleDefImplTest extends IOCTestCase
     }
 
     @Test
-    public void default_service_id_from_method_annotation()
-    {
-        Logger logger = mockLogger();
-
-        replay();
-
-        ModuleDef def = new DefaultModuleDefImpl(ServiceIdViaAnnotationModule.class, logger, null);
-
-        assertEquals(def.getServiceIds().size(), 2);
-
-        ServiceDef sd = def.getServiceDef("FooService");
-
-        assertEquals(sd.getServiceId(), "FooService");
-
-        verify();
-    }
-    
-    @Test
-    public void default_service_id_from_annotation()
-    {
-        Logger logger = mockLogger();
-
-        replay();
-
-        ModuleDef def = new DefaultModuleDefImpl(ServiceIdViaAnnotationModule.class, logger, null);
-
-        assertEquals(def.getServiceIds().size(), 2);
-
-        ServiceDef sd = def.getServiceDef("BarneyService");
-
-        assertEquals(sd.getServiceId(), "BarneyService");
-
-        verify();
-    }
-    
-    @Test
     public void default_service_id_from_return_type()
     {
         Logger logger = mockLogger();
@@ -197,17 +162,13 @@ public class DefaultModuleDefImplTest extends IOCTestCase
 
         Logger logger = mockLogger();
 
+        logger.warn(IOCMessages.buildMethodWrongReturnType(m));
+
         replay();
 
-        try
-        {
-            new DefaultModuleDefImpl(VoidBuilderMethodModule.class, logger, null);
-            unreachable();
-        }
-        catch (RuntimeException ex)
-        {
-            assertEquals(ex.getMessage(), IOCMessages.buildMethodWrongReturnType(m));
-        }
+        ModuleDef md = new DefaultModuleDefImpl(VoidBuilderMethodModule.class, logger, null);
+
+        assertTrue(md.getServiceIds().isEmpty());
 
         verify();
     }
@@ -219,17 +180,13 @@ public class DefaultModuleDefImplTest extends IOCTestCase
 
         Logger logger = mockLogger();
 
+        logger.warn(IOCMessages.buildMethodWrongReturnType(m));
+
         replay();
 
-        try
-        {
-            new DefaultModuleDefImpl(BuilderMethodModule.class, logger, null);
-            unreachable();
-        }
-        catch (RuntimeException ex)
-        {
-            assertEquals(ex.getMessage(), IOCMessages.buildMethodWrongReturnType(m));
-        }
+        ModuleDef md = new DefaultModuleDefImpl(BuilderMethodModule.class, logger, null);
+
+        assertTrue(md.getServiceIds().isEmpty());
 
         verify();
     }
@@ -246,17 +203,13 @@ public class DefaultModuleDefImplTest extends IOCTestCase
 
         Logger logger = mockLogger();
 
+        logger.warn(IOCMessages.decoratorMethodWrongReturnType(m));
+
         replay();
 
-        try
-        {
-            new DefaultModuleDefImpl(moduleClass, logger, null);
-            unreachable();
-        }
-        catch (RuntimeException ex)
-        {
-            assertEquals(ex.getMessage(), IOCMessages.decoratorMethodWrongReturnType(m));
-        }
+        ModuleDef md = new DefaultModuleDefImpl(moduleClass, logger, null);
+
+        assertTrue(md.getDecoratorDefs().isEmpty());
 
         verify();
     }
@@ -325,20 +278,13 @@ public class DefaultModuleDefImplTest extends IOCTestCase
         Method m = findMethod(moduleClass, "contributeTooMany");
 
         Logger logger = mockLogger();
+        logger.warn(IOCMessages.tooManyContributionParameters(m));
 
         replay();
 
-        try
-        {
-            new DefaultModuleDefImpl(moduleClass, logger, null);
-            unreachable();
-        }
-        catch (RuntimeException ex)
-        {
-            assertEquals(ex.getMessage(),
-                         "Service contribution method org.apache.tapestry5.ioc.internal.TooManyContributionParametersModule.contributeTooMany(Configuration, OrderedConfiguration) contains more than one parameter of type Configuration, OrderedConfiguration, or MappedConfiguration. Exactly one such parameter is required for a service contribution method.");
-        }
+        ModuleDef md = new DefaultModuleDefImpl(moduleClass, logger, null);
 
+        assertTrue(md.getContributionDefs().isEmpty());
 
         verify();
     }
@@ -350,19 +296,13 @@ public class DefaultModuleDefImplTest extends IOCTestCase
         Method m = findMethod(moduleClass, "contributeNoParameter");
 
         Logger logger = mockLogger();
+        logger.warn(IOCMessages.noContributionParameter(m));
 
         replay();
 
-        try
-        {
-            new DefaultModuleDefImpl(moduleClass, logger, null);
-            unreachable();
-        }
-        catch (RuntimeException ex)
-        {
-            assertEquals(ex.getMessage(),
-                         "Service contribution method org.apache.tapestry5.ioc.internal.NoUsableContributionParameterModule.contributeNoParameter(UpcaseService) does not contain a parameter of type Configuration, OrderedConfiguration or MappedConfiguration. This parameter is how the method make contributions into the service's configuration.");
-        }
+        ModuleDef md = new DefaultModuleDefImpl(moduleClass, logger, null);
+
+        assertTrue(md.getContributionDefs().isEmpty());
 
         verify();
     }
@@ -427,23 +367,19 @@ public class DefaultModuleDefImplTest extends IOCTestCase
     }
 
     @Test
-    public void instance_method_bind_is_error()
+    public void instance_method_bind_is_ignored()
     {
         Logger logger = mockLogger();
 
+        logger.error(and(contains(NonStaticBindMethodModule.class.getName()), contains("but is an instance method")));
+
         replay();
 
-        try
-        {
-            new DefaultModuleDefImpl(NonStaticBindMethodModule.class, logger, classFactory);
-            unreachable();
-        }
-        catch (RuntimeException ex)
-        {
-            assertMessageContains(ex,
-                                  "Method org.apache.tapestry5.ioc.internal.NonStaticBindMethodModule.bind(ServiceBinder)",
-                                  "appears to be a service binder method, but is an instance method, not a static method.");
-        }
+        ModuleDef md = new DefaultModuleDefImpl(NonStaticBindMethodModule.class, logger, classFactory);
+
+        // Prove that the bind method was not invoke
+
+        assertTrue(md.getServiceIds().isEmpty());
 
         verify();
     }

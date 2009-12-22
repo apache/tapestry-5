@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -154,24 +154,6 @@ public interface ComponentModel
      * org.apache.tapestry5.annotations.AfterRender}, etc.).
      *
      * @return set of classes
-     * @since 5.0.19, 5.1.0.0
      */
     Set<Class> getHandledRenderPhases();
-
-    /**
-     * Determines if the component has an event handler for the indicated event name (case insensitive). This includes
-     * handles in the component class itself, or its super-classes, but does not include event handles supplied by
-     * implementation or instance mixins.
-     *
-     * @param eventType name of event to check (case insensitive)
-     * @return true if event handler present
-     */
-    boolean handlesEvent(String eventType);
-
-    /**
-     * @param mixinClassName class name of the mixin for which the ordering is desired
-     * @return the ordering constraint(s) for the mixin, potentially null.
-     * @since 5.2.0.0
-     */
-    String[] getOrderForMixin(String mixinClassName);
 }

@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,139 +14,102 @@
 
 package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry5.SymbolConstants;
-import org.apache.tapestry5.internal.InternalConstants;
-import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.ioc.Resource;
-import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.services.Context;
-import org.apache.tapestry5.services.Request;
+import org.apache.tapestry5.ioc.util.TimeInterval;
 import org.apache.tapestry5.services.Response;
-import org.apache.tapestry5.services.ResponseCompressionAnalyzer;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.Map;
 
 public class ResourceStreamerImpl implements ResourceStreamer
 {
-    private final ResourceCache resourceCache;
+    private static final long TEN_YEARS = new TimeInterval("10y").milliseconds();
 
-    private final Request request;
+    private static final int BUFFER_SIZE = 5000;
 
     private final Response response;
 
-    private final Context context;
-
-    private final ResponseCompressionAnalyzer analyzer;
-
     private final Map<String, String> configuration;
 
-    private final int compressionCutoff;
-
-    public ResourceStreamerImpl(Request request,
-
-                                Response response,
-
-                                Context context,
-
-                                ResourceCache resourceCache,
-
-                                Map<String, String> configuration,
-
-                                ResponseCompressionAnalyzer analyzer,
-
-                                @Symbol(SymbolConstants.MIN_GZIP_SIZE)
-                                int compressionCutoff) 
+    public ResourceStreamerImpl(final Response response, Map<String, String> configuration)
     {
-        this.request = request;
         this.response = response;
-        this.context = context;
-        this.resourceCache = resourceCache;
         this.configuration = configuration;
-        this.analyzer = analyzer;
-        this.compressionCutoff = compressionCutoff;
     }
 
     public void streamResource(Resource resource) throws IOException
     {
-        // Prevent the upstream code from compressing when we don't want to.
+        URL url = resource.toURL();
 
-        request.setAttribute(InternalConstants.SUPPRESS_COMPRESSION, true);
+        URLConnection connection = url.openConnection();
 
-        StreamableResource streamble = resourceCache.getStreamableResource(resource);
+        int contentLength = connection.getContentLength();
 
-        long lastModified = streamble.getLastModified();
+        if (contentLength >= 0) response.setContentLength(contentLength);
+
+        // Could get this from the ResourceCache, but can't imagine
+        // it's very expensive.
+
+        long lastModified = connection.getLastModified();
 
         response.setDateHeader("Last-Modified", lastModified);
-        response.setDateHeader("Expires", lastModified + InternalConstants.TEN_YEARS);
+        response.setDateHeader("Expires", lastModified + TEN_YEARS);
 
-        String contentType = identifyContentType(resource, streamble);
+        String contentType = connection.getContentType();
 
-        boolean compress = analyzer.isGZipSupported() &&
-                streamble.getSize(false) >= compressionCutoff &&
-                analyzer.isCompressable(contentType);
+        if ("content/unknown".equals(contentType)) contentType = null;
 
-        int contentLength = streamble.getSize(compress);
+        if (contentType == null)
+        {
+            String file = resource.getFile();
+            int dotx = file.lastIndexOf('.');
 
-        if (contentLength >= 0)
-            response.setContentLength(contentLength);
+            if (dotx > 0)
+            {
+                String extension = file.substring(dotx + 1);
 
-        if (compress)
-            response.setHeader(InternalConstants.CONTENT_ENCODING_HEADER, InternalConstants.GZIP_CONTENT_ENCODING);
+                contentType = configuration.get(extension);
+            }
+
+            if (contentType == null) contentType = "application/octet-stream";
+        }
 
         InputStream is = null;
 
         try
         {
-            is = streamble.getStream(compress);
+            connection.connect();
+
+            is = new BufferedInputStream(connection.getInputStream());
 
             OutputStream os = response.getOutputStream(contentType);
 
-            TapestryInternalUtils.copy(is, os);
+            byte[] buffer = new byte[BUFFER_SIZE];
+
+            while (true)
+            {
+                int length = is.read(buffer);
+
+                if (length < 0) break;
+
+                os.write(buffer, 0, length);
+            }
 
             is.close();
             is = null;
 
-            os.close();
+            os.flush();
         }
         finally
         {
             InternalUtils.close(is);
         }
-    }
 
-    public String getContentType(Resource resource) throws IOException
-    {
-        return identifyContentType(resource, resourceCache.getStreamableResource(resource));
-    }
-
-    private String identifyContentType(Resource resource, StreamableResource streamble) throws IOException
-    {
-        String contentType = streamble.getContentType();
-
-        if ("content/unknown".equals(contentType)) contentType = null;
-
-        if (contentType != null) return contentType;
-
-        contentType = context.getMimeType(resource.getPath());
-
-        if (contentType != null) return contentType;
-
-        String file = resource.getFile();
-        int dotx = file.lastIndexOf('.');
-
-        if (dotx > 0)
-        {
-            String extension = file.substring(dotx + 1);
-
-            contentType = configuration.get(extension);
-        }
-
-        return contentType != null
-               ? contentType
-               : "application/octet-stream";
     }
 }

@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Map;
 
 /**
  * Basic implementation of {@link org.apache.tapestry5.ioc.ObjectCreator} that handles invoking a method on the module
@@ -37,16 +38,26 @@ public class ServiceBuilderMethodInvoker extends AbstractServiceCreator
     }
 
     /**
+     * Returns a map that includes (possibly) an additional mapping containing the collected configuration data. This
+     * involves scanning the builder method's parameters.
+     */
+    private Map<Class, Object> getParameterDefaultsWithConfigurations()
+    {
+        return getParameterDefaultsWithConfiguration(
+                builderMethod.getParameterTypes(),
+                builderMethod.getGenericParameterTypes());
+    }
+
+    /**
      * Invoked from the proxy to create the actual service implementation.
      */
     public Object createObject()
     {
-        // Defer getting (and possibly instantitating) the module instance until the last possible
+        // Defer getting (and possibly instantitating) the module builder until the last possible
         // moment. If the method is static, there's no need to even get the builder.
 
-        Object moduleInstance = InternalUtils.isStatic(builderMethod)
-                                ? null
-                                : resources.getModuleBuilder();
+        Object moduleBuilder = InternalUtils.isStatic(builderMethod) ? null : resources
+                .getModuleBuilder();
 
         Object result = null;
         Throwable failure = null;
@@ -56,12 +67,12 @@ public class ServiceBuilderMethodInvoker extends AbstractServiceCreator
             Object[] parameters = InternalUtils.calculateParametersForMethod(
                     builderMethod,
                     resources,
-                    createInjectionResources(), resources.getTracker());
+                    getParameterDefaultsWithConfigurations(), resources.getTracker());
 
             if (logger.isDebugEnabled())
                 logger.debug(IOCMessages.invokingMethod(creatorDescription));
 
-            result = builderMethod.invoke(moduleInstance, parameters);
+            result = builderMethod.invoke(moduleBuilder, parameters);
         }
         catch (InvocationTargetException ite)
         {

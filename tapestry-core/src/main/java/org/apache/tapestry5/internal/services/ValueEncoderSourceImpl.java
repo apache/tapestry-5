@@ -15,10 +15,10 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.ValueEncoder;
+import org.apache.tapestry5.internal.events.InvalidationListener;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.ioc.util.StrategyRegistry;
-import org.apache.tapestry5.services.InvalidationListener;
 import org.apache.tapestry5.services.ValueEncoderFactory;
 import org.apache.tapestry5.services.ValueEncoderSource;
 
@@ -35,7 +35,7 @@ public class ValueEncoderSourceImpl implements ValueEncoderSource, InvalidationL
         registry = StrategyRegistry.newInstance(ValueEncoderFactory.class, configuration);
     }
 
-    @SuppressWarnings({"unchecked"})
+    @SuppressWarnings({ "unchecked" })
     public <T> ValueEncoder<T> getValueEncoder(Class<T> type)
     {
         Defense.notNull(type, "type");

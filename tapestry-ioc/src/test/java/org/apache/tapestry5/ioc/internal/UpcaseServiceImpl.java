@@ -14,6 +14,9 @@
 
 package org.apache.tapestry5.ioc.internal;
 
+/**
+ *
+ */
 public class UpcaseServiceImpl implements UpcaseService
 {
 

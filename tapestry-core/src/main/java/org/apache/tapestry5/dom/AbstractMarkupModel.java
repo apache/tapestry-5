@@ -1,4 +1,4 @@
-//  Copyright 2008, 2009 The Apache Software Foundation
+//  Copyright 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,22 +14,8 @@
 
 package org.apache.tapestry5.dom;
 
-import org.apache.tapestry5.ioc.internal.util.Defense;
-
 public abstract class AbstractMarkupModel implements MarkupModel
 {
-    private final boolean useApostropheForAttributes;
-
-    protected AbstractMarkupModel(boolean useApostropheForAttributes)
-    {
-        this.useApostropheForAttributes = useApostropheForAttributes;
-    }
-
-    public char getAttributeQuote()
-    {
-        return useApostropheForAttributes ? '\'' : '"';
-    }
-
     /**
      * Passes all characters but '&lt;', '&gt;' and '&amp;' through unchanged.
      */
@@ -93,8 +79,6 @@ public abstract class AbstractMarkupModel implements MarkupModel
 
     public void encodeQuoted(String content, StringBuilder builder)
     {
-        Defense.notNull(content, "content");
-
         int length = content.length();
 
         for (int i = 0; i < length; i++)
@@ -120,26 +104,8 @@ public abstract class AbstractMarkupModel implements MarkupModel
 
                 case '"':
 
-                    if (!useApostropheForAttributes)
-                    {
-                        builder.append("&quot;");
-                        continue;
-                    }
-
-                    builder.append(ch);
+                    builder.append("&quot;");
                     continue;
-
-                case '\'':
-
-                    if (useApostropheForAttributes)
-                    {
-                        //TAP5-714
-                        builder.append("&#39;");
-                        continue;
-                    }
-
-
-                    // Fall through
 
                 default:
 

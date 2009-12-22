@@ -14,12 +14,12 @@
 
 package org.apache.tapestry5.integration.app1.pages;
 
-import org.apache.tapestry5.annotations.SessionState;
+import org.apache.tapestry5.annotations.ApplicationState;
 import org.apache.tapestry5.integration.app1.data.BirthdayReminder;
 
 public class BeanEditDateDemo
 {
-    @SessionState
+    @ApplicationState
     private BirthdayReminder reminder;
 
     public BirthdayReminder getReminder()

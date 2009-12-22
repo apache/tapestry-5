@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,13 +16,13 @@ package org.apache.tapestry5.ioc.internal;
 
 import org.apache.tapestry5.ioc.*;
 import org.apache.tapestry5.ioc.def.ContributionDef;
-import org.apache.tapestry5.ioc.internal.util.*;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.ClassFactory;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Map;
-import java.util.logging.Logger;
 
 public class ContributionDefImpl implements ContributionDef
 {
@@ -31,9 +31,6 @@ public class ContributionDefImpl implements ContributionDef
     private final Method contributorMethod;
 
     private final ClassFactory classFactory;
-
-    private static final Class[] CONFIGURATION_TYPES = new Class[] {Configuration.class, MappedConfiguration.class,
-            OrderedConfiguration.class};
 
     public ContributionDefImpl(String serviceId, Method contributorMethod, ClassFactory classFactory)
     {
@@ -53,51 +50,39 @@ public class ContributionDefImpl implements ContributionDef
         return serviceId;
     }
 
-    public void contribute(ModuleBuilderSource moduleSource, ServiceResources resources,
+    public void contribute(ModuleBuilderSource moduleBuilderSource, ServiceResources resources,
                            Configuration configuration)
     {
-        invokeMethod(moduleSource, resources, Configuration.class, configuration);
+        invokeMethod(moduleBuilderSource, resources, Configuration.class, configuration);
     }
 
-    public void contribute(ModuleBuilderSource moduleSource, ServiceResources resources,
+    public void contribute(ModuleBuilderSource moduleBuilderSource, ServiceResources resources,
                            OrderedConfiguration configuration)
     {
-        invokeMethod(moduleSource, resources, OrderedConfiguration.class, configuration);
+        invokeMethod(moduleBuilderSource, resources, OrderedConfiguration.class, configuration);
     }
 
-    public void contribute(ModuleBuilderSource moduleSource, ServiceResources resources,
+    public void contribute(ModuleBuilderSource moduleBuilderSource, ServiceResources resources,
                            MappedConfiguration configuration)
     {
-        invokeMethod(moduleSource, resources, MappedConfiguration.class, configuration);
+        invokeMethod(moduleBuilderSource, resources, MappedConfiguration.class, configuration);
     }
 
     private <T> void invokeMethod(ModuleBuilderSource source, ServiceResources resources,
                                   Class<T> parameterType, T parameterValue)
     {
-        Map<Class, Object> resourceMap = CollectionFactory.newMap();
+        Map<Class, Object> parameterDefaults = CollectionFactory.newMap();
 
-        resourceMap.put(parameterType, parameterValue);
-        resourceMap.put(ObjectLocator.class, resources);
-        resourceMap.put(Logger.class, resources.getLogger());
+        // The way it works is: the method will take Configuration, OrderedConfiguration or
+        // MappedConfiguration. So, if the method is for one type and the service is for a different
+        // type, then we'll see an error putting together the parameter.
 
-        InjectionResources injectionResources = new MapInjectionResources(resourceMap);
-
-        // For each of the other configuration types that is not expected, add a guard.
-
-        for (Class t : CONFIGURATION_TYPES)
-        {
-            if (parameterType != t)
-            {
-                injectionResources = new DelegatingInjectionResources(
-                        new WrongConfigurationTypeGuard(resources.getServiceId(), t, parameterType),
-                        injectionResources);
-            }
-        }
-
+        parameterDefaults.put(parameterType, parameterValue);
+        parameterDefaults.put(ObjectLocator.class, resources);
 
         Throwable fail = null;
 
-        Object moduleInstance = InternalUtils.isStatic(contributorMethod) ? null : source
+        Object moduleBuilder = InternalUtils.isStatic(contributorMethod) ? null : source
                 .getModuleBuilder();
 
         try
@@ -105,9 +90,9 @@ public class ContributionDefImpl implements ContributionDef
             Object[] parameters = InternalUtils.calculateParametersForMethod(
                     contributorMethod,
                     resources,
-                    injectionResources, resources.getTracker());
+                    parameterDefaults, resources.getTracker());
 
-            contributorMethod.invoke(moduleInstance, parameters);
+            contributorMethod.invoke(moduleBuilder, parameters);
         }
         catch (InvocationTargetException ex)
         {

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <!-- 
-   Copyright 2007, 2008 The Apache Software Foundation
+   Copyright 2007 The Apache Software Foundation
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -47,30 +47,21 @@
             <item name="Nightly Docs" href="http://tapestry.formos.com/nightly/tapestry5/"/>
             <item name="Issues" href="https://issues.apache.org/jira/browse/TAP5"/>
             <item name="FAQ" href="faq/general.html"/>
-            <item name="Refcard" href="http://refcardz.dzone.com/refcardz/apache-tapestry-50?oid=hom7545"/>
-            <item name="Howard's Blog" href="http://tapestryjava.blogspot.com/"/>
         </menu>
 
         <menu name="Upgrade Notes">
-            <item name="From Tapestry 5.0" href="upgrade.html"/>
+            <item name="From Tapestry 5" href="upgrade.html"/>
             <item name="From Tapestry 4" href="upgrade4.html"/>
-            <item name="Upgrade Notes (5.0)" href="upgrade5.0.html"/>
-            <item name="Release Notes (5.0)" href="release-notes-5.0.html"/>
         </menu>
 
         <menu name="Tapestry 5 Modules">
             <item name="tapestry5-annotations" href="tapestry5-annotations/"/>
-            <item name="tapestry-beanvalidator" href="tapestry-beanvalidator/"/>
             <item name="tapestry-core" href="tapestry-core/"/>
             <item name="tapestry-hibernate" href="tapestry-hibernate/"/>
-            <item name="tapestry-hibernate-core" href="tapestry-hibernate-core/"/>
             <item name="tapestry-ioc" href="tapestry-ioc/"/>
             <item name="tapestry-spring" href="tapestry-spring/"/>
             <item name="tapestry-test" href="tapestry-test/"/>
             <item name="tapestry-upload" href="tapestry-upload/"/>
-            <!-- This will be coming back in 5.2
-            <item name="tapestry-webflow" href="tapestry-webflow/"/>
-            -->
         </menu>
 
         <menu name="Tapestry Tutorials">
@@ -78,8 +69,9 @@
         </menu>
 
         <menu name="User Guide">
-            <item name="Ajax &amp; JavaScript" href="guide/ajax.html"/>
+            <item name="Ajax" href="guide/ajax.html"/>
             <item name="Aliases" href="guide/alias.html"/>
+            <item name="Application State" href="guide/appstate.html"/>
             <item name="Assets" href="guide/assets.html"/>
             <item name="BeanEditForm Guide" href="guide/beaneditform.html"/>
             <item name="Class Reloading" href="guide/reload.html"/>
@@ -102,17 +94,12 @@
             <item name="Logging" href="guide/logging.html"/>
             <item name="Page Lifecycle" href="guide/lifecycle.html"/>
             <item name="Page Navigation" href="guide/pagenav.html"/>
-            <item name="Persistent Page Data" href="guide/persist.html"/>
-            <item name="Persistent State" href="guide/appstate.html"/>
-            <item name="Property Expressions" href="guide/propexp.html"/>
+            <item name="Persistent Data" href="guide/persist.html"/>
             <item name="Project Layout" href="guide/project-layout.html"/>
             <item name="Request Processing" href="guide/request.html"/>
-            <item name="Response Compression" href="guide/compress.html"/>
             <item name="Service Status" href="guide/servicestatus.html"/>
-            <item name="Integration Testing" href="guide/testing.html"/>
             <item name="Type Coercion" href="guide/coercion.html"/>
             <item name="Unit testing pages/components" href="guide/unit-testing-pages.html"/>
-            <item name="URL rewriting" href="guide/url-rewriting.html"/>
         </menu>
 
         <menu name="Tapestry Cookbook">
@@ -121,7 +108,6 @@
             <item name="Exception Reporting" href="cookbook/exceptions.html"/>
             <item name="Supporting Informal Parameters" href="cookbook/informals.html"/>
             <item name="Component Libraries" href="cookbook/lib.html"/>
-            <item name="Switching Cases" href="cookbook/switch.html"/>
         </menu>
 
         <menu name="Tapestry 5 Maven Support">
@@ -131,10 +117,9 @@
 
 
         <menu name="Deployment Notes">
-            <item name="Glassfish" href="glassfish.html"/>
-            <item name="JBoss" href="jboss.html"/>
             <item name="Jetty" href="jetty.html"/>
             <item name="Tomcat" href="tomcat.html"/>
+            <item name="JBoss" href="jboss.html"/>
             <item name="WebSphere" href="websphere.html"/>
         </menu>
 

@@ -18,8 +18,7 @@ import org.apache.tapestry5.dom.Document;
 
 /**
  * Interface used to programatically render a page, forming a {@link org.apache.tapestry5.dom.Document} which can then
- * be manipulated or {@linkplain org.apache.tapestry5.dom.Document#toMarkup(java.io.PrintWriter) streamed to a
- * PrintWriter}.
+ * be manipulated or {@link org.apache.tapestry5.dom.Document#toMarkup(java.io.PrintWriter) streamed to a PrintWriter}.
  */
 public interface PageDocumentGenerator
 {

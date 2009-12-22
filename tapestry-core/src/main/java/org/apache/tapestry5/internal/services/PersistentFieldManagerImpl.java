@@ -15,7 +15,6 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.ComponentResources;
-import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.model.ComponentModel;
@@ -29,6 +28,10 @@ import java.util.Map;
 
 public class PersistentFieldManagerImpl implements PersistentFieldManager
 {
+    public static final String META_KEY = "tapestry.persistence-strategy";
+
+    public static final String DEFAULT_STRATEGY = "session";
+
     private final MetaDataLocator metaDataLocator;
 
     private final Map<String, PersistentFieldStrategy> strategies;
@@ -90,6 +93,6 @@ public class PersistentFieldManagerImpl implements PersistentFieldManager
 
         if (InternalUtils.isNonBlank(strategy)) return strategy;
 
-        return metaDataLocator.findMeta(SymbolConstants.PERSISTENCE_STRATEGY, resources, String.class);
+        return metaDataLocator.findMeta(META_KEY, resources, String.class);
     }
 }

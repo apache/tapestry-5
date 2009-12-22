@@ -1,4 +1,4 @@
-// Copyright 2008, 2009 The Apache Software Foundation
+// Copyright 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ import org.testng.annotations.Test;
 
 public class CompositeRenderCommandTest extends InternalBaseTestCase
 {
-    @DataProvider
+    @DataProvider(name = "nyi")
     public Object[][] nyi_data()
     {
         RenderCommand push = new RenderCommand()
@@ -64,7 +64,7 @@ public class CompositeRenderCommandTest extends InternalBaseTestCase
         };
     }
 
-    @Test(dataProvider = "nyi_data")
+    @Test(dataProvider = "nyi")
     public void render_queue_commands_nyi
             (RenderCommand
                     rc)
@@ -74,7 +74,7 @@ public class CompositeRenderCommandTest extends InternalBaseTestCase
 
         try
         {
-            new CompositeRenderCommand(new RenderCommand[] { rc }).render(writer, queue);
+            new CompositeRenderCommand(new RenderCommand[] {rc}).render(writer, queue);
 
             unreachable();
         }

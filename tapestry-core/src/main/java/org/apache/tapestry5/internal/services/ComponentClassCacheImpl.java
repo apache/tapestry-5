@@ -14,11 +14,10 @@
 
 package org.apache.tapestry5.internal.services;
 
+import org.apache.tapestry5.internal.events.InvalidationListener;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.services.ClassFabUtils;
 import org.apache.tapestry5.ioc.services.ClassFactory;
-import org.apache.tapestry5.services.ComponentLayer;
-import org.apache.tapestry5.services.InvalidationListener;
 
 import java.util.Map;
 
@@ -28,7 +27,7 @@ public class ComponentClassCacheImpl implements ComponentClassCache, Invalidatio
 
     private final ClassFactory classFactory;
 
-    public ComponentClassCacheImpl(@ComponentLayer ClassFactory classFactory)
+    public ComponentClassCacheImpl(ClassFactory classFactory)
     {
         this.classFactory = classFactory;
     }

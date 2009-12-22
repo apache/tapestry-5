@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,8 +16,8 @@ package org.apache.tapestry5.internal.transform;
 
 import org.apache.tapestry5.Binding;
 import org.apache.tapestry5.annotations.Parameter;
-import org.apache.tapestry5.annotations.BindParameter;
-import org.apache.tapestry5.internal.*;
+import org.apache.tapestry5.internal.InternalComponentResources;
+import org.apache.tapestry5.internal.ParameterAccess;
 import org.apache.tapestry5.internal.bindings.LiteralBinding;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.util.BodyBuilder;
@@ -35,7 +35,6 @@ import java.util.List;
 public class ParameterWorker implements ComponentClassTransformWorker
 {
     private static final String BIND_METHOD_NAME = ParameterWorker.class.getName() + ".bind";
-    private static final String EQUAL_METHOD_NAME = ParameterWorker.class.getName() + ".equal";
 
     private final BindingSource bindingSource;
 
@@ -85,11 +84,11 @@ public class ParameterWorker implements ComponentClassTransformWorker
 
         String parameterName = getParameterName(name, annotation.name());
 
-        boolean cache = annotation.cache();
-
-        model.addParameter(parameterName, annotation.required(), annotation.allowNull(), annotation.defaultPrefix(),cache);
+        model.addParameter(parameterName, annotation.required(), annotation.allowNull(), annotation.defaultPrefix());
 
         String type = transformation.getFieldType(name);
+
+        boolean cache = annotation.cache();
 
         String cachedFieldName = transformation.addField(Modifier.PRIVATE, "boolean", name + "_cached");
 
@@ -134,9 +133,6 @@ public class ParameterWorker implements ComponentClassTransformWorker
         // be used to reset the field after rendering.
 
         builder.addln("%s = %s;", defaultFieldName, fieldName);
-
-        addListenerSetup(fieldName, fieldType, parameterName, accessFieldName, builder, transformation);
-
         builder.end();
 
         transformation.extendMethod(TransformConstants.CONTAINING_PAGE_DID_LOAD_SIGNATURE, builder
@@ -236,45 +232,9 @@ public class ParameterWorker implements ComponentClassTransformWorker
                       actualMethodName);
     }
 
-    private void addListenerSetup(
-            String fieldName,
-            String fieldType,
-            String parameterName,
-            String accessFieldName,
-            BodyBuilder builder,
-            ClassTransformation transformation)
-    {
-        transformation.addImplementedInterface(ParameterChangeListener.class);
-        builder.addln("%s.registerParameterChangeListener($0);",accessFieldName);
-
-        TransformMethodSignature signature = new TransformMethodSignature(Modifier.PUBLIC, "void", "parameterChanged",
-                new String[] {ParameterChangedEvent.class.getName()}, null);
-
-        BodyBuilder changedBody = new BodyBuilder();
-        changedBody.begin();
-
-        changedBody.addln("if (%s($1, \"%s\"))",EQUAL_METHOD_NAME,parameterName);
-        changedBody.begin();
-
-        String cast = TransformUtils.getWrapperTypeName(fieldType);
-
-        if (TransformUtils.isPrimitive(fieldType))
-            changedBody.addln("%s = ((%s) $1.getNewValue()).%s();",
-                                fieldName, cast, TransformUtils.getUnwrapperMethodName(fieldType));
-        else
-            changedBody.addln("%s = (%s) $1.getNewValue();",fieldName, cast);
-
-        changedBody.addln("return;");
-        changedBody.end();
-
-        changedBody.end();
-        
-        transformation.extendMethod(signature,changedBody.toString());
-
-    }
-
     private void addWriterMethod(String fieldName, String cachedFieldName, String accessFieldName, boolean cache,
-                                 String parameterName, String fieldType, String resourcesFieldName,
+                                 String parameterName,
+                                 String fieldType, String resourcesFieldName,
                                  ClassTransformation transformation)
     {
         BodyBuilder builder = new BodyBuilder();
@@ -293,10 +253,11 @@ public class ParameterWorker implements ComponentClassTransformWorker
         // Always start by updating the parameter; this will implicitly check for
         // read-only or unbound parameters. $1 is the single parameter
         // to the method.
-        builder.addln("%s.unregisterParameterChangeListener($0);",accessFieldName);
+
         builder.addln("%s.write(($w)$1);", accessFieldName);
-        builder.addln("%s.registerParameterChangeListener($0);",accessFieldName);
+
         builder.addln("%s = $1;", fieldName);
+
         if (cache) builder.addln("%s = %s.isRendering();", cachedFieldName, resourcesFieldName);
 
         builder.end();
@@ -307,17 +268,6 @@ public class ParameterWorker implements ComponentClassTransformWorker
                                                                           new String[] {fieldType}, null);
 
         transformation.addMethod(signature, builder.toString());
-
-        builder.clear();
-
-        //add the catch because if we don't re-register the class as a parameter change listener, it's value
-        //could wind up stale, and write can throw an exception.
-        builder.begin();
-        builder.addln("%s.registerParameterChangeListener($0);",accessFieldName);
-        builder.addln("throw $e;");
-        builder.end();
-
-        transformation.addCatch(signature,Exception.class.getName(),builder.toString());
 
         transformation.replaceWriteAccess(fieldName, methodName);
     }
@@ -397,11 +347,6 @@ public class ParameterWorker implements ComponentClassTransformWorker
             return;
         }
 
-        resources.bindParameter(parameterName, new LiteralBinding(null, "default " + parameterName, value));
-    }
-
-    public static <T> boolean equal(T left, T right)
-    {
-        return TapestryInternalUtils.isEqual(left,right);
+        resources.bindParameter(parameterName, new LiteralBinding("default " + parameterName, value, null));
     }
 }

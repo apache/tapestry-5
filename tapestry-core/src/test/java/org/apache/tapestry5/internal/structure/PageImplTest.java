@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@ public class PageImplTest extends InternalBaseTestCase
 
         replay();
 
-        Page page = new PageImpl(LOGICAL_PAGE_NAME, locale, null);
+        Page page = new PageImpl(LOGICAL_PAGE_NAME, locale, null, null, null);
 
         assertNull(page.getRootElement());
 
@@ -44,7 +44,7 @@ public class PageImplTest extends InternalBaseTestCase
 
         assertSame(page.getLocale(), locale);
         assertSame(page.getRootElement(), root);
-        assertSame(page.getName(), LOGICAL_PAGE_NAME);
+        assertSame(page.getLogicalName(), LOGICAL_PAGE_NAME);
 
         verify();
     }
@@ -60,7 +60,7 @@ public class PageImplTest extends InternalBaseTestCase
 
         replay();
 
-        Page page = new PageImpl(null, locale, null);
+        Page page = new PageImpl(null, locale, null, null, null);
 
         page.addLifecycleListener(listener1);
         page.addLifecycleListener(listener2);
@@ -82,7 +82,7 @@ public class PageImplTest extends InternalBaseTestCase
 
         replay();
 
-        Page page = new PageImpl(null, locale, null);
+        Page page = new PageImpl(null, locale, null, null, null);
 
         page.addLifecycleListener(listener);
 
@@ -116,7 +116,7 @@ public class PageImplTest extends InternalBaseTestCase
 
         replay();
 
-        Page page = new PageImpl(null, locale, null);
+        Page page = new PageImpl(null, locale, null, null, null);
         page.setRootElement(element);
 
         page.addLifecycleListener(listener1);
@@ -135,18 +135,16 @@ public class PageImplTest extends InternalBaseTestCase
     @Test
     public void attach_notification()
     {
+
         PageLifecycleListener listener1 = newPageLifecycle();
         PageLifecycleListener listener2 = newPageLifecycle();
-
-        listener1.restoreStateBeforePageAttach();
-        listener2.restoreStateBeforePageAttach();
 
         listener1.containingPageDidAttach();
         listener2.containingPageDidAttach();
 
         replay();
 
-        Page page = new PageImpl(null, locale, null);
+        Page page = new PageImpl(null, locale, null, null, null);
 
         page.addLifecycleListener(listener1);
         page.addLifecycleListener(listener2);
@@ -172,7 +170,7 @@ public class PageImplTest extends InternalBaseTestCase
 
         replay();
 
-        Page page = new PageImpl(LOGICAL_PAGE_NAME, locale, null);
+        Page page = new PageImpl(LOGICAL_PAGE_NAME, locale, null, null, null);
 
         page.addLifecycleListener(listener1);
         page.addLifecycleListener(listener2);
@@ -189,7 +187,7 @@ public class PageImplTest extends InternalBaseTestCase
 
         replay();
 
-        Page page = new PageImpl(LOGICAL_PAGE_NAME, locale, null);
+        Page page = new PageImpl(LOGICAL_PAGE_NAME, locale, null, null, null);
 
         page.setRootElement(root);
 

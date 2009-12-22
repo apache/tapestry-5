@@ -14,7 +14,6 @@
 
 package org.apache.tapestry5.integration.app1.pages;
 
-import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.integration.app1.data.Department;
 import org.apache.tapestry5.internal.TapestryInternalUtils;
@@ -33,14 +32,6 @@ public class RadioDemo
 
     @Inject
     private Messages messages;
-
-    @Inject
-    private ComponentResources resources;
-
-    void onActionFromReset()
-    {
-        resources.discardPersistentFieldChanges();
-    }
 
     public Department[] getDepartments()
     {

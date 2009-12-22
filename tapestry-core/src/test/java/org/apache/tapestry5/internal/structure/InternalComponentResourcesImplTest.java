@@ -89,7 +89,7 @@ public class InternalComponentResourcesImplTest extends InternalBaseTestCase
         Binding binding = mockBinding();
         Object rawValue = new Object();
         String convertedValue = "*converted*";
-        ComponentPageElementResources componentPageElementResources = mockComponentPageElementResources();
+        PageResources pageResources = mockPageResources();
 
         train_getModel(ins, model);
 
@@ -97,14 +97,13 @@ public class InternalComponentResourcesImplTest extends InternalBaseTestCase
 
         train_get(binding, rawValue);
 
-        train_coerce(componentPageElementResources, rawValue, String.class, convertedValue);
+        train_coerce(pageResources, rawValue, String.class, convertedValue);
 
         writer.attributes("fred", convertedValue);
 
         replay();
 
-        InternalComponentResources resources = new InternalComponentResourcesImpl(null, element, null,
-                                                                                  componentPageElementResources,
+        InternalComponentResources resources = new InternalComponentResourcesImpl(null, element, null, pageResources,
                                                                                   null, null, ins);
 
         resources.bindParameter("fred", binding);

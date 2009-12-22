@@ -1,4 +1,4 @@
-// Copyright 2008, 2009 The Apache Software Foundation
+// Copyright 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import org.apache.tapestry5.corelib.internal.ComponentActionSink;
 import org.apache.tapestry5.corelib.internal.FormSupportAdapter;
 import org.apache.tapestry5.corelib.internal.HiddenFieldPositioner;
 import org.apache.tapestry5.dom.Element;
+import org.apache.tapestry5.internal.services.ClientBehaviorSupport;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.*;
 import org.slf4j.Logger;
@@ -33,6 +34,7 @@ import org.slf4j.Logger;
  * org.apache.tapestry5.corelib.components.Form#FORM_DATA form data} for the fragment if it is invisible when the form
  * is submitted; alternately, client-side logic can simply remove the form fragment element (including its visible and
  * hidden fields) to prevent server-side processing.
+ * <p/>
  * <p/>
  * The client-side element has a new property, formFragment, added to it.  The formFragment object has new methods to
  * control the client-side behavior of the fragment: <dl> <dt>hide()</dt> <dd>Hides the element, using the configured
@@ -75,14 +77,6 @@ public class FormFragment implements ClientElement
     @Parameter(defaultPrefix = BindingConstants.LITERAL)
     private String element;
 
-    /**
-     * If bound, then the id attribute of the rendered element will be this exact value. If not bound, then a unique id
-     * is generated for the element.
-     */
-    @Parameter(name = "id", defaultPrefix = BindingConstants.LITERAL)
-    private String idParameter;
-
-
     @Inject
     private Environment environment;
 
@@ -113,9 +107,6 @@ public class FormFragment implements ClientElement
 
     private HiddenFieldPositioner hiddenFieldPositioner;
 
-    @Inject
-    private ClientDataEncoder clientDataEncoder;
-
     String defaultElement()
     {
         return resources.getElementName("div");
@@ -129,7 +120,9 @@ public class FormFragment implements ClientElement
     {
         FormSupport formSupport = environment.peekRequired(FormSupport.class);
 
-        clientId = resources.isBound("id") ? idParameter : renderSupport.allocateClientId(resources);
+        String id = resources.getId();
+
+        clientId = renderSupport.allocateClientId(id);
 
         hiddenFieldPositioner = new HiddenFieldPositioner(writer, rules);
 
@@ -142,7 +135,7 @@ public class FormFragment implements ClientElement
 
         clientBehaviorSupport.addFormFragment(clientId, show, hide);
 
-        componentActions = new ComponentActionSink(logger, clientDataEncoder);
+        componentActions = new ComponentActionSink(logger);
 
         // Here's the magic of environmentals ... we can create a wrapper around
         // the normal FormSupport environmental that intercepts some of the behavior.
@@ -186,9 +179,9 @@ public class FormFragment implements ClientElement
 
                 "name", Form.FORM_DATA,
 
-                "id", clientId + "-hidden",
+                "id", clientId + ":hidden",
 
-                "value", componentActions.getClientData()
+                "value", componentActions.toBase64()
         );
 
         writer.end(); // div

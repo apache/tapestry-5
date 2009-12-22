@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -25,7 +25,6 @@ import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.Session;
 
 import java.util.List;
-import java.util.regex.Pattern;
 
 /**
  * Responsible for reporting runtime exceptions. This page is quite verbose and is usually overridden in a production
@@ -37,10 +36,6 @@ import java.util.regex.Pattern;
 public class ExceptionReport implements ExceptionReporter
 {
     private static final String PATH_SEPARATOR_PROPERTY = "path.separator";
-
-    // Match anything ending in .(something?)path.
-
-    private static final Pattern PATH_RECOGNIZER = Pattern.compile("\\..*path$");
 
     @Property
     private String attributeName;
@@ -58,11 +53,6 @@ public class ExceptionReport implements ExceptionReporter
     @Symbol(SymbolConstants.TAPESTRY_VERSION)
     @Property(write = false)
     private String tapestryVersion;
-
-    @Inject
-    @Symbol(SymbolConstants.APPLICATION_VERSION)
-    @Property(write = false)
-    private String applicationVersion;
 
     @Property(write = false)
     private Throwable rootException;
@@ -105,9 +95,11 @@ public class ExceptionReport implements ExceptionReporter
         return System.getProperty(propertyName);
     }
 
-    public boolean isComplexProperty()
+    public boolean isSimpleProperty()
     {
-        return PATH_RECOGNIZER.matcher(propertyName).find() && getPropertyValue().contains(pathSeparator);
+        if (propertyName.equals(PATH_SEPARATOR_PROPERTY)) return true;
+
+        return !getPropertyValue().contains(pathSeparator);
     }
 
     public String[] getComplexPropertyValue()

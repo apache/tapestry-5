@@ -1,4 +1,4 @@
-// Copyright 2006, 2009 The Apache Software Foundation
+// Copyright 2006 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -25,6 +25,8 @@ import org.apache.tapestry5.annotations.OnEvent;
  * <p/>
  * Most of the methods are related to render phases; see the corresponding annotations and component rendering
  * documentation to see how they relate to each other.
+ * <p/>
+ * This interface is likely to change without notice.
  */
 public interface Component extends ComponentResourcesAware, PageLifecycleListener
 {

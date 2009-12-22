@@ -1,4 +1,4 @@
-//  Copyright 2008, 2009 The Apache Software Foundation
+//  Copyright 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,6 +14,8 @@
 
 package org.apache.tapestry5.internal.services;
 
+import org.apache.tapestry5.internal.structure.Page;
+
 /**
  * Fires the {@link org.apache.tapestry5.EventConstants#PASSIVATE} event on a page, and collects the result, converting
  * it to an array of objects.
@@ -24,8 +26,8 @@ public interface PageActivationContextCollector
      * Fires the passivate event and collects the response, which is coerced to an object array. A page that does not
      * have an event handler for the passivate event will return an empty array.
      *
-     * @param pageName to collect context from ; this should be the canonical page name
+     * @param page to collect context from
      * @return the activation context, or an empty array of the page does not provide a context
      */
-    Object[] collectPageActivationContext(String pageName);
+    Object[] collectPageActivationContext(Page page);
 }

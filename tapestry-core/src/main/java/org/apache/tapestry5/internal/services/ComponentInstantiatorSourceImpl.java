@@ -16,6 +16,7 @@ package org.apache.tapestry5.internal.services;
 
 import javassist.*;
 import org.apache.tapestry5.internal.event.InvalidationEventHubImpl;
+import org.apache.tapestry5.internal.events.UpdateListener;
 import org.apache.tapestry5.internal.util.URLChangeTracker;
 import org.apache.tapestry5.ioc.internal.services.ClassFactoryClassPool;
 import org.apache.tapestry5.ioc.internal.services.ClassFactoryImpl;
@@ -24,9 +25,6 @@ import org.apache.tapestry5.ioc.internal.services.CtClassSourceImpl;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.ioc.services.ClassFactory;
-import org.apache.tapestry5.ioc.services.ClasspathURLConverter;
-import org.apache.tapestry5.services.InvalidationEventHub;
-import org.apache.tapestry5.services.UpdateListener;
 import org.slf4j.Logger;
 
 import java.net.URL;
@@ -47,7 +45,7 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
 
     private final Set<String> controlledPackageNames = CollectionFactory.newSet();
 
-    private final URLChangeTracker changeTracker;
+    private final URLChangeTracker changeTracker = new URLChangeTracker();
 
     private final ClassLoader parent;
 
@@ -101,14 +99,12 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
     }
 
     public ComponentInstantiatorSourceImpl(Logger logger, ClassLoader parent, ComponentClassTransformer transformer,
-                                           InternalRequestGlobals internalRequestGlobals,
-                                           ClasspathURLConverter classpathURLConverter)
+                                           InternalRequestGlobals internalRequestGlobals)
     {
         this.parent = parent;
         this.transformer = transformer;
         this.logger = logger;
         this.internalRequestGlobals = internalRequestGlobals;
-        this.changeTracker = new URLChangeTracker(classpathURLConverter);
 
         initializeService();
     }
@@ -263,7 +259,7 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
     {
     }
 
-    public synchronized Instantiator getInstantiator(String className)
+    public synchronized Instantiator findInstantiator(String className)
     {
         Instantiator result = classNameToInstantiator.get(className);
 
@@ -354,10 +350,5 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
     public CtClassSource getClassSource()
     {
         return classSource;
-    }
-
-    public InvalidationEventHub getInvalidationEventHub()
-    {
-        return this;
     }
 }

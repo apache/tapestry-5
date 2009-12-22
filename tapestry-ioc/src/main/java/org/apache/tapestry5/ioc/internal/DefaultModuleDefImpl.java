@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,9 +18,12 @@ import org.apache.tapestry5.ioc.*;
 import org.apache.tapestry5.ioc.annotations.*;
 import org.apache.tapestry5.ioc.def.ContributionDef;
 import org.apache.tapestry5.ioc.def.DecoratorDef;
-import org.apache.tapestry5.ioc.def.ModuleDef2;
+import org.apache.tapestry5.ioc.def.ModuleDef;
 import org.apache.tapestry5.ioc.def.ServiceDef;
+import static org.apache.tapestry5.ioc.internal.ConfigurationType.*;
+import static org.apache.tapestry5.ioc.internal.IOCMessages.*;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.*;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.ClassFactory;
 import org.slf4j.Logger;
@@ -31,10 +34,10 @@ import java.lang.reflect.Modifier;
 import java.util.*;
 
 /**
- * Starting from the Class for a module, identifies all the services (service builder methods), decorators (service
- * decorator methods) and (not yet implemented) contributions (service contributor methods).
+ * Starting from the Class for a module builder, identifies all the services (service builder methods), decorators
+ * (service decorator methods) and (not yet implemented) contributions (service contributor methods).
  */
-public class DefaultModuleDefImpl implements ModuleDef2, ServiceDefAccumulator
+public class DefaultModuleDefImpl implements ModuleDef, ServiceDefAccumulator
 {
     /**
      * The prefix used to identify service builder methods.
@@ -51,11 +54,9 @@ public class DefaultModuleDefImpl implements ModuleDef2, ServiceDefAccumulator
      */
     private static final String CONTRIBUTE_METHOD_NAME_PREFIX = "contribute";
 
-    private static final String ADVISE_METHOD_NAME_PREFIX = "advise";
+    private final static Map<Class, ConfigurationType> PARAMETER_TYPE_TO_CONFIGURATION_TYPE = newMap();
 
-    private final static Map<Class, ConfigurationType> PARAMETER_TYPE_TO_CONFIGURATION_TYPE = CollectionFactory.newMap();
-
-    private final Class moduleClass;
+    private final Class builderClass;
 
     private final Logger logger;
 
@@ -64,41 +65,37 @@ public class DefaultModuleDefImpl implements ModuleDef2, ServiceDefAccumulator
     /**
      * Keyed on service id.
      */
-    private final Map<String, ServiceDef> serviceDefs = CollectionFactory.newCaseInsensitiveMap();
+    private final Map<String, ServiceDef> serviceDefs = newCaseInsensitiveMap();
 
     /**
      * Keyed on decorator id.
      */
-    private final Map<String, DecoratorDef> decoratorDefs = CollectionFactory.newCaseInsensitiveMap();
+    private final Map<String, DecoratorDef> decoratorDefs = newCaseInsensitiveMap();
 
-    private final Map<String, AdvisorDef> advisorDefs = CollectionFactory.newCaseInsensitiveMap();
+    private final Set<ContributionDef> contributionDefs = newSet();
 
-    private final Set<ContributionDef> contributionDefs = CollectionFactory.newSet();
-
-    private final Set<Class> defaultMarkers = CollectionFactory.newSet();
-
-    private final static Set<Method> OBJECT_METHODS = CollectionFactory.newSet(Object.class.getMethods());
+    private final Set<Class> defaultMarkers = newSet();
 
     static
     {
-        PARAMETER_TYPE_TO_CONFIGURATION_TYPE.put(Configuration.class, ConfigurationType.UNORDERED);
-        PARAMETER_TYPE_TO_CONFIGURATION_TYPE.put(OrderedConfiguration.class, ConfigurationType.ORDERED);
-        PARAMETER_TYPE_TO_CONFIGURATION_TYPE.put(MappedConfiguration.class, ConfigurationType.MAPPED);
+        PARAMETER_TYPE_TO_CONFIGURATION_TYPE.put(Configuration.class, UNORDERED);
+        PARAMETER_TYPE_TO_CONFIGURATION_TYPE.put(OrderedConfiguration.class, ORDERED);
+        PARAMETER_TYPE_TO_CONFIGURATION_TYPE.put(MappedConfiguration.class, MAPPED);
     }
 
     /**
-     * @param moduleClass  the class that is responsible for building services, etc.
+     * @param builderClass the class that is responsible for building services, etc.
      * @param logger       based on the class name of the module
      * @param classFactory factory used to create new classes at runtime or locate method line numbers for error
      *                     reporting
      */
-    public DefaultModuleDefImpl(Class<?> moduleClass, Logger logger, ClassFactory classFactory)
+    public DefaultModuleDefImpl(Class<?> builderClass, Logger logger, ClassFactory classFactory)
     {
-        this.moduleClass = moduleClass;
+        this.builderClass = builderClass;
         this.logger = logger;
         this.classFactory = classFactory;
 
-        Marker annotation = moduleClass.getAnnotation(Marker.class);
+        Marker annotation = builderClass.getAnnotation(Marker.class);
 
         if (annotation != null)
         {
@@ -106,38 +103,23 @@ public class DefaultModuleDefImpl implements ModuleDef2, ServiceDefAccumulator
             defaultMarkers.addAll(Arrays.asList(annotation.value()));
         }
 
-        // Want to verify that every public method is meaningful to Tapestry IoC.  Remaining methods might
-        // have typos, i.e., "createFoo" that should be "buildFoo".
-
-        Set<Method> methods = CollectionFactory.newSet(moduleClass.getMethods());
-
-        methods.removeAll(OBJECT_METHODS);
-
-        boolean modulePreventsServiceDecoration = moduleClass.getAnnotation(PreventServiceDecoration.class) != null;
-
-        grind(methods, modulePreventsServiceDecoration);
-        bind(methods, modulePreventsServiceDecoration);
-
-        if (methods.isEmpty()) return;
-
-        throw new RuntimeException(String.format("Module class %s contains unrecognized public methods: %s.",
-                                                 moduleClass.getName(),
-                                                 InternalUtils.joinSorted(methods)));
+        grind();
+        bind();
     }
 
     /**
-     * Identifies the module class and a list of service ids within the module.
+     * Identifies the module builder class and a list of service ids within the module.
      */
     @Override
     public String toString()
     {
-        return String.format("ModuleDef[%s %s]", moduleClass.getName(), InternalUtils
+        return String.format("ModuleDef[%s %s]", builderClass.getName(), InternalUtils
                 .joinSorted(serviceDefs.keySet()));
     }
 
     public Class getBuilderClass()
     {
-        return moduleClass;
+        return builderClass;
     }
 
     public Set<String> getServiceIds()
@@ -150,9 +132,9 @@ public class DefaultModuleDefImpl implements ModuleDef2, ServiceDefAccumulator
         return serviceDefs.get(serviceId);
     }
 
-    private void grind(Set<Method> remainingMethods, boolean modulePreventsServiceDecoration)
+    private void grind()
     {
-        Method[] methods = moduleClass.getMethods();
+        Method[] methods = builderClass.getMethods();
 
         Comparator<Method> c = new Comparator<Method>()
         {
@@ -176,29 +158,19 @@ public class DefaultModuleDefImpl implements ModuleDef2, ServiceDefAccumulator
 
             if (name.startsWith(BUILD_METHOD_NAME_PREFIX))
             {
-                addServiceDef(m, modulePreventsServiceDecoration);
-                remainingMethods.remove(m);
+                addServiceDef(m);
                 continue;
             }
 
             if (name.startsWith(DECORATE_METHOD_NAME_PREFIX))
             {
                 addDecoratorDef(m);
-                remainingMethods.remove(m);
                 continue;
             }
 
             if (name.startsWith(CONTRIBUTE_METHOD_NAME_PREFIX))
             {
                 addContributionDef(m);
-                remainingMethods.remove(m);
-                continue;
-            }
-
-            if (name.startsWith(ADVISE_METHOD_NAME_PREFIX))
-            {
-                addAdvisorDef(m);
-                remainingMethods.remove(m);
                 continue;
             }
         }
@@ -221,14 +193,20 @@ public class DefaultModuleDefImpl implements ModuleDef2, ServiceDefAccumulator
             if (thisParameter != null)
             {
                 if (type != null)
-                    throw new RuntimeException(IOCMessages.tooManyContributionParameters(method));
+                {
+                    logger.warn(IOCMessages.tooManyContributionParameters(method));
+                    return;
+                }
 
                 type = thisParameter;
             }
         }
 
         if (type == null)
-            throw new RuntimeException(IOCMessages.noContributionParameter(method));
+        {
+            logger.warn(IOCMessages.noContributionParameter(method));
+            return;
+        }
 
         ContributionDef def = new ContributionDefImpl(serviceId, method, classFactory);
 
@@ -246,75 +224,23 @@ public class DefaultModuleDefImpl implements ModuleDef2, ServiceDefAccumulator
         Class returnType = method.getReturnType();
 
         if (returnType.isPrimitive() || returnType.isArray())
-            throw new RuntimeException(IOCMessages.decoratorMethodWrongReturnType(method));
-
-        DecoratorDef def = new DecoratorDefImpl(method, extractPatterns(decoratorId, method),
-                                                extractConstraints(method), classFactory, decoratorId);
-
-        decoratorDefs.put(decoratorId, def);
-    }
-
-    private String[] extractPatterns(String id, Method method)
-    {
-        Match match = method.getAnnotation(Match.class);
-
-        if (match == null)
-            return new String[] { id };
-
-        return match.value();
-    }
-
-    private String[] extractConstraints(Method method)
-    {
-        Order order = method.getAnnotation(Order.class);
-
-        if (order == null) return null;
-
-        return order.value();
-    }
-
-    private void addAdvisorDef(Method method)
-    {
-        // TODO: methods just named "decorate"
-
-        String advisorId = stripMethodPrefix(method, ADVISE_METHOD_NAME_PREFIX);
-
-        // TODO: Check for duplicates
-
-        Class returnType = method.getReturnType();
-
-        if (!returnType.equals(void.class))
-            throw new RuntimeException(String.format("Advise method %s does not return void.",
-                                                     toString(method)));
-
-        boolean found = false;
-
-        for (Class pt : method.getParameterTypes())
         {
-            if (pt.equals(MethodAdviceReceiver.class))
-            {
-                found = true;
-
-                break;
-            }
+            logger.warn(decoratorMethodWrongReturnType(method));
+            return;
         }
 
-        if (!found)
-            throw new RuntimeException(String.format("Advise method %s must take a parameter of type %s.",
-                                                     toString(method),
-                                                     MethodAdviceReceiver.class.getName()));
+        Order orderAnnotation = method.getAnnotation(Order.class);
+        Match match = method.getAnnotation(Match.class);
 
+        String[] constraints = orderAnnotation != null ? orderAnnotation.value() : null;
 
-        AdvisorDef def = new AdvisorDefImpl(method, extractPatterns(advisorId, method), extractConstraints(method),
-                                            classFactory, advisorId);
+        // TODO: Validate constraints here?
 
-        advisorDefs.put(advisorId, def);
+        String[] patterns = match == null ? new String[] {decoratorId} : match.value();
 
-    }
+        DecoratorDef def = new DecoratorDefImpl(decoratorId, method, patterns, constraints, classFactory);
 
-    private String toString(Method method)
-    {
-        return InternalUtils.asString(method, classFactory);
+        decoratorDefs.put(decoratorId, def);
     }
 
     private boolean methodContainsObjectParameter(Method method)
@@ -338,20 +264,9 @@ public class DefaultModuleDefImpl implements ModuleDef2, ServiceDefAccumulator
     /**
      * Invoked for public methods that have the proper prefix.
      */
-    private void addServiceDef(final Method method, boolean modulePreventsServiceDecoration)
+    private void addServiceDef(final Method method)
     {
-        ServiceId serviceIdAnnotation = method.getAnnotation(ServiceId.class);
-
-        String serviceId;
-
-        if (serviceIdAnnotation != null)
-        {
-            serviceId = serviceIdAnnotation.value();
-        }
-        else
-        {
-            serviceId = stripMethodPrefix(method, BUILD_METHOD_NAME_PREFIX);
-        }
+        String serviceId = stripMethodPrefix(method, BUILD_METHOD_NAME_PREFIX);
 
         // If the method name was just "build()", then work from the return type.
 
@@ -365,13 +280,13 @@ public class DefaultModuleDefImpl implements ModuleDef2, ServiceDefAccumulator
         Class returnType = method.getReturnType();
 
         if (returnType.isPrimitive() || returnType.isArray())
-            throw new RuntimeException(IOCMessages.buildMethodWrongReturnType(method));
+        {
+            logger.warn(buildMethodWrongReturnType(method));
+            return;
+        }
 
         String scope = extractServiceScope(method);
         boolean eagerLoad = method.isAnnotationPresent(EagerLoad.class);
-
-        boolean preventDecoration = modulePreventsServiceDecoration ||
-                method.getAnnotation(PreventServiceDecoration.class) != null;
 
         ObjectCreatorSource source = new ObjectCreatorSource()
         {
@@ -382,15 +297,14 @@ public class DefaultModuleDefImpl implements ModuleDef2, ServiceDefAccumulator
 
             public String getDescription()
             {
-                return DefaultModuleDefImpl.this.toString(method);
+                return InternalUtils.asString(method, classFactory);
             }
         };
 
-        Set<Class> markers = CollectionFactory.newSet(defaultMarkers);
+        Set<Class> markers = newSet(defaultMarkers);
         markers.addAll(extractMarkers(method));
 
-        ServiceDefImpl serviceDef = new ServiceDefImpl(returnType, serviceId, markers, scope, eagerLoad,
-                                                       preventDecoration, source);
+        ServiceDefImpl serviceDef = new ServiceDefImpl(returnType, serviceId, markers, scope, eagerLoad, source);
 
         addServiceDef(serviceDef);
     }
@@ -411,8 +325,7 @@ public class DefaultModuleDefImpl implements ModuleDef2, ServiceDefAccumulator
         ServiceDef existing = serviceDefs.get(serviceId);
 
         if (existing != null)
-            throw new RuntimeException(
-                    IOCMessages.buildMethodConflict(serviceId, serviceDef.toString(), existing.toString()));
+            throw new RuntimeException(buildMethodConflict(serviceId, serviceDef.toString(), existing.toString()));
 
         serviceDefs.put(serviceId, serviceDef);
     }
@@ -426,7 +339,7 @@ public class DefaultModuleDefImpl implements ModuleDef2, ServiceDefAccumulator
 
     public Set<DecoratorDef> getDecoratorDefs()
     {
-        return toSet(decoratorDefs);
+        return newSet(decoratorDefs.values());
     }
 
     public Set<ContributionDef> getContributionDefs()
@@ -436,38 +349,33 @@ public class DefaultModuleDefImpl implements ModuleDef2, ServiceDefAccumulator
 
     public String getLoggerName()
     {
-        return moduleClass.getName();
+        return builderClass.getName();
     }
 
     /**
      * See if the build class defined a bind method and invoke it.
-     *
-     * @param remainingMethods set of methods as yet unaccounted for
-     * @param modulePreventsServiceDecoration
-     *                         true if {@link org.apache.tapestry5.ioc.annotations.PreventServiceDecoration} on module
-     *                         class
      */
-    private void bind(Set<Method> remainingMethods, boolean modulePreventsServiceDecoration)
+    private void bind()
     {
         Throwable failure;
         Method bindMethod = null;
 
         try
         {
-            bindMethod = moduleClass.getMethod("bind", ServiceBinder.class);
+            bindMethod = builderClass.getMethod("bind", ServiceBinder.class);
 
             if (!Modifier.isStatic(bindMethod.getModifiers()))
-                throw new RuntimeException(
-                        IOCMessages.bindMethodMustBeStatic(toString(bindMethod)));
+            {
+                logger.error(IOCMessages.bindMethodMustBeStatic(InternalUtils.asString(bindMethod, classFactory)));
 
-            ServiceBinderImpl binder = new ServiceBinderImpl(this, bindMethod, classFactory, defaultMarkers,
-                                                             modulePreventsServiceDecoration);
+                return;
+            }
+
+            ServiceBinderImpl binder = new ServiceBinderImpl(this, bindMethod, classFactory, defaultMarkers);
 
             bindMethod.invoke(null, binder);
 
             binder.finish();
-
-            remainingMethods.remove(bindMethod);
 
             return;
         }
@@ -490,18 +398,8 @@ public class DefaultModuleDefImpl implements ModuleDef2, ServiceDefAccumulator
             failure = ex.getTargetException();
         }
 
-        String methodId = toString(bindMethod);
+        String methodId = InternalUtils.asString(bindMethod, classFactory);
 
         throw new RuntimeException(IOCMessages.errorInBindMethod(methodId, failure), failure);
-    }
-
-    public Set<AdvisorDef> getAdvisorDefs()
-    {
-        return toSet(advisorDefs);
-    }
-
-    private <K, V> Set<V> toSet(Map<K, V> map)
-    {
-        return CollectionFactory.newSet(map.values());
     }
 }

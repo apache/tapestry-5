@@ -1,4 +1,4 @@
-// Copyright 2006, 2009 The Apache Software Foundation
+// Copyright 2006 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,8 +14,6 @@
 
 package org.apache.tapestry5.model;
 
-import java.util.List;
-
 /**
  * A mutable version of {@link org.apache.tapestry5.model.EmbeddedComponentModel} that allows the parameters to be
  * incrementally stored.
@@ -25,16 +23,7 @@ public interface MutableEmbeddedComponentModel extends EmbeddedComponentModel
     void addParameter(String name, String value);
 
     /**
-     * Adds a mixin to the component in terms of its fully qualified class name, with optional ordering constraints.
+     * Adds a mixin to the component in terms of its fully qualified class name.
      */
-    void addMixin(String mixinClassName, String... orderingConstraints);
-
-    /**
-     * Sets the list of published parameters for this embedded component.
-     *
-     * @param parameterNames list of names
-     * @see org.apache.tapestry5.annotations.Component#publishParameters()
-     * @since 5.1.0.0
-     */
-    void setPublishedParameters(List<String> parameterNames);
+    void addMixin(String mixinClassName);
 }

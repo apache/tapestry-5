@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,14 +14,8 @@
 
 package org.apache.tapestry5.dom;
 
-import org.apache.tapestry5.MarkupWriter;
-import org.apache.tapestry5.internal.services.MarkupWriterImpl;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.testng.annotations.Test;
-
-import java.util.Collection;
-import java.util.List;
 
 /**
  * Tests for a number of DOM node classes, including {@link org.apache.tapestry5.dom.Element} and {@link
@@ -61,28 +55,9 @@ public class DOMTest extends InternalBaseTestCase
 
         Element nested = root.elementNS("fredns", "nested");
 
-        nested.elementNS("barneyns", "deepest");
+        Element deepest = nested.elementNS("barneyns", "deepest");
 
         assertEquals(d.toString(), readFile("namespaced_elements.txt"));
-    }
-
-    @Test
-    public void quote_using_apostrophes() throws Exception
-    {
-        Document d = new Document(new XMLMarkupModel(true));
-
-        Element root = d.newRootElement("fredns", "root");
-
-        root.defineNamespace("fredns", "f");
-        root.defineNamespace("barneyns", "b");
-
-        Element nested = root.elementNS("fredns", "nested");
-
-        nested.attribute("attribute", "value");
-
-        nested.elementNS("barneyns", "deepest");
-
-        assertEquals(d.toString(), readFile("quote_using_apostrophes.txt"));
     }
 
     @Test
@@ -440,18 +415,7 @@ public class DOMTest extends InternalBaseTestCase
         root.attribute("alpha-only", "abcdef");
         root.attribute("entities", "\"<>&");
 
-        assertEquals(root.toString(), "<prime entities=\"&quot;&lt;&gt;&amp;\" alpha-only=\"abcdef\"/>");
-    }
-
-    @Test
-    public void apostrophes_are_escaped() {
-        Document d = new Document(new XMLMarkupModel(true));
-
-        Element root = d.newRootElement("prime");
-
-        root.attribute("apostrophie", "some'thing");
-
-        assertEquals(root.toString(), "<prime apostrophie='some&#39;thing'/>");
+        assertEquals(root.toString(), "<prime alpha-only=\"abcdef\" entities=\"&quot;&lt;&gt;&amp;\"/>");
     }
 
     @Test
@@ -685,7 +649,7 @@ public class DOMTest extends InternalBaseTestCase
     }
 
     /**
-     * TAP5-385
+     * TAP5-401
      */
     @Test
     public void empty_html_elements()
@@ -699,212 +663,5 @@ public class DOMTest extends InternalBaseTestCase
         root.element("img");
 
         assertEquals(d.toString(), "<doc><hr/><br/><img/></doc>");
-    }
-
-    /**
-     * TAP5-402
-     */
-    @Test
-    public void is_empty()
-    {
-        Document d = new Document();
-
-        Element root = d.newRootElement("root");
-
-        assertTrue(root.isEmpty());
-
-        root.text("");
-
-        assertTrue(root.isEmpty());
-
-        root.text("  ");
-
-        assertTrue(root.isEmpty());
-
-        Element child = root.element("child");
-
-        assertFalse(root.isEmpty());
-
-        assertTrue(child.isEmpty());
-
-        child.text("not empty");
-
-        assertFalse(child.isEmpty());
-    }
-
-    /**
-     * TAP5-457
-     */
-    @Test
-    public void defaults_for_xml_defined_namespaces() throws Exception
-    {
-        Document d = new Document();
-
-        String XHTML_NAMESPACE = "http://www.w3.org/1999/xhtml";
-
-        Element root = d.newRootElement(XHTML_NAMESPACE, "html");
-
-        root.attribute(Document.XML_NAMESPACE_URI, "lang", "de");
-
-        // Before TAP5-457, it would be ns0: not xml:
-
-        assertEquals(d.toString(), readFile("defaults_for_xml_defined_namespaces.txt"));
-    }
-
-    @Test
-    public void visit_order()
-    {
-        Document d = new Document();
-
-        Element root = d.newRootElement("parent");
-
-        Element child1 = root.element("child1");
-        Element child2 = root.element("child2");
-
-        child1.element("child1a");
-        child1.text("Does not affect traversal");
-        child1.element("child1b");
-
-        child2.element("child2a");
-        child2.element("child2b");
-        child2.element("child2c");
-
-        final List<String> elementNames = CollectionFactory.newList();
-
-        d.visit(new Visitor()
-        {
-            public void visit(Element element)
-            {
-                elementNames.add(element.getName());
-            }
-        });
-
-        assertListsEquals(elementNames, "parent", "child1", "child1a", "child1b", "child2", "child2a", "child2b",
-                          "child2c");
-    }
-
-    /**
-     * TAP5-559
-     */
-    @Test
-    public void later_updates_to_same_attribute_are_ignored()
-    {
-        Document d = new Document();
-
-        Element root = d.newRootElement("parent");
-
-        root.attribute("baggins", "bilbo");
-
-        // This will be ignored.
-
-        root.attribute("baggins", "frodo");
-
-
-        assertEquals(d.toString(), "<parent baggins=\"bilbo\"></parent>");
-    }
-
-    @Test
-    public void force_attributes_changes_attribute_value()
-    {
-        Document d = new Document();
-
-
-        Element root = d.newRootElement("parent");
-
-        root.attribute("baggins", "bilbo");
-
-        // This will be ignored.
-
-        root.forceAttributes("baggins", "frodo");
-
-
-        assertEquals(d.toString(), "<parent baggins=\"frodo\"></parent>");
-    }
-
-    @Test
-    public void force_attributes_to_null_removes_attribute()
-    {
-        Document d = new Document();
-
-
-        Element root = d.newRootElement("parent");
-
-        root.attributes("baggins", "frodo",
-                        "friend", "sam");
-
-        root.forceAttributes("friend", null);
-
-        assertEquals(root.toString(), "<parent baggins=\"frodo\"></parent>");
-
-        root.forceAttributes("baggins", null,
-                             "enemy", "gollum");
-
-        assertEquals(root.toString(), "<parent enemy=\"gollum\"></parent>");
-    }
-
-    @Test
-    public void get_attributes()
-    {
-        Document d = new Document();
-
-        Element root = d.newRootElement("parent");
-
-        assertTrue(root.getAttributes().isEmpty());
-
-        root.attribute("fred", "flintstone");
-
-        Collection<Attribute> attributes = root.getAttributes();
-
-        assertEquals(attributes.size(), 1);
-
-        Attribute attribute = attributes.iterator().next();
-
-        assertEquals(attribute.getName(), "fred");
-        assertEquals(attribute.getValue(), "flintstone");
-    }
-
-    /**
-     * TAP5-636
-     */
-    @Test
-    public void force_null_for_first_attribute_is_noop()
-    {
-        Document d = new Document();
-
-        Element root = d.newRootElement("root");
-
-        root.forceAttributes("null", null);
-
-        assertEquals(root.toString(), "<root></root>");
-    }
-
-    @Test
-    public void remove_while_rendering()
-    {
-        MarkupWriter writer = new MarkupWriterImpl(new XMLMarkupModel());
-
-        writer.element("ul");
-
-        for (int i = 0; i < 4; i++)
-        {
-            Element e = writer.element("li");
-
-            if (i != 2)
-            {
-                writer.write(String.valueOf(i));
-            }
-
-            writer.end();
-
-            if (e.getChildren().isEmpty())
-            {
-                e.remove();
-            }
-        }
-
-        writer.end();
-
-        assertEquals(writer.toString(), "<?xml version=\"1.0\"?>\n" +
-                "<ul><li>0</li><li>1</li><li>3</li></ul>");
     }
 }

@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,9 +15,12 @@
 package org.apache.tapestry5.dom;
 
 import org.apache.tapestry5.internal.util.PrintOutCollector;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.Defense;
 
 import java.io.PrintWriter;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -25,29 +28,29 @@ import java.util.Map;
  */
 public abstract class Node
 {
-    Element container;
+    private Node container;
 
     /**
-     * Next node within containing element.
+     * Child notes; only Element actually has children.  Attributes are modeled differently in this DOM than in
+     * traditional W3C Dom (where Attributes are another type of child node).
      */
-    Node nextSibling;
+    private List<Node> children;
 
     /**
      * Creates a new node, setting its container to the provided value. Container may also be null, but that is only
      * used for Document nodes (the topmost node of a DOM).
      *
-     * @param container element containing this node
+     * @param container
      */
-    protected Node(Element container)
+    protected Node(Node container)
     {
         this.container = container;
     }
 
     /**
-     * Returns the containing {@link org.apache.tapestry5.dom.Element} for this node, or null if this node is the root
-     * element of the document.
+     * Returns the containing node for this node, or null if this node is the root element of the document.
      */
-    public Element getContainer()
+    public Node getContainer()
     {
         return container;
     }
@@ -57,6 +60,61 @@ public abstract class Node
         return container.getDocument();
     }
 
+    /**
+     * Returns the node as an {@link org.apache.tapestry5.dom.Element}, if it is an element. Returns null otherwise.
+     */
+    Element asElement()
+    {
+        return null;
+    }
+
+    void addChild(Node child)
+    {
+        ensureChildren();
+
+        children.add(child);
+
+        child.container = this;
+    }
+
+    private void ensureChildren()
+    {
+        if (children == null) children = CollectionFactory.newList();
+    }
+
+    void insertChildAt(int index, Node child)
+    {
+        ensureChildren();
+
+        children.add(index, child);
+
+        child.container = this;
+    }
+
+    boolean hasChildren()
+    {
+        return children != null && !children.isEmpty();
+    }
+
+    void writeChildMarkup(Document document, PrintWriter writer, Map<String, String> namespaceURIToPrefix)
+    {
+        if (children == null) return;
+
+        for (Node child : children)
+            child.toMarkup(document, writer, namespaceURIToPrefix);
+    }
+
+    /**
+     * @return the concatenation of the String representations {@link #toString()} of its children.
+     */
+    public final String getChildMarkup()
+    {
+        PrintOutCollector collector = new PrintOutCollector();
+
+        writeChildMarkup(getDocument(), collector.getPrintWriter(), null);
+
+        return collector.getPrintOut();
+    }
 
     /**
      * Invokes {@link #toMarkup(PrintWriter)}, collecting output in a string, which is returned.
@@ -71,6 +129,18 @@ public abstract class Node
         return collector.getPrintOut();
     }
 
+    /**
+     * Returns an unmodifiable list of children for this node. Only {@link org.apache.tapestry5.dom.Element}s will have
+     * children.  Also, note that unlike W3C DOM, attributes are not represented as {@link
+     * org.apache.tapestry5.dom.Node}s.
+     *
+     * @return unmodifiable list of children nodes
+     */
+    @SuppressWarnings("unchecked")
+    public List<Node> getChildren()
+    {
+        return children == null ? Collections.EMPTY_LIST : Collections.unmodifiableList(children);
+    }
 
     /**
      * Writes the markup for this node to the writer.
@@ -104,7 +174,7 @@ public abstract class Node
 
         remove();
 
-        element.container.insertChildBefore(element, this);
+        element.getContainer().insertChildBefore(element, this);
 
         return this;
     }
@@ -122,7 +192,7 @@ public abstract class Node
 
         remove();
 
-        element.container.insertChildAfter(element, this);
+        element.getContainer().insertChildAfter(element, this);
 
         return this;
     }
@@ -183,9 +253,54 @@ public abstract class Node
      */
     public void remove()
     {
-        container.remove(this);
+        getContainer().remove(this);
 
         container = null;
+    }
+
+
+    /**
+     * Removes a child node from this node.
+     */
+    void remove(Node node)
+    {
+        if (children == null || !children.remove(node))
+            throw new IllegalArgumentException("Node to remove was not present as a child of this node.");
+    }
+
+    private void insertChildBefore(Node existing, Node node)
+    {
+        int index = indexOfNode(existing);
+
+        children.add(index, node);
+
+        node.container = this;
+    }
+
+    private void insertChildAfter(Node existing, Node node)
+    {
+        int index = indexOfNode(existing);
+
+        children.add(index + 1, node);
+
+        node.container = this;
+    }
+
+
+    int indexOfNode(Node node)
+    {
+        ensureChildren();
+
+        int index = children.indexOf(node);
+
+        if (index < 0) throw new IllegalArgumentException("Existing element not a child of this node.");
+
+        return index;
+    }
+
+    void clearChildren()
+    {
+        children = null;
     }
 
     /**
@@ -198,10 +313,13 @@ public abstract class Node
      */
     public Element wrap(String elementName, String... namesAndValues)
     {
-        int index = container.indexOfNode(this);
+        Element containerElement = container.asElement();
+
+        int index = containerElement.indexOfNode(this);
 
         // Insert the new element just before this node.
-        Element element = container.elementAt(index, elementName, namesAndValues);
+        Element element =
+                containerElement.elementAt(index, elementName, namesAndValues);
 
         // Move this node inside the new element.
         moveToTop(element);

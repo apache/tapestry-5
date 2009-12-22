@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,15 +14,12 @@
 
 package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry5.SymbolConstants;
+import org.apache.tapestry5.internal.events.InvalidationListener;
+import org.apache.tapestry5.internal.events.UpdateListener;
 import org.apache.tapestry5.internal.util.URLChangeTracker;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.Resource;
-import org.apache.tapestry5.ioc.annotations.Symbol;
-import org.apache.tapestry5.ioc.services.ClasspathURLConverter;
 import org.apache.tapestry5.model.ComponentModel;
-import org.apache.tapestry5.services.InvalidationEventHub;
-import org.apache.tapestry5.services.UpdateListener;
 
 import java.util.Locale;
 
@@ -30,7 +27,9 @@ public class ComponentMessagesSourceImpl implements ComponentMessagesSource, Upd
 {
     private final MessagesSource messagesSource;
 
-    private final Resource appCatalogResource;
+    private final Resource rootResource;
+
+    private final String appCatalog;
 
     private static class ComponentModelBundle implements MessagesBundle
     {
@@ -64,18 +63,15 @@ public class ComponentMessagesSourceImpl implements ComponentMessagesSource, Upd
         }
     }
 
-    public ComponentMessagesSourceImpl(
-            @Symbol(SymbolConstants.APPLICATION_CATALOG)
-            Resource appCatalogResource,
-
-            ClasspathURLConverter classpathURLConverter)
+    public ComponentMessagesSourceImpl(Resource rootResource, String appCatalog)
     {
-        this(appCatalogResource, new URLChangeTracker(classpathURLConverter));
+        this(rootResource, appCatalog, new URLChangeTracker());
     }
 
-    ComponentMessagesSourceImpl(Resource appCatalogResource, URLChangeTracker tracker)
+    ComponentMessagesSourceImpl(Resource rootResource, String appCatalog, URLChangeTracker tracker)
     {
-        this.appCatalogResource = appCatalogResource;
+        this.rootResource = rootResource;
+        this.appCatalog = appCatalog;
 
         messagesSource = new MessagesSourceImpl(tracker);
     }
@@ -87,19 +83,12 @@ public class ComponentMessagesSourceImpl implements ComponentMessagesSource, Upd
 
     public Messages getMessages(ComponentModel componentModel, Locale locale)
     {
+        final Resource appCatalogResource = rootResource.forFile(appCatalog);
+
         // If the application catalog exists, set it up as the root, otherwise use null.
 
         MessagesBundle appCatalogBundle = !appCatalogResource.exists() ? null
-                                                                       : rootBundle();
-
-        MessagesBundle bundle = new ComponentModelBundle(componentModel, appCatalogBundle);
-
-        return messagesSource.getMessages(bundle, locale);
-    }
-
-    private MessagesBundle rootBundle()
-    {
-        return new MessagesBundle()
+                                          : new MessagesBundle()
         {
             public Resource getBaseResource()
             {
@@ -108,7 +97,7 @@ public class ComponentMessagesSourceImpl implements ComponentMessagesSource, Upd
 
             public Object getId()
             {
-                return appCatalogResource.getPath();
+                return appCatalog;
             }
 
             public MessagesBundle getParent()
@@ -116,10 +105,14 @@ public class ComponentMessagesSourceImpl implements ComponentMessagesSource, Upd
                 return null;
             }
         };
+
+        MessagesBundle bundle = new ComponentModelBundle(componentModel, appCatalogBundle);
+
+        return messagesSource.getMessages(bundle, locale);
     }
 
-    public InvalidationEventHub getInvalidationEventHub()
+    public void addInvalidationListener(InvalidationListener listener)
     {
-        return messagesSource;
+        messagesSource.addInvalidationListener(listener);
     }
 }

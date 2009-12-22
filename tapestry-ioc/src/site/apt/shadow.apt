@@ -20,7 +20,7 @@ public Request build()
 }
 +----+
 
-  (shadowBuilder and requestGlobals are injected into the module class instance)
+  (shadowBuilder and requestGlobals are injected into the module builder instance)
 
   This can be thought of as similar to:
   

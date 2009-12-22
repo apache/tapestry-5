@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,64 +14,46 @@
 
 package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry5.SymbolConstants;
-import org.apache.tapestry5.internal.TapestryInternalUtils;
-import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.ioc.annotations.Symbol;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.internal.util.Defense;
-import org.apache.tapestry5.ioc.services.PerthreadManager;
+import org.apache.tapestry5.internal.util.LocaleUtils;
+import org.apache.tapestry5.services.Cookies;
 import org.apache.tapestry5.services.PersistentLocale;
 
 import java.util.Locale;
-import java.util.Set;
 
 public class PersistentLocaleImpl implements PersistentLocale
 {
-    private final PerthreadManager perThreadManager;
+    /**
+     * Name of the cookie written to the client web browser to identify the locale.
+     */
+    private static final String LOCALE_COOKIE_NAME = "org.apache.tapestry5.locale";
 
-    private final String supportedLocales;
+    private final Cookies cookieSource;
 
-    private final Set<String> localeNames = CollectionFactory.newSet();
-
-    public PersistentLocaleImpl(PerthreadManager perThreadManager,
-
-                                @Inject @Symbol(SymbolConstants.SUPPORTED_LOCALES)
-                                String supportedLocales)
+    public PersistentLocaleImpl(Cookies cookieSource)
     {
-        this.perThreadManager = perThreadManager;
-        this.supportedLocales = supportedLocales;
-
-        for (String name : TapestryInternalUtils.splitAtCommas(supportedLocales))
-        {
-            localeNames.add(name.toLowerCase());
-        }
+        this.cookieSource = cookieSource;
     }
 
     public void set(Locale locale)
     {
-        Defense.notNull(locale, "locale");
-
-        if (!localeNames.contains(locale.toString().toLowerCase()))
-        {
-            String message = String.format(
-                    "Locale '%s' is not supported by this application. Supported locales are '%s'; this is configured via the %s symbol.",
-                    locale, supportedLocales, SymbolConstants.SUPPORTED_LOCALES);
-
-            throw new IllegalArgumentException(message);
-        }
-
-
-        perThreadManager.put(this, locale);
+        cookieSource.writeCookieValue(LOCALE_COOKIE_NAME, locale.toString());
     }
 
     public Locale get()
     {
-        return (Locale) perThreadManager.get(this);
+        String localeCookieValue = getCookieValue();
+
+        return localeCookieValue != null ? LocaleUtils.toLocale(localeCookieValue) : null;
+    }
+
+    private String getCookieValue()
+    {
+        return cookieSource.readCookieValue(LOCALE_COOKIE_NAME);
     }
 
     public boolean isSet()
     {
-        return get() != null;
+        return getCookieValue() != null;
     }
+
 }

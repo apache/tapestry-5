@@ -11,7 +11,7 @@ Component Events
   
   * They represent requests initiated by the user, triggered by links and forms in the client web browser.
     These are described more fully in {{{pagenav.html}page navigation}} and in 
-    {{{request.html}request processing}}.
+    {{{request.html}requst processing}}.
     
   * They represent flow-of-control within a request, allowing one component to notify its container
     about some kind of circumstance ("a form was submitted"), or to collect some piece for data

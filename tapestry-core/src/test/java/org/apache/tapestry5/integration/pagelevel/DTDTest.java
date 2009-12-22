@@ -1,4 +1,4 @@
-// Copyright 2007, 2009 The Apache Software Foundation
+// Copyright 2007 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ public class DTDTest extends Assert
 
     private static final String STRICT = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">";
 
-    @DataProvider
+    @DataProvider(name = "dtd_page_provider")
     public Object[][] dtd_page_provider()
     {
         return new Object[][]
@@ -42,8 +42,9 @@ public class DTDTest extends Assert
     @Test(dataProvider = "dtd_page_provider")
     public void verify_correct_dtds(String pageName, String expectedDTD, String checkText)
     {
-        PageTester tester = new PageTester(TestConstants.APP2_PACKAGE, TestConstants.APP2_NAME);
-
+        String appPackage = "org.apache.tapestry5.integration.app2";
+        String appName = "";
+        PageTester tester = new PageTester(appPackage, appName);
         Document doc = tester.renderPage(pageName);
         String txt = doc.toString();
         // use startsWith to make sure the DTD is getting into the right spot.

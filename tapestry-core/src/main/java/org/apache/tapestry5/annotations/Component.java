@@ -1,4 +1,4 @@
-// Copyright 2006, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,16 +20,12 @@ import java.lang.annotation.Retention;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Target;
 
-import static org.apache.tapestry5.ioc.annotations.AnnotationUseContext.*;
-import org.apache.tapestry5.ioc.annotations.UseWith;
-
 /**
  * Used to define an <em>embedded component</em> within another component.
  */
 @Target(FIELD)
 @Documented
 @Retention(RUNTIME)
-@UseWith({COMPONENT,PAGE})
 public @interface Component
 {
 
@@ -48,20 +44,11 @@ public @interface Component
      * Parameter bindings for the component. Each value in the array is of the form "name=value". The value is a binding
      * expression, with a default binding prefix of "prop:".
      */
-    String[] parameters() default { };
+    String[] parameters() default {};
 
     /**
      * If true, then the component will inherit all informal parameters from its parent component. The default is
      * false.
      */
     boolean inheritInformalParameters() default false;
-
-    /**
-     * A comma-separated list of parameters of the component that should be published as parameters of the containing
-     * component.   Binding the parameter of the outer component will bind the inner component's parameter, as with the
-     * "inhert:" binding prefix.
-     *
-     * @since 5.1.0.0
-     */
-    String publishParameters() default "";
 }

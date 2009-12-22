@@ -1,4 +1,4 @@
-//  Copyright 2008, 2009 The Apache Software Foundation
+//  Copyright 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,6 +13,8 @@
 // limitations under the License.
 
 package org.apache.tapestry5.ioc;
+
+import org.apache.tapestry5.ioc.internal.util.Invokable;
 
 /**
  * Used to track some set of operations in such a way that a failure (a thrown RuntimeException) will be logged along

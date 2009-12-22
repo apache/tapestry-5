@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,15 +14,14 @@
 
 package org.apache.tapestry5.internal;
 
-import org.apache.tapestry5.ioc.ModuleBuilderSource;
-import org.apache.tapestry5.ioc.OrderedConfiguration;
-import org.apache.tapestry5.ioc.ServiceResources;
+import org.apache.tapestry5.ioc.*;
+import org.apache.tapestry5.ioc.def.ContributionDef;
 import org.apache.tapestry5.ioc.services.SymbolProvider;
 
 /**
  * Makes a contribution to the SymbolSource service configuration.
  */
-public class SyntheticSymbolSourceContributionDef extends AbstractContributionDef
+public class SyntheticSymbolSourceContributionDef implements ContributionDef
 {
     private final String contributionName;
 
@@ -38,14 +37,22 @@ public class SyntheticSymbolSourceContributionDef extends AbstractContributionDe
         this.constraints = constraints;
     }
 
+    public void contribute(ModuleBuilderSource moduleBuilderSource, ServiceResources resources,
+                           Configuration configuration)
+    {
+    }
 
     @SuppressWarnings("unchecked")
-    public void contribute(ModuleBuilderSource moduleSource, ServiceResources resources,
+    public void contribute(ModuleBuilderSource moduleBuilderSource, ServiceResources resources,
                            OrderedConfiguration configuration)
     {
         configuration.add(contributionName, provider, constraints);
     }
 
+    public void contribute(ModuleBuilderSource moduleBuilderSource, ServiceResources resources,
+                           MappedConfiguration configuration)
+    {
+    }
 
     /**
      * Returns "SymbolSource".

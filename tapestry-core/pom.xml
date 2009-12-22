@@ -1,4 +1,4 @@
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.apache.tapestry</groupId>
     <artifactId>tapestry-core</artifactId>
@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.apache.tapestry</groupId>
         <artifactId>tapestry-project</artifactId>
-        <version>5.2.0-SNAPSHOT</version>
+        <version>5.0.19</version>
     </parent>
     <name>Tapestry Core Library</name>
     <description>
@@ -40,41 +40,9 @@
             <groupId>javax.servlet</groupId>
             <artifactId>servlet-api</artifactId>
         </dependency>
-
-        <dependency>
-            <groupId>org.antlr</groupId>
-            <artifactId>antlr-runtime</artifactId>
-            <version>3.1.1</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.antlr</groupId>
-                    <artifactId>stringtemplate</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
     </dependencies>
-
     <build>
         <plugins>
-            <plugin>
-                <groupId>org.antlr</groupId>
-                <artifactId>antlr3-maven-plugin</artifactId>
-                <version>3.1.1.2</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>antlr</goal>
-                        </goals>
-                        <configuration>
-                            <!-- This is a hack so that the parser grammar can locate the tokens file generated
-                                 by the lexer grammar. -->
-                            <libDirectory>target/generated-sources/antlr/org/apache/tapestry5/internal/antlr
-                            </libDirectory>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
@@ -131,7 +99,6 @@
                 <configuration>
                     <rootPackage>org.apache.tapestry5.corelib</rootPackage>
                     <apidocs>../apidocs</apidocs>
-                    <tapestryJavadoc>../apidocs</tapestryJavadoc>
                 </configuration>
             </plugin>
         </plugins>

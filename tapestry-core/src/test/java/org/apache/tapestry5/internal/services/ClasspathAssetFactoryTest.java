@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,12 +20,11 @@ import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.internal.util.ClasspathResource;
 import org.apache.tapestry5.services.AssetFactory;
 import org.apache.tapestry5.services.ClasspathAssetAliasManager;
+import org.easymock.EasyMock;
 import org.testng.annotations.Test;
 
 public class ClasspathAssetFactoryTest extends InternalBaseTestCase
 {
-    private final IdentityAssetPathConverter converter = new IdentityAssetPathConverter();
-
     @Test
     public void asset_client_URL_is_cached()
     {
@@ -41,10 +40,11 @@ public class ClasspathAssetFactoryTest extends InternalBaseTestCase
 
         train_toClientURL(aliasManager, "foo/Bar.txt", expectedClientURL);
 
+        EasyMock.expectLastCall().times(2); // Cache of the raw path, not the final path which may be optimized
+
         replay();
 
-        ClasspathAssetFactory factory = new ClasspathAssetFactory(cache, aliasManager,
-                                                                  converter);
+        ClasspathAssetFactory factory = new ClasspathAssetFactory(cache, aliasManager);
 
         Asset asset = factory.createAsset(r);
 
@@ -84,9 +84,11 @@ public class ClasspathAssetFactoryTest extends InternalBaseTestCase
 
         train_toClientURL(aliasManager, "foo/Bar.txt", expectedClientURL);
 
+        EasyMock.expectLastCall().times(2); // 2nd time is the toString() call
+
         replay();
 
-        AssetFactory factory = new ClasspathAssetFactory(cache, aliasManager, new IdentityAssetPathConverter());
+        AssetFactory factory = new ClasspathAssetFactory(cache, aliasManager);
 
         Asset asset = factory.createAsset(r);
 
@@ -113,9 +115,11 @@ public class ClasspathAssetFactoryTest extends InternalBaseTestCase
 
         train_toClientURL(aliasManager, "foo/Bar.ABC123.txt", expectedClientURL);
 
+        EasyMock.expectLastCall().times(2); // 2nd time is the toString() call
+
         replay();
 
-        AssetFactory factory = new ClasspathAssetFactory(cache, aliasManager, new IdentityAssetPathConverter());
+        AssetFactory factory = new ClasspathAssetFactory(cache, aliasManager);
 
         Asset asset = factory.createAsset(r);
 

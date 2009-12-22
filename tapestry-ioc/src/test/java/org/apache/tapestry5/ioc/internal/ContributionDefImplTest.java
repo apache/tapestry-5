@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,7 +18,8 @@ import org.apache.tapestry5.ioc.*;
 import org.apache.tapestry5.ioc.annotations.InjectService;
 import org.apache.tapestry5.ioc.def.ContributionDef;
 import org.apache.tapestry5.ioc.test.IOCTestCase;
-import org.slf4j.Logger;
+import static org.easymock.EasyMock.eq;
+import static org.easymock.EasyMock.isA;
 import org.testng.annotations.Test;
 
 import java.lang.reflect.Method;
@@ -41,10 +42,6 @@ public class ContributionDefImplTest extends IOCTestCase implements ModuleBuilde
         toContribute = new Object();
         Configuration configuration = mockConfiguration();
         ServiceResources serviceResources = mockServiceResources(tracker);
-        Logger logger = mockLogger();
-
-        train_getLogger(serviceResources, logger);
-        train_getServiceId(serviceResources, "Bif");
 
         configuration.add(toContribute);
 
@@ -65,11 +62,8 @@ public class ContributionDefImplTest extends IOCTestCase implements ModuleBuilde
         Configuration configuration = mockConfiguration();
         ServiceResources resources = mockServiceResources(tracker);
         UpcaseService service = mockUpcaseService();
-        Logger logger = mockLogger();
 
-        train_getLogger(resources, logger);
         train_getService(resources, "zip.Zap", UpcaseService.class, service);
-        train_getServiceId(resources, "Bif");
 
         configuration.add(service);
 
@@ -88,10 +82,11 @@ public class ContributionDefImplTest extends IOCTestCase implements ModuleBuilde
     {
         Configuration configuration = mockConfiguration();
         ServiceResources resources = mockServiceResources(tracker);
-        Logger logger = mockLogger();
 
-        train_getLogger(resources, logger);
-        train_getServiceId(resources, "Bif");
+        Throwable t = new RuntimeException("Missing service.");
+
+        expect(resources.getObject(eq(MappedConfiguration.class), isA(AnnotationProvider.class)))
+                .andThrow(t);
 
         replay();
 
@@ -105,10 +100,9 @@ public class ContributionDefImplTest extends IOCTestCase implements ModuleBuilde
         }
         catch (RuntimeException ex)
         {
-            assertMessageContains(ex,
-                                  "Error invoking service contribution method org.apache.tapestry5.ioc.internal.ContributionDefImplTest.contributeUnorderedWrongParameter(MappedConfiguration)",
-                                  "Service 'Bif' is configured using org.apache.tapestry5.ioc.Configuration, not org.apache.tapestry5.ioc.MappedConfiguration."
-            );
+            assertEquals(ex.getMessage(), "Error invoking service contribution method "
+                    + getClass().getName()
+                    + ".contributeUnorderedWrongParameter(MappedConfiguration): Missing service.");
         }
 
         verify();
@@ -124,12 +118,8 @@ public class ContributionDefImplTest extends IOCTestCase implements ModuleBuilde
         OrderedConfiguration configuration = mockOrderedConfiguration();
         ServiceResources resources = mockServiceResources(tracker);
         UpcaseService service = mockUpcaseService();
-        Logger logger = mockLogger();
-
-        train_getLogger(resources, logger);
 
         train_getService(resources, "zip.Zap", UpcaseService.class, service);
-        train_getServiceId(resources, "Bif");
 
         configuration.add("fred", service);
 
@@ -150,12 +140,8 @@ public class ContributionDefImplTest extends IOCTestCase implements ModuleBuilde
         MappedConfiguration configuration = mockMappedConfiguration();
         ServiceResources resources = mockServiceResources(tracker);
         UpcaseService service = mockUpcaseService();
-        Logger logger = mockLogger();
-
-        train_getLogger(resources, logger);
 
         train_getService(resources, "zip.Zap", UpcaseService.class, service);
-        train_getServiceId(resources, "Bif");
 
         configuration.add("upcase", service);
 

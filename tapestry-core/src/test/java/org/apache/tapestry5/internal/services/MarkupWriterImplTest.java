@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -23,32 +23,16 @@ import org.testng.annotations.Test;
 
 public class MarkupWriterImplTest extends InternalBaseTestCase
 {
-
-    /**
-     * TAP5-349
-     */
-    @Test
-    public void single_root_element_only()
+    @Test(expectedExceptions = IllegalStateException.class)
+    public void write_with_no_current_element()
     {
-        MarkupWriter w = new MarkupWriterImpl(new XMLMarkupModel());
+        MarkupWriter w = new MarkupWriterImpl();
 
-        w.element("root1");
-        w.end();
-
-        try
-        {
-            w.element("root2");
-            unreachable();
-        }
-        catch (RuntimeException ex)
-        {
-            assertEquals(ex.getMessage(),
-                         "A document must have exactly one root element. Element <root1> is already the root element.");
-        }
+        w.write("fail!");
     }
 
     @Test
-    public void write_whitespace_before_start_of_root_element_is_retained()
+    public void write_whitespace_before_start_of_root_element_is_ignored()
     {
         MarkupWriter w = new MarkupWriterImpl(new XMLMarkupModel());
 
@@ -57,12 +41,11 @@ public class MarkupWriterImplTest extends InternalBaseTestCase
         w.element("root");
         w.end();
 
-        assertEquals(w.toString(), "<?xml version=\"1.0\"?>\n" +
-                "  <root/>");
+        assertEquals(w.toString(), "<?xml version=\"1.0\"?>\n<root/>");
     }
 
     @Test
-    public void write_whitespace_after_end_of_root_element_is_retained_in_preamble()
+    public void write_whitespace_after_end_of_root_element_is_ignored()
     {
         MarkupWriter w = new MarkupWriterImpl(new XMLMarkupModel());
 
@@ -71,25 +54,15 @@ public class MarkupWriterImplTest extends InternalBaseTestCase
 
         w.write("  ");
 
-        assertEquals(w.toString(), "<?xml version=\"1.0\"?>\n  <root/>");
+        assertEquals(w.toString(), "<?xml version=\"1.0\"?>\n<root/>");
     }
 
-    @Test()
-    public void preamble_content() throws Exception
+    @Test(expectedExceptions = IllegalStateException.class)
+    public void comment_with_no_current_element()
     {
-        MarkupWriter w = new MarkupWriterImpl(new XMLMarkupModel());
+        MarkupWriter w = new MarkupWriterImpl();
 
-        w.comment("preamble start");
-        w.write("preamble text");
-        w.cdata("CDATA content");
-        w.writeRaw("&nbsp;");
-        w.element("root");
-        w.end();
-        // You really shouldn't have any text after the close tag of the document, so it
-        // gets moved to the top, to the "preamble", before the first element.
-        w.comment("content after root element in preamble");
-
-        assertEquals(w.getDocument().toString(), readFile("preamble_content.txt"));
+        w.comment("fail!");
     }
 
     @Test(expectedExceptions = IllegalStateException.class)
@@ -156,7 +129,7 @@ public class MarkupWriterImplTest extends InternalBaseTestCase
         root.attribute("gnip", "gnop");
 
         assertEquals(w.toString(),
-                     "<root gnip=\"gnop\" foo=\"bar\">before child<nested>inner text</nested>after child</root>");
+                     "<root foo=\"bar\" gnip=\"gnop\">before child<nested>inner text</nested>after child</root>");
     }
 
     @Test
@@ -169,7 +142,7 @@ public class MarkupWriterImplTest extends InternalBaseTestCase
 
         // img is a tag with an end tag style of omit, so no close tag is written.
 
-        assertEquals(w.toString(), "<img height=\"20\" width=\"20\" src=\"foo.png\"/>");
+        assertEquals(w.toString(), "<img height=\"20\" src=\"foo.png\" width=\"20\"/>");
     }
 
     @Test
@@ -181,7 +154,7 @@ public class MarkupWriterImplTest extends InternalBaseTestCase
 
         w.attributes("foo", "bar", "gnip", "gnop");
 
-        assertEquals(w.toString(), "<root gnip=\"gnop\" foo=\"bar\"></root>");
+        assertEquals(w.toString(), "<root foo=\"bar\" gnip=\"gnop\"></root>");
     }
 
     @Test

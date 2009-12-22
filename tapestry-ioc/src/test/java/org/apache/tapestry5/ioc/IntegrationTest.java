@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@ package org.apache.tapestry5.ioc;
 
 import org.apache.tapestry5.ioc.internal.*;
 import org.apache.tapestry5.ioc.services.*;
-import org.apache.tapestry5.ioc.util.NonmatchingMappedConfigurationOverrideModule;
 import org.easymock.EasyMock;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -124,10 +123,10 @@ public class IntegrationTest extends IOCInternalTestCase
             service.run();
             unreachable();
         }
-        catch (RuntimeException ex)
+        catch (IllegalStateException ex)
         {
-            assertMessageContains(ex,
-                                  "Proxy for service Fred is no longer active because the IOC Registry has been shut down.");
+            assertEquals(ex.getMessage(),
+                         "Proxy for service Fred is no longer active because the IOC Registry has been shut down.");
         }
 
         // Show that toString() still works, even for a shutdown proxy.
@@ -232,32 +231,10 @@ public class IntegrationTest extends IOCInternalTestCase
         }
         catch (Exception ex)
         {
-            assertMessageContains(ex, "Error building service proxy for service 'UnknownScope'",
-                                  "Unknown service scope 'magic'");
+            assertMessageContains(ex, "Exception constructing service 'UnknownScope'", "Unknown service scope 'magic'");
         }
 
         r.shutdown();
-    }
-
-    @Test
-    public void scope_mismatch()
-    {
-        Registry r = buildRegistry(ScopeMismatchModule.class);
-
-        try
-        {
-            r.getService(StringBuilder.class);
-            unreachable();
-        }
-        catch (Exception ex)
-        {
-            assertMessageContains(ex,
-                                  "Error building service proxy for service 'ScopeRequiresAProxyAndNoInterfaceIsProvided'",
-                                  "Service scope 'perthread' requires a proxy");
-        }
-
-        r.shutdown();
-
     }
 
     @Test
@@ -893,7 +870,7 @@ public class IntegrationTest extends IOCInternalTestCase
 
         URL url = fakejar.toURL();
 
-        URLClassLoader loader = new URLClassLoader(new URL[] { url }, Thread.currentThread().getContextClassLoader());
+        URLClassLoader loader = new URLClassLoader(new URL[] {url}, Thread.currentThread().getContextClassLoader());
 
         RegistryBuilder builder = new RegistryBuilder(loader);
 
@@ -971,7 +948,7 @@ public class IntegrationTest extends IOCInternalTestCase
         catch (RuntimeException ex)
         {
             assertMessageContains(ex,
-                                  "Module class org.apache.tapestry5.ioc.internal.PrivateConstructorModule does not contain any public constructors.");
+                                  "Module builder class org.apache.tapestry5.ioc.internal.PrivateConstructorModule does not contain any public constructors.");
         }
     }
 
@@ -985,385 +962,5 @@ public class IntegrationTest extends IOCInternalTestCase
         assertEquals(s.upcase("Hello, ${fred}"), "HELLO, FLINTSTONE");
 
         r.shutdown();
-    }
-
-    @Test
-    public void unordered_configuration_contribute_by_class()
-    {
-        Registry r = buildRegistry(ContributeByClassModule.class);
-
-        StringTransformer st = r.getService("MasterStringTransformer", StringTransformer.class);
-
-        assertEquals(st.transform("Tapestry"), "TAPESTRY");
-
-        r.shutdown();
-    }
-
-    @Test
-    public void ordered_configuration_contribute_by_class()
-    {
-        Registry r = buildRegistry(ContributeByClassModule.class);
-
-        StringTransformer st = r.getService("StringTransformerChain", StringTransformer.class);
-
-        assertEquals(st.transform("Tapestry"), "TAPESTRY");
-
-        r.shutdown();
-    }
-
-    @Test
-    public void mapped_configuration_contribute_by_class()
-    {
-        Registry r = buildRegistry(ContributeByClassModule.class);
-
-        StringTransformer st = r.getService("MappedStringTransformer", StringTransformer.class);
-
-        assertEquals(st.transform("Tapestry"), "TAPESTRY");
-
-        r.shutdown();
-    }
-
-    /**
-     * TAP5-139
-     */
-    @Test
-    public void autobuild_injection()
-    {
-        Registry r = buildRegistry(AutobuildInjectionModule.class);
-
-        StringTransformer st = r.getService(StringTransformer.class);
-
-        assertEquals(st.transform("Hello, ${fred}"), "Hello, flintstone");
-
-        r.shutdown();
-    }
-
-    /**
-     * TAP5-292
-     */
-    @Test
-    public void field_resource_injection()
-    {
-        Registry r = buildRegistry(FieldResourceInjectionModule.class);
-
-        FieldResourceService s = r.getService(FieldResourceService.class);
-
-        assertEquals(s.getServiceId(), "FieldResourceService");
-        assertListsEquals(s.getLabels(), "Barney", "Betty", "Fred", "Wilma");
-
-        r.shutdown();
-    }
-
-    /**
-     * TAP5-292
-     */
-    @Test
-    public void failed_field_resource_injection()
-    {
-        Registry r = buildRegistry(FieldResourceInjectionModule.class);
-
-        StringTransformer s = r.getService(StringTransformer.class);
-
-        try
-        {
-            s.transform("hello");
-            unreachable();
-        }
-        catch (RuntimeException ex)
-        {
-            assertMessageContains(ex,
-                                  "Unable to determine resource value to inject into field 'unknownRunnable' (of type java.lang.Runnable).");
-        }
-    }
-
-    /**
-     * TAP5-291
-     */
-    @Test
-    public void post_injection_method_invoked()
-    {
-        Registry r = buildRegistry(PostInjectionMethodModule.class);
-
-        Greeter g = r.getService(Greeter.class);
-
-        assertEquals(g.getGreeting(), "Greetings from ServiceIdGreeter.");
-    }
-
-    /**
-     * TAP5-429
-     */
-    @Test
-    public void contribute_to_unknown_service()
-    {
-        try
-        {
-            buildRegistry(InvalidContributeDefModule.class);
-            unreachable();
-        }
-        catch (IllegalArgumentException ex)
-        {
-            assertMessageContains(ex,
-                                  "Contribution org.apache.tapestry5.ioc.InvalidContributeDefModule.contributeDoesNotExist(Configuration)",
-                                  "is for service 'DoesNotExist', which does not exist.");
-        }
-    }
-
-    /**
-     * TAP5-436
-     */
-    @Test
-    public void extra_methods_on_module_class_are_errors()
-    {
-        try
-        {
-            buildRegistry(ExtraMethodsModule.class);
-            unreachable();
-        }
-        catch (RuntimeException ex)
-        {
-            assertMessageContains(ex,
-                                  "Module class org.apache.tapestry5.ioc.ExtraMethodsModule contains unrecognized public methods: ",
-                                  "thisMethodIsInvalid()",
-                                  "soIsThisMethod().");
-        }
-    }
-
-    /**
-     * TAP5-430
-     */
-    @Test
-    public void service_builder_method_marked_for_no_decoration()
-    {
-        Registry r = buildRegistry(PreventDecorationModule.class);
-
-        StringTransformer st = r.getService(StringTransformer.class);
-
-        assertEquals(st.transform("tapestry"), "TAPESTRY");
-
-        r.shutdown();
-    }
-
-    /**
-     * TAP5-430
-     */
-    @Test
-    public void bind_service_marked_for_no_decoration_explicitly()
-    {
-        Registry r = buildRegistry(PreventDecorationModule.class);
-
-        Greeter g = r.getService(Greeter.class);
-
-        assertEquals(g.getGreeting(), "Greetings from ServiceIdGreeter.");
-
-        r.shutdown();
-    }
-
-    /**
-     * TAP5-430
-     */
-    @Test
-    public void bind_service_with_prevent_service_decoration_annotations_on_implementation_class()
-    {
-        Registry r = buildRegistry(PreventDecorationModule.class);
-
-        Rocket rocket = r.getService(Rocket.class);
-
-        assertEquals(rocket.getCountdown(), "3, 2, 1, Launch!");
-
-        r.shutdown();
-    }
-
-    /**
-     * TAP5-437
-     */
-    @Test
-    public void successful_ordered_configuration_override()
-    {
-        Registry r = buildRegistry(FredModule.class, BarneyModule.class, ConfigurationOverrideModule.class);
-
-        NameListHolder service = r.getService("OrderedNames", NameListHolder.class);
-
-        List<String> names = service.getNames();
-
-        assertEquals(names, Arrays.asList("BARNEY", "WILMA", "Mr. Flintstone"));
-    }
-
-    /**
-     * TAP5-437
-     */
-    @Test
-    public void failed_ordered_configuration_override()
-    {
-        Registry r = buildRegistry(FredModule.class, BarneyModule.class, FailedConfigurationOverrideModule.class);
-
-        NameListHolder service = r.getService("OrderedNames", NameListHolder.class);
-
-        try
-        {
-            service.getNames();
-            unreachable();
-        }
-        catch (RuntimeException ex)
-        {
-            assertMessageContains(ex,
-                                  "Failure processing override from org.apache.tapestry5.ioc.FailedConfigurationOverrideModule.contributeOrderedNames(OrderedConfiguration)",
-                                  "Override for object 'wilma' is invalid as it does not match an existing object.");
-        }
-    }
-
-    /**
-     * TAP5-437
-     */
-    @Test
-    public void duplicate_ordered_configuration_override()
-    {
-        Registry r = buildRegistry(FredModule.class, BarneyModule.class, ConfigurationOverrideModule.class,
-                                   DuplicateConfigurationOverrideModule.class);
-
-        NameListHolder service = r.getService("OrderedNames", NameListHolder.class);
-
-        try
-        {
-            service.getNames();
-            unreachable();
-        }
-        catch (RuntimeException ex)
-        {
-            // Can't get too specific since we don't know which module will get processed first
-            assertMessageContains(ex,
-                                  "Error invoking service contribution method ",
-                                  "Contribution 'fred' has already been overridden");
-        }
-    }
-
-    /**
-     * TAP5-437
-     */
-    @Test
-    public void mapped_configuration_override()
-    {
-        Registry r = buildRegistry(FredModule.class, BarneyModule.class, ConfigurationOverrideModule.class);
-
-        StringLookup sl = r.getService(StringLookup.class);
-
-        // Due to override wilma to null:
-
-        assertListsEquals(sl.keys(), "barney", "betty", "fred");
-
-        assertEquals(sl.lookup("fred"), "Mr. Flintstone");
-    }
-
-    /**
-     * TAP5-437
-     */
-    @Test
-    public void nonmatching_mapped_configuration_override()
-    {
-        Registry r = buildRegistry(FredModule.class, BarneyModule.class,
-                                   NonmatchingMappedConfigurationOverrideModule.class);
-
-        StringLookup sl = r.getService(StringLookup.class);
-
-        try
-        {
-            sl.keys();
-            unreachable();
-        }
-        catch (RuntimeException ex)
-        {
-            assertMessageContains(ex,
-                                  "Exception constructing service 'StringLookup'",
-                                  "Error invoking service builder method org.apache.tapestry5.ioc.FredModule.buildStringLookup(Map) ",
-                                  "Override for key alley cat (at org.apache.tapestry5.ioc.util.NonmatchingMappedConfigurationOverrideModule.contributeStringLookup(MappedConfiguration)",
-                                  "does not match an existing key.");
-        }
-    }
-
-    /**
-     * TAP-437
-     */
-    @Test
-    public void duplicate_override_for_mapped_configuration()
-    {
-        Registry r = buildRegistry(FredModule.class, BarneyModule.class,
-                                   ConfigurationOverrideModule.class, DuplicateConfigurationOverrideModule.class);
-
-        StringLookup sl = r.getService(StringLookup.class);
-
-        try
-        {
-            sl.keys();
-            unreachable();
-        }
-        catch (RuntimeException ex)
-        {
-            assertMessageContains(ex,
-                                  "Error invoking service contribution method",
-                                  "Contribution key fred has already been overridden");
-        }
-    }
-
-    /**
-     * TAP5-316
-     */
-    @Test
-    public void service_override()
-    {
-        Registry r = buildRegistry(GreeterServiceOverrideModule.class);
-
-        Greeter g = r.getObject(Greeter.class, null);
-
-        assertEquals(g.getGreeting(), "Override Greeting");
-    }
-
-    /**
-     * TAP5-60
-     */
-    @Test
-    public void non_void_advisor_method_is_error()
-    {
-        try
-        {
-            buildRegistry(NonVoidAdvisorMethodModule.class);
-            unreachable();
-        }
-        catch (RuntimeException ex)
-        {
-            assertMessageContains(ex,
-                                  "Advise method org.apache.tapestry5.ioc.NonVoidAdvisorMethodModule.adviseFoo(MethodAdviceReceiver)",
-                                  "does not return void.");
-        }
-    }
-
-    /**
-     * TAP5-60
-     */
-    @Test
-    public void advisor_methods_must_take_a_method_advisor_parameter()
-    {
-        try
-        {
-            buildRegistry(AdviceMethodMissingAdvisorParameterModule.class);
-            unreachable();
-        }
-        catch (RuntimeException ex)
-        {
-            assertMessageContains(ex,
-                                  "Advise method org.apache.tapestry5.ioc.AdviceMethodMissingAdvisorParameterModule.adviseBar()",
-                                  "must take a parameter of type org.apache.tapestry5.ioc.MethodAdviceReceiver.");
-        }
-    }
-
-    /**
-     * TAP5-60
-     */
-    @Test
-    public void advise_services()
-    {
-        Registry r = buildRegistry(AdviceDemoModule.class);
-
-        Greeter g = r.getService(Greeter.class);
-
-        assertEquals(g.getGreeting(), "ADVICE IS EASY!");
     }
 }

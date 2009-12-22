@@ -1,4 +1,4 @@
-// Copyright 2008, 2009 The Apache Software Foundation
+// Copyright 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,13 +16,12 @@ package org.apache.tapestry5.integration.app1.pages;
 
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.Link;
-import org.apache.tapestry5.PersistenceConstants;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.ioc.annotations.Inject;
 
 public class ActionViaLinkDemo
 {
-    @Persist(PersistenceConstants.FLASH)
+    @Persist("flash")
     private String message;
 
     @Inject
@@ -31,7 +30,7 @@ public class ActionViaLinkDemo
     Object[]
     onPassivate()
     {
-        return new Object[] { };
+        return new Object[] {};
     }
 
     public String getMessage()

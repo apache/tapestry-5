@@ -133,17 +133,7 @@ Service Ids
   
   When using a service builder method, the service id is the <simple name> of the service interface.
   
-  This can be overridden by adding the {{{../apidocs/org/apache/tapestry5/ioc/annotations/ServiceId.html}ServiceId}} annotation to the service builder method:
-  
-+---+
-  @ServiceId("FileSystemIndexer")
-  public static Indexer buildIndexer(@InjectService("FileSystem") FileSystem fileSystem)
-  {
-     . . .
-  }
-+----+
-  
-  Another option is to add the service id to the method name, after "build", for example:
+  This can be overridden by adding the service id to the method name, after "build", for example:
   
 +---+
   public static Indexer buildFileSystemIndexer(@InjectService("FileSystem") FileSystem fileSystem)
@@ -154,25 +144,7 @@ Service Ids
 
   Here, the service id is "FileSystemIndexer" not "Indexer".
   
-  For autobuilt services, the service id can be specified by placing the 
-  {{{../apidocs/org/apache/tapestry5/ioc/annotations/ServiceId.html}ServiceId}} annotation directly 
-  on a service implementation class. 
-
-+---+
-  @ServiceId("FileSystemIndexer")
-  public class IndexerImpl implements Indexer
-  {
-      ...
-  }
-+---+
-
-  When the service is bound, the value of the annotation is used as id:
-  
-+---+
-  binder.bind(Indexer.class, IndexerImpl.class);
-+---+
-  
-  This id can be overriden again by calling the method {{{../apidocs/org/apache/tapestry5/ioc/ServiceBindingOptions.html#withId(java.lang.String)}withId}}
+  For autobuilt services, the service id can be specified when the service is bound:
   
 +---+
   binder.bind(Indexer.class, IndexerImpl.class).withId("FileSystemIndexer");
@@ -189,7 +161,7 @@ Service Ids
   
   * As parameters to the service implementation class' constructor (for autobuilt services)
   
-  * As parameters passed to the constructor of the service's module class (to be cached inside instance variables)
+  * As parameters passed to the constructor of the service's module builder (cached inside instance variables)
 
   * Directly into fields of the service implementation
   
@@ -210,11 +182,9 @@ Service Ids
   }
 +-----------------------------------------------------------------------------------+
 
-  Tapestry assumes that parameters to builder methods are dependencies; in this example
-  it is able to figure out what services to pass in based just on the type (later we'll
-  see how we can fine tune this with annotations, when the service type is not sufficient
-  to identify a single service).
-
+  Here we've annotated the parameters of the service builder method to identify what
+  service to inject for that parameter.  
+  
   This is an example of when you would want to use the service builder method, rather than
   just binding the service interface to the implementation class: because we want to do something extra,
   in this case, register the new indexer service with the scheduler.

@@ -77,36 +77,4 @@ public class TestBaseTest extends TestBase
         assertEquals(b.isFlag(), true);
         assertEquals(b.getValue(), "magic");
     }
-
-    @Test
-    public void get_field()
-    {
-        Bean b = new Bean();
-
-        String expectedValue = "fred";
-
-        set(b, "value", expectedValue);
-
-        assertSame(b.getValue(), expectedValue);
-        assertSame(get(b, "value"), expectedValue);
-    }
-
-    @Test
-    public void error_getting_field()
-    {
-        Bean b = new Bean();
-
-        try
-        {
-            get(b, "missingField");
-            unreachable();
-        }
-        catch (RuntimeException ex)
-        {
-            assertMessageContains(ex,
-                                  "Unable to read field 'missingField' of org.apache.tapestry5.ioc.test.Bean",
-                                  "Class org.apache.tapestry5.ioc.test.Bean does not contain a field named 'missingField'.");
-
-        }
-    }
 }

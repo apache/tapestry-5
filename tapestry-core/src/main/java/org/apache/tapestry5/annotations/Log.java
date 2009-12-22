@@ -1,4 +1,4 @@
-// Copyright 2008, 2009 The Apache Software Foundation
+// Copyright 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,8 +16,6 @@ package org.apache.tapestry5.annotations;
 
 import java.lang.annotation.*;
 
-import static org.apache.tapestry5.ioc.annotations.AnnotationUseContext.*;
-import org.apache.tapestry5.ioc.annotations.UseWith;
 
 /**
  * Marker annotation for component methods to enable debug-level logging. Annotated methods will log method entry (with
@@ -28,7 +26,6 @@ import org.apache.tapestry5.ioc.annotations.UseWith;
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@UseWith({COMPONENT,MIXIN,PAGE})
 public @interface Log
 {
 }

@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,12 +15,16 @@
 package org.apache.tapestry5.internal.structure;
 
 import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.Link;
+import org.apache.tapestry5.internal.services.LinkFactory;
 import org.apache.tapestry5.internal.services.PersistentFieldManager;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.internal.util.Defense;
 import static org.apache.tapestry5.ioc.internal.util.Defense.notNull;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.runtime.PageLifecycleListener;
+import org.apache.tapestry5.services.ComponentClassResolver;
 import org.apache.tapestry5.services.PersistentFieldBundle;
 import org.slf4j.Logger;
 
@@ -29,11 +33,15 @@ import java.util.Locale;
 
 public class PageImpl implements Page
 {
-    private final String name;
+    private final String logicalPageName;
 
     private final Locale locale;
 
+    private final LinkFactory linkFactory;
+
     private final PersistentFieldManager persistentFieldManager;
+
+    private final ComponentClassResolver componentClassResolver;
 
     private ComponentPageElement rootElement;
 
@@ -49,17 +57,20 @@ public class PageImpl implements Page
      */
     private PersistentFieldBundle fieldBundle;
 
-    public PageImpl(String name, Locale locale, PersistentFieldManager persistentFieldManager)
+    public PageImpl(String logicalPageName, Locale locale, LinkFactory linkFactory,
+                    PersistentFieldManager persistentFieldManager, ComponentClassResolver componentClassResolver)
     {
-        this.name = name;
+        this.logicalPageName = logicalPageName;
         this.locale = locale;
+        this.linkFactory = linkFactory;
         this.persistentFieldManager = persistentFieldManager;
+        this.componentClassResolver = componentClassResolver;
     }
 
     @Override
     public String toString()
     {
-        return String.format("Page[%s %s]", name, locale);
+        return String.format("Page[%s %s]", logicalPageName, locale);
     }
 
     public ComponentPageElement getComponentElementByNestedId(String nestedId)
@@ -136,12 +147,14 @@ public class PageImpl implements Page
         loadComplete = true;
     }
 
+    public boolean isLoadComplete()
+    {
+        return loadComplete;
+    }
+
     public void attached()
     {
         if (dirtyCount != 0) throw new IllegalStateException(StructureMessages.pageIsDirty(this));
-
-        for (PageLifecycleListener listener : listeners)
-            listener.restoreStateBeforePageAttach();
 
         for (PageLifecycleListener listener : listeners)
             listener.containingPageDidAttach();
@@ -152,17 +165,36 @@ public class PageImpl implements Page
         return rootElement.getLogger();
     }
 
+    public Link createComponentEventLink(String nestedId, String eventType, boolean forForm, Object... context)
+    {
+        return linkFactory.createComponentEventLink(this, nestedId, eventType, forForm, context);
+    }
+
+    public Link createPageRenderLink(String pageName, boolean override, Object... context)
+    {
+        return linkFactory.createPageRenderLink(pageName, override, context);
+    }
+
+    public Link createPageRenderLink(Class pageClass, boolean override, Object... context)
+    {
+        Defense.notNull(pageClass, "pageClass");
+
+        String pageName = componentClassResolver.resolvePageClassNameToPageName(pageClass.getName());
+
+        return linkFactory.createPageRenderLink(pageName, override, context);
+    }
+
     public void persistFieldChange(ComponentResources resources, String fieldName, Object newValue)
     {
         if (!loadComplete)
             throw new RuntimeException(StructureMessages.persistChangeBeforeLoadComplete());
 
-        persistentFieldManager.postChange(name, resources, fieldName, newValue);
+        persistentFieldManager.postChange(logicalPageName, resources, fieldName, newValue);
     }
 
     public Object getFieldChange(String nestedId, String fieldName)
     {
-        if (fieldBundle == null) fieldBundle = persistentFieldManager.gatherChanges(name);
+        if (fieldBundle == null) fieldBundle = persistentFieldManager.gatherChanges(logicalPageName);
 
         return fieldBundle.getValue(nestedId, fieldName);
     }
@@ -174,7 +206,7 @@ public class PageImpl implements Page
 
     public void discardPersistentFieldChanges()
     {
-        persistentFieldManager.discardChanges(name);
+        persistentFieldManager.discardChanges(logicalPageName);
     }
 
     public void incrementDirtyCount()
@@ -182,8 +214,8 @@ public class PageImpl implements Page
         dirtyCount++;
     }
 
-    public String getName()
+    public String getLogicalName()
     {
-        return name;
+        return logicalPageName;
     }
 }

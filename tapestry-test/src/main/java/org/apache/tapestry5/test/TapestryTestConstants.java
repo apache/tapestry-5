@@ -15,11 +15,6 @@
 package org.apache.tapestry5.test;
 
 import java.io.File;
-import java.lang.reflect.Method;
-
-import org.testng.ITestContext;
-
-import com.thoughtworks.selenium.Selenium;
 
 public class TapestryTestConstants
 {
@@ -28,49 +23,15 @@ public class TapestryTestConstants
      */
     public static final String CURRENT_DIR_PATH = System.getProperty("user.dir");
     /**
-     * The Surefire plugin sets basedir but DOES NOT change the current working directory. When
-     * building across modules,
-     * basedir changes for each module, but user.dir does not. This value should be used when
-     * referecing local files.
-     * Outside of surefire, the "basedir" property will not be set, and the current working
-     * directory will be the
+     * The Surefire plugin sets basedir but DOES NOT change the current working directory. When building across modules,
+     * basedir changes for each module, but user.dir does not. This value should be used when referecing local files.
+     * Outside of surefire, the "basedir" property will not be set, and the current working directory will be the
      * default.
      */
-    public static final String MODULE_BASE_DIR_PATH = System.getProperty("basedir",
-            CURRENT_DIR_PATH);
+    public static final String MODULE_BASE_DIR_PATH = System.getProperty("basedir", CURRENT_DIR_PATH);
 
     /**
      * {@link #MODULE_BASE_DIR_PATH} as a file.
      */
     public static final File MODULE_BASE_DIR = new File(MODULE_BASE_DIR_PATH);
-
-    /**
-     * {@link ITestContext} attribute holding an instance of {@link Selenium}.
-     * 
-     * @see SeleniumLauncher#startup(String, String, int, String, ITestContext)
-     * @since 5.2.0
-     */
-    public static final String SELENIUM_ATTRIBUTE = "tapestry.selenium";
-
-    /**
-     * {@link ITestContext} attribute holding an instance of {@link ErrorReporter}.
-     * 
-     * @see SeleniumLauncher#startup(String, String, int, String, ITestContext)
-     * @since 5.2.0
-     */
-    public static final String ERROR_REPORTER_ATTRIBUTE = "tapestry.error-reporter";
-
-    /**
-     * {@link ITestContext} attribute holding the application's base URL.
-     * 
-     * @see SeleniumLauncher#startup(String, String, int, String, ITestContext)
-     * @since 5.2.0
-     */
-    public static final String BASE_URL_ATTRIBUTE = "tapestry.base-url";
-
-    /**
-     * {@link ITestContext} attribute updated to store the current test method
-     * (as a {@link Method} instance).
-     */
-    public static final String CURRENT_TEST_METHOD_ATTRIBUTE = "tapestry.current-test-method";
 }

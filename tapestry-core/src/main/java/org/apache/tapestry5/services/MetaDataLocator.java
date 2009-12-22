@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
 package org.apache.tapestry5.services;
 
 import org.apache.tapestry5.ComponentResources;
-import org.apache.tapestry5.ioc.annotations.UsesMappedConfiguration;
 
 /**
  * Used to lookup meta data concerning a particular component. The primary source of meta data is the meta data defined
@@ -26,11 +25,8 @@ import org.apache.tapestry5.ioc.annotations.UsesMappedConfiguration;
  * logical name.
  * <p/>
  * Finally, if no metadata is available, then {@link org.apache.tapestry5.ioc.services.SymbolSource#valueForSymbol(String)}
- * is used to obtain a value. Generally speaking, if you are going to use this service to look up meta data, your should
- * also make a contribution to the FactoryDefaults service; otherwise, you risk a runtime exception if a meta-data key
- * can not be resolved.
+ * is used to obtain a value.
  */
-@UsesMappedConfiguration(String.class)
 public interface MetaDataLocator
 {
     /**
@@ -39,21 +35,10 @@ public interface MetaDataLocator
      *
      * @param key       the key used to locate the meta data (case insensitive)
      * @param resources the resources of the initial component used in the search
-     * @return the value if found (in the component, the component's container, etc. or via a folder default)
+     * @return the value if found (in the component, the component's container, etc. or via a folder default) or null if
+     *         not found anywhere
      * @throws RuntimeException if the value for the key is not present as meta data of the component, as an override,
      *                          or as a symbol
      */
     <T> T findMeta(String key, ComponentResources resources, Class<T> expectedType);
-
-    /**
-     * Searches for the value for the corresponding key for a particular page name (the page will <em>not</em> be
-     * loaded).  The value, if located, will have symbols expanded, and will be type coerced to the desired type.
-     *
-     * @param key      the key used to locate the meta data (case insensitive)
-     * @param pageName the name of the page to search
-     * @return the value if found
-     * @throws RuntimeException if the value for the key is not present as meta data of the page, as an override, or as
-     *                          a symbol
-     */
-    <T> T findMeta(String key, String pageName, Class<T> expectedType);
 }

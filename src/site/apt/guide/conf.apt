@@ -57,16 +57,16 @@ Configuring Tapestry
   Actual files inside the web application take precedence over Tapestry pages, in situation where there
   would be a naming conflict.  
   
-  Tapestry recognizes the <root URL>, where the servlet path is simply "/", and renders the application page "Index",
+  Tapestry recognizes the <root URL>, where the servlet path is simply "/", and renders the application page "Start",
   if it exists.  
   
 * Tapestry IoC Configuration
 
-  Most other configuration occurs inside your application's module class.  The application module class
+  Most other configuration occurs inside your application's module builder class.  The application module builder
   will often define new services, provide overrides of services, or make contributions to service configurations.
   
-  Tapestry looks for a module class in the services package (under the root package). It capitalizes
-  the \<filter-name\> and appends "Module".  In the previous example, the module class
+  Tapestry looks for a module builder class in the services package (under the root package). It capitalizes
+  the \<filter-name\> and appends "Module".  In the previous example, the module builder class
   would be org.example.myapp.services.AppModule.
   
   If such a class exists, it is added to the IoC Registry. It is not an error for your application to not have a module, though
@@ -102,27 +102,6 @@ public class AppModule
 
   Many of these symbols have an associated constant in the class
   {{{../apidocs/org/apache/tapestry5/SymbolConstants.html}SymbolConstants}}.
-
-  [tapestry.app-catalog]
-    The location of the global application message
-    catalog, the default is context:WEB-INF/<app-name>.properties.
-
-  [tapestry.application-version]
-    The version of the application, which is incorporated into URLs for context and classpath assets. Assets
-    may be {{{compress.html}compressed}}, and will have far-future expiration headers; they will be aggresively
-    cached by the client web browser. You should change the application version on each new deployment of the
-    application (that is, any time assets in the context change),
-    to force clients to re-download changed versions of files.  If you do not specify
-    an application version, a <random> one will be assigned on every deployment (which is good for development
-    but very bad for production).
-
-  [tapestry.charset]
-    The character encoding used when generating output (or parsing input).  The default is "UTF-8".
-
-  [tapestry.combine-scripts]
-    If "true", then all JavaScript libraries required for a particular page render will be combined into a single
-    request (the contents of the libraries are dynamically combined by Tapestry).  Defaults to "true" in
-    production mode.
 
   [tapestry.compress-whitespace]
     A flag (true or false).  When true (the default) whitespace in component templates is compressed by default
@@ -169,16 +148,6 @@ public class AppModule
      When true, all URIs will be absolute URIs (including the
      context path, and the complete path for the request).
 
-  [tapestry.gzip-compression-enabled]
-    Override to "false" to disable GZIP compression of dynamic Tapestry pages and static assets.
-     
-  [tapestry.min-gzip-size]
-    The minimum stream size necessary for Tapestry to use GZIP compression on the response stream.
-
-  [tapestry.omit-generator-meta]
-    If "true", then the \<meta\> tag that Tapestry normally writes into the \<head\>, identifying the Tapestry version,
-    will be omitted.  Use this when you do not wish to advertise your application's use of Tapestry.
-
   [tapestry.production-mode]
     A flag (true or false) indicating whether the application is running in production or in development. The default
     is true, which means that runtime exceptions are not reported with full detail (only the root exception message
@@ -209,22 +178,22 @@ public class AppModule
     Tapestry will wait a short period of time (the soft wait interval) to see if an existing page instance
     is made available.  It will then create a new page instance (unless the hard limit has been reached).
 
-    The default is 5 page instances.    Remember that page pooling is done separately for each
+    The default is 5 page instances.    Remember that page pooling is done seperately for each
     page (and localization of the page).
 
   [tapestry.page-pool.soft-wait]
     The time interval that Tapestry will wait for a page instance to become available before deciding whether to create
     an entirely new page instance.  The default is "10 ms".
 
-  [tapestry.secure-enabled]
-    If true, then  {{{../apidocs/org/apache/tapestry5/annotations/Secure.html}@Secure}} annotation is honored; if
-    false, no security checks or redirects take place. This defaults to tapestry.production-mode, meaning that in development
-    mode it will (by default) be disabled.
-
   [tapestry.secure-page]
     If true, then the page may only be accessed via HTTPS.  The {{{../apidocs/org/apache/tapestry5/annotations/Secure.html}@Secure}}
-    annotation will set this value to true.  This symbol is the default for all pages; set it to "true" to force
-    the entire application to be secure.
+    annotation will set this value to true.
+
+  [tapestry.script-at-top]
+    If true, then links for external JavaScript libraries will be placed at the top of the page,  inside the
+    \<head\> element, rather than in the default location (at the bottom of the \<body\> element). The \<script\> block for per-page
+    initialization will be placed at the bottom of the page in either case.  The default (scripts at the bottom)
+    was chosen in accordance with {{{http://developer.yahoo.com/performance/rules.html#js_bottom}Yahoo Peformance Best Practices}}. 
 
   [tapestry.scriptaculous]
     The path to the embedded copy of {{{http://script.aculo.us/}script.aculo.us}} packaged with Tapestry. This value may be overridden

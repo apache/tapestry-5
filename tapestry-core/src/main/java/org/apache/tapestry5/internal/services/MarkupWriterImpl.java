@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ import org.apache.tapestry5.MarkupWriterListener;
 import org.apache.tapestry5.dom.*;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.Defense;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 
 import java.io.PrintWriter;
 import java.util.Collection;
@@ -75,29 +76,25 @@ public class MarkupWriterImpl implements MarkupWriter
 
     public void cdata(String content)
     {
-        currentText = null;
+        ensureCurrentElement();
 
-        if (current == null)
-        {
-            document.cdata(content);
-        }
-        else
-        {
-            current.cdata(content);
-        }
+        current.cdata(content);
+
+        currentText = null;
     }
 
     public void write(String text)
     {
+        // Whitespace before and after the root element is quietly ignored.
+        if (current == null && InternalUtils.isBlank(text)) return;
+
+        ensureCurrentElement();
+
         if (text == null) return;
 
         if (currentText == null)
         {
-            currentText =
-                    current == null
-                    ? document.text(text)
-                    : current.text(text);
-
+            currentText = current.text(text);
             return;
         }
 
@@ -133,27 +130,13 @@ public class MarkupWriterImpl implements MarkupWriter
 
     private void ensureCurrentElement()
     {
-        if (current == null)
-            throw new IllegalStateException(ServicesMessages.markupWriterNoCurrentElement());
+        if (current == null) throw new IllegalStateException(ServicesMessages.markupWriterNoCurrentElement());
     }
 
     public Element element(String name, Object... namesAndValues)
     {
-        if (current == null)
-        {
-            Element existingRootElement = document.getRootElement();
-
-            if (existingRootElement != null)
-                throw new IllegalStateException(String.format(
-                        "A document must have exactly one root element. Element <%s> is already the root element.",
-                        existingRootElement.getName()));
-
-            current = document.newRootElement(name);
-        }
-        else
-        {
-            current = current.element(name);
-        }
+        if (current == null) current = document.newRootElement(name);
+        else current = current.element(name);
 
         attributes(namesAndValues);
 
@@ -166,16 +149,11 @@ public class MarkupWriterImpl implements MarkupWriter
 
     public void writeRaw(String text)
     {
+        ensureCurrentElement();
+
         currentText = null;
 
-        if (current == null)
-        {
-            document.raw(text);
-        }
-        else
-        {
-            current.raw(text);
-        }
+        current.raw(text);
     }
 
     public Element end()
@@ -193,16 +171,11 @@ public class MarkupWriterImpl implements MarkupWriter
 
     public void comment(String text)
     {
-        currentText = null;
+        ensureCurrentElement();
 
-        if (current == null)
-        {
-            document.comment(text);
-        }
-        else
-        {
-            current.comment(text);
-        }
+        current.comment(text);
+
+        currentText = null;
     }
 
     public Element attributeNS(String namespace, String attributeName, String attributeValue)

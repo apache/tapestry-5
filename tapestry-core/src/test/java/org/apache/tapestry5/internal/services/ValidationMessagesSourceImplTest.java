@@ -17,7 +17,6 @@ package org.apache.tapestry5.internal.services;
 import org.apache.tapestry5.ioc.MessageFormatter;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.Resource;
-import org.apache.tapestry5.ioc.internal.services.ClasspathURLConverterImpl;
 import org.apache.tapestry5.ioc.internal.util.ClasspathResource;
 import org.apache.tapestry5.services.ValidationMessagesSource;
 import org.testng.Assert;
@@ -37,9 +36,7 @@ public class ValidationMessagesSourceImplTest extends Assert
         Resource rootResource = new ClasspathResource("/");
         source = new ValidationMessagesSourceImpl(Arrays.asList(
                 "org/apache/tapestry5/internal/ValidationMessages",
-                "org/apache/tapestry5/internal/ValidationTestMessages"), 
-                rootResource,
-                new ClasspathURLConverterImpl());
+                "org/apache/tapestry5/internal/ValidationTestMessages"), rootResource);
     }
 
     @Test

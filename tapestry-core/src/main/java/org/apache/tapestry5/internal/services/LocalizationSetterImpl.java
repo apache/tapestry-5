@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2009 The Apache Software Foundation
+// Copyright 2006, 2007 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,14 +14,12 @@
 
 package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.services.ThreadLocale;
-import org.apache.tapestry5.services.LocalizationSetter;
 import org.apache.tapestry5.services.PersistentLocale;
-import org.apache.tapestry5.services.Request;
+import org.apache.tapestry5.SymbolConstants;
 
 import java.util.Locale;
 import java.util.Map;
@@ -33,8 +31,6 @@ import java.util.Set;
  */
 public class LocalizationSetterImpl implements LocalizationSetter
 {
-    private final Request request;
-
     private final ThreadLocale threadLocale;
 
     private final Locale defaultLocale;
@@ -45,19 +41,13 @@ public class LocalizationSetterImpl implements LocalizationSetter
 
     private final PersistentLocale persistentLocale;
 
-    public LocalizationSetterImpl(Request request,
-
-                                  PersistentLocale persistentLocale,
-
-                                  ThreadLocale threadLocale,
-
+    public LocalizationSetterImpl(PersistentLocale persistentLocale, ThreadLocale threadLocale,
                                   @Inject
                                   @Symbol(SymbolConstants.SUPPORTED_LOCALES)
                                   String acceptedLocaleNames)
     {
-        this.request = request;
-
         this.persistentLocale = persistentLocale;
+
         this.threadLocale = threadLocale;
 
         String[] names = acceptedLocaleNames.split(",");
@@ -102,40 +92,16 @@ public class LocalizationSetterImpl implements LocalizationSetter
         }
     }
 
-    public boolean setLocaleFromLocaleName(String localeName)
+    public void setThreadLocale(Locale desiredLocale)
     {
-        boolean supported = acceptedLocaleNames.contains(localeName);
+        if (persistentLocale.get() != null) desiredLocale = persistentLocale.get();
 
-        if (supported)
-        {
-            Locale locale = findClosestSupportedLocale(toLocale(localeName));
+        Locale locale = findClosestAcceptedLocale(desiredLocale);
 
-            persistentLocale.set(locale);
-
-            threadLocale.setLocale(locale);
-        }
-        else
-        {
-            Locale requestLocale = request.getLocale();
-
-            Locale supportedLocale = findClosestSupportedLocale(requestLocale);
-
-            threadLocale.setLocale(supportedLocale);
-        }
-
-        return supported;
+        threadLocale.setLocale(locale);
     }
 
-    public void setNonPeristentLocaleFromLocaleName(String localeName)
-    {
-        Locale requested = toLocale(localeName);
-
-        Locale supported = findClosestSupportedLocale(requested);
-
-        threadLocale.setLocale(supported);
-    }
-
-    private Locale findClosestSupportedLocale(Locale desiredLocale)
+    private Locale findClosestAcceptedLocale(Locale desiredLocale)
     {
         String localeName = desiredLocale.toString();
 
@@ -157,4 +123,5 @@ public class LocalizationSetterImpl implements LocalizationSetter
 
         return scorex < 0 ? "" : localeName.substring(0, scorex);
     }
+
 }

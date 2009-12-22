@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,28 +19,23 @@ import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.dom.Element;
+import org.apache.tapestry5.internal.services.ClientBehaviorSupport;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.json.JSONObject;
-import org.apache.tapestry5.services.ClientBehaviorSupport;
 
 
 /**
  * A Zone is portion of the output page designed for easy dynamic updating via Ajax or other client-side effects.  A
- * Zone renders out as a &lt;div&gt; element (or whatever is specified in the template) and may have content initially,
- * or may only get its content as a result of client side activity.
+ * Zone renders out as a &lt;div&gt; element and may have content initially, or may only get its content as a result of
+ * client side activity.
  * <p/>
  * Often, Zones are initially invisible, in which case the visible parameter may be set to false (it defaults to true).
  * <p/>
  * When a user clicks an {@link org.apache.tapestry5.corelib.components.ActionLink} whose zone parameter is set, the
- * corresponding client-side Tapestry.ZoneManager object is located. It will update the content of the Zone's
- * &lt;div&gt; and then invoke either a show method (if the div is not visible) or an update method (if the div is
- * visible).  The show and update parameters are the <em>names</em> of functions attached to the Tapestry.ElementEffect
- * object.    Likewise, a {@link org.apache.tapestry5.corelib.components.Form} component may also trigger an update of a
- * client-side Zone.
- * <p/>
- * The server side event handler can return a {@link org.apache.tapestry5.Block} or a component to render as the new
- * content on the client side. Often, re-rendering the Zone's {@linkplain #getBody() body} is useful. Multiple
- * client-side zones may be updated by returning a {@link org.apache.tapestry5.ajax.MultiZoneUpdate}.
+ * corresponding client-side Tapestry.Zone object is located. It will update the content of the Zone's &lt;div&gt; and
+ * then invoke either a show method (if the div is not visible) or an update method (if the div is visible).  The show
+ * and update parameters are the <em>names</em> of functions attached to the Tapestry.ElementEffect object.    Likewise,
+ * a {@link org.apache.tapestry5.corelib.components.Form} component may also trigger an update of a client-side Zone.
  * <p/>
  * Renders informal parameters, adding CSS class "t-zone" and possibly, "t-invisible".
  * <p/>
@@ -51,9 +46,6 @@ import org.apache.tapestry5.services.ClientBehaviorSupport;
  * of the page). Failure to provide an explicit id results in a new, and non-predictable, id being generated for each
  * partial render, which will often result in client-side failures to locate the element to update when the Zone is
  * triggered.
- * <p/>
- * After the client-side content is updated, a client-side event is fired on the zone's element. The constant
- * Tapestry.ZONE_UPDATED_EVENT can be used to listen to the event.
  */
 @SupportsInformalParameters
 public class Zone implements ClientElement
@@ -74,18 +66,11 @@ public class Zone implements ClientElement
     private String update;
 
     /**
-     * The element name to render for the zone; this defaults to the element actually used in the template, or "div" if
-     * no specific element was specified.
-     */
-    @Parameter(required = true, allowNull = false, defaultPrefix = BindingConstants.LITERAL)
-    private String elementName;
-
-    /**
      * If bound, then the id attribute of the rendered element will be this exact value. If not bound, then a unique id
      * is generated for the element.
      */
     @Parameter(name = "id", defaultPrefix = BindingConstants.LITERAL)
-    private String idParameter;
+    private String clientId;
 
     @Environmental
     private RenderSupport renderSupport;
@@ -103,24 +88,18 @@ public class Zone implements ClientElement
     @Inject
     private ComponentResources resources;
 
-    private String clientId;
-
-    String defaultElementName()
-    {
-        return resources.getElementName("div");
-    }
-
     void beginRender(MarkupWriter writer)
     {
-        clientId = resources.isBound("id") ? idParameter : renderSupport.allocateClientId(resources);
+        if (!resources.isBound("id"))
+            clientId = renderSupport.allocateClientId(resources);
 
-        Element e = writer.element(elementName, "id", clientId);
+        Element e = writer.element("div", "id", clientId);
 
         resources.renderInformalParameters(writer);
 
         e.addClassName("t-zone");
 
-        if (!visible) e.addClassName(CSSClassConstants.INVISIBLE);
+        if (!visible) e.addClassName("t-invisible");
 
         // And continue on to render the body
 
@@ -135,12 +114,6 @@ public class Zone implements ClientElement
         writer.end(); // div
     }
 
-    /**
-     * The client id of the Zone; this is set when the Zone renders and will either be the value bound to the id
-     * parameter, or an allocated unique id.
-     *
-     * @return client-side element id
-     */
     public String getClientId()
     {
         return clientId;

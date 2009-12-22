@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -54,8 +54,6 @@ public final class MutableComponentModelImpl implements MutableComponentModel
 
     private List<String> mixinClassNames;
 
-    private Map<String, String[]> mixinOrders;
-
     private boolean informalParametersSupported;
 
     private boolean mixinAfter;
@@ -63,8 +61,6 @@ public final class MutableComponentModelImpl implements MutableComponentModel
     private Map<String, String> metaData;
 
     private Set<Class> handledRenderPhases;
-
-    private Map<String, Boolean> handledEvents;
 
     public MutableComponentModelImpl(String componentClassName, Logger logger, Resource baseResource,
                                      ComponentModel parentModel)
@@ -106,7 +102,7 @@ public final class MutableComponentModelImpl implements MutableComponentModel
         return componentClassName;
     }
 
-    public void addParameter(String name, boolean required, boolean allowNull, String defaultBindingPrefix, boolean cached)
+    public void addParameter(String name, boolean required, boolean allowNull, String defaultBindingPrefix)
     {
         Defense.notBlank(name, "name");
         Defense.notBlank(defaultBindingPrefix, "defaultBindingPrefix");
@@ -119,16 +115,7 @@ public final class MutableComponentModelImpl implements MutableComponentModel
         if (parameters.containsKey(name))
             throw new IllegalArgumentException(ModelMessages.duplicateParameter(name, componentClassName));
 
-        parameters.put(name, new ParameterModelImpl(name, required, allowNull, defaultBindingPrefix,cached));
-    }
-
-    public void addParameter(String name, boolean required, boolean allowNull, String defaultBindingPrefix)
-    {
-        //assume /false/ for the default because:
-        //if the parameter is actually cached, the only effect will be to reduce that optimization in certain
-        //scenarios (mixin BindParameter).  But if the value is NOT cached but we say it is,
-        //we'll get incorrect behavior.
-        addParameter(name,required,allowNull,defaultBindingPrefix,false);
+        parameters.put(name, new ParameterModelImpl(name, required, allowNull, defaultBindingPrefix));
     }
 
     public ParameterModel getParameterModel(String parameterName)
@@ -231,16 +218,11 @@ public final class MutableComponentModelImpl implements MutableComponentModel
         return parentModel == null;
     }
 
-    public void addMixinClassName(String mixinClassName, String... order)
+    public void addMixinClassName(String mixinClassName)
     {
         if (mixinClassNames == null) mixinClassNames = CollectionFactory.newList();
 
         mixinClassNames.add(mixinClassName);
-        if (order != null && order.length > 0)
-        {
-            if (mixinOrders == null) mixinOrders = CollectionFactory.newCaseInsensitiveMap();
-            mixinOrders.put(mixinClassName,order);
-        }
     }
 
     public List<String> getMixinClassNames()
@@ -302,14 +284,6 @@ public final class MutableComponentModelImpl implements MutableComponentModel
         handledRenderPhases.add(renderPhase);
     }
 
-    public void addEventHandler(String eventType)
-    {
-        if (handledEvents == null)
-            handledEvents = CollectionFactory.newCaseInsensitiveMap();
-
-        handledEvents.put(eventType, true);
-    }
-
     public String getMeta(String key)
     {
         String result = InternalUtils.get(metaData, key);
@@ -330,19 +304,5 @@ public final class MutableComponentModelImpl implements MutableComponentModel
             result.addAll(handledRenderPhases);
 
         return result;
-    }
-
-    public boolean handlesEvent(String eventType)
-    {
-        if (InternalUtils.get(handledEvents, eventType) != null) return true;
-
-        return parentModel == null
-               ? false
-               : parentModel.handlesEvent(eventType);
-    }
-
-    public String[] getOrderForMixin(String mixinClassName)
-    {
-        return InternalUtils.get(mixinOrders,mixinClassName);
     }
 }

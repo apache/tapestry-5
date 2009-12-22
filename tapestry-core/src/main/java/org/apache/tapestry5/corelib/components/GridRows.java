@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -28,8 +28,8 @@
 package org.apache.tapestry5.corelib.components;
 
 import org.apache.tapestry5.ComponentAction;
+import org.apache.tapestry5.PrimaryKeyEncoder;
 import org.apache.tapestry5.PropertyOverrides;
-import org.apache.tapestry5.ValueEncoder;
 import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.Property;
@@ -41,6 +41,7 @@ import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.services.FormSupport;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -51,17 +52,16 @@ import java.util.List;
  * form render and the form submission, this can cause unexpected results, including applying changes to the wrong
  * objects.
  */
-@SuppressWarnings({ "unchecked" })
+@SuppressWarnings({"unchecked"})
 public class GridRows
 {
     private int startRow;
 
     private boolean recordStateByIndex;
-
     private boolean recordStateByEncoder;
 
     /**
-     * This action is used when a {@link org.apache.tapestry5.ValueEncoder} is not provided.
+     * This action is used when a {@link org.apache.tapestry5.PrimaryKeyEncoder} is not.
      */
     static class SetupForRowByIndex implements ComponentAction<GridRows>
     {
@@ -87,26 +87,52 @@ public class GridRows
     }
 
     /**
-     * This action is used when a {@link org.apache.tapestry5.ValueEncoder} is provided.
+     * This action is used when a {@link org.apache.tapestry5.PrimaryKeyEncoder} is provided.
      */
-    static class SetupForRowWithClientValue implements ComponentAction<GridRows>
+    static class SetupForRowByKey implements ComponentAction<GridRows>
     {
-        private final String clientValue;
+        private final Serializable rowKey;
 
-        SetupForRowWithClientValue(String clientValue)
+        SetupForRowByKey(Serializable rowKey)
         {
-            this.clientValue = clientValue;
+            this.rowKey = rowKey;
         }
 
         public void execute(GridRows component)
         {
-            component.setupForRowWithClientValue(clientValue);
+            component.setupForRowByKey(rowKey);
         }
 
         @Override
         public String toString()
         {
-            return String.format("GridRows.SetupForRowWithClientValue[%s]", clientValue);
+            return String.format("GridRows.SetupForRowByKey[%s]", rowKey);
+        }
+    }
+
+
+    /**
+     * This action is also associated with the {@link org.apache.tapestry5.PrimaryKeyEncoder}; it allows the PKE to be
+     * informed of the series of keys to expect with the form submission.
+     */
+    static class PrepareForKeys implements ComponentAction<GridRows>
+    {
+        private List<Serializable> storedKeys;
+
+        public PrepareForKeys(List<Serializable> storedKeys)
+        {
+            this.storedKeys = storedKeys;
+        }
+
+        public void execute(GridRows component)
+        {
+            component.prepareForKeys(storedKeys);
+        }
+
+        @Override
+        public String toString()
+        {
+            return "GridRows.PrepareForKeys" + storedKeys.toString();
         }
     }
 
@@ -159,22 +185,19 @@ public class GridRows
     private boolean lean;
 
     /**
-     * If true and the component is enclosed by a Form, then the normal state saving logic is turned off. Defaults to
-     * false, enabling state saving logic within Forms. This can be set to false when form elements within the Grid are
-     * not related to the current row of the grid, or where another component (such as {@link
-     * org.apache.tapestry5.corelib.components.Hidden}) is used to maintain row state.
+     * If true and the Loop is enclosed by a Form, then the normal state saving logic is turned off. Defaults to false,
+     * enabling state saving logic within Forms.
      */
     @Parameter(name = "volatile")
     private boolean volatileState;
 
     /**
-     * Changes how state is recorded into the form to store the {@linkplain org.apache.tapestry5.ValueEncoder#toClient(Object)
-     * client value} for each row (rather than the index), and restore the {@linkplain
-     * org.apache.tapestry5.ValueEncoder#toValue(String) row values} from the client value.
+     * Changes how state is recorded into the form to store the {@linkplain org.apache.tapestry5.PrimaryKeyEncoder#toKey(Object)
+     * primary key} for each row (rather than the index), and restore the {@linkplain
+     * org.apache.tapestry5.PrimaryKeyEncoder#toValue(java.io.Serializable) row values} from the primary keys.
      */
     @Parameter
-    private ValueEncoder encoder;
-
+    private PrimaryKeyEncoder encoder;
 
     /**
      * Optional output parameter (only set during rendering) that identifies the current row index. This is the index on
@@ -206,6 +229,8 @@ public class GridRows
 
     @Property(write = false)
     private PropertyModel columnModel;
+
+    private List<Serializable> encodedPrimaryKeys;
 
     public String getRowClass()
     {
@@ -273,6 +298,16 @@ public class GridRows
 
         recordStateByIndex = recordingStateInsideForm && (encoder == null);
         recordStateByEncoder = recordingStateInsideForm && (encoder != null);
+
+        if (recordStateByEncoder)
+        {
+            encodedPrimaryKeys = CollectionFactory.newList();
+
+            // As we render, we'll fill in encodedPrimaryKeys.  That's ok, because nothing is serialized
+            // until later.  When the form is submitted, this will give us a chance to inform
+            // the PKE about the keys to expect.
+            formSupport.store(this, new PrepareForKeys(encodedPrimaryKeys));
+        }
     }
 
     /**
@@ -285,15 +320,24 @@ public class GridRows
 
     /**
      * Callback method that bypasses the data source and converts a primary key back into a row value (via {@link
-     * org.apache.tapestry5.ValueEncoder#toValue(String)}).
+     * org.apache.tapestry5.PrimaryKeyEncoder#toValue(java.io.Serializable)}).
      */
-    void setupForRowWithClientValue(String clientValue)
+    void setupForRowByKey(Serializable rowKey)
     {
-        row = encoder.toValue(clientValue);
+        row = encoder.toValue(rowKey);
 
         if (row == null)
             throw new IllegalArgumentException(
-                    String.format("%s returned null for client value '%s'.", encoder, clientValue));
+                    String.format("%s returned null for key %s.", encoder, rowKey));
+    }
+
+    /**
+     * Callback method that allows the primary key encoder to prepare for the keys that will be resolved to row values
+     * in this request.
+     */
+    private void prepareForKeys(List<Serializable> storedKeys)
+    {
+        encoder.prepareForKeys(storedKeys);
     }
 
 
@@ -316,8 +360,10 @@ public class GridRows
 
             if (recordStateByEncoder)
             {
-                String key = encoder.toClient(row);
-                formSupport.store(this, new SetupForRowWithClientValue(key));
+                Serializable key = encoder.toKey(row);
+                encodedPrimaryKeys.add(key);
+
+                formSupport.store(this, new SetupForRowByKey(key));
             }
         }
 

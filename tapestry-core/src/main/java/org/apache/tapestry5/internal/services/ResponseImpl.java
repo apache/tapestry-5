@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@ package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.Link;
 import org.apache.tapestry5.ioc.internal.util.Defense;
+import static org.apache.tapestry5.ioc.internal.util.Defense.notBlank;
 import org.apache.tapestry5.services.Response;
 
 import javax.servlet.http.HttpServletResponse;
@@ -37,9 +38,11 @@ public class ResponseImpl implements Response
 
     public PrintWriter getPrintWriter(String contentType) throws IOException
     {
-        Defense.notBlank(contentType, "contentType");
+        notBlank(contentType, "contentType");
 
-        OutputStream os = getOutputStream(contentType);
+        response.setContentType(contentType);
+
+        OutputStream os = response.getOutputStream();
 
         Writer w = new OutputStreamWriter(os, response.getCharacterEncoding());
 
@@ -77,7 +80,7 @@ public class ResponseImpl implements Response
 
     public OutputStream getOutputStream(String contentType) throws IOException
     {
-        Defense.notBlank(contentType, "contentType");
+        notBlank(contentType, "contentType");
 
         response.setContentType(contentType);
 

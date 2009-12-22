@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@ package org.apache.tapestry5.internal.bindings;
 import org.apache.tapestry5.Binding;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.PropertyConduit;
-import org.apache.tapestry5.internal.services.StringInterner;
 import org.apache.tapestry5.ioc.Location;
 import org.apache.tapestry5.services.BindingFactory;
 import org.apache.tapestry5.services.PropertyConduitSource;
@@ -32,12 +31,9 @@ public class PropBindingFactory implements BindingFactory
 {
     private final PropertyConduitSource source;
 
-    private final StringInterner interner;
-
-    public PropBindingFactory(PropertyConduitSource propertyConduitSource, StringInterner interner)
+    public PropBindingFactory(PropertyConduitSource propertyConduitSource)
     {
         source = propertyConduitSource;
-        this.interner = interner;
     }
 
     public Binding newBinding(String description, ComponentResources container,
@@ -48,9 +44,9 @@ public class PropBindingFactory implements BindingFactory
 
         PropertyConduit conduit = source.create(targetClass, expression);
 
-        String toString = interner.format("PropBinding[%s %s(%s)]", description, container
+        String toString = String.format("PropBinding[%s %s(%s)]", description, container
                 .getCompleteId(), expression);
 
-        return new PropBinding(location, target, conduit, toString);
+        return new PropBinding(target, conduit, toString, location);
     }
 }

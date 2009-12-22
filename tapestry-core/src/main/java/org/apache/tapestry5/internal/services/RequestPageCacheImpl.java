@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -38,11 +38,11 @@ public class RequestPageCacheImpl implements RequestPageCache, ThreadCleanupList
         this.resolver = resolver;
     }
 
-    public Page get(String pageName)
+    public Page get(String logicalPageName)
     {
-        Defense.notNull(pageName, "pageName");
+        Defense.notNull(logicalPageName, "logicalPageName");
 
-        String canonicalName = resolver.canonicalizePageName(pageName);
+        String canonicalName = resolver.canonicalizePageName(logicalPageName);
 
         Page page = cache.get(canonicalName);
 

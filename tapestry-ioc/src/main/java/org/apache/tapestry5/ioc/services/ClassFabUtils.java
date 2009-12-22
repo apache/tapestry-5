@@ -204,17 +204,6 @@ public final class ClassFabUtils
         return String.format("(%s)%s", desiredType, reference);
     }
 
-    /**
-     * Given a primitive type, finds the unwrap method of the corresponding wrapper type.
-     *
-     * @param primitiveType
-     * @return method name
-     */
-    public static String getUnwrapMethodName(Class primitiveType)
-    {
-        return PRIMITIVE_TYPE_NAME_TO_PRIMITIVE_INFO.get(primitiveType.getName()).unwrapMethod;
-    }
-
 
     /**
      * Given a type name, determines if that is the name of a primitive type.
@@ -255,7 +244,7 @@ public final class ClassFabUtils
     {
         classFab.addField("_creator", Modifier.PRIVATE | Modifier.FINAL, ObjectCreator.class);
 
-        classFab.addConstructor(new Class[] {ObjectCreator.class}, null, "_creator = $1;");
+        classFab.addConstructor(new Class[] { ObjectCreator.class }, null, "_creator = $1;");
 
         String body = format("return (%s) _creator.createObject();", serviceInterface.getName());
 

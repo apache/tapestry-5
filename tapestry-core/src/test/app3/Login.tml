@@ -16,9 +16,6 @@
             <li>
                 <t:pagelink page="renderpagedemo">PageDocumentGenerator demo</t:pagelink>
             </li>
-            <li>
-                <t:pagelink page="consoledemo">Console demo</t:pagelink>
-            </li>
         </ul>
 
     </body>

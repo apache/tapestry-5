@@ -1,4 +1,4 @@
-// Copyright 2006, 2009 The Apache Software Foundation
+// Copyright 2006 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,8 +17,6 @@ package org.apache.tapestry5.ioc;
 /**
  * A service decorator is derived from a {@link org.apache.tapestry5.ioc.def.DecoratorDef} and is responsible for
  * building an interceptor around an existing implementation (called the "delegate").
- *
- * @see org.apache.tapestry5.ioc.ServiceAdvisor
  */
 public interface ServiceDecorator
 {
@@ -29,5 +27,5 @@ public interface ServiceDecorator
      * @return a new object implementing the same service interface, or delegate or null if the decorator chooses not to
      *         create a new interceptor.
      */
-    Object createInterceptor(Object delegate);
+    public Object createInterceptor(Object delegate);
 }

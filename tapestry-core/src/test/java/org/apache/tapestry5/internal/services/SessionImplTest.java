@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,16 +14,14 @@
 
 package org.apache.tapestry5.internal.services;
 
+import org.apache.tapestry5.internal.test.InternalBaseTestCase;
+import org.apache.tapestry5.services.Session;
+import org.testng.annotations.Test;
+
+import javax.servlet.http.HttpSession;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
-
-import javax.servlet.http.HttpSession;
-
-import org.apache.tapestry5.internal.test.InternalBaseTestCase;
-import org.apache.tapestry5.services.Session;
-import org.apache.tapestry5.services.SessionPersistedObjectAnalyzer;
-import org.testng.annotations.Test;
 
 public class SessionImplTest extends InternalBaseTestCase
 {
@@ -37,7 +35,7 @@ public class SessionImplTest extends InternalBaseTestCase
 
         replay();
 
-        Session session = new SessionImpl(hs, null);
+        Session session = new SessionImpl(hs);
 
         assertEquals(session.getAttributeNames(), Arrays.asList("barney", "fred"));
 
@@ -54,7 +52,7 @@ public class SessionImplTest extends InternalBaseTestCase
 
         replay();
 
-        Session session = new SessionImpl(hs, null);
+        Session session = new SessionImpl(hs);
 
         assertEquals(session.getAttributeNames("f"), Arrays.asList("fanny", "fred"));
 
@@ -70,7 +68,7 @@ public class SessionImplTest extends InternalBaseTestCase
 
         replay();
 
-        Session session = new SessionImpl(hs, null);
+        Session session = new SessionImpl(hs);
 
         session.invalidate();
 
@@ -87,7 +85,7 @@ public class SessionImplTest extends InternalBaseTestCase
 
         replay();
 
-        Session session = new SessionImpl(hs, null);
+        Session session = new SessionImpl(hs);
 
         session.setMaxInactiveInterval(seconds);
 
@@ -104,38 +102,9 @@ public class SessionImplTest extends InternalBaseTestCase
 
         replay();
 
-        Session session = new SessionImpl(hs, null);
+        Session session = new SessionImpl(hs);
 
         assertEquals(session.getMaxInactiveInterval(), seconds);
-
-        verify();
-    }
-
-    @Test
-    public void dirty_persisted_object_is_forced_to_update()
-    {
-        HttpSession hs = mockHttpSession();
-        SessionPersistedObjectAnalyzer analyzer = newMock(SessionPersistedObjectAnalyzer.class);
-        Object dirty = new Object();
-
-        train_getAttribute(hs, "dirty", dirty);
-
-        replay();
-
-        Session session = new SessionImpl(hs, analyzer);
-
-        assertSame(session.getAttribute("dirty"), dirty);
-
-        verify();
-
-        expect(analyzer.isDirty(dirty)).andReturn(true);
-
-        hs.setAttribute("dirty", null);
-        hs.setAttribute("dirty", dirty);
-
-        replay();
-
-        session.restoreDirtyObjects();
 
         verify();
     }

@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2009 The Apache Software Foundation
+// Copyright 2006, 2007 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -22,10 +22,5 @@ public enum TokenType
 {
 
     ATTRIBUTE, CDATA, COMMENT, END_ELEMENT, START_COMPONENT, START_ELEMENT, TEXT, BODY, EXPANSION, PARAMETER, BLOCK, DTD,
-    DEFINE_NAMESPACE_PREFIX,
-
-    /**
-     * @since 5.1.0.1
-     */
-    EXTENSION_POINT
+    DEFINE_NAMESPACE_PREFIX
 }

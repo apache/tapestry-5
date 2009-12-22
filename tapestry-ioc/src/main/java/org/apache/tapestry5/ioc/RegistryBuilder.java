@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -103,11 +103,11 @@ public final class RegistryBuilder
      *
      * @see org.apache.tapestry5.ioc.annotations.SubModule
      */
-    public RegistryBuilder add(Class... moduleClasses)
+    public RegistryBuilder add(Class... moduleBuilderClasses)
     {
         lock.check();
 
-        List<Class> queue = CollectionFactory.newList(Arrays.asList(moduleClasses));
+        List<Class> queue = CollectionFactory.newList(Arrays.asList(moduleBuilderClasses));
 
         while (!queue.isEmpty())
         {
@@ -118,8 +118,6 @@ public final class RegistryBuilder
             if (addedModuleClasses.contains(c)) continue;
 
             addedModuleClasses.add(c);
-
-            logger.info("Adding module definition for " + c);
 
             ModuleDef def = new DefaultModuleDefImpl(c, logger, classFactory);
             add(def);

@@ -1,4 +1,4 @@
-// Copyright 2008, 2009 The Apache Software Foundation
+// Copyright 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,9 +14,6 @@
 
 package org.apache.tapestry5.annotations;
 
-import org.apache.tapestry5.ioc.annotations.UseWith;
-import org.apache.tapestry5.ioc.annotations.AnnotationUseContext;
-
 import java.lang.annotation.Documented;
 import static java.lang.annotation.ElementType.TYPE;
 import java.lang.annotation.Retention;
@@ -31,7 +28,6 @@ import java.lang.annotation.Target;
 @Target(TYPE)
 @Retention(RUNTIME)
 @Documented
-@UseWith(AnnotationUseContext.PAGE)
 public @interface Secure
 {
 }

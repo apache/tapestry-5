@@ -1,4 +1,4 @@
-//  Copyright 2007, 2008, 2009 The Apache Software Foundation
+//  Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -69,8 +69,7 @@ public class BindingConstants
 
     /**
      * References a localized asset.  The asset will be relative to the component's class file, unless a prefix
-     * (typically, "context:") is used on the expression.    Typically, this is used for classpath assets relative to
-     * the component class, and {@link #CONTEXT} is used for context assets.
+     * (typically, "context:") is used.
      *
      * @see org.apache.tapestry5.Asset
      * @see org.apache.tapestry5.services.AssetSource
@@ -83,12 +82,4 @@ public class BindingConstants
      * org.apache.tapestry5.corelib.components.Loop} component.
      */
     public static final String VAR = "var";
-
-    /**
-     * Binding factory for context assets specifically. The expression is the path from the root of the web
-     * application.
-     *
-     * @since 5.1.0.0
-     */
-    public static final String CONTEXT = "context";
 }

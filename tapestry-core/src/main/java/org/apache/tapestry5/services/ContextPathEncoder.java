@@ -34,15 +34,6 @@ public interface ContextPathEncoder
     String encodeIntoPath(Object[] context);
 
     /**
-     * Encodes the context into a string. Returns the empty string if the context is empty.
-     *
-     * @param context to encode
-     * @return encoded values seperated by "/" characters, or the empty string
-     * @since 5.1.0.2
-     */
-    String encodeIntoPath(EventContext context);
-
-    /**
      * Inverse of {@link #encodeIntoPath(Object[])}; the path is split into strings, and the string are decoded and
      * constructed into an {@link org.apache.tapestry5.EventContext}.
      *

@@ -1,4 +1,4 @@
-// Copyright 2008, 2009 The Apache Software Foundation
+// Copyright 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,9 +20,6 @@ import java.lang.annotation.Retention;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Target;
 
-import static org.apache.tapestry5.ioc.annotations.AnnotationUseContext.*;
-import org.apache.tapestry5.ioc.annotations.UseWith;
-
 /**
  * Annotation for fields for which accessor methods (getters and setters) should be created.  This can help when
  * defining the kind of placeholder properties often used in components, though the disadvantage is that you can't
@@ -34,7 +31,6 @@ import org.apache.tapestry5.ioc.annotations.UseWith;
 @Target(FIELD)
 @Documented
 @Retention(RUNTIME)
-@UseWith({COMPONENT,MIXIN,PAGE})
 public @interface Property
 {
     /**

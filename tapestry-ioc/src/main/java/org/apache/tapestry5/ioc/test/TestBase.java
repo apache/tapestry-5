@@ -277,35 +277,6 @@ public class TestBase extends Assert
         return object;
     }
 
-    /**
-     * Reads the content of a private field.
-     *
-     * @param object    to read the private field from
-     * @param fieldName name of field to read
-     * @return value stored in the field
-     * @since 5.1.0.5
-     */
-    protected static Object get(Object object, String fieldName)
-    {
-        Defense.notNull(object, "object");
-        Defense.notBlank(fieldName, "fieldName");
-
-        try
-        {
-            Field field = findField(object.getClass(), fieldName);
-
-            field.setAccessible(true);
-
-            return field.get(object);
-        }
-        catch (Exception ex)
-        {
-            throw new RuntimeException(String.format("Unable to read field '%s' of %s: %s",
-                                                     fieldName, object,
-                                                     InternalUtils.toMessage(ex)), ex);
-        }
-    }
-
     private static Field findField(Class objectClass, String fieldName)
     {
 

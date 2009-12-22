@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@ package org.apache.tapestry5.ioc.internal;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.def.ContributionDef;
 import org.apache.tapestry5.ioc.def.ServiceDef;
-import org.apache.tapestry5.ioc.def.ServiceDef2;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import static org.apache.tapestry5.ioc.internal.util.InternalUtils.asString;
@@ -77,6 +76,11 @@ final class IOCMessages
     static String constructorError(String creatorDescription, String serviceId, Throwable cause)
     {
         return MESSAGES.format("constructor-error", creatorDescription, serviceId, cause);
+    }
+
+    static String decoratorMethodError(Method method, String serviceId, Throwable cause)
+    {
+        return MESSAGES.format("decorator-method-error", asString(method), serviceId, cause);
     }
 
     static String builderMethodReturnedNull(String methodId, String serviceId)
@@ -161,27 +165,27 @@ final class IOCMessages
         return MESSAGES.format("contribution-method-error", asString(method), cause);
     }
 
-    static String contributionWasNull(String serviceId)
+    static String contributionWasNull(String serviceId, ContributionDef def)
     {
-        return MESSAGES.format("contribution-was-null", serviceId);
+        return MESSAGES.format("contribution-was-null", serviceId, def);
     }
 
-    static String contributionKeyWasNull(String serviceId)
+    static String contributionKeyWasNull(String serviceId, ContributionDef def)
     {
-        return MESSAGES.format("contribution-key-was-null", serviceId);
+        return MESSAGES.format("contribution-key-was-null", serviceId, def);
     }
 
-    static String contributionWrongValueType(String serviceId, Class actualClass,
+    static String contributionWrongValueType(String serviceId, ContributionDef def, Class actualClass,
                                              Class expectedClass)
     {
-        return MESSAGES.format("contribution-wrong-value-type", serviceId, actualClass
+        return MESSAGES.format("contribution-wrong-value-type", serviceId, def, actualClass
                 .getName(), expectedClass.getName());
     }
 
-    static String contributionWrongKeyType(String serviceId, Class actualClass,
+    static String contributionWrongKeyType(String serviceId, ContributionDef def, Class actualClass,
                                            Class expectedClass)
     {
-        return MESSAGES.format("contribution-wrong-key-type", serviceId, actualClass.getName(),
+        return MESSAGES.format("contribution-wrong-key-type", serviceId, def, actualClass.getName(),
                                expectedClass.getName());
     }
 
@@ -195,9 +199,10 @@ final class IOCMessages
         return MESSAGES.format("generic-type-not-supported", type);
     }
 
-    static String contributionDuplicateKey(String serviceId, ContributionDef existingDef)
+    static String contributionDuplicateKey(String serviceId, ContributionDef contributionDef,
+                                           ContributionDef existingDef)
     {
-        return MESSAGES.format("contribution-duplicate-key", serviceId, existingDef);
+        return MESSAGES.format("contribution-duplicate-key", serviceId, contributionDef, existingDef);
     }
 
     static String errorBuildingService(String serviceId, ServiceDef serviceDef, Throwable cause)
@@ -205,14 +210,14 @@ final class IOCMessages
         return MESSAGES.format("error-building-service", serviceId, serviceDef, cause);
     }
 
-    static String noPublicConstructors(Class moduleClass)
+    static String noPublicConstructors(Class moduleBuilderClass)
     {
-        return MESSAGES.format("no-public-constructors", moduleClass.getName());
+        return MESSAGES.format("no-public-constructors", moduleBuilderClass.getName());
     }
 
-    static String tooManyPublicConstructors(Class moduleClass, Constructor constructor)
+    static String tooManyPublicConstructors(Class moduleBuilderClass, Constructor constructor)
     {
-        return MESSAGES.format("too-many-public-constructors", moduleClass.getName(), constructor);
+        return MESSAGES.format("too-many-public-constructors", moduleBuilderClass.getName(), constructor);
     }
 
     static String recursiveModuleConstructor(Class builderClass, Constructor constructor)
@@ -290,7 +295,7 @@ final class IOCMessages
     }
 
     static String manyServicesMatchMarker(Class objectType, List<Class> markers,
-                                          Collection<ServiceDef2> matchingServices)
+                                          Collection<ServiceDef> matchingServices)
     {
         return MESSAGES.format("many-services-match-marker",
                                ClassFabUtils.toJavaClassName(objectType),

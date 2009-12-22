@@ -15,7 +15,6 @@
 package org.apache.tapestry5.internal.util;
 
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.services.ClasspathURLConverter;
 
 import java.io.File;
 import java.io.IOException;
@@ -37,31 +36,23 @@ public class URLChangeTracker
     private final Map<File, Long> fileToTimestamp = CollectionFactory.newConcurrentMap();
 
     private final boolean granularitySeconds;
-    
-    private ClasspathURLConverter classpathURLConverter; 
 
     /**
      * Creates a new URL change tracker with millisecond-level granularity.
-     * 
-     * @param classpathURLConverter used to convert URLs from one protocol to another
      */
-    public URLChangeTracker(ClasspathURLConverter classpathURLConverter)
+    public URLChangeTracker()
     {
-        this(classpathURLConverter, false);
-        
+        this(false);
     }
 
     /**
      * Creates a new URL change tracker, using either millisecond-level granularity or second-level granularity.
      *
-     * @param classpathURLConverter used to convert URLs from one protocol to another
      * @param granularitySeconds whether or not to use second granularity (as opposed to millisecond granularity)
      */
-    public URLChangeTracker(ClasspathURLConverter classpathURLConverter, boolean granularitySeconds)
+    public URLChangeTracker(boolean granularitySeconds)
     {
         this.granularitySeconds = granularitySeconds;
-        
-        this.classpathURLConverter = classpathURLConverter;
     }
 
     /**
@@ -75,12 +66,10 @@ public class URLChangeTracker
     public long add(URL url)
     {
         if (url == null) return 0;
-        
-        URL converted = classpathURLConverter.convert(url);
 
-        if (!converted.getProtocol().equals("file")) return timestampForNonFileURL(converted);
+        if (!url.getProtocol().equals("file")) return timestampForNonFileURL(url);
 
-        File resourceFile = toFile(converted);
+        File resourceFile = toFile(url);
 
         if (fileToTimestamp.containsKey(resourceFile)) return fileToTimestamp.get(resourceFile);
 

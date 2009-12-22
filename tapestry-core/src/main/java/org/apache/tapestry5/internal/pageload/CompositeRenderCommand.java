@@ -1,4 +1,4 @@
-// Copyright 2008, 2009 The Apache Software Foundation
+// Copyright 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -23,11 +23,11 @@ import org.apache.tapestry5.runtime.RenderQueue;
  * A RenderCommand wrapper that renders internally a series of render commands. This is intended for static content
  * (commands that may write content, but won't affect the render queue itself.
  */
-class CompositeRenderCommand implements RenderCommand
+public class CompositeRenderCommand implements RenderCommand
 {
     /**
      * Composite commands are intended for static elements; elements that won't invoke methods on the RenderQueue. To
-     * enforce this, we have a NO-OP version of RenderQueue that is passed to the composed render commands.
+     * enforce this, we have a NO-OP version of RenderQueue that is passed ot the composed render commands.
      */
     private static final RenderQueue NOOP = new RenderQueue()
     {
@@ -49,7 +49,8 @@ class CompositeRenderCommand implements RenderCommand
         private void nyi(String methodName)
         {
             throw new IllegalStateException(
-                    PageloadMessages.compositeRenderCommandMethodNotImplemented(methodName));
+                    String.format("RenderQueue method %s() is not implemented for composited render commands.",
+                                  methodName));
         }
     };
 

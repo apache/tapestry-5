@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,13 +15,11 @@
 package org.apache.tapestry5.integration.app1.pages.nested;
 
 import org.apache.tapestry5.Block;
-import org.apache.tapestry5.RenderSupport;
 import org.apache.tapestry5.ValueEncoder;
 import org.apache.tapestry5.annotations.*;
 import org.apache.tapestry5.corelib.components.BeanEditForm;
 import org.apache.tapestry5.corelib.components.Zone;
 import org.apache.tapestry5.integration.app1.data.RegistrationData;
-import org.apache.tapestry5.integration.app1.pages.SecurePage;
 import org.apache.tapestry5.internal.services.StringValueEncoder;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.json.JSONObject;
@@ -38,7 +36,7 @@ public class ZoneDemo
     @ApplicationState
     private RegistrationData registration;
 
-    private static final String[] NAMES = { "Fred & Wilma", "Mr. <Roboto>", "Grim Fandango", "Registration", "Vote" };
+    private static final String[] NAMES = {"Fred & Wilma", "Mr. <Roboto>", "Grim Fandango", "Registration", "Vote"};
 
     @Inject
     private Block registrationForm, registrationOutput, voteForm, voteOutput;
@@ -49,11 +47,6 @@ public class ZoneDemo
     @InjectComponent
     private Zone output;
 
-    @InjectPage
-    private SecurePage securePage;
-
-    @Environmental
-    private RenderSupport renderSupport;
 
     public String[] getNames()
     {
@@ -125,35 +118,14 @@ public class ZoneDemo
         return new StringValueEncoder();
     }
 
-    void onSelectedFromVoteYes()
-    {
-        vote = "Yes";
-    }
+    void onSelectedFromVoteYes() { vote = "Yes"; }
 
-    void onSelectedFromVoteNo()
-    {
-        vote = "No";
-    }
+    void onSelectedFromVoteNo() { vote = "No"; }
 
-    Object onSuccessFromVote()
-    {
-        return voteOutput;
-    }
+    Object onSuccessFromVote() { return voteOutput; }
 
     Object onActionFromRedirect()
     {
         return AssetDemo.class;
-    }
-
-    Object onActionFromSecureRedirect()
-    {
-        return securePage;
-    }
-
-    void afterRender()
-    {
-        renderSupport.addScript(
-                "$('%s').observe(Tapestry.ZONE_UPDATED_EVENT, function() { $('zone-update-message').update('Zone updated.'); });",
-                output.getClientId());
     }
 }

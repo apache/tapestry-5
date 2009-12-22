@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -56,6 +56,7 @@ public class PageTesterSession implements Session
         {
             attributes.put(name, value);
         }
+
     }
 
     private void nyi(String name)
@@ -76,17 +77,9 @@ public class PageTesterSession implements Session
         nyi("invalidate");
     }
 
-    public boolean isInvalidated()
-    {
-        return false;
-    }
-
-    public void restoreDirtyObjects()
-    {
-    }
-
     public void setMaxInactiveInterval(int seconds)
     {
         nyi("setMaxInactiveInterval");
     }
+
 }

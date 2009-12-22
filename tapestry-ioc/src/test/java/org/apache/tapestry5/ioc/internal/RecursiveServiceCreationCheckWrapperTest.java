@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2009 The Apache Software Foundation
+// Copyright 2006, 2007 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -32,7 +32,7 @@ public class RecursiveServiceCreationCheckWrapperTest extends IOCInternalTestCas
         ObjectCreator delegate = mockObjectCreator();
         Object service = new Object();
 
-        ServiceDef def = new ServiceDefImpl(Runnable.class, "Bar", null, "singleton", false, false, source);
+        ServiceDef def = new ServiceDefImpl(Runnable.class, "Bar", null, "singleton", false, source);
 
         train_createObject(delegate, service);
 
@@ -70,7 +70,7 @@ public class RecursiveServiceCreationCheckWrapperTest extends IOCInternalTestCas
         ObjectCreator delegate = mockObjectCreator();
         Object service = new Object();
 
-        ServiceDef def = new ServiceDefImpl(Runnable.class, "Bar", null, "singleton", false, false, source);
+        ServiceDef def = new ServiceDefImpl(Runnable.class, "Bar", null, "singleton", false, source);
 
         expect(delegate.createObject()).andThrow(failure);
 
@@ -101,5 +101,6 @@ public class RecursiveServiceCreationCheckWrapperTest extends IOCInternalTestCas
         assertSame(service, wrapper.createObject());
 
         verify();
+
     }
 }

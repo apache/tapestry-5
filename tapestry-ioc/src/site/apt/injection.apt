@@ -73,46 +73,45 @@ Standard Injection Processing
 
    This step applies only to IoC layer injection (not to injection into components).
 
+   <Currently: this step only applies to parameter, not to field; an outstanding issue is to support resource
+   injection into fields.>
+
    When the Inject annotation is <not present> at the point of injection, Tapestry checks to see
    if a resource can be injected.  When the Inject annotation is present, this step is skipped (this is necessary
    when the object to be injected has a type that conflicts with a resource type, such as String).
 
-   [org.slf4j.Logger]
-   The Logger of the service being constructed (or the logger of the Module class being instantiated).
+   What resources are available depend on what kind of operation is occuring:
 
-   [String]
-   The service id of the service being constructed.
+   * Autobuilt object: no special resources
 
-   [{{{../apidocs/org/apache/tapestry5/ioc/ObjectLocator.html}ObjectLocator}}]
-   For contribute methods, used to locate additional objects.
+   * Contributor method: The appropriate Configuration, OrderedConfiguration or MappedConfiguration instance.
 
-   [{{{../apidocs/org/apache/tapestry5/ioc/ServiceResources.html}ServiceResources}}]
-   For service builder methods, an extended version of ObjectLocator.
+   * Service builder method:
 
-   [Class]
-   The service interface type.
+     * String: the service id
 
-   [{{{../apidocs/org/apache/tapestry5/ioc/OperationTracker.html}OperationTracker}}]
-   Used to track deeply nested operations so that errors can be reported sensibly.
+     * {{{../apidocs/org/apache/tapestry5/ioc/ObjectLocator.html}ObjectLocator}} or
+       {{{../apidocs/org/apache/tapestry5/ioc/ServiceResources.html}ServiceResources}}: Used to lookup or autobuild additional objects;
+       the same object is passed for both types
 
-   [Object, or service interface type]
-   Passed to decorator methods.
+     *  org.slf4j.Logger: Logger for the service, based on the class name of the module and the service id
 
-   [Collection, List, Map]
-   Assembled service configurations passed to service builder methods (or service class constructors).
+     * Class: Java class for the service's service interface
 
-   [Configuration, OrderedConfiguration, MappedConfiguration]
-   Configuration passed to contribute methods, to build service configurations.
+     * Collection, List, Map: Combined service contributions
+
+     []
+
+   * Service Implementation Constructor: Same as service builder method.
+
+   * Service decorator method:  Same as service bulider method, without service contributions (Collection, List, Map), plus:
+
+     Object or <Service Interface>: the delegate for the interceptor created by the decorator method
+
+   []
 
    If field type does not match any of the available resource types, or the Inject annotation is present,
    logic continues to the next step.
-
-   Injection of resources into fields is triggered by the presence of the
-   {{{../apidocs/org/apache/tapestry5/ioc/annotations/InjectResource.html}InjectResource}}
-   annotation, whereas injection of resources into parameters occurs when the Inject or InjectService
-   annotation is <not> present.  These rules are slightly tricky, which reflects a desire to avoid
-   any annotations except when needed, and the fact that field injection came much later than
-   parameter injection.
 
 * Service Lookup by Type and Annotations
 
@@ -172,20 +171,6 @@ Standard Injection Processing
    {{{../apidocs/org/apache/tapestry5/ioc/annotations/Symbol.html}Symbol}} annotation's value
    (if present) is lookup up and converted to the injection type.
 
-** Autobuild ObjectProvider
-
-   Checks to see if the
-   {{{../apidocs/org/apache/tapestry5/ioc/annotation/Autobuild.html}Autobuild}} annotation is present and,
-   if so, autobuilds the value for the parameter. Of course, the object being built will itself
-   be configured via injection.
-
-** ServiceOverride ObjectProvider
-
-   Checks any contributions to the
-   {{{../apidocs/org/apache/tapestry5/ioc/services/ServiceOverride.html}ServiceOverride}} service. Contributions
-   map a type to an object of that type. Thus, ServiceOverrides will override injections of services
-   that are not qualified with a marker annotation.
-
 ** Alias ObjectProvider  (tapestry-core)
 
   Uses the
@@ -193,64 +178,31 @@ Standard Injection Processing
   that can be injected.
 
   This is commonly used to override a built-in service by contributing an object with the
-  exact same interface.           This is an older and more complex version of the ServiceOverride provider.
+  exact same interface.
 
 ** Asset ObjectProvider (tapestry-core)
 
   Checks for the
   {{{../apidocs/org/apache/tapestry5/annotations/Path.html}Path}}    annotation.
 
-   If present, the annotation's value has embedded symbols expanded, and is converted into an Asset (which must
+   If present, the annotation value has embedded symbols expanded, and is converted into an Asset (which must
    exist).
 
    The TypeCoercer can then convert the Asset to the injection type.
 
+
 ** Service ObjectProvider (tapestry-core)
 
   Looks for the  {{{../apidocs/org/apache/tapestry5/annotations/Service.html}Service}} annotation;
-  if present, the annotation's value is the exact service id to inject.  This is necessary because
+  if present, the annotation value is the exact service id to inject.  This is necessary because
   injections into <component> fields are always triggered by the Inject annotation.
-
-** SpringBean ObjectProvider (tapestry-spring)
-
-   Attempts to resolve a Spring bean purely by object type (Spring qualifiers are not supported). If no beans
-   are assignable to the type, then processing continues. If exactly one is assignable, it is used as the injection value.
-   If more than one bean is assignable, it is an error (and a list of matching beans names will be part of the thrown
-   exception).
 
 * Service Lookup
 
   If none of the ObjectProviders can identify the value to inject, a last step occurs: lookup by service type.
   If exactly <one> service matches the injection type, then that service is injected.
 
-  Otherwise, the lookup fails because either no services match, or more than one matches.
-
-Post-Injection Methods
-
-  Autobuilt objects (services and the like, but <not> components) may have post-injection methods.
-
-  Any public method may have the
-  {{{../apidocs/org/apache/tapestry5/annotations/PostInjection.html}PostInjection}} annotation.
-
-  Such methods are invoked after constructor and/or field injection.  Only <<public methods>> will
-  be invoked.  Any return value is ignored.
-
-  Further injections may take place using the parameters of the method.
-
-  Often this is used to perform additional setup, such as registerring a service as a listener of
-  events produced by another service:
-
-----
-public class MyServiceImpl implements MyService, UpdateListener
-{
-  @PostInjection
-  public void registerAsListener(UpdateListenerHub hub)
-  {
-    hub.addUpdateListener(this);
-  }
-}
-----  
-
+  Otherwise, the lookup fails because either no services match, or more than one matches. 
 
 Component Injection
 
@@ -301,9 +253,3 @@ Component Injection
 * Service InjectionProvider
 
   Equivalent to the Service Lookup phase in an IoC layer injection.
-
-@InjectService in Components
-
-  This is now supported; you may use the
-  {{{../apidocs/org/apache/tapestry5/ioc/annotations/InjectService.html}InjectService}} annotation on component
-  fields.

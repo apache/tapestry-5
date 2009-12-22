@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -111,16 +111,8 @@ public class PropertyEditor
     @Inject
     private Environment environment;
 
-    /**
-     * Source for property editor blocks. This defaults to the default implementation of {@link
-     * org.apache.tapestry5.services.BeanBlockSource}.
-     */
-    @Parameter(required = true, allowNull = false)
-    private BeanBlockSource beanBlockSource;
-
     @Inject
-    @Core
-    private BeanBlockSource defaultBeanBlockSource;
+    private BeanBlockSource beanBlockSource;
 
     @Inject
     private Messages messages;
@@ -138,11 +130,6 @@ public class PropertyEditor
     private FormSupport formSupport;
 
     private PropertyModel propertyModel;
-
-    BeanBlockSource defaultBeanBlockSource()
-    {
-        return defaultBeanBlockSource;
-    }
 
     /**
      * Creates a {@link org.apache.tapestry5.services.PropertyEditContext} and pushes it onto the {@link

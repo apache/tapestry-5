@@ -1,4 +1,4 @@
-// Copyright 2008, 2009 The Apache Software Foundation
+// Copyright  2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -39,6 +39,6 @@ public class NullFieldStrategyBindingFactory implements BindingFactory
     {
         NullFieldStrategy strategy = strategySource.get(expression);
 
-        return new LiteralBinding(location, description, strategy);
+        return new LiteralBinding(description, strategy, location);
     }
 }

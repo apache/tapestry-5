@@ -19,7 +19,6 @@ import javassist.Loader;
 import javassist.LoaderClassPath;
 import javassist.NotFoundException;
 import org.apache.tapestry5.annotations.ApplicationState;
-import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.internal.InternalComponentResources;
 import org.apache.tapestry5.internal.services.*;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
@@ -98,7 +97,6 @@ public class ApplicationStateWorkerTest extends InternalBaseTestCase
         MutableComponentModel model = mockMutableComponentModel();
 
         train_findFieldsWithAnnotation(ct, ApplicationState.class);
-        train_findFieldsWithAnnotation(ct, SessionState.class);
 
         replay();
 

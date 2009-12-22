@@ -1,4 +1,4 @@
-// Copyright 2006, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -22,9 +22,6 @@ import org.apache.tapestry5.ioc.Resource;
  * packaged inside JARs).
  * <p/>
  * An Asset's toString() will return the URL for the resource (the same value as {@link #toClientURL()}).
- * <p/>
- * Release 5.1.0.0 introduced {@link org.apache.tapestry5.Asset2}, which extends this interface with an additional
- * method.
  */
 public interface Asset
 {
@@ -32,10 +29,8 @@ public interface Asset
      * Returns a URL that can be passed, unchanged, to the client in order for it to access the resource. The same value
      * is returned from <code>toString()</code>.
      * <p/>
-     * Tapestry's built-in asset types (context and classpath) always incorporate a version number as part of the path,
-     * and alternate implementations are encouraged to do so as well. In addition, Tapestry ensures that context and
-     * classpath assets have a far-future expires header (to ensure aggresive caching by the client).
-     * <p/>
+     * Note that the returned value may be {@linkplain SymbolConstants#FORCE_ABSOLUTE_URIS request dependent}. You may
+     * cache instances of Asset, but do not cache the client URL path as it may change.
      */
     String toClientURL();
 
@@ -43,5 +38,4 @@ public interface Asset
      * Returns the underlying Resource for the Asset.
      */
     Resource getResource();
-
 }

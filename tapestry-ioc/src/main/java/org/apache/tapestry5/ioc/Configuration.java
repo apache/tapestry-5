@@ -1,4 +1,4 @@
-// Copyright 2006, 2008, 2009 The Apache Software Foundation
+// Copyright 2006 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ package org.apache.tapestry5.ioc;
  * configuration.
  * <p/>
  * A service can <em>collect</em> contributions in three different ways: <ul> <li>As an un-ordered collection of
- * values</li> <li>As an ordered list of values (where each value has a unique id, pre-requisites and
+ * values</li> <li>As an ordered list of values (where each value has a unique id, pre-requisited and
  * post-requisites)</li> <li>As a map of keys and values </ul>
  * <p/>
  * This implementation is used for un-ordered configuration data.
@@ -35,13 +35,4 @@ public interface Configuration<T>
      * @param object to add to the service's configuration
      */
     void add(T object);
-
-    /**
-     * Automatically instantiates an instance of the class, with dependencies injeted, and adds it to the
-     * configuration.
-     *
-     * @param clazz what class to instantiate
-     * @since 5.1.0.0
-     */
-    void addInstance(Class<? extends T> clazz);
 }

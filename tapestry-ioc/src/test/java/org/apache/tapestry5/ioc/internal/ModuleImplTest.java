@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -25,7 +25,6 @@ import org.testng.annotations.Test;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Set;
 
 public class ModuleImplTest extends IOCInternalTestCase
@@ -68,9 +67,6 @@ public class ModuleImplTest extends IOCInternalTestCase
         Logger logger = mockLogger();
 
         ModuleDef moduleDef = mockModuleDef();
-
-        Set<String> serviceIds = Collections.emptySet();
-        expect(moduleDef.getServiceIds()).andReturn(serviceIds);
 
         expect(moduleDef.getDecoratorDefs()).andReturn(rawDefs);
 

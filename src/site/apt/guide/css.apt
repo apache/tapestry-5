@@ -31,12 +31,13 @@ Adding your own CSS
 
 +---+
 <head>
-  <link href="${context:css/myapp.css}" rel="stylesheet" type="text/css"/>
+  <link href="${asset:context:css/myapp.css}" rel="stylesheet" type="text/css"/>
   . . .
 +---+
 
-  The "context:" prefix means that the remainder of the expansion is a path to a context asset, a 
-  resource in the web application root (src/main/webapp in your workspace).
+  The "asset:" prefix means that the remainder of the expansion is a path to a resource.  The "context:" part
+  indicates that it should look for the resource in the web application root (src/main/webapp in your workspace).  If you
+  left this out, it would look for the file on the classpath, relative to the component's Java class.
 
 Using the IncludeStylesheet Annotation
 

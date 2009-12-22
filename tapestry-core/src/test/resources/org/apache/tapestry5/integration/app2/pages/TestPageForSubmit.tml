@@ -9,9 +9,6 @@
 	<input t:id="t2" t:type="TextField"/>
 </form></p>
 <input type="submit" id="orphanedSubmit"/>
-<t:form t:id="form3">
-    <input id="submitImage" t:type="submit" image="prop:spacerImage"/>
-</t:form>
 <p>
 Value is: ${value}.
 </p>

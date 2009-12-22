@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -31,8 +31,8 @@ public final class TransformConstants
 {
     // Shared parameters of a whole bunch of lifecycle methods, representing the different
     // component render states.
-    private static final String[] RENDER_PHASE_METHOD_PARAMETERS = { MarkupWriter.class.getName(),
-            Event.class.getName() };
+    private static final String[] RENDER_PHASE_METHOD_PARAMETERS = {MarkupWriter.class.getName(),
+            Event.class.getName()};
 
     /**
      * Signature for {@link org.apache.tapestry5.runtime.Component#dispatchComponentEvent(org.apache.tapestry5.runtime.ComponentEvent)}.
@@ -40,7 +40,7 @@ public final class TransformConstants
      * @see org.apache.tapestry5.annotations.OnEvent
      */
     public static final TransformMethodSignature DISPATCH_COMPONENT_EVENT = new TransformMethodSignature(
-            Modifier.PUBLIC, "boolean", "dispatchComponentEvent", new String[] { ComponentEvent.class.getName() },
+            Modifier.PUBLIC, "boolean", "dispatchComponentEvent", new String[] {ComponentEvent.class.getName()},
             null);
 
     /**
@@ -66,14 +66,6 @@ public final class TransformConstants
      */
     public static final TransformMethodSignature CONTAINING_PAGE_DID_ATTACH_SIGNATURE = new TransformMethodSignature(
             "containingPageDidAttach");
-
-    /**
-     * Signature for {@link org.apache.tapestry5.runtime.PageLifecycleListener#restoreStateBeforePageAttach()}
-     *
-     * @since 5.1.0.1
-     */
-    public static final TransformMethodSignature RESTORE_STATE_BEFORE_PAGE_ATTACH_SIGNATURE = new TransformMethodSignature(
-            "restoreStateBeforePageAttach");
 
     /**
      * Signature for {@link org.apache.tapestry5.runtime.Component#setupRender(MarkupWriter, Event)}.

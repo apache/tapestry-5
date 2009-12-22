@@ -1,4 +1,4 @@
-// Copyright 2006, 2009 The Apache Software Foundation
+// Copyright 2006 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -35,13 +35,6 @@ public interface PageLifecycleListener
      * Invoked when a page is first attached to the current request, giving components a chance to initialize for the
      * current request.
      */
-    void containingPageDidAttach();
 
-    /**
-     * A kind of "pre-attach" phase allowing components to restore internal state before handling the actual attach;
-     * this is primarily used to restore persisted fields.
-     *
-     * @since 5.1.0.1
-     */
-    void restoreStateBeforePageAttach();
+    void containingPageDidAttach();
 }

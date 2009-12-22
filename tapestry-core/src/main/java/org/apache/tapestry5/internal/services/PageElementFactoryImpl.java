@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,25 +18,36 @@ import org.apache.tapestry5.Binding;
 import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.MarkupWriter;
-import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.internal.parser.AttributeToken;
 import org.apache.tapestry5.internal.parser.ExpansionToken;
-import org.apache.tapestry5.internal.structure.ExpansionPageElement;
+import org.apache.tapestry5.internal.structure.*;
 import org.apache.tapestry5.ioc.Location;
 import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newList;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.TapestryException;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
+import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.runtime.RenderCommand;
 import org.apache.tapestry5.runtime.RenderQueue;
 import org.apache.tapestry5.services.BindingSource;
+import org.apache.tapestry5.services.ComponentClassResolver;
 
 import java.util.List;
+import java.util.Locale;
 
 public class PageElementFactoryImpl implements PageElementFactory
 {
+    private final ComponentInstantiatorSource componentInstantiatorSource;
+
+    private final ComponentClassResolver componentClassResolver;
+
     private final TypeCoercer typeCoercer;
 
     private final BindingSource bindingSource;
+
+    private final PageResourcesSource pageResourcesSource;
+
+    private static final String EXPANSION_START = "${";
 
     private static class LiteralStringProvider implements StringProvider
     {
@@ -53,10 +64,15 @@ public class PageElementFactoryImpl implements PageElementFactory
         }
     }
 
-    public PageElementFactoryImpl(TypeCoercer typeCoercer, BindingSource bindingSource)
+    public PageElementFactoryImpl(ComponentInstantiatorSource componentInstantiatorSource,
+                                  ComponentClassResolver resolver, TypeCoercer typeCoercer, BindingSource bindingSource,
+                                  PageResourcesSource pageResourcesSource)
     {
+        this.componentInstantiatorSource = componentInstantiatorSource;
+        componentClassResolver = resolver;
         this.typeCoercer = typeCoercer;
         this.bindingSource = bindingSource;
+        this.pageResourcesSource = pageResourcesSource;
     }
 
     public RenderCommand newAttributeElement(ComponentResources componentResources, final AttributeToken token)
@@ -90,7 +106,7 @@ public class PageElementFactoryImpl implements PageElementFactory
 
         while (true)
         {
-            int expansionx = expression.indexOf(InternalConstants.EXPANSION_START, startx);
+            int expansionx = expression.indexOf(EXPANSION_START, startx);
 
             // No more expansions, add in the rest of the string as a literal.
 
@@ -168,17 +184,126 @@ public class PageElementFactoryImpl implements PageElementFactory
         return new ExpansionPageElement(binding, typeCoercer);
     }
 
+    public ComponentPageElement newComponentElement(Page page, ComponentPageElement container, String id,
+                                                    String componentType, String componentClassName, String elementName,
+                                                    Location location)
+    {
+        try
+        {
+            String finalClassName = componentClassName;
+
+            // This awkwardness is making me think that the page loader should resolve the component
+            // type before invoking this method (we would then remove the componentType parameter).
+
+            if (InternalUtils.isNonBlank(componentType))
+            {
+                // The type actually overrides the specified class name. The class name is defined
+                // by the type of the field. In many scenarios, the field type is a common
+                // interface,
+                // and the type is used to determine the concrete class to instantiate.
+
+                try
+                {
+                    finalClassName = componentClassResolver
+                            .resolveComponentTypeToClassName(componentType);
+                }
+                catch (IllegalArgumentException ex)
+                {
+                    throw new TapestryException(ex.getMessage(), location, ex);
+                }
+            }
+
+            Instantiator instantiator = componentInstantiatorSource
+                    .findInstantiator(finalClassName);
+
+            // This is actually a good place to check for recursive templates, here where we've
+            // resolved
+            // the component type to a fully qualified class name.
+
+            checkForRecursion(finalClassName, container, location);
+
+            // The container for any components is the loading component, regardless of
+            // how the component elements are nested within the loading component's
+            // template.
+
+            ComponentPageElement result = container.newChild(id, elementName, instantiator, location);
+
+            page.addLifecycleListener(result);
+
+            addMixins(result, instantiator);
+
+            return result;
+        }
+        catch (RuntimeException ex)
+        {
+            throw new TapestryException(ex.getMessage(), location, ex);
+        }
+    }
+
+    private void checkForRecursion(String componentClassName, ComponentPageElement container, Location location)
+    {
+        // Container may be null for a root element;
+
+        if (container == null) return;
+
+        ComponentResources resources = container.getComponentResources();
+
+        while (resources != null)
+        {
+            if (resources.getComponentModel().getComponentClassName().equals(componentClassName))
+                throw new TapestryException(ServicesMessages.componentRecursion(componentClassName), location, null);
+
+            resources = resources.getContainerResources();
+        }
+    }
+
+    public ComponentPageElement newRootComponentElement(Page page, String componentType, Locale locale)
+    {
+        Instantiator instantiator = componentInstantiatorSource.findInstantiator(componentType);
+
+        PageResources pageResources = pageResourcesSource.get(locale);
+
+        ComponentPageElement result = new ComponentPageElementImpl(page, instantiator, pageResources);
+
+        page.addLifecycleListener(result);
+
+        addMixins(result, instantiator);
+
+        return result;
+    }
+
+    private void addMixins(ComponentPageElement component, Instantiator instantiator)
+    {
+        ComponentModel model = instantiator.getModel();
+        for (String mixinClassName : model.getMixinClassNames())
+            addMixinByClassName(component, mixinClassName);
+    }
+
+    public void addMixinByTypeName(ComponentPageElement component, String mixinType)
+    {
+        String mixinClassName = componentClassResolver.resolveMixinTypeToClassName(mixinType);
+
+        addMixinByClassName(component, mixinClassName);
+    }
+
+    public void addMixinByClassName(ComponentPageElement component, String mixinClassName)
+    {
+        Instantiator mixinInstantiator = componentInstantiatorSource.findInstantiator(mixinClassName);
+
+        component.addMixin(mixinInstantiator);
+    }
+
     public Binding newBinding(String parameterName, ComponentResources loadingComponentResources,
                               ComponentResources embeddedComponentResources, String defaultBindingPrefix,
                               String expression, Location location)
     {
 
-        if (expression.contains(InternalConstants.EXPANSION_START))
+        if (expression.contains(EXPANSION_START))
         {
             StringProvider provider = parseAttributeExpansionExpression(expression, loadingComponentResources,
                                                                         location);
 
-            return new AttributeExpansionBinding(location, provider);
+            return new AttributeExpansionBinding(provider, location);
         }
 
         return bindingSource.newBinding(parameterName, loadingComponentResources,

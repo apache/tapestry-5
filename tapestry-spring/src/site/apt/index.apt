@@ -6,34 +6,31 @@ Tapestry/Spring Integration
 
   Provides integration between Tapestry and Spring, allowing beans defined by Spring to be injected into Tapestry IoC services, and into
   Tapestry components.
-
-Changes From 5.0
-
- You may now use the @Inject or @InjectService annotations inside Spring beans; these will be resolved to
- Tapestry services or other objects available via the MasterObjectProvider.  Please see
- the {{{../tapestry-ioc/injection.html}detailed guide to Injection}}.
-
- The dependency on Spring is no longer scope "provider" and has changed to 2.5.6.
-
- <<Spring Beans are no longer exposed as services, unless 5.0 compatibility mode is enabled.>>
-
- You no longer create a ContextLoaderListener.
-
- These changes represent an unfortunate backwards compatibility issue.
- If necessary, you can still use tapestry-spring version 5.0.18 with the rest of Tapestry.
   
-Spring Version
+Version
 
-  This module is compiled and tested against Spring 2.5.6.  It should be resonable to override the dependency to earlier versions
-  of Spring, though the code makes use of some APIs that were added to Spring to support JDK 1.5 annotations. 
-    
+  This module is compiled and tested against Spring 1.2.8.  However, Spring 2.0 is fully backwards compatible to Spring 1.2.8.
+  
+  This module uses the Maven scope "provided" for the dependencies on Spring. This means that in your own POM, you will need to specify your own
+  dependency to Spring, including the correct version.  Example:
+  
++---+
+<dependency>
+  <groupId>org.springframework</groupId>
+  <artifactId>spring-web</artifactId>
+  <version>1.2.8</version>
+</dependency>    
++----+
+
+  With the default Maven scope, the Spring JARs and dependencies will be packaged into your application's WAR file.
+  
+  
 Usage
 
   The integration is designed to be a very thin layer on top of Spring's normal configuration for a web application.
   
   Detailed instructions are available in the
-  {{{http://static.springframework.org/spring/docs/2.5.x/reference/beans.html#context-create}Spring documentation}}. Please omit
-  the part about creating a ContextLoaderListener: this is now done automatically by Tapestry.
+  {{{http://static.springframework.org/spring/docs/1.2.x/reference/beans.html#context-create}Spring 1.2.x documentation}}.
   
 * web.xml changes
   
@@ -49,17 +46,25 @@ Usage
   </filter>
 +---+  
  
-   Secondly, you may add the normal Spring configuration, consisting of an optional \<context-param\> identifying which Spring bean configuration file(s) to load:
+   Secondly, you must add the normal Spring configuration, consisting of a \<listener\> element,
+   and (optionally) a \<context-param\> identifying which Spring bean configuration file(s) to load:
  
 +---+
 <context-param>
   <param-name>contextConfigLocation</param-name>
   <param-value>/WEB-INF/daoContext.xml /WEB-INF/applicationContext.xml</param-value>
 </context-param>
+
+<listener>
+  <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+</listener>
 +---+
 
   The \<context-param\> lists the Spring bean configuration file.  It is optional and defaults to just /WEB-INF/applicationContext.xml if omitted.
-
+  
+  The ContextLoaderListener is responsible for reading the bean configuration file (or files) and storing the result in the application context, where
+  the Tapestry-Spring integration code can make use of it.
+  
 * Injecting beans
 
   Inside your component classes, you may use the 
@@ -71,33 +76,39 @@ Usage
   private UserDAO userDAO;
 +----+
 
-  Searching for Spring beans is threaded into the {{{../tapestry-ioc/injection.html}MasterObjectProvider service}}. The Spring context becomes one
-  more place that Tapestry searches when determining the injection for a injected field or method parameter.
-
+  If you have multiple beans that implement the same interface (for instance, if you have wrapped your bean using a transaction interceptor), you must disambiguate.  The easiest way
+  to accomplish this is to add a 
+  {{{../apidocs/org/apache/tapestry5/annotations/Service.html}Service}}
+  annotation to identify the name of the
+  Spring bean:
   
-ApplicationContext Service
++----+
+  @Inject
+  @Service("UserDAO")
+  private UserDAO userDAO;
++----+  
+  
+  Injection of Spring beans via service builder methods or autobuilding occurs just the same: the Spring beans masquerade as Tapestry IoC services and all is well.
+ 
+Case Insensitivity
 
-  The Spring ApplicationContext is also added as a service.
+  Spring beans names are treated exactly as Tapestry IoC service ids.  Since service ids are case insensitive, access to Spring beans by bean name will also
+  be case insensitive.
+  
+WebApplicationContext Service
 
-ApplicationContextCustomizer
-
-  A new chain-of-command service,
-  {{{../apidocs/org/apache/tapestry5/spring/ApplicationContextCustomizer.html}ApplicationContextCustomizer}}
-  allows the application context, created by Tapestry, to be customized as it is created.  You may contribute
-  your own ApplicationContextCustomizer instances as needed.
-
-5.0 Compatibility Mode
-
- In some circumstances, it is desirable to configure the Spring ApplicationContext externally. The  context \<config-param\>
- "tapestry.use-external-spring-context" can be configured to "true".  Tapestry will then use an existing ApplicationContext,
- provided by a Spring ContextLoaderListener. You will still be able to inject Spring beans into Tapestry components and services,
- and the ApplicationContext service will be visible ... but you will not be able to inject Tapestry IoC services into Spring beans.
-
- This option provides compatibility with the tapestry-spring 5.0, including exposing Spring beans as Tapestry IoC services
- (something that no longer occurs unless compatibility mode is enabled).
-
+  The Spring WebApplicationContext is also added as a service, in addition to any services defined within the context.
+  
 Limitations
 
+  The names of beans are obtained at application start up. If new beans are programattically added to the Spring application context at runtime,
+  these will not be visible for injection.
+  
+  Only the bean <name> is used, not any of the bean's <aliases>.
+  
+  No check is made for name clashes that would occur when two beans have names that differ only in terms of capitalization.  If you're going to go around naming beans "userDAO" and "UserDao",
+  you're just asking for trouble.
+  
   Non-singleton beans are not handled properly. Tapestry will request the beans from the application context in a manner unsuitable for their lifecycle.
-  For the moment, you should consider the non-singleton beans to be not-injectable.  Instead, inject the ApplicationContext service and
+  For the moment, you should consider the non-singleton beans to be not-injectable.  Instead, inject the WebApplicationContext service and
   obtain the non-singleton beans as needed.

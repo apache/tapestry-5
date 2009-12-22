@@ -1,4 +1,4 @@
-// Copyright 2008, 2009 The Apache Software Foundation
+// Copyright 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,8 +16,6 @@ package org.apache.tapestry5.annotations;
 
 import java.lang.annotation.*;
 
-import static org.apache.tapestry5.ioc.annotations.AnnotationUseContext.PAGE;
-import org.apache.tapestry5.ioc.annotations.UseWith;
 
 /**
  * An annotation on a page component used to identify the content type the page returns. An alternative to the {@link
@@ -27,7 +25,6 @@ import org.apache.tapestry5.ioc.annotations.UseWith;
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@UseWith(PAGE)
 public @interface ContentType
 {
     /**

@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,33 +15,28 @@
 package org.apache.tapestry5.ioc.internal;
 
 import org.apache.tapestry5.ioc.MappedConfiguration;
-import org.apache.tapestry5.ioc.ObjectLocator;
 import org.apache.tapestry5.ioc.def.ContributionDef;
+import org.slf4j.Logger;
 
 import java.util.Map;
 
 /**
- * A wrapper around a Map that provides the {@link org.apache.tapestry5.ioc.MappedConfiguration} interface, and provides
- * two forms of validation for mapped configurations: <ul> <li>If either key or value is null, then a warning is logged
- * </li> <li>If the key has previously been stored (by some other {@link org.apache.tapestry5.ioc.def.ContributionDef},
- * then a warning is logged</li> </ul>
+ * Provides two forms of validation for mapped configurations: <ul> <li>If either key or value is null, then a warning
+ * is logged </li> <li>If the key has previously been stored (by some other {@link
+ * org.apache.tapestry5.ioc.def.ContributionDef}, then a warning is logged</li> </ul>
  * <p/>
  * When a warning is logged, the key/value pair is not added to the delegate.
- * <p/>
- * Handles instantiation of instances.
  *
  * @param <K>
  * @param <V>
  */
 public class ValidatingMappedConfigurationWrapper<K, V> implements MappedConfiguration<K, V>
 {
-    private final Map<K, V> map;
-
-    private final Map<K, MappedConfigurationOverride<K, V>> overrides;
-
     private final String serviceId;
 
     private final ContributionDef contributionDef;
+
+    private final Logger logger;
 
     private final Class<K> expectedKeyType;
 
@@ -49,40 +44,62 @@ public class ValidatingMappedConfigurationWrapper<K, V> implements MappedConfigu
 
     private final Map<K, ContributionDef> keyToContributor;
 
-    private final ObjectLocator locator;
+    private final MappedConfiguration<K, V> delegate;
 
-    public ValidatingMappedConfigurationWrapper(Map<K, V> map, Map<K, MappedConfigurationOverride<K, V>> overrides,
-                                                String serviceId, ContributionDef contributionDef,
-                                                Class<K> expectedKeyType, Class<V> expectedValueType,
+    public ValidatingMappedConfigurationWrapper(String serviceId, ContributionDef contributionDef,
+                                                Logger logger, Class<K> expectedKeyType, Class<V> expectedValueType,
                                                 Map<K, ContributionDef> keyToContributor,
-                                                ObjectLocator locator)
+                                                MappedConfiguration<K, V> delegate)
     {
-        this.map = map;
-        this.overrides = overrides;
         this.serviceId = serviceId;
         this.contributionDef = contributionDef;
+        this.logger = logger;
         this.expectedKeyType = expectedKeyType;
         this.expectedValueType = expectedValueType;
         this.keyToContributor = keyToContributor;
-        this.locator = locator;
+        this.delegate = delegate;
     }
 
     public void add(K key, V value)
     {
-        validateKey(key);
+        if (key == null)
+        {
+            logger.warn(IOCMessages.contributionKeyWasNull(serviceId, contributionDef));
+            return;
+        }
 
         if (value == null)
-            throw new NullPointerException(IOCMessages.contributionWasNull(serviceId));
+        {
+            logger.warn(IOCMessages.contributionWasNull(serviceId, contributionDef));
+            return;
+        }
 
+        if (!expectedKeyType.isInstance(key))
+        {
+            logger.warn(IOCMessages.contributionWrongKeyType(serviceId, contributionDef, key
+                    .getClass(), expectedKeyType));
+            return;
+        }
 
-        validateValue(value);
+        if (!expectedValueType.isInstance(value))
+        {
+            logger.warn(IOCMessages.contributionWrongValueType(serviceId, contributionDef, value
+                    .getClass(), expectedValueType));
+            return;
+        }
 
         ContributionDef existing = keyToContributor.get(key);
 
         if (existing != null)
-            throw new IllegalArgumentException(IOCMessages.contributionDuplicateKey(serviceId, existing));
+        {
+            logger.warn(IOCMessages.contributionDuplicateKey(
+                    serviceId,
+                    contributionDef,
+                    existing));
+            return;
+        }
 
-        map.put(key, value);
+        delegate.add(key, value);
 
         // Remember that this key is provided by this contribution, when looking
         // for future conflicts.
@@ -90,51 +107,4 @@ public class ValidatingMappedConfigurationWrapper<K, V> implements MappedConfigu
         keyToContributor.put(key, contributionDef);
     }
 
-    private void validateValue(V value)
-    {
-        if (!expectedValueType.isInstance(value))
-            throw new IllegalArgumentException(IOCMessages.contributionWrongValueType(serviceId, value
-                    .getClass(), expectedValueType));
-    }
-
-    private void validateKey(K key)
-    {
-        if (key == null)
-            throw new NullPointerException(IOCMessages.contributionKeyWasNull(serviceId));
-
-        if (!expectedKeyType.isInstance(key))
-            throw new IllegalArgumentException(
-                    IOCMessages.contributionWrongKeyType(serviceId, key
-                            .getClass(), expectedKeyType));
-    }
-
-    public void addInstance(K key, Class<? extends V> clazz)
-    {
-        V value = locator.autobuild(clazz);
-
-        add(key, value);
-    }
-
-    public void override(K key, V value)
-    {
-        validateKey(key);
-
-        if (value != null) validateValue(value);
-
-        MappedConfigurationOverride<K, V> existing = overrides.get(key);
-
-        if (existing != null)
-            throw new IllegalArgumentException(
-                    String.format("Contribution key %s has already been overridden (by %s).",
-                                  key, existing.getContribDef()));
-
-
-        overrides.put(key, new MappedConfigurationOverride<K, V>(contributionDef, map, key, value));
-    }
-
-
-    public void overrideInstance(K key, Class<? extends V> clazz)
-    {
-        override(key, locator.autobuild(clazz));
-    }
 }

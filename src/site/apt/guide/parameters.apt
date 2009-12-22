@@ -14,20 +14,7 @@ Component Parameters
   Parameters are defined by placing a
   {{{../apidocs/org/apache/tapestry5/annotations/Parameter.html}Parameter}} annotation
   onto a private field.
-
-  In Tapestry, a parameter is not a slot into which data is pushed: it is a <connection> between
-  a field of the component (marked with the @Parameter annotation) and a property or resource
-  of the component's container.  In most simple examples, the container is the page, but since components
-  can have themselves have templates, sometime the container of a component is another component.
-
-  The connection is called a <binding>. The binding is two-way: the component can read the bound property
-  by reading its parameter field. Likewise, a component that updates its parameter field will update
-  the bound property.
-
-  This is important in a lot of cases; for example a TextField component can read <and update> the property
-  bound to its value parameter. It reads the value when rendering, but updates the value when
-  the form is submitted.
-
+  
   The component listed below is a looping component; it renders its body
   a number of times, defined by its start and end parameters (which set the boundaries
   of the loop).  The component can update a value parameter bound to a property of its container,
@@ -99,7 +86,7 @@ Binding Parameters
   {{{templates.html}template}}:
   
 +---+
-<html t:type="layout" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd">
+<html t:type="layout" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
     <p> Merry Christmas: <t:count end="3"> Ho! </t:count>
     </p>
 </html>
@@ -128,13 +115,11 @@ Binding Expressions
 *------------+----------------------------------------------------------------------------------+
 | <<Prefix>> | <<Description>>                                                                  |
 *------------+----------------------------------------------------------------------------------+
-| asset      | The relative path to an asset file (which must exist).                           |
+| asset      | The relative path to an asset file (which must exist). |
 *------------+----------------------------------------------------------------------------------+
-| block      | The id of a block within the template.                                           |
+| block      | The id of a block within the template. |
 *------------+----------------------------------------------------------------------------------+
 | component  | The id of another component within the same template.                            |
-*------------+----------------------------------------------------------------------------------+
-| context    | Context asset: path from context root.                                           |
 *------------+----------------------------------------------------------------------------------+
 | literal    | A literal string.                                                                |
 *------------+----------------------------------------------------------------------------------+
@@ -142,25 +127,17 @@ Binding Expressions
 *------------+----------------------------------------------------------------------------------+
 | message    | Retrieves a value from the component's {{{localization.html}message catalog}}.   |
 *------------+----------------------------------------------------------------------------------+
-| prop       | A {{{propexp.html}property expression}} to read or update.                       |
+| prop       | The name of a property of the containing component to read or update.            |
 *------------+----------------------------------------------------------------------------------+
 | translate  | The name of a configured translator.                                             |
 *------------+----------------------------------------------------------------------------------+
 | validate   | A <validator specification> used to create some number of field validators.      |
 *------------+----------------------------------------------------------------------------------+
-| var        | Allows a render variable of the component to be read or updated.                 |
+| var        | Allows a render variable of the component to be read or updated. |      |
 *------------+----------------------------------------------------------------------------------+
 
-
-  Most of these binding prefixes allow parameters to be bound to read-only values; for instance
-  a parameter bound to "message:some-key" will see the message for "some-key" from its container's
-  message catalog in the field. If the component tries to update the parameter (by setting the value
-  of the field), a runtime exception will be thrown to indicate that the value is read-only.
-
-  Only prop: and var: binding prefixes are updateable.
-
   Parameters have a default prefix, usually "prop:", that is used when the prefix is not provided.
-
+  
   A <special prefix>, "inherit:", is used to support {{{#Inherited Parameter Bindings}Inherted Parameter Bindings}}.
 
 Render Variables
@@ -200,19 +177,54 @@ Render Variables
 
   Render variable names are case insensitive.
 
-Property Expression Bindings
+Property Bindings
 
-  The "prop:" binding prefix indicates a property expression binding.
-
-  Property expressions are used to link a parameter of a component to a property
-  of its container. Property expressions
-  can navigate a series of properties and/or invoke methods, as well as several
-  other useful patterns.  Property expressions have
-  {{{propexp.html}their own documentation}}.
-
-  The default binding prefix in most cases is "prop:", which is why it is usually
-  omitted.
+  The "prop:" binding prefix indicates a property binding.
+  
+  The expression for a property binding is a dotted sequence of property names.  Simple
+  property expressions are just the name of a property, "prop:userName".  Complex property
+  expression may do a little navigation before getting to the property to read and/or update:
+  "prop:userData.name".  
+  
+  In addition to property names, you may also invoke arbitrary methods.  The methods must be public,
+  return a non-void value, throw no checked exceptions, and take no parameters.  To differentiate
+  a method name from a property name, you simply append the open and close parenthesis.  Thus
+  the prior examples could be rewritten as "prop:getUserName()" and "prop:getUserData().getName()".
+  Note that when the last term in the expression is a method name, the binding will be read-only,
+  rather than read/write.
+  
+  This feature is most useful for accessing a couple of propertys of standard collection classes
+  that aren't named as proper properties, such as Collection.size(), or Map.keySet().
+      
+  Ever get frustrated, tripping over null pointers inside such an expression?  You may use
+  "?." instead of "." as the separator.  This adds a null check and aborts the expression
+  if the term is null.  Thus "foo?.bar?.baz" will return null if either foo or bar are null.
+  Likewise, updating "foo?.bar?.baz" will turn into a no-op if foo or bar is null.    
+      
+  In addition, a few special cases are also supported. 
+  In most cases, these special values save you the trouble of adding a "literal:" prefix to
+  the value.  These special cases are <alternatives> to property expressions.
+  
+  * "true" and "false" will be converted to booleans. 
+  
+  * "null" will be the  value null. 
     
+  * "this" will be the component itself.
+  
+  * Simple numeric values are also accepted. These will be parsed into Long or Double objects.
+    Ex: "prop:3.14".
+    
+  * A range of integers separated by two periods. Ex: "1..10".  
+  
+  * Literal strings, inside single quotes.  Ex: "'Hello World'"
+  
+  []
+  
+  In all these cases, excess whitespace is ignored.  For the keywords ("true", "false", "this" and
+  "null"), case is ignored.
+  
+  Such values are read only and invariant.
+  
 Validate Bindings
 
   The "validate:" binding prefix is highly specialized. It allows a short string to be
@@ -258,24 +270,6 @@ Informal Parameters
   prefix is "literal:".  This reflects the fact that a parameter specified in the Java class, using the annotation, is most likely
   a computed value, whereas a value in the template should simply be copied, as is, into the result HTML stream.
 
-Asset Bindings
-
-  Assets bindings are normally relative to the component class.  This can be overriden by prefixing the path with "context:",
-  in which case, the path is a context path from the root of the web application context.
-
-Context Bindings
-
-  Context bindings are like asset bindings, but the path is <always> relative to the root of the web application context.
-  This is intended for use inside templates, i.e.:
-
----
-  <img src="${context:images/icon.png}"/>
----
-
-  Tapestry will adjust the URL of the image so that it is processed by Tapestry, not the servlet container.
-  It will gain a URL that includes the application's version number, it will have a far-future expires header,
-  and (if the client supports it) its content will be compressed before being sent to the client.
-
 Supporting Informal Parameters
 
     <<Only>> components which area annotated with
@@ -296,7 +290,7 @@ Parameters Are Bi-Directional
   to its own instance variable.
   
 +---+
-<t:layout xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd">
+<t:layout xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
     <p> Countdown:
         <t:count start="5" end="1" value="index"> 
           ${index} ...  
@@ -460,7 +454,7 @@ Parameter Caching
   
 Parameter Type Coercion
 
-  Tapestry includes a mechanism for {{{coercion.html}coercing types automatically}}. Most often, this is used to
+  Tapestry includes a mechanism for {{{coercion.html}coecing types automatically}}. Most often, this is used to
   convert literal strings into appropriate values, but in many cases, more complex conversions
   will occur.
   
@@ -507,24 +501,4 @@ public class MyComponent
   builds around your class.  In any case, once the resources are injected,
   they can be queried.
  
-Publishing Parameters
-
-  Often when creating new components from existing components, you want to expose some of the
-  functionality of the embedded component, in the form of exposing parameters of the embedded components
-  as parameters of the outer component.
-
-  In Tapestry 5.0, you would define a parameter of the outer component, and use the
-  "inherit:" binding prefix to connect the inner component's parameter to the outer component's parameter.
-  This is somewhat clumsy, as it involves creating an otherwise unused field just for the parameter; in practice
-  it also leads to duplication of the documentation of the parameter.
-
-  In Tapestry 5.1, you may use the publishParameters attribute of the
-  {{{../apidocs/org/apache/tapestry5/annotations/Component.html}Component}} annotation. List one
-  or more parameters separated by commas: those parameters of the inner/embedded component become
-  parameters of the outer component.  You should <<not>> define a parameter field in the outer component.
-
-  There are still cases where you want to use the "inherit:" binding prefix. For example, if you have
-  several components that need to share a parameter, then you must do it the Tapestry 5.0 way: a true parameter
-  on the outer component, and "inherit:" bindings on the embedded components. You can follow a similar pattern
-  to rename a parameter in the outer component.
-
+   

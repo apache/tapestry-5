@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,17 +14,13 @@
 
 package org.apache.tapestry5.internal;
 
-import org.apache.tapestry5.*;
+import org.apache.tapestry5.OptionModel;
+import org.apache.tapestry5.SelectModel;
 import org.apache.tapestry5.ioc.Messages;
-import org.apache.tapestry5.ioc.Resource;
-import org.apache.tapestry5.ioc.Orderable;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -40,11 +36,6 @@ public class TapestryInternalUtils
 
     private static final Pattern NON_WORD_PATTERN = Pattern.compile("[^\\w]");
 
-    private static final Pattern COMMA_PATTERN = Pattern.compile("\\s*,\\s*");
-
-    private static final int BUFFER_SIZE = 5000;
-
-    private static final String[] EMPTY_STRING_ARRAY = new String[0];
 
     /**
      * Capitalizes the string, and inserts a space before each upper case character (or sequence of upper case
@@ -382,121 +373,4 @@ public class TapestryInternalUtils
     {
         return SLASH_PATTERN.split(path);
     }
-
-    /**
-     * Splits a value around commas.  Whitespace around the commas is removed, as is leading and trailing whitespace.
-     *
-     * @since 5.1.0.0
-     */
-    public static String[] splitAtCommas(String value)
-    {
-        if (InternalUtils.isBlank(value))
-            return EMPTY_STRING_ARRAY;
-
-        return COMMA_PATTERN.split(value.trim());
-    }
-
-    /**
-     * Copies some content from an input stream to an output stream. It is the caller's responsibility to close the
-     * streams.
-     *
-     * @param in  source of data
-     * @param out sink of data
-     * @throws IOException
-     * @since 5.1.0.0
-     */
-    public static void copy(InputStream in, OutputStream out) throws IOException
-    {
-        byte[] buffer = new byte[BUFFER_SIZE];
-
-        while (true)
-        {
-            int length = in.read(buffer);
-
-            if (length < 0) break;
-
-            out.write(buffer, 0, length);
-        }
-
-        // TAPESTRY-2415: WebLogic needs this flush() call.
-        out.flush();
-    }
-
-    public static boolean isEqual(EventContext left, EventContext right)
-    {
-        if (left == right) return true;
-
-        int count = left.getCount();
-
-        if (count != right.getCount()) return false;
-
-        for (int i = 0; i < count; i++)
-        {
-            if (!left.get(Object.class, i).equals(right.get(Object.class, i)))
-                return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * Converts an Asset to an Asset2 if necessary. When actually wrapping an Asset as an Asset2, the asset is assumed
-     * to be variant (i.e., not cacheable).
-     *
-     * @since 5.1.0.0
-     */
-    public static Asset2 toAsset2(final Asset asset)
-    {
-        if (asset instanceof Asset2)
-            return (Asset2) asset;
-
-        return new Asset2()
-        {
-            /** Returns false. */
-            public boolean isInvariant()
-            {
-                return false;
-            }
-
-            public Resource getResource()
-            {
-                return asset.getResource();
-            }
-
-            public String toClientURL()
-            {
-                return asset.toClientURL();
-            }
-
-            @Override
-            public String toString()
-            {
-                return asset.toString();
-            }
-        };
-    }
-
-    /**
-     *
-     * @param mixinDef the original mixin definition.
-     * @return an Orderable whose id is the mixin name.
-     */
-    public static Orderable<String> mixinTypeAndOrder(String mixinDef) {
-        int idx = mixinDef.indexOf("::");
-        if (idx == -1)
-        {
-            return new Orderable(mixinDef,mixinDef);
-        }
-        String type = mixinDef.substring(0,idx);
-        String[] constraints = splitMixinConstraints(mixinDef.substring(idx+2));
-
-        return new Orderable(type,type,constraints);
-    }
-
-
-    public static String[] splitMixinConstraints(String s)
-    {
-        return InternalUtils.isBlank(s)?null:s.split(";");
-    }
-
 }

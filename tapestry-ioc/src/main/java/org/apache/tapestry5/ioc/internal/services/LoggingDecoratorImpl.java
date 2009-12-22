@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,9 +14,9 @@
 
 package org.apache.tapestry5.ioc.internal.services;
 
+import org.apache.tapestry5.ioc.MethodAdvice;
 import org.apache.tapestry5.ioc.services.AspectDecorator;
-import org.apache.tapestry5.ioc.services.AspectInterceptorBuilder;
-import org.apache.tapestry5.ioc.services.LoggingAdvisor;
+import org.apache.tapestry5.ioc.services.ExceptionTracker;
 import org.apache.tapestry5.ioc.services.LoggingDecorator;
 import org.slf4j.Logger;
 
@@ -24,25 +24,21 @@ public class LoggingDecoratorImpl implements LoggingDecorator
 {
     private final AspectDecorator aspectDecorator;
 
-    private final LoggingAdvisor advisor;
+    private final ExceptionTracker exceptionTracker;
 
-    public LoggingDecoratorImpl(AspectDecorator aspectDecorator, LoggingAdvisor advisor)
+    public LoggingDecoratorImpl(AspectDecorator aspectDecorator, ExceptionTracker exceptionTracker)
     {
         this.aspectDecorator = aspectDecorator;
-        this.advisor = advisor;
+        this.exceptionTracker = exceptionTracker;
     }
 
     public <T> T build(Class<T> serviceInterface, T delegate, String serviceId, final Logger logger)
     {
-        AspectInterceptorBuilder<T> builder = aspectDecorator.createBuilder(serviceInterface, delegate,
-                                                                            String.format(
-                                                                                    "<Logging interceptor for %s(%s)>",
-                                                                                    serviceId,
-                                                                                    serviceInterface.getName()));
-        advisor.addLoggingAdvice(logger, builder);
+        MethodAdvice advice = new LoggingAdvice(logger, exceptionTracker);
 
-        return builder.build();
+        return aspectDecorator.build(serviceInterface, delegate, advice,
+                                     String.format("<Logging interceptor for %s(%s)>", serviceId,
+                                                   serviceInterface.getName()));
     }
-
 
 }

@@ -14,14 +14,11 @@
 
 package org.example.testapp.pages;
 
-import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.Retain;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.example.testapp.services.SpringStatusProvider;
 import org.example.testapp.services.Upcase;
-import org.example.testapp.services.ViaFactory;
-import org.springframework.context.ApplicationContext;
+import org.springframework.web.context.WebApplicationContext;
 
 import java.util.Arrays;
 
@@ -35,15 +32,7 @@ public class Start
     private Upcase upcaseBean;
 
     @Inject
-    private ApplicationContext applicationContext;
-
-    @Inject
-    @Property
-    private SpringStatusProvider statusProvider;
-
-    @Inject
-    @Property
-    private ViaFactory viaFactory;
+    private WebApplicationContext context;
 
     void onSuccess()
     {
@@ -62,6 +51,7 @@ public class Start
 
     public String getSpringBeans()
     {
-        return InternalUtils.join(Arrays.asList(applicationContext.getBeanDefinitionNames()));
+        return InternalUtils.join(Arrays.asList(context.getBeanDefinitionNames()));
     }
+
 }

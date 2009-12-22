@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@ import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.internal.services.ComponentResourcesOperation;
-import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.services.SymbolSource;
 import org.apache.tapestry5.model.MutableComponentModel;
@@ -55,9 +54,8 @@ public abstract class AbstractIncludeAssetWorker implements ComponentClassTransf
      * @param assetPaths     raw paths to be converted to assets
      */
     protected final void addOperationForAssetPaths(ClassTransformation transformation,
-                                                   MutableComponentModel model, String[] assetPaths)
+                                                   final MutableComponentModel model, String[] assetPaths)
     {
-        final Resource baseResource = model.getBaseResource();
         final List<String> paths = CollectionFactory.newList();
 
         for (String value : assetPaths)
@@ -79,7 +77,7 @@ public abstract class AbstractIncludeAssetWorker implements ComponentClassTransf
 
                 for (String assetPath : paths)
                 {
-                    Asset asset = assetSource.getAsset(baseResource, assetPath, locale);
+                    Asset asset = assetSource.getAsset(model.getBaseResource(), assetPath, locale);
 
                     handleAsset(asset);
                 }

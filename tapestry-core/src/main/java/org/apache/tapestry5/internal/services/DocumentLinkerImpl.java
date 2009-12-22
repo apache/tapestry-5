@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,14 +16,9 @@ package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.dom.Document;
 import org.apache.tapestry5.dom.Element;
-import org.apache.tapestry5.dom.Node;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.services.ClientDataEncoder;
-import org.apache.tapestry5.services.ClientDataSink;
 
-import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.util.List;
 import java.util.Set;
 
@@ -39,44 +34,12 @@ public class DocumentLinkerImpl implements DocumentLinker
 
     private final boolean developmentMode;
 
-    private final boolean omitGeneratorMetaTag;
+    private final boolean scriptsAtTop;
 
-    private final String tapestryBanner;
-
-    private final ClientDataEncoder clientDataEncoder;
-
-    private boolean combineScripts;
-
-    /**
-     * Full asset path prefix, including the request context path.
-     */
-    private final String fullAssetPrefix;
-
-    private final int contextPathLength;
-
-    /**
-     * @param productionMode       via symbol configuration
-     * @param omitGeneratorMetaTag via symbol configuration
-     * @param tapestryVersion      version of Tapestry framework (for meta tag)
-     * @param combineScripts       if true, individual JavaScript assets will be combined into a single virtual asset
-     * @param contextPath          {@link org.apache.tapestry5.services.Request#getContextPath()}
-     * @param clientDataEncoder    used to encode data for the combined virtual asset
-     */
-    public DocumentLinkerImpl(boolean productionMode, boolean omitGeneratorMetaTag,
-                              String tapestryVersion, boolean combineScripts, String contextPath,
-                              ClientDataEncoder clientDataEncoder)
+    public DocumentLinkerImpl(boolean productionMode, boolean scriptsAtTop)
     {
-        this.combineScripts = combineScripts;
-        this.clientDataEncoder = clientDataEncoder;
-
         developmentMode = !productionMode;
-        this.omitGeneratorMetaTag = omitGeneratorMetaTag;
-
-        tapestryBanner = String.format("Apache Tapestry Framework (version %s)", tapestryVersion);
-
-        fullAssetPrefix = contextPath + RequestConstants.ASSET_PATH_PREFIX;
-
-        contextPathLength = contextPath.length();
+        this.scriptsAtTop = scriptsAtTop;
     }
 
     public void addStylesheetLink(String styleURL, String media)
@@ -93,11 +56,6 @@ public class DocumentLinkerImpl implements DocumentLinker
         if (scripts.contains(scriptURL)) return;
 
         scripts.add(scriptURL);
-
-        // If a script with an external URL is added, we can't combine the scripts after all.
-
-        if (combineScripts && !scriptURL.startsWith(fullAssetPrefix))
-            combineScripts = false;
     }
 
     public void addScript(String script)
@@ -124,18 +82,6 @@ public class DocumentLinkerImpl implements DocumentLinker
         if (!stylesheets.isEmpty())
             addStylesheetsToHead(root, includedStylesheets);
 
-        //only add the generator meta only to html documents
-
-        boolean isHtmlRoot = root.getName().equals("html");
-
-        if (!omitGeneratorMetaTag && isHtmlRoot)
-        {
-            Element head = findOrCreateElement(root, "head", true);
-            head.element("meta",
-                         "name", "generator",
-                         "content", tapestryBanner);
-        }
-
         addScriptElements(root);
     }
 
@@ -152,7 +98,9 @@ public class DocumentLinkerImpl implements DocumentLinker
         if (!rootElementName.equals("html"))
             throw new RuntimeException(ServicesMessages.documentMissingHTMLRoot(rootElementName));
 
-        Element container = findOrCreateElement(root, "head", true);
+        String childElement = scriptsAtTop ? "head" : "body";
+
+        Element container = findOrCreateElement(root, childElement, scriptsAtTop);
 
         // TAPESTRY-2364
 
@@ -185,6 +133,7 @@ public class DocumentLinkerImpl implements DocumentLinker
         if (blockNeeded)
         {
             Element e = body.element("script", "type", "text/javascript");
+            e.raw("\n<!--\n");
 
             if (developmentMode)
                 e.raw("Tapestry.DEBUG_ENABLED = true;\n");
@@ -194,68 +143,25 @@ public class DocumentLinkerImpl implements DocumentLinker
             e.raw(scriptBlock.toString());
 
             e.raw("});\n");
+
+            e.raw("// -->\n");
         }
     }
 
     /**
-     * Adds a script link for each included script to the bottom of the container (the &lt;head&gt;).
+     * Adds a script link for each included script to the bottom of the container (the &lt;head&gt; or &lt;body&gt; of
+     * the document, based on the scriptsAtTop configuration).
      *
      * @param container element to add the script links to
      * @param scripts   scripts to add
      */
     protected void addScriptLinksForIncludedScripts(Element container, List<String> scripts)
     {
-        Element existing = findExistingElement(container, "script");
-
-        Element scriptContainer = container.element("script-container");
-
-        if (combineScripts)
-        {
-            addCombinedScriptLink(scriptContainer, scripts);
-        }
-        else
-        {
-            for (String scriptURL : scripts)
-                scriptContainer.element("script",
-                                        "type", "text/javascript",
-                                        "src", scriptURL);
-        }
-
-        if (existing != null) scriptContainer.moveBefore(existing);
-
-        scriptContainer.pop();
-    }
-
-    private void addCombinedScriptLink(Element container, List<String> scripts)
-    {
-        try
-        {
-            ClientDataSink dataSink = clientDataEncoder.createSink();
-
-            ObjectOutputStream stream = dataSink.getObjectOutputStream();
-
-            stream.writeInt(scripts.size());
-
-            for (String scriptURL : scripts)
-            {
-                // Each scriptURL will be prefixed with the context path, which isn't needed to build the combined virtual
-                // asset (in fact, it gets in the way).
-
-                stream.writeUTF(scriptURL.substring(contextPathLength));
-            }
-
-            String virtualURL = fullAssetPrefix + RequestConstants.VIRTUAL_FOLDER + dataSink.getEncodedClientData() + ".js";
-
+        for (String scriptURL : scripts)
             container.element("script",
-                              "type", "text/javascript",
-                              "src", virtualURL);
-        }
-        catch (IOException ex)
-        {
-            throw new RuntimeException(ex);
-        }
+                              "src", scriptURL,
+                              "type", "text/javascript");
     }
-
 
     /**
      * Locates the head element under the root ("html") element, creating it if necessary, and adds the stylesheets to
@@ -281,32 +187,7 @@ public class DocumentLinkerImpl implements DocumentLinker
 
         Element head = findOrCreateElement(root, "head", true);
 
-        Element existing = findExistingElement(head, "link");
-
-        // Create a temporary container element.
-        Element container = head.element("stylesheet-link-container");
-
         for (int i = 0; i < count; i++)
-            stylesheets.get(i).add(container);
-
-        if (existing != null)
-            container.moveBefore(existing);
-
-        container.pop();
-    }
-
-    Element findExistingElement(Element container, String elementName)
-    {
-        for (Node n : container.getChildren())
-        {
-            if (n instanceof Element)
-            {
-                Element e = (Element) n;
-
-                if (e.getName().equalsIgnoreCase(elementName)) return e;
-            }
-        }
-
-        return null;
+            stylesheets.get(i).add(head, i);
     }
 }

@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@ package org.apache.tapestry5.internal.services;
 
 import javassist.CtClass;
 import org.apache.tapestry5.internal.structure.ComponentPageElement;
-import org.apache.tapestry5.internal.structure.Page;
 import org.apache.tapestry5.ioc.Location;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.Resource;
@@ -46,6 +45,11 @@ class ServicesMessages
         return MESSAGES.get("markup-writer-no-current-element");
     }
 
+    static String noConstructorFound(Class instanceClass)
+    {
+        return MESSAGES.format("no-constructor-found", instanceClass.getName());
+    }
+
     static String missingDeclaredField(CtClass ctClass, String fieldName)
     {
         return MESSAGES.format("missing-declared-field", ctClass.getName(), fieldName);
@@ -71,14 +75,29 @@ class ServicesMessages
         return MESSAGES.format("class-not-transformed", className);
     }
 
+    static String newParserError(Resource resource, Throwable cause)
+    {
+        return MESSAGES.format("new-parser-error", resource, cause);
+    }
+
     static String missingTemplateResource(Resource resource)
     {
         return MESSAGES.format("missing-template-resource", resource);
     }
 
+    static String templateParseError(Resource resource, Throwable cause)
+    {
+        return MESSAGES.format("template-parse-error", resource, cause);
+    }
+
     static String contentInsideBodyNotAllowed(Location location)
     {
         return MESSAGES.format("content-inside-body-not-allowed", location);
+    }
+
+    static String mayNotNestElementsInsideBody(String elementName)
+    {
+        return MESSAGES.format("may-not-nest-elements-inside-body", elementName);
     }
 
     static String methodCompileError(TransformMethodSignature signature, String methodBody, Throwable cause)
@@ -99,6 +118,23 @@ class ServicesMessages
     static String nonPrivateFields(String className, List<String> names)
     {
         return MESSAGES.format("non-private-fields", className, InternalUtils.joinSorted(names));
+    }
+
+    static String compTypeConflict(String embeddedId, String templateType, String modelType)
+    {
+        return MESSAGES.format("comp-type-conflict", embeddedId, templateType, modelType);
+    }
+
+    static String noTypeForEmbeddedComponent(String embeddedId, String componentClassName)
+    {
+        return MESSAGES.format("no-type-for-embedded-component", embeddedId, componentClassName);
+    }
+
+    static String embeddedComponentsNotInTemplate(Collection<String> ids, String componentClassName,
+                                                  Resource templateResource)
+    {
+        return MESSAGES.format("embedded-components-not-in-template", InternalUtils.joinSorted(ids),
+                               componentClassName, InternalUtils.lastTerm(componentClassName), templateResource);
     }
 
     static String bindingSourceFailure(String expression, Throwable cause)
@@ -326,9 +362,9 @@ class ServicesMessages
         return MESSAGES.format("resource-access-forbidden", URI);
     }
 
-    static String noMarkupFromPageRender(Page page)
+    static String noMarkupFromPageRender(org.apache.tapestry5.internal.structure.Page page)
     {
-        return MESSAGES.format("no-markup-from-page-render", page.getName());
+        return MESSAGES.format("no-markup-from-page-render", page.getLogicalName());
     }
 
     static String baseClassInWrongPackage(String parentClassName, String className, String suggestedPackage)
@@ -390,30 +426,5 @@ class ServicesMessages
     public static String addNewMethodConflict(TransformMethodSignature signature)
     {
         return MESSAGES.format("add-new-method-conflict", signature);
-    }
-
-    static String parameterElementDoesNotAllowAttributes()
-    {
-        return MESSAGES.get("parameter-element-does-not-allow-attributes");
-    }
-
-    static String invalidPathForLibraryNamespace(String URI)
-    {
-        return MESSAGES.format("invalid-path-for-library-namespace", URI);
-    }
-
-    static String literalConduitNotUpdateable()
-    {
-        return MESSAGES.get("literal-conduit-not-updateable");
-    }
-
-    static String requestRewriteReturnedNull()
-    {
-        return MESSAGES.get("request-rewrite-returned-null");
-    }
-
-    static String linkRewriteReturnedNull()
-    {
-        return MESSAGES.get("link-rewrite-returned-null");
     }
 }

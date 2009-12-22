@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,11 +17,13 @@ package org.apache.tapestry5.internal.services;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.internal.util.ClasspathResource;
-import org.apache.tapestry5.services.*;
-import static org.easymock.EasyMock.endsWith;
+import org.apache.tapestry5.services.Request;
+import org.apache.tapestry5.services.RequestGlobals;
+import org.apache.tapestry5.services.Response;
+import static org.easymock.EasyMock.*;
 import org.testng.annotations.Test;
 
-import javax.servlet.http.HttpServletRequest;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
@@ -33,48 +35,56 @@ public class ResourceStreamerImplTest extends InternalBaseTestCase
     @Test
     public void content_type_css() throws IOException
     {
-        content_type("text/css", "test.css", true);
+        content_type("text/css", "test.css");
     }
 
     @Test
     public void content_type_js() throws IOException
     {
-        content_type("text/javascript", "test.js", true);
+        content_type("text/javascript", "test.js");
     }
 
     @Test
     public void content_type_gif() throws IOException
     {
-        content_type("image/gif", "test.gif", false);
+        content_type("image/gif", "test.gif");
     }
 
-    private void content_type(String contentType, String fileName, boolean consultsContext) throws IOException
+    private void content_type(String contentType, String fileName) throws IOException
     {
         Request request = mockRequest();
-        HttpServletRequest hsRequest = mockHttpServletRequest();
-        HttpServletResponse hsResponse = mockHttpServletResponse();
-        Context context = mockContext();
-        
-        if (consultsContext)
-            expect(context.getMimeType(endsWith(fileName))).andReturn(null);
+        HttpServletResponse hsr = mockHttpServletResponse();
+
+        train_setContentLength(hsr, anyInt());
+        train_setDateHeader(hsr, eq("Last-Modified"), anyLong());
+        train_setDateHeader(hsr, eq("Expires"), anyLong());
+        train_setContentType(hsr, contentType);
+        train_getOutputStream(hsr, new TestServletOutputStream());
 
         replay();
 
-        Response response = new ResponseImpl(hsResponse);
+        Response response = new ResponseImpl(hsr);
         ResourceStreamer streamer = getService(ResourceStreamer.class);
         RequestGlobals globals = getService(RequestGlobals.class);
 
-        globals.storeServletRequestResponse(hsRequest, hsResponse);
         globals.storeRequestResponse(request, response);
-
-        getService(ApplicationGlobals.class).storeContext(context);
 
         String path = getClass().getPackage().getName().replace('.', '/') + "/" + fileName;
 
         Resource resource = new ClasspathResource(path);
 
-        assertEquals(streamer.getContentType(resource), contentType);
+        streamer.streamResource(resource);
 
         verify();
     }
+
+    private static class TestServletOutputStream extends ServletOutputStream
+    {
+        @Override
+        public void write(int b) throws IOException
+        {
+            // Empty.
+        }
+    }
+
 }

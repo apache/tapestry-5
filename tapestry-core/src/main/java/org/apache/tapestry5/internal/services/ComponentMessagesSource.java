@@ -1,4 +1,4 @@
-// Copyright 2006, 2008, 2009 The Apache Software Foundation
+// Copyright 2006 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,17 +14,16 @@
 
 package org.apache.tapestry5.internal.services;
 
+import org.apache.tapestry5.internal.event.InvalidationEventHub;
 import org.apache.tapestry5.ioc.Messages;
-import org.apache.tapestry5.ioc.annotations.NotLazy;
 import org.apache.tapestry5.model.ComponentModel;
-import org.apache.tapestry5.services.InvalidationEventHub;
 
 import java.util.Locale;
 
 /**
  * Used to connect a Tapestry component to its message catalog.
  */
-public interface ComponentMessagesSource
+public interface ComponentMessagesSource extends InvalidationEventHub
 {
     /**
      * Used to obtain a {@link Messages} instance for a particular component, within a particular locale. If the
@@ -36,12 +35,4 @@ public interface ComponentMessagesSource
      * @return the message catalog for the component, in the indicated locale
      */
     Messages getMessages(ComponentModel componentModel, Locale locale);
-
-    /**
-     * Returns the event hub that allows listeners to be notified when any underlying message catalog file is changed.
-     *
-     * @since 5.1.0.0
-     */
-    @NotLazy
-    InvalidationEventHub getInvalidationEventHub();
 }

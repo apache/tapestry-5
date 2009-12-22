@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -69,14 +69,4 @@ public interface Context
      * Returns the names of all attributes of the context, sorted alphabetically.
      */
     List<String> getAttributeNames();
-
-    /**
-     * Returns the MIME content type of the specified file, or null if no content type is known. MIME types are built-in
-     * to servlet containers and may be futher specified via the web application deployment descriptor.
-     *
-     * @param file name of file
-     * @return the presumed MIME content type, or null if not known
-     * @since 5.1.0.0
-     */
-    String getMimeType(String file);
 }

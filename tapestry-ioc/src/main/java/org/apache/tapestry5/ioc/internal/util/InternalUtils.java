@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,10 +16,7 @@ package org.apache.tapestry5.ioc.internal.util;
 
 import org.apache.tapestry5.ioc.*;
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.ioc.annotations.InjectResource;
 import org.apache.tapestry5.ioc.annotations.InjectService;
-import org.apache.tapestry5.ioc.annotations.PostInjection;
-import org.apache.tapestry5.ioc.def.*;
 import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newList;
 import static org.apache.tapestry5.ioc.internal.util.Defense.notBlank;
 import org.apache.tapestry5.ioc.services.ClassFabUtils;
@@ -30,7 +27,10 @@ import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-import java.lang.reflect.*;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -39,7 +39,6 @@ import java.util.regex.Pattern;
  * Utilities used within various internal implemenations of Tapestry IOC and the rest of the tapestry-core framework.
  */
 
-@SuppressWarnings({ "JavaDoc", "unchecked" })
 public class InternalUtils
 {
     /**
@@ -105,11 +104,6 @@ public class InternalUtils
         return array == null ? 0 : array.length;
     }
 
-    public static int size(Collection collection)
-    {
-        return collection == null ? 0 : collection.size();
-    }
-
     /**
      * Strips leading "_" and "$" and trailing "_" from the name.
      */
@@ -170,8 +164,9 @@ public class InternalUtils
         return null;
     }
 
-    private static Object calculateInjection(Class injectionType, Type genericType, final Annotation[] annotations,
-                                             ObjectLocator locator, InjectionResources resources)
+    @SuppressWarnings("unchecked")
+    private static Object calculateInjection(Class injectionType, final Annotation[] annotations,
+                                             ObjectLocator locator, Map<Class, Object> defaults)
     {
         AnnotationProvider provider = new AnnotationProvider()
         {
@@ -198,7 +193,7 @@ public class InternalUtils
 
         if (provider.getAnnotation(Inject.class) == null)
         {
-            Object result = resources.findResource(injectionType, genericType);
+            Object result = defaults.get(injectionType);
 
             if (result != null) return result;
         }
@@ -210,30 +205,26 @@ public class InternalUtils
     }
 
     public static Object[] calculateParametersForMethod(Method method, ObjectLocator locator,
-                                                        InjectionResources resources,
-                                                        OperationTracker tracker)
+                                                        Map<Class, Object> parameterDefaults, OperationTracker tracker)
     {
+        Class[] parameterTypes = method.getParameterTypes();
+        Annotation[][] annotations = method.getParameterAnnotations();
 
-        return calculateParameters(locator, resources, method.getParameterTypes(), method.getGenericParameterTypes(),
-                                   method.getParameterAnnotations(),
-                                   tracker);
+        return calculateParameters(locator, parameterDefaults, parameterTypes, annotations, tracker);
     }
 
     public static Object[] calculateParametersForConstructor(Constructor constructor, ObjectLocator locator,
-                                                             InjectionResources resources,
+                                                             Map<Class, Object> parameterDefaults,
                                                              OperationTracker tracker)
     {
+        Class[] parameterTypes = constructor.getParameterTypes();
+        Annotation[][] annotations = constructor.getParameterAnnotations();
 
-        return calculateParameters(locator, resources, constructor.getParameterTypes(),
-                                   constructor.getGenericParameterTypes(),
-                                   constructor.getParameterAnnotations(), tracker);
+        return calculateParameters(locator, parameterDefaults, parameterTypes, annotations, tracker);
     }
 
-    public static Object[] calculateParameters(final ObjectLocator locator,
-                                               final InjectionResources resources,
-                                               Class[] parameterTypes,
-                                               final Type[] genericTypes,
-                                               Annotation[][] parameterAnnotations,
+    public static Object[] calculateParameters(final ObjectLocator locator, final Map<Class, Object> defaults,
+                                               Class[] parameterTypes, Annotation[][] parameterAnnotations,
                                                OperationTracker tracker)
     {
         int parameterCount = parameterTypes.length;
@@ -243,7 +234,6 @@ public class InternalUtils
         for (int i = 0; i < parameterCount; i++)
         {
             final Class type = parameterTypes[i];
-            final Type genericType = genericTypes[i];
             final Annotation[] annotations = parameterAnnotations[i];
 
             String description = String.format("Determining injection value for parameter #%d (%s)", i + 1,
@@ -253,7 +243,7 @@ public class InternalUtils
             {
                 public Object invoke()
                 {
-                    return calculateInjection(type, genericType, annotations, locator, resources);
+                    return calculateInjection(type, annotations, locator, defaults);
                 }
             };
 
@@ -267,19 +257,17 @@ public class InternalUtils
      * Injects into the fields (of all visibilities)  when the {@link org.apache.tapestry5.ioc.annotations.Inject} or
      * {@link org.apache.tapestry5.ioc.annotations.InjectService} annotations are present.
      *
-     * @param object    to be initialized
-     * @param locator   used to resolve external dependencies
-     * @param resources provides injection resources for fields
-     * @param tracker   track operations
+     * @param object  to be initialized
+     * @param locator used to resolve external dependencies
+     * @param tracker track operations
      */
-    public static void injectIntoFields(final Object object, final ObjectLocator locator,
-                                        final InjectionResources resources,
-                                        OperationTracker tracker)
+    public static void injectIntoFields(final Object object, final ObjectLocator locator, OperationTracker tracker)
     {
         Class clazz = object.getClass();
 
         while (clazz != Object.class)
         {
+
             Field[] fields = clazz.getDeclaredFields();
 
             for (final Field f : fields)
@@ -305,35 +293,22 @@ public class InternalUtils
                 {
                     public void run()
                     {
-                        final Class<?> fieldType = f.getType();
-
                         InjectService is = ap.getAnnotation(InjectService.class);
+
                         if (is != null)
                         {
-                            inject(object, f, locator.getService(is.value(), fieldType));
+                            inject(object, f, locator.getService(is.value(), f.getType()));
                             return;
                         }
 
                         if (ap.getAnnotation(Inject.class) != null)
                         {
-                            inject(object, f, locator.getObject(fieldType, ap));
+                            inject(object, f, locator.getObject(f.getType(), ap));
                             return;
                         }
 
-
-                        if (ap.getAnnotation(InjectResource.class) != null)
-                        {
-                            Object value = resources.findResource(fieldType, f.getGenericType());
-
-                            if (value == null)
-                                throw new RuntimeException(UtilMessages.injectResourceFailure(f.getName(), fieldType));
-
-                            inject(object, f, value);
-
-                            return;
-                        }
-
-                        // Ignore fields that do not have the necessary annotation.
+                        // Ignore fields that do not have the necessary annotation.  Should we ignore static
+                        // fields?
 
                     }
                 });
@@ -341,46 +316,6 @@ public class InternalUtils
 
 
             clazz = clazz.getSuperclass();
-        }
-    }
-
-    public static void invokePostInjectionMethods(final Object object, final ObjectLocator locator,
-                                                  final InjectionResources injectionResources,
-                                                  final OperationTracker tracker)
-    {
-        for (final Method m : object.getClass().getMethods())
-        {
-            if (m.getAnnotation(PostInjection.class) == null) continue;
-
-            String description = String.format("Invoking post-inject method %s", m);
-
-            tracker.run(description, new Runnable()
-            {
-                public void run()
-                {
-                    Throwable fail = null;
-
-                    try
-                    {
-                        Object[] parameters = InternalUtils.calculateParametersForMethod(m, locator,
-                                                                                         injectionResources, tracker);
-
-                        m.invoke(object, parameters);
-                    }
-                    catch (InvocationTargetException ex)
-                    {
-                        fail = ex.getTargetException();
-                    }
-                    catch (Exception ex)
-                    {
-                        fail = ex;
-                    }
-
-                    if (fail != null)
-                        throw new RuntimeException(String.format("Exception invoking method %s: %s",
-                                                                 m, toMessage(fail)), fail);
-                }
-            });
         }
     }
 
@@ -478,21 +413,6 @@ public class InternalUtils
         return input == null || input.length() == 0 || input.trim().length() == 0;
     }
 
-
-    /**
-     * Returns true if the input is an empty collection.
-     */
-
-    public static boolean isEmptyCollection(Object input)
-    {
-        if(input instanceof Collection)
-        {
-            return ((Collection)input).isEmpty();
-        }
-        
-        return false;
-    }
-    
     public static boolean isNonBlank(String input)
     {
         return !isBlank(input);
@@ -758,118 +678,5 @@ public class InternalUtils
                     "Constructor %s is not public and may not be used for autobuilding an instance of the class. " +
                             "You should make the constructor public, or mark an alternate public constructor with the @Inject annotation.",
                     constructor));
-    }
-
-    public static ServiceDef2 toServiceDef2(final ServiceDef sd)
-    {
-        if (sd instanceof ServiceDef2)
-            return (ServiceDef2) sd;
-
-        return new ServiceDef2()
-        {
-            public boolean isPreventDecoration()
-            {
-                return false;
-            }
-
-            public ObjectCreator createServiceCreator(ServiceBuilderResources resources)
-            {
-                return sd.createServiceCreator(resources);
-            }
-
-            public String getServiceId()
-            {
-                return sd.getServiceId();
-            }
-
-            public Set<Class> getMarkers()
-            {
-                return sd.getMarkers();
-            }
-
-            public Class getServiceInterface()
-            {
-                return sd.getServiceInterface();
-            }
-
-            public String getServiceScope()
-            {
-                return sd.getServiceScope();
-            }
-
-            public boolean isEagerLoad()
-            {
-                return sd.isEagerLoad();
-            }
-        };
-    }
-
-    public static ModuleDef2 toModuleDef2(final ModuleDef md)
-    {
-        if (md instanceof ModuleDef2)
-            return (ModuleDef2) md;
-
-        return new ModuleDef2()
-        {
-            public Set<AdvisorDef> getAdvisorDefs()
-            {
-                return Collections.emptySet();
-            }
-
-            public Class getBuilderClass()
-            {
-                return md.getBuilderClass();
-            }
-
-            public Set<ContributionDef> getContributionDefs()
-            {
-                return md.getContributionDefs();
-            }
-
-            public Set<DecoratorDef> getDecoratorDefs()
-            {
-                return md.getDecoratorDefs();
-            }
-
-            public String getLoggerName()
-            {
-                return md.getLoggerName();
-            }
-
-            public ServiceDef getServiceDef(String serviceId)
-            {
-                return md.getServiceDef(serviceId);
-            }
-
-            public Set<String> getServiceIds()
-            {
-                return md.getServiceIds();
-            }
-        };
-    }
-
-    /** @since 5.1.0.2 */
-    public static ServiceLifecycle2 toServiceLifecycle2(final ServiceLifecycle lifecycle)
-    {
-        if (lifecycle instanceof ServiceLifecycle2)
-            return (ServiceLifecycle2) lifecycle;
-
-        return new ServiceLifecycle2()
-        {
-            public boolean requiresProxy()
-            {
-                return true;
-            }
-
-            public Object createService(ServiceResources resources, ObjectCreator creator)
-            {
-                return lifecycle.createService(resources, creator);
-            }
-
-            public boolean isSingleton()
-            {
-                return lifecycle.isSingleton();
-            }
-        };
     }
 }

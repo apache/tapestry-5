@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,16 +14,13 @@
 
 package org.apache.tapestry5.internal.structure;
 
-import org.apache.tapestry5.ioc.Location;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.MessagesImpl;
-import org.apache.tapestry5.ComponentResources;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
-import java.util.Arrays;
 
 final class StructureMessages
 {
@@ -53,6 +50,12 @@ final class StructureMessages
     static String writeParameterFailure(String parameterName, String componentId, Throwable cause)
     {
         return MESSAGES.format("write-parameter-failure", parameterName, componentId, cause);
+    }
+
+    static String missingMixinForParameter(String componentId, String mixinName, String parameterName)
+    {
+        return MESSAGES
+                .format("missing-mixin-for-parameter", componentId, mixinName, parameterName);
     }
 
     static String unknownMixin(String componentId, String mixinClassName)
@@ -90,12 +93,6 @@ final class StructureMessages
         return MESSAGES.format("duplicate-child-component", container.getCompleteId(), childId);
     }
 
-    static String originalChildComponent(ComponentPageElement container, String childId, Location originalLocation)
-    {
-        return MESSAGES.format("original-child-component", container.getCompleteId(), childId,
-                               originalLocation.getResource().getPath(), originalLocation.getLine());
-    }
-
     static String duplicateBlock(ComponentPageElement component, String blockId)
     {
         return MESSAGES.format("duplicate-block", component.getCompleteId(), blockId);
@@ -120,22 +117,5 @@ final class StructureMessages
     static String persistChangeBeforeLoadComplete()
     {
         return MESSAGES.get("persist-change-before-load-complete");
-    }
-
-    static String noSuchCoreComponentParameter(ComponentResources mixinResources,
-                                               String boundId, String...parameters)
-    {
-        return MESSAGES.format("no-such-core-component-parameter",
-                boundId,
-                mixinResources.getComponentModel().getComponentClassName(),
-                mixinResources.getContainerResources().getComponentModel().getComponentClassName(),
-                InternalUtils.joinSorted(Arrays.asList(parameters)),
-                InternalUtils.joinSorted(Arrays.asList(mixinResources.getContainerResources().getComponentModel().getDeclaredParameterNames())));
-    }
-
-    public static String bindParameterOnlyOnMixin(String boundParameterName, InternalComponentResourcesImpl internalComponentResources)
-    {
-        return MESSAGES.format("bind-parameter-only-on-mixin",boundParameterName,
-                internalComponentResources.getComponentModel().getComponentClassName());
     }
 }

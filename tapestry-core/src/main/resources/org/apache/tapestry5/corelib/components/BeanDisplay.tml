@@ -5,7 +5,7 @@
 
         <dt class="${propertyClass}">${propertyModel.label}</dt>
 
-        <dd t:type="any" t:mixins="NotEmpty" class="${propertyClass}">
+        <dd class="${propertyClass}">
             <t:propertydisplay model="propertyModel" overrides="overrides" object="object"/>
         </dd>
     </t:loop>

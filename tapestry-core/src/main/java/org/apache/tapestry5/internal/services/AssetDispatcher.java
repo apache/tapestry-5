@@ -1,4 +1,4 @@
-// Copyright 2006, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.ioc.internal.util.ClasspathResource;
 import org.apache.tapestry5.services.ClasspathAssetAliasManager;
 import org.apache.tapestry5.services.Dispatcher;
 import org.apache.tapestry5.services.Request;
@@ -35,22 +36,18 @@ public class AssetDispatcher implements Dispatcher
 {
     private final ResourceStreamer streamer;
 
-    private final ResourceCache resourceCache;
+    private final ClasspathAssetAliasManager aliasManager;
 
-    private final AssetResourceLocator assetResourceLocator;
+    private final ResourceCache resourceCache;
 
     static final String IF_MODIFIED_SINCE_HEADER = "If-Modified-Since";
 
-    public AssetDispatcher(ResourceStreamer streamer,
-
-                           ResourceCache resourceCache,
-
-                           AssetResourceLocator assetResourceLocator)
+    public AssetDispatcher(ResourceStreamer streamer, ClasspathAssetAliasManager aliasManager,
+                           ResourceCache resourceCache)
     {
         this.streamer = streamer;
+        this.aliasManager = aliasManager;
         this.resourceCache = resourceCache;
-        this.assetResourceLocator = assetResourceLocator;
-
     }
 
     public boolean dispatch(Request request, Response response) throws IOException
@@ -64,7 +61,9 @@ public class AssetDispatcher implements Dispatcher
 
         // ClassLoaders like their paths to start with a leading slash.
 
-        Resource resource = assetResourceLocator.findResourceForPath(path);
+        String resourcePath = aliasManager.toResourcePath(path);
+
+        Resource resource = findResourceAndValidateDigest(response, resourcePath);
 
         if (resource == null) return true;
 
@@ -102,5 +101,59 @@ public class AssetDispatcher implements Dispatcher
         streamer.streamResource(resource);
 
         return true;
+    }
+
+    /**
+     * @param response     used to send errors back to the client
+     * @param resourcePath the path to the requested resource, from the request
+     * @return the resource for the path, with the digest stripped out of the URL, or null if the digest is invalid (and
+     *         an error has been sent back to the client)
+     * @throws IOException
+     */
+    private Resource findResourceAndValidateDigest(Response response, String resourcePath) throws IOException
+    {
+        Resource resource = new ClasspathResource(resourcePath);
+
+        if (!resourceCache.requiresDigest(resource)) return resource;
+
+        String file = resource.getFile();
+
+        // Somehow this code got real ugly, but it's all about preventing NPEs when a resource
+        // that should have a digest doesn't.
+
+        boolean valid = false;
+        Resource result = resource;
+
+        int lastdotx = file.lastIndexOf('.');
+
+        if (lastdotx > 0)
+        {
+            int prevdotx = file.lastIndexOf('.', lastdotx - 1);
+
+            if (prevdotx > 0)
+            {
+
+                String requestDigest = file.substring(prevdotx + 1, lastdotx);
+
+                // Strip the digest out of the file name.
+
+                String realFile = file.substring(0, prevdotx) + file.substring(lastdotx);
+
+                result = resource.forFile(realFile);
+
+                String actualDigest = resourceCache.getDigest(result);
+
+                valid = requestDigest.equals(actualDigest);
+            }
+        }
+
+        if (!valid)
+        {
+            response.sendError(HttpServletResponse.SC_FORBIDDEN, ServicesMessages
+                    .wrongAssetDigest(result));
+            result = null;
+        }
+
+        return result;
     }
 }

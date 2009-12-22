@@ -1,4 +1,4 @@
-// Copyright 2008, 2009 The Apache Software Foundation
+// Copyright 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
 package org.apache.tapestry5.services;
 
 import org.apache.tapestry5.EventContext;
-import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.ioc.internal.util.Defense;
 
 /**
@@ -46,25 +45,5 @@ public class PageRenderRequestParameters
     public EventContext getActivationContext()
     {
         return activationContext;
-    }
-
-    @Override
-    public boolean equals(Object obj)
-    {
-        if (this == obj) return true;
-
-        if (obj == null || getClass() != obj.getClass()) return false;
-
-        PageRenderRequestParameters other = (PageRenderRequestParameters) obj;
-
-        return logicalPageName.equals(other.logicalPageName) &&
-                TapestryInternalUtils.isEqual(activationContext, other.activationContext);
-    }
-
-
-    @Override
-    public String toString()
-    {
-        return String.format("PageRenderRequestParameters[%s]", logicalPageName);
     }
 }

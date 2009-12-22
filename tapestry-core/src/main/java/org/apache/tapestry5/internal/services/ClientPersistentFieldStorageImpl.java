@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,17 +15,17 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.Link;
+import org.apache.tapestry5.internal.util.Base64ObjectInputStream;
+import org.apache.tapestry5.internal.util.Base64ObjectOutputStream;
 import org.apache.tapestry5.ioc.ScopeConstants;
 import org.apache.tapestry5.ioc.annotations.Scope;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newMap;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.services.ClientDataEncoder;
-import org.apache.tapestry5.services.ClientDataSink;
 import org.apache.tapestry5.services.PersistentFieldChange;
 import org.apache.tapestry5.services.Request;
 
 import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
@@ -109,18 +109,14 @@ public class ClientPersistentFieldStorageImpl implements ClientPersistentFieldSt
         }
     }
 
-    private final ClientDataEncoder clientDataEncoder;
-
-    private final Map<Key, Object> persistedValues = CollectionFactory.newMap();
+    private final Map<Key, Object> persistedValues = newMap();
 
     private String clientData;
 
     private boolean mapUptoDate = false;
 
-    public ClientPersistentFieldStorageImpl(Request request, ClientDataEncoder clientDataEncoder)
+    public ClientPersistentFieldStorageImpl(Request request)
     {
-        this.clientDataEncoder = clientDataEncoder;
-
         // This, here, is the problem of TAPESTRY-2501; this call can predate
         // the check to set the character set based on meta data of the page.
 
@@ -223,7 +219,7 @@ public class ClientPersistentFieldStorageImpl implements ClientPersistentFieldSt
 
         try
         {
-            in = clientDataEncoder.decodeClientData(clientData);
+            in = new Base64ObjectInputStream(clientData);
 
             int count = in.readInt();
 
@@ -264,12 +260,12 @@ public class ClientPersistentFieldStorageImpl implements ClientPersistentFieldSt
 
         // Otherwise, time to update clientData from persistedValues
 
-        ClientDataSink sink = clientDataEncoder.createSink();
-
-        ObjectOutputStream os = sink.getObjectOutputStream();
+        Base64ObjectOutputStream os = null;
 
         try
         {
+            os = new Base64ObjectOutputStream();
+
             os.writeInt(persistedValues.size());
 
             for (Map.Entry<Key, Object> e : persistedValues.entrySet())
@@ -287,6 +283,6 @@ public class ClientPersistentFieldStorageImpl implements ClientPersistentFieldSt
             InternalUtils.close(os);
         }
 
-        clientData = sink.getClientData();
+        clientData = os.toBase64();
     }
 }

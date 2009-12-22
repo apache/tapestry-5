@@ -27,9 +27,9 @@
             <subsection name="UserList.html (partial)">
                 <source><![CDATA[
         <t:grid source="users" row="user" model="model">
-            <p:lastnamecell>
+            <t:parameter name="lastnamecell">
                 <t:pagelink page="user/view" context="user.id">${user.lastname}</t:pagelink>
-            </p:lastnamecell>
+            </t:parameter>
 
         </t:grid>]]></source>
             </subsection>

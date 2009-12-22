@@ -1,4 +1,4 @@
-// Copyright 2008, 2009 The Apache Software Foundation
+// Copyright 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -23,8 +23,7 @@ public class RenderVariableBinding extends AbstractBinding
     private final ComponentResources resources;
     private final String name;
 
-    public RenderVariableBinding(Location location, String description, ComponentResources resources, String name
-    )
+    public RenderVariableBinding(String description, ComponentResources resources, String name, Location location)
     {
         super(location);
 

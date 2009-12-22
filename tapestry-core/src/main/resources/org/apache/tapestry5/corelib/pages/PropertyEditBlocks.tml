@@ -26,11 +26,6 @@
         <input t:id="dateField"/>
     </t:block>
 
-    <t:block id="calendar">
-        <t:label for="calendarField"/>
-        <input t:id="calendarField"/>
-    </t:block>
-
     <t:block id="password">
         <t:label for="passwordField"/>
         <input t:id="passwordField"/>

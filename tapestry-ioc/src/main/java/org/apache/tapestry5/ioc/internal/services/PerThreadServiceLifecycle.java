@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -41,8 +41,7 @@ public class PerThreadServiceLifecycle implements ServiceLifecycle
 
     private final ClassFactory classFactory;
 
-    public PerThreadServiceLifecycle(@Builtin
-    PerthreadManager perthreadManager,
+    public PerThreadServiceLifecycle(PerthreadManager perthreadManager,
 
                                      @Builtin
                                      ClassFactory classFactory)
@@ -92,7 +91,7 @@ public class PerThreadServiceLifecycle implements ServiceLifecycle
         // Constructor takes a ServiceCreator
 
         cf.addConstructor(new Class[]
-                { ObjectCreator.class }, null, "_creator = $1;");
+                {ObjectCreator.class}, null, "_creator = $1;");
 
         String body = format("return (%s) _creator.createObject();", serviceInterface.getName());
 

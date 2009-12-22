@@ -17,7 +17,7 @@ package org.apache.tapestry5.internal.events;
 /**
  * Event listener interface for objects that need to know when the current request finishes.
  *
- * @see org.apache.tapestry5.internal.services.EndOfRequestEventHub
+ * @see org.apache.tapestry5.internal.services.EndOfRequestListenerHub
  */
 public interface EndOfRequestListener
 {

@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,84 +14,52 @@
 
 package org.apache.tapestry5.ioc.internal;
 
-import org.apache.tapestry5.ioc.ObjectLocator;
 import org.apache.tapestry5.ioc.OrderedConfiguration;
 import org.apache.tapestry5.ioc.def.ContributionDef;
-import org.apache.tapestry5.ioc.internal.util.Defense;
-import org.apache.tapestry5.ioc.internal.util.Orderer;
-
-import java.util.Map;
+import org.slf4j.Logger;
 
 /**
- * Wraps a {@link java.util.List} as a {@link org.apache.tapestry5.ioc.OrderedConfiguration}, implementing validation of
- * values provided to an {@link org.apache.tapestry5.ioc.OrderedConfiguration}.
+ * Implements validation of values provided to an {@link org.apache.tapestry5.ioc.OrderedConfiguration}. If you provide
+ * an incorrect value type, the value is converted to null but added anyway. This ensures that incorrect values
+ * contributed in don't screw up the {@link org.apache.tapestry5.ioc.internal.util.Orderer} (and generate a bunch of
+ * error messages there).
  *
  * @param <T>
  */
 public class ValidatingOrderedConfigurationWrapper<T> implements OrderedConfiguration<T>
 {
-    private final Orderer<T> orderer;
-
     private final String serviceId;
+
+    private final ContributionDef contributionDef;
+
+    private final Logger logger;
 
     private final Class expectedType;
 
-    private final ObjectLocator locator;
+    private final OrderedConfiguration<T> delegate;
 
-    private final Map<String, OrderedConfigurationOverride<T>> overrides;
-
-    private final ContributionDef contribDef;
-
-    public ValidatingOrderedConfigurationWrapper(Orderer<T> orderer,
-                                                 Map<String, OrderedConfigurationOverride<T>> overrides,
-                                                 ContributionDef contribDef, String serviceId,
-                                                 Class expectedType,
-                                                 ObjectLocator locator)
+    public ValidatingOrderedConfigurationWrapper(String serviceId, ContributionDef contributionDef,
+                                                 Logger logger, Class expectedType, OrderedConfiguration<T> delegate)
     {
-        this.orderer = orderer;
-        this.overrides = overrides;
-        this.contribDef = contribDef;
         this.serviceId = serviceId;
+        this.contributionDef = contributionDef;
+        this.logger = logger;
         this.expectedType = expectedType;
-        this.locator = locator;
+        this.delegate = delegate;
     }
 
     public void add(String id, T object, String... constraints)
     {
-        checkValid(object);
-
-        orderer.add(id, object, constraints);
+        delegate.add(id, validVersionOf(object), constraints);
     }
 
-    public void override(String id, T object, String... constraints)
+    private T validVersionOf(T object)
     {
-        Defense.notBlank(id, "id");
+        if (object == null || expectedType.isInstance(object)) return object;
 
-        checkValid(object);
-
-        OrderedConfigurationOverride existing = overrides.get(id);
-        if (existing != null)
-            throw new IllegalArgumentException(String.format("Contribution '%s' has already been overridden (by %s).",
-                                                             id, existing.getContribDef()));
-
-        overrides.put(id, new OrderedConfigurationOverride(orderer, id, object, constraints, contribDef));
-    }
-
-    public void addInstance(String id, Class<? extends T> clazz, String... constraints)
-    {
-        add(id, locator.autobuild(clazz), constraints);
-    }
-
-    public void overrideInstance(String id, Class<? extends T> clazz, String... constraints)
-    {
-        override(id, locator.autobuild(clazz), constraints);
-    }
-
-    private void checkValid(T object)
-    {
-        if (object == null || expectedType.isInstance(object)) return;
-
-        throw new IllegalArgumentException(IOCMessages.contributionWrongValueType(serviceId, object
+        logger.warn(IOCMessages.contributionWrongValueType(serviceId, contributionDef, object
                 .getClass(), expectedType));
+
+        return null;
     }
 }

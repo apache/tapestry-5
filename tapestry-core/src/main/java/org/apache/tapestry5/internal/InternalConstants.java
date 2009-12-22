@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
 
 package org.apache.tapestry5.internal;
 
-import org.apache.tapestry5.ioc.util.TimeInterval;
+import org.apache.tapestry5.services.Alias;
 
 public final class InternalConstants
 {
@@ -28,6 +28,18 @@ public final class InternalConstants
      * Turns off loading of default modules (as driven by JAR file Manifest entries).
      */
     public static final String DISABLE_DEFAULT_MODULES_PARAM = "tapestry.disable-default-modules";
+
+    /**
+     * The application mode, generally "servlet", used to select the correct contributions to the {@link Alias}
+     * service.
+     */
+    public static final String TAPESTRY_ALIAS_MODE_SYMBOL = "tapestry.alias-mode";
+
+    /**
+     * The name of the application (i.e., the name of the application filter). Used, for example, to select additional
+     * resources related to the application.
+     */
+    public static final String TAPESTRY_APP_NAME_SYMBOL = "tapestry.app-name";
 
     /**
      * The extension used for Tapestry component template files, <em>T</em>apestry <em>M</em>arkup <em>L</em>anguage.
@@ -89,36 +101,4 @@ public final class InternalConstants
      * recognize the response as JSON, and the Ajax.Response.responseJSON property will be null.
      */
     public static final String JSON_MIME_TYPE = "application/json";
-
-    /**
-     * Request attribute key; if non-null, then automatic GZIP compression of response stream is suppressed. This is
-     * useful when the code opening the response stream wants to explicitly control whether GZIP compression occurs or
-     * not.
-     *
-     * @since 5.1.0.0
-     */
-    public static final String SUPPRESS_COMPRESSION = "tapestry.supress-compression";
-
-    /**
-     * Name of response header for content encoding.
-     *
-     * @since 5.1.0.0
-     */
-    public static final String CONTENT_ENCODING_HEADER = "Content-Encoding";
-
-    /**
-     * Response content encoding value indicating use of GZIP compression.
-     *
-     * @since 5.1.0.0
-     */
-    public static final String GZIP_CONTENT_ENCODING = "gzip";
-    /**
-     * Identifies the start of an expansion inside a template.
-     */
-    public static final String EXPANSION_START = "${";
-    /**
-     * Special prefix for parameters that are inherited from named parameters of their container.
-     */
-    public static final String INHERIT_BINDING_PREFIX = "inherit:";
-    public static final long TEN_YEARS = new TimeInterval("10y").milliseconds();
 }

@@ -1,4 +1,4 @@
-// Copyright 2008, 2009 The Apache Software Foundation
+// Copyright 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,9 +20,6 @@ import java.lang.annotation.Retention;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Target;
 
-import static org.apache.tapestry5.ioc.annotations.AnnotationUseContext.PAGE;
-import org.apache.tapestry5.ioc.annotations.UseWith;
-
 /**
  * Annotation for a field for which the page activation context handlers (onActivate and onPassivate) should be created.
  * In order to use this annotation you must contribute a {@link org.apache.tapestry5.ValueEncoder} for the class of the
@@ -34,7 +31,6 @@ import org.apache.tapestry5.ioc.annotations.UseWith;
 @Target(FIELD)
 @Documented
 @Retention(RUNTIME)
-@UseWith(PAGE)
 public @interface PageActivationContext
 {
     /**

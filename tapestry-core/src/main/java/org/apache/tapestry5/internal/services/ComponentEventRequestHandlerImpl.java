@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@ package org.apache.tapestry5.internal.services;
 import org.apache.tapestry5.EventConstants;
 import org.apache.tapestry5.internal.structure.ComponentPageElement;
 import org.apache.tapestry5.internal.structure.Page;
-import org.apache.tapestry5.ioc.annotations.Primary;
 import org.apache.tapestry5.ioc.internal.util.TapestryException;
 import org.apache.tapestry5.services.*;
 
@@ -35,15 +34,9 @@ public class ComponentEventRequestHandlerImpl implements ComponentEventRequestHa
 
     private final Environment environment;
 
-    public ComponentEventRequestHandlerImpl(
-            @Traditional @Primary
-            ComponentEventResultProcessor resultProcessor,
-
-            RequestPageCache cache, Response response,
-
-            ActionRenderResponseGenerator generator,
-
-            Environment environment)
+    public ComponentEventRequestHandlerImpl(@Traditional ComponentEventResultProcessor resultProcessor,
+                                            RequestPageCache cache, Response response,
+                                            ActionRenderResponseGenerator generator, Environment environment)
     {
         this.resultProcessor = resultProcessor;
         this.cache = cache;

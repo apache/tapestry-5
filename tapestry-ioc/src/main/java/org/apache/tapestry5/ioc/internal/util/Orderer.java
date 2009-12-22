@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2009 The Apache Software Foundation
+// Copyright 2006, 2007 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -100,24 +100,6 @@ public class Orderer<T>
         idToOrderable.put(id, orderable);
     }
 
-    public void override(Orderable<T> orderable)
-    {
-        lock.check();
-
-        String id = orderable.getId();
-
-        Orderable<T> existing = idToOrderable.get(id);
-
-        if (existing == null)
-            throw new IllegalArgumentException(
-                    String.format("Override for object '%s' is invalid as it does not match an existing object.", id));
-
-        orderables.remove(existing);
-        orderables.add(orderable);
-
-        idToOrderable.put(id, orderable);
-    }
-
     /**
      * Adds an object to be ordered.
      *
@@ -132,13 +114,6 @@ public class Orderer<T>
         lock.check();
 
         add(new Orderable<T>(id, target, constraints));
-    }
-
-    public void override(String id, T target, String... constraints)
-    {
-        lock.check();
-
-        override(new Orderable<T>(id, target, constraints));
     }
 
     public List<T> getOrdered()

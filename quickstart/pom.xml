@@ -1,88 +1,25 @@
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.apache.tapestry</groupId>
     <artifactId>quickstart</artifactId>
     <packaging>maven-plugin</packaging>
-    <dependencies>
-        <dependency>
-            <groupId>org.easymock</groupId>
-            <artifactId>easymock</artifactId>
-            <version>2.4</version>
-        </dependency>
-        <dependency>
-            <groupId>org.testng</groupId>
-            <artifactId>testng</artifactId>
-            <version>${testng-version}</version>
-            <classifier>jdk15</classifier>
-        </dependency>
-    </dependencies>
     <parent>
         <groupId>org.apache.tapestry</groupId>
         <artifactId>tapestry-project</artifactId>
-        <version>5.2.0-SNAPSHOT</version>
+        <version>5.0.19</version>
     </parent>
     <name>Tapestry 5 Quickstart Archetype</name>
     <inceptionYear>2007</inceptionYear>
     <url>http://tapestry.apache.org/tapestry5/${project.artifactId}/</url>
-    <description>Archetype for creating a basic Tapestry 5 application.</description>
-
-    <build>
-        <resources>
-            <resource>
-                <filtering>false</filtering>
-                <directory>${basedir}/src/main/resources</directory>
-                <excludes>
-                    <exclude>archetype-catalog.xml</exclude>
-                    <exclude>**/.*</exclude>
-                </excludes>
-            </resource>
-        </resources>
-
-        <extensions>
-            <extension>
-                <groupId>org.apache.maven.archetype</groupId>
-                <artifactId>archetype-packaging</artifactId>
-            </extension>
-        </extensions>
-    </build>
-
-    <profiles>
-        <profile>
-            <id>ci</id>
-            <build>
-                <plugins>
-
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-antrun-plugin</artifactId>
-                        <version>1.2</version>
-                        <executions>
-                            <execution>
-                                <phase>deploy</phase>
-                                <configuration>
-
-                                    <tasks>
-                                        <echo>Copying Archetype Catalog to repository</echo>
-                                        <copy overwrite="true" todir="/var/www/maven-snapshot-repository">
-                                            <fileset dir="src/main/resources" includes="*catalog.xml"></fileset>
-                                            <filterset>
-                                                <filter token="project.version" value="${project.version}"></filter>
-                                            </filterset>
-                                        </copy>
-                                    </tasks>
-
-                                </configuration>
-                                <goals>
-                                    <goal>run</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-
-
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
-
+    <description>Archetype for creating a basic Tapestry 5 application, including Eclipse control
+        files.
+    </description>
+    <dependencies>
+      <dependency>
+        <groupId>org.testng</groupId>
+        <artifactId>testng</artifactId>
+        <version>${testng-version}</version>
+        <classifier>jdk15</classifier>
+      </dependency>
+    </dependencies>
 </project>

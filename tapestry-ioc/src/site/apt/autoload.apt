@@ -23,7 +23,7 @@ JAR Manifest Entries
   It does this by searching for a particular global manifest entry.
 
   The manifest entry name is "Tapestry-Module-Classes".  The value is a comma-separated list
-  of fully qualified class names of module classes (this allows a single
+  of fully qualified class names of module builder classes (this allows a single
   JAR to contain multiple, related modules).  Whitespace is ignored.
 
   Example:
@@ -76,11 +76,8 @@ SubModule Annotation
   A better alternative is the
   {{{../apidocs/org/apache/tapestry5/ioc/annotations/SubModule.html}@SubModule annotation}}.
 
-  The value for this annotation is a list of <additional> classes to be treated as module classes,
-  exactly as if they were identified in the manifest. Despite the name, there is no hierarchy of modules in
-  Tapestry IoC.
-
-  Example:
+  The value for this annotation is a list of <additional> classes to be treated as module builder classes,
+  exactly as if they were identified in the manifest.  For example:
 
 +----+
 @SubModule(
@@ -91,4 +88,4 @@ public final class InternalModule
 +----+
 
   In general, your should only need to identify a single module in the JAR manifest, and make use of
-  @SubModule to pull in any additional module classes.
+  @SubModule to pull in any additional module builder classes.

@@ -1,4 +1,4 @@
-//  Copyright 2008, 2009 The Apache Software Foundation
+//  Copyright 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -123,38 +123,4 @@ public class EventConstants
      * also be visible in the {@link org.apache.tapestry5.PrimaryKeyEncoder encoder parameter}.
      */
     public static final String ADD_ROW = "addRow";
-
-    /**
-     * Event triggered by the {@link org.apache.tapestry5.corelib.components.Loop} component to inform its container of
-     * all the values that were supplied from the client during a form submission. The event handler method should have
-     * a single parameter, of type Object[] or type List, to receive the values.
-     *
-     * @since 5.1.0.0
-     */
-    public static final String SYNCHRONIZE_VALUES = "synchronizeValues";
-
-    /**
-     * Event triggered by {@link org.apache.tapestry5.corelib.components.ProgressiveDisplay} component to inform its
-     * container of what context (if any) is available. The event handler may return a renderable object or null. If
-     * null is returned, the component renders its own body as the partial markup response.
-     *
-     * @since 5.1.0.1
-     */
-    public static final String PROGRESSIVE_DISPLAY = "progressiveDisplay";
-
-    /**
-     * Event triggered by an {@link org.apache.tapestry5.corelib.mixins.Autocomplete} mixin to request completions of
-     * the current input. The context is the partial string provided by the client.
-     *
-     * @SINCE 5.1.0.4
-     */
-    public static final String PROVIDE_COMPLETIONS = "providecompletions";
-    
-    /**
-     * Event triggered by {@link org.apache.tapestry5.corelib.components.Select} component to inform its
-     * container that Select's value has changed.
-     *
-     * @since 5.2.0.0
-     */
-    public static final String VALUE_CHANGED = "valuechanged";
 }

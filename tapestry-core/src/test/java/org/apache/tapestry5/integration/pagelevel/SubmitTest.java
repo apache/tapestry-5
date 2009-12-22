@@ -1,4 +1,4 @@
-// Copyright 2007, 2009 The Apache Software Foundation
+// Copyright 2007 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@ package org.apache.tapestry5.integration.pagelevel;
 import org.apache.tapestry5.dom.Document;
 import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.services.SymbolSource;
 import org.apache.tapestry5.test.PageTester;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -38,8 +37,6 @@ public class SubmitTest extends Assert
     public void submit_form()
     {
         Element submitButton = doc.getElementById("capitalize1");
-        assertEquals("submit", submitButton.getAttribute("type"));
-        
         fieldValues.put("t1", "hello");
         doc = tester.clickSubmit(submitButton, fieldValues);
         assertTrue(doc.toString().contains("Value is: HELLO"));
@@ -58,49 +55,22 @@ public class SubmitTest extends Assert
     public void not_a_submit()
     {
         Element submitButton = doc.getElementById("t1");
-
         tester.clickSubmit(submitButton, fieldValues);
     }
 
-    @Test
+    @Test(expectedExceptions = IllegalArgumentException.class)
     public void not_in_form()
     {
-        try
-        {
-            Element submitButton = doc.getElementById("orphanedSubmit");
-
-            tester.clickSubmit(submitButton, fieldValues);
-
-            throw new RuntimeException("Should not be reachable.");
-        }
-        catch (RuntimeException ex)
-        {
-            assertEquals(ex.getMessage(), "Could not locate an ancestor element of type 'form'.");
-        }
-    }
-    
-    @Test
-    public void render_image_type()
-    {
-        Element submitButton = doc.getElementById("submitImage");
-        
-        assertEquals("image", submitButton.getAttribute("type"));
-        
-        SymbolSource service = tester.getService(SymbolSource.class);
-        
-        String symbolValue = service.valueForSymbol("tapestry.spacer-image");
-        
-        String iconName = symbolValue.substring(symbolValue.lastIndexOf("/"));
-        
-        assertTrue(submitButton.getAttribute("src").contains(iconName));
-
+        Element submitButton = doc.getElementById("orphanedSubmit");
+        tester.clickSubmit(submitButton, fieldValues);
     }
 
     @BeforeMethod
     public void before()
     {
-        tester = new PageTester(TestConstants.APP2_PACKAGE, TestConstants.APP2_NAME);
-
+        String appPackage = "org.apache.tapestry5.integration.app2";
+        String appName = "";
+        tester = new PageTester(appPackage, appName);
         doc = tester.renderPage("TestPageForSubmit");
         fieldValues = CollectionFactory.newMap();
     }

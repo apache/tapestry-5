@@ -1,4 +1,4 @@
-// Copyright 2008, 2009 The Apache Software Foundation
+// Copyright 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ package org.apache.tapestry5.corelib.components;
 import org.apache.tapestry5.*;
 import org.apache.tapestry5.annotations.*;
 import org.apache.tapestry5.corelib.internal.AjaxFormLoopContext;
+import org.apache.tapestry5.internal.services.ComponentClassCache;
 import org.apache.tapestry5.internal.services.PageRenderQueue;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.internal.util.Defense;
@@ -25,25 +26,21 @@ import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.*;
 
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.Iterator;
 
 /**
  * A special form of the {@link org.apache.tapestry5.corelib.components.Loop} component that adds  Ajax support to
  * handle adding new rows and removing existing rows dynamically.  Expects that the values being iterated over are
- * entities that can be identified via a {@link org.apache.tapestry5.ValueEncoder}.
+ * entities that can be identified via a {@link org.apache.tapestry5.PrimaryKeyEncoder}.
  * <p/>
  * Works with {@link org.apache.tapestry5.corelib.components.AddRowLink} and {@link
  * org.apache.tapestry5.corelib.components.RemoveRowLink} components.
- * <p/>
- * The addRow event will receive the context specified by the context parameter.
- * <p/>
- * The removeRow event will receive the client-side value for the row being iterated.
  *
- * @see EventConstants#ADD_ROW
- * @see EventConstants#REMOVE_ROW
+ * @see org.apache.tapestry5.EventConstants#ADD_ROW
+ * @see org.apache.tapestry5.EventConstants#REMOVE_ROW
  */
-@Events({ EventConstants.ADD_ROW, EventConstants.REMOVE_ROW })
 public class AjaxFormLoop
 {
     /**
@@ -66,13 +63,6 @@ public class AjaxFormLoop
     @Parameter(required = true)
     private Object value;
 
-    /**
-     * Name of a function on the client-side Tapestry.ElementEffect object that is invoked to make added content
-     * visible.  This is used with the {@link FormInjector} component, when adding a new row to the loop. Leaving as
-     * null uses the default function, "highlight".
-     */
-    @Parameter(defaultPrefix = BindingConstants.LITERAL)
-    private String show;
 
     /**
      * The context for the form loop (optional parameter). This list of values will be converted into strings and
@@ -100,10 +90,9 @@ public class AjaxFormLoop
 
     /**
      * Required parameter used to convert server-side objects (provided from the source) into client-side ids and back.
-     * A default encoder may be calculated from the type of property bound to the value parameter.
      */
     @Parameter(required = true, allowNull = false)
-    private ValueEncoder<Object> encoder;
+    private PrimaryKeyEncoder encoder;
 
     @InjectComponent
     private ClientElement rowInjector;
@@ -137,18 +126,13 @@ public class AjaxFormLoop
     private TypeCoercer typeCoercer;
 
     @Inject
-    private ComponentDefaultProvider defaultProvider;
+    private ComponentClassCache componentClassCache;
+
 
     @Inject
     private PageRenderQueue pageRenderQueue;
 
     private boolean renderingInjector;
-
-    ValueEncoder defaultEncoder()
-    {
-        return defaultProvider.defaultValueEncoder("value", resources);
-    }
-
 
     private final AjaxFormLoopContext formLoopContext = new AjaxFormLoopContext()
     {
@@ -168,7 +152,11 @@ public class AjaxFormLoop
 
         public void addRemoveRowTrigger(String clientId)
         {
-            Link link = resources.createEventLink("triggerRemoveRow", toClientValue());
+            Serializable id = idForCurrentValue();
+
+            String idType = id.getClass().getName();
+
+            Link link = resources.createEventLink("triggerRemoveRow", id, idType);
 
             String asURI = link.toAbsoluteURI();
 
@@ -189,26 +177,26 @@ public class AjaxFormLoop
 
 
     /**
-     * Action for synchronizing the current element of the loop by recording its client value.
+     * Action for synchronizing the current element of the loop by recording its client value / primary key.
      */
     static class SyncValue implements ComponentAction<AjaxFormLoop>
     {
-        private final String clientValue;
+        private final Serializable id;
 
-        public SyncValue(String clientValue)
+        public SyncValue(Serializable id)
         {
-            this.clientValue = clientValue;
+            this.id = id;
         }
 
         public void execute(AjaxFormLoop component)
         {
-            component.syncValue(clientValue);
+            component.syncValue(id);
         }
 
         @Override
         public String toString()
         {
-            return String.format("AjaxFormLoop.SyncValue[%s]", clientValue);
+            return String.format("AjaxFormLoop.SyncValue[%s]", id);
         }
     }
 
@@ -277,15 +265,15 @@ public class AjaxFormLoop
         }
     };
 
-    @SuppressWarnings({ "unchecked" })
+    @SuppressWarnings({"unchecked"})
     @Log
-    private void syncValue(String clientValue)
+    private void syncValue(Serializable id)
     {
-        Object value = encoder.toValue(clientValue);
+        Object value = encoder.toValue(id);
 
         if (value == null)
             throw new RuntimeException(
-                    String.format("Unable to convert client value '%s' back into a server-side object.", clientValue));
+                    String.format("Unable to convert serialized id '%s' back into an object.", id));
 
         this.value = value;
     }
@@ -301,22 +289,21 @@ public class AjaxFormLoop
 
     private void syncCurrentValue()
     {
-        String id = toClientValue();
+        Serializable id = idForCurrentValue();
 
-        // Add the command that restores value from the value clientValue,
+        // Add the command that restores value from the value id,
         // when the form is submitted.
 
         formSupport.store(this, new SyncValue(id));
     }
 
     /**
-     * Uses the {@link org.apache.tapestry5.ValueEncoder} to convert the current server-side value to a client-side
-     * value.
+     * Uses the {@link org.apache.tapestry5.PrimaryKeyEncoder} to convert the current row value to an id.
      */
-    @SuppressWarnings({ "unchecked" })
-    private String toClientValue()
+    @SuppressWarnings({"unchecked"})
+    private Serializable idForCurrentValue()
     {
-        return encoder.toClient(value);
+        return encoder.toKey(value);
     }
 
 
@@ -402,7 +389,8 @@ public class AjaxFormLoop
         if (value == null)
             throw new IllegalArgumentException(
                     String.format("Event handler for event 'addRow' from %s should have returned a non-null value.",
-                                  resources.getCompleteId()));
+                                  resources.getCompleteId())
+            );
 
 
         renderingInjector = true;
@@ -423,11 +411,15 @@ public class AjaxFormLoop
     }
 
     @Log
-    Object onTriggerRemoveRow(String rowId)
+    Object onTriggerRemoveRow(String rowId, String idTypeName)
     {
-        Object value = encoder.toValue(rowId);
+        Class idType = componentClassCache.forName(idTypeName);
 
-        resources.triggerEvent(EventConstants.REMOVE_ROW, new Object[] { value }, null);
+        Serializable coerced = (Serializable) typeCoercer.coerce(rowId, idType);
+
+        Object value = encoder.toValue(coerced);
+
+        resources.triggerEvent(EventConstants.REMOVE_ROW, new Object[] {value}, null);
 
         return new JSONObject();
     }

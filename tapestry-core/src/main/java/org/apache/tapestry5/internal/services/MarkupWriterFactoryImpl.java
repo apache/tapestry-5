@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -32,10 +32,6 @@ public class MarkupWriterFactoryImpl implements MarkupWriterFactory
 
     private final MarkupModel xmlModel = new XMLMarkupModel();
 
-    private final MarkupModel htmlPartialModel = new DefaultMarkupModel(true);
-
-    private final MarkupModel xmlPartialModel = new XMLMarkupModel(true);
-
     public MarkupWriterFactoryImpl(PageContentTypeAnalyzer analyzer, RequestPageCache cache)
     {
         this.analyzer = analyzer;
@@ -57,9 +53,7 @@ public class MarkupWriterFactoryImpl implements MarkupWriterFactory
     {
         boolean isHTML = contentType.getMimeType().equalsIgnoreCase("text/html");
 
-        MarkupModel model = partial
-                            ? (isHTML ? htmlPartialModel : xmlPartialModel)
-                            : (isHTML ? htmlModel : xmlModel);
+        MarkupModel model = isHTML ? htmlModel : xmlModel;
 
         // The charset parameter sets the encoding attribute of the XML declaration, if
         // not null and if using the XML model.

@@ -43,8 +43,7 @@ public class EncodeEntities
     @SuppressWarnings("unchecked")
     User onPassivate()
     {
-    	// Use ordering so that we get the most recently inserted users first.    	
-        List<User> users = session.createQuery("from User order by id desc").list();
+        List<User> users = session.createQuery("from User").list();
         if (users.isEmpty())
             return null;
 

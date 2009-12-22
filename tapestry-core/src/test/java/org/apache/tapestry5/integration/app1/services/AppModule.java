@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,14 +16,12 @@ package org.apache.tapestry5.integration.app1.services;
 
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.ValueEncoder;
-import org.apache.tapestry5.integration.app1.data.ToDoItem;
 import org.apache.tapestry5.integration.app1.data.Track;
 import org.apache.tapestry5.internal.services.GenericValueEncoderFactory;
 import org.apache.tapestry5.ioc.Configuration;
 import org.apache.tapestry5.ioc.MappedConfiguration;
 import org.apache.tapestry5.ioc.OrderedConfiguration;
 import org.apache.tapestry5.ioc.annotations.Marker;
-import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.services.*;
 import org.apache.tapestry5.test.JettyRunner;
@@ -50,7 +48,7 @@ public class AppModule
      * interface.
      */
     @Target(
-            { PARAMETER, FIELD })
+            {PARAMETER, FIELD})
     @Retention(RUNTIME)
     @Documented
     public @interface Local
@@ -107,6 +105,11 @@ public class AppModule
         configuration.add("Timing", filter);
     }
 
+    public void contributeClasspathAssetAliasManager(MappedConfiguration<String, String> configuration)
+    {
+        configuration.add("app1/", "org/apache/tapestry5/integration/app1/");
+    }
+
     public UserAuthenticator buildUserAuthenticator()
     {
         return new UserAuthenticator()
@@ -120,16 +123,11 @@ public class AppModule
 
     public static void contributeApplicationDefaults(MappedConfiguration<String, String> configuration)
     {
-        configuration.add(SymbolConstants.SUPPORTED_LOCALES, "en,fr,de");
+        configuration.add(SymbolConstants.SUPPORTED_LOCALES, "en,fr");
         configuration.add(SymbolConstants.PRODUCTION_MODE, "false");
         configuration.add(SymbolConstants.COMPRESS_WHITESPACE, "false");
-        configuration.add(SymbolConstants.COMBINE_SCRIPTS, "true");
-
-        configuration.add(SymbolConstants.SECURE_ENABLED, "true");
 
         configuration.add("app.injected-symbol", "Symbol contributed to ApplicationDefaults");
-        
-        configuration.add(SymbolConstants.BLACKBIRD_ENABLED, "true");
     }
 
     public static void contributeIgnoredPathsFilter(Configuration<String> configuration)
@@ -213,10 +211,9 @@ public class AppModule
     }
 
     public static void contributeValueEncoderSource(MappedConfiguration<Class, ValueEncoderFactory> configuration,
-                                                    final MusicLibrary library,
-                                                    final ToDoDatabase todoDatabase)
+                                                    final MusicLibrary library)
     {
-        ValueEncoder<Track> trackEncoder = new ValueEncoder<Track>()
+        ValueEncoder<Track> encoder = new ValueEncoder<Track>()
         {
             public String toClient(Track value)
             {
@@ -232,24 +229,7 @@ public class AppModule
         };
 
 
-        configuration.add(Track.class, GenericValueEncoderFactory.create(trackEncoder));
-
-        ValueEncoder<ToDoItem> todoEncoder = new ValueEncoder<ToDoItem>()
-        {
-            public String toClient(ToDoItem value)
-            {
-                return String.valueOf(value.getId());
-            }
-
-            public ToDoItem toValue(String clientValue)
-            {
-                long id = Long.parseLong(clientValue);
-
-                return todoDatabase.get(id);
-            }
-        };
-
-        configuration.add(ToDoItem.class, GenericValueEncoderFactory.create(todoEncoder));
+        configuration.add(Track.class, GenericValueEncoderFactory.create(encoder));
     }
 
 
@@ -259,8 +239,8 @@ public class AppModule
         configuration.add("ReverseStringsWorker", new ReverseStringsWorker());
     }
 
-    public static void contributeWhitelistAuthorizer(Configuration<String> configuration)
+    public static void contributeWhitelistAuthorizer(Configuration<String> configuration) 
     {
-        configuration.add("org/apache/tapestry5/integration/app1/pages/availablefile2.txt");
+        configuration.add("org/apache/tapestry5/integration/app1/pages/availablefile.txt");
     }
 }

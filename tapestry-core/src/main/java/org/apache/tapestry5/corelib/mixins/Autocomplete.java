@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -52,8 +52,7 @@ import java.util.List;
  * }
  * </pre>
  */
-@IncludeJavaScriptLibrary({ "${tapestry.scriptaculous}/controls.js", "autocomplete.js" })
-@Events(EventConstants.PROVIDE_COMPLETIONS)
+@IncludeJavaScriptLibrary({"${tapestry.scriptaculous}/controls.js", "autocomplete.js"})
 public class Autocomplete
 {
     static final String EVENT_NAME = "autocomplete";
@@ -131,8 +130,6 @@ public class Autocomplete
 
                        "class", "t-autoloader-icon " + CSSClassConstants.INVISIBLE,
 
-                       "alt", "",
-
                        "id", loaderId);
         writer.end();
 
@@ -190,7 +187,7 @@ public class Autocomplete
             }
         };
 
-        resources.triggerEvent(EventConstants.PROVIDE_COMPLETIONS, new Object[] { input }, callback);
+        resources.triggerEvent("providecompletions", new Object[] {input}, callback);
 
         ContentType contentType = responseRenderer.findContentType(this);
 

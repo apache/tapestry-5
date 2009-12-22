@@ -1,4 +1,4 @@
-// Copyright 2006, 2008 The Apache Software Foundation
+// Copyright 2006 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
 package org.apache.tapestry5.ioc.internal.services;
 
 import org.apache.tapestry5.ioc.internal.IOCInternalTestCase;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newMap;
 import org.apache.tapestry5.ioc.services.StrategyBuilder;
 import org.apache.tapestry5.ioc.util.StrategyRegistry;
 import org.testng.annotations.Test;
@@ -39,6 +39,7 @@ public class StrategyBuilderImplTest extends IOCInternalTestCase
         {
             return this.value;
         }
+
     }
 
     @Test
@@ -67,24 +68,9 @@ public class StrategyBuilderImplTest extends IOCInternalTestCase
         }
     }
 
-    @Test
-    public void using_registration_map()
-    {
-        Map<Class, KindOf> registrations = CollectionFactory.newMap();
-
-        registrations.put(Map.class, new KindOfImpl("MAP"));
-        registrations.put(List.class, new KindOfImpl("LIST"));
-        StrategyBuilder builder = getService(StrategyBuilder.class);
-
-        KindOf service = builder.build(KindOf.class, registrations);
-
-        assertEquals(service.kindOf(Collections.EMPTY_MAP), "MAP");
-        assertEquals(service.kindOf(Collections.EMPTY_LIST), "LIST");
-    }
-
     private StrategyRegistry<KindOf> buildStrategyRegistry()
     {
-        Map<Class, KindOf> registrations = CollectionFactory.newMap();
+        Map<Class, KindOf> registrations = newMap();
 
         registrations.put(Map.class, new KindOfImpl("MAP"));
         registrations.put(List.class, new KindOfImpl("LIST"));

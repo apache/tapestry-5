@@ -1,4 +1,4 @@
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.apache.tapestry</groupId>
     <artifactId>tapestry-hibernate</artifactId>
@@ -11,7 +11,7 @@
     <parent>
         <groupId>org.apache.tapestry</groupId>
         <artifactId>tapestry-project</artifactId>
-        <version>5.2.0-SNAPSHOT</version>
+        <version>5.0.19</version>
     </parent>
     <inceptionYear>2007</inceptionYear>
 
@@ -20,12 +20,6 @@
             <groupId>org.apache.tapestry</groupId>
             <artifactId>tapestry-core</artifactId>
         </dependency>
-
-        <dependency>
-            <groupId>org.apache.tapestry</groupId>
-            <artifactId>tapestry-hibernate-core</artifactId>
-        </dependency>
-
 
         <!-- Testing -->
 
@@ -56,6 +50,51 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- This is the default version of Hibernate used; Maven provides the ability to override this dependency, though
+         it can be tricky because there are overlapping third-party dependencies with slightly different version numbers. -->
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <version>3.3.1.GA</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>javax.transaction</groupId>
+                    <artifactId>jta</artifactId>
+                </exclusion>
+                <!-- Make sure we use the version defined by tapestry-ioc. -->
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>geronimo-spec</groupId>
+            <artifactId>geronimo-spec-jta</artifactId>
+            <version>1.0-M1</version>
+        </dependency>
+
+        <!-- The annotation should be compatible with the 3.2.2.ga release of the
+      core package. -->
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-annotations</artifactId>
+            <version>3.4.0.GA</version>
+            <exclusions>
+                <!-- Make sure we use the version defined by tapestry-ioc. -->
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-c3p0</artifactId>
+            <version>3.3.1.GA</version>
+        </dependency>
 
     </dependencies>
 

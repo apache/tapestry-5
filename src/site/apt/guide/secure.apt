@@ -47,7 +47,7 @@ Securing Multiple Pages
 ----
 public void contributeMetaDataLocator(MappedConfiguration<String,String> configuration)
 {
-    configuration.add("admin:" + MetaDataConstants.SECURE_PAGE, "true");
+  configuration.put("admin:" + MetaDataConstants.SECURE_PAGE, "true");
 }
 ----
 
@@ -63,7 +63,7 @@ public void contributeMetaDataLocator(MappedConfiguration<String,String> configu
 ---
 public void contributeMetaDataLocator(MappedConfiguration<String,String> configuration)
 {
-    configuration.add(MetaDataConstants.SECURE_PAGE, "true");
+  configuration.put(TapestryConstants.SECURE_PAGE, "true");
 }
 ----
 
@@ -119,12 +119,6 @@ Base URL Support
   The Alias service exists just for these kinds of overrides; it allows a late-binding
   to a customized implementation of the BaseURLSource service that hides the built-in
   Tapestry implementation.
-
-
-Development Mode
-
-  When working in development mode, the Secure annotation is ignored. This is controlled by the
-  tapestry.secure-enabled {{{conf.html}configuration symbol}}.
 
 
 Application Server Configuration

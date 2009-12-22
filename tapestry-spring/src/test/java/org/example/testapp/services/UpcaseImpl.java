@@ -14,21 +14,12 @@
 
 package org.example.testapp.services;
 
-import org.apache.tapestry5.ioc.annotations.Inject;
-import org.springframework.beans.factory.annotation.Autowired;
-
 public class UpcaseImpl implements Upcase
 {
-    private final StringTransformer transformer;
-
-    @Autowired
-    public UpcaseImpl(@Inject StringTransformer transformer)
-    {
-        this.transformer = transformer;
-    }
 
     public String toUpperCase(String input)
     {
-        return transformer.transform(input);
+        return input.toUpperCase();
     }
+
 }

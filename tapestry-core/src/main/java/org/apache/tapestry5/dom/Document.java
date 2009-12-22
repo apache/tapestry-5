@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,12 +14,10 @@
 
 package org.apache.tapestry5.dom;
 
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.Defense;
 
 import java.io.PrintWriter;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -27,16 +25,6 @@ import java.util.Map;
  */
 public final class Document extends Node
 {
-    /**
-     * XML Namespace URI.  May be bound to the "xml" but must not be bound to any other prefix.
-     */
-    public static final String XML_NAMESPACE_URI = "http://www.w3.org/XML/1998/namespace";
-
-    /**
-     * Namespace used exclusively for defining namespaces.
-     */
-    public static final String XMLNS_NAMESPACE_URI = "http://www.w3.org/2000/xmlns/";
-
     private Element rootElement;
 
     private DTD dtd;
@@ -44,11 +32,6 @@ public final class Document extends Node
     private final MarkupModel model;
 
     private final String encoding;
-
-    /**
-     * Non-element content that comes between the DOCTYPE and the root element.
-     */
-    private List<Node> preamble;
 
     public Document(MarkupModel model)
     {
@@ -144,21 +127,14 @@ public final class Document extends Node
 
             writer.print("?>\n");
         }
+
+        // TODO: lead-in comments, directives.
         if (dtd != null)
         {
             dtd.toMarkup(writer);
         }
 
-        if (preamble != null)
-        {
-            for (Node n : preamble)
-                n.toMarkup(this, writer, namespaceURIToPrefix);
-        }
-
-        Map<String, String> initialNamespaceMap = CollectionFactory.newMap();
-
-        initialNamespaceMap.put("xml", "http://www.w3.org/XML/1998/namespace");
-        initialNamespaceMap.put("xmlns", "http://www.w3.org/2000/xmlns/");
+        Map<String, String> initialNamespaceMap = Collections.emptyMap();
 
         rootElement.toMarkup(document, writer, initialNamespaceMap);
     }
@@ -195,79 +171,8 @@ public final class Document extends Node
     @Override
     protected Map<String, String> getNamespaceURIToPrefix()
     {
-        if (rootElement == null)
-        {
-            return Collections.emptyMap();
-        }
+        if (rootElement == null) return Collections.emptyMap();
 
         return rootElement.getNamespaceURIToPrefix();
-    }
-
-    /**
-     * Visits the root element of the document.
-     *
-     * @param visitor callback
-     * @since 5.1.0.0
-     */
-    void visit(Visitor visitor)
-    {
-        rootElement.visit(visitor);
-    }
-
-    private <T extends Node> T newChild(T child)
-    {
-        if (preamble == null)
-            preamble = CollectionFactory.newList();
-
-        preamble.add(child);
-
-        return child;
-    }
-
-    /**
-     * Adds the comment and returns this document for further construction.
-     *
-     * @since 5.1.0.0
-     */
-    public Document comment(String text)
-    {
-        newChild(new Comment(null, text));
-
-        return this;
-    }
-
-    /**
-     * Adds the raw text and returns this document for further construction.
-     *
-     * @since 5.1.0.0
-     */
-    public Document raw(String text)
-    {
-        newChild(new Raw(null, text));
-
-        return this;
-    }
-
-    /**
-     * Adds and returns a new text node (the text node is returned so that {@link Text#write(String)} or [@link {@link
-     * Text#writef(String, Object[])} may be invoked.
-     *
-     * @param text initial text for the node
-     * @return the new Text node
-     */
-    public Text text(String text)
-    {
-        return newChild(new Text(null, text));
-    }
-
-    /**
-     * Adds and returns a new CDATA node.
-     *
-     * @param content the content to be rendered by the node
-     * @return the newly created node
-     */
-    public CData cdata(String content)
-    {
-        return newChild(new CData(null, content));
     }
 }

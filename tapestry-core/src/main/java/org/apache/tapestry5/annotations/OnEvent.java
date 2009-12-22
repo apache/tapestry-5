@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,8 +15,6 @@
 package org.apache.tapestry5.annotations;
 
 import org.apache.tapestry5.EventConstants;
-import org.apache.tapestry5.ioc.annotations.UseWith;
-import static org.apache.tapestry5.ioc.annotations.AnnotationUseContext.*;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -48,7 +46,6 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 @Retention(RUNTIME)
 @Documented
-@UseWith({COMPONENT,MIXIN,PAGE})
 public @interface OnEvent
 {
 
@@ -66,7 +63,9 @@ public @interface OnEvent
      * the component's grand-container and will appear to originate from the container. Thus events that escape a
      * component will appear to originate in the component's container, and so forth.
      * <p/>
+     * <p/>
      * Matching by component id is case insensitive.
      */
     String component() default "";
+
 }

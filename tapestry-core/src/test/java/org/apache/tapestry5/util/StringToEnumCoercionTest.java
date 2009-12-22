@@ -15,8 +15,7 @@
 package org.apache.tapestry5.util;
 
 import junit.framework.AssertionFailedError;
-
-import org.apache.tapestry5.root.Stooge;
+import org.apache.tapestry5.Stooge;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -53,7 +52,7 @@ public class StringToEnumCoercionTest extends Assert
         {
             assertEquals(
                     ex.getMessage(),
-                    "Input \'shemp\' does not identify a value from enumerated type org.apache.tapestry5.root.Stooge. Available values: CURLY_JOE, LARRY, MOE.");
+                    "Input \'shemp\' does not identify a value from enumerated type org.apache.tapestry5.Stooge. Available values: CURLY_JOE, LARRY, MOE.");
         }
     }
 }

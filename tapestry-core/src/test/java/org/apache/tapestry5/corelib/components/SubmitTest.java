@@ -14,19 +14,14 @@
 
 package org.apache.tapestry5.corelib.components;
 
-import static org.easymock.EasyMock.isA;
-
-import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.EventConstants;
 import org.apache.tapestry5.corelib.internal.FormSupportImpl;
 import org.apache.tapestry5.internal.services.HeartbeatImpl;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
-import org.apache.tapestry5.ioc.test.TestBase;
 import org.apache.tapestry5.services.FormSupport;
 import org.apache.tapestry5.services.Heartbeat;
 import org.apache.tapestry5.services.Request;
-import org.easymock.EasyMock;
 import org.testng.annotations.Test;
 
 public class SubmitTest extends InternalBaseTestCase
@@ -64,7 +59,7 @@ public class SubmitTest extends InternalBaseTestCase
 
         Submit submit = new Submit(request);
 
-        TestBase.set(submit, "resources", resources, "formSupport", support);
+        submit.setup(resources, support, null, null);
 
         submit.processSubmission(elementName);
 
@@ -97,7 +92,8 @@ public class SubmitTest extends InternalBaseTestCase
 
         Submit submit = new Submit(request);
 
-        TestBase.set(submit, "resources", resources, "formSupport", support, "heartbeat", heartbeat, "defer", false);
+        submit.setup(resources, support, heartbeat, null);
+        submit.setDefer(false);
 
         submit.processSubmission(elementName);
 
@@ -108,55 +104,6 @@ public class SubmitTest extends InternalBaseTestCase
         replay();
 
         heartbeat.end();
-
-        verify();
-    }
-    
-    @Test
-    public void test_imagesubmit_event_fired()
-    {
-        Request request = mockRequest();
-        final ComponentResources resources = mockComponentResources();
-        FormSupport formSupport = mockFormSupport();
-        Asset image = mockAsset();
-
-        String elementName = "myname";
-
-        train_getParameter(request, elementName + ".x", "15");
-        
-        formSupport.defer(isA(Runnable.class));
-
-        replay();
-
-        Submit submit = new Submit(request);
-        
-        TestBase.set(submit, "resources", resources, "formSupport", formSupport, "image", image);
-
-        submit.processSubmission(elementName);
-
-        verify();
-    }
-    
-    @Test
-    public void test_submit_event_fired()
-    {
-        Request request = mockRequest();
-        final ComponentResources resources = mockComponentResources();
-        FormSupport formSupport = mockFormSupport();
-
-        String elementName = "myname";
-
-        train_getParameter(request, elementName, "login");
-        
-        formSupport.defer(isA(Runnable.class));
-
-        replay();
-
-        Submit submit = new Submit(request);
-        
-        TestBase.set(submit, "resources", resources, "formSupport", formSupport);
-
-        submit.processSubmission(elementName);
 
         verify();
     }

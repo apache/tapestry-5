@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2009 The Apache Software Foundation
+// Copyright 2006, 2007 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -24,7 +24,6 @@ import org.testng.annotations.Test;
 
 public class ContextAssetFactoryTest extends InternalBaseTestCase
 {
-    private final IdentityAssetPathConverter converter = new IdentityAssetPathConverter();
 
     @Test
     public void root_resource()
@@ -34,7 +33,7 @@ public class ContextAssetFactoryTest extends InternalBaseTestCase
 
         replay();
 
-        AssetFactory factory = new ContextAssetFactory(request, context, "1.2.3", converter);
+        AssetFactory factory = new ContextAssetFactory(request, context, null);
 
         assertEquals(factory.getRootResource().toString(), "context:/");
 
@@ -46,25 +45,30 @@ public class ContextAssetFactoryTest extends InternalBaseTestCase
     {
         Context context = mockContext();
         Request request = mockRequest();
+        RequestPathOptimizer optimizer = mockRequestPathOptimizer();
 
         Resource r = new ContextResource(context, "foo/Bar.txt");
 
         train_getContextPath(request, "/context");
 
+        train_optimizePath(optimizer, "/context/foo/Bar.txt", "/opt/path1");
+        train_optimizePath(optimizer, "/context/foo/Bar.txt", "/opt/path2");
+
         replay();
 
-        AssetFactory factory = new ContextAssetFactory(request, context, "4.5.6", new IdentityAssetPathConverter());
+        AssetFactory factory = new ContextAssetFactory(request, context, optimizer);
 
         Asset asset = factory.createAsset(r);
 
         assertSame(asset.getResource(), r);
-        assertEquals(asset.toClientURL(), "/context/assets/ctx/4.5.6/foo/Bar.txt");
+        assertEquals(asset.toClientURL(), "/opt/path1");
 
         // In real life, toString() is the same as toClientURL(), but we're testing
         // that the optimize method is getting called, basically.
 
-        assertEquals(asset.toString(), "/context/assets/ctx/4.5.6/foo/Bar.txt");
+        assertEquals(asset.toString(), "/opt/path2");
 
         verify();
     }
+
 }

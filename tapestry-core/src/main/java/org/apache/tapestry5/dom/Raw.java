@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ public final class Raw extends Node
 {
     private final String text;
 
-    Raw(Element container, String text)
+    Raw(Node container, String text)
     {
         super(container);
 

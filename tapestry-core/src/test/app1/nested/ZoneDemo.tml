@@ -63,12 +63,7 @@
         <li>
             <t:actionlink t:id="redirect" zone="output">Perform a redirect to another page</t:actionlink>
         </li>
-        <li>
-            <t:actionlink t:id="secureRedirect" zone="output">Perform secure redirect to another page</t:actionlink>
-        </li>
     </ul>
-
-    <div id="zone-update-message"/>
 
 
 </html>

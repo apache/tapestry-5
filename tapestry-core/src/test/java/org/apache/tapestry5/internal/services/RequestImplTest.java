@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -38,7 +38,7 @@ public class RequestImplTest extends InternalBaseTestCase
 
         replay();
 
-        Request request = new RequestImpl(sr, CHARSET, null);
+        Request request = new RequestImpl(sr, CHARSET);
 
         assertNull(request.getSession(false));
 
@@ -57,7 +57,7 @@ public class RequestImplTest extends InternalBaseTestCase
 
         replay();
 
-        Request request = new RequestImpl(sr, CHARSET, null);
+        Request request = new RequestImpl(sr, CHARSET);
         Session session = request.getSession(true);
 
         assertEquals(session.getAttribute("foo"), "bar");
@@ -78,7 +78,7 @@ public class RequestImplTest extends InternalBaseTestCase
 
         replay();
 
-        new RequestImpl(sr, encoding, null).getParameterNames();
+        new RequestImpl(sr, encoding).getParameterNames();
 
         verify();
     }
@@ -98,7 +98,7 @@ public class RequestImplTest extends InternalBaseTestCase
 
         try
         {
-            new RequestImpl(sr, encoding, null).getParameterNames();
+            new RequestImpl(sr, encoding).getParameterNames();
             unreachable();
         }
         catch (RuntimeException ex)
@@ -118,18 +118,18 @@ public class RequestImplTest extends InternalBaseTestCase
 
         replay();
 
-        Request request = new RequestImpl(sr, CHARSET, null);
+        Request request = new RequestImpl(sr, CHARSET);
 
         assertEquals(request.isXHR(), expected);
 
         verify();
     }
 
-    @DataProvider
+    @DataProvider(name = "xhr_inputs")
     public Object[][] xhr_inputs()
     {
-        return new Object[][] { { null, false }, { "", false }, { "some other value", false },
-                { "XMLHttpRequest", true } };
+        return new Object[][]{{null, false}, {"", false}, {"some other value", false},
+                {"XMLHttpRequest", true}};
     }
 
     @Test
@@ -144,7 +144,7 @@ public class RequestImplTest extends InternalBaseTestCase
 
         replay();
 
-        Request request = new RequestImpl(sr, CHARSET, null);
+        Request request = new RequestImpl(sr, CHARSET);
 
         assertEquals(request.getPath(), path);
 
@@ -165,7 +165,7 @@ public class RequestImplTest extends InternalBaseTestCase
 
         replay();
 
-        Request request = new RequestImpl(sr, CHARSET, null);
+        Request request = new RequestImpl(sr, CHARSET);
 
         assertEquals(request.getPath(), path);
 
@@ -175,7 +175,6 @@ public class RequestImplTest extends InternalBaseTestCase
     /**
      * TAPESTRY-1713
      */
-    @Test
     public void get_path_for_websphere_with_nonempty_path()
     {
         HttpServletRequest sr = mockHttpServletRequest();
@@ -184,39 +183,12 @@ public class RequestImplTest extends InternalBaseTestCase
 
         replay();
 
-        Request request = new RequestImpl(sr, CHARSET, null);
+        Request request = new RequestImpl(sr, CHARSET);
 
         assertEquals(request.getPath(), "/");
 
         verify();
     }
-
-    @Test
-    public void get_session_returns_null_if_invalid()
-    {
-        HttpServletRequest sr = mockHttpServletRequest();
-        HttpSession hsession = mockHttpSession();
-
-        train_getSession(sr, true, hsession);
-
-        hsession.invalidate();
-
-        replay();
-
-        Request request = new RequestImpl(sr, CHARSET, null);
-
-        Session session = request.getSession(true);
-
-        session.invalidate();
-
-        assertNull(request.getSession(false));
-
-        assertSame(request.getSession(true), session);
-
-        verify(); 
-    }
-
-
 
     protected final void train_getPathInfo(HttpServletRequest request, String pathInfo)
     {

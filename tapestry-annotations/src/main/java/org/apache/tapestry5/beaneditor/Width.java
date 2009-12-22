@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,11 +14,7 @@
 
 package org.apache.tapestry5.beaneditor;
 
-import org.apache.tapestry5.ioc.annotations.UseWith;
-import static org.apache.tapestry5.ioc.annotations.AnnotationUseContext.*;
-
 import java.lang.annotation.*;
-
 
 /**
  * Defines the desired width of the field used to edit the property.  Note that width (generally equivalent to the size
@@ -31,7 +27,6 @@ import java.lang.annotation.*;
 @Target({ ElementType.FIELD, ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@UseWith({BEAN,COMPONENT,MIXIN,PAGE})
 public @interface Width
 {
     /**

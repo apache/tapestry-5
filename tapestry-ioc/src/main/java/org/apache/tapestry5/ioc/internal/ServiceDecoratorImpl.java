@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,51 +15,123 @@
 package org.apache.tapestry5.ioc.internal;
 
 import org.apache.tapestry5.ioc.ModuleBuilderSource;
+import org.apache.tapestry5.ioc.ObjectLocator;
 import org.apache.tapestry5.ioc.ServiceDecorator;
 import org.apache.tapestry5.ioc.ServiceResources;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.internal.util.InjectionResources;
-import org.apache.tapestry5.ioc.internal.util.MapInjectionResources;
+import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newMap;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.ClassFactory;
+import org.slf4j.Logger;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Map;
 
 /**
  * A wrapper around a decorator method.
  */
-public class ServiceDecoratorImpl extends AbstractMethodInvokingInstrumenter implements ServiceDecorator
+public class ServiceDecoratorImpl implements ServiceDecorator
 {
+    private final ModuleBuilderSource moduleBuilderSource;
 
-    public ServiceDecoratorImpl(Method method, ModuleBuilderSource moduleSource,
+    private final String serviceId;
+
+    private final Map<Class, Object> parameterDefaults = newMap();
+
+    private final Logger logger;
+
+    private final ServiceResources resources;
+
+    private final ClassFactory classFactory;
+
+    private final Method decoratorMethod;
+
+    private final Class serviceInterface;
+
+    public ServiceDecoratorImpl(Method method, ModuleBuilderSource moduleBuilderSource,
                                 ServiceResources resources, ClassFactory classFactory)
     {
-        super(moduleSource, method, resources, classFactory);
+        serviceId = resources.getServiceId();
+        decoratorMethod = method;
+        this.moduleBuilderSource = moduleBuilderSource;
+        this.resources = resources;
+        serviceInterface = resources.getServiceInterface();
+        logger = resources.getLogger();
+        this.classFactory = classFactory;
+
+        parameterDefaults.put(String.class, serviceId);
+        parameterDefaults.put(ObjectLocator.class, resources);
+        parameterDefaults.put(ServiceResources.class, resources);
+        parameterDefaults.put(Logger.class, logger);
+        parameterDefaults.put(Class.class, serviceInterface);
+    }
+
+    @Override
+    public String toString()
+    {
+        return classFactory.getMethodLocation(decoratorMethod).toString();
+    }
+
+    private String methodId()
+    {
+        return InternalUtils.asString(decoratorMethod, classFactory);
     }
 
     public Object createInterceptor(Object delegate)
     {
         // Create a copy of the parameters map so that Object.class points to the delegate instance.
 
-        Map<Class, Object> resources = CollectionFactory.newMap(this.resourcesDefaults);
+        Map<Class, Object> parameterDefaults = newMap(this.parameterDefaults);
+        parameterDefaults.put(Object.class, delegate);
+        parameterDefaults.put(serviceInterface, delegate);
 
-        resources.put(Object.class, delegate);
-        resources.put(serviceInterface, delegate);
+        if (logger.isDebugEnabled()) logger.debug(IOCMessages.invokingMethod(methodId()));
 
-        InjectionResources injectionResources = new MapInjectionResources(resources);
+        Object result = null;
+        Throwable failure = null;
 
-        Object result = invoke(injectionResources);
+        Object moduleBuilder = InternalUtils.isStatic(decoratorMethod) ? null
+                               : moduleBuilderSource.getModuleBuilder();
+
+        try
+        {
+            Object[] parameters = InternalUtils.calculateParametersForMethod(
+                    decoratorMethod,
+                    resources,
+                    parameterDefaults, resources.getTracker());
+
+            result = decoratorMethod.invoke(moduleBuilder, parameters);
+        }
+        catch (InvocationTargetException ite)
+        {
+            failure = ite.getTargetException();
+        }
+
+        catch (Exception ex)
+        {
+            failure = ex;
+        }
+
+        if (failure != null)
+            throw new RuntimeException(IOCMessages.decoratorMethodError(
+                    decoratorMethod,
+                    serviceId,
+                    failure), failure);
 
         if (result != null && !serviceInterface.isInstance(result))
         {
-            throw new RuntimeException(IOCMessages.decoratorReturnedWrongType(
-                    method,
+            logger.warn(IOCMessages.decoratorReturnedWrongType(
+                    decoratorMethod,
                     serviceId,
                     result,
                     serviceInterface));
+
+            // Change the result to null so that we won't use the interceptor,
+            // and so that ClassCastExceptions don't occur later down the pipeline.
+
+            result = null;
         }
 
         return result;
     }
-
 }

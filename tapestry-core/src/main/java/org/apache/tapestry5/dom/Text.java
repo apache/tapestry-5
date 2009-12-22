@@ -1,4 +1,4 @@
-// Copyright 2006, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -24,18 +24,13 @@ public final class Text extends Node
 {
     private final StringBuilder buffer;
 
-    Text(Element container, String text)
+    Text(Node container, String text)
     {
         super(container);
 
         buffer = new StringBuilder(text.length());
 
         write(text);
-    }
-
-    boolean isEmpty()
-    {
-        return buffer.length() == 0 || buffer.toString().trim().length() == 0;
     }
 
     /**

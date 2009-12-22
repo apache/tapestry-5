@@ -26,7 +26,7 @@ import java.util.List;
 
 public class BlockImpl extends BaseLocatable implements Block, BodyPageElement, RenderCommand
 {
-    // We could lazily create this, but for (parameter) block elements the case
+    // We could lazily create this, but for <t:block> and <t:parameter>, the case
     // for an empty block is extremely rare.
 
     private final List<RenderCommand> elements = CollectionFactory.newList();

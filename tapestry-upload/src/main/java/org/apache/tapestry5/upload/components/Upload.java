@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,7 +15,10 @@
 package org.apache.tapestry5.upload.components;
 
 import org.apache.tapestry5.*;
-import org.apache.tapestry5.annotations.*;
+import org.apache.tapestry5.annotations.Environmental;
+import org.apache.tapestry5.annotations.Mixin;
+import org.apache.tapestry5.annotations.Parameter;
+import org.apache.tapestry5.annotations.Path;
 import org.apache.tapestry5.corelib.base.AbstractField;
 import org.apache.tapestry5.corelib.mixins.RenderDisabled;
 import org.apache.tapestry5.ioc.annotations.Inject;
@@ -31,8 +34,7 @@ import java.util.Locale;
 /**
  * A component to upload a file.
  */
-@SuppressWarnings({ "UnusedDeclaration" })
-@Events(EventConstants.VALIDATE)
+@SuppressWarnings({"UnusedDeclaration"})
 public class Upload extends AbstractField
 {
     public static final String MULTIPART_ENCTYPE = "multipart/form-data";
@@ -111,7 +113,7 @@ public class Upload extends AbstractField
         this.fieldValidationSupport = fieldValidationSupport;
     }
 
-    @SuppressWarnings({ "unchecked" })
+    @SuppressWarnings({"unchecked"})
     @Override
     protected void processSubmission(String elementName)
     {

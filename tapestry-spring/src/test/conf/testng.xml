@@ -19,7 +19,6 @@
     <test name="Tapestry Spring Integration">
         <packages>
             <package name="org.apache.tapestry5.spring"/>
-            <package name="org.apache.tapestry5.internal.spring"/>
         </packages>
     </test>
 </suite>

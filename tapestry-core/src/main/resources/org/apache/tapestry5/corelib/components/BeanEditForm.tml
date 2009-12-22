@@ -1,4 +1,4 @@
-<form t:id="form" validate="object"
+<form t:id="form"
       xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
     <t:errors/>
 

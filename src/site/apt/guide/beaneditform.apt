@@ -25,8 +25,6 @@ Using the BeanEditForm Component
   * Boolean: as a checkbox
 
   * Date: as a JavaScript calendar
-  
-  * Calendar: as a JavaScript calendar
 
   []
   
@@ -75,9 +73,7 @@ Using the BeanEditForm Component
   Default validation for fields is primary determined by property type.
   
   If desired, additional validation may be specified using the 
-  {{{../apidocs/org/apache/tapestry5/beaneditor/Validate.html}Validate}} annotation. 
-
-  * As of 5.2, validation may also be specified via the containing component's property file, using a key in the form of propertyId-validate (eg: name-validate=required).
+  {{{../apidocs/org/apache/tapestry5/beaneditor/Validate.html}Validate}} annotation.
   
 * Property ordering
 
@@ -120,9 +116,9 @@ Customizing the BeanModel
   
   The BeanEditForm component has several parameters for this purpose:
 
-  * add: A comma separated list of property names to add to the model.
+  * add: A command seperated list of property names to add to the model.
 
-  * include: A comma separated list of property names to keep with the model (others are excluded).
+  * include: A comma seperated list of property names to keep with the model (others are excluded).
 
   * exclude: A comma separated list of property names to exclude from the model.
   

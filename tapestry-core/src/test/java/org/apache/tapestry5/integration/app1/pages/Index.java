@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -65,40 +65,7 @@ public class Index
 
     private static final List<Item> ITEMS = CollectionFactory.newList(
 
-            new Item("MultiLevelInheritDemo", "Multi-Level Inherit Demo",
-                     "Use of inherit: binding prefix across three levels"),
-
-            new Item("HiddenDemo", "Hidden Demo", "Demo the use of the Hidden component."),
-
-            new Item("FormZoneDemo", "Form Zone Demo", "Use a form to update a zone."),
-
-            new Item("ZoneUpdateNamespace", "Zone/Namespace Interaction", "Prove that TAP5-573 is fixed"),
-
-            new Item("AbstractComponentDemo", "Abstract Component Demo", "Error when a component is abstract"),
-
-            new Item("TemplateOverrideDemo", "Template Override Demo",
-                     "Child component extends and overrides parent template."),
-
-            new Item("MultiZoneUpdateDemo", "Multiple Zone Update Demo",
-                     "A single request can now update multiple Zones"),
-
-            new Item("LinkSubmitInZoneDemo", "LinkSubmit inside Zone",
-                     "Ensure that a LinkSubmit works correctly when its containing Form updates a Zone"),
-
-            new Item("SlowAjaxDemo", "Slow Ajax Demo", "Handling of client-side Ajax before the page is fully loaded"),
-
-            new Item("ProgressiveDemo", "ProgressiveDisplay Demo", "Progressive Enhancement via a component"),
-
-            new Item("ClientNumericValidationDemo", "Client-Side Numeric Validation",
-                     "Client-side locale-specific validation"),
-
-            new Item("PublishParametersDemo", "Publish Parameters Demo",
-                     "Use of @Component.publishParameters attribute."),
-
             new Item("LinkSubmitDemo", "LinkSubmit Demo", "JavaScript LinkSubmit component"),
-
-            new Item("LinkSubmitWithoutValidatorDemo", "LinkSubmit Without Validator Demo",
-                    "Demonstrates that the LinkSubmit component is working without a validator on any of fields in the form"),
 
             new Item("PerFormValidationMessageDemo", "Per-Form Validation Messages",
                      "Per-form configuration of validation messages and constraints."),
@@ -348,50 +315,6 @@ public class Index
 
             new Item("FormFieldOutsideForm", "Form Field Outside Form",
                      "Nice exception message for common problem of form fields outside forms"),
-
-            new Item("SubmitWithContext", "Submit With Context",
-                     "Providing a context for Submit component"),
-
-            new Item("MessageConstraintGeneratorDemo",
-                     "Validation Constraints From Messages",
-                     "Providing validators to apply from a properties file"),
-
-            new Item("RenderClientIdDemo",
-                     "RenderClientId Mixin",
-                     "Force render of client-side id of a client element via the RenderClientId mixin"),
-
-            new Item("BindParameterDemo",
-                     "BindParameter mixin annotation",
-                     "Accessing component parameter values from a mixin"),
-
-            new Item("BindParameterNoSuchParameter",
-                     "BindParameter error handling",
-                     "BindParameter throws exception if the containing component doesn't have a matching parameter"),
-
-            new Item("BindParameterOnComponent",
-                      "BindParameter on component",
-                      "Verify that BindParameter can only be used on mixin fields"),
-
-            new Item("MixinOrderingDemo",
-                     "Mixin Ordering Demo",
-                     "Various mixin-ordering scenarios"),
-
-            new Item("MissingComponentClassException",
-                     "Missing Component Class Exception",
-                     "Meaningful exception message thrown when component class can't be determined from template or field in containing component."),
-
-            new Item("SessionAttributeDemo",
-                     "SessionAttribute Demo",
-                     "Annotation to map a field to a specific session attribute"),
-
-            new Item("BeanEditCalendarDemo", "BeanEditor / Calendar Demo",
-                     "Use of calendar properties inside BeanEditor and BeanDisplay"),
-
-            new Item("TriggerDemo", "Trigger Demo", "Use of Trigger component"),
-            
-            new Item("ImageSubmitDemo", "Submit with an Image Demo", "Make sure that submit with the image parameter set triggers the 'selected' event."),
-            
-            new Item("SelectZoneDemo", "Select Zone Demo", "Use a Select component to update a zone."),
 
             new Item("AssetProtectionDemo", "Asset Protection Demo", "AssetProtectionDispatcher is properly contributed and functioning")
 

@@ -1,4 +1,4 @@
-//  Copyright 2008, 2009 The Apache Software Foundation
+//  Copyright 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,11 +14,10 @@
 
 package org.apache.tapestry5.ioc.internal;
 
-import org.apache.tapestry5.ioc.Invokable;
 import org.apache.tapestry5.ioc.OperationTracker;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.ioc.internal.util.Invokable;
 import org.apache.tapestry5.ioc.util.Stack;
 import org.slf4j.Logger;
 
@@ -42,30 +41,11 @@ public class OperationTrackerImpl implements OperationTracker
 
     public void run(String description, final Runnable operation)
     {
-        Defense.notBlank(description, "description");
-        Defense.notNull(operation, "operation");
-
-        invoke(description, new Invokable<Void>()
-        {
-            public Void invoke()
-            {
-                operation.run();
-
-                return null;
-            }
-        });
-    }
-
-    public <T> T invoke(String description, Invokable<T> operation)
-    {
-        Defense.notBlank(description, "description");
-        Defense.notNull(operation, "operation");
-
         operations.push(description);
 
         try
         {
-            return operation.invoke();
+            operation.run();
         }
         catch (RuntimeException ex)
         {
@@ -102,8 +82,14 @@ public class OperationTrackerImpl implements OperationTracker
         }
     }
 
-    boolean isEmpty()
+    public <T> T invoke(String description, Invokable<T> operation)
     {
-        return operations.isEmpty();
+        InvokableToRunnable<T> i2r = new InvokableToRunnable<T>(operation);
+
+        run(description, i2r);
+
+        return i2r.getResult();
     }
+
+    boolean isEmpty() { return operations.isEmpty(); }
 }

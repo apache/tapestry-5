@@ -1,4 +1,4 @@
-// Copyright 2006, 2009 The Apache Software Foundation
+// Copyright 2006 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,9 +21,6 @@ import java.lang.annotation.Retention;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Target;
 
-import static org.apache.tapestry5.ioc.annotations.AnnotationUseContext.MIXIN;
-import org.apache.tapestry5.ioc.annotations.UseWith;
-
 /**
  * A marker annotation applied to a mixin to indicate that the mixin's render state behavior is deferred until after the
  * the behavior of the component to which the mixin is attached. Normally, mixins occur before the component. This
@@ -34,7 +31,6 @@ import org.apache.tapestry5.ioc.annotations.UseWith;
 @Documented
 @Retention(RUNTIME)
 @Inherited
-@UseWith(MIXIN)
 public @interface MixinAfter
 {
 

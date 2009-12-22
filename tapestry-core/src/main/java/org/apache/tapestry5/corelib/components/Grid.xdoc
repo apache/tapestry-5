@@ -80,17 +80,17 @@ public class User
 
 
                 <source><![CDATA[
-<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd" xmlns:p="tapestry:parameter">
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
     <body>
         <h1>List Users</h1>
 
         <t:grid source="users" row="user">
-            <p:lastNameCell>
+            <t:parameter name="lastnamecell">
                 <t:pagelink page="user/view" context="user.id">${user.lastname}</t:pagelink>
-            </p:lastNameCell>
-            <p:empty>
+            </t:parameter>
+            <t:parameter name="empty">
               <p>There are no users to display; you can <t:pagelink page="user/add">add some</a>.</p>
-            </p:empty>
+            </t:parameter>
         </t:grid>
     </body>
 </html>
@@ -98,7 +98,7 @@ public class User
 
 
                 <p>
-                    The block parameter name
+                    The parameter name
                     <code><em>property</em>cell
                     </code>
                     is used to override the rendering of cells for one property. As usual, case is ignored. Here we
@@ -177,20 +177,20 @@ public class UserList
 
 
                 <source><![CDATA[
-<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd" xmlns:p="tapestry:parameter">
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
     <body>
         <h1>List Users</h1>
 
         <t:grid source="users" row="user" add="delete">
-            <p:lastnamecell>
+            <t:parameter name="lastnamecell">
                 <t:pagelink page="user/view" context="user.id">${user.lastname}</t:pagelink>
-            </p:lastnameCell>
-            <p:deletecell>
+            </t:parameter>
+            <t:parameter name="deletecell">
                 <t:actionlink t:id="delete" context="user.id">Delete</t:actionlink>
-            </p:deletecell>
-            <p:empty>
+            </t:parameter>
+            <t:parameter name="empty">
               <p>There are no users to display; you can <t:pagelink page="user/add">add some</a>.</p>
-            </p:empty>
+            </t:parameter>
         </t:grid>
     </body>
 </html>

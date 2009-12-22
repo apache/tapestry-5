@@ -1,4 +1,4 @@
-// Copyright 2006, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -29,23 +29,6 @@ public interface ComponentTemplate
      * Returns true if no template could be found for the component.
      */
     boolean isMissing();
-
-    /**
-     * Returns true if this component template is an extension of its parent class' template.
-     *
-     * @since 5.1.0.1
-     */
-    boolean isExtension();
-
-    /**
-     * Returns a list of tokens associated with an extension point, or null if this template neither defines the
-     * extension point nor overrides it.
-     *
-     * @param extensionPointId
-     * @return list of tokens provided in this template, or null
-     * @since 5.1.0.1
-     */
-    List<TemplateToken> getExtensionPointTokens(String extensionPointId);
 
     /**
      * Returns the resource that was parsed to form the template.

@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,8 +16,6 @@ package org.apache.tapestry5.ioc.internal.util;
 
 import org.apache.tapestry5.ioc.*;
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.ioc.def.ServiceDef;
-import org.apache.tapestry5.ioc.def.ServiceDef2;
 import org.apache.tapestry5.ioc.internal.QuietOperationTracker;
 import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newMap;
 import static org.apache.tapestry5.ioc.internal.util.InternalUtils.toList;
@@ -99,15 +97,13 @@ public class InternalUtilsTest extends IOCTestCase
     @Test
     public void array_size_when_null()
     {
-        Object[] array = null;
-
-        assertEquals(InternalUtils.size(array), 0);
+        assertEquals(InternalUtils.size(null), 0);
     }
 
     @Test
     public void array_size_when_non_null()
     {
-        Object[] array = { 1, 2, 3 };
+        Object[] array = {1, 2, 3};
 
         assertEquals(InternalUtils.size(array), 3);
     }
@@ -118,18 +114,18 @@ public class InternalUtilsTest extends IOCTestCase
         assertEquals(InternalUtils.stripMemberName(input), expected);
     }
 
-    @DataProvider
+    @DataProvider(name = "memberNameData")
     public Object[][] memberNameData()
     {
         return new Object[][] {
-                { "simple", "simple" },
-                { "_name", "name" },
-                { "$name", "name" },
-                { "ruby_style", "ruby_style" },
-                { "__$ruby_style_", "ruby_style" },
-                { "$_$__$__$_$___$_$_$_$$name$", "name" },
-                { "foo_", "foo" },
-                { "_foo_", "foo" }
+                {"simple", "simple"},
+                {"_name", "name"},
+                {"$name", "name"},
+                {"ruby_style", "ruby_style"},
+                {"__$ruby_style_", "ruby_style"},
+                {"$_$__$__$_$___$_$_$_$$name$", "name"},
+                {"foo_", "foo"},
+                {"_foo_", "foo"}
         };
     }
 
@@ -218,8 +214,8 @@ public class InternalUtilsTest extends IOCTestCase
     @DataProvider(name = "capitalize_inputs")
     public Object[][] capitalize_inputs()
     {
-        return new Object[][] { { "hello", "Hello" }, { "Goodbye", "Goodbye" }, { "", "" }, { "a", "A" },
-                { "A", "A" } };
+        return new Object[][] {{"hello", "Hello"}, {"Goodbye", "Goodbye"}, {"", ""}, {"a", "A"},
+                {"A", "A"}};
     }
 
     @Test
@@ -364,7 +360,7 @@ public class InternalUtilsTest extends IOCTestCase
 
         try
         {
-            InternalUtils.validateMarkerAnnotations(new Class[] { Inject.class, NotRetainedRuntime.class });
+            InternalUtils.validateMarkerAnnotations(new Class[] {Inject.class, NotRetainedRuntime.class});
             unreachable();
         }
         catch (IllegalArgumentException ex)
@@ -477,7 +473,7 @@ public class InternalUtilsTest extends IOCTestCase
 
         replay();
 
-        InternalUtils.injectIntoFields(target, ol, null, tracker);
+        InternalUtils.injectIntoFields(target, ol, tracker);
 
         assertSame(target.getFred(), fred);
 
@@ -511,7 +507,7 @@ public class InternalUtilsTest extends IOCTestCase
 
         replay();
 
-        InternalUtils.injectIntoFields(target, ol, null, tracker);
+        InternalUtils.injectIntoFields(target, ol, tracker);
 
         assertSame(target.getSymbolSource(), ss);
 
@@ -534,7 +530,7 @@ public class InternalUtilsTest extends IOCTestCase
 
         try
         {
-            InternalUtils.injectIntoFields(target, ol, null, tracker);
+            InternalUtils.injectIntoFields(target, ol, tracker);
 
             unreachable();
         }
@@ -563,73 +559,5 @@ public class InternalUtilsTest extends IOCTestCase
         map.put("gnip", 97);
 
         assertSame(InternalUtils.keys(map), map.keySet());
-    }
-
-    @Test
-    public void collection_size()
-    {
-        Collection c = null;
-
-        assertEquals(InternalUtils.size(c), 0);
-
-        c = Arrays.asList("moe", "larry", "curly");
-
-        assertEquals(InternalUtils.size(c), 3);
-    }
-
-    @Test
-    public void servicedef_to_servicedef2()
-    {
-        final ObjectCreator oc = mockObjectCreator();
-        final String serviceId = "RocketLauncher";
-        final Set<Class> markers = Collections.emptySet();
-        final Class serviceInterface = Runnable.class;
-
-        ServiceDef sd = new ServiceDef()
-        {
-            public ObjectCreator createServiceCreator(ServiceBuilderResources resources)
-            {
-                return oc;
-            }
-
-            public String getServiceId()
-            {
-                return serviceId;
-            }
-
-            public Set<Class> getMarkers()
-            {
-                return markers;
-            }
-
-            public Class getServiceInterface()
-            {
-                return serviceInterface;
-            }
-
-            public String getServiceScope()
-            {
-                return ScopeConstants.PERTHREAD;
-            }
-
-            public boolean isEagerLoad()
-            {
-                return true;
-            }
-        };
-
-        replay();
-
-        ServiceDef2 sd2 = InternalUtils.toServiceDef2(sd);
-
-        assertSame(sd2.createServiceCreator(null), oc);
-        assertSame(sd2.getServiceId(), serviceId);
-        assertSame(sd2.getMarkers(), markers);
-        assertSame(sd2.getServiceInterface(), serviceInterface);
-        assertSame(sd2.getServiceScope(), ScopeConstants.PERTHREAD);
-        assertTrue(sd2.isEagerLoad());
-        assertFalse(sd2.isPreventDecoration());
-
-        verify();
     }
 }

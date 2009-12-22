@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2009 The Apache Software Foundation
+// Copyright 2006, 2007 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -27,6 +27,8 @@ public class ClasspathAssetAliasManagerImpl implements ClasspathAssetAliasManage
 {
     private final Request request;
 
+    private final RequestPathOptimizer optimizer;
+
     /**
      * Map from alias to path.
      */
@@ -47,9 +49,12 @@ public class ClasspathAssetAliasManagerImpl implements ClasspathAssetAliasManage
      */
     public ClasspathAssetAliasManagerImpl(Request request,
 
+                                          RequestPathOptimizer optimizer,
+
                                           Map<String, String> configuration)
     {
         this.request = request;
+        this.optimizer = optimizer;
 
         for (Map.Entry<String, String> e : configuration.entrySet())
         {
@@ -78,14 +83,19 @@ public class ClasspathAssetAliasManagerImpl implements ClasspathAssetAliasManage
 
     private String withSlash(String input)
     {
-        if (input.equals("")) return input;
-
         if (input.endsWith("/")) return input;
 
         return input + "/";
     }
 
     public String toClientURL(String resourcePath)
+    {
+        String path = toCompleteClientURI(resourcePath);
+
+        return optimizer.optimizePath(path);
+    }
+
+    private String toCompleteClientURI(String resourcePath)
     {
         StringBuilder builder = new StringBuilder(request.getContextPath());
         builder.append(RequestConstants.ASSET_PATH_PREFIX);

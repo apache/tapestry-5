@@ -1,4 +1,4 @@
-// Copyright 2006, 2009 The Apache Software Foundation
+// Copyright 2006 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,9 +20,6 @@ import java.lang.annotation.Retention;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Target;
 
-import static org.apache.tapestry5.ioc.annotations.AnnotationUseContext.COMPONENT;
-import org.apache.tapestry5.ioc.annotations.UseWith;
-
 /**
  * Used to attach one ore more instance mixin to an embedded component. Each mixin is specified in terms of a logical
  * mixin type name. This annotation is only recognized when used in conjuction with the {@link Component} annotation.
@@ -32,16 +29,11 @@ import org.apache.tapestry5.ioc.annotations.UseWith;
 @Target(FIELD)
 @Documented
 @Retention(RUNTIME)
-@UseWith(COMPONENT)
 public @interface Mixins
 {
 
     /**
-     * One or more mixin type names and optional constraints, from which actual mixin class names can be resolved.
-     * For specifying constraints, do:
-     * mixinname::constraint1;constraint2
-     * For instance:
-     * mixina::before:mixinb;after:mixinc;after:mixind
+     * One or more mixin type names, from which actual mixin class names can be resolved.
      */
     String[] value();
 }

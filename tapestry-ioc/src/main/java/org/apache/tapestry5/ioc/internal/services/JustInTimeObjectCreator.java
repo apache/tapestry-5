@@ -1,4 +1,4 @@
-// Copyright 2007, 2009 The Apache Software Foundation
+// Copyright 2007 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -31,9 +31,11 @@ public class JustInTimeObjectCreator implements ObjectCreator, EagerLoadServiceP
 {
     private final ServiceActivityTracker tracker;
 
-    private volatile ObjectCreator creator;
+    private ObjectCreator creator;
 
-    private volatile Object object;
+    private boolean shutdown;
+
+    private Object object;
 
     private final String serviceId;
 
@@ -51,32 +53,30 @@ public class JustInTimeObjectCreator implements ObjectCreator, EagerLoadServiceP
      *
      * @throws IllegalStateException if the registry has been shutdown
      */
-    public Object createObject()
+    public synchronized Object createObject()
     {
+        if (shutdown)
+            throw new IllegalStateException(ServiceMessages.registryShutdown(serviceId));
+
         if (object == null)
-            obtainObjectFromCreator();
+        {
+            try
+            {
+                object = creator.createObject();
+
+                // And if that's successful ...
+
+                tracker.setStatus(serviceId, Status.REAL);
+
+                creator = null;
+            }
+            catch (RuntimeException ex)
+            {
+                throw new RuntimeException(ServiceMessages.serviceBuildFailure(serviceId, ex), ex);
+            }
+        }
 
         return object;
-    }
-
-    private synchronized void obtainObjectFromCreator()
-    {
-        if (object != null) return;
-
-        try
-        {
-            object = creator.createObject();
-
-            // And if that's successful ...
-
-            tracker.setStatus(serviceId, Status.REAL);
-
-            creator = null;
-        }
-        catch (RuntimeException ex)
-        {
-            throw new RuntimeException(ServiceMessages.serviceBuildFailure(serviceId, ex), ex);
-        }
     }
 
     /**
@@ -92,17 +92,11 @@ public class JustInTimeObjectCreator implements ObjectCreator, EagerLoadServiceP
     /**
      * Sets the shutdown flag and releases the object and the creator.
      */
-    public void registryDidShutdown()
+    public synchronized void registryDidShutdown()
     {
-        creator = new ObjectCreator()
-        {
-            public Object createObject()
-            {
-                throw new IllegalStateException(ServiceMessages.registryShutdown(serviceId));
-            }
-        };
-
+        shutdown = true;
         object = null;
+        creator = null;
     }
 
 }

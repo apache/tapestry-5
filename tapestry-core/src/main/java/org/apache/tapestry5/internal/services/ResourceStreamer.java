@@ -23,10 +23,7 @@ import java.io.IOException;
  * Responsible for streaming the contents of a resource to the client. The {@link org.apache.tapestry5.ioc.Resource} to
  * stream is almost always a {@link org.apache.tapestry5.ioc.internal.util.ClasspathResource}.
  * <p/>
- * The service's configuration is used to map file extensions to content types. Note: this only works for simple
- * extensions (i.e., "jpg") not for complex extensions (i.e., "tar.gz").
- *
- * @since 5.1.0.0
+ * The service's configuration is used to map file extensions to content types.
  */
 @UsesMappedConfiguration(String.class)
 public interface ResourceStreamer
@@ -35,13 +32,4 @@ public interface ResourceStreamer
      * Streams the content of the resource to the client.
      */
     void streamResource(Resource resource) throws IOException;
-
-    /**
-     * Analyzes the resource to determine what its content type is, possibly using the service's configuration.
-     *
-     * @param resource to analyze
-     * @return content type
-     * @throws IOException
-     */
-    String getContentType(Resource resource) throws IOException;
 }

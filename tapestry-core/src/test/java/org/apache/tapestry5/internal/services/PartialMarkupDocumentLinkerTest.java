@@ -64,8 +64,8 @@ public class PartialMarkupDocumentLinkerTest extends Assert
         linker.commit(reply);
         
         JSONObject expected = new JSONObject(
-        		"{\"stylesheets\":[{\"href\":\"foo.css\",\"media\":\"print\"},{\"href\":\"bar.css\"}]}");
-        
+                    "{\"stylesheets\":[{\"href\":\"foo.css\",\"media\":\"print\"},{\"href\":\"bar.css\"}]}");
+
         assertEquals(reply, expected);
 
     }

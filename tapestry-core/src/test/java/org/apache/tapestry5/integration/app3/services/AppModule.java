@@ -1,4 +1,4 @@
-// Copyright 2008, 2009 The Apache Software Foundation
+// Copyright 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,23 +14,13 @@
 
 package org.apache.tapestry5.integration.app3.services;
 
-import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.ioc.Configuration;
-import org.apache.tapestry5.ioc.MappedConfiguration;
 import org.apache.tapestry5.services.BeanBlockContribution;
 
 public class AppModule
 {
-    public static void contributeBeanBlockOverrideSource(Configuration<BeanBlockContribution> configuration)
+    public void contributeBeanBlockOverrideSource(Configuration<BeanBlockContribution> configuration)
     {
         configuration.add(new BeanBlockContribution("boolean", "PropertyDisplayBlockOverrides", "boolean", false));
     }
-
-    public static void contributeApplicationDefaults(MappedConfiguration<String, String> configuration)
-    {
-        configuration.add(SymbolConstants.GZIP_COMPRESSION_ENABLED, "false");
-        
-        configuration.add(SymbolConstants.PRODUCTION_MODE, "false");
-    }
-    
 }

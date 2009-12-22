@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,9 +14,8 @@
 
 package org.apache.tapestry5.internal.services;
 
+import org.apache.tapestry5.internal.events.UpdateListener;
 import org.apache.tapestry5.ioc.test.TestBase;
-import org.apache.tapestry5.services.UpdateListener;
-import org.apache.tapestry5.services.UpdateListenerHub;
 import org.testng.annotations.Test;
 
 public class UpdateListenerHubImplTest extends TestBase
@@ -34,7 +33,7 @@ public class UpdateListenerHubImplTest extends TestBase
 
         hub.addUpdateListener(listener);
 
-        hub.fireCheckForUpdates();
+        hub.fireUpdateEvent();
 
         verify();
     }

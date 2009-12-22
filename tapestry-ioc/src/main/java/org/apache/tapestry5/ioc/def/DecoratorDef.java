@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2009 The Apache Software Foundation
+// Copyright 2006, 2007 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -35,14 +35,6 @@ import org.apache.tapestry5.ioc.ServiceResources;
  * resulting in the Logging interceptor. Thus at runtime, the Logging interceptor will execute first, then delegate to
  * the Security interceptor, which would delegate to the Transaction interceptor, which would finally delegate to the
  * core service implementation.
- * <p/>
- * Service decorators are part of the initial version of Tapestry IoC.  Starting in release 5.1, their use has been
- * deprecated, in favor of {@link org.apache.tapestry5.ioc.AdvisorDef}, which is based on {@link
- * org.apache.tapestry5.ioc.services.AspectInterceptorBuilder}.
- * <p/>
- * Note: service decorators are applied <em>around</em> the interceptor generated via any {@link
- * org.apache.tapestry5.ioc.AdvisorDef}s (for compatibility with Tapestry 5.0). In general, you should use service
- * decoration or service advice, not both.
  */
 public interface DecoratorDef
 {
@@ -59,15 +51,15 @@ public interface DecoratorDef
 
     /**
      * Creates an object that can perform the decoration (in the default case, by invoking the decorator method on the
-     * module class or instance.
+     * module builder instance.
      *
-     * @param moduleSource access to the the module  instance associated with the module containing the decorator (not
-     *                     necessarily the module containing the service being decorated)
-     * @param resources    the resources visible <em>to the decorator</em> (which may be in a different module than the
-     *                     service being decorated). Other resource properties (serviceId, serviceInterface, log, etc.)
-     *                     are for the service being decorated.
+     * @param moduleBuilderSource the module builder instance associated with the module containing the decorator (not
+     *                            necessarily the module containing the service being decorated)
+     * @param resources           the resources visible <em>to the decorator</em> (which may be in a different module
+     *                            than the service being decorated). Other resource properties (serviceId,
+     *                            serviceInterface, log, etc.) are for the service being decorated.
      */
-    ServiceDecorator createDecorator(ModuleBuilderSource moduleSource,
+    ServiceDecorator createDecorator(ModuleBuilderSource moduleBuilderSource,
                                      ServiceResources resources);
 
     /**

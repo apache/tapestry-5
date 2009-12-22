@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,19 +14,15 @@
 
 package org.apache.tapestry5.internal;
 
-import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.ioc.IOCUtilities;
 import org.apache.tapestry5.ioc.Registry;
 import org.apache.tapestry5.ioc.RegistryBuilder;
 import org.apache.tapestry5.ioc.def.ContributionDef;
 import org.apache.tapestry5.ioc.def.ModuleDef;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.ioc.services.*;
+import org.apache.tapestry5.ioc.services.SymbolProvider;
+import org.apache.tapestry5.services.Alias;
 import org.apache.tapestry5.services.TapestryModule;
-import org.slf4j.Logger;
-
-import java.util.Formatter;
-import java.util.List;
 
 /**
  * This class is used to build the {@link Registry}. The Registry contains {@link org.apache.tapestry5.ioc.services.TapestryIOCModule}
@@ -39,8 +35,6 @@ import java.util.List;
  */
 public class TapestryAppInitializer
 {
-    private final Logger logger;
-
     private final SymbolProvider appProvider;
 
     private final String appName;
@@ -52,23 +46,19 @@ public class TapestryAppInitializer
     private final RegistryBuilder builder = new RegistryBuilder();
 
     private long registryCreatedTime;
-    private Registry registry;
 
-    public TapestryAppInitializer(Logger logger, String appPackage, String appName, String aliasMode)
+    public TapestryAppInitializer(String appPackage, String appName, String aliasMode)
     {
-        this(logger, new SingleKeySymbolProvider(InternalConstants.TAPESTRY_APP_PACKAGE_PARAM, appPackage), appName,
-             aliasMode);
+        this(new SingleKeySymbolProvider(InternalConstants.TAPESTRY_APP_PACKAGE_PARAM, appPackage), appName, aliasMode);
     }
 
     /**
-     * @param logger      logger for output confirmation
      * @param appProvider provides symbols for the application (normally, from the ServletContext init parameters)
      * @param appName     the name of the application (i.e., the name of the application servlet)
-     * @param aliasMode   the mode, used by the {@link org.apache.tapestry5.services.Alias} service, normally "servlet"
+     * @param aliasMode   the mode, used by the {@link Alias} service, normally "servlet"
      */
-    public TapestryAppInitializer(Logger logger, SymbolProvider appProvider, String appName, String aliasMode)
+    public TapestryAppInitializer(SymbolProvider appProvider, String appName, String aliasMode)
     {
-        this.logger = logger;
         this.appProvider = appProvider;
 
         String appPackage = appProvider.valueForSymbol(InternalConstants.TAPESTRY_APP_PACKAGE_PARAM);
@@ -109,7 +99,7 @@ public class TapestryAppInitializer
 
         // Add a synthetic module that contributes symbol sources.
 
-        addSyntheticSymbolSourceModule(appPackage);
+        addSyntheticSymbolSourceModule();
     }
 
     /**
@@ -123,96 +113,52 @@ public class TapestryAppInitializer
             builder.add(def);
     }
 
-    public void addModules(Class... moduleClasses)
+    public void addModules(Class... moduleBuilderClasses)
     {
-        builder.add(moduleClasses);
+        builder.add(moduleBuilderClasses);
     }
 
-    private void addSyntheticSymbolSourceModule(String appPackage)
+    private void addSyntheticSymbolSourceModule()
     {
-        ContributionDef appPathContribution =
-                new SyntheticSymbolSourceContributionDef("AppPath",
-                                                         new SingleKeySymbolProvider(
-                                                                 InternalSymbols.APP_PACKAGE_PATH,
-                                                                 appPackage.replace('.', '/')));
+        ContributionDef symbolSourceContribution = new SyntheticSymbolSourceContributionDef("ServletContext",
+                                                                                            appProvider,
+                                                                                            "before:ApplicationDefaults");
 
-        ContributionDef symbolSourceContribution =
-                new SyntheticSymbolSourceContributionDef("ServletContext",
-                                                         appProvider,
-                                                         "before:ApplicationDefaults");
+        ContributionDef aliasModeContribution = new SyntheticSymbolSourceContributionDef("AliasMode",
+                                                                                         new SingleKeySymbolProvider(
+                                                                                                 InternalConstants.TAPESTRY_ALIAS_MODE_SYMBOL,
+                                                                                                 aliasMode),
+                                                                                         "before:ServletContext");
 
-        ContributionDef aliasModeContribution =
-                new SyntheticSymbolSourceContributionDef("AliasMode",
-                                                         new SingleKeySymbolProvider(InternalSymbols.ALIAS_MODE,
-                                                                                     aliasMode),
-                                                         "before:ServletContext");
+        ContributionDef appNameContribution = new SyntheticSymbolSourceContributionDef("AppName",
+                                                                                       new SingleKeySymbolProvider(
+                                                                                               InternalConstants.TAPESTRY_APP_NAME_SYMBOL,
+                                                                                               appName),
+                                                                                       "before:ServletContext");
 
-        ContributionDef appNameContribution =
-                new SyntheticSymbolSourceContributionDef("AppName",
-                                                         new SingleKeySymbolProvider(InternalSymbols.APP_NAME, appName),
-                                                         "before:ServletContext");
-
-        builder.add(new SyntheticModuleDef(symbolSourceContribution, aliasModeContribution, appNameContribution,
-                                           appPathContribution));
+        builder.add(new SyntheticModuleDef(symbolSourceContribution, aliasModeContribution, appNameContribution));
     }
 
-    public Registry createRegistry()
+    public Registry getRegistry()
     {
         registryCreatedTime = System.currentTimeMillis();
 
-        registry = builder.build();
-
-        return registry;
+        return builder.build();
     }
 
-    public void announceStartup()
+    /**
+     * @return the system time (in ms) when the registry has been created successfully.
+     */
+    public long getRegistryCreatedTime()
     {
-        long toFinish = System.currentTimeMillis();
+        return registryCreatedTime;
+    }
 
-        SymbolSource source = registry.getService("SymbolSource", SymbolSource.class);
-
-        StringBuilder buffer = new StringBuilder("Startup status:\n\n");
-        Formatter f = new Formatter(buffer);
-
-        f.format("Application '%s' (Tapestry version %s).\n\n" +
-                "Startup time: %,d ms to build IoC Registry, %,d ms overall.\n\n" +
-                "Startup services status:\n",
-                 appName,
-                 source.valueForSymbol(SymbolConstants.TAPESTRY_VERSION),
-                 registryCreatedTime - startTime, toFinish - startTime);
-
-        int unrealized = 0;
-
-        ServiceActivityScoreboard scoreboard = registry
-                .getService(ServiceActivityScoreboard.class);
-
-        List<ServiceActivity> serviceActivity = scoreboard.getServiceActivity();
-
-        int longest = 0;
-
-        // One pass to find the longest name, and to count the unrealized services.
-
-        for (ServiceActivity activity : serviceActivity)
-        {
-            Status status = activity.getStatus();
-
-            longest = Math.max(longest, activity.getServiceId().length());
-
-            if (status == Status.DEFINED || status == Status.VIRTUAL) unrealized++;
-        }
-
-        String formatString = "%" + longest + "s: %s\n";
-
-        // A second pass to output all the services
-
-        for (ServiceActivity activity : serviceActivity)
-        {
-            f.format(formatString, activity.getServiceId(), activity.getStatus().name());
-        }
-
-        f.format("\n%4.2f%% unrealized services (%d/%d)\n", 100. * unrealized / serviceActivity.size(), unrealized,
-                 serviceActivity.size());
-
-        logger.info(buffer.toString());
+    /**
+     * @return the time when the initialization was started.
+     */
+    public long getStartTime()
+    {
+        return startTime;
     }
 }

@@ -1,4 +1,4 @@
-// Copyright 2009 The Apache Software Foundation
+// Copyright 2006 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,33 +14,69 @@
 
 package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry5.ioc.test.TestBase;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.services.Cookies;
 import org.apache.tapestry5.services.PersistentLocale;
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import java.io.IOException;
 import java.util.Locale;
+import java.util.Map;
 
-public class PersistentLocaleImplTest extends TestBase
+public class PersistentLocaleImplTest extends Assert
 {
-    /**
-     * TAP5-537
-     */
     @Test
-    public void set_to_unsupported_locale()
+    public void get() throws IOException
     {
-        PersistentLocale pl = new PersistentLocaleImpl(null, "en,fr");
-
-        try
+        Cookies cookieSource = new NoOpCookieSource()
         {
-            pl.set(Locale.CHINESE);
-            unreachable();
-        }
-        catch (IllegalArgumentException ex)
-        {
-            assertEquals(ex.getMessage(),
-                         "Locale 'zh' is not supported by this application. Supported locales are 'en,fr'; this is configured via the tapestry.supported-locales symbol.");
-        }
 
+            @Override
+            public String readCookieValue(String name)
+            {
+                return name.equals("org.apache.tapestry5.locale") ? "fr" : null;
+            }
+
+        };
+        PersistentLocale persistentLocale = new PersistentLocaleImpl(cookieSource);
+        assertEquals(persistentLocale.get(), Locale.FRENCH);
+    }
+
+    @Test
+    public void get_none() throws IOException
+    {
+        Cookies cookieSource = new NoOpCookieSource()
+        {
+
+            @Override
+            public String readCookieValue(String name)
+            {
+                return null;
+            }
+
+        };
+        PersistentLocale persistentLocale = new PersistentLocaleImpl(cookieSource);
+        assertNull(persistentLocale.get());
+    }
+
+    @Test
+    public void set() throws IOException
+    {
+        final Map<String, String> cookies = CollectionFactory.newMap();
+        Cookies cookieSource = new NoOpCookieSource()
+        {
+            @Override
+            public void writeCookieValue(String name, String value)
+            {
+                cookies.put(name, value);
+            }
+
+        };
+        PersistentLocale persistentLocale = new PersistentLocaleImpl(cookieSource);
+        persistentLocale.set(Locale.CANADA_FRENCH);
+        assertEquals(cookies.size(), 1);
+        assertEquals(cookies.get("org.apache.tapestry5.locale"), "fr_CA");
     }
 
 }

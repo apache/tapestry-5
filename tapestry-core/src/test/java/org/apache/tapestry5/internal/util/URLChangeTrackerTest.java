@@ -14,8 +14,6 @@
 
 package org.apache.tapestry5.internal.util;
 
-import org.apache.tapestry5.ioc.internal.services.ClasspathURLConverterImpl;
-import org.apache.tapestry5.ioc.services.ClasspathURLConverter;
 import org.apache.tapestry5.test.TapestryTestCase;
 import org.testng.annotations.Test;
 
@@ -24,12 +22,10 @@ import java.net.URL;
 
 public class URLChangeTrackerTest extends TapestryTestCase
 {
-    private final ClasspathURLConverter converter = new ClasspathURLConverterImpl();
-    
     @Test
     public void contains_change_when_empty()
     {
-        URLChangeTracker t = new URLChangeTracker(converter);
+        URLChangeTracker t = new URLChangeTracker();
 
         assertFalse(t.containsChanges());
     }
@@ -37,7 +33,7 @@ public class URLChangeTrackerTest extends TapestryTestCase
     @Test
     public void add_null_returns_zero()
     {
-        URLChangeTracker t = new URLChangeTracker(converter);
+        URLChangeTracker t = new URLChangeTracker();
 
         assertEquals(t.add(null), 0l);
     }
@@ -45,7 +41,7 @@ public class URLChangeTrackerTest extends TapestryTestCase
     @Test
     public void contains_changes() throws Exception
     {
-        URLChangeTracker t = new URLChangeTracker(converter);
+        URLChangeTracker t = new URLChangeTracker();
 
         File f = File.createTempFile("changetracker0", ".tmp");
         URL url = f.toURL();
@@ -83,7 +79,7 @@ public class URLChangeTrackerTest extends TapestryTestCase
     @Test
     public void creating_a_new_file_is_a_change() throws Exception
     {
-        URLChangeTracker t = new URLChangeTracker(converter);
+        URLChangeTracker t = new URLChangeTracker();
 
         File f = File.createTempFile("changetracker0", ".tmp");
         URL url = f.toURL();
@@ -117,7 +113,7 @@ public class URLChangeTrackerTest extends TapestryTestCase
     @Test
     public void non_file_URLs_are_ignored() throws Exception
     {
-        URLChangeTracker t = new URLChangeTracker(converter);
+        URLChangeTracker t = new URLChangeTracker();
 
         URL url = new URL("ftp://breeblebrox.com");
 
@@ -129,7 +125,7 @@ public class URLChangeTrackerTest extends TapestryTestCase
     @Test
     public void caching() throws Exception
     {
-        URLChangeTracker t = new URLChangeTracker(converter);
+        URLChangeTracker t = new URLChangeTracker();
 
         File f = File.createTempFile("changetracker0", ".tmp");
         URL url = f.toURL();
@@ -157,7 +153,7 @@ public class URLChangeTrackerTest extends TapestryTestCase
         File f = File.createTempFile("changetracker0", ".tmp");
         URL url = f.toURL();
 
-        URLChangeTracker t = new URLChangeTracker(converter);
+        URLChangeTracker t = new URLChangeTracker();
 
         long timeModified = t.add(url);
 
@@ -176,7 +172,7 @@ public class URLChangeTrackerTest extends TapestryTestCase
     @Test
     public void second_level_granularity() throws Exception
     {
-        URLChangeTracker t = new URLChangeTracker(converter, true);
+        URLChangeTracker t = new URLChangeTracker(true);
 
         File f = File.createTempFile("changetracker0", ".tmp");
         URL url = f.toURL();

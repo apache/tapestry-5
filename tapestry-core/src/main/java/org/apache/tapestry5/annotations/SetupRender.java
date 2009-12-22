@@ -1,4 +1,4 @@
-// Copyright 2006, 2009 The Apache Software Foundation
+// Copyright 2006 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,8 +19,6 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Target;
-import static org.apache.tapestry5.ioc.annotations.AnnotationUseContext.*;
-import org.apache.tapestry5.ioc.annotations.UseWith;
 
 /**
  * Marker annotation for methods that should be executed during the SetupRender phase. Such methods may optionally take
@@ -31,7 +29,6 @@ import org.apache.tapestry5.ioc.annotations.UseWith;
 @Target(ElementType.METHOD)
 @Retention(RUNTIME)
 @Documented
-@UseWith({COMPONENT,MIXIN,PAGE})
 public @interface SetupRender
 {
 

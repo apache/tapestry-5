@@ -15,8 +15,6 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.ComponentResources;
-import org.apache.tapestry5.PersistenceConstants;
-import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newList;
 import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newMap;
@@ -183,7 +181,7 @@ public class PersistentFieldManagerImplTest extends InternalBaseTestCase
 
         train_getFieldPersistenceStrategy(model, fieldName, "");
 
-        train_findMeta(locator, SymbolConstants.PERSISTENCE_STRATEGY, resources, String.class, strategyName);
+        train_findMeta(locator, PersistentFieldManagerImpl.META_KEY, resources, String.class, strategyName);
 
         train_getNestedId(resources, nestedId);
 
@@ -213,7 +211,7 @@ public class PersistentFieldManagerImplTest extends InternalBaseTestCase
         Object value = new Object();
 
         Map<String, PersistentFieldStrategy> strategies = newMap();
-        strategies.put(PersistenceConstants.SESSION, strat);
+        strategies.put(PersistentFieldManagerImpl.DEFAULT_STRATEGY, strat);
 
         train_getComponentModel(resources, model);
 
@@ -221,9 +219,9 @@ public class PersistentFieldManagerImplTest extends InternalBaseTestCase
 
         train_findMeta(
                 locator,
-                SymbolConstants.PERSISTENCE_STRATEGY,
+                PersistentFieldManagerImpl.META_KEY,
                 resources, String.class,
-                PersistenceConstants.SESSION);
+                PersistentFieldManagerImpl.DEFAULT_STRATEGY);
 
         train_getNestedId(resources, nestedId);
 

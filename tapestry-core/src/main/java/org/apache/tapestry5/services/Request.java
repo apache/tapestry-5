@@ -28,8 +28,7 @@ import java.util.Locale;
 public interface Request
 {
     /**
-     * Gets the {@link Session}. If create is false and the session has not be created previously, returns null. Also,
-     * if the session is invalided and create is false, returns null.
+     * Gets the {@link Session}. If create is false and the session has not be created previously, returns null.
      *
      * @param create true to force the creation of the session
      * @return the session (or null if create is false the session has not been previously created)

@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2007 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -40,32 +40,6 @@ public class TapestrySpringIntegrationTest extends AbstractIntegrationTestSuite
     {
         open(BASE_URL);
 
-        String text = getText("beans");
-        assertTrue(text.contains("upcase"));
-    }
-
-    @Test
-    public void customize_pipeline_is_invoked() throws Exception
-    {
-        open(BASE_URL);
-
-        assertText("message", "SPRING VERSION 2.5.6: PIPELINE WAS INVOKED");
-    }
-
-    @Test
-    public void too_many_spring_beans_are_assignable()
-    {
-        open(BASE_URL + "bedrock");
-
-        assertTextPresent(
-                "Spring context contains 2 beans assignable to type org.example.testapp.services.Flintstone: barney, fred.");
-    }
-
-    @Test
-    public void factory_provided_beans_accessible() throws Exception
-    {
-        open(BASE_URL);
-
-        assertEquals(getText("viaFactory"), "Instantiated via a factory bean.");
+        assertTextPresent("[upcase]");
     }
 }

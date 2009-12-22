@@ -1,4 +1,4 @@
-// Copyright 2008, 2009 The Apache Software Foundation
+// Copyright 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ Tapestry.DateField = Class.create({
     initialize : function(spec)
     {
         this.field = $(spec.field);
-        this.trigger = $(spec.field + "-trigger");
+        this.trigger = $(spec.field + ":trigger");
         this.parseURL = spec.parseURL;
         this.formatURL = spec.formatURL;
 
@@ -110,9 +110,7 @@ Tapestry.DateField = Class.create({
         new Ajax.Request(url,
         {
             method: 'get',
-            parameters: {
-                input: input
-            },
+            parameters: { input: input },
             onSuccess: successHandler,
             onFailure: Tapestry.ajaxFailureHandler
         });
@@ -126,9 +124,7 @@ Tapestry.DateField = Class.create({
 
         this.popup = $(this.datePicker.create());
 
-        this.field.insert({
-            after : this.popup
-        });
+        this.field.insert({ after : this.popup });
 
         this.popup.absolutize().hide();
 
@@ -172,12 +168,7 @@ Tapestry.DateField = Class.create({
 
         var reference = this.field.type == "text" ? this.field : this.trigger;
 
-        this.popup.clonePosition(reference, {
-            offsetTop: reference.getHeight() + 2
-        }).setStyle({
-            width: "",
-            height: ""
-        });
+        this.popup.clonePosition(reference, { offsetTop: reference.getHeight() + 2 }).setStyle({ width: "", height: "" });
     },
 
     /** Duration, in seconds, used when fading the popup in or out. */
@@ -186,9 +177,7 @@ Tapestry.DateField = Class.create({
 
     hidePopup : function()
     {
-        new Effect.Fade(this.popup, {
-            duration: this.FADE_DURATION
-        });
+        new Effect.Fade(this.popup, { duration: this.FADE_DURATION });
     },
 
     revealPopup : function()
@@ -202,9 +191,7 @@ Tapestry.DateField = Class.create({
             Tapestry.DateField.activeDateField.hidePopup();
         }
 
-        new Effect.Appear(this.popup, {
-            duration: this.FADE_DURATION
-        });
+        new Effect.Appear(this.popup, { duration: this.FADE_DURATION });
 
         Tapestry.DateField.activeDateField = this;
     }

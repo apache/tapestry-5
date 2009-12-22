@@ -1,4 +1,4 @@
-//  Copyright 2008, 2009 The Apache Software Foundation
+//  Copyright 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -30,13 +30,13 @@ public class AjaxPageNameComponentEventResultProcessor implements ComponentEvent
 {
     private final ComponentEventResultProcessor masterProcessor;
 
-    private final LinkSource linkSource;
+    private final LinkFactory linkFactory;
 
     public AjaxPageNameComponentEventResultProcessor(@Ajax ComponentEventResultProcessor masterProcessor,
-                                                     LinkSource linkSource)
+                                                     LinkFactory linkFactory)
     {
         this.masterProcessor = masterProcessor;
-        this.linkSource = linkSource;
+        this.linkFactory = linkFactory;
     }
 
     /**
@@ -48,7 +48,7 @@ public class AjaxPageNameComponentEventResultProcessor implements ComponentEvent
      */
     public void processResultValue(String value) throws IOException
     {
-        Link link = linkSource.createPageRenderLink(value, false);
+        Link link = linkFactory.createPageRenderLink(value, false);
 
         masterProcessor.processResultValue(link);
     }

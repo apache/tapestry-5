@@ -69,12 +69,6 @@ public class PropertyEditBlocks
             parameters = {"value=context.propertyValue", "label=prop:context.label", "clientId=prop:context.propertyid",
                     "validate=prop:dateFieldValidator"})
     private DateField dateField;
-    
-    @SuppressWarnings("unused")
-    @Component(
-            parameters = {"value=context.propertyValue", "label=prop:context.label", "clientId=prop:context.propertyid",
-                    "validate=prop:calendarFieldValidator"})
-    private DateField calendarField;
 
     @Component(
             parameters = {"value=context.propertyValue", "label=prop:context.label",
@@ -140,11 +134,6 @@ public class PropertyEditBlocks
     public FieldValidator getDateFieldValidator()
     {
         return context.getValidator(dateField);
-    }
-
-    public FieldValidator getCalendarFieldValidator()
-    {
-        return context.getValidator(calendarField);
     }
 
     public FieldValidator getSelectValidator()

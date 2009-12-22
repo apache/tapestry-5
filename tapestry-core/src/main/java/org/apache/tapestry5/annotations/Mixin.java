@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2009 The Apache Software Foundation
+// Copyright 2006, 2007 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,16 +20,12 @@ import java.lang.annotation.Retention;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Target;
 
-import static org.apache.tapestry5.ioc.annotations.AnnotationUseContext.COMPONENT;
-import org.apache.tapestry5.ioc.annotations.UseWith;
-
 /**
  * Defines an <em>implementation</em> mixin for a component.
  */
 @Target(FIELD)
 @Documented
 @Retention(RUNTIME)
-@UseWith({COMPONENT})
 public @interface Mixin
 {
 
@@ -40,12 +36,4 @@ public @interface Mixin
      * the mixin class to instantiate and attach to the component.
      */
     String value() default "";
-
-    /**
-     * Defines an ordering constraint for when the mixin should be applied in relation to other mixins.
-     * The string is analagous exactly to the strings used to define ordered contributions.
-     * Eg: @Mixin(order={"before:mixina","after:mixinb"}). The ids are mixin names and are case insensitive.
-     * @since 5.2.0.0
-     */
-    String[] order() default {};
 }

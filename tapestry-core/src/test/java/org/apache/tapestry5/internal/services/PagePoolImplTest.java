@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -75,7 +75,7 @@ public class PagePoolImplTest extends InternalBaseTestCase
         verify();
 
         train_detached(page1, false);
-        train_getName(page1, LOGICAL_PAGE_NAME);
+        train_getLogicalName(page1, LOGICAL_PAGE_NAME);
         train_getLocale(page1, locale);
 
         replay();
@@ -106,7 +106,7 @@ public class PagePoolImplTest extends InternalBaseTestCase
         Logger logger = mockLogger();
 
         train_detached(page, true);
-        train_getName(page, "dirty");
+        train_getLogicalName(page, "dirty");
         train_getLocale(page, Locale.ENGLISH);
 
         logger.error(contains("is dirty, and will be discarded"));

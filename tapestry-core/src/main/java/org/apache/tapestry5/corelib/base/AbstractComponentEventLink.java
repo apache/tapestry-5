@@ -1,4 +1,4 @@
-// Copyright 2008, 2009 The Apache Software Foundation
+// Copyright 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,13 +16,10 @@ package org.apache.tapestry5.corelib.base;
 
 import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.Link;
-import org.apache.tapestry5.MarkupConstants;
 import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.Parameter;
-import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.services.ClientBehaviorSupport;
-import org.apache.tapestry5.services.Request;
+import org.apache.tapestry5.internal.services.ClientBehaviorSupport;
 
 /**
  * Base class for link-generating components that are based on a component event request. Such events have an event
@@ -47,9 +44,6 @@ public abstract class AbstractComponentEventLink extends AbstractLink
     @Environmental
     private ClientBehaviorSupport clientBehaviorSupport;
 
-    @Inject
-    private Request request;
-
     void beginRender(MarkupWriter writer)
     {
         if (isDisabled()) return;
@@ -60,8 +54,7 @@ public abstract class AbstractComponentEventLink extends AbstractLink
 
         if (zone != null)
         {
-            if (!request.isXHR())
-                writer.getElement().forceAttributes(MarkupConstants.ONCLICK, MarkupConstants.WAIT_FOR_PAGE);
+            writer.getElement().forceAttributes("href", "#");
 
             clientBehaviorSupport.linkZone(getClientId(), zone, link);
         }

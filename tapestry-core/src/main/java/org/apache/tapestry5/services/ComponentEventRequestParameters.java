@@ -1,4 +1,4 @@
-// Copyright 2008, 2009 The Apache Software Foundation
+// Copyright 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
 package org.apache.tapestry5.services;
 
 import org.apache.tapestry5.EventContext;
-import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.ioc.internal.util.Defense;
 
 /**
@@ -45,15 +44,6 @@ public final class ComponentEventRequestParameters
         this.eventContext = eventContext;
     }
 
-    @Override
-    public String toString()
-    {
-        return String.format("ComponentEventParameters[page=%s component=%s:%s event=%s]",
-                             activePageName,
-                             containingPageName, nestedComponentId,
-                             eventType);
-    }
-
     // Implements equals() as a convienience for testing.
 
     public boolean equals(Object o)
@@ -68,9 +58,26 @@ public final class ComponentEventRequestParameters
         if (!eventType.equals(that.eventType)) return false;
         if (!nestedComponentId.equals(that.nestedComponentId)) return false;
 
-        if (!TapestryInternalUtils.isEqual(eventContext, that.eventContext)) return false;
+        if (!isEqual(eventContext, that.eventContext)) return false;
 
-        return TapestryInternalUtils.isEqual(pageActivationContext, that.pageActivationContext);
+        return isEqual(pageActivationContext, that.pageActivationContext);
+    }
+
+    private boolean isEqual(EventContext left, EventContext right)
+    {
+        if (left == right) return true;
+
+        int count = left.getCount();
+
+        if (count != right.getCount()) return false;
+
+        for (int i = 0; i < count; i++)
+        {
+            if (!left.get(Object.class, i).equals(right.get(Object.class, i)))
+                return false;
+        }
+
+        return true;
     }
 
 

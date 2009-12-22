@@ -25,12 +25,10 @@ Tapestry.LinkSubmit = Class.create({
     createHidden : function()
     {
         var hidden = new Element("input", { "type":"hidden",
-            "id": this.element.id + "-hidden",
-            "name": this.element.id + "-hidden",
+            "name": this.element.id + ":hidden",
             "value": this.element.id});
 
-        if (this.form.select("input#" + this.element.id + "-hidden").length == 0)
-            this.element.insert({after:hidden});
+        this.element.insert({after:hidden});
     },
 
     onClick : function(event)
@@ -40,11 +38,10 @@ Tapestry.LinkSubmit = Class.create({
         Event.stop(event);
 
         var onsubmit = this.form.onsubmit;
-        
-        this.createHidden();
-        
+
         if (onsubmit == undefined || onsubmit.call(window.document, event))
-        {    
+        {
+            this.createHidden();
             this.form.submit();
         }
 

@@ -6,15 +6,14 @@ Tapestry IoC Configurations
 
   One of the key concepts on Tapestry IoC is <distributed configuration>. This is a
   concept borrowed from the Eclipse Plugin API and evidenced in 
-  Apache HiveMind prior to Tapestry 5 IoC.
+  HiveMind prior to Tapestry 5 IoC.
   
   So ... nice term, what does it mean?
   
-  Distributed configuration is the key feature of Tapestry IoC that supports <extensibility>
-  and <modularity>.
+  Distributed configuration is the key feature of Tapestry IoC that supports <extensibility>.
   
   The distributed part refers to the fact that <any module> may make <contributions> to 
-  any service's configuration.
+  any service's configuration (subject to the normal visibility rules for private services).
   
   This seems esoteric, but is quite handy, and is best explained by example.
   
@@ -76,9 +75,9 @@ Tapestry IoC Configurations
   Now the FileServicerDispatcher builder method gets a Map with at least four entries in it.
 
   Because Tapestry IoC is highly dynamic (it scans the visible JAR manifest files to identify
-  module classes), the FileServicerDispatcher service may be in one module, and the
+  module builder classes), the FileServicerDispatcher service may be in one module, and the
   other contributing modules (such as the one that contributes the Office file services) may be written at 
-  a much later date. With no change to the FileServicerDispatcher service or its module class,
+  a much later date. With no change to the FileServicerDispatcher service or its module builder class,
   the new services "plug into" the overall solution, simply by having their JAR's on runtime classpath. 
   
 Configuration Types
@@ -228,12 +227,7 @@ Configuration Types
   {{{apidocs/org/apache/tapestry5/ioc/util/CaseInsensitiveMap.html}CaseInsensitiveMap}}
   will be  automatically used (and passed to the service builder method), to help ensure that {{{case.html}case insensitivity}} 
   is automatic and pervasive.
-
-Injecting Classes
-
-  All three configuration interfaces have a second method, addInstance().  This method takes a class, not an instance.
-  The class is instantiated and contributed. If the constructor for the class takes dependencies, those are injected as well.
-
+  
 Injecting Resources
 
   In addition to injecting services into a contributor method (via
@@ -244,23 +238,7 @@ Injecting Resources
   
   * {{{apidocs/org/apache/tapestry5/ioc/ObjectLocator.html}ObjectLocator}}:  access to other services visible
   to the contributing module
-
-  * org.slf4j.Logger: the Logger for the service being contributed to
   
   []
   
   No annotation is needed for these cases.
-
-Configuration Overrides
-
-  <<New in 5.1>> The OrderedConfiguration and MappedConfiguration interfaces now support overrides.  An override is a replacement
-  for a normally contributed object. An override <must> match a contributed object, and each contributed object may be overidden
-  at most once.
-
-  The new object replaces the original object; alternately, you may override the original object with null.
-
-  This allows you to fine tune configuration values that are contributed from modules that you are using, rather than just those
-  that you write yourself.  It is powerful and a bit dangerous.
-
-  In Tapestry 5.0, services that wanted to support this kind of override behavior had to implement it on an ad-hoc basis,
-  such as ApplicationDefaults overriding FactoryDefaults.  In many cases, that is stil useful.

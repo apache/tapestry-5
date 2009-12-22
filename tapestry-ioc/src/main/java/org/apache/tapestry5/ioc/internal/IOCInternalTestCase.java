@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2009 The Apache Software Foundation
+// Copyright 2006, 2007 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -123,9 +123,20 @@ public class IOCInternalTestCase extends IOCTestCase implements Registry
         expect(registry.findDecoratorsForService(isA(ServiceDef.class))).andReturn(result);
     }
 
+    protected final void train_findDecoratorsForService(Module module, String serviceId,
+                                                        List<ServiceDecorator> decorators)
+    {
+        expect(module.findDecoratorsForService(serviceId)).andReturn(decorators);
+    }
+
     protected final void train_getDescription(ObjectCreatorSource source, String description)
     {
         expect(source.getDescription()).andReturn(description).atLeastOnce();
+    }
+
+    protected final void train_getLifecycle(InternalRegistry registry, String scope, ServiceLifecycle lifecycle)
+    {
+        expect(registry.getServiceLifecycle(scope)).andReturn(lifecycle);
     }
 
     protected final <T> void train_getService(InternalRegistry registry, String serviceId, Class<T> serviceInterface,

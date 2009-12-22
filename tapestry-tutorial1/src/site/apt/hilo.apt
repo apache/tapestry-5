@@ -23,7 +23,7 @@ Chapter 3: Implementing the Hi/Lo Guessing Game
   <<src/main/webapp/Index.tml:>>
   
 ----
-<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd">
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
   <head>
     <title>tutorial1 Start Page</title>
   </head>
@@ -58,7 +58,7 @@ Chapter 3: Implementing the Hi/Lo Guessing Game
   <<src/main/webapp/Guess.tml:>>
   
 ----
-<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd">
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
   <head>
     <title>Guess A Number</title>
   </head>
@@ -280,7 +280,7 @@ public class Start
   <<src/main/webapp/Guess.tml:>>
   
 ---
-<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd">
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
   <head>
     <title>Guess A Number</title>
   </head>
@@ -378,7 +378,7 @@ public class Start
   <<src/main/webapp/GameOver.tml:>>
 
 ---
-<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd">
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
   <head>
     <title>Game Over!</title>
   </head>
@@ -485,7 +485,7 @@ public class GameOver
   <<src/main/webapp/GameOver.tml:>>
   
 ---
-<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd">
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
   <head>
     <title>Game Over!</title>
   </head>

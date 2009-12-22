@@ -1,4 +1,4 @@
-// Copyright 2008, 2009 The Apache Software Foundation
+// Copyright 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,8 +16,7 @@ package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.Link;
 import org.apache.tapestry5.MetaDataConstants;
-import org.apache.tapestry5.SymbolConstants;
-import org.apache.tapestry5.ioc.annotations.Symbol;
+import org.apache.tapestry5.internal.structure.Page;
 import org.apache.tapestry5.services.BaseURLSource;
 import org.apache.tapestry5.services.MetaDataLocator;
 import org.apache.tapestry5.services.Request;
@@ -31,57 +30,54 @@ public class RequestSecurityManagerImpl implements RequestSecurityManager
 
     private final Response response;
 
-    private final LinkSource linkSource;
+    private final LinkFactory linkFactory;
 
     private final MetaDataLocator locator;
 
     private final BaseURLSource baseURLSource;
 
-    private final boolean securityEnabled;
+    private final RequestPageCache requestPageCache;
 
-    public RequestSecurityManagerImpl(Request request, Response response, LinkSource linkSource,
+    public RequestSecurityManagerImpl(Request request, Response response, LinkFactory linkFactory,
                                       MetaDataLocator locator, BaseURLSource baseURLSource,
-
-                                      @Symbol(SymbolConstants.SECURE_ENABLED)
-                                      boolean securityEnabled)
+                                      RequestPageCache requestPageCache)
     {
         this.request = request;
         this.response = response;
-        this.linkSource = linkSource;
+        this.linkFactory = linkFactory;
         this.locator = locator;
         this.baseURLSource = baseURLSource;
-        this.securityEnabled = securityEnabled;
+        this.requestPageCache = requestPageCache;
     }
 
     public boolean checkForInsecureRequest(String pageName) throws IOException
     {
-        if (!securityEnabled) return false;
-
-        // We don't (at this time) redirect from secure to insecure, just from insecure to secure.
+        // We don't (at this time) redirect from secure to insecure, just form insecure to secure.
 
         if (request.isSecure()) return false;
 
-        if (!isSecure(pageName)) return false;
+        Page page = requestPageCache.get(pageName);
+
+        if (!isSecure(page)) return false;
 
         // Page is secure but request is not, so redirect.
 
-        Link link = linkSource.createPageRenderLink(pageName, false);
+        Link link = linkFactory.createPageRenderLink(page, false);
 
         response.sendRedirect(link);
 
         return true;
     }
 
-    private boolean isSecure(String pageName)
+    private boolean isSecure(Page page)
     {
-        return locator.findMeta(MetaDataConstants.SECURE_PAGE, pageName, Boolean.class);
+        return locator.findMeta(MetaDataConstants.SECURE_PAGE,
+                                page.getRootComponent().getComponentResources(), Boolean.class);
     }
 
-    public String getBaseURL(String pageName)
+    public String getBaseURL(Page page)
     {
-        if (!securityEnabled) return null;
-
-        boolean securePage = isSecure(pageName);
+        boolean securePage = isSecure(page);
 
         if (securePage == request.isSecure()) return null;
 

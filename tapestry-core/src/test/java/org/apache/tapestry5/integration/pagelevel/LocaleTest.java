@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2009 The Apache Software Foundation
+// Copyright 2006, 2007 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -45,24 +45,28 @@ public class LocaleTest extends Assert
     @Test
     public void change_language_in_browser()
     {
-        tester.setPreferedLanguage(Locale.ENGLISH);
-
         Document doc = tester.renderPage("TestPageForLocale");
-
         assertEquals(doc.getElementById("id1").getChildMarkup(), "English page");
-
         tester.setPreferedLanguage(Locale.CANADA_FRENCH);
-
         doc = tester.renderPage("TestPageForLocale");
+        assertEquals(doc.getElementById("id1").getChildMarkup(), "French page");
+    }
 
+    @Test
+    public void persist_locale()
+    {
+        Document doc = tester.renderPage("TestPageForLocale");
+        doc = tester.clickLink(doc.getElementById("changeLocale"));
         assertEquals(doc.getElementById("id1").getChildMarkup(), "French page");
     }
 
     @BeforeMethod
     public void before()
     {
+        String appPackage = "org.apache.tapestry5.integration.app2";
         // LocaleAppModule.java has configured support for a certain locales.
-        tester = new PageTester(TestConstants.APP2_PACKAGE, TestConstants.APP2_NAME);
+        String appName = "LocaleApp";
+        tester = new PageTester(appPackage, appName);
     }
 
     @AfterMethod

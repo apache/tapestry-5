@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,22 +14,22 @@
 
 package org.apache.tapestry5.internal.services;
 
+import org.apache.tapestry5.internal.event.InvalidationEventHub;
 import org.apache.tapestry5.ioc.internal.services.CtClassSource;
 import org.apache.tapestry5.ioc.services.ClassFactory;
-import org.apache.tapestry5.services.InvalidationEventHub;
 
 /**
  * Creates {@link org.apache.tapestry5.internal.services.Instantiator}s for components, based on component class name.
  * This will involve transforming the component's class before it is loaded.
  * <p/>
- * In addition, a source acts as an event hub for {@link org.apache.tapestry5.services.InvalidationListener}s, so that
- * any information derived from loaded classes can be discarded and rebuilt when classes change.
+ * In addition, a source acts as an event hub for {@link org.apache.tapestry5.internal.events.InvalidationListener}s, so
+ * that any information derived from loaded classes can be discarded and rebuilt when classes change.
  * <p/>
  * The strategy used is that when <em>any</em> class (in a controlled package) changes, the entire class loader is
  * discarded, along with any instances derived from those classes. A new class loader is created, and then invalidation
  * events are fired to listeners.
  */
-public interface ComponentInstantiatorSource
+public interface ComponentInstantiatorSource extends InvalidationEventHub
 {
 
     /**
@@ -41,7 +41,7 @@ public interface ComponentInstantiatorSource
      * @param classname FQCN to find (and perhaps transform and load)
      * @return an object which can instantiate an instance of the component
      */
-    Instantiator getInstantiator(String classname);
+    Instantiator findInstantiator(String classname);
 
     /**
      * Adds a controlled package. Only classes within controlled packages are subject to transformation.
@@ -51,7 +51,7 @@ public interface ComponentInstantiatorSource
     void addPackage(String packageName);
 
     /**
-     * Checks to see if a fully qualfied class name exists. This method appears to exist only for testing.
+     * Checks to see if a fully qualfied class name exists.
      *
      * @param className name of class to check
      * @return true if the class exists (there's a ".class" file), false otherwise
@@ -69,11 +69,4 @@ public interface ComponentInstantiatorSource
      */
     CtClassSource getClassSource();
 
-    /**
-     * Invalidation event hub used to notify listeners that component classes have changed.
-     *
-     * @see org.apache.tapestry5.services.ComponentClasses
-     * @since 5.1.0.0
-     */
-    InvalidationEventHub getInvalidationEventHub();
 }

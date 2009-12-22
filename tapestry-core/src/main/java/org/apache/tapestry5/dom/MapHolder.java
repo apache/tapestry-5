@@ -1,4 +1,4 @@
-// Copyright 2008, 2009 The Apache Software Foundation
+// Copyright 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -26,20 +26,18 @@ import java.util.Map;
  */
 class MapHolder
 {
-    private static final Map<String, String> EMPTY_MAP = Collections.emptyMap();
-
     private final Map<String, String> startingMap;
 
     private Map<String, String> localMap;
 
     MapHolder()
     {
-        this(null);
+        this(Collections.<String, String>emptyMap());
     }
 
     MapHolder(Map<String, String> startingMap)
     {
-        this.startingMap = startingMap == null ? EMPTY_MAP : startingMap;
+        this.startingMap = startingMap;
     }
 
     void put(String key, String value)

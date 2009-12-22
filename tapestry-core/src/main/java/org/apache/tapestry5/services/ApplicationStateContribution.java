@@ -18,7 +18,7 @@ import org.apache.tapestry5.ioc.internal.util.Defense;
 
 /**
  * A contribution to the configuration of the {@link ApplicationStateManager}, identifying the strategy and creator for
- * a particular Session State Object (SSO), identified by the SSO's class.
+ * a particular ASO (identified by the ASO's class).
  */
 public final class ApplicationStateContribution
 {

@@ -1,4 +1,4 @@
-// Copyright 2008, 2009 The Apache Software Foundation
+// Copyright 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,9 +14,12 @@
 
 package org.apache.tapestry5.internal.services;
 
+import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.Link;
 import org.apache.tapestry5.MetaDataConstants;
+import org.apache.tapestry5.internal.structure.Page;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
+import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.services.BaseURLSource;
 import org.apache.tapestry5.services.MetaDataLocator;
 import org.apache.tapestry5.services.Request;
@@ -33,16 +36,17 @@ public class RequestSecurityManagerImplTest extends InternalBaseTestCase
     {
         Request request = mockRequest();
         Response response = mockResponse();
-        LinkSource linkSource = mockLinkSource();
+        LinkFactory linkFactory = mockLinkFactory();
         MetaDataLocator locator = mockMetaDataLocator();
         BaseURLSource source = mockBaseURLSource();
+        RequestPageCache cache = mockRequestPageCache();
 
         train_isSecure(request, true);
 
         replay();
 
         RequestSecurityManager manager
-                = new RequestSecurityManagerImpl(request, response, linkSource, locator, source, true);
+                = new RequestSecurityManagerImpl(request, response, linkFactory, locator, source, cache);
 
         assertFalse(manager.checkForInsecureRequest(PAGE_NAME));
 
@@ -54,18 +58,22 @@ public class RequestSecurityManagerImplTest extends InternalBaseTestCase
     {
         Request request = mockRequest();
         Response response = mockResponse();
-        LinkSource linkSource = mockLinkSource();
+        LinkFactory linkFactory = mockLinkFactory();
         MetaDataLocator locator = mockMetaDataLocator();
         BaseURLSource source = mockBaseURLSource();
+        RequestPageCache cache = mockRequestPageCache();
+        Page page = mockPage();
 
         train_isSecure(request, false);
 
-        train_isSecure(locator, PAGE_NAME, false);
+        train_get(cache, PAGE_NAME, page);
+
+        train_isSecure(locator, page, false);
 
         replay();
 
         RequestSecurityManager manager
-                = new RequestSecurityManagerImpl(request, response, linkSource, locator, source, true);
+                = new RequestSecurityManagerImpl(request, response, linkFactory, locator, source, cache);
 
         assertFalse(manager.checkForInsecureRequest(PAGE_NAME));
 
@@ -77,42 +85,41 @@ public class RequestSecurityManagerImplTest extends InternalBaseTestCase
     {
         Request request = mockRequest();
         Response response = mockResponse();
-        LinkSource linkSource = mockLinkSource();
+        LinkFactory linkFactory = mockLinkFactory();
         MetaDataLocator locator = mockMetaDataLocator();
         BaseURLSource source = mockBaseURLSource();
+        Page page = mockPage();
         Link link = mockLink();
+        RequestPageCache cache = mockRequestPageCache();
 
         train_isSecure(request, false);
 
-        train_isSecure(locator, PAGE_NAME, true);
+        train_get(cache, PAGE_NAME, page);
 
-        train_createPageRenderLink(linkSource, PAGE_NAME, link);
+        train_isSecure(locator, page, true);
+
+        train_createPageRenderLink(linkFactory, page, link);
 
         response.sendRedirect(link);
 
         replay();
 
         RequestSecurityManager manager
-                = new RequestSecurityManagerImpl(request, response, linkSource, locator, source, true);
+                = new RequestSecurityManagerImpl(request, response, linkFactory, locator, source, cache);
 
         assertTrue(manager.checkForInsecureRequest(PAGE_NAME));
 
         verify();
     }
 
-    private void train_createPageRenderLink(LinkSource linkSource, String pageName, Link link)
-    {
-        expect(linkSource.createPageRenderLink(pageName, false)).andReturn(link);
-    }
-
-    @DataProvider
+    @DataProvider(name = "base_URL_data")
     public Object[][] base_URL_data()
     {
         return new Object[][] {
-                { true, true, null },
-                { false, false, null },
-                { true, false, "http://example.org" },
-                { false, true, "https://example.org" }
+                {true, true, null},
+                {false, false, null},
+                {true, false, "http://example.org"},
+                {false, true, "https://example.org"}
         };
     }
 
@@ -121,13 +128,13 @@ public class RequestSecurityManagerImplTest extends InternalBaseTestCase
     {
         Request request = mockRequest();
         Response response = mockResponse();
-        LinkSource linkSource = mockLinkSource();
+        LinkFactory linkFactory = mockLinkFactory();
         MetaDataLocator locator = mockMetaDataLocator();
         BaseURLSource source = mockBaseURLSource();
+        Page page = mockPage();
 
         train_isSecure(request, secureRequest);
-
-        train_isSecure(locator, PAGE_NAME, securePage);
+        train_isSecure(locator, page, securePage);
 
         if (expectedURL != null)
             train_getBaseURL(source, securePage, expectedURL);
@@ -135,16 +142,23 @@ public class RequestSecurityManagerImplTest extends InternalBaseTestCase
         replay();
 
         RequestSecurityManager manager
-                = new RequestSecurityManagerImpl(request, response, linkSource, locator, source, true);
+                = new RequestSecurityManagerImpl(request, response, linkFactory, locator, source, null);
 
-        assertEquals(manager.getBaseURL(PAGE_NAME), expectedURL);
+        assertEquals(manager.getBaseURL(page), expectedURL);
 
         verify();
     }
 
-    private static void train_isSecure(MetaDataLocator locator, String pageName, boolean securePage)
+
+    private void train_isSecure(MetaDataLocator locator, Page page, boolean secure)
     {
-        expect(locator.findMeta(MetaDataConstants.SECURE_PAGE, pageName, Boolean.class)).andReturn(securePage);
+        Component component = mockComponent();
+        ComponentResources resources = mockInternalComponentResources();
+
+        train_getRootComponent(page, component);
+        train_getComponentResources(component, resources);
+
+        train_findMeta(locator, MetaDataConstants.SECURE_PAGE, resources, Boolean.class, secure);
     }
 
 

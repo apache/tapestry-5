@@ -93,41 +93,7 @@
             <a href="GetterMethodAlreadyExists">Getter Method Already Exists</a>
             -- demo @Property attempting to overwrite an existing getter method
         </li>
-        <li>
-            <a href="DuplicateIds">Duplicate IDs</a>
-            -- demo two components declared with the same ID
-        </li>
-        <li>
-            <a href="PublishDuplicateNameDemo">Duplicate Published Parameter Name</a>
-            -- demo error checking for the same parameter name published from two different
-            embedded components
-        </li>
-        <li>
-            <a href="EmbeddedComponentTypeConflict">Embedded Component Type Conflict
-            </a>
-            -- error checking for conflict between @Component.type and t:type.
-        </li>
-        <li>
-            <a href="PublishUnknownParameterDemo">Publish Unknown Parameter Demo</a>
-            -- publishing a parameter which does not exist
-        </li>
-        <li>
-            <a href="BadMixinIdDemo">Bad Mixin Id Demo</a>
-            -- error reporting when a parameter specifies a mixin id that does not exist
-        </li>
-        <li>
-            <a href="DupeMixinDemo">Duplicate Mixin Demo</a>
-            -- error reporting for adding a duplicate mixin to a component
-        </li>
-        <li>
-            <a href="UnsupportedParameterBlockDemo">Unsupported Parameter Block Demo</a>
-            -- informal block parameter to a component that does not support informal parameters
-        </li>
-        <li>
-            <a href="InvalidTemplateExtend">Invalid Template Extend Demo</a>
-            -- template uses extend, but component doesn't have a super-class
-        </li>
     </ul>
 
-</html>
+</html>                      
 

@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,17 +15,20 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.internal.util.Holder;
-import org.apache.tapestry5.ioc.Invokable;
 import org.apache.tapestry5.ioc.internal.util.ConcurrentBarrier;
-import org.apache.tapestry5.services.*;
+import org.apache.tapestry5.ioc.internal.util.Invokable;
+import org.apache.tapestry5.services.Request;
+import org.apache.tapestry5.services.RequestFilter;
+import org.apache.tapestry5.services.RequestHandler;
+import org.apache.tapestry5.services.Response;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Implements a barrier that periodically asks the {@link org.apache.tapestry5.services.UpdateListenerHub} to check for
- * updates to files. The UpdateListenerHub is invoked from a write method, meaning that when it is called, all other
- * threads will be blocked.
+ * Implements a barrier that periodically asks the {@link org.apache.tapestry5.internal.services.UpdateListenerHub} to
+ * check for updates to files. The UpdateListenerHub is invoked from a write method, meaning that when it is called, all
+ * other threads will be blocked.
  */
 public class CheckForUpdatesFilter implements RequestFilter
 {
@@ -50,7 +53,7 @@ public class CheckForUpdatesFilter implements RequestFilter
                 // Fire the update event which will force a number of checks and then
                 // corresponding invalidation events.
 
-                updateListenerHub.fireCheckForUpdates();
+                updateListenerHub.fireUpdateEvent();
 
                 lastCheck = System.currentTimeMillis();
             }
@@ -106,4 +109,5 @@ public class CheckForUpdatesFilter implements RequestFilter
 
         return result;
     }
+
 }

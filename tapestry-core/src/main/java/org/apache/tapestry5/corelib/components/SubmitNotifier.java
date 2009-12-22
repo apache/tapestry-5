@@ -1,4 +1,4 @@
-// Copyright 2008, 2009 The Apache Software Foundation
+// Copyright 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@ package org.apache.tapestry5.corelib.components;
 import org.apache.tapestry5.ComponentAction;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.annotations.Environmental;
-import org.apache.tapestry5.annotations.Events;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.FormSupport;
 
@@ -27,7 +26,6 @@ import org.apache.tapestry5.services.FormSupport;
  * that (during the form submission) triggers "BeginSubmit" and "AfterSubmit" events.  The container can receive these
  * events to perform setup before a group of components process their submission, and perform cleanup afterwards.
  */
-@Events({ "BeginSubmit", "AfterSubmit" })
 public class SubmitNotifier
 {
     private static final class TriggerEvent implements ComponentAction<SubmitNotifier>

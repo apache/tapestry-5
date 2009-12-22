@@ -17,7 +17,6 @@ package org.apache.tapestry5.internal.services;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.Session;
-import org.apache.tapestry5.services.SessionPersistedObjectAnalyzer;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -39,18 +38,12 @@ public class RequestImpl implements Request
 
     private final String requestEncoding;
 
-    private final SessionPersistedObjectAnalyzer analyzer;
-
     private boolean encodingSet;
 
-    private Session session;
-
-    public RequestImpl(HttpServletRequest request, String requestEncoding,
-                       SessionPersistedObjectAnalyzer analyzer)
+    public RequestImpl(HttpServletRequest request, String requestEncoding)
     {
         this.request = request;
         this.requestEncoding = requestEncoding;
-        this.analyzer = analyzer;
     }
 
     public List<String> getParameterNames()
@@ -103,19 +96,9 @@ public class RequestImpl implements Request
 
     public Session getSession(boolean create)
     {
-        if (session == null)
-        {
-            HttpSession hsession = request.getSession(create);
+        HttpSession session = request.getSession(create);
 
-            if (hsession != null)
-            {
-                session = new SessionImpl(hsession, analyzer);
-            }
-        }
-
-        if (!create && session != null && session.isInvalidated()) return null;
-
-        return session;
+        return session == null ? null : new SessionImpl(session);
     }
 
     public Locale getLocale()
@@ -179,4 +162,5 @@ public class RequestImpl implements Request
     {
         return request.getServerName();
     }
+
 }

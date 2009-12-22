@@ -15,11 +15,11 @@
 package org.apache.tapestry5.ioc.internal;
 
 import org.apache.tapestry5.ioc.ServiceBuilderResources;
-import org.apache.tapestry5.ioc.internal.util.InjectionResources;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Map;
 
 /**
  * A service creator based on an implementation class' constructor, rather than a service builder method.
@@ -44,24 +44,23 @@ public class ConstructorServiceCreator extends AbstractServiceCreator
 
     public Object createObject()
     {
-        Throwable failure = null;
-        Object result = null;
-
-        InternalUtils.validateConstructorForAutobuild(constructor);
-
-        InjectionResources injectionResources = createInjectionResources();
+        Throwable failure;
 
         try
         {
+            InternalUtils.validateConstructorForAutobuild(constructor);
+
             Object[] parameters = InternalUtils.calculateParametersForConstructor(constructor, resources,
-                                                                                  injectionResources,
+                                                                                  getParameterDefaultsWithConfigurations(),
                                                                                   resources.getTracker());
 
             if (logger.isDebugEnabled()) logger.debug(IOCMessages.invokingConstructor(creatorDescription));
 
-            result = constructor.newInstance(parameters);
+            Object result = constructor.newInstance(parameters);
 
-            InternalUtils.injectIntoFields(result, resources, injectionResources, resources.getTracker());
+            InternalUtils.injectIntoFields(result, resources, resources.getTracker());
+
+            return result;
         }
         catch (InvocationTargetException ite)
         {
@@ -72,11 +71,16 @@ public class ConstructorServiceCreator extends AbstractServiceCreator
             failure = ex;
         }
 
-        if (failure != null)
-            throw new RuntimeException(IOCMessages.constructorError(creatorDescription, serviceId, failure), failure);
+        throw new RuntimeException(IOCMessages.constructorError(creatorDescription, serviceId, failure), failure);
+    }
 
-        InternalUtils.invokePostInjectionMethods(result, resources, injectionResources, resources.getTracker());
-
-        return result;
+    /**
+     * Returns a map that includes (possibly) an additional mapping containing the collected configuration data. This
+     * involves scanning the constructor's parameters.
+     */
+    private Map<Class, Object> getParameterDefaultsWithConfigurations()
+    {
+        return getParameterDefaultsWithConfiguration(constructor.getParameterTypes(), constructor
+                .getGenericParameterTypes());
     }
 }

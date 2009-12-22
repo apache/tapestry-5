@@ -1,4 +1,4 @@
-//  Copyright 2008, 2009 The Apache Software Foundation
+//  Copyright 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,7 +15,10 @@
 package org.apache.tapestry5.corelib.components;
 
 import org.apache.tapestry5.*;
-import org.apache.tapestry5.annotations.*;
+import org.apache.tapestry5.annotations.Environmental;
+import org.apache.tapestry5.annotations.IncludeJavaScriptLibrary;
+import org.apache.tapestry5.annotations.Parameter;
+import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.FormSupport;
 import org.apache.tapestry5.services.Heartbeat;
@@ -28,7 +31,6 @@ import org.apache.tapestry5.services.Request;
  */
 @SupportsInformalParameters
 @IncludeJavaScriptLibrary("linksubmit.js")
-@Events(EventConstants.SELECTED + " by default, may be overridden")
 public class LinkSubmit implements ClientElement
 {
     /**
@@ -87,7 +89,7 @@ public class LinkSubmit implements ClientElement
     {
         this.clientId = clientId;
 
-        String hiddenFieldName = this.clientId + "-hidden";
+        String hiddenFieldName = this.clientId + ":hidden";
 
         if (request.getParameter(hiddenFieldName) != null)
         {
@@ -115,13 +117,8 @@ public class LinkSubmit implements ClientElement
             formSupport.store(this, new ProcessSubmission(clientId));
 
             writer.element("a",
-
                            "id", clientId,
-
                            "href", "#");
-
-            if (!request.isXHR())
-                writer.attributes(MarkupConstants.ONCLICK, MarkupConstants.WAIT_FOR_PAGE);
 
             resources.renderInformalParameters(writer);
         }

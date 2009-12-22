@@ -17,7 +17,6 @@ package org.apache.tapestry5.ioc.internal.services;
 import org.apache.tapestry5.ioc.AnnotationProvider;
 import org.apache.tapestry5.ioc.ObjectLocator;
 import org.apache.tapestry5.ioc.ObjectProvider;
-import org.apache.tapestry5.ioc.internal.QuietOperationTracker;
 import org.apache.tapestry5.ioc.services.MasterObjectProvider;
 import org.apache.tapestry5.ioc.test.IOCTestCase;
 import org.testng.annotations.Test;
@@ -44,7 +43,7 @@ public class MasterObjectProviderImplTest extends IOCTestCase
 
         replay();
 
-        MasterObjectProvider master = new MasterObjectProviderImpl(configuration, new QuietOperationTracker());
+        MasterObjectProvider master = new MasterObjectProviderImpl(configuration);
 
         assertSame(master.provide(type, ap, locator, true), expected);
 
@@ -69,7 +68,7 @@ public class MasterObjectProviderImplTest extends IOCTestCase
 
         replay();
 
-        MasterObjectProvider master = new MasterObjectProviderImpl(configuration, new QuietOperationTracker());
+        MasterObjectProvider master = new MasterObjectProviderImpl(configuration);
 
         assertSame(master.provide(type, ap, locator, true), expected);
 
@@ -93,7 +92,7 @@ public class MasterObjectProviderImplTest extends IOCTestCase
 
         replay();
 
-        MasterObjectProvider master = new MasterObjectProviderImpl(configuration, new QuietOperationTracker());
+        MasterObjectProvider master = new MasterObjectProviderImpl(configuration);
 
         assertNull(master.provide(type, ap, locator, false));
 
@@ -120,7 +119,7 @@ public class MasterObjectProviderImplTest extends IOCTestCase
 
         replay();
 
-        MasterObjectProvider master = new MasterObjectProviderImpl(configuration, new QuietOperationTracker());
+        MasterObjectProvider master = new MasterObjectProviderImpl(configuration);
 
         assertSame(master.provide(type, ap, locator, true), expected);
 

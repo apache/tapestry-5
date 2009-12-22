@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@ package org.apache.tapestry5.internal.bindings;
 import org.apache.tapestry5.Binding;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.FieldTranslator;
-import org.apache.tapestry5.internal.services.StringInterner;
 import org.apache.tapestry5.ioc.Location;
 import org.apache.tapestry5.services.BindingFactory;
 import org.apache.tapestry5.services.FieldTranslatorSource;
@@ -30,18 +29,15 @@ public class TranslateBindingFactory implements BindingFactory
 {
     private final FieldTranslatorSource source;
 
-    private final StringInterner interner;
-
-    public TranslateBindingFactory(FieldTranslatorSource source, StringInterner interner)
+    public TranslateBindingFactory(FieldTranslatorSource source)
     {
         this.source = source;
-        this.interner = interner;
     }
 
     public Binding newBinding(String description, ComponentResources container,
                               final ComponentResources component, final String expression, Location location)
     {
-        return new InvariantBinding(location, FieldTranslator.class, interner.intern(description + ": " + expression))
+        return new VariantBinding(FieldTranslator.class, description + ": " + expression, location)
         {
             public Object get()
             {

@@ -18,9 +18,7 @@ import org.apache.tapestry5.EventContext;
 import org.apache.tapestry5.internal.EmptyEventContext;
 import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.internal.URLEventContext;
-import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.services.ContextPathEncoder;
 import org.apache.tapestry5.services.ContextValueEncoder;
 import org.apache.tapestry5.services.URLEncoder;
@@ -33,38 +31,24 @@ public class ContextPathEncoderImpl implements ContextPathEncoder
 
     private final URLEncoder urlEncoder;
 
-    private final TypeCoercer typeCoercer;
-
     private final EventContext EMPTY = new EmptyEventContext();
 
-    public ContextPathEncoderImpl(ContextValueEncoder valueEncoder, URLEncoder urlEncoder, TypeCoercer typeCoercer)
+    public ContextPathEncoderImpl(ContextValueEncoder valueEncoder, URLEncoder urlEncoder)
     {
         this.valueEncoder = valueEncoder;
         this.urlEncoder = urlEncoder;
-        this.typeCoercer = typeCoercer;
     }
 
     public String encodeIntoPath(Object[] context)
     {
         if (context == null || context.length == 0) return "";
 
-        return encodeIntoPath(new ArrayEventContext(typeCoercer, context));       
-    }
-
-    public String encodeIntoPath(EventContext context)
-    {
-        Defense.notNull(context, "context");
-
-        int count = context.getCount();
-        
         StringBuilder output = new StringBuilder(BUFFER_SIZE);
 
-        for (int i = 0; i < count; i++)
+        for (int i = 0; i < context.length; i++)
         {
-            Object raw = context.get(Object.class, i);
-
+            Object raw = context[i];
             String valueEncoded = raw == null ? null : valueEncoder.toClient(raw);
-
             String urlEncoded = urlEncoder.encode(valueEncoded);
 
             if (i > 0) output.append("/");

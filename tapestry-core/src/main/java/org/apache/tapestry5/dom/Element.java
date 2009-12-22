@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,11 +15,9 @@
 package org.apache.tapestry5.dom;
 
 import org.apache.tapestry5.internal.TapestryInternalUtils;
-import org.apache.tapestry5.internal.util.PrintOutCollector;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.ioc.util.Stack;
 
 import java.io.PrintWriter;
 import java.util.*;
@@ -32,14 +30,35 @@ import java.util.*;
  */
 public final class Element extends Node
 {
+    class Attribute
+    {
+        private final String namespace;
+        private final String name;
+        private final String value;
+
+        public Attribute(String namespace, String name, String value)
+        {
+            this.namespace = namespace;
+            this.name = name;
+            this.value = value;
+        }
+
+
+        void render(MarkupModel model, StringBuilder builder, Map<String, String> namespaceURIToPrefix)
+        {
+            builder.append(" ");
+            builder.append(toPrefixedName(namespaceURIToPrefix, namespace, name));
+            builder.append("=\"");
+            model.encodeQuoted(value, builder);
+            builder.append('"');
+        }
+    }
 
     private final String name;
 
-    private Node firstChild;
+    private Map<String, Attribute> attributes;
 
-    private Node lastChild;
-
-    private Attribute firstAttribute;
+    private Element parent;
 
     private final Document document;
 
@@ -59,7 +78,7 @@ public final class Element extends Node
      */
     Element(Document container, String namespace, String name)
     {
-        super(null);
+        super(container);
 
         document = container;
         this.namespace = namespace;
@@ -73,6 +92,7 @@ public final class Element extends Node
     {
         super(parent);
 
+        this.parent = parent;
         this.namespace = namespace;
         this.name = name;
 
@@ -87,12 +107,10 @@ public final class Element extends Node
 
     /**
      * Returns the containing element for this element. This will be null for the root element of a document.
-     *
-     * @deprecated since 5.1.0.1, use {@link Node#getContainer()} instead
      */
     public Element getParent()
     {
-        return container;
+        return parent;
     }
 
     /**
@@ -119,49 +137,13 @@ public final class Element extends Node
     {
         Defense.notBlank(name, "name");
 
-        updateAttribute(namespace, name, value, false);
+        if (value == null) return this;
+
+        if (attributes == null) attributes = CollectionFactory.newMap();
+
+        if (!attributes.containsKey(name)) attributes.put(name, new Attribute(namespace, name, value));
 
         return this;
-    }
-
-    private void updateAttribute(String namespace, String name, String value, boolean force)
-    {
-        if (!force && value == null) return;
-
-        Attribute prior = null;
-        Attribute cursor = firstAttribute;
-
-        while (cursor != null)
-        {
-            if (cursor.matches(namespace, name))
-            {
-                if (!force) return;
-
-                if (value != null)
-                {
-                    cursor.value = value;
-                    return;
-                }
-
-                // Remove this Attribute node from the linked list
-
-                if (prior == null)
-                    firstAttribute = cursor.nextAttribute;
-                else
-                    prior.nextAttribute = cursor.nextAttribute;
-
-                return;
-            }
-
-            prior = cursor;
-            cursor = cursor.nextAttribute;
-        }
-
-        //  Don't add a Attribute if the value is null.
-
-        if (value == null) return;
-
-        firstAttribute = new Attribute(this, namespace, name, value, firstAttribute);
     }
 
 
@@ -185,11 +167,12 @@ public final class Element extends Node
     }
 
     /**
-     * Forces changes to a number of attributes. The new attributes <em>overwrite</em> previous values. Overriding an
-     * attribute's value to null will remove the attribute entirely.
+     * Forces changes to a number of attributes. The new attributes <em>overwrite</em> previous values.
      */
     public Element forceAttributes(String... namesAndValues)
     {
+        if (attributes == null) attributes = CollectionFactory.newMap();
+
         int i = 0;
 
         while (i < namesAndValues.length)
@@ -197,7 +180,13 @@ public final class Element extends Node
             String name = namesAndValues[i++];
             String value = namesAndValues[i++];
 
-            updateAttribute(namespace, name, value, true);
+            if (value == null)
+            {
+                attributes.remove(name);
+                continue;
+            }
+
+            attributes.put(name, new Attribute(null, name, value));
         }
 
         return this;
@@ -279,7 +268,7 @@ public final class Element extends Node
     }
 
     /**
-     * Adds and returns a new CDATA node.
+     * Adds an returns a new CDATA node.
      *
      * @param content the content to be rendered by the node
      * @return the newly created node
@@ -310,12 +299,13 @@ public final class Element extends Node
 
         builder.append("<").append(prefixedElementName);
 
-        // Output order used to be alpha sorted, but now it tends to be the inverse
-        // of the order in which attributes were added.
+        List<String> keys = InternalUtils.sortedKeys(attributes);
 
-        for (Attribute attr = firstAttribute; attr != null; attr = attr.nextAttribute)
+        for (String key : keys)
         {
-            attr.render(markupModel, builder, localNamespacePrefixToURI);
+            Attribute attribute = attributes.get(key);
+
+            attribute.render(markupModel, builder, localNamespacePrefixToURI);
         }
 
         // Next, emit namespace declarations for each namespace.
@@ -324,8 +314,6 @@ public final class Element extends Node
 
         for (String namespace : namespaces)
         {
-            if (namespace.equals(Document.XML_NAMESPACE_URI)) continue;
-
             String prefix = namespaceToPrefix.get(namespace);
 
             builder.append(" xmlns");
@@ -335,12 +323,11 @@ public final class Element extends Node
                 builder.append(":").append(prefix);
             }
 
-            builder.append("=");
-            builder.append(markupModel.getAttributeQuote());
+            builder.append("=\"");
 
             markupModel.encodeQuoted(namespace, builder);
 
-            builder.append(markupModel.getAttributeQuote());
+            builder.append('"');
         }
 
         EndTagStyle style = markupModel.getEndTagStyle(name);
@@ -369,11 +356,9 @@ public final class Element extends Node
         }
     }
 
-    String toPrefixedName(Map<String, String> namespaceURIToPrefix, String namespace, String name)
+    private String toPrefixedName(Map<String, String> namespaceURIToPrefix, String namespace, String name)
     {
         if (namespace == null || namespace.equals("")) return name;
-
-        if (namespace.equals(Document.XML_NAMESPACE_URI)) return "xml:" + name;
 
         String prefix = namespaceURIToPrefix.get(namespace);
 
@@ -413,9 +398,11 @@ public final class Element extends Node
 
             if (id.equals(elementId)) return e;
 
-            for (Element child : e.childElements())
+            for (Node n : e.getChildren())
             {
-                queue.addLast(child);
+                Element child = n.asElement();
+
+                if (child != null) queue.addLast(child);
             }
         }
 
@@ -450,10 +437,11 @@ public final class Element extends Node
 
     private Element findChildWithElementName(String name)
     {
-        for (Element child : childElements())
+        for (Node node : getChildren())
         {
-            if (child.getName().equals(name))
-                return child;
+            Element child = node.asElement();
+
+            if (child != null && child.getName().equals(name)) return child;
         }
 
         // Not found.
@@ -461,69 +449,25 @@ public final class Element extends Node
         return null;
     }
 
-    private Iterable<Element> childElements()
-    {
-        return new Iterable<Element>()
-        {
-            public Iterator<Element> iterator()
-            {
-                return new Iterator<Element>()
-                {
-                    private Node cursor = firstChild;
-
-                    {
-                        advance();
-                    }
-
-                    private void advance()
-                    {
-                        while (cursor != null)
-                        {
-                            if (cursor instanceof Element) return;
-
-                            cursor = cursor.nextSibling;
-                        }
-                    }
-
-                    public boolean hasNext()
-                    {
-                        return cursor != null;
-                    }
-
-                    public Element next()
-                    {
-                        Element result = (Element) cursor;
-
-                        cursor = cursor.nextSibling;
-
-                        advance();
-
-                        return result;
-                    }
-
-                    public void remove()
-                    {
-                        throw new UnsupportedOperationException("remove() not supported.");
-                    }
-                };
-            }
-        };
-    }
-
     public String getAttribute(String attributeName)
     {
-        for (Attribute attr = firstAttribute; attr != null; attr = attr.nextAttribute)
-        {
-            if (attr.getName().equalsIgnoreCase(attributeName))
-                return attr.value;
-        }
+        Attribute attribute = InternalUtils.get(attributes, attributeName);
 
-        return null;
+        return attribute == null ? null : attribute.value;
     }
 
     public String getName()
     {
         return name;
+    }
+
+    /**
+     * All other implementations of Node return null except this one.
+     */
+    @Override
+    Element asElement()
+    {
+        return this;
     }
 
     /**
@@ -567,12 +511,6 @@ public final class Element extends Node
         Defense.notNull(namespace, "namespace");
         Defense.notNull(namespacePrefix, "namespacePrefix");
 
-        // Don't allow an override of the XML namespace URI, per
-        // http://www.w3.org/TR/2006/REC-xml-names-20060816/#xmlReserved
-
-        if (namespace.equals(Document.XML_NAMESPACE_URI))
-            return this;
-
         if (namespaceToPrefix == null)
             namespaceToPrefix = CollectionFactory.newMap();
 
@@ -614,8 +552,7 @@ public final class Element extends Node
      */
     public Element removeChildren()
     {
-        firstChild = null;
-        lastChild = null;
+        clearChildren();
 
         return this;
     }
@@ -652,8 +589,11 @@ public final class Element extends Node
 
         // And for any attributes that have a namespace.
 
-        for (Attribute attr = firstAttribute; attr != null; attr = attr.nextAttribute)
-            addMappingIfNeeded(holder, attr.getNamespace());
+        if (attributes != null)
+        {
+            for (Attribute a : attributes.values())
+                addMappingIfNeeded(holder, a.namespace);
+        }
 
         return holder.getResult();
     }
@@ -695,12 +635,12 @@ public final class Element extends Node
 
         List<Element> elements = CollectionFactory.newList(this);
 
-        Element cursor = container;
+        Element cursor = parent;
 
         while (cursor != null)
         {
             elements.add(cursor);
-            cursor = cursor.container;
+            cursor = cursor.parent;
         }
 
         // Reverse the list, so that later elements will overwrite earlier ones.
@@ -711,261 +651,5 @@ public final class Element extends Node
             holder.putAll(e.namespaceToPrefix);
 
         return holder.getResult();
-    }
-
-    /**
-     * Returns true if the element has no children, or has only text children that contain only whitespace.
-     *
-     * @since 5.1.0.0
-     */
-    public boolean isEmpty()
-    {
-        List<Node> children = getChildren();
-
-        if (children.isEmpty()) return true;
-
-        for (Node n : children)
-        {
-            if (n instanceof Text)
-            {
-                Text t = (Text) n;
-
-                if (t.isEmpty()) continue;
-            }
-
-            // Not a text node, or a non-empty text node, then the element isn't empty.
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * Depth-first visitor traversal of this Element and its Element children. The traversal order is the same as render
-     * order.
-     *
-     * @param visitor callback
-     * @since 5.1.0.0
-     */
-    public void visit(Visitor visitor)
-    {
-        Stack<Element> queue = CollectionFactory.newStack();
-
-        queue.push(this);
-
-        while (!queue.isEmpty())
-        {
-            Element e = queue.pop();
-
-            visitor.visit(e);
-
-            e.queueChildren(queue);
-        }
-    }
-
-
-    private void queueChildren(Stack<Element> queue)
-    {
-        if (firstChild == null) return;
-
-        List<Element> childElements = CollectionFactory.newList();
-
-        for (Node cursor = firstChild; cursor != null; cursor = cursor.nextSibling)
-        {
-            if (cursor instanceof Element)
-                childElements.add((Element) cursor);
-        }
-
-        Collections.reverse(childElements);
-
-        for (Element e : childElements)
-            queue.push(e);
-    }
-
-    void addChild(Node child)
-    {
-        child.container = this;
-
-        if (lastChild == null)
-        {
-            firstChild = child;
-            lastChild = child;
-            return;
-        }
-
-        lastChild.nextSibling = child;
-        lastChild = child;
-    }
-
-    void insertChildAt(int index, Node newChild)
-    {
-        newChild.container = this;
-
-        if (index < 1)
-        {
-            newChild.nextSibling = firstChild;
-            firstChild = newChild;
-        }
-        else
-        {
-            Node cursor = firstChild;
-            for (int i = 1; i < index; i++)
-            {
-                cursor = cursor.nextSibling;
-            }
-
-
-            newChild.nextSibling = cursor.nextSibling;
-            cursor.nextSibling = newChild;
-        }
-
-        if (index < 1)
-            firstChild = newChild;
-
-        if (newChild.nextSibling == null)
-            lastChild = newChild;
-    }
-
-    boolean hasChildren()
-    {
-        return firstChild != null;
-    }
-
-    void writeChildMarkup(Document document, PrintWriter writer, Map<String, String> namespaceURIToPrefix)
-    {
-        Node cursor = firstChild;
-
-        while (cursor != null)
-        {
-            cursor.toMarkup(document, writer, namespaceURIToPrefix);
-
-            cursor = cursor.nextSibling;
-        }
-    }
-
-    /**
-     * @return the concatenation of the String representations {@link #toString()} of its children.
-     */
-    public final String getChildMarkup()
-    {
-        PrintOutCollector collector = new PrintOutCollector();
-
-        writeChildMarkup(getDocument(), collector.getPrintWriter(), null);
-
-        return collector.getPrintOut();
-    }
-
-    /**
-     * Returns an unmodifiable list of children for this element. Only {@link org.apache.tapestry5.dom.Element}s will
-     * have children.  Also, note that unlike W3C DOM, attributes are not represented as {@link
-     * org.apache.tapestry5.dom.Node}s.
-     *
-     * @return unmodifiable list of children nodes
-     */
-    @SuppressWarnings("unchecked")
-    public List<Node> getChildren()
-    {
-        List<Node> result = CollectionFactory.newList();
-        Node cursor = firstChild;
-
-        while (cursor != null)
-        {
-            result.add(cursor);
-            cursor = cursor.nextSibling;
-        }
-
-        return result;
-    }
-
-    void remove(Node node)
-    {
-        Node prior = null;
-        Node cursor = firstChild;
-
-        while (cursor != null)
-        {
-            if (cursor == node)
-            {
-                Node afterNode = node.nextSibling;
-
-                if (prior != null)
-                    prior.nextSibling = afterNode;
-                else
-                    firstChild = afterNode;
-
-                // If node was the final node in the element then handle deletion.
-                // It's even possible node was the only node in the container.
-
-                if (lastChild == node)
-                {
-                    lastChild = prior != null ? prior : null;
-                }
-
-                return;
-            }
-
-            prior = cursor;
-            cursor = cursor.nextSibling;
-        }
-
-        throw new IllegalArgumentException("Node to remove was not present as a child of this element.");
-    }
-
-    void insertChildBefore(Node existing, Node node)
-    {
-        int index = indexOfNode(existing);
-
-        node.container = this;
-
-        insertChildAt(index, node);
-    }
-
-    void insertChildAfter(Node existing, Node node)
-    {
-        Node oldAfter = existing.nextSibling;
-
-        existing.nextSibling = node;
-        node.nextSibling = oldAfter;
-
-        if (oldAfter == null)
-            lastChild = node;
-
-        node.container = this;
-    }
-
-    int indexOfNode(Node node)
-    {
-        int index = 0;
-        Node cursor = firstChild;
-
-        while (cursor != null)
-        {
-            if (node == cursor) return index;
-
-            cursor = cursor.nextSibling;
-            index++;
-        }
-
-        throw new IllegalArgumentException("Node not a child of this element.");
-    }
-
-    /**
-     * Returns the attributes for this Element as a (often empty) collection of {@link
-     * org.apache.tapestry5.dom.Attribute}s. The order of the attributes within the collection is not specified.
-     * Modifying the collection will not affect the attributes (use {@link #forceAttributes(String[])} to change
-     * existing attribute values, and {@link #attribute(String, String, String)} to add new attribute values.
-     *
-     * @return attribute collection
-     */
-    public Collection<Attribute> getAttributes()
-    {
-        Collection<Attribute> result = CollectionFactory.newList();
-
-        for (Attribute a = firstAttribute; a != null; a = a.nextAttribute)
-        {
-            result.add(a);
-        }
-
-        return result;
     }
 }

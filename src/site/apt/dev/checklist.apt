@@ -14,10 +14,10 @@ Preparation
   
 Bumping the Version Number
 
-  At this point, the version number of the project POM is 5.1.0.x-SNAPSHOT. 
+  At this point, the version number of the project POM is 5.0.x-SNAPSHOT. 
   Modules inherit their version number from the project POM version number.
   
-  We need to update the version number across all modules, from 5.1.0.x-SNAPSHOT to just 5.1.0.x.
+  We need to update the version number across all modules, from 5.0.x-SNAPSHOT to just 5.0.x.
   
   The Ruby script,  support/update-versions, can change the version numbers everywhere they need changing.  A single parameter on the command line is the new version number.
     	 
@@ -29,7 +29,7 @@ Add The Next Release to JIRA
   
   {{{https://issues.apache.org/jira/secure/project/ManageVersions.jspa?pid=12310833}https://issues.apache.org/jira/secure/project/ManageVersions.jspa?pid=12310833}}
   
-  to add the next release.  Any bugs that are fixed will be tagged with this new version number (5.1.0.x + 1).  Example: after building out 5.1.0.3, create 5.1.0.4.
+  to add the next release.  Any bugs that are fixed will be tagged with this new version number (5.0.x + 1).  Example: after building out 5.0.3, create 5.0.4.    
   Schedule it above the existing version.
   
   While you're there, use the <<Release>> option for the previous release; this ensures that any existing bugs are not marked as pending for the old release,
@@ -40,15 +40,12 @@ Generate the Release Notes
   JIRA has the ability to generate release notes automatically (this is why it is so important to keep the fix version number accurate).
   
   {{{https://issues.apache.org/jira/secure/ConfigureReleaseNote.jspa?projectId=12310833}https://issues.apache.org/jira/secure/ConfigureReleaseNote.jspa?projectId=12310833}}
-
-  <<Manually check this list for accuracy!>>  I've repeatedly seen closed bugs that were not fixed (i.e., duplicate) marked with a fix version, so that they incorrectly show
-  up in this list. Find those, edit them to remove the fix release (only actually fixed bugs should have a fix release) and re-run the report.
   
   Select the correct version, in HTML format.
   
   Paste the notes to the <<top>> of tapestry-project/src/site/xdoc/release-notes.xml
   
-  Wrap the title ("Release Notes - Tapestry - Version 5.1.0.x") inside an \<h1\> element.
+  Wrap the title ("Release Notes - Tapestry - Version 5.0.x") inside an \<h1\> element.
 
 Build and Deploy Artifacts
 
@@ -118,21 +115,21 @@ Commit Changes
   
 Tag In Subversion
 
-  You must the tag the source in SVN, copying the trunk folder to tags/releases/5.1.0.x.  The SVN tags/releases folder must
+  You must the tag the source in SVN, copying the trunk folder to tags/releases/5.0.x.  The SVN tags/releases folder must
   already exist, the specific folder must not.
 
   I do this from IntelliJ, but the command line (for example) is pretty straight forward (and I may create a script to help with this):
     
-  <<<svn copy -rHEAD https://svn.apache.org/repos/asf/tapestry/tapestry5/trunk https://svn.apache.org/repos/asf/tapestry/tapestry5/tags/releases/5.1.0.x>>>
+  <<<svn copy -rHEAD https://svn.apache.org/repos/asf/tapestry/tapestry5/trunk https://svn.apache.org/repos/asf/tapestry/tapestry5/tags/releases/5.0.x>>>
     
 
 
 Run the vote
 
-	Send a "[VOTE] Tapestry Release 5.1.0.x" message onto the dev@tapestry.apache.org mailing list.
+	Send a "[VOTE] Tapestry Release 5.0.x" message onto the dev@tapestry.apache.org mailing list.
 	
 ----
-I've created and uploaded a release of Tapestry 5.1.0.x, ready to be voted upon.
+I've created and uploaded a release of Tapestry 5.0.x, ready to be voted upon.
 
 The files are uploaded to:
 
@@ -142,11 +139,11 @@ and a Maven repository:
 
 http://people.apache.org/~hlship/tapestry-ibiblio-rsynch-repository/
 
-Please examine these files to determine if a new preview release, 5.1.0.x, is ready.
+Please examine these files to determine if a new preview release, 5.0.x, is ready.
 
-I've also created a 5.1.0.x tag in Subversion:
+I've also created a 5.0.x tag in Subversion:
 
-http://svn.apache.org/viewvc/tapestry/tapestry5/tags/releases/5.1.0.x/
+http://svn.apache.org/viewvc/tapestry/tapestry5/tags/releases/5.0.x/
 
 On a successful vote, I'll move the files from these directories to the proper distribution directories.
 
@@ -156,8 +153,6 @@ Vote will run for three days; on success I'll move the voted artifacts into plac
 On success: roll it out!
 
 * Build and Deploy Site
-
-  Use Subversion to restore your workspace to the release/5.1.0.x tag generated in the previous step.
 
   Execute <<<mvn site site:deploy -Pjavadoc>>>
 
@@ -206,7 +201,7 @@ Update the Downloads Page
   
 Advance the Version Numbers
 
-	This is optional but is useful, go find all those version numbers again and set them to 5.1.0.(n+1)-SNAPSHOT.  So, if you just released 5.1.0.3, set all the version numbers to 5.1.0.4-SNAPSHOT.    Again,
+	This is optional but is useful, go find all those version numbers again and set them to 5.0.(n+1)-SNAPSHOT.  So, if you just released 5.0.3, set all the version numbers to 5.0.4-SNAPSHOT.    Again,
 	use the support/update-versions Ruby script.  
     
     

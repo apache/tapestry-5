@@ -4,9 +4,9 @@
  
 Tapestry IoC Modules
  
-  You inform Tapestry about your services and contributions by providing a module class.
+  You inform Tapestry about your services and contributions by providing a module builder class.
 
-  The module class is a plain Java class.  A system of annotations and naming conventions allow
+  The module builder is a plain Java class.  A system of annotations and naming conventions allow
   Tapestry to determine what services are provided by the module.
 
   A module class exists for the following reasons:
@@ -23,15 +23,10 @@ Tapestry IoC Modules
 
   []
 
+  A module builder defines builder methods, one for each service provided by the module.
 
-  All public methods of a module class must be meaningful to Tapestry (be one of the categories above).  Any extra
-  public methods result in startup exceptions (because the method may contain a typo).
-
-Service Builder Methods
-
-  Service builder methods were the original way to define a service and provide the logic to construct it;
-  although this is now more commonly (and succinctly) accomplished using the bind() method, there are
-  still many cases where service builder methods are useful.
+  <<This page needs to be rewritten or reorganized; using the bind() method is the preferred way to define services,
+  service builder methods are now used in very limited circumstances.>>
 
   Service builder methods are public methods. They are often static. Here's a trivial example:
 
@@ -107,11 +102,7 @@ public class MyAppModule
   * You wish to do more than just instantiate a class; for example, to register the class as an event listener with some other service.
 
   * There is <no implementation class>; in some cases, you can create your implementation on the fly using JDK dynamic proxies or bytecode generation.
-
-  []
-
-  The bind() method must be static; an exception is thrown if the bind() method exists but is an instance method.
-
+  
 {Cacheing Services}
 
   You will occasionally find yourself in the position of injecting the same services
@@ -173,7 +164,7 @@ public class MyModule
   
   Note that the fields are final: this is important. Tapestry IoC is thread-safe and you largely
   never have to think about concurrency issues. But in a busy application, different services may be
-  built by different threads simultaneously. Each module class is a singleton, instantiated at most once, and
+  built by different threads simultaneously. Each module builder class is instantiated at most once, and
   making these fields final ensures that the values are available across multiple threads.
   Refer to Brian Goetz's {{{http://www.javaconcurrencyinpractice.com/}Java Concurrency in Practice}}
   for a more complete explanation of the relationship between final fields, constructors, and threads ...
@@ -181,15 +172,16 @@ public class MyModule
   
   Care should be taken with this approach: in some circumstances, you may force a situation in which
   the module constructor is dependent on itself. For example, if you invoke a method on any injected services
-  defined within the same module from the module class' constructor,
+  defined within the same module from the module builder's constructor,
   then the service implementation will be needed. Creating service implementations
   requires the module builder instance ... that's a recursive reference. 
     
   Tapestry detects these scenarios and throws a runtime exception to prevent an endless loop.
+    
 
-Module Class Implementation Notes
+Module Builder Implementation Notes
 
-  Module classes are designed to be very, very simple to implement.
+  Module builder classes are designed to be very, very simple to implement.
     
   Again, keep the methods very simple. Use {{{service.html#Injecting Dependencies}parameter injection}}
   to gain access to the dependencies you need.
@@ -197,7 +189,7 @@ Module Class Implementation Notes
   Be careful about inheritance. Tapestry will see all <public> methods,
   even those inherited from base classes.  Tapestry <only> sees public methods.  
   
-  By convention, module class names end in Module and are final classes.
+  By convention, module builder class names end in Module and are final classes.
   
   You don't <have> to define your methods as static. The use of static methods is only absolutely
   necessary in a few cases, where the constructor for a module is dependent on contributions

@@ -4,9 +4,6 @@
  
 Tapestry IoC Decorators
 
-  <<Decoration has been replaced, in Tapestry 5.1, with {{{advice.html}advice}},
-  which is a simpler mechanism for accomplishing the same thing.>>
-
   <Decoration> is the name of a popular design pattern.  Using decoration,
   an existing object's behavior can be extended without changing the implementation
   of the object.
@@ -38,7 +35,7 @@ Tapestry IoC Decorators
   Decorators often are used in the context of <cross-cutting concerns>, such as logging or
   transaction management. This approach is a kind of <aspect oriented design>.
   
-  One such cross cutting concern is lazy initialization of services.  In Apache HiveMind, services
+  One such cross cutting concern is lazy initialization of services.  In HiveMind, services
   are created only as needed, when a method of a service interface is first invoked.
   This concern is supplied by the Tapestry IoC framework itself, but similar
   concerns are easily implemented as decorations.

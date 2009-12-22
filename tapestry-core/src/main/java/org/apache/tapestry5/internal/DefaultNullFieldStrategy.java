@@ -30,7 +30,7 @@ public class DefaultNullFieldStrategy implements NullFieldStrategy
     }
 
     /**
-     * Returns null .
+     * Returns the empty string.
      */
     public String replaceFromClient()
     {

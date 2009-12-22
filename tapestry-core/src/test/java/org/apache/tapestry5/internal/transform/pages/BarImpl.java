@@ -16,6 +16,9 @@ package org.apache.tapestry5.internal.transform.pages;
 
 import org.apache.tapestry5.internal.services.BarInterface;
 
+/**
+ *
+ */
 public class BarImpl extends FooImpl implements BarInterface
 {
 

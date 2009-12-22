@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -29,8 +29,6 @@ import java.util.Map;
 public class AssetSourceImpl implements AssetSource
 {
     private static final String CLASSPATH = "classpath";
-
-    private static final String CONTEXT = "context";
 
     private final StrategyRegistry<AssetFactory> registry;
 
@@ -73,56 +71,32 @@ public class AssetSourceImpl implements AssetSource
         return getAsset(null, path, locale);
     }
 
-    public Asset getContextAsset(String path, Locale locale)
-    {
-        return getAsset(prefixToRootResource.get(CONTEXT), path, locale);
-    }
-
     public Asset getAsset(Resource baseResource, String path, Locale locale)
-    {
-        return getAssetInLocale(baseResource, path, defaulted(locale));
-    }
-
-    public Resource resourceForPath(String path)
-    {
-        return getUnlocalizedResource(null, path);
-    }
-
-    private Asset getAssetInLocale(Resource baseResource, String path, Locale locale)
-    {
-        return getLocalizedAssetFromResource(getUnlocalizedResource(baseResource, path), locale);
-    }
-
-    private Resource getUnlocalizedResource(Resource baseResource, String path)
     {
         Defense.notBlank(path, "path");
 
+        if (baseResource == null) baseResource = prefixToRootResource.get(CLASSPATH);
+
+        if (locale == null) locale = threadLocale.getLocale();
+
         int colonx = path.indexOf(':');
 
-        if (colonx < 0)
-        {
-            Resource root = baseResource != null ? baseResource : prefixToRootResource.get(CLASSPATH);
-
-            return root.forFile(path);
-        }
+        if (colonx < 0) return findRelativeAsset(baseResource, path, locale);
 
         String prefix = path.substring(0, colonx);
 
-        Resource root = prefixToRootResource.get(prefix);
+        Resource rootResource = prefixToRootResource.get(prefix);
 
-        if (root == null)
+        if (rootResource == null)
             throw new IllegalArgumentException(ServicesMessages.unknownAssetPrefix(path));
 
-
-        return root.forFile(path.substring(colonx + 1));
+        return findRelativeAsset(rootResource, path.substring(colonx + 1), locale);
     }
 
-
-    private Asset getLocalizedAssetFromResource(Resource unlocalized, Locale locale)
+    private Asset findRelativeAsset(Resource baseResource, String path, Locale locale)
     {
-        Resource localized = locale == null
-                             ? unlocalized
-                             : unlocalized.forLocale(locale);
+        Resource unlocalized = baseResource.forFile(path);
+        Resource localized = unlocalized.forLocale(locale);
 
         if (localized == null)
             throw new RuntimeException(ServicesMessages.assetDoesNotExist(unlocalized));
@@ -143,11 +117,6 @@ public class AssetSourceImpl implements AssetSource
         return result;
     }
 
-    private Locale defaulted(Locale locale)
-    {
-        return locale != null ? locale : threadLocale.getLocale();
-    }
-
     private Asset createAssetFromResource(Resource resource)
     {
         // The class of the resource is derived from the class of the base resource.
@@ -160,4 +129,5 @@ public class AssetSourceImpl implements AssetSource
 
         return factory.createAsset(resource);
     }
+
 }

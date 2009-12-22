@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,7 +14,6 @@
 
 package org.apache.tapestry5.internal.structure;
 
-import org.apache.tapestry5.Binding;
 import org.apache.tapestry5.Block;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.ComponentResourcesCommon;
@@ -22,6 +21,7 @@ import org.apache.tapestry5.internal.InternalComponentResources;
 import org.apache.tapestry5.internal.InternalComponentResourcesCommon;
 import org.apache.tapestry5.internal.services.Instantiator;
 import org.apache.tapestry5.ioc.Location;
+import org.apache.tapestry5.model.ParameterModel;
 import org.apache.tapestry5.runtime.*;
 import org.slf4j.Logger;
 
@@ -70,19 +70,9 @@ public interface ComponentPageElement extends ComponentResourcesCommon, Internal
     /**
      * Adds a mixin.
      *
-     * @param mixinId      a unique id for the mixin, the last term of the mixin's class name
      * @param instantiator used to instantiate an instance of the mixin
-     * @param order        Ordering strings used to determine the order of mixin execution.
      */
-    void addMixin(String mixinId, Instantiator instantiator, String... order);
-
-    /**
-     * @param mixinId       id of previously added mixin
-     * @param parameterName simple (unqualified) name of parameter
-     * @param binding       binding for parameter
-     * @since 5.1.0.0
-     */
-    void bindMixinParameter(String mixinId, String parameterName, Binding binding);
+    void addMixin(Instantiator instantiator);
 
     /**
      * Retrieves a component page element by its id. The search is caseless.
@@ -118,19 +108,26 @@ public interface ComponentPageElement extends ComponentResourcesCommon, Internal
     boolean dispatchEvent(ComponentEvent event);
 
     /**
+     * Searches the component (and its mixins) for a formal parameter matching the given name. If found, the {@link
+     * ParameterModel#getDefaultBindingPrefix() default binding prefix} is returned. Otherwise the parameter is an
+     * informal parameter, and null is returned.
+     *
+     * @param parameterName the name of the parameter, possibly qualified with the mixin class name
+     * @return the default binding prefix, or null
+     */
+    String getDefaultBindingPrefix(String parameterName);
+
+    /**
      * Creates a new child component of the invoked component.  The new element will be added as an embedded element of
      * its container.
      *
      * @param id           simple id of the new component
-     * @param nestedId
-     * @param completeId
      * @param elementName  name of the component's element in its container's template
      * @param instantiator used to create a component instance, and access the component's model
-     * @param location     location of the element within its container's template @return the new component
+     * @param location     location of the element within its container's template
+     * @return the new component
      */
-    ComponentPageElement newChild(String id, String nestedId, String completeId, String elementName,
-                                  Instantiator instantiator,
-                                  Location location);
+    ComponentPageElement newChild(String id, String elementName, Instantiator instantiator, Location location);
 
     /**
      * Returns a logger used to for logging event dispatch and event method invocation.

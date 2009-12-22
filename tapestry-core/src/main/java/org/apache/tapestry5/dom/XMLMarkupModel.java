@@ -1,4 +1,4 @@
-// Copyright 2006, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,16 +19,6 @@ package org.apache.tapestry5.dom;
  */
 public final class XMLMarkupModel extends AbstractMarkupModel
 {
-    public XMLMarkupModel()
-    {
-        this(false);
-    }
-
-    public XMLMarkupModel(boolean useApostropheForAttributes)
-    {
-        super(useApostropheForAttributes);
-    }
-
     /**
      * Always returns ABBREVIATE.
      */

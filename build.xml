@@ -109,7 +109,6 @@
         <copy-licenses module="tapestry-ioc"/>
         <copy-licenses module="tapestry-core"/>
         <copy-licenses module="tapestry-hibernate"/>
-        <copy-licenses module="tapestry-hibernate-core"/>
         <copy-licenses module="tapestry-spring"/>
         <copy-licenses module="tapestry-upload"/>
 
@@ -143,7 +142,6 @@
             <zipfileset prefix="tapestry-annotations" dir="tapestry-annotations" includes="${sources}"/>
             <zipfileset prefix="tapestry-core" dir="tapestry-core" includes="${sources}"/>
             <zipfileset prefix="tapestry-hibernate" dir="tapestry-hibernate" includes="${sources}"/>
-            <zipfileset prefix="tapestry-hibernate-core" dir="tapestry-hibernate-core" includes="${sources}"/>
             <zipfileset prefix="tapestry-ioc" dir="tapestry-ioc" includes="${sources}"/>
             <zipfileset prefix="tapestry-spring" dir="tapestry-spring" includes="${sources}"/>
             <zipfileset prefix="tapestry-test" dir="tapestry-test" includes="${sources}"/>

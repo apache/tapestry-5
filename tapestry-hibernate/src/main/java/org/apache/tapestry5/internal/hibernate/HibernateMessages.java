@@ -15,11 +15,29 @@
 package org.apache.tapestry5.internal.hibernate;
 
 import org.apache.tapestry5.ioc.Messages;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.MessagesImpl;
+
+import java.util.Collection;
 
 class HibernateMessages
 {
     private static final Messages MESSAGES = MessagesImpl.forClass(HibernateMessages.class);
+
+    static String startupTiming(long toConfigure, long overall)
+    {
+        return MESSAGES.format("startup-timing", toConfigure, overall);
+    }
+
+    static String entityCatalog(Collection entityNames)
+    {
+        return MESSAGES.format("entity-catalog", InternalUtils.joinSorted(entityNames));
+    }
+
+    static String configurationImmutable()
+    {
+        return MESSAGES.get("configuration-immutable");
+    }
 
     static String sessionPersistedEntityLoadFailure(String entityName, Object id, Throwable cause)
     {

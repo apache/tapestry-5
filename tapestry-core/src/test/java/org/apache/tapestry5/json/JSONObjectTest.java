@@ -1,4 +1,4 @@
-// Copyright 2007, 2009 The Apache Software Foundation
+// Copyright 2007 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,9 +18,7 @@ import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-import java.math.BigDecimal;
 import java.util.Arrays;
-import java.util.HashMap;
 
 /**
  * Tests JSONObject, particularily in terms of parsing and writing JSON streams.
@@ -91,7 +89,7 @@ public class JSONObjectTest extends Assert
         assertEquals(object.getBoolean("mykey"), expected);
     }
 
-    @DataProvider
+    @DataProvider(name = "boolean_inputs")
     public Object[][] boolean_inputs()
     {
         return new Object[][] { { "true", true }, { "TRUE", true }, { "false", false }, { "FALSE", false },
@@ -200,7 +198,7 @@ public class JSONObjectTest extends Assert
         }
     }
 
-    @Test(dataProvider = "double_to_string_data")
+    @Test(dataProvider = "double_inputs")
     public void double_to_string(double input, String expected)
     {
         String actual = JSONObject.doubleToString(input);
@@ -208,14 +206,14 @@ public class JSONObjectTest extends Assert
         assertEquals(actual, expected);
     }
 
-    @DataProvider
-    public Object[][] double_to_string_data()
+    @DataProvider(name = "double_inputs")
+    public Object[][] double_inputs()
     {
         return new Object[][] { { 3d, "3" }, { -22.5d, "-22.5" }, { 0d, "0" }, { Double.NEGATIVE_INFINITY, "null" },
                 { Double.POSITIVE_INFINITY, "null" }, { Double.NaN, "null" }, };
     }
 
-    @Test(dataProvider = "get_double_data")
+    @Test(dataProvider = "get_double_inputs")
     public void get_double(Object value, double expected)
     {
         JSONObject object = new JSONObject();
@@ -225,8 +223,8 @@ public class JSONObjectTest extends Assert
         assertEquals(object.getDouble("key"), expected);
     }
 
-    @DataProvider
-    public Object[][] get_double_data()
+    @DataProvider(name = "get_double_inputs")
+    public Object[][] getDoubleInputs()
     {
         return new Object[][] { { new Double(3.5), 3.5d }, { new Long(1000), 1000d }, { "-101.7", -101.7d } };
     }
@@ -277,7 +275,7 @@ public class JSONObjectTest extends Assert
         assertEquals(object.getInt("intkey"), expected);
     }
 
-    @DataProvider
+    @DataProvider(name = "get_int_inputs")
     public Object[][] get_int_inputs()
     {
         return new Object[][] { { "3", 3 }, { new Long(97), 97 }, { "-8.76", -8 } };
@@ -385,490 +383,5 @@ public class JSONObjectTest extends Assert
 
         assertEquals(names, new String[] { "barney", "fred" });
 
-    }
-
-    @Test
-    public void parse_null()
-    {
-        JSONObject object = new JSONObject("{ \"nullkey\": null }");
-
-        assertSame(object.get("nullkey"), JSONObject.NULL);
-    }
-
-    @Test
-    public void emit_null()
-    {
-        JSONObject object = new JSONObject();
-
-        object.put("nullkey", JSONObject.NULL);
-
-        assertEquals(object.toString(), "{\"nullkey\":null}");
-
-        assertTrue(object.isNull("nullkey"));
-    }
-
-    @Test
-    public void null_matches_java_null()
-    {
-        assertTrue(JSONObject.NULL.equals(null));
-    }
-
-    @DataProvider
-    public final Object[][] bad_parse_data()
-    {
-        return new Object[][]
-                {
-                        { "{  ", "A JSONObject text must end with '}' at character 3 of {" },
-                        { "fred", "A JSONObject text must begin with '{' at character 1 of fred" },
-                        { "{ \"akey\" }", "Expected a ':' after a key at character 10 of { \"akey\" }" },
-                        { "{ \"fred\" : 1 \"barney\" }",
-                                "Expected a ',' or '}' at character 14 of { \"fred\" : 1 \"barney\" }" },
-                        { "{ \"list\" : [1, 2", "Expected a ',' or ']' at character 16 of { \"list\" : [1, 2" }
-                };
-
-    }
-
-    @Test(dataProvider = "bad_parse_data")
-    public void jsonobject_parse_errors(String input, String expectedMessage)
-    {
-        try
-        {
-            new JSONObject(input);
-            unreachable();
-        }
-        catch (RuntimeException ex)
-        {
-            assertEquals(ex.getMessage().trim(), expectedMessage);
-        }
-    }
-
-    @Test
-    public void alternate_key_value_seperators()
-    {
-        JSONObject object = new JSONObject("{ \"fred\" = 1; \"barney\" => 2 }");
-
-        assertEquals(object.getInt("fred"), 1);
-        assertEquals(object.getInt("barney"), 2);
-    }
-
-    @Test
-    public void get_long_from_number()
-    {
-        JSONObject object = new JSONObject("{ \"key\": 92 }");
-
-        assertEquals(object.getLong("key"), 92l);
-    }
-
-    @Test
-    public void get_long_from_string()
-    {
-        JSONObject object = new JSONObject("{ \"key\": \"-200\" }");
-
-        assertEquals(object.getLong("key"), -200l);
-    }
-
-    @Test
-    public void get_string_from_number()
-    {
-        JSONObject object = new JSONObject("{ \"key\": 92 }");
-
-        assertEquals(object.getString("key"), "92");
-    }
-
-    @Test
-    public void number_to_string_conversion()
-    {
-        JSONObject object = new JSONObject();
-
-        object.put("key", new BigDecimal("100.0000000"));
-
-        assertEquals(object.toString(), "{\"key\":100}");
-    }
-
-    @Test
-    public void parse_empty_object()
-    {
-        assertEquals(new JSONObject("{}").length(), 0);
-    }
-
-    @Test
-    public void put_null_is_remove()
-    {
-        JSONObject object = new JSONObject();
-
-        object.put("key", "value");
-
-        object.put("key", null);
-
-        assertEquals(object.toString(), "{}");
-
-        assertTrue(object.keys().isEmpty());
-    }
-
-    @Test
-    public void quote_null_is_empty_string()
-    {
-        assertEquals(JSONObject.quote(null), "\"\"");
-    }
-
-    @Test
-    public void quote_empty_string_is_empty_string()
-    {
-        assertEquals(JSONObject.quote(""), "\"\"");
-    }
-
-    @Test
-    public void character_escapes_in_quote()
-    {
-        assertEquals(JSONObject.quote("\"/\b\t\n\f\r\u2001/a</"), "\"\\\"/\\b\\t\\n\\f\\r\\u2001/a<\\/\"");
-    }
-
-    @DataProvider
-    public Object[][] non_finite_data()
-    {
-        return new Object[][]
-                {
-                        { Double.NaN },
-                        { Double.NEGATIVE_INFINITY },
-                        { Float.NEGATIVE_INFINITY },
-                        { Float.NaN }
-                };
-    }
-
-    @Test(dataProvider = "non_finite_data")
-    public void non_finite_numbers_not_allowed(Number nonfinite)
-    {
-        JSONObject object = new JSONObject();
-
-        try
-        {
-            object.put("nonfinite", nonfinite);
-            unreachable();
-        }
-        catch (RuntimeException ex)
-        {
-            assertEquals(ex.getMessage(), "JSON does not allow non-finite numbers.");
-        }
-    }
-
-    @Test
-    public void invalid_object_added()
-    {
-        try
-        {
-            JSONObject.testValidity(new HashMap());
-            unreachable();
-        }
-        catch (RuntimeException ex)
-        {
-            assertEquals(ex.getMessage(),
-                         "JSONObject properties may be one of Boolean, Number, String, org.apache.tapestry5.json.JSONArray, org.apache.tapestry5.json.JSONLiteral, org.apache.tapestry5.json.JSONObject, org.apache.tapestry5.json.JSONObject$Null, org.apache.tapestry5.json.JSONString. Type java.util.HashMap is not allowed.");
-        }
-    }
-
-    @Test
-    public void output_json_string()
-    {
-        JSONString string = new JSONString()
-        {
-            public String toJSONString()
-            {
-                return "*VALUE*";
-            }
-        };
-
-        JSONObject object = new JSONObject();
-
-        object.put("key", string);
-
-        assertEquals(object.toString(), "{\"key\":\"*VALUE*\"}");
-    }
-
-    @Test
-    public void equals_implementation()
-    {
-        String text = "{ \"key\" : 99 }";
-
-        JSONObject obj1 = new JSONObject(text);
-        JSONObject obj2 = new JSONObject(text);
-
-        assertTrue(obj1.equals(obj1));
-        assertTrue(obj1.equals(obj2));
-        assertFalse(obj1.equals(null));
-        assertFalse(obj1.equals(text));
-
-        obj2.put("anotherkey", "something");
-
-        assertFalse(obj1.equals(obj2));
-    }
-
-    @Test
-    public void parse_escaped()
-    {
-        JSONObject object = new JSONObject("{ \"key\" : \"\\\"/\\b\\t\\n\\f\\r\\u2001/a<\\/\\x20\" }");
-
-        assertEquals(object.get("key"), "\"/\b\t\n\f\r\u2001/a</ ");
-    }
-
-    @Test
-    public void parse_nested_object()
-    {
-        JSONObject object = new JSONObject("{ \"key\" : { \"name\" : \"inner\" }}");
-
-        JSONObject inner = object.getJSONObject("key");
-        assertEquals(inner.getString("name"), "inner");
-    }
-
-    @Test
-    public void parse_true_and_false()
-    {
-        JSONObject object = new JSONObject("{ \"t\" : true, \"f\" : false }");
-
-        assertEquals(object.getBoolean("t"), true);
-        assertEquals(object.getBoolean("f"), false);
-    }
-
-    @Test
-    public void parse_number_forms()
-    {
-        JSONObject object = new JSONObject("{ \"hex\" : 0x50, \"oct\" : 030, \"posInt\" : +50, " +
-                " \"negInt\" : -50, \"long\" : 4294968530, \"float\": -32.7 }");
-
-        assertEquals(object.getInt("hex"), 80);
-        assertEquals(object.getInt("oct"), 24);
-        assertEquals(object.getInt("posInt"), 50);
-        assertEquals(object.getInt("negInt"), -50);
-        assertEquals(object.getLong("long"), 4294968530l);
-        assertEquals(object.getDouble("float"), -32.7d);
-    }
-
-    @Test
-    public void json_array_from_values()
-    {
-        assertEquals(new JSONArray("fred", "barney", "wilma").toString(), "[\"fred\",\"barney\",\"wilma\"]");
-    }
-
-    @Test
-    public void array_must_start_with_bracket()
-    {
-        try
-        {
-            new JSONArray("1, 2, 3]");
-            unreachable();
-        }
-        catch (RuntimeException ex)
-        {
-            assertEquals(ex.getMessage(), "A JSONArray text must start with '[' at character 1 of 1, 2, 3]");
-        }
-    }
-
-    @Test
-    public void parse_empty_array()
-    {
-        assertEquals(new JSONArray("[]").length(), 0);
-    }
-
-    @Test
-    public void empty_element_is_null()
-    {
-        JSONArray array = new JSONArray("[1,,3]");
-
-        assertEquals(array.getInt(0), 1);
-        assertTrue(array.isNull(1));
-        assertEquals(array.getInt(2), 3);
-    }
-
-    @Test
-    public void comma_at_end_of_list_is_ignored()
-    {
-        JSONArray array = new JSONArray("[1,2,]");
-
-        assertEquals(array.length(), 2);
-        assertEquals(array.getInt(0), 1);
-        assertEquals(array.getInt(1), 2);
-    }
-
-    @Test
-    public void not_a_boolean_at_index()
-    {
-        JSONArray array = new JSONArray("[alpha]");
-
-        try
-        {
-            array.getBoolean(0);
-            unreachable();
-        }
-        catch (RuntimeException ex)
-        {
-            assertEquals(ex.getMessage(), "JSONArray[0] is not a Boolean.");
-        }
-    }
-
-    @Test
-    public void boolean_values()
-    {
-        JSONArray array = new JSONArray(true, false, "True", "False");
-
-        assertTrue(array.getBoolean(0));
-        assertTrue(array.getBoolean(2));
-
-        assertFalse(array.getBoolean(1));
-        assertFalse(array.getBoolean(3));
-    }
-
-
-    @Test
-    public void not_a_double_at_index()
-    {
-        JSONArray array = new JSONArray(true);
-
-        try
-        {
-            array.getDouble(0);
-            unreachable();
-        }
-        catch (RuntimeException ex)
-        {
-            assertEquals(ex.getMessage(), "JSONArray[0] is not a number.");
-        }
-    }
-
-    @Test
-    public void get_double_from_array()
-    {
-        JSONArray array = new JSONArray(400l, "95.5");
-
-        assertEquals(array.getDouble(0), 400.d);
-        assertEquals(array.getDouble(1), 95.5d);
-    }
-
-    @Test
-    public void get_long_from_array()
-    {
-        JSONArray array = new JSONArray(400l, "95.5");
-
-        assertEquals(array.getLong(0), 400l);
-        assertEquals(array.getLong(1), 95l);
-    }
-
-    @Test
-    public void not_a_nested_array_at_index()
-    {
-        JSONArray array = new JSONArray("fred", "barney");
-
-        try
-        {
-            array.getJSONArray(1);
-            unreachable();
-        }
-        catch (RuntimeException ex)
-        {
-            assertEquals(ex.getMessage(), "JSONArray[1] is not a JSONArray.");
-        }
-    }
-
-    @Test
-    public void get_nested_array()
-    {
-        JSONArray nested = new JSONArray();
-        JSONArray outer = new JSONArray(nested);
-
-        assertSame(outer.getJSONArray(0), nested);
-    }
-
-    @Test
-    public void not_a_json_object_at_index()
-    {
-        JSONArray array = new JSONArray("fred", "barney", "wilma");
-
-        try
-        {
-            array.getJSONObject(1);
-            unreachable();
-        }
-        catch (RuntimeException ex)
-        {
-            assertEquals(ex.getMessage(), "JSONArray[1] is not a JSONObject.");
-        }
-    }
-
-    @Test
-    public void get_json_object_at_index()
-    {
-        JSONObject inner = new JSONObject();
-
-        JSONArray array = new JSONArray("fred", true, inner);
-
-        assertSame(array.getJSONObject(2), inner);
-    }
-
-    @Test
-    public void put_at_negative_index_is_invalid()
-    {
-        JSONArray array = new JSONArray();
-
-        try
-        {
-            array.put(-1, "fred");
-            unreachable();
-        }
-        catch (RuntimeException ex)
-        {
-            assertEquals(ex.getMessage(), "JSONArray[-1] not found.");
-        }
-    }
-
-    @Test
-    public void put_overrides_existing_value_in_array()
-    {
-        JSONArray array = new JSONArray("fred", "barney", "wilma");
-
-        array.put(2, "betty");
-
-        assertEquals(array.getString(2), "betty");
-    }
-
-    @Test
-    public void put_pads_short_array_with_nulls()
-    {
-        JSONArray array = new JSONArray("fred", "barney", "wilma");
-
-        array.put(4, "bambam");
-
-        assertTrue(array.isNull(3));
-        assertEquals(array.getString(4), "bambam");
-    }
-
-    @Test
-    public void array_equality()
-    {
-        JSONArray array1 = new JSONArray(1, 2, 3);
-        JSONArray array2 = new JSONArray(1, 2, 3);
-
-        assertTrue(array1.equals(array1));
-        assertFalse(array1.equals(null));
-        assertFalse(array1.equals(this));
-
-        assertTrue(array1.equals(array2));
-
-        array2.put(9, "stuff");
-
-        assertFalse(array1.equals(array2));
-    }
-
-    @Test
-    public void null_to_string()
-    {
-        assertEquals(JSONObject.NULL.toString(), "null");
-    }
-
-    @Test
-    public void json_literal()
-    {
-        JSONObject obj = new JSONObject();
-
-        obj.put("callback", new JSONLiteral("function(x) { $('bar').show(); }"));
-
-        assertEquals(obj.toString(), "{\"callback\":function(x) { $('bar').show(); }}");
     }
 }

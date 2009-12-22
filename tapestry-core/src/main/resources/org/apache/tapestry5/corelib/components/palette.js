@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
 
 Tapestry.Palette = Class.create({
 
-    // id: of main select element                                                                                                 ˜
+    // id: of main select element
     // reorder: true to enable extra controls for changing selection order
     // naturalOrder: array of values, the proper order for the elements (needed when de-selecting items)
     initialize : function(id, reorder, naturalOrder)
@@ -22,19 +22,19 @@ Tapestry.Palette = Class.create({
         this.reorder = reorder;
         // The SELECT elements
 
-        this.avail = $(id + "-avail");
+        this.avail = $(id + ":avail");
         this.selected = $(id);
 
-        this.hidden = $(id + "-values");
+        this.hidden = $(id + ":values");
 
         // The BUTTON elements
-        this.select = $(id + "-select");
-        this.deselect = $(id + "-deselect");
+        this.select = $(id + ":select");
+        this.deselect = $(id + ":deselect");
 
         if (this.reorder)
         {
-            this.up = $(id + "-up");
-            this.down = $(id + "-down");
+            this.up = $(id + ":up");
+            this.down = $(id + ":down");
         }
 
         this.valueToOrderIndex = {};
@@ -133,11 +133,6 @@ Tapestry.Palette = Class.create({
 
     transferOptions : function (from, to, atEnd)
     {
-        // don't bother moving the options if nothing is selected. this can happen
-        // if you double-click a disabled option
-        if (from.selectedIndex == -1)
-            return;
-
         // from: SELECT to move option(s) from (those that are selected)
         // to: SELECT to add option(s) to
         // atEnd : if true, add at end, otherwise by natural sort order

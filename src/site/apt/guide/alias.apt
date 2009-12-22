@@ -5,7 +5,7 @@
 Introduction
 
   Tapestry goes to great lengths so that you can use the 
-  {{{inject.html}Inject}} annotation on a field
+  {{{inject.htmll}Inject}} annotation on a field
   and provide no additional data, yet end up with the correct object or service.
   
   In many cases, Tapestry must match a field type to an available IoC service.

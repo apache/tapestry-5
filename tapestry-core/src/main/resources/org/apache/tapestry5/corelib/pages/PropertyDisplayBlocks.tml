@@ -8,10 +8,6 @@
         <t:output value="context.propertyValue" format="dateFormat"/>
     </t:block>
 
-    <t:block id="calendar">
-        <t:output value="calendarDate" format="dateFormat"/>
-    </t:block>
-
     <t:block id="password">
         <t:delegate to="passwordRenderer"/>
     </t:block>

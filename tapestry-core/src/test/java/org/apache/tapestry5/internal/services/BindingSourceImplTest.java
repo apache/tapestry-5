@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -28,8 +28,6 @@ import java.util.Map;
 
 public class BindingSourceImplTest extends InternalBaseTestCase
 {
-    private final StringInterner interner = new StringInternerImpl();
-
     @Test
     public void expression_has_no_prefix()
     {
@@ -51,7 +49,7 @@ public class BindingSourceImplTest extends InternalBaseTestCase
 
         map.put(defaultPrefix, factory);
 
-        BindingSource source = new BindingSourceImpl(map, interner);
+        BindingSource source = new BindingSourceImpl(map);
 
         Binding actual = source.newBinding(
                 description,
@@ -87,7 +85,7 @@ public class BindingSourceImplTest extends InternalBaseTestCase
 
         map.put(defaultPrefix, factory);
 
-        BindingSource source = new BindingSourceImpl(map, interner);
+        BindingSource source = new BindingSourceImpl(map);
 
         Binding actual = source.newBinding(
                 description,
@@ -123,7 +121,7 @@ public class BindingSourceImplTest extends InternalBaseTestCase
 
         map.put("prop", factory);
 
-        BindingSource source = new BindingSourceImpl(map, interner);
+        BindingSource source = new BindingSourceImpl(map);
 
         Binding actual = source.newBinding(
                 description,
@@ -160,7 +158,7 @@ public class BindingSourceImplTest extends InternalBaseTestCase
 
         map.put(defaultPrefix, factory);
 
-        BindingSource source = new BindingSourceImpl(map, interner);
+        BindingSource source = new BindingSourceImpl(map);
 
         try
         {
@@ -197,7 +195,7 @@ public class BindingSourceImplTest extends InternalBaseTestCase
 
         map.put(defaultPrefix, factory);
 
-        BindingSource source = new BindingSourceImpl(map, interner);
+        BindingSource source = new BindingSourceImpl(map);
 
         try
         {

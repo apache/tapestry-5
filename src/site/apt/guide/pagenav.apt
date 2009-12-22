@@ -22,8 +22,8 @@ Page Navigation
 Component Event Requests
   
   Component event requests may take the form of hyperlinks
-  ({{{../ref/org/apache/tapestry5/corelib/components/ActionLink.html}ActionLink}}) or form submissions
-  ({{{../ref/org/apache/tapestry5/corelib/components/Form.html}Form}}).
+  ({{{../component-parameters.html#org.apache.tapestry5.corelib.components.actionlink}ActionLink}}) or form submissions
+  ({{{../component-parameters.html#org.apache.tapestry5.corelib.components.form}Form}}).
   
   In both cases, the value returned from an {{{event.html}event handler method}} controls the response sent to the client web browser.
   
@@ -75,7 +75,8 @@ Component Event Requests
   {{{../apidocs/org/apache/tapestry5/Link.html}Link}} instance directly.  The Link is converted into a URL and a client redirect to that URL is sent to the client.
   
   The {{{../apidocs/org/apache/tapestry5/ComponentResources.html}ComponentResources}} object that is injected into your pages (and components) has methods
-  for creating component event and page render links.
+  for creating action and page links (they are actually defined in
+  {{{../apidocs/org/apache/tapestry5/ComponentResourcesCommon.html}ComponentResourcesCommon}}).
   
 * Stream response
 

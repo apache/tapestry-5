@@ -1,4 +1,4 @@
-// Copyright 2006, 2008, 2009 The Apache Software Foundation
+// Copyright 2006 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ package org.apache.tapestry5.ioc;
  * configuration.
  * <p/>
  * A service can <em>collect</em> contributions in three different ways: <ul> <li>As an un-ordered collection of
- * values</li> <li>As an ordered list of values (where each value has a unique id, pre-requisites and
+ * values</li> <li>As an ordered list of values (where each value has a unique id, pre-requisited and
  * post-requisites)</li> <li>As a map of keys and values </ul>
  * <p/>
  * The service defines the <em>type</em> of contribution, in terms of a base class or service interface. Contributions
@@ -37,35 +37,4 @@ public interface OrderedConfiguration<T>
      * @parm object to add to the service's configuration
      */
     void add(String id, T object, String... constraints);
-
-    /**
-     * Overrides a normally contributed object.  Each override must match a single normally contributed object.
-     *
-     * @param id          identifies object to override
-     * @param object      overriding object (may be null)
-     * @param constraints contrains for the overridden object, replacing constraints for the original object (even if
-     *                    omitted, in which case the override object will have no orderring contraints)
-     * @since 5.1.0.0
-     */
-    void override(String id, T object, String... constraints);
-
-    /**
-     * Adds an ordered object by instantiating (with dependencies) the indicated class.
-     *
-     * @param id          of contribution (used for ordering)
-     * @param clazz       class to instantiate
-     * @param constraints used to order the object relative to other contributed objects
-     * @since 5.1.0.0
-     */
-    void addInstance(String id, Class<? extends T> clazz, String... constraints);
-
-    /**
-     * Instantiates an object and adds it as an override.
-     *
-     * @param id          of object to override
-     * @param clazz       to instantiate
-     * @param constraints override contraints
-     * @since 5.1.0.0
-     */
-    void overrideInstance(String id, Class<? extends T> clazz, String... constraints);
 }

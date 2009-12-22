@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -264,11 +264,12 @@ public class PropBindingFactoryTest extends InternalBaseTestCase
         {
             assertEquals(
                     ex.getMessage(),
-                    "Expression 'stringHolderMethod().stringValue()' for class org.apache.tapestry5.internal.bindings.TargetBean is read-only.");
+                    "Expression stringHolderMethod().stringValue() for class org.apache.tapestry5.internal.bindings.TargetBean is read-only.");
             assertSame(ex.getLocation(), l);
         }
 
         verify();
+
     }
 
     @Test
@@ -435,6 +436,7 @@ public class PropBindingFactoryTest extends InternalBaseTestCase
         }
 
         verify();
+
     }
 
     @Test
@@ -483,7 +485,7 @@ public class PropBindingFactoryTest extends InternalBaseTestCase
         {
             assertEquals(
                     ex.getMessage(),
-                    "Expression 'readOnly' for class org.apache.tapestry5.internal.bindings.TargetBean is read-only.");
+                    "Expression readOnly for class org.apache.tapestry5.internal.bindings.TargetBean is read-only.");
             assertEquals(ex.getLocation(), l);
         }
 
@@ -549,8 +551,8 @@ public class PropBindingFactoryTest extends InternalBaseTestCase
         verify();
     }
 
-    @Test(dataProvider = "values")
-    public void special_prop_binding_values(String expression, Object expected)
+    @Test
+    public void special_prop_binding_value_null()
     {
         Location l = mockLocation();
         String description = "my description";
@@ -558,7 +560,22 @@ public class PropBindingFactoryTest extends InternalBaseTestCase
         Component component = mockComponent();
 
         train_getComponent(resources, component);
-        train_getCompleteId(resources, "Does.not.matter");
+
+        replay();
+
+        Binding binding = factory.newBinding(description, resources, null, "this", l);
+
+        assertSame(binding.get(), component);
+
+        verify();
+    }
+
+    @Test(dataProvider = "values")
+    public void special_prop_binding_values(String expression, Object expected)
+    {
+        Location l = mockLocation();
+        String description = "my description";
+        ComponentResources resources = mockComponentResources();
 
         replay();
 
@@ -566,40 +583,34 @@ public class PropBindingFactoryTest extends InternalBaseTestCase
 
         assertEquals(binding.get(), expected);
 
-        // All of these are invariatns, even though they are generated from the PropertyConduit.
-
-        assertTrue(binding.isInvariant());
-
         verify();
     }
 
-    @DataProvider
+    @DataProvider(name = "values")
     public Object[][] values()
     {
         return new Object[][]
                 {
-                        { "true", true, },
-                        { "True", true, },
-                        { " true ", true, },
-                        { "false", false },
-                        { "null", null },
-                        { "3", 3l },
-                        { " 37 ", 37l },
-                        { " -227", -227l },
-                        { " 5.", 5d },
-                        { " -100.", -100d },
-                        { " -0.0 ", -0d },
-                        { "+50", 50l },
-                        { "+7..+20", new IntegerRange(7, 20) },
-                        { "+5.5", 5.5d },
-                        { "1..10", new IntegerRange(1, 10) },
-                        { " -20 .. -30 ", new IntegerRange(-20, -30) },
-                        { "0.", 0d },
-                        { " 227.75", 227.75d },
-                        { " -10123.67", -10123.67d },
-                        { "'Hello World'", "Hello World" },
-                        { " 'Whitespace Ignored' ", "Whitespace Ignored" },
-                        { " ' Inside ' ", " Inside " }
-                };
+                        {"true", true,},
+                        {"True", true,},
+                        {" true ", true,},
+                        {"false", false},
+                        {"null", null},
+                        {"3", 3l},
+                        {" 37 ", 37l},
+                        {" -227", -227l},
+                        {" 5.", 5d},
+                        {" -100.", -100d},
+                        {" -0.0 ", -0d},
+                        {"1..10", new IntegerRange(1, 10)},
+                        {" -20 .. -30 ", new IntegerRange(-20, -30)},
+                        {"0.", 0d},
+                        {" 227.75", 227.75d},
+                        {" -10123.67", -10123.67d},
+                        {"'Hello World'", "Hello World"},
+                        {" 'Whitespace Ignored' ", "Whitespace Ignored"},
+                        {" ' Inside ' ", " Inside "},
+                        {" 'Nested ' Quotes ' Inside'", "Nested ' Quotes ' Inside"},
+                        {"'''", "'"}};
     }
 }

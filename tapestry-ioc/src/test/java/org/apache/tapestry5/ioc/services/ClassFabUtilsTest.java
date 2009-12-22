@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ import org.testng.annotations.Test;
 public class ClassFabUtilsTest extends IOCTestCase
 {
 
-    @Test(dataProvider = "createInputs")
+    @Test(dataProvider = "provider")
     public void to_jvm_binary_name(String input, String expected)
     {
         String actual = ClassFabUtils.toJVMBinaryName(input);
@@ -29,7 +29,7 @@ public class ClassFabUtilsTest extends IOCTestCase
         assertEquals(actual, expected);
     }
 
-    @DataProvider
+    @DataProvider(name = "provider")
     public Object[][] createInputs()
     {
         return new Object[][] { { "java.lang.Object", "java.lang.Object" },
@@ -51,8 +51,8 @@ public class ClassFabUtilsTest extends IOCTestCase
         assertEquals(ClassFabUtils.getTypeCode(input), expected);
     }
 
-    @DataProvider
-    public Object[][] typeCodeProvider()
+    @DataProvider(name = "typeCodeProvider")
+    public Object[][] get_type_code_provider()
     {
         return new Object[][] { { int.class, "I" },
 

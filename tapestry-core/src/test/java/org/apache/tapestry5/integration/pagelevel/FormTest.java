@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2009 The Apache Software Foundation
+// Copyright 2006, 2007 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -31,8 +31,9 @@ public class FormTest extends Assert
     @Test
     public void submit_form()
     {
-        tester = new PageTester(TestConstants.APP2_PACKAGE, TestConstants.APP2_NAME);
-
+        String appPackage = "org.apache.tapestry5.integration.app2";
+        String appName = "";
+        tester = new PageTester(appPackage, appName);
         Document doc = tester.renderPage("TestPageForForm");
         Element form = doc.getElementById("form1");
         Map<String, String> fieldValues = CollectionFactory.newMap();

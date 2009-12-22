@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,10 +14,10 @@
 
 package org.apache.tapestry5.ioc.internal;
 
-import org.apache.tapestry5.ioc.Invokable;
 import org.apache.tapestry5.ioc.ObjectCreator;
+import org.apache.tapestry5.ioc.OperationTracker;
 import org.apache.tapestry5.ioc.ServiceDecorator;
-import org.apache.tapestry5.ioc.def.ServiceDef;
+import org.apache.tapestry5.ioc.internal.util.Invokable;
 
 import java.util.Collections;
 import java.util.List;
@@ -28,30 +28,34 @@ import java.util.List;
  */
 public class InterceptorStackBuilder implements ObjectCreator
 {
-    private final ServiceDef serviceDef;
+    private final String serviceId;
 
-    private final ObjectCreator delegate;
+    private final ObjectCreator coreServiceCreator;
 
-    private final InternalRegistry registry;
+    private final Module module;
+
+    private final OperationTracker tracker;
 
     /**
-     * @param serviceDef service begin decorated
-     * @param delegate   responsible for creating the object to be decorated
-     * @param registry   access to service decorators
+     * @param module             the module containing the decorator method
+     * @param serviceId          identifies the service to be decorated
+     * @param coreServiceCreator responsible for creating the core service which is then decorated with a stack of
+     * @param tracker            used to track which decorator is being invoked
      */
-    public InterceptorStackBuilder(ServiceDef serviceDef, ObjectCreator delegate,
-                                   InternalRegistry registry)
+    public InterceptorStackBuilder(Module module, String serviceId, ObjectCreator coreServiceCreator,
+                                   OperationTracker tracker)
     {
-        this.serviceDef = serviceDef;
-        this.delegate = delegate;
-        this.registry = registry;
+        this.module = module;
+        this.serviceId = serviceId;
+        this.coreServiceCreator = coreServiceCreator;
+        this.tracker = tracker;
     }
 
     public Object createObject()
     {
-        Object current = delegate.createObject();
+        Object current = coreServiceCreator.createObject();
 
-        List<ServiceDecorator> decorators = registry.findDecoratorsForService(serviceDef);
+        List<ServiceDecorator> decorators = module.findDecoratorsForService(serviceId);
 
         // We get the decorators ordered according to their dependencies. However, we want to
         // process from the last interceptor to the first, so we reverse the list.
@@ -63,7 +67,7 @@ public class InterceptorStackBuilder implements ObjectCreator
             final Object delegate = current;
 
             Object interceptor =
-                    registry.invoke("Invoking " + decorator, new Invokable<Object>()
+                    tracker.invoke("Invoking " + decorator, new Invokable<Object>()
                     {
                         public Object invoke()
                         {

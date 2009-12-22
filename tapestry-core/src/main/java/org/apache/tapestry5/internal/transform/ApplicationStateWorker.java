@@ -15,10 +15,7 @@
 package org.apache.tapestry5.internal.transform;
 
 import org.apache.tapestry5.annotations.ApplicationState;
-import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.internal.services.ComponentClassCache;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.services.ApplicationStateManager;
 import org.apache.tapestry5.services.ClassTransformation;
@@ -28,11 +25,10 @@ import org.apache.tapestry5.services.TransformMethodSignature;
 import static java.lang.String.format;
 import java.lang.reflect.Modifier;
 import java.util.List;
-import java.util.Map;
 
 /**
- * Looks for the {@link ApplicationState} and {@link org.apache.tapestry5.annotations.SessionState} annotations and
- * converts read and write access on such fields into calls to the {@link ApplicationStateManager}.
+ * Looks for the {@link ApplicationState} annotation and converts read and write access on such fields into calls to the
+ * {@link ApplicationStateManager}.
  */
 public class ApplicationStateWorker implements ComponentClassTransformWorker
 {
@@ -49,41 +45,20 @@ public class ApplicationStateWorker implements ComponentClassTransformWorker
 
     public void transform(ClassTransformation transformation, MutableComponentModel model)
     {
-        Map<String, Boolean> fields = CollectionFactory.newMap();
+        List<String> names = transformation.findFieldsWithAnnotation(ApplicationState.class);
 
-        List<String> asoNames = transformation.findFieldsWithAnnotation(ApplicationState.class);
-
-        for (String name : asoNames)
-        {
-            ApplicationState applicationState = transformation.getFieldAnnotation(name, ApplicationState.class);
-
-            fields.put(name, applicationState.create());
-        }
-
-
-        List<String> ssoNames = transformation.findFieldsWithAnnotation(SessionState.class);
-
-        for (String name : ssoNames)
-        {
-            SessionState sessionState = transformation.getFieldAnnotation(name, SessionState.class);
-
-            fields.put(name, sessionState.create());
-        }
-
-
-        if (fields.isEmpty()) return;
+        if (names.isEmpty()) return;
 
         String managerFieldName = transformation.addInjectedField(ApplicationStateManager.class,
                                                                   "applicationStateManager", applicationStateManager);
 
-        for (String fieldName : InternalUtils.sortedKeys(fields))
+        for (String fieldName : names)
         {
-            processField(fieldName, managerFieldName, transformation, fields.get(fieldName));
+            processField(fieldName, managerFieldName, transformation);
         }
     }
 
-    private void processField(String fieldName, String managerFieldName, ClassTransformation transformation,
-                              boolean create)
+    private void processField(String fieldName, String managerFieldName, ClassTransformation transformation)
     {
         String fieldType = transformation.getFieldType(fieldName);
 
@@ -91,7 +66,7 @@ public class ApplicationStateWorker implements ComponentClassTransformWorker
 
         String typeFieldName = transformation.addInjectedField(Class.class, fieldName + "_type", fieldClass);
 
-        replaceRead(transformation, fieldName, fieldType, managerFieldName, typeFieldName, create);
+        replaceRead(transformation, fieldName, fieldType, managerFieldName, typeFieldName);
 
         replaceWrite(transformation, fieldName, fieldType, managerFieldName, typeFieldName);
 
@@ -140,14 +115,17 @@ public class ApplicationStateWorker implements ComponentClassTransformWorker
     }
 
     private void replaceRead(ClassTransformation transformation, String fieldName, String fieldType,
-                             String managerFieldName, String typeFieldName, boolean create)
+                             String managerFieldName, String typeFieldName)
     {
+        ApplicationState annotation = transformation.getFieldAnnotation(fieldName, ApplicationState.class);
+
+
         String readMethodName = transformation.newMemberName("read", fieldName);
 
         TransformMethodSignature readMethodSignature = new TransformMethodSignature(Modifier.PRIVATE, fieldType,
                                                                                     readMethodName, null, null);
 
-        String methodName = create ? "get" : "getIfExists";
+        String methodName = annotation.create() ? "get" : "getIfExists";
 
         String body = format("return (%s) %s.%s(%s);", fieldType, managerFieldName, methodName, typeFieldName);
 

@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,7 +15,10 @@
 package org.apache.tapestry5.corelib.components;
 
 import org.apache.tapestry5.*;
-import org.apache.tapestry5.annotations.*;
+import org.apache.tapestry5.annotations.Component;
+import org.apache.tapestry5.annotations.Parameter;
+import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.beaneditor.BeanModel;
 import org.apache.tapestry5.internal.beaneditor.BeanModelUtils;
 import org.apache.tapestry5.ioc.annotations.Inject;
@@ -29,13 +32,10 @@ import org.apache.tapestry5.services.BeanModelSource;
  * annotation), and the order and validation for the properties determined from annotations on the property's getter and
  * setter methods.
  * <p/>
- * You may add block parameters to the component; when the name matches (case insensitive) the name of a property, then
- * the corresponding Block is renderered, rather than any of the built in property editor blocks. This allows you to
- * override specific properties with your own customized UI, for cases where the default UI is insufficient, or no
+ * You may add &lt;t:parameter&gt;s to the component; when the name matches (case insensitive) the name of a property,
+ * then the corresponding Block is renderered, rather than any of the built in property editor blocks. This allows you
+ * to override specific properties with your own customized UI, for cases where the default UI is insufficient, or no
  * built-in editor type is appropriate.
- * <p/>
- * BeanEditForm contains a {@link org.apache.tapestry5.corelib.components.Form} component and will trigger all the
- * events of a Form.
  *
  * @see org.apache.tapestry5.beaneditor.BeanModel
  * @see org.apache.tapestry5.services.BeanModelSource
@@ -43,10 +43,8 @@ import org.apache.tapestry5.services.BeanModelSource;
  * @see org.apache.tapestry5.beaneditor.DataType
  */
 @SupportsInformalParameters
-@Events(EventConstants.PREPARE)
 public class BeanEditForm implements ClientElement, FormValidationControl
 {
-
     /**
      * The text label for the submit button of the form, by default "Create/Update".
      */
@@ -96,8 +94,22 @@ public class BeanEditForm implements ClientElement, FormValidationControl
     @Parameter(defaultPrefix = BindingConstants.LITERAL)
     private String reorder;
 
-    @Component(parameters =
-            "validationId=componentResources.id", publishParameters = "clientValidation,autofocus,zone")
+    /**
+     * May be bound, to override the Form's default for clientValidation.
+     */
+    @Parameter
+    private boolean clientValidation;
+
+    /**
+     * Binding the zone parameter will cause the form submission to be handled as an Ajax request that updates the
+     * indicated zone.  Often a BeanEditForm will update the same zone that contains it.
+     */
+    @Parameter(defaultPrefix = BindingConstants.LITERAL)
+    private String zone;
+
+    @Component(parameters = {"clientValidation=inherit:clientValidation",
+            "validationId=componentResources.id",
+            "zone=inherit:zone"})
     private Form form;
 
     /**

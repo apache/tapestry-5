@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,14 +15,12 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.internal.InternalConstants;
+import org.apache.tapestry5.internal.events.InvalidationListener;
 import org.apache.tapestry5.internal.parser.ComponentTemplate;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.ioc.Resource;
-import org.apache.tapestry5.ioc.internal.services.ClasspathURLConverterImpl;
 import org.apache.tapestry5.ioc.internal.util.ClasspathResource;
-import org.apache.tapestry5.ioc.services.ClasspathURLConverter;
 import org.apache.tapestry5.model.ComponentModel;
-import org.apache.tapestry5.services.InvalidationListener;
 import org.testng.annotations.Test;
 
 import java.io.File;
@@ -39,8 +37,6 @@ public class ComponentTemplateSourceImplTest extends InternalBaseTestCase
     static public final String PATH = "org/apache/tapestry5/internal/pageload";
 
     private final ClassLoader loader = Thread.currentThread().getContextClassLoader();
-    
-    private final ClasspathURLConverter converter = new ClasspathURLConverterImpl();
 
     /**
      * Creates a new class loader, whose parent is the thread's context class loader, but adds a single classpath root
@@ -56,7 +52,7 @@ public class ComponentTemplateSourceImplTest extends InternalBaseTestCase
         URL url = new URL(urlPath + "/");
 
         return new URLClassLoader(new URL[]
-                {url}, loader);
+                { url }, loader);
     }
 
     /**
@@ -90,7 +86,7 @@ public class ComponentTemplateSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentTemplateSource source = new ComponentTemplateSourceImpl(parser, null, converter);
+        ComponentTemplateSource source = new ComponentTemplateSourceImpl(parser, null);
 
         assertSame(source.getTemplate(model, Locale.ENGLISH), template);
 
@@ -134,7 +130,7 @@ public class ComponentTemplateSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentTemplateSourceImpl source = new ComponentTemplateSourceImpl(parser, null, converter);
+        ComponentTemplateSourceImpl source = new ComponentTemplateSourceImpl(parser, null);
         source.addInvalidationListener(listener);
 
         assertSame(source.getTemplate(model, Locale.ENGLISH), template);
@@ -149,7 +145,7 @@ public class ComponentTemplateSourceImplTest extends InternalBaseTestCase
 
         verify();
 
-        // Now, change the file and processInbound an UpdateEvent.
+        // Now, change the file and process an UpdateEvent.
 
         touch(f);
 
@@ -198,7 +194,7 @@ public class ComponentTemplateSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentTemplateSourceImpl source = new ComponentTemplateSourceImpl(parser, null, converter);
+        ComponentTemplateSourceImpl source = new ComponentTemplateSourceImpl(parser, null);
 
         assertSame(source.getTemplate(model, Locale.ENGLISH), template);
 
@@ -239,7 +235,7 @@ public class ComponentTemplateSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentTemplateSourceImpl source = new ComponentTemplateSourceImpl(parser, locator, converter);
+        ComponentTemplateSourceImpl source = new ComponentTemplateSourceImpl(parser, locator);
 
         assertSame(source.getTemplate(model, locale), template);
 
@@ -265,7 +261,7 @@ public class ComponentTemplateSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentTemplateSourceImpl source = new ComponentTemplateSourceImpl(parser, locator, converter);
+        ComponentTemplateSourceImpl source = new ComponentTemplateSourceImpl(parser, locator);
 
         ComponentTemplate template = source.getTemplate(model, Locale.ENGLISH);
 
@@ -303,7 +299,7 @@ public class ComponentTemplateSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentTemplateSource source = new ComponentTemplateSourceImpl(parser, locator, converter);
+        ComponentTemplateSource source = new ComponentTemplateSourceImpl(parser, locator);
 
         assertSame(source.getTemplate(model, Locale.ENGLISH), template);
 

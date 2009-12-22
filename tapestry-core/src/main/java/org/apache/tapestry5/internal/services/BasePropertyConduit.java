@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,10 +15,8 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.PropertyConduit;
-import org.apache.tapestry5.internal.util.IntegerRange;
 import org.apache.tapestry5.ioc.AnnotationProvider;
 import org.apache.tapestry5.ioc.internal.util.Defense;
-import org.apache.tapestry5.ioc.services.TypeCoercer;
 
 import java.lang.annotation.Annotation;
 
@@ -34,50 +32,30 @@ public abstract class BasePropertyConduit implements PropertyConduit
 
     private final String description;
 
-    private final TypeCoercer typeCoercer;
-
-    public BasePropertyConduit(Class propertyType, AnnotationProvider annotationProvider, String description,
-                               TypeCoercer typeCoercer)
+    public BasePropertyConduit(Class propertyType, AnnotationProvider annotationProvider, String description)
     {
         Defense.notNull(propertyType, "propertyType");
         Defense.notNull(annotationProvider, "annotationProvider");
         Defense.notBlank(description, "description");
-        Defense.notNull(typeCoercer, "typeCoercer");
 
         this.propertyType = propertyType;
         this.annotationProvider = annotationProvider;
         this.description = description;
-        this.typeCoercer = typeCoercer;
     }
 
     @Override
-    public final String toString()
+    public String toString()
     {
         return description;
     }
 
-    public final <T extends Annotation> T getAnnotation(Class<T> annotationClass)
+    public <T extends Annotation> T getAnnotation(Class<T> annotationClass)
     {
         return annotationProvider.getAnnotation(annotationClass);
     }
 
-    public final Class getPropertyType()
+    public Class getPropertyType()
     {
         return propertyType;
-    }
-
-    public final IntegerRange range(int from, int to)
-    {
-        return new IntegerRange(from, to);
-    }
-
-    protected final <T> T coerce(Object value, Class<T> type)
-    {
-        return typeCoercer.coerce(value, type);
-    }
-
-    public final boolean invert(Object value)
-    {
-        return coerce(value, Boolean.class).equals(Boolean.FALSE);
     }
 }

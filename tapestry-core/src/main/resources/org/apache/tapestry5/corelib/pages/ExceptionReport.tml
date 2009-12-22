@@ -1,4 +1,4 @@
-<html xml:space="default" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd" xmlns:p="tapestry:parameter">
+<html xml:space="default" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
     <head>
         <title>Application Exception</title>
     </head>
@@ -7,17 +7,15 @@
 
         <t:if test="productionMode">
             <p>${rootException.message}</p>
-            <p:else>
+            <t:parameter name="else">
                 <t:exceptiondisplay exception="rootException"/>
 
                 <div class="t-env-data">
 
                     <h2>Tapestry Framework</h2>
                     <dl>
-                        <dt>Tapestry Version</dt>
+                        <dt>Version</dt>
                         <dd>${tapestryVersion}</dd>
-                        <dt>Application Version</dt>
-                        <dd>${applicationVersion}</dd>
                     </dl>
 
                     <h2>Request</h2>
@@ -40,22 +38,22 @@
                         <t:loop source="systemProperties" value="propertyName">
                             <dt>${propertyName}</dt>
                             <dd>
-                                <t:if test="! complexProperty">
+                                <t:if test="simpleProperty">
                                     ${propertyValue}
-                                    <p:else>
+                                    <t:parameter name="else">
                                         <ul>
                                             <li t:type="loop" source="complexPropertyValue" value="var:path">
                                                 ${var:path}
                                             </li>
                                         </ul>
-                                    </p:else>
+                                    </t:parameter>
                                 </t:if>
                             </dd>
                         </t:loop>
                     </dl>
 
                 </div>
-            </p:else>
+            </t:parameter>
         </t:if>
     </body>
 

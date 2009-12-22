@@ -1,4 +1,4 @@
-// Copyright 2007, 2009 The Apache Software Foundation
+// Copyright 2007 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@ package org.apache.tapestry5.ioc;
 
 import org.apache.tapestry5.ioc.annotations.EagerLoad;
 import org.apache.tapestry5.ioc.annotations.Scope;
+import org.apache.tapestry5.ioc.def.ServiceDef;
 
 import java.lang.annotation.Annotation;
 
@@ -23,7 +24,7 @@ import java.lang.annotation.Annotation;
  * Allows additional options for a service to be specified, overriding hard coded defaults or defaults from annotations
  * on the service.
  *
- * @see org.apache.tapestry5.ioc.def.ServiceDef2
+ * @see ServiceDef
  */
 public interface ServiceBindingOptions
 {
@@ -42,7 +43,6 @@ public interface ServiceBindingOptions
      *
      * @param scope
      * @return this binding options, for further configuration
-     * @see org.apache.tapestry5.ioc.ScopeConstants
      */
     ServiceBindingOptions scope(String scope);
 
@@ -53,13 +53,6 @@ public interface ServiceBindingOptions
      * @return this binding options, for further configuration
      */
     ServiceBindingOptions eagerLoad();
-
-    /**
-     * Disallows service decoration for this service.
-     *
-     * @return this binding options, for further configuration
-     */
-    ServiceBindingOptions preventDecoration();
 
     /**
      * Defines the marker interface(s) for the service, used to connect injections by type at the point of injection

@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2009 The Apache Software Foundation
+// Copyright 2006, 2007 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,9 +18,7 @@ import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.internal.util.URLChangeTracker;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.Resource;
-import org.apache.tapestry5.ioc.internal.services.ClasspathURLConverterImpl;
 import org.apache.tapestry5.ioc.internal.util.ClasspathResource;
-import org.apache.tapestry5.ioc.services.ClasspathURLConverter;
 import org.apache.tapestry5.model.ComponentModel;
 import org.testng.annotations.Test;
 
@@ -37,15 +35,13 @@ public class ComponentMessagesSourceImplTest extends InternalBaseTestCase
 
     private static final String SIMPLE_COMPONENT_CLASS_NAME = "org.apache.tapestry5.internal.services.SimpleComponent";
 
-    private final ClasspathURLConverter converter = new ClasspathURLConverterImpl();
-
-    private final URLChangeTracker tracker = new URLChangeTracker(converter);
+    private final URLChangeTracker tracker = new URLChangeTracker();
 
     private final Resource simpleComponentResource = new ClasspathResource(
             "org/apache/tapestry5/internal/services/SimpleComponent.class");
 
     private final ComponentMessagesSourceImpl source = new ComponentMessagesSourceImpl(
-            simpleComponentResource.forFile("AppCatalog.properties"), tracker);
+            simpleComponentResource, "AppCatalog.properties", tracker);
 
     @Test
     public void simple_component()
@@ -208,8 +204,8 @@ public class ComponentMessagesSourceImplTest extends InternalBaseTestCase
 
         forceCacheClear();
 
-        ComponentMessagesSource source = new ComponentMessagesSourceImpl(
-                simpleComponentResource.forFile("NoSuchAppCatalog.properties"), converter);
+        ComponentMessagesSource source = new ComponentMessagesSourceImpl(simpleComponentResource,
+                                                                         "NoSuchAppCatalog.properties");
 
         Messages messages = source.getMessages(model, Locale.ENGLISH);
 

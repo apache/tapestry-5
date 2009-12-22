@@ -1,4 +1,4 @@
-// Copyright 2007, 2009 The Apache Software Foundation
+// Copyright 2007 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,8 +16,6 @@ package org.apache.tapestry5.annotations;
 
 import org.apache.tapestry5.Block;
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.ioc.annotations.UseWith;
-import static org.apache.tapestry5.ioc.annotations.AnnotationUseContext.*;
 
 import java.lang.annotation.Documented;
 import static java.lang.annotation.ElementType.FIELD;
@@ -32,7 +30,6 @@ import java.lang.annotation.Target;
 @Target(FIELD)
 @Documented
 @Retention(RUNTIME)
-@UseWith({COMPONENT,MIXIN,PAGE,SERVICE})
 public @interface Id
 {
     /**

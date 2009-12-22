@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
 package org.apache.tapestry5.internal.beaneditor;
 
 import org.apache.tapestry5.beaneditor.BeanModel;
-import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 
 /**
  * Utilities used in a few places to modify an existing {@link BeanModel}.
@@ -39,23 +38,16 @@ public final class BeanModelUtils
     {
         if (addPropertyNames != null) add(model, addPropertyNames);
 
-        if (includePropertyNames != null) include(model, join(includePropertyNames, addPropertyNames));
+        if (includePropertyNames != null) include(model, includePropertyNames);
 
         if (excludePropertyNames != null) exclude(model, excludePropertyNames);
 
         if (reorderPropertyNames != null) reorder(model, reorderPropertyNames);
     }
 
-    private static final String join(String firstList, String optionalSecondList)
-    {
-        if (InternalUtils.isBlank(optionalSecondList)) return firstList;
-
-        return firstList + "," + optionalSecondList;
-    }
-
     /**
      * Adds empty properties to the bean model.  New properties are added with a <em>null</em> {@link
-     * org.apache.tapestry5.PropertyConduit}. `
+     * org.apache.tapestry5.PropertyConduit}.
      *
      * @param model         to be modified
      * @param propertyNames comma-separated list of property names

@@ -44,7 +44,7 @@ Form component
   from Tapestry 4.  Instead, a hidden field generated during the render stores
   the information needed to process the form submission.
   
-  After the fields have done their processing, the Form emits a "validateForm" event.
+  After the fields have done their processing, the Form emits a "validate" event.
   This is a chance to perform cross-form validation that can't be described declaratively.
   
   Next, the Form determines if there have been any validation errors.  If there have been,
@@ -153,7 +153,7 @@ Configuring Fields and Labels
 	The template for page contains a minimal amount of Tapestry instrumentation:
 	
 +---+
-<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd">
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
     <head>
         <title>Login</title>
     </head>
@@ -239,16 +239,13 @@ Errors and Decorations
   This is nice and seamless; the same look and feel and behavior for both the built-in validators, and for errors generated based on
   application logic.
 
-Centralizing Validation with @Validate and Property Files
+Centralizing Validation with @Validate
 
   The {{{../apidocs/org/apache/tapestry5/beaneditor/Validate.html}Validate}} annotation can take the place of the
   validate parameter of TextField, PasswordField, TextArea and other components.  When the validate parameter
   is not bound, the component will check for the @Validate annotation and use its value as the validation definition.
 
   The annotation may be placed on the getter or setter method, or on the field itself.
-
-  Validation constraints can also be specified in the properties file of the containing page or component.
-  The key takes the form <propertyId>-validate.  For example: username-validate=required,minlength=6.
 
 Customizing Validation Messages
 
@@ -305,28 +302,6 @@ ssn-regexp-message=Social security numbers are in the format 12-34-5678.
   This technique also works with the BeanEditForm; as with validation messages, the
   formId is the BeanEditForm component's id, and the
   fieldId is the name of the property being editted.
-
-Available Validators
-
-  Currently Tapestry provides the following built-in validators:
-
-*-----------+-----------------+---------------------------------------------------------------------+-----------------------------------------------------------------------+
-| Validator | Constraint Type | Description                                                         | Example                                                               |
-*-----------+-----------------+---------------------------------------------------------------------+-----------------------------------------------------------------------+
-| email     | -               | Ensures that the given input is a valid e-mail address              | <<<\<t:textfield value="email" validate="email" /\>>>>                |
-*-----------+-----------------+---------------------------------------------------------------------+-----------------------------------------------------------------------+
-| max       | long            | Enforces a maximum integer value                                    | <<<\<t:textfield value="age" validate="max=120,min=0" /\>>>>          |
-*-----------+-----------------+---------------------------------------------------------------------+-----------------------------------------------------------------------+
-| maxLength | int             | Makes sure that a string value has a maximum length                 | <<<\<t:textfield value="zip" validate="maxlength=7" /\>>>>            |
-*-----------+-----------------+---------------------------------------------------------------------+-----------------------------------------------------------------------+
-| min       | long            | Enforces a minimum integer value                                    | <<<\<t:textfield value="age" validate="max=120,min=0" /\>>>>          |
-*-----------+-----------------+---------------------------------------------------------------------+-----------------------------------------------------------------------+
-| minLength | int             | Makes sure that a string value has a minimum length                 | <<<\<t:textfield value="somefield" validate="minlength=1" /\>>>>      |
-*-----------+-----------------+---------------------------------------------------------------------+-----------------------------------------------------------------------+
-| regexp    | pattern         | Makes sure that a string value conforms to a given pattern          | <<<\<t:textfield value="otherfield" validate="regexp=^[a-z]+$" /\>>>> |
-*-----------+-----------------+---------------------------------------------------------------------+-----------------------------------------------------------------------+
-| required  | -               | Makes sure that a string value is not null and not the empty string | <<<\<t:textfield value="name" validate="required" /\>>>>              |
-*-----------+-----------------+---------------------------------------------------------------------+-----------------------------------------------------------------------+
 
 Overriding the Translator with Events
 
@@ -404,5 +379,4 @@ Overriding the Translator with Events
   This means that, in certain circumstances,
   an input value will be rejected on the client side even though it is valid on the server side.   You may
   need to disable client-side validation in order to use this feature.
-
 

@@ -145,7 +145,7 @@ Tapestry: The Full Cycle Solution
   You don't have to worry about URLs. Incoming requests for Tapestry encode the
   name of the page and the id of the component within the page, along with other information,
   into the URL for you. Your code never has to pick apart a URL, you create
-  {{{guide/event.html}event handler methods}} to know when the user has clicked a link
+  {{{../guide/event.html}event handler methods}} to know when the user has clicked a link
   or submitted a form, or done something more interesting using Ajax.  Tapestry has the structure it needs
   to build all necessary information into the URL, and unpack that information in a later request.
   
@@ -154,7 +154,7 @@ Tapestry: The Full Cycle Solution
   your application using true object oriented techniques.
 
   In terms of state management: Tapestry takes care of 
-  {{{guide/persist.html}persisting field values into the session}}. You don't have to figure out mnemonic,
+  {{{tapestry-core/guide/persist.html}persisting field values into the session}}. You don't have to figure out mneumonic,
   unique names for session attributes, or write code to pull data out of the session or push it back in.
   Tapestry is able to do this for you.
 
@@ -174,13 +174,13 @@ Making the Transition
   of pages that are connected together.  
   
   You don't create URLs and map them to singleton classes; you put a <component> in your page, and
-  add an {{{guide/event.html}event handling method}} to your class to be invoked when that component is triggered. Many components?
+  add an {{{tapestry-core/guide/event.html}event handling method}} to your class to be invoked when that component is triggered. Many components?
   No problem, just add more event handler methods.
   
 Leave Behind the Pain
 
   Tired of constantly rebuilding and redeploying your application every time you make a change? Tapestry features
-  {{{guide/reload.html}live class reloading}}. Every time you make a change to your code or your templates, Tapestry picks up the
+  {{{tapestry-core/guide/reload.html}live class reloading}}. Every time you make a change to your code or your templates, Tapestry picks up the
   changes immediately ... no waiting!  Just think about how fast and easy building an application is without the expected
   constraints; scripting language speed with all the power of Java.
   

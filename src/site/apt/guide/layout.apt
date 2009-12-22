@@ -20,7 +20,7 @@ Layout Component
 * Layout.tml
 
 ----
-<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd">
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
     <head>
         <title>My Nifty Web Application</title>
     </head>
@@ -72,10 +72,10 @@ public class Layout
   \<link\> element to the template.
 
 
-* Index.tml
+* Start.tml
 
 ----
-<html t:type="layout" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd">
+<html t:type="layout" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
 
    <h1>Welcome to the Nifty Web Application!</h1>
 
@@ -85,7 +85,7 @@ public class Layout
 </html>
 ----
 
-  This is an example of using the Layout component.  To keep our Index.tml template
+  This is an example of using the Layout component.  To keep our Start.tml template
   relatively previewable, we are using an \<html\> element and the t:type
   attribute to specify that it is a component.
 

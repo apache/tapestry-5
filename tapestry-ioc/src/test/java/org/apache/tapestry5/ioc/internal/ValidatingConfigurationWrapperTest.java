@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,13 +15,9 @@
 package org.apache.tapestry5.ioc.internal;
 
 import org.apache.tapestry5.ioc.Configuration;
-import org.apache.tapestry5.ioc.ObjectLocator;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.def.ContributionDef;
+import org.slf4j.Logger;
 import org.testng.annotations.Test;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class ValidatingConfigurationWrapperTest extends IOCInternalTestCase
 {
@@ -29,81 +25,76 @@ public class ValidatingConfigurationWrapperTest extends IOCInternalTestCase
     @Test
     public void valid_contribution()
     {
-        List<Runnable> collection = CollectionFactory.newList();
+        ContributionDef def = mockContributionDef();
+        Logger logger = mockLogger();
+        Configuration configuration = mockConfiguration();
         Runnable value = mockRunnable();
+
+        configuration.add(value);
 
         replay();
 
-        Configuration wrapper = new ValidatingConfigurationWrapper(collection, "foo.Bar",
-                                                                   Runnable.class, null);
+        Configuration wrapper = new ValidatingConfigurationWrapper("foo.Bar", logger,
+                                                                   Runnable.class, def, configuration);
 
         wrapper.add(value);
 
         verify();
-
-        assertListsEquals(collection, value);
-    }
-
-    @SuppressWarnings({"unchecked"})
-    @Test
-    public void valid_class_contribution()
-    {
-        ObjectLocator locator = mockObjectLocator();
-        final HashMap value = new HashMap();
-        train_autobuild(locator, HashMap.class, value);
-        List<Map> collection = CollectionFactory.newList();
-
-        replay();
-
-        Configuration wrapper = new ValidatingConfigurationWrapper(collection, "foo.Bar",
-                                                                   Map.class, locator);
-
-        wrapper.addInstance(HashMap.class);
-
-        verify();
-
-        assertListsEquals(collection, value);
     }
 
     @SuppressWarnings("unchecked")
     @Test
     public void null_contribution()
     {
-        List<Runnable> collection = CollectionFactory.newList();
+        Logger logger = mockLogger();
+        Configuration configuration = mockConfiguration();
+        ContributionDef def = new ContributionDefImpl("Bar", findMethod("contributeUnorderedNull"),
+                                                      getClassFactory());
 
-        Configuration wrapper = new ValidatingConfigurationWrapper(collection, "Bar", Runnable.class,
-                                                                   null);
+        logger.warn(IOCMessages.contributionWasNull("Bar", def));
 
-        try
-        {
-            wrapper.add(null);
-            unreachable();
-        }
-        catch (NullPointerException ex)
-        {
-            assertEquals(ex.getMessage(), "Service contribution (to service 'Bar') was null.");
-        }
+        replay();
+
+        Configuration wrapper = new ValidatingConfigurationWrapper("Bar", logger, Runnable.class,
+                                                                   def, configuration);
+
+        wrapper.add(null);
+
+        verify();
     }
 
     @SuppressWarnings("unchecked")
     @Test
     public void wrong_type_of_contribution()
     {
-        List<Runnable> collection = CollectionFactory.newList();
+        Logger logger = mockLogger();
+        Configuration configuration = mockConfiguration();
+        ContributionDef def = new ContributionDefImpl("Bar", findMethod("contributeUnorderedNull"),
+                                                      getClassFactory());
 
+        logger.warn(IOCMessages
+                .contributionWrongValueType("Bar", def, String.class, Runnable.class));
 
-        Configuration wrapper = new ValidatingConfigurationWrapper(collection, "Bar", Runnable.class,
-                                                                   null);
+        replay();
 
-        try
-        {
-            wrapper.add("runnable");
-            unreachable();
-        }
-        catch (IllegalArgumentException ex)
-        {
-            assertEquals(ex.getMessage(),
-                         "Service contribution (to service 'Bar') was an instance of java.lang.String, which is not assignable to the configuration type java.lang.Runnable.");
-        }
+        Configuration wrapper = new ValidatingConfigurationWrapper("Bar", logger, Runnable.class,
+                                                                   def, configuration);
+
+        wrapper.add("runnable");
+
+        verify();
     }
+
+    // Just a placeholder to give the errors something to report about
+
+    public void contributeUnorderedNull()
+    {
+
+    }
+
+    public void contributeWrongType()
+    {
+
+    }
+
 }

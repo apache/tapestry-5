@@ -27,7 +27,7 @@ public class ViewPerson
 +----+   
 
 +----+
-<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd">
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
 <body>
   The person's name is: ${person.name}
 </body>
@@ -74,49 +74,6 @@ public class ViewPerson
   
   This persistence strategy works with any Hibernate entity that is associated with a valid Hibernate Session by persisting only the id
   of the entity. Notice that no onPassivate() method is needed; when the page renders the entity is loaded by the id stored in the session.
-  
-Using @SessionState with entities
-
-  The default strategy for persisting Session State Objects is "session". Storing a Hibernate entity into a <HttpSession> is problematic 
-  because the stored entity is detached from the Hibernate session. Similar to @Persist("entity") you may use the "entity" persistence 
-  strategy to persist Hibernate entities as SSOs:
-  
-+----+
-public class Index
-{
-  @SessionState
-  @Property
-  private Person person;
-  
-  ...
-  
-}
-+----+  
-
-	For this purpose you need to set the value of the symbol <HibernateSymbols.ENTITY_SESSION_STATE_PERSISTENCE_STRATEGY_ENABLED> 
-	to <true>:
-	
-+----+
-public class AppModule
-{
-    public static void contributeApplicationDefaults(MappedConfiguration<String, String> configuration)
-    {
-        configuration.add(HibernateSymbols.ENTITY_SESSION_STATE_PERSISTENCE_STRATEGY_ENABLED, "true");
-    }
-}
-+----+  
-
-	Alternatively you can apply the "entity" persistence strategy to a single Hibernate entity:
-	
-+----+
-public class AppModule
-{
-    public void contributeApplicationStateManager(MappedConfiguration<Class, ApplicationStateContribution> configuration)
-    {
-    	configuration.add(Person.class, new ApplicationStateContribution(HibernatePersistenceConstants.ENTITY));
-    }
-}
-+----+  
 
 Committing Changes
 
@@ -202,18 +159,19 @@ public class AppModule
 }
 +---+
 
-   Finally, you should use the HibernateTransactionAdviser to add transaction advice:
+   Finally, add a decorator method to your module:
 
 +---+
     @Match("*DAO")
-    public static void adviseTransactions(HibernateTransactionAdviser advisor, MethodAdviceReceiver receiver)
+    public static <T> T decorateTransactionally(HibernateTransactionDecorator decorator, Class<T> serviceInterface,
+                                                T delegate,
+                                                String serviceId)
     {
-        advisor.addTransactionCommitAdvice(receiver);
+        return decorator.build(serviceInterface, delegate, serviceId);
     }
 +---+
 
-  This advice method is configured to match against any service whose id ends with "DAO", such as "PersonDAO".
-
-  The advisor scans the service interface and identifies any methods with the @CommitAfter annotation.
-
-  
+  This one is configured to match against any service whose id ends with "DAO", such as "PersonDAO".
+  The HibernateTransactionDecorator
+  service builds an interceptor around the delegate (which is, basically, the service) that understands
+  the @CommitAfter annotation.  Methods that don't have @CommitAfter pass right on through unchanged.

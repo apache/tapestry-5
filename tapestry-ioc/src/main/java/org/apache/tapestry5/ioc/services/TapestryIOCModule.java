@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,15 +14,9 @@
 
 package org.apache.tapestry5.ioc.services;
 
-import static org.apache.tapestry5.ioc.OrderConstraintBuilder.after;
-import static org.apache.tapestry5.ioc.OrderConstraintBuilder.before;
-
-import org.apache.tapestry5.IOCSymbols;
 import org.apache.tapestry5.ioc.*;
-import org.apache.tapestry5.ioc.annotations.*;
+import org.apache.tapestry5.ioc.annotations.Marker;
 import org.apache.tapestry5.ioc.internal.services.*;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.util.TimeInterval;
 
 import java.io.File;
@@ -30,15 +24,11 @@ import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.*;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Defines the base set of services for the Tapestry IOC container.
  */
 @Marker(Builtin.class)
-@PreventServiceDecoration
 public final class TapestryIOCModule
 {
     public static void bind(ServiceBinder binder)
@@ -64,31 +54,20 @@ public final class TapestryIOCModule
         binder.bind(ClassNameLocator.class, ClassNameLocatorImpl.class);
         binder.bind(AspectDecorator.class, AspectDecoratorImpl.class);
         binder.bind(ClasspathURLConverter.class, ClasspathURLConverterImpl.class);
-        binder.bind(ServiceOverride.class, ServiceOverrideImpl.class);
-        binder.bind(LoggingAdvisor.class, LoggingAdvisorImpl.class);
-        binder.bind(LazyAdvisor.class, LazyAdvisorImpl.class);
-        binder.bind(ThunkCreator.class, ThunkCreatorImpl.class);
     }
 
     /**
-     * Provides access to additional service lifecycles. One lifecycle is built in ("singleton") but additional ones are
-     * accessed via this service (and its mapped configuration). Only proxiable services (those with explicit service
-     * interfaces) can be managed in terms of a lifecycle.
+     * Provides access to additional service lifecycles. One lifecycles is built in ("singleton") but additional ones
+     * are accessed via this service (and its mapped configuration). Only proxiable services (those with explicit
+     * service interfaces) can be managed in terms of a lifecycle.
      */
-    public static ServiceLifecycleSource build(Map<String, ServiceLifecycle> configuration)
+    public static ServiceLifecycleSource build(final Map<String, ServiceLifecycle> configuration)
     {
-        final Map<String, ServiceLifecycle2> lifecycles = CollectionFactory.newCaseInsensitiveMap();
-
-        for (String name : configuration.keySet())
-        {
-            lifecycles.put(name, InternalUtils.toServiceLifecycle2(configuration.get(name)));
-        }
-
         return new ServiceLifecycleSource()
         {
             public ServiceLifecycle get(String scope)
             {
-                return lifecycles.get(scope);
+                return configuration.get(scope);
             }
         };
     }
@@ -96,39 +75,22 @@ public final class TapestryIOCModule
     /**
      * Contributes the "perthread" scope.
      */
-    public static void contributeServiceLifecycleSource(MappedConfiguration<String, ServiceLifecycle> configuration)
+    public void contributeServiceLifecycleSource(MappedConfiguration<String, ServiceLifecycle> configuration,
+                                                 ObjectLocator locator)
     {
-        configuration.addInstance(ScopeConstants.PERTHREAD, PerThreadServiceLifecycle.class);
+        configuration.add(ScopeConstants.PERTHREAD, locator.autobuild(PerThreadServiceLifecycle.class));
     }
 
     /**
-     * <dl> <dt>AnnotationBasedContributions</dt> <dd>Empty placeholder used to seperate annotation-based ObjectProvider
-     * contributions (which come before) from non-annotation based (ServiceOverride here, Alias in tapestry-core) which
-     * come after. </dd> <dt>Value</dt> <dd>Supports the {@link org.apache.tapestry5.ioc.annotations.Value}
-     * annotation</dd> <dt>Symbol</dt> <dd>Supports the {@link org.apache.tapestry5.ioc.annotations.Symbol}
-     * annotations</dd> <dt>Autobuild</dt> <dd>Supports the {@link org.apache.tapestry5.ioc.annotations.Autobuild}
-     * annotation</dd> <dt>ServiceOverride</dt> <dd>Allows simple service overrides via the {@link
-     * org.apache.tapestry5.ioc.services.ServiceOverride} service (and its configuration)</dl>
+     * <dl> <dt>Value</dt> <dd>Supports the {@link org.apache.tapestry5.ioc.annotations.Value} annotation</dd>
+     * <dt>Symbol</dt> <dd>Supports the {@link org.apache.tapestry5.ioc.annotations.Symbol} annotations</dd> </dl>
      */
     public static void contributeMasterObjectProvider(OrderedConfiguration<ObjectProvider> configuration,
-                                                      @Local final ServiceOverride serviceOverride)
+
+                                                      ObjectLocator locator)
     {
-        configuration.add("AnnotationBasedContributions", null);
-
-        configuration.addInstance("Value", ValueObjectProvider.class, before("AnnotationBasedContributions").build());
-        configuration.addInstance("Symbol", SymbolObjectProvider.class, before("AnnotationBasedContributions").build());
-        configuration.add("Autobuild", new AutobuildObjectProvider(), before("AnnotationBasedContributions").build());
-
-
-        ObjectProvider wrapper = new ObjectProvider()
-        {
-            public <T> T provide(Class<T> objectType, AnnotationProvider annotationProvider, ObjectLocator locator)
-            {
-                return serviceOverride.getServiceOverrideProvider().provide(objectType, annotationProvider, locator);
-            }
-        };
-
-        configuration.add("ServiceOverride", wrapper, after("AnnotationBasedContributions").build());
+        configuration.add("Value", locator.autobuild(ValueObjectProvider.class));
+        configuration.add("Symbol", locator.autobuild(SymbolObjectProvider.class));
     }
 
     /**
@@ -360,7 +322,7 @@ public final class TapestryIOCModule
         {
             public Object[] coerce(Object input)
             {
-                return new Object[] { input };
+                return new Object[] {input};
             }
         });
 
@@ -389,52 +351,5 @@ public final class TapestryIOCModule
         configuration.add("SystemProperties", new SystemPropertiesSymbolProvider(), "before:*");
         configuration.add("ApplicationDefaults", applicationDefaults, "after:SystemProperties");
         configuration.add("FactoryDefaults", factoryDefaults, "after:ApplicationDefaults");
-    }
-
-    public static ParallelExecutor buildDeferredExecution(
-            @Symbol(IOCSymbols.THREAD_POOL_CORE_SIZE)
-            int coreSize,
-
-            @Symbol(IOCSymbols.THREAD_POOL_MAX_SIZE)
-            int maxSize,
-
-            @Symbol(IOCSymbols.THREAD_POOL_KEEP_ALIVE)
-            @IntermediateType(TimeInterval.class)
-            int keepAliveMillis,
-
-            @Symbol(IOCSymbols.THREAD_POOL_ENABLED)
-            boolean threadPoolEnabled,
-
-            PerthreadManager perthreadManager,
-
-            RegistryShutdownHub shutdownHub,
-
-            ThunkCreator thunkCreator)
-    {
-
-        if (!threadPoolEnabled)
-            return new NonParallelExecutor();
-
-        final ThreadPoolExecutor executorService = new ThreadPoolExecutor(coreSize, maxSize,
-                                                                          keepAliveMillis, TimeUnit.MILLISECONDS,
-                                                                          new LinkedBlockingQueue(maxSize));
-
-        shutdownHub.addRegistryShutdownListener(new RegistryShutdownListener()
-        {
-            public void registryDidShutdown()
-            {
-                executorService.shutdown();
-            }
-        });
-
-        return new ParallelExecutorImpl(executorService, thunkCreator, perthreadManager);
-    }
-
-    public static void contributeFactoryDefaults(MappedConfiguration<String, String> configuration)
-    {
-        configuration.add(IOCSymbols.THREAD_POOL_CORE_SIZE, "3");
-        configuration.add(IOCSymbols.THREAD_POOL_MAX_SIZE, "20");
-        configuration.add(IOCSymbols.THREAD_POOL_KEEP_ALIVE, "1 m");
-        configuration.add(IOCSymbols.THREAD_POOL_ENABLED, "true");
     }
 }

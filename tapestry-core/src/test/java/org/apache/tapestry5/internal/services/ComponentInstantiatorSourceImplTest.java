@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -23,13 +23,10 @@ import org.apache.tapestry5.ioc.Registry;
 import org.apache.tapestry5.ioc.RegistryBuilder;
 import org.apache.tapestry5.ioc.def.ContributionDef;
 import org.apache.tapestry5.ioc.def.ModuleDef;
-import org.apache.tapestry5.ioc.internal.services.ClasspathURLConverterImpl;
-import org.apache.tapestry5.ioc.services.ClasspathURLConverter;
 import org.apache.tapestry5.ioc.services.PropertyAccess;
 import org.apache.tapestry5.ioc.services.SymbolProvider;
 import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.services.TapestryModule;
-import org.apache.tapestry5.services.UpdateListenerHub;
 import org.slf4j.Logger;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -52,8 +49,6 @@ public class ComponentInstantiatorSourceImplTest extends InternalBaseTestCase
 
     private static final String SYNTH_COMPONENT_CLASSNAME = "org.apache.tapestry5.internal.transform.pages.SynthComponent";
 
-    private final ClasspathURLConverter converter = new ClasspathURLConverterImpl();
-
     private File extraClasspath;
 
     private ComponentInstantiatorSource source;
@@ -75,7 +70,7 @@ public class ComponentInstantiatorSourceImplTest extends InternalBaseTestCase
         replay();
 
         ComponentInstantiatorSourceImpl e = new ComponentInstantiatorSourceImpl(logger, contextLoader, transformer,
-                                                                                null, converter);
+                                                                                null);
 
         assertEquals(e.inControlledPackage("foo.bar.Baz"), false);
 
@@ -188,7 +183,7 @@ public class ComponentInstantiatorSourceImplTest extends InternalBaseTestCase
 
         UpdateListenerHub hub = registry.getService("UpdateListenerHub", UpdateListenerHub.class);
 
-        hub.fireCheckForUpdates();
+        hub.fireUpdateEvent();
 
         // This will be the new version of the class
 
@@ -240,7 +235,7 @@ public class ComponentInstantiatorSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        Instantiator inst = source.getInstantiator(classname);
+        Instantiator inst = source.findInstantiator(classname);
 
         Component target = inst.newInstance(resources);
 
@@ -269,7 +264,7 @@ public class ComponentInstantiatorSourceImplTest extends InternalBaseTestCase
 
         builder.add(TapestryModule.class);
 
-        SymbolProvider provider = new SingleKeySymbolProvider(InternalSymbols.ALIAS_MODE, "servlet");
+        SymbolProvider provider = new SingleKeySymbolProvider(InternalConstants.TAPESTRY_ALIAS_MODE_SYMBOL, "servlet");
         ContributionDef contribution = new SyntheticSymbolSourceContributionDef("AliasMode", provider,
                                                                                 "before:ApplicationDefaults");
 

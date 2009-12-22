@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,11 +20,8 @@ import org.apache.tapestry5.annotations.Mixins;
 import org.apache.tapestry5.internal.KeyValue;
 import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.ioc.Location;
-import org.apache.tapestry5.ioc.Orderable;
 import org.apache.tapestry5.ioc.internal.services.StringLocation;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.ioc.internal.util.TapestryException;
 import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.model.MutableEmbeddedComponentModel;
@@ -69,14 +66,6 @@ public class ComponentWorker implements ComponentClassTransformWorker
 
             addParameters(embedded, annotation.parameters());
 
-
-            String names = annotation.publishParameters();
-            if (InternalUtils.isNonBlank(names))
-            {
-                embedded.setPublishedParameters(CollectionFactory.newList(TapestryInternalUtils.splitAtCommas(names)));
-            }
-
-
             transformation.makeReadOnly(fieldName);
 
             String body = String.format("%s = (%s) %s.getEmbeddedComponent(\"%s\");", fieldName, type,
@@ -97,20 +86,8 @@ public class ComponentWorker implements ComponentClassTransformWorker
 
         if (annotation == null) return;
 
-        boolean orderEmpty = annotation.order().length == 0;
-
-        if (!orderEmpty && annotation.order().length != annotation.value().length)
-            throw new TapestryException(TransformMessages.badMixinConstraintLength(annotation,fieldName),
-                    model,null);
-
-
-        for (int i=0; i<annotation.value().length;i++)
-        {
-            String[] constraints = orderEmpty?
-                    new String[0]:
-                    TapestryInternalUtils.splitMixinConstraints(annotation.order()[i]);
-            model.addMixin(annotation.value()[i].getName(), constraints);
-        }
+        for (Class c : annotation.value())
+            model.addMixin(c.getName());
     }
 
     private void addMixinTypes(String fieldName, ClassTransformation transformation,
@@ -122,9 +99,8 @@ public class ComponentWorker implements ComponentClassTransformWorker
 
         for (String typeName : annotation.value())
         {
-            Orderable<String> typeAndOrder = TapestryInternalUtils.mixinTypeAndOrder(typeName);
-            String mixinClassName = resolver.resolveMixinTypeToClassName(typeAndOrder.getTarget());
-            model.addMixin(mixinClassName,typeAndOrder.getConstraints());
+            String mixinClassName = resolver.resolveMixinTypeToClassName(typeName);
+            model.addMixin(mixinClassName);
         }
     }
 

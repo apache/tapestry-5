@@ -14,10 +14,8 @@
 
 package org.apache.tapestry5.internal.services;
 
+import org.apache.tapestry5.internal.events.UpdateListener;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.internal.util.Defense;
-import org.apache.tapestry5.services.UpdateListener;
-import org.apache.tapestry5.services.UpdateListenerHub;
 
 import java.util.List;
 
@@ -27,15 +25,14 @@ public class UpdateListenerHubImpl implements UpdateListenerHub
 
     public void addUpdateListener(UpdateListener listener)
     {
-        Defense.notNull(listener, "listener");
-
         listeners.add(listener);
+
     }
 
     /**
      * Notifies all {@link UpdateListener}s.
      */
-    public void fireCheckForUpdates()
+    public void fireUpdateEvent()
     {
         for (UpdateListener listener : listeners)
         {

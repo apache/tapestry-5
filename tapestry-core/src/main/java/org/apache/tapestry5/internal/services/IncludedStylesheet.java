@@ -1,4 +1,4 @@
-//  Copyright 2008, 2009 The Apache Software Foundation
+//  Copyright 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,13 +19,13 @@ import org.apache.tapestry5.dom.Element;
 /**
  * A stylesheet included in the rendered document by the {@link org.apache.tapestry5.internal.services.DocumentLinker}.
  */
-class IncludedStylesheet
+public class IncludedStylesheet
 {
     private final String url;
 
     private final String media;
 
-    IncludedStylesheet(String url, String media)
+    public IncludedStylesheet(String url, String media)
     {
         this.url = url;
         this.media = media;
@@ -33,16 +33,21 @@ class IncludedStylesheet
 
 
     /**
-     * Invoked to add the stylesheet link to a container element.
+     * Invoked to add the stylesheet at a particular index under the head element.
      *
-     * @param container to add the new element to
+     * @param head  the head element of the document (i.e., html/head).
+     * @param index at which to add the stylesheet link
      */
-    void add(Element container)
+    public void add(Element head, int index)
     {
-        container.element("link",
-                          "href", url,
-                          "rel", "stylesheet",
-                          "type", "text/css",
-                          "media", media);
+        head.elementAt(index, "link",
+
+                       "href", url,
+
+                       "rel", "stylesheet",
+
+                       "type", "text/css",
+
+                       "media", media);
     }
 }

@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,25 +15,20 @@
 package org.apache.tapestry5.corelib.components;
 
 import org.apache.tapestry5.*;
-import org.apache.tapestry5.annotations.*;
+import org.apache.tapestry5.annotations.BeforeRenderTemplate;
+import org.apache.tapestry5.annotations.Environmental;
+import org.apache.tapestry5.annotations.Mixin;
+import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.corelib.base.AbstractField;
 import org.apache.tapestry5.corelib.data.BlankOption;
-import org.apache.tapestry5.corelib.internal.ComponentActionSink;
-import org.apache.tapestry5.corelib.internal.HiddenFieldPositioner;
 import org.apache.tapestry5.corelib.mixins.RenderDisabled;
 import org.apache.tapestry5.internal.TapestryInternalUtils;
-import org.apache.tapestry5.internal.services.PageRenderQueue;
-import org.apache.tapestry5.internal.util.Holder;
 import org.apache.tapestry5.internal.util.SelectModelRenderer;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.ioc.internal.util.IdAllocator;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.json.JSONArray;
-import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.*;
 import org.apache.tapestry5.util.EnumSelectModel;
-import org.slf4j.Logger;
 
 import java.util.Locale;
 
@@ -47,12 +42,8 @@ import java.util.Locale;
  * can be overriden by binding the encoder parameter, or extended by contributing a {@link ValueEncoderFactory} into the
  * service's configuration.
  */
-@Events({EventConstants.VALIDATE, EventConstants.VALUE_CHANGED + " when 'zone' parameter is bound"})
 public class Select extends AbstractField
 {
-    public static final String FORM_COMPONENTID_PARAMETER = "t:formcomponentid";
-    public static final String CHANGE_EVENT = "change";
-    
     private class Renderer extends SelectModelRenderer
     {
 
@@ -127,46 +118,9 @@ public class Select extends AbstractField
      */
     @Parameter(required = true, principal = true, autoconnect = true)
     private Object value;
-    
-    /**
-     * Binding the zone parameter will cause any change of Select's value to be handled as an Ajax request that updates the
-     * indicated zone. The component will trigger the event {@link EventConstants#VALUE_CHANGED} to inform its
-     * container that Select's value has changed.
-     * 
-     * @since 5.2.0.0
-     */
-    @Parameter(defaultPrefix = BindingConstants.LITERAL)
-    private String zone;
 
     @Inject
     private FieldValidationSupport fieldValidationSupport;
-    
-    @Environmental
-    private FormSupport formSupport;
-
-    @Inject
-    private Environment environment;
-
-    @Inject
-    private RenderSupport renderSupport;
-
-    @Inject
-    private ComponentResources componentResources;
-
-    @Inject
-    private HiddenFieldLocationRules rules;
-
-    @Inject
-    private Logger logger;
-
-    @Inject
-    private ClientDataEncoder clientDataEncoder;
-
-    @Inject
-    private ComponentSource componentSource;
-
-    @Inject
-    private PageRenderQueue pageRenderQueue;
 
     @SuppressWarnings("unused")
     @Mixin
@@ -179,7 +133,7 @@ public class Select extends AbstractField
         return TapestryInternalUtils.isEqual(clientValue, selectedClientValue);
     }
 
-    @SuppressWarnings({ "unchecked" })
+    @SuppressWarnings({"unchecked"})
     @Override
     protected void processSubmission(String elementName)
     {
@@ -187,7 +141,9 @@ public class Select extends AbstractField
 
         tracker.recordInput(this, submittedValue);
 
-        Object selectedValue = toValue(submittedValue);
+        Object selectedValue = InternalUtils.isBlank(submittedValue)
+                               ? null :
+                               encoder.toValue(submittedValue);
 
         try
         {
@@ -215,83 +171,6 @@ public class Select extends AbstractField
         resources.renderInformalParameters(writer);
 
         // Disabled is via a mixin
-        
-        if (this.zone != null) 
-        {
-            final Link link = this.resources.createEventLink(CHANGE_EVENT);
-
-            link.addParameter(FORM_COMPONENTID_PARAMETER, this.formSupport.getFormComponentId());
-
-            final JSONArray spec = new JSONArray();
-            spec.put("change");
-            spec.put(getClientId());
-            spec.put(this.zone);
-            spec.put(link.toAbsoluteURI());
-
-            this.renderSupport.addInit("updateZoneOnEvent", spec);
-        }
-    }
-    
-    Object onChange() 
-    {
-        final String formId = this.request.getParameter(FORM_COMPONENTID_PARAMETER);
-
-        final String changedValue = this.request.getParameter("t:selectvalue");
-
-        final Object newValue = toValue(changedValue);
-
-        final Holder<Object> holder = Holder.create();
-
-        final ComponentEventCallback callback = new ComponentEventCallback() 
-        {
-            public boolean handleResult(final Object result) 
-            {
-
-                holder.put(result);
-
-                Select.this.value = newValue;
-
-                return true;
-            }
-        };
-
-        this.componentResources.triggerEvent(EventConstants.VALUE_CHANGED, new Object[] { newValue }, callback);
-
-        final PartialMarkupRendererFilter filter = new PartialMarkupRendererFilter() 
-        {
-            public void renderMarkup(MarkupWriter writer, JSONObject reply, PartialMarkupRenderer renderer) 
-            {
-
-                HiddenFieldPositioner hiddenFieldPositioner = new HiddenFieldPositioner(writer, Select.this.rules);
-
-                final ComponentActionSink actionSink = new ComponentActionSink(Select.this.logger, Select.this.clientDataEncoder);
-
-                final Form form = (Form) Select.this.componentSource.getComponent(formId);
-
-                FormSupport formSupport = form.createRenderTimeFormSupport(form.getClientId(), actionSink, new IdAllocator());
-
-                Select.this.environment.push(FormSupport.class, formSupport);
-                Select.this.environment.push(ValidationTracker.class, new ValidationTrackerImpl());
-
-                renderer.renderMarkup(writer, reply);
-
-                Select.this.environment.pop(ValidationTracker.class);
-                Select.this.environment.pop(FormSupport.class);
-
-                hiddenFieldPositioner.getElement().attributes("type", "hidden", "name", Form.FORM_DATA, 
-                        "value", actionSink.getClientData());
-
-            }
-        };
-
-        this.pageRenderQueue.addPartialMarkupRendererFilter(filter);
-
-        return holder.get();
-    }
-
-    protected Object toValue(final String submittedValue) 
-    {
-        return InternalUtils.isBlank(submittedValue) ? null : this.encoder.toValue(submittedValue);
     }
 
     @SuppressWarnings("unchecked")

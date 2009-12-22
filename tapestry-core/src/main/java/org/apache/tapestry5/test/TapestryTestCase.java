@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -645,7 +645,7 @@ public abstract class TapestryTestCase extends IOCTestCase
     protected final void train_getParameterModel(ComponentModel model, String parameterName,
                                                  ParameterModel parameterModel)
     {
-        expect(model.getParameterModel(parameterName)).andReturn(parameterModel).atLeastOnce();
+        expect(model.getParameterModel(parameterName)).andReturn(parameterModel);
     }
 
     protected final void train_getParameterNames(ComponentModel model, String... names)
@@ -887,16 +887,6 @@ public abstract class TapestryTestCase extends IOCTestCase
     public final void train_getLocation(Locatable locatable, Location location)
     {
         expect(locatable.getLocation()).andReturn(location).atLeastOnce();
-    }
-
-    public final void train_getResource(Location location, Resource resource)
-    {
-        expect(location.getResource()).andReturn(resource).atLeastOnce();
-    }
-
-    public final void train_getLine(Location location, int line)
-    {
-        expect(location.getLine()).andReturn(line).atLeastOnce();
     }
 
     protected final void train_getParameter(Request request, String elementName, String value)
@@ -1189,30 +1179,5 @@ public abstract class TapestryTestCase extends IOCTestCase
     protected final void train_getFormValidationId(FormSupport formSupport, String validationId)
     {
         expect(formSupport.getFormValidationId()).andReturn(validationId).atLeastOnce();
-    }
-
-    protected final void train_isAllowNull(ParameterModel model, boolean allowNull)
-    {
-        expect(model.isAllowNull()).andReturn(allowNull).atLeastOnce();
-    }
-
-    protected final void train_isInvalidated(Session session, boolean invalidated)
-    {
-        expect(session.isInvalidated()).andReturn(invalidated);
-    }
-
-    protected final ComponentEventRequestHandler mockComponentEventRequestHandler()
-    {
-        return newMock(ComponentEventRequestHandler.class);
-    }
-
-    protected final ComponentRequestHandler mockComponentRequestHandler()
-    {
-        return newMock(ComponentRequestHandler.class);
-    }
-
-    protected final Asset2 mockAsset2()
-    {
-        return newMock(Asset2.class);
     }
 }

@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,8 +21,6 @@ import java.lang.annotation.Retention;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Target;
 
-import static org.apache.tapestry5.ioc.annotations.AnnotationUseContext.*;
-
 /**
  * Used in conjunction with {@link org.apache.tapestry5.ioc.annotations.Inject} to inject a literal value, rather than a
  * service. Symbols in the value are expanded and the resulting string is coerced to the desired type. For IoC, this
@@ -36,7 +34,6 @@ import static org.apache.tapestry5.ioc.annotations.AnnotationUseContext.*;
         { PARAMETER, FIELD })
 @Retention(RUNTIME)
 @Documented
-@UseWith({COMPONENT,MIXIN,PAGE,SERVICE})
 public @interface Value
 {
     /**

@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -35,12 +35,10 @@ public interface InternalRegistry extends Registry, RegistryShutdownHub, Operati
      *
      * @param objectType         type of object o be injected
      * @param annotationProvider access to annotations at point of injection
-     * @param locator            used to resolve any subsequent injections
      * @param localModule        module to limit services to, if Local annotaton present
      * @return the service or object
      */
-    <T> T getObject(Class<T> objectType, AnnotationProvider annotationProvider, ObjectLocator locator,
-                    Module localModule);
+    <T> T getObject(Class<T> objectType, AnnotationProvider annotationProvider, Module localModule);
 
     /**
      * Returns a service lifecycle by service scope name.
@@ -49,20 +47,13 @@ public interface InternalRegistry extends Registry, RegistryShutdownHub, Operati
      * @return the lifecycle corresponding to the scope
      * @throws RuntimeException if the lifecycle name does not match a known lifecycle
      */
-    ServiceLifecycle2 getServiceLifecycle(String scope);
+    ServiceLifecycle getServiceLifecycle(String scope);
 
     /**
      * Searches for decorators for a particular service. The resulting {@link org.apache.tapestry5.ioc.def.DecoratorDef}s
      * are ordered, then converted into {@link ServiceDecorator}s.
      */
     List<ServiceDecorator> findDecoratorsForService(ServiceDef serviceDef);
-
-    /**
-     * Searches for advisors for a particular service, returning them in order of application.
-     *
-     * @since 5.1.0.0
-     */
-    List<ServiceAdvisor> findAdvisorsForService(ServiceDef serviceDef);
 
     /**
      * Builds up an unordered collection by invoking service contributor methods that target the service (from any

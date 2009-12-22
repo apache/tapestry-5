@@ -1,4 +1,4 @@
-// Copyright 2006, 2009 The Apache Software Foundation
+// Copyright 2006 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,9 +20,6 @@ import java.lang.annotation.Retention;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Target;
 
-import static org.apache.tapestry5.ioc.annotations.AnnotationUseContext.*;
-import org.apache.tapestry5.ioc.annotations.UseWith;
-
 /**
  * Associated with components that have a template, this phase is invoked to allow the component to decorate its
  * template with additional markup. Returning true will cause the component's template to render (possibly including
@@ -32,7 +29,6 @@ import org.apache.tapestry5.ioc.annotations.UseWith;
 @Target(ElementType.METHOD)
 @Retention(RUNTIME)
 @Documented
-@UseWith({COMPONENT,MIXIN,PAGE})
 public @interface BeforeRenderTemplate
 {
 

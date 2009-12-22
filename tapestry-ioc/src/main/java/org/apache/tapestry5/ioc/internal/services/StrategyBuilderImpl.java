@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,7 +19,6 @@ import org.apache.tapestry5.ioc.util.BodyBuilder;
 import org.apache.tapestry5.ioc.util.StrategyRegistry;
 
 import java.lang.reflect.Modifier;
-import java.util.Map;
 
 public class StrategyBuilderImpl implements StrategyBuilder
 {
@@ -50,13 +49,6 @@ public class StrategyBuilderImpl implements StrategyBuilder
         }
     }
 
-    public <S> S build(Class<S> adapterType, Map<Class, S> registrations)
-    {
-        StrategyRegistry<S> registry = StrategyRegistry.newInstance(adapterType, registrations);
-
-        return build(registry);
-    }
-
     private Class createImplClass(Class interfaceClass)
     {
         ClassFab cf = classFactory.newClass(interfaceClass);
@@ -65,7 +57,7 @@ public class StrategyBuilderImpl implements StrategyBuilder
 
         cf.addField("_registry", Modifier.PRIVATE | Modifier.FINAL, StrategyRegistry.class);
         cf.addConstructor(new Class[]
-                {StrategyRegistry.class}, null, "_registry = $1;");
+                { StrategyRegistry.class }, null, "_registry = $1;");
 
         BodyBuilder builder = new BodyBuilder();
 
@@ -90,6 +82,7 @@ public class StrategyBuilderImpl implements StrategyBuilder
             builder.end();
 
             cf.addMethod(Modifier.PUBLIC, sig, builder.toString());
+
         }
 
         if (!mi.getToString())

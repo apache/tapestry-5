@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2009 The Apache Software Foundation
+// Copyright 2006, 2007 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -25,15 +25,19 @@ import org.apache.tapestry5.ioc.ServiceResources;
  */
 public class LifecycleWrappedServiceCreator implements ObjectCreator
 {
-     private final ServiceLifecycle lifecycle;
+    private final InternalRegistry registry;
+
+    private final String serviceScope;
 
     private final ServiceResources resources;
 
     private final ObjectCreator creator;
 
-    public LifecycleWrappedServiceCreator(ServiceLifecycle lifecycle, ServiceResources resources, ObjectCreator creator)
+    public LifecycleWrappedServiceCreator(InternalRegistry registry, String serviceScope,
+                                          ServiceResources resources, ObjectCreator creator)
     {
-        this.lifecycle = lifecycle;
+        this.registry = registry;
+        this.serviceScope = serviceScope;
         this.resources = resources;
         this.creator = creator;
     }
@@ -43,6 +47,8 @@ public class LifecycleWrappedServiceCreator implements ObjectCreator
      */
     public Object createObject()
     {
+        ServiceLifecycle lifecycle = registry.getServiceLifecycle(serviceScope);
+
         return lifecycle.createService(resources, creator);
     }
 

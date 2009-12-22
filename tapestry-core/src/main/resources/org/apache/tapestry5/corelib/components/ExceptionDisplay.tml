@@ -4,32 +4,30 @@
             <li>
                 <span class="t-exception-class-name">${info.className}</span>
 
-                <div t:type="if" test="info.message" class="t-exception-message">${info.message}</div>
+                <t:if test="info.message">
+                    <div class="t-exception-message">${info.message}</div>
+                </t:if>
 
-                <dl t:type="if" test="showPropertyList">
-                    <t:loop source="info.propertyNames" value="propertyName">
-                        <dt>${propertyName}</dt>
-                        <dd>
-                            <t:renderobject object="propertyValue"/>
-                        </dd>
-                    </t:loop>
-                    <t:if test="info.stackTrace">
-                        <dt>
-                            <span class="t-exception-stack-controls">
-                                <input type="checkbox" id="${toggleId}" checked="checked"/>
-                                <label for="${toggleId}">Hide uninteresting stack frames</label>
-                            </span>
-                            Stack trace
-                        </dt>
-                        <dd>
-                            <ul class="t-stack-trace">
-                                <li t:type="loop" source="info.stackTrace" value="frame" class="${frameClass}">
-                                    ${frame}
-                                </li>
-                            </ul>
-                        </dd>
-                    </t:if>
-                </dl>
+                <t:if test="showPropertyList">
+                    <dl>
+                        <t:loop source="info.propertyNames" value="propertyName">
+                            <dt>${propertyName}</dt>
+                            <dd>
+                                <t:renderobject object="propertyValue"/>
+                            </dd>
+                        </t:loop>
+                        <t:if test="info.stackTrace">
+                            <dt>Stack trace</dt>
+                            <dd>
+                                <ul class="t-stack-trace">
+                                    <t:loop source="info.stackTrace" value="frame">
+                                        <li class="${frameClass}">${frame}</li>
+                                    </t:loop>
+                                </ul>
+                            </dd>
+                        </t:if>
+                    </dl>
+                </t:if>
             </li>
         </t:loop>
     </ul>

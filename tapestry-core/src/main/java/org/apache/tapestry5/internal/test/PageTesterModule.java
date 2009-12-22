@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,10 +15,17 @@
 package org.apache.tapestry5.internal.test;
 
 import org.apache.tapestry5.SymbolConstants;
+import org.apache.tapestry5.internal.services.ComponentInvocationMap;
 import org.apache.tapestry5.internal.services.CookieSink;
 import org.apache.tapestry5.internal.services.CookieSource;
-import org.apache.tapestry5.ioc.*;
-import org.apache.tapestry5.services.*;
+import org.apache.tapestry5.ioc.Configuration;
+import org.apache.tapestry5.ioc.MappedConfiguration;
+import org.apache.tapestry5.ioc.ObjectLocator;
+import org.apache.tapestry5.ioc.ServiceBinder;
+import org.apache.tapestry5.services.AliasContribution;
+import org.apache.tapestry5.services.MarkupWriterFactory;
+import org.apache.tapestry5.services.Request;
+import org.apache.tapestry5.services.Response;
 import org.apache.tapestry5.test.PageTester;
 
 /**
@@ -33,46 +40,40 @@ public class PageTesterModule
     {
         binder.bind(TestableRequest.class, TestableRequestImpl.class);
         binder.bind(TestableResponse.class, TestableResponseImpl.class);
+        binder.bind(TestableMarkupWriterFactory.class, TestableMarkupWriterFactoryImpl.class);
     }
 
     public static void contributeAlias(Configuration<AliasContribution> configuration, ObjectLocator locator)
     {
-        alias(configuration, locator, Request.class, "TestableRequest");
-        alias(configuration, locator, Response.class, "TestableResponse");
+        add(configuration, ComponentInvocationMap.class, new PageTesterComponentInvocationMap());
+
+        add(configuration, locator, Request.class, "TestableRequest");
+        add(configuration, locator, Response.class, "TestableResponse");
+        add(configuration, locator, MarkupWriterFactory.class, "TestableMarkupWriterFactory");
 
         TestableCookieSinkSource cookies = new TestableCookieSinkSource();
 
-        alias(configuration, CookieSink.class, cookies);
-        alias(configuration, CookieSource.class, cookies);
+        add(configuration, CookieSink.class, cookies);
+        add(configuration, CookieSource.class, cookies);
     }
 
-    private static <T> void alias(Configuration<AliasContribution> configuration, ObjectLocator locator,
-                                  Class<T> serviceClass, String serviceId)
+    private static <T> void add(Configuration<AliasContribution> configuration, ObjectLocator locator,
+                                Class<T> serviceClass, String serviceId)
     {
         T service = locator.getService(serviceId, serviceClass);
 
-        alias(configuration, serviceClass, service);
+        add(configuration, serviceClass, service);
     }
 
-    private static <T> void alias(Configuration<AliasContribution> configuration, Class<T> serviceClass, T service)
+    private static <T> void add(Configuration<AliasContribution> configuration, Class<T> serviceClass, T service)
     {
         AliasContribution<T> contribution = AliasContribution.create(serviceClass, TEST_MODE, service);
 
         configuration.add(contribution);
     }
 
-    public static void contributeFactoryDefaults(MappedConfiguration<String, String> configuration)
+    public static void contributeApplicationDefaults(MappedConfiguration<String, String> configuration)
     {
-        configuration.override(SymbolConstants.FORCE_ABSOLUTE_URIS, "true");
-    }
-
-    public static void contributeRequestHandler(OrderedConfiguration<RequestFilter> configuration)
-    {
-        configuration.addInstance("EndOfRequestCleanup", EndOfRequestCleanupFilter.class, "before:StaticFiles");
-    }
-
-    public static void contributeMarkupRenderer(OrderedConfiguration<MarkupRendererFilter> configuration)
-    {
-        configuration.addInstance("CaptureRenderedDocument", CaptureRenderedDocument.class, "before:DocumentLinker");
+        configuration.add(SymbolConstants.FORCE_ABSOLUTE_URIS, "true");
     }
 }

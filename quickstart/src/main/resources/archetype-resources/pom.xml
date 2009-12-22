@@ -1,53 +1,27 @@
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0">
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0">
     <modelVersion>4.0.0</modelVersion>
     <groupId>${groupId}</groupId>
     <artifactId>${artifactId}</artifactId>
     <version>${version}</version>
     <packaging>war</packaging>
     <name>${artifactId} Tapestry 5 Application</name>
-    #set( $D = '$' )
     <dependencies>
         <dependency>
             <groupId>org.apache.tapestry</groupId>
             <artifactId>tapestry-core</artifactId>
-            <version>${D}{tapestry-release-version}</version>
+            <version>${tapestry-release-version}</version>
         </dependency>
+
         <!-- A dependency on either JUnit or TestNG is required, or the surefire plugin (which runs the tests)
 will fail, preventing Maven from packaging the WAR. Tapestry includes a large number
 of testing facilities designed for use with TestNG (http://testng.org/), so it's recommended. -->
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
-            <version>5.8</version>
+            <version>5.1</version>
             <classifier>jdk15</classifier>
             <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.easymock</groupId>
-            <artifactId>easymock</artifactId>
-            <version>2.4</version>
-            <scope>test</scope>
-        </dependency>
-
-        <!-- tapestry-test will conflict with RunJettyRun inside Eclipse. tapestry-test brings in Selenium, which
-             is based on Jetty 5.1; RunJettyRun uses Jetty 6.
-        <dependency>
-            <groupId>org.apache.tapestry</groupId>
-            <artifactId>tapestry-test</artifactId>
-            <version>${D}{tapestry-release-version}</version>
-            <scope>test</scope>
-        </dependency>
-
-        -->
-
-        <!-- Provided by the servlet container, but sometimes referenced in the application
-       code. -->
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>servlet-api</artifactId>
-            <version>2.5</version>
-            <scope>provided</scope>
         </dependency>
 
     </dependencies>
@@ -88,23 +62,19 @@ of testing facilities designed for use with TestNG (http://testng.org/), so it's
             <plugin>
                 <groupId>org.apache.tapestry</groupId>
                 <artifactId>tapestry-component-report</artifactId>
-                <version>${D}{tapestry-release-version}</version>
+                <version>${tapestry-release-version}</version>
                 <configuration>
-                    <rootPackage>${package}</rootPackage>
+                    <rootPackage>${packageName}</rootPackage>
                 </configuration>
             </plugin>
         </plugins>
     </reporting>
 
     <repositories>
+        <!-- This can be commented out when the tapestry-release-version is a not a snapshot.
+ The non-snapshot Tapestry artifacts are distributed through the central
+ repository at ibiblio.     -->
 
-        <!-- This repository is only needed if the Tapestry released artifacts haven't made it to the central Maven repository yet. -->
-        <repository>
-            <id>tapestry</id>
-            <url>http://tapestry.formos.com/maven-repository/</url>
-        </repository>
-
-        <!-- This repository is only needed when the tapestry-release-version is a snapshot release. -->
         <repository>
             <id>tapestry-snapshots</id>
             <url>http://tapestry.formos.com/maven-snapshot-repository/</url>
@@ -134,6 +104,6 @@ of a Tapestry Maven plugin is not required.   -->
     </pluginRepositories>
 
     <properties>
-        <tapestry-release-version>5.2.0-SNAPSHOT</tapestry-release-version>
+        <tapestry-release-version>5.0.19-SNAPSHOT</tapestry-release-version>
     </properties>
 </project>

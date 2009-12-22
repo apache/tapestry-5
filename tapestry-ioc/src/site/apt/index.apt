@@ -14,13 +14,12 @@ Tapestry Inversion of Control Container
   some weaker mechanisms, such as extensions, that served a similar purpose.  To make large scale changes to the behavior of Tapestry 3 required
   subclassing key classes and overriding methods.
   
-  Tapestry 4 introduced the use of the {{{http://hivemind.apache.org/}Apache HiveMind}} IoC container.  In fact, the HiveMind project was created 
+  Tapestry 4 introduced the use of the {{{http://hivemind.apache.org/}HiveMind}} IoC container.  In fact, the HiveMind project was created 
   specifically for use as the IoC container for Tapestry 4.  Tapestry 4 has met its goals for extensibility and configurability, largely
   because of HiveMind's flexibility.
   
   Tapestry 5 extends on this, replacing HiveMind with a new container specifically build for Tapestry 5,
-  designed for greater ease of use, expressiveness and performance. HiveMind itself has been subsequently shelved; T5 IoC
-  can be considered a streamlined and improved HiveMind. And T5 IoC can be used separately from the rest of Tapestry!
+  designed for greater ease of use, expressiveness and performance.  And it can be used separately from the rest of Tapestry!
   
 * Why Not Spring?
 
@@ -33,14 +32,14 @@ Tapestry Inversion of Control Container
     duplicate the large web of interrelated services (nearly 200 in Tapestry 4.0).
         
   * Although Spring allows beans to be intercepted, it does so in the form of a new bean, leaving the un-intercepted bean visible
-    (and subject to misuse).  Tapestry IoC "wraps" the service inside interceptors, preventing unintercepted access
+    (and subject to misuse).  HiveMind and Tapestry IoC "wrap" the service inside interceptors, preventing unintercepted access
     to the core service implementation.
   
-  * Spring's XML configuration files are quite verbose. This has improved with
-    Spring 2.0, but still far more verbose that T5 IoC module classes.
+  * Spring's XML configuration files are quite verbose, often more so than equivalent HiveMind XML files. This has improved with
+    Spring 2.0.
     
   * Spring has a simple map/list/value configuration scheme, but it is not distributed; it is part of a single bean definition. 
-    Tapestry 5 IoC allows a service configuration to be assembled from multiple modules. This is very important
+    HiveMind and Tapestry 5 IoC allow service configuration to be assembled from multiple modules. This is very important
     for seamless extensibility of the framework, with zero configuration (just drop the module into the classpath and 
     everything hooks together).
   
@@ -64,8 +63,7 @@ Tapestry Inversion of Control Container
   system around simple objects and methods.
   
   Tapestry IoC also represents many simplifications of HiveMind, representing lessons learned while creating both
-  HiveMind and Tapestry 4.  HiveMind itself has wound down (it is not longer in active development), with the user base
-  moving to Tapestry 5.
+  HiveMind and Tapestry 4.
 
 * Why not Guice?
 
@@ -94,7 +92,8 @@ Goals
   and easier than a big chunk of XML.
 
   In addition, moving from XML to Java code encourages testing; you can unit test the 
-  service builder methods of your  module  class, but you can't realistically unit test an XML descriptor.
+  service builder methods of your
+  module builder class, but you can't realistically unit test an XML descriptor.
   
   Tapestry IoC modules are easily packaged into JAR files, supporting 
   zero-configuration usage: just drop the JAR onto the classpath.
@@ -166,10 +165,10 @@ Terminology
   
   Services are aggregated into <<modules>>:
       
-  * A module is defined by a <<module class>>, a specific class containing a mix of static or instance methods, used to define
+  * A module is defined by a <<module builder>>, a specific class containing a mix of static or instance methods, used to define
     services, decorate them (see below), or contribute to service configurations (again, more below).
   
-  * Methods of the module class define the services provided by the module, 
+  * Methods of the module builder class define the services provided by the module, 
     and the same methods are responsible
     for instantiating the service implementation.
     
@@ -192,7 +191,11 @@ Terminology
   of object allowed to be contributed into the configuration. The configuration is constructed
   from <<contributions>> provided by one or more modules.   <<Service contributor methods>> are invoked to contribute objects into
   configurations.
-    
+  
+  <Note: In HiveMind, services and configurations were separate, which often lead
+  to linked pairs of similarly named services and configurations. For Tapestry IoC, each service is allowed to have a single configuration,
+  which is normally sufficient.>
+  
   Services are instantiated as needed. In this case, "need" translates to "when a method of the service is invoked".
   A service is represented (to the outside world, or to other services) as a <<proxy>> that implements
   the service interface. The first time a method is invoked on the proxy, the full service (consisting of the core service implementation wrapped with any interceptors) is

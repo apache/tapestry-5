@@ -6,7 +6,7 @@ Content Type and Markup Output
 
   Tapestry reads {{{templates.html}well-formed XML template files}} and renders its output as XML, with minor caveats:
 
-  * The \<?xml?\> XML declaration is omitted.
+  * The \<?xml\?> XML declaration is omitted.
 
   * Most element render with an open and close tag, even if empty.
 
@@ -17,7 +17,7 @@ Content Type and Markup Output
     * hr
 
     * img
-   
+
     []
 
   * \<![CDATA[]\> sections are <<not>> used
@@ -37,9 +37,8 @@ Content Type and Markup Output
 Input/Output Character Set
 
   The character set (aka character encoding) used when writing output and when parsing requests is normally "utf-8".
-  All pages use the same encoding, which can be set using the  
+  All pages use the same encoding, which can be set using the
   <<<tapestry.charset>>>
   {{{conf.html}configuration setting}}.
-  
 
-  
+

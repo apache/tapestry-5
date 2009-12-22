@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,6 +19,10 @@ import java.io.IOException;
 /**
  * Filter interface for {@link org.apache.tapestry5.services.RequestHandler}. Implementations of this interface may be
  * contributed into the RequestHandler service configuration.
+ *
+ * @see org.apache.tapestry5.services.TapestryModule#contributeRequestHandler(org.apache.tapestry5.ioc.OrderedConfiguration,
+ *      Context, RequestExceptionHandler, long, long, org.apache.tapestry5.internal.services.LocalizationSetter,
+ *      RequestFilter)
  */
 public interface RequestFilter
 {

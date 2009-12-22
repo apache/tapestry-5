@@ -1,4 +1,4 @@
-// Copyright 2007, 2009 The Apache Software Foundation
+// Copyright 2007 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -32,7 +32,6 @@ import java.util.Set;
  *
  * @param <K> the key type (which must be serializable)
  * @param <V> the value type
- * @deprecated See deprecation notes for {@link org.apache.tapestry5.PrimaryKeyEncoder}.
  */
 public class DefaultPrimaryKeyEncoder<K extends Serializable, V> implements PrimaryKeyEncoder<K, V>
 {
@@ -43,31 +42,6 @@ public class DefaultPrimaryKeyEncoder<K extends Serializable, V> implements Prim
     private Set<K> deletedKeys;
 
     private K currentKey;
-
-    private final Class<K> keyType;
-
-    /**
-     * Compatibility with 5.0: new encoder, key type unknown. You <em>will</em> want to use the other constructor and
-     * specify the key type.
-     */
-    public DefaultPrimaryKeyEncoder()
-    {
-        this(null);
-    }
-
-    /**
-     * @since 5.1.0.0
-     */
-    public DefaultPrimaryKeyEncoder(Class<K> keyType)
-    {
-        this.keyType = keyType;
-    }
-
-
-    public Class<K> getKeyType()
-    {
-        return keyType;
-    }
 
     /**
      * Adds a new key/value pair to the encoder.

@@ -1,4 +1,4 @@
-// Copyright 2006, 2009 The Apache Software Foundation
+// Copyright 2006 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -25,8 +25,8 @@ public class ComponentBinding extends AbstractBinding
 
     private final String componentId;
 
-    public ComponentBinding(Location location, String description, ComponentResources resources, String componentId
-    )
+    public ComponentBinding(String description, ComponentResources resources, String componentId,
+                            Location location)
     {
         super(location);
 

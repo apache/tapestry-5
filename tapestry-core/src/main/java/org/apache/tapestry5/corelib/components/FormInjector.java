@@ -1,4 +1,4 @@
-// Copyright 2008, 2009 The Apache Software Foundation
+// Copyright 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@ package org.apache.tapestry5.corelib.components;
 
 import org.apache.tapestry5.*;
 import org.apache.tapestry5.annotations.Environmental;
-import org.apache.tapestry5.annotations.Events;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.corelib.data.InsertPosition;
@@ -24,12 +23,14 @@ import org.apache.tapestry5.corelib.internal.ComponentActionSink;
 import org.apache.tapestry5.corelib.internal.HiddenFieldPositioner;
 import org.apache.tapestry5.corelib.internal.InternalFormSupport;
 import org.apache.tapestry5.dom.Element;
+import org.apache.tapestry5.internal.services.ClientBehaviorSupport;
 import org.apache.tapestry5.internal.services.ComponentResultProcessorWrapper;
 import org.apache.tapestry5.internal.services.PageRenderQueue;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.internal.util.IdAllocator;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.json.JSONObject;
+import org.apache.tapestry5.runtime.RenderCommand;
 import org.apache.tapestry5.services.*;
 import org.slf4j.Logger;
 
@@ -45,7 +46,6 @@ import java.io.IOException;
  * before or after (per configuration) the existing FormInjector element.
  */
 @SupportsInformalParameters
-@Events(EventConstants.ACTION)
 public class FormInjector implements ClientElement
 {
     public static final String INJECT_EVENT = "inject";
@@ -170,9 +170,6 @@ public class FormInjector implements ClientElement
     @Inject
     private HiddenFieldLocationRules rules;
 
-    @Inject
-    private ClientDataEncoder clientDataEncoder;
-
     /**
      * Invoked via an Ajax request.  Triggers an action event and captures the return value. The return value from the
      * event notification is what will ultimately render (typically, its a Block).  However, we do a <em>lot</em> of
@@ -189,13 +186,15 @@ public class FormInjector implements ClientElement
 
         // Here's where it gets very, very tricky.
 
+        final RenderCommand rootRenderCommand = pageRenderQueue.getRootRenderCommand();
+
         final String formClientId = readParameterValue(FORM_CLIENTID_PARAMETER);
 
         String formComponentId = request.getParameter(FORM_COMPONENTID_PARAMETER);
 
         final Form form = (Form) componentSource.getComponent(formComponentId);
 
-        final ComponentActionSink actionSink = new ComponentActionSink(logger, clientDataEncoder);
+        final ComponentActionSink actionSink = new ComponentActionSink(logger);
 
         PartialMarkupRendererFilter filter = new PartialMarkupRendererFilter()
         {
@@ -210,7 +209,7 @@ public class FormInjector implements ClientElement
 
                 String uid = Long.toHexString(System.currentTimeMillis());
 
-                IdAllocator idAllocator = new IdAllocator("-" + uid);
+                IdAllocator idAllocator = new IdAllocator(":" + uid);
 
                 clientId = renderSupport.allocateClientId(resources);
 
@@ -238,7 +237,7 @@ public class FormInjector implements ClientElement
 
                         "name", Form.FORM_DATA,
 
-                        "value", actionSink.getClientData());
+                        "value", actionSink.toBase64());
             }
         };
 

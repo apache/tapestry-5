@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,9 +15,11 @@
 package org.apache.tapestry5.corelib.components;
 
 import org.apache.tapestry5.*;
-import org.apache.tapestry5.annotations.*;
+import org.apache.tapestry5.annotations.Environmental;
+import org.apache.tapestry5.annotations.IncludeJavaScriptLibrary;
+import org.apache.tapestry5.annotations.IncludeStylesheet;
+import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.corelib.base.AbstractField;
-import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.json.JSONArray;
@@ -46,10 +48,9 @@ import java.util.Locale;
  */
 // TODO: More testing; see https://issues.apache.org/jira/browse/TAPESTRY-1844
 @IncludeStylesheet("${tapestry.datepicker}/css/datepicker.css")
-@IncludeJavaScriptLibrary({ "${tapestry.datepicker}/js/datepicker.js",
+@IncludeJavaScriptLibrary({"${tapestry.datepicker}/js/datepicker.js",
         "datefield.js"
-})
-@Events(EventConstants.VALIDATE)
+        })
 public class DateField extends AbstractField
 {
     /**
@@ -110,9 +111,6 @@ public class DateField extends AbstractField
 
     @Inject
     private FieldValidationSupport fieldValidationSupport;
-
-    @Inject
-    private Messages messages;
 
 
     private static final String RESULT = "result";
@@ -206,9 +204,9 @@ public class DateField extends AbstractField
         if (value == null) value = formatCurrentValue();
 
         String clientId = getClientId();
-        String triggerId = clientId + "-trigger";
+        String triggerId = clientId + ":trigger";
 
-        writer.element("input",
+        writer.element(INPUT_PARAMETER,
 
                        "type", hideTextField ? "hidden" : "text",
 
@@ -317,7 +315,7 @@ public class DateField extends AbstractField
         }
         catch (ParseException ex)
         {
-            tracker.recordError(this, messages.format("date-value-not-parseable", value));
+            tracker.recordError(this, "Date value is not parseable.");
             return;
         }
 
