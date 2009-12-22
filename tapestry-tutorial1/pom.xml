@@ -10,12 +10,6 @@
         <url>http://www.apache.org</url>
     </organization>
 
-    <scm>
-        <connection>scm:svn:https://svn.apache.org/repos/asf/tapestry/tapestry5/trunk/tapestry-tutorial1/</connection>
-        <url>http://svn.apache.org/viewvc/tapestry/tapestry5/trunk/tapestry-tutorial1/</url>
-      <developerConnection>scm:svn:https://svn.apache.org/repos/asf/tapestry/tapestry5/trunk/tutorial1</developerConnection>
-  </scm>
-
     <parent>
         <groupId>org.apache.tapestry</groupId>
         <artifactId>tapestry-project</artifactId>
