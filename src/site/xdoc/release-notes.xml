@@ -19,6 +19,38 @@
         <title>Tapestry Project Release Notes</title>
     </properties>
     <body>
+		
+		<h1>Release Notes - Tapestry 5 - Version 5.0.19</h1>
+		
+		<h2>Bug</h2>
+		<ul>
+			<li>[<a href='https://issues.apache.org/jira/browse/TAP5-419'>TAP5-419</a>] -         Logging of component class transformations has typo in prefix
+			</li>
+			<li>[<a href='https://issues.apache.org/jira/browse/TAP5-449'>TAP5-449</a>] -         @CleanupRender Render phase methods not always invoked
+			</li>
+			<li>[<a href='https://issues.apache.org/jira/browse/TAP5-815'>TAP5-815</a>] -         Asset dispatcher allows any file inside the webapp visible and downloadable
+			</li>
+			<li>[<a href='https://issues.apache.org/jira/browse/TAP5-894'>TAP5-894</a>] -         Fix PartialMarkupDocumentLinkerTest.stylesheet_link() 
+			</li>
+			<li>[<a href='https://issues.apache.org/jira/browse/TAP5-936'>TAP5-936</a>] -         Tapestry wiki link links to nothing for locales other then en
+			</li>
+		</ul>
+		
+		<h2>Improvement</h2>
+		<ul>
+			<li>[<a href='https://issues.apache.org/jira/browse/TAP5-417'>TAP5-417</a>] -         Tapestry Performance Improvements
+			</li>
+			<li>[<a href='https://issues.apache.org/jira/browse/TAP5-762'>TAP5-762</a>] -         Upgrade Selenium dependencies to version 1.0.1
+			</li>
+			<li>[<a href='https://issues.apache.org/jira/browse/TAP5-934'>TAP5-934</a>] -         Update javassist version + improve error reporting in OneShotLock
+			</li>
+		</ul>
+		
+		<h2>Task</h2>
+		<ul>
+			<li>[<a href='https://issues.apache.org/jira/browse/TAP5-819'>TAP5-819</a>] -         remove ide-specific files from all sub-modules and add them to svn:ignore
+			</li>
+		</ul>
 
         <h1>Release Notes - Tapestry 5 - Version 5.0.18</h1>
 
