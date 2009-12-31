@@ -25,4 +25,9 @@ public class AssetProtectionDemo
     @Path("style.css")
     @Property
     private Asset style;
+    
+    @Inject
+    @Path("classpath:nonaccessible.css")
+    @Property
+    private Asset nonaccessible;
 }

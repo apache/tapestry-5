@@ -1,5 +1,6 @@
 <html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd">
 	<body>
-		<a href="${style}">Show CSS</a>
+		<p><a href="${style}">Show CSS</a></p>
+		<p><a href="${nonaccessible}">Non accessible</a></p>
 	</body>
 </html>

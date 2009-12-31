@@ -14,21 +14,8 @@
 
 package org.example.services;
 
-import org.apache.tapestry5.internal.InternalConstants;
-import org.apache.tapestry5.ioc.Configuration;
-import org.apache.tapestry5.ioc.annotations.Symbol;
 
 public class AppModule
 {
 
-    public void contributeRegexAuthorizer(final Configuration<String> regex,
-            @Symbol(InternalConstants.TAPESTRY_APP_PACKAGE_PARAM) 
-            final String appPackageName) 
-    {
-
-        final String pattern = "([^/.]+/)*[^/.]+\\.((css)|(js)|(jpg)|(jpeg)|(png)|(gif))$";
-
-        regex.add("^" + appPackageName.replace(".", "/") + "/" + pattern);
-
-      }
 }

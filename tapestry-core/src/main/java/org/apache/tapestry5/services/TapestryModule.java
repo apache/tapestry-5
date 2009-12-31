@@ -2436,11 +2436,19 @@ public final class TapestryModule
     }
 
     public void contributeRegexAuthorizer(Configuration<String> regex,
+            
                 @Symbol("tapestry.scriptaculous.path") String scriptPath,
+                
                 @Symbol("tapestry.blackbird.path") String blackbirdPath,
+                
                 @Symbol("tapestry.datepicker.path") String datepickerPath,
+                
                 @Symbol(SymbolConstants.CONTEXT_ASSETS_AVAILABLE) boolean contextAvailable,
-                @Symbol(SymbolConstants.APPLICATION_VERSION) String appVersion)
+                
+                @Symbol(SymbolConstants.APPLICATION_VERSION) String appVersion,
+                
+                @Symbol(InternalConstants.TAPESTRY_APP_PACKAGE_PARAM) 
+                final String appPackageName)
 
     {
         //allow any js, jpg, jpeg, png, or css under org/apache/tapstry5. The funky bit of ([^/.]+/)* is what allows
@@ -2455,6 +2463,8 @@ public final class TapestryModule
         regex.add(scriptPath + "/" + pathPattern);
         //allow access to virtual assets. Critical for tapestry-combined js files.
         regex.add("virtual/" + pathPattern);
+
+        regex.add("^" + appPackageName.replace(".", "/") + "/" + pathPattern);
 
         if (contextAvailable) 
         {

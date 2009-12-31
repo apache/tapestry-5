@@ -37,6 +37,10 @@ public class CutomAppPackageIntegrationTests extends AbstractIntegrationTestSuit
        start("Asset Protection Demo");
        clickAndWait("link=Show CSS");
        assertTextPresent("//Some CSS");
+       
+       start("Asset Protection Demo");
+       clickAndWait("link=Non accessible");
+       assertTextPresent("HTTP ERROR: 404");
     }
 
 }
