@@ -63,339 +63,397 @@ public class Index
         }
     }
 
-    private static final List<Item> ITEMS = CollectionFactory.newList(
+    private static final List<Item> ITEMS = CollectionFactory
+            .newList(
 
-            new Item("MultiLevelInheritDemo", "Multi-Level Inherit Demo",
-                     "Use of inherit: binding prefix across three levels"),
+                    new Item("RenderObjectExceptionDemo", "RenderObject Exception Demo",
+                            "Demonstrate how exceptions when rendering default objects are displayed."),
 
-            new Item("HiddenDemo", "Hidden Demo", "Demo the use of the Hidden component."),
+                    new Item("MultiLevelInheritDemo", "Multi-Level Inherit Demo",
+                            "Use of inherit: binding prefix across three levels"),
 
-            new Item("FormZoneDemo", "Form Zone Demo", "Use a form to update a zone."),
+                    new Item("HiddenDemo", "Hidden Demo", "Demo the use of the Hidden component."),
 
-            new Item("ZoneUpdateNamespace", "Zone/Namespace Interaction", "Prove that TAP5-573 is fixed"),
+                    new Item("FormZoneDemo", "Form Zone Demo", "Use a form to update a zone."),
 
-            new Item("AbstractComponentDemo", "Abstract Component Demo", "Error when a component is abstract"),
+                    new Item("ZoneUpdateNamespace", "Zone/Namespace Interaction",
+                            "Prove that TAP5-573 is fixed"),
 
-            new Item("TemplateOverrideDemo", "Template Override Demo",
-                     "Child component extends and overrides parent template."),
+                    new Item("AbstractComponentDemo", "Abstract Component Demo",
+                            "Error when a component is abstract"),
 
-            new Item("MultiZoneUpdateDemo", "Multiple Zone Update Demo",
-                     "A single request can now update multiple Zones"),
+                    new Item("TemplateOverrideDemo", "Template Override Demo",
+                            "Child component extends and overrides parent template."),
 
-            new Item("LinkSubmitInZoneDemo", "LinkSubmit inside Zone",
-                     "Ensure that a LinkSubmit works correctly when its containing Form updates a Zone"),
+                    new Item("MultiZoneUpdateDemo", "Multiple Zone Update Demo",
+                            "A single request can now update multiple Zones"),
 
-            new Item("SlowAjaxDemo", "Slow Ajax Demo", "Handling of client-side Ajax before the page is fully loaded"),
+                    new Item("LinkSubmitInZoneDemo", "LinkSubmit inside Zone",
+                            "Ensure that a LinkSubmit works correctly when its containing Form updates a Zone"),
 
-            new Item("ProgressiveDemo", "ProgressiveDisplay Demo", "Progressive Enhancement via a component"),
+                    new Item("SlowAjaxDemo", "Slow Ajax Demo",
+                            "Handling of client-side Ajax before the page is fully loaded"),
 
-            new Item("ClientNumericValidationDemo", "Client-Side Numeric Validation",
-                     "Client-side locale-specific validation"),
+                    new Item("ProgressiveDemo", "ProgressiveDisplay Demo",
+                            "Progressive Enhancement via a component"),
 
-            new Item("PublishParametersDemo", "Publish Parameters Demo",
-                     "Use of @Component.publishParameters attribute."),
+                    new Item("ClientNumericValidationDemo", "Client-Side Numeric Validation",
+                            "Client-side locale-specific validation"),
 
-            new Item("LinkSubmitDemo", "LinkSubmit Demo", "JavaScript LinkSubmit component"),
+                    new Item("PublishParametersDemo", "Publish Parameters Demo",
+                            "Use of @Component.publishParameters attribute."),
 
-            new Item("LinkSubmitWithoutValidatorDemo", "LinkSubmit Without Validator Demo",
-                    "Demonstrates that the LinkSubmit component is working without a validator on any of fields in the form"),
+                    new Item("LinkSubmitDemo", "LinkSubmit Demo", "JavaScript LinkSubmit component"),
 
-            new Item("PerFormValidationMessageDemo", "Per-Form Validation Messages",
-                     "Per-form configuration of validation messages and constraints."),
+                    new Item(
+                            "LinkSubmitWithoutValidatorDemo",
+                            "LinkSubmit Without Validator Demo",
+                            "Demonstrates that the LinkSubmit component is working without a validator on any of fields in the form"),
 
-            new Item("EmptyLoopDemo", "Empty Loop Demo", "Use of empty parameter with the Loop component."),
+                    new Item("PerFormValidationMessageDemo", "Per-Form Validation Messages",
+                            "Per-form configuration of validation messages and constraints."),
 
-            new Item("BlankPasswordDemo", "Blank Password Demo",
-                     "Show that a blank value in a PasswordField does not update the server side value."),
+                    new Item("EmptyLoopDemo", "Empty Loop Demo",
+                            "Use of empty parameter with the Loop component."),
 
-            new Item("GridFormEncoderDemo", "Grid Form Encoder Demo",
-                     "Grid inside a Form using the PrimaryKeyEncoder option"),
+                    new Item("BlankPasswordDemo", "Blank Password Demo",
+                            "Show that a blank value in a PasswordField does not update the server side value."),
 
-            new Item("DateFieldAjaxFormLoop", "DateField inside AjaxFormLoop",
-                     "Show that DateField component works correctly inside AjaxFormLoop"),
+                    new Item("GridFormEncoderDemo", "Grid Form Encoder Demo",
+                            "Grid inside a Form using the PrimaryKeyEncoder option"),
 
-            new Item("NestedForm", "Nested Form Demo", "Error when a Form is nested inside another Form."),
+                    new Item("DateFieldAjaxFormLoop", "DateField inside AjaxFormLoop",
+                            "Show that DateField component works correctly inside AjaxFormLoop"),
 
-            new Item("UnhandledEventDemo", "Unhandled Event Demo",
-                     "Events that don't have matching event handlers cause exceptions"),
+                    new Item("NestedForm", "Nested Form Demo",
+                            "Error when a Form is nested inside another Form."),
 
-            new Item("PrimitiveDefaultDemo", "Primitive Default Demo",
-                     "Primitive value returned from parameter default method"),
+                    new Item("UnhandledEventDemo", "Unhandled Event Demo",
+                            "Events that don't have matching event handlers cause exceptions"),
 
-            new Item("ValidateFormValidationExceptionDemo",
-                     "ValidationForm ValidationException Demo",
-                     "Throwing a ValidationException from the validateForm event handler."),
+                    new Item("PrimitiveDefaultDemo", "Primitive Default Demo",
+                            "Primitive value returned from parameter default method"),
 
-            new Item("ClientFormatDemo", "Client Format Validation", "Client-side input format validation"),
+                    new Item("ValidateFormValidationExceptionDemo",
+                            "ValidationForm ValidationException Demo",
+                            "Throwing a ValidationException from the validateForm event handler."),
 
-            new Item("ShortGrid", "Short Grid",
-                     "Grid where the number of claimed rows is less than the number of actual rows"),
+                    new Item("ClientFormatDemo", "Client Format Validation",
+                            "Client-side input format validation"),
 
-            new Item("NullParameterDemo", "Null Parameter Demo", "Binding a not-null parameter to null."),
+                    new Item("ShortGrid", "Short Grid",
+                            "Grid where the number of claimed rows is less than the number of actual rows"),
 
-            new Item("nestedbeaneditor", "Nested BeanEditor",
-                     "BeanEditor as override for property editor in BeanEditForm"),
+                    new Item("NullParameterDemo", "Null Parameter Demo",
+                            "Binding a not-null parameter to null."),
 
-            new Item("actionpage", "Action Page", "tests fixture for ActionLink component"),
+                    new Item("nestedbeaneditor", "Nested BeanEditor",
+                            "BeanEditor as override for property editor in BeanEditForm"),
 
-            new Item("cleancachedemo", "Clean Cache Demo", "cache cleared properly during Ajax calls"),
+                    new Item("actionpage", "Action Page", "tests fixture for ActionLink component"),
 
-            new Item("numberbeaneditordemo", "Number BeanEditor Demo",
-                     "use of nulls and wrapper types with BeanEditor"),
+                    new Item("cleancachedemo", "Clean Cache Demo",
+                            "cache cleared properly during Ajax calls"),
 
-            new Item("forminjectordemo", "FormInjector Demo", "extending a form dynamically via Ajax"),
+                    new Item("numberbeaneditordemo", "Number BeanEditor Demo",
+                            "use of nulls and wrapper types with BeanEditor"),
 
-            new Item("music", "Music Page", "demo handling of edge cases of page naming"),
+                    new Item("forminjectordemo", "FormInjector Demo",
+                            "extending a form dynamically via Ajax"),
 
-            new Item("PersistentDemo", "Persistent Demo", "storing and clearing persistent properties"),
+                    new Item("music", "Music Page", "demo handling of edge cases of page naming"),
 
-            new Item("ActionViaLinkDemo", "Action via Link Demo", "tests creating an action link explicitly"),
+                    new Item("PersistentDemo", "Persistent Demo",
+                            "storing and clearing persistent properties"),
 
-            new Item("FormFragmentDemo", "Form Fragment Demo", "page with dynamic form sections"),
+                    new Item("ActionViaLinkDemo", "Action via Link Demo",
+                            "tests creating an action link explicitly"),
 
-            new Item("BooleanDemo", "Boolean Property Demo", "demo boolean properties using both is and get prefixes"),
+                    new Item("FormFragmentDemo", "Form Fragment Demo",
+                            "page with dynamic form sections"),
 
-            new Item("DeleteFromGridDemo", "Delete From Grid", "demo deleting items form a Grid"),
+                    new Item("BooleanDemo", "Boolean Property Demo",
+                            "demo boolean properties using both is and get prefixes"),
 
-            new Item("RenderErrorDemo", "Render Error Demo", "reporting of errors while rendering"),
+                    new Item("DeleteFromGridDemo", "Delete From Grid",
+                            "demo deleting items form a Grid"),
 
-            new Item("nested/AssetDemo", "AssetDemo", "declaring an image using Assets"),
+                    new Item("RenderErrorDemo", "Render Error Demo",
+                            "reporting of errors while rendering"),
 
-            new Item("nested/ActionDemo", "Action With Context Demo",
-                     "using action links with context on page with activation context"),
+                    new Item("nested/AssetDemo", "AssetDemo", "declaring an image using Assets"),
 
-            new Item("blockdemo", "BlockDemo", "use of blocks to control rendering"),
+                    new Item("nested/ActionDemo", "Action With Context Demo",
+                            "using action links with context on page with activation context"),
 
-            new Item("countdown", "Countdown Page", "defining component using @Component annotation"),
+                    new Item("blockdemo", "BlockDemo", "use of blocks to control rendering"),
 
-            new Item("injectdemo", "Inject Demo", "use of various kinds of injection"),
+                    new Item("countdown", "Countdown Page",
+                            "defining component using @Component annotation"),
 
-            new Item("instancemixin", "InstanceMixin", "mixin added to a particular component instance"),
+                    new Item("injectdemo", "Inject Demo", "use of various kinds of injection"),
 
-            new Item("TextFieldWrapperTypeDemo", "TextField Wrapper Types",
-                     "use of TextField to edit numeric wrapper types (not primitives) "),
+                    new Item("instancemixin", "InstanceMixin",
+                            "mixin added to a particular component instance"),
 
-            new Item("EnvironmentalDemo", "Environmental Annotation Usage",
-                     "Storing and retrieving Environmental values"),
+                    new Item("TextFieldWrapperTypeDemo", "TextField Wrapper Types",
+                            "use of TextField to edit numeric wrapper types (not primitives) "),
 
-            new Item("Expansion", "Expansion Page", "Use of expansions in templates"),
+                    new Item("EnvironmentalDemo", "Environmental Annotation Usage",
+                            "Storing and retrieving Environmental values"),
 
-            new Item("ExpansionSubclass", "ExpansionSubclass", "components can inherit templates from base classes"),
+                    new Item("Expansion", "Expansion Page", "Use of expansions in templates"),
 
-            new Item("Localization", "Localization", "access localized messages from the component catalog"),
+                    new Item("ExpansionSubclass", "ExpansionSubclass",
+                            "components can inherit templates from base classes"),
 
-            new Item("NumberSelect", "NumberSelect", "passivate/activate page context demo"),
+                    new Item("Localization", "Localization",
+                            "access localized messages from the component catalog"),
 
-            new Item("ParameterConflict", "Template Overridden by Class Page",
-                     "Parameters in the class override those in the template"),
+                    new Item("NumberSelect", "NumberSelect", "passivate/activate page context demo"),
 
-            new Item("ParameterDefault", "ParameterDefault", "defaulter methods for component parameters"),
+                    new Item("ParameterConflict", "Template Overridden by Class Page",
+                            "Parameters in the class override those in the template"),
 
-            new Item("passwordfielddemo", "PasswordFieldDemo", "test for the PasswordField component"),
+                    new Item("ParameterDefault", "ParameterDefault",
+                            "defaulter methods for component parameters"),
 
-            new Item("rendercomponentdemo", "RenderComponentDemo",
-                     "components that \"nominate\" other components to render"),
+                    new Item("passwordfielddemo", "PasswordFieldDemo",
+                            "test for the PasswordField component"),
 
-            new Item("renderphaseorder", "RenderPhaseOrder", "order of operations when invoking render phase methods"),
+                    new Item("rendercomponentdemo", "RenderComponentDemo",
+                            "components that \"nominate\" other components to render"),
 
-            new Item("simpleform", "SimpleForm", "first pass at writing Form and TextField components"),
+                    new Item("renderphaseorder", "RenderPhaseOrder",
+                            "order of operations when invoking render phase methods"),
 
-            new Item("validform", "ValidForm", "server-side input validation"),
+                    new Item("simpleform", "SimpleForm",
+                            "first pass at writing Form and TextField components"),
 
-            new Item("ToDoListVolatile", "ToDo List (Volatile)", "Loops and Submit inside Form, volatile mode"),
+                    new Item("validform", "ValidForm", "server-side input validation"),
 
-            new Item("MissingTemplate", "Missing Template Demo",
-                     "Demo for what happens when a template is not found for a page"),
+                    new Item("ToDoListVolatile", "ToDo List (Volatile)",
+                            "Loops and Submit inside Form, volatile mode"),
 
-            new Item("nested/zonedemo", "Zone Demo", "dynamic updates within a page"),
+                    new Item("MissingTemplate", "Missing Template Demo",
+                            "Demo for what happens when a template is not found for a page"),
 
-            new Item("todolist", "ToDo List", "Loops and Submit inside Form using primary key encoder"),
+                    new Item("nested/zonedemo", "Zone Demo", "dynamic updates within a page"),
 
-            new Item("flashdemo", "FlashDemo", "demonstrate 'flash' persistence"),
+                    new Item("todolist", "ToDo List",
+                            "Loops and Submit inside Form using primary key encoder"),
 
-            new Item("beaneditordemo", "BeanEditor Demo", "demonstrate the BeanEditor mega-component"),
+                    new Item("flashdemo", "FlashDemo", "demonstrate 'flash' persistence"),
 
-            new Item("pageloadeddemo", "PageLoaded Demo", "shows that page lifecycle methods are invoked"),
+                    new Item("beaneditordemo", "BeanEditor Demo",
+                            "demonstrate the BeanEditor mega-component"),
 
-            new Item("griddemo", "Grid Demo", "default Grid component"),
+                    new Item("pageloadeddemo", "PageLoaded Demo",
+                            "shows that page lifecycle methods are invoked"),
 
-            new Item("nullgrid", "Null Grid", "handling of null source for Grid"),
+                    new Item("griddemo", "Grid Demo", "default Grid component"),
 
-            new Item("gridsetdemo", "Grid Set Demo", "handling of Set sources for Grid"),
+                    new Item("nullgrid", "Null Grid", "handling of null source for Grid"),
 
-            new Item("gridenumdemo", "Grid Enum Demo", "handling of enum types in the Grid"),
+                    new Item("gridsetdemo", "Grid Set Demo", "handling of Set sources for Grid"),
 
-            new Item("GridRemoveReorderDemo", "Grid Remove/Reorder Demo", "handling of remove and reorder parameters"),
+                    new Item("gridenumdemo", "Grid Enum Demo", "handling of enum types in the Grid"),
 
-            new Item("protected", "Protected Page",
-                     "Demonstrate result of non-void return from a page's activate method"),
+                    new Item("GridRemoveReorderDemo", "Grid Remove/Reorder Demo",
+                            "handling of remove and reorder parameters"),
 
-            new Item("Kicker", "Kicker", "demos complex page and component context in links"),
+                    new Item("protected", "Protected Page",
+                            "Demonstrate result of non-void return from a page's activate method"),
 
-            new Item("simpletrackgriddemo", "SimpleTrack Grid Demo",
-                     "customizing the model for a Grid around an interface"),
+                    new Item("Kicker", "Kicker",
+                            "demos complex page and component context in links"),
 
-            new Item("pagelinkcontext", "PageLink Context Demo", "passing explicit context in a page render link"),
+                    new Item("simpletrackgriddemo", "SimpleTrack Grid Demo",
+                            "customizing the model for a Grid around an interface"),
 
-            new Item("pagecontextinform", "Page Context in Form", "passivate/activate page context in Form"),
+                    new Item("pagelinkcontext", "PageLink Context Demo",
+                            "passing explicit context in a page render link"),
 
-            new Item("ValidBeanEditorDemo", "Client Validation Demo", "BeanEditor with validation enabled"),
+                    new Item("pagecontextinform", "Page Context in Form",
+                            "passivate/activate page context in Form"),
 
-            new Item("Unreachable", "Unreachable Page", "page not reachable due to IgnoredPathsFilter"),
+                    new Item("ValidBeanEditorDemo", "Client Validation Demo",
+                            "BeanEditor with validation enabled"),
 
-            new Item("renderabledemo", "Renderable Demo", "shows that render phase methods can return a Renderable"),
+                    new Item("Unreachable", "Unreachable Page",
+                            "page not reachable due to IgnoredPathsFilter"),
 
-            new Item("inheritedbindingsdemo", "Inherited Bindings Demo",
-                     "Tests for components that inherit bindings from containing components"),
+                    new Item("renderabledemo", "Renderable Demo",
+                            "shows that render phase methods can return a Renderable"),
 
-            new Item("ClientPersistenceDemo", "Client Persistence Demo",
-                     "component field values persisted on the client side"),
+                    new Item("inheritedbindingsdemo", "Inherited Bindings Demo",
+                            "Tests for components that inherit bindings from containing components"),
 
-            new Item("attributeExpansionsDemo", "Attribute Expansions Demo",
-                     "use expansions inside attributes of ordinary elements"),
+                    new Item("ClientPersistenceDemo", "Client Persistence Demo",
+                            "component field values persisted on the client side"),
 
-            new Item("PaletteDemo", "Palette Demo", "multiple selection component"),
+                    new Item("attributeExpansionsDemo", "Attribute Expansions Demo",
+                            "use expansions inside attributes of ordinary elements"),
 
-            new Item("ReturnTypes", "Return Types", "tests various event handler return types"),
+                    new Item("PaletteDemo", "Palette Demo", "multiple selection component"),
 
-            new Item("FormEncodingType", "Form Encoding Type", "Test ability to set an encoding type for a Form"),
+                    new Item("ReturnTypes", "Return Types",
+                            "tests various event handler return types"),
 
-            new Item("RadioDemo", "RadioDemo", "Use of the RadioGroup and Radio components"),
+                    new Item("FormEncodingType", "Form Encoding Type",
+                            "Test ability to set an encoding type for a Form"),
 
-            new Item("RegexpDemo", "Regexp Demo", "Use of the Regexp validator"),
+                    new Item("RadioDemo", "RadioDemo", "Use of the RadioGroup and Radio components"),
 
-            new Item("BeanEditRemoveReorder", "BeanEdit Remove/Reorder",
-                     "Use of the remove and reorder parameters with BeanEditForm"),
+                    new Item("RegexpDemo", "Regexp Demo", "Use of the Regexp validator"),
 
-            new Item("MultiBeanEditDemo", "MultiBeanEdit Demo", "Multiple BeanEditor components in a single form"),
+                    new Item("BeanEditRemoveReorder", "BeanEdit Remove/Reorder",
+                            "Use of the remove and reorder parameters with BeanEditForm"),
 
-            new Item("GridFormDemo", "Grid Form Demo", "Grid operating inside a Form"),
+                    new Item("MultiBeanEditDemo", "MultiBeanEdit Demo",
+                            "Multiple BeanEditor components in a single form"),
 
-            new Item("DateFieldDemo", "DateField Demo", "using DateField by itself on a page"),
+                    new Item("GridFormDemo", "Grid Form Demo", "Grid operating inside a Form"),
 
-            new Item("BeanEditDateDemo", "BeanEditor / Date Demo",
-                     "Use of date properties inside BeanEditor and BeanDisplay"),
+                    new Item("DateFieldDemo", "DateField Demo",
+                            "using DateField by itself on a page"),
 
-            new Item("eventmethodtranslate", "EventMethod Translator",
-                     "Demo ability to provide toclient and parseclient event handler methods"),
+                    new Item("BeanEditDateDemo", "BeanEditor / Date Demo",
+                            "Use of date properties inside BeanEditor and BeanDisplay"),
 
-            new Item("autocompletedemo", "Autocomplete Mixin Demo", "Demo the autocomplete mixin for text fields"),
+                    new Item("eventmethodtranslate", "EventMethod Translator",
+                            "Demo ability to provide toclient and parseclient event handler methods"),
 
-            new Item("componentparameter", "ComponentParameter Demo",
-                     " Demo using a component type as a parameter type and succesfuly passing a component"),
+                    new Item("autocompletedemo", "Autocomplete Mixin Demo",
+                            "Demo the autocomplete mixin for text fields"),
 
-            new Item("inheritinformalsdemo", "Inherit Informal Parameters Demo",
-                     "Demo a component which inherits informal parameters from its container"),
+                    new Item("componentparameter", "ComponentParameter Demo",
+                            " Demo using a component type as a parameter type and succesfuly passing a component"),
 
-            new Item("disabledfields", "Disabled Fields",
-                     "Demonstrate a bunch of disabled fields, to verify that the RenderDisabled mixin works and is being used properly"),
+                    new Item("inheritinformalsdemo", "Inherit Informal Parameters Demo",
+                            "Demo a component which inherits informal parameters from its container"),
 
-            new Item("BeanEditorOverride", "BeanEditor Override",
-                     "Property editor overrides work for the BeanEditor component itself (not just the BeanEditForm component)"),
+                    new Item(
+                            "disabledfields",
+                            "Disabled Fields",
+                            "Demonstrate a bunch of disabled fields, to verify that the RenderDisabled mixin works and is being used properly"),
 
-            new Item("varbindingdemo", "Var Binding Demo", "use of the var: binding prefix"),
+                    new Item(
+                            "BeanEditorOverride",
+                            "BeanEditor Override",
+                            "Property editor overrides work for the BeanEditor component itself (not just the BeanEditForm component)"),
 
-            new Item("leangriddemo", "Lean Grid Demo",
-                     "Grid component with lean parameter turned on, to eliminate CSS class attributes in TD and TH elements"),
+                    new Item("varbindingdemo", "Var Binding Demo", "use of the var: binding prefix"),
 
-            new Item("blockcaller", "Action Links off of Active Page",
-                     "Actions can exist on pages other than the active page, via Blocks."),
+                    new Item(
+                            "leangriddemo",
+                            "Lean Grid Demo",
+                            "Grid component with lean parameter turned on, to eliminate CSS class attributes in TD and TH elements"),
 
-            new Item("unlessdemo", "Unless Demo", "use of the Unless component"),
+                    new Item("blockcaller", "Action Links off of Active Page",
+                            "Actions can exist on pages other than the active page, via Blocks."),
 
-            new Item("MagicValueEncoder", "Magic ValueEncoder Demo",
-                     "Automatic creation of ValueEncoder using the TypeCoercer"),
+                    new Item("unlessdemo", "Unless Demo", "use of the Unless component"),
 
-            new Item("NullStrategyDemo", "Null Field Strategy Demo", "use of the nulls parameter of TextField"),
+                    new Item("MagicValueEncoder", "Magic ValueEncoder Demo",
+                            "Automatic creation of ValueEncoder using the TypeCoercer"),
 
-            new Item("OverrideValidationDecorator", "Override Validation Decorator",
-                     "override the default validation decorator"),
+                    new Item("NullStrategyDemo", "Null Field Strategy Demo",
+                            "use of the nulls parameter of TextField"),
 
-            new Item("ExceptionEventDemo", "Exception Event Demo", "handling component event exceptions"),
+                    new Item("OverrideValidationDecorator", "Override Validation Decorator",
+                            "override the default validation decorator"),
 
-            new Item("AddedGridColumnsDemo", "Added Grid Columns Demo", "programatically adding grid columns"),
+                    new Item("ExceptionEventDemo", "Exception Event Demo",
+                            "handling component event exceptions"),
 
-            new Item("PrimitiveArrayParameterDemo", "Primitive Array Parameter Demo",
-                     "use primitive array as parameter type"),
+                    new Item("AddedGridColumnsDemo", "Added Grid Columns Demo",
+                            "programatically adding grid columns"),
 
-            new Item("RenderPhaseMethodExceptionDemo", "Render Phase Method Exception Demo",
-                     "render phase methods may throw checked exceptions"),
+                    new Item("PrimitiveArrayParameterDemo", "Primitive Array Parameter Demo",
+                            "use primitive array as parameter type"),
 
-            new Item("TrackEditor", "Generic Page Class Demo",
-                     "demo use of generics with component classes and, particularily, with property types"),
+                    new Item("RenderPhaseMethodExceptionDemo",
+                            "Render Phase Method Exception Demo",
+                            "render phase methods may throw checked exceptions"),
 
-            new Item("IndirectProtectedFields", "Protected Fields Demo",
-                     "demo exception when component class contains protected fields"),
+                    new Item("TrackEditor", "Generic Page Class Demo",
+                            "demo use of generics with component classes and, particularily, with property types"),
 
-            new Item("injectcomponentdemo", "Inject Component Demo",
-                     "inject component defined in template"),
+                    new Item("IndirectProtectedFields", "Protected Fields Demo",
+                            "demo exception when component class contains protected fields"),
 
-            new Item("cachedpage", "Cached Annotation", "Caching method return values"),
+                    new Item("injectcomponentdemo", "Inject Component Demo",
+                            "inject component defined in template"),
 
-            new Item("cachedpage2", "Cached Annotation2", "Caching method return values w/ inheritence"),
+                    new Item("cachedpage", "Cached Annotation", "Caching method return values"),
 
-            new Item("inplacegriddemo", "In-Place Grid Demo", "Grid that updates in-place using Ajax"),
+                    new Item("cachedpage2", "Cached Annotation2",
+                            "Caching method return values w/ inheritence"),
 
-            new Item("methodadvicedemo", "Method Advice Demo", "Advising component methods."),
+                    new Item("inplacegriddemo", "In-Place Grid Demo",
+                            "Grid that updates in-place using Ajax"),
 
-            new Item("HasBodyDemo", "Has Body Demo", "Verify the hasBody() method of ComponentResources"),
+                    new Item("methodadvicedemo", "Method Advice Demo",
+                            "Advising component methods."),
 
-            new Item("BeanEditorBeanEditContext", "BeanEditor BeanEditContext",
-                     "BeanEditContext is pushed into enviroment by BeanEditor."),
+                    new Item("HasBodyDemo", "Has Body Demo",
+                            "Verify the hasBody() method of ComponentResources"),
 
-            new Item("InformalParametersDemo", "Informal Parameters Demo",
-                     "Access to informal parameters names and values"),
+                    new Item("BeanEditorBeanEditContext", "BeanEditor BeanEditContext",
+                            "BeanEditContext is pushed into enviroment by BeanEditor."),
 
-            new Item("FormFieldOutsideForm", "Form Field Outside Form",
-                     "Nice exception message for common problem of form fields outside forms"),
+                    new Item("InformalParametersDemo", "Informal Parameters Demo",
+                            "Access to informal parameters names and values"),
 
-            new Item("SubmitWithContext", "Submit With Context",
-                     "Providing a context for Submit component"),
+                    new Item("FormFieldOutsideForm", "Form Field Outside Form",
+                            "Nice exception message for common problem of form fields outside forms"),
 
-            new Item("MessageConstraintGeneratorDemo",
-                     "Validation Constraints From Messages",
-                     "Providing validators to apply from a properties file"),
+                    new Item("SubmitWithContext", "Submit With Context",
+                            "Providing a context for Submit component"),
 
-            new Item("RenderClientIdDemo",
-                     "RenderClientId Mixin",
-                     "Force render of client-side id of a client element via the RenderClientId mixin"),
+                    new Item("MessageConstraintGeneratorDemo",
+                            "Validation Constraints From Messages",
+                            "Providing validators to apply from a properties file"),
 
-            new Item("BindParameterDemo",
-                     "BindParameter mixin annotation",
-                     "Accessing component parameter values from a mixin"),
+                    new Item("RenderClientIdDemo", "RenderClientId Mixin",
+                            "Force render of client-side id of a client element via the RenderClientId mixin"),
 
-            new Item("BindParameterNoSuchParameter",
-                     "BindParameter error handling",
-                     "BindParameter throws exception if the containing component doesn't have a matching parameter"),
+                    new Item("BindParameterDemo", "BindParameter mixin annotation",
+                            "Accessing component parameter values from a mixin"),
 
-            new Item("BindParameterOnComponent",
-                      "BindParameter on component",
-                      "Verify that BindParameter can only be used on mixin fields"),
+                    new Item("BindParameterNoSuchParameter", "BindParameter error handling",
+                            "BindParameter throws exception if the containing component doesn't have a matching parameter"),
 
-            new Item("MixinOrderingDemo",
-                     "Mixin Ordering Demo",
-                     "Various mixin-ordering scenarios"),
+                    new Item("BindParameterOnComponent", "BindParameter on component",
+                            "Verify that BindParameter can only be used on mixin fields"),
 
-            new Item("MissingComponentClassException",
-                     "Missing Component Class Exception",
-                     "Meaningful exception message thrown when component class can't be determined from template or field in containing component."),
+                    new Item("MixinOrderingDemo", "Mixin Ordering Demo",
+                            "Various mixin-ordering scenarios"),
 
-            new Item("SessionAttributeDemo",
-                     "SessionAttribute Demo",
-                     "Annotation to map a field to a specific session attribute"),
+                    new Item(
+                            "MissingComponentClassException",
+                            "Missing Component Class Exception",
+                            "Meaningful exception message thrown when component class can't be determined from template or field in containing component."),
 
-            new Item("BeanEditCalendarDemo", "BeanEditor / Calendar Demo",
-                     "Use of calendar properties inside BeanEditor and BeanDisplay"),
+                    new Item("SessionAttributeDemo", "SessionAttribute Demo",
+                            "Annotation to map a field to a specific session attribute"),
 
-            new Item("TriggerDemo", "Trigger Demo", "Use of Trigger component"),
-            
-            new Item("ImageSubmitDemo", "Submit with an Image Demo", "Make sure that submit with the image parameter set triggers the 'selected' event."),
-            
-            new Item("SelectZoneDemo", "Select Zone Demo", "Use a Select component to update a zone."),
+                    new Item("BeanEditCalendarDemo", "BeanEditor / Calendar Demo",
+                            "Use of calendar properties inside BeanEditor and BeanDisplay"),
 
-            new Item("AssetProtectionDemo", "Asset Protection Demo", "AssetProtectionDispatcher is properly contributed and functioning")
+                    new Item("TriggerDemo", "Trigger Demo", "Use of Trigger component"),
 
-    );
+                    new Item("ImageSubmitDemo", "Submit with an Image Demo",
+                            "Make sure that submit with the image parameter set triggers the 'selected' event."),
+
+                    new Item("SelectZoneDemo", "Select Zone Demo",
+                            "Use a Select component to update a zone."),
+
+                    new Item("AssetProtectionDemo", "Asset Protection Demo",
+                            "AssetProtectionDispatcher is properly contributed and functioning")
+
+            );
 
     static
     {

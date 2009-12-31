@@ -455,3 +455,10 @@ DIV.t-page-loading-banner {
     border-right: 2px solid black;
     border-bottom: 2px solid black;
 }
+
+SPAN.t-render-object-error
+{
+  font-weight: bold;
+  font: italic;
+  color: red;
+}

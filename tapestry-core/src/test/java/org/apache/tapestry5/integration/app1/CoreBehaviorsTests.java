@@ -1221,7 +1221,6 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
         assertTextPresent("read Bar");
     }
 
-
     /**
      * TAPESTRY-1598
      */
@@ -1399,8 +1398,9 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     @Test
     public void test_asset_protection()
     {
-        // Have to watch out for minor differences in error messages from one version of Jetty to the next.
-        
+        // Have to watch out for minor differences in error messages from one version of Jetty to
+        // the next.
+
         // context resources should be available by default.
         clickThru("Asset Protection Demo");
         clickAndWait("link=Available File");
@@ -1425,5 +1425,16 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
         clickThru("Asset Protection Demo");
         clickAndWait("link=Available File2");
         assertTextPresent("This file should be available to clients.");
+    }
+
+    /** TAP5-964 */
+    @Test
+    public void failure_inside_default_object_renderer()
+    {
+        clickThru("RenderObject Exception Demo");
+
+        assertText(
+                "container",
+                "Exception rendering description for object of type org.apache.tapestry5.integration.app1.data.NullToString: (java.lang.NullPointerException) NPE from NullToString");
     }
 }

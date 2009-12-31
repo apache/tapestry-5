@@ -1862,13 +1862,7 @@ public final class TapestryModule
 
     final TypeCoercer typeCoercer)
     {
-        configuration.add(Object.class, new ObjectRenderer()
-        {
-            public void render(Object object, MarkupWriter writer)
-            {
-                writer.write(String.valueOf(object));
-            }
-        });
+        configuration.add(Object.class, new DefaultObjectRenderer());
 
         configuration.addInstance(Request.class, RequestRenderer.class);
 
