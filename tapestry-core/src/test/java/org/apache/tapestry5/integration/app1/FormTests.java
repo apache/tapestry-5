@@ -779,4 +779,19 @@ public class FormTests extends TapestryCoreTestCase
         // Haven't figured out how to get selenium to check that fields are
         // disabled.
     }
+    
+    /**
+     * TAP5-915
+     */
+    @Test
+    public void override_datefield_message_catalog()
+    {
+        open(getBaseURL() + "overridedatefieldmessagecatalogdemo");
+
+        type("birthday", "aaaaa");
+        
+        clickAndWait("//input[@type='submit' and @value='Go']");
+       
+        assertTextPresent("The input 'aaaaa' is not a valid date");
+    }
 }

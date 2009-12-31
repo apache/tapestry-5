@@ -1,0 +1,13 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd">
+    <h1>Override DateField Message Catalog</h1>
+    
+    <p>
+        <t:form>
+        	<t:errors/>
+        	<t:datefield t:id="birthday" messages="messages" />
+        	<input type="submit" value="Go"/>
+        </t:form>
+    </p>
+
+    
+</html>

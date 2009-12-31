@@ -90,6 +90,14 @@ public class DateField extends AbstractField
     @Parameter(defaultPrefix = BindingConstants.ASSET, value = "datefield.gif")
     private Asset icon;
 
+    /**
+     * Used to override the component's message catalog.
+     * 
+     * @since 5.2.0.0
+     */
+    @Parameter("componentResources.messages")
+    private Messages messages;
+
     @Environmental
     private RenderSupport support;
 
@@ -110,10 +118,6 @@ public class DateField extends AbstractField
 
     @Inject
     private FieldValidationSupport fieldValidationSupport;
-
-    @Inject
-    private Messages messages;
-
 
     private static final String RESULT = "result";
 
