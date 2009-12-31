@@ -35,6 +35,10 @@ What is Apache Tapestry?
 New And Of Note
 
   * A {{{guide/testing.html}guide to integration testing}} is now available.
+  
+  * The annotated {{{guide/persist.html}@SessionAttribute}} can be used to read or to write some data from or into the HttpSession.
+  
+  * The {{{tapestry-beanvalidator}JSR-303 Integration Library}} is now available.
 
   []
   

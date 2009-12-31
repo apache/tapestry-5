@@ -276,6 +276,31 @@ Rendering Components
   
   Returning a component instance does <<not>> short circuit method invocation, the way returning a boolean would.  It is possible
   that multiple  methods may return components (this is not advised -- insanity may ensue).  
+  
+Further Return Types
+
+  Further return types for a render phase method are {{{../apidocs/org/apache/tapestry5/Block.html}Block}}, 
+  {{{../apidocs/org/apache/tapestry5/Renderable.html}Renderable}} and {{{../apidocs/org/apache/tapestry5/runtime/RenderCommand.html}RenderCommand}}. 
+  The following component returns a Renderable in the early phase BeginRender and skips the phase BeforeRenderTemplate.
+ 
++---+ 
+public class OutputValueComponent
+{
+    @Paremeter
+    private String value;
+    
+    Object beginRender()
+    {
+        return new Renderable()
+        {
+            public void render(MarkupWriter writer)
+            {
+                writer.write(value);
+            }
+        };
+    }
+ }
++---+ 
 
 Method Conflicts and Ordering
 

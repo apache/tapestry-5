@@ -14,14 +14,15 @@
 
 package org.apache.tapestry5.internal.structure;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.apache.tapestry5.ComponentEventCallback;
 import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.Renderable;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.runtime.RenderCommand;
 import org.apache.tapestry5.runtime.RenderQueue;
-
-import java.util.List;
 
 /**
  * Used by {@link org.apache.tapestry5.internal.structure.ComponentPageElementImpl} to track the results of invoking the
@@ -81,7 +82,8 @@ class RenderPhaseEventHandler implements ComponentEventCallback
             return false;
         }
 
-        throw new RuntimeException(StructureMessages.wrongPhaseResultType(Boolean.class));
+        throw new RuntimeException(StructureMessages.wrongPhaseResultType(
+                Arrays.asList(Boolean.class.getName(), Renderable.class.getName(), RenderCommand.class.getName())));
     }
 
     private void add(RenderCommand command)

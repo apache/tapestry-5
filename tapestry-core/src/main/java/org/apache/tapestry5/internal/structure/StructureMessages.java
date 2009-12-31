@@ -65,9 +65,9 @@ final class StructureMessages
         return MESSAGES.format("detach-failure", listener, cause);
     }
 
-    static String wrongPhaseResultType(Class expectedType)
+    static String wrongPhaseResultType(List<String> expectedTypes)
     {
-        return MESSAGES.format("wrong-phase-result-type", expectedType.getName());
+        return MESSAGES.format("wrong-phase-result-type", InternalUtils.join(expectedTypes));
     }
 
     static String blockNotFound(String componentId, String blockId)
