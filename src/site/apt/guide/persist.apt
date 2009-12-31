@@ -148,3 +148,34 @@ Clustering Issues
   service is ultimately responsible for determining whether a session persisted object is dirty or not (dirty meaning
   in need of a restore into the session). This is an extensible service where new strategies, for new classes,
   can be introduced.
+  
+Session Data
+
+  When integrating Tapestry with legacy applications it is often required to read or to write some data from or into the HttpSession.
+ 
++----+
+public class Page
+{
+    @Inject
+    private Request request;
+    
+    public User getUser()
+    {
+        return (User) request.getSession(true).getAttribute("user");
+    }
+
+}
++----+
+
+  Since 5.2 this can be accomplished just by annotating a page or component property with @SessionAttribute. This annotation is 
+  used to map a property of a page or component to value stored in session. The name of the annotated property is used as the name of 
+  the session attribute to look for. You can also provide a name by binding the <<value>> parameter of the annotation.
+
++----+
+public class Page
+{
+    @SessionAttribute
+    private User user;
+
+}
++----+
