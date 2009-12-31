@@ -142,25 +142,116 @@ Securing Assets
 
   Securing assets is an important consideration for any web application.  Many assets, such as hibernate configuration
   files, sit in the classpath and are exposable via the Asset service, which is not desirable.  To protect these and
-  other sensitive assets, Tapestry provides the AssetProtectionDispatcher.  This dispatcher sits in front of the
-  AssetDispatcher, the service responsible for streaming assets to the client, and watches for Asset requests.
+  other sensitive assets, Tapestry provides the {{{../apidocs/org/apache/tapestry5/internal/services/AssetProtectionDispatcher.html}AssetProtectionDispatcher}}. 
+  This dispatcher sits in front of the AssetDispatcher, the service responsible for streaming assets to the client, and watches for Asset requests.
   When an asset request comes in, the protection dispatcher checks for authorization to view the file against a
-  contributed list of AssetPathAuthorizer implementations.  Determination of whether the client can view the requested
-  resource is then made based on whether any of the contributed AssetPathAuthorizer implementations explicitly allowed
-  or denied access to the resource.
+  contributed list of {{{../apidocs/org/apache/tapestry5/services/AssetPathAuthorizer.html}AssetPathAuthorizer}} implementations.  
+  Determination of whether the client can view the requested resource is then made based on whether any of the contributed 
+  AssetPathAuthorizer implementations explicitly allowed or denied access to the resource.
 
-  Tapestry provides two AssetPathAuthorizer implemenations "out of the box" to which users may contribute: RegexAuthorizer
-  and WhitelistAuthorizer.  RegexAuthorizer uses regular expressions to determine assets which are viewable by the
+  Tapestry provides two AssetPathAuthorizer implemenations "out of the box" to which users may contribute: 
+  {{{../apidocs/org/apache/tapestry5/internal/services/RegexAuthorizer.html}RegexAuthorizer}}
+  and {{{../apidocs/org/apache/tapestry5/internal/services/WhitelistAuthorizer.html}WhitelistAuthorizer}}.  
+  RegexAuthorizer uses regular expressions to determine assets which are viewable by the
   client; any assets that match one of its (contributed) regular expressions are authorized. Anything not matched is
   passed through to the WhitelistAuthorizer.  WhitelistAuthorizer uses an exact-matching whitelist.  Anything matching
   exactly one its contributions is allowed; all other asset requests are denied.  The default tapestry configuration
   contributes nothing to WhitelistAuthorizer (access will be denied to all asset requests passed through to it), and
   explicitly allows access to css, jpg, jpeg, js, png, and gif files associated with tapestry (tapestry.js, blackbird
   files, date picker files, etc.).  The default contribution also enables access to the css, jpg, jpeg, js, png, and gif
-  files provided by the popular chenille-kit 3rd party library. The default configuration denies access to all other
+  files inside any subpackage of the configured app package. The default configuration denies access to all other
   assets.  To enable access to your application's assets, either contribute a custom AssetPathAnalyzer, or contribute
   appropriate regular expression or exact path contributions to RegexAuthorizer or WhitelistAuthorizer, respectively.
-  See TapestryModule.contribteRegexAuthorizer for examples.
+  See TapestryModule.contribteRegexAuthorizer for examples. 
+  
+  Imagine you wish to allow access to resources outside the app package. Let 'org.example' be your app package and 'org.resources' the package 
+  where your assets are located. To allow access to the 'styles.css' file inside 'org.resources' package you need to contribute to WhitelistAuthorizer.
+  
++----+
+    public class AppModule
+    {        
+        public void contributeWhitelistAuthorizer(final Configuration<String> configuration) 
+        {
+            configuration.add("org/resources/styles.css");
+        }
+    }
++---+  
+
+  If you wish to allow access to several resources then a contribution to RegexAuthorizer is a better alternative.
+
++----+
+    public class AppModule
+    {        
+        public void contributeRegexAuthorizer(final Configuration<String> configuration) 
+        {
+        	String pattern = "([^/.]+/)*[^/.]+\\.((css)|(js)|(jpg)|(jpeg)|(png)|(gif))$";
+        	
+        	configuration.add("^org/resources/" + pattern);
+        }
+    }
++---+ 
+
+  And finally if you wish to blacklist a path that is allowed by Tapestry you should write your own AssetPathAuthorizer. 
+  The following one denies access to all configured paths. Note that 
+  {{{../apidocs/org/apache/tapestry5/services/AssetPathAuthorizer.html#order()}AssetPathAuthorizer.html#order()}}
+  defines the order in which methods {{{../apidocs/org/apache/tapestry5/services/AssetPathAuthorizer.html#accessAllowed(java.lang.String)}AssetPathAuthorizer.html#accessAllowed}} 
+  and {{{../apidocs/org/apache/tapestry5/services/AssetPathAuthorizer.html#accessDenied(java.lang.String)}AssetPathAuthorizer.html#accessDenied}} are invoked. 
+  In this example the method 'AssetPathAuthorizer#accessDenied' is invoked first. If the current path is to be blacklisted 'AssetPathAuthorizer#accessDenied' returns the value 'true' and 
+  'AssetPathAuthorizer#accessAllowed' is not invoked. That's why 'AssetPathAuthorizer#accessAllowed' returns true.
+  
++----+
+    public class BlacklistAuthorizer implements AssetPathAuthorizer 
+    {
+
+        private final Collection<String> configuration;
+
+        public DenyAssetPathAuthorizer(final Collection<String> configuration) 
+        {
+            this.configuration = configuration;
+        }
+
+        public boolean accessAllowed(final String someResourcePath) 
+        {
+            return true;
+        }
+
+        public boolean accessDenied(final String someResourcePath) 
+        {
+            return this.configuration.contains(someResourcePath);
+        }
+
+        public List<Order> order() 
+        {
+            return Arrays.asList(Order.DENY, Order.ALLOW);
+        }
+    }
++---+  
+
+  Then contribute the BlacklistAuthorizer and place it before all other AssetPathAuthorizer.
+
++----+
+    public class AppModule
+    {
+
+        public static void bind(final ServiceBinder binder) 
+        {
+            binder.bind(AssetPathAuthorizer.class, BlacklistAuthorizer.class).withId("BlacklistAuthorizer");
+        }
+        
+        public void contributeBlacklistAuthorizer(final Configuration<String> configuration) 
+        {
+            configuration.add("org/example/pages/secret.jpg");
+        }
+        
+        public static void contributeAssetProtectionDispatcher(
+                OrderedConfiguration<AssetPathAuthorizer> configuration,
+        	
+                @InjectService("BlacklistAuthorizer") AssetPathAuthorizer blacklist)
+        {
+                configuration.add("blacklist",blacklist,"before:*");
+        }
+    }
++---+  
 
 
 Performance Notes
