@@ -14,6 +14,7 @@
 
 package org.apache.tapestry5.ioc.internal;
 
+import javassist.bytecode.AccessFlag;
 import org.apache.tapestry5.ioc.*;
 import org.apache.tapestry5.ioc.def.ContributionDef;
 import org.apache.tapestry5.ioc.def.DecoratorDef;
@@ -22,7 +23,9 @@ import org.apache.tapestry5.ioc.def.ServiceDef;
 import org.apache.tapestry5.ioc.internal.services.ClassFactoryImpl;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.ioc.services.ClassFab;
 import org.apache.tapestry5.ioc.services.ClassFactory;
+import org.apache.tapestry5.ioc.services.MethodSignature;
 import org.apache.tapestry5.ioc.test.IOCTestCase;
 import static org.easymock.EasyMock.contains;
 import org.slf4j.Logger;
@@ -31,6 +34,8 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.List;
 import java.util.Set;
 
 public class DefaultModuleDefImplTest extends IOCTestCase
@@ -596,6 +601,48 @@ public class DefaultModuleDefImplTest extends IOCTestCase
         assertEquals(markers.size(), 2);
 
         verify();
+    }
+
+    /**
+     * TAP5-839
+     */
+    @Test
+    public void public_synthetic_methods_are_ignored() throws NoSuchMethodException
+    {
+        Class moduleClass = createSyntheticMethodModuleClass();
+
+        Logger logger = mockLogger();
+
+        replay();
+
+        ModuleDef md = new DefaultModuleDefImpl(moduleClass, logger, classFactory);
+
+        // reality check that a service was found
+        
+        assertEquals(md.getServiceIds().size(), 1);
+
+        verify();
+    }
+
+    private Class createSyntheticMethodModuleClass() throws NoSuchMethodException
+    {
+        ClassFab fab = classFactory.newClass("EnhancedSyntheticMethodModule", SyntheticMethodModule.class);
+
+        int modifiers = Modifier.PUBLIC | AccessFlag.SYNTHETIC;
+
+        // choose arbitrary signature
+
+        MethodSignature signature = new MethodSignature(List.class.getMethod("size"));
+
+        fab.addMethod(modifiers, signature, "return 0;");
+
+        Class moduleClass = fab.createClass();
+
+        // make sure we really managed to create a synthetic method
+
+        assertTrue(moduleClass.getMethod("size").isSynthetic());
+        
+        return moduleClass;
     }
 
     // TODO: We're short on tests that ensure that marker annotation are additive (i.e., module

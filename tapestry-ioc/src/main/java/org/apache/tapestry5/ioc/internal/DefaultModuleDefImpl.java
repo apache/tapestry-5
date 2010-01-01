@@ -112,6 +112,7 @@ public class DefaultModuleDefImpl implements ModuleDef2, ServiceDefAccumulator
         Set<Method> methods = CollectionFactory.newSet(moduleClass.getMethods());
 
         methods.removeAll(OBJECT_METHODS);
+		removeSyntheticMethods(methods);
 
         boolean modulePreventsServiceDecoration = moduleClass.getAnnotation(PreventServiceDecoration.class) != null;
 
@@ -149,6 +150,18 @@ public class DefaultModuleDefImpl implements ModuleDef2, ServiceDefAccumulator
     {
         return serviceDefs.get(serviceId);
     }
+
+	private void removeSyntheticMethods(Set<Method> methods)
+	{
+		Iterator<Method> iterator = methods.iterator();
+
+        while (iterator.hasNext())
+		{
+            Method m = iterator.next();
+            
+			if (m.isSynthetic()) iterator.remove();
+		}
+	}
 
     private void grind(Set<Method> remainingMethods, boolean modulePreventsServiceDecoration)
     {
