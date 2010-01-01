@@ -68,7 +68,6 @@ public class HibernateEntityValueEncoderTest extends IOCTestCase
         HibernateEntityValueEncoder<SampleEntity> encoder = new HibernateEntityValueEncoder<SampleEntity>(
                 SampleEntity.class, persistentClass, session, access, typeCoercer, logger);
 
-
         try
         {
             encoder.toClient(entity);
@@ -76,8 +75,9 @@ public class HibernateEntityValueEncoderTest extends IOCTestCase
         }
         catch (IllegalStateException ex)
         {
-            assertMessageContains(ex, "Entity org.apache.tapestry5.internal.hibernate.SampleEntity",
-                                  "has an id property of null");
+            assertMessageContains(ex,
+                    "Entity org.apache.tapestry5.internal.hibernate.SampleEntity",
+                    "has an id property of null");
         }
 
         verify();
@@ -104,11 +104,42 @@ public class HibernateEntityValueEncoderTest extends IOCTestCase
         HibernateEntityValueEncoder<SampleEntity> encoder = new HibernateEntityValueEncoder<SampleEntity>(
                 SampleEntity.class, persistentClass, session, access, typeCoercer, logger);
 
-
         assertNull(encoder.toValue("12345"));
 
         verify();
+    }
 
+    @Test
+    public void to_value_bad_type_coercion()
+    {
+        Session session = mockSession();
+        Logger logger = mockLogger();
+
+        replay();
+
+        RootClass persistentClass = new RootClass();
+        Property idProperty = new Property();
+        idProperty.setName("id");
+        persistentClass.setIdentifierProperty(idProperty);
+
+        HibernateEntityValueEncoder<SampleEntity> encoder = new HibernateEntityValueEncoder<SampleEntity>(
+                SampleEntity.class, persistentClass, session, access, typeCoercer, logger);
+
+        try
+        {
+            encoder.toValue("xyz");
+            unreachable();
+        }
+        catch (RuntimeException ex)
+        {
+            assertMessageContains(
+                    ex,
+                    "Exception converting 'xyz' to instance of java.lang.Long (id type for entity org.apache.tapestry5.internal.hibernate.SampleEntity)");
+        }
+
+        assertNull(encoder.toValue(""));
+
+        verify();
     }
 
     protected final Session mockSession()

@@ -7,3 +7,4 @@
 *.iws
 target
 test-output
+temp-testng*.xml

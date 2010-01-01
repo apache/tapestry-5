@@ -41,8 +41,8 @@ public final class HibernateEntityValueEncoder<E> implements ValueEncoder<E>
 
     private final Logger logger;
 
-    public HibernateEntityValueEncoder(Class<E> entityClass, PersistentClass persistentClass, Session session,
-                                       PropertyAccess propertyAccess, TypeCoercer typeCoercer, Logger logger)
+    public HibernateEntityValueEncoder(Class<E> entityClass, PersistentClass persistentClass,
+            Session session, PropertyAccess propertyAccess, TypeCoercer typeCoercer, Logger logger)
     {
         this.entityClass = entityClass;
         this.session = session;
@@ -53,20 +53,23 @@ public final class HibernateEntityValueEncoder<E> implements ValueEncoder<E>
 
         idPropertyName = property.getName();
 
-        propertyAdapter = propertyAccess.getAdapter(this.entityClass).getPropertyAdapter(idPropertyName);
+        propertyAdapter = propertyAccess.getAdapter(this.entityClass).getPropertyAdapter(
+                idPropertyName);
     }
-
 
     public String toClient(E value)
     {
-        if (value == null) return null;
+        if (value == null)
+            return null;
 
         Object id = propertyAdapter.get(value);
 
         if (id == null)
-            throw new IllegalStateException(String.format(
-                    "Entity %s has an %s property of null; this probably means that it has not been persisted yet.",
-                    value, idPropertyName));
+            throw new IllegalStateException(
+                    String
+                            .format(
+                                    "Entity %s has an %s property of null; this probably means that it has not been persisted yet.",
+                                    value, idPropertyName));
 
         return typeCoercer.coerce(id, String.class);
     }
@@ -74,9 +77,23 @@ public final class HibernateEntityValueEncoder<E> implements ValueEncoder<E>
     @SuppressWarnings("unchecked")
     public E toValue(String clientValue)
     {
-        if (InternalUtils.isBlank(clientValue)) return null;
+        if (InternalUtils.isBlank(clientValue))
+            return null;
 
-        Object id = typeCoercer.coerce(clientValue, propertyAdapter.getType());
+        Object id = null;
+
+        try
+        {
+
+            id = typeCoercer.coerce(clientValue, propertyAdapter.getType());
+        }
+        catch (Exception ex)
+        {
+            throw new RuntimeException(String.format(
+                    "Exception converting '%s' to instance of %s (id type for entity %s): %s",
+                    clientValue, propertyAdapter.getType().getName(), entityClass.getName(),
+                    InternalUtils.toMessage(ex)), ex);
+        }
 
         Serializable ser = Defense.cast(id, Serializable.class, "id");
 
@@ -84,8 +101,10 @@ public final class HibernateEntityValueEncoder<E> implements ValueEncoder<E>
 
         if (result == null)
         {
-            // We don't identify the entity type in the message because the logger is based on the entity type.
-            logger.error(String.format("Unable to convert client value '%s' into an entity instance.", clientValue));
+            // We don't identify the entity type in the message because the logger is based on the
+            // entity type.
+            logger.error(String.format(
+                    "Unable to convert client value '%s' into an entity instance.", clientValue));
         }
 
         return result;
