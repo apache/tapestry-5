@@ -18,7 +18,6 @@ import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.internal.transform.pages.ReadOnlyBean;
 import org.apache.tapestry5.internal.util.Holder;
 import org.apache.tapestry5.ioc.ObjectLocator;
-import org.apache.tapestry5.ioc.internal.QuietOperationTracker;
 import org.apache.tapestry5.services.*;
 import org.easymock.EasyMock;
 import static org.easymock.EasyMock.eq;
@@ -52,7 +51,7 @@ public class ApplicationStateManagerImplTest extends InternalBaseTestCase
         replay();
 
         ApplicationStateManager manager = new ApplicationStateManagerImpl(configuration, source,
-                null, null);
+                null);
 
         assertSame(manager.get(asoClass), aso);
 
@@ -78,7 +77,7 @@ public class ApplicationStateManagerImplTest extends InternalBaseTestCase
         replay();
 
         ApplicationStateManager manager = new ApplicationStateManagerImpl(configuration, source,
-                null, null);
+                null);
 
         assertFalse(manager.exists(asoClass));
 
@@ -104,7 +103,7 @@ public class ApplicationStateManagerImplTest extends InternalBaseTestCase
         replay();
 
         ApplicationStateManager manager = new ApplicationStateManagerImpl(configuration, source,
-                null, null);
+                null);
 
         assertTrue(manager.exists(asoClass));
 
@@ -131,7 +130,7 @@ public class ApplicationStateManagerImplTest extends InternalBaseTestCase
         replay();
 
         ApplicationStateManager manager = new ApplicationStateManagerImpl(configuration, source,
-                null, null);
+                null);
 
         manager.set(asoClass, aso);
 
@@ -167,14 +166,15 @@ public class ApplicationStateManagerImplTest extends InternalBaseTestCase
 
         expect(strategy.get(eq(asoClass), isA(ApplicationStateCreator.class))).andAnswer(answer);
 
-        train_autobuild(locator, asoClass, new ReadOnlyBean());
+        expect(locator.autobuild(EasyMock.isA(String.class), EasyMock.eq(asoClass))).andReturn(
+                new ReadOnlyBean());
 
         replay();
 
         Map<Class, ApplicationStateContribution> configuration = Collections.emptyMap();
 
         ApplicationStateManager manager = new ApplicationStateManagerImpl(configuration, source,
-                locator, new QuietOperationTracker());
+                locator);
 
         Object actual = manager.get(asoClass);
 
@@ -201,7 +201,7 @@ public class ApplicationStateManagerImplTest extends InternalBaseTestCase
         replay();
 
         ApplicationStateManager manager = new ApplicationStateManagerImpl(configuration, source,
-                null, null);
+                null);
 
         assertNull(manager.getIfExists(asoClass));
 
@@ -228,7 +228,7 @@ public class ApplicationStateManagerImplTest extends InternalBaseTestCase
         replay();
 
         ApplicationStateManager manager = new ApplicationStateManagerImpl(configuration, source,
-                null, null);
+                null);
 
         assertSame(manager.getIfExists(asoClass), aso);
 

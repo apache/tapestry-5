@@ -14,23 +14,21 @@
 
 package org.apache.tapestry5.internal.beaneditor;
 
+import java.util.List;
+import java.util.Map;
+
 import org.apache.tapestry5.PropertyConduit;
 import org.apache.tapestry5.beaneditor.BeanModel;
 import org.apache.tapestry5.beaneditor.PropertyModel;
 import org.apache.tapestry5.beaneditor.RelativePosition;
 import org.apache.tapestry5.internal.services.CoercingPropertyConduitWrapper;
-import org.apache.tapestry5.ioc.Invokable;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.ObjectLocator;
-import org.apache.tapestry5.ioc.OperationTracker;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.ioc.services.ClassFabUtils;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.services.PropertyConduitSource;
-
-import java.util.List;
-import java.util.Map;
 
 public class BeanModelImpl<T> implements BeanModel<T>
 {
@@ -44,8 +42,6 @@ public class BeanModelImpl<T> implements BeanModel<T>
 
     private final ObjectLocator locator;
 
-    private final OperationTracker tracker;
-
     private final Map<String, PropertyModel> properties = CollectionFactory.newCaseInsensitiveMap();
 
     // The list of property names, in desired order (generally not alphabetical order).
@@ -53,8 +49,7 @@ public class BeanModelImpl<T> implements BeanModel<T>
     private final List<String> propertyNames = CollectionFactory.newList();
 
     public BeanModelImpl(Class<T> beanType, PropertyConduitSource propertyConduitSource,
-            TypeCoercer typeCoercer, Messages messages, ObjectLocator locator,
-            OperationTracker tracker)
+            TypeCoercer typeCoercer, Messages messages, ObjectLocator locator)
 
     {
         this.beanType = beanType;
@@ -62,7 +57,6 @@ public class BeanModelImpl<T> implements BeanModel<T>
         this.typeCoercer = typeCoercer;
         this.messages = messages;
         this.locator = locator;
-        this.tracker = tracker;
     }
 
     public Class<T> getBeanType()
@@ -72,14 +66,7 @@ public class BeanModelImpl<T> implements BeanModel<T>
 
     public T newInstance()
     {
-        return tracker.invoke("Instantiating new instance of " + beanType.getName(),
-                new Invokable<T>()
-                {
-                    public T invoke()
-                    {
-                        return locator.autobuild(beanType);
-                    }
-                });
+        return locator.autobuild("Instantiating new instance of " + beanType.getName(), beanType);
     }
 
     public PropertyModel add(String propertyName)

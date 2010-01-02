@@ -1,4 +1,4 @@
-// Copyright 2008, 2009 The Apache Software Foundation
+// Copyright 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,6 +14,8 @@
 
 package org.apache.tapestry5.internal.services;
 
+import javax.servlet.http.Cookie;
+
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.internal.pageload.PageLoaderImpl;
 import org.apache.tapestry5.internal.structure.ComponentPageElementResourcesSource;
@@ -26,11 +28,25 @@ import org.apache.tapestry5.ioc.annotations.Marker;
 import org.apache.tapestry5.ioc.annotations.Scope;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.services.CtClassSource;
-import org.apache.tapestry5.ioc.services.*;
-import org.apache.tapestry5.services.*;
+import org.apache.tapestry5.ioc.services.Builtin;
+import org.apache.tapestry5.ioc.services.ClassFactory;
+import org.apache.tapestry5.ioc.services.ClasspathURLConverter;
+import org.apache.tapestry5.ioc.services.PerthreadManager;
+import org.apache.tapestry5.ioc.services.PropertyShadowBuilder;
+import org.apache.tapestry5.services.AssetFactory;
+import org.apache.tapestry5.services.ComponentClassResolver;
+import org.apache.tapestry5.services.ComponentClasses;
+import org.apache.tapestry5.services.ComponentLayer;
+import org.apache.tapestry5.services.ComponentMessages;
+import org.apache.tapestry5.services.ComponentTemplates;
+import org.apache.tapestry5.services.ContextProvider;
+import org.apache.tapestry5.services.Core;
+import org.apache.tapestry5.services.InvalidationEventHub;
+import org.apache.tapestry5.services.LocalizationSetter;
+import org.apache.tapestry5.services.RequestGlobals;
+import org.apache.tapestry5.services.ResponseCompressionAnalyzer;
+import org.apache.tapestry5.services.UpdateListenerHub;
 import org.slf4j.Logger;
-
-import javax.servlet.http.Cookie;
 
 /**
  * {@link org.apache.tapestry5.services.TapestryModule} has gotten too complicated and it is nice to demarkate public

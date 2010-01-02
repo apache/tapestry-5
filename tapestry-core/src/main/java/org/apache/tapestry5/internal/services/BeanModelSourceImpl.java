@@ -25,6 +25,7 @@ import org.apache.tapestry5.internal.beaneditor.BeanModelImpl;
 import org.apache.tapestry5.internal.beaneditor.BeanModelUtils;
 import org.apache.tapestry5.ioc.Location;
 import org.apache.tapestry5.ioc.Messages;
+import org.apache.tapestry5.ioc.ObjectLocator;
 import org.apache.tapestry5.ioc.ServiceResources;
 import org.apache.tapestry5.ioc.annotations.Primary;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
@@ -51,7 +52,7 @@ public class BeanModelSourceImpl implements BeanModelSource
 
     private final DataTypeAnalyzer dataTypeAnalyzer;
 
-    private final ServiceResources resources;
+    private final ObjectLocator locator;
 
     private static class PropertyOrder implements Comparable<PropertyOrder>
     {
@@ -132,14 +133,14 @@ public class BeanModelSourceImpl implements BeanModelSource
     public BeanModelSourceImpl(TypeCoercer typeCoercer, PropertyAccess propertyAccess,
             PropertyConduitSource propertyConduitSource, @ComponentLayer
             ClassFactory classFactory, @Primary
-            DataTypeAnalyzer dataTypeAnalyzer, ServiceResources resources)
+            DataTypeAnalyzer dataTypeAnalyzer, ObjectLocator locator)
     {
         this.typeCoercer = typeCoercer;
         this.propertyAccess = propertyAccess;
         this.propertyConduitSource = propertyConduitSource;
         this.classFactory = classFactory;
         this.dataTypeAnalyzer = dataTypeAnalyzer;
-        this.resources = resources;
+        this.locator = locator;
     }
 
     public <T> BeanModel<T> createDisplayModel(Class<T> beanClass, Messages messages)
@@ -161,7 +162,7 @@ public class BeanModelSourceImpl implements BeanModelSource
         ClassPropertyAdapter adapter = propertyAccess.getAdapter(beanClass);
 
         BeanModel<T> model = new BeanModelImpl<T>(beanClass, propertyConduitSource, typeCoercer,
-                messages, resources, resources.getTracker());
+                messages, locator);
 
         for (final String propertyName : adapter.getPropertyNames())
         {

@@ -14,15 +14,16 @@
 
 package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry5.ioc.Invokable;
-import org.apache.tapestry5.ioc.ObjectLocator;
-import org.apache.tapestry5.ioc.OperationTracker;
-import org.apache.tapestry5.ioc.ServiceResources;
-
 import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newConcurrentMap;
-import org.apache.tapestry5.services.*;
 
 import java.util.Map;
+
+import org.apache.tapestry5.ioc.ObjectLocator;
+import org.apache.tapestry5.services.ApplicationStateContribution;
+import org.apache.tapestry5.services.ApplicationStateCreator;
+import org.apache.tapestry5.services.ApplicationStateManager;
+import org.apache.tapestry5.services.ApplicationStatePersistenceStrategy;
+import org.apache.tapestry5.services.ApplicationStatePersistenceStrategySource;
 
 public class ApplicationStateManagerImpl implements ApplicationStateManager
 {
@@ -71,16 +72,12 @@ public class ApplicationStateManagerImpl implements ApplicationStateManager
 
     private final ObjectLocator locator;
 
-    private final OperationTracker tracker;
-
     @SuppressWarnings("unchecked")
     public ApplicationStateManagerImpl(Map<Class, ApplicationStateContribution> configuration,
-            ApplicationStatePersistenceStrategySource source, ObjectLocator locator,
-            OperationTracker tracker)
+            ApplicationStatePersistenceStrategySource source, ObjectLocator locator)
     {
         this.source = source;
         this.locator = locator;
-        this.tracker = tracker;
 
         for (Class asoClass : configuration.keySet())
         {
@@ -104,14 +101,8 @@ public class ApplicationStateManagerImpl implements ApplicationStateManager
             {
                 public T create()
                 {
-                    return tracker.invoke("Instantiating instance of SSO class "
-                            + ssoClass.getName(), new Invokable<T>()
-                    {
-                        public T invoke()
-                        {
-                            return locator.autobuild(ssoClass);
-                        }
-                    });
+                    return locator.autobuild("Instantiating instance of SSO class "
+                            + ssoClass.getName(), ssoClass);
                 }
             };
         }

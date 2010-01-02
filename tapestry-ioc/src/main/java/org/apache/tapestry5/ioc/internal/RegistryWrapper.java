@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,8 +19,8 @@ import org.apache.tapestry5.ioc.ObjectLocator;
 import org.apache.tapestry5.ioc.Registry;
 
 /**
- * A wrapper around {@link InternalRegistry} that exists to expand symbols in a service id before invoking {@link
- * ObjectLocator#getService(Class)}.
+ * A wrapper around {@link InternalRegistry} that exists to expand symbols in a service id before
+ * invoking {@link ObjectLocator#getService(Class)}.
  */
 public class RegistryWrapper implements Registry
 {
@@ -61,6 +61,11 @@ public class RegistryWrapper implements Registry
     public <T> T autobuild(Class<T> clazz)
     {
         return registry.autobuild(clazz);
+    }
+
+    public <T> T autobuild(String description, Class<T> clazz)
+    {
+        return registry.autobuild(description, clazz);
     }
 
     public void performRegistryStartup()

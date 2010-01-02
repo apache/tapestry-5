@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -48,7 +48,8 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
     }
 
     /**
-     * Used to obtain the {@link org.apache.tapestry5.ioc.services.ClassFactory} service, which is crucial when creating
+     * Used to obtain the {@link org.apache.tapestry5.ioc.services.ClassFactory} service, which is
+     * crucial when creating
      * runtime classes for proxies and the like.
      */
     static final String CLASS_FACTORY_SERVICE_ID = "ClassFactory";
@@ -72,7 +73,8 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
      */
     private final Map<String, Module> serviceIdToModule = CollectionFactory.newCaseInsensitiveMap();
 
-    private final Map<String, ServiceLifecycle2> lifecycles = CollectionFactory.newCaseInsensitiveMap();
+    private final Map<String, ServiceLifecycle2> lifecycles = CollectionFactory
+            .newCaseInsensitiveMap();
 
     private final PerthreadManager perthreadManager;
 
@@ -95,12 +97,16 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
     /**
      * Constructs the registry from a set of module definitions and other resources.
-     *
-     * @param moduleDefs   defines the modules (and builders, decorators, etc., within)
-     * @param classFactory TODO
-     * @param loggerSource used to obtain Logger instances
+     * 
+     * @param moduleDefs
+     *            defines the modules (and builders, decorators, etc., within)
+     * @param classFactory
+     *            TODO
+     * @param loggerSource
+     *            used to obtain Logger instances
      */
-    public RegistryImpl(Collection<ModuleDef> moduleDefs, ClassFactory classFactory, LoggerSource loggerSource)
+    public RegistryImpl(Collection<ModuleDef> moduleDefs, ClassFactory classFactory,
+            LoggerSource loggerSource)
     {
         this.loggerSource = loggerSource;
 
@@ -116,11 +122,9 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
         perthreadManager = new PerthreadManagerImpl(logger);
 
-
         logger = loggerForBuiltinService(REGISTRY_SHUTDOWN_HUB_SERVICE_ID);
 
         registryShutdownHub = new RegistryShutdownHubImpl(logger);
-
 
         lifecycles.put("singleton", new SingletonServiceLifecycle());
 
@@ -165,7 +169,8 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
             moduleToServiceDefs.put(module, moduleServiceDefs);
         }
 
-        addBuiltin(SERVICE_ACTIVITY_SCOREBOARD_SERVICE_ID, ServiceActivityScoreboard.class, scoreboardAndTracker);
+        addBuiltin(SERVICE_ACTIVITY_SCOREBOARD_SERVICE_ID, ServiceActivityScoreboard.class,
+                scoreboardAndTracker);
         addBuiltin(LOGGER_SOURCE_SERVICE_ID, LoggerSource.class, this.loggerSource);
         addBuiltin(CLASS_FACTORY_SERVICE_ID, ClassFactory.class, this.classFactory);
         addBuiltin(PERTHREAD_MANAGER_SERVICE_ID, PerthreadManager.class, perthreadManager);
@@ -194,18 +199,17 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         {
             String serviceId = cd.getServiceId();
 
-            if (!serviceIdToModule.containsKey(serviceId))
-            {
-                throw new IllegalArgumentException(
-                        String.format("Contribution %s is for service '%s', which does not exist.",
-                                      cd, serviceId));
-            }
+            if (!serviceIdToModule.containsKey(serviceId)) { throw new IllegalArgumentException(
+                    String.format("Contribution %s is for service '%s', which does not exist.", cd,
+                            serviceId)); }
         }
     }
 
     /**
-     * It's not unreasonable for an eagerly-loaded service to decide to start a thread, at which point we raise issues
-     * about improper publishing of the Registry instance from the RegistryImpl constructor. Moving eager loading of
+     * It's not unreasonable for an eagerly-loaded service to decide to start a thread, at which
+     * point we raise issues
+     * about improper publishing of the Registry instance from the RegistryImpl constructor. Moving
+     * eager loading of
      * services out to its own method should ensure thread safety.
      */
     public void performRegistryStartup()
@@ -310,7 +314,8 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         lock.check();
 
         T result = checkForBuiltinService(serviceId, serviceInterface);
-        if (result != null) return result;
+        if (result != null)
+            return result;
 
         // Checking serviceId and serviceInterface is overkill; they have been checked and rechecked
         // all the way to here.
@@ -324,7 +329,8 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
     {
         Object service = builtinServices.get(serviceId);
 
-        if (service == null) return null;
+        if (service == null)
+            return null;
 
         try
         {
@@ -348,8 +354,9 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
     {
         Module module = serviceIdToModule.get(serviceId);
 
-        if (module == null) throw new RuntimeException(IOCMessages.noSuchService(serviceId, serviceIdToModule
-                .keySet()));
+        if (module == null)
+            throw new RuntimeException(IOCMessages.noSuchService(serviceId, serviceIdToModule
+                    .keySet()));
 
         return module;
     }
@@ -375,7 +382,8 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         Logger logger = getServiceLogger(serviceId);
 
         Orderer<T> orderer = new Orderer<T>(logger);
-        Map<String, OrderedConfigurationOverride<T>> overrides = CollectionFactory.newCaseInsensitiveMap();
+        Map<String, OrderedConfigurationOverride<T>> overrides = CollectionFactory
+                .newCaseInsensitiveMap();
 
         for (Module m : moduleToServiceDefs.keySet())
             addToOrderedConfiguration(orderer, overrides, objectType, serviceDef, m);
@@ -387,7 +395,8 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         {
             ObjectProvider contribution = new ObjectProvider()
             {
-                public <T> T provide(Class<T> objectType, AnnotationProvider annotationProvider, ObjectLocator locator)
+                public <T> T provide(Class<T> objectType, AnnotationProvider annotationProvider,
+                        ObjectLocator locator)
                 {
                     return findServiceByMarkerAndType(objectType, annotationProvider, null);
                 }
@@ -402,7 +411,8 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         return orderer.getOrdered();
     }
 
-    public <K, V> Map<K, V> getMappedConfiguration(ServiceDef serviceDef, Class<K> keyType, Class<V> objectType)
+    public <K, V> Map<K, V> getMappedConfiguration(ServiceDef serviceDef, Class<K> keyType,
+            Class<V> objectType)
     {
         lock.check();
 
@@ -413,7 +423,8 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         Map<K, MappedConfigurationOverride<K, V>> overrides = newConfigurationMap(keyType);
 
         for (Module m : moduleToServiceDefs.keySet())
-            addToMappedConfiguration(result, overrides, keyToContribution, keyType, objectType, serviceDef, m);
+            addToMappedConfiguration(result, overrides, keyToContribution, keyType, objectType,
+                    serviceDef, m);
 
         for (MappedConfigurationOverride<K, V> override : overrides.values())
         {
@@ -437,26 +448,28 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
     }
 
     private <K, V> void addToMappedConfiguration(Map<K, V> map,
-                                                 Map<K, MappedConfigurationOverride<K, V>> overrides,
-                                                 Map<K, ContributionDef> keyToContribution, Class<K> keyClass,
-                                                 Class<V> valueType, ServiceDef serviceDef, final Module module)
+            Map<K, MappedConfigurationOverride<K, V>> overrides,
+            Map<K, ContributionDef> keyToContribution, Class<K> keyClass, Class<V> valueType,
+            ServiceDef serviceDef, final Module module)
     {
         String serviceId = serviceDef.getServiceId();
         Set<ContributionDef> contributions = module.getContributorDefsForService(serviceId);
 
-        if (contributions.isEmpty()) return;
+        if (contributions.isEmpty())
+            return;
 
         Logger logger = getServiceLogger(serviceId);
 
         boolean debug = logger.isDebugEnabled();
 
-        final ServiceResources resources = new ServiceResourcesImpl(this, module, serviceDef, classFactory, logger);
+        final ServiceResources resources = new ServiceResourcesImpl(this, module, serviceDef,
+                classFactory, logger);
 
         for (final ContributionDef def : contributions)
         {
-            final MappedConfiguration<K, V> validating =
-                    new ValidatingMappedConfigurationWrapper<K, V>(map, overrides, serviceId, def, keyClass, valueType,
-                                                                   keyToContribution, resources);
+            final MappedConfiguration<K, V> validating = new ValidatingMappedConfigurationWrapper<K, V>(
+                    map, overrides, serviceId, def, keyClass, valueType, keyToContribution,
+                    resources);
 
             String description = IOCMessages.invokingMethod(def);
 
@@ -473,25 +486,26 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         }
     }
 
-    private <T> void addToUnorderedConfiguration(Collection<T> collection,
-                                                 Class<T> valueType,
-                                                 ServiceDef serviceDef, final Module module)
+    private <T> void addToUnorderedConfiguration(Collection<T> collection, Class<T> valueType,
+            ServiceDef serviceDef, final Module module)
     {
         String serviceId = serviceDef.getServiceId();
         Set<ContributionDef> contributions = module.getContributorDefsForService(serviceId);
 
-        if (contributions.isEmpty()) return;
+        if (contributions.isEmpty())
+            return;
 
         Logger logger = getServiceLogger(serviceId);
 
         boolean debug = logger.isDebugEnabled();
 
-        final ServiceResources resources = new ServiceResourcesImpl(this, module, serviceDef, classFactory, logger);
+        final ServiceResources resources = new ServiceResourcesImpl(this, module, serviceDef,
+                classFactory, logger);
 
         for (final ContributionDef def : contributions)
         {
-            final Configuration<T> validating =
-                    new ValidatingConfigurationWrapper<T>(collection, serviceId, valueType, resources);
+            final Configuration<T> validating = new ValidatingConfigurationWrapper<T>(collection,
+                    serviceId, valueType, resources);
 
             String description = IOCMessages.invokingMethod(def);
 
@@ -509,25 +523,25 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
     }
 
     private <T> void addToOrderedConfiguration(Orderer<T> orderer,
-                                               Map<String, OrderedConfigurationOverride<T>> overrides,
-                                               Class<T> valueType,
-                                               ServiceDef serviceDef, final Module module)
+            Map<String, OrderedConfigurationOverride<T>> overrides, Class<T> valueType,
+            ServiceDef serviceDef, final Module module)
     {
         String serviceId = serviceDef.getServiceId();
         Set<ContributionDef> contributions = module.getContributorDefsForService(serviceId);
 
-        if (contributions.isEmpty()) return;
+        if (contributions.isEmpty())
+            return;
 
         Logger logger = getServiceLogger(serviceId);
         boolean debug = logger.isDebugEnabled();
 
-        final ServiceResources resources = new ServiceResourcesImpl(this, module, serviceDef, classFactory, logger);
+        final ServiceResources resources = new ServiceResourcesImpl(this, module, serviceDef,
+                classFactory, logger);
 
         for (final ContributionDef def : contributions)
         {
-            final OrderedConfiguration<T> validating =
-                    new ValidatingOrderedConfigurationWrapper<T>(orderer, overrides, def, serviceId, valueType,
-                                                                 resources);
+            final OrderedConfiguration<T> validating = new ValidatingOrderedConfigurationWrapper<T>(
+                    orderer, overrides, def, serviceId, valueType, resources);
 
             String description = IOCMessages.invokingMethod(def);
 
@@ -551,7 +565,8 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
         List<String> serviceIds = findServiceIdsForInterface(serviceInterface);
 
-        if (serviceIds == null) serviceIds = Collections.emptyList();
+        if (serviceIds == null)
+            serviceIds = Collections.emptyList();
 
         switch (serviceIds.size())
         {
@@ -569,7 +584,8 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
                 Collections.sort(serviceIds);
 
-                throw new RuntimeException(IOCMessages.manyServiceMatches(serviceInterface, serviceIds));
+                throw new RuntimeException(IOCMessages.manyServiceMatches(serviceInterface,
+                        serviceIds));
         }
     }
 
@@ -582,7 +598,8 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
         for (Map.Entry<String, Object> entry : builtinServices.entrySet())
         {
-            if (serviceInterface.isInstance(entry.getValue())) result.add(entry.getKey());
+            if (serviceInterface.isInstance(entry.getValue()))
+                result.add(entry.getKey());
         }
 
         Collections.sort(result);
@@ -598,7 +615,8 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
         if (result == null)
         {
-            ServiceLifecycleSource source = getService("ServiceLifecycleSource", ServiceLifecycleSource.class);
+            ServiceLifecycleSource source = getService("ServiceLifecycleSource",
+                    ServiceLifecycleSource.class);
 
             result = source.get(scope);
         }
@@ -623,15 +641,19 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         {
             Set<DecoratorDef> decoratorDefs = module.findMatchingDecoratorDefs(serviceDef);
 
-            if (decoratorDefs.isEmpty()) continue;
+            if (decoratorDefs.isEmpty())
+                continue;
 
-            ServiceResources resources = new ServiceResourcesImpl(this, module, serviceDef, classFactory, logger);
+            ServiceResources resources = new ServiceResourcesImpl(this, module, serviceDef,
+                    classFactory, logger);
 
             for (DecoratorDef decoratorDef : decoratorDefs)
             {
                 ServiceDecorator decorator = decoratorDef.createDecorator(module, resources);
 
-                orderer.add(decoratorDef.getDecoratorId(), decorator, decoratorDef.getConstraints());
+                orderer
+                        .add(decoratorDef.getDecoratorId(), decorator, decoratorDef
+                                .getConstraints());
             }
         }
 
@@ -652,9 +674,11 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         {
             Set<AdvisorDef> advisorDefs = module.findMatchingServiceAdvisors(serviceDef);
 
-            if (advisorDefs.isEmpty()) continue;
+            if (advisorDefs.isEmpty())
+                continue;
 
-            ServiceResources resources = new ServiceResourcesImpl(this, module, serviceDef, classFactory, logger);
+            ServiceResources resources = new ServiceResourcesImpl(this, module, serviceDef,
+                    classFactory, logger);
 
             for (AdvisorDef advisorDef : advisorDefs)
             {
@@ -674,12 +698,13 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         return classFactory.newClass(serviceInterface);
     }
 
-    public <T> T getObject(Class<T> objectType, AnnotationProvider annotationProvider, ObjectLocator locator,
-                           Module localModule)
+    public <T> T getObject(Class<T> objectType, AnnotationProvider annotationProvider,
+            ObjectLocator locator, Module localModule)
     {
         lock.check();
 
-        AnnotationProvider effectiveProvider = annotationProvider != null ? annotationProvider : new NullAnnotationProvider();
+        AnnotationProvider effectiveProvider = annotationProvider != null ? annotationProvider
+                : new NullAnnotationProvider();
 
         // We do a check here for known marker/type combinations, so that you can use a marker
         // annotation
@@ -688,15 +713,17 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
         T result = findServiceByMarkerAndType(objectType, annotationProvider, localModule);
 
-        if (result != null) return result;
+        if (result != null)
+            return result;
 
-        MasterObjectProvider masterProvider = getService(IOCConstants.MASTER_OBJECT_PROVIDER_SERVICE_ID,
-                                                         MasterObjectProvider.class);
+        MasterObjectProvider masterProvider = getService(
+                IOCConstants.MASTER_OBJECT_PROVIDER_SERVICE_ID, MasterObjectProvider.class);
 
         return masterProvider.provide(objectType, effectiveProvider, locator, true);
     }
 
-    private Collection<ServiceDef2> filterByType(Class<?> objectType, Collection<ServiceDef2> serviceDefs)
+    private Collection<ServiceDef2> filterByType(Class<?> objectType,
+            Collection<ServiceDef2> serviceDefs)
     {
         Collection<ServiceDef2> result = CollectionFactory.newSet();
 
@@ -712,37 +739,40 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
     }
 
     @SuppressWarnings("unchecked")
-    private <T> T findServiceByMarkerAndType(Class<T> objectType, AnnotationProvider provider, Module localModule)
+    private <T> T findServiceByMarkerAndType(Class<T> objectType, AnnotationProvider provider,
+            Module localModule)
     {
-        if (provider == null) return null;
+        if (provider == null)
+            return null;
 
         boolean localOnly = localModule != null && provider.getAnnotation(Local.class) != null;
 
-
         Set<ServiceDef2> matches = CollectionFactory.newSet();
 
-        matches.addAll(filterByType(objectType, localOnly
-                                                ? moduleToServiceDefs.get(localModule)
-                                                : allServiceDefs
-        ));
+        matches.addAll(filterByType(objectType, localOnly ? moduleToServiceDefs.get(localModule)
+                : allServiceDefs));
 
         List<Class> markers = CollectionFactory.newList();
 
-        if (localOnly) markers.add(Local.class);
+        if (localOnly)
+            markers.add(Local.class);
 
         for (Class marker : markerToServiceDef.keySet())
         {
-            if (provider.getAnnotation(marker) == null) continue;
+            if (provider.getAnnotation(marker) == null)
+                continue;
 
             markers.add(marker);
 
             matches = intersection(matches, markerToServiceDef.get(marker));
         }
 
-        // If didn't see @Local or any recognized marker annotation, then don't try to filter that way.
+        // If didn't see @Local or any recognized marker annotation, then don't try to filter that
+        // way.
         // Continue on, eventually to the MasterObjectProvider service.
 
-        if (markers.isEmpty()) return null;
+        if (markers.isEmpty())
+            return null;
 
         switch (matches.size())
         {
@@ -766,37 +796,41 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
                 throw new RuntimeException(IOCMessages.noServicesMatchMarker(objectType, markers));
 
             default:
-                throw new RuntimeException(IOCMessages.manyServicesMatchMarker(objectType, markers, matches));
+                throw new RuntimeException(IOCMessages.manyServicesMatchMarker(objectType, markers,
+                        matches));
         }
     }
 
     /**
-     * Filters the set into a new set, containing only elements shared between the set and the filter collection.
-     *
-     * @param set    to be filtered
-     * @param filter values to keep from the set
+     * Filters the set into a new set, containing only elements shared between the set and the
+     * filter collection.
+     * 
+     * @param set
+     *            to be filtered
+     * @param filter
+     *            values to keep from the set
      * @return a new set containing only the shared values
      */
     private static <T> Set<T> intersection(Set<T> set, Collection<T> filter)
     {
-        if (set.isEmpty()) return Collections.emptySet();
+        if (set.isEmpty())
+            return Collections.emptySet();
 
         Set<T> result = CollectionFactory.newSet();
 
         for (T elem : filter)
         {
-            if (set.contains(elem)) result.add(elem);
+            if (set.contains(elem))
+                result.add(elem);
         }
 
         return result;
     }
 
-
     public <T> T getObject(Class<T> objectType, AnnotationProvider annotationProvider)
     {
         return getObject(objectType, annotationProvider, this, null);
     }
-
 
     public void addRegistryShutdownListener(RegistryShutdownListener listener)
     {
@@ -811,7 +845,8 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
         // Again, a bit of work to avoid instantiating the SymbolSource until absolutely necessary.
 
-        if (!InternalUtils.containsSymbols(input)) return input;
+        if (!InternalUtils.containsSymbols(input))
+            return input;
 
         return getSymbolSource().expandSymbols(input);
     }
@@ -821,9 +856,21 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
      */
     private synchronized SymbolSource getSymbolSource()
     {
-        if (symbolSource == null) symbolSource = getService(SYMBOL_SOURCE_SERVICE_ID, SymbolSource.class);
+        if (symbolSource == null)
+            symbolSource = getService(SYMBOL_SOURCE_SERVICE_ID, SymbolSource.class);
 
         return symbolSource;
+    }
+
+    public <T> T autobuild(String description, final Class<T> clazz)
+    {
+        return invoke(description, new Invokable<T>()
+        {
+            public T invoke()
+            {
+                return autobuild(clazz);
+            }
+        });
     }
 
     public <T> T autobuild(final Class<T> clazz)
@@ -832,7 +879,8 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
         final Constructor constructor = InternalUtils.findAutobuildConstructor(clazz);
 
-        if (constructor == null) throw new RuntimeException(IOCMessages.noAutobuildConstructor(clazz));
+        if (constructor == null)
+            throw new RuntimeException(IOCMessages.noAutobuildConstructor(clazz));
 
         final ObjectLocator locator = this;
         final OperationTracker tracker = this;
@@ -842,23 +890,18 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
         final InjectionResources resources = new MapInjectionResources(resourcesMap);
 
-
         final Invokable<T> operation = new Invokable<T>()
         {
             public T invoke()
             {
                 Throwable failure;
-                // An empty map, because when performing autobuilding outside the context of building a
-                // service, we don't have defaults for Log, service id, etc.
 
                 try
                 {
                     InternalUtils.validateConstructorForAutobuild(constructor);
 
-                    Object[] parameters = InternalUtils.calculateParametersForConstructor(constructor,
-                                                                                          locator,
-                                                                                          resources,
-                                                                                          tracker);
+                    Object[] parameters = InternalUtils.calculateParametersForConstructor(
+                            constructor, locator, resources, tracker);
 
                     Object result = constructor.newInstance(parameters);
 
@@ -877,13 +920,12 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
                 String description = classFactory.getConstructorLocation(constructor).toString();
 
-                throw new RuntimeException(IOCMessages.autobuildConstructorError(description, failure),
-                                           failure);
+                throw new RuntimeException(IOCMessages.autobuildConstructorError(description,
+                        failure), failure);
             }
         };
 
-        T result = invoke("Autobuilding instance of class " + clazz.getName(),
-                          operation);
+        T result = invoke("Autobuilding instance of class " + clazz.getName(), operation);
 
         InternalUtils.invokePostInjectionMethods(result, locator, resources, this);
 
@@ -912,7 +954,8 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
             public synchronized Object createObject()
             {
-                if (delegate == null) delegate = autobuildCreator.createObject();
+                if (delegate == null)
+                    delegate = autobuildCreator.createObject();
 
                 return delegate;
             }

@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -28,7 +28,8 @@ import java.sql.PreparedStatement;
 import java.util.*;
 
 /**
- * A few tests that are easiest (or even just possible) by building a Registry and trying out a few things.
+ * A few tests that are easiest (or even just possible) by building a Registry and trying out a few
+ * things.
  */
 public class IntegrationTest extends IOCInternalTestCase
 {
@@ -127,7 +128,7 @@ public class IntegrationTest extends IOCInternalTestCase
         catch (RuntimeException ex)
         {
             assertMessageContains(ex,
-                                  "Proxy for service Fred is no longer active because the IOC Registry has been shut down.");
+                    "Proxy for service Fred is no longer active because the IOC Registry has been shut down.");
         }
 
         // Show that toString() still works, even for a shutdown proxy.
@@ -136,7 +137,8 @@ public class IntegrationTest extends IOCInternalTestCase
     }
 
     /**
-     * Along the way, we also test a few other things, such as decorator matching and automatic dependency resolution.
+     * Along the way, we also test a few other things, such as decorator matching and automatic
+     * dependency resolution.
      */
     @Test
     public void public_service_decorator_order()
@@ -169,7 +171,8 @@ public class IntegrationTest extends IOCInternalTestCase
     }
 
     /**
-     * We don't have to do as many public/private etc. tests for the other types of configuration, because the code
+     * We don't have to do as many public/private etc. tests for the other types of configuration,
+     * because the code
      * paths are so similar.
      */
 
@@ -233,7 +236,7 @@ public class IntegrationTest extends IOCInternalTestCase
         catch (Exception ex)
         {
             assertMessageContains(ex, "Error building service proxy for service 'UnknownScope'",
-                                  "Unknown service scope 'magic'");
+                    "Unknown service scope 'magic'");
         }
 
         r.shutdown();
@@ -251,9 +254,10 @@ public class IntegrationTest extends IOCInternalTestCase
         }
         catch (Exception ex)
         {
-            assertMessageContains(ex,
-                                  "Error building service proxy for service 'ScopeRequiresAProxyAndNoInterfaceIsProvided'",
-                                  "Service scope 'perthread' requires a proxy");
+            assertMessageContains(
+                    ex,
+                    "Error building service proxy for service 'ScopeRequiresAProxyAndNoInterfaceIsProvided'",
+                    "Service scope 'perthread' requires a proxy");
         }
 
         r.shutdown();
@@ -302,7 +306,8 @@ public class IntegrationTest extends IOCInternalTestCase
     }
 
     /**
-     * This test fails at times and I'm not sure why. It's some kind of interaction with other tests but hard to figure
+     * This test fails at times and I'm not sure why. It's some kind of interaction with other tests
+     * but hard to figure
      * out. Damn ThreadLocals!
      */
     @Test
@@ -354,7 +359,8 @@ public class IntegrationTest extends IOCInternalTestCase
     {
         Registry r = buildRegistry(EagerLoadModule.class);
 
-        assertFalse(EagerLoadModule._eagerLoadDidHappen, "EagerLoadModule is not in correct initial state.");
+        assertFalse(EagerLoadModule._eagerLoadDidHappen,
+                "EagerLoadModule is not in correct initial state.");
 
         r.performRegistryStartup();
 
@@ -403,9 +409,11 @@ public class IntegrationTest extends IOCInternalTestCase
         }
         catch (RuntimeException ex)
         {
-            assertMessageContains(ex, "Error invoking constructor",
-                                  "ExceptionInConstructorServiceImpl() (at ExceptionInConstructorServiceImpl.java",
-                                  "for service 'Pingable'", "Yes, we have no tomatoes.");
+            assertMessageContains(
+                    ex,
+                    "Error invoking constructor",
+                    "ExceptionInConstructorServiceImpl() (at ExceptionInConstructorServiceImpl.java",
+                    "for service 'Pingable'", "Yes, we have no tomatoes.");
         }
 
         r.shutdown();
@@ -431,7 +439,6 @@ public class IntegrationTest extends IOCInternalTestCase
     {
         Registry r = buildRegistry(ConventionModule.class);
 
-
         StringHolder holder = r.getService(StringHolder.class);
 
         holder.setValue("Bar");
@@ -451,8 +458,8 @@ public class IntegrationTest extends IOCInternalTestCase
         }
         catch (RuntimeException ex)
         {
-            assertMessageContains(ex,
-                                  "No service implements the interface " + StringTransformer.class.getName() + ". Please provide");
+            assertMessageContains(ex, "No service implements the interface "
+                    + StringTransformer.class.getName() + ". Please provide");
         }
     }
 
@@ -466,8 +473,8 @@ public class IntegrationTest extends IOCInternalTestCase
         }
         catch (RuntimeException ex)
         {
-            assertMessageContains(ex,
-                                  "No service implements the interface " + Pingable.class.getName());
+            assertMessageContains(ex, "No service implements the interface "
+                    + Pingable.class.getName());
         }
     }
 
@@ -505,6 +512,25 @@ public class IntegrationTest extends IOCInternalTestCase
         r.shutdown();
     }
 
+    /** TAP5-967 */
+    @Test
+    public void autobuild_with_description_via_registry()
+    {
+        Registry r = buildRegistry();
+
+        StringHolder holder = r.autobuild("Building StringHolderImpl", StringHolderImpl.class);
+
+        assertSame(holder.getClass(), StringHolderImpl.class);
+
+        // Check that it works.
+
+        holder.setValue("Bar");
+
+        assertEquals(holder.getValue(), "Bar");
+
+        r.shutdown();
+    }
+
     @Test
     public void service_builder_method_uses_autobuild_with_failure()
     {
@@ -524,12 +550,14 @@ public class IntegrationTest extends IOCInternalTestCase
         }
         catch (RuntimeException ex)
         {
-            assertMessageContains(ex,
-                                  "Class org.apache.tapestry5.ioc.UnbuildablePingable does not contain a public constructor needed to autobuild.");
+            assertMessageContains(
+                    ex,
+                    "Class org.apache.tapestry5.ioc.UnbuildablePingable does not contain a public constructor needed to autobuild.");
 
             // Like to check that the message includes the source location
 
-            assertTrue(ex.getMessage().matches(".*\\(at ServiceBuilderAutobuilderModule.java:\\d+\\).*"));
+            assertTrue(ex.getMessage().matches(
+                    ".*\\(at ServiceBuilderAutobuilderModule.java:\\d+\\).*"));
         }
 
         r.shutdown();
@@ -548,8 +576,9 @@ public class IntegrationTest extends IOCInternalTestCase
         }
         catch (RuntimeException ex)
         {
-            assertMessageContains(ex,
-                                  "Class org.apache.tapestry5.ioc.UnbuildablePingable does not contain a public constructor needed to autobuild.");
+            assertMessageContains(
+                    ex,
+                    "Class org.apache.tapestry5.ioc.UnbuildablePingable does not contain a public constructor needed to autobuild.");
         }
 
         r.shutdown();
@@ -568,8 +597,10 @@ public class IntegrationTest extends IOCInternalTestCase
         }
         catch (RuntimeException ex)
         {
-            assertMessageContains(ex, "Error invoking constructor org.apache.tapestry5.ioc.FailInConstructorRunnable()",
-                                  "Failure in Runnable constructor.");
+            assertMessageContains(
+                    ex,
+                    "Error invoking constructor org.apache.tapestry5.ioc.FailInConstructorRunnable()",
+                    "Failure in Runnable constructor.");
 
             // Like to check that the message includes the source location
 
@@ -610,7 +641,8 @@ public class IntegrationTest extends IOCInternalTestCase
         }
         catch (RuntimeException ex)
         {
-            assertEquals(ex.getMessage(), "No service implements the interface java.sql.PreparedStatement.");
+            assertEquals(ex.getMessage(),
+                    "No service implements the interface java.sql.PreparedStatement.");
         }
 
         r.shutdown();
@@ -628,8 +660,9 @@ public class IntegrationTest extends IOCInternalTestCase
         }
         catch (RuntimeException ex)
         {
-            assertEquals(ex.getMessage(),
-                         "Service interface org.apache.tapestry5.ioc.Pingable is matched by 2 services: Barney, Fred.  Automatic dependency resolution requires that exactly one service implement the interface.");
+            assertEquals(
+                    ex.getMessage(),
+                    "Service interface org.apache.tapestry5.ioc.Pingable is matched by 2 services: Barney, Fred.  Automatic dependency resolution requires that exactly one service implement the interface.");
         }
 
         r.shutdown();
@@ -705,10 +738,12 @@ public class IntegrationTest extends IOCInternalTestCase
         }
         catch (RuntimeException ex)
         {
-            assertMessageContains(ex, "Error invoking service builder method",
-                                  "Unable to locate a single service assignable to type org.apache.tapestry5.ioc.Greeter with marker annotation(s) org.apache.tapestry5.ioc.RedMarker",
-                                  "org.apache.tapestry5.ioc.GreeterModule.buildRedGreeter1()",
-                                  "org.apache.tapestry5.ioc.GreeterModule.buildRedGreeter2()");
+            assertMessageContains(
+                    ex,
+                    "Error invoking service builder method",
+                    "Unable to locate a single service assignable to type org.apache.tapestry5.ioc.Greeter with marker annotation(s) org.apache.tapestry5.ioc.RedMarker",
+                    "org.apache.tapestry5.ioc.GreeterModule.buildRedGreeter1()",
+                    "org.apache.tapestry5.ioc.GreeterModule.buildRedGreeter2()");
         }
 
         r.shutdown();
@@ -728,8 +763,10 @@ public class IntegrationTest extends IOCInternalTestCase
         }
         catch (RuntimeException ex)
         {
-            assertMessageContains(ex, "Error invoking service builder method",
-                                  " Unable to locate any service assignable to type org.apache.tapestry5.ioc.Greeter with marker annotation(s) org.apache.tapestry5.ioc.YellowMarker.");
+            assertMessageContains(
+                    ex,
+                    "Error invoking service builder method",
+                    " Unable to locate any service assignable to type org.apache.tapestry5.ioc.Greeter with marker annotation(s) org.apache.tapestry5.ioc.YellowMarker.");
         }
 
         r.shutdown();
@@ -767,7 +804,8 @@ public class IntegrationTest extends IOCInternalTestCase
     }
 
     /**
-     * A cursory test for {@link ServiceActivityScoreboard}, just to see if any data has been collected.
+     * A cursory test for {@link ServiceActivityScoreboard}, just to see if any data has been
+     * collected.
      */
     @Test
     public void service_activity_scoreboard()
@@ -794,13 +832,17 @@ public class IntegrationTest extends IOCInternalTestCase
         {
             String serviceId = a.getServiceId();
 
-            if (serviceId.equals("ClassFactory")) assertEquals(a.getStatus(), Status.BUILTIN);
+            if (serviceId.equals("ClassFactory"))
+                assertEquals(a.getStatus(), Status.BUILTIN);
 
-            if (serviceId.equals("RedGreeter1")) assertEquals(a.getStatus(), Status.DEFINED);
+            if (serviceId.equals("RedGreeter1"))
+                assertEquals(a.getStatus(), Status.DEFINED);
 
-            if (serviceId.equals("TypeCoercer")) assertEquals(a.getStatus(), Status.REAL);
+            if (serviceId.equals("TypeCoercer"))
+                assertEquals(a.getStatus(), Status.REAL);
 
-            if (serviceId.equals("BlueGreeter")) assertEquals(a.getStatus(), Status.VIRTUAL);
+            if (serviceId.equals("BlueGreeter"))
+                assertEquals(a.getStatus(), Status.VIRTUAL);
         }
 
         r.shutdown();
@@ -818,7 +860,7 @@ public class IntegrationTest extends IOCInternalTestCase
         assertEquals(CountingGreeterImpl.instantiationCount, 0);
 
         assertEquals(g.toString(),
-                     "<Autobuild proxy org.apache.tapestry5.ioc.CountingGreeterImpl(org.apache.tapestry5.ioc.Greeter)>");
+                "<Autobuild proxy org.apache.tapestry5.ioc.CountingGreeterImpl(org.apache.tapestry5.ioc.Greeter)>");
 
         assertEquals(CountingGreeterImpl.instantiationCount, 0);
 
@@ -833,7 +875,6 @@ public class IntegrationTest extends IOCInternalTestCase
 
         r.shutdown();
     }
-
 
     /**
      * TAPESTRY-2117
@@ -878,7 +919,7 @@ public class IntegrationTest extends IOCInternalTestCase
         catch (Exception ex)
         {
             assertEquals(ex.getMessage(),
-                         "Exception constructing service 'BrokenGreeter': Failure inside ServiceBuilder callback.");
+                    "Exception constructing service 'BrokenGreeter': Failure inside ServiceBuilder callback.");
         }
 
         r.shutdown();
@@ -889,11 +930,13 @@ public class IntegrationTest extends IOCInternalTestCase
     {
         File fakejar = new File("src/test/fakejar");
 
-        assertTrue(fakejar.exists() && fakejar.isDirectory(), "src/test/fakejar must be an existing directory");
+        assertTrue(fakejar.exists() && fakejar.isDirectory(),
+                "src/test/fakejar must be an existing directory");
 
         URL url = fakejar.toURL();
 
-        URLClassLoader loader = new URLClassLoader(new URL[] { url }, Thread.currentThread().getContextClassLoader());
+        URLClassLoader loader = new URLClassLoader(new URL[]
+        { url }, Thread.currentThread().getContextClassLoader());
 
         RegistryBuilder builder = new RegistryBuilder(loader);
 
@@ -904,10 +947,8 @@ public class IntegrationTest extends IOCInternalTestCase
         }
         catch (RuntimeException ex)
         {
-            assertMessageContains(ex,
-                                  "Exception loading module(s) from manifest",
-                                  "Failure loading Tapestry IoC module class does.not.exist.Module"
-            );
+            assertMessageContains(ex, "Exception loading module(s) from manifest",
+                    "Failure loading Tapestry IoC module class does.not.exist.Module");
         }
     }
 
@@ -918,7 +959,8 @@ public class IntegrationTest extends IOCInternalTestCase
 
         StringHolder g = r.getService("LocalGreeterHolder", StringHolder.class);
 
-        // Comes from the @Local DrawlGreeter, even though there are many other Greeter services available.
+        // Comes from the @Local DrawlGreeter, even though there are many other Greeter services
+        // available.
 
         assertEquals(g.getValue(), "Hello, y'all!");
 
@@ -951,7 +993,8 @@ public class IntegrationTest extends IOCInternalTestCase
         }
         catch (RuntimeException ex)
         {
-            assertMessageContains(ex, "Construction of service 'TypeCoercer' has failed due to recursion");
+            assertMessageContains(ex,
+                    "Construction of service 'TypeCoercer' has failed due to recursion");
         }
 
         r.shutdown();
@@ -970,8 +1013,9 @@ public class IntegrationTest extends IOCInternalTestCase
         }
         catch (RuntimeException ex)
         {
-            assertMessageContains(ex,
-                                  "Module class org.apache.tapestry5.ioc.internal.PrivateConstructorModule does not contain any public constructors.");
+            assertMessageContains(
+                    ex,
+                    "Module class org.apache.tapestry5.ioc.internal.PrivateConstructorModule does not contain any public constructors.");
         }
     }
 
@@ -1071,8 +1115,9 @@ public class IntegrationTest extends IOCInternalTestCase
         }
         catch (RuntimeException ex)
         {
-            assertMessageContains(ex,
-                                  "Unable to determine resource value to inject into field 'unknownRunnable' (of type java.lang.Runnable).");
+            assertMessageContains(
+                    ex,
+                    "Unable to determine resource value to inject into field 'unknownRunnable' (of type java.lang.Runnable).");
         }
     }
 
@@ -1102,9 +1147,10 @@ public class IntegrationTest extends IOCInternalTestCase
         }
         catch (IllegalArgumentException ex)
         {
-            assertMessageContains(ex,
-                                  "Contribution org.apache.tapestry5.ioc.InvalidContributeDefModule.contributeDoesNotExist(Configuration)",
-                                  "is for service 'DoesNotExist', which does not exist.");
+            assertMessageContains(
+                    ex,
+                    "Contribution org.apache.tapestry5.ioc.InvalidContributeDefModule.contributeDoesNotExist(Configuration)",
+                    "is for service 'DoesNotExist', which does not exist.");
         }
     }
 
@@ -1121,10 +1167,10 @@ public class IntegrationTest extends IOCInternalTestCase
         }
         catch (RuntimeException ex)
         {
-            assertMessageContains(ex,
-                                  "Module class org.apache.tapestry5.ioc.ExtraMethodsModule contains unrecognized public methods: ",
-                                  "thisMethodIsInvalid()",
-                                  "soIsThisMethod().");
+            assertMessageContains(
+                    ex,
+                    "Module class org.apache.tapestry5.ioc.ExtraMethodsModule contains unrecognized public methods: ",
+                    "thisMethodIsInvalid()", "soIsThisMethod().");
         }
     }
 
@@ -1179,7 +1225,8 @@ public class IntegrationTest extends IOCInternalTestCase
     @Test
     public void successful_ordered_configuration_override()
     {
-        Registry r = buildRegistry(FredModule.class, BarneyModule.class, ConfigurationOverrideModule.class);
+        Registry r = buildRegistry(FredModule.class, BarneyModule.class,
+                ConfigurationOverrideModule.class);
 
         NameListHolder service = r.getService("OrderedNames", NameListHolder.class);
 
@@ -1194,7 +1241,8 @@ public class IntegrationTest extends IOCInternalTestCase
     @Test
     public void failed_ordered_configuration_override()
     {
-        Registry r = buildRegistry(FredModule.class, BarneyModule.class, FailedConfigurationOverrideModule.class);
+        Registry r = buildRegistry(FredModule.class, BarneyModule.class,
+                FailedConfigurationOverrideModule.class);
 
         NameListHolder service = r.getService("OrderedNames", NameListHolder.class);
 
@@ -1205,9 +1253,10 @@ public class IntegrationTest extends IOCInternalTestCase
         }
         catch (RuntimeException ex)
         {
-            assertMessageContains(ex,
-                                  "Failure processing override from org.apache.tapestry5.ioc.FailedConfigurationOverrideModule.contributeOrderedNames(OrderedConfiguration)",
-                                  "Override for object 'wilma' is invalid as it does not match an existing object.");
+            assertMessageContains(
+                    ex,
+                    "Failure processing override from org.apache.tapestry5.ioc.FailedConfigurationOverrideModule.contributeOrderedNames(OrderedConfiguration)",
+                    "Override for object 'wilma' is invalid as it does not match an existing object.");
         }
     }
 
@@ -1217,8 +1266,8 @@ public class IntegrationTest extends IOCInternalTestCase
     @Test
     public void duplicate_ordered_configuration_override()
     {
-        Registry r = buildRegistry(FredModule.class, BarneyModule.class, ConfigurationOverrideModule.class,
-                                   DuplicateConfigurationOverrideModule.class);
+        Registry r = buildRegistry(FredModule.class, BarneyModule.class,
+                ConfigurationOverrideModule.class, DuplicateConfigurationOverrideModule.class);
 
         NameListHolder service = r.getService("OrderedNames", NameListHolder.class);
 
@@ -1230,9 +1279,8 @@ public class IntegrationTest extends IOCInternalTestCase
         catch (RuntimeException ex)
         {
             // Can't get too specific since we don't know which module will get processed first
-            assertMessageContains(ex,
-                                  "Error invoking service contribution method ",
-                                  "Contribution 'fred' has already been overridden");
+            assertMessageContains(ex, "Error invoking service contribution method ",
+                    "Contribution 'fred' has already been overridden");
         }
     }
 
@@ -1242,7 +1290,8 @@ public class IntegrationTest extends IOCInternalTestCase
     @Test
     public void mapped_configuration_override()
     {
-        Registry r = buildRegistry(FredModule.class, BarneyModule.class, ConfigurationOverrideModule.class);
+        Registry r = buildRegistry(FredModule.class, BarneyModule.class,
+                ConfigurationOverrideModule.class);
 
         StringLookup sl = r.getService(StringLookup.class);
 
@@ -1260,7 +1309,7 @@ public class IntegrationTest extends IOCInternalTestCase
     public void nonmatching_mapped_configuration_override()
     {
         Registry r = buildRegistry(FredModule.class, BarneyModule.class,
-                                   NonmatchingMappedConfigurationOverrideModule.class);
+                NonmatchingMappedConfigurationOverrideModule.class);
 
         StringLookup sl = r.getService(StringLookup.class);
 
@@ -1271,11 +1320,12 @@ public class IntegrationTest extends IOCInternalTestCase
         }
         catch (RuntimeException ex)
         {
-            assertMessageContains(ex,
-                                  "Exception constructing service 'StringLookup'",
-                                  "Error invoking service builder method org.apache.tapestry5.ioc.FredModule.buildStringLookup(Map) ",
-                                  "Override for key alley cat (at org.apache.tapestry5.ioc.util.NonmatchingMappedConfigurationOverrideModule.contributeStringLookup(MappedConfiguration)",
-                                  "does not match an existing key.");
+            assertMessageContains(
+                    ex,
+                    "Exception constructing service 'StringLookup'",
+                    "Error invoking service builder method org.apache.tapestry5.ioc.FredModule.buildStringLookup(Map) ",
+                    "Override for key alley cat (at org.apache.tapestry5.ioc.util.NonmatchingMappedConfigurationOverrideModule.contributeStringLookup(MappedConfiguration)",
+                    "does not match an existing key.");
         }
     }
 
@@ -1286,7 +1336,7 @@ public class IntegrationTest extends IOCInternalTestCase
     public void duplicate_override_for_mapped_configuration()
     {
         Registry r = buildRegistry(FredModule.class, BarneyModule.class,
-                                   ConfigurationOverrideModule.class, DuplicateConfigurationOverrideModule.class);
+                ConfigurationOverrideModule.class, DuplicateConfigurationOverrideModule.class);
 
         StringLookup sl = r.getService(StringLookup.class);
 
@@ -1297,9 +1347,8 @@ public class IntegrationTest extends IOCInternalTestCase
         }
         catch (RuntimeException ex)
         {
-            assertMessageContains(ex,
-                                  "Error invoking service contribution method",
-                                  "Contribution key fred has already been overridden");
+            assertMessageContains(ex, "Error invoking service contribution method",
+                    "Contribution key fred has already been overridden");
         }
     }
 
@@ -1329,9 +1378,10 @@ public class IntegrationTest extends IOCInternalTestCase
         }
         catch (RuntimeException ex)
         {
-            assertMessageContains(ex,
-                                  "Advise method org.apache.tapestry5.ioc.NonVoidAdvisorMethodModule.adviseFoo(MethodAdviceReceiver)",
-                                  "does not return void.");
+            assertMessageContains(
+                    ex,
+                    "Advise method org.apache.tapestry5.ioc.NonVoidAdvisorMethodModule.adviseFoo(MethodAdviceReceiver)",
+                    "does not return void.");
         }
     }
 
@@ -1348,9 +1398,10 @@ public class IntegrationTest extends IOCInternalTestCase
         }
         catch (RuntimeException ex)
         {
-            assertMessageContains(ex,
-                                  "Advise method org.apache.tapestry5.ioc.AdviceMethodMissingAdvisorParameterModule.adviseBar()",
-                                  "must take a parameter of type org.apache.tapestry5.ioc.MethodAdviceReceiver.");
+            assertMessageContains(
+                    ex,
+                    "Advise method org.apache.tapestry5.ioc.AdviceMethodMissingAdvisorParameterModule.adviseBar()",
+                    "must take a parameter of type org.apache.tapestry5.ioc.MethodAdviceReceiver.");
         }
     }
 

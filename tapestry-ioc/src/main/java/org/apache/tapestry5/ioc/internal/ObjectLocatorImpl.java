@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,7 +18,8 @@ import org.apache.tapestry5.ioc.AnnotationProvider;
 import org.apache.tapestry5.ioc.ObjectLocator;
 
 /**
- * Base service locator class used when only the module is known (i.e., when instantiating a module class).
+ * Base service locator class used when only the module is known (i.e., when instantiating a module
+ * class).
  */
 public class ObjectLocatorImpl implements ObjectLocator
 {
@@ -52,6 +53,11 @@ public class ObjectLocatorImpl implements ObjectLocator
     public <T> T autobuild(Class<T> clazz)
     {
         return registry.autobuild(clazz);
+    }
+
+    public <T> T autobuild(String description, Class<T> clazz)
+    {
+        return registry.autobuild(description, clazz);
     }
 
     public <T> T proxy(Class<T> interfaceClass, Class<? extends T> implementationClass)

@@ -1,4 +1,4 @@
-//  Copyright 2008 The Apache Software Foundation
+//  Copyright 2008, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,17 +20,19 @@ import org.apache.tapestry5.ioc.ObjectProvider;
 import org.apache.tapestry5.ioc.annotations.Autobuild;
 
 /**
- * Checks for the {@link org.apache.tapestry5.ioc.annotations.Autobuild} annotation and, if so invokes {@link
- * org.apache.tapestry5.ioc.ObjectLocator#autobuild(Class)} on it.
+ * Checks for the {@link org.apache.tapestry5.ioc.annotations.Autobuild} annotation and, if so
+ * invokes {@link org.apache.tapestry5.ioc.ObjectLocator#autobuild(Class)} on it.
  */
 public class AutobuildObjectProvider implements ObjectProvider
 {
-    public <T> T provide(Class<T> objectType, AnnotationProvider annotationProvider, ObjectLocator locator)
+    public <T> T provide(Class<T> objectType, AnnotationProvider annotationProvider,
+            ObjectLocator locator)
     {
         Autobuild annotation = annotationProvider.getAnnotation(Autobuild.class);
 
         if (annotation != null)
-            return locator.autobuild(objectType);
+            return locator
+                    .autobuild("Autobuilding instance of " + objectType.getName(), objectType);
 
         return null;
     }
