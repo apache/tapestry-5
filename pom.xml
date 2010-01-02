@@ -116,12 +116,23 @@
         </developer>
         <developer>
             <id>uli</id>
-            <name>Ulrich Stark</name>
+            <name>Ulrich Stärk</name>
             <email>uli@apache.org</email>
             <roles>
                 <role>Developer</role>
             </roles>
             <timezone>+1</timezone>
+        </developer>
+        <developer>
+            <id>andyhot</id>
+            <name>Andreas Andreou</name>
+            <email>andyhot@apache.org</email>
+            <url>http://blog.andyhot.gr</url>
+            <roles>
+                <role>PMC</role>
+                <role>Developer</role>
+            </roles>
+            <timezone>+2</timezone>
         </developer>
     </developers>
 
