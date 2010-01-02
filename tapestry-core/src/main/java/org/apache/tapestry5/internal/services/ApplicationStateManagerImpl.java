@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,7 +14,11 @@
 
 package org.apache.tapestry5.internal.services;
 
+import org.apache.tapestry5.ioc.Invokable;
 import org.apache.tapestry5.ioc.ObjectLocator;
+import org.apache.tapestry5.ioc.OperationTracker;
+import org.apache.tapestry5.ioc.ServiceResources;
+
 import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newConcurrentMap;
 import org.apache.tapestry5.services.*;
 
@@ -33,7 +37,7 @@ public class ApplicationStateManagerImpl implements ApplicationStateManager
         private final ApplicationStateCreator<T> creator;
 
         ApplicationStateAdapter(Class<T> ssoClass, ApplicationStatePersistenceStrategy strategy,
-                                ApplicationStateCreator<T> creator)
+                ApplicationStateCreator<T> creator)
         {
             this.ssoClass = ssoClass;
             this.strategy = strategy;
@@ -57,7 +61,8 @@ public class ApplicationStateManagerImpl implements ApplicationStateManager
     }
 
     /**
-     * The map will be extended periodically as new ASOs, not in the configuration, are encountered. Thut is is thread
+     * The map will be extended periodically as new ASOs, not in the configuration, are encountered.
+     * Thut is is thread
      * safe.
      */
     private final Map<Class, ApplicationStateAdapter> classToAdapter = newConcurrentMap();
@@ -66,19 +71,23 @@ public class ApplicationStateManagerImpl implements ApplicationStateManager
 
     private final ObjectLocator locator;
 
+    private final OperationTracker tracker;
+
     @SuppressWarnings("unchecked")
     public ApplicationStateManagerImpl(Map<Class, ApplicationStateContribution> configuration,
-                                       ApplicationStatePersistenceStrategySource source, ObjectLocator locator)
+            ApplicationStatePersistenceStrategySource source, ObjectLocator locator,
+            OperationTracker tracker)
     {
         this.source = source;
         this.locator = locator;
+        this.tracker = tracker;
 
         for (Class asoClass : configuration.keySet())
         {
             ApplicationStateContribution contribution = configuration.get(asoClass);
 
             ApplicationStateAdapter adapter = newAdapter(asoClass, contribution.getStrategy(),
-                                                         contribution.getCreator());
+                    contribution.getCreator());
 
             classToAdapter.put(asoClass, adapter);
         }
@@ -87,7 +96,7 @@ public class ApplicationStateManagerImpl implements ApplicationStateManager
 
     @SuppressWarnings("unchecked")
     private <T> ApplicationStateAdapter<T> newAdapter(final Class<T> ssoClass, String strategyName,
-                                                      ApplicationStateCreator<T> creator)
+            ApplicationStateCreator<T> creator)
     {
         if (creator == null)
         {
@@ -95,7 +104,14 @@ public class ApplicationStateManagerImpl implements ApplicationStateManager
             {
                 public T create()
                 {
-                    return locator.autobuild(ssoClass);
+                    return tracker.invoke("Instantiating instance of SSO class "
+                            + ssoClass.getName(), new Invokable<T>()
+                    {
+                        public T invoke()
+                        {
+                            return locator.autobuild(ssoClass);
+                        }
+                    });
                 }
             };
         }

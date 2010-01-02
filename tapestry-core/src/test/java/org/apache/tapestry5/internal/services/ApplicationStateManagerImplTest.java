@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.internal.transform.pages.ReadOnlyBean;
 import org.apache.tapestry5.internal.util.Holder;
 import org.apache.tapestry5.ioc.ObjectLocator;
+import org.apache.tapestry5.ioc.internal.QuietOperationTracker;
 import org.apache.tapestry5.services.*;
 import org.easymock.EasyMock;
 import static org.easymock.EasyMock.eq;
@@ -42,9 +43,7 @@ public class ApplicationStateManagerImplTest extends InternalBaseTestCase
         ReadOnlyBean aso = new ReadOnlyBean();
 
         Map<Class, ApplicationStateContribution> configuration = Collections.singletonMap(asoClass,
-                                                                                          new ApplicationStateContribution(
-                                                                                                  strategyName,
-                                                                                                  creator));
+                new ApplicationStateContribution(strategyName, creator));
 
         train_get(source, strategyName, strategy);
 
@@ -52,7 +51,8 @@ public class ApplicationStateManagerImplTest extends InternalBaseTestCase
 
         replay();
 
-        ApplicationStateManager manager = new ApplicationStateManagerImpl(configuration, source, null);
+        ApplicationStateManager manager = new ApplicationStateManagerImpl(configuration, source,
+                null, null);
 
         assertSame(manager.get(asoClass), aso);
 
@@ -70,16 +70,15 @@ public class ApplicationStateManagerImplTest extends InternalBaseTestCase
         ApplicationStateCreator<ReadOnlyBean> creator = mockApplicationStateCreator();
 
         Map<Class, ApplicationStateContribution> configuration = Collections.singletonMap(asoClass,
-                                                                                          new ApplicationStateContribution(
-                                                                                                  strategyName,
-                                                                                                  creator));
+                new ApplicationStateContribution(strategyName, creator));
 
         train_get(source, strategyName, strategy);
         train_exists(strategy, asoClass, false);
 
         replay();
 
-        ApplicationStateManager manager = new ApplicationStateManagerImpl(configuration, source, null);
+        ApplicationStateManager manager = new ApplicationStateManagerImpl(configuration, source,
+                null, null);
 
         assertFalse(manager.exists(asoClass));
 
@@ -97,16 +96,15 @@ public class ApplicationStateManagerImplTest extends InternalBaseTestCase
         ApplicationStateCreator<ReadOnlyBean> creator = mockApplicationStateCreator();
 
         Map<Class, ApplicationStateContribution> configuration = Collections.singletonMap(asoClass,
-                                                                                          new ApplicationStateContribution(
-                                                                                                  strategyName,
-                                                                                                  creator));
+                new ApplicationStateContribution(strategyName, creator));
 
         train_get(source, strategyName, strategy);
         train_exists(strategy, asoClass, true);
 
         replay();
 
-        ApplicationStateManager manager = new ApplicationStateManagerImpl(configuration, source, null);
+        ApplicationStateManager manager = new ApplicationStateManagerImpl(configuration, source,
+                null, null);
 
         assertTrue(manager.exists(asoClass));
 
@@ -124,8 +122,7 @@ public class ApplicationStateManagerImplTest extends InternalBaseTestCase
         Object aso = new ReadOnlyBean();
 
         Map<Class, ApplicationStateContribution> configuration = Collections.singletonMap(asoClass,
-                                                                                          new ApplicationStateContribution(
-                                                                                                  strategyName));
+                new ApplicationStateContribution(strategyName));
 
         train_get(source, strategyName, strategy);
 
@@ -133,7 +130,8 @@ public class ApplicationStateManagerImplTest extends InternalBaseTestCase
 
         replay();
 
-        ApplicationStateManager manager = new ApplicationStateManagerImpl(configuration, source, null);
+        ApplicationStateManager manager = new ApplicationStateManagerImpl(configuration, source,
+                null, null);
 
         manager.set(asoClass, aso);
 
@@ -151,7 +149,6 @@ public class ApplicationStateManagerImplTest extends InternalBaseTestCase
         ObjectLocator locator = mockObjectLocator();
 
         train_get(source, ApplicationStateManagerImpl.DEFAULT_STRATEGY, strategy);
-
 
         IAnswer answer = new IAnswer()
         {
@@ -176,7 +173,8 @@ public class ApplicationStateManagerImplTest extends InternalBaseTestCase
 
         Map<Class, ApplicationStateContribution> configuration = Collections.emptyMap();
 
-        ApplicationStateManager manager = new ApplicationStateManagerImpl(configuration, source, locator);
+        ApplicationStateManager manager = new ApplicationStateManagerImpl(configuration, source,
+                locator, new QuietOperationTracker());
 
         Object actual = manager.get(asoClass);
 
@@ -195,16 +193,15 @@ public class ApplicationStateManagerImplTest extends InternalBaseTestCase
         ApplicationStateCreator<ReadOnlyBean> creator = mockApplicationStateCreator();
 
         Map<Class, ApplicationStateContribution> configuration = Collections.singletonMap(asoClass,
-                                                                                          new ApplicationStateContribution(
-                                                                                                  strategyName,
-                                                                                                  creator));
+                new ApplicationStateContribution(strategyName, creator));
 
         train_get(source, strategyName, strategy);
         train_exists(strategy, asoClass, false);
 
         replay();
 
-        ApplicationStateManager manager = new ApplicationStateManagerImpl(configuration, source, null);
+        ApplicationStateManager manager = new ApplicationStateManagerImpl(configuration, source,
+                null, null);
 
         assertNull(manager.getIfExists(asoClass));
 
@@ -222,9 +219,7 @@ public class ApplicationStateManagerImplTest extends InternalBaseTestCase
         ReadOnlyBean aso = new ReadOnlyBean();
 
         Map<Class, ApplicationStateContribution> configuration = Collections.singletonMap(asoClass,
-                                                                                          new ApplicationStateContribution(
-                                                                                                  strategyName,
-                                                                                                  creator));
+                new ApplicationStateContribution(strategyName, creator));
 
         train_get(source, strategyName, strategy);
         train_exists(strategy, asoClass, true);
@@ -232,7 +227,8 @@ public class ApplicationStateManagerImplTest extends InternalBaseTestCase
 
         replay();
 
-        ApplicationStateManager manager = new ApplicationStateManagerImpl(configuration, source, null);
+        ApplicationStateManager manager = new ApplicationStateManagerImpl(configuration, source,
+                null, null);
 
         assertSame(manager.getIfExists(asoClass), aso);
 

@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,6 +14,10 @@
 
 package org.apache.tapestry5.internal.services;
 
+import java.lang.reflect.Method;
+import java.util.Collections;
+import java.util.List;
+
 import org.apache.tapestry5.beaneditor.BeanModel;
 import org.apache.tapestry5.beaneditor.NonVisual;
 import org.apache.tapestry5.beaneditor.ReorderProperties;
@@ -21,19 +25,19 @@ import org.apache.tapestry5.internal.beaneditor.BeanModelImpl;
 import org.apache.tapestry5.internal.beaneditor.BeanModelUtils;
 import org.apache.tapestry5.ioc.Location;
 import org.apache.tapestry5.ioc.Messages;
-import org.apache.tapestry5.ioc.ObjectLocator;
+import org.apache.tapestry5.ioc.ServiceResources;
 import org.apache.tapestry5.ioc.annotations.Primary;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.Defense;
-import org.apache.tapestry5.ioc.services.*;
+import org.apache.tapestry5.ioc.services.ClassFactory;
+import org.apache.tapestry5.ioc.services.ClassPropertyAdapter;
+import org.apache.tapestry5.ioc.services.PropertyAccess;
+import org.apache.tapestry5.ioc.services.PropertyAdapter;
+import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.services.BeanModelSource;
 import org.apache.tapestry5.services.ComponentLayer;
 import org.apache.tapestry5.services.DataTypeAnalyzer;
 import org.apache.tapestry5.services.PropertyConduitSource;
-
-import java.lang.reflect.Method;
-import java.util.Collections;
-import java.util.List;
 
 public class BeanModelSourceImpl implements BeanModelSource
 {
@@ -47,8 +51,7 @@ public class BeanModelSourceImpl implements BeanModelSource
 
     private final DataTypeAnalyzer dataTypeAnalyzer;
 
-    private final ObjectLocator locator;
-
+    private final ServiceResources resources;
 
     private static class PropertyOrder implements Comparable<PropertyOrder>
     {
@@ -69,17 +72,21 @@ public class BeanModelSourceImpl implements BeanModelSource
         {
             int result = classDepth - o.classDepth;
 
-            if (result == 0) result = sortKey - o.sortKey;
+            if (result == 0)
+                result = sortKey - o.sortKey;
 
-            if (result == 0) result = propertyName.compareTo(o.propertyName);
+            if (result == 0)
+                result = propertyName.compareTo(o.propertyName);
 
             return result;
         }
     }
 
     /**
-     * @param classAdapter  defines the bean that contains the properties
-     * @param propertyNames the initial set of property names, which will be rebuilt in the correct order
+     * @param classAdapter
+     *            defines the bean that contains the properties
+     * @param propertyNames
+     *            the initial set of property names, which will be rebuilt in the correct order
      */
     private void orderProperties(ClassPropertyAdapter classAdapter, List<String> propertyNames)
     {
@@ -123,15 +130,16 @@ public class BeanModelSourceImpl implements BeanModelSource
     }
 
     public BeanModelSourceImpl(TypeCoercer typeCoercer, PropertyAccess propertyAccess,
-                               PropertyConduitSource propertyConduitSource, @ComponentLayer ClassFactory classFactory,
-                               @Primary DataTypeAnalyzer dataTypeAnalyzer, ObjectLocator locator)
+            PropertyConduitSource propertyConduitSource, @ComponentLayer
+            ClassFactory classFactory, @Primary
+            DataTypeAnalyzer dataTypeAnalyzer, ServiceResources resources)
     {
         this.typeCoercer = typeCoercer;
         this.propertyAccess = propertyAccess;
         this.propertyConduitSource = propertyConduitSource;
         this.classFactory = classFactory;
         this.dataTypeAnalyzer = dataTypeAnalyzer;
-        this.locator = locator;
+        this.resources = resources;
     }
 
     public <T> BeanModel<T> createDisplayModel(Class<T> beanClass, Messages messages)
@@ -144,31 +152,36 @@ public class BeanModelSourceImpl implements BeanModelSource
         return create(beanClass, true, messages);
     }
 
-    public <T> BeanModel<T> create(Class<T> beanClass, boolean filterReadOnlyProperties, Messages messages)
+    public <T> BeanModel<T> create(Class<T> beanClass, boolean filterReadOnlyProperties,
+            Messages messages)
     {
         Defense.notNull(beanClass, "beanClass");
         Defense.notNull(messages, "messages");
 
         ClassPropertyAdapter adapter = propertyAccess.getAdapter(beanClass);
 
-        BeanModel<T> model = new BeanModelImpl<T>(beanClass, propertyConduitSource, typeCoercer, messages,
-                                                  locator);
+        BeanModel<T> model = new BeanModelImpl<T>(beanClass, propertyConduitSource, typeCoercer,
+                messages, resources, resources.getTracker());
 
         for (final String propertyName : adapter.getPropertyNames())
         {
             PropertyAdapter pa = adapter.getPropertyAdapter(propertyName);
 
-            if (!pa.isRead()) continue;
+            if (!pa.isRead())
+                continue;
 
-            if (pa.getAnnotation(NonVisual.class) != null) continue;
+            if (pa.getAnnotation(NonVisual.class) != null)
+                continue;
 
-            if (filterReadOnlyProperties && !pa.isUpdate()) continue;
+            if (filterReadOnlyProperties && !pa.isUpdate())
+                continue;
 
             final String dataType = dataTypeAnalyzer.identifyDataType(pa);
 
             // If an unregistered type, then ignore the property.
 
-            if (dataType == null) continue;
+            if (dataType == null)
+                continue;
 
             model.add(propertyName).dataType(dataType);
         }
@@ -190,7 +203,6 @@ public class BeanModelSourceImpl implements BeanModelSource
         {
             BeanModelUtils.reorder(model, reorderAnnotation.value());
         }
-
 
         return model;
     }

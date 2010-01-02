@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,8 +19,10 @@ import org.apache.tapestry5.beaneditor.BeanModel;
 import org.apache.tapestry5.beaneditor.PropertyModel;
 import org.apache.tapestry5.beaneditor.RelativePosition;
 import org.apache.tapestry5.internal.services.CoercingPropertyConduitWrapper;
+import org.apache.tapestry5.ioc.Invokable;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.ObjectLocator;
+import org.apache.tapestry5.ioc.OperationTracker;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.ioc.services.ClassFabUtils;
@@ -42,17 +44,17 @@ public class BeanModelImpl<T> implements BeanModel<T>
 
     private final ObjectLocator locator;
 
+    private final OperationTracker tracker;
+
     private final Map<String, PropertyModel> properties = CollectionFactory.newCaseInsensitiveMap();
 
     // The list of property names, in desired order (generally not alphabetical order).
 
     private final List<String> propertyNames = CollectionFactory.newList();
 
-    public BeanModelImpl(
-            Class<T> beanType, PropertyConduitSource
-            propertyConduitSource,
-            TypeCoercer typeCoercer, Messages
-            messages, ObjectLocator locator)
+    public BeanModelImpl(Class<T> beanType, PropertyConduitSource propertyConduitSource,
+            TypeCoercer typeCoercer, Messages messages, ObjectLocator locator,
+            OperationTracker tracker)
 
     {
         this.beanType = beanType;
@@ -60,6 +62,7 @@ public class BeanModelImpl<T> implements BeanModel<T>
         this.typeCoercer = typeCoercer;
         this.messages = messages;
         this.locator = locator;
+        this.tracker = tracker;
     }
 
     public Class<T> getBeanType()
@@ -69,7 +72,14 @@ public class BeanModelImpl<T> implements BeanModel<T>
 
     public T newInstance()
     {
-        return locator.autobuild(beanType);
+        return tracker.invoke("Instantiating new instance of " + beanType.getName(),
+                new Invokable<T>()
+                {
+                    public T invoke()
+                    {
+                        return locator.autobuild(beanType);
+                    }
+                });
     }
 
     public PropertyModel add(String propertyName)
@@ -84,13 +94,12 @@ public class BeanModelImpl<T> implements BeanModel<T>
         Defense.notBlank(propertyName, "propertyName");
 
         if (properties.containsKey(propertyName))
-            throw new RuntimeException(BeanEditorMessages.duplicatePropertyName(
-                    beanType,
+            throw new RuntimeException(BeanEditorMessages.duplicatePropertyName(beanType,
                     propertyName));
     }
 
     public PropertyModel add(RelativePosition position, String existingPropertyName,
-                             String propertyName, PropertyConduit conduit)
+            String propertyName, PropertyConduit conduit)
     {
         Defense.notNull(position, "position");
 
@@ -116,7 +125,7 @@ public class BeanModelImpl<T> implements BeanModel<T>
     }
 
     public PropertyModel add(RelativePosition position, String existingPropertyName,
-                             String propertyName)
+            String propertyName)
     {
         PropertyConduit conduit = createConduit(propertyName);
 
@@ -141,7 +150,7 @@ public class BeanModelImpl<T> implements BeanModel<T>
     private CoercingPropertyConduitWrapper createConduit(String propertyName)
     {
         return new CoercingPropertyConduitWrapper(propertyConduitSource.create(beanType,
-                                                                               propertyName), typeCoercer);
+                propertyName), typeCoercer);
     }
 
     public PropertyModel get(String propertyName)
@@ -149,9 +158,8 @@ public class BeanModelImpl<T> implements BeanModel<T>
         PropertyModel propertyModel = properties.get(propertyName);
 
         if (propertyModel == null)
-            throw new RuntimeException(BeanEditorMessages.unknownProperty(beanType,
-                                                                          propertyName,
-                                                                          properties.keySet()));
+            throw new RuntimeException(BeanEditorMessages.unknownProperty(beanType, propertyName,
+                    properties.keySet()));
 
         return propertyModel;
     }
@@ -160,7 +168,8 @@ public class BeanModelImpl<T> implements BeanModel<T>
     {
         for (PropertyModel model : properties.values())
         {
-            if (model.getId().equalsIgnoreCase(propertyId)) return model;
+            if (model.getId().equalsIgnoreCase(propertyId))
+                return model;
         }
 
         // Not found, so we throw an exception. A bit of work to set
@@ -173,8 +182,7 @@ public class BeanModelImpl<T> implements BeanModel<T>
             ids.add(model.getId());
         }
 
-        throw new RuntimeException(BeanEditorMessages.unknownPropertyId(beanType,
-                                                                        propertyId, ids));
+        throw new RuntimeException(BeanEditorMessages.unknownPropertyId(beanType, propertyId, ids));
 
     }
 
@@ -189,7 +197,8 @@ public class BeanModelImpl<T> implements BeanModel<T>
         {
             PropertyModel model = properties.get(propertyName);
 
-            if (model == null) continue;
+            if (model == null)
+                continue;
 
             // De-referencing from the model is needed because the name provided may not be a
             // case-exact match, so we get the normalized or canonical name from the model because
@@ -233,7 +242,6 @@ public class BeanModelImpl<T> implements BeanModel<T>
     {
         List<String> reorderedPropertyNames = CollectionFactory.newList();
         Map<String, PropertyModel> reduced = CollectionFactory.newCaseInsensitiveMap();
-
 
         for (String name : propertyNames)
         {
