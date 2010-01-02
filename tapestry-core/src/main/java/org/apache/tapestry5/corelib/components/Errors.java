@@ -25,14 +25,17 @@ import org.apache.tapestry5.services.FormSupport;
 import java.util.List;
 
 /**
- * Standard validation error presenter. Must be enclosed by a {@link org.apache.tapestry5.corelib.components.Form}
- * component. If errors are present, renders a div element around a banner message and around an unnumbered list of
- * error messages. Renders nothing if the {@link org.apache.tapestry5.ValidationTracker} shows no errors.
+ * Standard validation error presenter. Must be enclosed by a
+ * {@link org.apache.tapestry5.corelib.components.Form} component. If errors are present, renders a
+ * div element around a banner message and around an unnumbered list of
+ * error messages. Renders nothing if the {@link org.apache.tapestry5.ValidationTracker} shows no
+ * errors.
  */
 public class Errors
 {
     /**
-     * The banner message displayed above the errors. The default value is "You must correct the following errors before
+     * The banner message displayed above the errors. The default value is "You must correct the
+     * following errors before
      * you may continue.".
      */
     @Parameter("message:default-banner")
@@ -48,14 +51,13 @@ public class Errors
     @Environmental(false)
     private ValidationTracker tracker;
 
-    @Environmental
-    private FormSupport formSupport;
-
     void beginRender(MarkupWriter writer)
     {
-        if (tracker == null) throw new RuntimeException(InternalMessages.encloseErrorsInForm());
+        if (tracker == null)
+            throw new RuntimeException(InternalMessages.encloseErrorsInForm());
 
-        if (!tracker.getHasErrors()) return;
+        if (!tracker.getHasErrors())
+            return;
 
         writer.element("div", "class", className);
 
