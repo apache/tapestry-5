@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -30,10 +30,14 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Implementation of {@link org.apache.tapestry5.ioc.ServiceBuilderResources}. We just have one implementation that
- * fills the purposes of methods that need a {@link org.apache.tapestry5.ioc.ServiceResources} (which includes service
- * decorator methods) as well as methods that need a {@link org.apache.tapestry5.ioc.ServiceBuilderResources} (which is
- * just service builder methods). Since it is most commonly used for the former, we'll just leave the name as
+ * Implementation of {@link org.apache.tapestry5.ioc.ServiceBuilderResources}. We just have one
+ * implementation that
+ * fills the purposes of methods that need a {@link org.apache.tapestry5.ioc.ServiceResources}
+ * (which includes service
+ * decorator methods) as well as methods that need a
+ * {@link org.apache.tapestry5.ioc.ServiceBuilderResources} (which is
+ * just service builder methods). Since it is most commonly used for the former, we'll just leave
+ * the name as
  * ServiceResourcesImpl.
  */
 public class ServiceResourcesImpl extends ObjectLocatorImpl implements ServiceBuilderResources
@@ -49,7 +53,7 @@ public class ServiceResourcesImpl extends ObjectLocatorImpl implements ServiceBu
     private final ClassFactory classFactory;
 
     public ServiceResourcesImpl(InternalRegistry registry, Module module, ServiceDef serviceDef,
-                                ClassFactory classFactory, Logger logger)
+            ClassFactory classFactory, Logger logger)
     {
         super(registry, module);
 
@@ -77,15 +81,14 @@ public class ServiceResourcesImpl extends ObjectLocatorImpl implements ServiceBu
 
     public <T> Collection<T> getUnorderedConfiguration(final Class<T> valueType)
     {
-        Collection<T> result =
-                registry.invoke("Collecting unordered configuration for service " + serviceDef.getServiceId(),
-                                new Invokable<Collection<T>>()
-                                {
-                                    public Collection<T> invoke()
-                                    {
-                                        return registry.getUnorderedConfiguration(serviceDef, valueType);
-                                    }
-                                });
+        Collection<T> result = registry.invoke("Collecting unordered configuration for service "
+                + serviceDef.getServiceId(), new Invokable<Collection<T>>()
+        {
+            public Collection<T> invoke()
+            {
+                return registry.getUnorderedConfiguration(serviceDef, valueType);
+            }
+        });
 
         logConfiguration(result);
 
@@ -100,15 +103,14 @@ public class ServiceResourcesImpl extends ObjectLocatorImpl implements ServiceBu
 
     public <T> List<T> getOrderedConfiguration(final Class<T> valueType)
     {
-        List<T> result = registry.invoke(
-                "Collecting ordered configuration for service " + serviceDef.getServiceId(),
-                new Invokable<List<T>>()
-                {
-                    public List<T> invoke()
-                    {
-                        return registry.getOrderedConfiguration(serviceDef, valueType);
-                    }
-                });
+        List<T> result = registry.invoke("Collecting ordered configuration for service "
+                + serviceDef.getServiceId(), new Invokable<List<T>>()
+        {
+            public List<T> invoke()
+            {
+                return registry.getOrderedConfiguration(serviceDef, valueType);
+            }
+        });
 
         logConfiguration(result);
 
@@ -117,17 +119,17 @@ public class ServiceResourcesImpl extends ObjectLocatorImpl implements ServiceBu
 
     public <K, V> Map<K, V> getMappedConfiguration(final Class<K> keyType, final Class<V> valueType)
     {
-        Map<K, V> result =
-                registry.invoke("Collecting mapped configuration for service " + serviceDef.getServiceId(),
-                                new Invokable<Map<K, V>>()
-                                {
-                                    public Map<K, V> invoke()
-                                    {
-                                        return registry.getMappedConfiguration(serviceDef, keyType, valueType);
-                                    }
-                                });
+        Map<K, V> result = registry.invoke("Collecting mapped configuration for service "
+                + serviceDef.getServiceId(), new Invokable<Map<K, V>>()
+        {
+            public Map<K, V> invoke()
+            {
+                return registry.getMappedConfiguration(serviceDef, keyType, valueType);
+            }
+        });
 
-        if (logger.isDebugEnabled()) logger.debug(IOCMessages.constructedConfiguration(result));
+        if (logger.isDebugEnabled())
+            logger.debug(IOCMessages.constructedConfiguration(result));
 
         return result;
     }
@@ -138,29 +140,35 @@ public class ServiceResourcesImpl extends ObjectLocatorImpl implements ServiceBu
     }
 
     @Override
+    public <T> T autobuild(String description, final Class<T> clazz)
+    {
+        Defense.notNull(clazz, "clazz");
+
+        return registry.invoke(description, new Invokable<T>()
+        {
+            public T invoke()
+            {
+                Constructor constructor = InternalUtils.findAutobuildConstructor(clazz);
+
+                if (constructor == null)
+                    throw new RuntimeException(IOCMessages.noAutobuildConstructor(clazz));
+
+                String description = classFactory.getConstructorLocation(constructor).toString();
+
+                ObjectCreator creator = new ConstructorServiceCreator(ServiceResourcesImpl.this,
+                        description, constructor);
+
+                return clazz.cast(creator.createObject());
+            }
+        });
+    }
+
+    @Override
     public <T> T autobuild(final Class<T> clazz)
     {
         Defense.notNull(clazz, "clazz");
 
-        return registry.invoke("Autobuilding instance of class " + clazz.getName(),
-                               new Invokable<T>()
-                               {
-                                   public T invoke()
-                                   {
-                                       Constructor constructor = InternalUtils.findAutobuildConstructor(clazz);
-
-                                       if (constructor == null)
-                                           throw new RuntimeException(IOCMessages.noAutobuildConstructor(clazz));
-
-                                       String description = classFactory.getConstructorLocation(constructor).toString();
-
-                                       ObjectCreator creator = new ConstructorServiceCreator(ServiceResourcesImpl.this,
-                                                                                             description,
-                                                                                             constructor);
-
-                                       return clazz.cast(creator.createObject());
-                                   }
-                               });
+        return autobuild("Autobuilding instance of class " + clazz.getName(), clazz);
     }
 
     public OperationTracker getTracker()
