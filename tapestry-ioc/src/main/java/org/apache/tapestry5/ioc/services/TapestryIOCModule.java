@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -417,7 +417,7 @@ public final class TapestryIOCModule
 
         final ThreadPoolExecutor executorService = new ThreadPoolExecutor(coreSize, maxSize,
                                                                           keepAliveMillis, TimeUnit.MILLISECONDS,
-                                                                          new LinkedBlockingQueue(maxSize));
+                                                                          new LinkedBlockingQueue());
 
         shutdownHub.addRegistryShutdownListener(new RegistryShutdownListener()
         {
