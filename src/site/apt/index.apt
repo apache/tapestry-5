@@ -20,8 +20,8 @@ What is Apache Tapestry?
  
  Tapestry is architected to scale from tiny, single-page applications all the way up to
  massive applications consisting of hundreds of individual pages, developed by
- large, diverse teams. Tapestry easily integrates with any kind of backend, including JEE, 
-  Spring and Hibernate.
+ large, diverse teams. Tapestry has significant Ajax features baked right in. On the server-side, Tapestry easily integrates with any kind of backend, including JEE, 
+ Spring and Hibernate.
  
  It's more than what you <can> do with Tapestry ... it's also <how> you do it!  Tapestry is a vastly productive environment.
  Java developers love it because they can make <Java code> changes and see them immediately ... no redeploy, no restart! And it's blazingly fast to boot
@@ -30,9 +30,12 @@ What is Apache Tapestry?
  it makes it easy for large teams to work together, and because they know important features (including localization) are baked right in. Once you work
  in Tapestry there's no going back!
 
- Tapestry is released under the Apache Software Licence 2.0.
+ Tapestry is released under the Apache Software License 2.0.
 
 New And Of Note
+
+  * Tapestry no longer uses a StAX parser to parse templates (it uses a standard SAX parser), meaning fewer dependencies and
+    better compatibility with Google App Engine.
 
   * A {{{guide/testing.html}guide to integration testing}} is now available.
   
@@ -144,8 +147,8 @@ About Snapshots and Releases
   
   The use of Maven has let us move with great speed, providing preview releases and <snapshots>.
   
-  Snapshots are <intermediate versions> of releases. As I'm writing this, the most recent preview release is 5.0.2 and the current snapshots are
-  for 5.0.3-SNAPSHOT.  Maven keys off the -SNAPSHOT suffix and handles the dependency specially. It knows that snapshot releases can change frequently,
+  Snapshots are <intermediate versions> of releases. As I'm writing this, the most recent preview release is 5.2.0 and the current snapshots are
+  for 5.2.0-SNAPSHOT.  Maven keys off the -SNAPSHOT suffix and handles the dependency specially. It knows that snapshot releases can change frequently,
   so it will keep checking (at least once a day, maybe more often) to see if there's an updated version of the snapshot.
   
   A nightly build process on Tapestry's continuous integration server creates new snapshots <every night>.
@@ -157,10 +160,10 @@ About Snapshots and Releases
   running Maven.
   
   Your best bet is to use the {{{quickstart/}quickstart Maven archetype}} to create your initial Tapestry project; it generates a full project
-  directory, including a POM that links to the Apache snapshots repository.
+  directory, including a POM that links to the Tapestry snapshots repository.
   
   <<Documentation on this site usually refers to the latest snapshot ... that is, it is usually ahead of the last official release. In some cases,
-  it is written as if the snapshot release is stable; if documentation refers to version 5.1.x.x and that doesn't work, try 5.1.x.x-SNAPSHOT.>>
+  it is written as if the snapshot release is stable; if documentation refers to version 5.2.x and that doesn't work, try 5.2..x-SNAPSHOT.>>
     
 Principle 1 -- Static Structure, Dynamic Behavior
 
@@ -195,7 +198,10 @@ Principle 1 -- Static Structure, Dynamic Behavior
  use of the HttpSession is key to Tapestry's very high scalability, especially in a clustered
  configuration.
  
- In some Tapestry-like frameworks, such as Faces and Wicket, the page structure is more dynamic, at 
+ Tapestry also includes built-in mechanisms to store a limited amount of state, such as a persistent
+ object id, directly into the URL used to access a page.
+ 
+ In some Tapestry-like frameworks, such as JavaServer Faces and Wicket, the page structure is more dynamic, at 
  the cost of storing much, much more data in the HttpSession.
  
  This static structure is not so limiting as you might think. With different kinds of conditional
@@ -240,3 +246,6 @@ Backwards Compatibility
   This is already evident in Tapestry 5.1, where many new features and improvements have occurred, but is still
   100% backwards compatible to Tapestry 5.0, as long as you've avoided the temptation to make use of
   internal APIs.
+  
+  Tapestry 5.2 is continuing in this vein with improved performance and new features without sacrificing
+  backwards compatibility at all.
