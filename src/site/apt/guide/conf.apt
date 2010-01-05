@@ -13,9 +13,11 @@ Configuring Tapestry
   The majority of configuration occurs inside the servlet deployment descriptor,
   WEB-INF/web.xml.
   
-  Most of the configuration is boilerplate; the same for all applications.
+  Most of the configuration is boilerplate; the same for all applications. Your application
+  will configure a 
+  {{{../apidocs/org/apache/tapestry5/TapestryFilter}TapestryFilter}} (or a subclass in some cases). This filter intercepts all incoming requests and determines which ones will be handled by Tapestry, and how.
   
-  The application specific configuration is to identify the root application package.
+  The main application-specific configuration is to identify the root application package.
   Tapestry uses this package name to locate your page and component classes.
   
   Page classes must go in the pages sub-package, and components must go in the
@@ -48,6 +50,9 @@ Configuring Tapestry
   
   In this example, page classes will be stored in the <<<org.example.myapp.pages>>> package (or in sub-packages below).
   Likewise, component classes will be stored in the <<<org.example.myapp.components>>> package.
+  
+
+  
   
 * Tapestry Requests vs. Container Requests
 
@@ -254,6 +259,24 @@ public class AppModule
     is sent directly for the action request, no redirect in the middle. This option should be used with care,
     and only in cases where you are certain that the benefits outweigh the disadvantages.
 
+* Additional modules
+
+  In some cases, especially related to testing, you may want to fine tune which modules are
+  available at runtime.  For example,
+  you might use a symbol (defined in your AppModule) to identify the database URL to connect to,
+  and have a test-only module that overrides the symbol's value to point to a test database.
+  
+  Specifying additional modules is accomplished in two steps:
+  
+  First, change your launch configuration or startup script to specify the JVM system property
+  <<<tapestry.execution-mode>>>.  The value for this
+  property is a comma-separated list of modes; if not specified at
+  all, it defaults to the string "production".
+  
+  For each execution mode in the list, Tapestry will check for a \<context-param\> named 
+  <<<tapestry.>>><mode><<<-modules>>>.  The value is a comma-separated list
+  of fully qualified module class names.
+  
 
 Ignored Paths
 
@@ -283,4 +306,4 @@ Ignored Paths
 
   The regular expressions provided in the configuration are always compiled with case insensitivity enabled.
 
-  Also note that actual files in your web application (images, stylesheets, etc.) are always ignored by Tapestry.
+  Also note that actual files in your web application (images, stylesheets, etc.) are always ignored by Tapestry.  

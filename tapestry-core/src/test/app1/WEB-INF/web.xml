@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- 
-   Copyright 2006 The Apache Software Foundation
+   Copyright 2006, 2010 The Apache Software Foundation
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -23,6 +23,10 @@
     <context-param>
         <param-name>tapestry.app-package</param-name>
         <param-value>org.apache.tapestry5.integration.app1</param-value>
+    </context-param>
+    <context-param>
+      <param-name>tapestry.production-modules</param-name>
+      <param-value>org.apache.tapestry5.integration.app1.services.TestOnlyModule</param-value>
     </context-param>
     <filter>
         <filter-name>app</filter-name>

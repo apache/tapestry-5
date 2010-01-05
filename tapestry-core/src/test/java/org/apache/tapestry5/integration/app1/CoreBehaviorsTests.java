@@ -1,4 +1,4 @@
-// Copyright 2009 The Apache Software Foundation
+// Copyright 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -1436,5 +1436,15 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
         assertText(
                 "container",
                 "Exception rendering description for object of type org.apache.tapestry5.integration.app1.data.NullToString: (java.lang.NullPointerException) NPE from NullToString");
+    }
+
+    /** TAP5-966 */
+
+    @Test
+    public void module_loading()
+    {
+        clickThru("Test Only Service Demo");
+
+        assertText("message", "TestOnly service message");
     }
 }

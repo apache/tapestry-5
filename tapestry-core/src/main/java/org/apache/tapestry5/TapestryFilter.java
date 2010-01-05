@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -30,15 +30,25 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
- * The TapestryFilter is responsible for intercepting all requests into the web application. It identifies the requests
- * that are relevant to Tapestry, and lets the servlet container handle the rest. It is also responsible for
+ * The TapestryFilter is responsible for intercepting all requests into the web application. It
+ * identifies the requests
+ * that are relevant to Tapestry, and lets the servlet container handle the rest. It is also
+ * responsible for
  * initializing Tapestry.
  * <p/>
+ * The application is primarily configured via context-level init parameters.
  * <p/>
- * The application is configured via context-level init parameters.
- * <p/>
- * <dl> <dt>  tapestry.app-package</dt> <dd> The application package (used to search for pages, components, etc.)</dd>
+ * <dl>
+ * <dt>tapestry.app-package</dt>
+ * <dd>The application package (used to search for pages, components, etc.)</dd>
  * </dl>
+ * <p>
+ * In addition, a JVM system property affects configuration: <code>tapestry.execution-mode</code>
+ * (with default value "production"). This property is a comma-separated list of execution modes.
+ * For each mode, an additional init parameter is checked for:
+ * <code>tapestry.<em>mode</em>-modules</code>; this is a comma-separated list of module class names
+ * to load. In this way, more precise control over the available modules can be obtained which is
+ * often needed during testing.
  */
 public class TapestryFilter implements Filter
 {
@@ -51,14 +61,18 @@ public class TapestryFilter implements Filter
     private HttpServletRequestHandler handler;
 
     /**
-     * Key under which that Tapestry IoC {@link org.apache.tapestry5.ioc.Registry} is stored in the ServletContext. This
-     * allows other code, beyond Tapestry, to obtain the Registry and, from it, any Tapestry services. Such code should
-     * be careful about invoking {@link org.apache.tapestry5.ioc.Registry#cleanupThread()} appopriately.
+     * Key under which that Tapestry IoC {@link org.apache.tapestry5.ioc.Registry} is stored in the
+     * ServletContext. This
+     * allows other code, beyond Tapestry, to obtain the Registry and, from it, any Tapestry
+     * services. Such code should
+     * be careful about invoking {@link org.apache.tapestry5.ioc.Registry#cleanupThread()}
+     * appropriately.
      */
     public static final String REGISTRY_CONTEXT_NAME = "org.apache.tapestry5.application-registry";
 
     /**
-     * Initializes the filter using the {@link TapestryAppInitializer}. The application name is the capitalization of
+     * Initializes the filter using the {@link TapestryAppInitializer}. The application name is the
+     * capitalization of
      * the filter name (as specified in web.xml).
      */
     public final void init(FilterConfig filterConfig) throws ServletException
@@ -71,7 +85,10 @@ public class TapestryFilter implements Filter
 
         SymbolProvider provider = new ServletContextSymbolProvider(context);
 
-        TapestryAppInitializer appInitializer = new TapestryAppInitializer(logger, provider, filterName, "servlet");
+        String executionMode = System.getProperty("tapestry.execution-mode", "production");
+
+        TapestryAppInitializer appInitializer = new TapestryAppInitializer(logger, provider,
+                filterName, "servlet", executionMode);
 
         appInitializer.addModules(provideExtraModuleDefs(context));
 
@@ -80,7 +97,7 @@ public class TapestryFilter implements Filter
         context.setAttribute(REGISTRY_CONTEXT_NAME, registry);
 
         ServletApplicationInitializer ai = registry.getService("ServletApplicationInitializer",
-                                                               ServletApplicationInitializer.class);
+                ServletApplicationInitializer.class);
 
         ai.initializeApplication(filterConfig.getServletContext());
 
@@ -99,10 +116,12 @@ public class TapestryFilter implements Filter
     }
 
     /**
-     * Invoked from {@link #init(FilterConfig)} after the Registry has been created, to allow any additional
+     * Invoked from {@link #init(FilterConfig)} after the Registry has been created, to allow any
+     * additional
      * initialization to occur. This implementation does nothing, and my be overriden in subclasses.
-     *
-     * @param registry from which services may be extracted
+     * 
+     * @param registry
+     *            from which services may be extracted
      * @throws ServletException
      */
     protected void init(Registry registry) throws ServletException
@@ -111,7 +130,8 @@ public class TapestryFilter implements Filter
     }
 
     /**
-     * Overridden in subclasses to provide additional module definitions beyond those normally located. This
+     * Overridden in subclasses to provide additional module definitions beyond those normally
+     * located. This
      * implementation returns an empty array.
      */
     protected ModuleDef[] provideExtraModuleDefs(ServletContext context)
@@ -124,9 +144,11 @@ public class TapestryFilter implements Filter
     {
         try
         {
-            boolean handled = handler.service((HttpServletRequest) request, (HttpServletResponse) response);
+            boolean handled = handler.service((HttpServletRequest) request,
+                    (HttpServletResponse) response);
 
-            if (!handled) chain.doFilter(request, response);
+            if (!handled)
+                chain.doFilter(request, response);
         }
         finally
         {
@@ -135,8 +157,10 @@ public class TapestryFilter implements Filter
     }
 
     /**
-     * Shuts down and discards the registry.  Invokes {@link #destroy(org.apache.tapestry5.ioc.Registry)} to allow
-     * subclasses to peform any shutdown logic, then shuts down the registry, and removes it from the ServletContext.
+     * Shuts down and discards the registry. Invokes
+     * {@link #destroy(org.apache.tapestry5.ioc.Registry)} to allow
+     * subclasses to peform any shutdown logic, then shuts down the registry, and removes it from
+     * the ServletContext.
      */
     public final void destroy()
     {
@@ -152,9 +176,11 @@ public class TapestryFilter implements Filter
     }
 
     /**
-     * Invoked from {@link #destroy()} to allow subclasses to add additional shutdown logic to the filter. The Registry
-     * will be shutdown after this call. This implementation does nothing, and may be overridden in subclasses.
-     *
+     * Invoked from {@link #destroy()} to allow subclasses to add additional shutdown logic to the
+     * filter. The Registry
+     * will be shutdown after this call. This implementation does nothing, and may be overridden in
+     * subclasses.
+     * 
      * @param registry
      */
     protected void destroy(Registry registry)
