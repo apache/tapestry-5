@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -39,10 +39,12 @@ public class LinkSourceImpl implements LinkSource, LinkCreationHub
 
     private final RequestGlobals requestGlobals;
 
+    private final RequestPageCache pageCache;
+
     public LinkSourceImpl(PageRenderQueue pageRenderQueue,
             PageActivationContextCollector contextCollector, TypeCoercer typeCoercer,
             ComponentClassResolver resolver, ComponentEventLinkEncoder linkEncoder,
-            RequestGlobals requestGlobals)
+            RequestGlobals requestGlobals, RequestPageCache pageCache)
     {
         this.pageRenderQueue = pageRenderQueue;
         this.contextCollector = contextCollector;
@@ -50,6 +52,7 @@ public class LinkSourceImpl implements LinkSource, LinkCreationHub
         this.resolver = resolver;
         this.linkEncoder = linkEncoder;
         this.requestGlobals = requestGlobals;
+        this.pageCache = pageCache;
     }
 
     public Link createComponentEventLink(Page page, String nestedId, String eventType,
@@ -99,7 +102,8 @@ public class LinkSourceImpl implements LinkSource, LinkCreationHub
         Object[] context = (override || pageActivationContext.length != 0) ? pageActivationContext
                 : contextCollector.collectPageActivationContext(canonical);
 
-        boolean loopback = canonical.equals(requestGlobals.getActivePageName());
+        boolean loopback = canonical.equals(requestGlobals.getActivePageName())
+                && pageCache.get(pageName).hasResetListeners();
 
         PageRenderRequestParameters parameters = new PageRenderRequestParameters(canonical,
                 new ArrayEventContext(typeCoercer, context), loopback);

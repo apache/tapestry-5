@@ -45,7 +45,6 @@ public class ComponentEventLinkEncoderImplTest extends InternalBaseTestCase
         Response response = mockResponse();
         RequestPathOptimizer optimizer = mockRequestPathOptimizer();
         ContextPathEncoder contextPathEncoder = getService(ContextPathEncoder.class);
-        RequestGlobals globals = mockRequestGlobals(null);
 
         expect(manager.getBaseURL("MyPage")).andReturn(null);
         train_getContextPath(request, "/myapp");
@@ -67,15 +66,6 @@ public class ComponentEventLinkEncoderImplTest extends InternalBaseTestCase
         verify();
     }
 
-    private RequestGlobals mockRequestGlobals(String activePageName)
-    {
-        RequestGlobals rg = mockRequestGlobals();
-
-        expect(rg.getActivePageName()).andReturn(activePageName).atLeastOnce();
-
-        return rg;
-    }
-
     @Test
     public void index_stripped_off()
     {
@@ -84,7 +74,6 @@ public class ComponentEventLinkEncoderImplTest extends InternalBaseTestCase
         Response response = mockResponse();
         RequestPathOptimizer optimizer = mockRequestPathOptimizer();
         ContextPathEncoder contextPathEncoder = getService(ContextPathEncoder.class);
-        RequestGlobals globals = mockRequestGlobals(null);
 
         expect(manager.getBaseURL("admin/Index")).andReturn(null);
         train_getContextPath(request, "");
@@ -114,7 +103,6 @@ public class ComponentEventLinkEncoderImplTest extends InternalBaseTestCase
         Response response = mockResponse();
         RequestPathOptimizer optimizer = mockRequestPathOptimizer();
         ContextPathEncoder contextPathEncoder = getService(ContextPathEncoder.class);
-        RequestGlobals globals = mockRequestGlobals(null);
 
         expect(manager.getBaseURL("Index")).andReturn(null);
         train_getContextPath(request, "");
