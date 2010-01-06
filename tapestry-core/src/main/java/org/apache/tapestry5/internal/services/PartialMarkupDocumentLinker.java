@@ -1,10 +1,10 @@
-// Copyright 2008 The Apache Software Foundation
+// Copyright 2008, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,6 +14,9 @@
 
 package org.apache.tapestry5.internal.services;
 
+import java.util.Set;
+
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
 
@@ -25,19 +28,32 @@ public class PartialMarkupDocumentLinker implements DocumentLinker
 
     private final JSONArray stylesheets = new JSONArray();
 
+    private final Set<String> uniquer = CollectionFactory.newSet();
+
     public void addScriptLink(String scriptURL)
     {
+        if (uniquer.contains(scriptURL))
+            return;
+
         scripts.put(scriptURL);
+
+        uniquer.add(scriptURL);
     }
 
     public void addStylesheetLink(String styleURL, String media)
     {
+        if (uniquer.contains(styleURL))
+            return;
+
         JSONObject object = new JSONObject();
         object.put("href", styleURL);
 
-        if (media != null) object.put("media", media);
+        if (media != null)
+            object.put("media", media);
 
         stylesheets.put(object);
+
+        uniquer.add(styleURL);
     }
 
     public void addScript(String script)
@@ -48,8 +64,9 @@ public class PartialMarkupDocumentLinker implements DocumentLinker
 
     /**
      * Commits changes, adding one or more keys to the reply.
-     *
-     * @param reply JSON Object to be sent to client
+     * 
+     * @param reply
+     *            JSON Object to be sent to client
      */
     public void commit(JSONObject reply)
     {
