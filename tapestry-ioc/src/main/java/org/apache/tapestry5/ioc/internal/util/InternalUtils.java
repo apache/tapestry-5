@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -50,7 +50,7 @@ public class InternalUtils
     /**
      * Pattern used to eliminate leading and trailing underscores and dollar signs.
      */
-    private static final Pattern NAME_PATTERN = Pattern.compile("^[_|$]*([\\w|$]+?)[_|$]*$", Pattern.CASE_INSENSITIVE);
+    private static final Pattern NAME_PATTERN = Pattern.compile("^[_|$]*([\\p{javaJavaIdentifierPart}]+?)[_|$]*$", Pattern.CASE_INSENSITIVE);
 
     /**
      * Converts a method to a user presentable string using a {@link ClassFactory} to obtain a {@link Location} (where

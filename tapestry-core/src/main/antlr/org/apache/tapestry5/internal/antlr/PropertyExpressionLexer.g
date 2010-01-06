@@ -1,4 +1,4 @@
-// Copyright 2008 The Apache Software Foundation
+// Copyright 2008, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -91,7 +91,32 @@ FALSE	:	F A L S E;
 THIS	:	T H I S;
 
 IDENTIFIER 
-	:	LETTER (LETTER | DIGIT | '_')*;
+    :   JAVA_ID_START (JAVA_ID_PART)*
+    ;
+
+fragment
+JAVA_ID_START
+    :  '\u0024'
+    |  '\u0041'..'\u005a'
+    |  '\u005f'
+    |  '\u0061'..'\u007a'
+    |  '\u00c0'..'\u00d6'
+    |  '\u00d8'..'\u00f6'
+    |  '\u00f8'..'\u00ff'
+    |  '\u0100'..'\u1fff'
+    |  '\u3040'..'\u318f'
+    |  '\u3300'..'\u337f'
+    |  '\u3400'..'\u3d2d'
+    |  '\u4e00'..'\u9fff'
+    |  '\uf900'..'\ufaff'
+    ;
+
+fragment
+JAVA_ID_PART
+    :  JAVA_ID_START
+    |  '\u0030'..'\u0039'
+    ;
+
 
 // The Safe Dereference operator understands not to de-reference through
 // a null.
