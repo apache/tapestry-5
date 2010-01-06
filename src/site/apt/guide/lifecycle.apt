@@ -127,12 +127,18 @@ Page Lifecycle Methods
   a lot of cleanup of the page, discarding temporary objects (so that they can be reclaimed by the garbage collector) and otherwise returning the
   page to its pristine state.  After detaching, a page is placed into the page pool, where it will await reuse for some future request (likely by a completely
   different user).
+    
+  A page is <reset> when the page is accessed from another page; component event links and page render links that target the same page
+  do not cause a reset, but linking from one page to another will cause a reset on the destination page when it is rendered. The reset
+  lifecycle event occurs <after> page activation, allowing the page to reset its internal state to the match its activation context.  Note that
+  on pages that have such reset logic will have an additional query parameter added to the page render URL in some cases.
   
   As with {{{rendering.html}component rendering}}, you have the ability to make your components "aware" of these events by identifying methods to be invoked.
   
-  You have the choice of attaching an annotation to a method, or simply naming the method correctly.  
+  You have the choice of attaching an annotation to a method, or simply following the method naming convention.  
   
-  Page lifecycle methods should take no parameters and return void.
+  Page lifecycle methods should take no parameters and return void.  Page lifecycle methods can occur in a page class, or a component class or mixin.
+  When different components within the same page implement the same lifecycle method, the order of execution is not defined.
   
   The annotations / method names are:
   
@@ -141,6 +147,8 @@ Page Lifecycle Methods
    * {{{../apidocs/org/apache/tapestry5/annotations/PageAttached.html}PageAttached}} annotation, or method name "pageAttached"
    
    * {{{../apidocs/org/apache/tapestry5/annotations/PageDetached.html}PageDetached}} annotation, or method name "pageDetached"
+   
+   * {{{../apidocs/org/apache/tapestry5/annotations/PageReset.html}PageReset}} annotation, or method name "pageReset"
    
    
    
