@@ -282,8 +282,7 @@ public class PageRenderDispatcherTest extends InternalBaseTestCase
     private ComponentRequestHandler wrap(RequestPageCache cache,
             ComponentEventResultProcessor processor, PageResponseRenderer renderer, Request request)
     {
-        PageRenderRequestHandler prh = new PageRenderRequestHandlerImpl(cache, processor, renderer,
-                request);
+        PageRenderRequestHandler prh = new PageRenderRequestHandlerImpl(cache, processor, renderer);
 
         return new ComponentRequestHandlerTerminator(null, prh);
     }

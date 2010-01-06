@@ -323,7 +323,8 @@ public class ComponentEventLinkEncoderImpl implements ComponentEventLinkEncoder
             String pageName = extendedName.substring(0, slashx);
             String pageActivationContext = atEnd ? "" : extendedName.substring(slashx + 1);
 
-            PageRenderRequestParameters parameters = checkIfPage(pageName, pageActivationContext);
+            PageRenderRequestParameters parameters = checkIfPage(request, pageName,
+                    pageActivationContext);
 
             if (parameters != null)
                 return parameters;
@@ -336,10 +337,11 @@ public class ComponentEventLinkEncoderImpl implements ComponentEventLinkEncoder
 
         // OK, maybe its all page activation context for the root Index page.
 
-        return checkIfPage("", extendedName);
+        return checkIfPage(request, "", extendedName);
     }
 
-    private PageRenderRequestParameters checkIfPage(String pageName, String pageActivationContext)
+    private PageRenderRequestParameters checkIfPage(Request request, String pageName,
+            String pageActivationContext)
     {
         if (!componentClassResolver.isPageName(pageName))
             return null;
@@ -348,7 +350,9 @@ public class ComponentEventLinkEncoderImpl implements ComponentEventLinkEncoder
 
         String canonicalized = componentClassResolver.canonicalizePageName(pageName);
 
-        return new PageRenderRequestParameters(canonicalized, activationContext);
+        boolean loopback = request.getParameter(InternalConstants.LOOPBACK) != null;
+
+        return new PageRenderRequestParameters(canonicalized, activationContext, loopback);
     }
 
     public void appendContext(boolean seperatorRequired, EventContext context, StringBuilder builder)

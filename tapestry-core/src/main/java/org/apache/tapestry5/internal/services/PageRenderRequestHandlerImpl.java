@@ -39,17 +39,13 @@ public class PageRenderRequestHandlerImpl implements PageRenderRequestHandler
 
     private final PageResponseRenderer pageResponseRenderer;
 
-    private final Request request;
-
     public PageRenderRequestHandlerImpl(RequestPageCache cache, @Traditional
     @Primary
-    ComponentEventResultProcessor resultProcessor, PageResponseRenderer pageResponseRenderer,
-            Request request)
+    ComponentEventResultProcessor resultProcessor, PageResponseRenderer pageResponseRenderer)
     {
         this.cache = cache;
         this.resultProcessor = resultProcessor;
         this.pageResponseRenderer = pageResponseRenderer;
-        this.request = request;
     }
 
     public void handle(PageRenderRequestParameters parameters) throws IOException
@@ -67,7 +63,7 @@ public class PageRenderRequestHandlerImpl implements PageRenderRequestHandler
         if (callback.isAborted())
             return;
 
-        if (request.getParameter(InternalConstants.LOOPBACK) == null)
+        if (!parameters.isLoopback())
             page.pageReset();
 
         pageResponseRenderer.renderPageResponse(page);

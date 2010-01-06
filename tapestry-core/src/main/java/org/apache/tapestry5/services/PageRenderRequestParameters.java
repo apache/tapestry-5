@@ -30,17 +30,28 @@ public class PageRenderRequestParameters
 
     private final EventContext activationContext;
 
+    private final boolean loopback;
+
+    /** @deprecated Use {@link #PageRenderRequestParameters(String, EventContext, boolean)  */
     public PageRenderRequestParameters(String logicalPageName, EventContext activationContext)
+    {
+        this(logicalPageName, activationContext, false);
+    }
+
+    public PageRenderRequestParameters(String logicalPageName, EventContext activationContext,
+            boolean loopback)
     {
         Defense.notNull(logicalPageName, "logicalPageName");
         Defense.notNull(activationContext, "activationContext");
 
         this.logicalPageName = logicalPageName;
         this.activationContext = activationContext;
+        this.loopback = loopback;
     }
 
     /**
-     * Returns a {@linkplain ComponentClassResolver#canonicalizePageName(String) canonicalized} version of the page name.
+     * Returns a {@linkplain ComponentClassResolver#canonicalizePageName(String) canonicalized}
+     * version of the page name.
      */
     public String getLogicalPageName()
     {
@@ -63,8 +74,18 @@ public class PageRenderRequestParameters
 
         PageRenderRequestParameters other = (PageRenderRequestParameters) obj;
 
-        return logicalPageName.equals(other.logicalPageName)
+        return loopback == other.loopback && logicalPageName.equals(other.logicalPageName)
                 && TapestryInternalUtils.isEqual(activationContext, other.activationContext);
+    }
+
+    /**
+     * Is this request a loopback (a request for the same page that rendered it in the first place)?
+     * 
+     * @since 5.2.0
+     */
+    public boolean isLoopback()
+    {
+        return loopback;
     }
 
     @Override

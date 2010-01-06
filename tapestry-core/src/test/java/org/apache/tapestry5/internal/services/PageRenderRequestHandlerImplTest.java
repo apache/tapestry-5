@@ -17,14 +17,12 @@ package org.apache.tapestry5.internal.services;
 import org.apache.tapestry5.ComponentEventCallback;
 import org.apache.tapestry5.EventConstants;
 import org.apache.tapestry5.EventContext;
-import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.internal.structure.ComponentPageElement;
 import org.apache.tapestry5.internal.structure.Page;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.services.ComponentEventResultProcessor;
 import org.apache.tapestry5.services.PageRenderRequestHandler;
 import org.apache.tapestry5.services.PageRenderRequestParameters;
-import org.apache.tapestry5.services.Request;
 import org.easymock.EasyMock;
 import org.testng.annotations.Test;
 
@@ -34,7 +32,6 @@ public class PageRenderRequestHandlerImplTest extends InternalBaseTestCase
     public void loopback_request() throws Exception
     {
         RequestPageCache cache = mockRequestPageCache();
-        Request request = mockRequest();
         ComponentEventResultProcessor processor = mockComponentEventResultProcessor();
         PageResponseRenderer renderer = mockPageResponseRenderer();
         Page page = mockPage();
@@ -50,8 +47,6 @@ public class PageRenderRequestHandlerImplTest extends InternalBaseTestCase
                         .same(context), EasyMock.isA(ComponentEventCallback.class))).andReturn(
                 false);
 
-        train_getParameter(request, InternalConstants.LOOPBACK, "T");
-
         // Skips the pageReset()
 
         renderer.renderPageResponse(page);
@@ -59,9 +54,10 @@ public class PageRenderRequestHandlerImplTest extends InternalBaseTestCase
         replay();
 
         PageRenderRequestHandler handler = new PageRenderRequestHandlerImpl(cache, processor,
-                renderer, request);
+                renderer);
 
-        PageRenderRequestParameters parameters = new PageRenderRequestParameters("foo/Bar", context);
+        PageRenderRequestParameters parameters = new PageRenderRequestParameters("foo/Bar",
+                context, true);
 
         handler.handle(parameters);
 
