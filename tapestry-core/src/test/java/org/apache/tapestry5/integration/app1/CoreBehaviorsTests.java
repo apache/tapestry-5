@@ -1447,4 +1447,39 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
 
         assertText("message", "TestOnly service message");
     }
+
+    /** TAP5-948 */
+    @Test
+    public void page_reset_annotation()
+    {
+        clickThru("PageReset Annotation Demo");
+
+        assertText("current", "0");
+
+        clickAndWait("link=increment");
+
+        assertText("current", "1");
+
+        clickAndWait("link=increment");
+
+        assertText("current", "2");
+
+        clickAndWait("link=refresh");
+
+        assertText("current", "2");
+
+        clickAndWait("link=Back to index");
+        clickAndWait("link=PageReset Annotation Demo");
+
+        assertText("current", "0");
+    }
+
+    /** TAP5-948 */
+    @Test
+    public void page_reset_annotation_on_bad_method()
+    {
+        clickThru("PageReset Annotation Failure");
+
+        assertTextPresent("Method void reset(java.lang.String) of class org.apache.tapestry5.integration.app1.pages.PageResetFailure is invalid: methods with the @PageReset annotation must return void, and have no parameters or thrown exceptions.");
+    }
 }

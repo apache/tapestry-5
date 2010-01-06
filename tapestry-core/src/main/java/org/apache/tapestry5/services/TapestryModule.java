@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -504,6 +504,8 @@ public final class TapestryModule
      * <dd>Checks for the {@link org.apache.tapestry5.annotations.Cached} annotation</dd>
      * <dt>Log</dt>
      * <dd>Checks for the {@link org.apache.tapestry5.annotations.Log} annotation</dd>
+     * <dt>PageReset
+     * <dd>Checks for the {@link PageReset} annotation
      * </dl>
      */
     public static void contributeComponentClassTransformWorker(
@@ -551,7 +553,7 @@ public final class TapestryModule
         // have been properly setup.
 
         configuration.addInstance("BindParameter", BindParameterWorker.class, "after:Parameter");
-
+        
         // Workers for the component rendering state machine methods; this is in
         // typical
         // execution order.
@@ -606,6 +608,8 @@ public final class TapestryModule
         configuration.addInstance("Environment", EnvironmentalWorker.class, "after:Property");
 
         configuration.addInstance("Log", LogWorker.class);
+
+        configuration.addInstance("PageReset", PageResetAnnotationWorker.class);
 
         // This one is always last. Any additional private fields that aren't
         // annotated will
@@ -2749,6 +2753,21 @@ public final class TapestryModule
     }
 
     /**
+     * Contributes:
+     * <dl>
+     * <dt>InitializeActivePageName
+     * <dd>{@link InitializeActivePageName}
+     * </dl>
+     * 
+     * @since 5.2.0
+     */
+    public void contributeComponentRequestHandler(
+            OrderedConfiguration<ComponentRequestFilter> configuration)
+    {
+        configuration.addInstance("InitializeActivePageName", InitializeActivePageName.class);
+    }
+
+    /**
      * @throws Exception
      * @since 5.1.0.2
      */
@@ -2855,24 +2874,24 @@ public final class TapestryModule
     }
 
     public void contributeRegexAuthorizer(Configuration<String> regex,
-            
-                                        @Symbol("tapestry.scriptaculous.path")
-                                        String scriptPath, 
-                                        
-                                        @Symbol("tapestry.blackbird.path")
-                                        String blackbirdPath, 
-                                        
-                                        @Symbol("tapestry.datepicker.path")
-                                        String datepickerPath, 
-                                        
-                                        @Symbol(SymbolConstants.CONTEXT_ASSETS_AVAILABLE)
-                                        boolean contextAvailable, 
-                                        
-                                        @Symbol(SymbolConstants.APPLICATION_VERSION)
-                                        String appVersion,
-                                        
-                                        @Symbol(InternalConstants.TAPESTRY_APP_PACKAGE_PARAM)
-                                        String appPackageName)
+
+    @Symbol("tapestry.scriptaculous.path")
+    String scriptPath,
+
+    @Symbol("tapestry.blackbird.path")
+    String blackbirdPath,
+
+    @Symbol("tapestry.datepicker.path")
+    String datepickerPath,
+
+    @Symbol(SymbolConstants.CONTEXT_ASSETS_AVAILABLE)
+    boolean contextAvailable,
+
+    @Symbol(SymbolConstants.APPLICATION_VERSION)
+    String appVersion,
+
+    @Symbol(InternalConstants.TAPESTRY_APP_PACKAGE_PARAM)
+    String appPackageName)
     {
         // allow any js, jpg, jpeg, png, or css under org/apache/tapestry5,
         // along with
@@ -2891,7 +2910,7 @@ public final class TapestryModule
         // allow access to virtual assets. Critical for tapestry-combined js
         // files.
         regex.add("virtual/" + pathPattern);
-        
+
         regex.add("^" + appPackageName.replace(".", "/") + "/" + pathPattern);
 
         if (contextAvailable)

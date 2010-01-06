@@ -1,4 +1,4 @@
-// Copyright 2008, 2009 The Apache Software Foundation
+// Copyright 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -77,6 +77,8 @@ public final class ComponentEventRequestParameters
     /**
      * The name of the active page which rendered the link.  This is usually, but not always, the page which contains
      * the component.
+     * 
+     * @return {@link ComponentClassResolver#canonicalizePageName(String) canonicalized} page name
      */
     public String getActivePageName()
     {
@@ -87,6 +89,8 @@ public final class ComponentEventRequestParameters
      * The name of the page containing the component that was triggered. Usually this is the same as the active page,
      * but because of {@link org.apache.tapestry5.Block} and similar constructs, a component from other than the active
      * page may be rendered with the active page.
+     * 
+     * @return {@link ComponentClassResolver#canonicalizePageName(String) canonicalized} page name
      */
     public String getContainingPageName()
     {

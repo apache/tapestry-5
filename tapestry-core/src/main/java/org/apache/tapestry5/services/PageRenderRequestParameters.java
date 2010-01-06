@@ -19,8 +19,9 @@ import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.ioc.internal.util.Defense;
 
 /**
- * Used with {@link org.apache.tapestry5.services.PageRenderRequestHandler} and {@link
- * org.apache.tapestry5.services.PageRenderRequestFilter} to define the logical page name and activation context for the
+ * Used with {@link org.apache.tapestry5.services.PageRenderRequestHandler} and
+ * {@link org.apache.tapestry5.services.PageRenderRequestFilter} to define the logical page name and
+ * activation context for the
  * request.
  */
 public class PageRenderRequestParameters
@@ -38,6 +39,9 @@ public class PageRenderRequestParameters
         this.activationContext = activationContext;
     }
 
+    /**
+     * Returns a {@linkplain ComponentClassResolver#canonicalizePageName(String) canonicalized} version of the page name.
+     */
     public String getLogicalPageName()
     {
         return logicalPageName;
@@ -51,16 +55,17 @@ public class PageRenderRequestParameters
     @Override
     public boolean equals(Object obj)
     {
-        if (this == obj) return true;
+        if (this == obj)
+            return true;
 
-        if (obj == null || getClass() != obj.getClass()) return false;
+        if (obj == null || getClass() != obj.getClass())
+            return false;
 
         PageRenderRequestParameters other = (PageRenderRequestParameters) obj;
 
-        return logicalPageName.equals(other.logicalPageName) &&
-                TapestryInternalUtils.isEqual(activationContext, other.activationContext);
+        return logicalPageName.equals(other.logicalPageName)
+                && TapestryInternalUtils.isEqual(activationContext, other.activationContext);
     }
-
 
     @Override
     public String toString()

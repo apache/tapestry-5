@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,6 +17,8 @@ package org.apache.tapestry5.internal.structure;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.internal.services.PersistentFieldManager;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.internal.util.Defense;
+
 import static org.apache.tapestry5.ioc.internal.util.Defense.notNull;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.runtime.Component;
@@ -37,14 +39,17 @@ public class PageImpl implements Page
 
     private ComponentPageElement rootElement;
 
-    private final List<PageLifecycleListener> listeners = CollectionFactory.newList();
+    private final List<PageLifecycleListener> lifecycleListeners = CollectionFactory.newList();
+
+    private final List<PageResetListener> resetListeners = CollectionFactory.newList();
 
     private int dirtyCount;
 
     private boolean loadComplete;
 
     /**
-     * Obtained from the {@link org.apache.tapestry5.internal.services.PersistentFieldManager} when first needed,
+     * Obtained from the {@link org.apache.tapestry5.internal.services.PersistentFieldManager} when
+     * first needed,
      * discarded at the end of the request.
      */
     private PersistentFieldBundle fieldBundle;
@@ -103,14 +108,14 @@ public class PageImpl implements Page
 
     public void addLifecycleListener(PageLifecycleListener listener)
     {
-        listeners.add(listener);
+        lifecycleListeners.add(listener);
     }
 
     public boolean detached()
     {
         boolean result = dirtyCount > 0;
 
-        for (PageLifecycleListener listener : listeners)
+        for (PageLifecycleListener listener : lifecycleListeners)
         {
             try
             {
@@ -130,7 +135,7 @@ public class PageImpl implements Page
 
     public void loaded()
     {
-        for (PageLifecycleListener listener : listeners)
+        for (PageLifecycleListener listener : lifecycleListeners)
             listener.containingPageDidLoad();
 
         loadComplete = true;
@@ -138,12 +143,13 @@ public class PageImpl implements Page
 
     public void attached()
     {
-        if (dirtyCount != 0) throw new IllegalStateException(StructureMessages.pageIsDirty(this));
+        if (dirtyCount != 0)
+            throw new IllegalStateException(StructureMessages.pageIsDirty(this));
 
-        for (PageLifecycleListener listener : listeners)
+        for (PageLifecycleListener listener : lifecycleListeners)
             listener.restoreStateBeforePageAttach();
 
-        for (PageLifecycleListener listener : listeners)
+        for (PageLifecycleListener listener : lifecycleListeners)
             listener.containingPageDidAttach();
     }
 
@@ -162,7 +168,8 @@ public class PageImpl implements Page
 
     public Object getFieldChange(String nestedId, String fieldName)
     {
-        if (fieldBundle == null) fieldBundle = persistentFieldManager.gatherChanges(name);
+        if (fieldBundle == null)
+            fieldBundle = persistentFieldManager.gatherChanges(name);
 
         return fieldBundle.getValue(nestedId, fieldName);
     }
@@ -186,4 +193,20 @@ public class PageImpl implements Page
     {
         return name;
     }
+
+    public void addResetListener(PageResetListener listener)
+    {
+        Defense.notNull(listener, "listener");
+
+        resetListeners.add(listener);
+    }
+
+    public void pageReset()
+    {
+        for (PageResetListener l : resetListeners)
+        {
+            l.pageDidReset();
+        }
+    }
+
 }

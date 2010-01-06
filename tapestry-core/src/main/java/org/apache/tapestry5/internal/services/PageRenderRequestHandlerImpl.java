@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,18 +15,20 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.EventConstants;
+import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.internal.structure.Page;
 import org.apache.tapestry5.ioc.annotations.Primary;
 import org.apache.tapestry5.services.ComponentEventResultProcessor;
 import org.apache.tapestry5.services.PageRenderRequestHandler;
 import org.apache.tapestry5.services.PageRenderRequestParameters;
+import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.Traditional;
 
 import java.io.IOException;
 
 /**
  * Handles a page render request by activating and then rendering the page.
- *
+ * 
  * @see org.apache.tapestry5.internal.services.PageRenderDispatcher
  */
 public class PageRenderRequestHandlerImpl implements PageRenderRequestHandler
@@ -37,28 +39,36 @@ public class PageRenderRequestHandlerImpl implements PageRenderRequestHandler
 
     private final PageResponseRenderer pageResponseRenderer;
 
-    public PageRenderRequestHandlerImpl(RequestPageCache cache,
-                                        @Traditional @Primary
-                                        ComponentEventResultProcessor resultProcessor,
-                                        PageResponseRenderer pageResponseRenderer)
+    private final Request request;
+
+    public PageRenderRequestHandlerImpl(RequestPageCache cache, @Traditional
+    @Primary
+    ComponentEventResultProcessor resultProcessor, PageResponseRenderer pageResponseRenderer,
+            Request request)
     {
         this.cache = cache;
         this.resultProcessor = resultProcessor;
         this.pageResponseRenderer = pageResponseRenderer;
+        this.request = request;
     }
 
     public void handle(PageRenderRequestParameters parameters) throws IOException
     {
         Page page = cache.get(parameters.getLogicalPageName());
 
-        ComponentResultProcessorWrapper callback = new ComponentResultProcessorWrapper(resultProcessor);
+        ComponentResultProcessorWrapper callback = new ComponentResultProcessorWrapper(
+                resultProcessor);
 
-        page.getRootElement().triggerContextEvent(EventConstants.ACTIVATE, parameters.getActivationContext(),
-                                                  callback);
+        page.getRootElement().triggerContextEvent(EventConstants.ACTIVATE,
+                parameters.getActivationContext(), callback);
 
         // The handler will have asked the result processor to send a response.
 
-        if (callback.isAborted()) return;
+        if (callback.isAborted())
+            return;
+
+        if (request.getParameter(InternalConstants.LOOPBACK) == null)
+            page.pageReset();
 
         pageResponseRenderer.renderPageResponse(page);
     }

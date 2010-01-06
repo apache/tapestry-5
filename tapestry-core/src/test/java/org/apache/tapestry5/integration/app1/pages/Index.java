@@ -65,6 +65,10 @@ public class Index
 
     private static final List<Item> ITEMS = CollectionFactory
             .newList(
+
+                    new Item("PageResetDemo", "PageReset Annotation Demo",
+                            "Use of PageReset annotation to re-initialize page state"),
+
                     new Item("TestOnlyServiceDemo", "Test Only Service Demo",
                             "IoC module available via web.xml configuration"),
 

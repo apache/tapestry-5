@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -39,7 +39,8 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * The bridge between a component and its {@link ComponentPageElement}, that supplies all kinds of resources to the
+ * The bridge between a component and its {@link ComponentPageElement}, that supplies all kinds of
+ * resources to the
  * component, including access to its parameters, parameter bindings, and persistent field data.
  */
 public class InternalComponentResourcesImpl implements InternalComponentResources
@@ -80,7 +81,8 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
     private boolean informalsComputed;
 
     /**
-     * We keep a linked list of informal parameters, which saves us the expense of determining which bindings are formal
+     * We keep a linked list of informal parameters, which saves us the expense of determining which
+     * bindings are formal
      * and which are informal. Each Informal points to the next.
      */
     private class Informal
@@ -102,16 +104,17 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
         {
             Object value = binding.get();
 
-            if (value == null) return;
+            if (value == null)
+                return;
 
-            if (value instanceof Block) return;
+            if (value instanceof Block)
+                return;
 
             // If it's already a String, don't use the TypeCoercer (renderInformalParameters is
             // a CPU hotspot, as is TypeCoercer.coerce).
 
-            String valueString = value instanceof String
-                                 ? (String) value
-                                 : elementResources.coerce(value, String.class);
+            String valueString = value instanceof String ? (String) value : elementResources
+                    .coerce(value, String.class);
 
             writer.attributes(name, valueString);
         }
@@ -120,10 +123,8 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
     private Informal firstInformal;
 
     public InternalComponentResourcesImpl(Page page, ComponentPageElement element,
-                                          ComponentResources containerResources,
-                                          ComponentPageElementResources elementResources,
-                                          String completeId, String nestedId, Instantiator componentInstantiator
-    )
+            ComponentResources containerResources, ComponentPageElementResources elementResources,
+            String completeId, String nestedId, Instantiator componentInstantiator)
     {
         this.page = page;
         this.element = element;
@@ -242,7 +243,8 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
         return getBinding(parameterName) != null;
     }
 
-    public <T extends Annotation> T getParameterAnnotation(String parameterName, Class<T> annotationType)
+    public <T extends Annotation> T getParameterAnnotation(String parameterName,
+            Class<T> annotationType)
     {
         return getParameterAccess(parameterName).getAnnotation(annotationType);
     }
@@ -262,7 +264,8 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
         return input == null ? EMPTY : input;
     }
 
-    public boolean triggerContextEvent(String eventType, EventContext context, ComponentEventCallback callback)
+    public boolean triggerContextEvent(String eventType, EventContext context,
+            ComponentEventCallback callback)
     {
         return element.triggerContextEvent(eventType, context, callback);
     }
@@ -290,18 +293,18 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
         }
         catch (Exception ex)
         {
-            throw new TapestryException(StructureMessages.fieldPersistFailure(getCompleteId(), fieldName, ex),
-                                        getLocation(), ex);
+            throw new TapestryException(StructureMessages.fieldPersistFailure(getCompleteId(),
+                    fieldName, ex), getLocation(), ex);
         }
     }
 
     public void bindParameter(String parameterName, Binding binding)
     {
-        if (bindings == null) bindings = CollectionFactory.newCaseInsensitiveMap();
+        if (bindings == null)
+            bindings = CollectionFactory.newCaseInsensitiveMap();
 
         bindings.put(parameterName, binding);
     }
-
 
     public Class getBoundType(String parameterName)
     {
@@ -340,7 +343,8 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
 
     public void renderInformalParameters(MarkupWriter writer)
     {
-        if (bindings == null) return;
+        if (bindings == null)
+            return;
 
         if (!informalsComputed)
         {
@@ -358,7 +362,8 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
 
     public Component getContainer()
     {
-        if (containerResources == null) return null;
+        if (containerResources == null)
+            return null;
 
         return containerResources.getComponent();
     }
@@ -380,7 +385,8 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
 
     public Messages getMessages()
     {
-        if (messages == null) messages = elementResources.getMessages(componentModel);
+        if (messages == null)
+            messages = elementResources.getMessages(componentModel);
 
         return messages;
     }
@@ -429,7 +435,8 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
             for (String name : bindings.keySet())
             {
 
-                if (componentModel.getParameterModel(name) != null) continue;
+                if (componentModel.getParameterModel(name) != null)
+                    continue;
 
                 result.put(name, bindings.get(name));
             }
@@ -443,9 +450,9 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
         Object result = InternalUtils.get(renderVariables, name);
 
         if (result == null)
-            throw new IllegalArgumentException(StructureMessages.missingRenderVariable(getCompleteId(),
-                                                                                       name,
-                                                                                       renderVariables == null ? null : renderVariables.keySet()));
+            throw new IllegalArgumentException(StructureMessages.missingRenderVariable(
+                    getCompleteId(), name, renderVariables == null ? null : renderVariables
+                            .keySet()));
 
         return result;
     }
@@ -456,16 +463,19 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
         Defense.notNull(value, "value");
 
         if (!element.isRendering())
-            throw new IllegalStateException(StructureMessages.renderVariableSetWhenNotRendering(getCompleteId(), name));
+            throw new IllegalStateException(StructureMessages.renderVariableSetWhenNotRendering(
+                    getCompleteId(), name));
 
-        if (renderVariables == null) renderVariables = CollectionFactory.newCaseInsensitiveMap();
+        if (renderVariables == null)
+            renderVariables = CollectionFactory.newCaseInsensitiveMap();
 
         renderVariables.put(name, value);
     }
 
     public void postRenderCleanup()
     {
-        if (renderVariables != null) renderVariables.clear();
+        if (renderVariables != null)
+            renderVariables.clear();
     }
 
     public void addPageLifecycleListener(PageLifecycleListener listener)
@@ -475,7 +485,8 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
 
     public ParameterAccess getParameterAccess(final String parameterName)
     {
-        if (access == null) access = CollectionFactory.newCaseInsensitiveMap();
+        if (access == null)
+            access = CollectionFactory.newCaseInsensitiveMap();
 
         ParameterAccess result = access.get(parameterName);
 
@@ -488,46 +499,50 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
         return result;
     }
 
-    public ParameterAccess getContainerBoundParameterAccess(final String boundParameterName, String... parentParameterNames)
+    public ParameterAccess getContainerBoundParameterAccess(final String boundParameterName,
+            String... parentParameterNames)
     {
-        if (containerParameterAccess == null) containerParameterAccess = CollectionFactory.newCaseInsensitiveMap();
+        if (containerParameterAccess == null)
+            containerParameterAccess = CollectionFactory.newCaseInsensitiveMap();
 
         ParameterAccess result = containerParameterAccess.get(boundParameterName);
         if (result == null)
         {
             final InternalComponentResources res = (InternalComponentResources) getContainerResources();
-            //Ideally, this check would occur at class fabrication time. But there's not currently a way
-            //to tell if a component class is a mixin class, short of checking for "mixins" in the FQCN.
-            //So we check to make sure that this component class name is in the set of mixins defined for the container
-            //resources.
-            if (!res.isMixingIn(this.getComponentModel().getComponentClassName())) {
-                //then we're not a mixin, we're a component in the tree.
-                throw new TapestryException(StructureMessages.bindParameterOnlyOnMixin(boundParameterName, this),this,null);
-            }
-            //Have to be careful here. Problem is that if the mixin is not @MixinAfter, its PAGE_DID_LOAD will be called
-            //before the core component's. That can potentially result in missing default bindings if we
-            //call getParameterAcces at the wrong time (the unbound parameter access will be cached...).
-            String parentParameterName = findParentParameterName(parentParameterNames);
-            if (parentParameterName == null)
+            // Ideally, this check would occur at class fabrication time. But there's not currently
+            // a way
+            // to tell if a component class is a mixin class, short of checking for "mixins" in the
+            // FQCN.
+            // So we check to make sure that this component class name is in the set of mixins
+            // defined for the container
+            // resources.
+            if (!res.isMixingIn(this.getComponentModel().getComponentClassName()))
             {
-                throw new TapestryException(
-                        StructureMessages.noSuchCoreComponentParameter(this,boundParameterName,parentParameterNames), 
-                        this,null);
+                // then we're not a mixin, we're a component in the tree.
+                throw new TapestryException(StructureMessages.bindParameterOnlyOnMixin(
+                        boundParameterName, this), this, null);
             }
+            // Have to be careful here. Problem is that if the mixin is not @MixinAfter, its
+            // PAGE_DID_LOAD will be called
+            // before the core component's. That can potentially result in missing default bindings
+            // if we
+            // call getParameterAcces at the wrong time (the unbound parameter access will be
+            // cached...).
+            String parentParameterName = findParentParameterName(parentParameterNames);
+            if (parentParameterName == null) { throw new TapestryException(StructureMessages
+                    .noSuchCoreComponentParameter(this, boundParameterName, parentParameterNames),
+                    this, null); }
             result = createContainerParameterAccess(parentParameterName);
-            containerParameterAccess.put(boundParameterName,result);
+            containerParameterAccess.put(boundParameterName, result);
         }
         return result;
     }
 
     private String findParentParameterName(String... queries)
     {
-        for(String query : queries)
+        for (String query : queries)
         {
-            if(getContainerResources().getComponentModel().getParameterModel(query) != null)
-            {
-                return query;
-            }
+            if (getContainerResources().getComponentModel().getParameterModel(query) != null) { return query; }
         }
         return null;
     }
@@ -559,7 +574,8 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
 
             public <T> T read(Class<T> desiredType)
             {
-                if (binding == null) return null;
+                if (binding == null)
+                    return null;
 
                 T result;
 
@@ -574,16 +590,16 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
                 }
                 catch (Exception ex)
                 {
-                    throw new TapestryException(
-                            StructureMessages.getParameterFailure(parameterName, getCompleteId(), ex), binding,
-                            ex);
+                    throw new TapestryException(StructureMessages.getParameterFailure(
+                            parameterName, getCompleteId(), ex), binding, ex);
                 }
 
                 if (result == null && !allowNull)
-                    throw new TapestryException(String.format(
-                            "Parameter '%s' of component %s is bound to null. This parameter is not allowed to be null.",
-                            parameterName,
-                            getCompleteId()), binding, null);
+                    throw new TapestryException(
+                            String
+                                    .format(
+                                            "Parameter '%s' of component %s is bound to null. This parameter is not allowed to be null.",
+                                            parameterName, getCompleteId()), binding, null);
 
                 return result;
             }
@@ -593,10 +609,10 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
 
                 if (binding == null)
                 {
-                    //have to fire in case there's a mixin watching value;
-                    //even if it's not bound to any other value,
-                    //the mixin needs to know that the value internal to the component
-                    //was changed.
+                    // have to fire in case there's a mixin watching value;
+                    // even if it's not bound to any other value,
+                    // the mixin needs to know that the value internal to the component
+                    // was changed.
                     fireParameterChanged(parameterName, parameterValue);
                     return;
                 }
@@ -607,13 +623,12 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
                     Object coerced = elementResources.coerce(parameterValue, bindingType);
 
                     binding.set(coerced);
-                    fireParameterChanged(parameterName,coerced);
+                    fireParameterChanged(parameterName, coerced);
                 }
                 catch (Exception ex)
                 {
-                    throw new TapestryException(
-                            StructureMessages.writeParameterFailure(parameterName, getCompleteId(), ex), binding,
-                            ex);
+                    throw new TapestryException(StructureMessages.writeParameterFailure(
+                            parameterName, getCompleteId(), ex), binding, ex);
                 }
             }
 
@@ -636,14 +651,16 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
 
             public void registerParameterChangeListener(ParameterChangeListener listener)
             {
-                Defense.notNull(listener,"listener");
-                if (listeners == null) listeners = CollectionFactory.newSet();
+                Defense.notNull(listener, "listener");
+                if (listeners == null)
+                    listeners = CollectionFactory.newSet();
                 listeners.add(listener);
             }
 
             public void unregisterParameterChangeListener(ParameterChangeListener listener)
             {
-                if (listeners == null) return;
+                if (listeners == null)
+                    return;
                 listeners.remove(listener);
             }
 
@@ -654,8 +671,8 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
 
             protected void fireParameterChanged(String parameterName, Object newValue)
             {
-                ParameterChangedEvent event = new ParameterChangedEvent(parameterName,newValue);
-                for(ParameterChangeListener l : listeners)
+                ParameterChangedEvent event = new ParameterChangedEvent(parameterName, newValue);
+                for (ParameterChangeListener l : listeners)
                 {
                     l.parameterChanged(event);
                 }
@@ -707,14 +724,16 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
 
             public void registerParameterChangeListener(final ParameterChangeListener listener)
             {
-                //if it's not bound, try defering.
+                // if it's not bound, try defering.
                 if (isBound())
                 {
                     access().registerParameterChangeListener(listener);
-                } else
+                }
+                else
                 {
-                    //try waiting for it. If it's not bound after load, then it's not bound at all.
-                    element.deferLoadAction(new Runnable() {
+                    // try waiting for it. If it's not bound after load, then it's not bound at all.
+                    element.deferLoadAction(new Runnable()
+                    {
                         public void run()
                         {
                             access().registerParameterChangeListener(listener);
@@ -739,5 +758,10 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
             }
         };
 
+    }
+
+    public void addPageResetListener(PageResetListener listener)
+    {
+        page.addResetListener(listener);
     }
 }

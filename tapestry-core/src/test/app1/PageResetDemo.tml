@@ -1,0 +1,19 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+  <h1>PageReset Annotation Demo</h1>
+
+  <p>
+    The current click count is:
+    <span id="current">${count}</span>
+  </p>
+
+  <ul>
+    <li>
+      <t:actionlink t:id="increment">increment</t:actionlink>
+    </li>
+    <li>
+      <t:pagelink page="pageResetDemo">refresh</t:pagelink>
+    </li>
+  </ul>
+
+</html>

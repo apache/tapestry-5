@@ -127,6 +127,11 @@
             <a href="InvalidTemplateExtend">Invalid Template Extend Demo</a>
             -- template uses extend, but component doesn't have a super-class
         </li>
+        
+        <li>
+          <a href="PageResetFailure">PageReset Annotation Failure</a>
+          -- error when @PageReset is on a method with parameters
+        </li>
     </ul>
 
 </html>

@@ -1,4 +1,4 @@
-// Copyright 2009 The Apache Software Foundation
+// Copyright 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -27,21 +27,17 @@ import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.Session;
 import org.apache.tapestry5.services.TransformMethodSignature;
 
-
 /**
- * Looks for the {@link SessionAttribute} annotation and converts read and write access on such 
- * fields into calls to the {@link Session#getAttribute(String)} and 
+ * Looks for the {@link SessionAttribute} annotation and converts read and write access on such
+ * fields into calls to the {@link Session#getAttribute(String)} and
  * {@link Session#setAttribute(String, Object)}.
- *
  */
 public class SessionAttributeWorker implements ComponentClassTransformWorker
 {
-
-    private ObjectLocator objectLocator;
+    private final ObjectLocator objectLocator;
 
     public SessionAttributeWorker(ObjectLocator objectLocator)
     {
-        super();
         this.objectLocator = objectLocator;
     }
 
@@ -51,8 +47,7 @@ public class SessionAttributeWorker implements ComponentClassTransformWorker
 
         for (String fieldName : names)
         {
-            SessionAttribute annotation = transformation.getFieldAnnotation(
-                    fieldName,
+            SessionAttribute annotation = transformation.getFieldAnnotation(fieldName,
                     SessionAttribute.class);
 
             String sessionKey = annotation.value();
@@ -66,9 +61,7 @@ public class SessionAttributeWorker implements ComponentClassTransformWorker
 
             Request request = objectLocator.getService(Request.class);
 
-            String requestField = transformation.addInjectedField(
-                    Request.class,
-                    "_request",
+            String requestField = transformation.addInjectedField(Request.class, "_request",
                     request);
 
             replaceReadAccess(transformation, fieldName, fieldType, sessionKey, requestField);
@@ -84,11 +77,8 @@ public class SessionAttributeWorker implements ComponentClassTransformWorker
         TransformMethodSignature readMethodSignature = new TransformMethodSignature(
                 Modifier.PRIVATE, fieldType, readMethodName, null, null);
 
-        String body = String.format(
-                "return (%s) %s.getSession(true).getAttribute(\"%s\");",
-                fieldType,
-                requestField,
-                sessionKey);
+        String body = String.format("return (%s) %s.getSession(true).getAttribute(\"%s\");",
+                fieldType, requestField, sessionKey);
 
         transformation.addMethod(readMethodSignature, body);
         transformation.replaceReadAccess(fieldName, readMethodName);
@@ -103,9 +93,7 @@ public class SessionAttributeWorker implements ComponentClassTransformWorker
                 "void", writeMethodName, new String[]
                 { fieldType }, null);
 
-        String body = String.format(
-                "%s.getSession(true).setAttribute(\"%s\", $1);",
-                requestField,
+        String body = String.format("%s.getSession(true).setAttribute(\"%s\", $1);", requestField,
                 sessionKey);
 
         transformation.addMethod(writeSignature, body);

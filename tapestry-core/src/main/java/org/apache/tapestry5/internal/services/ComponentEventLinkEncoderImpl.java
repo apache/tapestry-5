@@ -1,4 +1,4 @@
-// Copyright 2009 The Apache Software Foundation
+// Copyright 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -47,27 +47,31 @@ public class ComponentEventLinkEncoderImpl implements ComponentEventLinkEncoder
 
     private final boolean encodeLocaleIntoPath;
 
+    private final RequestGlobals requestGlobals;
+
     private static final int BUFFER_SIZE = 100;
 
     private static final char SLASH = '/';
 
     // A beast that recognizes all the elements of a path in a single go.
     // We skip the leading slash, then take the next few terms (until a dot or a colon)
-    // as the page name.  Then there's a sequence that sees a dot
+    // as the page name. Then there's a sequence that sees a dot
     // and recognizes the nested component id (which may be missing), which ends
-    // at the colon, or at the slash (or the end of the string).  The colon identifies
-    // the event name (the event name is also optional).  A valid path will always have
+    // at the colon, or at the slash (or the end of the string). The colon identifies
+    // the event name (the event name is also optional). A valid path will always have
     // a nested component id or an event name (or both) ... when both are missing, then the
-    // path is most likely a page render request.  After the optional event name,
+    // path is most likely a page render request. After the optional event name,
     // the next piece is the action context, which is the remainder of the path.
 
     private final Pattern PATH_PATTERN = Pattern.compile(
 
-            "^/" +      // The leading slash is recognized but skipped
-                    "(((\\w+)/)*(\\w+))" + // A series of folder names leading up to the page name, forming the logical page name
-                    "(\\.(\\w+(\\.\\w+)*))?" + // The first dot separates the page name from the nested component id
-                    "(\\:(\\w+))?" + // A colon, then the event type
-                    "(/(.*))?", //  A slash, then the action context
+    "^/" + // The leading slash is recognized but skipped
+            "(((\\w+)/)*(\\w+))" + // A series of folder names leading up to the page name, forming
+            // the logical page name
+            "(\\.(\\w+(\\.\\w+)*))?" + // The first dot separates the page name from the nested
+            // component id
+            "(\\:(\\w+))?" + // A colon, then the event type
+            "(/(.*))?", // A slash, then the action context
             Pattern.COMMENTS);
 
     // Constants for the match groups in the above pattern.
@@ -77,16 +81,12 @@ public class ComponentEventLinkEncoderImpl implements ComponentEventLinkEncoder
     private static final int CONTEXT = 11;
 
     public ComponentEventLinkEncoderImpl(ComponentClassResolver componentClassResolver,
-                                         ContextPathEncoder contextPathEncoder,
-                                         LocalizationSetter localizationSetter,
-                                         Request request,
-                                         Response response,
-                                         RequestSecurityManager requestSecurityManager,
-                                         RequestPathOptimizer optimizer,
-                                         PersistentLocale persistentLocale,
+            ContextPathEncoder contextPathEncoder, LocalizationSetter localizationSetter,
+            Request request, Response response, RequestSecurityManager requestSecurityManager,
+            RequestPathOptimizer optimizer, PersistentLocale persistentLocale,
 
-                                         @Symbol(SymbolConstants.ENCODE_LOCALE_INTO_PATH)
-                                         boolean encodeLocaleIntoPath)
+            @Symbol(SymbolConstants.ENCODE_LOCALE_INTO_PATH)
+            boolean encodeLocaleIntoPath, RequestGlobals requestGlobals)
     {
         this.componentClassResolver = componentClassResolver;
         this.contextPathEncoder = contextPathEncoder;
@@ -97,6 +97,7 @@ public class ComponentEventLinkEncoderImpl implements ComponentEventLinkEncoder
         this.optimizer = optimizer;
         this.persistentLocale = persistentLocale;
         this.encodeLocaleIntoPath = encodeLocaleIntoPath;
+        this.requestGlobals = requestGlobals;
     }
 
     public Link createPageRenderLink(PageRenderRequestParameters parameters)
@@ -124,16 +125,28 @@ public class ComponentEventLinkEncoderImpl implements ComponentEventLinkEncoder
 
         appendContext(encodedPageName.length() > 0, parameters.getActivationContext(), builder);
 
-        return new LinkImpl(builder.toString(), baseURL == null, false, response, optimizer);
+        Link link = new LinkImpl(builder.toString(), baseURL == null, false, response, optimizer);
+
+        String requestPageName = requestGlobals.getActivePageName();
+
+        // TODO: It should only be necessary to encode the LOOPBACK for pages that actually have
+        // reset listener.
+
+        if (activePageName.equals(requestPageName))
+            link.addParameter(InternalConstants.LOOPBACK, "t");
+
+        return link;
     }
 
     private String encodePageName(String pageName)
     {
-        if (pageName.equalsIgnoreCase("index")) return "";
+        if (pageName.equalsIgnoreCase("index"))
+            return "";
 
         String encoded = pageName.toLowerCase();
 
-        if (!encoded.endsWith("/index")) return encoded;
+        if (!encoded.endsWith("/index"))
+            return encoded;
 
         return encoded.substring(0, encoded.length() - 6);
     }
@@ -191,7 +204,8 @@ public class ComponentEventLinkEncoderImpl implements ComponentEventLinkEncoder
 
         appendContext(true, parameters.getEventContext(), builder);
 
-        Link result = new LinkImpl(builder.toString(), baseURL == null, forForm, response, optimizer);
+        Link result = new LinkImpl(builder.toString(), baseURL == null, forForm, response,
+                optimizer);
 
         EventContext pageActivationContext = parameters.getPageActivationContext();
 
@@ -209,7 +223,8 @@ public class ComponentEventLinkEncoderImpl implements ComponentEventLinkEncoder
         // need to differentiate that.
 
         if (!containingPageName.equalsIgnoreCase(activePageName))
-            result.addParameter(InternalConstants.CONTAINER_PAGE_NAME, encodePageName(containingPageName));
+            result.addParameter(InternalConstants.CONTAINER_PAGE_NAME,
+                    encodePageName(containingPageName));
 
         return result;
     }
@@ -218,50 +233,53 @@ public class ComponentEventLinkEncoderImpl implements ComponentEventLinkEncoder
     {
         Matcher matcher = PATH_PATTERN.matcher(request.getPath());
 
-        if (!matcher.matches()) return null;
+        if (!matcher.matches())
+            return null;
 
         String nestedComponentId = matcher.group(NESTED_ID);
 
         String eventType = matcher.group(EVENT_NAME);
 
-        if (nestedComponentId == null && eventType == null) return null;
+        if (nestedComponentId == null && eventType == null)
+            return null;
 
         String activePageName = matcher.group(LOGICAL_PAGE_NAME);
 
         int slashx = activePageName.indexOf('/');
 
-        String possibleLocaleName = slashx > 0
-                                    ? activePageName.substring(0, slashx)
-                                    : "";
+        String possibleLocaleName = slashx > 0 ? activePageName.substring(0, slashx) : "";
 
         if (localizationSetter.setLocaleFromLocaleName(possibleLocaleName))
             activePageName = activePageName.substring(slashx + 1);
 
-        if (!componentClassResolver.isPageName(activePageName)) return null;
+        if (!componentClassResolver.isPageName(activePageName))
+            return null;
+
+        activePageName = componentClassResolver.canonicalizePageName(activePageName);
 
         EventContext eventContext = contextPathEncoder.decodePath(matcher.group(CONTEXT));
 
-        EventContext activationContext = contextPathEncoder.decodePath(
-                request.getParameter(InternalConstants.PAGE_CONTEXT_NAME));
+        EventContext activationContext = contextPathEncoder.decodePath(request
+                .getParameter(InternalConstants.PAGE_CONTEXT_NAME));
 
         // The event type is often omitted, and defaults to "action".
 
-        if (eventType == null) eventType = EventConstants.ACTION;
+        if (eventType == null)
+            eventType = EventConstants.ACTION;
 
-        if (nestedComponentId == null) nestedComponentId = "";
+        if (nestedComponentId == null)
+            nestedComponentId = "";
 
         String containingPageName = request.getParameter(InternalConstants.CONTAINER_PAGE_NAME);
 
-        if (containingPageName == null) containingPageName = activePageName;
+        if (containingPageName == null)
+            containingPageName = activePageName;
+        else
+            containingPageName = componentClassResolver.canonicalizePageName(containingPageName);
 
-        return new ComponentEventRequestParameters(activePageName,
-                                                   containingPageName,
-                                                   nestedComponentId,
-                                                   eventType,
-                                                   activationContext,
-                                                   eventContext);
+        return new ComponentEventRequestParameters(activePageName, containingPageName,
+                nestedComponentId, eventType, activationContext, eventContext);
     }
-
 
     public PageRenderRequestParameters decodePageRenderRequest(Request request)
     {
@@ -290,15 +308,11 @@ public class ComponentEventLinkEncoderImpl implements ComponentEventLinkEncoder
         // 5. Just activation context (for root Index page)
         // 6. A locale name followed by activation context
 
-        String possibleLocaleName = slashx > 0
-                                    ? extendedName.substring(0, slashx)
-                                    : extendedName;
+        String possibleLocaleName = slashx > 0 ? extendedName.substring(0, slashx) : extendedName;
 
         if (localizationSetter.setLocaleFromLocaleName(possibleLocaleName))
         {
-            extendedName = slashx > 0
-                           ? extendedName.substring(slashx + 1)
-                           : "";
+            extendedName = slashx > 0 ? extendedName.substring(slashx + 1) : "";
         }
 
         slashx = extendedName.length();
@@ -307,8 +321,7 @@ public class ComponentEventLinkEncoderImpl implements ComponentEventLinkEncoder
         while (slashx > 0)
         {
             String pageName = extendedName.substring(0, slashx);
-            String pageActivationContext = atEnd ? "" :
-                                           extendedName.substring(slashx + 1);
+            String pageActivationContext = atEnd ? "" : extendedName.substring(slashx + 1);
 
             PageRenderRequestParameters parameters = checkIfPage(pageName, pageActivationContext);
 
@@ -328,11 +341,14 @@ public class ComponentEventLinkEncoderImpl implements ComponentEventLinkEncoder
 
     private PageRenderRequestParameters checkIfPage(String pageName, String pageActivationContext)
     {
-        if (!componentClassResolver.isPageName(pageName)) return null;
+        if (!componentClassResolver.isPageName(pageName))
+            return null;
 
         EventContext activationContext = contextPathEncoder.decodePath(pageActivationContext);
 
-        return new PageRenderRequestParameters(pageName, activationContext);
+        String canonicalized = componentClassResolver.canonicalizePageName(pageName);
+
+        return new PageRenderRequestParameters(canonicalized, activationContext);
     }
 
     public void appendContext(boolean seperatorRequired, EventContext context, StringBuilder builder)

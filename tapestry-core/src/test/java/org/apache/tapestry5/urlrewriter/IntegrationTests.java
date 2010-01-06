@@ -1,4 +1,4 @@
-// Copyright 2009 The Apache Software Foundation
+// Copyright 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -42,7 +42,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     {
 
         open(BASE_URL);
-        assertAttribute("//a[@class='self']/@href", "/");
+        assertAttribute("//a[@class='self']/@href", "?t:lb=t");
         assertAttribute("//a[@class='dummy']/@href", "/notdummy");
 
 //        final String url = String.format("http://%s:%d/", SUBDOMAIN, JETTY_PORT);

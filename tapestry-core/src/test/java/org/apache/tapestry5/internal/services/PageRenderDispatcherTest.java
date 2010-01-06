@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ package org.apache.tapestry5.internal.services;
 import org.apache.tapestry5.ComponentEventCallback;
 import org.apache.tapestry5.EventConstants;
 import org.apache.tapestry5.EventContext;
+import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.internal.structure.ComponentPageElement;
 import org.apache.tapestry5.internal.structure.Page;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
@@ -53,12 +54,8 @@ public class PageRenderDispatcherTest extends InternalBaseTestCase
 
         replay();
 
-        Dispatcher d = new PageRenderDispatcher(null,
-                                                new ComponentEventLinkEncoderImpl(resolver, contextPathEncoder, ls,
-                                                                                  request, response,
-                                                                                  null, null,
-                                                                                  null,
-                                                                                  true));
+        Dispatcher d = new PageRenderDispatcher(null, new ComponentEventLinkEncoderImpl(resolver,
+                contextPathEncoder, ls, request, response, null, null, null, true, null));
 
         assertFalse(d.dispatch(request, response));
 
@@ -82,12 +79,8 @@ public class PageRenderDispatcherTest extends InternalBaseTestCase
 
         replay();
 
-        Dispatcher d = new PageRenderDispatcher(null,
-                                                new ComponentEventLinkEncoderImpl(resolver, contextPathEncoder, ls,
-                                                                                  request, response,
-                                                                                  null, null,
-                                                                                  null,
-                                                                                  true));
+        Dispatcher d = new PageRenderDispatcher(null, new ComponentEventLinkEncoderImpl(resolver,
+                contextPathEncoder, ls, request, response, null, null, null, true, null));
 
         assertFalse(d.dispatch(request, response));
 
@@ -110,16 +103,21 @@ public class PageRenderDispatcherTest extends InternalBaseTestCase
 
         replay();
 
-        Dispatcher d = new PageRenderDispatcher(null,
-                                                new ComponentEventLinkEncoderImpl(resolver, contextPathEncoder, ls,
-                                                                                  request, response,
-                                                                                  null, null,
-                                                                                  null,
-                                                                                  true));
+        Dispatcher d = new PageRenderDispatcher(null, new ComponentEventLinkEncoderImpl(resolver,
+                contextPathEncoder, ls, request, response, null, null, null, true, null));
 
         assertFalse(d.dispatch(request, response));
 
         verify();
+    }
+
+    private Request mockRequest(boolean isLoopback)
+    {
+        Request request = mockRequest();
+
+        train_getParameter(request, InternalConstants.LOOPBACK, isLoopback ? "t" : null);
+
+        return request;
     }
 
     /**
@@ -129,7 +127,7 @@ public class PageRenderDispatcherTest extends InternalBaseTestCase
     public void page_activation_context_for_root_index_page() throws Exception
     {
         ComponentClassResolver resolver = mockComponentClassResolver();
-        Request request = mockRequest();
+        Request request = mockRequest(false);
         Response response = mockResponse();
         Page page = mockPage();
         ComponentPageElement rootElement = mockComponentPageElement();
@@ -146,28 +144,29 @@ public class PageRenderDispatcherTest extends InternalBaseTestCase
         train_isPageName(resolver, "foo", false);
         train_isPageName(resolver, "", true);
 
-        train_get(cache, "", page);
+        train_canonicalizePageName(resolver, "", "index");
+
+        train_get(cache, "index", page);
 
         train_getRootElement(page, rootElement);
 
-        train_triggerContextEvent(rootElement, EventConstants.ACTIVATE, new Object[] { "foo", "bar" }, false);
+        train_triggerContextEvent(rootElement, EventConstants.ACTIVATE, new Object[]
+        { "foo", "bar" }, false);
+
+        page.pageReset();
 
         renderer.renderPageResponse(page);
 
         replay();
 
-        Dispatcher d = new PageRenderDispatcher(wrap(cache, processor, renderer),
-                                                new ComponentEventLinkEncoderImpl(resolver, contextPathEncoder, ls,
-                                                                                  request, response,
-                                                                                  null, null,
-                                                                                  null,
-                                                                                  true));
+        Dispatcher d = new PageRenderDispatcher(wrap(cache, processor, renderer, request),
+                new ComponentEventLinkEncoderImpl(resolver, contextPathEncoder, ls, request,
+                        response, null, null, null, true, null));
 
         assertTrue(d.dispatch(request, response));
 
         verify();
     }
-
 
     @Test
     public void no_extra_context_without_final_slash() throws Exception
@@ -187,7 +186,7 @@ public class PageRenderDispatcherTest extends InternalBaseTestCase
         PageResponseRenderer renderer = mockPageResponseRenderer();
         RequestPageCache cache = mockRequestPageCache();
         ComponentEventResultProcessor processor = newComponentEventResultProcessor();
-        Request request = mockRequest();
+        Request request = mockRequest(false);
         Response response = mockResponse();
         Page page = mockPage();
         ComponentPageElement rootElement = mockComponentPageElement();
@@ -200,21 +199,22 @@ public class PageRenderDispatcherTest extends InternalBaseTestCase
 
         train_isPageName(resolver, "foo/Bar", true);
 
-        train_get(cache, "foo/Bar", page);
+        train_canonicalizePageName(resolver, "foo/Bar", "foo/bar");
+
+        train_get(cache, "foo/bar", page);
         train_getRootElement(page, rootElement);
 
         train_triggerContextEvent(rootElement, EventConstants.ACTIVATE, new Object[0], false);
+
+        page.pageReset();
 
         renderer.renderPageResponse(page);
 
         replay();
 
-        Dispatcher d = new PageRenderDispatcher(wrap(cache, processor, renderer),
-                                                new ComponentEventLinkEncoderImpl(resolver, contextPathEncoder, ls,
-                                                                                  request, response,
-                                                                                  null, null,
-                                                                                  null,
-                                                                                  true));
+        Dispatcher d = new PageRenderDispatcher(wrap(cache, processor, renderer, request),
+                new ComponentEventLinkEncoderImpl(resolver, contextPathEncoder, ls, request,
+                        response, null, null, null, true, null));
 
         assertTrue(d.dispatch(request, response));
 
@@ -239,7 +239,7 @@ public class PageRenderDispatcherTest extends InternalBaseTestCase
         ComponentClassResolver resolver = mockComponentClassResolver();
         PageResponseRenderer renderer = mockPageResponseRenderer();
         RequestPageCache cache = mockRequestPageCache();
-        Request request = mockRequest();
+        Request request = mockRequest(false);
         Response response = mockResponse();
         Page page = mockPage();
         ComponentPageElement rootElement = mockComponentPageElement();
@@ -256,31 +256,34 @@ public class PageRenderDispatcherTest extends InternalBaseTestCase
 
         train_isPageName(resolver, "foo/Bar", true);
 
-        train_get(cache, "foo/Bar", page);
+        train_canonicalizePageName(resolver, "foo/Bar", "foo/bar");
+
+        train_get(cache, "foo/bar", page);
         train_getRootElement(page, rootElement);
 
-        train_triggerContextEvent(rootElement, EventConstants.ACTIVATE, new Object[] { "zip", "zoom" }, false);
+        train_triggerContextEvent(rootElement, EventConstants.ACTIVATE, new Object[]
+        { "zip", "zoom" }, false);
+
+        page.pageReset();
 
         renderer.renderPageResponse(page);
 
         replay();
 
-        Dispatcher d = new PageRenderDispatcher(wrap(cache, processor, renderer),
-                                                new ComponentEventLinkEncoderImpl(resolver, contextPathEncoder, ls,
-                                                                                  request, response,
-                                                                                  null, null,
-                                                                                  null,
-                                                                                  true));
+        Dispatcher d = new PageRenderDispatcher(wrap(cache, processor, renderer, request),
+                new ComponentEventLinkEncoderImpl(resolver, contextPathEncoder, ls, request,
+                        response, null, null, null, true, null));
 
         assertTrue(d.dispatch(request, response));
 
         verify();
     }
 
-    private ComponentRequestHandler wrap(RequestPageCache cache, ComponentEventResultProcessor processor,
-                                         PageResponseRenderer renderer)
+    private ComponentRequestHandler wrap(RequestPageCache cache,
+            ComponentEventResultProcessor processor, PageResponseRenderer renderer, Request request)
     {
-        PageRenderRequestHandler prh = new PageRenderRequestHandlerImpl(cache, processor, renderer);
+        PageRenderRequestHandler prh = new PageRenderRequestHandlerImpl(cache, processor, renderer,
+                request);
 
         return new ComponentRequestHandlerTerminator(null, prh);
     }
@@ -290,8 +293,8 @@ public class PageRenderDispatcherTest extends InternalBaseTestCase
         return newMock(ComponentEventResultProcessor.class);
     }
 
-    private void train_triggerContextEvent(ComponentPageElement element, String eventType, final Object[] context,
-                                           final boolean handled)
+    private void train_triggerContextEvent(ComponentPageElement element, String eventType,
+            final Object[] context, final boolean handled)
     {
         IAnswer<Boolean> answer = new IAnswer<Boolean>()
         {
@@ -308,12 +311,12 @@ public class PageRenderDispatcherTest extends InternalBaseTestCase
                     assertEquals(ec.get(Object.class, i), context[i]);
                 }
 
-
                 return handled;
             }
         };
 
-        expect(element.triggerContextEvent(eq(eventType), isA(EventContext.class),
-                                           isA(ComponentEventCallback.class))).andAnswer(answer);
+        expect(
+                element.triggerContextEvent(eq(eventType), isA(EventContext.class),
+                        isA(ComponentEventCallback.class))).andAnswer(answer);
     }
 }

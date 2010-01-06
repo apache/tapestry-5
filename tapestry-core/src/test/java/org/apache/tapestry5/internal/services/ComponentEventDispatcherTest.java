@@ -49,12 +49,8 @@ public class ComponentEventDispatcherTest extends InternalBaseTestCase
         replay();
 
         Dispatcher dispatcher = new ComponentEventDispatcher(null,
-                                                             new ComponentEventLinkEncoderImpl(null, contextPathEncoder,
-                                                                                               null, request, response,
-                                                                                               null,
-                                                                                               null,
-                                                                                               null,
-                                                                                               true));
+                new ComponentEventLinkEncoderImpl(null, contextPathEncoder, null, request,
+                        response, null, null, null, true, null));
 
         assertFalse(dispatcher.dispatch(request, response));
 
@@ -73,7 +69,8 @@ public class ComponentEventDispatcherTest extends InternalBaseTestCase
     @Test
     public void event_on_page_with_name_and_dotted_parameters() throws Exception
     {
-        test("/foo/MyPage:myevent/1.2.3/4.5.6", "foo", "foo/MyPage", "", "myevent", "1.2.3", "4.5.6");
+        test("/foo/MyPage:myevent/1.2.3/4.5.6", "foo", "foo/MyPage", "", "myevent", "1.2.3",
+                "4.5.6");
     }
 
     /**
@@ -82,7 +79,8 @@ public class ComponentEventDispatcherTest extends InternalBaseTestCase
     @Test
     public void event_on_page_dotted_parameters() throws Exception
     {
-        test("/foo/MyPage:action/1.2.3/4.5.6", "foo", "foo/MyPage", "", EventConstants.ACTION, "1.2.3", "4.5.6");
+        test("/foo/MyPage:action/1.2.3/4.5.6", "foo", "foo/MyPage", "", EventConstants.ACTION,
+                "1.2.3", "4.5.6");
     }
 
     @Test
@@ -100,14 +98,15 @@ public class ComponentEventDispatcherTest extends InternalBaseTestCase
     @Test
     public void default_event_with_nested_id_and_context() throws Exception
     {
-        test("/foo/MyPage.fred/fee/fie/foe/fum", "foo", "foo/MyPage", "fred", EventConstants.ACTION, "fee", "fie",
-             "foe", "fum");
+        test("/foo/MyPage.fred/fee/fie/foe/fum", "foo", "foo/MyPage", "fred",
+                EventConstants.ACTION, "fee", "fie", "foe", "fum");
     }
 
     @Test
     public void default_event_with_context_that_includes_a_colon() throws Exception
     {
-        test("/foo/MyPage.underdog/a:b:c/d", "foo", "foo/MyPage", "underdog", EventConstants.ACTION, "a:b:c", "d");
+        test("/foo/MyPage.underdog/a:b:c/d", "foo", "foo/MyPage", "underdog",
+                EventConstants.ACTION, "a:b:c", "d");
     }
 
     @Test
@@ -125,7 +124,8 @@ public class ComponentEventDispatcherTest extends InternalBaseTestCase
     @Test
     public void nested_component_event_with_context() throws Exception
     {
-        test("/foo/MyPage.nested:trigger/foo/bar/baz", "foo", "foo/MyPage", "nested", "trigger", "foo", "bar", "baz");
+        test("/foo/MyPage.nested:trigger/foo/bar/baz", "foo", "foo/MyPage", "nested", "trigger",
+                "foo", "bar", "baz");
     }
 
     @Test
@@ -137,20 +137,18 @@ public class ComponentEventDispatcherTest extends InternalBaseTestCase
         ComponentClassResolver resolver = mockComponentClassResolver();
         LocalizationSetter ls = mockLocalizationSetter();
 
-        ComponentEventRequestParameters expectedParameters = new ComponentEventRequestParameters("mypage", "mypage", "",
-                                                                                                 "eventname",
-                                                                                                 new URLEventContext(
-                                                                                                         contextValueEncoder,
-                                                                                                         new String[] {
-                                                                                                                 "alpha",
-                                                                                                                 "beta" }),
-                                                                                                 new EmptyEventContext());
+        ComponentEventRequestParameters expectedParameters = new ComponentEventRequestParameters(
+                "mypage", "mypage", "", "eventname", new URLEventContext(contextValueEncoder,
+                        new String[]
+                        { "alpha", "beta" }), new EmptyEventContext());
 
         train_getPath(request, "/mypage:eventname");
 
         train_setLocaleFromLocaleName(ls, "", false);
 
         train_isPageName(resolver, "mypage", true);
+
+        train_canonicalizePageName(resolver, "mypage", "mypage");
 
         train_getParameter(request, InternalConstants.PAGE_CONTEXT_NAME, "alpha/beta");
 
@@ -160,14 +158,9 @@ public class ComponentEventDispatcherTest extends InternalBaseTestCase
 
         replay();
 
-        Dispatcher dispatcher = new ComponentEventDispatcher(handler, new ComponentEventLinkEncoderImpl(resolver,
-                                                                                                        contextPathEncoder,
-                                                                                                        ls, request,
-                                                                                                        response,
-                                                                                                        null,
-                                                                                                        null,
-                                                                                                        null,
-                                                                                                        true));
+        Dispatcher dispatcher = new ComponentEventDispatcher(handler,
+                new ComponentEventLinkEncoderImpl(resolver, contextPathEncoder, ls, request,
+                        response, null, null, null, true, null));
 
         assertTrue(dispatcher.dispatch(request, response));
 
@@ -183,10 +176,9 @@ public class ComponentEventDispatcherTest extends InternalBaseTestCase
         ComponentClassResolver resolver = mockComponentClassResolver();
         LocalizationSetter ls = mockLocalizationSetter();
 
-        ComponentEventRequestParameters expectedParameters = new ComponentEventRequestParameters("activepage", "mypage",
-                                                                                                 "", "eventname",
-                                                                                                 new EmptyEventContext(),
-                                                                                                 new EmptyEventContext());
+        ComponentEventRequestParameters expectedParameters = new ComponentEventRequestParameters(
+                "activepage", "mypage", "", "eventname", new EmptyEventContext(),
+                new EmptyEventContext());
 
         train_getPath(request, "/activepage:eventname");
 
@@ -194,22 +186,21 @@ public class ComponentEventDispatcherTest extends InternalBaseTestCase
 
         train_isPageName(resolver, "activepage", true);
 
+        train_canonicalizePageName(resolver, "activepage", "activepage");
+
         train_getParameter(request, InternalConstants.PAGE_CONTEXT_NAME, null);
 
         train_getParameter(request, InternalConstants.CONTAINER_PAGE_NAME, "mypage");
+
+        train_canonicalizePageName(resolver, "mypage", "mypage");
 
         handler.handleComponentEvent(expectedParameters);
 
         replay();
 
-        Dispatcher dispatcher = new ComponentEventDispatcher(handler, new ComponentEventLinkEncoderImpl(resolver,
-                                                                                                        contextPathEncoder,
-                                                                                                        ls, request,
-                                                                                                        response,
-                                                                                                        null,
-                                                                                                        null,
-                                                                                                        null,
-                                                                                                        true));
+        Dispatcher dispatcher = new ComponentEventDispatcher(handler,
+                new ComponentEventLinkEncoderImpl(resolver, contextPathEncoder, ls, request,
+                        response, null, null, null, true, null));
 
         assertTrue(dispatcher.dispatch(request, response));
 
@@ -231,23 +222,17 @@ public class ComponentEventDispatcherTest extends InternalBaseTestCase
 
         replay();
 
-        Dispatcher dispatcher = new ComponentEventDispatcher(null, new ComponentEventLinkEncoderImpl(resolver,
-                                                                                                     contextPathEncoder,
-                                                                                                     ls, request,
-                                                                                                     response,
-                                                                                                     null,
-                                                                                                     null,
-                                                                                                     null,
-                                                                                                     true));
+        Dispatcher dispatcher = new ComponentEventDispatcher(null,
+                new ComponentEventLinkEncoderImpl(resolver, contextPathEncoder, ls, request,
+                        response, null, null, null, true, null));
 
         assertFalse(dispatcher.dispatch(request, response));
 
         verify();
     }
 
-    private void test(String requestPath, String localeName, String containerPageName, String nestedComponentId,
-                      String eventType,
-                      String... eventContext) throws IOException
+    private void test(String requestPath, String localeName, String containerPageName,
+            String nestedComponentId, String eventType, String... eventContext) throws IOException
     {
         ComponentRequestHandler handler = mockComponentRequestHandler();
         Request request = mockRequest();
@@ -255,20 +240,17 @@ public class ComponentEventDispatcherTest extends InternalBaseTestCase
         ComponentClassResolver resolver = mockComponentClassResolver();
         LocalizationSetter localizationSetter = mockLocalizationSetter();
 
-        ComponentEventRequestParameters expectedParameters = new ComponentEventRequestParameters(containerPageName,
-                                                                                                 containerPageName,
-                                                                                                 nestedComponentId,
-                                                                                                 eventType,
-                                                                                                 new EmptyEventContext(),
-                                                                                                 new URLEventContext(
-                                                                                                         contextValueEncoder,
-                                                                                                         eventContext));
+        ComponentEventRequestParameters expectedParameters = new ComponentEventRequestParameters(
+                containerPageName, containerPageName, nestedComponentId, eventType,
+                new EmptyEventContext(), new URLEventContext(contextValueEncoder, eventContext));
 
         train_getPath(request, requestPath);
 
         train_setLocaleFromLocaleName(localizationSetter, localeName, false);
 
         train_isPageName(resolver, containerPageName, true);
+
+        train_canonicalizePageName(resolver, containerPageName, containerPageName);
 
         train_getParameter(request, InternalConstants.PAGE_CONTEXT_NAME, null);
 
@@ -278,11 +260,9 @@ public class ComponentEventDispatcherTest extends InternalBaseTestCase
 
         replay();
 
-        Dispatcher dispatcher = new ComponentEventDispatcher(
-                handler, new ComponentEventLinkEncoderImpl(resolver, contextPathEncoder, localizationSetter, request,
-                                                           response, null, null,
-                                                           null,
-                                                           true));
+        Dispatcher dispatcher = new ComponentEventDispatcher(handler,
+                new ComponentEventLinkEncoderImpl(resolver, contextPathEncoder, localizationSetter,
+                        request, response, null, null, null, true, null));
 
         assertTrue(dispatcher.dispatch(request, response));
 

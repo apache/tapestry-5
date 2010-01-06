@@ -24,7 +24,7 @@ import org.testng.annotations.Test;
 
 /**
  * Most of the testing is implemented through legacy tests against code that uses CELE.
- *
+ * 
  * @since 5.1.0.1
  */
 public class ComponentEventLinkEncoderImplTest extends InternalBaseTestCase
@@ -45,6 +45,7 @@ public class ComponentEventLinkEncoderImplTest extends InternalBaseTestCase
         Response response = mockResponse();
         RequestPathOptimizer optimizer = mockRequestPathOptimizer();
         ContextPathEncoder contextPathEncoder = getService(ContextPathEncoder.class);
+        RequestGlobals globals = mockRequestGlobals(null);
 
         expect(manager.getBaseURL("MyPage")).andReturn(null);
         train_getContextPath(request, "/myapp");
@@ -53,18 +54,27 @@ public class ComponentEventLinkEncoderImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentEventLinkEncoder encoder = new ComponentEventLinkEncoderImpl(null, contextPathEncoder, null, request,
-                                                                              response,
-                                                                              manager, optimizer, null,
-                                                                              false);
+        ComponentEventLinkEncoder encoder = new ComponentEventLinkEncoderImpl(null,
+                contextPathEncoder, null, request, response, manager, optimizer, null, false,
+                globals);
 
-        PageRenderRequestParameters parameters = new PageRenderRequestParameters("MyPage", new EmptyEventContext());
+        PageRenderRequestParameters parameters = new PageRenderRequestParameters("MyPage",
+                new EmptyEventContext());
 
         Link link = encoder.createPageRenderLink(parameters);
 
         assertEquals(link.toAbsoluteURI(), "MAGIC");
 
         verify();
+    }
+
+    private RequestGlobals mockRequestGlobals(String activePageName)
+    {
+        RequestGlobals rg = mockRequestGlobals();
+
+        expect(rg.getActivePageName()).andReturn(activePageName).atLeastOnce();
+
+        return rg;
     }
 
     @Test
@@ -75,6 +85,7 @@ public class ComponentEventLinkEncoderImplTest extends InternalBaseTestCase
         Response response = mockResponse();
         RequestPathOptimizer optimizer = mockRequestPathOptimizer();
         ContextPathEncoder contextPathEncoder = getService(ContextPathEncoder.class);
+        RequestGlobals globals = mockRequestGlobals(null);
 
         expect(manager.getBaseURL("admin/Index")).andReturn(null);
         train_getContextPath(request, "");
@@ -83,14 +94,12 @@ public class ComponentEventLinkEncoderImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentEventLinkEncoder encoder = new ComponentEventLinkEncoderImpl(null, contextPathEncoder, null, request,
-                                                                              response,
-                                                                              manager, optimizer, null,
-                                                                              false);
+        ComponentEventLinkEncoder encoder = new ComponentEventLinkEncoderImpl(null,
+                contextPathEncoder, null, request, response, manager, optimizer, null, false,
+                globals);
 
         PageRenderRequestParameters parameters = new PageRenderRequestParameters("admin/Index",
-                                                                                 new ArrayEventContext(typeCoercer,
-                                                                                                       "abc"));
+                new ArrayEventContext(typeCoercer, "abc"));
 
         Link link = encoder.createPageRenderLink(parameters);
 
@@ -107,6 +116,7 @@ public class ComponentEventLinkEncoderImplTest extends InternalBaseTestCase
         Response response = mockResponse();
         RequestPathOptimizer optimizer = mockRequestPathOptimizer();
         ContextPathEncoder contextPathEncoder = getService(ContextPathEncoder.class);
+        RequestGlobals globals = mockRequestGlobals(null);
 
         expect(manager.getBaseURL("Index")).andReturn(null);
         train_getContextPath(request, "");
@@ -115,12 +125,12 @@ public class ComponentEventLinkEncoderImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentEventLinkEncoder encoder = new ComponentEventLinkEncoderImpl(null, contextPathEncoder, null, request,
-                                                                              response,
-                                                                              manager, optimizer, null,
-                                                                              false);
+        ComponentEventLinkEncoder encoder = new ComponentEventLinkEncoderImpl(null,
+                contextPathEncoder, null, request, response, manager, optimizer, null, false,
+                globals);
 
-        PageRenderRequestParameters parameters = new PageRenderRequestParameters("Index", new EmptyEventContext());
+        PageRenderRequestParameters parameters = new PageRenderRequestParameters("Index",
+                new EmptyEventContext());
 
         Link link = encoder.createPageRenderLink(parameters);
 

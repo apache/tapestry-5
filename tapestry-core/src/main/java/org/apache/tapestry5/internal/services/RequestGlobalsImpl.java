@@ -37,6 +37,8 @@ public class RequestGlobalsImpl implements RequestGlobals
 
     private Response response;
 
+    private String activePageName;
+
     public void storeServletRequestResponse(HttpServletRequest request, HttpServletResponse response)
     {
         servletRequest = request;
@@ -68,4 +70,15 @@ public class RequestGlobalsImpl implements RequestGlobals
     {
         return response;
     }
+
+    public String getActivePageName()
+    {
+        return activePageName;
+    }
+
+    public void storeActivePageName(String pageName)
+    {
+        this.activePageName = pageName;
+    }
+
 }

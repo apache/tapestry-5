@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,18 +17,22 @@ package org.apache.tapestry5.internal;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.internal.services.PersistentFieldManager;
 import org.apache.tapestry5.internal.structure.Page;
+import org.apache.tapestry5.internal.structure.PageResetListener;
 import org.apache.tapestry5.runtime.RenderQueue;
 
 /**
- * An extension of {@link org.apache.tapestry5.ComponentResources} that represents additional methods that are private
+ * An extension of {@link org.apache.tapestry5.ComponentResources} that represents additional
+ * methods that are private
  * to the framework and not exposed in any public APIs.
  */
-public interface InternalComponentResources extends ComponentResources, InternalComponentResourcesCommon
+public interface InternalComponentResources extends ComponentResources,
+        InternalComponentResourcesCommon
 {
     /**
      * Get the current persisted value of the field.
-     *
-     * @param fieldName the name of the field to access
+     * 
+     * @param fieldName
+     *            the name of the field to access
      * @return the value stored for the field, or null if no value is currently stored
      */
     Object getFieldChange(String fieldName);
@@ -39,8 +43,10 @@ public interface InternalComponentResources extends ComponentResources, Internal
     boolean hasFieldChange(String fieldName);
 
     /**
-     * Posts a change to a persistent field. If the component is still loading, then this change is ignored. Otherwise,
-     * it is propagated, via the {@link Page#persistFieldChange(org.apache.tapestry5.ComponentResources, String, Object)
+     * Posts a change to a persistent field. If the component is still loading, then this change is
+     * ignored. Otherwise,
+     * it is propagated, via the
+     * {@link Page#persistFieldChange(org.apache.tapestry5.ComponentResources, String, Object)
      * page} to the {@link PersistentFieldManager}.
      */
     void persistFieldChange(String fieldName, Object newValue);
@@ -57,19 +63,31 @@ public interface InternalComponentResources extends ComponentResources, Internal
 
     /**
      * Gets access object for the parameter.
-     *
+     * 
      * @param parameterName
      * @return object used to read and update the parameter
      */
     ParameterAccess getParameterAccess(String parameterName);
 
     /**
-     * Gets access object suitable for handling mixin fields which are bound to a parameter of the core component
-     * @param boundParameterName the name of the mixin field that should be linked to the core component's field.
-     * @param parentParameterNames the list of parameter names to try in the parent. The first name that matches a
-     *          declared parameter name in the core component will be used. This allows BindParameter to be used with
-     *          mixins that have a similar parameter type with different parameter names (eg:
-     * @since 5.2.0.0
+     * Gets access object suitable for handling mixin fields which are bound to a parameter of the
+     * core component
+     * 
+     * @param boundParameterName
+     *            the name of the mixin field that should be linked to the core component's field.
+     * @param parentParameterNames
+     *            the list of parameter names to try in the parent. The first name that matches a
+     *            declared parameter name in the core component will be used. This allows
+     *            BindParameter to be used with
+     *            mixins that have a similar parameter type with different parameter names (eg:
+     * @since 5.2.0
      */
-    ParameterAccess getContainerBoundParameterAccess(String boundParameterName, String... parentParameterNames);
+    ParameterAccess getContainerBoundParameterAccess(String boundParameterName,
+            String... parentParameterNames);
+
+    /**
+     * Delegates to {@link Page#addResetListener(org.apache.tapestry5.internal.structure.PageResetListener)}.
+     * @param listener to register
+     */
+    void addPageResetListener(PageResetListener listener);
 }

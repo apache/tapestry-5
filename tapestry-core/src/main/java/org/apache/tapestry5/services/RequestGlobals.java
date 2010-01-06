@@ -21,7 +21,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * Service used to store the current request objects, both the Servlet API versions, and the Tapestry generic versions.
+ * Service used to store the current request objects, both the Servlet API versions, and the
+ * Tapestry generic versions.
  * The service has a per-thread scope.
  */
 public interface RequestGlobals
@@ -49,4 +50,22 @@ public interface RequestGlobals
      * The current response. This is exposed as service Response.
      */
     Response getResponse();
+
+    /**
+     * Stores the {@linkplain ComponentClassResolver#canonicalizePageName(String) canonicalized}
+     * name of the active page for this request.
+     * 
+     * @param pageName
+     *            name of page (probably extracted from the URL)
+     * @since 5.2.0
+     */
+    void storeActivePageName(String pageName);
+
+    /**
+     * Returns the active page name previously stored.
+     * 
+     * @return canonicalized page name
+     * @since 5.2.0
+     */
+    String getActivePageName();
 }

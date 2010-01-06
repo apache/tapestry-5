@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -159,7 +159,7 @@ public class TransformMethodSignature implements Comparable<TransformMethodSigna
 
     /**
      * Returns the long form description of the signature. This includes modifiers, return type, method name, parameters
-     * and thrown exceptions, formatter approximately as it would appear in Java source (except that parameter names,
+     * and thrown exceptions, formatted approximately as it would appear in Java source (except that parameter names,
      * which are not known, do no appear).
      */
     @Override
