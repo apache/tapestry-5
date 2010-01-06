@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,6 +21,7 @@ import org.apache.tapestry5.internal.structure.PageResetListener;
 import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.services.ClassTransformation;
 import org.apache.tapestry5.services.ComponentClassTransformWorker;
+import org.apache.tapestry5.services.MethodFilter;
 import org.apache.tapestry5.services.TransformConstants;
 import org.apache.tapestry5.services.TransformMethodSignature;
 
@@ -38,10 +39,18 @@ public class PageResetAnnotationWorker implements ComponentClassTransformWorker
     private static final TransformMethodSignature CONTAINING_PAGE_DID_RESET = new TransformMethodSignature(
             "containingPageDidReset");
 
-    public void transform(ClassTransformation transformation, MutableComponentModel model)
+    public void transform(final ClassTransformation transformation, MutableComponentModel model)
     {
-        List<TransformMethodSignature> methods = transformation
-                .findMethodsWithAnnotation(PageReset.class);
+        MethodFilter filter = new MethodFilter()
+        {
+            public boolean accept(TransformMethodSignature signature)
+            {
+                return signature.getMethodName().equalsIgnoreCase("pageReset")
+                        || transformation.getMethodAnnotation(signature, PageReset.class) != null;
+            }
+        };
+
+        List<TransformMethodSignature> methods = transformation.findMethods(filter);
 
         if (methods.isEmpty())
             return;
