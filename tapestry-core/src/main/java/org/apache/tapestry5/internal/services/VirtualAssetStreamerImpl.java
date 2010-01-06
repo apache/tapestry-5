@@ -1,10 +1,10 @@
-// Copyright 2009 The Apache Software Foundation
+// Copyright 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,21 +14,35 @@
 
 package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry5.internal.InternalConstants;
-import org.apache.tapestry5.internal.TapestryInternalUtils;
-import org.apache.tapestry5.ioc.Resource;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.json.JSONArray;
-import org.apache.tapestry5.services.*;
-
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.util.Map;
 import java.util.zip.GZIPOutputStream;
 
+import org.apache.tapestry5.SymbolConstants;
+import org.apache.tapestry5.internal.InternalConstants;
+import org.apache.tapestry5.internal.TapestryInternalUtils;
+import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.ioc.annotations.Symbol;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.json.JSONArray;
+import org.apache.tapestry5.services.ClientDataEncoder;
+import org.apache.tapestry5.services.InvalidationListener;
+import org.apache.tapestry5.services.Request;
+import org.apache.tapestry5.services.Response;
+import org.apache.tapestry5.services.ResponseCompressionAnalyzer;
+
 /**
- * This implementation uses {@link org.apache.tapestry5.internal.services.ResourceCache}, but is also a listener of
- * invalidation events from ResourceCache. When a Asset resource changes, any cached data in this service is discarded.
- *
+ * This implementation uses {@link org.apache.tapestry5.internal.services.ResourceCache}, but is
+ * also a listener of
+ * invalidation events from ResourceCache. When a Asset resource changes, any cached data in this
+ * service is discarded.
+ * 
  * @since 5.1.0.2
  */
 public class VirtualAssetStreamerImpl implements VirtualAssetStreamer, InvalidationListener
@@ -46,18 +60,25 @@ public class VirtualAssetStreamerImpl implements VirtualAssetStreamer, Invalidat
     private final Response response;
 
     /**
-     * Cache keyed on client data (encoding the Asset paths to combine), value is the assembled virtual asset.
+     * Cache keyed on client data (encoding the Asset paths to combine), value is the assembled
+     * virtual asset.
      */
     private final Map<String, ByteArrayOutputStream> cache = CollectionFactory.newConcurrentMap();
 
     /**
      * Cached keyed on client data ... value is the GZIP compressed value for the virtual asset.
      */
-    private final Map<String, ByteArrayOutputStream> compressedCache = CollectionFactory.newConcurrentMap();
+    private final Map<String, ByteArrayOutputStream> compressedCache = CollectionFactory
+            .newConcurrentMap();
 
-    public VirtualAssetStreamerImpl(ResourceCache resourceCache, ResponseCompressionAnalyzer compressionAnalyzer,
-                                    ClientDataEncoder clientDataEncoder, AssetResourceLocator resourceLocator,
-                                    Request request, Response response)
+    private final boolean productionMode;
+
+    public VirtualAssetStreamerImpl(ResourceCache resourceCache,
+            ResponseCompressionAnalyzer compressionAnalyzer, ClientDataEncoder clientDataEncoder,
+            AssetResourceLocator resourceLocator, Request request, Response response,
+
+            @Symbol(SymbolConstants.PRODUCTION_MODE)
+            boolean productionMode)
     {
         this.resourceCache = resourceCache;
         this.compressionAnalyzer = compressionAnalyzer;
@@ -65,6 +86,7 @@ public class VirtualAssetStreamerImpl implements VirtualAssetStreamer, Invalidat
         this.resourceLocator = resourceLocator;
         this.request = request;
         this.response = response;
+        this.productionMode = productionMode;
     }
 
     public void streamVirtualAsset(String clientData) throws IOException
@@ -79,16 +101,20 @@ public class VirtualAssetStreamerImpl implements VirtualAssetStreamer, Invalidat
         long lastModified = System.currentTimeMillis();
 
         response.setDateHeader("Last-Modified", lastModified);
-        response.setDateHeader("Expires", lastModified + InternalConstants.TEN_YEARS);
+
+        if (productionMode)
+            response.setDateHeader("Expires", lastModified + InternalConstants.TEN_YEARS);
 
         response.setContentLength(stream.size());
 
         if (compress)
-            response.setHeader(InternalConstants.CONTENT_ENCODING_HEADER, InternalConstants.GZIP_CONTENT_ENCODING);
+            response.setHeader(InternalConstants.CONTENT_ENCODING_HEADER,
+                    InternalConstants.GZIP_CONTENT_ENCODING);
 
         request.setAttribute(InternalConstants.SUPPRESS_COMPRESSION, true);
 
-        // CSS support is problematic, because of relative URLs inside the CSS files. For the moment, only
+        // CSS support is problematic, because of relative URLs inside the CSS files. For the
+        // moment, only
         // JavaScript is supported.
 
         OutputStream output = response.getOutputStream("text/javascript");
@@ -98,7 +124,8 @@ public class VirtualAssetStreamerImpl implements VirtualAssetStreamer, Invalidat
         output.close();
     }
 
-    private ByteArrayOutputStream getVirtualStream(String clientData, boolean compress) throws IOException
+    private ByteArrayOutputStream getVirtualStream(String clientData, boolean compress)
+            throws IOException
     {
         return compress ? getCompressedVirtualStream(clientData) : getVirtualStream(clientData);
     }
@@ -133,9 +160,10 @@ public class VirtualAssetStreamerImpl implements VirtualAssetStreamer, Invalidat
     }
 
     /**
-     * This is where it gets tricky. We need to take the clientData and turn it back into a bytestream, then read the
+     * This is where it gets tricky. We need to take the clientData and turn it back into a
+     * bytestream, then read the
      * UTF strings for the paths out of it and add those all together.
-     *
+     * 
      * @param clientData
      * @return
      */
@@ -153,8 +181,7 @@ public class VirtualAssetStreamerImpl implements VirtualAssetStreamer, Invalidat
         return result;
     }
 
-    private ByteArrayOutputStream constructVirtualAssetStream(String clientData)
-            throws IOException
+    private ByteArrayOutputStream constructVirtualAssetStream(String clientData) throws IOException
     {
         ByteArrayOutputStream result = new ByteArrayOutputStream();
 

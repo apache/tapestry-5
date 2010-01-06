@@ -1,10 +1,10 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -46,20 +46,25 @@ public class ResourceStreamerImpl implements ResourceStreamer
 
     private final int compressionCutoff;
 
+    private final boolean productionMode;
+
     public ResourceStreamerImpl(Request request,
 
-                                Response response,
+    Response response,
 
-                                Context context,
+    Context context,
 
-                                ResourceCache resourceCache,
+    ResourceCache resourceCache,
 
-                                Map<String, String> configuration,
+    Map<String, String> configuration,
 
-                                ResponseCompressionAnalyzer analyzer,
+    ResponseCompressionAnalyzer analyzer,
 
-                                @Symbol(SymbolConstants.MIN_GZIP_SIZE)
-                                int compressionCutoff) 
+    @Symbol(SymbolConstants.MIN_GZIP_SIZE)
+    int compressionCutoff,
+
+    @Symbol(SymbolConstants.PRODUCTION_MODE)
+    boolean productionMode)
     {
         this.request = request;
         this.response = response;
@@ -68,6 +73,7 @@ public class ResourceStreamerImpl implements ResourceStreamer
         this.configuration = configuration;
         this.analyzer = analyzer;
         this.compressionCutoff = compressionCutoff;
+        this.productionMode = productionMode;
     }
 
     public void streamResource(Resource resource) throws IOException
@@ -81,13 +87,15 @@ public class ResourceStreamerImpl implements ResourceStreamer
         long lastModified = streamble.getLastModified();
 
         response.setDateHeader("Last-Modified", lastModified);
-        response.setDateHeader("Expires", lastModified + InternalConstants.TEN_YEARS);
+
+        if (productionMode)
+            response.setDateHeader("Expires", lastModified + InternalConstants.TEN_YEARS);
 
         String contentType = identifyContentType(resource, streamble);
 
-        boolean compress = analyzer.isGZipSupported() &&
-                streamble.getSize(false) >= compressionCutoff &&
-                analyzer.isCompressable(contentType);
+        boolean compress = analyzer.isGZipSupported()
+                && streamble.getSize(false) >= compressionCutoff
+                && analyzer.isCompressable(contentType);
 
         int contentLength = streamble.getSize(compress);
 
@@ -95,7 +103,8 @@ public class ResourceStreamerImpl implements ResourceStreamer
             response.setContentLength(contentLength);
 
         if (compress)
-            response.setHeader(InternalConstants.CONTENT_ENCODING_HEADER, InternalConstants.GZIP_CONTENT_ENCODING);
+            response.setHeader(InternalConstants.CONTENT_ENCODING_HEADER,
+                    InternalConstants.GZIP_CONTENT_ENCODING);
 
         InputStream is = null;
 
@@ -123,17 +132,21 @@ public class ResourceStreamerImpl implements ResourceStreamer
         return identifyContentType(resource, resourceCache.getStreamableResource(resource));
     }
 
-    private String identifyContentType(Resource resource, StreamableResource streamble) throws IOException
+    private String identifyContentType(Resource resource, StreamableResource streamble)
+            throws IOException
     {
         String contentType = streamble.getContentType();
 
-        if ("content/unknown".equals(contentType)) contentType = null;
+        if ("content/unknown".equals(contentType))
+            contentType = null;
 
-        if (contentType != null) return contentType;
+        if (contentType != null)
+            return contentType;
 
         contentType = context.getMimeType(resource.getPath());
 
-        if (contentType != null) return contentType;
+        if (contentType != null)
+            return contentType;
 
         String file = resource.getFile();
         int dotx = file.lastIndexOf('.');
@@ -145,8 +158,6 @@ public class ResourceStreamerImpl implements ResourceStreamer
             contentType = configuration.get(extension);
         }
 
-        return contentType != null
-               ? contentType
-               : "application/octet-stream";
+        return contentType != null ? contentType : "application/octet-stream";
     }
 }
