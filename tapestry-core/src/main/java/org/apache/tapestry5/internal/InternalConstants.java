@@ -149,4 +149,6 @@ public final class InternalConstants
      */
     public static final String INHERIT_BINDING_PREFIX = "inherit:";
     public static final long TEN_YEARS = new TimeInterval("10y").milliseconds();
+        
+    public static final String[] EMPTY_STRING_ARRAY = new String[0];
 }

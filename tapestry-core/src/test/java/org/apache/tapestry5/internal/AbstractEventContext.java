@@ -1,4 +1,4 @@
-// Copyright 2008 The Apache Software Foundation
+// Copyright 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,29 +16,19 @@ package org.apache.tapestry5.internal;
 
 import org.apache.tapestry5.EventContext;
 
-/**
- * Placeholder used when no context is available.
- */
-public class EmptyEventContext implements EventContext
+public abstract class AbstractEventContext implements EventContext
 {
-    /**
-     * Always returns zero.
-     */
-    public int getCount()
-    {
-        return 0;
-    }
-
-    /**
-     * This should never be called because the count is always zero.
-     */
-    public <T> T get(Class<T> desiredType, int index)
-    {
-        return null;
-    }
-
     public String[] toStrings()
     {
-        return InternalConstants.EMPTY_STRING_ARRAY;
+        int count = getCount();
+
+        String[] result = new String[count];
+
+        for (int i = 0; i < count; i++)
+        {
+            result[i] = get(String.class, i);
+        }
+
+        return result;
     }
 }

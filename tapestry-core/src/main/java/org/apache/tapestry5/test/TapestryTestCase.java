@@ -14,7 +14,52 @@
 
 package org.apache.tapestry5.test;
 
-import org.apache.tapestry5.*;
+import static java.lang.Thread.sleep;
+import static org.apache.tapestry5.internal.test.CodeEq.codeEq;
+import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newList;
+import static org.easymock.EasyMock.eq;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.lang.annotation.Annotation;
+import java.net.URL;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Properties;
+
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.apache.tapestry5.Asset;
+import org.apache.tapestry5.Asset2;
+import org.apache.tapestry5.Binding;
+import org.apache.tapestry5.Block;
+import org.apache.tapestry5.ClientElement;
+import org.apache.tapestry5.ComponentEventCallback;
+import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.ComponentResourcesCommon;
+import org.apache.tapestry5.Field;
+import org.apache.tapestry5.FieldTranslator;
+import org.apache.tapestry5.FieldValidationSupport;
+import org.apache.tapestry5.FieldValidator;
+import org.apache.tapestry5.Link;
+import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.NullFieldStrategy;
+import org.apache.tapestry5.PropertyConduit;
+import org.apache.tapestry5.PropertyOverrides;
+import org.apache.tapestry5.RenderSupport;
+import org.apache.tapestry5.Translator;
+import org.apache.tapestry5.ValidationDecorator;
+import org.apache.tapestry5.ValidationTracker;
+import org.apache.tapestry5.Validator;
+import org.apache.tapestry5.ValueEncoder;
 import org.apache.tapestry5.annotations.Id;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.Path;
@@ -22,11 +67,14 @@ import org.apache.tapestry5.beaneditor.BeanModel;
 import org.apache.tapestry5.beaneditor.PropertyModel;
 import org.apache.tapestry5.internal.services.MapMessages;
 import org.apache.tapestry5.internal.services.MarkupWriterImpl;
-import static org.apache.tapestry5.internal.test.CodeEq.codeEq;
-import org.apache.tapestry5.ioc.*;
+import org.apache.tapestry5.ioc.AnnotationProvider;
+import org.apache.tapestry5.ioc.Locatable;
+import org.apache.tapestry5.ioc.Location;
+import org.apache.tapestry5.ioc.Messages;
+import org.apache.tapestry5.ioc.ObjectLocator;
+import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newList;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.test.IOCTestCase;
 import org.apache.tapestry5.model.ComponentModel;
@@ -34,23 +82,50 @@ import org.apache.tapestry5.model.EmbeddedComponentModel;
 import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.model.ParameterModel;
 import org.apache.tapestry5.runtime.Component;
-import org.apache.tapestry5.services.*;
+import org.apache.tapestry5.services.AliasManager;
+import org.apache.tapestry5.services.ApplicationStateCreator;
+import org.apache.tapestry5.services.ApplicationStateManager;
+import org.apache.tapestry5.services.ApplicationStatePersistenceStrategy;
+import org.apache.tapestry5.services.ApplicationStatePersistenceStrategySource;
+import org.apache.tapestry5.services.AssetFactory;
+import org.apache.tapestry5.services.AssetSource;
+import org.apache.tapestry5.services.BaseURLSource;
+import org.apache.tapestry5.services.BeanModelSource;
+import org.apache.tapestry5.services.BindingFactory;
+import org.apache.tapestry5.services.BindingSource;
+import org.apache.tapestry5.services.ClassTransformation;
+import org.apache.tapestry5.services.ClasspathAssetAliasManager;
+import org.apache.tapestry5.services.ComponentClassResolver;
+import org.apache.tapestry5.services.ComponentEventRequestHandler;
+import org.apache.tapestry5.services.ComponentEventResultProcessor;
+import org.apache.tapestry5.services.ComponentRequestHandler;
+import org.apache.tapestry5.services.Context;
+import org.apache.tapestry5.services.Environment;
+import org.apache.tapestry5.services.FieldTranslatorSource;
+import org.apache.tapestry5.services.FieldValidatorSource;
+import org.apache.tapestry5.services.FormSupport;
+import org.apache.tapestry5.services.Heartbeat;
+import org.apache.tapestry5.services.HttpServletRequestHandler;
+import org.apache.tapestry5.services.InjectionProvider;
+import org.apache.tapestry5.services.MetaDataLocator;
+import org.apache.tapestry5.services.MethodFilter;
+import org.apache.tapestry5.services.PageRenderLinkSource;
+import org.apache.tapestry5.services.Request;
+import org.apache.tapestry5.services.RequestGlobals;
+import org.apache.tapestry5.services.RequestHandler;
+import org.apache.tapestry5.services.ResourceDigestGenerator;
+import org.apache.tapestry5.services.Response;
+import org.apache.tapestry5.services.Session;
+import org.apache.tapestry5.services.TransformMethodSignature;
+import org.apache.tapestry5.services.TranslatorSource;
+import org.apache.tapestry5.services.ValidationConstraintGenerator;
+import org.apache.tapestry5.services.ValidationMessagesSource;
+import org.apache.tapestry5.services.ValueEncoderSource;
 import org.easymock.EasyMock;
-import static org.easymock.EasyMock.eq;
 import org.easymock.IAnswer;
 
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import java.io.*;
-import static java.lang.Thread.sleep;
-import java.lang.annotation.Annotation;
-import java.net.URL;
-import java.util.*;
-
 /**
- * Base test case that adds a number of convienience factory and training methods for the public interfaces of
+ * Base test case that adds a number of convenience factory and training methods for the public interfaces of
  * Tapestry.
  */
 public abstract class TapestryTestCase extends IOCTestCase
@@ -1220,5 +1295,10 @@ public abstract class TapestryTestCase extends IOCTestCase
     protected final RequestGlobals mockRequestGlobals()
     {
         return newMock(RequestGlobals.class);
+    }
+
+    protected final PageRenderLinkSource mockPageRenderLinkSource()
+    {
+        return newMock(PageRenderLinkSource.class);
     }
 }

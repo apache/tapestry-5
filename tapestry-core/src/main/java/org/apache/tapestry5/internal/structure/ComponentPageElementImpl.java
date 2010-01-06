@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,9 +14,33 @@
 
 package org.apache.tapestry5.internal.structure;
 
-import org.apache.tapestry5.*;
-import org.apache.tapestry5.annotations.*;
+import static org.apache.tapestry5.ioc.internal.util.Defense.notBlank;
+
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+
+import org.apache.tapestry5.Binding;
+import org.apache.tapestry5.Block;
+import org.apache.tapestry5.BlockNotFoundException;
+import org.apache.tapestry5.ComponentEventCallback;
+import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.EventContext;
+import org.apache.tapestry5.Link;
+import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.Renderable;
+import org.apache.tapestry5.TapestryMarkers;
+import org.apache.tapestry5.annotations.AfterRender;
+import org.apache.tapestry5.annotations.AfterRenderBody;
+import org.apache.tapestry5.annotations.AfterRenderTemplate;
+import org.apache.tapestry5.annotations.BeforeRenderTemplate;
+import org.apache.tapestry5.annotations.BeginRender;
+import org.apache.tapestry5.annotations.CleanupRender;
+import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.dom.Element;
+import org.apache.tapestry5.internal.AbstractEventContext;
 import org.apache.tapestry5.internal.InternalComponentResources;
 import org.apache.tapestry5.internal.services.ComponentEventImpl;
 import org.apache.tapestry5.internal.services.EventImpl;
@@ -24,15 +48,21 @@ import org.apache.tapestry5.internal.services.Instantiator;
 import org.apache.tapestry5.internal.util.NotificationEventCallback;
 import org.apache.tapestry5.ioc.BaseLocatable;
 import org.apache.tapestry5.ioc.Location;
-import static org.apache.tapestry5.ioc.internal.util.Defense.notBlank;
-import org.apache.tapestry5.ioc.internal.util.*;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.internal.util.Defense;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.ioc.internal.util.Orderer;
+import org.apache.tapestry5.ioc.internal.util.TapestryException;
 import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.model.ParameterModel;
 import org.apache.tapestry5.runtime.Component;
-import org.apache.tapestry5.runtime.*;
+import org.apache.tapestry5.runtime.ComponentEvent;
+import org.apache.tapestry5.runtime.ComponentEventException;
+import org.apache.tapestry5.runtime.Event;
+import org.apache.tapestry5.runtime.PageLifecycleListener;
+import org.apache.tapestry5.runtime.RenderCommand;
+import org.apache.tapestry5.runtime.RenderQueue;
 import org.slf4j.Logger;
-
-import java.util.*;
 
 /**
  * Implements {@link RenderCommand} and represents a component within an overall page. Much of a component page
@@ -1038,7 +1068,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
 
     private EventContext createParameterContext(final Object... values)
     {
-        return new EventContext()
+        return new AbstractEventContext()
         {
             public int getCount()
             {
