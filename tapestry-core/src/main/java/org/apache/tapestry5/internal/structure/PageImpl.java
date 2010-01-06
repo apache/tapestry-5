@@ -205,7 +205,7 @@ public class PageImpl implements Page
     {
         for (PageResetListener l : resetListeners)
         {
-            l.pageDidReset();
+            l.containingPageDidReset();
         }
     }
 

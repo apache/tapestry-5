@@ -35,8 +35,8 @@ public class PageResetAnnotationWorker implements ComponentClassTransformWorker
 {
     private static final String META_KEY = "tapestry.page-reset-listener";
 
-    private static final TransformMethodSignature PAGE_DID_RESET = new TransformMethodSignature(
-            "pageDidReset");
+    private static final TransformMethodSignature CONTAINING_PAGE_DID_RESET = new TransformMethodSignature(
+            "containingPageDidReset");
 
     public void transform(ClassTransformation transformation, MutableComponentModel model)
     {
@@ -70,7 +70,7 @@ public class PageResetAnnotationWorker implements ComponentClassTransformWorker
                                         "Method %s of class %s is invalid: methods with the @PageReset annotation must return void, and have no parameters or thrown exceptions.",
                                         sig, model.getComponentClassName()));
 
-            transformation.extendMethod(PAGE_DID_RESET, sig.getMethodName() + "();");
+            transformation.extendMethod(CONTAINING_PAGE_DID_RESET, sig.getMethodName() + "();");
         }
 
     }

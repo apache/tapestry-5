@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,10 +14,20 @@
 
 package org.apache.tapestry5.internal.structure;
 
+import org.apache.tapestry5.annotations.PageReset;
+
+/**
+ * Optional interface implemented to support resetting of the page state.
+ * 
+ * @since 5.2.0
+ * @see PageReset
+ */
 public interface PageResetListener
 {
     /**
-     * Invoked when the page is first accessed 
+     * Invoked when the page is accessed from some other page. This notification will be sent
+     * <em>after</em> the page
+     * has been activated.
      */
-    void pageDidReset();
+    void containingPageDidReset();
 }
