@@ -101,7 +101,7 @@ public class LinkSourceImplTest extends InternalBaseTestCase
 
         LinkSource source = new LinkSourceImpl(null,
                                                collector, typeCoercer, resolver,
-                                               linkEncoder);
+                                               linkEncoder, null);
 
 
         Link actual = source.createPageRenderLink(pageName, false);
@@ -140,7 +140,7 @@ public class LinkSourceImplTest extends InternalBaseTestCase
 
         LinkSource source = new LinkSourceImpl(null,
                                                collector, typeCoercer, resolver,
-                                               linkEncoder);
+                                               linkEncoder, null);
 
         source.getLinkCreationHub().addListener(listener);
 
@@ -215,7 +215,7 @@ public class LinkSourceImplTest extends InternalBaseTestCase
 
         LinkSource source = new LinkSourceImpl(queue,
                                                collector, typeCoercer, null,
-                                               linkEncoder);
+                                               linkEncoder, null);
 
         assertSame(source.createComponentEventLink(primaryPage, "gnip.gnop", "myevent", true, 3, 5, 9), link);
 
@@ -261,7 +261,7 @@ public class LinkSourceImplTest extends InternalBaseTestCase
 
         LinkSource source = new LinkSourceImpl(queue,
                                                collector, typeCoercer, null,
-                                               linkEncoder);
+                                               linkEncoder, null);
 
         source.getLinkCreationHub().addListener(listener);
 

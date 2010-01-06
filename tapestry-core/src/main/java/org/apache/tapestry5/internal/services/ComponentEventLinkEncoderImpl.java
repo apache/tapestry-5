@@ -47,8 +47,6 @@ public class ComponentEventLinkEncoderImpl implements ComponentEventLinkEncoder
 
     private final boolean encodeLocaleIntoPath;
 
-    private final RequestGlobals requestGlobals;
-
     private static final int BUFFER_SIZE = 100;
 
     private static final char SLASH = '/';
@@ -86,7 +84,7 @@ public class ComponentEventLinkEncoderImpl implements ComponentEventLinkEncoder
             RequestPathOptimizer optimizer, PersistentLocale persistentLocale,
 
             @Symbol(SymbolConstants.ENCODE_LOCALE_INTO_PATH)
-            boolean encodeLocaleIntoPath, RequestGlobals requestGlobals)
+            boolean encodeLocaleIntoPath)
     {
         this.componentClassResolver = componentClassResolver;
         this.contextPathEncoder = contextPathEncoder;
@@ -97,7 +95,6 @@ public class ComponentEventLinkEncoderImpl implements ComponentEventLinkEncoder
         this.optimizer = optimizer;
         this.persistentLocale = persistentLocale;
         this.encodeLocaleIntoPath = encodeLocaleIntoPath;
-        this.requestGlobals = requestGlobals;
     }
 
     public Link createPageRenderLink(PageRenderRequestParameters parameters)
@@ -127,12 +124,7 @@ public class ComponentEventLinkEncoderImpl implements ComponentEventLinkEncoder
 
         Link link = new LinkImpl(builder.toString(), baseURL == null, false, response, optimizer);
 
-        String requestPageName = requestGlobals.getActivePageName();
-
-        // TODO: It should only be necessary to encode the LOOPBACK for pages that actually have
-        // reset listener.
-
-        if (activePageName.equals(requestPageName))
+        if (parameters.isLoopback())
             link.addParameter(InternalConstants.LOOPBACK, "t");
 
         return link;

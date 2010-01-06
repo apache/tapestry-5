@@ -37,21 +37,23 @@ public class LinkSourceImpl implements LinkSource, LinkCreationHub
 
     private final ComponentClassResolver resolver;
 
+    private final RequestGlobals requestGlobals;
+
     public LinkSourceImpl(PageRenderQueue pageRenderQueue,
-                          PageActivationContextCollector contextCollector,
-                          TypeCoercer typeCoercer,
-                          ComponentClassResolver resolver,
-                          ComponentEventLinkEncoder linkEncoder)
+            PageActivationContextCollector contextCollector, TypeCoercer typeCoercer,
+            ComponentClassResolver resolver, ComponentEventLinkEncoder linkEncoder,
+            RequestGlobals requestGlobals)
     {
         this.pageRenderQueue = pageRenderQueue;
         this.contextCollector = contextCollector;
         this.typeCoercer = typeCoercer;
         this.resolver = resolver;
         this.linkEncoder = linkEncoder;
+        this.requestGlobals = requestGlobals;
     }
 
-    public Link createComponentEventLink(Page page, String nestedId, String eventType, boolean forForm,
-                                         Object... eventContext)
+    public Link createComponentEventLink(Page page, String nestedId, String eventType,
+            boolean forForm, Object... eventContext)
     {
         Defense.notNull(page, "page");
         Defense.notBlank(eventType, "action");
@@ -64,17 +66,13 @@ public class LinkSourceImpl implements LinkSource, LinkCreationHub
 
         String activePageName = activePage.getName();
 
-        Object[] pageActivationContext = contextCollector.collectPageActivationContext(activePageName);
+        Object[] pageActivationContext = contextCollector
+                .collectPageActivationContext(activePageName);
 
-        ComponentEventRequestParameters parameters
-                = new ComponentEventRequestParameters(
-                activePageName,
-                page.getName(),
-                toBlank(nestedId),
-                eventType,
-                new ArrayEventContext(typeCoercer, pageActivationContext),
-                new ArrayEventContext(typeCoercer, eventContext));
-
+        ComponentEventRequestParameters parameters = new ComponentEventRequestParameters(
+                activePageName, page.getName(), toBlank(nestedId), eventType,
+                new ArrayEventContext(typeCoercer, pageActivationContext), new ArrayEventContext(
+                        typeCoercer, eventContext));
 
         Link link = linkEncoder.createComponentEventLink(parameters, forForm);
 
@@ -89,20 +87,22 @@ public class LinkSourceImpl implements LinkSource, LinkCreationHub
         return input == null ? "" : input;
     }
 
-    public Link createPageRenderLink(String pageName, boolean override, Object... pageActivationContext)
+    public Link createPageRenderLink(String pageName, boolean override,
+            Object... pageActivationContext)
     {
-        // Resolve the page name to its canonical format (the best version for URLs). This also validates
+        // Resolve the page name to its canonical format (the best version for URLs). This also
+        // validates
         // the page name.
 
         String canonical = resolver.canonicalizePageName(pageName);
 
-        Object[] context = (override || pageActivationContext.length != 0)
-                           ? pageActivationContext
-                           : contextCollector.collectPageActivationContext(canonical);
+        Object[] context = (override || pageActivationContext.length != 0) ? pageActivationContext
+                : contextCollector.collectPageActivationContext(canonical);
 
-        PageRenderRequestParameters parameters =
-                new PageRenderRequestParameters(canonical,
-                                                new ArrayEventContext(typeCoercer, context));
+        boolean loopback = canonical.equals(requestGlobals.getActivePageName());
+
+        PageRenderRequestParameters parameters = new PageRenderRequestParameters(canonical,
+                new ArrayEventContext(typeCoercer, context), loopback);
 
         Link link = linkEncoder.createPageRenderLink(parameters);
 

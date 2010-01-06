@@ -55,8 +55,7 @@ public class ComponentEventLinkEncoderImplTest extends InternalBaseTestCase
         replay();
 
         ComponentEventLinkEncoder encoder = new ComponentEventLinkEncoderImpl(null,
-                contextPathEncoder, null, request, response, manager, optimizer, null, false,
-                globals);
+                contextPathEncoder, null, request, response, manager, optimizer, null, false);
 
         PageRenderRequestParameters parameters = new PageRenderRequestParameters("MyPage",
                 new EmptyEventContext());
@@ -95,8 +94,7 @@ public class ComponentEventLinkEncoderImplTest extends InternalBaseTestCase
         replay();
 
         ComponentEventLinkEncoder encoder = new ComponentEventLinkEncoderImpl(null,
-                contextPathEncoder, null, request, response, manager, optimizer, null, false,
-                globals);
+                contextPathEncoder, null, request, response, manager, optimizer, null, false);
 
         PageRenderRequestParameters parameters = new PageRenderRequestParameters("admin/Index",
                 new ArrayEventContext(typeCoercer, "abc"));
@@ -126,8 +124,7 @@ public class ComponentEventLinkEncoderImplTest extends InternalBaseTestCase
         replay();
 
         ComponentEventLinkEncoder encoder = new ComponentEventLinkEncoderImpl(null,
-                contextPathEncoder, null, request, response, manager, optimizer, null, false,
-                globals);
+                contextPathEncoder, null, request, response, manager, optimizer, null, false);
 
         PageRenderRequestParameters parameters = new PageRenderRequestParameters("Index",
                 new EmptyEventContext());
