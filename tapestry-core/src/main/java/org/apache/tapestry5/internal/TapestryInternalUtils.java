@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -43,8 +43,6 @@ public class TapestryInternalUtils
     private static final Pattern COMMA_PATTERN = Pattern.compile("\\s*,\\s*");
 
     private static final int BUFFER_SIZE = 5000;
-
-    private static final String[] EMPTY_STRING_ARRAY = new String[0];
 
     /**
      * Capitalizes the string, and inserts a space before each upper case character (or sequence of upper case
@@ -391,8 +389,8 @@ public class TapestryInternalUtils
     public static String[] splitAtCommas(String value)
     {
         if (InternalUtils.isBlank(value))
-            return EMPTY_STRING_ARRAY;
-
+            return InternalConstants.EMPTY_STRING_ARRAY;
+            
         return COMMA_PATTERN.split(value.trim());
     }
 

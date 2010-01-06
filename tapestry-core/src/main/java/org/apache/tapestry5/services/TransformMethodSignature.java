@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,12 +18,15 @@ import static org.apache.tapestry5.ioc.internal.util.Defense.notBlank;
 
 import java.lang.reflect.Modifier;
 
+import org.apache.tapestry5.internal.InternalConstants;
+
 /**
- * A representation of a method signature, which consists of its name, modifiers (primarily, visibility), return type,
+ * A representation of a method signature, which consists of its name, modifiers (primarily,
+ * visibility), return type,
  * parameter types, and declared exception types.
  * <p/>
- * Types are stored as class names (or primitive names) because the signature is used with {@link ClassTransformation}
- * (which operates on as-yet unloaded classes).
+ * Types are stored as class names (or primitive names) because the signature is used with
+ * {@link ClassTransformation} (which operates on as-yet unloaded classes).
  */
 public class TransformMethodSignature implements Comparable<TransformMethodSignature>
 {
@@ -35,19 +38,18 @@ public class TransformMethodSignature implements Comparable<TransformMethodSigna
 
     private final String[] parameterTypes, exceptionTypes;
 
-    private static final String[] EMPTY_STRINGS = new String[0];
-
     /**
      * Convenience for adding a public void method with no parameters or exception types.
      */
 
     public TransformMethodSignature(String name)
     {
-        this(Modifier.PUBLIC, "void", name, EMPTY_STRINGS, EMPTY_STRINGS);
+        this(Modifier.PUBLIC, "void", name, InternalConstants.EMPTY_STRING_ARRAY,
+                InternalConstants.EMPTY_STRING_ARRAY);
     }
 
     public TransformMethodSignature(int modifiers, String type, String name,
-                                    String[] parameterTypes, String[] exceptionTypes)
+            String[] parameterTypes, String[] exceptionTypes)
     {
         this.modifiers = modifiers;
 
@@ -63,11 +65,12 @@ public class TransformMethodSignature implements Comparable<TransformMethodSigna
 
     private String[] typeNamesOrEmpty(String[] types)
     {
-        return types == null ? EMPTY_STRINGS : types;
+        return types == null ? InternalConstants.EMPTY_STRING_ARRAY : types;
     }
 
     /**
-     * Returns a non-null array of the names of each declared exception type thrown by the method. Calling code should
+     * Returns a non-null array of the names of each declared exception type thrown by the method.
+     * Calling code should
      * not modify the array.
      */
     public String[] getExceptionTypes()
@@ -85,7 +88,7 @@ public class TransformMethodSignature implements Comparable<TransformMethodSigna
 
     /**
      * Returns the set of modifier flags for this method.
-     *
+     * 
      * @see java.lang.reflect.Modifier
      */
     public int getModifiers()
@@ -94,7 +97,8 @@ public class TransformMethodSignature implements Comparable<TransformMethodSigna
     }
 
     /**
-     * Returns an array of the type name for each parameter. Calling code should not modify the array.
+     * Returns an array of the type name for each parameter. Calling code should not modify the
+     * array.
      */
     public String[] getParameterTypes()
     {
@@ -135,31 +139,35 @@ public class TransformMethodSignature implements Comparable<TransformMethodSigna
     @Override
     public boolean equals(Object other)
     {
-        if (other == null || !(other instanceof TransformMethodSignature)) return false;
+        if (other == null || !(other instanceof TransformMethodSignature))
+            return false;
 
         TransformMethodSignature ms = (TransformMethodSignature) other;
 
         return modifiers == ms.modifiers && returnType.equals(ms.returnType)
-                && methodName.equals(ms.methodName)
-                && matches(parameterTypes, ms.parameterTypes)
+                && methodName.equals(ms.methodName) && matches(parameterTypes, ms.parameterTypes)
                 && matches(exceptionTypes, ms.exceptionTypes);
     }
 
     private boolean matches(String[] values, String[] otherValues)
     {
-        if (values.length != otherValues.length) return false;
+        if (values.length != otherValues.length)
+            return false;
 
         for (int i = 0; i < values.length; i++)
         {
-            if (!values[i].equals(otherValues[i])) return false;
+            if (!values[i].equals(otherValues[i]))
+                return false;
         }
 
         return true;
     }
 
     /**
-     * Returns the long form description of the signature. This includes modifiers, return type, method name, parameters
-     * and thrown exceptions, formatted approximately as it would appear in Java source (except that parameter names,
+     * Returns the long form description of the signature. This includes modifiers, return type,
+     * method name, parameters
+     * and thrown exceptions, formatted approximately as it would appear in Java source (except that
+     * parameter names,
      * which are not known, do no appear).
      */
     @Override
@@ -200,7 +208,8 @@ public class TransformMethodSignature implements Comparable<TransformMethodSigna
 
         for (int i = 0; i < parameterTypes.length; i++)
         {
-            if (i > 0) builder.append(", ");
+            if (i > 0)
+                builder.append(", ");
 
             builder.append(parameterTypes[i]);
         }
@@ -209,7 +218,8 @@ public class TransformMethodSignature implements Comparable<TransformMethodSigna
     }
 
     /**
-     * Sorting is primarily via method name. For methods with the same name, the second level of sorting is by parameter
+     * Sorting is primarily via method name. For methods with the same name, the second level of
+     * sorting is by parameter
      * count (descending).
      */
     public int compareTo(TransformMethodSignature o)
@@ -217,15 +227,17 @@ public class TransformMethodSignature implements Comparable<TransformMethodSigna
         int result = methodName.compareTo(o.methodName);
 
         // Sort descending
-        if (result == 0) result = o.parameterTypes.length - parameterTypes.length;
+        if (result == 0)
+            result = o.parameterTypes.length - parameterTypes.length;
 
         return result;
     }
 
     /**
-     * Returns a shortened form of the string representation of the method. It lists just the name of the method and the
+     * Returns a shortened form of the string representation of the method. It lists just the name
+     * of the method and the
      * types of any parameters, omitting return type, exceptions and modifiers.
-     *
+     * 
      * @return
      */
     public String getMediumDescription()
