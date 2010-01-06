@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -291,7 +291,15 @@ public class Form implements ClientElement, FormValidationControl
 
         name = renderSupport.allocateClientId(resources);
 
-        formSupport = createRenderTimeFormSupport(name, actionSink, new IdAllocator());
+        // Pre-register some names, to prevent client-side collisions with function names
+        // attached to the JS Form object.
+        
+        IdAllocator allocator = new IdAllocator();
+        
+        allocator.allocateId("reset");
+        allocator.allocateId("submit");
+        
+        formSupport = createRenderTimeFormSupport(name, actionSink, allocator);
 
         if (zone != null)
             clientBehaviorSupport.linkZone(name, zone, link);
