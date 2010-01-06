@@ -15,7 +15,8 @@ Tapestry.Logging = {
 		
 		debug: function(msg)
         {
-			Tapestry.Logging.updateConsole("t-err", msg);
+			if (Tapestry.DEBUG_ENABLED)
+				Tapestry.Logging.updateConsole("t-debug", msg);
         },
         
         warn: function(msg)
@@ -25,8 +26,7 @@ Tapestry.Logging = {
         
         error: function(msg)
         {
-        	if (Tapestry.DEBUG_ENABLED)
-    			Tapestry.Logging.updateConsole("t-debug", msg);
+    		Tapestry.Logging.updateConsole("t-err", msg);
         },
         
         /** Formats a message and updates the console. The console is virtual
