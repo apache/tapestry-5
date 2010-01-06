@@ -1,10 +1,10 @@
-// Copyright 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2007, 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -41,7 +41,8 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * A wrapper that converts a Spring {@link ApplicationContext} into a set of service definitions, compatible with
+ * A wrapper that converts a Spring {@link ApplicationContext} into a set of service definitions,
+ * compatible with
  * Tapestry 5 IoC, for the beans defined in the context, as well as the context itself.
  */
 public class SpringModuleDef implements ModuleDef
@@ -56,20 +57,40 @@ public class SpringModuleDef implements ModuleDef
 
     private final ServletContext servletContext;
 
-    private ConfigurableWebApplicationContext locateExternalContext()
+    private ApplicationContext locateExternalContext()
     {
-        ConfigurableWebApplicationContext context = (ConfigurableWebApplicationContext) servletContext.getAttribute(
-                WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE);
-
-        if (context == null)
-            throw new NullPointerException(String.format(
-                    "No Spring ApplicationContext stored in the ServletContext as attribute '%s'. " +
-                            "You should either re-enable Tapestry as the creator of the ApplicationContext, or " +
-                            "add a Spring ContextLoaderListener to web.xml.",
-                    WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE));
+        ApplicationContext context = locateApplicationContext(servletContext);
 
         applicationContextCreated.set(true);
 
+        return context;
+    }
+
+    /**
+     * Invoked to obtain the Spring ApplicationContext, presumably stored in the ServletContext.
+     * This method is only used in Tapestry 5.0 compatibility mode (in Tapestry 5.1 and above,
+     * the default is for Tapestry to <em>create</em> the ApplicationContext).
+     * 
+     * @param servletContext
+     *            used to locate the ApplicationContext
+     * @return the ApplicationContext itself
+     * @throws RuntimeException
+     *             if the ApplicationContext could not be located or is otherwise invalid
+     * @since 5.2.0
+     */
+    protected ApplicationContext locateApplicationContext(ServletContext servletContext)
+    {
+        ApplicationContext context = (ApplicationContext) servletContext
+                .getAttribute(WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE);
+
+        if (context == null)
+            throw new NullPointerException(
+                    String
+                            .format(
+                                    "No Spring ApplicationContext stored in the ServletContext as attribute '%s'. "
+                                            + "You should either re-enable Tapestry as the creator of the ApplicationContext, or "
+                                            + "add a Spring ContextLoaderListener to web.xml.",
+                                    WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE));
         return context;
     }
 
@@ -77,11 +98,11 @@ public class SpringModuleDef implements ModuleDef
     {
         this.servletContext = servletContext;
 
-        compatibilityMode = Boolean.parseBoolean(
-                servletContext.getInitParameter(SpringConstants.USE_EXTERNAL_SPRING_CONTEXT));
+        compatibilityMode = Boolean.parseBoolean(servletContext
+                .getInitParameter(SpringConstants.USE_EXTERNAL_SPRING_CONTEXT));
 
-        final ApplicationContext externalContext =
-                compatibilityMode ? locateExternalContext() : null;
+        final ApplicationContext externalContext = compatibilityMode ? locateExternalContext()
+                : null;
 
         if (compatibilityMode)
             addServiceDefsForSpringBeans(externalContext);
@@ -91,11 +112,11 @@ public class SpringModuleDef implements ModuleDef
             public ObjectCreator createServiceCreator(final ServiceBuilderResources resources)
             {
                 if (compatibilityMode)
-                    return new StaticObjectCreator(externalContext, "externally configured Spring ApplicationContext");
+                    return new StaticObjectCreator(externalContext,
+                            "externally configured Spring ApplicationContext");
 
-
-                ApplicationContextCustomizer customizer = resources.getService("ApplicationContextCustomizer",
-                                                                               ApplicationContextCustomizer.class);
+                ApplicationContextCustomizer customizer = resources.getService(
+                        "ApplicationContextCustomizer", ApplicationContextCustomizer.class);
 
                 return constructObjectCreatorForApplicationContext(resources, customizer);
             }
@@ -112,9 +133,8 @@ public class SpringModuleDef implements ModuleDef
 
             public Class getServiceInterface()
             {
-                return compatibilityMode
-                       ? externalContext.getClass()
-                       : ConfigurableWebApplicationContext.class;
+                return compatibilityMode ? externalContext.getClass()
+                        : ConfigurableWebApplicationContext.class;
             }
 
             public String getServiceScope()
@@ -135,17 +155,15 @@ public class SpringModuleDef implements ModuleDef
     {
         for (final String beanName : BeanFactoryUtils.beanNamesIncludingAncestors(context))
         {
-            String trueName = beanName.startsWith("&")
-                              ? beanName.substring(1)
-                              : beanName;
+            String trueName = beanName.startsWith("&") ? beanName.substring(1) : beanName;
 
             services.put(trueName, new SpringBeanServiceDef(trueName, context));
         }
     }
 
-    private ObjectCreator constructObjectCreatorForApplicationContext(final ServiceBuilderResources resources,
-                                                                      @Primary
-                                                                      ApplicationContextCustomizer customizer)
+    private ObjectCreator constructObjectCreatorForApplicationContext(
+            final ServiceBuilderResources resources, @Primary
+            ApplicationContextCustomizer customizer)
     {
         final CustomizingContextLoader loader = new CustomizingContextLoader(customizer);
 
@@ -169,12 +187,12 @@ public class SpringModuleDef implements ModuleDef
                         {
                             public Object invoke()
                             {
-                                resources.getLogger().info(String.format(
-                                        "Starting Spring (version %s)",
-                                        SpringVersion.getVersion()));
+                                resources.getLogger().info(
+                                        String.format("Starting Spring (version %s)", SpringVersion
+                                                .getVersion()));
 
-                                WebApplicationContext context = loader.initWebApplicationContext(
-                                        servletContext);
+                                WebApplicationContext context = loader
+                                        .initWebApplicationContext(servletContext);
 
                                 shutdownHub.addRegistryShutdownListener(shutdownListener);
 
@@ -199,7 +217,8 @@ public class SpringModuleDef implements ModuleDef
     }
 
     /**
-     * Returns a contribution, "SpringBean", to the MasterObjectProvider service.  It is ordered after the built-in
+     * Returns a contribution, "SpringBean", to the MasterObjectProvider service. It is ordered
+     * after the built-in
      * contributions.
      */
     public Set<ContributionDef> getContributionDefs()
@@ -212,7 +231,6 @@ public class SpringModuleDef implements ModuleDef
     private ContributionDef createContributionToMasterObjectProvider()
     {
 
-
         ContributionDef def = new AbstractContributionDef()
         {
             public String getServiceId()
@@ -222,16 +240,17 @@ public class SpringModuleDef implements ModuleDef
 
             @Override
             public void contribute(ModuleBuilderSource moduleSource, ServiceResources resources,
-                                   OrderedConfiguration configuration)
+                    OrderedConfiguration configuration)
             {
                 final OperationTracker tracker = resources.getTracker();
 
-                final ApplicationContext context = resources.getService(SERVICE_ID, ApplicationContext.class);
+                final ApplicationContext context = resources.getService(SERVICE_ID,
+                        ApplicationContext.class);
 
                 final ObjectProvider springBeanProvider = new ObjectProvider()
                 {
-                    public <T> T provide(Class<T> objectType, AnnotationProvider annotationProvider,
-                                         ObjectLocator locator)
+                    public <T> T provide(Class<T> objectType,
+                            AnnotationProvider annotationProvider, ObjectLocator locator)
                     {
 
                         Map beanMap = context.getBeansOfType(objectType);
@@ -249,11 +268,12 @@ public class SpringModuleDef implements ModuleDef
 
                             default:
 
-                                String message = String.format(
-                                        "Spring context contains %d beans assignable to type %s: %s.",
-                                        beanMap.size(),
-                                        ClassFabUtils.toJavaClassName(objectType),
-                                        InternalUtils.joinSorted(beanMap.keySet()));
+                                String message = String
+                                        .format(
+                                                "Spring context contains %d beans assignable to type %s: %s.",
+                                                beanMap.size(), ClassFabUtils
+                                                        .toJavaClassName(objectType), InternalUtils
+                                                        .joinSorted(beanMap.keySet()));
 
                                 throw new IllegalArgumentException(message);
                         }
@@ -262,8 +282,8 @@ public class SpringModuleDef implements ModuleDef
 
                 final ObjectProvider springBeanProviderInvoker = new ObjectProvider()
                 {
-                    public <T> T provide(final Class<T> objectType, final AnnotationProvider annotationProvider,
-                                         final ObjectLocator locator)
+                    public <T> T provide(final Class<T> objectType,
+                            final AnnotationProvider annotationProvider, final ObjectLocator locator)
                     {
                         return tracker.invoke(
                                 "Resolving dependency by searching Spring ApplicationContext",
@@ -271,7 +291,8 @@ public class SpringModuleDef implements ModuleDef
                                 {
                                     public T invoke()
                                     {
-                                        return springBeanProvider.provide(objectType, annotationProvider, locator);
+                                        return springBeanProvider.provide(objectType,
+                                                annotationProvider, locator);
                                     }
                                 });
                     }
@@ -279,18 +300,20 @@ public class SpringModuleDef implements ModuleDef
 
                 ObjectProvider outerCheck = new ObjectProvider()
                 {
-                    public <T> T provide(Class<T> objectType, AnnotationProvider annotationProvider,
-                                         ObjectLocator locator)
+                    public <T> T provide(Class<T> objectType,
+                            AnnotationProvider annotationProvider, ObjectLocator locator)
                     {
-                        // I think the following line is the only reason we put the SpringBeanProvider here,
+                        // I think the following line is the only reason we put the
+                        // SpringBeanProvider here,
                         // rather than in SpringModule.
 
-                        if (!applicationContextCreated.get()) return null;
+                        if (!applicationContextCreated.get())
+                            return null;
 
-                        return springBeanProviderInvoker.provide(objectType, annotationProvider, locator);
+                        return springBeanProviderInvoker.provide(objectType, annotationProvider,
+                                locator);
                     }
                 };
-
 
                 configuration.add("SpringBean", outerCheck, "after:Service,Alias,Autobuild");
             }
