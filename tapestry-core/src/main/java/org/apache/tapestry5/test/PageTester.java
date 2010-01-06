@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -38,16 +38,21 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.Locale;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 /**
- * This class is used to run a Tapestry app in a single-threaded, in-process testing environment. You can ask it to
- * render a certain page and check the DOM object created. You can also ask it to click on a link element in the DOM
- * object to get the next page. Because no servlet container is required, it is very fast and you can directly debug
+ * This class is used to run a Tapestry app in a single-threaded, in-process testing environment.
+ * You can ask it to
+ * render a certain page and check the DOM object created. You can also ask it to click on a link
+ * element in the DOM
+ * object to get the next page. Because no servlet container is required, it is very fast and you
+ * can directly debug
  * into your code in your IDE.
  */
 public class PageTester
 {
-    @SuppressWarnings({ "FieldCanBeLocal" })
+    @SuppressWarnings(
+    { "FieldCanBeLocal" })
     private final Logger logger = LoggerFactory.getLogger(PageTester.class);
 
     private final Registry registry;
@@ -65,9 +70,10 @@ public class PageTester
     private static final String DEFAULT_SUBMIT_VALUE_ATTRIBUTE = "Submit Query";
 
     /**
-     * Initializes a PageTester without overriding any services and assuming that the context root is in
+     * Initializes a PageTester without overriding any services and assuming that the context root
+     * is in
      * src/main/webapp.
-     *
+     * 
      * @see #PageTester(String, String, String, Class[])
      */
     public PageTester(String appPackage, String appName)
@@ -76,15 +82,23 @@ public class PageTester
     }
 
     /**
-     * Initializes a PageTester that acts as a browser and a servlet container to test drive your Tapestry pages.
-     *
-     * @param appPackage    The same value you would specify using the tapestry.app-package context parameter. As this
-     *                      testing environment is not run in a servlet container, you need to specify it.
-     * @param appName       The same value you would specify as the filter name. It is used to form the name of the
-     *                      module class for your app. If you don't have one, pass an empty string.
-     * @param contextPath   The path to the context root so that Tapestry can find the templates (if they're put
-     *                      there).
-     * @param moduleClasses Classes of additional modules to load
+     * Initializes a PageTester that acts as a browser and a servlet container to test drive your
+     * Tapestry pages.
+     * 
+     * @param appPackage
+     *            The same value you would specify using the tapestry.app-package context parameter.
+     *            As this
+     *            testing environment is not run in a servlet container, you need to specify it.
+     * @param appName
+     *            The same value you would specify as the filter name. It is used to form the name
+     *            of the
+     *            module class for your app. If you don't have one, pass an empty string.
+     * @param contextPath
+     *            The path to the context root so that Tapestry can find the templates (if they're
+     *            put
+     *            there).
+     * @param moduleClasses
+     *            Classes of additional modules to load
      */
     public PageTester(String appPackage, String appName, String contextPath, Class... moduleClasses)
     {
@@ -92,10 +106,11 @@ public class PageTester
         Defense.notBlank(appName, "appName");
         Defense.notBlank(contextPath, "contextPath");
 
-        SymbolProvider provider = new SingleKeySymbolProvider(InternalConstants.TAPESTRY_APP_PACKAGE_PARAM, appPackage);
+        SymbolProvider provider = new SingleKeySymbolProvider(
+                InternalConstants.TAPESTRY_APP_PACKAGE_PARAM, appPackage);
 
         TapestryAppInitializer initializer = new TapestryAppInitializer(logger, provider, appName,
-                                                                        PageTesterModule.TEST_MODE);
+                PageTesterModule.TEST_MODE);
 
         initializer.addModules(PageTesterModule.class);
         initializer.addModules(moduleClasses);
@@ -116,7 +131,8 @@ public class PageTester
     }
 
     /**
-     * Overridden in subclasses to provide additional module definitions beyond those normally located. This
+     * Overridden in subclasses to provide additional module definitions beyond those normally
+     * located. This
      * implementation returns an empty array.
      */
     protected ModuleDef[] provideExtraModuleDefs()
@@ -124,16 +140,14 @@ public class PageTester
         return new ModuleDef[0];
     }
 
-
     /**
-     * Invoke this method when done using the PageTester; it shuts down the internal {@link
-     * org.apache.tapestry5.ioc.Registry} used by the tester.
+     * Invoke this method when done using the PageTester; it shuts down the internal
+     * {@link org.apache.tapestry5.ioc.Registry} used by the tester.
      */
     public void shutdown()
     {
         registry.shutdown();
     }
-
 
     /**
      * Returns the Registry that was created for the application.
@@ -144,10 +158,12 @@ public class PageTester
     }
 
     /**
-     * Allows a service to be retrieved via its service interface.  Use {@link #getRegistry()} for more complicated
+     * Allows a service to be retrieved via its service interface. Use {@link #getRegistry()} for
+     * more complicated
      * queries.
-     *
-     * @param serviceInterface used to select the service
+     * 
+     * @param serviceInterface
+     *            used to select the service
      */
     public <T> T getService(Class<T> serviceInterface)
     {
@@ -156,8 +172,9 @@ public class PageTester
 
     /**
      * Renders a page specified by its name.
-     *
-     * @param pageName The name of the page to be rendered.
+     * 
+     * @param pageName
+     *            The name of the page to be rendered.
      * @return The DOM created. Typically you will assert against it.
      */
     public Document renderPage(String pageName)
@@ -172,11 +189,8 @@ public class PageTester
 
                 boolean handled = requestHandler.service(request, response);
 
-                if (!handled)
-                {
-                    throw new RuntimeException(
-                            String.format("Request was not handled: '%s' may not be a valid page name.", pageName));
-                }
+                if (!handled) { throw new RuntimeException(String.format(
+                        "Request was not handled: '%s' may not be a valid page name.", pageName)); }
 
                 Link link = response.getRedirectLink();
 
@@ -189,9 +203,8 @@ public class PageTester
                 Document result = response.getRenderedDocument();
 
                 if (result == null)
-                    throw new RuntimeException(
-                            String.format("Render of page '%s' did not result in a Document.", pageName));
-
+                    throw new RuntimeException(String.format(
+                            "Render of page '%s' did not result in a Document.", pageName));
 
                 return result;
             }
@@ -206,8 +219,9 @@ public class PageTester
 
     /**
      * Simulates a click on a link.
-     *
-     * @param linkElement The Link object to be "clicked" on.
+     * 
+     * @param linkElement
+     *            The Link object to be "clicked" on.
      * @return The DOM created. Typically you will assert against it.
      */
 
@@ -229,9 +243,9 @@ public class PageTester
         String result = element.getAttribute(attributeName);
 
         if (InternalUtils.isBlank(result))
-            throw new RuntimeException(
-                    String.format("The %s attribute of the <%s> element was blank or missing.",
-                                  attributeName, element.getName()));
+            throw new RuntimeException(String.format(
+                    "The %s attribute of the <%s> element was blank or missing.", attributeName,
+                    element.getName()));
 
         return result;
     }
@@ -239,8 +253,8 @@ public class PageTester
     private void validateElementName(Element element, String expectedElementName)
     {
         if (!element.getName().equalsIgnoreCase(expectedElementName))
-            throw new RuntimeException(
-                    String.format("The element must be type '%s', not '%s'.", expectedElementName, element.getName()));
+            throw new RuntimeException(String.format("The element must be type '%s', not '%s'.",
+                    expectedElementName, element.getName()));
     }
 
     private Document runComponentEventRequest()
@@ -254,8 +268,9 @@ public class PageTester
                 boolean handled = requestHandler.service(request, response);
 
                 if (!handled)
-                    throw new RuntimeException(String.format("Request for path '%s' was not handled by Tapestry.",
-                                                             request.getPath()));
+                    throw new RuntimeException(String
+                            .format("Request for path '%s' was not handled by Tapestry.", request
+                                    .getPath()));
 
                 Link link = response.getRedirectLink();
 
@@ -268,8 +283,8 @@ public class PageTester
                 Document result = response.getRenderedDocument();
 
                 if (result == null)
-                    throw new RuntimeException(
-                            String.format("Render request '%s' did not result in a Document.", request.getPath()));
+                    throw new RuntimeException(String.format(
+                            "Render request '%s' did not result in a Document.", request.getPath()));
 
                 return result;
             }
@@ -279,7 +294,6 @@ public class PageTester
             }
 
         }
-
 
     }
 
@@ -294,41 +308,53 @@ public class PageTester
 
         int comma = linkPath.indexOf('?');
 
-        String path = comma < 0
-                      ? linkPath
-                      : linkPath.substring(0, comma);
+        String path = comma < 0 ? linkPath : linkPath.substring(0, comma);
 
         request.clear().setPath(path);
 
         if (comma > 0)
-            decodeParametersIntoRequest(path.substring(comma + 1));
+            decodeParametersIntoRequest(linkPath.substring(comma + 1));
     }
 
     private void decodeParametersIntoRequest(String queryString)
     {
-        if (InternalUtils.isNonBlank(queryString))
-            throw new RuntimeException("Have not yet implemented this method.");
+        if (InternalUtils.isBlank(queryString))
+            return;
+
+        for (String term : queryString.split("&"))
+        {
+            int eqx = term.indexOf("=");
+
+            String key = term.substring(0, eqx).trim();
+            String value = term.substring(eqx + 1).trim();
+
+            request.loadParameter(key, value);
+        }
     }
 
     private String stripContextFromPath(String path)
     {
         String contextPath = request.getContextPath();
 
-        if (contextPath.equals("")) return path;
+        if (contextPath.equals(""))
+            return path;
 
         if (!path.startsWith(contextPath))
-            throw new RuntimeException(String.format("Path '%s' does not start with context path '%s'.",
-                                                     path, contextPath));
+            throw new RuntimeException(String.format(
+                    "Path '%s' does not start with context path '%s'.", path, contextPath));
 
         return path.substring(contextPath.length());
     }
 
     /**
-     * Simulates a submission of the form specified. The caller can specify values for the form fields, which act as
+     * Simulates a submission of the form specified. The caller can specify values for the form
+     * fields, which act as
      * overrides on the values stored inside the elements.
-     *
-     * @param form       the form to be submitted.
-     * @param parameters the query parameter name/value pairs
+     * 
+     * @param form
+     *            the form to be submitted.
+     * @param parameters
+     *            the query parameter name/value pairs
      * @return The DOM created. Typically you will assert against it.
      */
     public Document submitForm(Element form, Map<String, String> parameters)
@@ -398,7 +424,8 @@ public class PageTester
                 {
                     String value = element.getAttribute("value");
 
-                    // TODO: If value is blank do we use the content, or is the content only the label?
+                    // TODO: If value is blank do we use the content, or is the content only the
+                    // label?
 
                     if (InternalUtils.isNonBlank(element.getAttribute("selected")))
                     {
@@ -426,11 +453,14 @@ public class PageTester
     }
 
     /**
-     * Simulates a submission of the form by clicking the specified submit button. The caller can specify values for the
+     * Simulates a submission of the form by clicking the specified submit button. The caller can
+     * specify values for the
      * form fields.
-     *
-     * @param submitButton the submit button to be clicked.
-     * @param fieldValues  the field values keyed on field names.
+     * 
+     * @param submitButton
+     *            the submit button to be clicked.
+     * @param fieldValues
+     *            the field values keyed on field names.
      * @return The DOM created. Typically you will assert against it.
      */
     public Document clickSubmit(Element submitButton, Map<String, String> fieldValues)
@@ -463,7 +493,8 @@ public class PageTester
         {
             String type = element.getAttribute("type");
 
-            if ("submit".equals(type)) return;
+            if ("submit".equals(type))
+                return;
         }
 
         throw new IllegalArgumentException("The specified element is not a submit button.");
@@ -486,16 +517,17 @@ public class PageTester
             e = e.getParent();
         }
 
-        throw new RuntimeException(
-                String.format("Could not locate an ancestor element of type '%s'.", ancestorName));
+        throw new RuntimeException(String.format(
+                "Could not locate an ancestor element of type '%s'.", ancestorName));
 
     }
 
     /**
-     * Sets the simulated browser's preferred language, i.e., the value returned from {@link
-     * org.apache.tapestry5.services.Request#getLocale()}.
-     *
-     * @param preferedLanguage preferred language setting
+     * Sets the simulated browser's preferred language, i.e., the value returned from
+     * {@link org.apache.tapestry5.services.Request#getLocale()}.
+     * 
+     * @param preferedLanguage
+     *            preferred language setting
      */
     public void setPreferedLanguage(Locale preferedLanguage)
     {
