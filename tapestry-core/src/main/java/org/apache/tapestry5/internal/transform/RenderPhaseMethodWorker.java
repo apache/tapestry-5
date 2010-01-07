@@ -14,6 +14,7 @@
 
 package org.apache.tapestry5.internal.transform;
 
+import java.lang.annotation.Annotation;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -52,13 +53,15 @@ public class RenderPhaseMethodWorker implements ComponentClassTransformWorker
 
     private final MethodInvocationBuilder invocationBuilder = new MethodInvocationBuilder();
 
-    private final Map<Class, TransformMethodSignature> annotationToSignature = CollectionFactory
+    private final Map<Class<? extends Annotation>, TransformMethodSignature> annotationToSignature = CollectionFactory
             .newMap();
 
-    private final Map<String, Class> nameToAnnotation = CollectionFactory.newCaseInsensitiveMap();
+    private final Map<String, Class<? extends Annotation>> nameToAnnotation = CollectionFactory
+            .newCaseInsensitiveMap();
 
-    private final Set<Class> reverseAnnotations = CollectionFactory.newSet(AfterRenderBody.class,
-            AfterRenderTemplate.class, AfterRender.class, CleanupRender.class);
+    private final Set<Class<? extends Annotation>> reverseAnnotations = CollectionFactory.newSet(
+            AfterRenderBody.class, AfterRenderTemplate.class, AfterRender.class,
+            CleanupRender.class);
 
     private final Set<TransformMethodSignature> lifecycleMethods = CollectionFactory.newSet();
 
