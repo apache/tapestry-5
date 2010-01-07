@@ -1,10 +1,10 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -33,7 +33,7 @@ public class TypeCoercerImpl implements TypeCoercer
     private final Map<Class, List<CoercionTuple>> sourceTypeToTuple = CollectionFactory.newMap();
 
     /**
-     * A coercion to a specific target type.  Manages a cache of coercions to specific types.
+     * A coercion to a specific target type. Manages a cache of coercions to specific types.
      */
     private class TargetCoercion
     {
@@ -56,7 +56,8 @@ public class TypeCoercerImpl implements TypeCoercer
 
             Class sourceType = input != null ? input.getClass() : void.class;
 
-            if (type.isAssignableFrom(sourceType)) return input;
+            if (type.isAssignableFrom(sourceType))
+                return input;
 
             Coercion c = getCoercion(sourceType);
 
@@ -66,11 +67,7 @@ public class TypeCoercerImpl implements TypeCoercer
             }
             catch (Exception ex)
             {
-                throw new RuntimeException(ServiceMessages.failedCoercion(
-                        input,
-                        type,
-                        c,
-                        ex), ex);
+                throw new RuntimeException(ServiceMessages.failedCoercion(input, type, c, ex), ex);
             }
         }
 
@@ -128,7 +125,8 @@ public class TypeCoercerImpl implements TypeCoercer
 
         Class effectiveTargetType = ClassFabUtils.getWrapperType(targetType);
 
-        if (effectiveTargetType.isInstance(input)) return input;
+        if (effectiveTargetType.isInstance(input))
+            return input;
 
         return getTargetCoercion(effectiveTargetType).coerce(input);
     }
@@ -140,11 +138,13 @@ public class TypeCoercerImpl implements TypeCoercer
         Defense.notNull(targetType, "targetType");
 
         Class effectiveTargetType = ClassFabUtils.getWrapperType(targetType);
+        Class effctiveInputType = ClassFabUtils.getWrapperType(inputType);
 
         // Is a coercion even necessary? Not if the target type is assignable from the
         // input value.
 
-        if (effectiveTargetType.isAssignableFrom(inputType)) return "";
+        if (effectiveTargetType.isAssignableFrom(effctiveInputType))
+            return "";
 
         return getTargetCoercion(targetType).explain(inputType);
     }
@@ -165,7 +165,7 @@ public class TypeCoercerImpl implements TypeCoercer
     public synchronized void clearCache()
     {
         // There's no need to clear the typeToTargetCoercion map, as it is a WeakHashMap and
-        // will release the keys for classes that are no longer in existence.  On the other hand,
+        // will release the keys for classes that are no longer in existence. On the other hand,
         // there's likely all sorts of references to unloaded classes inside each TargetCoercion's
         // individual cache, so clear all those.
 
@@ -178,24 +178,27 @@ public class TypeCoercerImpl implements TypeCoercer
     }
 
     /**
-     * Here's the real meat; we do a search of the space to find coercions, or a system of coercions, that accomplish
+     * Here's the real meat; we do a search of the space to find coercions, or a system of
+     * coercions, that accomplish
      * the desired coercion.
      * <p/>
-     * There's <strong>TREMENDOUS</strong> room to improve this algorithm. For example, inheritance lists could be
-     * cached. Further, there's probably more ways to early prune the search. However, even with dozens or perhaps
-     * hundreds of tuples, I suspect the search will still grind to a conclusion quickly.
+     * There's <strong>TREMENDOUS</strong> room to improve this algorithm. For example, inheritance
+     * lists could be cached. Further, there's probably more ways to early prune the search.
+     * However, even with dozens or perhaps hundreds of tuples, I suspect the search will still
+     * grind to a conclusion quickly.
      * <p/>
-     * The order of operations should help ensure that the most efficient tuple chain is located. If you think about how
-     * tuples are added to the queue, there are two factors: size (the number of steps in the coercion) and "class
-     * distance" (that is, number of steps up the inheritance hiearchy). All the appropriate 1 step coercions will be
-     * considered first, in class distance order. Along the way, we'll queue up all the 2 step coercions, again in class
-     * distance order. By the time we reach some of those, we'll have begun queing up the 3 step coercions, and so
-     * forth, until we run out of input tuples we can use to fabricate multi-step compound coercions, or reach a final
-     * response.
+     * The order of operations should help ensure that the most efficient tuple chain is located. If
+     * you think about how tuples are added to the queue, there are two factors: size (the number of
+     * steps in the coercion) and "class distance" (that is, number of steps up the inheritance
+     * hiearchy). All the appropriate 1 step coercions will be considered first, in class distance
+     * order. Along the way, we'll queue up all the 2 step coercions, again in class distance order.
+     * By the time we reach some of those, we'll have begun queing up the 3 step coercions, and so
+     * forth, until we run out of input tuples we can use to fabricate multi-step compound
+     * coercions, or reach a final response.
      * <p/>
-     * This does create a good number of short lived temporary objects (the compound tuples), but that's what the GC is
-     * really good at.
-     *
+     * This does create a good number of short lived temporary objects (the compound tuples), but
+     * that's what the GC is really good at.
+     * 
      * @param sourceType
      * @param targetType
      * @return coercer from sourceType to targetType
@@ -203,7 +206,8 @@ public class TypeCoercerImpl implements TypeCoercer
     @SuppressWarnings("unchecked")
     private Coercion findOrCreateCoercion(Class sourceType, Class targetType)
     {
-        if (sourceType == void.class) return searchForNullCoercion(targetType);
+        if (sourceType == void.class)
+            return searchForNullCoercion(targetType);
 
         // These are instance variables because this method may be called concurrently.
         // On a true race, we may go to the work of seeking out and/or fabricating
@@ -227,7 +231,8 @@ public class TypeCoercerImpl implements TypeCoercer
 
             Class tupleTargetType = tuple.getTargetType();
 
-            if (targetType.isAssignableFrom(tupleTargetType)) return tuple.getCoercion();
+            if (targetType.isAssignableFrom(tupleTargetType))
+                return tuple.getCoercion();
 
             // So .. this tuple doesn't get us directly to the target type.
             // However, it *may* get us part of the way. Each of these
@@ -241,17 +246,17 @@ public class TypeCoercerImpl implements TypeCoercer
         // Not found anywhere. Identify the source and target type and a (sorted) list of
         // all the known coercions.
 
-        throw new IllegalArgumentException(ServiceMessages.noCoercionFound(
-                sourceType,
-                targetType,
+        throw new IllegalArgumentException(ServiceMessages.noCoercionFound(sourceType, targetType,
                 buildCoercionCatalog()));
     }
 
     /**
-     * Coercion from null is special; we match based on the target type and its not a spanning search. In many cases, we
+     * Coercion from null is special; we match based on the target type and its not a spanning
+     * search. In many cases, we
      * return a pass-thru that leaves the value as null.
-     *
-     * @param targetType desired type
+     * 
+     * @param targetType
+     *            desired type
      * @return the coercion
      */
     private Coercion searchForNullCoercion(Class targetType)
@@ -267,7 +272,8 @@ public class TypeCoercerImpl implements TypeCoercer
             {
                 Class tupleTargetType = tuple.getTargetType();
 
-                if (targetType.equals(tupleTargetType)) return tuple.getCoercion();
+                if (targetType.equals(tupleTargetType))
+                    return tuple.getCoercion();
             }
         }
 
@@ -278,7 +284,8 @@ public class TypeCoercerImpl implements TypeCoercer
     }
 
     /**
-     * Builds a string listing all the coercions configured for the type coercer, sorted alphabetically.
+     * Builds a string listing all the coercions configured for the type coercer, sorted
+     * alphabetically.
      */
     private String buildCoercionCatalog()
     {
@@ -297,7 +304,7 @@ public class TypeCoercerImpl implements TypeCoercer
      * Seeds the pool with the initial set of coercions for the given type.
      */
     private void seedQueue(Class sourceType, Set<CoercionTuple> consideredTuples,
-                           LinkedList<CoercionTuple> queue)
+            LinkedList<CoercionTuple> queue)
     {
         // Work from the source type up looking for tuples
 
@@ -305,7 +312,8 @@ public class TypeCoercerImpl implements TypeCoercer
         {
             List<CoercionTuple> tuples = sourceTypeToTuple.get(c);
 
-            if (tuples == null) continue;
+            if (tuples == null)
+                continue;
 
             for (CoercionTuple tuple : tuples)
             {
@@ -316,24 +324,30 @@ public class TypeCoercerImpl implements TypeCoercer
             // Don't pull in Object -> type coercions when doing
             // a search from null.
 
-            if (sourceType == void.class) return;
+            if (sourceType == void.class)
+                return;
         }
     }
 
     /**
-     * Creates and adds to the pool a new set of coercions based on an intermediate tuple. Adds compound coercion tuples
+     * Creates and adds to the pool a new set of coercions based on an intermediate tuple. Adds
+     * compound coercion tuples
      * to the end of the queue.
-     *
-     * @param sourceType        the source type of the coercion
-     * @param intermediateTuple a tuple that converts from the source type to some intermediate type (that is not
-     *                          assignable to the target type)
-     * @param consideredTuples  set of tuples that have already been added to the pool (directly, or as a compound
-     *                          coercion)
-     * @param queue             the work queue of tuples
+     * 
+     * @param sourceType
+     *            the source type of the coercion
+     * @param intermediateTuple
+     *            a tuple that converts from the source type to some intermediate type (that is not
+     *            assignable to the target type)
+     * @param consideredTuples
+     *            set of tuples that have already been added to the pool (directly, or as a compound
+     *            coercion)
+     * @param queue
+     *            the work queue of tuples
      */
     @SuppressWarnings("unchecked")
     private void queueIntermediates(Class sourceType, CoercionTuple intermediateTuple,
-                                    Set<CoercionTuple> consideredTuples, LinkedList<CoercionTuple> queue)
+            Set<CoercionTuple> consideredTuples, LinkedList<CoercionTuple> queue)
     {
         Class intermediateType = intermediateTuple.getTargetType();
 
@@ -341,11 +355,13 @@ public class TypeCoercerImpl implements TypeCoercer
         {
             List<CoercionTuple> tuples = sourceTypeToTuple.get(c);
 
-            if (tuples == null) continue;
+            if (tuples == null)
+                continue;
 
             for (CoercionTuple tuple : tuples)
             {
-                if (consideredTuples.contains(tuple)) continue;
+                if (consideredTuples.contains(tuple))
+                    continue;
 
                 Class newIntermediateType = tuple.getTargetType();
 
@@ -354,7 +370,8 @@ public class TypeCoercerImpl implements TypeCoercer
                 // as branches that loop back towards the source type will
                 // eventually be considered and discarded.
 
-                if (sourceType.isAssignableFrom(newIntermediateType)) continue;
+                if (sourceType.isAssignableFrom(newIntermediateType))
+                    continue;
 
                 // The intermediateTuple coercer gets from S --> I1 (an intermediate type).
                 // The current tuple's coercer gets us from I2 --> X. where I2 is assignable
@@ -362,10 +379,10 @@ public class TypeCoercerImpl implements TypeCoercer
                 // intermediate type, hopefully closer to our eventual target type.
 
                 Coercion compoundCoercer = new CompoundCoercion(intermediateTuple.getCoercion(),
-                                                                tuple.getCoercion());
+                        tuple.getCoercion());
 
                 CoercionTuple compoundTuple = new CoercionTuple(sourceType, newIntermediateType,
-                                                                compoundCoercer, false);
+                        compoundCoercer, false);
 
                 // So, every tuple that is added to the queue can take as input the sourceType.
                 // The target type may be another intermdiate type, or may be something

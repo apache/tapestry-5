@@ -1,10 +1,10 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -72,6 +72,26 @@ public class TypeCoercerImplTest extends IOCInternalTestCase
     }
 
     @Test
+    public void explain_to_same_type()
+    {
+        assertEquals(coercer.explain(Integer.class, Integer.class), "");
+    }
+
+    /** TAP5-917 */
+    @Test
+    public void explain_primitive_to_wrapper_type()
+    {
+        assertEquals(coercer.explain(int.class, Integer.class), "");
+    }
+
+    /** TAP5-917 */
+    @Test
+    public void explain_wrapper_to_primitive_type()
+    {
+        assertEquals(coercer.explain(Integer.class, int.class), "");
+    }
+
+    @Test
     public void combined_coercion()
     {
         StringBuilder builder = new StringBuilder("12345");
@@ -113,7 +133,7 @@ public class TypeCoercerImplTest extends IOCInternalTestCase
             assertTrue(ex
                     .getMessage()
                     .contains(
-                    "Coercion of {} to type java.lang.Float (via Object --> String, String --> Double, Double --> Float) failed"));
+                            "Coercion of {} to type java.lang.Float (via Object --> String, String --> Double, Double --> Float) failed"));
             assertTrue(ex.getCause() instanceof NumberFormatException);
         }
     }
@@ -141,8 +161,9 @@ public class TypeCoercerImplTest extends IOCInternalTestCase
         Float floatValue = new Float(31.14);
         byte byte1 = 12, byte2 = 56;
         short short1 = 34, short2 = 98;
-        return new Object[][] {
-                // There's a lot of these!
+        return new Object[][]
+        {
+        // There's a lot of these!
 
                 { this, String.class, toString() },
 
@@ -206,25 +227,35 @@ public class TypeCoercerImplTest extends IOCInternalTestCase
 
                 { null, String.class, null },
 
-                { new Object[] { "a", 123 }, List.class, Arrays.asList("a", 123) },
+                { new Object[]
+                { "a", 123 }, List.class, Arrays.asList("a", 123) },
 
-                { new String[] { "a", "b" }, List.class, Arrays.asList("a", "b") },
+                { new String[]
+                { "a", "b" }, List.class, Arrays.asList("a", "b") },
 
-                { new byte[] { byte1, byte2 }, List.class, Arrays.asList(byte1, byte2) },
+                { new byte[]
+                { byte1, byte2 }, List.class, Arrays.asList(byte1, byte2) },
 
-                { new short[] { short1, short2 }, List.class, Arrays.asList(short1, short2) },
+                { new short[]
+                { short1, short2 }, List.class, Arrays.asList(short1, short2) },
 
-                { new int[] { 1, 2 }, List.class, Arrays.asList(1, 2) },
+                { new int[]
+                { 1, 2 }, List.class, Arrays.asList(1, 2) },
 
-                { new long[] { 123L, 321L }, List.class, Arrays.asList(123L, 321L) },
+                { new long[]
+                { 123L, 321L }, List.class, Arrays.asList(123L, 321L) },
 
-                { new float[] { 3.4f, 7.777f }, List.class, Arrays.asList(3.4f, 7.777f) },
+                { new float[]
+                { 3.4f, 7.777f }, List.class, Arrays.asList(3.4f, 7.777f) },
 
-                { new double[] { 3.4, 7.777 }, List.class, Arrays.asList(3.4, 7.777) },
+                { new double[]
+                { 3.4, 7.777 }, List.class, Arrays.asList(3.4, 7.777) },
 
-                { new char[] { 'a', 'b' }, List.class, Arrays.asList('a', 'b') },
+                { new char[]
+                { 'a', 'b' }, List.class, Arrays.asList('a', 'b') },
 
-                { new boolean[] { true, false }, List.class, Arrays.asList(true, false) },
+                { new boolean[]
+                { true, false }, List.class, Arrays.asList(true, false) },
 
                 { "foo/bar/baz.txt", File.class, new File("foo/bar/baz.txt") },
 
@@ -246,13 +277,16 @@ public class TypeCoercerImplTest extends IOCInternalTestCase
     @DataProvider
     public Object[][] explain_inputs()
     {
-        return new Object[][] {
-                { StringBuffer.class, Integer.class, "Object --> String, String --> Long, Long --> Integer" },
-                { void.class, Map.class, "null --> null" }, { void.class, Boolean.class, "null --> Boolean" },
+        return new Object[][]
+        {
+                { StringBuffer.class, Integer.class,
+                        "Object --> String, String --> Long, Long --> Integer" },
+                { void.class, Map.class, "null --> null" },
+                { void.class, Boolean.class, "null --> Boolean" },
                 { String[].class, List.class, "Object[] --> java.util.List" },
                 { Float.class, Double.class, "Float --> Double" },
-                { Double.class, BigDecimal.class, "Object --> String, String --> java.math.BigDecimal" },
-        };
+                { Double.class, BigDecimal.class,
+                        "Object --> String, String --> java.math.BigDecimal" }, };
     }
 
     @Test
@@ -262,7 +296,8 @@ public class TypeCoercerImplTest extends IOCInternalTestCase
 
         Object[] result = coercer.coerce(input, Object[].class);
 
-        assertArraysEqual(result, new Object[] { input });
+        assertArraysEqual(result, new Object[]
+        { input });
     }
 
     @Test
