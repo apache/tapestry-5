@@ -14,6 +14,7 @@
 
 package org.apache.tapestry5.internal.services;
 
+import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -50,8 +51,12 @@ public class PartialDocumentLinkerImplTest extends Assert
 
         linker.commit(reply);
 
-        assertEquals(reply.toString(),
-                "{\"stylesheets\":[{\"href\":\"foo.css\"},{\"media\":\"print\",\"href\":\"bar.css\"}]}");
+        // JDK version affect this (order of attributes), so it's the hard way.
 
+        JSONObject expected = new JSONObject().put("stylesheets", new JSONArray(new JSONObject()
+                .put("href", "foo.css"), new JSONObject().put("media", "print").put("href",
+                "bar.css")));
+
+        assertEquals(reply, expected);
     }
 }
