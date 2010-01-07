@@ -16,6 +16,7 @@ package org.apache.tapestry5;
 
 import java.io.Serializable;
 
+import org.apache.tapestry5.annotations.ImmutableSessionPersistedObject;
 import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.services.PageRenderLinkSource;
@@ -30,6 +31,7 @@ import org.apache.tapestry5.services.PageRenderLinkSource;
  * 
  * @since 5.2.0
  */
+@ImmutableSessionPersistedObject
 public class PageCallback implements Serializable
 {
     private static final long serialVersionUID = -8067619978636824702L;
