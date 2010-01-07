@@ -1,10 +1,10 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,105 +14,139 @@
 
 package org.apache.tapestry5.internal.transform;
 
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.annotations.AfterRender;
+import org.apache.tapestry5.annotations.AfterRenderBody;
+import org.apache.tapestry5.annotations.AfterRenderTemplate;
+import org.apache.tapestry5.annotations.BeforeRenderBody;
+import org.apache.tapestry5.annotations.BeforeRenderTemplate;
+import org.apache.tapestry5.annotations.BeginRender;
+import org.apache.tapestry5.annotations.CleanupRender;
+import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.internal.util.MethodInvocationBuilder;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.util.BodyBuilder;
 import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.services.ClassTransformation;
 import org.apache.tapestry5.services.ComponentClassTransformWorker;
 import org.apache.tapestry5.services.MethodFilter;
+import org.apache.tapestry5.services.TransformConstants;
 import org.apache.tapestry5.services.TransformMethodSignature;
 
-import java.lang.annotation.Annotation;
-import java.util.Iterator;
-import java.util.List;
-
 /**
- * Converts one of the methods of {@link org.apache.tapestry5.runtime.Component} into a chain of command that, itself,
- * invokes certain methods (render phase methods) marked with an annotation, or named in a specific way.
+ * Converts one of the methods of {@link org.apache.tapestry5.runtime.Component} into a chain of
+ * command that, itself,
+ * invokes certain methods (render phase methods) marked with an annotation, or named in a specific
+ * way.
  */
+@SuppressWarnings("unchecked")
 public class RenderPhaseMethodWorker implements ComponentClassTransformWorker
 {
     private static final String CHECK_ABORT_FLAG = "if ($2.isAborted()) return;";
 
-    private final Class<? extends Annotation> methodAnnotation;
-
-    private final TransformMethodSignature lifecycleMethodSignature;
-
-    private final String lifecycleMethodName;
-
-    private final boolean reverse;
-
     private final MethodInvocationBuilder invocationBuilder = new MethodInvocationBuilder();
 
-    /**
-     * Normal method invocation: parent class, then methods in ascending alphabetical order. Reverse order: method in
-     * descending alphabetical order, then parent class.
-     *
-     * @param lifecycleMethodSignature the signature of the method to be implemented in the component class
-     * @param methodAnnotation         the class of the corresponding annotation
-     * @param reverse                  if true, the normal method invocation order is reversed
-     */
-    public RenderPhaseMethodWorker(TransformMethodSignature lifecycleMethodSignature,
-                                   Class<? extends Annotation> methodAnnotation, boolean reverse)
+    private final Map<Class, TransformMethodSignature> annotationToSignature = CollectionFactory
+            .newMap();
+
+    private final Map<String, Class> nameToAnnotation = CollectionFactory.newCaseInsensitiveMap();
+
+    private final Set<Class> reverseAnnotations = CollectionFactory.newSet(AfterRenderBody.class,
+            AfterRenderTemplate.class, AfterRender.class, CleanupRender.class);
+
+    private final Set<TransformMethodSignature> lifecycleMethods = CollectionFactory.newSet();
+
     {
-        this.lifecycleMethodSignature = lifecycleMethodSignature;
-        this.methodAnnotation = methodAnnotation;
-        this.reverse = reverse;
-        lifecycleMethodName = lifecycleMethodSignature.getMethodName();
+        annotationToSignature.put(SetupRender.class, TransformConstants.SETUP_RENDER_SIGNATURE);
+        annotationToSignature.put(BeginRender.class, TransformConstants.BEGIN_RENDER_SIGNATURE);
+        annotationToSignature.put(BeforeRenderTemplate.class,
+                TransformConstants.BEFORE_RENDER_TEMPLATE_SIGNATURE);
+        annotationToSignature.put(BeforeRenderBody.class,
+                TransformConstants.BEFORE_RENDER_BODY_SIGNATURE);
+        annotationToSignature.put(AfterRenderBody.class,
+                TransformConstants.AFTER_RENDER_BODY_SIGNATURE);
+        annotationToSignature.put(AfterRenderTemplate.class,
+                TransformConstants.AFTER_RENDER_TEMPLATE_SIGNATURE);
+        annotationToSignature.put(AfterRender.class, TransformConstants.AFTER_RENDER_SIGNATURE);
+        annotationToSignature.put(CleanupRender.class, TransformConstants.CLEANUP_RENDER_SIGNATURE);
+
+        for (Map.Entry<Class, TransformMethodSignature> me : annotationToSignature.entrySet())
+        {
+            nameToAnnotation.put(me.getValue().getMethodName(), me.getKey());
+            lifecycleMethods.add(me.getValue());
+        }
 
         // If we ever add more parameters to the methods, then we can add more to the invocation
-        // builder.
-        // *Never* expose the Event parameter ($2), it is for internal use only.
+        // builder. *Never* expose the Event parameter ($2), it is for internal use only.
 
         invocationBuilder.addParameter(MarkupWriter.class.getName(), "$1");
     }
 
-    @Override
-    public String toString()
-    {
-        return String.format("RenderPhaseMethodWorker[%s]", methodAnnotation.getName());
-    }
-
     public void transform(final ClassTransformation transformation, MutableComponentModel model)
     {
+        Map<Class, List<TransformMethodSignature>> methods = CollectionFactory.newMap();
+
         MethodFilter filter = new MethodFilter()
         {
             public boolean accept(TransformMethodSignature signature)
             {
-                // These methods get added to base classes and otherwise fall into this filter. If
-                // we don't include this filter, then we get endless loops.
-
-                if (signature.equals(lifecycleMethodSignature)) return false;
-
-                // A degenerate case would be a method, say beginRender(), with an conflicting
-                // annotation, say @AfterRender. In that case, this code is broken, as the method
-                // will be invoked for both phases!
-
-                return (correctName(signature) || correctAnnotation(signature)) &&
-                        !transformation.isMethodOverride(signature);
-            }
-
-            private boolean correctAnnotation(TransformMethodSignature signature)
-            {
-                return transformation.getMethodAnnotation(signature, methodAnnotation) != null;
-            }
-
-            private boolean correctName(TransformMethodSignature signature)
-            {
-                return signature.getMethodName().equals(lifecycleMethodName);
+                return !transformation.isMethodOverride(signature)
+                        && !lifecycleMethods.contains(signature);
             }
         };
 
-        List<TransformMethodSignature> methods = transformation.findMethods(filter);
+        for (TransformMethodSignature sig : transformation.findMethods(filter))
+        {
+            Class categorized = null;
 
-        // Except in the root class, don't bother to add a new method unless there's something to
-        // call (beside super).
+            for (Class annotationClass : annotationToSignature.keySet())
+            {
+                if (transformation.getMethodAnnotation(sig, annotationClass) != null)
+                {
+                    categorized = annotationClass;
+                    break;
+                }
+            }
 
-        if (methods.isEmpty()) return;
+            // If no annotation, see if the method name maps to an annotation class
+            // and use that. Thus explicit annotations always override method name matching
+            // as per TAP5-266
 
-        model.addRenderPhase(methodAnnotation);
+            if (categorized == null)
+                categorized = nameToAnnotation.get(sig.getMethodName());
+
+            if (categorized != null)
+            {
+                InternalUtils.addToMapList(methods, categorized, sig);
+            }
+        }
+
+        if (methods.isEmpty())
+            return;
+
+        for (Map.Entry<Class, List<TransformMethodSignature>> me : methods.entrySet())
+        {
+            Class annotationClass = me.getKey();
+
+            model.addRenderPhase(annotationClass);
+
+            linkMethodsToRenderPhase(transformation, model, annotationToSignature
+                    .get(annotationClass), reverseAnnotations.contains(annotationClass), me
+                    .getValue());
+        }
+    }
+
+    public void linkMethodsToRenderPhase(ClassTransformation transformation,
+            MutableComponentModel model, TransformMethodSignature lifecycleMethodSignature,
+            boolean reverse, List<TransformMethodSignature> methods)
+    {
+        String lifecycleMethodName = lifecycleMethodSignature.getMethodName();
 
         BodyBuilder builder = new BodyBuilder();
         builder.begin();
@@ -125,8 +159,8 @@ public class RenderPhaseMethodWorker implements ComponentClassTransformWorker
             builder.addln(CHECK_ABORT_FLAG);
         }
 
-        Iterator<TransformMethodSignature> i = reverse ? InternalUtils.reverseIterator(methods) : methods
-                .iterator();
+        Iterator<TransformMethodSignature> i = reverse ? InternalUtils.reverseIterator(methods)
+                : methods.iterator();
 
         builder.addln("try");
         builder.begin();
@@ -136,8 +170,8 @@ public class RenderPhaseMethodWorker implements ComponentClassTransformWorker
 
         // In reverse order in a a subclass, invoke the super method last.
 
-        if (reverse && !model.isRootClass()) builder.addln("super.%s($$);", lifecycleMethodName);
-
+        if (reverse && !model.isRootClass())
+            builder.addln("super.%s($$);", lifecycleMethodName);
 
         builder.end(); // try
 
@@ -149,16 +183,14 @@ public class RenderPhaseMethodWorker implements ComponentClassTransformWorker
 
         builder.end();
 
-        // Let's see if this works; for base classes, we are adding an empty method the adding a
-        // non-empty
-        // method "on top of it".
+        // Let's see if this works; for base classes, we are adding an empty method then adding a
+        // non-empty method "on top of it".
 
         transformation.addMethod(lifecycleMethodSignature, builder.toString());
     }
 
-
     private void addMethodCallToBody(BodyBuilder builder, TransformMethodSignature sig,
-                                     ClassTransformation transformation)
+            ClassTransformation transformation)
     {
         boolean isVoid = sig.getReturnType().equals("void");
 

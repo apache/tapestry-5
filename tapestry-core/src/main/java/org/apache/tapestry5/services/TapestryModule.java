@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -487,8 +487,8 @@ public final class TapestryModule
      * <dd>Identifies unclaimed fields and resets them to null/0/false at the end of the request</dd>
      * <dt>RenderCommand</dt>
      * <dd>Ensures all components also implement {@link org.apache.tapestry5.runtime.RenderCommand}</dd>
-     * <dt>SetupRender, BeginRender, etc.</dt>
-     * <dd>Correspond to component render phases and annotations</dd>
+     * <dt>RenderPhase</dt>
+     * <dd>Link in render phaes methods</dd>
      * <dt>InvokePostRenderCleanupOnResources</dt>
      * <dd>Makes sure
      * {@link org.apache.tapestry5.internal.InternalComponentResources#postRenderCleanup()} is
@@ -553,26 +553,8 @@ public final class TapestryModule
         // have been properly setup.
 
         configuration.addInstance("BindParameter", BindParameterWorker.class, "after:Parameter");
-        
-        // Workers for the component rendering state machine methods; this is in
-        // typical
-        // execution order.
 
-        add(configuration, TransformConstants.SETUP_RENDER_SIGNATURE, SetupRender.class, false);
-        add(configuration, TransformConstants.BEGIN_RENDER_SIGNATURE, BeginRender.class, false);
-        add(configuration, TransformConstants.BEFORE_RENDER_TEMPLATE_SIGNATURE,
-                BeforeRenderTemplate.class, false);
-        add(configuration, TransformConstants.BEFORE_RENDER_BODY_SIGNATURE, BeforeRenderBody.class,
-                false);
-
-        // These phases operate in reverse order.
-
-        add(configuration, TransformConstants.AFTER_RENDER_BODY_SIGNATURE, AfterRenderBody.class,
-                true);
-        add(configuration, TransformConstants.AFTER_RENDER_TEMPLATE_SIGNATURE,
-                AfterRenderTemplate.class, true);
-        add(configuration, TransformConstants.AFTER_RENDER_SIGNATURE, AfterRender.class, true);
-        add(configuration, TransformConstants.CLEANUP_RENDER_SIGNATURE, CleanupRender.class, true);
+        configuration.addInstance("RenderPhase", RenderPhaseMethodWorker.class);
 
         // Ideally, these should be ordered pretty late in the process to make
         // sure there are no
@@ -1220,17 +1202,6 @@ public final class TapestryModule
         String name = TapestryInternalUtils.lastTerm(annotationClass.getName());
 
         configuration.add(name, worker);
-    }
-
-    private static void add(OrderedConfiguration<ComponentClassTransformWorker> configuration,
-            TransformMethodSignature signature, Class<? extends Annotation> annotationClass,
-            boolean reverse)
-    {
-        // make the name match the annotation class name.
-
-        String name = annotationClass.getSimpleName();
-
-        configuration.add(name, new RenderPhaseMethodWorker(signature, annotationClass, reverse));
     }
 
     // ========================================================================
