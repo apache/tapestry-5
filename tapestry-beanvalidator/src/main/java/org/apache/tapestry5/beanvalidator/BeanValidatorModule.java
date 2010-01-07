@@ -1,4 +1,4 @@
-// Copyright 2009 The Apache Software Foundation
+// Copyright 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,16 +13,19 @@
 // limitations under the License.
 package org.apache.tapestry5.beanvalidator;
 
-import java.util.Locale;
-
 import javax.validation.MessageInterpolator;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
+import javax.validation.constraints.NotNull;
 import javax.validation.groups.Default;
 
+import org.apache.tapestry5.Asset;
+import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.RenderSupport;
 import org.apache.tapestry5.internal.beanvalidator.BeanFieldValidatorDefaultSource;
 import org.apache.tapestry5.internal.beanvalidator.BeanValidationGroupSourceImpl;
 import org.apache.tapestry5.internal.beanvalidator.BeanValidatorSourceImpl;
+import org.apache.tapestry5.internal.beanvalidator.ClientConstraintDescriptorImpl;
 import org.apache.tapestry5.internal.beanvalidator.MessageInterpolatorImpl;
 import org.apache.tapestry5.ioc.Configuration;
 import org.apache.tapestry5.ioc.MappedConfiguration;
@@ -31,7 +34,11 @@ import org.apache.tapestry5.ioc.ServiceBinder;
 import org.apache.tapestry5.ioc.annotations.Local;
 import org.apache.tapestry5.ioc.services.PropertyShadowBuilder;
 import org.apache.tapestry5.ioc.services.ThreadLocale;
+import org.apache.tapestry5.services.AssetSource;
+import org.apache.tapestry5.services.Environment;
 import org.apache.tapestry5.services.FieldValidatorDefaultSource;
+import org.apache.tapestry5.services.MarkupRenderer;
+import org.apache.tapestry5.services.MarkupRendererFilter;
 
 /**
  * Module for JSR-303 services.
@@ -46,6 +53,7 @@ public class BeanValidatorModule
 					.withId("BeanFieldValidatorDefaultSource");
 		binder.bind(BeanValidatorGroupSource.class, BeanValidationGroupSourceImpl.class);
 		binder.bind(BeanValidatorSource.class, BeanValidatorSourceImpl.class);
+		binder.bind(ClientConstraintDescriptorSource.class, ClientConstraintDescriptorImpl.class);
 	}
 
 	public static void contributeServiceOverride(
@@ -84,6 +92,40 @@ public class BeanValidatorModule
 				configuration.messageInterpolator(new MessageInterpolatorImpl(defaultInterpolator, threadLocale));
 			}
 		});
+	}
+	
+	public static void contributeClientConstraintDescriptorSource(
+			final Configuration<ClientConstraintDescriptor> configuration) 
+	{
+		configuration.add(new ClientConstraintDescriptor(NotNull.class, "notnull"));
+	}
+	
+	public void contributeMarkupRenderer(
+			OrderedConfiguration<MarkupRendererFilter> configuration, 
+			
+			final AssetSource assetSource,
+			
+			final ThreadLocale threadLocale,
+			
+			final Environment environment)
+	{
+        MarkupRendererFilter injectBeanValidatorScript = new MarkupRendererFilter()
+        {
+            public void renderMarkup(MarkupWriter writer, MarkupRenderer renderer)
+            {
+                RenderSupport renderSupport = environment.peek(RenderSupport.class);
+                
+                Asset validators = assetSource.getAsset(null, "org/apache/tapestry5/beanvalidator/tapestry-beanvalidator.js",
+                        threadLocale.getLocale());
+
+                renderSupport.addScriptLink(validators);
+
+                renderer.renderMarkup(writer);
+            }
+        };
+        
+        
+        configuration.add("BeanValidatorScript", injectBeanValidatorScript, "after:*");
 	}
 
 }

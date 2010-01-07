@@ -1,4 +1,4 @@
-// Copyright 2009 The Apache Software Foundation
+// Copyright 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,47 +13,46 @@
 // limitations under the License.
 package org.apache.tapestry5.internal.beanvalidator;
 
-import static java.lang.String.format;
-
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.Locale;
-import java.util.Set;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.Field;
 import org.apache.tapestry5.FieldValidator;
-import org.apache.tapestry5.MarkupWriter;
-import org.apache.tapestry5.ValidationException;
 import org.apache.tapestry5.beanvalidator.BeanValidatorGroupSource;
-import org.apache.tapestry5.beanvalidator.BeanValidatorSource;
+import org.apache.tapestry5.beanvalidator.ClientConstraintDescriptorSource;
 import org.apache.tapestry5.internal.services.CompositeFieldValidator;
 import org.apache.tapestry5.ioc.AnnotationProvider;
 import org.apache.tapestry5.ioc.Messages;
-import org.apache.tapestry5.services.BeanValidationContext;
 import org.apache.tapestry5.services.Core;
 import org.apache.tapestry5.services.Environment;
 import org.apache.tapestry5.services.FieldValidatorDefaultSource;
+import org.apache.tapestry5.services.FormSupport;
 
 public class BeanFieldValidatorDefaultSource implements FieldValidatorDefaultSource 
 {
 	private final FieldValidatorDefaultSource fieldValidatorDefaultSource;
-	private final BeanValidatorSource beanValidatorSource;
+	private final ValidatorFactory validatorFactory;
 	private final BeanValidatorGroupSource beanValidationGroupSource;
+	private final ClientConstraintDescriptorSource clientValidatorSource;
+	private final FormSupport formSupport;
 	private final Environment environment;
 
 	public BeanFieldValidatorDefaultSource(
 			@Core FieldValidatorDefaultSource fieldValidatorDefaultSource,
-			final BeanValidatorSource beanValidatorSource,
+			final ValidatorFactory validatorFactory,
 			final BeanValidatorGroupSource beanValidationGroupSource,
+			final ClientConstraintDescriptorSource clientValidatorSource,
+			final FormSupport formSupport,
 			final Environment environment) 
 	{
 		this.fieldValidatorDefaultSource = fieldValidatorDefaultSource;
-		this.beanValidatorSource = beanValidatorSource;
+		this.validatorFactory = validatorFactory;
 		this.beanValidationGroupSource = beanValidationGroupSource;
+		this.clientValidatorSource = clientValidatorSource;
+		this.formSupport = formSupport;
 		this.environment = environment;
 	}
 
@@ -66,57 +65,10 @@ public class BeanFieldValidatorDefaultSource implements FieldValidatorDefaultSou
 		FieldValidator validator = fieldValidatorDefaultSource.createDefaultValidator(
 				field, overrideId, overrideMessages, locale, propertyType, propertyAnnotations);
 
-		FieldValidator beanValidator = new FieldValidator() {
-			
-			public boolean isRequired() 
-			{
-				return false;
-			}
-
-			public void render(final MarkupWriter writer) 
-			{
-			}
-
-			public void validate(final Object value) throws ValidationException 
-			{
-
-				final BeanValidationContext beanValidationContext = BeanFieldValidatorDefaultSource.this.environment
-						.peek(BeanValidationContext.class);
-
-				if (beanValidationContext == null) 
-				{
-					return;
-				}
-				
-				final Validator validator = BeanFieldValidatorDefaultSource.this.beanValidatorSource.create();
-				
-				final Set<ConstraintViolation<Object>> violations = validator.validateValue(
-								(Class<Object>) beanValidationContext.getObject().getClass(), overrideId, 
-								value, beanValidationGroupSource.get());
-				
-				if (violations.isEmpty()) 
-				{
-					return;
-				}
-				
-				final StringBuilder builder = new StringBuilder();
-				
-				for (Iterator iterator = violations.iterator(); iterator.hasNext();) 
-				{
-					ConstraintViolation<?> violation = (ConstraintViolation<Object>) iterator.next();
-					
-					builder.append(format("%s %s", field.getLabel(), violation.getMessage()));
-					
-					if(iterator.hasNext())
-						builder.append(", ");
-			
-				}
-				
-				throw new ValidationException(builder.toString());
-
-			}
-
-		};
+		
+		FieldValidator beanValidator 
+			= new BeanFieldValidator(field, overrideId, validatorFactory, beanValidationGroupSource, 
+					clientValidatorSource, formSupport, environment);
 		
 		return new CompositeFieldValidator(Arrays.asList(validator, beanValidator));
 	}

@@ -1,4 +1,4 @@
-// Copyright 2009 The Apache Software Foundation
+// Copyright 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -69,5 +69,36 @@ public class TapestryBeanValidationIntegrationTests extends AbstractIntegrationT
     	clickAndWait(SUBMIT);
 
     	assertTextPresent("User Name may not be null");
+    }
+    
+    public void client_validaton() throws Exception
+    {
+    	start("Client Validation Demo");
+    	
+    	click(SUBMIT);
+
+    	assertBubbleMessage("userName", "may not be null");
+    	
+    	type("userName", "igor");
+    	
+    	click(SUBMIT);
+
+    	assertBubbleMessage("password", "may not be null");
+    }
+    
+    protected final void assertBubbleMessage(String fieldId, String expected)
+    {
+        String popupId = fieldId + ":errorpopup";
+
+        waitForElementToAppear(popupId);
+
+        assertText(String.format("//div[@id='%s']/span", popupId), expected);
+    }
+    
+    protected final void waitForElementToAppear(String elementId)
+    {
+        String condition = String.format("window.$(\"%s\")", elementId);
+
+        waitForCondition(condition, PAGE_LOAD_TIMEOUT);
     }
 }

@@ -1,4 +1,4 @@
-// Copyright 2009, 2010 The Apache Software Foundation
+// Copyright 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -11,22 +11,21 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-package org.apache.tapestry5.services;
+package org.apache.tapestry5.beanvalidator;
+
+import org.apache.tapestry5.ioc.annotations.UsesConfiguration;
 
 /**
- * Defines a context for validating beans.
- * 
- * @since 5.2.0.0
+ * Source for {@link ClientConstraintDescriptor}.
+ *
  */
-public interface BeanValidationContext
+@UsesConfiguration(ClientConstraintDescriptor.class)
+public interface ClientConstraintDescriptorSource 
 {
-    /**
-     * Returns the type of the object to validate. This method is needed for client side validation.
-     */
-    Class getBeanType();
-    
-    /**
-     * Return the object to validate.
-     */
-    Object getBeanInstance();
+	/**
+	 * Return a {@link ClientConstraintDescriptor} for a constraint annotation or null.
+	 * 
+	 * @param annotationClass type of the constraint annotation
+	 */
+	ClientConstraintDescriptor getConstraintDescriptor(Class annotationClass);
 }
