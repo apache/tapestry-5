@@ -19,6 +19,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.annotations.AfterRender;
@@ -79,7 +80,7 @@ public class RenderPhaseMethodWorker implements ComponentClassTransformWorker
         annotationToSignature.put(AfterRender.class, TransformConstants.AFTER_RENDER_SIGNATURE);
         annotationToSignature.put(CleanupRender.class, TransformConstants.CLEANUP_RENDER_SIGNATURE);
 
-        for (Map.Entry<Class, TransformMethodSignature> me : annotationToSignature.entrySet())
+        for (Entry<Class<? extends Annotation>, TransformMethodSignature> me : annotationToSignature.entrySet())
         {
             nameToAnnotation.put(me.getValue().getMethodName(), me.getKey());
             lifecycleMethods.add(me.getValue());
