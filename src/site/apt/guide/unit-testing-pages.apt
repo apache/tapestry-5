@@ -10,7 +10,7 @@ Unit testing pages or components
 * Setting up a driving environment
 
   In order to unit test a page, you'll need to create an instance of 
-  {{{../apidocs/org/apache/tapestry5/test/pagelevel/PageTester.html}PageTester}}.
+  {{{../apidocs/org/apache/tapestry5/test/PageTester.html}PageTester}}.
   It acts as both the browser and the servlet container so that you can
   use it to drive your page. 
   
@@ -134,7 +134,7 @@ public class MyTest extends Assert
 +---+
 
   To submit a form by clicking a submit button, call the
-  {{{../apidocs/org/apache/tapestry5/test/pagelevel/PageTester.html#clickSubmit(org.apache.tapestry5.dom.Element, java.util.Map)}clickSubmit()}}
+  {{{../apidocs/org/apache/tapestry5/test/PageTester.html#clickSubmit(org.apache.tapestry5.dom.Element, java.util.Map)}clickSubmit()}}
   method instead.
 
 * Unit testing a component
