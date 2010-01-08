@@ -14,6 +14,10 @@
 
 package org.apache.tapestry5.test;
 
+import java.io.IOException;
+import java.util.Locale;
+import java.util.Map;
+
 import org.apache.tapestry5.Link;
 import org.apache.tapestry5.dom.Document;
 import org.apache.tapestry5.dom.Element;
@@ -34,11 +38,6 @@ import org.apache.tapestry5.services.ApplicationGlobals;
 import org.apache.tapestry5.services.RequestHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.util.Locale;
-import java.util.Map;
-import java.util.regex.Pattern;
 
 /**
  * This class is used to run a Tapestry app in a single-threaded, in-process testing environment.
@@ -514,7 +513,7 @@ public class PageTester
             if (e.getName().equalsIgnoreCase(ancestorName))
                 return e;
 
-            e = e.getParent();
+            e = e.getContainer();
         }
 
         throw new RuntimeException(String.format(
