@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//      http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,6 +14,7 @@
 
 package org.apache.tapestry5.internal.services;
 
+import org.apache.tapestry5.ioc.annotations.UsesConfiguration;
 import org.apache.tapestry5.services.AssetPathAuthorizer;
 
 import java.util.ArrayList;
@@ -30,35 +31,32 @@ import java.util.regex.Pattern;
  * the whitelist authorizer, which has an explicit deny policy.
  * Hence, as long as the whitelist authorizer is being used in conjunction with
  * the regex authorizer, there is no need to worry about accessDenied in this authorizer.
- *
  */
+@UsesConfiguration(String.class)
 public class RegexAuthorizer implements AssetPathAuthorizer
 {
-    
+
     private final Collection<Pattern> _regexes;
-    
+
     public RegexAuthorizer(final Collection<String> regex)
     {
-        //an alternate way to construct this would be to make sure that each pattern is grouped
-        //and then to regex or the various patterns together into a single pattern.
-        //that might be faster, but probably not enough to make a difference, and this is cleaner.
+        // an alternate way to construct this would be to make sure that each pattern is grouped
+        // and then to regex or the various patterns together into a single pattern.
+        // that might be faster, but probably not enough to make a difference, and this is cleaner.
         List<Pattern> tmp = new ArrayList<Pattern>();
-        for(String exp : regex)
+        for (String exp : regex)
         {
             tmp.add(Pattern.compile(exp));
         }
         _regexes = Collections.unmodifiableCollection(tmp);
-        
+
     }
 
     public boolean accessAllowed(String resourcePath)
     {
-        for(Pattern regex : _regexes)
+        for (Pattern regex : _regexes)
         {
-            if (regex.matcher(resourcePath).matches())
-            {
-                return true;
-            }
+            if (regex.matcher(resourcePath).matches()) { return true; }
         }
         return false;
     }
@@ -68,7 +66,7 @@ public class RegexAuthorizer implements AssetPathAuthorizer
         return false;
     }
 
-    public List<Order> order() 
+    public List<Order> order()
     {
         return Arrays.asList(Order.ALLOW);
     }

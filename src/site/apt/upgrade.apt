@@ -14,6 +14,16 @@ Upgrade Notes
 
 Release 5.2.0
 
+* Asset Security
+
+  Tapestry now includes a new mechanism for ensuring the security of server-side assets, addressing a bug
+  that allowed a malicious user to search and download any file on the classpath. The new approach
+  is more secure, but is based on explicitly extending access; some existing frameworks (created to
+  be compatible with Tapestry 5.1) will need additional configuration to extend access to their
+  assets.  See the {{{guide/assets.html}notes on securing Assets}}. 
+
+* Template Parser back to SAX
+
   Tapestry no longer uses a StAX parser (it uses a normal SAX parser) to parse template. This change
   reduces the number of dependencies for Tapestry, and is a stepping stone to compatibility with
   Google App Engine.
