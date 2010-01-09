@@ -213,7 +213,24 @@ Step 5: Configure the module to autoload
 
 ----
 
-Step 6: Versioning Assets
+Step 6: Extending Client Access
+
+  As of Tapestry 5.2, a new step is needed: {{{../guide/assets.html}extending access for the assets}}.
+  
+  This is accomplished in your library's module class, HappyModule:
+  
+----
+  public static void contributeRegexAuthorizer(Configuration<String> configuration)
+  {
+    configuration.add("^org/example/happylib/.*\\.jpg$");
+  }  
+----
+
+  This contribution uses a regular expression to identify that any resource on the classpath under the
+  org/example/happylib folder with a <<<jpg>>> extension is allowed.  If you had a mix of different
+  image types, you could replace <<<jpg>>> with <<<(jpg|gif|png)>>>.
+
+Step 7: Versioning Assets
 
   Classpath assets, those packaged in JAR files (such as the happy.jpg asset) are retrieved by the client web browser
   using a URL that reflects the package name.                  Tapestry users a special virtual folder, <<</assets>>>, under
