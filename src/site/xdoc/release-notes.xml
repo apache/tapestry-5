@@ -20,11 +20,73 @@
     </properties>
     <body>
 
-        <p>This document contains release notes for current release of Tapestry, release 5.1.
-            There are also<a href="release-notes-5.0.html">release notes for Tapestry 5.0</a>.
+		<p>This document contains the release notes for Tapestry 5.1.
+			You can also read the <a href="release-notes-5.0.html">the Tapestry 5.0 release notes</a>.
         </p>
 
-
+		<h1>Release Notes - Tapestry 5 - Version 5.1.0.7</h1>
+		
+		<h2>Bug</h2>
+		<ul>
+			<li>[<a href='https://issues.apache.org/jira/browse/TAP5-711'>TAP5-711</a>] -         Submit component: using image parameter brakes &quot;Selected&quot; events
+			</li>
+			<li>[<a href='https://issues.apache.org/jira/browse/TAP5-714'>TAP5-714</a>] -         Incorrect encoding of single quotes for Ajax requests
+			</li>
+			<li>[<a href='https://issues.apache.org/jira/browse/TAP5-719'>TAP5-719</a>] -         Component LinkSubmit doesn't work
+			</li>
+			<li>[<a href='https://issues.apache.org/jira/browse/TAP5-734'>TAP5-734</a>] -         Tapestry tutorial documentation refers to old archtype command
+			</li>
+			<li>[<a href='https://issues.apache.org/jira/browse/TAP5-749'>TAP5-749</a>] -         The FormFragment and LinkSubmit components create a hidden field whose id ends with &quot;:hidden&quot;
+			</li>
+			<li>[<a href='https://issues.apache.org/jira/browse/TAP5-755'>TAP5-755</a>] -         URL rewriting documentation contains an example that won't compile due to lack of a return value
+			</li>
+			<li>[<a href='https://issues.apache.org/jira/browse/TAP5-767'>TAP5-767</a>] -         PropertyConduitSourceImpl should use english locale (instead of default locale) when evaluating decimals
+			</li>
+			<li>[<a href='https://issues.apache.org/jira/browse/TAP5-779'>TAP5-779</a>] -         CLONE -Linksubmit doesn't work inside a form with Zone parameter set
+			</li>
+			<li>[<a href='https://issues.apache.org/jira/browse/TAP5-815'>TAP5-815</a>] -         Asset dispatcher allows any file inside the webapp visible and downloadable
+			</li>
+			<li>[<a href='https://issues.apache.org/jira/browse/TAP5-837'>TAP5-837</a>] -         prototype1.6.0 not support for ie8
+			</li>
+			<li>[<a href='https://issues.apache.org/jira/browse/TAP5-868'>TAP5-868</a>] -         It is not possible to attach a validation event listener to a Palette (or other &lt;select&gt; field)
+			</li>
+			<li>[<a href='https://issues.apache.org/jira/browse/TAP5-894'>TAP5-894</a>] -         Fix PartialMarkupDocumentLinkerTest.stylesheet_link() 
+			</li>
+			<li>[<a href='https://issues.apache.org/jira/browse/TAP5-896'>TAP5-896</a>] -         Contribute 'properties' file extension to the configuration of ResourceDigestGenerator
+			</li>
+			<li>[<a href='https://issues.apache.org/jira/browse/TAP5-913'>TAP5-913</a>] -         Stack size too large exception, related to PropertyExpressionLexer
+			</li>
+			<li>[<a href='https://issues.apache.org/jira/browse/TAP5-936'>TAP5-936</a>] -         Tapestry wiki link links to nothing for locales other then en
+			</li>
+		</ul>
+		
+		<h2>Improvement</h2>
+		<ul>
+			<li>[<a href='https://issues.apache.org/jira/browse/TAP5-88'>TAP5-88</a>] -         Add support for Bulgarian locale
+			</li>
+			<li>[<a href='https://issues.apache.org/jira/browse/TAP5-762'>TAP5-762</a>] -         Upgrade Selenium dependencies to version 1.0.1
+			</li>
+			<li>[<a href='https://issues.apache.org/jira/browse/TAP5-912'>TAP5-912</a>] -         Validation of properties of type java.util.Collection should fail when the collection is empty
+			</li>
+			<li>[<a href='https://issues.apache.org/jira/browse/TAP5-958'>TAP5-958</a>] -         Upgrade Tapestry's built-in copy of prototype.js to version 1.6.1
+			</li>
+			<li>[<a href='https://issues.apache.org/jira/browse/TAP5-963'>TAP5-963</a>] -         Allow access to static resources (css, js, jpg, jpeg, png, gif) inside the app package
+			</li>
+		</ul>
+		
+		<h2>New Feature</h2>
+		<ul>
+			<li>[<a href='https://issues.apache.org/jira/browse/TAP5-138'>TAP5-138</a>] -         Add Zone parameter to Select component
+			</li>
+		</ul>
+		
+		<h2>Task</h2>
+		<ul>
+			<li>[<a href='https://issues.apache.org/jira/browse/TAP5-556'>TAP5-556</a>] -         Fix TranslatorSourceImplTest
+			</li>
+			<li>[<a href='https://issues.apache.org/jira/browse/TAP5-819'>TAP5-819</a>] -         remove ide-specific files from all sub-modules and add them to svn:ignore
+			</li>
+</ul>
 		
 		<h1>Release Notes - Tapestry 5 - Version 5.1.0.6</h1>
 		
