@@ -57,6 +57,11 @@ Persistence Strategies
   
   The flash is typically used to store temporary messages that should only be displayed to the user
   once.
+
++----+
+  @Persist(PersistenceConstants.FLASH)
+  private String message;
++----+
   
 * client strategy
 
@@ -73,7 +78,11 @@ Persistence Strategies
   
   Use client persistence with care, and store a minimal amount of data.  Try to store the identity (that is,
   primary key) of an object, rather than the object itself.
- 
+
++----+
+  @Persist(PersistenceConstants.CLIENT)
+  private String message;
++----+
   
 Persistence Search
 
