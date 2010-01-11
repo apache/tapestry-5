@@ -131,7 +131,7 @@ public class LinkImpl implements Link
 
         builder.append(absoluteURI);
 
-        String sep = "?";
+        String sep = absoluteURI.contains("?") ? "&" : "?";
 
         for (String name : getParameterNames())
         {

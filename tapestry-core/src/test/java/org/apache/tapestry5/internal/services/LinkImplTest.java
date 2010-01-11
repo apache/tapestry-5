@@ -16,9 +16,7 @@ package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.Link;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
-import org.apache.tapestry5.services.ContextPathEncoder;
 import org.apache.tapestry5.services.Response;
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 public class LinkImplTest extends InternalBaseTestCase
@@ -28,14 +26,6 @@ public class LinkImplTest extends InternalBaseTestCase
     private static final String OPTIMIZED = "../baz/path";
 
     private static final String ENCODED = "*encoded*";
-
-    private ContextPathEncoder contextPathEncoder;
-
-    @BeforeClass
-    public void setup()
-    {
-        contextPathEncoder = getService(ContextPathEncoder.class);
-    }
 
     @Test
     public void simple_redirect()
@@ -130,5 +120,26 @@ public class LinkImplTest extends InternalBaseTestCase
 
 
         verify();
+    }
+
+    @Test
+    public void to_uri_with_added_parameters_and_on_construction_uri()
+    {
+    	RequestPathOptimizer optimizer = mockRequestPathOptimizer();
+    	Response response = mockResponse();
+    	
+    	String expectedURI = "/ctx/foo?foo=bar&baz=barney";
+		train_encodeURL(response, expectedURI, expectedURI);
+    	
+    	replay();
+    	
+    	
+    	Link link = new LinkImpl("/ctx/foo?foo=bar", false, false, response, optimizer);
+    	link.addParameter("baz", "barney");
+    	
+    	assertEquals(link.toURI(), expectedURI);
+    	
+    	
+    	verify();
     }
 }
