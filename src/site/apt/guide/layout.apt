@@ -15,7 +15,14 @@ Layout Component
 
   Tapestry doesn't have a mechanism for such includes, nor does it have the need.
 
-  Instead, you can create a component that acts like a template for your pages.
+  Instead, you can create a component that acts like a template for your pages.  It consists of a 
+  template file <Layout.tml> and a Java class <Layout.java>. 
+  
+  In a typical maven project, the template file should be stored in the package <src/main/resources/MY_TAPESTRY_APP_PACKAGE/components>. 
+  The Java file should be stored in the package <src/main/java/MY_TAPESTRY_APP_PACKAGE/components>.
+
+  See {{{project-layout.html}Project Layout}}.
+
 
 * Layout.tml
 
