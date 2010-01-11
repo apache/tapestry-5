@@ -283,5 +283,12 @@ public class SymbolConstants
      * without explicit user contributions.
      */
     public static final String CONTEXT_ASSETS_AVAILABLE ="tapestry.context-assets-available";
+    
+    /**
+     * The default javascript (tapestry.js) automatically injected into every rendered HTML page. 
+     *
+     * @since 5.2.0.0
+     */
+    public static final String DEFAULT_JAVASCRIPT = "tapestry.default-javascript";
 
 }

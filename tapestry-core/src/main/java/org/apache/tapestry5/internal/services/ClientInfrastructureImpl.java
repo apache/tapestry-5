@@ -56,7 +56,7 @@ public class ClientInfrastructureImpl implements ClientInfrastructure
 
                     // Uses functions defined by the prior three
 
-                    "org/apache/tapestry5/tapestry.js",
+                    "${tapestry.default-javascript}",
             };
 
     private static final String[] CORE_STYLESHEET = new String[]

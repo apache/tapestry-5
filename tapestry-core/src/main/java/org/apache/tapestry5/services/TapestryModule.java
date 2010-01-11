@@ -2317,6 +2317,9 @@ public final class TapestryModule
 
         configuration.add(SymbolConstants.START_PAGE_NAME, "start");
 
+        configuration.add(SymbolConstants.DEFAULT_JAVASCRIPT,
+        		"classpath:/org/apache/tapestry5/tapestry.js");
+        
         configuration.add(SymbolConstants.DEFAULT_STYLESHEET,
                 "classpath:/org/apache/tapestry5/default.css");
         configuration.add("tapestry.spacer-image", "classpath:/org/apache/tapestry5/spacer.gif");
