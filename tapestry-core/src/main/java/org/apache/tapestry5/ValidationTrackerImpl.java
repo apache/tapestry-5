@@ -1,4 +1,4 @@
-// Copyright 2006, 2008 The Apache Software Foundation
+// Copyright 2006, 2008, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -22,7 +22,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Standard implmentation of {@link ValidationTracker}. Works pretty hard to ensure a minimum amount of data is stored
+ * Standard implementation of {@link ValidationTracker}. Works pretty hard to ensure a minimum
+ * amount of data is stored
  * in the HttpSession.
  */
 public final class ValidationTrackerImpl extends BaseOptimizedSessionPersistedObject implements ValidationTracker, Serializable
