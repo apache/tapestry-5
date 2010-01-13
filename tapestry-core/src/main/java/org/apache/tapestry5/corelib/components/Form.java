@@ -47,19 +47,17 @@ import java.io.ObjectInputStream;
  * <p/>
  * A Form emits many notification events. When it renders, it fires a
  * {@link org.apache.tapestry5.EventConstants#PREPARE_FOR_RENDER} notification, followed by a
- * {@link org.apache.tapestry5.EventConstants#PREPARE} notification.
+ * {@link EventConstants#PREPARE} notification.
  * <p/>
  * When the form is submitted, the component emits several notifications: first a
- * {@link org.apache.tapestry5.EventConstants#PREPARE_FOR_SUBMIT}, then a
- * {@link org.apache.tapestry5.EventConstants#PREPARE}: these allow the page to update its state as
- * necessary to prepare for the form submission, then (after components enclosed by the form have
- * operated), a {@link org.apache.tapestry5.EventConstants#VALIDATE_FORM} event is emitted, to allow
- * for cross-form validation. After that, either a
- * {@link org.apache.tapestry5.EventConstants#SUCCESS} OR
- * {@link org.apache.tapestry5.EventConstants#FAILURE} event (depending on whether the
- * {@link ValidationTracker} has recorded any errors). Lastly, a
- * {@link org.apache.tapestry5.EventConstants#SUBMIT} event, for any listeners that care only about
- * form submission, regardless of success or failure.
+ * {@link EventConstants#PREPARE_FOR_SUBMIT}, then a {@link EventConstants#PREPARE}: these allow the
+ * page to update its state as necessary to prepare for the form submission, then (after components
+ * enclosed by the form have operated), a {@link EventConstants#VALIDATE} event is emitted (followed
+ * by a {@link EventConstants#VALIDATE_FORM} event, for backwards compatibility), to allow for
+ * cross-form validation. After that, either a {@link EventConstants#SUCCESS} OR
+ * {@link EventConstants#FAILURE} event (depending on whether the {@link ValidationTracker} has
+ * recorded any errors). Lastly, a {@link EventConstants#SUBMIT} event, for any listeners that care
+ * only about form submission, regardless of success or failure.
  * <p/>
  * For all of these notifications, the event context is derived from the <strong>context</strong>
  * parameter. This context is encoded into the form's action URI (the parameter is not read when the
@@ -67,42 +65,42 @@ import java.io.ObjectInputStream;
  */
 @Events(
 { EventConstants.PREPARE_FOR_RENDER, EventConstants.PREPARE, EventConstants.PREPARE_FOR_SUBMIT,
-        EventConstants.VALIDATE_FORM, EventConstants.SUBMIT, EventConstants.FAILURE,
-        EventConstants.SUCCESS })
+        EventConstants.VALIDATE, EventConstants.VALIDATE_FORM, EventConstants.SUBMIT,
+        EventConstants.FAILURE, EventConstants.SUCCESS })
 public class Form implements ClientElement, FormValidationControl
 {
     /**
-     * @deprecated Use constant from {@link org.apache.tapestry5.EventConstants} instead.
+     * @deprecated Use constant from {@link EventConstants} instead.
      */
     public static final String PREPARE_FOR_RENDER = EventConstants.PREPARE_FOR_RENDER;
 
     /**
-     * @deprecated Use constant from {@link org.apache.tapestry5.EventConstants} instead.
+     * @deprecated Use constant from {@link EventConstants} instead.
      */
     public static final String PREPARE_FOR_SUBMIT = EventConstants.PREPARE_FOR_SUBMIT;
 
     /**
-     * @deprecated Use constant from {@link org.apache.tapestry5.EventConstants} instead.
+     * @deprecated Use constant from {@link EventConstants} instead.
      */
     public static final String PREPARE = EventConstants.PREPARE;
 
     /**
-     * @deprecated Use constant from {@link org.apache.tapestry5.EventConstants} instead.
+     * @deprecated Use constant from {@link EventConstants} instead.
      */
     public static final String SUBMIT = EventConstants.SUBMIT;
 
     /**
-     * @deprecated Use constant from {@link org.apache.tapestry5.EventConstants} instead.
+     * @deprecated Use constant from {@link EventConstants} instead.
      */
     public static final String VALIDATE_FORM = EventConstants.VALIDATE_FORM;
 
     /**
-     * @deprecated Use constant from {@link org.apache.tapestry5.EventConstants} instead.
+     * @deprecated Use constant from {@link EventConstants} instead.
      */
     public static final String SUCCESS = EventConstants.SUCCESS;
 
     /**
-     * @deprecated Use constant from {@link org.apache.tapestry5.EventConstants} instead.
+     * @deprecated Use constant from {@link EventConstants} instead.
      */
     public static final String FAILURE = EventConstants.FAILURE;
 
@@ -172,7 +170,7 @@ public class Form implements ClientElement, FormValidationControl
     /**
      * Prefix value used when searching for validation messages and constraints.
      * The default is the Form component's
-     * id. This is overriden by {@link org.apache.tapestry5.corelib.components.BeanEditForm}.
+     * id. This is overridden by {@link org.apache.tapestry5.corelib.components.BeanEditForm}.
      * 
      * @see org.apache.tapestry5.services.FormSupport#getFormValidationId()
      */
@@ -230,6 +228,7 @@ public class Form implements ClientElement, FormValidationControl
     /**
      * Set up via the traditional or Ajax component event request handler
      */
+    @SuppressWarnings("unchecked")
     @Environmental
     private ComponentEventResultProcessor componentEventResultProcessor;
 
@@ -531,11 +530,22 @@ public class Form implements ClientElement, FormValidationControl
     }
 
     private void fireValidateFormEvent(EventContext context,
+            ComponentResultProcessorWrapper callback) throws IOException
+    {
+        fireValidateEvent(EventConstants.VALIDATE, context, callback);
+
+        if (callback.isAborted())
+            return;
+
+        fireValidateEvent(EventConstants.VALIDATE_FORM, context, callback);
+    }
+
+    private void fireValidateEvent(String eventName, EventContext context,
             ComponentResultProcessorWrapper callback)
     {
         try
         {
-            resources.triggerContextEvent(EventConstants.VALIDATE_FORM, context, callback);
+            resources.triggerContextEvent(eventName, context, callback);
         }
         catch (RuntimeException ex)
         {

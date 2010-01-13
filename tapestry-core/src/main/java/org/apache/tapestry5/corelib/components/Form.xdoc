@@ -132,6 +132,7 @@
                 <ul>
                     <li>prepareForSubmit</li>
                     <li>prepare</li>
+                    <li>validate</li>
                     <li>validateForm</li>
                     <li>failure
                         <em>or</em>
@@ -141,8 +142,10 @@
                 </ul>
 
                 <p>
-                    The validateForm event is to allow the page to
-                    perform cross-field validation. The failure or success
+                    The validate event is to allow the page to
+                    perform cross-field validation. The validateForm event is a deprecated name for the
+                    validate event (it currently exists only for backwards compatibility).
+                    The failure or success
                     event is fired based on whether there are or are not any
                     validation errors.
                 </p>

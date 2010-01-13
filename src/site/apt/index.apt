@@ -93,7 +93,7 @@ public class Login
   @Inject
   private LoginAuthenticator authenticator;
 
-  void onValidateForm()
+  void onValidateFromForm()
   {
     if (! authenticator.isValidLogin(userId, password))
     {
@@ -110,10 +110,10 @@ public class Login
 +----+
 
   This short snippet demonstrates a bit about how Tapestry operates.  Pages and services
-  within the application are injected with the @Inject annotation. The method names, onValidateForm()
+  within the application are injected with the @Inject annotation. The method names, onValidateFromForm()
   and onSuccess(),
-  inform Tapestry about when the method is to be invoked.  The two events <validateForm> and <success> occur
-  when a form is submitted; "validateForm" is triggered to perform cross-field validations, and "success" is
+  inform Tapestry about when the method is to be invoked.  The two events <validate> and <success> occur
+  when a form is submitted; "validate" is triggered to perform cross-field validations, and "success" is
   only triggered when there are no validation errors. The onSuccess() method's
   return value directs Tapestry on what to do next: jump to another page within the application
   (here identified as the class for the page, but many other options exist).  When there are exceptions,

@@ -178,7 +178,7 @@
                     the method does (i.e.,
                     <code>validateUserCredentials()</code>
                     instead of
-                    <code>onValidateFormFromLogin()</code>).
+                    <code>onValidateFromLogin()</code>).
                 </p>
 
                 <p>
