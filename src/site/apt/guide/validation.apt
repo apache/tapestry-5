@@ -89,62 +89,49 @@ Storing Data Between Requests
 public class Login
 {
     @Persist
+    @Property
     private String userName;
 
+    @Property
     private String password;
 
     @Inject
     private UserAuthenticator authenticator;
 
-    @Component(id = "password")
+    @InjectComponent(id = "password")
     private PasswordField passwordField;
 
     @Component
     private Form form;
 
-    String onSuccess()
+    void onValidateFromForm()
     {
         if (!authenticator.isValid(userName, password))
         {
             form.recordError(passwordField, "Invalid user name or password.");
-            return null;
         }
-
-        return "PostLogin";
     }
 
-    public String getPassword()
+    Object onSuccess()
     {
-        return password;
-    }
-
-    public void setPassword(String password)
-    {
-        password = password;
-    }
-
-    public String getUserName()
-    {
-        return userName;
-    }
-
-    public void setUserName(String userName)
-    {
-        userName = userName;
+        return PostLogin.class;
     }
 }
 +---+  
 
 	Because of the the fact that a form submission is <two> requests (the submission itself, then a re-render of the page),
-	it is necessary to make the value stored in the _userName field persist between the two requests. This would be necessary
-	for the _password field as well, except that the 
+	it is necessary to make the value stored in the userName field persist between the two requests. This would be necessary
+	for the password field as well, except that the 
 	{{{../tapestry-core/ref/org/apache/tapestry5/corelib/components/PasswordField.html}PasswordField}} component never renders a value.
+	
+	The method onValidateFromForm() is invoked first: it's name indicates a "validate" event from the "form" component; it exists
+	to perform cross-field validation
 	
 	Note that the onSuccess() method is not public; event handler methods can have any visibility, even private.  Package private
 	(that is, no modifier) is the typical use, as it allows the component to be tested, from a test case class in the same package.
 	
 	The Form only emits a "success" event if the there are no prior validation errors.  This means it is not necessary to
-	write <<<if (_form.getHasErrors()) return;>>> as the first line of the method.
+	write <<<if (form.getHasErrors()) return;>>> as the first line of the method.
 	
 	Finally, notice how business logic fits into validation.  The UserAuthenticator service is responsible for ensuring
 	that the userName and (plaintext) password are valid. When it returns false, we ask the Form component
@@ -153,7 +140,7 @@ public class Login
 
 Configuring Fields and Labels
 
-	The template for page contains a minimal amount of Tapestry instrumentation:
+	The template for the Login page contains a minimal amount of Tapestry instrumentation:
 	
 +---+
 <html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd">
