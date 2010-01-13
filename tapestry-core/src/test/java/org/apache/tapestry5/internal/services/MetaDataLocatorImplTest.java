@@ -1,10 +1,10 @@
-// Copyright 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2007, 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,6 +17,8 @@ package org.apache.tapestry5.internal.services;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newMap;
+
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.services.SymbolSource;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.model.ComponentModel;
@@ -58,7 +60,8 @@ public class MetaDataLocatorImplTest extends InternalBaseTestCase
 
         Map<String, String> configuration = Collections.emptyMap();
 
-        MetaDataLocator locator = new MetaDataLocatorImpl(symbolSource, typeCoercer, modelSource, configuration);
+        MetaDataLocator locator = new MetaDataLocatorImpl(symbolSource, typeCoercer, modelSource,
+                configuration);
 
         assertSame(locator.findMeta(key, resources, String.class), value);
 
@@ -71,6 +74,105 @@ public class MetaDataLocatorImplTest extends InternalBaseTestCase
         replay();
 
         assertSame(locator.findMeta(key, resources, String.class), value);
+
+        verify();
+    }
+
+    @Test
+    public void default_to_symbol_source()
+    {
+        ComponentResources resources = mockComponentResources();
+        ComponentModel model = mockComponentModel();
+        SymbolSource symbolSource = mockSymbolSource();
+        ComponentModelSource modelSource = mockComponentModelSource();
+
+        String key = "foo.bar";
+        String value = "zaphod";
+        String completeId = "foo/Bar:baz";
+
+        train_getCompleteId(resources, completeId);
+        train_getComponentModel(resources, model);
+        train_getMeta(model, key, null);
+        train_getContainerResources(resources, null);
+        train_getPageName(resources, "foo/Bar");
+        train_valueForSymbol(symbolSource, key, value);
+
+        replay();
+
+        Map<String, String> configuration = Collections.emptyMap();
+
+        MetaDataLocator locator = new MetaDataLocatorImpl(symbolSource, typeCoercer, modelSource,
+                configuration);
+
+        assertSame(locator.findMeta(key, resources, String.class), value);
+
+        verify();
+
+        // And check that it's cached:
+
+        train_getCompleteId(resources, completeId);
+
+        replay();
+
+        assertSame(locator.findMeta(key, resources, String.class), value);
+
+        verify();
+    }
+
+    @Test
+    public void find_by_page_name()
+    {
+        ComponentModel model = mockComponentModel();
+        SymbolSource symbolSource = mockSymbolSource();
+        ComponentModelSource modelSource = mockComponentModelSource();
+
+        String key = "foo.bar";
+        String value = "zaphod";
+        String pageName = "foo/Bar";
+
+        expect(modelSource.getPageModel(pageName)).andReturn(model);
+
+        train_getMeta(model, key, value);
+        train_expandSymbols(symbolSource, value, "*expanded*");
+
+        replay();
+
+        Map<String, String> configuration = Collections.emptyMap();
+
+        MetaDataLocator locator = new MetaDataLocatorImpl(symbolSource, typeCoercer, modelSource,
+                configuration);
+
+        assertSame(locator.findMeta(key, pageName, String.class), "*expanded*");
+
+        verify();
+    }
+
+    @Test
+    public void not_found_by_page_name_but_found_in_configuration()
+    {
+        ComponentModel model = mockComponentModel();
+        SymbolSource symbolSource = mockSymbolSource();
+        ComponentModelSource modelSource = mockComponentModelSource();
+
+        String key = "foo.bar";
+        String value = "zaphod";
+        String pageName = "gnip/Gnop";
+
+        expect(modelSource.getPageModel(pageName)).andReturn(model);
+
+        train_getMeta(model, key, null);
+        train_expandSymbols(symbolSource, value, "*expanded*");
+
+        replay();
+
+        Map<String, String> configuration = CollectionFactory.newMap();
+        
+        configuration.put("gnip:foo.bar", value);
+
+        MetaDataLocator locator = new MetaDataLocatorImpl(symbolSource, typeCoercer, modelSource,
+                configuration);
+
+        assertSame(locator.findMeta(key, pageName, String.class), "*expanded*");
 
         verify();
     }
@@ -101,7 +203,8 @@ public class MetaDataLocatorImplTest extends InternalBaseTestCase
 
         Map<String, String> configuration = Collections.emptyMap();
 
-        MetaDataLocator locator = new MetaDataLocatorImpl(symbolSource, typeCoercer, modelSource, configuration);
+        MetaDataLocator locator = new MetaDataLocatorImpl(symbolSource, typeCoercer, modelSource,
+                configuration);
 
         assertSame(locator.findMeta(key, resources, String.class), value);
 
@@ -135,7 +238,8 @@ public class MetaDataLocatorImplTest extends InternalBaseTestCase
         Map<String, String> configuration = newMap();
         configuration.put(key, value);
 
-        MetaDataLocator locator = new MetaDataLocatorImpl(symbolSource, typeCoercer, modelSource, configuration);
+        MetaDataLocator locator = new MetaDataLocatorImpl(symbolSource, typeCoercer, modelSource,
+                configuration);
 
         assertSame(locator.findMeta(key, resources, String.class), value);
 
@@ -178,7 +282,8 @@ public class MetaDataLocatorImplTest extends InternalBaseTestCase
         Map<String, String> configuration = newMap();
         configuration.put(key.toUpperCase(), value);
 
-        MetaDataLocator locator = new MetaDataLocatorImpl(symbolSource, typeCoercer, modelSource, configuration);
+        MetaDataLocator locator = new MetaDataLocatorImpl(symbolSource, typeCoercer, modelSource,
+                configuration);
 
         assertSame(locator.findMeta(key, resources, String.class), value);
 
@@ -222,7 +327,8 @@ public class MetaDataLocatorImplTest extends InternalBaseTestCase
         configuration.put(key, "xxx");
         configuration.put("foo:" + key, value);
 
-        MetaDataLocator locator = new MetaDataLocatorImpl(symbolSource, typeCoercer, modelSource, configuration);
+        MetaDataLocator locator = new MetaDataLocatorImpl(symbolSource, typeCoercer, modelSource,
+                configuration);
 
         assertSame(locator.findMeta(key, resources, String.class), value);
 
@@ -261,8 +367,8 @@ public class MetaDataLocatorImplTest extends InternalBaseTestCase
 
         Map<String, String> configuration = Collections.emptyMap();
 
-        MetaDataLocatorImpl locator = new MetaDataLocatorImpl(symbolSource, typeCoercer, modelSource, configuration
-        );
+        MetaDataLocatorImpl locator = new MetaDataLocatorImpl(symbolSource, typeCoercer,
+                modelSource, configuration);
 
         assertSame(locator.findMeta(key, resources, String.class), value);
 
@@ -286,7 +392,8 @@ public class MetaDataLocatorImplTest extends InternalBaseTestCase
     }
 
     /**
-     * Makes sense to test together to ensure that the expanded value is what's fed to the type coercer.
+     * Makes sense to test together to ensure that the expanded value is what's fed to the type
+     * coercer.
      */
     @Test
     public void train_symbols_expanded_and_types_coerced()
@@ -310,7 +417,8 @@ public class MetaDataLocatorImplTest extends InternalBaseTestCase
 
         Map<String, String> configuration = Collections.emptyMap();
 
-        MetaDataLocator locator = new MetaDataLocatorImpl(symbolSource, typeCoercer, modelSource, configuration);
+        MetaDataLocator locator = new MetaDataLocatorImpl(symbolSource, typeCoercer, modelSource,
+                configuration);
 
         assertEquals(locator.findMeta(key, resources, Integer.class), new Integer(99));
 

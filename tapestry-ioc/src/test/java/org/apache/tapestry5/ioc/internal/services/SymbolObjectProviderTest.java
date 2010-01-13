@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -114,10 +114,5 @@ public class SymbolObjectProviderTest extends IOCTestCase
         Symbol annotation = newMock(Symbol.class);
         expect(annotation.value()).andReturn(symbolName);
         return annotation;
-    }
-
-    protected final void train_valueForSymbol(SymbolSource source, String symbolName, String symbolValue)
-    {
-        expect(source.valueForSymbol(symbolName)).andReturn(symbolValue);
     }
 }

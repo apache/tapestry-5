@@ -21,6 +21,7 @@ import org.apache.tapestry5.ioc.def.DecoratorDef;
 import org.apache.tapestry5.ioc.def.ModuleDef;
 import org.apache.tapestry5.ioc.def.ServiceDef;
 import org.apache.tapestry5.ioc.services.*;
+
 import static org.easymock.EasyMock.isA;
 import org.slf4j.Logger;
 
@@ -422,5 +423,10 @@ public class IOCTestCase extends TestBase
         train_getTracker(resources, tracker);
 
         return resources;
+    }
+
+    protected final void train_valueForSymbol(SymbolSource symbolSource, String symbolName, String value)
+    {
+        expect(symbolSource.valueForSymbol(symbolName)).andReturn(value).atLeastOnce();
     }
 }

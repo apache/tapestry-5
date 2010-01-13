@@ -1,10 +1,10 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -31,7 +31,8 @@ public class MetaDataLocatorImpl implements MetaDataLocator, InvalidationListene
 
     private final ComponentModelSource modelSource;
 
-    private final Map<String, Map<String, String>> defaultsByFolder = CollectionFactory.newCaseInsensitiveMap();
+    private final Map<String, Map<String, String>> defaultsByFolder = CollectionFactory
+            .newCaseInsensitiveMap();
 
     private final Map<String, String> cache = CollectionFactory.newConcurrentMap();
 
@@ -40,9 +41,8 @@ public class MetaDataLocatorImpl implements MetaDataLocator, InvalidationListene
         String valueForKey(String key);
     }
 
-    public MetaDataLocatorImpl(SymbolSource symbolSource, TypeCoercer typeCoercer, ComponentModelSource modelSource,
-                               Map<String, String> configuration
-    )
+    public MetaDataLocatorImpl(SymbolSource symbolSource, TypeCoercer typeCoercer,
+            ComponentModelSource modelSource, Map<String, String> configuration)
     {
         this.symbolSource = symbolSource;
         this.typeCoercer = typeCoercer;
@@ -82,36 +82,36 @@ public class MetaDataLocatorImpl implements MetaDataLocator, InvalidationListene
 
     public <T> T findMeta(String key, final ComponentResources resources, Class<T> expectedType)
     {
-        String value = getSymbolExpandedValueFromCache(key,
-                                                       resources.getCompleteId() + "/" + key,
-                                                       new ValueLocator()
-                                                       {
-                                                           public String valueForKey(String key)
-                                                           {
-                                                               return locate(key, resources);
-                                                           }
-                                                       });
+        String value = getSymbolExpandedValueFromCache(key, resources.getCompleteId() + "/" + key,
+                new ValueLocator()
+                {
+                    public String valueForKey(String key)
+                    {
+                        return locate(key, resources);
+                    }
+                });
 
         return typeCoercer.coerce(value, expectedType);
     }
 
     public <T> T findMeta(String key, final String pageName, Class<T> expectedType)
     {
+        String value = getSymbolExpandedValueFromCache(key, pageName + "/" + key,
+                new ValueLocator()
+                {
+                    public String valueForKey(String key)
+                    {
+                        String result = modelSource.getPageModel(pageName).getMeta(key);
 
-        String value = getSymbolExpandedValueFromCache(key,
-                                                       pageName + "/" + key,
-                                                       new ValueLocator()
-                                                       {
-                                                           public String valueForKey(String key)
-                                                           {
-                                                               return modelSource.getPageModel(pageName).getMeta(key);
-                                                           }
-                                                       });
+                        return result != null ? result : locateInDefaults(key, pageName);
+                    }
+                });
 
         return typeCoercer.coerce(value, expectedType);
     }
 
-    private String getSymbolExpandedValueFromCache(String key, String cacheKey, ValueLocator valueLocator)
+    private String getSymbolExpandedValueFromCache(String key, String cacheKey,
+            ValueLocator valueLocator)
     {
         if (cache.containsKey(cacheKey))
             return cache.get(cacheKey);
@@ -140,11 +140,13 @@ public class MetaDataLocatorImpl implements MetaDataLocator, InvalidationListene
         {
             String value = cursor.getComponentModel().getMeta(key);
 
-            if (value != null) return value;
+            if (value != null)
+                return value;
 
             ComponentResources next = cursor.getContainerResources();
 
-            if (next == null) return locateInDefaults(key, cursor.getPageName());
+            if (next == null)
+                return locateInDefaults(key, cursor.getPageName());
 
             cursor = next;
         }
@@ -167,9 +169,11 @@ public class MetaDataLocatorImpl implements MetaDataLocator, InvalidationListene
 
             Map<String, String> forFolder = defaultsByFolder.get(folderKey);
 
-            if (forFolder != null && forFolder.containsKey(key)) return forFolder.get(key);
+            if (forFolder != null && forFolder.containsKey(key))
+                return forFolder.get(key);
 
-            if (lastSlashx < 0) break;
+            if (lastSlashx < 0)
+                break;
 
             path = path.substring(0, lastSlashx);
         }
