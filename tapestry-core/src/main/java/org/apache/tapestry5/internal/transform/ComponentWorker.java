@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,6 +14,7 @@
 
 package org.apache.tapestry5.internal.transform;
 
+import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.annotations.Component;
 import org.apache.tapestry5.annotations.MixinClasses;
 import org.apache.tapestry5.annotations.Mixins;
@@ -32,6 +33,7 @@ import org.apache.tapestry5.model.MutableEmbeddedComponentModel;
 import org.apache.tapestry5.services.ClassTransformation;
 import org.apache.tapestry5.services.ComponentClassResolver;
 import org.apache.tapestry5.services.ComponentClassTransformWorker;
+import org.apache.tapestry5.services.ComponentValueProvider;
 import org.apache.tapestry5.services.TransformConstants;
 
 /**
@@ -44,7 +46,7 @@ public class ComponentWorker implements ComponentClassTransformWorker
 {
     private final ComponentClassResolver resolver;
 
-    public ComponentWorker(final ComponentClassResolver resolver)
+    public ComponentWorker(ComponentClassResolver resolver)
     {
         this.resolver = resolver;
     }
@@ -57,10 +59,10 @@ public class ComponentWorker implements ComponentClassTransformWorker
 
             transformation.claimField(fieldName, annotation);
 
-            String id = annotation.id();
+            String annotationId = annotation.id();
 
-            if (InternalUtils.isBlank(id))
-                id = InternalUtils.stripMemberName(fieldName);
+            final String id = InternalUtils.isNonBlank(annotationId) ? annotationId : InternalUtils
+                    .stripMemberName(fieldName);
 
             String type = transformation.getFieldType(fieldName);
 
@@ -79,13 +81,17 @@ public class ComponentWorker implements ComponentClassTransformWorker
                         .splitAtCommas(names)));
             }
 
-            transformation.makeReadOnly(fieldName);
+            ComponentValueProvider<Object> provider = new ComponentValueProvider<Object>()
+            {
+                @Override
+                public Object get(ComponentResources resources)
+                {
+                    return resources.getEmbeddedComponent(id);
+                }
+            };
 
-            String body = String.format("%s = (%s) %s.getEmbeddedComponent(\"%s\");", fieldName,
-                    type, transformation.getResourcesFieldName(), id);
-
-            transformation
-                    .extendMethod(TransformConstants.CONTAINING_PAGE_DID_LOAD_SIGNATURE, body);
+            transformation.assignFieldIndirect(fieldName,
+                    TransformConstants.CONTAINING_PAGE_DID_LOAD_SIGNATURE, provider);
 
             addMixinClasses(fieldName, transformation, embedded);
             addMixinTypes(fieldName, transformation, embedded);
