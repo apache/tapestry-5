@@ -115,7 +115,7 @@ public final class TransformUtils
     }
 
     /**
-     * Returns the default value for a type. This is the string "null" for most types, or a literal value for primtive
+     * Returns the default value for a type. This is the string "null" for most types, or a literal value for primitive
      * types.
      */
     public static String getDefaultValue(String type)
