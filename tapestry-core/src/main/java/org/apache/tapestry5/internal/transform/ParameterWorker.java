@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,19 +14,29 @@
 
 package org.apache.tapestry5.internal.transform;
 
+import java.lang.reflect.Modifier;
+import java.util.Iterator;
+import java.util.List;
+
 import org.apache.tapestry5.Binding;
 import org.apache.tapestry5.annotations.Parameter;
-import org.apache.tapestry5.annotations.BindParameter;
-import org.apache.tapestry5.internal.*;
+import org.apache.tapestry5.internal.InternalComponentResources;
+import org.apache.tapestry5.internal.ParameterAccess;
+import org.apache.tapestry5.internal.ParameterChangeListener;
+import org.apache.tapestry5.internal.ParameterChangedEvent;
+import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.internal.bindings.LiteralBinding;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.util.BodyBuilder;
 import org.apache.tapestry5.model.MutableComponentModel;
-import org.apache.tapestry5.services.*;
-
-import java.lang.reflect.Modifier;
-import java.util.Iterator;
-import java.util.List;
+import org.apache.tapestry5.services.BindingSource;
+import org.apache.tapestry5.services.ClassTransformation;
+import org.apache.tapestry5.services.ComponentClassTransformWorker;
+import org.apache.tapestry5.services.ComponentDefaultProvider;
+import org.apache.tapestry5.services.MethodFilter;
+import org.apache.tapestry5.services.TransformConstants;
+import org.apache.tapestry5.services.TransformMethodSignature;
+import org.apache.tapestry5.services.TransformUtils;
 
 /**
  * Responsible for identifying parameters via the {@link org.apache.tapestry5.annotations.Parameter} annotation on
