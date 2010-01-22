@@ -52,7 +52,6 @@ public class InjectContainerWorker implements ComponentClassTransformWorker
 
             ComponentValueProvider<Object> provider = new ComponentValueProvider<Object>()
             {
-                @Override
                 public Object get(ComponentResources resources)
                 {
                     Component container = resources.getContainer();

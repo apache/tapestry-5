@@ -14,19 +14,23 @@
 
 package org.apache.tapestry5.internal.model;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.tapestry5.ioc.Location;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.ioc.internal.util.IdAllocator;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.model.*;
+import org.apache.tapestry5.model.ComponentModel;
+import org.apache.tapestry5.model.EmbeddedComponentModel;
+import org.apache.tapestry5.model.MutableComponentModel;
+import org.apache.tapestry5.model.MutableEmbeddedComponentModel;
+import org.apache.tapestry5.model.ParameterModel;
 import org.slf4j.Logger;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * Internal implementation of {@link org.apache.tapestry5.model.MutableComponentModel}.
@@ -145,8 +149,7 @@ public final class MutableComponentModelImpl implements MutableComponentModel
 
         return result;
     }
-
-    @Override
+    
     public boolean isFormalParameter(String parameterName)
     {
         return getParameterModel(parameterName) != null;

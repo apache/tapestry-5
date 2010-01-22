@@ -82,8 +82,7 @@ public class ComponentWorker implements ComponentClassTransformWorker
             }
 
             ComponentValueProvider<Object> provider = new ComponentValueProvider<Object>()
-            {
-                @Override
+            {                
                 public Object get(ComponentResources resources)
                 {
                     return resources.getEmbeddedComponent(id);

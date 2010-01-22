@@ -59,7 +59,6 @@ public class ParameterWorker implements ComponentClassTransformWorker
         this.typeCoercer = typeCoercer;
     }
 
-    @Override
     public void transform(ClassTransformation transformation, MutableComponentModel model)
     {
         List<String> fieldNames = transformation.findFieldsWithAnnotation(Parameter.class);
@@ -113,7 +112,6 @@ public class ParameterWorker implements ComponentClassTransformWorker
             // issues
             // are addressed by deferring some behaviors until the load() method.
 
-            @Override
             public ParameterConduit get(ComponentResources resources)
             {
                 final InternalComponentResources icr = (InternalComponentResources) resources;
@@ -168,7 +166,6 @@ public class ParameterWorker implements ComponentClassTransformWorker
                         return loaded;
                     }
 
-                    @Override
                     public void set(Object newValue)
                     {
                         // Assignments before the page is loaded ultimately exist to set the
@@ -196,7 +193,6 @@ public class ParameterWorker implements ComponentClassTransformWorker
                         cached = enableCaching && icr.isRendering();
                     }
 
-                    @Override
                     public void reset()
                     {
                         if (!isInvariant())
@@ -206,7 +202,6 @@ public class ParameterWorker implements ComponentClassTransformWorker
                         }
                     }
 
-                    @Override
                     public void load()
                     {
                         // If it's bound at this point, that's because of an explicit binding
@@ -248,14 +243,12 @@ public class ParameterWorker implements ComponentClassTransformWorker
                         return defaultBinding;
                     }
 
-                    @Override
                     public boolean isBound()
                     {
                         return parameterAccess.isBound();
                     }
 
                     @SuppressWarnings("unchecked")
-                    @Override
                     public Object get()
                     {
                         if (!isLoaded()) { return defaultValue; }
@@ -279,7 +272,6 @@ public class ParameterWorker implements ComponentClassTransformWorker
                         return result;
                     }
 
-                    @Override
                     public void setDefault(Object value)
                     {
                         if (value == null)

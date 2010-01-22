@@ -33,8 +33,8 @@ import org.apache.tapestry5.services.TransformConstants;
  * block to inject; if
  * omitted, the block id is deduced from the field id.
  * <p/>
- * Must be scheduled before {@link DefaultInjectionProvider} because it uses the same annotation,
- * Inject, with a different interpretation.
+ * Must be scheduled before {@link DefaultInjectionProvider} because it uses the same annotation, Inject, with a
+ * different interpretation.
  */
 public class BlockInjectionProvider implements InjectionProvider
 {
@@ -51,8 +51,6 @@ public class BlockInjectionProvider implements InjectionProvider
 
         ComponentValueProvider<Block> provider = new ComponentValueProvider<Block>()
         {
-
-            @Override
             public Block get(ComponentResources resources)
             {
                 return resources.getBlock(blockId);

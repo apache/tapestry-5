@@ -16,11 +16,8 @@ package org.apache.tapestry5.internal.transform;
 
 import java.util.List;
 
-import javax.xml.ws.ServiceMode;
-
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.annotations.BindParameter;
-import org.apache.tapestry5.corelib.pages.ServiceStatus;
 import org.apache.tapestry5.internal.InternalComponentResources;
 import org.apache.tapestry5.internal.services.ComponentClassCache;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
@@ -76,7 +73,6 @@ public class BindParameterWorker implements ComponentClassTransformWorker
         ComponentValueProvider<FieldValueConduit> provider = new ComponentValueProvider<FieldValueConduit>()
         {
 
-            @Override
             public FieldValueConduit get(final ComponentResources resources)
             {
                 if (!resources.isMixin())
@@ -116,14 +112,12 @@ public class BindParameterWorker implements ComponentClassTransformWorker
                         return conduit;
                     }
 
-                    @Override
                     public void set(Object newValue)
                     {
                         getParameterConduit().set(newValue);
                     }
 
                     @SuppressWarnings("unchecked")
-                    @Override
                     public Object get()
                     {
                         // For the moment, this results in two passes through the TypeCoercer; we'll look

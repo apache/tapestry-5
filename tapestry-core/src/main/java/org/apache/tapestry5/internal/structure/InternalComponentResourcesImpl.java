@@ -151,7 +151,7 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
         component = componentInstantiator.newInstance(this);
     }
 
-    @Override
+    
     public boolean isMixin()
     {
         return mixin;
@@ -162,7 +162,7 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
         return element.getLocation();
     }
 
-    @Override
+    
     public String toString()
     {
         return String.format("InternalComponentResources[%s]", getCompleteId());
@@ -601,13 +601,13 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
         page.addResetListener(listener);
     }
 
-    @Override
+    
     public ParameterConduit getParameterConduit(String parameterName)
     {
         return InternalUtils.get(conduits, parameterName);
     }
 
-    @Override
+    
     public void setParameterConduit(String parameterName, ParameterConduit conduit)
     {
         if (conduits == null)

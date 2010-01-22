@@ -56,10 +56,10 @@ public class AssetInjectionProvider implements InjectionProvider
         final String expanded = symbolSource.expandSymbols(path.value());
 
         final Resource baseResource = componentModel.getBaseResource();
-        
+
         ComponentValueProvider<Asset> provider = new ComponentValueProvider<Asset>()
         {
-            @Override
+
             public Asset get(ComponentResources resources)
             {
                 Locale locale = resources.getLocale();
@@ -69,7 +69,7 @@ public class AssetInjectionProvider implements InjectionProvider
         };
 
         transformation.injectFieldIndirect(fieldName, provider);
-        
+
         return true;
     }
 

@@ -23,17 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javassist.CannotCompileException;
-import javassist.ClassPool;
-import javassist.CtBehavior;
-import javassist.CtClass;
-import javassist.CtConstructor;
-import javassist.CtField;
-import javassist.CtMember;
-import javassist.CtMethod;
-import javassist.CtNewConstructor;
-import javassist.CtNewMethod;
-import javassist.NotFoundException;
+import javassist.*;
 import javassist.expr.ExprEditor;
 import javassist.expr.FieldAccess;
 
@@ -62,8 +52,7 @@ import org.apache.tapestry5.services.TransformUtils;
 import org.slf4j.Logger;
 
 /**
- * Implementation of the {@link org.apache.tapestry5.internal.services.InternalClassTransformation}
- * interface.
+ * Implementation of the {@link org.apache.tapestry5.internal.services.InternalClassTransformation} interface.
  */
 public final class InternalClassTransformationImpl implements InternalClassTransformation
 {
@@ -1429,7 +1418,6 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         makeReadOnly(fieldName);
     }
 
-    @Override
     public <T> void injectFieldIndirect(String fieldName, ComponentValueProvider<T> provider)
     {
         Defense.notBlank(fieldName, "fieldName");
@@ -1725,7 +1713,6 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         }
     }
 
-    @Override
     public String toString()
     {
         StringBuilder builder = new StringBuilder("InternalClassTransformation[\n");
@@ -1866,7 +1853,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
         ExprEditor editor = new ExprEditor()
         {
-            @Override
+
             public void edit(FieldAccess access) throws CannotCompileException
             {
                 CtBehavior where = access.where();
@@ -1987,7 +1974,6 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         return "$" + constructorArgs.size();
     }
 
-    @Override
     public <T> void assignFieldIndirect(String fieldName, TransformMethodSignature methodSig,
             ComponentValueProvider<T> provider)
     {
@@ -2008,7 +1994,6 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         makeReadOnly(fieldName);
     }
 
-    @Override
     public void replaceFieldAccess(String fieldName,
             ComponentValueProvider<FieldValueConduit> conduitProvider)
     {
@@ -2016,7 +2001,6 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
                 + "$conduit", conduitProvider));
     }
 
-    @Override
     public void replaceFieldAccess(String fieldName, String conduitFieldName)
     {
         String fieldType = getFieldType(fieldName);

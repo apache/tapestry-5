@@ -35,7 +35,6 @@ public class CommonResourcesInjectionProvider implements InjectionProvider
     private static ComponentValueProvider<Messages> messagesProvider = new ComponentValueProvider<Messages>()
     {
 
-        @Override
         public Messages get(ComponentResources resources)
         {
             return resources.getMessages();
@@ -45,7 +44,6 @@ public class CommonResourcesInjectionProvider implements InjectionProvider
     private static ComponentValueProvider<Locale> localeProvider = new ComponentValueProvider<Locale>()
     {
 
-        @Override
         public Locale get(ComponentResources resources)
         {
             return resources.getLocale();
@@ -54,7 +52,7 @@ public class CommonResourcesInjectionProvider implements InjectionProvider
 
     private static ComponentValueProvider<Logger> loggerProvider = new ComponentValueProvider<Logger>()
     {
-        @Override
+
         public Logger get(ComponentResources resources)
         {
             return resources.getLogger();
@@ -63,8 +61,6 @@ public class CommonResourcesInjectionProvider implements InjectionProvider
 
     private static ComponentValueProvider<String> completeIdProvider = new ComponentValueProvider<String>()
     {
-
-        @Override
         public String get(ComponentResources resources)
         {
             return resources.getCompleteId();

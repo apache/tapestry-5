@@ -73,13 +73,12 @@ public abstract class AbstractIncludeAssetWorker implements ComponentClassTransf
 
         ComponentValueProvider<Runnable> provider = new ComponentValueProvider<Runnable>()
         {
-            @Override
             public Runnable get(final ComponentResources resources)
             {
-                // This code is re-executed for each new component instance. We could 
+                // This code is re-executed for each new component instance. We could
                 // possibly cache on resources.getCompleteId() + locale, but that's
                 // probably not worth the effort.
-                
+
                 final Locale locale = resources.getLocale();
 
                 final List<Asset> assets = CollectionFactory.newList();
@@ -93,7 +92,6 @@ public abstract class AbstractIncludeAssetWorker implements ComponentClassTransf
 
                 return new Runnable()
                 {
-                    @Override
                     public void run()
                     {
                         for (Asset asset : assets)
@@ -117,8 +115,7 @@ public abstract class AbstractIncludeAssetWorker implements ComponentClassTransf
     /**
      * Invoked, from the component's setup render phase, for each asset. This method must be
      * threadsafe. Most
-     * implementations pass the asset to a particular method of
-     * {@link org.apache.tapestry5.RenderSupport}.
+     * implementations pass the asset to a particular method of {@link org.apache.tapestry5.RenderSupport}.
      * 
      * @param asset
      *            to be processed

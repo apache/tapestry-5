@@ -14,6 +14,8 @@
 
 package org.apache.tapestry5.internal.transform;
 
+import java.util.List;
+
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.annotations.Mixin;
 import org.apache.tapestry5.internal.InternalComponentResources;
@@ -24,8 +26,6 @@ import org.apache.tapestry5.services.ComponentClassResolver;
 import org.apache.tapestry5.services.ComponentClassTransformWorker;
 import org.apache.tapestry5.services.ComponentValueProvider;
 import org.apache.tapestry5.services.TransformConstants;
-
-import java.util.List;
 
 /**
  * Supports the {@link org.apache.tapestry5.annotations.Mixin} annotation, which allows a mixin to
@@ -66,8 +66,6 @@ public class MixinWorker implements ComponentClassTransformWorker
 
             ComponentValueProvider<Object> provider = new ComponentValueProvider<Object>()
             {
-
-                @Override
                 public Object get(ComponentResources resources)
                 {
                     InternalComponentResources icr = (InternalComponentResources) resources;
