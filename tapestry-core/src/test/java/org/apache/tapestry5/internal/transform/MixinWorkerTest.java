@@ -1,10 +1,10 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,6 +19,7 @@ import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.services.ClassTransformation;
 import org.apache.tapestry5.services.ComponentClassResolver;
+import org.apache.tapestry5.services.ComponentValueProvider;
 import org.apache.tapestry5.services.TransformConstants;
 import org.testng.annotations.Test;
 import org.easymock.EasyMock;
@@ -41,14 +42,16 @@ public class MixinWorkerTest extends InternalBaseTestCase
         verify();
     }
 
+    @SuppressWarnings("unchecked")
     @Test
     public void field_with_explicit_type_and_order()
     {
         ComponentClassResolver resolver = mockComponentClassResolver();
         ClassTransformation transformation = mockClassTransformation();
         MutableComponentModel model = mockMutableComponentModel();
-        String[] order = {"before:*"};
-        Mixin annotation = newMixin("Bar",order);
+        String[] order =
+        { "before:*" };
+        Mixin annotation = newMixin("Bar", order);
 
         train_findFieldsWithAnnotation(transformation, Mixin.class, "fred");
         train_getFieldAnnotation(transformation, "fred", Mixin.class, annotation);
@@ -56,16 +59,11 @@ public class MixinWorkerTest extends InternalBaseTestCase
 
         train_resolveMixinTypeToClassName(resolver, "Bar", "foo.bar.BazMixin");
 
-        model.addMixinClassName("foo.bar.BazMixin",order);
+        model.addMixinClassName("foo.bar.BazMixin", order);
 
-        transformation.makeReadOnly("fred");
-
-        train_getResourcesFieldName(transformation, "rez");
-
-        train_extendMethod(
-                transformation,
-                TransformConstants.CONTAINING_PAGE_DID_LOAD_SIGNATURE,
-                "fred = (foo.bar.Baz) rez.getMixinByClassName(\"foo.bar.BazMixin\");");
+        transformation.assignFieldIndirect(EasyMock.eq("fred"), EasyMock
+                .eq(TransformConstants.CONTAINING_PAGE_DID_LOAD_SIGNATURE), EasyMock
+                .isA(ComponentValueProvider.class));
 
         transformation.claimField("fred", annotation);
 
@@ -76,6 +74,7 @@ public class MixinWorkerTest extends InternalBaseTestCase
         verify();
     }
 
+    @SuppressWarnings("unchecked")
     @Test
     public void field_with_no_specific_mixin_type_or_order()
     {
@@ -83,22 +82,17 @@ public class MixinWorkerTest extends InternalBaseTestCase
         ClassTransformation transformation = mockClassTransformation();
         MutableComponentModel model = mockMutableComponentModel();
         String[] order = new String[0];
-        Mixin annotation = newMixin("",order);
+        Mixin annotation = newMixin("", order);
 
         train_findFieldsWithAnnotation(transformation, Mixin.class, "fred");
         train_getFieldAnnotation(transformation, "fred", Mixin.class, annotation);
         train_getFieldType(transformation, "fred", "foo.bar.Baz");
 
-        model.addMixinClassName("foo.bar.Baz",order);
+        model.addMixinClassName("foo.bar.Baz", order);
 
-        transformation.makeReadOnly("fred");
-
-        train_getResourcesFieldName(transformation, "rez");
-
-        train_extendMethod(
-                transformation,
-                TransformConstants.CONTAINING_PAGE_DID_LOAD_SIGNATURE,
-                "fred = (foo.bar.Baz) rez.getMixinByClassName(\"foo.bar.Baz\");");
+        transformation.assignFieldIndirect(EasyMock.eq("fred"), EasyMock
+                .eq(TransformConstants.CONTAINING_PAGE_DID_LOAD_SIGNATURE), EasyMock
+                .isA(ComponentValueProvider.class));
 
         transformation.claimField("fred", annotation);
 
@@ -111,12 +105,12 @@ public class MixinWorkerTest extends InternalBaseTestCase
     }
 
     protected final void train_resolveMixinTypeToClassName(ComponentClassResolver resolver,
-                                                           String mixinType, String mixinClassName)
+            String mixinType, String mixinClassName)
     {
         expect(resolver.resolveMixinTypeToClassName(mixinType)).andReturn(mixinClassName);
     }
 
-    private Mixin newMixin(String value,String...order)
+    private Mixin newMixin(String value, String... order)
     {
         Mixin annotation = newMock(Mixin.class);
 
