@@ -1985,4 +1985,26 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
         return "$" + constructorArgs.size();
     }
+
+    @Override
+    public <T> void assignFieldIndirect(String fieldName, TransformMethodSignature methodSig,
+            ComponentValueProvider<T> provider)
+    {
+        Defense.notBlank(fieldName, "fieldName");
+        Defense.notNull(methodSig, "methodSig");
+        Defense.notNull(provider, "provider");
+
+        String providerFieldName = addInjectedField(ComponentValueProvider.class, fieldName
+                + "$provider", provider);
+
+        CtClass fieldType = getFieldCtType(fieldName);
+
+        String body = String.format("%s = (%s) %s.get(%s);", fieldName, fieldType.getName(),
+                providerFieldName, resourcesFieldName);
+
+        extendMethod(methodSig, body);
+
+        makeReadOnly(fieldName);
+    }
+
 }

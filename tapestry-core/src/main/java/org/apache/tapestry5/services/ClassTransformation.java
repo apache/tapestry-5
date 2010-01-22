@@ -500,4 +500,23 @@ public interface ClassTransformation extends AnnotationProvider
      * @return true if the parent class contains a method with the name signature
      */
     boolean isMethodOverride(TransformMethodSignature methodSignature);
+
+    /**
+     * Uses {@link #extendMethod(TransformMethodSignature, String)} to make an assignment to
+     * a field within the provided method. In addition, the field is marked as read-only. This
+     * is an alternative to {@link #injectFieldIndirect(String, ComponentValueProvider)} for values
+     * that <em>can not</em> be calculated at the constructor.
+     * 
+     * @param <T>
+     * @param fieldName
+     *            name of field to assign
+     * @param methodSig
+     *            identifies the method where the assignment will occur, often this is
+     *            {@link TransformConstants#CONTAINING_PAGE_DID_LOAD_SIGNATURE}
+     * @param provider
+     *            provides the value of the field
+     * @since 5.2.0
+     */
+    <T> void assignFieldIndirect(String fieldName, TransformMethodSignature methodSig,
+            ComponentValueProvider<T> provider);
 }
