@@ -16,6 +16,7 @@ package org.apache.tapestry5.internal.services;
 
 import javassist.CtClass;
 import org.apache.tapestry5.internal.structure.ComponentPageElement;
+import org.apache.tapestry5.internal.structure.InternalComponentResourcesImpl;
 import org.apache.tapestry5.internal.structure.Page;
 import org.apache.tapestry5.ioc.Location;
 import org.apache.tapestry5.ioc.Messages;

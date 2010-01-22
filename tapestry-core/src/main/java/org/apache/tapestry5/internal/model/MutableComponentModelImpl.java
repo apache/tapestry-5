@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -66,8 +66,8 @@ public final class MutableComponentModelImpl implements MutableComponentModel
 
     private Map<String, Boolean> handledEvents;
 
-    public MutableComponentModelImpl(String componentClassName, Logger logger, Resource baseResource,
-                                     ComponentModel parentModel)
+    public MutableComponentModelImpl(String componentClassName, Logger logger,
+            Resource baseResource, ComponentModel parentModel)
     {
         this.componentClassName = componentClassName;
         this.logger = logger;
@@ -106,7 +106,8 @@ public final class MutableComponentModelImpl implements MutableComponentModel
         return componentClassName;
     }
 
-    public void addParameter(String name, boolean required, boolean allowNull, String defaultBindingPrefix, boolean cached)
+    public void addParameter(String name, boolean required, boolean allowNull,
+            String defaultBindingPrefix, boolean cached)
     {
         Defense.notBlank(name, "name");
         Defense.notBlank(defaultBindingPrefix, "defaultBindingPrefix");
@@ -117,36 +118,49 @@ public final class MutableComponentModelImpl implements MutableComponentModel
             parameters = CollectionFactory.newCaseInsensitiveMap();
 
         if (parameters.containsKey(name))
-            throw new IllegalArgumentException(ModelMessages.duplicateParameter(name, componentClassName));
+            throw new IllegalArgumentException(ModelMessages.duplicateParameter(name,
+                    componentClassName));
 
-        parameters.put(name, new ParameterModelImpl(name, required, allowNull, defaultBindingPrefix,cached));
+        parameters.put(name, new ParameterModelImpl(name, required, allowNull,
+                defaultBindingPrefix, cached));
     }
 
-    public void addParameter(String name, boolean required, boolean allowNull, String defaultBindingPrefix)
+    public void addParameter(String name, boolean required, boolean allowNull,
+            String defaultBindingPrefix)
     {
-        //assume /false/ for the default because:
-        //if the parameter is actually cached, the only effect will be to reduce that optimization in certain
-        //scenarios (mixin BindParameter).  But if the value is NOT cached but we say it is,
-        //we'll get incorrect behavior.
-        addParameter(name,required,allowNull,defaultBindingPrefix,false);
+        // assume /false/ for the default because:
+        // if the parameter is actually cached, the only effect will be to reduce that optimization
+        // in certain
+        // scenarios (mixin BindParameter). But if the value is NOT cached but we say it is,
+        // we'll get incorrect behavior.
+        addParameter(name, required, allowNull, defaultBindingPrefix, false);
     }
 
     public ParameterModel getParameterModel(String parameterName)
     {
         ParameterModel result = InternalUtils.get(parameters, parameterName.toLowerCase());
 
-        if (result == null && parentModel != null) result = parentModel.getParameterModel(parameterName);
+        if (result == null && parentModel != null)
+            result = parentModel.getParameterModel(parameterName);
 
         return result;
+    }
+
+    @Override
+    public boolean isFormalParameter(String parameterName)
+    {
+        return getParameterModel(parameterName) != null;
     }
 
     public List<String> getParameterNames()
     {
         List<String> names = CollectionFactory.newList();
 
-        if (parameters != null) names.addAll(parameters.keySet());
+        if (parameters != null)
+            names.addAll(parameters.keySet());
 
-        if (parentModel != null) names.addAll(parentModel.getParameterNames());
+        if (parentModel != null)
+            names.addAll(parentModel.getParameterNames());
 
         Collections.sort(names);
 
@@ -158,19 +172,19 @@ public final class MutableComponentModelImpl implements MutableComponentModel
         return InternalUtils.sortedKeys(parameters);
     }
 
-    public MutableEmbeddedComponentModel addEmbeddedComponent(String id, String type, String componentClassName,
-                                                              boolean inheritInformalParameters, Location location)
+    public MutableEmbeddedComponentModel addEmbeddedComponent(String id, String type,
+            String componentClassName, boolean inheritInformalParameters, Location location)
     {
         // TODO: Parent compent model? Or would we simply override the parent?
 
-        if (embeddedComponents == null) embeddedComponents = CollectionFactory.newCaseInsensitiveMap();
+        if (embeddedComponents == null)
+            embeddedComponents = CollectionFactory.newCaseInsensitiveMap();
         else if (embeddedComponents.containsKey(id))
-            throw new IllegalArgumentException(ModelMessages.duplicateComponentId(id, this.componentClassName));
+            throw new IllegalArgumentException(ModelMessages.duplicateComponentId(id,
+                    this.componentClassName));
 
-        MutableEmbeddedComponentModel embedded = new MutableEmbeddedComponentModelImpl(id, type, componentClassName,
-                                                                                       this.componentClassName,
-                                                                                       inheritInformalParameters,
-                                                                                       location);
+        MutableEmbeddedComponentModel embedded = new MutableEmbeddedComponentModelImpl(id, type,
+                componentClassName, this.componentClassName, inheritInformalParameters, location);
 
         embeddedComponents.put(id, embedded);
 
@@ -181,9 +195,11 @@ public final class MutableComponentModelImpl implements MutableComponentModel
     {
         List<String> result = CollectionFactory.newList();
 
-        if (embeddedComponents != null) result.addAll(embeddedComponents.keySet());
+        if (embeddedComponents != null)
+            result.addAll(embeddedComponents.keySet());
 
-        if (parentModel != null) result.addAll(parentModel.getEmbeddedComponentIds());
+        if (parentModel != null)
+            result.addAll(parentModel.getEmbeddedComponentIds());
 
         Collections.sort(result);
 
@@ -194,7 +210,8 @@ public final class MutableComponentModelImpl implements MutableComponentModel
     {
         EmbeddedComponentModel result = InternalUtils.get(embeddedComponents, componentId);
 
-        if (result == null && parentModel != null) result = parentModel.getEmbeddedComponentModel(componentId);
+        if (result == null && parentModel != null)
+            result = parentModel.getEmbeddedComponentModel(componentId);
 
         return result;
     }
@@ -203,9 +220,11 @@ public final class MutableComponentModelImpl implements MutableComponentModel
     {
         String result = InternalUtils.get(persistentFields, fieldName);
 
-        if (result == null && parentModel != null) result = parentModel.getFieldPersistenceStrategy(fieldName);
+        if (result == null && parentModel != null)
+            result = parentModel.getFieldPersistenceStrategy(fieldName);
 
-        if (result == null) throw new IllegalArgumentException(ModelMessages.missingPersistentField(fieldName));
+        if (result == null)
+            throw new IllegalArgumentException(ModelMessages.missingPersistentField(fieldName));
 
         return result;
     }
@@ -219,7 +238,8 @@ public final class MutableComponentModelImpl implements MutableComponentModel
     {
         String logicalFieldName = persistentFieldNameAllocator.allocateId(fieldName);
 
-        if (persistentFields == null) persistentFields = CollectionFactory.newMap();
+        if (persistentFields == null)
+            persistentFields = CollectionFactory.newMap();
 
         persistentFields.put(logicalFieldName, strategy);
 
@@ -233,13 +253,15 @@ public final class MutableComponentModelImpl implements MutableComponentModel
 
     public void addMixinClassName(String mixinClassName, String... order)
     {
-        if (mixinClassNames == null) mixinClassNames = CollectionFactory.newList();
+        if (mixinClassNames == null)
+            mixinClassNames = CollectionFactory.newList();
 
         mixinClassNames.add(mixinClassName);
         if (order != null && order.length > 0)
         {
-            if (mixinOrders == null) mixinOrders = CollectionFactory.newCaseInsensitiveMap();
-            mixinOrders.put(mixinClassName,order);
+            if (mixinOrders == null)
+                mixinOrders = CollectionFactory.newCaseInsensitiveMap();
+            mixinOrders.put(mixinClassName, order);
         }
     }
 
@@ -247,9 +269,11 @@ public final class MutableComponentModelImpl implements MutableComponentModel
     {
         List<String> result = CollectionFactory.newList();
 
-        if (mixinClassNames != null) result.addAll(mixinClassNames);
+        if (mixinClassNames != null)
+            result.addAll(mixinClassNames);
 
-        if (parentModel != null) result.addAll(parentModel.getMixinClassNames());
+        if (parentModel != null)
+            result.addAll(parentModel.getMixinClassNames());
 
         Collections.sort(result);
 
@@ -286,7 +310,8 @@ public final class MutableComponentModelImpl implements MutableComponentModel
         Defense.notBlank(key, "key");
         Defense.notBlank(value, "value");
 
-        if (metaData == null) metaData = CollectionFactory.newCaseInsensitiveMap();
+        if (metaData == null)
+            metaData = CollectionFactory.newCaseInsensitiveMap();
 
         // TODO: Error if duplicate?
 
@@ -297,7 +322,8 @@ public final class MutableComponentModelImpl implements MutableComponentModel
     {
         Defense.notNull(renderPhase, "renderPhase");
 
-        if (handledRenderPhases == null) handledRenderPhases = CollectionFactory.newSet();
+        if (handledRenderPhases == null)
+            handledRenderPhases = CollectionFactory.newSet();
 
         handledRenderPhases.add(renderPhase);
     }
@@ -314,7 +340,8 @@ public final class MutableComponentModelImpl implements MutableComponentModel
     {
         String result = InternalUtils.get(metaData, key);
 
-        if (result == null && parentModel != null) result = parentModel.getMeta(key);
+        if (result == null && parentModel != null)
+            result = parentModel.getMeta(key);
 
         return result;
     }
@@ -334,15 +361,14 @@ public final class MutableComponentModelImpl implements MutableComponentModel
 
     public boolean handlesEvent(String eventType)
     {
-        if (InternalUtils.get(handledEvents, eventType) != null) return true;
+        if (InternalUtils.get(handledEvents, eventType) != null)
+            return true;
 
-        return parentModel == null
-               ? false
-               : parentModel.handlesEvent(eventType);
+        return parentModel == null ? false : parentModel.handlesEvent(eventType);
     }
 
     public String[] getOrderForMixin(String mixinClassName)
     {
-        return InternalUtils.get(mixinOrders,mixinClassName);
+        return InternalUtils.get(mixinOrders, mixinClassName);
     }
 }

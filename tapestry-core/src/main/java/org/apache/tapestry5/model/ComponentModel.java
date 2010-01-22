@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -39,7 +39,7 @@ public interface ComponentModel
     Resource getBaseResource();
 
     /**
-     * The FQCN of the component.
+     * The fully qualified class name of the component.
      */
     String getComponentClassName();
 
@@ -79,12 +79,20 @@ public interface ComponentModel
     List<String> getMixinClassNames();
 
     /**
-     * Return a single parameter model by parameter name, or null if the parameter is not defined.
+     * Return a single parameter model by parameter name, or null if the parameter is not defined (is not 
+     * a formal parameter).
      *
      * @param parameterName the name of the parameter (case is ignored)
      */
     ParameterModel getParameterModel(String parameterName);
 
+    /**
+     * Returns true if the named parameter is formally defined (there's a ParameterModel).
+     * @param parameterName name of the parameter (case is ignored)
+     * @since 5.2.0
+     */
+    boolean isFormalParameter(String parameterName);
+    
     /**
      * Returns an alphabetically sorted list of the names of all formal parameters. This includes parameters defined by
      * a base class.
@@ -171,7 +179,7 @@ public interface ComponentModel
     /**
      * @param mixinClassName class name of the mixin for which the ordering is desired
      * @return the ordering constraint(s) for the mixin, potentially null.
-     * @since 5.2.0.0
+     * @since 5.2.0
      */
     String[] getOrderForMixin(String mixinClassName);
 }

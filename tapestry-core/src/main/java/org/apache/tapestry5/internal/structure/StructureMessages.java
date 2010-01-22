@@ -122,20 +122,4 @@ final class StructureMessages
         return MESSAGES.get("persist-change-before-load-complete");
     }
 
-    static String noSuchCoreComponentParameter(ComponentResources mixinResources,
-                                               String boundId, String...parameters)
-    {
-        return MESSAGES.format("no-such-core-component-parameter",
-                boundId,
-                mixinResources.getComponentModel().getComponentClassName(),
-                mixinResources.getContainerResources().getComponentModel().getComponentClassName(),
-                InternalUtils.joinSorted(Arrays.asList(parameters)),
-                InternalUtils.joinSorted(Arrays.asList(mixinResources.getContainerResources().getComponentModel().getDeclaredParameterNames())));
-    }
-
-    public static String bindParameterOnlyOnMixin(String boundParameterName, InternalComponentResourcesImpl internalComponentResources)
-    {
-        return MESSAGES.format("bind-parameter-only-on-mixin",boundParameterName,
-                internalComponentResources.getComponentModel().getComponentClassName());
-    }
 }

@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -76,9 +76,11 @@ public interface ComponentResources extends ComponentResourcesCommon
 
     /**
      * Returns an embedded component, given the component's id.
-     *
-     * @param embeddedId selects the embedded component (case is ignored)
-     * @throws IllegalArgumentException if this component does not contain a component with the given id
+     * 
+     * @param embeddedId
+     *            selects the embedded component (case is ignored)
+     * @throws IllegalArgumentException
+     *             if this component does not contain a component with the given id
      */
 
     Component getEmbeddedComponent(String embeddedId);
@@ -90,9 +92,11 @@ public interface ComponentResources extends ComponentResourcesCommon
 
     /**
      * Obtains an annotation provided by a parameter.
-     *
-     * @param parameterName  name of parameter to search for the annotation
-     * @param annotationType the type of annotation
+     * 
+     * @param parameterName
+     *            name of parameter to search for the annotation
+     * @param annotationType
+     *            the type of annotation
      * @return the annotation if found or null otherwise
      */
     <T extends Annotation> T getParameterAnnotation(String parameterName, Class<T> annotationType);
@@ -100,8 +104,9 @@ public interface ComponentResources extends ComponentResourcesCommon
     /**
      * Indentifies all parameters that are not formal parameters and writes each as a attribute/value pair into the
      * current element of the markup writer.
-     *
-     * @param writer to which {@link MarkupWriter#attributes(Object[]) attributes} will be written
+     * 
+     * @param writer
+     *            to which {@link MarkupWriter#attributes(Object[]) attributes} will be written
      */
     void renderInformalParameters(MarkupWriter writer);
 
@@ -115,8 +120,9 @@ public interface ComponentResources extends ComponentResourcesCommon
      * with property bindings, and is used to determine the actual type of the property, rather than the type of
      * parameter (remember that type coercion automatically occurs, which can mask significant differences between the
      * parameter type and the bound property type).
-     *
-     * @param parameterName used to select the parameter (case is ignored)
+     * 
+     * @param parameterName
+     *            used to select the parameter (case is ignored)
      * @return the type of the bound parameter, or null if the parameter is not bound
      * @see Binding#getBindingType()
      */
@@ -124,35 +130,42 @@ public interface ComponentResources extends ComponentResourcesCommon
 
     /**
      * Returns an annotation provider, used to obtain annotations related to the parameter.
-     *
-     * @param parameterName used to select the parameter (case is ignored)
+     * 
+     * @param parameterName
+     *            used to select the parameter (case is ignored)
      * @return the annotation provider, or null if the parameter is not bound
      */
     AnnotationProvider getAnnotationProvider(String parameterName);
 
     /**
      * Used to access an informal parameter that's a Block.
-     *
-     * @param parameterName the name of the informal parameter (case is ignored)
+     * 
+     * @param parameterName
+     *            the name of the informal parameter (case is ignored)
      * @return the informal Block parameter, or null if not bound
      */
     Block getBlockParameter(String parameterName);
 
     /**
      * Returns a previously stored render variable.
-     *
-     * @param name of the variable (case will be ignored)
+     * 
+     * @param name
+     *            of the variable (case will be ignored)
      * @return the variable's value
-     * @throws IllegalArgumentException if the name doesn't correspond to a stored value
+     * @throws IllegalArgumentException
+     *             if the name doesn't correspond to a stored value
      */
     Object getRenderVariable(String name);
 
     /**
      * Stores a render variable, accessible with the provided name.
-     *
-     * @param name  of value to store
-     * @param value value to store (may not be null)
-     * @throws IllegalStateException if the component is not currently rendering
+     * 
+     * @param name
+     *            of value to store
+     * @param value
+     *            value to store (may not be null)
+     * @throws IllegalStateException
+     *             if the component is not currently rendering
      */
     void storeRenderVariable(String name, Object value);
 
@@ -161,9 +174,8 @@ public interface ComponentResources extends ComponentResourcesCommon
      */
     void addPageLifecycleListener(PageLifecycleListener listener);
 
-
     /**
-     * Discards all persistent field changes for the page containing the component.  Changes are eliminated from
+     * Discards all persistent field changes for the page containing the component. Changes are eliminated from
      * persistent storage (such as the {@link org.apache.tapestry5.services.Session}) which will take effect in the
      * <em>next</em> request (the attached page instance is not affected).
      */
@@ -171,20 +183,20 @@ public interface ComponentResources extends ComponentResourcesCommon
 
     /**
      * Returns the name of element that represents the component in its template, or null if not known.
-     *
+     * 
      * @return the element name or null
      */
     String getElementName();
 
     /**
      * Returns a list of the names of any informal parameters bound to this component.
-     *
+     * 
      * @return the name sorted alphabetically
      * @see org.apache.tapestry5.annotations.SupportsInformalParameters
      */
     List<String> getInformalParameterNames();
 
-    /**
+/**
      * Reads an informal parameter and {@linkplain org.apache.tapestry5.ioc.services.TypeCoercer coercers) the bound
      * value to the indicated type.
      *
@@ -193,4 +205,12 @@ public interface ComponentResources extends ComponentResourcesCommon
      * @return instance of type
      */
     <T> T getInformalParameter(String name, Class<T> type);
+
+    /**
+     * Returns true if these resources represent a mixin to another component. The component is the
+     * {@linkplain #getContainerResources() container} of this resources.
+     * 
+     * @since 5.2.0
+     */
+    boolean isMixin();
 }

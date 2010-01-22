@@ -18,7 +18,6 @@ import java.lang.annotation.Annotation;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.tapestry5.Binding;
 import org.apache.tapestry5.Block;
@@ -29,8 +28,6 @@ import org.apache.tapestry5.Link;
 import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.internal.InternalComponentResources;
 import org.apache.tapestry5.internal.ParameterAccess;
-import org.apache.tapestry5.internal.ParameterChangeListener;
-import org.apache.tapestry5.internal.ParameterChangedEvent;
 import org.apache.tapestry5.internal.services.Instantiator;
 import org.apache.tapestry5.internal.transform.ParameterConduit;
 import org.apache.tapestry5.ioc.AnnotationProvider;
@@ -46,7 +43,6 @@ import org.apache.tapestry5.model.ParameterModel;
 import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.runtime.PageLifecycleListener;
 import org.apache.tapestry5.runtime.RenderQueue;
-import org.apache.tapestry5.services.FieldValueConduit;
 import org.slf4j.Logger;
 
 /**
@@ -81,7 +77,7 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
     // Case-insensitive map from container-parameter name to ParameterAccess, for BindParameter.
     // Should only ever be used for mixins.
     private Map<String, ParameterAccess> containerParameterAccess;
-    
+
     // Case insentive map from parameter name to ParameterConduit, used to support mixins
     // which need access to the containing component's PC's
     private Map<String, ParameterConduit> conduits;
@@ -94,6 +90,8 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
     private static final Object[] EMPTY = new Object[0];
 
     private boolean informalsComputed;
+
+    private final boolean mixin;
 
     /**
      * We keep a linked list of informal parameters, which saves us the expense of determining which
@@ -139,7 +137,7 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
 
     public InternalComponentResourcesImpl(Page page, ComponentPageElement element,
             ComponentResources containerResources, ComponentPageElementResources elementResources,
-            String completeId, String nestedId, Instantiator componentInstantiator)
+            String completeId, String nestedId, Instantiator componentInstantiator, boolean mixin)
     {
         this.page = page;
         this.element = element;
@@ -147,9 +145,16 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
         this.elementResources = elementResources;
         this.completeId = completeId;
         this.nestedId = nestedId;
+        this.mixin = mixin;
 
         componentModel = componentInstantiator.getModel();
         component = componentInstantiator.newInstance(this);
+    }
+
+    @Override
+    public boolean isMixin()
+    {
+        return mixin;
     }
 
     public Location getLocation()
@@ -346,16 +351,6 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
         return element.getMixinByClassName(mixinClassName);
     }
 
-    public boolean isMixingIn(String mixinClassName)
-    {
-        return element.isMixingIn(mixinClassName);
-    }
-
-    public void deferLoadAction(Runnable action)
-    {
-        element.deferLoadAction(action);
-    }
-
     public void renderInformalParameters(MarkupWriter writer)
     {
         if (bindings == null)
@@ -514,54 +509,6 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
         return result;
     }
 
-    public ParameterAccess getContainerBoundParameterAccess(final String boundParameterName,
-            String... parentParameterNames)
-    {
-        if (containerParameterAccess == null)
-            containerParameterAccess = CollectionFactory.newCaseInsensitiveMap();
-
-        ParameterAccess result = containerParameterAccess.get(boundParameterName);
-        if (result == null)
-        {
-            final InternalComponentResources res = (InternalComponentResources) getContainerResources();
-            // Ideally, this check would occur at class fabrication time. But there's not currently
-            // a way
-            // to tell if a component class is a mixin class, short of checking for "mixins" in the
-            // FQCN.
-            // So we check to make sure that this component class name is in the set of mixins
-            // defined for the container
-            // resources.
-            if (!res.isMixingIn(this.getComponentModel().getComponentClassName()))
-            {
-                // then we're not a mixin, we're a component in the tree.
-                throw new TapestryException(StructureMessages.bindParameterOnlyOnMixin(
-                        boundParameterName, this), this, null);
-            }
-            // Have to be careful here. Problem is that if the mixin is not @MixinAfter, its
-            // PAGE_DID_LOAD will be called
-            // before the core component's. That can potentially result in missing default bindings
-            // if we
-            // call getParameterAcces at the wrong time (the unbound parameter access will be
-            // cached...).
-            String parentParameterName = findParentParameterName(parentParameterNames);
-            if (parentParameterName == null) { throw new TapestryException(StructureMessages
-                    .noSuchCoreComponentParameter(this, boundParameterName, parentParameterNames),
-                    this, null); }
-            result = createContainerParameterAccess(parentParameterName);
-            containerParameterAccess.put(boundParameterName, result);
-        }
-        return result;
-    }
-
-    private String findParentParameterName(String... queries)
-    {
-        for (String query : queries)
-        {
-            if (getContainerResources().getComponentModel().getParameterModel(query) != null) { return query; }
-        }
-        return null;
-    }
-
     private ParameterAccess createParameterAccess(final String parameterName)
     {
         final Binding binding = getBinding(parameterName);
@@ -578,13 +525,6 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
             public boolean isBound()
             {
                 return binding != null;
-            }
-
-            public Object read(String desiredTypeName)
-            {
-                Class desiredType = elementResources.toClass(desiredTypeName);
-
-                return read(desiredType);
             }
 
             public <T> T read(Class<T> desiredType)
@@ -621,26 +561,16 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
 
             public <T> void write(T parameterValue)
             {
-
                 if (binding == null)
-                {
-                    // have to fire in case there's a mixin watching value;
-                    // even if it's not bound to any other value,
-                    // the mixin needs to know that the value internal to the component
-                    // was changed.
-                    fireParameterChanged(parameterName, parameterValue);
                     return;
-                }
 
                 Class bindingType = binding.getBindingType();
-                
+
                 try
                 {
                     Object coerced = elementResources.coerce(parameterValue, bindingType);
 
                     binding.set(coerced);
-                
-                    fireParameterChanged(parameterName, coerced);
                 }
                 catch (Exception ex)
                 {
@@ -663,122 +593,7 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
             {
                 return binding == null ? null : binding.getAnnotation(annotationClass);
             }
-
-            private Set<ParameterChangeListener> listeners;
-
-            public void registerParameterChangeListener(ParameterChangeListener listener)
-            {
-                Defense.notNull(listener, "listener");
-                if (listeners == null)
-                    listeners = CollectionFactory.newSet();
-                listeners.add(listener);
-            }
-
-            public void unregisterParameterChangeListener(ParameterChangeListener listener)
-            {
-                if (listeners == null)
-                    return;
-                listeners.remove(listener);
-            }
-
-            public boolean shouldCache()
-            {
-                return cache;
-            }
-
-            protected void fireParameterChanged(String parameterName, Object newValue)
-            {
-                ParameterChangedEvent event = new ParameterChangedEvent(parameterName, newValue);
-
-                if (listeners != null)
-                {
-                    for (ParameterChangeListener l : listeners)
-                    {
-                        l.parameterChanged(event);
-                    }
-                }
-            }
-
         };
-    }
-
-    private ParameterAccess createContainerParameterAccess(final String parentParameterName)
-    {
-
-        return new ParameterAccess()
-        {
-
-            private ParameterAccess access()
-            {
-                return element.getComponentResources().getParameterAccess(parentParameterName);
-            }
-
-            public boolean isBound()
-            {
-                return element.getBinding(parentParameterName) != null;
-            }
-
-            public Object read(String desiredTypeName)
-            {
-                return access().read(desiredTypeName);
-            }
-
-            public <T> T read(Class<T> expectedType)
-            {
-                return access().read(expectedType);
-            }
-
-            public <T> void write(T parameterValue)
-            {
-                access().write(parameterValue);
-            }
-
-            public boolean isInvariant()
-            {
-                return access().isInvariant();
-            }
-
-            public Class getBoundType()
-            {
-                return access().getBoundType();
-            }
-
-            public void registerParameterChangeListener(final ParameterChangeListener listener)
-            {
-                // if it's not bound, try defering.
-                if (isBound())
-                {
-                    access().registerParameterChangeListener(listener);
-                }
-                else
-                {
-                    // try waiting for it. If it's not bound after load, then it's not bound at all.
-                    element.deferLoadAction(new Runnable()
-                    {
-                        public void run()
-                        {
-                            access().registerParameterChangeListener(listener);
-                        }
-                    });
-                }
-            }
-
-            public void unregisterParameterChangeListener(ParameterChangeListener listener)
-            {
-                access().unregisterParameterChangeListener(listener);
-            }
-
-            public boolean shouldCache()
-            {
-                return access().shouldCache();
-            }
-
-            public <T extends Annotation> T getAnnotation(Class<T> annotationClass)
-            {
-                return access().getAnnotation(annotationClass);
-            }
-        };
-
     }
 
     public void addPageResetListener(PageResetListener listener)
@@ -787,7 +602,7 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
     }
 
     @Override
-    public FieldValueConduit getParameterConduit(String parameterName)
+    public ParameterConduit getParameterConduit(String parameterName)
     {
         return InternalUtils.get(conduits, parameterName);
     }
@@ -795,10 +610,10 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
     @Override
     public void setParameterConduit(String parameterName, ParameterConduit conduit)
     {
-        if (conduits == null) conduits = CollectionFactory.newCaseInsensitiveMap();
+        if (conduits == null)
+            conduits = CollectionFactory.newCaseInsensitiveMap();
 
         conduits.put(parameterName, conduit);
     }
-    
-    
+
 }

@@ -68,13 +68,12 @@ import org.slf4j.Logger;
 /**
  * Implements {@link RenderCommand} and represents a component within an overall page. Much of a
  * component page
- * element's behavior is delegated to user code, via a
- * {@link org.apache.tapestry5.runtime.Component} instance.
+ * element's behavior is delegated to user code, via a {@link org.apache.tapestry5.runtime.Component} instance.
  * <p/>
  * Once instantiated, a ComponentPageElement should be registered as a
  * {@linkplain org.apache.tapestry5.internal.structure.Page#addLifecycleListener(org.apache.tapestry5.runtime.PageLifecycleListener)
- * lifecycle listener}. This could be done inside the constructors, but that tends to complicate
- * unit tests, so its done by {@link org.apache.tapestry5.internal.services.PageElementFactoryImpl}.
+ * lifecycle listener}. This could be done inside the constructors, but that tends to complicate unit tests, so its done
+ * by {@link org.apache.tapestry5.internal.services.PageElementFactoryImpl}.
  */
 public class ComponentPageElementImpl extends BaseLocatable implements ComponentPageElement,
         PageLifecycleListener
@@ -249,9 +248,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
     }
 
     /**
-     * Replaces
-     * {@link org.apache.tapestry5.internal.structure.ComponentPageElementImpl.BeginRenderPhase}
-     * when there is
+     * Replaces {@link org.apache.tapestry5.internal.structure.ComponentPageElementImpl.BeginRenderPhase} when there is
      * a handler for AfterRender but not BeginRender.
      */
     private class OptimizedBeginRenderPhase implements RenderCommand
@@ -515,8 +512,6 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
 
     private Orderer<Component> mixinAfterOrderer;
 
-    private List<Runnable> deferredLoadActions;
-
     private boolean loaded;
 
     /**
@@ -588,7 +583,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
                 .getComponentResources();
 
         coreResources = new InternalComponentResourcesImpl(this.page, this, containerResources,
-                this.elementResources, completeId, nestedId, instantiator);
+                this.elementResources, completeId, nestedId, instantiator, false);
 
         coreComponent = coreResources.getComponent();
 
@@ -713,7 +708,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
 
         InternalComponentResourcesImpl resources = new InternalComponentResourcesImpl(page, this,
                 coreResources, elementResources, completeId + mixinExtension, nestedId
-                        + mixinExtension, instantiator);
+                        + mixinExtension, instantiator, true);
 
         mixinIdToComponentResources.put(mixinId, resources);
         // note that since we're using explicit ordering now,
@@ -833,19 +828,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
         // that is invoked first, before we check for unbound parameters.
 
         invoke(false, CONTAINING_PAGE_DID_LOAD);
-        executeDeferredLoadActions();
         verifyRequiredParametersAreBound();
-    }
-
-    private void executeDeferredLoadActions()
-    {
-        if (deferredLoadActions == null)
-            return;
-        for (Runnable action : deferredLoadActions)
-        {
-            action.run();
-        }
-        deferredLoadActions = null;// having executed them, we have no need now to store them.
     }
 
     public void enqueueBeforeRenderBody(RenderQueue queue)
@@ -928,18 +911,6 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
                     .getComponent(); }
         }
         return null;
-    }
-
-    public boolean isMixingIn(String mixinClassName)
-    {
-        return mixinForClassName(mixinClassName) != null;
-    }
-
-    public void deferLoadAction(Runnable action)
-    {
-        if (deferredLoadActions == null)
-            deferredLoadActions = CollectionFactory.newList();
-        deferredLoadActions.add(action);
     }
 
     public ComponentResources getMixinResources(String mixinId)

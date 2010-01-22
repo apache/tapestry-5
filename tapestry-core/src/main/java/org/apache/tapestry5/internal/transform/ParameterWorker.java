@@ -14,29 +14,27 @@
 
 package org.apache.tapestry5.internal.transform;
 
-import java.lang.reflect.Modifier;
 import java.util.Iterator;
 import java.util.List;
 
 import org.apache.tapestry5.Binding;
+import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.internal.InternalComponentResources;
 import org.apache.tapestry5.internal.ParameterAccess;
-import org.apache.tapestry5.internal.ParameterChangeListener;
-import org.apache.tapestry5.internal.ParameterChangedEvent;
-import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.internal.bindings.LiteralBinding;
+import org.apache.tapestry5.internal.services.ComponentClassCache;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.ioc.util.BodyBuilder;
+import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.services.BindingSource;
 import org.apache.tapestry5.services.ClassTransformation;
 import org.apache.tapestry5.services.ComponentClassTransformWorker;
 import org.apache.tapestry5.services.ComponentDefaultProvider;
+import org.apache.tapestry5.services.ComponentValueProvider;
 import org.apache.tapestry5.services.MethodFilter;
 import org.apache.tapestry5.services.TransformConstants;
 import org.apache.tapestry5.services.TransformMethodSignature;
-import org.apache.tapestry5.services.TransformUtils;
 
 /**
  * Responsible for identifying parameters via the {@link org.apache.tapestry5.annotations.Parameter} annotation on
@@ -44,20 +42,25 @@ import org.apache.tapestry5.services.TransformUtils;
  */
 public class ParameterWorker implements ComponentClassTransformWorker
 {
-    private static final String BIND_METHOD_NAME = ParameterWorker.class.getName() + ".bind";
-    private static final String EQUAL_METHOD_NAME = ParameterWorker.class.getName() + ".equal";
+    private final ComponentClassCache classCache;
 
     private final BindingSource bindingSource;
 
-    private ComponentDefaultProvider defaultProvider;
+    private final ComponentDefaultProvider defaultProvider;
 
-    public ParameterWorker(BindingSource bindingSource, ComponentDefaultProvider defaultProvider)
+    private final TypeCoercer typeCoercer;
+
+    public ParameterWorker(ComponentClassCache classCache, BindingSource bindingSource,
+            ComponentDefaultProvider defaultProvider, TypeCoercer typeCoercer)
     {
+        this.classCache = classCache;
         this.bindingSource = bindingSource;
         this.defaultProvider = defaultProvider;
+        this.typeCoercer = typeCoercer;
     }
 
-    public void transform(final ClassTransformation transformation, MutableComponentModel model)
+    @Override
+    public void transform(ClassTransformation transformation, MutableComponentModel model)
     {
         List<String> fieldNames = transformation.findFieldsWithAnnotation(Parameter.class);
 
@@ -69,14 +72,13 @@ public class ParameterWorker implements ComponentClassTransformWorker
             {
                 String fieldName = i.next();
 
-                Parameter annotation = transformation.getFieldAnnotation(fieldName, Parameter.class);
+                Parameter annotation = transformation
+                        .getFieldAnnotation(fieldName, Parameter.class);
 
                 // Process the principal annotations on the first pass, handle the others
                 // on the second pass.
 
-                boolean process = pass == 0
-                                  ? annotation.principal()
-                                  : true;
+                boolean process = pass == 0 ? annotation.principal() : true;
 
                 if (process)
                 {
@@ -86,135 +88,236 @@ public class ParameterWorker implements ComponentClassTransformWorker
                 }
             }
         }
+
     }
 
-    private void convertFieldIntoParameter(String name, Parameter annotation, ClassTransformation transformation,
-                                           MutableComponentModel model)
+    private void convertFieldIntoParameter(String fieldName, final Parameter annotation,
+            ClassTransformation transformation, MutableComponentModel model)
     {
-        transformation.claimField(name, annotation);
+        final String fieldTypeName = transformation.getFieldType(fieldName);
 
-        String parameterName = getParameterName(name, annotation.name());
+        final String parameterName = getParameterName(fieldName, annotation.name());
 
-        boolean cache = annotation.cache();
+        final boolean enableCaching = annotation.cache();
 
-        model.addParameter(parameterName, annotation.required(), annotation.allowNull(), annotation.defaultPrefix(),cache);
+        model.addParameter(parameterName, annotation.required(), annotation.allowNull(), annotation
+                .defaultPrefix(), enableCaching);
 
-        String type = transformation.getFieldType(name);
+        transformation.claimField(fieldName, annotation);
+        
+        ComponentValueProvider<ParameterConduit> provider = new ComponentValueProvider<ParameterConduit>()
+        {
+            // Invoked from the components' constructor. This causes a few issues (it would be
+            // better
+            // if there was a way to defer until the component's page loaded lifecycle method). The
+            // issues
+            // are addressed by deferring some behaviors until the load() method.
 
-        String cachedFieldName = transformation.addField(Modifier.PRIVATE, "boolean", name + "_cached");
+            @Override
+            public ParameterConduit get(ComponentResources resources)
+            {
+                final InternalComponentResources icr = (InternalComponentResources) resources;
 
-        String resourcesFieldName = transformation.getResourcesFieldName();
+                final Class fieldType = classCache.forName(fieldTypeName);
 
-        String accessFieldName = addParameterSetup(name, annotation.defaultPrefix(), annotation.value(),
-                                                   parameterName, cachedFieldName, cache, type, resourcesFieldName,
-                                                   transformation, annotation.autoconnect());
+                // Rely on some code generation in the component to set the default binding from
+                // the field, or from a default method.
 
-        addReaderMethod(name, cachedFieldName, accessFieldName, cache, parameterName, type, resourcesFieldName,
-                        transformation);
+                return new ParameterConduit()
+                {
+                    // Current cached value for the parameter.
+                    private Object value;
 
-        addWriterMethod(name, cachedFieldName, accessFieldName, cache, parameterName, type, resourcesFieldName,
-                        transformation);
+                    // Default value for parameter, computed *once* at
+                    // page load time.
+
+                    private Object defaultValue;
+
+                    private ParameterAccess parameterAccess;
+
+                    private Binding defaultBinding;
+
+                    boolean loaded = false;
+
+                    // Is the current value of the binding cached in the
+                    // value field?
+                    private boolean cached = false;
+
+                    // If the field is a primitive type, set its default value to false
+                    // or zero. For non-primitives, null until we know better.
+
+                    {
+                        Class javaType = classCache.forName(fieldTypeName);
+
+                        if (javaType.isPrimitive())
+                        {
+                            // Reminder: 0 coerces to false
+                            defaultValue = typeCoercer.coerce(0l, javaType);
+                        }
+
+                        icr.setParameterConduit(parameterName, this);
+                    }
+
+                    private boolean isInvariant()
+                    {
+                        return parameterAccess.isInvariant();
+                    }
+
+                    private boolean isLoaded()
+                    {
+                        return loaded;
+                    }
+
+                    @Override
+                    public void set(Object newValue)
+                    {
+                        // Assignments before the page is loaded ultimately exist to set the
+                        // default value for the field. Often this is from the (original)
+                        // constructor method,
+                        // which is converted to a real method as part of the transformation.
+
+                        if (!loaded)
+                        {
+                            defaultValue = newValue;
+                            return;
+                        }
+
+                        // This will catch read-only or unbound parameters.
+
+                        parameterAccess.write(newValue);
+
+                        value = newValue;
+
+                        // If caching is enabled for the parameter (the typical case) and the
+                        // component is currently rendering, then the result
+                        // can be cached in the ParameterConduit (until the component finishes
+                        // rendering).
+
+                        cached = enableCaching && icr.isRendering();
+                    }
+
+                    @Override
+                    public void reset()
+                    {
+                        if (!isInvariant())
+                        {
+                            value = defaultValue;
+                            cached = false;
+                        }
+                    }
+
+                    @Override
+                    public void load()
+                    {
+                        // If it's bound at this point, that's because of an explicit binding
+                        // in the template or @Component annotation.
+
+                        if (!icr.isBound(parameterName))
+                        {
+                            // Otherwise, construct a default binding, or use one provided from
+                            // the component.
+
+                            Binding binding = getDefaultBindingForParameter();
+
+                            if (binding != null)
+                                icr.bindParameter(parameterName, binding);
+
+                            defaultBinding = null;
+                        }
+
+                        parameterAccess = icr.getParameterAccess(parameterName);
+
+                        loaded = true;
+
+                        value = defaultValue;
+                    }
+
+                    private Binding getDefaultBindingForParameter()
+                    {
+                        if (InternalUtils.isNonBlank(annotation.value()))
+                            return bindingSource.newBinding("default " + parameterName, icr,
+                                    annotation.defaultPrefix(), annotation.value());
+
+                        if (annotation.autoconnect())
+                            return defaultProvider.defaultBinding(parameterName, icr);
+
+                        // Return (if not null) the binding from the setDefault() method which is
+                        // set via a default method on the component, or from the field's initial
+                        // value.
+
+                        return defaultBinding;
+                    }
+
+                    @Override
+                    public boolean isBound()
+                    {
+                        return parameterAccess.isBound();
+                    }
+
+                    @SuppressWarnings("unchecked")
+                    @Override
+                    public Object get()
+                    {
+                        if (!isLoaded()) { return defaultValue; }
+
+                        if (cached || !isBound()) { return value; }
+
+                        // Read the parameter's binding and cast it to the
+                        // field's type.
+                        Object result = parameterAccess.read(fieldType);
+
+                        // If the value is invariant, we can cache it forever. Otherwise, we
+                        // we may want to cache it for the remainder of the component render (if the
+                        // component is currently rendering).
+
+                        if (isInvariant() || (enableCaching && icr.isRendering()))
+                        {
+                            value = result;
+                            cached = true;
+                        }
+
+                        return result;
+                    }
+
+                    @Override
+                    public void setDefault(Object value)
+                    {
+                        if (value == null)
+                            return;
+
+                        if (value instanceof Binding)
+                        {
+                            defaultBinding = (Binding) value;
+                            return;
+                        }
+
+                        defaultBinding = new LiteralBinding(null, "default " + parameterName, value);
+                    }
+                };
+            }
+
+        };
+
+        // This has to be done in the constructor, to handle any field initializations
+
+        String conduitFieldName = transformation.addIndirectInjectedField(ParameterConduit.class,
+                parameterName + "$conduit", provider);
+
+        addCodeForParameterDefaultMethod(transformation, parameterName, conduitFieldName);
+
+        transformation.replaceFieldAccess(fieldName, conduitFieldName);
+
+        transformation.extendMethod(TransformConstants.CONTAINING_PAGE_DID_LOAD_SIGNATURE, String
+                .format("%s.load();", conduitFieldName));
+
+        transformation.extendMethod(TransformConstants.POST_RENDER_CLEANUP_SIGNATURE, String
+                .format("%s.reset();", conduitFieldName));
+
     }
 
-    /**
-     * Returns the name of a field that stores whether the parameter binding is invariant.
-     */
-    private String addParameterSetup(String fieldName, String defaultPrefix, String defaultBinding,
-                                     String parameterName, String cachedFieldName, boolean cache, String fieldType,
-                                     String resourcesFieldName, ClassTransformation transformation, boolean autoconnect)
+    private void addCodeForParameterDefaultMethod(ClassTransformation transformation,
+            final String parameterName, String conduitFieldName)
     {
-
-        String accessFieldName = transformation.addField(Modifier.PRIVATE, ParameterAccess.class.getName(),
-                                                         fieldName + "_access");
-
-        String defaultFieldName = transformation.addField(Modifier.PRIVATE, fieldType, fieldName + "_default");
-
-        BodyBuilder builder = new BodyBuilder().begin();
-
-        addDefaultBindingSetup(parameterName, defaultPrefix, defaultBinding, resourcesFieldName,
-                               transformation,
-                               builder, autoconnect);
-
-        // Order is (alas) important here: must invoke getParameterAccess() after the binding setup, as
-        // that code may invoke InternalComponentResources.bindParameter().
-
-        builder.addln("%s = %s.getParameterAccess(\"%s\");", accessFieldName, resourcesFieldName, parameterName);
-
-        // Store the current value of the field into the default field. This value will
-        // be used to reset the field after rendering.
-
-        builder.addln("%s = %s;", defaultFieldName, fieldName);
-
-        addListenerSetup(fieldName, fieldType, parameterName, accessFieldName, builder, transformation);
-
-        builder.end();
-
-        transformation.extendMethod(TransformConstants.CONTAINING_PAGE_DID_LOAD_SIGNATURE, builder
-                .toString());
-
-        // Now, when the component completes rendering, ensure that any variant parameters are
-        // are returned to default value. This isn't necessary when the parameter is not cached,
-        // because (unless the binding is invariant), there's no value to get rid of (and if it is
-        // invariant, there's no need to get rid of it).
-
-        if (cache)
-        {
-            builder.clear();
-
-            builder.addln("if (! %s.isInvariant())", accessFieldName);
-            builder.begin();
-            builder.addln("%s = %s;", fieldName, defaultFieldName);
-            builder.addln("%s = false;", cachedFieldName);
-            builder.end();
-
-            // Clean up after the component renders.
-
-            String body = builder.toString();
-
-            transformation.extendMethod(TransformConstants.POST_RENDER_CLEANUP_SIGNATURE, body);
-
-            // And again, when the page is detached (TAPESTRY-2460)
-
-            transformation.extendMethod(TransformConstants.CONTAINING_PAGE_DID_DETACH_SIGNATURE, builder.toString());
-        }
-
-        return accessFieldName;
-    }
-
-    private void addDefaultBindingSetup(String parameterName, String defaultPrefix, String defaultBinding,
-                                        String resourcesFieldName,
-                                        ClassTransformation transformation,
-                                        BodyBuilder builder, boolean autoconnect)
-    {
-        if (InternalUtils.isNonBlank(defaultBinding))
-        {
-            builder.addln("if (! %s.isBound(\"%s\"))", resourcesFieldName, parameterName);
-
-            String bindingFactoryFieldName = transformation.addInjectedField(BindingSource.class, "bindingSource",
-                                                                             bindingSource);
-
-            builder
-                    .addln("  %s.bindParameter(\"%s\", %s.newBinding(\"default %2$s\", %1$s, \"%s\", \"%s\"));",
-                           resourcesFieldName, parameterName, bindingFactoryFieldName, defaultPrefix, defaultBinding);
-
-            return;
-        }
-
-        if (autoconnect)
-        {
-            String defaultProviderFieldName = transformation.addInjectedField(ComponentDefaultProvider.class,
-                                                                              "defaultProvider", defaultProvider);
-
-            builder.addln("if (! %s.isBound(\"%s\"))", resourcesFieldName, parameterName);
-
-            builder.addln("  %s.bindParameter(\"%s\", %s.defaultBinding(\"%s\", %s));", resourcesFieldName,
-                          parameterName, defaultProviderFieldName, parameterName, resourcesFieldName);
-            return;
-        }
-
-        // If no default binding expression provided in the annotation, then look for a default
-        // binding method to provide the binding.
-
         final String methodName = "default" + parameterName;
 
         MethodFilter filter = new MethodFilter()
@@ -231,187 +334,20 @@ public class ParameterWorker implements ComponentClassTransformWorker
 
         List<TransformMethodSignature> signatures = transformation.findMethods(filter);
 
-        if (signatures.isEmpty()) return;
-
-        // Because the check was case-insensitive, we need to determine the actual
-        // name.
+        if (signatures.isEmpty())
+            return;
 
         String actualMethodName = signatures.get(0).getMethodName();
 
-        builder.addln("if (! %s.isBound(\"%s\"))", resourcesFieldName, parameterName);
-        builder.addln("  %s(\"%s\", %s, ($w) %s());",
-                      BIND_METHOD_NAME,
-                      parameterName,
-                      resourcesFieldName,
-                      actualMethodName);
+        transformation.extendExistingMethod(TransformConstants.CONTAINING_PAGE_DID_LOAD_SIGNATURE,
+                String.format("%s.setDefault(($w) %s());", conduitFieldName, actualMethodName));
     }
 
-    private void addListenerSetup(
-            String fieldName,
-            String fieldType,
-            String parameterName,
-            String accessFieldName,
-            BodyBuilder builder,
-            ClassTransformation transformation)
+    private static String getParameterName(String fieldName, String annotatedName)
     {
-        transformation.addImplementedInterface(ParameterChangeListener.class);
-        builder.addln("%s.registerParameterChangeListener($0);",accessFieldName);
-
-        TransformMethodSignature signature = new TransformMethodSignature(Modifier.PUBLIC, "void", "parameterChanged",
-                new String[] {ParameterChangedEvent.class.getName()}, null);
-
-        BodyBuilder changedBody = new BodyBuilder();
-        changedBody.begin();
-
-        changedBody.addln("if (%s($1, \"%s\"))",EQUAL_METHOD_NAME,parameterName);
-        changedBody.begin();
-
-        String cast = TransformUtils.getWrapperTypeName(fieldType);
-
-        if (TransformUtils.isPrimitive(fieldType))
-            changedBody.addln("%s = ((%s) $1.getNewValue()).%s();",
-                                fieldName, cast, TransformUtils.getUnwrapperMethodName(fieldType));
-        else
-            changedBody.addln("%s = (%s) $1.getNewValue();",fieldName, cast);
-
-        changedBody.addln("return;");
-        changedBody.end();
-
-        changedBody.end();
-        
-        transformation.extendMethod(signature,changedBody.toString());
-
-    }
-
-    private void addWriterMethod(String fieldName, String cachedFieldName, String accessFieldName, boolean cache,
-                                 String parameterName, String fieldType, String resourcesFieldName,
-                                 ClassTransformation transformation)
-    {
-        BodyBuilder builder = new BodyBuilder();
-        builder.begin();
-
-        // Before the component is loaded, updating the property sets the default value
-        // for the parameter. The value is stored in the field, but will be
-        // rolled into default field inside containingPageDidLoad().
-
-        builder.addln("if (! %s.isLoaded())", resourcesFieldName);
-        builder.begin();
-        builder.addln("%s = $1;", fieldName);
-        builder.addln("return;");
-        builder.end();
-
-        // Always start by updating the parameter; this will implicitly check for
-        // read-only or unbound parameters. $1 is the single parameter
-        // to the method.
-        builder.addln("%s.unregisterParameterChangeListener($0);",accessFieldName);
-        builder.addln("%s.write(($w)$1);", accessFieldName);
-        builder.addln("%s.registerParameterChangeListener($0);",accessFieldName);
-        builder.addln("%s = $1;", fieldName);
-        if (cache) builder.addln("%s = %s.isRendering();", cachedFieldName, resourcesFieldName);
-
-        builder.end();
-
-        String methodName = transformation.newMemberName("update_parameter", parameterName);
-
-        TransformMethodSignature signature = new TransformMethodSignature(Modifier.PRIVATE, "void", methodName,
-                                                                          new String[] {fieldType}, null);
-
-        transformation.addMethod(signature, builder.toString());
-
-        builder.clear();
-
-        //add the catch because if we don't re-register the class as a parameter change listener, it's value
-        //could wind up stale, and write can throw an exception.
-        builder.begin();
-        builder.addln("%s.registerParameterChangeListener($0);",accessFieldName);
-        builder.addln("throw $e;");
-        builder.end();
-
-        transformation.addCatch(signature,Exception.class.getName(),builder.toString());
-
-        transformation.replaceWriteAccess(fieldName, methodName);
-    }
-
-    /**
-     * Adds a private method that will be the replacement for read-access to the field.
-     */
-    private void addReaderMethod(String fieldName, String cachedFieldName, String accessFieldName, boolean cache,
-                                 String parameterName, String fieldType, String resourcesFieldName,
-                                 ClassTransformation transformation)
-    {
-        BodyBuilder builder = new BodyBuilder();
-        builder.begin();
-
-        // While the component is still loading, or when the value for the component is cached,
-        // or if the value is not bound, then return the current value of the field.
-
-        builder.addln("if (%s || ! %s.isLoaded() || ! %s.isBound()) return %s;", cachedFieldName,
-                      resourcesFieldName, accessFieldName, fieldName);
-
-        String cast = TransformUtils.getWrapperTypeName(fieldType);
-
-        // The ($r) cast will convert the result to the method return type; generally
-        // this does nothing. but for primitive types, it will unwrap
-        // the wrapper type back to a primitive.  We pass the desired type name
-        // to readParameter(), since its easier to convert it properly to
-        // a type on that end than in the generated code.
-
-        builder.addln("%s result = ($r) ((%s) %s.read(\"%2$s\"));", fieldType, cast, accessFieldName);
-
-        // If the binding is invariant, then it's ok to cache. Othewise, its only
-        // ok to cache if a) the @Parameter says to cache and b) the component
-        // is rendering at the point when field is accessed.
-
-        builder.add("if (%s.isInvariant()", accessFieldName);
-
-        if (cache) builder.add(" || %s.isRendering()", resourcesFieldName);
-
-        builder.addln(")");
-        builder.begin();
-        builder.addln("%s = result;", fieldName);
-        builder.addln("%s = true;", cachedFieldName);
-        builder.end();
-
-        builder.addln("return result;");
-        builder.end();
-
-        String methodName = transformation.newMemberName("read_parameter", parameterName);
-
-        TransformMethodSignature signature = new TransformMethodSignature(Modifier.PRIVATE, fieldType, methodName, null,
-                                                                          null);
-
-        transformation.addMethod(signature, builder.toString());
-
-        transformation.replaceReadAccess(fieldName, methodName);
-    }
-
-    private String getParameterName(String fieldName, String annotatedName)
-    {
-        if (InternalUtils.isNonBlank(annotatedName)) return annotatedName;
+        if (InternalUtils.isNonBlank(annotatedName))
+            return annotatedName;
 
         return InternalUtils.stripMemberName(fieldName);
-    }
-
-    /**
-     * Invoked from generated code as part of the handling of parameter default methods.
-     */
-    public static void bind(String parameterName, InternalComponentResources resources, Object value)
-    {
-        if (value == null) return;
-
-        if (value instanceof Binding)
-        {
-            Binding binding = (Binding) value;
-
-            resources.bindParameter(parameterName, binding);
-            return;
-        }
-
-        resources.bindParameter(parameterName, new LiteralBinding(null, "default " + parameterName, value));
-    }
-
-    public static <T> boolean equal(T left, T right)
-    {
-        return TapestryInternalUtils.isEqual(left,right);
     }
 }

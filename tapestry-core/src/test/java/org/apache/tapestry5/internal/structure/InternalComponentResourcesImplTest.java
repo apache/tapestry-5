@@ -44,7 +44,7 @@ public class InternalComponentResourcesImplTest extends InternalBaseTestCase
         replay();
 
         InternalComponentResources resources = new InternalComponentResourcesImpl(null, element, null, null, null,
-                                                                                  null, ins);
+                                                                                  null, ins, false);
 
         resources.renderInformalParameters(writer);
 
@@ -69,7 +69,7 @@ public class InternalComponentResourcesImplTest extends InternalBaseTestCase
         replay();
 
         InternalComponentResources resources = new InternalComponentResourcesImpl(null, element, null, null, null,
-                                                                                  null, ins);
+                                                                                  null, ins, false);
 
         resources.bindParameter("fred", binding);
 
@@ -105,7 +105,7 @@ public class InternalComponentResourcesImplTest extends InternalBaseTestCase
 
         InternalComponentResources resources = new InternalComponentResourcesImpl(null, element, null,
                                                                                   componentPageElementResources,
-                                                                                  null, null, ins);
+                                                                                  null, null, ins, false);
 
         resources.bindParameter("fred", binding);
 
@@ -130,7 +130,7 @@ public class InternalComponentResourcesImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentResources resources = new InternalComponentResourcesImpl(null, element, null, null, null, null, ins);
+        ComponentResources resources = new InternalComponentResourcesImpl(null, element, null, null, null, null, ins, false);
 
         resources.storeRenderVariable("myRenderVar", value);
 
@@ -160,7 +160,7 @@ public class InternalComponentResourcesImplTest extends InternalBaseTestCase
         replay();
 
         ComponentResources resources = new InternalComponentResourcesImpl(null, element, null, null, "Foo.bar", null,
-                                                                          ins);
+                                                                          ins, false);
 
         resources.storeRenderVariable("fred", "FRED");
         resources.storeRenderVariable("barney", "BARNEY");
@@ -195,7 +195,7 @@ public class InternalComponentResourcesImplTest extends InternalBaseTestCase
         replay();
 
         InternalComponentResources resources = new InternalComponentResourcesImpl(null, element, null, null, "Foo.bar",
-                                                                                  null, ins);
+                                                                                  null, ins, false);
 
         resources.storeRenderVariable("fred", "FRED");
         resources.storeRenderVariable("barney", "BARNEY");
@@ -231,7 +231,7 @@ public class InternalComponentResourcesImplTest extends InternalBaseTestCase
         replay();
 
         InternalComponentResources resources = new InternalComponentResourcesImpl(null, element, null, null, "Foo.bar",
-                                                                                  null, ins);
+                                                                                  null, ins, false);
 
 
         try
@@ -265,7 +265,7 @@ public class InternalComponentResourcesImplTest extends InternalBaseTestCase
         replay();
 
         InternalComponentResources resources = new InternalComponentResourcesImpl(page, element, null, null, null,
-                                                                                  null, ins);
+                                                                                  null, ins, false);
 
         resources.addPageLifecycleListener(listener);
 

@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -1321,10 +1321,8 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
 
         assertTextPresent(
                 "An unexpected application exception has occurred.",
-                "Failed to BindParameter 'boundParameter' in mixin 'org.apache.tapestry5.integration.app1.mixins.EchoValue2': "
-                        + "component 'org.apache.tapestry5.corelib.components.Any' does not provide a matching parameter "
-                        + "(looking for: value). Available parameters: [clientId, element]");
 
+                "Failed to bind parameter of mixin BindParameterNoSuchParameter:throwexception$echovalue2 (type org.apache.tapestry5.integration.app1.mixins.EchoValue2). Containing component org.apache.tapestry5.corelib.components.Any does not contain a formal parameter matching any of boundParameter, value. Formal parameters: clientId, element.");
     }
 
     @Test
@@ -1334,7 +1332,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
 
         assertTextPresent(
                 "An unexpected application exception has occurred.",
-                "@BindParameter was used on 'value' in component class 'org.apache.tapestry5.integration.app1.components.BindParameterComponent', but @BindParameter should only be used in mixins");
+                "@BindParameter was used on field 'value' of component class 'org.apache.tapestry5.integration.app1.components.BindParameterComponent', but @BindParameter should only be used in mixins.");
     }
 
     @Test
@@ -1364,8 +1362,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
      * there's warnings that pop up about
      * certificates.
      * <p/>
-     * Verified: Selenium can't handle this, even with a user manually OK-ing the certificate
-     * warning dialogs.
+     * Verified: Selenium can't handle this, even with a user manually OK-ing the certificate warning dialogs.
      */
     @Test(enabled = false)
     public void secure_page_access()

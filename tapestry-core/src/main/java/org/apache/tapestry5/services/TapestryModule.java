@@ -546,9 +546,8 @@ public final class TapestryModule
         // make sure
         // that Parameter fields are processed after injections.
 
-        // configuration.addInstance("Parameter", ParameterWorker.class, "after:Inject*");
-        configuration.addInstance("Parameter", ParameterWorker2.class, "after:Inject*");
-
+        configuration.addInstance("Parameter", ParameterWorker.class, "after:Inject*");
+        
         // bind parameter should always go after parameter to make sure all
         // parameters
         // have been properly setup.

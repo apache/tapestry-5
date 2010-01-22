@@ -20,7 +20,6 @@ import org.apache.tapestry5.internal.structure.Page;
 import org.apache.tapestry5.internal.structure.PageResetListener;
 import org.apache.tapestry5.internal.transform.ParameterConduit;
 import org.apache.tapestry5.runtime.RenderQueue;
-import org.apache.tapestry5.services.FieldValueConduit;
 
 /**
  * An extension of {@link org.apache.tapestry5.ComponentResources} that represents additional
@@ -72,22 +71,6 @@ public interface InternalComponentResources extends ComponentResources,
     ParameterAccess getParameterAccess(String parameterName);
 
     /**
-     * Gets access object suitable for handling mixin fields which are bound to a parameter of the
-     * core component
-     * 
-     * @param boundParameterName
-     *            the name of the mixin field that should be linked to the core component's field.
-     * @param parentParameterNames
-     *            the list of parameter names to try in the parent. The first name that matches a
-     *            declared parameter name in the core component will be used. This allows
-     *            BindParameter to be used with
-     *            mixins that have a similar parameter type with different parameter names (eg:
-     * @since 5.2.0
-     */
-    ParameterAccess getContainerBoundParameterAccess(String boundParameterName,
-            String... parentParameterNames);
-
-    /**
      * Delegates to
      * {@link Page#addResetListener(org.apache.tapestry5.internal.structure.PageResetListener)}.
      * 
@@ -97,7 +80,7 @@ public interface InternalComponentResources extends ComponentResources,
     void addPageResetListener(PageResetListener listener);
 
     /** @since 5.2.0 */
-    FieldValueConduit getParameterConduit(String parameterName);
+    ParameterConduit getParameterConduit(String parameterName);
 
     /** @since 5.2.0 */
     void setParameterConduit(String parameterName, ParameterConduit conduit);
