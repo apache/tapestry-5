@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -249,18 +249,24 @@ public interface ClassTransformation extends AnnotationProvider
      * Like {@link #addInjectedField(Class, String, Object)}, but instead of specifying the value,
      * a provider for the value is specified. In the generated class' constructor, the provider
      * will be passed the {@link ComponentResources} and will return the final value; thus
-     * each component <em>instance</em> will receive a unique 
+     * each component <em>instance</em> will receive a unique
+     * 
      * @param <T>
-     * @param type type of value to inject
-     * @param suggestedName suggested name for the new field
-     * @param provider injected into the component to provide the value
+     * @param type
+     *            type of value to inject
+     * @param suggestedName
+     *            suggested name for the new field
+     * @param provider
+     *            injected into the component to provide the value
      * @return the actual name of the injected field
      * @since 5.2
      */
-    <T> String addIndirectInjectedField(Class<T> type, String suggestedName, ComponentValueProvider<T> provider);
-    
+    <T> String addIndirectInjectedField(Class<T> type, String suggestedName,
+            ComponentValueProvider<T> provider);
+
     /**
-     * Converts and <em>existing</em> field into a read only field whose value is the provided value. This is used
+     * Converts and <em>existing</em> field into a read only field whose value is the provided
+     * value. This is used
      * when converting an
      * existing field into a read-only injected value.
      * 
@@ -270,6 +276,22 @@ public interface ClassTransformation extends AnnotationProvider
      *            the value provided by the field
      */
     void injectField(String fieldName, Object value);
+
+    /**
+     * Like {@link #injectField(String, Object)}, except that the value to be injected is obtained
+     * from
+     * a {@link ComponentValueProvider}. It is assumed that the provider will return an object
+     * assignable to the field.
+     * 
+     * @param <T>
+     *            type of field
+     * @param fieldName
+     *            name of field to convert
+     * @param provider
+     *            provides the value to be assigned to the field
+     * @since 5.2.0
+     */
+    <T> void injectFieldIndirect(String fieldName, ComponentValueProvider<T> provider);
 
     /**
      * Transforms the class to implement the indicated interface. If the class (or its super class)

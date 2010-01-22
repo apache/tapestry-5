@@ -14,9 +14,29 @@
 
 package org.apache.tapestry5.internal.services;
 
-import javassist.*;
+import java.lang.annotation.Annotation;
+import java.lang.annotation.Inherited;
+import java.lang.reflect.Modifier;
+import java.util.Collections;
+import java.util.Formatter;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javassist.CannotCompileException;
+import javassist.ClassPool;
+import javassist.CtBehavior;
+import javassist.CtClass;
+import javassist.CtConstructor;
+import javassist.CtField;
+import javassist.CtMember;
+import javassist.CtMethod;
+import javassist.CtNewConstructor;
+import javassist.CtNewMethod;
+import javassist.NotFoundException;
 import javassist.expr.ExprEditor;
 import javassist.expr.FieldAccess;
+
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.internal.InternalComponentResources;
 import org.apache.tapestry5.ioc.internal.services.CtClassSource;
@@ -32,13 +52,13 @@ import org.apache.tapestry5.ioc.util.BodyBuilder;
 import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.runtime.Component;
-import org.apache.tapestry5.services.*;
+import org.apache.tapestry5.services.ComponentMethodAdvice;
+import org.apache.tapestry5.services.ComponentValueProvider;
+import org.apache.tapestry5.services.FieldFilter;
+import org.apache.tapestry5.services.MethodFilter;
+import org.apache.tapestry5.services.TransformMethodSignature;
+import org.apache.tapestry5.services.TransformUtils;
 import org.slf4j.Logger;
-
-import java.lang.annotation.Annotation;
-import java.lang.annotation.Inherited;
-import java.lang.reflect.Modifier;
-import java.util.*;
 
 /**
  * Implementation of the {@link org.apache.tapestry5.internal.services.InternalClassTransformation}
@@ -59,6 +79,8 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
     private final ClassPool classPool;
 
     private final IdAllocator idAllocator;
+
+    private final CtClass providerType;
 
     /**
      * Map, keyed on InjectKey, of field name. Injections are always added as protected (not
@@ -146,6 +168,8 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         parentTransformation = null;
         this.componentModel = componentModel;
 
+        providerType = toCtClass(ComponentValueProvider.class);
+
         idAllocator = new IdAllocator();
 
         logger = componentModel.getLogger();
@@ -185,6 +209,8 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         logger = componentModel.getLogger();
         this.parentTransformation = parentTransformation;
         this.componentModel = componentModel;
+
+        providerType = toCtClass(ComponentValueProvider.class);
 
         resourcesFieldName = parentTransformation.getResourcesFieldName();
 
@@ -1261,19 +1287,15 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         String fieldName = addField(Modifier.PRIVATE | Modifier.FINAL, type.getName(),
                 suggestedName);
 
-        // TODO: This shouldn't have to be constantly recomputed
-
-        CtClass providerType = toCtClass(ComponentValueProvider.class);
-
-        constructorArgs.add(new ConstructorArg(providerType, provider));
+        String argName = addConstructorArg(providerType, provider);
 
         // Inside the constructor,
         // pass the resources to the provider's get() method, cast to the
         // field type and assign. This will likely not work with
         // primitives and arrays, but that's ok for now.
 
-        extendConstructor(String.format("  %s = (%s) $%d.get(%s);", fieldName, type.getName(),
-                constructorArgs.size(), resourcesFieldName));
+        extendConstructor(String.format("  %s = (%s) %s.get(%s);", fieldName, type.getName(),
+                argName, resourcesFieldName));
 
         return fieldName;
     }
@@ -1389,20 +1411,39 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
      */
     private void addInjectToConstructor(String fieldName, CtClass fieldType, Object value)
     {
-        constructorArgs.add(new ConstructorArg(fieldType, value));
-
-        extendConstructor(String.format("  %s = $%d;", fieldName, constructorArgs.size()));
+        extendConstructor(String.format("  %s = %s;", fieldName,
+                addConstructorArg(fieldType, value)));
     }
 
     public void injectField(String fieldName, Object value)
     {
-        Defense.notNull(fieldName, "fieldName");
+        Defense.notBlank(fieldName, "fieldName");
 
         failIfFrozen();
 
         CtClass type = getFieldCtType(fieldName);
 
         addInjectToConstructor(fieldName, type, value);
+
+        makeReadOnly(fieldName);
+    }
+
+    @Override
+    public <T> void injectFieldIndirect(String fieldName, ComponentValueProvider<T> provider)
+    {
+        Defense.notBlank(fieldName, "fieldName");
+        Defense.notNull(provider, "provider");
+
+        failIfFrozen();
+
+        CtClass type = getFieldCtType(fieldName);
+
+        String argName = addConstructorArg(providerType, provider);
+
+        extendConstructor(String.format("  %s = (%s) %s.get(%s);", fieldName, type.getName(),
+                argName, resourcesFieldName));
+
+        // Add the provider to the constructor
 
         makeReadOnly(fieldName);
     }
@@ -1927,5 +1968,21 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
     public boolean isRootTransformation()
     {
         return parentTransformation == null;
+    }
+
+    /**
+     * Adds a new constructor argument to the transformed constructor.
+     * 
+     * @param parameterType
+     *            type of parameter
+     * @param value
+     *            value of parameter
+     * @return psuedo-name of parameter (i.e., "$2", "$3", etc.)
+     */
+    private String addConstructorArg(CtClass parameterType, Object value)
+    {
+        constructorArgs.add(new ConstructorArg(parameterType, value));
+
+        return "$" + constructorArgs.size();
     }
 }

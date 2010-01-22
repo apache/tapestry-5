@@ -1,10 +1,10 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,6 +14,10 @@
 
 package org.apache.tapestry5.internal.services;
 
+import java.util.Locale;
+
+import org.apache.tapestry5.Asset;
+import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.annotations.Path;
 import org.apache.tapestry5.ioc.ObjectLocator;
 import org.apache.tapestry5.ioc.Resource;
@@ -21,13 +25,13 @@ import org.apache.tapestry5.ioc.services.SymbolSource;
 import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.services.AssetSource;
 import org.apache.tapestry5.services.ClassTransformation;
+import org.apache.tapestry5.services.ComponentValueProvider;
 import org.apache.tapestry5.services.InjectionProvider;
 
-import static java.lang.String.format;
-
 /**
- * Performs injection of assets, based on the presence of the {@link Path} annotation. This is more useful than the
- * general {@link AssetObjectProvider}, becase relative assets are supported.
+ * Performs injection of assets, based on the presence of the {@link Path} annotation. This is more
+ * useful than the
+ * general {@link AssetObjectProvider}, because relative assets are supported.
  */
 public class AssetInjectionProvider implements InjectionProvider
 {
@@ -42,28 +46,30 @@ public class AssetInjectionProvider implements InjectionProvider
     }
 
     public boolean provideInjection(String fieldName, Class fieldType, ObjectLocator locator,
-                                    ClassTransformation transformation, MutableComponentModel componentModel)
+            ClassTransformation transformation, MutableComponentModel componentModel)
     {
         Path path = transformation.getFieldAnnotation(fieldName, Path.class);
 
-        if (path == null) return false;
+        if (path == null)
+            return false;
 
-        String expanded = symbolSource.expandSymbols(path.value());
+        final String expanded = symbolSource.expandSymbols(path.value());
 
-        String sourceFieldName = transformation.addInjectedField(AssetSource.class, "assetSource", assetSource);
+        final Resource baseResource = componentModel.getBaseResource();
+        
+        ComponentValueProvider<Asset> provider = new ComponentValueProvider<Asset>()
+        {
+            @Override
+            public Asset get(ComponentResources resources)
+            {
+                Locale locale = resources.getLocale();
 
-        String baseResourceFieldName = transformation.addInjectedField(Resource.class, "baseResource",
-                                                                       componentModel.getBaseResource());
+                return assetSource.getAsset(baseResource, expanded, locale);
+            }
+        };
 
-        String resourcesFieldName = transformation.getResourcesFieldName();
-
-        String statement = format("%s = (%s) %s.getAsset(%s, \"%s\", %s.getLocale());", fieldName, fieldType.getName(),
-                                  sourceFieldName, baseResourceFieldName, expanded, resourcesFieldName);
-
-        transformation.extendConstructor(statement);
-
-        transformation.makeReadOnly(fieldName);
-
+        transformation.injectFieldIndirect(fieldName, provider);
+        
         return true;
     }
 
