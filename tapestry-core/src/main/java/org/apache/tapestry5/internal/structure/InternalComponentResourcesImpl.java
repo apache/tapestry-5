@@ -27,19 +27,18 @@ import org.apache.tapestry5.EventContext;
 import org.apache.tapestry5.Link;
 import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.internal.InternalComponentResources;
-import org.apache.tapestry5.internal.ParameterAccess;
 import org.apache.tapestry5.internal.services.Instantiator;
 import org.apache.tapestry5.internal.transform.ParameterConduit;
 import org.apache.tapestry5.ioc.AnnotationProvider;
 import org.apache.tapestry5.ioc.Location;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.ioc.internal.NullAnnotationProvider;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.TapestryException;
 import org.apache.tapestry5.model.ComponentModel;
-import org.apache.tapestry5.model.ParameterModel;
 import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.runtime.PageLifecycleListener;
 import org.apache.tapestry5.runtime.RenderQueue;
@@ -71,14 +70,7 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
     // Case insensitive map from parameter name to binding
     private Map<String, Binding> bindings;
 
-    // Case insensitive map from parameter name to ParameterAccess
-    private Map<String, ParameterAccess> access;
-
-    // Case-insensitive map from container-parameter name to ParameterAccess, for BindParameter.
-    // Should only ever be used for mixins.
-    private Map<String, ParameterAccess> containerParameterAccess;
-
-    // Case insentive map from parameter name to ParameterConduit, used to support mixins
+    // Case insensitive map from parameter name to ParameterConduit, used to support mixins
     // which need access to the containing component's PC's
     private Map<String, ParameterConduit> conduits;
 
@@ -88,6 +80,8 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
     private Map<String, Object> renderVariables;
 
     private static final Object[] EMPTY = new Object[0];
+
+    private static final AnnotationProvider NULL_ANNOTATION_PROVIDER = new NullAnnotationProvider();
 
     private boolean informalsComputed;
 
@@ -151,7 +145,6 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
         component = componentInstantiator.newInstance(this);
     }
 
-    
     public boolean isMixin()
     {
         return mixin;
@@ -162,7 +155,6 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
         return element.getLocation();
     }
 
-    
     public String toString()
     {
         return String.format("InternalComponentResources[%s]", getCompleteId());
@@ -235,7 +227,11 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
 
     public <T> T getInformalParameter(String name, Class<T> type)
     {
-        return getParameterAccess(name).read(type);
+        Binding binding = getBinding(name);
+
+        Object value = binding == null ? null : binding.get();
+
+        return elementResources.coerce(value, type);
     }
 
     public Block getBody()
@@ -266,7 +262,9 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
     public <T extends Annotation> T getParameterAnnotation(String parameterName,
             Class<T> annotationType)
     {
-        return getParameterAccess(parameterName).getAnnotation(annotationType);
+        Binding binding = getBinding(parameterName);
+
+        return binding == null ? null : binding.getAnnotation(annotationType);
     }
 
     public boolean isRendering()
@@ -328,7 +326,9 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
 
     public Class getBoundType(String parameterName)
     {
-        return getParameterAccess(parameterName).getBoundType();
+        Binding binding = getBinding(parameterName);
+
+        return binding == null ? null : binding.getBindingType();
     }
 
     public Binding getBinding(String parameterName)
@@ -338,7 +338,9 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
 
     public AnnotationProvider getAnnotationProvider(String parameterName)
     {
-        return getParameterAccess(parameterName);
+        Binding binding = getBinding(parameterName);
+
+        return binding == null ? NULL_ANNOTATION_PROVIDER : binding;
     }
 
     public Logger getLogger()
@@ -493,121 +495,16 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
         page.addLifecycleListener(listener);
     }
 
-    public ParameterAccess getParameterAccess(final String parameterName)
-    {
-        if (access == null)
-            access = CollectionFactory.newCaseInsensitiveMap();
-
-        ParameterAccess result = access.get(parameterName);
-
-        if (result == null)
-        {
-            result = createParameterAccess(parameterName);
-            access.put(parameterName, result);
-        }
-
-        return result;
-    }
-
-    private ParameterAccess createParameterAccess(final String parameterName)
-    {
-        final Binding binding = getBinding(parameterName);
-
-        ParameterModel parameterModel = getComponentModel().getParameterModel(parameterName);
-
-        final boolean allowNull = parameterModel == null ? true : parameterModel.isAllowNull();
-
-        final boolean cache = parameterModel == null ? false : parameterModel.isCached();
-
-        return new ParameterAccess()
-        {
-
-            public boolean isBound()
-            {
-                return binding != null;
-            }
-
-            public <T> T read(Class<T> desiredType)
-            {
-                if (binding == null)
-                    return null;
-
-                T result;
-
-                try
-                {
-                    // Will throw NPE if binding is null, but this should never be called if the
-                    // parameter is not bound.
-
-                    Object boundValue = binding.get();
-
-                    result = elementResources.coerce(boundValue, desiredType);
-                }
-                catch (Exception ex)
-                {
-                    throw new TapestryException(StructureMessages.getParameterFailure(
-                            parameterName, getCompleteId(), ex), binding, ex);
-                }
-
-                if (result == null && !allowNull)
-                    throw new TapestryException(
-                            String
-                                    .format(
-                                            "Parameter '%s' of component %s is bound to null. This parameter is not allowed to be null.",
-                                            parameterName, getCompleteId()), binding, null);
-
-                return result;
-            }
-
-            public <T> void write(T parameterValue)
-            {
-                if (binding == null)
-                    return;
-
-                Class bindingType = binding.getBindingType();
-
-                try
-                {
-                    Object coerced = elementResources.coerce(parameterValue, bindingType);
-
-                    binding.set(coerced);
-                }
-                catch (Exception ex)
-                {
-                    throw new TapestryException(StructureMessages.writeParameterFailure(
-                            parameterName, getCompleteId(), ex), binding, ex);
-                }
-            }
-
-            public boolean isInvariant()
-            {
-                return binding != null && binding.isInvariant();
-            }
-
-            public Class getBoundType()
-            {
-                return binding == null ? null : binding.getBindingType();
-            }
-
-            public <T extends Annotation> T getAnnotation(Class<T> annotationClass)
-            {
-                return binding == null ? null : binding.getAnnotation(annotationClass);
-            }
-        };
-    }
-
     public void addPageResetListener(PageResetListener listener)
     {
         page.addResetListener(listener);
     }
 
-    
     public ParameterConduit getParameterConduit(String parameterName)
     {
         return InternalUtils.get(conduits, parameterName);
     }
 
-    
     public void setParameterConduit(String parameterName, ParameterConduit conduit)
     {
         if (conduits == null)

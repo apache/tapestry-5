@@ -45,16 +45,6 @@ final class StructureMessages
                                InternalUtils.joinSorted(components));
     }
 
-    static String getParameterFailure(String parameterName, String componentId, Throwable cause)
-    {
-        return MESSAGES.format("get-parameter-failure", parameterName, componentId, cause);
-    }
-
-    static String writeParameterFailure(String parameterName, String componentId, Throwable cause)
-    {
-        return MESSAGES.format("write-parameter-failure", parameterName, componentId, cause);
-    }
-
     static String unknownMixin(String componentId, String mixinClassName)
     {
         return MESSAGES.format("unknown-mixin", componentId, mixinClassName);

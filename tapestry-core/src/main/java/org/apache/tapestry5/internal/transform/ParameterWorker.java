@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,10 +21,10 @@ import org.apache.tapestry5.Binding;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.internal.InternalComponentResources;
-import org.apache.tapestry5.internal.ParameterAccess;
 import org.apache.tapestry5.internal.bindings.LiteralBinding;
 import org.apache.tapestry5.internal.services.ComponentClassCache;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.ioc.internal.util.TapestryException;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.services.BindingSource;
@@ -103,7 +103,7 @@ public class ParameterWorker implements ComponentClassTransformWorker
                 .defaultPrefix(), enableCaching);
 
         transformation.claimField(fieldName, annotation);
-        
+
         ComponentValueProvider<ParameterConduit> provider = new ComponentValueProvider<ParameterConduit>()
         {
             // Invoked from the components' constructor. This causes a few issues (it would be
@@ -131,11 +131,11 @@ public class ParameterWorker implements ComponentClassTransformWorker
 
                     private Object defaultValue;
 
-                    private ParameterAccess parameterAccess;
-
-                    private Binding defaultBinding;
+                    private Binding parameterBinding;
 
                     boolean loaded = false;
+
+                    private boolean invariant = false;
 
                     // Is the current value of the binding cached in the
                     // value field?
@@ -156,11 +156,6 @@ public class ParameterWorker implements ComponentClassTransformWorker
                         icr.setParameterConduit(parameterName, this);
                     }
 
-                    private boolean isInvariant()
-                    {
-                        return parameterAccess.isInvariant();
-                    }
-
                     private boolean isLoaded()
                     {
                         return loaded;
@@ -170,8 +165,7 @@ public class ParameterWorker implements ComponentClassTransformWorker
                     {
                         // Assignments before the page is loaded ultimately exist to set the
                         // default value for the field. Often this is from the (original)
-                        // constructor method,
-                        // which is converted to a real method as part of the transformation.
+                        // constructor method, which is converted to a real method as part of the transformation.
 
                         if (!loaded)
                         {
@@ -181,7 +175,7 @@ public class ParameterWorker implements ComponentClassTransformWorker
 
                         // This will catch read-only or unbound parameters.
 
-                        parameterAccess.write(newValue);
+                        writeToBinding(newValue);
 
                         value = newValue;
 
@@ -193,9 +187,63 @@ public class ParameterWorker implements ComponentClassTransformWorker
                         cached = enableCaching && icr.isRendering();
                     }
 
+                    private Object readFromBinding()
+                    {
+                        Object result = null;
+
+                        try
+                        {
+                            Object boundValue = parameterBinding.get();
+
+                            result = typeCoercer.coerce(boundValue, fieldType);
+                        }
+                        catch (RuntimeException ex)
+                        {
+                            throw new TapestryException(String
+                                    .format("Failure reading parameter '%s' of component %s: %s",
+                                            parameterName, icr.getCompleteId(), InternalUtils
+                                                    .toMessage(ex)), parameterBinding, ex);
+                        }
+
+                        if (result != null || annotation.allowNull())
+                            return result;
+
+                        throw new TapestryException(
+                                String
+                                        .format(
+                                                "Parameter '%s' of component %s is bound to null. This parameter is not allowed to be null.",
+                                                parameterName, icr.getCompleteId()),
+                                parameterBinding, null);
+                    }
+
+                    @SuppressWarnings("unchecked")
+                    private void writeToBinding(Object newValue)
+                    {
+                        // An unbound parameter acts like a simple field
+                        // with no side effects.
+
+                        if (parameterBinding == null)
+                            return;
+
+                        try
+                        {
+                            Object coerced = typeCoercer.coerce(newValue, parameterBinding
+                                    .getBindingType());
+
+                            parameterBinding.set(coerced);
+                        }
+                        catch (RuntimeException ex)
+                        {
+                            throw new TapestryException(String
+                                    .format("Failure writing parameter '%s' of component %s: %s",
+                                            parameterName, icr.getCompleteId(), InternalUtils
+                                                    .toMessage(ex)), icr, ex);
+                        }
+                    }
+
                     public void reset()
                     {
-                        if (!isInvariant())
+                        if (!invariant)
                         {
                             value = defaultValue;
                             cached = false;
@@ -216,13 +264,13 @@ public class ParameterWorker implements ComponentClassTransformWorker
 
                             if (binding != null)
                                 icr.bindParameter(parameterName, binding);
-
-                            defaultBinding = null;
                         }
 
-                        parameterAccess = icr.getParameterAccess(parameterName);
+                        parameterBinding = icr.getBinding(parameterName);
 
                         loaded = true;
+
+                        invariant = parameterBinding != null && parameterBinding.isInvariant();
 
                         value = defaultValue;
                     }
@@ -240,12 +288,12 @@ public class ParameterWorker implements ComponentClassTransformWorker
                         // set via a default method on the component, or from the field's initial
                         // value.
 
-                        return defaultBinding;
+                        return parameterBinding;
                     }
 
                     public boolean isBound()
                     {
-                        return parameterAccess.isBound();
+                        return parameterBinding != null;
                     }
 
                     @SuppressWarnings("unchecked")
@@ -257,13 +305,14 @@ public class ParameterWorker implements ComponentClassTransformWorker
 
                         // Read the parameter's binding and cast it to the
                         // field's type.
-                        Object result = parameterAccess.read(fieldType);
+
+                        Object result = readFromBinding();
 
                         // If the value is invariant, we can cache it forever. Otherwise, we
                         // we may want to cache it for the remainder of the component render (if the
                         // component is currently rendering).
 
-                        if (isInvariant() || (enableCaching && icr.isRendering()))
+                        if (invariant || (enableCaching && icr.isRendering()))
                         {
                             value = result;
                             cached = true;
@@ -279,11 +328,12 @@ public class ParameterWorker implements ComponentClassTransformWorker
 
                         if (value instanceof Binding)
                         {
-                            defaultBinding = (Binding) value;
+                            parameterBinding = (Binding) value;
                             return;
                         }
 
-                        defaultBinding = new LiteralBinding(null, "default " + parameterName, value);
+                        parameterBinding = new LiteralBinding(null, "default " + parameterName,
+                                value);
                     }
                 };
             }

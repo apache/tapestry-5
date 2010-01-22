@@ -19,6 +19,7 @@ import org.apache.tapestry5.internal.services.PersistentFieldManager;
 import org.apache.tapestry5.internal.structure.Page;
 import org.apache.tapestry5.internal.structure.PageResetListener;
 import org.apache.tapestry5.internal.transform.ParameterConduit;
+import org.apache.tapestry5.runtime.PageLifecycleListener;
 import org.apache.tapestry5.runtime.RenderQueue;
 
 /**
@@ -63,25 +64,27 @@ public interface InternalComponentResources extends ComponentResources,
     void queueRender(RenderQueue queue);
 
     /**
-     * Gets access object for the parameter.
-     * 
-     * @param parameterName
-     * @return object used to read and update the parameter
-     */
-    ParameterAccess getParameterAccess(String parameterName);
-
-    /**
-     * Delegates to
-     * {@link Page#addResetListener(org.apache.tapestry5.internal.structure.PageResetListener)}.
+     * Delegates to {@link Page#addResetListener(org.apache.tapestry5.internal.structure.PageResetListener)}.
      * 
      * @param listener
      *            to register
      */
     void addPageResetListener(PageResetListener listener);
 
-    /** @since 5.2.0 */
+    /**
+     * Gets a previously stored ParameterConduit, allowing PCs to be shared between a component
+     * and a mixin of that component.
+     * 
+     * @since 5.2.0
+     */
     ParameterConduit getParameterConduit(String parameterName);
 
-    /** @since 5.2.0 */
+    /**
+     * Stores a ParameterConduit for later access. Tthis occurs inside a component's
+     * {@link PageLifecycleListener#containingPageDidLoad()} lifecycle
+     * method.
+     * 
+     * @since 5.2.0
+     */
     void setParameterConduit(String parameterName, ParameterConduit conduit);
 }
