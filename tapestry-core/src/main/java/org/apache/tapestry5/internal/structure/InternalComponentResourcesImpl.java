@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,8 +14,23 @@
 
 package org.apache.tapestry5.internal.structure;
 
-import org.apache.tapestry5.*;
-import org.apache.tapestry5.internal.*;
+import java.lang.annotation.Annotation;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+
+import org.apache.tapestry5.Binding;
+import org.apache.tapestry5.Block;
+import org.apache.tapestry5.ComponentEventCallback;
+import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.EventContext;
+import org.apache.tapestry5.Link;
+import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.internal.InternalComponentResources;
+import org.apache.tapestry5.internal.ParameterAccess;
+import org.apache.tapestry5.internal.ParameterChangeListener;
+import org.apache.tapestry5.internal.ParameterChangedEvent;
 import org.apache.tapestry5.internal.services.Instantiator;
 import org.apache.tapestry5.ioc.AnnotationProvider;
 import org.apache.tapestry5.ioc.Location;
@@ -31,12 +46,6 @@ import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.runtime.PageLifecycleListener;
 import org.apache.tapestry5.runtime.RenderQueue;
 import org.slf4j.Logger;
-
-import java.lang.annotation.Annotation;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * The bridge between a component and its {@link ComponentPageElement}, that supplies all kinds of
@@ -618,11 +627,13 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
                 }
 
                 Class bindingType = binding.getBindingType();
+                
                 try
                 {
                     Object coerced = elementResources.coerce(parameterValue, bindingType);
 
                     binding.set(coerced);
+                
                     fireParameterChanged(parameterName, coerced);
                 }
                 catch (Exception ex)
@@ -672,9 +683,13 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
             protected void fireParameterChanged(String parameterName, Object newValue)
             {
                 ParameterChangedEvent event = new ParameterChangedEvent(parameterName, newValue);
-                for (ParameterChangeListener l : listeners)
+
+                if (listeners != null)
                 {
-                    l.parameterChanged(event);
+                    for (ParameterChangeListener l : listeners)
+                    {
+                        l.parameterChanged(event);
+                    }
                 }
             }
 
