@@ -1,10 +1,10 @@
-// Copyright 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2007, 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,10 +14,12 @@
 
 package org.apache.tapestry5.internal.transform;
 
+import java.util.List;
+import java.util.Locale;
+
 import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.annotations.SetupRender;
-import org.apache.tapestry5.internal.services.ComponentResourcesOperation;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.services.SymbolSource;
@@ -25,14 +27,12 @@ import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.services.AssetSource;
 import org.apache.tapestry5.services.ClassTransformation;
 import org.apache.tapestry5.services.ComponentClassTransformWorker;
+import org.apache.tapestry5.services.ComponentValueProvider;
 import org.apache.tapestry5.services.TransformConstants;
 
-import java.util.List;
-import java.util.Locale;
-
 /**
- * Base class for workers that automatically inlcude assets in the page (via methods on {@link
- * org.apache.tapestry5.RenderSupport}).
+ * Base class for workers that automatically include assets in the page (via methods on
+ * {@link org.apache.tapestry5.RenderSupport}).
  */
 public abstract class AbstractIncludeAssetWorker implements ComponentClassTransformWorker
 {
@@ -47,15 +47,19 @@ public abstract class AbstractIncludeAssetWorker implements ComponentClassTransf
     }
 
     /**
-     * Expands symbols in the path, then adds an operation into the setup render phase of the component. Ultimately,
-     * {@link #handleAsset(org.apache.tapestry5.Asset)} will be invoked for each asset (dervied from assetPaths).
-     *
-     * @param transformation transformation process for component
-     * @param model          component model for component
-     * @param assetPaths     raw paths to be converted to assets
+     * Expands symbols in the path, then adds an operation into the setup render phase of the
+     * component. Ultimately, {@link #handleAsset(org.apache.tapestry5.Asset)} will be invoked for
+     * each asset (dervied from assetPaths).
+     * 
+     * @param transformation
+     *            transformation process for component
+     * @param model
+     *            component model for component
+     * @param assetPaths
+     *            raw paths to be converted to assets
      */
     protected final void addOperationForAssetPaths(ClassTransformation transformation,
-                                                   MutableComponentModel model, String[] assetPaths)
+            MutableComponentModel model, String[] assetPaths)
     {
         final Resource baseResource = model.getBaseResource();
         final List<String> paths = CollectionFactory.newList();
@@ -67,45 +71,57 @@ public abstract class AbstractIncludeAssetWorker implements ComponentClassTransf
             paths.add(expanded);
         }
 
-        ComponentResourcesOperation op = new ComponentResourcesOperation()
+        ComponentValueProvider<Runnable> provider = new ComponentValueProvider<Runnable>()
         {
-            // Remember that ONE instances of this op will be injected into EVERY instance
-            // of the component ... that means that we can't do any aggresive caching
-            // inside the operation (the operation must be threadsafe).
-
-            public void perform(ComponentResources resources)
+            @Override
+            public Runnable get(final ComponentResources resources)
             {
-                Locale locale = resources.getLocale();
+                // This code is re-executed for each new component instance. We could 
+                // possibly cache on resources.getCompleteId() + locale, but that's
+                // probably not worth the effort.
+                
+                final Locale locale = resources.getLocale();
+
+                final List<Asset> assets = CollectionFactory.newList();
 
                 for (String assetPath : paths)
                 {
                     Asset asset = assetSource.getAsset(baseResource, assetPath, locale);
 
-                    handleAsset(asset);
+                    assets.add(asset);
                 }
+
+                return new Runnable()
+                {
+                    @Override
+                    public void run()
+                    {
+                        for (Asset asset : assets)
+                        {
+                            handleAsset(asset);
+                        }
+                    }
+                };
             }
         };
 
-        String opFieldName = transformation.addInjectedField(ComponentResourcesOperation.class, "operation", op);
+        String runnableFieldName = transformation.addIndirectInjectedField(Runnable.class,
+                "includeAssets", provider);
 
-        String resourcesName = transformation.getResourcesFieldName();
-
-        String body = String.format("%s.perform(%s);", opFieldName, resourcesName);
-
-        // This is what I like about this approach; the injected body is tiny.  The downside is that
-        // the object that gets injected is hard to test, hard enough that we'll just concentrate on
-        // the integration test, thank you.
-
-        transformation.extendMethod(TransformConstants.SETUP_RENDER_SIGNATURE, body);
+        transformation.extendMethod(TransformConstants.SETUP_RENDER_SIGNATURE, String.format(
+                "%s.run();", runnableFieldName));
 
         model.addRenderPhase(SetupRender.class);
     }
 
     /**
-     * Invoked, from the component's setup render phase, for each asset. This method must be threadsafe.  Most
-     * implementation pass the asset to a particular method of {@link org.apache.tapestry5.RenderSupport}.
-     *
-     * @param asset to be processed
+     * Invoked, from the component's setup render phase, for each asset. This method must be
+     * threadsafe. Most
+     * implementations pass the asset to a particular method of
+     * {@link org.apache.tapestry5.RenderSupport}.
+     * 
+     * @param asset
+     *            to be processed
      */
     protected abstract void handleAsset(Asset asset);
 }

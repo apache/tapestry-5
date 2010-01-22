@@ -15,6 +15,8 @@
 package org.apache.tapestry5.services;
 
 import javassist.CtBehavior;
+
+import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.ioc.AnnotationProvider;
 import org.slf4j.Logger;
 
@@ -230,6 +232,8 @@ public interface ClassTransformation extends AnnotationProvider
      * and value will return the same field name. Caching extends to the parent transformation, so
      * that a value injected
      * into a parent class will be available (via the protected instance variable) to subclasses.
+     * This is primarily used to inject service dependencies into components, though it has a number
+     * of other uses as well.
      * 
      * @param type
      *            the type of object to inject
@@ -242,7 +246,21 @@ public interface ClassTransformation extends AnnotationProvider
     String addInjectedField(Class type, String suggestedName, Object value);
 
     /**
-     * Converts the field into a read only field whose value is the provided value. This is used
+     * Like {@link #addInjectedField(Class, String, Object)}, but instead of specifying the value,
+     * a provider for the value is specified. In the generated class' constructor, the provider
+     * will be passed the {@link ComponentResources} and will return the final value; thus
+     * each component <em>instance</em> will receive a unique 
+     * @param <T>
+     * @param type type of value to inject
+     * @param suggestedName suggested name for the new field
+     * @param provider injected into the component to provide the value
+     * @return the actual name of the injected field
+     * @since 5.2
+     */
+    <T> String addIndirectInjectedField(Class<T> type, String suggestedName, ComponentValueProvider<T> provider);
+    
+    /**
+     * Converts and <em>existing</em> field into a read only field whose value is the provided value. This is used
      * when converting an
      * existing field into a read-only injected value.
      * 
