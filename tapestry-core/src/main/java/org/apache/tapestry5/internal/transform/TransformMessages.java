@@ -1,4 +1,4 @@
-// Copyright 2008, 2009 The Apache Software Foundation
+// Copyright 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,12 +16,11 @@ package org.apache.tapestry5.internal.transform;
 
 import java.util.List;
 
+import org.apache.tapestry5.annotations.MixinClasses;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.MessagesImpl;
-import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.services.TransformMethodSignature;
-import org.apache.tapestry5.annotations.MixinClasses;
 
 class TransformMessages
 {
@@ -30,12 +29,6 @@ class TransformMessages
     static String fieldInjectionError(String className, String fieldName, Throwable cause)
     {
         return MESSAGES.format("field-injection-error", className, fieldName, cause);
-    }
-
-    static String componentNotAssignableToField(Component component, String fieldName, String fieldType)
-    {
-        return MESSAGES.format("component-not-assignable-to-field", component
-                .getComponentResources().getCompleteId(), fieldName, fieldType);
     }
 
     static String cachedMethodMustHaveReturnValue(TransformMethodSignature method)

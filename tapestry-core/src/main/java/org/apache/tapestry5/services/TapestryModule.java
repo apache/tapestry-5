@@ -538,7 +538,7 @@ public final class TapestryModule
         configuration.add("OnEvent", new OnEventWorker());
         configuration.add("SupportsInformalParameters", new SupportsInformalParametersWorker());
         configuration.addInstance("InjectPage", InjectPageWorker.class);
-        configuration.add("InjectContainer", new InjectContainerWorker());
+        configuration.addInstance("InjectContainer", InjectContainerWorker.class);
         configuration.add("InjectComponent", new InjectComponentWorker());
         configuration.add("RenderCommand", new RenderCommandWorker());
 
@@ -2318,8 +2318,8 @@ public final class TapestryModule
         configuration.add(SymbolConstants.START_PAGE_NAME, "start");
 
         configuration.add(SymbolConstants.DEFAULT_JAVASCRIPT,
-        		"classpath:/org/apache/tapestry5/tapestry.js");
-        
+                "classpath:/org/apache/tapestry5/tapestry.js");
+
         configuration.add(SymbolConstants.DEFAULT_STYLESHEET,
                 "classpath:/org/apache/tapestry5/default.css");
         configuration.add("tapestry.spacer-image", "classpath:/org/apache/tapestry5/spacer.gif");
