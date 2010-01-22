@@ -32,6 +32,7 @@ import org.apache.tapestry5.internal.ParameterAccess;
 import org.apache.tapestry5.internal.ParameterChangeListener;
 import org.apache.tapestry5.internal.ParameterChangedEvent;
 import org.apache.tapestry5.internal.services.Instantiator;
+import org.apache.tapestry5.internal.transform.ParameterConduit;
 import org.apache.tapestry5.ioc.AnnotationProvider;
 import org.apache.tapestry5.ioc.Location;
 import org.apache.tapestry5.ioc.Messages;
@@ -45,6 +46,7 @@ import org.apache.tapestry5.model.ParameterModel;
 import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.runtime.PageLifecycleListener;
 import org.apache.tapestry5.runtime.RenderQueue;
+import org.apache.tapestry5.services.FieldValueConduit;
 import org.slf4j.Logger;
 
 /**
@@ -79,6 +81,10 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
     // Case-insensitive map from container-parameter name to ParameterAccess, for BindParameter.
     // Should only ever be used for mixins.
     private Map<String, ParameterAccess> containerParameterAccess;
+    
+    // Case insentive map from parameter name to ParameterConduit, used to support mixins
+    // which need access to the containing component's PC's
+    private Map<String, ParameterConduit> conduits;
 
     private Messages messages;
 
@@ -779,4 +785,20 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
     {
         page.addResetListener(listener);
     }
+
+    @Override
+    public FieldValueConduit getParameterConduit(String parameterName)
+    {
+        return InternalUtils.get(conduits, parameterName);
+    }
+
+    @Override
+    public void setParameterConduit(String parameterName, ParameterConduit conduit)
+    {
+        if (conduits == null) conduits = CollectionFactory.newCaseInsensitiveMap();
+
+        conduits.put(parameterName, conduit);
+    }
+    
+    
 }

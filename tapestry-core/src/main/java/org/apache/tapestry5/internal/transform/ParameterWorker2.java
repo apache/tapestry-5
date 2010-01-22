@@ -14,7 +14,6 @@
 
 package org.apache.tapestry5.internal.transform;
 
-import java.lang.reflect.Modifier;
 import java.util.Iterator;
 import java.util.List;
 
@@ -36,7 +35,6 @@ import org.apache.tapestry5.services.ComponentValueProvider;
 import org.apache.tapestry5.services.MethodFilter;
 import org.apache.tapestry5.services.TransformConstants;
 import org.apache.tapestry5.services.TransformMethodSignature;
-import org.apache.tapestry5.services.TransformUtils;
 
 public class ParameterWorker2 implements ComponentClassTransformWorker
 {
@@ -107,7 +105,7 @@ public class ParameterWorker2 implements ComponentClassTransformWorker
             // better
             // if there was a way to defer until the component's page loaded lifecycle method). The
             // issues
-            // are addressed by deferring some behaviors until the reset() method.
+            // are addressed by deferring some behaviors until the load() method.
 
             @Override
             public ParameterConduit get(ComponentResources resources)
@@ -115,8 +113,6 @@ public class ParameterWorker2 implements ComponentClassTransformWorker
                 final InternalComponentResources icr = (InternalComponentResources) resources;
 
                 final Class fieldType = classCache.forName(fieldTypeName);
-
-                // final ParameterAccess parameterAccess = icr.getParameterAccess(parameterName);
 
                 // Rely on some code generation in the component to set the default binding from
                 // the field, or from a default method.
@@ -149,15 +145,11 @@ public class ParameterWorker2 implements ComponentClassTransformWorker
 
                         if (javaType.isPrimitive())
                         {
-                            if (javaType == boolean.class)
-                            {
-                                defaultValue = false;
-                            }
-                            else
-                            {
-                                defaultValue = typeCoercer.coerce(0l, javaType);
-                            }
+                            // Reminder: 0 coerces to false
+                            defaultValue = typeCoercer.coerce(0l, javaType);
                         }
+
+                        icr.setParameterConduit(parameterName, this);
                     }
 
                     private boolean isInvariant()
@@ -184,19 +176,15 @@ public class ParameterWorker2 implements ComponentClassTransformWorker
                             return;
                         }
 
-                        // TODO: Disable parameter change listener before updating PA
-
                         // This will catch read-only or unbound parameters.
 
                         parameterAccess.write(newValue);
-
-                        // TODO: Re-enable parameter change listener after updating PA
 
                         value = newValue;
 
                         // If caching is enabled for the parameter (the typical case) and the
                         // component is currently rendering, then the result
-                        // can be cached in the ParameterConduit (until the component finished
+                        // can be cached in the ParameterConduit (until the component finishes
                         // rendering).
 
                         cached = enableCaching && icr.isRendering();
@@ -215,22 +203,19 @@ public class ParameterWorker2 implements ComponentClassTransformWorker
                     @Override
                     public void load()
                     {
-                        boolean isBound = icr.isBound(parameterName);
-
-
                         // If it's bound at this point, that's because of an explicit binding
                         // in the template or @Component annotation.
-                        
+
                         if (!icr.isBound(parameterName))
                         {
                             // Otherwise, construct a default binding, or use one provided from
                             // the component.
-                            
+
                             Binding binding = getDefaultBindingForParameter();
 
                             if (binding != null)
                                 icr.bindParameter(parameterName, binding);
-                            
+
                             defaultBinding = null;
                         }
 
@@ -250,9 +235,10 @@ public class ParameterWorker2 implements ComponentClassTransformWorker
                         if (annotation.autoconnect())
                             return defaultProvider.defaultBinding(parameterName, icr);
 
-                        // Return (if not null) the binding from the setDefault() method which is set
-                        // via a default method on the component, or from the field's initial value.
-                        
+                        // Return (if not null) the binding from the setDefault() method which is
+                        // set via a default method on the component, or from the field's initial
+                        // value.
+
                         return defaultBinding;
                     }
 
@@ -277,7 +263,7 @@ public class ParameterWorker2 implements ComponentClassTransformWorker
                         // If the value is invariant, we can cache it forever. Otherwise, we
                         // we may want to cache it for the remainder of the component render (if the
                         // component is currently rendering).
-                        
+
                         if (isInvariant() || (enableCaching && icr.isRendering()))
                         {
                             value = result;
@@ -313,9 +299,7 @@ public class ParameterWorker2 implements ComponentClassTransformWorker
 
         addCodeForParameterDefaultMethod(transformation, parameterName, conduitFieldName);
 
-        addParameterWriteMethod(transformation, fieldName, fieldTypeName, conduitFieldName);
-
-        addParameterReadMethod(transformation, fieldName, fieldTypeName, conduitFieldName);
+        transformation.replaceFieldAccess(fieldName, conduitFieldName);
 
         transformation.extendMethod(TransformConstants.CONTAINING_PAGE_DID_LOAD_SIGNATURE, String
                 .format("%s.load();", conduitFieldName));
@@ -323,43 +307,6 @@ public class ParameterWorker2 implements ComponentClassTransformWorker
         transformation.extendMethod(TransformConstants.POST_RENDER_CLEANUP_SIGNATURE, String
                 .format("%s.reset();", conduitFieldName));
 
-        transformation.removeField(fieldName);
-    }
-
-    private void addParameterReadMethod(ClassTransformation transformation, String fieldName,
-            final String fieldTypeName, String conduitFieldName)
-    {
-        String readMethodName = transformation.newMemberName("read_parameter", fieldName);
-
-        TransformMethodSignature readSig = new TransformMethodSignature(Modifier.PRIVATE,
-                fieldTypeName, readMethodName, null, null);
-
-        String cast = TransformUtils.getWrapperTypeName(fieldTypeName);
-
-        // The ($r) cast will convert the result to the method return type; generally
-        // this does nothing. but for primitive types, it will unwrap
-        // the wrapper type back to a primitive. We pass the desired type name
-        // to readParameter(), since its easier to convert it properly to
-        // a type on that end than in the generated code.
-
-        transformation.addMethod(readSig, String.format("return ($r) ((%s) %s.get());", cast,
-                conduitFieldName));
-
-        transformation.replaceReadAccess(fieldName, readMethodName);
-    }
-
-    private void addParameterWriteMethod(ClassTransformation transformation, String fieldName,
-            String fieldTypeName, String conduitFieldName)
-    {
-        String writeMethodName = transformation.newMemberName("update_parameter", fieldName);
-
-        TransformMethodSignature writeSig = new TransformMethodSignature(Modifier.PRIVATE, "void",
-                writeMethodName, new String[]
-                { fieldTypeName }, null);
-
-        transformation.addMethod(writeSig, String.format("%s.set(($w) $1);", conduitFieldName));
-
-        transformation.replaceWriteAccess(fieldName, writeMethodName);
     }
 
     private void addCodeForParameterDefaultMethod(ClassTransformation transformation,

@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,7 +18,9 @@ import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.internal.services.PersistentFieldManager;
 import org.apache.tapestry5.internal.structure.Page;
 import org.apache.tapestry5.internal.structure.PageResetListener;
+import org.apache.tapestry5.internal.transform.ParameterConduit;
 import org.apache.tapestry5.runtime.RenderQueue;
+import org.apache.tapestry5.services.FieldValueConduit;
 
 /**
  * An extension of {@link org.apache.tapestry5.ComponentResources} that represents additional
@@ -86,8 +88,17 @@ public interface InternalComponentResources extends ComponentResources,
             String... parentParameterNames);
 
     /**
-     * Delegates to {@link Page#addResetListener(org.apache.tapestry5.internal.structure.PageResetListener)}.
-     * @param listener to register
+     * Delegates to
+     * {@link Page#addResetListener(org.apache.tapestry5.internal.structure.PageResetListener)}.
+     * 
+     * @param listener
+     *            to register
      */
     void addPageResetListener(PageResetListener listener);
+
+    /** @since 5.2.0 */
+    FieldValueConduit getParameterConduit(String parameterName);
+
+    /** @since 5.2.0 */
+    void setParameterConduit(String parameterName, ParameterConduit conduit);
 }

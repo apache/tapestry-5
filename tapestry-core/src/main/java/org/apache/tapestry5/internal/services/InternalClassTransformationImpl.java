@@ -55,6 +55,7 @@ import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.services.ComponentMethodAdvice;
 import org.apache.tapestry5.services.ComponentValueProvider;
 import org.apache.tapestry5.services.FieldFilter;
+import org.apache.tapestry5.services.FieldValueConduit;
 import org.apache.tapestry5.services.MethodFilter;
 import org.apache.tapestry5.services.TransformMethodSignature;
 import org.apache.tapestry5.services.TransformUtils;
@@ -2007,4 +2008,44 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         makeReadOnly(fieldName);
     }
 
+    @Override
+    public void replaceFieldAccess(String fieldName,
+            ComponentValueProvider<FieldValueConduit> conduitProvider)
+    {
+        replaceFieldAccess(fieldName, addIndirectInjectedField(FieldValueConduit.class, fieldName
+                + "$conduit", conduitProvider));
+    }
+
+    @Override
+    public void replaceFieldAccess(String fieldName, String conduitFieldName)
+    {
+        String fieldType = getFieldType(fieldName);
+
+        String readMethodName = newMemberName("get", fieldName);
+
+        TransformMethodSignature readSig = new TransformMethodSignature(Modifier.PRIVATE,
+                fieldType, readMethodName, null, null);
+
+        String cast = TransformUtils.getWrapperTypeName(fieldType);
+
+        // The ($r) cast will convert the result to the method return type; generally
+        // this does nothing. but for primitive types, it will unwrap
+        // the wrapper type back to a primitive.
+
+        addMethod(readSig, String.format("return ($r) ((%s) %s.get());", cast, conduitFieldName));
+
+        replaceReadAccess(fieldName, readMethodName);
+
+        String writeMethodName = newMemberName("set", fieldName);
+
+        TransformMethodSignature writeSig = new TransformMethodSignature(Modifier.PRIVATE, "void",
+                writeMethodName, new String[]
+                { fieldType }, null);
+
+        addMethod(writeSig, String.format("%s.set(($w) $1);", conduitFieldName));
+
+        replaceWriteAccess(fieldName, writeMethodName);
+
+        removeField(fieldName);
+    }
 }

@@ -249,7 +249,7 @@ public interface ClassTransformation extends AnnotationProvider
      * Like {@link #addInjectedField(Class, String, Object)}, but instead of specifying the value,
      * a provider for the value is specified. In the generated class' constructor, the provider
      * will be passed the {@link ComponentResources} and will return the final value; thus
-     * each component <em>instance</em> will receive a unique
+     * each component <em>instance</em> will receive a matching unique instance via the provider.
      * 
      * @param <T>
      * @param type
@@ -519,4 +519,28 @@ public interface ClassTransformation extends AnnotationProvider
      */
     <T> void assignFieldIndirect(String fieldName, TransformMethodSignature methodSig,
             ComponentValueProvider<T> provider);
+
+    /**
+     * Replaces read and write field access with a conduit. The field will be deleted.
+     * 
+     * @param fieldName
+     *            field to replace
+     * @param conduitProvider
+     *            provides the actual conduit at class instantiation time
+     * @since 5.2.0
+     */
+    void replaceFieldAccess(String fieldName,
+            ComponentValueProvider<FieldValueConduit> conduitProvider);
+
+    /**
+     * Replaces read and write field access with a previously injected conduit (identified by its
+     * field name). The conduit must implement {@link FieldValueConduit}. The field will be removed.
+     * 
+     * @since 5.2.0
+     * @param fieldName
+     *            field to replace
+     * @param conduitFieldName
+     *            name of field which will have an instance of {@link FieldValueConduit}
+     */
+    void replaceFieldAccess(String fieldName, String conduitFieldName);
 }
