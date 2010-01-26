@@ -93,4 +93,13 @@ public interface TransformField extends AnnotationProvider, Comparable<Transform
      * method signature.
      */
     <T> void assignIndirect(TransformMethodSignature signature, ComponentValueProvider<T> provider);
+
+    /**
+     * Marks the field for removal (at the end of the class transformation). Often, a field is deleted
+     * after access to the field is {@linkplain #replaceAccess(ComponentValueProvider) replaced}.
+     * 
+     * @throws IllegalStateException
+     *             if the field has already been marked for deletion
+     */
+    void remove();
 }

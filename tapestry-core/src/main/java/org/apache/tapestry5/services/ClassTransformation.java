@@ -233,7 +233,7 @@ public interface ClassTransformation extends AnnotationProvider
 
     /**
      * Finds any declared <em>instance</em> fields that have not been claimed (via {@link #claimField(String, Object)})
-     * and returns the names of those fields. May return an empty array.
+     * and have not been either added or deleted, and returns the names of those fields. May return an empty array.
      */
     List<String> findUnclaimedFields();
 
@@ -474,6 +474,7 @@ public interface ClassTransformation extends AnnotationProvider
      *            the name of the field to remove
      * @see #replaceReadAccess(String, String)
      * @see #replaceWriteAccess(String, String)
+     * @deprecated Use {@link TransformField#remove()} instead
      */
     void removeField(String fieldName);
 

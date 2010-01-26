@@ -147,6 +147,8 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
         private Object claimTag;
 
+        boolean removed;
+
         TransformFieldImpl(CtField field, boolean added)
         {
             this.field = field;
@@ -216,6 +218,30 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
             return claimTag != null;
         }
 
+        public void remove()
+        {
+            if (removed)
+                throw new RuntimeException(String
+                        .format("Field %s.%s has already been marked for removal.", ctClass
+                                .getName(), name));
+
+            removed = true;
+
+            formatter.format("remove field %s;\n\n", name);
+        }
+
+        void doRemove()
+        {
+            try
+            {
+                ctClass.removeField(field);
+            }
+            catch (NotFoundException ex)
+            {
+                throw new RuntimeException(ex);
+            }
+        }
+
         public void replaceAccess(ComponentValueProvider<FieldValueConduit> conduitProvider)
         {
             replaceAccess(addIndirectInjectedField(FieldValueConduit.class, name + "$conduit",
@@ -254,7 +280,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
             replaceWriteAccess(name, writeMethodName);
 
-            removeField(name);
+            remove();
         }
 
         public <T> void assignIndirect(TransformMethod method, ComponentValueProvider<T> provider)
@@ -323,8 +349,6 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
     // Key is field name, value is expression used to replace read access
     private Map<String, String> fieldWriteTransforms;
-
-    private Set<String> removedFieldNames;
 
     /**
      * Contains the assembled Javassist code for the class' default constructor.
@@ -465,7 +489,6 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         methodSignatures = null;
         fieldReadTransforms = null;
         fieldWriteTransforms = null;
-        removedFieldNames = null;
         constructor = null;
         formatter = null;
         methodToInvocationBuilder = null;
@@ -513,7 +536,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
             idAllocator.allocateId(name);
 
-            fields.put(name, new TransformFieldImpl(field, false));
+            TransformFieldImpl tfi = fields.put(name, new TransformFieldImpl(field, false));
 
             int modifiers = field.getModifiers();
 
@@ -527,8 +550,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
             if (name.equals("metaClass") && getFieldType(name).equals("groovy.lang.MetaClass"))
             {
-                claimField(name, "Ignored");
-
+                tfi.claim("Ignored");
                 continue;
             }
 
@@ -632,18 +654,6 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         throw new RuntimeException(String.format("Class %s does not contain a field named '%s'.",
                 ctClass.getName(), fieldName));
 
-    }
-
-    private CtField findDeclaredCtField(String fieldName)
-    {
-        try
-        {
-            return ctClass.getDeclaredField(fieldName);
-        }
-        catch (NotFoundException ex)
-        {
-            throw new RuntimeException(ex);
-        }
     }
 
     public String newMemberName(String suggested)
@@ -1155,6 +1165,8 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
     public List<String> findFieldsWithAnnotation(final Class<? extends Annotation> annotationClass)
     {
+        Defense.notNull(annotationClass, "annotationClass");
+
         FieldFilter filter = new FieldFilter()
         {
             public boolean accept(String fieldName, String fieldType)
@@ -1168,21 +1180,18 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
     public List<String> findFields(final FieldFilter filter)
     {
-        failIfFrozen();
+        Defense.notNull(filter, "filter");
 
-        List<String> result = CollectionFactory.newList();
-
-        for (TransformFieldImpl field : fields.values())
+        List<TransformField> fields2 = matchFields(new Predicate<TransformField>()
         {
-            String fieldName = field.getName();
+            @Override
+            public boolean accept(TransformField object)
+            {
+                return filter.accept(object.getName(), object.getType());
+            }
+        });
 
-            if (filter.accept(fieldName, field.getType()))
-                result.add(fieldName);
-        }
-
-        Collections.sort(result);
-
-        return result;
+        return toFieldNames(fields2);
     }
 
     public List<TransformField> matchFields(Predicate<TransformField> predicate)
@@ -1292,15 +1301,10 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
         for (TransformFieldImpl f : fields.values())
         {
-            if (f.added || f.isClaimed())
+            if (f.added || f.removed || f.isClaimed())
                 continue;
 
-            String name = f.getName();
-
-            if (removedFieldNames != null && removedFieldNames.contains(name))
-                continue;
-
-            names.add(name);
+            names.add(f.getName());
         }
 
         Collections.sort(names);
@@ -1719,7 +1723,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
         BodyBuilder constructor = new BodyBuilder();
 
-        // This is realy -1 + 2: The first value in constructorArgs is the
+        // This is really -1 + 2: The first value in constructorArgs is the
         // InternalComponentResources, which doesn't
         // count toward's the Instantiator's constructor ... then we add in the Model and String
         // description.
@@ -1924,14 +1928,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
     public void removeField(String fieldName)
     {
-        formatter.format("remove field %s;\n\n", fieldName);
-
-        // TODO: We could check that there's an existing field read and field write transform ...
-
-        if (removedFieldNames == null)
-            removedFieldNames = CollectionFactory.newSet();
-
-        removedFieldNames.add(fieldName);
+        getField(fieldName).remove();
     }
 
     public void replaceReadAccess(String fieldName, String methodName)
@@ -1976,20 +1973,10 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         if (fieldReadTransforms != null || fieldWriteTransforms != null)
             replaceFieldAccess();
 
-        if (removedFieldNames != null)
+        for (TransformFieldImpl tfi : fields.values())
         {
-            for (String fieldName : removedFieldNames)
-            {
-                try
-                {
-                    CtField field = ctClass.getDeclaredField(fieldName);
-                    ctClass.removeField(field);
-                }
-                catch (NotFoundException ex)
-                {
-                    throw new RuntimeException(ex);
-                }
-            }
+            if (tfi.removed)
+                tfi.doRemove();
         }
     }
 
