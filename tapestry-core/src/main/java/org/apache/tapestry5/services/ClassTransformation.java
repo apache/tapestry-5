@@ -24,8 +24,6 @@ import org.apache.tapestry5.ioc.AnnotationProvider;
 import org.apache.tapestry5.ioc.Predicate;
 import org.slf4j.Logger;
 
-import com.sun.source.tree.MethodTree;
-
 /**
  * Contains class-specific information used when transforming a raw component class into an
  * executable component class.

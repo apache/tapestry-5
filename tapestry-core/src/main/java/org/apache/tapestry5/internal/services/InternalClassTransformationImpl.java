@@ -681,7 +681,6 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         }
     }
 
-    @Override
     public TransformField getField(String fieldName)
     {
         failIfFrozen();
