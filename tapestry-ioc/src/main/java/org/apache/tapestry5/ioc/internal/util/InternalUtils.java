@@ -916,9 +916,11 @@ public class InternalUtils
     }
 
     /** @since 5.2.0 */
-    public static <T extends Comparable<T>> List<T> matchAndSort(Collection<T> collection,
-            Predicate<T> predicate)
+    public static <T extends Comparable<T>> List<T> matchAndSort(
+            Collection<? extends T> collection, Predicate<T> predicate)
     {
+        Defense.notNull(predicate, "predicate");
+
         List<T> result = CollectionFactory.newList();
 
         for (T object : collection)
