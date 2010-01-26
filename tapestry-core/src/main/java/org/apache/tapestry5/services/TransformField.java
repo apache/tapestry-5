@@ -56,4 +56,20 @@ public interface TransformField extends AnnotationProvider
      *             if the field is already claimed for some other tag
      */
     void claim(Object tag);
+
+    /**
+     * Replaces read and write field access with a conduit. The field will be deleted.
+     * 
+     * @param conduitProvider
+     *            provides the actual conduit at class instantiation time
+     */
+    void replaceAccess(ComponentValueProvider<FieldValueConduit> conduitProvider);
+
+    /**
+     * Replaces read and write field access with a conduit. The field itself will be deleted.
+     * 
+     * @param conduitField
+     *            identifies the field containing (via injection) an instance of {@link FieldValueConduit}
+     */
+    void replaceAccess(TransformField conduitField);
 }

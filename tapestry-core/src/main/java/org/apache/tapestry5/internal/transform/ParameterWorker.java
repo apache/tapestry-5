@@ -34,6 +34,7 @@ import org.apache.tapestry5.services.ComponentDefaultProvider;
 import org.apache.tapestry5.services.ComponentValueProvider;
 import org.apache.tapestry5.services.MethodFilter;
 import org.apache.tapestry5.services.TransformConstants;
+import org.apache.tapestry5.services.TransformField;
 import org.apache.tapestry5.services.TransformMethodSignature;
 
 /**
@@ -342,12 +343,14 @@ public class ParameterWorker implements ComponentClassTransformWorker
 
         // This has to be done in the constructor, to handle any field initializations
 
-        String conduitFieldName = transformation.addIndirectInjectedField(ParameterConduit.class,
-                parameterName + "$conduit", provider);
+        TransformField conduitField = transformation.addIndirectInjectedField(
+                ParameterConduit.class, parameterName + "$conduit", provider);
+
+        String conduitFieldName = conduitField.getName();
 
         addCodeForParameterDefaultMethod(transformation, parameterName, conduitFieldName);
 
-        transformation.replaceFieldAccess(fieldName, conduitFieldName);
+        transformation.getField(fieldName).replaceAccess(conduitField);
 
         transformation.extendMethod(TransformConstants.CONTAINING_PAGE_DID_LOAD_SIGNATURE, String
                 .format("%s.load();", conduitFieldName));

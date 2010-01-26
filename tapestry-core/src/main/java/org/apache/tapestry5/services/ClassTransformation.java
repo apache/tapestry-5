@@ -273,7 +273,7 @@ public interface ClassTransformation extends AnnotationProvider
      * @return the actual name of the injected field
      * @since 5.2
      */
-    <T> String addIndirectInjectedField(Class<T> type, String suggestedName,
+    <T> TransformField addIndirectInjectedField(Class<T> type, String suggestedName,
             ComponentValueProvider<T> provider);
 
     /**
@@ -527,28 +527,4 @@ public interface ClassTransformation extends AnnotationProvider
      */
     <T> void assignFieldIndirect(String fieldName, TransformMethodSignature methodSig,
             ComponentValueProvider<T> provider);
-
-    /**
-     * Replaces read and write field access with a conduit. The field will be deleted.
-     * 
-     * @param fieldName
-     *            field to replace
-     * @param conduitProvider
-     *            provides the actual conduit at class instantiation time
-     * @since 5.2.0
-     */
-    void replaceFieldAccess(String fieldName,
-            ComponentValueProvider<FieldValueConduit> conduitProvider);
-
-    /**
-     * Replaces read and write field access with a previously injected conduit (identified by its
-     * field name). The conduit must implement {@link FieldValueConduit}. The field will be removed.
-     * 
-     * @since 5.2.0
-     * @param fieldName
-     *            field to replace
-     * @param conduitFieldName
-     *            name of field which will have an instance of {@link FieldValueConduit}
-     */
-    void replaceFieldAccess(String fieldName, String conduitFieldName);
-}
+ }

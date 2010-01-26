@@ -112,6 +112,8 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
     {
         private final CtField field;
 
+        private final String name;
+
         private final String type;
 
         private final boolean primitive;
@@ -125,6 +127,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         TransformFieldImpl(CtField field, boolean added)
         {
             this.field = field;
+            this.name = field.getName();
             this.added = added;
 
             try
@@ -141,7 +144,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
         public String getName()
         {
-            return field.getName();
+            return name;
         }
 
         public String getType()
@@ -183,6 +186,47 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         public boolean isClaimed()
         {
             return claimTag != null;
+        }
+
+        public void replaceAccess(ComponentValueProvider<FieldValueConduit> conduitProvider)
+        {
+            replaceAccess(addIndirectInjectedField(FieldValueConduit.class, name + "$conduit",
+                    conduitProvider));
+        }
+
+        public void replaceAccess(TransformField conduitField)
+        {
+            failIfFrozen();
+
+            String conduitFieldName = conduitField.getName();
+
+            String readMethodName = newMemberName("get", name);
+
+            TransformMethodSignature readSig = new TransformMethodSignature(Modifier.PRIVATE, type,
+                    readMethodName, null, null);
+
+            String cast = TransformUtils.getWrapperTypeName(type);
+
+            // The ($r) cast will convert the result to the method return type; generally
+            // this does nothing. but for primitive types, it will unwrap
+            // the wrapper type back to a primitive.
+
+            addMethod(readSig, String
+                    .format("return ($r) ((%s) %s.get());", cast, conduitFieldName));
+
+            replaceReadAccess(name, readMethodName);
+
+            String writeMethodName = newMemberName("set", name);
+
+            TransformMethodSignature writeSig = new TransformMethodSignature(Modifier.PRIVATE,
+                    "void", writeMethodName, new String[]
+                    { type }, null);
+
+            addMethod(writeSig, String.format("%s.set(($w) $1);", conduitFieldName));
+
+            replaceWriteAccess(name, writeMethodName);
+
+            removeField(name);
         }
     }
 
@@ -1016,6 +1060,9 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         return tmi == null ? null : tmi.method;
     }
 
+    // TODO: Rework this method for efficiency, i.e., so that we can leverage the methods
+    // map in parent InternalClassTransformImpls, rather than the exhaustive
+    // search.
     private CtMethod addOverrideOfSuperclassMethod(TransformMethodSignature methodSignature)
     {
         try
@@ -1278,9 +1325,16 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
     public String addField(int modifiers, String type, String suggestedName)
     {
+        return addTransformField(modifiers, type, suggestedName).getName();
+    }
+
+    private TransformField addTransformField(int modifiers, String type, String suggestedName)
+    {
         failIfFrozen();
 
         String fieldName = newMemberName(suggestedName);
+
+        TransformFieldImpl result = null;
 
         try
         {
@@ -1291,7 +1345,9 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
             ctClass.addField(field);
 
-            fields.put(fieldName, new TransformFieldImpl(field, true));
+            result = new TransformFieldImpl(field, true);
+
+            fields.put(fieldName, result);
 
         }
         catch (NotFoundException ex)
@@ -1305,7 +1361,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
         formatter.format("add field: %s %s %s;\n\n", Modifier.toString(modifiers), type, fieldName);
 
-        return fieldName;
+        return result;
     }
 
     public String addInjectedField(Class type, String suggestedName, Object value)
@@ -1332,13 +1388,13 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         return fieldName;
     }
 
-    public <T> String addIndirectInjectedField(Class<T> type, String suggestedName,
+    public <T> TransformField addIndirectInjectedField(Class<T> type, String suggestedName,
             ComponentValueProvider<T> provider)
     {
         Defense.notNull(type, "type");
         Defense.notNull(provider, "provider");
-
-        String fieldName = addField(Modifier.PRIVATE | Modifier.FINAL, type.getName(),
+        
+        TransformField field = addTransformField(Modifier.PRIVATE | Modifier.FINAL, type.getName(),
                 suggestedName);
 
         String argName = addConstructorArg(providerType, provider);
@@ -1348,10 +1404,10 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         // field type and assign. This will likely not work with
         // primitives and arrays, but that's ok for now.
 
-        extendConstructor(String.format("  %s = (%s) %s.get(%s);", fieldName, type.getName(),
+        extendConstructor(String.format("  %s = (%s) %s.get(%s);", field.getName(), type.getName(),
                 argName, resourcesFieldName));
 
-        return fieldName;
+        return field;
     }
 
     private CtClass toCtClass(Class type)
@@ -2065,44 +2121,5 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         extendMethod(methodSig, body);
 
         makeReadOnly(fieldName);
-    }
-
-    public void replaceFieldAccess(String fieldName,
-            ComponentValueProvider<FieldValueConduit> conduitProvider)
-    {
-        replaceFieldAccess(fieldName, addIndirectInjectedField(FieldValueConduit.class, fieldName
-                + "$conduit", conduitProvider));
-    }
-
-    public void replaceFieldAccess(String fieldName, String conduitFieldName)
-    {
-        String fieldType = getFieldType(fieldName);
-
-        String readMethodName = newMemberName("get", fieldName);
-
-        TransformMethodSignature readSig = new TransformMethodSignature(Modifier.PRIVATE,
-                fieldType, readMethodName, null, null);
-
-        String cast = TransformUtils.getWrapperTypeName(fieldType);
-
-        // The ($r) cast will convert the result to the method return type; generally
-        // this does nothing. but for primitive types, it will unwrap
-        // the wrapper type back to a primitive.
-
-        addMethod(readSig, String.format("return ($r) ((%s) %s.get());", cast, conduitFieldName));
-
-        replaceReadAccess(fieldName, readMethodName);
-
-        String writeMethodName = newMemberName("set", fieldName);
-
-        TransformMethodSignature writeSig = new TransformMethodSignature(Modifier.PRIVATE, "void",
-                writeMethodName, new String[]
-                { fieldType }, null);
-
-        addMethod(writeSig, String.format("%s.set(($w) $1);", conduitFieldName));
-
-        replaceWriteAccess(fieldName, writeMethodName);
-
-        removeField(fieldName);
     }
 }

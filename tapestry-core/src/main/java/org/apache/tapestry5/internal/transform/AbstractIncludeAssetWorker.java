@@ -29,6 +29,7 @@ import org.apache.tapestry5.services.ClassTransformation;
 import org.apache.tapestry5.services.ComponentClassTransformWorker;
 import org.apache.tapestry5.services.ComponentValueProvider;
 import org.apache.tapestry5.services.TransformConstants;
+import org.apache.tapestry5.services.TransformField;
 
 /**
  * Base class for workers that automatically include assets in the page (via methods on
@@ -103,11 +104,11 @@ public abstract class AbstractIncludeAssetWorker implements ComponentClassTransf
             }
         };
 
-        String runnableFieldName = transformation.addIndirectInjectedField(Runnable.class,
+        TransformField runnableField = transformation.addIndirectInjectedField(Runnable.class,
                 "includeAssets", provider);
 
         transformation.extendMethod(TransformConstants.SETUP_RENDER_SIGNATURE, String.format(
-                "%s.run();", runnableFieldName));
+                "%s.run();", runnableField.getName()));
 
         model.addRenderPhase(SetupRender.class);
     }

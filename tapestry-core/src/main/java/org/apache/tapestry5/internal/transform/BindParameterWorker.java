@@ -133,7 +133,7 @@ public class BindParameterWorker implements ComponentClassTransformWorker
             }
         };
 
-        transformation.replaceFieldAccess(fieldName, provider);
+        transformation.getField(fieldName).replaceAccess(provider);
     }
 
     private String identifyParameterName(ComponentResources resources, String firstGuess,
