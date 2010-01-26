@@ -27,6 +27,7 @@ import org.apache.tapestry5.services.AssetSource;
 import org.apache.tapestry5.services.ClassTransformation;
 import org.apache.tapestry5.services.ComponentValueProvider;
 import org.apache.tapestry5.services.InjectionProvider;
+import org.apache.tapestry5.services.TransformField;
 
 /**
  * Performs injection of assets, based on the presence of the {@link Path} annotation. This is more
@@ -48,7 +49,9 @@ public class AssetInjectionProvider implements InjectionProvider
     public boolean provideInjection(String fieldName, Class fieldType, ObjectLocator locator,
             ClassTransformation transformation, MutableComponentModel componentModel)
     {
-        Path path = transformation.getFieldAnnotation(fieldName, Path.class);
+        TransformField field = transformation.getField(fieldName);
+
+        Path path = field.getAnnotation(Path.class);
 
         if (path == null)
             return false;
@@ -68,7 +71,7 @@ public class AssetInjectionProvider implements InjectionProvider
             }
         };
 
-        transformation.injectFieldIndirect(fieldName, provider);
+        field.injectIndirect(provider);
 
         return true;
     }

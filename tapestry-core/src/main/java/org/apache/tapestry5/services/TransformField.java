@@ -102,4 +102,30 @@ public interface TransformField extends AnnotationProvider, Comparable<Transform
      *             if the field has already been marked for deletion
      */
     void remove();
+
+    /** Returns the modifiers for the field. */
+    int getModifiers();
+
+    /**
+     * Converts this field into a read only field whose value is the provided
+     * value. This is used when converting an existing field into a read-only injected value.
+     * 
+     * @param value
+     *            the value provided by the field
+     */
+    void inject(Object value);
+
+    /**
+     * Like {@link #inject(Object)}, except that the value to be injected is obtained
+     * from a {@link ComponentValueProvider}. It is assumed that the provider will return an object
+     * assignable to the field.
+     * 
+     * @param <T>
+     *            type of field
+     * @param provider
+     *            provides the value to be assigned to the field
+     * @since 5.2.0
+     */
+    <T> void injectIndirect(ComponentValueProvider<T> provider);
+
 }

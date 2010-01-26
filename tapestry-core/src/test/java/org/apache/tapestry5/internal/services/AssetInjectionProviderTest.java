@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -22,6 +22,7 @@ import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.services.AssetSource;
 import org.apache.tapestry5.services.ClassTransformation;
 import org.apache.tapestry5.services.InjectionProvider;
+import org.apache.tapestry5.services.TransformField;
 import org.testng.annotations.Test;
 
 public class AssetInjectionProviderTest extends InternalBaseTestCase
@@ -34,10 +35,12 @@ public class AssetInjectionProviderTest extends InternalBaseTestCase
         ObjectLocator locator = mockObjectLocator();
         ClassTransformation ct = mockClassTransformation();
         MutableComponentModel model = mockMutableComponentModel();
+        TransformField field = newMock(TransformField.class);
 
         String fieldName = "myField";
 
-        train_getFieldAnnotation(ct, fieldName, Path.class, null);
+        expect(ct.getField(fieldName)).andReturn(field);
+        expect(field.getAnnotation(Path.class)).andReturn(null);
 
         replay();
 

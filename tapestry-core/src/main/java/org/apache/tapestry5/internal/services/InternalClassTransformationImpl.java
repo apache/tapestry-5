@@ -135,6 +135,8 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
     {
         private final CtField field;
 
+        private final CtClass fieldType;
+
         private final String name;
 
         private final String type;
@@ -157,7 +159,8 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
             try
             {
-                type = field.getType().getName();
+                fieldType = field.getType();
+                type = fieldType.getName();
             }
             catch (NotFoundException ex)
             {
@@ -216,6 +219,11 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         public boolean isClaimed()
         {
             return claimTag != null;
+        }
+
+        public int getModifiers()
+        {
+            return field.getModifiers();
         }
 
         public void remove()
@@ -310,12 +318,35 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
             makeReadOnly(name);
         }
 
-        @Override
         public <T> void assignIndirect(TransformMethodSignature signature,
                 ComponentValueProvider<T> provider)
         {
             assignIndirect(getMethod(signature), provider);
         }
+
+        public void inject(Object value)
+        {
+            failIfFrozen();
+
+            addInjectToConstructor(name, fieldType, value);
+
+            makeReadOnly(name);
+        }
+
+        public <T> void injectIndirect(ComponentValueProvider<T> provider)
+        {
+            Defense.notNull(provider, "provider");
+
+            failIfFrozen();
+
+            String argName = addConstructorArg(providerType, provider);
+
+            extendConstructor(String.format("  %s = (%s) %s.get(%s);", name, type, argName,
+                    resourcesFieldName));
+
+            makeReadOnly(name);
+        }
+
     }
 
     private final Map<TransformMethodSignature, TransformMethodImpl> methods = CollectionFactory
@@ -1336,16 +1367,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
     public int getFieldModifiers(String fieldName)
     {
-        failIfFrozen();
-
-        try
-        {
-            return ctClass.getDeclaredField(fieldName).getModifiers();
-        }
-        catch (NotFoundException ex)
-        {
-            throw new RuntimeException(ex);
-        }
+        return getField(fieldName).getModifiers();
     }
 
     private CtClass getFieldCtType(String fieldName)
@@ -1564,34 +1586,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
     public void injectField(String fieldName, Object value)
     {
-        Defense.notBlank(fieldName, "fieldName");
-
-        failIfFrozen();
-
-        CtClass type = getFieldCtType(fieldName);
-
-        addInjectToConstructor(fieldName, type, value);
-
-        makeReadOnly(fieldName);
-    }
-
-    public <T> void injectFieldIndirect(String fieldName, ComponentValueProvider<T> provider)
-    {
-        Defense.notBlank(fieldName, "fieldName");
-        Defense.notNull(provider, "provider");
-
-        failIfFrozen();
-
-        CtClass type = getFieldCtType(fieldName);
-
-        String argName = addConstructorArg(providerType, provider);
-
-        extendConstructor(String.format("  %s = (%s) %s.get(%s);", fieldName, type.getName(),
-                argName, resourcesFieldName));
-
-        // Add the provider to the constructor
-
-        makeReadOnly(fieldName);
+        getField(fieldName).inject(value);
     }
 
     private CtClass convertNameToCtType(String type) throws NotFoundException

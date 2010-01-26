@@ -86,7 +86,7 @@ public class CommonResourcesInjectionProvider implements InjectionProvider
         if (provider == null)
             return false;
 
-        transformation.injectFieldIndirect(fieldName, provider);
+        transformation.getField(fieldName).injectIndirect(provider);
 
         return true;
     }

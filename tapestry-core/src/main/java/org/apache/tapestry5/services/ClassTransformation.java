@@ -312,7 +312,7 @@ public interface ClassTransformation extends AnnotationProvider
             ComponentValueProvider<T> provider);
 
     /**
-     * Converts and <em>existing</em> field into a read only field whose value is the provided
+     * Converts an <em>existing</em> field into a read only field whose value is the provided
      * value. This is used
      * when converting an
      * existing field into a read-only injected value.
@@ -321,24 +321,9 @@ public interface ClassTransformation extends AnnotationProvider
      *            name of field to convert
      * @param value
      *            the value provided by the field
+     * @deprecated Use {@link TransformField#inject(Object)} instead
      */
     void injectField(String fieldName, Object value);
-
-    /**
-     * Like {@link #injectField(String, Object)}, except that the value to be injected is obtained
-     * from
-     * a {@link ComponentValueProvider}. It is assumed that the provider will return an object
-     * assignable to the field.
-     * 
-     * @param <T>
-     *            type of field
-     * @param fieldName
-     *            name of field to convert
-     * @param provider
-     *            provides the value to be assigned to the field
-     * @since 5.2.0
-     */
-    <T> void injectFieldIndirect(String fieldName, ComponentValueProvider<T> provider);
 
     /**
      * Transforms the class to implement the indicated interface. If the class (or its super class)
@@ -454,6 +439,8 @@ public interface ClassTransformation extends AnnotationProvider
      * name. Replacements
      * do not occur in methods added via {@link #addMethod(TransformMethodSignature, String)} or
      * {@link #extendMethod(TransformMethodSignature, String)}.
+     * 
+     * @deprecated Use {@link TransformField#replaceAccess(ComponentValueProvider) instead
      */
     void replaceReadAccess(String fieldName, String methodName);
 
@@ -463,6 +450,8 @@ public interface ClassTransformation extends AnnotationProvider
      * should take a single parameter of the same type as the field. Replacements do not occur in
      * methods added via {@link #addMethod(TransformMethodSignature, String)} or
      * {@link #extendMethod(TransformMethodSignature, String)}.
+     * 
+     * @deprecated Use {@link TransformField#replaceAccess(ComponentValueProvider) instead
      */
     void replaceWriteAccess(String fieldName, String methodName);
 
@@ -480,21 +469,20 @@ public interface ClassTransformation extends AnnotationProvider
 
     /**
      * Converts a type name into a corresponding class (possibly, a transformed class). Primitive
-     * type names are
-     * returned as wrapper types.
+     * type names are returned as wrapper types.
      */
-
     Class toClass(String type);
 
     /**
      * Returns a logger, based on the class name being transformed, to which warnings or errors
-     * concerning the class
-     * being transformed may be logged.
+     * concerning the class being transformed may be logged.
      */
     Logger getLogger();
 
     /**
      * Returns the modifiers for the named field.
+     * 
+     * @deprecated Use {@link TransformField#getModifiers()} instead
      */
     int getFieldModifiers(String fieldName);
 
