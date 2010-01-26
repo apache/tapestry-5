@@ -33,22 +33,21 @@ import java.util.List;
  * naming conventions. Most of the changes are provided by different implementations of
  * {@link ComponentClassTransformWorker}.
  * <p/>
- * Much of this information is somewhat like ordinary reflection, but applies to a class that has
- * not yet been loaded.
+ * Much of this information is somewhat like ordinary reflection, but applies to a class that has not yet been loaded.
  * <p/>
- * Transformation is primarily about identifying annotations on fields and on methods and changing
- * the class, adding new interfaces, fields and methods, and deleting some existing fields.
+ * Transformation is primarily about identifying annotations on fields and on methods and changing the class, adding new
+ * interfaces, fields and methods, and deleting some existing fields.
  * <p/>
- * A ClassTransformation contains all the state data specific to a particular class being
- * transformed. A number of <em>workers</em> will operate upon the ClassTransformation to effect the
- * desired changes before the true class is loaded into memory.
+ * A ClassTransformation contains all the state data specific to a particular class being transformed. A number of
+ * <em>workers</em> will operate upon the ClassTransformation to effect the desired changes before the true class is
+ * loaded into memory.
  * <p/>
- * Instances of this class are not designed to be thread safe, access to an instance should be
- * restricted to a single thread. In fact, the design of this type is to allow stateless singletons
- * in multiple threads to work on thread-specific data (within the ClassTransformation).
+ * Instances of this class are not designed to be thread safe, access to an instance should be restricted to a single
+ * thread. In fact, the design of this type is to allow stateless singletons in multiple threads to work on
+ * thread-specific data (within the ClassTransformation).
  * <p/>
- * The majority of methods concern the <em>declared</em> members (field and methods) of a specific
- * class, rather than any fields or methods inherited from a base class.
+ * The majority of methods concern the <em>declared</em> members (field and methods) of a specific class, rather than
+ * any fields or methods inherited from a base class.
  * 
  * @see org.apache.tapestry5.services.TapestryModule#contributeComponentClassTransformWorker(org.apache.tapestry5.ioc.OrderedConfiguration,
  *      org.apache.tapestry5.ioc.ObjectLocator, InjectionProvider, ComponentClassResolver)
@@ -134,8 +133,21 @@ public interface ClassTransformation extends AnnotationProvider
      * @return the annotation if present, or null otherwise
      * @throws IllegalArgumentException
      *             if the fieldName does not correspond to a declared field
+     * @deprecated Use {@link TransformField#getAnnotation(Class)} instead
      */
     <T extends Annotation> T getFieldAnnotation(String fieldName, Class<T> annotationClass);
+
+    /**
+     * Locates a declared field by its field name. The field must exist.
+     * 
+     * @param name
+     *            of declared field
+     * @return field information
+     * @throws RuntimeException
+     *             if no such field
+     * @since 5.2.0
+     */
+    TransformField getField(String fieldName);
 
     /**
      * Finds an annotation on a declared method.
@@ -185,8 +197,7 @@ public interface ClassTransformation extends AnnotationProvider
     void makeReadOnly(String fieldName);
 
     /**
-     * Finds any declared <em>instance</em> fields that have not been claimed (via
-     * {@link #claimField(String, Object)})
+     * Finds any declared <em>instance</em> fields that have not been claimed (via {@link #claimField(String, Object)})
      * and returns the names of those fields. May return an empty array.
      */
     List<String> findUnclaimedFields();
@@ -196,8 +207,9 @@ public interface ClassTransformation extends AnnotationProvider
      * 
      * @param fieldName
      * @return the type of the field, as a string
-     * @throws IllegalArgumentException
+     * @throws RuntimeException
      *             if the fieldName does not correspond to a declared instance field
+     * @deprecated Use {@link TransformField#getType()} instead
      */
     String getFieldType(String fieldName);
 
@@ -300,8 +312,8 @@ public interface ClassTransformation extends AnnotationProvider
      * methods of the interface
      * are added.
      * <p/>
-     * TODO: Checking that the names of methods in the interface do not conflict with the names of
-     * methods present in the (unmodified) class.
+     * TODO: Checking that the names of methods in the interface do not conflict with the names of methods present in
+     * the (unmodified) class.
      * 
      * @param interfaceClass
      *            the interface to be implemented by the class
@@ -315,15 +327,14 @@ public interface ClassTransformation extends AnnotationProvider
      * method (i.e. {@link javassist.CtBehavior#insertAfter(java.lang.String)}). To access or change
      * the return value, use the <code>$_</code> pseudo variable.
      * <p/>
-     * The method may be declared in the class, or may be inherited from a super-class. For
-     * inherited methods, a method body is added that first invokes the super implementation. Use
-     * {@link #addMethod(TransformMethodSignature, String)} when it is necessary to control when the
-     * super-class method is invoked.
+     * The method may be declared in the class, or may be inherited from a super-class. For inherited methods, a method
+     * body is added that first invokes the super implementation. Use
+     * {@link #addMethod(TransformMethodSignature, String)} when it is necessary to control when the super-class method
+     * is invoked.
      * <p/>
      * The extended method is considered <em>new</em>. New methods <em>are not</em> scanned for
-     * {@linkplain #removeField(String)} removed}, {@linkplain #replaceReadAccess(String, String)}
-     * read replaced}, or {@linkplain #replaceWriteAccess(String, String) write replaced} fields.
-     * Generally that's what you want!
+     * {@linkplain #removeField(String)} removed}, {@linkplain #replaceReadAccess(String, String)} read replaced}, or
+     * {@linkplain #replaceWriteAccess(String, String) write replaced} fields. Generally that's what you want!
      * 
      * @param methodSignature
      *            the signature of the method to extend
@@ -353,15 +364,13 @@ public interface ClassTransformation extends AnnotationProvider
     /**
      * Inserts code at the beginning of a method body (i.e. {@link CtBehavior#insertBefore(String)}.
      * <p/>
-     * The method may be declared in the class, or may be inherited from a super-class. For
-     * inherited methods, a method is added that first invokes the super implementation. Use
-     * {@link #addMethod(TransformMethodSignature, String)} when it is necessary to control when the
-     * super-class method is invoked.
+     * The method may be declared in the class, or may be inherited from a super-class. For inherited methods, a method
+     * is added that first invokes the super implementation. Use {@link #addMethod(TransformMethodSignature, String)}
+     * when it is necessary to control when the super-class method is invoked.
      * <p/>
      * <p/>
-     * Like {@link #extendExistingMethod(TransformMethodSignature, String)}, this method is
-     * generally used to "wrap" an existing method adding additional functionality such as caching
-     * or transaction support.
+     * Like {@link #extendExistingMethod(TransformMethodSignature, String)}, this method is generally used to "wrap" an
+     * existing method adding additional functionality such as caching or transaction support.
      * 
      * @param methodSignature
      * @param methodBody
@@ -371,8 +380,7 @@ public interface ClassTransformation extends AnnotationProvider
     void prefixMethod(TransformMethodSignature methodSignature, String methodBody);
 
     /**
-     * Returns the name of a field that provides the {@link org.apache.tapestry5.ComponentResources}
-     * for the transformed
+     * Returns the name of a field that provides the {@link org.apache.tapestry5.ComponentResources} for the transformed
      * component. This will be a protected field, accessible to the class and subclasses.
      * 
      * @return name of field

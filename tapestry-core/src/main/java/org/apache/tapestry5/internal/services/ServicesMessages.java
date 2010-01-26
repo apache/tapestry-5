@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -47,19 +47,9 @@ class ServicesMessages
         return MESSAGES.get("markup-writer-no-current-element");
     }
 
-    static String missingDeclaredField(CtClass ctClass, String fieldName)
-    {
-        return MESSAGES.format("missing-declared-field", ctClass.getName(), fieldName);
-    }
-
     static String errorAddingMethod(CtClass ctClass, String methodName, Throwable cause)
     {
         return MESSAGES.format("error-adding-method", ctClass.getName(), methodName, cause);
-    }
-
-    static String fieldAlreadyClaimed(String fieldName, CtClass ctClass, Object existingTag, Object newTag)
-    {
-        return MESSAGES.format("field-already-claimed", fieldName, ctClass.getName(), existingTag, newTag);
     }
 
     static String noDeclaredMethod(CtClass ctClass, TransformMethodSignature methodSignature)
