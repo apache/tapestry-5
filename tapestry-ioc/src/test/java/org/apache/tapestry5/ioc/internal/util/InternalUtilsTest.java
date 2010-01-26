@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -107,7 +107,8 @@ public class InternalUtilsTest extends IOCTestCase
     @Test
     public void array_size_when_non_null()
     {
-        Object[] array = { 1, 2, 3 };
+        Object[] array =
+        { 1, 2, 3 };
 
         assertEquals(InternalUtils.size(array), 3);
     }
@@ -121,16 +122,16 @@ public class InternalUtilsTest extends IOCTestCase
     @DataProvider
     public Object[][] memberNameData()
     {
-        return new Object[][] {
-                { "simple", "simple" },
-                { "_name", "name" },
-                { "$name", "name" },
-                { "ruby_style", "ruby_style" },
-                { "__$ruby_style_", "ruby_style" },
-                { "$_$__$__$_$___$_$_$_$$name$", "name" },
-                { "foo_", "foo" },
-                { "_foo_", "foo" }
-        };
+        return new Object[][]
+        {
+        { "simple", "simple" },
+        { "_name", "name" },
+        { "$name", "name" },
+        { "ruby_style", "ruby_style" },
+        { "__$ruby_style_", "ruby_style" },
+        { "$_$__$__$_$___$_$_$_$$name$", "name" },
+        { "foo_", "foo" },
+        { "_foo_", "foo" } };
     }
 
     @Test
@@ -218,8 +219,13 @@ public class InternalUtilsTest extends IOCTestCase
     @DataProvider(name = "capitalize_inputs")
     public Object[][] capitalize_inputs()
     {
-        return new Object[][] { { "hello", "Hello" }, { "Goodbye", "Goodbye" }, { "", "" }, { "a", "A" },
-                { "A", "A" } };
+        return new Object[][]
+        {
+        { "hello", "Hello" },
+        { "Goodbye", "Goodbye" },
+        { "", "" },
+        { "a", "A" },
+        { "A", "A" } };
     }
 
     @Test
@@ -361,16 +367,17 @@ public class InternalUtilsTest extends IOCTestCase
     {
         InternalUtils.validateMarkerAnnotation(Inject.class);
 
-
         try
         {
-            InternalUtils.validateMarkerAnnotations(new Class[] { Inject.class, NotRetainedRuntime.class });
+            InternalUtils.validateMarkerAnnotations(new Class[]
+            { Inject.class, NotRetainedRuntime.class });
             unreachable();
         }
         catch (IllegalArgumentException ex)
         {
-            assertEquals(ex.getMessage(),
-                         "Marker annotation class org.apache.tapestry5.ioc.internal.util.NotRetainedRuntime is not valid because it is not visible at runtime. Add a @RetentionPolicy(RUNTIME) to the class.");
+            assertEquals(
+                    ex.getMessage(),
+                    "Marker annotation class org.apache.tapestry5.ioc.internal.util.NotRetainedRuntime is not valid because it is not visible at runtime. Add a @RetentionPolicy(RUNTIME) to the class.");
         }
     }
 
@@ -443,8 +450,9 @@ public class InternalUtilsTest extends IOCTestCase
         }
         catch (IllegalArgumentException ex)
         {
-            assertEquals(ex.getMessage(),
-                         "Class org.apache.tapestry5.ioc.internal.util.InternalUtilsTest$PrivateInnerClass is not a public class and may not be autobuilt.");
+            assertEquals(
+                    ex.getMessage(),
+                    "Class org.apache.tapestry5.ioc.internal.util.InternalUtilsTest$PrivateInnerClass is not a public class and may not be autobuilt.");
         }
     }
 
@@ -461,8 +469,9 @@ public class InternalUtilsTest extends IOCTestCase
         }
         catch (IllegalArgumentException ex)
         {
-            assertMessageContains(ex,
-                                  "Constructor protected org.apache.tapestry5.ioc.internal.util.InternalUtilsTest$PublicInnerClass() is not public and may not be used for autobuilding an instance of the class.");
+            assertMessageContains(
+                    ex,
+                    "Constructor protected org.apache.tapestry5.ioc.internal.util.InternalUtilsTest$PublicInnerClass() is not public and may not be used for autobuilding an instance of the class.");
         }
     }
 
@@ -507,7 +516,8 @@ public class InternalUtilsTest extends IOCTestCase
             }
         };
 
-        expect(ol.getObject(eq(SymbolSource.class), isA(AnnotationProvider.class))).andAnswer(answer);
+        expect(ol.getObject(eq(SymbolSource.class), isA(AnnotationProvider.class))).andAnswer(
+                answer);
 
         replay();
 
@@ -541,9 +551,8 @@ public class InternalUtilsTest extends IOCTestCase
         catch (Exception ex)
         {
             assertMessageContains(ex,
-                                  "Unable to set field 'fred' of <FieldInjectionViaInjectService> to NotTheRightType");
+                    "Unable to set field 'fred' of <FieldInjectionViaInjectService> to NotTheRightType");
         }
-
 
         verify();
     }
@@ -631,5 +640,21 @@ public class InternalUtilsTest extends IOCTestCase
         assertFalse(sd2.isPreventDecoration());
 
         verify();
+    }
+
+    @Test
+    public void match_and_sort()
+    {
+        List<String> input = CollectionFactory.newList("Fred", "Barney", "..", ".hidden", "Wilma");
+
+        List<String> output = InternalUtils.matchAndSort(input, new Predicate<String>()
+        {
+            public boolean accept(String object)
+            {
+                return !object.startsWith(".");
+            }
+        });
+
+        assertListsEquals(output, "Barney", "Fred", "Wilma");
     }
 }

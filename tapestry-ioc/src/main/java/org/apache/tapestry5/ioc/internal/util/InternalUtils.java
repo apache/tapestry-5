@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,32 +14,44 @@
 
 package org.apache.tapestry5.ioc.internal.util;
 
-import org.apache.tapestry5.ioc.*;
-import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.ioc.annotations.InjectResource;
-import org.apache.tapestry5.ioc.annotations.InjectService;
-import org.apache.tapestry5.ioc.annotations.PostInjection;
-import org.apache.tapestry5.ioc.def.*;
 import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newList;
 import static org.apache.tapestry5.ioc.internal.util.Defense.notBlank;
-import org.apache.tapestry5.ioc.services.ClassFabUtils;
-import org.apache.tapestry5.ioc.services.ClassFactory;
 
 import java.io.Closeable;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-import java.lang.reflect.*;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.lang.reflect.Type;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.apache.tapestry5.ioc.*;
+import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.annotations.InjectResource;
+import org.apache.tapestry5.ioc.annotations.InjectService;
+import org.apache.tapestry5.ioc.annotations.PostInjection;
+import org.apache.tapestry5.ioc.def.ContributionDef;
+import org.apache.tapestry5.ioc.def.DecoratorDef;
+import org.apache.tapestry5.ioc.def.ModuleDef;
+import org.apache.tapestry5.ioc.def.ModuleDef2;
+import org.apache.tapestry5.ioc.def.ServiceDef;
+import org.apache.tapestry5.ioc.def.ServiceDef2;
+import org.apache.tapestry5.ioc.services.ClassFabUtils;
+import org.apache.tapestry5.ioc.services.ClassFactory;
 
 /**
  * Utilities used within various internal implemenations of Tapestry IOC and the rest of the tapestry-core framework.
  */
 
-@SuppressWarnings({ "JavaDoc", "unchecked" })
+@SuppressWarnings(
+{ "JavaDoc", "unchecked" })
 public class InternalUtils
 {
     /**
@@ -50,15 +62,18 @@ public class InternalUtils
     /**
      * Pattern used to eliminate leading and trailing underscores and dollar signs.
      */
-    private static final Pattern NAME_PATTERN = Pattern.compile("^[_|$]*([\\p{javaJavaIdentifierPart}]+?)[_|$]*$", Pattern.CASE_INSENSITIVE);
+    private static final Pattern NAME_PATTERN = Pattern.compile(
+            "^[_|$]*([\\p{javaJavaIdentifierPart}]+?)[_|$]*$", Pattern.CASE_INSENSITIVE);
 
     /**
      * Converts a method to a user presentable string using a {@link ClassFactory} to obtain a {@link Location} (where
      * possible). {@link #asString(Method)} is used under the covers, to present a detailed, but not excessive,
      * description of the class, method and parameters.
-     *
-     * @param method       method to convert to a string
-     * @param classFactory used to obtain the {@link Location}
+     * 
+     * @param method
+     *            method to convert to a string
+     * @param classFactory
+     *            used to obtain the {@link Location}
      * @return the method formatted for presentation to the user
      */
     public static String asString(Method method, ClassFactory classFactory)
@@ -71,7 +86,7 @@ public class InternalUtils
     /**
      * Converts a method to a user presentable string consisting of the containing class name, the method name, and the
      * short form of the parameter list (the class name of each parameter type, shorn of the package name portion).
-     *
+     * 
      * @param method
      * @return short string representation
      */
@@ -86,7 +101,8 @@ public class InternalUtils
 
         for (int i = 0; i < method.getParameterTypes().length; i++)
         {
-            if (i > 0) buffer.append(", ");
+            if (i > 0)
+                buffer.append(", ");
 
             String name = method.getParameterTypes()[i].getSimpleName();
 
@@ -120,7 +136,8 @@ public class InternalUtils
         Matcher matcher = NAME_PATTERN.matcher(memberName);
 
         if (!matcher.matches())
-            throw new IllegalArgumentException(String.format("Input '%s' is not a valid Java identifier.", memberName));
+            throw new IllegalArgumentException(String.format(
+                    "Input '%s' is not a valid Java identifier.", memberName));
 
         return matcher.group(1);
     }
@@ -154,24 +171,28 @@ public class InternalUtils
 
     /**
      * Finds a specific annotation type within an array of annotations.
-     *
+     * 
      * @param <T>
-     * @param annotations     to search
-     * @param annotationClass to match
+     * @param annotations
+     *            to search
+     * @param annotationClass
+     *            to match
      * @return the annotation instance, if found, or null otherwise
      */
-    public static <T extends Annotation> T findAnnotation(Annotation[] annotations, Class<T> annotationClass)
+    public static <T extends Annotation> T findAnnotation(Annotation[] annotations,
+            Class<T> annotationClass)
     {
         for (Annotation a : annotations)
         {
-            if (annotationClass.isInstance(a)) return annotationClass.cast(a);
+            if (annotationClass.isInstance(a))
+                return annotationClass.cast(a);
         }
 
         return null;
     }
 
-    private static Object calculateInjection(Class injectionType, Type genericType, final Annotation[] annotations,
-                                             ObjectLocator locator, InjectionResources resources)
+    private static Object calculateInjection(Class injectionType, Type genericType,
+            final Annotation[] annotations, ObjectLocator locator, InjectionResources resources)
     {
         AnnotationProvider provider = new AnnotationProvider()
         {
@@ -200,7 +221,8 @@ public class InternalUtils
         {
             Object result = resources.findResource(injectionType, genericType);
 
-            if (result != null) return result;
+            if (result != null)
+                return result;
         }
 
         // Otherwise, make use of the MasterObjectProvider service to resolve this type (plus
@@ -210,31 +232,24 @@ public class InternalUtils
     }
 
     public static Object[] calculateParametersForMethod(Method method, ObjectLocator locator,
-                                                        InjectionResources resources,
-                                                        OperationTracker tracker)
+            InjectionResources resources, OperationTracker tracker)
     {
 
-        return calculateParameters(locator, resources, method.getParameterTypes(), method.getGenericParameterTypes(),
-                                   method.getParameterAnnotations(),
-                                   tracker);
+        return calculateParameters(locator, resources, method.getParameterTypes(), method
+                .getGenericParameterTypes(), method.getParameterAnnotations(), tracker);
     }
 
-    public static Object[] calculateParametersForConstructor(Constructor constructor, ObjectLocator locator,
-                                                             InjectionResources resources,
-                                                             OperationTracker tracker)
+    public static Object[] calculateParametersForConstructor(Constructor constructor,
+            ObjectLocator locator, InjectionResources resources, OperationTracker tracker)
     {
 
-        return calculateParameters(locator, resources, constructor.getParameterTypes(),
-                                   constructor.getGenericParameterTypes(),
-                                   constructor.getParameterAnnotations(), tracker);
+        return calculateParameters(locator, resources, constructor.getParameterTypes(), constructor
+                .getGenericParameterTypes(), constructor.getParameterAnnotations(), tracker);
     }
 
     public static Object[] calculateParameters(final ObjectLocator locator,
-                                               final InjectionResources resources,
-                                               Class[] parameterTypes,
-                                               final Type[] genericTypes,
-                                               Annotation[][] parameterAnnotations,
-                                               OperationTracker tracker)
+            final InjectionResources resources, Class[] parameterTypes, final Type[] genericTypes,
+            Annotation[][] parameterAnnotations, OperationTracker tracker)
     {
         int parameterCount = parameterTypes.length;
 
@@ -246,8 +261,9 @@ public class InternalUtils
             final Type genericType = genericTypes[i];
             final Annotation[] annotations = parameterAnnotations[i];
 
-            String description = String.format("Determining injection value for parameter #%d (%s)", i + 1,
-                                               ClassFabUtils.toJavaClassName(type));
+            String description = String.format(
+                    "Determining injection value for parameter #%d (%s)", i + 1, ClassFabUtils
+                            .toJavaClassName(type));
 
             final Invokable<Object> operation = new Invokable<Object>()
             {
@@ -264,17 +280,20 @@ public class InternalUtils
     }
 
     /**
-     * Injects into the fields (of all visibilities)  when the {@link org.apache.tapestry5.ioc.annotations.Inject} or
+     * Injects into the fields (of all visibilities) when the {@link org.apache.tapestry5.ioc.annotations.Inject} or
      * {@link org.apache.tapestry5.ioc.annotations.InjectService} annotations are present.
-     *
-     * @param object    to be initialized
-     * @param locator   used to resolve external dependencies
-     * @param resources provides injection resources for fields
-     * @param tracker   track operations
+     * 
+     * @param object
+     *            to be initialized
+     * @param locator
+     *            used to resolve external dependencies
+     * @param resources
+     *            provides injection resources for fields
+     * @param tracker
+     *            track operations
      */
     public static void injectIntoFields(final Object object, final ObjectLocator locator,
-                                        final InjectionResources resources,
-                                        OperationTracker tracker)
+            final InjectionResources resources, OperationTracker tracker)
     {
         Class clazz = object.getClass();
 
@@ -286,7 +305,8 @@ public class InternalUtils
             {
                 // Ignore all static fields.
 
-                if (Modifier.isStatic(f.getModifiers())) continue;
+                if (Modifier.isStatic(f.getModifiers()))
+                    continue;
 
                 final AnnotationProvider ap = new AnnotationProvider()
                 {
@@ -296,10 +316,9 @@ public class InternalUtils
                     }
                 };
 
-                String description = String.format("Calculating injection value for field '%s' (%s)",
-                                                   f.getName(),
-                                                   ClassFabUtils.toJavaClassName(f.getType()));
-
+                String description = String.format(
+                        "Calculating injection value for field '%s' (%s)", f.getName(),
+                        ClassFabUtils.toJavaClassName(f.getType()));
 
                 tracker.run(description, new Runnable()
                 {
@@ -320,13 +339,13 @@ public class InternalUtils
                             return;
                         }
 
-
                         if (ap.getAnnotation(InjectResource.class) != null)
                         {
                             Object value = resources.findResource(fieldType, f.getGenericType());
 
                             if (value == null)
-                                throw new RuntimeException(UtilMessages.injectResourceFailure(f.getName(), fieldType));
+                                throw new RuntimeException(UtilMessages.injectResourceFailure(f
+                                        .getName(), fieldType));
 
                             inject(object, f, value);
 
@@ -339,18 +358,17 @@ public class InternalUtils
                 });
             }
 
-
             clazz = clazz.getSuperclass();
         }
     }
 
     public static void invokePostInjectionMethods(final Object object, final ObjectLocator locator,
-                                                  final InjectionResources injectionResources,
-                                                  final OperationTracker tracker)
+            final InjectionResources injectionResources, final OperationTracker tracker)
     {
         for (final Method m : object.getClass().getMethods())
         {
-            if (m.getAnnotation(PostInjection.class) == null) continue;
+            if (m.getAnnotation(PostInjection.class) == null)
+                continue;
 
             String description = String.format("Invoking post-inject method %s", m);
 
@@ -362,8 +380,8 @@ public class InternalUtils
 
                     try
                     {
-                        Object[] parameters = InternalUtils.calculateParametersForMethod(m, locator,
-                                                                                         injectionResources, tracker);
+                        Object[] parameters = InternalUtils.calculateParametersForMethod(m,
+                                locator, injectionResources, tracker);
 
                         m.invoke(object, parameters);
                     }
@@ -377,8 +395,8 @@ public class InternalUtils
                     }
 
                     if (fail != null)
-                        throw new RuntimeException(String.format("Exception invoking method %s: %s",
-                                                                 m, toMessage(fail)), fail);
+                        throw new RuntimeException(String.format(
+                                "Exception invoking method %s: %s", m, toMessage(fail)), fail);
                 }
             });
         }
@@ -388,7 +406,8 @@ public class InternalUtils
     {
         try
         {
-            if (!field.isAccessible()) field.setAccessible(true);
+            if (!field.isAccessible())
+                field.setAccessible(true);
 
             field.set(target, value);
 
@@ -397,8 +416,7 @@ public class InternalUtils
         catch (Exception ex)
         {
             throw new RuntimeException(String.format("Unable to set field '%s' of %s to %s: %s",
-                                                     field.getName(), target, value,
-                                                     toMessage(ex)));
+                    field.getName(), target, value, toMessage(ex)));
         }
     }
 
@@ -413,9 +431,11 @@ public class InternalUtils
     /**
      * Joins together some number of elements. If a value in the list is the empty string, it is replaced with the
      * string "(blank)".
-     *
-     * @param elements  objects to be joined together
-     * @param separator used between elements when joining
+     * 
+     * @param elements
+     *            objects to be joined together
+     * @param separator
+     *            used between elements when joining
      */
     public static String join(List elements, String separator)
     {
@@ -434,11 +454,13 @@ public class InternalUtils
 
                 for (Object o : elements)
                 {
-                    if (!first) buffer.append(separator);
+                    if (!first)
+                        buffer.append(separator);
 
                     String string = String.valueOf(o);
 
-                    if (string.equals("")) string = "(blank)";
+                    if (string.equals(""))
+                        string = "(blank)";
 
                     buffer.append(string);
 
@@ -451,13 +473,14 @@ public class InternalUtils
 
     /**
      * Creates a sorted copy of the provided elements, then turns that into a comma separated list.
-     *
+     * 
      * @return the elements converted to strings, sorted, joined with comma ... or "(none)" if the elements are null or
      *         empty
      */
     public static String joinSorted(Collection elements)
     {
-        if (elements == null || elements.isEmpty()) return "(none)";
+        if (elements == null || elements.isEmpty())
+            return "(none)";
 
         List<String> list = newList();
 
@@ -478,21 +501,17 @@ public class InternalUtils
         return input == null || input.length() == 0 || input.trim().length() == 0;
     }
 
-
     /**
      * Returns true if the input is an empty collection.
      */
 
     public static boolean isEmptyCollection(Object input)
     {
-        if(input instanceof Collection)
-        {
-            return ((Collection)input).isEmpty();
-        }
-        
+        if (input instanceof Collection) { return ((Collection) input).isEmpty(); }
+
         return false;
     }
-    
+
     public static boolean isNonBlank(String input)
     {
         return !isBlank(input);
@@ -503,7 +522,8 @@ public class InternalUtils
      */
     public static String capitalize(String input)
     {
-        if (input.length() == 0) return input;
+        if (input.length() == 0)
+            return input;
 
         return input.substring(0, 1).toUpperCase() + input.substring(1);
     }
@@ -515,25 +535,30 @@ public class InternalUtils
 
     public static Location locationOf(Object location)
     {
-        if (location == null) return null;
+        if (location == null)
+            return null;
 
-        if (location instanceof Location) return (Location) location;
+        if (location instanceof Location)
+            return (Location) location;
 
-        if (location instanceof Locatable) return ((Locatable) location).getLocation();
+        if (location instanceof Locatable)
+            return ((Locatable) location).getLocation();
 
         return null;
     }
 
     /**
      * Extracts the string keys from a map and returns them in sorted order. The keys are converted to strings.
-     *
-     * @param map the map to extract keys from (may be null)
+     * 
+     * @param map
+     *            the map to extract keys from (may be null)
      * @return the sorted keys, or the empty set if map is null
      */
 
     public static List<String> sortedKeys(Map map)
     {
-        if (map == null) return Collections.emptyList();
+        if (map == null)
+            return Collections.emptyList();
 
         List<String> keys = newList();
 
@@ -553,20 +578,21 @@ public class InternalUtils
         return map.keySet();
     }
 
-
     /**
      * Gets a value from a map (which may be null).
-     *
+     * 
      * @param <K>
      * @param <V>
-     * @param map the map to extract from (may be null)
+     * @param map
+     *            the map to extract from (may be null)
      * @param key
      * @return the value from the map, or null if the map is null
      */
 
     public static <K, V> V get(Map<K, V> map, K key)
     {
-        if (map == null) return null;
+        if (map == null)
+            return null;
 
         return map.get(key);
     }
@@ -623,7 +649,8 @@ public class InternalUtils
 
         int dotx = input.lastIndexOf('.');
 
-        if (dotx < 0) return input;
+        if (dotx < 0)
+            return input;
 
         return input.substring(dotx + 1);
     }
@@ -634,8 +661,9 @@ public class InternalUtils
      * is not determined which will be returned (don't build a class like that!). In addition, if a constructor is
      * annotated with {@link org.apache.tapestry5.ioc.annotations.Inject}, it will be used (no check for multiple such
      * constructors is made, only at most a single constructor should have the annotation).
-     *
-     * @param clazz to search for a constructor for
+     * 
+     * @param clazz
+     *            to search for a constructor for
      * @return the constructor to be used to instantiate the class, or null if no appropriate constructor was found
      */
     public static Constructor findAutobuildConstructor(Class clazz)
@@ -658,7 +686,8 @@ public class InternalUtils
 
         for (Constructor c : constructors)
         {
-            if (c.getAnnotation(Inject.class) != null) return c;
+            if (c.getAnnotation(Inject.class) != null)
+                return c;
         }
 
         // Choose a constructor with the most parameters.
@@ -679,12 +708,17 @@ public class InternalUtils
     /**
      * Adds a value to a specially organized map where the values are lists of objects. This somewhat simulates a map
      * that allows mutiple values for the same key.
-     *
-     * @param map   to store value into
-     * @param key   for which a value is added
-     * @param value to add
-     * @param <K>   the type of key
-     * @param <V>   the type of the list
+     * 
+     * @param map
+     *            to store value into
+     * @param key
+     *            for which a value is added
+     * @param value
+     *            to add
+     * @param <K>
+     *            the type of key
+     * @param <V>
+     *            the type of the list
      */
     public static <K, V> void addToMapList(Map<K, List<V>> map, K key, V value)
     {
@@ -701,46 +735,52 @@ public class InternalUtils
 
     /**
      * Validates that the marker annotation class had a retention policy of runtime.
-     *
-     * @param markerClass the marker annotation class
+     * 
+     * @param markerClass
+     *            the marker annotation class
      */
     public static void validateMarkerAnnotation(Class markerClass)
     {
         Retention policy = (Retention) markerClass.getAnnotation(Retention.class);
 
-        if (policy != null && policy.value() == RetentionPolicy.RUNTIME) return;
+        if (policy != null && policy.value() == RetentionPolicy.RUNTIME)
+            return;
 
         throw new IllegalArgumentException(UtilMessages.badMarkerAnnotation(markerClass));
     }
 
     public static void validateMarkerAnnotations(Class[] markerClasses)
     {
-        for (Class markerClass : markerClasses) validateMarkerAnnotation(markerClass);
+        for (Class markerClass : markerClasses)
+            validateMarkerAnnotation(markerClass);
     }
 
     public static void close(Closeable stream)
     {
-        if (stream != null) try
-        {
-            stream.close();
-        }
-        catch (IOException ex)
-        {
-            // Ignore.
-        }
+        if (stream != null)
+            try
+            {
+                stream.close();
+            }
+            catch (IOException ex)
+            {
+                // Ignore.
+            }
     }
 
     /**
-     * Extracts the message from an exception.  If the exception's message is null, returns the exceptions class name.
-     *
-     * @param exception to extract message from
+     * Extracts the message from an exception. If the exception's message is null, returns the exceptions class name.
+     * 
+     * @param exception
+     *            to extract message from
      * @return message or class name
      */
     public static String toMessage(Throwable exception)
     {
         String message = exception.getMessage();
 
-        if (message != null) return message;
+        if (message != null)
+            return message;
 
         return exception.getClass().getName();
     }
@@ -750,14 +790,16 @@ public class InternalUtils
         Class clazz = constructor.getDeclaringClass();
 
         if (!Modifier.isPublic(clazz.getModifiers()))
-            throw new IllegalArgumentException(
-                    String.format("Class %s is not a public class and may not be autobuilt.", clazz.getName()));
+            throw new IllegalArgumentException(String.format(
+                    "Class %s is not a public class and may not be autobuilt.", clazz.getName()));
 
         if (!Modifier.isPublic(constructor.getModifiers()))
-            throw new IllegalArgumentException(String.format(
-                    "Constructor %s is not public and may not be used for autobuilding an instance of the class. " +
-                            "You should make the constructor public, or mark an alternate public constructor with the @Inject annotation.",
-                    constructor));
+            throw new IllegalArgumentException(
+                    String
+                            .format(
+                                    "Constructor %s is not public and may not be used for autobuilding an instance of the class. "
+                                            + "You should make the constructor public, or mark an alternate public constructor with the @Inject annotation.",
+                                    constructor));
     }
 
     public static ServiceDef2 toServiceDef2(final ServiceDef sd)
@@ -871,5 +913,22 @@ public class InternalUtils
                 return lifecycle.isSingleton();
             }
         };
+    }
+
+    /** @since 5.2.0 */
+    public static <T extends Comparable<T>> List<T> matchAndSort(Collection<T> collection,
+            Predicate<T> predicate)
+    {
+        List<T> result = CollectionFactory.newList();
+
+        for (T object : collection)
+        {
+            if (predicate.accept(object))
+                result.add(object);
+        }
+
+        Collections.sort(result);
+
+        return result;
     }
 }
