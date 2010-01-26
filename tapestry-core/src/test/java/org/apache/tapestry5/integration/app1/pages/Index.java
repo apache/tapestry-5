@@ -457,7 +457,10 @@ public class Index
                             "Use a Select component to update a zone."),
 
                     new Item("AssetProtectionDemo", "Asset Protection Demo",
-                            "AssetProtectionDispatcher is properly contributed and functioning")
+                            "AssetProtectionDispatcher is properly contributed and functioning"),
+                            
+                    new Item("BeanDisplayEnumDemo", "BeanDisplay Enum Demo",
+                            "User represenation of enum values is correctly read from messages")
 
             );
 

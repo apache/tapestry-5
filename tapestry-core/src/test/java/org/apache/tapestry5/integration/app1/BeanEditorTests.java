@@ -198,4 +198,12 @@ public class BeanEditorTests extends TapestryCoreTestCase
 
         assertTextPresent("Bean class from context is: " + RegistrationData.class.getName());
     }
+    
+    /** TAP5-991 */
+    public void bean_display_enum_value_from_messages()
+    {
+        start("BeanDisplay Enum Demo");
+        
+        assertText("//dd[2]", "Ultra Important");
+    }
 }
