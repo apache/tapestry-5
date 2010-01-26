@@ -2013,7 +2013,7 @@ public final class TapestryModule
         // This should be overridden for particular applications. These are the locales for
         // which we have (at least some) localized messages.
         configuration.add(SymbolConstants.SUPPORTED_LOCALES,
-                          "en,it,es,zh_CN,pt_PT,de,ru,hr,fi_FI,sv_SE,fr_FR,da,pt_BR,ja,el");
+                          "en,it,es,zh_CN,pt_PT,de,ru,hr,fi_FI,sv_SE,fr_FR,da,pt_BR,ja,el,bg,no_NB");
 
         configuration.add(SymbolConstants.TAPESTRY_VERSION,
                           VersionUtils.readVersionNumber(
