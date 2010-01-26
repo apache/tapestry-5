@@ -794,4 +794,32 @@ public class FormTests extends TapestryCoreTestCase
        
         assertTextPresent("The input 'aaaaa' is not a valid date");
     }
+    
+    /**
+     * TAP5-52.
+     */
+    @Test
+    public void single_error_message()
+    {
+        open(getBaseURL() + "singleerrordemo");
+        
+        clickAndWait(SUBMIT);
+        
+        assertTextPresent("You must provide a value for Username");
+        assertTextPresent("You must provide a value for Password");
+
+        type("username", "Igor");
+        
+        clickAndWait(SUBMIT);
+        
+        assertFalse(isTextPresent("You must provide a value for Username"));
+        assertTextPresent("You must provide a value for Password");
+        
+        type("password", "secret");
+        
+        clickAndWait(SUBMIT);
+        
+        assertFalse(isTextPresent("You must provide a value for Username"));
+        assertFalse(isTextPresent("You must provide a value for Password"));
+    }
 }

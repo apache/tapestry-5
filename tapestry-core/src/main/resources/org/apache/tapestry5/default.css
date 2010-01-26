@@ -24,6 +24,14 @@ DIV.t-error LI {
     margin-left: 20px;
 }
 
+DIV.t-error-single {
+    padding: 2px;
+    display: block;
+    margin: 0px;
+    background-color: red;
+    color: white;
+}
+
 HTML>BODY DIV.t-error LI {
     margin-left: -20px;
 }
