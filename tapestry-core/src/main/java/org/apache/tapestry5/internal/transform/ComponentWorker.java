@@ -35,12 +35,13 @@ import org.apache.tapestry5.services.ComponentClassResolver;
 import org.apache.tapestry5.services.ComponentClassTransformWorker;
 import org.apache.tapestry5.services.ComponentValueProvider;
 import org.apache.tapestry5.services.TransformConstants;
+import org.apache.tapestry5.services.TransformField;
 
 /**
  * Finds fields with the {@link org.apache.tapestry5.annotations.Component} annotation and updates
  * the model. Also
- * checks for the {@link Mixins} and {@link MixinClasses} annotations and uses them to update the
- * {@link ComponentModel}.
+ * checks for the {@link Mixins} and {@link MixinClasses} annotations and uses them to update the {@link ComponentModel}
+ * .
  */
 public class ComponentWorker implements ComponentClassTransformWorker
 {
@@ -53,18 +54,20 @@ public class ComponentWorker implements ComponentClassTransformWorker
 
     public void transform(ClassTransformation transformation, MutableComponentModel model)
     {
-        for (String fieldName : transformation.findFieldsWithAnnotation(Component.class))
+        for (TransformField field : transformation.matchFieldsWithAnnotation(Component.class))
         {
-            Component annotation = transformation.getFieldAnnotation(fieldName, Component.class);
+            Component annotation = field.getAnnotation(Component.class);
 
-            transformation.claimField(fieldName, annotation);
+            field.claim(annotation);
 
             String annotationId = annotation.id();
+
+            String fieldName = field.getName();
 
             final String id = InternalUtils.isNonBlank(annotationId) ? annotationId : InternalUtils
                     .stripMemberName(fieldName);
 
-            String type = transformation.getFieldType(fieldName);
+            String type = field.getType();
 
             Location location = new StringLocation(String.format("%s.%s", transformation
                     .getClassName(), fieldName), 0);
@@ -82,25 +85,23 @@ public class ComponentWorker implements ComponentClassTransformWorker
             }
 
             ComponentValueProvider<Object> provider = new ComponentValueProvider<Object>()
-            {                
+            {
                 public Object get(ComponentResources resources)
                 {
                     return resources.getEmbeddedComponent(id);
                 }
             };
 
-            transformation.assignFieldIndirect(fieldName,
-                    TransformConstants.CONTAINING_PAGE_DID_LOAD_SIGNATURE, provider);
+            field.assignIndirect(TransformConstants.CONTAINING_PAGE_DID_LOAD_SIGNATURE, provider);
 
-            addMixinClasses(fieldName, transformation, embedded);
-            addMixinTypes(fieldName, transformation, embedded);
+            addMixinClasses(field, embedded);
+            addMixinTypes(field, embedded);
         }
     }
 
-    private void addMixinClasses(String fieldName, ClassTransformation transformation,
-            MutableEmbeddedComponentModel model)
+    private void addMixinClasses(TransformField field, MutableEmbeddedComponentModel model)
     {
-        MixinClasses annotation = transformation.getFieldAnnotation(fieldName, MixinClasses.class);
+        MixinClasses annotation = field.getAnnotation(MixinClasses.class);
 
         if (annotation == null)
             return;
@@ -109,7 +110,7 @@ public class ComponentWorker implements ComponentClassTransformWorker
 
         if (!orderEmpty && annotation.order().length != annotation.value().length)
             throw new TapestryException(TransformMessages.badMixinConstraintLength(annotation,
-                    fieldName), model, null);
+                    field.getName()), model, null);
 
         for (int i = 0; i < annotation.value().length; i++)
         {
@@ -120,10 +121,9 @@ public class ComponentWorker implements ComponentClassTransformWorker
         }
     }
 
-    private void addMixinTypes(String fieldName, ClassTransformation transformation,
-            MutableEmbeddedComponentModel model)
+    private void addMixinTypes(TransformField field, MutableEmbeddedComponentModel model)
     {
-        Mixins annotation = transformation.getFieldAnnotation(fieldName, Mixins.class);
+        Mixins annotation = field.getAnnotation(Mixins.class);
 
         if (annotation == null)
             return;

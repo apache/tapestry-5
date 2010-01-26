@@ -52,11 +52,6 @@ class ServicesMessages
         return MESSAGES.format("error-adding-method", ctClass.getName(), methodName, cause);
     }
 
-    static String noDeclaredMethod(CtClass ctClass, TransformMethodSignature methodSignature)
-    {
-        return MESSAGES.format("no-declared-method", ctClass.getName(), methodSignature);
-    }
-
     static String classNotTransformed(String className)
     {
         return MESSAGES.format("class-not-transformed", className);

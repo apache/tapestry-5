@@ -1,10 +1,10 @@
-// Copyright 2009 The Apache Software Foundation
+// Copyright 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//      http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,17 +14,13 @@
 
 package org.apache.tapestry5.integration.app1.components;
 
-import org.apache.tapestry5.corelib.components.TextField;
 import org.apache.tapestry5.annotations.Mixin;
-import org.apache.tapestry5.integration.app1.mixins.TextOnlyOnDisabled;
+import org.apache.tapestry5.corelib.components.TextField;
 
-/**
- *
- */
 public class TextOnlyOnDisabledTextField extends TextField
 {
+    @SuppressWarnings("unused")
+    @Mixin(value = "textonlyondisabled", order = "after:*")
+    private Object theMixin;
 
-    @Mixin(order = "after:*")
-    private TextOnlyOnDisabled theMixin;
-    
 }

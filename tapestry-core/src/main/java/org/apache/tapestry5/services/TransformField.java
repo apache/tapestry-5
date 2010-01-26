@@ -23,7 +23,7 @@ import org.apache.tapestry5.ioc.AnnotationProvider;
  * 
  * @since 5.2.0
  */
-public interface TransformField extends AnnotationProvider
+public interface TransformField extends AnnotationProvider, Comparable<TransformField>
 {
     /**
      * Returns the name of the field.
@@ -72,4 +72,25 @@ public interface TransformField extends AnnotationProvider
      *            identifies the field containing (via injection) an instance of {@link FieldValueConduit}
      */
     void replaceAccess(TransformField conduitField);
+
+    /**
+     * Extends the indicated method to add an assignment of the field with
+     * the value obtained by the provider. This is used when a value
+     * to be provided can not be provided from within the transformed class'
+     * constructor.
+     * 
+     * @param <T>
+     * @param method
+     *            identifies the method where the assignment will occur, often this is
+     *            {@link TransformConstants#CONTAINING_PAGE_DID_LOAD_SIGNATURE}
+     * @param provider
+     *            provides the value of the field
+     */
+    <T> void assignIndirect(TransformMethod method, ComponentValueProvider<T> provider);
+
+    /**
+     * Alternate version of {@link #assignIndirect(TransformMethod, ComponentValueProvider)} that operates using a
+     * method signature.
+     */
+    <T> void assignIndirect(TransformMethodSignature signature, ComponentValueProvider<T> provider);
 }

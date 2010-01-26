@@ -14,8 +14,6 @@
 
 package org.apache.tapestry5.internal.transform;
 
-import java.util.List;
-
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.annotations.Mixin;
 import org.apache.tapestry5.internal.InternalComponentResources;
@@ -26,6 +24,7 @@ import org.apache.tapestry5.services.ComponentClassResolver;
 import org.apache.tapestry5.services.ComponentClassTransformWorker;
 import org.apache.tapestry5.services.ComponentValueProvider;
 import org.apache.tapestry5.services.TransformConstants;
+import org.apache.tapestry5.services.TransformField;
 
 /**
  * Supports the {@link org.apache.tapestry5.annotations.Mixin} annotation, which allows a mixin to
@@ -45,19 +44,17 @@ public class MixinWorker implements ComponentClassTransformWorker
 
     public void transform(ClassTransformation transformation, MutableComponentModel model)
     {
-        List<String> fields = transformation.findFieldsWithAnnotation(Mixin.class);
-
-        for (String fieldName : fields)
+        for (TransformField field : transformation.matchFieldsWithAnnotation(Mixin.class))
         {
-            Mixin annotation = transformation.getFieldAnnotation(fieldName, Mixin.class);
+            Mixin annotation = field.getAnnotation(Mixin.class);
 
-            transformation.claimField(fieldName, annotation);
+            field.claim(annotation);
 
             String mixinType = annotation.value();
 
             String[] order = annotation.order();
 
-            String fieldType = transformation.getFieldType(fieldName);
+            String fieldType = field.getType();
 
             final String mixinClassName = InternalUtils.isBlank(mixinType) ? fieldType : resolver
                     .resolveMixinTypeToClassName(mixinType);
@@ -74,8 +71,7 @@ public class MixinWorker implements ComponentClassTransformWorker
                 }
             };
 
-            transformation.assignFieldIndirect(fieldName,
-                    TransformConstants.CONTAINING_PAGE_DID_LOAD_SIGNATURE, provider);
+            field.assignIndirect(TransformConstants.CONTAINING_PAGE_DID_LOAD_SIGNATURE, provider);
         }
     }
 }

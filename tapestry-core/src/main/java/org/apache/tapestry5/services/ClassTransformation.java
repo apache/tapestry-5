@@ -14,14 +14,17 @@
 
 package org.apache.tapestry5.services;
 
+import java.lang.annotation.Annotation;
+import java.util.List;
+
 import javassist.CtBehavior;
 
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.ioc.AnnotationProvider;
+import org.apache.tapestry5.ioc.Predicate;
 import org.slf4j.Logger;
 
-import java.lang.annotation.Annotation;
-import java.util.List;
+import com.sun.source.tree.MethodTree;
 
 /**
  * Contains class-specific information used when transforming a raw component class into an
@@ -87,8 +90,18 @@ public interface ClassTransformation extends AnnotationProvider
      * Generates a list of the names of declared instance fields that have the indicated annotation.
      * Non-private and
      * static fields are ignored. Only the names of private instance fields are returned.
+     * 
+     * @deprecated Use {@link #matchFieldsWithAnnotation(Class)} instead
      */
     List<String> findFieldsWithAnnotation(Class<? extends Annotation> annotationClass);
+
+    /**
+     * Returns a sorted list of declared instance fields with the indicated annotation. Non-private
+     * and static fields are ignored. Claimed fields are also ignored.
+     * 
+     * @since 5.2.0
+     */
+    List<TransformField> matchFieldsWithAnnotation(Class<? extends Annotation> annotationClass);
 
     /**
      * Finds all methods defined in the class that are marked with the provided annotation.
@@ -108,8 +121,19 @@ public interface ClassTransformation extends AnnotationProvider
      * @return a list of matching method signatures (which may be empty) in ascending order (by
      *         method name), but
      *         descending order (by parameter count) within overrides of a single method name.
+     * @deprecated Use {@link #matchMethods(Predicate)} instead
      */
     List<TransformMethodSignature> findMethods(MethodFilter filter);
+
+    /**
+     * Finds all methods matched by the provided predicate.
+     * 
+     * @param predicate
+     *            Used to filter the list
+     * @return a list of matching methods (which may be empty) in ascending order (by
+     *         method name), but descending order (by parameter count) within overrides of a single method name.
+     */
+    List<TransformMethod> matchMethods(Predicate<TransformMethod> predicate);
 
     /**
      * Finds all unclaimed fields matched by the provided filter. Only considers private instance
@@ -118,8 +142,19 @@ public interface ClassTransformation extends AnnotationProvider
      * @param filter
      *            passed each field name and field type
      * @return the names of all matched fields, in ascending order
+     * @deprecated Use {@link #matchFields(Predicate)} instead
      */
     List<String> findFields(FieldFilter filter);
+
+    /**
+     * Finds all unclaimed fields matched by the provided predicate. Only considers instance fields.
+     * 
+     * @param predicate
+     *            used for matching
+     * @return sorted list of matching fields
+     * @since 5.2.0
+     */
+    List<TransformField> matchFields(Predicate<TransformField> predicate);
 
     /**
      * Finds an annotation on a declared instance field.
@@ -342,14 +377,15 @@ public interface ClassTransformation extends AnnotationProvider
      *            the body of code
      * @throws org.apache.tapestry5.internal.services.MethodCompileException
      *             if the provided Javassist method body can not be compiled
-     * @see #extendExistingMethod(TransformMethodSignature, String)
+     * @deprecated Use {@link TransformMethod#extend(String)} instead
      */
     void extendMethod(TransformMethodSignature methodSignature, String methodBody);
 
     /**
      * Like {@link #extendMethod(TransformMethodSignature, String)}, but the extension does not mark
      * the method as new,
-     * and field changes <em>will</em> be processed.
+     * and field changes <em>will</em> be processed. Note: at some point, this is not longer true; extend and
+     * extendMethod work identically.
      * 
      * @param methodSignature
      *            signature of the method to extend
@@ -358,6 +394,7 @@ public interface ClassTransformation extends AnnotationProvider
      * @throws org.apache.tapestry5.internal.services.MethodCompileException
      *             if the provided method body can not be compiled
      * @see #prefixMethod(TransformMethodSignature, String)
+     * @deprecated Use {@link TransformMethod#extend(String) instead}
      */
     void extendExistingMethod(TransformMethodSignature methodSignature, String methodBody);
 
@@ -510,21 +547,16 @@ public interface ClassTransformation extends AnnotationProvider
     boolean isMethodOverride(TransformMethodSignature methodSignature);
 
     /**
-     * Uses {@link #extendMethod(TransformMethodSignature, String)} to make an assignment to
-     * a field within the provided method. In addition, the field is marked as read-only. This
-     * is an alternative to {@link #injectFieldIndirect(String, ComponentValueProvider)} for values
-     * that <em>can not</em> be calculated at the constructor.
+     * Locates and returns the method if declared in this class; if not, locates
+     * a super-class method that is implemented into this class. In the latter
+     * case, the method will be considered "new" (i.e., no field transformations),
+     * as with {@link #extendMethod(TransformMethodSignature, String)}).
      * 
-     * @param <T>
-     * @param fieldName
-     *            name of field to assign
-     * @param methodSig
-     *            identifies the method where the assignment will occur, often this is
-     *            {@link TransformConstants#CONTAINING_PAGE_DID_LOAD_SIGNATURE}
-     * @param provider
-     *            provides the value of the field
+     * @param signature
+     *            identifies the method to obtain
+     * @throw RuntimeException if the signature does not match a declared method of this
+     *        class, or a overridable method of a superclass
      * @since 5.2.0
      */
-    <T> void assignFieldIndirect(String fieldName, TransformMethodSignature methodSig,
-            ComponentValueProvider<T> provider);
- }
+    TransformMethod getMethod(TransformMethodSignature signature);
+}

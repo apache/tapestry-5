@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,8 +14,12 @@
 
 package org.apache.tapestry5.services;
 
+import org.apache.tapestry5.ioc.Predicate;
+
 /**
  * Used by {@link ClassTransformation#findFields(FieldFilter)} to identify which fields to keep.
+ * 
+ * @deprecated New APIs use {@link Predicate} instead
  */
 public interface FieldFilter
 {

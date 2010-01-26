@@ -14,8 +14,6 @@
 
 package org.apache.tapestry5.internal.transform;
 
-import java.util.List;
-
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.annotations.InjectContainer;
 import org.apache.tapestry5.internal.services.ComponentClassCache;
@@ -25,6 +23,7 @@ import org.apache.tapestry5.services.ClassTransformation;
 import org.apache.tapestry5.services.ComponentClassTransformWorker;
 import org.apache.tapestry5.services.ComponentValueProvider;
 import org.apache.tapestry5.services.TransformConstants;
+import org.apache.tapestry5.services.TransformField;
 
 /**
  * Identifies the {@link org.apache.tapestry5.annotations.InjectContainer} annotation and adds code
@@ -42,11 +41,12 @@ public class InjectContainerWorker implements ComponentClassTransformWorker
 
     public void transform(ClassTransformation transformation, MutableComponentModel model)
     {
-        List<String> names = transformation.findFieldsWithAnnotation(InjectContainer.class);
-
-        for (final String fieldName : names)
+        for (final TransformField field : transformation
+                .matchFieldsWithAnnotation(InjectContainer.class))
         {
-            final String fieldTypeName = transformation.getFieldType(fieldName);
+            final String fieldName = field.getName();
+
+            final String fieldTypeName = field.getType();
 
             final String componentClassName = model.getComponentClassName();
 
@@ -72,8 +72,7 @@ public class InjectContainerWorker implements ComponentClassTransformWorker
                 }
             };
 
-            transformation.assignFieldIndirect(fieldName,
-                    TransformConstants.CONTAINING_PAGE_DID_LOAD_SIGNATURE, provider);
+            field.assignIndirect(TransformConstants.CONTAINING_PAGE_DID_LOAD_SIGNATURE, provider);
         }
     }
 }

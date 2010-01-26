@@ -25,6 +25,7 @@ import org.apache.tapestry5.services.ClassTransformation;
 import org.apache.tapestry5.services.ComponentValueProvider;
 import org.apache.tapestry5.services.InjectionProvider;
 import org.apache.tapestry5.services.TransformConstants;
+import org.apache.tapestry5.services.TransformMethod;
 
 /**
  * Identifies fields of type {@link Block} that have the {@link Inject} annotation and converts them
@@ -57,8 +58,10 @@ public class BlockInjectionProvider implements InjectionProvider
             }
         };
 
-        transformation.assignFieldIndirect(fieldName,
-                TransformConstants.CONTAINING_PAGE_DID_ATTACH_SIGNATURE, provider);
+        TransformMethod method = transformation
+                .getMethod(TransformConstants.CONTAINING_PAGE_DID_ATTACH_SIGNATURE);
+
+        transformation.getField(fieldName).assignIndirect(method, provider);
 
         return true; // claim the field
     }
