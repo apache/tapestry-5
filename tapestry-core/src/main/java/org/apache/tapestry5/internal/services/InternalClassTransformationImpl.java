@@ -17,8 +17,6 @@ package org.apache.tapestry5.internal.services;
 import java.lang.annotation.Annotation;
 import java.lang.annotation.Inherited;
 import java.lang.reflect.Modifier;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Formatter;
 import java.util.List;
 import java.util.Map;
@@ -87,6 +85,8 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
         private final boolean added;
 
+        private ComponentMethodInvocationBuilder builder;
+
         TransformMethodImpl(CtMethod method, boolean added)
         {
             this.method = method;
@@ -113,6 +113,18 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
             return sig;
         }
 
+        public void advise(ComponentMethodAdvice advice)
+        {
+            failIfFrozen();
+
+            Defense.notNull(advice, "advice");
+
+            if (builder == null)
+                builder = createBuilder(sig);
+
+            builder.addAdvice(advice);
+        }
+
         public void extend(String body)
         {
             failIfFrozen();
@@ -128,6 +140,15 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
             }
 
             addMethodToDescription("extend", sig, body);
+        }
+
+        void doFinish()
+        {
+            if (builder != null)
+            {
+                builder.commit();
+                builder = null;
+            }
         }
     }
 
@@ -365,15 +386,6 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
     private List<Annotation> classAnnotations;
 
-    // Cache of method annotation
-
-    private Map<CtMethod, List<Annotation>> methodAnnotations = CollectionFactory.newMap();
-
-    private Map<CtMethod, TransformMethodSignature> methodSignatures = CollectionFactory.newMap();
-
-    private Map<TransformMethodSignature, ComponentMethodInvocationBuilder> methodToInvocationBuilder = CollectionFactory
-            .newMap();
-
     // Key is field name, value is expression used to replace read access
 
     private Map<String, String> fieldReadTransforms;
@@ -516,13 +528,10 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         fields = null;
 
         classAnnotations = null;
-        methodAnnotations = null;
-        methodSignatures = null;
         fieldReadTransforms = null;
         fieldWriteTransforms = null;
         constructor = null;
         formatter = null;
-        methodToInvocationBuilder = null;
     }
 
     public String getResourcesFieldName()
@@ -779,11 +788,9 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
             ctClass.addMethod(newMethod);
 
-            recordMethod(newMethod, true);
+            TransformMethod tm = recordMethod(newMethod, true);
 
-            TransformMethodSignature sig = getMethodSignature(newMethod);
-
-            addMethodToDescription("add default", sig, "<default>");
+            addMethodToDescription("add default", tm.getSignature(), "<default>");
         }
         catch (CannotCompileException ex)
         {
@@ -1196,33 +1203,24 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
     public List<String> findFieldsWithAnnotation(final Class<? extends Annotation> annotationClass)
     {
-        Defense.notNull(annotationClass, "annotationClass");
-
-        FieldFilter filter = new FieldFilter()
-        {
-            public boolean accept(String fieldName, String fieldType)
-            {
-                return getFieldAnnotation(fieldName, annotationClass) != null;
-            }
-        };
-
-        return findFields(filter);
+        return toFieldNames(matchFieldsWithAnnotation(annotationClass));
     }
 
     public List<String> findFields(final FieldFilter filter)
     {
         Defense.notNull(filter, "filter");
 
-        List<TransformField> fields2 = matchFields(new Predicate<TransformField>()
+        failIfFrozen();
+
+        List<TransformField> fields = matchFields(new Predicate<TransformField>()
         {
-            @Override
             public boolean accept(TransformField object)
             {
                 return filter.accept(object.getName(), object.getType());
             }
         });
 
-        return toFieldNames(fields2);
+        return toFieldNames(fields);
     }
 
     public List<TransformField> matchFields(Predicate<TransformField> predicate)
@@ -1232,13 +1230,11 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         return InternalUtils.matchAndSort(fields.values(), predicate);
     }
 
-    @Override
     public List<TransformField> matchFieldsWithAnnotation(
             final Class<? extends Annotation> annotationClass)
     {
         return matchFields(new Predicate<TransformField>()
         {
-            @Override
             public boolean accept(TransformField field)
             {
                 return field.getAnnotation(annotationClass) != null;
@@ -1282,21 +1278,6 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         return InternalUtils.matchAndSort(methods.values(), predicate);
     }
 
-    private TransformMethodSignature getMethodSignature(CtMethod method)
-    {
-        failIfFrozen();
-
-        TransformMethodSignature result = methodSignatures.get(method);
-        if (result == null)
-        {
-            result = toMethodSignature(method);
-
-            methodSignatures.put(method, result);
-        }
-
-        return result;
-    }
-
     private TransformMethodSignature toMethodSignature(CtMethod method)
     {
         try
@@ -1326,28 +1307,20 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
     public List<String> findUnclaimedFields()
     {
-        failIfFrozen();
-
-        List<String> names = CollectionFactory.newList();
-
-        for (TransformFieldImpl f : fields.values())
-        {
-            if (f.added || f.removed || f.isClaimed())
-                continue;
-
-            names.add(f.getName());
-        }
-
-        Collections.sort(names);
-
-        return names;
+        return toFieldNames(matchUnclaimedFields());
     }
 
-    private boolean isInstanceField(CtField field)
+    public List<TransformField> matchUnclaimedFields()
     {
-        int modifiers = field.getModifiers();
+        return matchFields(new Predicate<TransformField>()
+        {
+            public boolean accept(TransformField object)
+            {
+                TransformFieldImpl tmi = (TransformFieldImpl) object;
 
-        return Modifier.isPrivate(modifiers) && !Modifier.isStatic(modifiers);
+                return !(tmi.added || tmi.removed || tmi.isClaimed());
+            }
+        });
     }
 
     public String getFieldType(String fieldName)
@@ -1368,20 +1341,6 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
     public int getFieldModifiers(String fieldName)
     {
         return getField(fieldName).getModifiers();
-    }
-
-    private CtClass getFieldCtType(String fieldName)
-    {
-        try
-        {
-            CtField field = ctClass.getDeclaredField(fieldName);
-
-            return field.getType();
-        }
-        catch (NotFoundException ex)
-        {
-            throw new RuntimeException(ex);
-        }
     }
 
     public String addField(int modifiers, String type, String suggestedName)
@@ -1425,6 +1384,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         return result;
     }
 
+    // Returns String for backwards compatibility reasons
     public String addInjectedField(Class type, String suggestedName, Object value)
     {
         Defense.notNull(type, "type");
@@ -1517,19 +1477,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
     public void advise(TransformMethodSignature methodSignature, ComponentMethodAdvice advice)
     {
-        Defense.notNull(methodSignature, "methodSignature");
-        Defense.notNull(advice, "advice");
-
-        ComponentMethodInvocationBuilder builder = methodToInvocationBuilder.get(methodSignature);
-
-        if (builder == null)
-        {
-            builder = new ComponentMethodInvocationBuilder(this, componentClassCache,
-                    methodSignature, classSource);
-            methodToInvocationBuilder.put(methodSignature, builder);
-        }
-
-        builder.addAdvice(advice);
+        getMethod(methodSignature).advise(advice);
     }
 
     public boolean isMethodOverride(TransformMethodSignature methodSignature)
@@ -1598,9 +1546,14 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
     {
         failIfFrozen();
 
-        for (ComponentMethodInvocationBuilder builder : methodToInvocationBuilder.values())
+        // doFinish() will sometimes create new methods on the ClassTransformation, yielding
+        // a concurrent modification exception, so do a defensive copy.
+
+        List<TransformMethodImpl> tmis = CollectionFactory.newList(methods.values());
+
+        for (TransformMethodImpl tmi : tmis)
         {
-            builder.commit();
+            tmi.doFinish();
         }
 
         String initializer = convertConstructorToMethod();
@@ -2143,5 +2096,11 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         }
 
         return result;
+    }
+
+    private ComponentMethodInvocationBuilder createBuilder(TransformMethodSignature signature)
+    {
+        return new ComponentMethodInvocationBuilder(this, componentClassCache, signature,
+                classSource);
     }
 }

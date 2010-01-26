@@ -42,6 +42,9 @@ public interface TransformMethod extends AnnotationProvider, Comparable<Transfor
      * <p/>
      * The extended method is considered <em>new</em>. New methods <em>are not</em> scanned for removed fields, field
      * access changes, etc.
+     * <p>
+     * This method will eventually be removed, using {@link #advise(ComponentMethodAdvice)} or some other alternative is
+     * preferred.
      * 
      * @param body
      *            the body of Javassist psuedo-code
@@ -49,4 +52,15 @@ public interface TransformMethod extends AnnotationProvider, Comparable<Transfor
      *             if the provided Javassist method body can not be compiled
      */
     void extend(String body);
+
+    /**
+     * Add advice for the method; the advice will be threaded into method invocations of the indicated method.
+     * A method may be given multiple advice; each advice will recieve control in turn (assuming
+     * the previous advice invokes {@link ComponentMethodInvocation#proceed()}) in the order the advice
+     * is added. The last advice will proceed to the original method implementation.
+     * 
+     * @param advice
+     *            to receive control when the method is invoked
+     */
+    void advise(ComponentMethodAdvice advice);
 }

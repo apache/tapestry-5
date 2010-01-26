@@ -76,7 +76,7 @@ public interface ClassTransformation extends AnnotationProvider
     /**
      * As with {@link #newMemberName(String)}, but the suggested name is constructed from the prefix
      * and base name. An
-     * underscore will seperate the prefix from the base name.
+     * underscore will separate the prefix from the base name.
      * 
      * @param prefix
      *            for the generated name
@@ -97,7 +97,7 @@ public interface ClassTransformation extends AnnotationProvider
 
     /**
      * Returns a sorted list of declared instance fields with the indicated annotation. Non-private
-     * and static fields are ignored. Claimed fields are also ignored.
+     * and static fields are ignored.
      * 
      * @since 5.2.0
      */
@@ -148,6 +148,7 @@ public interface ClassTransformation extends AnnotationProvider
 
     /**
      * Finds all unclaimed fields matched by the provided predicate. Only considers instance fields.
+     * Added, removed and claimed fields are excluded.
      * 
      * @param predicate
      *            used for matching
@@ -234,8 +235,17 @@ public interface ClassTransformation extends AnnotationProvider
     /**
      * Finds any declared <em>instance</em> fields that have not been claimed (via {@link #claimField(String, Object)})
      * and have not been either added or deleted, and returns the names of those fields. May return an empty array.
+     * 
+     * @deprecated Use {@link #matchUnclaimedFields()} instead
      */
     List<String> findUnclaimedFields();
+
+    /**
+     * Matches all fields that are not claimed (or added or removed).
+     * 
+     * @since 5.2.0
+     */
+    List<TransformField> matchUnclaimedFields();
 
     /**
      * Obtains the type of a declared instance field.
@@ -523,6 +533,8 @@ public interface ClassTransformation extends AnnotationProvider
 
     /**
      * Adds method advice for the indicated method.
+     * 
+     * @deprecated Use {@link TransformMethod#advise(ComponentMethodAdvice)} instead
      */
     void advise(TransformMethodSignature methodSignature, ComponentMethodAdvice advice);
 
