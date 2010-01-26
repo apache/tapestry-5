@@ -2526,4 +2526,12 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         clickAndWait("link=Available File");
         assertTextPresent("This file should be available to clients.");
     }
+    
+    /** TAP5-991 */
+    public void bean_display_enum_value_from_messages()
+    {
+        start("BeanDisplay Enum Demo");
+        
+        assertText("//dd[2]", "Ultra Important");
+    }
 }

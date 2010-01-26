@@ -316,7 +316,10 @@ public class Index
             new Item("FormFieldOutsideForm", "Form Field Outside Form",
                      "Nice exception message for common problem of form fields outside forms"),
 
-            new Item("AssetProtectionDemo", "Asset Protection Demo", "AssetProtectionDispatcher is properly contributed and functioning")
+            new Item("AssetProtectionDemo", "Asset Protection Demo", "AssetProtectionDispatcher is properly contributed and functioning"),
+            
+            new Item("BeanDisplayEnumDemo", "BeanDisplay Enum Demo",
+                     "User represenation of enum values is correctly read from messages")
 
     );
 
