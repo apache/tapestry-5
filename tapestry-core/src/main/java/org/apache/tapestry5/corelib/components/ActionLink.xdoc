@@ -106,7 +106,15 @@ public class ViewAccount
                 you may need to include a company id as well as the account id. You can
                 build an object array to contain both values:
             </p>
+            <p>You can do this in a template using the following syntax</p>
+            <source><![CDATA[
+<t:actionlink t:id="foo" context="[account.companyId,account.id]">test foo</t:actionlink>
 
+            ]]>
+            </source>
+			<p>
+			Alternatively, you can provide a getter which returns an object array.
+			</p>
             <source><![CDATA[
     public Object[] getAccountContext()
     {
