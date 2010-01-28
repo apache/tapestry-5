@@ -18,13 +18,19 @@ import org.apache.tapestry5.Binding;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.internal.InternalComponentResources;
 import org.apache.tapestry5.internal.bindings.LiteralBinding;
+import org.apache.tapestry5.ioc.services.FieldValueConduit;
+import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.runtime.Component;
-import org.apache.tapestry5.services.FieldValueConduit;
 
 /**
  * A facade around {@link Binding} and {@link InternalComponentResources} that is used to instrument
  * fields with the {@link Parameter} annotation. Extends {@link FieldValueConduit} so that
  * the get() method implicitly coerces the value to the field's type.
+ * <p>
+ * {@link #get()} will read from the underlying {@link Binding} and used the {@link TypeCoercer} coerce the value to the
+ * parameter field's type. get() also includes a null value check (as per {@link Parameter#allowNull()}.
+ * <p>
+ * {@link #set(Object)} pushes the value into the binding.
  * 
  * @since 5.2.0
  */
@@ -49,8 +55,7 @@ public interface ParameterConduit extends FieldValueConduit
     boolean isBound();
 
     /**
-     * Resets the conduit, clearing any <em>temporarily</em> cached data (from a non-invariant
-     * {@link Binding}).
+     * Resets the conduit, clearing any <em>temporarily</em> cached data (from a non-invariant {@link Binding}).
      */
     void reset();
 

@@ -37,6 +37,7 @@ import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.ClassFab;
 import org.apache.tapestry5.ioc.services.ClassFabUtils;
 import org.apache.tapestry5.ioc.services.ClassFactory;
+import org.apache.tapestry5.ioc.services.FieldValueConduit;
 import org.apache.tapestry5.ioc.services.MethodSignature;
 import org.apache.tapestry5.ioc.util.BodyBuilder;
 import org.apache.tapestry5.model.ComponentModel;
@@ -45,7 +46,6 @@ import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.services.ComponentMethodAdvice;
 import org.apache.tapestry5.services.ComponentValueProvider;
 import org.apache.tapestry5.services.FieldFilter;
-import org.apache.tapestry5.services.FieldValueConduit;
 import org.apache.tapestry5.services.MethodFilter;
 import org.apache.tapestry5.services.TransformField;
 import org.apache.tapestry5.services.TransformMethod;
@@ -158,9 +158,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
         private final CtClass fieldType;
 
-        private final String name;
-
-        private final String type;
+        private final String name, type;
 
         private final boolean primitive;
 
@@ -171,6 +169,8 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         private Object claimTag;
 
         boolean removed;
+
+        String readValueBody, writeValueBody;
 
         TransformFieldImpl(CtField field, boolean added)
         {
@@ -232,7 +232,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
                         String
                                 .format(
                                         "Field %s of class %s is already claimed by %s and can not be claimed by %s.",
-                                        getName(), ctClass.getName(), claimTag, tag));
+                                        getName(), getClassName(), claimTag, tag));
 
             claimTag = tag;
         }
@@ -245,6 +245,42 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         public int getModifiers()
         {
             return field.getModifiers();
+        }
+
+        void replaceReadAccess(String methodName)
+        {
+            failIfFrozen();
+
+            if (readValueBody != null)
+                throw new IllegalStateException(String.format(
+                        "Field %s.%s has already had read access replaced.", getClassName(), name));
+
+            // Explicitly reference $0 (aka "this") because of TAPESTRY-1511.
+            // $0 is valid even inside a static method.
+
+            readValueBody = String.format("$_ = $0.%s();", methodName);
+
+            formatter.format("replace read %s: %s();\n\n", name, methodName);
+
+            fieldAccessReplaced = true;
+        }
+
+        void replaceWriteAccess(String methodName)
+        {
+            failIfFrozen();
+
+            if (writeValueBody != null)
+                throw new IllegalStateException(String.format(
+                        "Field %s.%s has already had write access replaces.", getClassName(), name));
+
+            // Explicitly reference $0 (aka "this") because of TAPESTRY-1511.
+            // $0 is valid even inside a static method.
+
+            writeValueBody = String.format("$0.%s($1);", methodName);
+
+            formatter.format("replace write %s: %s();\n\n", name, methodName);
+
+            fieldAccessReplaced = true;
         }
 
         public void remove()
@@ -277,6 +313,14 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
                     conduitProvider));
         }
 
+        public void replaceAccess(FieldValueConduit conduit)
+        {
+            String fieldName = addInjectedFieldUncached(FieldValueConduit.class, name + "$conduit",
+                    conduit);
+
+            replaceAccess(getTransformFieldImpl(fieldName));
+        }
+
         public void replaceAccess(TransformField conduitField)
         {
             failIfFrozen();
@@ -297,7 +341,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
             addMethod(readSig, String
                     .format("return ($r) ((%s) %s.get());", cast, conduitFieldName));
 
-            replaceReadAccess(name, readMethodName);
+            replaceReadAccess(readMethodName);
 
             String writeMethodName = newMemberName("set", name);
 
@@ -307,7 +351,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
             addMethod(writeSig, String.format("%s.set(($w) $1);", conduitFieldName));
 
-            replaceWriteAccess(name, writeMethodName);
+            replaceWriteAccess(writeMethodName);
 
             remove();
         }
@@ -386,13 +430,6 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
     private List<Annotation> classAnnotations;
 
-    // Key is field name, value is expression used to replace read access
-
-    private Map<String, String> fieldReadTransforms;
-
-    // Key is field name, value is expression used to replace read access
-    private Map<String, String> fieldWriteTransforms;
-
     /**
      * Contains the assembled Javassist code for the class' default constructor.
      */
@@ -413,6 +450,10 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
     private final ComponentClassCache componentClassCache;
 
     private final CtClassSource classSource;
+
+    // If true, then during finish, it is necessary to search for field replacements
+    // (field reads or writes replaces with method calls).
+    private boolean fieldAccessReplaced;
 
     /**
      * Signature for newInstance() method of Instantiator.
@@ -528,8 +569,6 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         fields = null;
 
         classAnnotations = null;
-        fieldReadTransforms = null;
-        fieldWriteTransforms = null;
         constructor = null;
         formatter = null;
     }
@@ -683,16 +722,20 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
     public TransformField getField(String fieldName)
     {
+        return getTransformFieldImpl(fieldName);
+    }
+
+    private TransformFieldImpl getTransformFieldImpl(String fieldName)
+    {
         failIfFrozen();
 
-        TransformField result = fields.get(fieldName);
+        TransformFieldImpl result = fields.get(fieldName);
 
         if (result != null)
             return result;
 
         throw new RuntimeException(String.format("Class %s does not contain a field named '%s'.",
-                ctClass.getName(), fieldName));
-
+                getClassName(), fieldName));
     }
 
     public String newMemberName(String suggested)
@@ -1119,7 +1162,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
             return result;
 
         throw new IllegalArgumentException(String.format("Class %s does not declare method '%s'.",
-                ctClass.getName(), signature));
+                getClassName(), signature));
 
     }
 
@@ -1600,7 +1643,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
             throw new RuntimeException(ex);
         }
 
-        formatter.format("add constructor: %s(", ctClass.getName());
+        formatter.format("add constructor: %s(", getClassName());
 
         for (int i = 0; i < count; i++)
         {
@@ -1662,7 +1705,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
             }
         }; }
 
-        String componentClassName = ctClass.getName();
+        String componentClassName = getClassName();
 
         String name = ClassFabUtils.generateClassName("Instantiator");
 
@@ -1757,7 +1800,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
     {
         if (frozen)
             throw new IllegalStateException("The ClassTransformation instance (for "
-                    + ctClass.getName()
+                    + getClassName()
                     + ") has completed all transformations and may not be further modified.");
     }
 
@@ -1765,7 +1808,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
     {
         if (!frozen)
             throw new IllegalStateException("The ClassTransformation instance (for "
-                    + ctClass.getName() + ") has not yet completed all transformations.");
+                    + getClassName() + ") has not yet completed all transformations.");
     }
 
     public IdAllocator getIdAllocator()
@@ -1864,7 +1907,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
                 methodName, new String[]
                 { fieldType }, null);
 
-        String message = ServicesMessages.readOnlyField(ctClass.getName(), fieldName);
+        String message = ServicesMessages.readOnlyField(getClassName(), fieldName);
 
         String body = String.format("throw new java.lang.RuntimeException(\"%s\");", message);
 
@@ -1880,36 +1923,12 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
     public void replaceReadAccess(String fieldName, String methodName)
     {
-        // Explicitly reference $0 (aka "this") because of TAPESTRY-1511.
-        // $0 is valid even inside a static method.
-
-        String body = String.format("$_ = $0.%s();", methodName);
-
-        if (fieldReadTransforms == null)
-            fieldReadTransforms = CollectionFactory.newMap();
-
-        // TODO: Collisions?
-
-        fieldReadTransforms.put(fieldName, body);
-
-        formatter.format("replace read %s: %s();\n\n", fieldName, methodName);
+        getTransformFieldImpl(fieldName).replaceReadAccess(methodName);
     }
 
     public void replaceWriteAccess(String fieldName, String methodName)
     {
-        // Explicitly reference $0 (aka "this") because of TAPESTRY-1511.
-        // $0 is valid even inside a static method.
-
-        String body = String.format("$0.%s($1);", methodName);
-
-        if (fieldWriteTransforms == null)
-            fieldWriteTransforms = CollectionFactory.newMap();
-
-        // TODO: Collisions?
-
-        fieldWriteTransforms.put(fieldName, body);
-
-        formatter.format("replace write %s: %s();\n\n", fieldName, methodName);
+        getTransformFieldImpl(fieldName).replaceWriteAccess(methodName);
     }
 
     private void performFieldTransformations()
@@ -1917,7 +1936,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         // If no field transformations have been requested, then we can save ourselves some
         // trouble!
 
-        if (fieldReadTransforms != null || fieldWriteTransforms != null)
+        if (fieldAccessReplaced)
             replaceFieldAccess();
 
         for (TransformFieldImpl tfi : fields.values())
@@ -1931,14 +1950,14 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
     private void replaceFieldAccess()
     {
-        // Provide empty maps here, to make the code in the inner class a tad
-        // easier.
+        final Map<String, String> fieldReadTransforms = CollectionFactory.newMap();
+        final Map<String, String> fieldWriteTransforms = CollectionFactory.newMap();
 
-        if (fieldReadTransforms == null)
-            fieldReadTransforms = CollectionFactory.newMap();
-
-        if (fieldWriteTransforms == null)
-            fieldWriteTransforms = CollectionFactory.newMap();
+        for (TransformFieldImpl tfi : fields.values())
+        {
+            putIfNotNull(fieldReadTransforms, tfi.name, tfi.readValueBody);
+            putIfNotNull(fieldWriteTransforms, tfi.name, tfi.writeValueBody);
+        }
 
         ExprEditor editor = new ExprEditor()
         {
@@ -2001,6 +2020,12 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         }
 
         formatter.format("\n");
+    }
+
+    private static <K, V> void putIfNotNull(Map<K, V> map, K key, V value)
+    {
+        if (value != null)
+            map.put(key, value);
     }
 
     public Class toClass(String type)

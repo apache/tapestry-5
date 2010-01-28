@@ -18,10 +18,14 @@ import javassist.CtClass;
 import javassist.Loader;
 import javassist.LoaderClassPath;
 import javassist.NotFoundException;
-import org.apache.tapestry5.annotations.ApplicationState;
-import org.apache.tapestry5.annotations.SessionState;
+
 import org.apache.tapestry5.internal.InternalComponentResources;
-import org.apache.tapestry5.internal.services.*;
+import org.apache.tapestry5.internal.services.ComponentClassCache;
+import org.apache.tapestry5.internal.services.Instantiator;
+import org.apache.tapestry5.internal.services.InternalClassTransformation;
+import org.apache.tapestry5.internal.services.InternalClassTransformationImpl;
+import org.apache.tapestry5.internal.services.InternalClassTransformationImplTest;
+import org.apache.tapestry5.internal.services.SimpleASO;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.internal.transform.pages.MaybeStateHolder;
 import org.apache.tapestry5.internal.transform.pages.StateHolder;
@@ -32,8 +36,6 @@ import org.apache.tapestry5.ioc.services.ClassFactory;
 import org.apache.tapestry5.ioc.services.PropertyAccess;
 import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.services.ApplicationStateManager;
-import org.apache.tapestry5.services.ClassTransformation;
-import org.apache.tapestry5.services.ComponentClassTransformWorker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.AfterClass;
@@ -88,25 +90,6 @@ public class ApplicationStateWorkerTest extends InternalBaseTestCase
     public void cleanup()
     {
         access = null;
-    }
-
-    @Test
-    public void no_fields_with_annotation()
-    {
-        ApplicationStateManager manager = mockApplicationStateManager();
-        ClassTransformation ct = mockClassTransformation();
-        MutableComponentModel model = mockMutableComponentModel();
-
-        train_findFieldsWithAnnotation(ct, ApplicationState.class);
-        train_findFieldsWithAnnotation(ct, SessionState.class);
-
-        replay();
-
-        ComponentClassTransformWorker worker = new ApplicationStateWorker(manager, null);
-
-        worker.transform(ct, model);
-
-        verify();
     }
 
     @SuppressWarnings("unchecked")

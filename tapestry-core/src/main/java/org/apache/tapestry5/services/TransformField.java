@@ -15,6 +15,7 @@
 package org.apache.tapestry5.services;
 
 import org.apache.tapestry5.ioc.AnnotationProvider;
+import org.apache.tapestry5.ioc.services.FieldValueConduit;
 
 /**
  * A field defined by (or created within) a {@link ClassTransformation},
@@ -72,6 +73,15 @@ public interface TransformField extends AnnotationProvider, Comparable<Transform
      *            identifies the field containing (via injection) an instance of {@link FieldValueConduit}
      */
     void replaceAccess(TransformField conduitField);
+
+    /**
+     * Replaces reand and write field access with a conduit. A new field is created for the conduit instance,
+     * and the original field is deleted.
+     * 
+     * @param conduit
+     *            used to replace read and write access to the field
+     */
+    void replaceAccess(FieldValueConduit conduit);
 
     /**
      * Extends the indicated method to add an assignment of the field with

@@ -1,10 +1,10 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,22 +14,58 @@
 
 package org.apache.tapestry5.internal.transform;
 
+import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.annotations.InjectPage;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.ioc.util.BodyBuilder;
+import org.apache.tapestry5.ioc.services.FieldValueConduit;
 import org.apache.tapestry5.model.MutableComponentModel;
-import org.apache.tapestry5.services.*;
-
-import java.lang.reflect.Modifier;
-import java.util.List;
+import org.apache.tapestry5.runtime.PageLifecycleAdapter;
+import org.apache.tapestry5.services.ClassTransformation;
+import org.apache.tapestry5.services.ComponentClassResolver;
+import org.apache.tapestry5.services.ComponentClassTransformWorker;
+import org.apache.tapestry5.services.ComponentSource;
+import org.apache.tapestry5.services.ComponentValueProvider;
+import org.apache.tapestry5.services.TransformField;
 
 /**
  * Peforms transformations that allow pages to be injected into components.
- *
+ * 
  * @see org.apache.tapestry5.annotations.InjectPage
  */
 public class InjectPageWorker implements ComponentClassTransformWorker
 {
+    private final class InjectedPageConduit extends ReadOnlyFieldValueConduit
+    {
+        private final String injectedPageName;
+
+        private Object page;
+
+        private InjectedPageConduit(ComponentResources resources, String fieldName,
+                String injectedPageName)
+        {
+            super(resources, fieldName);
+
+            this.injectedPageName = injectedPageName;
+
+            resources.addPageLifecycleListener(new PageLifecycleAdapter()
+            {
+                @Override
+                public void containingPageDidDetach()
+                {
+                    page = null;
+                }
+            });
+        }
+
+        public Object get()
+        {
+            if (page == null)
+                page = componentSource.getPage(injectedPageName);
+
+            return page;
+        }
+    }
+
     private final ComponentSource componentSource;
 
     private final ComponentClassResolver resolver;
@@ -42,46 +78,33 @@ public class InjectPageWorker implements ComponentClassTransformWorker
 
     public void transform(ClassTransformation transformation, MutableComponentModel model)
     {
-        List<String> names = transformation.findFieldsWithAnnotation(InjectPage.class);
-
-        if (names.isEmpty()) return;
-
-        String componentSource = transformation.addInjectedField(ComponentSource.class, "componentSource",
-                                                                 this.componentSource);
-
-
-        for (String name : names)
-            addInjectedPage(transformation, name, componentSource);
-
+        for (TransformField field : transformation.matchFieldsWithAnnotation(InjectPage.class))
+        {
+            addInjectedPage(field);
+        }
     }
 
-    private void addInjectedPage(ClassTransformation transformation, String fieldName, String componentSource)
+    private void addInjectedPage(TransformField field)
     {
-        InjectPage annotation = transformation.getFieldAnnotation(fieldName, InjectPage.class);
-        
-        transformation.claimField(fieldName, annotation);
+        InjectPage annotation = field.getAnnotation(InjectPage.class);
+
+        field.claim(annotation);
 
         String pageName = annotation.value();
 
-        String fieldType = transformation.getFieldType(fieldName);
-        String methodName = transformation.newMemberName("read_inject_page", fieldName);
+        final String fieldName = field.getName();
 
-        String injectedPageName = InternalUtils.isBlank(pageName) ? resolver
-                .resolvePageClassNameToPageName(fieldType) : pageName;
+        final String injectedPageName = InternalUtils.isBlank(pageName) ? resolver
+                .resolvePageClassNameToPageName(field.getType()) : pageName;
 
-        TransformMethodSignature sig = new TransformMethodSignature(Modifier.PRIVATE, fieldType, methodName, null,
-                                                                    null);
+        ComponentValueProvider<FieldValueConduit> provider = new ComponentValueProvider<FieldValueConduit>()
+        {
+            public FieldValueConduit get(ComponentResources resources)
+            {
+                return new InjectedPageConduit(resources, fieldName, injectedPageName);
+            }
+        };
 
-        BodyBuilder builder = new BodyBuilder();
-        builder.begin();
-
-        builder.addln("return (%s) %s.getPage(\"%s\");", fieldType, componentSource, injectedPageName);
-
-        builder.end();
-
-        transformation.addMethod(sig, builder.toString());
-        transformation.replaceReadAccess(fieldName, methodName);
-        transformation.makeReadOnly(fieldName);
-        transformation.removeField(fieldName);
+        field.replaceAccess(provider);
     }
 }

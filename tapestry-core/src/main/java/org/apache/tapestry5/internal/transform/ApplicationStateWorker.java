@@ -1,10 +1,10 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,21 +14,20 @@
 
 package org.apache.tapestry5.internal.transform;
 
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+
 import org.apache.tapestry5.annotations.ApplicationState;
 import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.internal.services.ComponentClassCache;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.ioc.Predicate;
+import org.apache.tapestry5.ioc.services.FieldValueConduit;
 import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.services.ApplicationStateManager;
 import org.apache.tapestry5.services.ClassTransformation;
 import org.apache.tapestry5.services.ComponentClassTransformWorker;
-import org.apache.tapestry5.services.TransformMethodSignature;
-
-import static java.lang.String.format;
-import java.lang.reflect.Modifier;
-import java.util.List;
-import java.util.Map;
+import org.apache.tapestry5.services.TransformField;
 
 /**
  * Looks for the {@link ApplicationState} and {@link org.apache.tapestry5.annotations.SessionState} annotations and
@@ -41,7 +40,7 @@ public class ApplicationStateWorker implements ComponentClassTransformWorker
     private final ComponentClassCache componentClassCache;
 
     public ApplicationStateWorker(ApplicationStateManager applicationStateManager,
-                                  ComponentClassCache componentClassCache)
+            ComponentClassCache componentClassCache)
     {
         this.applicationStateManager = applicationStateManager;
         this.componentClassCache = componentClassCache;
@@ -49,110 +48,79 @@ public class ApplicationStateWorker implements ComponentClassTransformWorker
 
     public void transform(ClassTransformation transformation, MutableComponentModel model)
     {
-        Map<String, Boolean> fields = CollectionFactory.newMap();
+        Map<TransformField, Boolean> fields = new TreeMap<TransformField, Boolean>();
 
-        List<String> asoNames = transformation.findFieldsWithAnnotation(ApplicationState.class);
-
-        for (String name : asoNames)
+        for (TransformField field : transformation
+                .matchFieldsWithAnnotation(ApplicationState.class))
         {
-            ApplicationState applicationState = transformation.getFieldAnnotation(name, ApplicationState.class);
+            ApplicationState annotation = field.getAnnotation(ApplicationState.class);
 
-            fields.put(name, applicationState.create());
+            fields.put(field, annotation.create());
+
+            field.claim(annotation);
         }
 
-
-        List<String> ssoNames = transformation.findFieldsWithAnnotation(SessionState.class);
-
-        for (String name : ssoNames)
+        for (TransformField field : transformation.matchFieldsWithAnnotation(SessionState.class))
         {
-            SessionState sessionState = transformation.getFieldAnnotation(name, SessionState.class);
+            SessionState annotation = field.getAnnotation(SessionState.class);
 
-            fields.put(name, sessionState.create());
+            fields.put(field, annotation.create());
+
+            field.claim(annotation);
         }
 
-
-        if (fields.isEmpty()) return;
-
-        String managerFieldName = transformation.addInjectedField(ApplicationStateManager.class,
-                                                                  "applicationStateManager", applicationStateManager);
-
-        for (String fieldName : InternalUtils.sortedKeys(fields))
+        for (Map.Entry<TransformField, Boolean> e : fields.entrySet())
         {
-            processField(fieldName, managerFieldName, transformation, fields.get(fieldName));
+            transform(transformation, e.getKey(), e.getValue());
         }
     }
 
-    private void processField(String fieldName, String managerFieldName, ClassTransformation transformation,
-                              boolean create)
+    @SuppressWarnings("unchecked")
+    private void transform(ClassTransformation transformation, TransformField field,
+            final boolean create)
     {
-        String fieldType = transformation.getFieldType(fieldName);
+        final Class fieldClass = componentClassCache.forName(field.getType());
 
-        Class fieldClass = componentClassCache.forName(fieldType);
-
-        String typeFieldName = transformation.addInjectedField(Class.class, fieldName + "_type", fieldClass);
-
-        replaceRead(transformation, fieldName, fieldType, managerFieldName, typeFieldName, create);
-
-        replaceWrite(transformation, fieldName, fieldType, managerFieldName, typeFieldName);
-
-        transformation.removeField(fieldName);
-
-        String booleanFieldName = fieldName + "Exists";
-
-        if (transformation.isField(booleanFieldName) && transformation.getFieldType(booleanFieldName).equals("boolean"))
+        field.replaceAccess(new FieldValueConduit()
         {
-            replaceFlagRead(transformation, booleanFieldName, typeFieldName, managerFieldName);
+            public void set(Object newValue)
+            {
+                applicationStateManager.set(fieldClass, newValue);
+            }
+
+            public Object get()
+            {
+                return create ? applicationStateManager.get(fieldClass) : applicationStateManager
+                        .getIfExists(fieldClass);
+            }
+        });
+
+        final String expectedName = field.getName() + "Exists";
+
+        List<TransformField> fields = transformation.matchFields(new Predicate<TransformField>()
+        {
+            public boolean accept(TransformField field)
+            {
+                return field.getType().equals("boolean")
+                        && field.getName().equalsIgnoreCase(expectedName);
+            }
+        });
+
+        for (TransformField existsField : fields)
+        {
+            existsField.claim(this);
+
+            String className = transformation.getClassName();
+
+            String fieldName = existsField.getName();
+
+            existsField.replaceAccess(new ReadOnlyFieldValueConduit(className, fieldName)
+            {
+                public Object get()
+                {
+                    return applicationStateManager.exists(fieldClass);
+                }
+            });
         }
-    }
-
-    private void replaceFlagRead(ClassTransformation transformation, String booleanFieldName, String typeFieldName,
-                                 String managerFieldName)
-    {
-        String readMethodName = transformation.newMemberName("read", booleanFieldName);
-
-        TransformMethodSignature sig = new TransformMethodSignature(Modifier.PRIVATE, "boolean", readMethodName, null,
-                                                                    null);
-
-        String body = format("return %s.exists(%s);", managerFieldName, typeFieldName);
-
-        transformation.addMethod(sig, body);
-
-        transformation.replaceReadAccess(booleanFieldName, readMethodName);
-        transformation.makeReadOnly(booleanFieldName);
-        transformation.removeField(booleanFieldName);
-    }
-
-    private void replaceWrite(ClassTransformation transformation, String fieldName, String fieldType,
-                              String managerFieldName, String typeFieldName)
-    {
-        String writeMethodName = transformation.newMemberName("write", fieldName);
-
-        TransformMethodSignature writeSignature = new TransformMethodSignature(Modifier.PRIVATE, "void",
-                                                                               writeMethodName,
-                                                                               new String[] { fieldType },
-                                                                               null);
-
-        String body = format("%s.set(%s, $1);", managerFieldName, typeFieldName);
-
-        transformation.addMethod(writeSignature, body);
-
-        transformation.replaceWriteAccess(fieldName, writeMethodName);
-    }
-
-    private void replaceRead(ClassTransformation transformation, String fieldName, String fieldType,
-                             String managerFieldName, String typeFieldName, boolean create)
-    {
-        String readMethodName = transformation.newMemberName("read", fieldName);
-
-        TransformMethodSignature readMethodSignature = new TransformMethodSignature(Modifier.PRIVATE, fieldType,
-                                                                                    readMethodName, null, null);
-
-        String methodName = create ? "get" : "getIfExists";
-
-        String body = format("return (%s) %s.%s(%s);", fieldType, managerFieldName, methodName, typeFieldName);
-
-        transformation.addMethod(readMethodSignature, body);
-
-        transformation.replaceReadAccess(fieldName, readMethodName);
     }
 }

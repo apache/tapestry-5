@@ -14,7 +14,22 @@
 
 package org.apache.tapestry5.internal.services;
 
-import javassist.*;
+import static java.lang.Thread.currentThread;
+import static java.util.Arrays.asList;
+
+import java.lang.annotation.Documented;
+import java.lang.annotation.Target;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.List;
+import java.util.Map;
+
+import javassist.CtClass;
+import javassist.CtMethod;
+import javassist.Loader;
+import javassist.LoaderClassPath;
+import javassist.NotFoundException;
+
 import org.apache.tapestry5.annotations.Meta;
 import org.apache.tapestry5.annotations.OnEvent;
 import org.apache.tapestry5.annotations.Retain;
@@ -43,15 +58,6 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-
-import static java.lang.Thread.currentThread;
-import java.lang.annotation.Documented;
-import java.lang.annotation.Target;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import static java.util.Arrays.asList;
-import java.util.List;
-import java.util.Map;
 
 /**
  * The tests share a number of resources, and so are run sequentially.

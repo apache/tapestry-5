@@ -12,13 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.services;
+package org.apache.tapestry5.ioc.services;
 
-import org.apache.tapestry5.Binding;
-import org.apache.tapestry5.ioc.services.TypeCoercer;
 
 /**
- * A callback object that is used to replace storage of a value inside a component field.
+ * Used as a replacement for a field.
  * 
  * @since 5.2.0
  */
@@ -26,20 +24,17 @@ public interface FieldValueConduit
 {
 
     /**
-     * Reads the current value of the parameter (via the {@link Binding}) and uses the
-     * {@link TypeCoercer} to convert the actual value to one assignable to the underlying field.
-     * The actual read value may be cached.
+     * Reads the current value of the field.
      * 
-     * @throws RuntimeException
-     *             if the parameter does not allow null but the current value is null
      * @return current value (possibly null)
      */
     Object get();
 
     /**
-     * Sets the value of the parameter, pushing it through the {@link Binding}.
+     * Sets the value of the field
      * 
      * @param newValue
+     *            to be captured
      */
     void set(Object newValue);
 
