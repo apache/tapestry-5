@@ -49,7 +49,7 @@ public class TapestrySpringIntegrationTest extends AbstractIntegrationTestSuite
     {
         open(BASE_URL);
 
-        assertText("message", "SPRING VERSION 2.5.6: PIPELINE WAS INVOKED");
+        assertText("message", "SPRING VERSION 3.0.0.RELEASE: PIPELINE WAS INVOKED");
     }
 
     @Test

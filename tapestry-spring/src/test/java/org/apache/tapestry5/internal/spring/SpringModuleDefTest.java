@@ -67,7 +67,7 @@ public class SpringModuleDefTest extends SpringTestCase
         assertEquals(sd.createServiceCreator(null).toString(),
                      "<ObjectCreator for externally configured Spring ApplicationContext>");
 
-        expect(ac.getType("fred")).andReturn(Runnable.class);
+        expect((Class)ac.getType("fred")).andReturn(Runnable.class);
         expect(ac.getBean("fred")).andReturn(fred);
 
 
@@ -85,7 +85,7 @@ public class SpringModuleDefTest extends SpringTestCase
 
         verify();
 
-        expect(ac.getType("barney")).andReturn(Runnable.class);
+        expect((Class)ac.getType("barney")).andReturn(Runnable.class);
         expect(ac.getBean("barney")).andReturn(barney);
 
         replay();

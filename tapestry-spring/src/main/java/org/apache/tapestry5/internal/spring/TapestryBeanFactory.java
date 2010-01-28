@@ -1,4 +1,4 @@
-// Copyright 2008 The Apache Software Foundation
+// Copyright 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -33,11 +33,11 @@ import java.util.Set;
  * org.apache.tapestry5.ioc.Registry#getObject(Class, org.apache.tapestry5.ioc.AnnotationProvider)} to provide the
  * value.
  */
-public class TapestyBeanFactory extends DefaultListableBeanFactory
+public class TapestryBeanFactory extends DefaultListableBeanFactory
 {
     private final Registry registry;
 
-    public TapestyBeanFactory(BeanFactory parentBeanFactory, Registry registry)
+    public TapestryBeanFactory(BeanFactory parentBeanFactory, Registry registry)
     {
         super(parentBeanFactory);
 
@@ -51,7 +51,7 @@ public class TapestyBeanFactory extends DefaultListableBeanFactory
 
         Class objectType = descriptor.getDependencyType();
 
-        final Object[] annotations = descriptor.getAnnotations();
+        final Annotation[] annotations = descriptor.getAnnotations();
 
         if (annotations != null)
         {

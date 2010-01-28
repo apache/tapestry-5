@@ -1,4 +1,4 @@
-// Copyright 2008 The Apache Software Foundation
+// Copyright 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
 package org.apache.tapestry5.spring;
 
 import org.apache.tapestry5.TapestryFilter;
-import org.apache.tapestry5.internal.spring.TapestyBeanFactory;
+import org.apache.tapestry5.internal.spring.TapestryBeanFactory;
 import org.apache.tapestry5.ioc.Registry;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.web.context.support.XmlWebApplicationContext;
@@ -37,6 +37,6 @@ public class TapestryApplicationContext extends XmlWebApplicationContext
             throw new IllegalStateException(
                     "Expected a Tapestry IoC Registry to be stored in the ServletContext, but the attribute was null.");
 
-        return new TapestyBeanFactory(getInternalParentBeanFactory(), registry);
+        return new TapestryBeanFactory(getInternalParentBeanFactory(), registry);
     }
 }
