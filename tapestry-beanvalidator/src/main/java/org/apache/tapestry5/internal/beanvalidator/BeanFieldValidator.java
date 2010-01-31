@@ -35,8 +35,8 @@ import org.apache.tapestry5.ValidationException;
 import org.apache.tapestry5.beanvalidator.BeanValidatorGroupSource;
 import org.apache.tapestry5.beanvalidator.ClientConstraintDescriptor;
 import org.apache.tapestry5.beanvalidator.ClientConstraintDescriptorSource;
+import org.apache.tapestry5.internal.BeanValidationContext;
 import org.apache.tapestry5.json.JSONObject;
-import org.apache.tapestry5.services.BeanValidationContext;
 import org.apache.tapestry5.services.Environment;
 import org.apache.tapestry5.services.FormSupport;
 
@@ -44,14 +44,13 @@ import org.apache.tapestry5.services.FormSupport;
 public class BeanFieldValidator implements FieldValidator
 {
 	private final Field field;
-	private final String propertyName;
 	private final ValidatorFactory validatorFactory;
 	private final BeanValidatorGroupSource beanValidationGroupSource;
 	private final ClientConstraintDescriptorSource clientValidatorSource;
 	private final FormSupport formSupport;
 	private final Environment environment;
 	
-	public BeanFieldValidator(Field field, String propertyName,
+	public BeanFieldValidator(Field field,
 			ValidatorFactory validatorFactory,
 			BeanValidatorGroupSource beanValidationGroupSource,
 			ClientConstraintDescriptorSource clientValidatorSource,
@@ -59,7 +58,6 @@ public class BeanFieldValidator implements FieldValidator
 			Environment environment) 
 	{
 		this.field = field;
-		this.propertyName = propertyName;
 		this.validatorFactory = validatorFactory;
 		this.beanValidationGroupSource = beanValidationGroupSource;
 		this.clientValidatorSource = clientValidatorSource;
@@ -85,7 +83,13 @@ public class BeanFieldValidator implements FieldValidator
 		
 		BeanDescriptor beanDescriptor = validator.getConstraintsForClass(beanValidationContext.getBeanType());
 		
-		PropertyDescriptor propertyDescriptor = beanDescriptor.getConstraintsForProperty(propertyName);
+		String currentProperty = beanValidationContext.getCurrentProperty();
+		
+		if(currentProperty == null) return;
+		
+		PropertyDescriptor propertyDescriptor = beanDescriptor.getConstraintsForProperty(currentProperty);
+		
+		if(propertyDescriptor == null) return;
 		
 		for (final ConstraintDescriptor<?> descriptor :propertyDescriptor.getConstraintDescriptors()) 
 		{
@@ -95,7 +99,7 @@ public class BeanFieldValidator implements FieldValidator
 			
 			if(clientConstraintDescriptor != null)
 			{	
-				String message = interpolateMessage(descriptor);
+				String message = format("%s %s", field.getLabel(), interpolateMessage(descriptor));
 				
 				JSONObject specs = new JSONObject();
 				
@@ -128,8 +132,18 @@ public class BeanFieldValidator implements FieldValidator
 		
 		final Validator validator = validatorFactory.getValidator();
 		
+		String currentProperty = beanValidationContext.getCurrentProperty();
+		
+		if(currentProperty == null) return;
+		
+		BeanDescriptor beanDescriptor = validator.getConstraintsForClass(beanValidationContext.getBeanType());
+		
+		PropertyDescriptor propertyDescriptor = beanDescriptor.getConstraintsForProperty(currentProperty);
+		
+		if(propertyDescriptor == null) return;
+		
 		final Set<ConstraintViolation<Object>> violations = validator.validateValue(
-						(Class<Object>) beanValidationContext.getBeanType(), propertyName, 
+						(Class<Object>) beanValidationContext.getBeanType(), currentProperty, 
 						value, beanValidationGroupSource.get());
 		
 		if (violations.isEmpty()) 

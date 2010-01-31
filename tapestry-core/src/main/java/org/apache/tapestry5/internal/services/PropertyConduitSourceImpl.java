@@ -140,6 +140,11 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
          * name.
          */
         String getDescription();
+        
+        /**
+         * Returns the name of the property, if exists.
+         */
+        String getPropertyName();
     }
 
     /**
@@ -244,6 +249,8 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
         private Class conduitPropertyType;
 
+        private String conduitPropertyName;
+
         private AnnotationProvider annotationProvider = nullAnnotationProvider;
 
         // Used to create unique variable names.
@@ -287,9 +294,10 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
         {
             List<Class> types = CollectionFactory.newList();
 
-            // $1, $2, $3, $4 ...
+            // $1, $2, $3, $4, $5 ...
 
             types.add(Class.class);
+            types.add(String.class);
             types.add(AnnotationProvider.class);
             types.add(String.class);
             types.add(TypeCoercer.class);
@@ -297,15 +305,16 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
             List<Object> values = CollectionFactory.newList();
 
             values.add(conduitPropertyType);
+            values.add(conduitPropertyName);
             values.add(annotationProvider);
             values.add(interner.format("PropertyConduit[%s %s]", rootType.getName(), expression));
             values.add(typeCoercer);
 
             BodyBuilder builder = new BodyBuilder().begin();
 
-            builder.addln("super($1,$2,$3,$4);");
+            builder.addln("super($1,$2,$3,$4,$5);");
 
-            int index = 5;
+            int index = 6;
 
             for (ConstructorParameter p : parameters)
             {
@@ -436,6 +445,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
                     createGetter(navigateMethod, node, info);
 
                     conduitPropertyType = info.getType();
+                    conduitPropertyName = info.getPropertyName();
                     annotationProvider = info;
 
                     return;
@@ -973,7 +983,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
         private ExpressionTermInfo infoForPropertyNode(Class activeType, Tree node)
         {
-            String propertyName = node.getText();
+            final String propertyName = node.getText();
 
             ClassPropertyAdapter classAdapter = access.getAdapter(activeType);
             final PropertyAdapter adapter = classAdapter.getPropertyAdapter(propertyName);
@@ -1014,6 +1024,11 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
                 {
                     return adapter.getAnnotation(annotationClass);
                 }
+
+				public String getPropertyName() 
+				{
+					return propertyName;
+				}
             };
         }
 
@@ -1065,6 +1080,11 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
                     {
                         return method.getAnnotation(annotationClass);
                     }
+
+					public String getPropertyName() 
+					{
+						return null;
+					}
                 };
             }
             catch (NoSuchMethodException ex)

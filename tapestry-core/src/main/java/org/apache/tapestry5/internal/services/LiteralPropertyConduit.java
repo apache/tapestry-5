@@ -28,7 +28,7 @@ public class LiteralPropertyConduit extends BasePropertyConduit
                                   TypeCoercer typeCoercer,
                                   Object value)
     {
-        super(propertyType, annotationProvider, description, typeCoercer);
+        super(propertyType, null, annotationProvider, description, typeCoercer);
 
         this.value = value;
     }

@@ -15,6 +15,7 @@
 package org.apache.tapestry5.internal.bindings;
 
 import org.apache.tapestry5.PropertyConduit;
+import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.internal.services.Invariant;
 import org.apache.tapestry5.ioc.Location;
 import org.apache.tapestry5.ioc.internal.util.TapestryException;
@@ -25,7 +26,7 @@ import java.lang.annotation.Annotation;
  * Base class for bindings created by the {@link org.apache.tapestry5.internal.bindings.PropBindingFactory}. A subclass
  * of this is created at runtime.
  */
-public class PropBinding extends AbstractBinding
+public class PropBinding extends AbstractBinding implements InternalPropBinding
 {
     private final Object root;
 
@@ -103,4 +104,9 @@ public class PropBinding extends AbstractBinding
     {
         return conduit.getAnnotation(annotationClass);
     }
+
+	public String getPropertyName() 
+	{
+		return TapestryInternalUtils.toInternalPropertyConduit(conduit).getPropertyName();
+	}
 }

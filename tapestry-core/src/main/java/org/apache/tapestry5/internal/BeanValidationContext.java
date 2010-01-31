@@ -11,12 +11,12 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-package org.apache.tapestry5.services;
+package org.apache.tapestry5.internal;
 
 /**
  * Defines a context for validating beans.
  * 
- * @since 5.2.0.0
+ * @since 5.2.0
  */
 public interface BeanValidationContext
 {
@@ -29,4 +29,16 @@ public interface BeanValidationContext
      * Return the object to validate.
      */
     Object getBeanInstance();
+    
+    /**
+     * Returns name of the property to validate. The current name is overwritten by every form field.
+     */
+    String getCurrentProperty();
+    
+    /**
+     * Sets name of the property to validate.
+     * 
+     * @param propertyName name of the property
+     */
+    void setCurrentProperty(String propertyName);
 }

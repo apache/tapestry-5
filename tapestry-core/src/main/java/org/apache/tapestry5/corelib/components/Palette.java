@@ -14,7 +14,31 @@
 
 package org.apache.tapestry5.corelib.components;
 
-import org.apache.tapestry5.*;
+import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newList;
+import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newSet;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.apache.tapestry5.Asset;
+import org.apache.tapestry5.Binding;
+import org.apache.tapestry5.BindingConstants;
+import org.apache.tapestry5.Block;
+import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.FieldValidationSupport;
+import org.apache.tapestry5.FieldValidator;
+import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.OptionGroupModel;
+import org.apache.tapestry5.OptionModel;
+import org.apache.tapestry5.RenderSupport;
+import org.apache.tapestry5.Renderable;
+import org.apache.tapestry5.SelectModel;
+import org.apache.tapestry5.SelectModelVisitor;
+import org.apache.tapestry5.ValidationException;
+import org.apache.tapestry5.ValidationTracker;
+import org.apache.tapestry5.ValueEncoder;
 import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.IncludeJavaScriptLibrary;
 import org.apache.tapestry5.annotations.Parameter;
@@ -23,16 +47,9 @@ import org.apache.tapestry5.corelib.base.AbstractField;
 import org.apache.tapestry5.internal.util.SelectModelRenderer;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newList;
-import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newSet;
 import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.services.ComponentDefaultProvider;
 import org.apache.tapestry5.services.Request;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * Multiple selection component. Generates a UI consisting of two &lt;select&gt; elements configured for multiple
@@ -147,7 +164,11 @@ public class Palette extends AbstractField
 
             writeDisabled(writer, isDisabled());
             
+            putPropertyNameIntoBeanValidationContext("selected");
+            
             Palette.this.validate.render(writer);
+            
+            removePropertyNameFromBeanValidationContext();
 
             for (Object value : getSelected())
             {
@@ -333,6 +354,8 @@ public class Palette extends AbstractField
             selected.add(objectValue);
         }
 
+        putPropertyNameIntoBeanValidationContext("selected");
+        
         try 
         {
             this.fieldValidationSupport.validate(selected, this.componentResources, this.validate);
@@ -343,6 +366,8 @@ public class Palette extends AbstractField
         {
             this.tracker.recordError(this, e.getMessage());
         }
+        
+        removePropertyNameFromBeanValidationContext();
     }
 
     private void writeDisabled(MarkupWriter writer, boolean disabled)

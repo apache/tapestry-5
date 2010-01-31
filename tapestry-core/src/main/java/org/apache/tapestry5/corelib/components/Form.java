@@ -21,6 +21,7 @@ import org.apache.tapestry5.corelib.internal.FormSupportImpl;
 import org.apache.tapestry5.corelib.internal.InternalFormSupport;
 import org.apache.tapestry5.corelib.mixins.RenderInformals;
 import org.apache.tapestry5.dom.Element;
+import org.apache.tapestry5.internal.BeanValidationContext;
 import org.apache.tapestry5.internal.BeanValidationContextImpl;
 import org.apache.tapestry5.internal.services.ComponentResultProcessorWrapper;
 import org.apache.tapestry5.internal.services.HeartbeatImpl;
@@ -178,10 +179,8 @@ public class Form implements ClientElement, FormValidationControl
     private String validationId;
 
     /**
-     * Object to validate during the form submission process. The value of this
-     * parameter is pushed as a {@link org.apache.tapestry5.services.BeanValidationContext} into the
-     * environment. This parameter should
-     * only be used in combination with the Bean Validation Library.
+     * Object to validate during the form submission process. The default is the Form component's container. 
+     * This parameter should only be used in combination with the Bean Validation Library.
      */
     @Parameter
     private Object validate;

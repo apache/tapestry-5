@@ -188,6 +188,8 @@ public class Select extends AbstractField
         tracker.recordInput(this, submittedValue);
 
         Object selectedValue = toValue(submittedValue);
+        
+        putPropertyNameIntoBeanValidationContext("value");
 
         try
         {
@@ -199,6 +201,8 @@ public class Select extends AbstractField
         {
             tracker.recordError(this, ex.getMessage());
         }
+        
+        removePropertyNameFromBeanValidationContext();
     }
 
     void afterRender(MarkupWriter writer)
@@ -209,8 +213,12 @@ public class Select extends AbstractField
     void beginRender(MarkupWriter writer)
     {
         writer.element("select", "name", getControlName(), "id", getClientId());
+        
+        putPropertyNameIntoBeanValidationContext("value");
 
         validate.render(writer);
+        
+        removePropertyNameFromBeanValidationContext();
 
         resources.renderInformalParameters(writer);
 

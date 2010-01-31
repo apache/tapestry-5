@@ -11,37 +11,18 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-package org.apache.tapestry5.internal;
+package org.apache.tapestry5.internal.bindings;
 
+import org.apache.tapestry5.Binding;
 
-public class BeanValidationContextImpl implements BeanValidationContext
+/**
+ * Internal marker interface for {@linkplain org.apache.tapestry5.internal.bindings.PropBinding}
+ *
+ */
+public interface InternalPropBinding extends Binding
 {
-    private Object bean;
-    private String currentProperty;
-
-    public BeanValidationContextImpl(Object bean)
-    {
-        this.bean = bean;
-    }
-
-    public Class getBeanType()
-    {
-        return bean==null?null:bean.getClass();
-    }
-
-    public Object getBeanInstance()
-    {
-        return bean;
-    }
-
-	public String getCurrentProperty() 
-	{
-		return currentProperty;
-	}
-
-	public void setCurrentProperty(String propertyName) 
-	{
-		this.currentProperty = propertyName;
-	}
-
+	/**
+	 * Returns the name of the property, if exists.
+	 */
+	String getPropertyName();
 }

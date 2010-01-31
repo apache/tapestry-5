@@ -14,21 +14,23 @@
 
 package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry5.PropertyConduit;
+import java.lang.annotation.Annotation;
+
+import org.apache.tapestry5.internal.InternalPropertyConduit;
 import org.apache.tapestry5.internal.util.IntegerRange;
 import org.apache.tapestry5.ioc.AnnotationProvider;
 import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
 
-import java.lang.annotation.Annotation;
-
 /**
  * Base class for {@link org.apache.tapestry5.PropertyConduit} instances created by the {@link
  * org.apache.tapestry5.services.PropertyConduitSource}.
  */
-public abstract class BasePropertyConduit implements PropertyConduit
+public abstract class BasePropertyConduit implements InternalPropertyConduit
 {
     private final Class propertyType;
+    
+    private final String propertyName;
 
     private final AnnotationProvider annotationProvider;
 
@@ -36,7 +38,7 @@ public abstract class BasePropertyConduit implements PropertyConduit
 
     private final TypeCoercer typeCoercer;
 
-    public BasePropertyConduit(Class propertyType, AnnotationProvider annotationProvider, String description,
+    public BasePropertyConduit(Class propertyType, String propertyName, AnnotationProvider annotationProvider, String description,
                                TypeCoercer typeCoercer)
     {
         Defense.notNull(propertyType, "propertyType");
@@ -45,6 +47,7 @@ public abstract class BasePropertyConduit implements PropertyConduit
         Defense.notNull(typeCoercer, "typeCoercer");
 
         this.propertyType = propertyType;
+        this.propertyName = propertyName;
         this.annotationProvider = annotationProvider;
         this.description = description;
         this.typeCoercer = typeCoercer;
@@ -64,6 +67,11 @@ public abstract class BasePropertyConduit implements PropertyConduit
     public final Class getPropertyType()
     {
         return propertyType;
+    }
+
+    public final String getPropertyName()
+    {
+        return propertyName;
     }
 
     public final IntegerRange range(int from, int to)

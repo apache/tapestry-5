@@ -18,6 +18,7 @@ import org.apache.tapestry5.Block;
 import org.apache.tapestry5.PropertyConduit;
 import org.apache.tapestry5.beaneditor.Validate;
 import org.apache.tapestry5.integration.app1.data.IntegerHolder;
+import org.apache.tapestry5.internal.InternalPropertyConduit;
 import org.apache.tapestry5.internal.bindings.PropBindingFactoryTest;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.internal.util.IntegerRange;
@@ -127,11 +128,14 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
     @Test
     public void question_dot_operator_for_object_type()
     {
-        PropertyConduit normal = source.create(CompositeBean.class, "simple.firstName");
-        PropertyConduit smart = source.create(CompositeBean.class, "simple?.firstName");
+        InternalPropertyConduit normal = (InternalPropertyConduit) source.create(CompositeBean.class, "simple.firstName");
+        InternalPropertyConduit smart = (InternalPropertyConduit) source.create(CompositeBean.class, "simple?.firstName");
 
         CompositeBean bean = new CompositeBean();
         bean.setSimple(null);
+        
+        assertEquals(normal.getPropertyName(), "firstName");
+        assertEquals(smart.getPropertyName(), "firstName");
 
         try
         {
@@ -163,7 +167,9 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
     @Test
     public void method_names_are_matched_caselessly()
     {
-        PropertyConduit conduit = source.create(CompositeBean.class, "GETSIMPLE().firstName");
+        InternalPropertyConduit conduit = (InternalPropertyConduit) source.create(CompositeBean.class, "GETSIMPLE().firstName");
+        
+        assertEquals(conduit.getPropertyName(), "firstName");
 
         CompositeBean bean = new CompositeBean();
         SimpleBean inner = new SimpleBean();

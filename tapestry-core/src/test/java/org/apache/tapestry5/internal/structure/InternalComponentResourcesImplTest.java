@@ -18,6 +18,7 @@ import org.apache.tapestry5.Binding;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.internal.InternalComponentResources;
+import org.apache.tapestry5.internal.bindings.InternalPropBinding;
 import org.apache.tapestry5.internal.services.Instantiator;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
@@ -268,6 +269,56 @@ public class InternalComponentResourcesImplTest extends InternalBaseTestCase
                                                                                   null, ins, false);
 
         resources.addPageLifecycleListener(listener);
+
+        verify();
+    }
+    
+    @Test
+    public void get_property_name()
+    {
+        Component component = mockComponent();
+        Instantiator ins = mockInstantiator(component);
+        ComponentModel model = mockComponentModel();
+        ComponentPageElement element = mockComponentPageElement();
+        Page page = mockPage();
+        Binding binding = mockBinding();
+        
+        train_getModel(ins, model);
+
+        replay();
+
+        InternalComponentResources resources = new InternalComponentResourcesImpl(page, element, null, null, null,
+                                                                                  null, ins, false);
+        
+        resources.bindParameter("bar", binding);
+
+        assertNull(resources.getPropertyName("bar"));
+
+        verify();
+    }
+    
+    @Test
+    public void get_property_name_internal_prop_binding()
+    {
+        Component component = mockComponent();
+        Instantiator ins = mockInstantiator(component);
+        ComponentModel model = mockComponentModel();
+        ComponentPageElement element = mockComponentPageElement();
+        Page page = mockPage();
+        InternalPropBinding binding = newMock(InternalPropBinding.class);
+        
+        train_getModel(ins, model);
+        
+        expect(binding.getPropertyName()).andReturn("foo");
+
+        replay();
+
+        InternalComponentResources resources = new InternalComponentResourcesImpl(page, element, null, null, null,
+                                                                                  null, ins, false);
+        
+        resources.bindParameter("bar", binding);
+
+        assertEquals(resources.getPropertyName("bar"), "foo");
 
         verify();
     }

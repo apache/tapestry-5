@@ -25,6 +25,7 @@ import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.annotation.Annotation;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -472,6 +473,40 @@ public class TapestryInternalUtils
                 return asset.toString();
             }
         };
+    }
+    
+    public static InternalPropertyConduit toInternalPropertyConduit(final PropertyConduit conduit)
+    {
+    	if(conduit instanceof InternalPropertyConduit)
+    		return (InternalPropertyConduit) conduit;
+    	
+    	return new InternalPropertyConduit() {
+			
+			public <T extends Annotation> T getAnnotation(Class<T> annotationClass) 
+			{
+				return conduit.getAnnotation(annotationClass);
+			}
+			
+			public void set(Object instance, Object value) 
+			{
+				conduit.set(instance, value);
+			}
+			
+			public Class getPropertyType() 
+			{
+				return conduit.getPropertyType();
+			}
+			
+			public Object get(Object instance) 
+			{
+				return conduit.get(instance);
+			}
+			
+			public String getPropertyName() 
+			{
+				return null;
+			}
+		};
     }
 
     /**

@@ -10,6 +10,9 @@
                 <t:pagelink page="FormValidationDemo">Form Validation Demo</t:pagelink>
             </li>
             <li>
+                <t:pagelink page="FormClientValidationDemo">Form Client Validation Demo</t:pagelink>
+            </li>
+            <li>
                 <t:pagelink page="BeanEditFormValidationDemo">BeanEditForm Validation Demo</t:pagelink>
             </li>
             <li>

@@ -20,8 +20,11 @@ import org.apache.tapestry5.corelib.internal.InternalMessages;
 import org.apache.tapestry5.corelib.mixins.DiscardBody;
 import org.apache.tapestry5.corelib.mixins.RenderDisabled;
 import org.apache.tapestry5.corelib.mixins.RenderInformals;
+import org.apache.tapestry5.internal.BeanValidationContext;
+import org.apache.tapestry5.internal.InternalComponentResources;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.ComponentDefaultProvider;
+import org.apache.tapestry5.services.Environment;
 import org.apache.tapestry5.services.FormSupport;
 
 import java.io.Serializable;
@@ -54,6 +57,9 @@ public abstract class AbstractField implements Field
 
     @Environmental
     private ValidationDecorator decorator;
+    
+    @Inject
+    private Environment environment;
 
 
     static class Setup implements ComponentAction<AbstractField>, Serializable
@@ -245,5 +251,29 @@ public abstract class AbstractField implements Field
     public boolean isRequired()
     {
         return false;
+    }
+    
+    protected void putPropertyNameIntoBeanValidationContext(String parameterName)
+    {
+        String propertyName = ((InternalComponentResources)resources).getPropertyName(parameterName);
+        
+        BeanValidationContext beanValidationContext = environment.peek(BeanValidationContext.class);
+        
+        if(beanValidationContext == null) return;
+
+        //If field is inside BeanEditForm, then property is already set
+        if(beanValidationContext.getCurrentProperty()==null)
+        {
+        	beanValidationContext.setCurrentProperty(propertyName);
+        }
+    }
+    
+    protected void removePropertyNameFromBeanValidationContext()
+    {   
+    	BeanValidationContext beanValidationContext = environment.peek(BeanValidationContext.class);
+    	
+    	if(beanValidationContext == null) return;
+    	
+    	beanValidationContext.setCurrentProperty(null);
     }
 }

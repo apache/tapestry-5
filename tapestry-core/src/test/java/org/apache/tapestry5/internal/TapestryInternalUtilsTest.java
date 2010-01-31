@@ -15,6 +15,7 @@
 package org.apache.tapestry5.internal;
 
 import org.apache.tapestry5.*;
+import org.apache.tapestry5.beaneditor.Width;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.Resource;
@@ -437,5 +438,42 @@ public class TapestryInternalUtilsTest extends InternalBaseTestCase
         assertSame(asset2.getResource(), resource);
 
         verify();
+    }
+    
+    
+    @Test
+    public void to_internal_property_conduit_no_wrapper_needed()
+    {
+    	InternalPropertyConduit conduit2 = newMock(InternalPropertyConduit.class);
+    	
+    	assertSame(TapestryInternalUtils.toInternalPropertyConduit(conduit2), conduit2);
+    }
+    
+    @Test
+    public void to_internal_property_conduit_wrapper()
+    {
+    	PropertyConduit conduit = mockPropertyConduit();
+    	
+    	Integer result = 123;
+    	Width width = newMock(Width.class);
+    	
+    	
+    	expect(conduit.get("")).andReturn(result);
+    	expect(conduit.getAnnotation(Width.class)).andReturn(width);
+    	expect(conduit.getPropertyType()).andReturn(Integer.class);
+    	conduit.set("", 345);
+    	
+    	replay();
+    	
+    	InternalPropertyConduit conduit2 = TapestryInternalUtils.toInternalPropertyConduit(conduit);
+    	
+    	assertNull(conduit2.getPropertyName());
+    	
+    	assertSame(conduit2.get(""), result);
+    	assertSame(conduit2.getAnnotation(Width.class), width);
+    	assertSame(conduit2.getPropertyType(), Integer.class);
+    	conduit2.set("", 345);
+    	
+    	verify();
     }
 }

@@ -16,3 +16,49 @@ Tapestry.Validator.notnull = function(field, message, spec)
 {
 	Tapestry.Validator.required(field, message);
 };
+
+Tapestry.Validator.isnull = function(field, message, spec)
+{
+    field.addValidator(function(value)
+    {
+    	if (value != null) 
+    		throw message;
+     });
+};
+
+Tapestry.Validator.maxnumber = function(field, message, spec)
+{
+	Tapestry.Validator.max(field, message, spec.value);
+};
+
+Tapestry.Validator.minnumber = function(field, message, spec)
+{
+	Tapestry.Validator.min(field, message, spec.value);
+};
+
+Tapestry.Validator.size = function(field, message, spec)
+{
+    field.addValidator(function(value)
+    {
+    	if (Object.isString(value))
+    	{
+        	if (value.length < spec.min) throw message;
+        	if (value.length > spec.max) throw message;
+
+    	}
+    	else if (Object.isArray(value))
+    	{	
+    		if(this.tagName == "SELECT")
+    		{
+    			var selectedOptions = Element.childElements(this).size();
+    			if (selectedOptions < spec.min) throw message;
+    			if (selectedOptions > spec.max) throw message;
+    		}
+    	}
+     });
+};
+
+Tapestry.Validator.pattern = function(field, message, spec)
+{
+	Tapestry.Validator.regexp(field, message, spec.pattern);
+};

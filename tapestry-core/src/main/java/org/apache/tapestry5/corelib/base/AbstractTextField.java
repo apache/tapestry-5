@@ -168,9 +168,13 @@ public abstract class AbstractTextField extends AbstractField
         }
 
         writeFieldTag(writer, value);
+        
+        putPropertyNameIntoBeanValidationContext("value");
 
         translate.render(writer);
         validate.render(writer);
+        
+        removePropertyNameFromBeanValidationContext();
 
         resources.renderInformalParameters(writer);
 
@@ -201,6 +205,8 @@ public abstract class AbstractTextField extends AbstractField
         try
         {
             Object translated = fieldValidationSupport.parseClient(rawValue, resources, translate, nulls);
+            
+            putPropertyNameIntoBeanValidationContext("value");
 
             fieldValidationSupport.validate(translated, resources, validate);
 
@@ -214,7 +220,10 @@ public abstract class AbstractTextField extends AbstractField
         {
             tracker.recordError(this, ex.getMessage());
         }
+        
+        removePropertyNameFromBeanValidationContext();
     }
+    
 
     /**
      * Should blank input be ignored (after validation)?  This will be true for {@link

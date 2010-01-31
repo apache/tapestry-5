@@ -16,7 +16,12 @@ package org.apache.tapestry5.beanvalidator;
 import javax.validation.MessageInterpolator;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Null;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 import javax.validation.groups.Default;
 
 import org.apache.tapestry5.Asset;
@@ -97,7 +102,12 @@ public class BeanValidatorModule
 	public static void contributeClientConstraintDescriptorSource(
 			final Configuration<ClientConstraintDescriptor> configuration) 
 	{
+		configuration.add(new ClientConstraintDescriptor(Max.class, "maxnumber", "value"));
+		configuration.add(new ClientConstraintDescriptor(Min.class, "minnumber", "value"));
 		configuration.add(new ClientConstraintDescriptor(NotNull.class, "notnull"));
+		configuration.add(new ClientConstraintDescriptor(Null.class, "isnull"));
+		configuration.add(new ClientConstraintDescriptor(Pattern.class, "pattern", "regexp"));
+		configuration.add(new ClientConstraintDescriptor(Size.class, "size", "min", "max"));
 	}
 	
 	public void contributeMarkupRenderer(

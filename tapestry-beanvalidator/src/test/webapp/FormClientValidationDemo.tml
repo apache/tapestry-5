@@ -1,6 +1,6 @@
 <html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd">
     <body>
-        <t:form clientValidation="clientValidationEnabled">
+        <t:form>
         	<t:errors/>
         	
         	<br/>
@@ -12,11 +12,11 @@
         	<t:textfield t:id="secretPassword" value="password"/>
         	
         	<br/>
-        	<t:palette t:id="programmingLanguages" model="literal:Java,C,Ruby,Python,Perl" selected="languages" encoder="stringValueEncoder"/>
-        	
+        	<t:palette t:id="programmingLanguages" model="literal:Java,C,Ruby,Python,Perl" selected="languages" encoder="stringValueEncoder"/>       
+        		
         	<br/>
-        	<t:select t:id="favoriteColors" model="literal:Red,Green,Blue" value="color"/>
-        	
+        	<t:select t:id="favoriteColors" model="literal:Red,Green,Blue" value="color"/>   
+        	     	
         	<br/>
         	<t:datefield t:id="birthDay" value="date" format="dd.MM.yyyy"/>
 

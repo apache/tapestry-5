@@ -27,6 +27,7 @@ import org.apache.tapestry5.EventContext;
 import org.apache.tapestry5.Link;
 import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.internal.InternalComponentResources;
+import org.apache.tapestry5.internal.bindings.InternalPropBinding;
 import org.apache.tapestry5.internal.services.Instantiator;
 import org.apache.tapestry5.internal.transform.ParameterConduit;
 import org.apache.tapestry5.ioc.AnnotationProvider;
@@ -512,5 +513,19 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
 
         conduits.put(parameterName, conduit);
     }
+    
+	public String getPropertyName(String parameterName) 
+	{
+        Binding binding = getBinding(parameterName);
+        
+        if(binding == null) return null;
+        
+    	if(binding instanceof InternalPropBinding)
+    	{
+    		return ((InternalPropBinding) binding).getPropertyName();
+    	}
+        
+        return null;
+	}
 
 }

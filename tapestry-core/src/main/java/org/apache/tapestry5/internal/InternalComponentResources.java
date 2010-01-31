@@ -15,6 +15,7 @@
 package org.apache.tapestry5.internal;
 
 import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.internal.bindings.PropBinding;
 import org.apache.tapestry5.internal.services.PersistentFieldManager;
 import org.apache.tapestry5.internal.structure.Page;
 import org.apache.tapestry5.internal.structure.PageResetListener;
@@ -87,4 +88,15 @@ public interface InternalComponentResources extends ComponentResources,
      * @since 5.2.0
      */
     void setParameterConduit(String parameterName, ParameterConduit conduit);
+    
+    
+    /**
+     * Returns the name of the bound property if {@link PropBinding} is used and the expression points to a property on a bean (e.g. user.name).
+     * Otherwise this method returns null.
+     * 
+     * @param parameterName name of the parameter
+     * 
+     * @since 5.2.0
+     */
+    String getPropertyName(String parameterName);
 }

@@ -19,6 +19,7 @@ import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.beaneditor.BeanModel;
 import org.apache.tapestry5.beaneditor.PropertyModel;
+import org.apache.tapestry5.internal.BeanValidationContext;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.internal.util.TapestryException;
@@ -207,6 +208,13 @@ public class PropertyEditor
         };
 
         environment.push(PropertyEditContext.class, context);
+        
+        BeanValidationContext beanValidationContext = environment.peek(BeanValidationContext.class);
+        
+        if(beanValidationContext != null)
+        {
+        	beanValidationContext.setCurrentProperty(propertyName);
+        }
     }
 
     /**
@@ -246,6 +254,7 @@ public class PropertyEditor
      */
     Block beginRender()
     {
+        
         Block override = overrides.getOverrideBlock(propertyModel.getId());
 
         if (override != null)
@@ -271,6 +280,7 @@ public class PropertyEditor
 
             throw new TapestryException(message, resources.getLocation(), ex);
         }
+        
     }
 
     /**
