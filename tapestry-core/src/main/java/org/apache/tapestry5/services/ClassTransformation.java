@@ -532,7 +532,7 @@ public interface ClassTransformation extends AnnotationProvider
     /**
      * Adds method advice for the indicated method.
      * 
-     * @deprecated Use {@link TransformMethod#advise(ComponentMethodAdvice)} instead
+     * @deprecated Use {@link TransformMethod#addAdvice(ComponentMethodAdvice)} instead
      */
     void advise(TransformMethodSignature methodSignature, ComponentMethodAdvice advice);
 

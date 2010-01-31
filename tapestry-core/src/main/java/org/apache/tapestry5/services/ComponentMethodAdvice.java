@@ -19,7 +19,7 @@ package org.apache.tapestry5.services;
  * method parameters. After invoking {@link org.apache.tapestry5.services.ComponentMethodInvocation#proceed()}, the
  * advice may query and override thrown exceptions or the return value of the invocation.
  * 
- * @see TransformMethod#advise(ComponentMethodAdvice)
+ * @see TransformMethod#addAdvice(ComponentMethodAdvice)
  */
 public interface ComponentMethodAdvice
 {

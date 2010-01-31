@@ -43,14 +43,7 @@ import org.apache.tapestry5.ioc.util.BodyBuilder;
 import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.runtime.Component;
-import org.apache.tapestry5.services.ComponentMethodAdvice;
-import org.apache.tapestry5.services.ComponentValueProvider;
-import org.apache.tapestry5.services.FieldFilter;
-import org.apache.tapestry5.services.MethodFilter;
-import org.apache.tapestry5.services.TransformField;
-import org.apache.tapestry5.services.TransformMethod;
-import org.apache.tapestry5.services.TransformMethodSignature;
-import org.apache.tapestry5.services.TransformUtils;
+import org.apache.tapestry5.services.*;
 import org.slf4j.Logger;
 
 /**
@@ -58,6 +51,9 @@ import org.slf4j.Logger;
  */
 public final class InternalClassTransformationImpl implements InternalClassTransformation
 {
+    public static final MethodSignature INVOKE_SIGNATURE = new MethodSignature(
+            MethodInvocationResult.class, "invoke", new Class[]
+            { Object.class, Object[].class }, null);
 
     private static final int INIT_BUFFER_SIZE = 100;
 
@@ -87,6 +83,8 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
         private ComponentMethodInvocationBuilder builder;
 
+        private MethodAccess access;
+
         TransformMethodImpl(CtMethod method, boolean added)
         {
             this.method = method;
@@ -113,7 +111,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
             return sig;
         }
 
-        public void advise(ComponentMethodAdvice advice)
+        public void addAdvice(ComponentMethodAdvice advice)
         {
             failIfFrozen();
 
@@ -125,9 +123,104 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
             builder.addAdvice(advice);
         }
 
+        public MethodAccess getAccess()
+        {
+            failIfFrozen();
+
+            if (access == null)
+                access = createMethodAccess();
+
+            return access;
+        }
+
+        private MethodAccess createMethodAccess()
+        {
+            if (isPublic())
+                return createPublicMethodAccess();
+
+            return null;
+        }
+
+        private boolean isPublic()
+        {
+            return Modifier.isPublic(sig.getModifiers());
+        }
+
+        private MethodAccess createPublicMethodAccess()
+        {
+
+            ClassFab cf = classFactory
+                    .newClass(ClassFabUtils.generateClassName(MethodAccess.class),
+                            AbstractMethodAccess.class);
+
+            boolean isVoid = sig.getReturnType().equals("void");
+
+            BodyBuilder builder = new BodyBuilder().begin();
+
+            builder.addln("%s instance = (%<s) $1;", getClassName());
+
+            builder.addln("try").begin();
+
+            if (!isVoid)
+            {
+                builder.add("return success(($w) ");
+            }
+
+            // Call the instance method, even if its void.
+
+            builder.add("instance.%s(", sig.getMethodName());
+
+            int p = 0;
+
+            for (String type : sig.getParameterTypes())
+            {
+                if (p != 0)
+                    builder.add(", ");
+
+                String ref = String.format("$2[%d]", p++);
+                builder.add(ClassFabUtils.castReference(ref, type));
+                p++;
+            }
+
+            // Balance the call to success()
+            if (!isVoid)
+                builder.add(")");
+
+            builder.addln(");");
+
+            if (isVoid)
+                builder.addln("return success(null);");
+
+            builder.end(); // try
+            builder.addln("catch (java.lang.RuntimeException ex) { throw ex; }");
+            builder.addln("catch (java.lang.Exception ex) { return fail(ex); }");
+
+            builder.end();
+
+            cf.addMethod(Modifier.PUBLIC, INVOKE_SIGNATURE, builder.toString());
+
+            cf.addToString(String.format("MethodAccess[method %s of class %s]", sig
+                    .getMediumDescription(), getClassName()));
+
+            Class accessClass = cf.createClass();
+
+            try
+            {
+                Object accessInstance = accessClass.newInstance();
+
+                return (MethodAccess) accessInstance;
+            }
+            catch (Exception ex)
+            {
+                throw new RuntimeException(ex);
+            }
+        }
+
         public void extend(String body)
         {
             failIfFrozen();
+
+            Defense.notBlank(body, "body");
 
             try
             {
@@ -1519,7 +1612,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
     public void advise(TransformMethodSignature methodSignature, ComponentMethodAdvice advice)
     {
-        getMethod(methodSignature).advise(advice);
+        getMethod(methodSignature).addAdvice(advice);
     }
 
     public boolean isMethodOverride(TransformMethodSignature methodSignature)

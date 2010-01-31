@@ -16,17 +16,19 @@ package org.apache.tapestry5.services;
 
 import static org.apache.tapestry5.ioc.internal.util.Defense.notBlank;
 
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
 import org.apache.tapestry5.internal.InternalConstants;
+import org.apache.tapestry5.ioc.services.ClassFabUtils;
 
 /**
  * A representation of a method signature, which consists of its name, modifiers (primarily,
  * visibility), return type,
  * parameter types, and declared exception types.
  * <p/>
- * Types are stored as class names (or primitive names) because the signature is used with
- * {@link ClassTransformation} (which operates on as-yet unloaded classes).
+ * Types are stored as class names (or primitive names) because the signature is used with {@link ClassTransformation}
+ * (which operates on as-yet unloaded classes).
  */
 public class TransformMethodSignature implements Comparable<TransformMethodSignature>
 {
