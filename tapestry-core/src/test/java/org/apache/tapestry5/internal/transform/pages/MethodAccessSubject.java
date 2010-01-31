@@ -56,4 +56,17 @@ public class MethodAccessSubject
 
         throw new SQLException("From publicVoidThrowsException()");
     }
+
+    @SuppressWarnings("unused")
+    private String privateMethod(String input, int count)
+    {
+        marker = "privateMethod";
+
+        StringBuilder builder = new StringBuilder();
+
+        for (int i = 0; i < count; i++)
+            builder.append(input);
+
+        return builder.toString();
+    }
 }

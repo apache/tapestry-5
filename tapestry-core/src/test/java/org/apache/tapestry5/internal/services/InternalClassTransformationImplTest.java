@@ -675,7 +675,57 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
         assertEquals(pi.operate(99), 100);
 
         assertEquals(access.get(instance, "marker"), "incrementer(99)");
+    }
 
+    public interface ProcessStringAndInteger
+    {
+        String process(String input, int value);
+    }
+
+    @Test
+    public void access_to_private_method() throws Exception
+    {
+        Object instance = transform(MethodAccessSubject.class, new ComponentClassTransformWorker()
+        {
+            public void transform(ClassTransformation transformation, MutableComponentModel model)
+            {
+                transformation.addImplementedInterface(ProcessStringAndInteger.class);
+
+                TransformMethod targetMethod = transformation
+                        .getMethod(new TransformMethodSignature(Modifier.PRIVATE,
+                                "java.lang.String", "privateMethod", new String[]
+                                { "java.lang.String", "int" }, null));
+
+                final MethodAccess targetMethodAccess = targetMethod.getAccess();
+
+                TransformMethodSignature processSig = new TransformMethodSignature(Modifier.PUBLIC,
+                        "java.lang.String", "process", new String[]
+                        { "java.lang.String", "int" }, null);
+
+                TransformMethod process = transformation.getMethod(processSig);
+
+                process.addAdvice(new ComponentMethodAdvice()
+                {
+                    public void advise(ComponentMethodInvocation invocation)
+                    {
+                        // Don't even bother with proceed() this time, which is OK (but
+                        // somewhat rare).
+
+                        MethodInvocationResult result = targetMethodAccess.invoke(invocation
+                                .getInstance(), invocation.getParameter(0), invocation
+                                .getParameter(1));
+
+                        invocation.overrideResult(result.getReturnValue());
+                    }
+                });
+            }
+        });
+
+        ProcessStringAndInteger p = (ProcessStringAndInteger) instance;
+
+        assertEquals(p.process("Tapestry!", 2), "Tapestry!Tapestry!");
+
+        assertEquals(access.get(instance, "marker"), "privateMethod");
     }
 
     @Test

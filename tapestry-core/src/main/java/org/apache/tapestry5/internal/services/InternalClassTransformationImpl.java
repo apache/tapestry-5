@@ -17,6 +17,7 @@ package org.apache.tapestry5.internal.services;
 import java.lang.annotation.Annotation;
 import java.lang.annotation.Inherited;
 import java.lang.reflect.Modifier;
+import java.util.Arrays;
 import java.util.Formatter;
 import java.util.List;
 import java.util.Map;
@@ -138,7 +139,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
             if (isPublic())
                 return createPublicMethodAccess();
 
-            return null;
+            return createNonPublicMethodAccess();
         }
 
         private boolean isPublic()
@@ -148,11 +149,16 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
         private MethodAccess createPublicMethodAccess()
         {
+            // For a public method, given the instance, we can just invoke the method directly
+            // from the MethodAccess object.
 
-            ClassFab cf = classFactory
-                    .newClass(ClassFabUtils.generateClassName(MethodAccess.class),
-                            AbstractMethodAccess.class);
+            String accessTarget = "instance." + sig.getMethodName();
 
+            return createMethodAccessForTarget(accessTarget, false);
+        }
+
+        private MethodAccess createMethodAccessForTarget(String accessTarget, boolean passInstance)
+        {
             boolean isVoid = sig.getReturnType().equals("void");
 
             BodyBuilder builder = new BodyBuilder().begin();
@@ -166,20 +172,23 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
                 builder.add("return success(($w) ");
             }
 
-            // Call the instance method, even if its void.
+            // Call the target, even if the eventual method is void
 
-            builder.add("instance.%s(", sig.getMethodName());
+            builder.add(accessTarget);
+            builder.add("(");
+
+            if (passInstance)
+                builder.add("instance");
 
             int p = 0;
 
             for (String type : sig.getParameterTypes())
             {
-                if (p != 0)
+                if (passInstance || p != 0)
                     builder.add(", ");
 
                 String ref = String.format("$2[%d]", p++);
                 builder.add(ClassFabUtils.castReference(ref, type));
-                p++;
             }
 
             // Balance the call to success()
@@ -197,7 +206,16 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
             builder.end();
 
-            cf.addMethod(Modifier.PUBLIC, INVOKE_SIGNATURE, builder.toString());
+            return instantiateMethodAccessFromBody(builder.toString());
+        }
+
+        private MethodAccess instantiateMethodAccessFromBody(String body)
+        {
+            ClassFab cf = classFactory
+                    .newClass(ClassFabUtils.generateClassName(MethodAccess.class),
+                            AbstractMethodAccess.class);
+
+            cf.addMethod(Modifier.PUBLIC, INVOKE_SIGNATURE, body);
 
             cf.addToString(String.format("MethodAccess[method %s of class %s]", sig
                     .getMediumDescription(), getClassName()));
@@ -214,6 +232,66 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
             {
                 throw new RuntimeException(ex);
             }
+        }
+
+        private MethodAccess createNonPublicMethodAccess()
+        {
+            // As with Java inner classes, we have to create a static bridge method.
+
+            String staticAccessMethodName = createStaticAccessMethodForNonPublicMethod();
+
+            // Have the MethodAccess object call the static method and pass the
+            // instance object as the first parameter. The static method will then
+            // invoke the non-public method on the passed instance.
+
+            return createMethodAccessForTarget(String.format("%s#%s", getClassName(),
+                    staticAccessMethodName), true);
+        }
+
+        /**
+         * The static method takes the same parameters as the main method, but takes
+         * an instance object first. Invoking the static method turns into an invocation
+         * of the proper method of the instance object.
+         * 
+         * @return the name of the created static access method
+         */
+        private String createStaticAccessMethodForNonPublicMethod()
+        {
+            List<String> parameterTypes = CollectionFactory.newList(getClassName());
+            parameterTypes.addAll(Arrays.asList(sig.getParameterTypes()));
+
+            String methodName = newMemberName("access", sig.getMethodName());
+
+            TransformMethodSignature accessMethodSignature = new TransformMethodSignature(
+                    Modifier.PUBLIC + Modifier.STATIC, sig.getReturnType(), methodName,
+                    parameterTypes.toArray(new String[0]), sig.getExceptionTypes());
+
+            boolean isVoid = sig.getReturnType().equals("void");
+
+            BodyBuilder builder = new BodyBuilder();
+
+            builder.begin();
+
+            if (!isVoid)
+                builder.add("return ");
+
+            builder.add("$1.%s(", sig.getMethodName());
+
+            for (int i = 0; i < sig.getParameterTypes().length; i++)
+            {
+                if (i > 0)
+                    builder.add(", ");
+
+                builder.add("$%d", i + 2);
+            }
+
+            builder.addln(");");
+
+            builder.end();
+
+            addMethod(accessMethodSignature, builder.toString());
+
+            return methodName;
         }
 
         public void extend(String body)
