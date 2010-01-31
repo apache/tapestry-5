@@ -1,10 +1,10 @@
-// Copyright 2008 The Apache Software Foundation
+// Copyright 2008, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,6 +15,7 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.services.ComponentMethodAdvice;
 import org.apache.tapestry5.services.ComponentMethodInvocation;
 
@@ -22,7 +23,7 @@ public abstract class AbstractComponentMethodInvocation implements ComponentMeth
 {
     private final ComponentMethodInvocationInfo info;
 
-    private final ComponentResources resources;
+    private final Component instance;
 
     private int adviceIndex = 0;
 
@@ -30,15 +31,20 @@ public abstract class AbstractComponentMethodInvocation implements ComponentMeth
 
     private Object result;
 
-    public AbstractComponentMethodInvocation(ComponentMethodInvocationInfo info, ComponentResources resources)
+    public AbstractComponentMethodInvocation(ComponentMethodInvocationInfo info, Component instance)
     {
         this.info = info;
-        this.resources = resources;
+        this.instance = instance;
+    }
+
+    public Component getInstance()
+    {
+        return instance;
     }
 
     public ComponentResources getComponentResources()
     {
-        return resources;
+        return instance.getComponentResources();
     }
 
     public String getMethodName()
@@ -62,7 +68,7 @@ public abstract class AbstractComponentMethodInvocation implements ComponentMeth
     }
 
     /**
-     * This first call is to the first advice.  When we run out of advice, we re-invoke.
+     * This first call is to the first advice. When we run out of advice, we re-invoke.
      */
     public void proceed()
     {
@@ -109,10 +115,9 @@ public abstract class AbstractComponentMethodInvocation implements ComponentMeth
             }
         }
 
-        throw new IllegalArgumentException(
-                String.format("Exception class %s is not a declared exception type for method %s().",
-                              thrown.getClass(),
-                              info.getMethodName()));
+        throw new IllegalArgumentException(String.format(
+                "Exception class %s is not a declared exception type for method %s().", thrown
+                        .getClass(), info.getMethodName()));
     }
 
     public Object getResult()
@@ -126,14 +131,11 @@ public abstract class AbstractComponentMethodInvocation implements ComponentMeth
         {
             Class expectedType = info.getEffectiveResultType();
 
-            if (!expectedType.isInstance(newResult))
-            {
-                throw new IllegalArgumentException(
-                        String.format("Invalid result value (%s) does not match return type %s for method %s.",
-                                      newResult,
-                                      expectedType.getName(),
-                                      info.getMethodName()));
-            }
+            if (!expectedType.isInstance(newResult)) { throw new IllegalArgumentException(
+                    String
+                            .format(
+                                    "Invalid result value (%s) does not match return type %s for method %s.",
+                                    newResult, expectedType.getName(), info.getMethodName())); }
         }
 
         result = newResult;

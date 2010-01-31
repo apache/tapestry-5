@@ -1,10 +1,10 @@
-// Copyright 2008 The Apache Software Foundation
+// Copyright 2008, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,21 +14,26 @@
 
 package org.apache.tapestry5.internal.services;
 
-import javassist.*;
-import org.apache.tapestry5.ComponentResources;
+import java.lang.reflect.Modifier;
+import java.util.concurrent.atomic.AtomicLong;
+
+import javassist.CannotCompileException;
+import javassist.CtClass;
+import javassist.CtConstructor;
+import javassist.CtField;
+import javassist.CtMethod;
+
 import org.apache.tapestry5.ioc.internal.services.CtClassSource;
 import org.apache.tapestry5.ioc.services.ClassFabUtils;
 import org.apache.tapestry5.ioc.util.BodyBuilder;
+import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.services.ComponentMethodAdvice;
 import org.apache.tapestry5.services.TransformMethodSignature;
-
-import java.lang.reflect.Modifier;
-import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Used by {@link org.apache.tapestry5.internal.services.InternalClassTransformationImpl} to manage adding method
  * invocation advice to arbitrary component methods.
- *
+ * 
  * @see org.apache.tapestry5.ioc.MethodAdvice
  */
 class ComponentMethodInvocationBuilder
@@ -59,9 +64,8 @@ class ComponentMethodInvocationBuilder
     }
 
     public ComponentMethodInvocationBuilder(InternalClassTransformation transformation,
-                                            ComponentClassCache componentClassCache,
-                                            TransformMethodSignature advisedMethod,
-                                            CtClassSource classSource)
+            ComponentClassCache componentClassCache, TransformMethodSignature advisedMethod,
+            CtClassSource classSource)
     {
         this.transformation = transformation;
         this.advisedMethod = advisedMethod;
@@ -69,9 +73,11 @@ class ComponentMethodInvocationBuilder
 
         info = new ComponentMethodInvocationInfo(advisedMethod, componentClassCache);
 
-        invocationClassName = this.transformation.getClassName() + "$" + this.advisedMethod.getMethodName() + "$invocation_" + nextUID();
+        invocationClassName = this.transformation.getClassName() + "$"
+                + this.advisedMethod.getMethodName() + "$invocation_" + nextUID();
 
-        invocationCtClass = this.classSource.newClass(invocationClassName, AbstractComponentMethodInvocation.class);
+        invocationCtClass = this.classSource.newClass(invocationClassName,
+                AbstractComponentMethodInvocation.class);
     }
 
     public void addAdvice(ComponentMethodAdvice advice)
@@ -112,16 +118,14 @@ class ComponentMethodInvocationBuilder
 
     private void rebuildOriginalMethod()
     {
-        String methodInfoField = transformation.addInjectedField(ComponentMethodInvocationInfo.class,
-                                                                 advisedMethod.getMethodName() + "Info",
-                                                                 info);
+        String methodInfoField = transformation.addInjectedField(
+                ComponentMethodInvocationInfo.class, advisedMethod.getMethodName() + "$info", info);
 
         String componentResourcesField = transformation.getResourcesFieldName();
 
         BodyBuilder builder = new BodyBuilder().begin();
 
-        builder.addln("%s invocation = new %<s(%s, %s, $$);", invocationClassName, methodInfoField,
-                      componentResourcesField);
+        builder.addln("%s invocation = new %<s(%s, $0, $$);", invocationClassName, methodInfoField);
 
         // Off into the first MethodAdvice
 
@@ -138,7 +142,7 @@ class ComponentMethodInvocationBuilder
                 String name = "ex" + i;
 
                 builder.addln("%s %s = (%1$s) invocation.getThrown(%s.getExceptionType(%d));",
-                              type, name, methodInfoField, i);
+                        type, name, methodInfoField, i);
                 builder.addln("if (%s != null) throw %<s;", name);
             }
         }
@@ -147,10 +151,9 @@ class ComponentMethodInvocationBuilder
 
         if (!returnType.equals("void"))
         {
-            builder.addln("return %s;",
-                          ClassFabUtils.castReference("invocation.getResult()", returnType));
+            builder.addln("return %s;", ClassFabUtils.castReference("invocation.getResult()",
+                    returnType));
         }
-
 
         builder.end();
 
@@ -158,13 +161,15 @@ class ComponentMethodInvocationBuilder
         transformation.addMethod(advisedMethod, builder.toString());
     }
 
-    private void implementInvokeAdvisedMethod(String advisedMethodName) throws CannotCompileException
+    private void implementInvokeAdvisedMethod(String advisedMethodName)
+            throws CannotCompileException
     {
         BodyBuilder builder = new BodyBuilder().begin();
 
         boolean isVoid = advisedMethod.getReturnType().equals("void");
 
-        builder.addln("%s component = (%<s) getComponentResources().getComponent();", transformation.getClassName());
+        builder.addln("%s component = (%<s) getComponentResources().getComponent();",
+                transformation.getClassName());
 
         String[] exceptionTypes = advisedMethod.getExceptionTypes();
         int exceptionCount = exceptionTypes.length;
@@ -172,20 +177,23 @@ class ComponentMethodInvocationBuilder
         if (exceptionCount > 0)
             builder.add("try").begin();
 
-        if (!isVoid) builder.add("overrideResult(($w) ");
+        if (!isVoid)
+            builder.add("overrideResult(($w) ");
 
         builder.add("component.%s(", advisedMethodName);
 
         for (int i = 0; i < advisedMethod.getParameterTypes().length; i++)
         {
-            if (i > 0) builder.add(", ");
+            if (i > 0)
+                builder.add(", ");
 
             builder.add("%s%d", FIELD_NAME, i);
         }
 
         builder.add(")");
 
-        if (!isVoid) builder.add(")");
+        if (!isVoid)
+            builder.add(")");
 
         builder.addln(";");
 
@@ -201,8 +209,8 @@ class ComponentMethodInvocationBuilder
 
         builder.end();
 
-        CtMethod method = new CtMethod(CtClass.voidType, "invokeAdvisedMethod",
-                                       new CtClass[0], invocationCtClass);
+        CtMethod method = new CtMethod(CtClass.voidType, "invokeAdvisedMethod", new CtClass[0],
+                invocationCtClass);
 
         method.setModifiers(PROTECTED_FINAL);
         method.setBody(builder.toString());
@@ -226,7 +234,7 @@ class ComponentMethodInvocationBuilder
         CtClass[] parameterTypes = new CtClass[parameterCount + 2];
 
         parameterTypes[0] = toCtClass(ComponentMethodInvocationInfo.class);
-        parameterTypes[1] = toCtClass(ComponentResources.class);
+        parameterTypes[1] = toCtClass(Component.class);
 
         BodyBuilder builder = new BodyBuilder().begin().addln("super($1,$2);");
 
@@ -272,15 +280,16 @@ class ComponentMethodInvocationBuilder
         {
             String type = advisedMethod.getParameterTypes()[i];
 
-            builder.addln("case %d: %s = %s; break;", i, FIELD_NAME + i, ClassFabUtils.castReference("$2", type));
+            builder.addln("case %d: %s = %s; break;", i, FIELD_NAME + i, ClassFabUtils
+                    .castReference("$2", type));
         }
 
         builder.addln("default: throw new IllegalArgumentException(\"Index out of range.\");");
 
         builder.end().end();
 
-        CtMethod method = new CtMethod(CtClass.voidType, "override",
-                                       new CtClass[] {CtClass.intType, toCtClass(Object.class)}, invocationCtClass);
+        CtMethod method = new CtMethod(CtClass.voidType, "override", new CtClass[]
+        { CtClass.intType, toCtClass(Object.class) }, invocationCtClass);
 
         method.setModifiers(PUBLIC_FINAL);
         method.setBody(builder.toString());
@@ -305,8 +314,8 @@ class ComponentMethodInvocationBuilder
 
         builder.end().end();
 
-        CtMethod method = new CtMethod(toCtClass(Object.class), "getParameter",
-                                       new CtClass[] {CtClass.intType}, invocationCtClass);
+        CtMethod method = new CtMethod(toCtClass(Object.class), "getParameter", new CtClass[]
+        { CtClass.intType }, invocationCtClass);
 
         method.setModifiers(PUBLIC_FINAL);
         method.setBody(builder.toString());
