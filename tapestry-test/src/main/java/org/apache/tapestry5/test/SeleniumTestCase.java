@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -27,13 +27,17 @@ import com.thoughtworks.selenium.Selenium;
 
 /**
  * Base class for creating Selenium-based integration test cases. This class implements all the
- * methods of {@link Selenium} and delegates to an instance (setup once per test by
- * {@link SeleniumLauncher}).
+ * methods of {@link Selenium} and delegates to an instance (setup once per test by {@link SeleniumLauncher}).
  * 
  * @since 5.2.0
  */
 public class SeleniumTestCase extends Assert implements Selenium
 {
+    /**
+     * 15 seconds
+     */
+    public static final String PAGE_LOAD_TIMEOUT = "15000";
+
     /**
      * Provided by {@link SeleniumLauncher}.
      */
@@ -52,8 +56,7 @@ public class SeleniumTestCase extends Assert implements Selenium
 
         delegate = (Selenium) context.getAttribute(TapestryTestConstants.SELENIUM_ATTRIBUTE);
         baseURL = (String) context.getAttribute(TapestryTestConstants.BASE_URL_ATTRIBUTE);
-        errorReporter = (ErrorReporter) context
-                .getAttribute(TapestryTestConstants.ERROR_REPORTER_ATTRIBUTE);
+        errorReporter = (ErrorReporter) context.getAttribute(TapestryTestConstants.ERROR_REPORTER_ATTRIBUTE);
     }
 
     @AfterClass
@@ -61,6 +64,8 @@ public class SeleniumTestCase extends Assert implements Selenium
     {
         delegate = null;
         baseURL = null;
+        errorReporter = null;
+        testContext = null;
     }
 
     /**
@@ -73,8 +78,8 @@ public class SeleniumTestCase extends Assert implements Selenium
     }
 
     /**
-     * Returns the base URL for the application. This is of the typically
-     * <code>http://localhost:9999/</code> (i.e., it includes a trailing slash).
+     * Returns the base URL for the application. This is of the typically <code>http://localhost:9999/</code> (i.e., it
+     * includes a trailing slash).
      */
     public String getBaseURL()
     {
@@ -266,8 +271,7 @@ public class SeleniumTestCase extends Assert implements Selenium
         delegate.dragAndDrop(locator, movementsString);
     }
 
-    public void dragAndDropToObject(String locatorOfObjectToBeDragged,
-            String locatorOfDragDestinationObject)
+    public void dragAndDropToObject(String locatorOfObjectToBeDragged, String locatorOfDragDestinationObject)
     {
         delegate.dragAndDropToObject(locatorOfObjectToBeDragged, locatorOfDragDestinationObject);
     }
@@ -487,8 +491,7 @@ public class SeleniumTestCase extends Assert implements Selenium
         return delegate.getWhetherThisFrameMatchFrameExpression(currentFrameString, target);
     }
 
-    public boolean getWhetherThisWindowMatchWindowExpression(String currentWindowString,
-            String target)
+    public boolean getWhetherThisWindowMatchWindowExpression(String currentWindowString, String target)
     {
         return delegate.getWhetherThisWindowMatchWindowExpression(currentWindowString, target);
     }
@@ -902,8 +905,7 @@ public class SeleniumTestCase extends Assert implements Selenium
         }
         catch (RuntimeException ex)
         {
-            System.err.printf("Error accessing %s: %s, in:\n\n%s\n\n", locator, ex.getMessage(),
-                    getHtmlSource());
+            System.err.printf("Error accessing %s: %s, in:\n\n%s\n\n", locator, ex.getMessage(), getHtmlSource());
 
             throw ex;
         }
@@ -947,6 +949,76 @@ public class SeleniumTestCase extends Assert implements Selenium
             writeErrorReport();
 
             throw new AssertionError("Page did not contain source '" + snippet + "'.");
+        }
+    }
+
+    /**
+     * Click a link identified by a locator, then wait for the resulting page to load.
+     * This is not useful for Ajax updates, just normal full-page refreshes.
+     * 
+     * @param locator
+     *            identifies the link to click
+     */
+    protected final void clickAndWait(String locator)
+    {
+        click(locator);
+
+        waitForPageToLoad();
+    }
+
+    /**
+     * Waits for the page to load (up to 15 seconds). This is invoked after clicking on an element
+     * that forces a full page refresh.
+     */
+    protected final void waitForPageToLoad()
+    {
+        waitForPageToLoad(PAGE_LOAD_TIMEOUT);
+    }
+
+    /**
+     * Used when the locator identifies an attribute, not an element.
+     * 
+     * @param locator
+     *            identifies the attribute whose value is to be asserted
+     * @param expected
+     *            expected value for the attribute
+     */
+    protected final void assertAttribute(String locator, String expected)
+    {
+        String actual = null;
+
+        try
+        {
+            actual = getAttribute(locator);
+        }
+        catch (RuntimeException ex)
+        {
+            System.err.printf("Error accessing %s: %s", locator, ex.getMessage());
+
+            writeErrorReport();
+
+            throw ex;
+        }
+
+        if (actual.equals(expected))
+            return;
+
+        writeErrorReport();
+
+        throw new AssertionError(String.format("%s was '%s' not '%s'", locator, actual, expected));
+    }
+
+    protected final void assertFieldValue(String locator, String expected)
+    {
+        try
+        {
+            assertEquals(getValue(locator), expected);
+        }
+        catch (AssertionError ex)
+        {
+            System.err.printf("%s:\n%s\n\n", ex.getMessage(), getHtmlSource());
+
+            throw ex;
         }
     }
 }
