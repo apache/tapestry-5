@@ -14,8 +14,17 @@
 
 package org.apache.tapestry5.corelib.components;
 
+import java.io.EOFException;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+
 import org.apache.tapestry5.*;
-import org.apache.tapestry5.annotations.*;
+import org.apache.tapestry5.annotations.Environmental;
+import org.apache.tapestry5.annotations.Events;
+import org.apache.tapestry5.annotations.Log;
+import org.apache.tapestry5.annotations.Mixin;
+import org.apache.tapestry5.annotations.Parameter;
+import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.corelib.internal.ComponentActionSink;
 import org.apache.tapestry5.corelib.internal.FormSupportImpl;
 import org.apache.tapestry5.corelib.internal.InternalFormSupport;
@@ -35,12 +44,15 @@ import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.TapestryException;
 import org.apache.tapestry5.ioc.util.ExceptionUtils;
 import org.apache.tapestry5.runtime.Component;
-import org.apache.tapestry5.services.*;
+import org.apache.tapestry5.services.ClientBehaviorSupport;
+import org.apache.tapestry5.services.ClientDataEncoder;
+import org.apache.tapestry5.services.ComponentEventResultProcessor;
+import org.apache.tapestry5.services.ComponentSource;
+import org.apache.tapestry5.services.Environment;
+import org.apache.tapestry5.services.FormSupport;
+import org.apache.tapestry5.services.Heartbeat;
+import org.apache.tapestry5.services.Request;
 import org.slf4j.Logger;
-
-import java.io.EOFException;
-import java.io.IOException;
-import java.io.ObjectInputStream;
 
 /**
  * An HTML form, which will enclose other components to render out the various
@@ -51,18 +63,17 @@ import java.io.ObjectInputStream;
  * {@link EventConstants#PREPARE} notification.
  * <p/>
  * When the form is submitted, the component emits several notifications: first a
- * {@link EventConstants#PREPARE_FOR_SUBMIT}, then a {@link EventConstants#PREPARE}: these allow the
- * page to update its state as necessary to prepare for the form submission, then (after components
- * enclosed by the form have operated), a {@link EventConstants#VALIDATE} event is emitted (followed
- * by a {@link EventConstants#VALIDATE_FORM} event, for backwards compatibility), to allow for
- * cross-form validation. After that, either a {@link EventConstants#SUCCESS} OR
- * {@link EventConstants#FAILURE} event (depending on whether the {@link ValidationTracker} has
- * recorded any errors). Lastly, a {@link EventConstants#SUBMIT} event, for any listeners that care
- * only about form submission, regardless of success or failure.
+ * {@link EventConstants#PREPARE_FOR_SUBMIT}, then a {@link EventConstants#PREPARE}: these allow the page to update its
+ * state as necessary to prepare for the form submission, then (after components enclosed by the form have operated), a
+ * {@link EventConstants#VALIDATE} event is emitted (followed by a {@link EventConstants#VALIDATE_FORM} event, for
+ * backwards compatibility), to allow for cross-form validation. After that, either a {@link EventConstants#SUCCESS} OR
+ * {@link EventConstants#FAILURE} event (depending on whether the {@link ValidationTracker} has recorded any errors).
+ * Lastly, a {@link EventConstants#SUBMIT} event, for any listeners that care only about form submission, regardless of
+ * success or failure.
  * <p/>
- * For all of these notifications, the event context is derived from the <strong>context</strong>
- * parameter. This context is encoded into the form's action URI (the parameter is not read when the
- * form is submitted, instead the values encoded into the form are used).
+ * For all of these notifications, the event context is derived from the <strong>context</strong> parameter. This
+ * context is encoded into the form's action URI (the parameter is not read when the form is submitted, instead the
+ * values encoded into the form are used).
  */
 @Events(
 { EventConstants.PREPARE_FOR_RENDER, EventConstants.PREPARE, EventConstants.PREPARE_FOR_SUBMIT,
@@ -179,7 +190,7 @@ public class Form implements ClientElement, FormValidationControl
     private String validationId;
 
     /**
-     * Object to validate during the form submission process. The default is the Form component's container. 
+     * Object to validate during the form submission process. The default is the Form component's container.
      * This parameter should only be used in combination with the Bean Validation Library.
      */
     @Parameter
@@ -238,6 +249,10 @@ public class Form implements ClientElement, FormValidationControl
     private ClientDataEncoder clientDataEncoder;
 
     private String name;
+
+    // Set during rendering or submit processing to be the
+    // same as the VT pushed into the Environment
+    private ValidationTracker activeTracker;
 
     String defaultValidationId()
     {
@@ -341,20 +356,16 @@ public class Form implements ClientElement, FormValidationControl
         if (zone != null)
             clientBehaviorSupport.linkZone(name, zone, link);
 
-        // TODO: Forms should not allow to nest. Perhaps a set() method instead
-        // of a push() method
-        // for this kind of check?
-
-        ValidationTracker wrapped = getWrappedTracker();
+        activeTracker = getWrappedTracker();
 
         environment.push(FormSupport.class, formSupport);
-        environment.push(ValidationTracker.class, wrapped);
+        environment.push(ValidationTracker.class, activeTracker);
         environment.push(BeanValidationContext.class, new BeanValidationContextImpl(validate));
 
         if (autofocus)
         {
             ValidationDecorator autofocusDecorator = new AutofocusValidationDecorator(environment
-                    .peek(ValidationDecorator.class), wrapped, renderSupport);
+                    .peek(ValidationDecorator.class), activeTracker, renderSupport);
             environment.push(ValidationDecorator.class, autofocusDecorator);
         }
 
@@ -442,6 +453,8 @@ public class Form implements ClientElement, FormValidationControl
 
         environment.pop(ValidationTracker.class);
 
+        activeTracker = null;
+
         environment.pop(BeanValidationContext.class);
     }
 
@@ -450,13 +463,13 @@ public class Form implements ClientElement, FormValidationControl
     @Log
     Object onAction(EventContext context) throws IOException
     {
-        ValidationTracker wrapped = getWrappedTracker();
+        activeTracker = getWrappedTracker();
 
-        wrapped.clear();
+        activeTracker.clear();
 
         formSupport = new FormSupportImpl(resources, validationId);
 
-        environment.push(ValidationTracker.class, wrapped);
+        environment.push(ValidationTracker.class, activeTracker);
         environment.push(FormSupport.class, formSupport);
         environment.push(BeanValidationContext.class, new BeanValidationContextImpl(validate));
 
@@ -501,10 +514,10 @@ public class Form implements ClientElement, FormValidationControl
             // true persistent data, not value from the previous form
             // submission.
 
-            if (!wrapped.getHasErrors())
-                wrapped.clear();
+            if (!activeTracker.getHasErrors())
+                activeTracker.clear();
 
-            resources.triggerContextEvent(wrapped.getHasErrors() ? EventConstants.FAILURE
+            resources.triggerContextEvent(activeTracker.getHasErrors() ? EventConstants.FAILURE
                     : EventConstants.SUCCESS, context, callback);
 
             // Lastly, tell anyone whose interested that the form is completely
@@ -525,6 +538,8 @@ public class Form implements ClientElement, FormValidationControl
             environment.pop(ValidationTracker.class);
 
             environment.pop(BeanValidationContext.class);
+
+            activeTracker = null;
         }
     }
 
@@ -627,22 +642,32 @@ public class Form implements ClientElement, FormValidationControl
 
     public void recordError(String errorMessage)
     {
-        getWrappedTracker().recordError(errorMessage);
+        getActiveTracker().recordError(errorMessage);
     }
 
     public void recordError(Field field, String errorMessage)
     {
-        getWrappedTracker().recordError(field, errorMessage);
+        getActiveTracker().recordError(field, errorMessage);
     }
 
     public boolean getHasErrors()
     {
-        return getWrappedTracker().getHasErrors();
+        return getActiveTracker().getHasErrors();
     }
 
     public boolean isValid()
     {
-        return !getWrappedTracker().getHasErrors();
+        return !getActiveTracker().getHasErrors();
+    }
+
+    private ValidationTracker getActiveTracker()
+    {
+        return activeTracker != null ? activeTracker : getWrappedTracker();
+    }
+
+    public void clearErrors()
+    {
+        getActiveTracker().clear();
     }
 
     // For testing:
@@ -650,11 +675,6 @@ public class Form implements ClientElement, FormValidationControl
     void setTracker(ValidationTracker tracker)
     {
         this.tracker = tracker;
-    }
-
-    public void clearErrors()
-    {
-        getWrappedTracker().clear();
     }
 
     /**
