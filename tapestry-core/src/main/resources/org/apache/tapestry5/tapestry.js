@@ -44,6 +44,9 @@ var Tapestry = {
 
     /** Event, fired on a zone element when the zone is updated with new content. */
     ZONE_UPDATED_EVENT : "tapestry:zoneupdated",
+    
+    /** Event fired on a link or submit to request that it request that the correct ZoneManager update from a provided URL. */    
+    TRIGGER_ZONE_UPDATE_EVENT : "tapestry:triggerzoneupdate",     	
 
     /** When false, the default, the Tapestry.debug() function will be a no-op. */
     DEBUG_ENABLED : false,
@@ -801,7 +804,12 @@ Tapestry.Initializer = {
 
         element.observe(eventName, function(event)
         {
-            Event.stop(event);
+            event.stop();
+            
+            element.fire(Tapestry.TRIGGER_ZONE_UPDATE_EVENT);
+        });
+        
+        element.observe(Tapestry.TRIGGER_ZONE_UPDATE_EVENT, function() {
 
             var zoneObject = Tapestry.findZoneManager(element);
 
@@ -809,9 +817,11 @@ Tapestry.Initializer = {
             
             var newUrl = url;
 
+            // A hack related to allowing a Select to perform an Ajax update of the page.
+            
             if(element.tagName == "SELECT" && element.value)
             {
-            	newUrl+='&t:selectvalue='+element.value;
+            	newUrl += '&t:selectvalue=' +element.value;
             }
 
             zoneObject.updateFromURL(newUrl);
