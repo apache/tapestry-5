@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -22,18 +22,15 @@ import org.slf4j.Logger;
 import java.util.Locale;
 
 /**
- * Represents a unique page within the application. Pages are part of the <em>internal</em>
- * structure of a Tapestry
- * application; end developers who refer to "page" are really referring to the
- * {@link #getRootComponent() root
+ * Represents a unique page within the application. Pages are part of the <em>internal</em> structure of a Tapestry
+ * application; end developers who refer to "page" are really referring to the {@link #getRootComponent() root
  * component} of the actual page.
  * <p/>
- * One of the most important aspects of a Page is that it <em>does not</em> have to be coded in a
- * thread-safe manner. Pages are always accessed within a single thread, associated with a single
- * incoming request.
+ * One of the most important aspects of a Page is that it <em>does not</em> have to be coded in a thread-safe manner.
+ * Pages are always accessed within a single thread, associated with a single incoming request.
  * <p/>
- * The Page object is never visible to end-user code. The page also exists to provide a kind of
- * service to components embedded (directly or indirectly) within the page.
+ * The Page object is never visible to end-user code. The page also exists to provide a kind of service to components
+ * embedded (directly or indirectly) within the page.
  */
 public interface Page
 {
@@ -72,9 +69,9 @@ public interface Page
      * just before the page
      * is returned to the page pool.
      * <p/>
-     * A page may be clean or dirty. A page is dirty if its dirty count is greater than zero
-     * (meaning that, during the render of the page, some components did not fully render), or if
-     * any of its listeners throw an exception from containingPageDidDetech().
+     * A page may be clean or dirty. A page is dirty if its dirty count is greater than zero (meaning that, during the
+     * render of the page, some components did not fully render), or if any of its listeners throw an exception from
+     * containingPageDidDetech().
      * <p/>
      * The page pool should discard pages that are dirty, rather than store them into the pool.
      * 
@@ -104,6 +101,13 @@ public interface Page
      * Adds a listener that is notified of large scale page events.
      */
     void addLifecycleListener(PageLifecycleListener listener);
+
+    /**
+     * Removes a listener that was previously added.
+     * 
+     * @since 5.2.0
+     */
+    void removeLifecycleListener(PageLifecycleListener listener);
 
     /**
      * Returns the logger of the root component element. Any logging about page construction or

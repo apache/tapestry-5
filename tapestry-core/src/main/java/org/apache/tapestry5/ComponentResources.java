@@ -175,6 +175,13 @@ public interface ComponentResources extends ComponentResourcesCommon
     void addPageLifecycleListener(PageLifecycleListener listener);
 
     /**
+     * Removes a previously added listener.
+     * 
+     * @since 5.2.0
+     */
+    void removePageLifecycleListener(PageLifecycleListener listener);
+
+    /**
      * Discards all persistent field changes for the page containing the component. Changes are eliminated from
      * persistent storage (such as the {@link org.apache.tapestry5.services.Session}) which will take effect in the
      * <em>next</em> request (the attached page instance is not affected).

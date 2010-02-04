@@ -131,8 +131,8 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
     private Informal firstInformal;
 
     public InternalComponentResourcesImpl(Page page, ComponentPageElement element,
-            ComponentResources containerResources, ComponentPageElementResources elementResources,
-            String completeId, String nestedId, Instantiator componentInstantiator, boolean mixin)
+            ComponentResources containerResources, ComponentPageElementResources elementResources, String completeId,
+            String nestedId, Instantiator componentInstantiator, boolean mixin)
     {
         this.page = page;
         this.element = element;
@@ -260,8 +260,7 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
         return getBinding(parameterName) != null;
     }
 
-    public <T extends Annotation> T getParameterAnnotation(String parameterName,
-            Class<T> annotationType)
+    public <T extends Annotation> T getParameterAnnotation(String parameterName, Class<T> annotationType)
     {
         Binding binding = getBinding(parameterName);
 
@@ -283,8 +282,7 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
         return input == null ? EMPTY : input;
     }
 
-    public boolean triggerContextEvent(String eventType, EventContext context,
-            ComponentEventCallback callback)
+    public boolean triggerContextEvent(String eventType, EventContext context, ComponentEventCallback callback)
     {
         return element.triggerContextEvent(eventType, context, callback);
     }
@@ -312,8 +310,8 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
         }
         catch (Exception ex)
         {
-            throw new TapestryException(StructureMessages.fieldPersistFailure(getCompleteId(),
-                    fieldName, ex), getLocation(), ex);
+            throw new TapestryException(StructureMessages.fieldPersistFailure(getCompleteId(), fieldName, ex),
+                    getLocation(), ex);
         }
     }
 
@@ -463,9 +461,8 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
         Object result = InternalUtils.get(renderVariables, name);
 
         if (result == null)
-            throw new IllegalArgumentException(StructureMessages.missingRenderVariable(
-                    getCompleteId(), name, renderVariables == null ? null : renderVariables
-                            .keySet()));
+            throw new IllegalArgumentException(StructureMessages.missingRenderVariable(getCompleteId(), name,
+                    renderVariables == null ? null : renderVariables.keySet()));
 
         return result;
     }
@@ -476,8 +473,7 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
         Defense.notNull(value, "value");
 
         if (!element.isRendering())
-            throw new IllegalStateException(StructureMessages.renderVariableSetWhenNotRendering(
-                    getCompleteId(), name));
+            throw new IllegalStateException(StructureMessages.renderVariableSetWhenNotRendering(getCompleteId(), name));
 
         if (renderVariables == null)
             renderVariables = CollectionFactory.newCaseInsensitiveMap();
@@ -494,6 +490,11 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
     public void addPageLifecycleListener(PageLifecycleListener listener)
     {
         page.addLifecycleListener(listener);
+    }
+
+    public void removePageLifecycleListener(PageLifecycleListener listener)
+    {
+        page.removeLifecycleListener(listener);
     }
 
     public void addPageResetListener(PageResetListener listener)
@@ -513,19 +514,17 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
 
         conduits.put(parameterName, conduit);
     }
-    
-	public String getPropertyName(String parameterName) 
-	{
+
+    public String getPropertyName(String parameterName)
+    {
         Binding binding = getBinding(parameterName);
-        
-        if(binding == null) return null;
-        
-    	if(binding instanceof InternalPropBinding)
-    	{
-    		return ((InternalPropBinding) binding).getPropertyName();
-    	}
-        
+
+        if (binding == null)
+            return null;
+
+        if (binding instanceof InternalPropBinding) { return ((InternalPropBinding) binding).getPropertyName(); }
+
         return null;
-	}
+    }
 
 }

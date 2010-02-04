@@ -39,7 +39,7 @@ public class PageImpl implements Page
 
     private ComponentPageElement rootElement;
 
-    private final List<PageLifecycleListener> lifecycleListeners = CollectionFactory.newList();
+    private final List<PageLifecycleListener> lifecycleListeners = CollectionFactory.newThreadSafeList();
 
     private final List<PageResetListener> resetListeners = CollectionFactory.newList();
 
@@ -109,6 +109,11 @@ public class PageImpl implements Page
     public void addLifecycleListener(PageLifecycleListener listener)
     {
         lifecycleListeners.add(listener);
+    }
+
+    public void removeLifecycleListener(PageLifecycleListener listener)
+    {
+        lifecycleListeners.remove(listener);
     }
 
     public boolean detached()
