@@ -34,6 +34,55 @@ import org.apache.tapestry5.services.TransformField;
  */
 public class InjectComponentWorker implements ComponentClassTransformWorker
 {
+    private final class InjectedComponentFieldValueConduit extends ReadOnlyFieldValueConduit
+    {
+        private final ComponentResources resources;
+        private final String fieldName, componentId, type;
+
+        private Component embedded;
+
+        private InjectedComponentFieldValueConduit(final ComponentResources resources, String fieldName, String type,
+                String componentId)
+        {
+            super(resources, fieldName);
+
+            this.resources = resources;
+            this.fieldName = fieldName;
+            this.componentId = componentId;
+            this.type = type;
+
+            resources.addPageLifecycleListener(new PageLifecycleAdapter()
+            {
+                public void containingPageDidLoad()
+                {
+                    load();
+
+                    resources.removePageLifecycleListener(this);
+                };
+            });
+        }
+
+        private void load()
+        {
+            embedded = resources.getEmbeddedComponent(componentId);
+
+            Class fieldType = classCache.forName(type);
+
+            if (!fieldType.isInstance(embedded))
+                throw new RuntimeException(
+                        String
+                                .format(
+                                        "Unable to inject component '%s' into field %s of component %s.  Class %s is not assignable to a field of type %s.",
+                                        componentId, fieldName, resources.getCompleteId(), embedded.getClass()
+                                                .getName(), fieldType.getName()));
+        }
+
+        public Object get()
+        {
+            return embedded;
+        }
+    }
+
     private final ComponentClassCache classCache;
 
     public InjectComponentWorker(ComponentClassCache classCache)
@@ -59,35 +108,7 @@ public class InjectComponentWorker implements ComponentClassTransformWorker
             {
                 public FieldValueConduit get(final ComponentResources resources)
                 {
-                    return new ReadOnlyFieldValueConduit(resources, fieldName)
-                    {
-                        private Component embedded;
-
-                        {
-                            resources.addPageLifecycleListener(new PageLifecycleAdapter()
-                            {
-                                public void containingPageDidLoad()
-                                {
-                                    embedded = resources.getEmbeddedComponent(componentId);
-
-                                    Class fieldType = classCache.forName(type);
-
-                                    if (!fieldType.isInstance(embedded))
-                                        throw new RuntimeException(
-                                                String
-                                                        .format(
-                                                                "Unable to inject component '%s' into field %s of component %s.  Class %s is not assignable to a field of type %s.",
-                                                                componentId, fieldName, resources.getCompleteId(),
-                                                                embedded.getClass().getName(), fieldType.getName()));
-                                };
-                            });
-                        }
-
-                        public Object get()
-                        {
-                            return embedded;
-                        }
-                    };
+                    return new InjectedComponentFieldValueConduit(resources, fieldName, type, componentId);
                 }
             };
 
