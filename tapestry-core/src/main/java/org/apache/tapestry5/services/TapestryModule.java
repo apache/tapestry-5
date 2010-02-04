@@ -539,7 +539,7 @@ public final class TapestryModule
         configuration.add("SupportsInformalParameters", new SupportsInformalParametersWorker());
         configuration.addInstance("InjectPage", InjectPageWorker.class);
         configuration.addInstance("InjectContainer", InjectContainerWorker.class);
-        configuration.add("InjectComponent", new InjectComponentWorker());
+        configuration.addInstance("InjectComponent",  InjectComponentWorker.class);
         configuration.add("RenderCommand", new RenderCommandWorker());
 
         // Default values for parameters are often some form of injection, so

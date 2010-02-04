@@ -111,8 +111,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
         // mismatched tag.
         clickThru("BadTemplate Page");
 
-        assertTextPresent(
-                "org.apache.tapestry5.ioc.internal.util.TapestryException",
+        assertTextPresent("org.apache.tapestry5.ioc.internal.util.TapestryException",
                 "Failure parsing template classpath:org/apache/tapestry5/integration/app1/pages/BadTemplate.tml",
                 "The element type \"t:foobar\" must be terminated by the matching end-tag \"</t:foobar>\"",
                 "classpath:org/apache/tapestry5/integration/app1/pages/BadTemplate.tml, line 6",
@@ -149,9 +148,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     {
         clickThru("InjectComponentMismatch");
 
-        assertTextPresent(
-                "Unable to inject component 'form' into field form of component InjectComponentMismatch. Class org.apache.tapestry5.corelib.components.BeanEditForm is not assignable to a field of type org.apache.tapestry5.corelib.components.Form.",
-                "ClassCastException");
+        assertTextPresent("Unable to inject component 'form' into field form of component InjectComponentMismatch. Class org.apache.tapestry5.corelib.components.BeanEditForm is not assignable to a field of type org.apache.tapestry5.corelib.components.Form.");
     }
 
     @Test
@@ -343,8 +340,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
         clickAndWait("link=go");
 
         assertTextSeries("//li[%d]", 1, "betty", "wilma", "betty/wilma", "\u82B1\u5B50");
-        assertTextSeries("//ul[2]/li[%d]", 1, "fred", "barney", "clark kent", "fred/barney",
-                "\u592A\u90CE");
+        assertTextSeries("//ul[2]/li[%d]", 1, "fred", "barney", "clark kent", "fred/barney", "\u592A\u90CE");
     }
 
     @Test
@@ -430,8 +426,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
         clickAndWait(clear);
 
         clickAndWait("link=No Context");
-        assertText("methodNames",
-                "[parent.eventHandlerZero(), parent.onAction(), child.eventHandlerZeroChild()]");
+        assertText("methodNames", "[parent.eventHandlerZero(), parent.onAction(), child.eventHandlerZeroChild()]");
 
         clickAndWait(clear);
         clickAndWait("link=Single context value");
@@ -460,8 +455,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     {
         clickThru("Inherited Bindings Demo");
 
-        assertTextPresent("Bound: [ value: the-bound-value, bound: true ]",
-                "Unbound: [ value: null, bound: false ]");
+        assertTextPresent("Bound: [ value: the-bound-value, bound: true ]", "Unbound: [ value: null, bound: false ]");
     }
 
     @Test
@@ -490,8 +484,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
         assertAttribute("//div[@id='single']/@class", "red");
         assertAttribute("//div[@id='consecutive']/@class", "goober-red");
         assertAttribute("//div[@id='trailer']/@class", "goober-green");
-        assertText("//div[@id='formal']",
-                "ALERT-expansions work inside formal component parameters as well");
+        assertText("//div[@id='formal']", "ALERT-expansions work inside formal component parameters as well");
 
         // An unrelated test, but fills in a bunch of minor gaps.
 
@@ -641,8 +634,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
         clickAndWait("link=force invalid event context");
 
         assertTextPresent("An unexpected application exception has occurred.",
-                "org.apache.tapestry5.runtime.ComponentEventException",
-                "java.lang.NumberFormatException");
+                "org.apache.tapestry5.runtime.ComponentEventException", "java.lang.NumberFormatException");
     }
 
     /**
@@ -672,8 +664,8 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
         // Just sample a smattering of the vast amount of data in the exception
         // report.
 
-        assertTextPresent("RenderErrorDemo", "class " + RenderErrorDemo.class.getName(),
-                "RenderErrorDemo:border", "RenderErrorDemo:echo");
+        assertTextPresent("RenderErrorDemo", "class " + RenderErrorDemo.class.getName(), "RenderErrorDemo:border",
+                "RenderErrorDemo:echo");
     }
 
     /**
@@ -863,8 +855,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
         assertText("version", "5");
 
         // @ReverseStrings filtered the checked exception to a string result
-        assertText(
-                "cranky",
+        assertText("cranky",
                 "Invocation of method getCranky() failed with org.apache.tapestry5.integration.app1.services.DearGodWhyMeException.");
 
         // Now to check advice on a setter that manipulates parameters
@@ -903,8 +894,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
         clickThru("Informal Parameters Demo");
 
         assertTextSeries("//dl[@id='informals']/dt[%d]", 1, "barney", "fred", "pageName");
-        assertTextSeries("//dl[@id='informals']/dd[%d]", 1, "rubble", "flintstone",
-                "InformalParametersDemo");
+        assertTextSeries("//dl[@id='informals']/dd[%d]", 1, "rubble", "flintstone", "InformalParametersDemo");
     }
 
     /**
@@ -1170,8 +1160,8 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
      *                 "from" is < 0, checking the corresponding mixin values is disabled.
      */
 
-    private void assertEchoMixins(String fieldName, String originalValue, int echo1From,
-            int echo2From, int echo3From, int fieldFrom, boolean isField)
+    private void assertEchoMixins(String fieldName, String originalValue, int echo1From, int echo2From, int echo3From,
+            int fieldFrom, boolean isField)
     {
         String[] vals =
         { originalValue, "temporaryvaluefromechovaluemixin", "3", "world" };
