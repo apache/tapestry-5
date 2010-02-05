@@ -36,7 +36,9 @@ public class JavascriptSupportImpl implements JavascriptSupport
 
     private final ClientInfrastructure clientInfrastructure;
 
-    private boolean stackAssetsAdded;
+    private final boolean partialMode;
+
+    private boolean stackAssetsAdded;;
 
     private final Map<InitializationPriority, StringBuilder> scripts = CollectionFactory.newMap();
 
@@ -44,15 +46,20 @@ public class JavascriptSupportImpl implements JavascriptSupport
 
     public JavascriptSupportImpl(DocumentLinker linker, ClientInfrastructure clientInfrastructure)
     {
-        this(linker, clientInfrastructure, new IdAllocator());
+        this(linker, clientInfrastructure, new IdAllocator(), false);
     }
 
     public JavascriptSupportImpl(DocumentLinker linker, ClientInfrastructure clientInfrastructure,
-            IdAllocator idAllocator)
+            IdAllocator idAllocator, boolean partialMode)
     {
         this.linker = linker;
         this.clientInfrastructure = clientInfrastructure;
         this.idAllocator = idAllocator;
+        this.partialMode = partialMode;
+
+        // In partial mode, assume that the infrastructure stack is already present
+        // (from the original page render).
+        stackAssetsAdded = partialMode;
     }
 
     public void commit()
@@ -85,13 +92,15 @@ public class JavascriptSupportImpl implements JavascriptSupport
         if (scripts.containsKey(InitializationPriority.EARLY) || scripts.containsKey(InitializationPriority.NORMAL)
                 || scripts.containsKey(InitializationPriority.LATE))
         {
-            master.append("Tapestry.onDOMLoaded(function() {\n");
+            if (!partialMode)
+                master.append("Tapestry.onDOMLoaded(function() {\n");
 
             addIfNonNull(master, InitializationPriority.EARLY);
             addIfNonNull(master, InitializationPriority.NORMAL);
             addIfNonNull(master, InitializationPriority.LATE);
 
-            master.append("});");
+            if (!partialMode)
+                master.append("});");
         }
     }
 

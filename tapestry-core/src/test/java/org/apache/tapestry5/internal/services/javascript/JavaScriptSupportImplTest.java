@@ -21,6 +21,7 @@ import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.internal.services.DocumentLinker;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.internal.util.IdAllocator;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.ClientInfrastructure;
 import org.apache.tapestry5.services.javascript.InitializationPriority;
@@ -56,6 +57,25 @@ public class JavaScriptSupportImplTest extends InternalBaseTestCase
         replay();
 
         JavascriptSupportImpl jss = new JavascriptSupportImpl(linker, infra);
+
+        jss.commit();
+
+        verify();
+    }
+
+    @Test
+    public void no_stack_or_dom_loading_callback_in_partial_mode()
+    {
+        DocumentLinker linker = mockDocumentLinker();
+        ClientInfrastructure infra = mockClientInfrastucture();
+
+        linker.addScript("doSomething();\n");
+
+        replay();
+
+        JavascriptSupportImpl jss = new JavascriptSupportImpl(linker, infra, new IdAllocator(), true);
+
+        jss.addScript("doSomething();");
 
         jss.commit();
 
