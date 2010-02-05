@@ -82,45 +82,7 @@ import org.apache.tapestry5.model.EmbeddedComponentModel;
 import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.model.ParameterModel;
 import org.apache.tapestry5.runtime.Component;
-import org.apache.tapestry5.services.AliasManager;
-import org.apache.tapestry5.services.ApplicationStateCreator;
-import org.apache.tapestry5.services.ApplicationStateManager;
-import org.apache.tapestry5.services.ApplicationStatePersistenceStrategy;
-import org.apache.tapestry5.services.ApplicationStatePersistenceStrategySource;
-import org.apache.tapestry5.services.AssetFactory;
-import org.apache.tapestry5.services.AssetSource;
-import org.apache.tapestry5.services.BaseURLSource;
-import org.apache.tapestry5.services.BeanModelSource;
-import org.apache.tapestry5.services.BindingFactory;
-import org.apache.tapestry5.services.BindingSource;
-import org.apache.tapestry5.services.ClassTransformation;
-import org.apache.tapestry5.services.ClasspathAssetAliasManager;
-import org.apache.tapestry5.services.ComponentClassResolver;
-import org.apache.tapestry5.services.ComponentEventRequestHandler;
-import org.apache.tapestry5.services.ComponentEventResultProcessor;
-import org.apache.tapestry5.services.ComponentRequestHandler;
-import org.apache.tapestry5.services.Context;
-import org.apache.tapestry5.services.Environment;
-import org.apache.tapestry5.services.FieldTranslatorSource;
-import org.apache.tapestry5.services.FieldValidatorSource;
-import org.apache.tapestry5.services.FormSupport;
-import org.apache.tapestry5.services.Heartbeat;
-import org.apache.tapestry5.services.HttpServletRequestHandler;
-import org.apache.tapestry5.services.InjectionProvider;
-import org.apache.tapestry5.services.MetaDataLocator;
-import org.apache.tapestry5.services.MethodFilter;
-import org.apache.tapestry5.services.PageRenderLinkSource;
-import org.apache.tapestry5.services.Request;
-import org.apache.tapestry5.services.RequestGlobals;
-import org.apache.tapestry5.services.RequestHandler;
-import org.apache.tapestry5.services.ResourceDigestGenerator;
-import org.apache.tapestry5.services.Response;
-import org.apache.tapestry5.services.Session;
-import org.apache.tapestry5.services.TransformMethodSignature;
-import org.apache.tapestry5.services.TranslatorSource;
-import org.apache.tapestry5.services.ValidationConstraintGenerator;
-import org.apache.tapestry5.services.ValidationMessagesSource;
-import org.apache.tapestry5.services.ValueEncoderSource;
+import org.apache.tapestry5.services.*;
 import org.easymock.EasyMock;
 import org.easymock.IAnswer;
 
@@ -1300,5 +1262,10 @@ public abstract class TapestryTestCase extends IOCTestCase
     protected final PageRenderLinkSource mockPageRenderLinkSource()
     {
         return newMock(PageRenderLinkSource.class);
+    }
+
+    protected final ClientInfrastructure mockClientInfrastucture()
+    {
+        return newMock(ClientInfrastructure.class);
     }
 }

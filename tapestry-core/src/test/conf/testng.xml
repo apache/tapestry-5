@@ -22,7 +22,7 @@
       <package name="org.apache.tapestry5.corelib.internal"/>
     </packages>
   </test>
-  <test name="Public APIs" enabled="true">
+  <test name="Service Unit Tests" enabled="true">
     <packages>
       <package name="org.apache.tapestry5.root"/>
       <package name="org.apache.tapestry5.dom"/>
@@ -32,10 +32,6 @@
       <package name="org.apache.tapestry5.urlrewriter"/>
       <package name="org.apache.tapestry5.util"/>
       <package name="org.apache.tapestry5.validator"/>
-    </packages>
-  </test>
-  <test name="Internal APIs" enabled="true">
-    <packages>
       <package name="org.apache.tapestry5.internal"/>
       <package name="org.apache.tapestry5.internal.beaneditor"/>
       <package name="org.apache.tapestry5.internal.bindings"/>
@@ -48,6 +44,7 @@
       <package name="org.apache.tapestry5.internal.transform"/>
       <package name="org.apache.tapestry5.internal.translator"/>
       <package name="org.apache.tapestry5.internal.util"/>
+      <package name="org.apache.tapestry5.internal.services.javascript"/>
     </packages>
   </test>
   <!--  We break these out by which of the test applications they apply to. We have a bunch. -->
@@ -80,7 +77,7 @@
       <class name="org.apache.tapestry5.test.SeleniumLauncher"/>
     </classes>
   </test>
-  
+
   <test name="Custom App Package Tests" enabled="true">
     <parameter name="tapestry.web-app-folder" value="src/test/app6"/>
     <packages>
@@ -90,7 +87,7 @@
       <class name="org.apache.tapestry5.test.SeleniumLauncher"/>
     </classes>
   </test>
-  
+
   <test name="Live Reload Tests" enabled="true">
     <packages>
       <package name="org.apache.tapestry5.integration.reload"/>
