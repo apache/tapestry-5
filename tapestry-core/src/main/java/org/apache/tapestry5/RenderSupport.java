@@ -175,7 +175,8 @@ public interface RenderSupport
      *            the name of the function (on the client-side Tapestry object) to invoke.
      * @param parameters
      * @deprecated Use {@link JavascriptSupport#addInitializerCall(String, JSONObject)} instead (which may require
-     *             changes to your JavaScript initializer function)
+     *             changes to your JavaScript initializer function), or (for a single parameter)
+     *             {@link JavascriptSupport#addInitializerCall(String, String)}
      */
     void addInit(String functionName, String... parameters);
 

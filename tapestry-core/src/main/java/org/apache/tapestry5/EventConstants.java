@@ -14,6 +14,8 @@
 
 package org.apache.tapestry5;
 
+import org.apache.tapestry5.corelib.components.BeanEditForm;
+
 /**
  * Constant values for common event names fired by Tapestry components.
  */
@@ -74,14 +76,20 @@ public class EventConstants
     /**
      * Event type for a notification to perform validation of submitted data. This allows a listener
      * to perform
-     * cross-field validation. This occurs before the {@link #SUCCESS} or {@link #FAILURE}
-     * notification.
+     * cross-field validation. This occurs before the {@link #SUCCESS} or {@link #FAILURE} notification.
      * 
      * @see org.apache.tapestry5.corelib.components.Form
-     * @deprecated As of 5.2, this event should no longer be used; the Form component now fires a
-     *             {@link #VALIDATE} event.
+     * @deprecated As of 5.2, this event should no longer be used; the Form component now fires a {@link #VALIDATE}
+     *             event.
      */
     public static final String VALIDATE_FORM = "validateForm";
+
+    /**
+     * Event type associated with clicking the cancel button inside a {@link BeanEditForm}.
+     * 
+     * @since 5.2.0
+     */
+    public static final String CANCELED = "canceled";
 
     /**
      * Event type for a notification after the form has submitted, when there are no errors in the
@@ -107,7 +115,7 @@ public class EventConstants
     public static final String SELECTED = "selected";
 
     /**
-     * Event triggered by some form-related cmponents to parse a value provided by the client. This
+     * Event triggered by some form-related components to parse a value provided by the client. This
      * takes the place of a {@link org.apache.tapestry5.Translator}.
      */
     public static final String PARSE_CLIENT = "parseClient";
@@ -154,8 +162,7 @@ public class EventConstants
     public static final String SYNCHRONIZE_VALUES = "synchronizeValues";
 
     /**
-     * Event triggered by {@link org.apache.tapestry5.corelib.components.ProgressiveDisplay}
-     * component to inform its
+     * Event triggered by {@link org.apache.tapestry5.corelib.components.ProgressiveDisplay} component to inform its
      * container of what context (if any) is available. The event handler may return a renderable
      * object or null. If
      * null is returned, the component renders its own body as the partial markup response.

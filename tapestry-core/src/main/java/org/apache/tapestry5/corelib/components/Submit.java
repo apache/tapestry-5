@@ -1,10 +1,10 @@
-// Copyright 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2007, 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,11 +19,13 @@ import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.Events;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.SupportsInformalParameters;
+import org.apache.tapestry5.corelib.SubmitMode;
 import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.FormSupport;
 import org.apache.tapestry5.services.Heartbeat;
 import org.apache.tapestry5.services.Request;
+import org.apache.tapestry5.services.javascript.JavascriptSupport;
 
 /**
  * Corresponds to &lt;input type="submit"&gt; or &lt;input type="image"&gt;, a client-side element that can force the
@@ -43,7 +45,7 @@ public class Submit implements ClientElement
 
     /**
      * The name of the event that will be triggered if this component is the cause of the form submission. The default
-     * is "selected".
+     * is {@link EventConstants#SELECTED}.
      */
     @Parameter(allowNull = false, defaultPrefix = BindingConstants.LITERAL)
     private String event = EventConstants.SELECTED;
@@ -58,7 +60,7 @@ public class Submit implements ClientElement
     /**
      * The list of values that will be made available to event handler method of this component when the form is
      * submitted.
-     *
+     * 
      * @since 5.1.0.0
      */
     @Parameter
@@ -66,12 +68,21 @@ public class Submit implements ClientElement
 
     /**
      * If provided, the component renders an input tag with type "image". Otherwise "submit".
-     *
+     * 
      * @since 5.1.0.0
      */
     @Parameter(defaultPrefix = BindingConstants.ASSET)
     private Asset image;
 
+    /**
+     * Defines the mode, or client-side behavior, for the submit. The default is {@link SubmitMode#NORMAL}; clicking the
+     * button submits the form with validation. {@link SubmitMode#CANCEL} indicates the client-side validation
+     * should be omitted (though server-side validation still occurs).
+     * 
+     * @since 5.2.0
+     */
+    @Parameter(allowNull = false, defaultPrefix = BindingConstants.LITERAL)
+    private SubmitMode mode = SubmitMode.NORMAL;
 
     @Environmental
     private FormSupport formSupport;
@@ -86,7 +97,7 @@ public class Submit implements ClientElement
     private Request request;
 
     @Inject
-    private RenderSupport renderSupport;
+    private JavascriptSupport javascriptSupport;
 
     private Element element;
 
@@ -128,9 +139,11 @@ public class Submit implements ClientElement
 
         element = writer.element("input", "type", type, "name", name);
 
-        if (disabled) writer.attributes("disabled", "disabled");
+        if (disabled)
+            writer.attributes("disabled", "disabled");
 
-        if (image != null) writer.attributes("src", image.toClientURL());
+        if (image != null)
+            writer.attributes("src", image.toClientURL());
 
         formSupport.store(this, new ProcessSubmission(name));
 
@@ -140,15 +153,20 @@ public class Submit implements ClientElement
     void afterRender(MarkupWriter writer)
     {
         writer.end();
+
+        if (mode == SubmitMode.CANCEL)
+            javascriptSupport.addInitializerCall("cancelButton", getClientId());
     }
 
     void processSubmission(String elementName)
     {
-        if (disabled) return;
+        if (disabled)
+            return;
 
         String value = request.getParameter(image == null ? elementName : elementName + ".x");
 
-        if (value == null) return;
+        if (value == null)
+            return;
 
         Runnable sendNotification = new Runnable()
         {
@@ -162,21 +180,23 @@ public class Submit implements ClientElement
         // heartbeat). This is most likely because the Submit is inside a Loop and some contextual
         // information will change if we defer.
 
-        if (defer) formSupport.defer(sendNotification);
-        else heartbeat.defer(sendNotification);
+        if (defer)
+            formSupport.defer(sendNotification);
+        else
+            heartbeat.defer(sendNotification);
     }
 
     /**
      * Returns the component's client id. This must be called after the component has rendered. The id is allocated
      * lazily (first time this method is invoked).
-     *
+     * 
      * @return client id for the component
      */
     public String getClientId()
     {
         if (clientId == null)
         {
-            clientId = renderSupport.allocateClientId(resources);
+            clientId = javascriptSupport.allocateClientId(resources);
 
             element.forceAttributes("id", clientId);
         }

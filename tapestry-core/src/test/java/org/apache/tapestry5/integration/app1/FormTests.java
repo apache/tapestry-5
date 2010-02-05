@@ -137,13 +137,7 @@ public class FormTests extends TapestryCoreTestCase
 
         click(SUBMIT);
 
-        // Looks like more weaknesses in Selenium, can only manage the first
-        // match not the others.
-        assertTextSeries("//div[@class='t-error-popup'][%d]/span", 1,
-                "You must provide a value for First Name."
-        // , "Everyone has to have a last name!",
-        // "Year of Birth requires a value of at least 1900."
-        );
+        assertTextPresent("You must provide a value for First Name.");
 
         type("firstName", "Howard");
         type("lastName", "Lewis Ship");
@@ -158,6 +152,21 @@ public class FormTests extends TapestryCoreTestCase
         clickAndWait(SUBMIT);
 
         assertTextPresent("Howard", "Lewis Ship", "1966", "U.S. Citizen");
+    }
+    
+    @Test
+    public void cancel_button()
+    {
+        clickThru("Client Validation Demo");
+
+        // Used to ensure that the <script> tag was present, but that's hard to
+        // do with script combining enabled.
+
+        clickAndWait("link=Clear Data");
+
+        clickAndWait("//input[@value='Cancel']");
+        
+        assertText("message", "Form was cancelled.");
     }
 
     @Test

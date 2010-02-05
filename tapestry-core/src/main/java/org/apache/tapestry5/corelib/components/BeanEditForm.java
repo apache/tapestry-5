@@ -1,10 +1,10 @@
-// Copyright 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2007, 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,12 +14,16 @@
 
 package org.apache.tapestry5.corelib.components;
 
+import java.io.IOException;
+
 import org.apache.tapestry5.*;
 import org.apache.tapestry5.annotations.*;
 import org.apache.tapestry5.beaneditor.BeanModel;
 import org.apache.tapestry5.internal.beaneditor.BeanModelUtils;
+import org.apache.tapestry5.internal.services.ComponentResultProcessorWrapper;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.BeanModelSource;
+import org.apache.tapestry5.services.ComponentEventResultProcessor;
 
 /**
  * A component that creates an entire form editing the properties of a particular bean. Inspired by <a
@@ -36,7 +40,7 @@ import org.apache.tapestry5.services.BeanModelSource;
  * <p/>
  * BeanEditForm contains a {@link org.apache.tapestry5.corelib.components.Form} component and will trigger all the
  * events of a Form.
- *
+ * 
  * @see org.apache.tapestry5.beaneditor.BeanModel
  * @see org.apache.tapestry5.services.BeanModelSource
  * @see org.apache.tapestry5.corelib.components.PropertyEditor
@@ -58,14 +62,15 @@ public class BeanEditForm implements ClientElement, FormValidationControl
      * The object to be edited. This will be read when the component renders and updated when the form for the component
      * is submitted. Typically, the container will listen for a "prepare" event, in order to ensure that a non-null
      * value is ready to be read or updated. Often, the BeanEditForm can create the object as needed (assuming a public,
-     * no arguments constructor).  The object property defaults to a property with the same name as the component id.
+     * no arguments constructor). The object property defaults to a property with the same name as the component id.
      */
     @Parameter(required = true, autoconnect = true)
     @Property
     private Object object;
 
     /**
-     * A comma-separated list of property names to be retained from the {@link org.apache.tapestry5.beaneditor.BeanModel}.
+     * A comma-separated list of property names to be retained from the
+     * {@link org.apache.tapestry5.beaneditor.BeanModel}.
      * Only these properties will be retained, and the properties will also be reordered. The names are
      * case-insensitive.
      */
@@ -80,7 +85,8 @@ public class BeanEditForm implements ClientElement, FormValidationControl
     private String add;
 
     /**
-     * A comma-separated list of property names to be removed from the {@link org.apache.tapestry5.beaneditor.BeanModel}.
+     * A comma-separated list of property names to be removed from the {@link org.apache.tapestry5.beaneditor.BeanModel}
+     * .
      * The names are case-insensitive.
      */
     @SuppressWarnings("unused")
@@ -96,9 +102,19 @@ public class BeanEditForm implements ClientElement, FormValidationControl
     @Parameter(defaultPrefix = BindingConstants.LITERAL)
     private String reorder;
 
-    @Component(parameters =
-            "validationId=componentResources.id", publishParameters = "clientValidation,autofocus,zone")
+    @Component(parameters = "validationId=componentResources.id", publishParameters = "clientValidation,autofocus,zone")
     private Form form;
+
+    /**
+     * If set to true, then the form will include an additional button after the submit button labeled "Cancel".
+     * The cancel button will submit the form, bypassing client-side validation. The BeanEditForm will fire a
+     * {@link EventConstants#CANCELED} event (before the form's {@link EventConstants#VALIDATE} event).
+     * 
+     * @since 5.2.0
+     */
+    @Property
+    @Parameter
+    private boolean cancel;
 
     /**
      * The model that identifies the parameters to be edited, their order, and every other aspect. If not specified, a
@@ -115,6 +131,12 @@ public class BeanEditForm implements ClientElement, FormValidationControl
     @Inject
     private BeanModelSource beanModelSource;
 
+    /**
+     * Set up via the traditional or Ajax component event request handler
+     */
+    @SuppressWarnings("unchecked")
+    @Environmental
+    private ComponentEventResultProcessor componentEventResultProcessor;
 
     void onPrepareFromForm()
     {
@@ -129,7 +151,6 @@ public class BeanEditForm implements ClientElement, FormValidationControl
 
         BeanModelUtils.modify(model, add, include, exclude, reorder);
     }
-
 
     /**
      * Returns the client id of the embedded form.
@@ -162,5 +183,14 @@ public class BeanEditForm implements ClientElement, FormValidationControl
     public void recordError(String errorMessage)
     {
         form.recordError(errorMessage);
+    }
+
+    boolean onSelectedFromCancel() throws IOException
+    {
+        ComponentResultProcessorWrapper callback = new ComponentResultProcessorWrapper(componentEventResultProcessor);
+
+        resources.triggerEvent(EventConstants.CANCELED, null, callback);
+
+        return callback.isAborted();
     }
 }

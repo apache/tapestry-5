@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,8 +14,10 @@
 
 package org.apache.tapestry5.integration.app1.pages;
 
+import org.apache.tapestry5.PersistenceConstants;
 import org.apache.tapestry5.annotations.ApplicationState;
 import org.apache.tapestry5.annotations.Component;
+import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.beaneditor.Validate;
 import org.apache.tapestry5.corelib.components.BeanEditForm;
@@ -23,8 +25,11 @@ import org.apache.tapestry5.integration.app1.data.RegistrationData;
 
 public class BeanEditorDemo
 {
+    @Persist(PersistenceConstants.FLASH)
+    private String message;
+
     @Component(id = "registrationData", parameters =
-            {"clientValidation=clientValidation"})
+    { "clientValidation=clientValidation" })
     private BeanEditForm form;
 
     @ApplicationState
@@ -54,5 +59,20 @@ public class BeanEditorDemo
     public String getPageTitle()
     {
         return "BeanEditor Component Demo";
+    }
+
+    public String getMessage()
+    {
+        return message;
+    }
+
+    public void setMessage(String message)
+    {
+        this.message = message;
+    }
+
+    protected void clearErrors()
+    {
+        form.clearErrors();
     }
 }

@@ -34,12 +34,15 @@ What is Apache Tapestry?
 
 New And Of Note
 
+  * Submit components can now be used to cancel a form (bypassing client-side validation).
+
   * Tapestry no longer uses a StAX parser to parse templates (it uses a standard SAX parser), meaning fewer dependencies and
     better compatibility with Google App Engine.
 
   * A {{{guide/testing.html}guide to integration testing}} is now available.
   
-  * The annotated {{{guide/persist.html}@SessionAttribute}} can be used to read or to write some data from or into the HttpSession.
+  * The {{{guide/persist.html}@SessionAttribute}} annotation can be used on component fields to
+    read write HttpSession attributes.
   
   * The {{{tapestry-beanvalidator}JSR-303 Integration Library}} is now available.
 
@@ -101,7 +104,7 @@ public class Login
     }
   }
 
-  Object onSuccess()
+  Object onSuccessFromForm()
   {
     return PostLogin.class;
   }
@@ -109,9 +112,9 @@ public class Login
 }
 +----+
 
-  This short snippet demonstrates a bit about how Tapestry operates.  Pages and services
+  This short snippet demonstrates a bit about how Tapestry operates.  Services
   within the application are injected with the @Inject annotation. The method names, onValidateFromForm()
-  and onSuccess(),
+  and onSuccessFromForm(),
   inform Tapestry about when the method is to be invoked.  The two events <validate> and <success> occur
   when a form is submitted; "validate" is triggered to perform cross-field validations, and "success" is
   only triggered when there are no validation errors. The onSuccess() method's
@@ -122,18 +125,19 @@ public class Login
   This also represents a distinct change from Tapestry 4. In earlier versions of Tapestry,
   the Form component's listener parameter would be bound to the method to invoke, by name.  Further,
   the listener method had to be public.
-  This new approach not only support multiple listeners, but provides an improved separation of
-  view concerns (inside the page's HTML template) and logic concerns, inside the Java class.
+  This new approach not only supports multiple listeners, but provides an improved separation of
+  view concerns (inside the page's template) and logic concerns, inside the Java class.
 
   In many cases, additional information about the event is available, and can be passed
   into the method by adding parameters to the method. Again, Tapestry will adapt
-  to your parameters, in whatever order you supply them.
+  to your parameters.
 
   Tapestry also saves you effort:  the @Property annotation marks a field as readable and writable;
-  Tapestry will provide the accessor methods automatically.
+  Tapestry will provide the accessor methods automatically. This kind of meta-programming is common in Tapestry,
+  and easy to implement yourself.
 
   Finally, Tapestry 5 explicitly separates actions (requests that change things) and rendering (requests that
-  render pages) into two separate requests.  Performing an action, such as clicking a link or submitting a form,
+  render pages into markup) into two separate requests.  Performing an action, such as clicking a link or submitting a form,
   results in a <client side redirect> to the new page. This is often called "redirect after post". This helps ensure
   that URLs in the browser are book-markable ... but also requires that a bit more information be stored in the session
   between requests (using the @Persist annotation).

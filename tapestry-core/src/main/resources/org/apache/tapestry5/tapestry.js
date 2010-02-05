@@ -39,6 +39,11 @@ var Tapestry = {
      */
     FIELD_VALIDATE_EVENT : "tapestry:fieldvalidate",
 
+    /** Event notification, on a form object, that is used to trigger validation on all
+     *  fields within the form (observed by each field's Tapestry.FieldEventManager).
+     */
+    FORM_VALIDATE_FIELDS_EVENT : "tapestry:validatefields", 
+    
     /** Event, fired on the document object, which identifies the current focus input element. */
     FOCUS_CHANGE_EVENT : "tapestry:focuschange",
 
@@ -559,7 +564,7 @@ Element.addMethods('FORM',
 
         return manager;
     },
-
+    
     /**
      * Sends an Ajax request to the Form's action. This encapsulates
      * a few things, such as a default onFailure handler, and working
@@ -916,6 +921,16 @@ Tapestry.Initializer = {
             $T(element).formFragment.setVisible(trigger.checked);
         });
 
+    },
+    
+    cancelButton : function(clientId)
+    {
+    	// Set the form's skipValidation property and allow the event to continue,
+    	// which will ultimately submit the form.
+    	
+    	$(clientId).observe("click", function(event) { 
+    		$T(this.form).skipValidation = true;
+    	});
     }
 };
 
@@ -1147,57 +1162,42 @@ Tapestry.FormEventManager = Class.create({
 
         this.form.onsubmit = this.handleSubmit.bindAsEventListener(this);
     },
-
+    
     handleSubmit : function(domevent)
     {
         var t = $T(this.form);
 
         t.validationError = false;
-
-        var firstErrorField = null;
-
-        // Locate elements that have an event manager (and therefore, validations)
-        // and let those validations execute, which may result in calls to recordError().
-
-
-        this.form.getElements().each(function(element)
-        {
-            var fem = $T(element).fieldEventManager;
-
-            if (fem != undefined)
-            {
-                // Ask the FEM to validate input for the field, which fires
-                // a number of events.
-                var error = fem.validateInput();
-
-                if (error && ! firstErrorField)
-                {
-                    firstErrorField = element;
-                }
-            }
-        });
-
-        // Allow observers to validate the form as a whole.  The FormEvent will be visible
-        // as event.memo.  The Form will not be submitted if event.result is set to false (it defaults
-        // to true).  Still trying to figure out what should get focus from this
-        // kind of event.
-
-        this.form.fire(Tapestry.FORM_VALIDATE_EVENT, this.form);
-
-        if (t.validationError)
-        {
-            Event.stop(domevent); // Should be domevent.stop(), but that fails under IE
-
-            if (firstErrorField) firstErrorField.activate();
-
-            // Because the submission failed, the last submit property is cleared,
-            // since the form may be submitted for some other reason later.
-
-            t.lastSubmit = null;
-
-            return false;
+        
+        if (!t.skipValidation) {
+        
+	        // Let all the fields do their validations first.
+	        
+	        this.form.fire(Tapestry.FORM_VALIDATE_FIELDS_EVENT, this.form);
+	
+	        // Allow observers to validate the form as a whole.  The FormEvent will be visible
+	        // as event.memo.  The Form will not be submitted if event.result is set to false (it defaults
+	        // to true).  Still trying to figure out what should get focus from this
+	        // kind of event.
+	
+	        if (!t.validationError)
+	        	this.form.fire(Tapestry.FORM_VALIDATE_EVENT, this.form);
+	
+	        if (t.validationError)
+	        {
+	            Event.stop(domevent); // Should be domevent.stop(), but that fails under IE
+	
+	            // Because the submission failed, the last submit property is cleared,
+	            // since the form may be submitted for some other reason later.
+	
+	            t.lastSubmit = null;
+	
+	            return false;
+	        }
+        
+        	t.skipValidation = false;
         }
-
+        
         this.form.fire(Tapestry.FORM_PREPARE_FOR_SUBMIT_EVENT, this.form);
 
         // This flag can be set to prevent the form from submitting normally.
@@ -1210,7 +1210,8 @@ Tapestry.FormEventManager = Class.create({
 
             Event.stop(domevent);
 
-            // Instead ...
+            // Instead fire the event (a listener will then trigger the Ajax submission).
+            // This is really a hook for the ZoneManager.
 
             this.form.fire(Tapestry.FORM_PROCESS_SUBMIT_EVENT);
 
@@ -1246,6 +1247,9 @@ Tapestry.FieldEventManager = Class.create({
                 this.validateInput();
 
         }.bindAsEventListener(this));
+        
+        $(this.field.form).observe(Tapestry.FORM_VALIDATE_FIELDS_EVENT,
+        		this.validateInput.bindAsEventListener(this));
     },
 
 
