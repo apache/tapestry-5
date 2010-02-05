@@ -1,10 +1,10 @@
-// Copyright 2007, 2009 The Apache Software Foundation
+// Copyright 2007, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -23,7 +23,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 
 /**
- * Tests JSONObject, particularily in terms of parsing and writing JSON streams.
+ * Tests JSONObject, particularly in terms of parsing and writing JSON streams.
  */
 public class JSONObjectTest extends Assert
 {
@@ -47,6 +47,16 @@ public class JSONObjectTest extends Assert
 
         JSONObject limitedCopy2 = new JSONObject(master, "fred", "wilma");
         assertEquals(limitedCopy2.keys().size(), 1);
+    }
+
+    @Test
+    public void key_values_constructor()
+    {
+        JSONObject easy = new JSONObject("fred", "flintstone", "barney", "rubble");
+
+        JSONObject hard = new JSONObject().put("fred", "flintstone").put("barney", "rubble");
+
+        assertEquals(easy, hard);
     }
 
     @Test
@@ -94,9 +104,14 @@ public class JSONObjectTest extends Assert
     @DataProvider
     public Object[][] boolean_inputs()
     {
-        return new Object[][] { { "true", true }, { "TRUE", true }, { "false", false }, { "FALSE", false },
-                { Boolean.TRUE, true },
-                { Boolean.FALSE, false } };
+        return new Object[][]
+        {
+        { "true", true },
+        { "TRUE", true },
+        { "false", false },
+        { "FALSE", false },
+        { Boolean.TRUE, true },
+        { Boolean.FALSE, false } };
     }
 
     @Test
@@ -211,8 +226,14 @@ public class JSONObjectTest extends Assert
     @DataProvider
     public Object[][] double_to_string_data()
     {
-        return new Object[][] { { 3d, "3" }, { -22.5d, "-22.5" }, { 0d, "0" }, { Double.NEGATIVE_INFINITY, "null" },
-                { Double.POSITIVE_INFINITY, "null" }, { Double.NaN, "null" }, };
+        return new Object[][]
+        {
+        { 3d, "3" },
+        { -22.5d, "-22.5" },
+        { 0d, "0" },
+        { Double.NEGATIVE_INFINITY, "null" },
+        { Double.POSITIVE_INFINITY, "null" },
+        { Double.NaN, "null" }, };
     }
 
     @Test(dataProvider = "get_double_data")
@@ -228,7 +249,11 @@ public class JSONObjectTest extends Assert
     @DataProvider
     public Object[][] get_double_data()
     {
-        return new Object[][] { { new Double(3.5), 3.5d }, { new Long(1000), 1000d }, { "-101.7", -101.7d } };
+        return new Object[][]
+        {
+        { new Double(3.5), 3.5d },
+        { new Long(1000), 1000d },
+        { "-101.7", -101.7d } };
     }
 
     @Test
@@ -280,7 +305,11 @@ public class JSONObjectTest extends Assert
     @DataProvider
     public Object[][] get_int_inputs()
     {
-        return new Object[][] { { "3", 3 }, { new Long(97), 97 }, { "-8.76", -8 } };
+        return new Object[][]
+        {
+        { "3", 3 },
+        { new Long(97), 97 },
+        { "-8.76", -8 } };
     }
 
     @Test
@@ -383,7 +412,8 @@ public class JSONObjectTest extends Assert
 
         Arrays.sort(names);
 
-        assertEquals(names, new String[] { "barney", "fred" });
+        assertEquals(names, new String[]
+        { "barney", "fred" });
 
     }
 
@@ -417,14 +447,12 @@ public class JSONObjectTest extends Assert
     public final Object[][] bad_parse_data()
     {
         return new Object[][]
-                {
-                        { "{  ", "A JSONObject text must end with '}' at character 3 of {" },
-                        { "fred", "A JSONObject text must begin with '{' at character 1 of fred" },
-                        { "{ \"akey\" }", "Expected a ':' after a key at character 10 of { \"akey\" }" },
-                        { "{ \"fred\" : 1 \"barney\" }",
-                                "Expected a ',' or '}' at character 14 of { \"fred\" : 1 \"barney\" }" },
-                        { "{ \"list\" : [1, 2", "Expected a ',' or ']' at character 16 of { \"list\" : [1, 2" }
-                };
+        {
+        { "{  ", "A JSONObject text must end with '}' at character 3 of {" },
+        { "fred", "A JSONObject text must begin with '{' at character 1 of fred" },
+        { "{ \"akey\" }", "Expected a ':' after a key at character 10 of { \"akey\" }" },
+        { "{ \"fred\" : 1 \"barney\" }", "Expected a ',' or '}' at character 14 of { \"fred\" : 1 \"barney\" }" },
+        { "{ \"list\" : [1, 2", "Expected a ',' or ']' at character 16 of { \"list\" : [1, 2" } };
 
     }
 
@@ -527,12 +555,11 @@ public class JSONObjectTest extends Assert
     public Object[][] non_finite_data()
     {
         return new Object[][]
-                {
-                        { Double.NaN },
-                        { Double.NEGATIVE_INFINITY },
-                        { Float.NEGATIVE_INFINITY },
-                        { Float.NaN }
-                };
+        {
+        { Double.NaN },
+        { Double.NEGATIVE_INFINITY },
+        { Float.NEGATIVE_INFINITY },
+        { Float.NaN } };
     }
 
     @Test(dataProvider = "non_finite_data")
@@ -561,8 +588,9 @@ public class JSONObjectTest extends Assert
         }
         catch (RuntimeException ex)
         {
-            assertEquals(ex.getMessage(),
-                         "JSONObject properties may be one of Boolean, Number, String, org.apache.tapestry5.json.JSONArray, org.apache.tapestry5.json.JSONLiteral, org.apache.tapestry5.json.JSONObject, org.apache.tapestry5.json.JSONObject$Null, org.apache.tapestry5.json.JSONString. Type java.util.HashMap is not allowed.");
+            assertEquals(
+                    ex.getMessage(),
+                    "JSONObject properties may be one of Boolean, Number, String, org.apache.tapestry5.json.JSONArray, org.apache.tapestry5.json.JSONLiteral, org.apache.tapestry5.json.JSONObject, org.apache.tapestry5.json.JSONObject$Null, org.apache.tapestry5.json.JSONString. Type java.util.HashMap is not allowed.");
         }
     }
 
@@ -631,8 +659,8 @@ public class JSONObjectTest extends Assert
     @Test
     public void parse_number_forms()
     {
-        JSONObject object = new JSONObject("{ \"hex\" : 0x50, \"oct\" : 030, \"posInt\" : +50, " +
-                " \"negInt\" : -50, \"long\" : 4294968530, \"float\": -32.7 }");
+        JSONObject object = new JSONObject("{ \"hex\" : 0x50, \"oct\" : 030, \"posInt\" : +50, "
+                + " \"negInt\" : -50, \"long\" : 4294968530, \"float\": -32.7 }");
 
         assertEquals(object.getInt("hex"), 80);
         assertEquals(object.getInt("oct"), 24);
@@ -715,7 +743,6 @@ public class JSONObjectTest extends Assert
         assertFalse(array.getBoolean(1));
         assertFalse(array.getBoolean(3));
     }
-
 
     @Test
     public void not_a_double_at_index()
