@@ -218,6 +218,71 @@ public class JavaScriptSupportImplTest extends InternalBaseTestCase
     }
 
     @Test
+    public void init_with_string()
+    {
+        DocumentLinker linker = mockDocumentLinker();
+        ClientInfrastructure infra = mockClientInfrastucture();
+
+        train_for_stack(infra, linker);
+
+        linker.addScript("Tapestry.init({\"setup\":[\"chuck\"]});\n");
+
+        replay();
+
+        JavascriptSupportImpl jss = new JavascriptSupportImpl(linker, infra);
+
+        jss.addInitializerCall(InitializationPriority.IMMEDIATE, "setup", "chuck");
+
+        jss.commit();
+
+        verify();
+    }
+
+    @Test
+    public void init_with_string_multiple()
+    {
+
+        DocumentLinker linker = mockDocumentLinker();
+        ClientInfrastructure infra = mockClientInfrastucture();
+
+        train_for_stack(infra, linker);
+
+        linker.addScript("Tapestry.init({\"setup\":[\"chuck\",\"pat\"]});\n");
+
+        replay();
+
+        JavascriptSupportImpl jss = new JavascriptSupportImpl(linker, infra);
+
+        jss.addInitializerCall(InitializationPriority.IMMEDIATE, "setup", "chuck");
+        jss.addInitializerCall(InitializationPriority.IMMEDIATE, "setup", "pat");
+
+        jss.commit();
+
+        verify();
+    }
+
+    @Test
+    public void default_for_init_string_is_normal_priority()
+    {
+        DocumentLinker linker = mockDocumentLinker();
+        ClientInfrastructure infra = mockClientInfrastucture();
+
+        train_for_stack(infra, linker);
+
+        linker.addScript("Tapestry.onDOMLoaded(function() {\nTapestry.init({\"setup\":[\"chuck\"]});\n});");
+
+        replay();
+
+        JavascriptSupportImpl jss = new JavascriptSupportImpl(linker, infra);
+
+        jss.addInitializerCall("setup", "chuck");
+
+        jss.commit();
+
+        verify();
+    }
+
+    @Test
     public void init_multiple()
     {
         JSONObject spec1 = new JSONObject("clientId", "chuck");

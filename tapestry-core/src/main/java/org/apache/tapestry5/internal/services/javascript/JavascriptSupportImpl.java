@@ -123,6 +123,11 @@ public class JavascriptSupportImpl implements JavascriptSupport
 
     public void addInitializerCall(InitializationPriority priority, String functionName, JSONObject parameter)
     {
+        storeInitializerCall(priority, functionName, parameter);
+    }
+
+    private void storeInitializerCall(InitializationPriority priority, String functionName, Object parameter)
+    {
         Defense.notNull(priority, "priority");
         Defense.notBlank(functionName, "functionName");
         Defense.notNull(parameter, "parameter");
@@ -147,6 +152,16 @@ public class JavascriptSupportImpl implements JavascriptSupport
     }
 
     public void addInitializerCall(String functionName, JSONObject parameter)
+    {
+        addInitializerCall(InitializationPriority.NORMAL, functionName, parameter);
+    }
+
+    public void addInitializerCall(InitializationPriority priority, String functionName, String parameter)
+    {
+        storeInitializerCall(priority, functionName, parameter);
+    }
+
+    public void addInitializerCall(String functionName, String parameter)
     {
         addInitializerCall(InitializationPriority.NORMAL, functionName, parameter);
     }

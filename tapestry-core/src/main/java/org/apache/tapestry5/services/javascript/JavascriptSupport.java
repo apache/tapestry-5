@@ -90,6 +90,32 @@ public interface JavascriptSupport
     void addInitializerCall(InitializationPriority priority, String functionName, JSONObject parameter);
 
     /**
+     * Adds a call to a client-side function inside the Tapestry.Initializer namespace. Calls to this
+     * method are aggregated into a call to the Tapestry.init() function. Initialization occurs at
+     * {@link InitializationPriority#NORMAL} priority.
+     * 
+     * @param functionName
+     *            name of client-side function (within Tapestry.Initializer namespace) to execute
+     * @param parameter
+     *            string to pass to function (typically, a client id)
+     */
+    void addInitializerCall(String functionName, String parameter);
+
+    /**
+     * Adds a call to a client-side function inside the Tapestry.Initializer namespace. Calls to this
+     * method are aggregated into a call to the Tapestry.init() function. Initialization occurs at
+     * the specified priority.
+     * 
+     * @param priority
+     *            priority to use when adding the script
+     * @param functionName
+     *            name of client-side function (within Tapestry.Initializer namespace) to execute
+     * @param parameter
+     *            string to pass to function (typically, a client id)
+     */
+    void addInitializerCall(InitializationPriority priority, String functionName, String parameter);
+    
+    /**
      * Imports a JavaScript library as part of the rendered page. Libraries are added in the order
      * they are first imported; duplicate imports are ignored.
      * 
