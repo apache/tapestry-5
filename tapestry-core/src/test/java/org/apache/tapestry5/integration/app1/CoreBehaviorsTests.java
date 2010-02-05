@@ -1330,8 +1330,6 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     {
         clickThru("Trigger Demo");
 
-        assertAttribute(String.format("//script[@src='%s']/@src", "some_additional_scripts.js"),
-                "some_additional_scripts.js");
         assertTextPresent("Event 'provideAdditionalMarkup' handled.");
     }
 

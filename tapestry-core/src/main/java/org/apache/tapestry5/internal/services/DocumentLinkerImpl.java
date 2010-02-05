@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -55,16 +55,21 @@ public class DocumentLinkerImpl implements DocumentLinker
     private final int contextPathLength;
 
     /**
-     * @param productionMode       via symbol configuration
-     * @param omitGeneratorMetaTag via symbol configuration
-     * @param tapestryVersion      version of Tapestry framework (for meta tag)
-     * @param combineScripts       if true, individual JavaScript assets will be combined into a single virtual asset
-     * @param contextPath          {@link org.apache.tapestry5.services.Request#getContextPath()}
-     * @param clientDataEncoder    used to encode data for the combined virtual asset
+     * @param productionMode
+     *            via symbol configuration
+     * @param omitGeneratorMetaTag
+     *            via symbol configuration
+     * @param tapestryVersion
+     *            version of Tapestry framework (for meta tag)
+     * @param combineScripts
+     *            if true, individual JavaScript assets will be combined into a single virtual asset
+     * @param contextPath
+     *            {@link org.apache.tapestry5.services.Request#getContextPath()}
+     * @param clientDataEncoder
+     *            used to encode data for the combined virtual asset
      */
-    public DocumentLinkerImpl(boolean productionMode, boolean omitGeneratorMetaTag,
-                              String tapestryVersion, boolean combineScripts, String contextPath,
-                              ClientDataEncoder clientDataEncoder)
+    public DocumentLinkerImpl(boolean productionMode, boolean omitGeneratorMetaTag, String tapestryVersion,
+            boolean combineScripts, String contextPath, ClientDataEncoder clientDataEncoder)
     {
         this.combineScripts = combineScripts;
         this.clientDataEncoder = clientDataEncoder;
@@ -81,7 +86,8 @@ public class DocumentLinkerImpl implements DocumentLinker
 
     public void addStylesheetLink(String styleURL, String media)
     {
-        if (stylesheets.contains(styleURL)) return;
+        if (stylesheets.contains(styleURL))
+            return;
 
         includedStylesheets.add(new IncludedStylesheet(styleURL, media));
 
@@ -90,7 +96,8 @@ public class DocumentLinkerImpl implements DocumentLinker
 
     public void addScriptLink(String scriptURL)
     {
-        if (scripts.contains(scriptURL)) return;
+        if (scripts.contains(scriptURL))
+            return;
 
         scripts.add(scriptURL);
 
@@ -102,16 +109,14 @@ public class DocumentLinkerImpl implements DocumentLinker
 
     public void addScript(String script)
     {
-        if (InternalUtils.isBlank(script)) return;
-
         scriptBlock.append(script);
-        scriptBlock.append("\n");
     }
 
     /**
      * Updates the supplied Document, possibly adding &lt;head&gt; or &lt;body&gt; elements.
-     *
-     * @param document to be updated
+     * 
+     * @param document
+     *            to be updated
      */
     public void updateDocument(Document document)
     {
@@ -119,21 +124,20 @@ public class DocumentLinkerImpl implements DocumentLinker
 
         // If the document failed to render at all, that's a different problem and is reported elsewhere.
 
-        if (root == null) return;
+        if (root == null)
+            return;
 
         if (!stylesheets.isEmpty())
             addStylesheetsToHead(root, includedStylesheets);
 
-        //only add the generator meta only to html documents
+        // only add the generator meta only to html documents
 
         boolean isHtmlRoot = root.getName().equals("html");
 
         if (!omitGeneratorMetaTag && isHtmlRoot)
         {
             Element head = findOrCreateElement(root, "head", true);
-            head.element("meta",
-                         "name", "generator",
-                         "content", tapestryBanner);
+            head.element("meta", "name", "generator", "content", tapestryBanner);
         }
 
         addScriptElements(root);
@@ -141,7 +145,8 @@ public class DocumentLinkerImpl implements DocumentLinker
 
     private void addScriptElements(Element root)
     {
-        if (scripts.isEmpty() && scriptBlock.length() == 0) return;
+        if (scripts.isEmpty() && scriptBlock.length() == 0)
+            return;
 
         // This only applies when the document is an HTML document. This may need to change in the
         // future, perhaps configurable, to allow for html and xhtml and perhaps others. Does SVG
@@ -175,8 +180,9 @@ public class DocumentLinkerImpl implements DocumentLinker
 
     /**
      * Adds the dynamic script block, which is, ultimately, a call to the client-side Tapestry.onDOMLoaded() function.
-     *
-     * @param body element to add the dynamic scripting to
+     * 
+     * @param body
+     *            element to add the dynamic scripting to
      */
     protected void addDynamicScriptBlock(Element body)
     {
@@ -189,19 +195,17 @@ public class DocumentLinkerImpl implements DocumentLinker
             if (developmentMode)
                 e.raw("Tapestry.DEBUG_ENABLED = true;\n");
 
-            e.raw("Tapestry.onDOMLoaded(function() {\n");
-
             e.raw(scriptBlock.toString());
-
-            e.raw("});\n");
         }
     }
 
     /**
      * Adds a script link for each included script to the bottom of the container (the &lt;head&gt;).
-     *
-     * @param container element to add the script links to
-     * @param scripts   scripts to add
+     * 
+     * @param container
+     *            element to add the script links to
+     * @param scripts
+     *            scripts to add
      */
     protected void addScriptLinksForIncludedScripts(Element container, List<String> scripts)
     {
@@ -216,12 +220,11 @@ public class DocumentLinkerImpl implements DocumentLinker
         else
         {
             for (String scriptURL : scripts)
-                scriptContainer.element("script",
-                                        "type", "text/javascript",
-                                        "src", scriptURL);
+                scriptContainer.element("script", "type", "text/javascript", "src", scriptURL);
         }
 
-        if (existing != null) scriptContainer.moveBefore(existing);
+        if (existing != null)
+            scriptContainer.moveBefore(existing);
 
         scriptContainer.pop();
     }
@@ -238,17 +241,17 @@ public class DocumentLinkerImpl implements DocumentLinker
 
             for (String scriptURL : scripts)
             {
-                // Each scriptURL will be prefixed with the context path, which isn't needed to build the combined virtual
+                // Each scriptURL will be prefixed with the context path, which isn't needed to build the combined
+                // virtual
                 // asset (in fact, it gets in the way).
 
                 stream.writeUTF(scriptURL.substring(contextPathLength));
             }
 
-            String virtualURL = fullAssetPrefix + RequestConstants.VIRTUAL_FOLDER + dataSink.getEncodedClientData() + ".js";
+            String virtualURL = fullAssetPrefix + RequestConstants.VIRTUAL_FOLDER + dataSink.getEncodedClientData()
+                    + ".js";
 
-            container.element("script",
-                              "type", "text/javascript",
-                              "src", virtualURL);
+            container.element("script", "type", "text/javascript", "src", virtualURL);
         }
         catch (IOException ex)
         {
@@ -256,19 +259,21 @@ public class DocumentLinkerImpl implements DocumentLinker
         }
     }
 
-
     /**
      * Locates the head element under the root ("html") element, creating it if necessary, and adds the stylesheets to
      * it.
-     *
-     * @param root        element of document
-     * @param stylesheets to add to the document
+     * 
+     * @param root
+     *            element of document
+     * @param stylesheets
+     *            to add to the document
      */
     protected void addStylesheetsToHead(Element root, List<IncludedStylesheet> stylesheets)
     {
         int count = stylesheets.size();
 
-        if (count == 0) return;
+        if (count == 0)
+            return;
 
         // This only applies when the document is an HTML document. This may need to change in the
         // future, perhaps configurable, to allow for html and xhtml and perhaps others. Does SVG
@@ -276,8 +281,9 @@ public class DocumentLinkerImpl implements DocumentLinker
 
         String rootElementName = root.getName();
 
-        // Not an html document, don't add anything. 
-        if (!rootElementName.equals("html")) return;
+        // Not an html document, don't add anything.
+        if (!rootElementName.equals("html"))
+            return;
 
         Element head = findOrCreateElement(root, "head", true);
 
@@ -303,7 +309,8 @@ public class DocumentLinkerImpl implements DocumentLinker
             {
                 Element e = (Element) n;
 
-                if (e.getName().equalsIgnoreCase(elementName)) return e;
+                if (e.getName().equalsIgnoreCase(elementName))
+                    return e;
             }
         }
 

@@ -268,15 +268,6 @@ public class JavaScriptSupportImplTest extends InternalBaseTestCase
         verify();
     }
 
-    private Asset mockAsset(String clientURL)
-    {
-        Asset asset = mockAsset();
-
-        train_toClientURL(asset, clientURL);
-
-        return asset;
-    }
-
     private void train_for_stack(ClientInfrastructure infra, DocumentLinker linker)
     {
         Asset asset1 = mockAsset("script1.js");

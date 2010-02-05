@@ -83,6 +83,7 @@ import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.model.ParameterModel;
 import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.services.*;
+import org.apache.tapestry5.services.javascript.JavascriptSupport;
 import org.easymock.EasyMock;
 import org.easymock.IAnswer;
 
@@ -1267,5 +1268,19 @@ public abstract class TapestryTestCase extends IOCTestCase
     protected final ClientInfrastructure mockClientInfrastucture()
     {
         return newMock(ClientInfrastructure.class);
+    }
+
+    protected final JavascriptSupport mockJavascriptSupport()
+    {
+        return newMock(JavascriptSupport.class);
+    }
+
+    protected final Asset mockAsset(String assetURL)
+    {
+        Asset asset = mockAsset();
+    
+        train_toClientURL(asset, assetURL);
+    
+        return asset;
     }
 }

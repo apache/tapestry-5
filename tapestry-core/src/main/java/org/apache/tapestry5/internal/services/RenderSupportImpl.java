@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,107 +19,75 @@ import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.FieldFocusPriority;
 import org.apache.tapestry5.RenderSupport;
 import org.apache.tapestry5.ioc.internal.util.Defense;
-import org.apache.tapestry5.ioc.internal.util.IdAllocator;
 import org.apache.tapestry5.ioc.services.SymbolSource;
 import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.AssetSource;
-import org.apache.tapestry5.services.ClientInfrastructure;
+import org.apache.tapestry5.services.javascript.JavascriptSupport;
 
 public class RenderSupportImpl implements RenderSupport
 {
-    private final IdAllocator idAllocator;
-
     private final DocumentLinker linker;
 
     private final SymbolSource symbolSource;
 
     private final AssetSource assetSource;
 
-    private final ClientInfrastructure clientInfrastructure;
-
-    private boolean stackAssetsAdded;
-
-    private final JSONObject init = new JSONObject();
-
     private FieldFocusPriority focusPriority;
 
     private String focusFieldId;
 
-    /**
-     * @param linker          Used to assemble JavaScript includes and snippets
-     * @param symbolSource    Used to example symbols (in {@linkplain #addClasspathScriptLink(String...) in classpath
-     *                        scripts)
-     * @param assetSource     Used to convert classpath scripts to {@link org.apache.tapestry5.Asset}s
-     * @param coreScripts     core scripts (evaluated as classpaths scripts) that are added to any page that includes a
-     *                        script link or script block
-     * @param javascriptStack
-     */
-    public RenderSupportImpl(DocumentLinker linker, SymbolSource symbolSource,
-                             AssetSource assetSource, ClientInfrastructure clientInfrastructure)
-    {
-        this(linker, symbolSource, assetSource, new IdAllocator(), clientInfrastructure);
-    }
+    private final JavascriptSupport javascriptSupport;
 
     /**
-     * @param linker          Used to assemble JavaScript includes and snippets
-     * @param symbolSource    Used to example symbols (in {@linkplain #addClasspathScriptLink(String...) in classpath
-     *                        scripts)
-     * @param assetSource     Used to convert classpath scripts to {@link org.apache.tapestry5.Asset}s
-     * @param idAllocator     Used to allocate unique client ids during the render
-     * @param coreScripts     core scripts (evaluated as classpaths scripts) that are added to any page that includes a
-     *                        script link or script block
-     * @param javascriptStack
+     * @param linker
+     *            Used to assemble JavaScript includes and snippets
+     * @param symbolSource
+     *            Used to example symbols (in {@linkplain #addClasspathScriptLink(String...)}
+     * @param assetSource
+     *            Used to convert classpath scripts to {@link org.apache.tapestry5.Asset}s
+     * @param javascriptSupport
+     *            Used to add JavaScript libraries and blocks of initialization JavaScript to the rendered page
+     * @param ClientInfrastructure
+     *            Identifies which JavaScript libraries and stylesheets are needed in a full page render
      */
-
-    public RenderSupportImpl(DocumentLinker linker, SymbolSource symbolSource,
-                             AssetSource assetSource, IdAllocator idAllocator,
-                             ClientInfrastructure clientInfrastructure)
-
+    public RenderSupportImpl(DocumentLinker linker, SymbolSource symbolSource, AssetSource assetSource,
+            JavascriptSupport javascriptSupport)
     {
         this.linker = linker;
         this.symbolSource = symbolSource;
         this.assetSource = assetSource;
-        this.idAllocator = idAllocator;
-        this.clientInfrastructure = clientInfrastructure;
+        this.javascriptSupport = javascriptSupport;
     }
 
     public String allocateClientId(String id)
     {
-        return idAllocator.allocateId(id);
+        return javascriptSupport.allocateClientId(id);
     }
 
     public String allocateClientId(ComponentResources resources)
     {
-        return allocateClientId(resources.getId());
+        return javascriptSupport.allocateClientId(resources);
     }
 
     public void addScriptLink(Asset... scriptAssets)
     {
-        addStack();
-
         for (Asset asset : scriptAssets)
         {
             Defense.notNull(asset, "scriptAsset");
 
-            linker.addScriptLink(asset.toClientURL());
+            javascriptSupport.importJavascriptLibrary(asset);
         }
     }
 
     public void addScriptLink(String... scriptURLs)
     {
-        addStack();
-
-        for (String url : scriptURLs)
-        {
-            linker.addScriptLink(url);
-        }
+        throw new RuntimeException(
+                "RenderSupport.addScriptLink(String...) is no longer supported, starting in Tapestry 5.2.");
     }
 
     public void addClasspathScriptLink(String... classpaths)
     {
-        addStack();
-
         for (String path : classpaths)
             addScriptLinkFromClasspath(path);
     }
@@ -130,23 +98,17 @@ public class RenderSupportImpl implements RenderSupport
 
         Asset asset = assetSource.getAsset(null, expanded, null);
 
-        linker.addScriptLink(asset.toClientURL());
+        addScriptLink(asset);
     }
 
     public void addScript(String script)
     {
-        Defense.notBlank(script, "script");
-
-        addStack();
-
-        linker.addScript(script);
+        javascriptSupport.addScript(script);
     }
 
     public void addScript(String format, Object... arguments)
     {
-        Defense.notNull(format, "format");
-
-        addScript(String.format(format, arguments));
+        javascriptSupport.addScript(format, arguments);
     }
 
     public void addInit(String functionName, JSONArray parameterList)
@@ -156,17 +118,11 @@ public class RenderSupportImpl implements RenderSupport
 
     public void addInit(String functionName, JSONObject parameter)
     {
-        addInitFunctionInvocation(functionName, parameter);
+        javascriptSupport.addInitializerCall(functionName, parameter);
     }
 
     public void addInit(String functionName, String... parameters)
     {
-        if (parameters.length == 1)
-        {
-            addInitFunctionInvocation(functionName, parameters[0]);
-            return;
-        }
-
         JSONArray array = new JSONArray();
 
         for (String parameter : parameters)
@@ -174,7 +130,7 @@ public class RenderSupportImpl implements RenderSupport
             array.put(parameter);
         }
 
-        addInitFunctionInvocation(functionName, array);
+        addInit(functionName, array);
     }
 
     public void autofocus(FieldFocusPriority priority, String fieldId)
@@ -189,20 +145,21 @@ public class RenderSupportImpl implements RenderSupport
         }
     }
 
+    /**
+     * For the few existing places that use the old variations of addInit(), passing a list of
+     * strings or a JSONArray, the end result is a bit inefficient. We end up generating lots
+     * of calls to Tapestry.init, with no attempt to aggregate them. Most of the time, the init
+     * occurs with a JSONObject (the "spec") and is handled by JavascriptSupport.
+     */
     private void addInitFunctionInvocation(String functionName, Object parameters)
     {
         Defense.notBlank(functionName, "functionName");
         Defense.notNull(parameters, "parameters");
 
-        JSONArray invocations = init.has(functionName) ? init.getJSONArray(functionName) : null;
+        JSONArray list = new JSONArray().put(parameters);
+        JSONObject wrapper = new JSONObject().put(functionName, list);
 
-        if (invocations == null)
-        {
-            invocations = new JSONArray();
-            init.put(functionName, invocations);
-        }
-
-        invocations.put(parameters);
+        addScript("Tapestry.init(%s);", wrapper);
     }
 
     /**
@@ -214,11 +171,6 @@ public class RenderSupportImpl implements RenderSupport
         {
             addScript("$('%s').activate();", focusFieldId);
         }
-
-        if (init.length() > 0)
-        {
-            addScript("Tapestry.init(%s);", init);
-        }
     }
 
     public void addStylesheetLink(Asset stylesheet, String media)
@@ -228,22 +180,8 @@ public class RenderSupportImpl implements RenderSupport
         linker.addStylesheetLink(stylesheet.toClientURL(), media);
     }
 
-
     public void addStylesheetLink(String stylesheetURL, String media)
     {
         linker.addStylesheetLink(stylesheetURL, media);
-    }
-
-    private void addStack()
-    {
-        if (!stackAssetsAdded)
-        {
-            for (Asset script : clientInfrastructure.getJavascriptStack())
-            {
-                linker.addScriptLink(script.toClientURL());
-            }
-
-            stackAssetsAdded = true;
-        }
     }
 }
