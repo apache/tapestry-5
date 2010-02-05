@@ -1958,9 +1958,9 @@ public final class TapestryModule
         {
             public void renderMarkup(MarkupWriter writer, MarkupRenderer renderer)
             {
-                RenderSupport renderSupport = environment.peekRequired(RenderSupport.class);
+                JavascriptSupport javascriptSupport = environment.peekRequired(JavascriptSupport.class);
 
-                ClientBehaviorSupportImpl clientBehaviorSupport = new ClientBehaviorSupportImpl(renderSupport);
+                ClientBehaviorSupportImpl clientBehaviorSupport = new ClientBehaviorSupportImpl(javascriptSupport);
 
                 environment.push(ClientBehaviorSupport.class, clientBehaviorSupport);
 
@@ -2008,7 +2008,7 @@ public final class TapestryModule
         configuration.add("JavascriptSupport", javascriptSupport, "after:DocumentLinker");
         configuration.add("RenderSupport", renderSupport, "after:JavascriptSupport");
         configuration.add("InjectDefaultStyleheet", injectDefaultStylesheet, "after:RenderSupport");
-        configuration.add("ClientBehaviorSupport", clientBehaviorSupport, "after:RenderSupport");
+        configuration.add("ClientBehaviorSupport", clientBehaviorSupport, "after:JavascriptSupport");
         configuration.add("Heartbeat", heartbeat, "after:RenderSupport");
         configuration.add("DefaultValidationDecorator", defaultValidationDecorator, "after:Heartbeat");
     }
@@ -2105,9 +2105,9 @@ public final class TapestryModule
         {
             public void renderMarkup(MarkupWriter writer, JSONObject reply, PartialMarkupRenderer renderer)
             {
-                RenderSupport renderSupport = environment.peekRequired(RenderSupport.class);
+                JavascriptSupport javascriptSupport = environment.peekRequired(JavascriptSupport.class);
 
-                ClientBehaviorSupportImpl support = new ClientBehaviorSupportImpl(renderSupport);
+                ClientBehaviorSupportImpl support = new ClientBehaviorSupportImpl(javascriptSupport);
 
                 environment.push(ClientBehaviorSupport.class, support);
 
@@ -2154,7 +2154,7 @@ public final class TapestryModule
         configuration.add("DocumentLinker", documentLinker);
         configuration.add("JavascriptSupport", javascriptSupport, "after:DocumentLinker");
         configuration.add("RenderSupport", renderSupport, "after:JavascriptSupport");
-        configuration.add("ClientBehaviorSupport", clientBehaviorSupport, "after:RenderSupport");
+        configuration.add("ClientBehaviorSupport", clientBehaviorSupport, "after:JavascriptSupport");
         configuration.add("Heartbeat", heartbeat, "after:RenderSupport");
         configuration.add("DefaultValidationDecorator", defaultValidationDecorator, "after:Heartbeat");
     }

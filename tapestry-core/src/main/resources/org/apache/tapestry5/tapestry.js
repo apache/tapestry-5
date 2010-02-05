@@ -753,13 +753,13 @@ Tapestry.Initializer = {
     /**
      * Convert a form or link into a trigger of an Ajax update that
      * updates the indicated Zone.
-     * @param element id or instance of <form> or <a> element
-     * @param zoneId id of the element to update when link clicked or form submitted
-     * @param url absolute component event request URL
+     * @param spec.linkId id or instance of <form> or <a> element
+     * @param spec.zoneId id of the element to update when link clicked or form submitted
+     * @param spec.url absolute component event request URL
      */
-    linkZone : function(element, zoneId, url)
+    linkZone : function(spec)
     {
-    	Tapestry.Initializer.updateZoneOnEvent("click", element, zoneId, url);
+    	Tapestry.Initializer.updateZoneOnEvent("click", spec.linkId, spec.zoneId, spec.url);
     },
     
     updateZoneOnEvent : function(eventName, element, zoneId, url)
@@ -828,41 +828,49 @@ Tapestry.Initializer = {
         });
     },
 
-    validate : function (field, specs)
+    /**
+     * Keys in the masterSpec are ids of field control elements. Value is a list of validation specs.
+     * Each validation spec is a 2 or 3 element array.
+     */
+    validate : function (masterSpec)
     {
-        field = $(field);
+    	$H(masterSpec).each(function (pair) { 
+    		
+    		var field = $(pair.key);
+    		
+    	      // Force the creation of the form and field event managers.
 
-        // Force the creation of the form and field event managers.
+            $(field.form).getFormEventManager();
+            $(field).getFieldEventManager();
 
-        $(field.form).getFormEventManager();
-        $(field).getFieldEventManager();
-
-        specs.each(function(spec)
-        {
-            // spec is a 2 or 3 element array.
-            // validator function name, message, optional constraint
-
-            var name = spec[0];
-            var message = spec[1];
-            var constraint = spec[2];
-
-            var vfunc = Tapestry.Validator[name];
-
-            if (vfunc == undefined)
+            // Each pair value is an array of specs
+            $A(pair.value).each(function(spec)
             {
-                Tapestry.error(Tapestry.Messages.missingValidator, {
-                    name:name,
-                    fieldName:field.id
-                });
-                return;
-            }
+                // spec is a 2 or 3 element array.
+                // validator function name, message, optional constraint
 
-            // Pass the extend field, the provided message, and the constraint object
-            // to the Tapestry.Validator function, so that it can, typically, invoke
-            // field.addValidator().
+                var name = spec[0];
+                var message = spec[1];
+                var constraint = spec[2];
 
-            vfunc.call(this, field, message, constraint);
-        });
+                var vfunc = Tapestry.Validator[name];
+
+                if (vfunc == undefined)
+                {
+                    Tapestry.error(Tapestry.Messages.missingValidator, {
+                        name:name,
+                        fieldName:field.id
+                    });
+                    return;
+                }
+
+                // Pass the extended field, the provided message, and the constraint object
+                // to the Tapestry.Validator function, so that it can, typically, invoke
+                // field.addValidator().
+
+                vfunc.call(this, field, message, constraint);
+            });
+    	});
     },
 
     zone : function(spec)
@@ -1387,12 +1395,7 @@ Tapestry.ZoneManager = Class.create({
     // show: name of Tapestry.ElementEffect function used to reveal the zone if hidden
     // update: name of Tapestry.ElementEffect function used to highlight the zone after it is updated
     initialize: function(spec)
-    {
-        if (Object.isString(spec))
-            spec = {
-                element: spec
-            }
-
+    {        
         this.element = $(spec.element);
         this.showFunc = Tapestry.ElementEffect[spec.show] || Tapestry.ElementEffect.show;
         this.updateFunc = Tapestry.ElementEffect[spec.update] || Tapestry.ElementEffect.highlight;
@@ -1484,11 +1487,6 @@ Tapestry.FormFragment = Class.create({
 
     initialize: function(spec)
     {
-        if (Object.isString(spec))
-            spec = {
-                element: spec
-            };
-
         this.element = $(spec.element);
 
         $T(this.element).formFragment = this;
