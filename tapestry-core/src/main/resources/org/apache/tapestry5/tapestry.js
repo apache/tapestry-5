@@ -809,7 +809,9 @@ Tapestry.Initializer = {
 
         element.observe(eventName, function(event)
         {
-            event.stop();
+            if (event.stopped) return;
+            
+        	event.stop();
             
             element.fire(Tapestry.TRIGGER_ZONE_UPDATE_EVENT);
         });
