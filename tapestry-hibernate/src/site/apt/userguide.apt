@@ -202,11 +202,11 @@ public class AppModule
 }
 +---+
 
-   Finally, you should use the HibernateTransactionAdviser to add transaction advice:
+   Finally, you should use the HibernateTransactionAdvisor to add transaction advice:
 
 +---+
     @Match("*DAO")
-    public static void adviseTransactions(HibernateTransactionAdviser advisor, MethodAdviceReceiver receiver)
+    public static void adviseTransactions(HibernateTransactionAdvisor advisor, MethodAdviceReceiver receiver)
     {
         advisor.addTransactionCommitAdvice(receiver);
     }
