@@ -75,7 +75,7 @@ public interface TransformField extends AnnotationProvider, Comparable<Transform
     void replaceAccess(TransformField conduitField);
 
     /**
-     * Replaces reand and write field access with a conduit. A new field is created for the conduit instance,
+     * Replaces read and write field access with a conduit. A new field is created for the conduit instance,
      * and the original field is deleted.
      * 
      * @param conduit
@@ -134,8 +134,12 @@ public interface TransformField extends AnnotationProvider, Comparable<Transform
      *            type of field
      * @param provider
      *            provides the value to be assigned to the field
-     * @since 5.2.0
      */
     <T> void injectIndirect(ComponentValueProvider<T> provider);
 
+    /**
+     * Returns an object that can be used to access the value of the field for read and update.
+     * Changes to the field will honor any {@link FieldValueConduit} that has been applied to the field.
+     */
+    FieldAccess getAccess();
 }

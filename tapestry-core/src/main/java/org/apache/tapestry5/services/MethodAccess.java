@@ -20,6 +20,7 @@ package org.apache.tapestry5.services;
  * or the checked exception that is thrown).
  * 
  * @since 5.2.0
+ * @see TransformMethod#getAccess()
  */
 public interface MethodAccess
 {

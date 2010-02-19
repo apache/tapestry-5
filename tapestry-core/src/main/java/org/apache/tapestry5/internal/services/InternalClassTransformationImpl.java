@@ -56,6 +56,14 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
             new Class[]
             { Object.class, Object[].class }, null);
 
+    public static final MethodSignature FIELD_ACCESS_READ_SIGNATURE = new MethodSignature(Object.class, "read",
+            new Class[]
+            { Object.class }, null);
+
+    public static final MethodSignature FIELD_ACCESS_WRITE_SIGNATURE = new MethodSignature(void.class, "write",
+            new Class[]
+            { Object.class, Object.class }, null);
+
     private static final int INIT_BUFFER_SIZE = 100;
 
     private boolean frozen;
@@ -385,6 +393,8 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
         String readValueBody, writeValueBody;
 
+        private org.apache.tapestry5.services.FieldAccess access;
+
         TransformFieldImpl(CtField field, boolean added)
         {
             this.field = field;
@@ -481,7 +491,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
             failIfFrozen();
 
             if (writeValueBody != null)
-                throw new IllegalStateException(String.format("Field %s.%s has already had write access replaces.",
+                throw new IllegalStateException(String.format("Field %s.%s has already had write access replaced.",
                         getClassName(), name));
 
             // Explicitly reference $0 (aka "this") because of TAPESTRY-1511.
@@ -492,6 +502,97 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
             formatter.format("replace write %s: %s();\n\n", name, methodName);
 
             fieldAccessReplaced = true;
+        }
+
+        public org.apache.tapestry5.services.FieldAccess getAccess()
+        {
+            failIfFrozen();
+
+            if (access == null)
+                createAccess();
+
+            return access;
+        }
+
+        private void createAccess()
+        {
+            TransformMethod reader = createReader();
+            TransformMethod writer = createWriter();
+
+            access = createFieldAccess(reader, writer);
+        }
+
+        private org.apache.tapestry5.services.FieldAccess createFieldAccess(TransformMethod reader,
+                TransformMethod writer)
+        {
+            ClassFab cf = classFactory.newClass(org.apache.tapestry5.services.FieldAccess.class);
+
+            addFieldAccessReadMethod(cf, reader);
+            addFieldAccessWriteMethod(cf, writer);
+
+            cf.addToString(String.format("FieldAccess<%s.%s>", getClassName(), name));
+
+            Class accessClass = cf.createClass();
+
+            try
+            {
+                return (org.apache.tapestry5.services.FieldAccess) accessClass.newInstance();
+            }
+            catch (Exception ex)
+            {
+                throw new RuntimeException(ex);
+            }
+        }
+
+        private void addFieldAccessReadMethod(ClassFab cf, TransformMethod readAccess)
+        {
+            BodyBuilder builder = new BodyBuilder().begin();
+
+            builder.addln("%s instance = (%<s) $1;", getClassName());
+            builder.addln("return ($w) instance.%s();", readAccess.getSignature().getMethodName());
+
+            builder.end();
+
+            cf.addMethod(Modifier.PUBLIC, FIELD_ACCESS_READ_SIGNATURE, builder.toString());
+        }
+
+        private void addFieldAccessWriteMethod(ClassFab cf, TransformMethod writeAccess)
+        {
+            BodyBuilder builder = new BodyBuilder().begin();
+
+            builder.addln("%s instance = (%<s) $1;", getClassName());
+            builder.addln("%s value = %s;", type, ClassFabUtils.castReference("$2", type));
+            builder.addln("instance.%s(value);", writeAccess.getSignature().getMethodName());
+
+            builder.end();
+
+            cf.addMethod(Modifier.PUBLIC, FIELD_ACCESS_WRITE_SIGNATURE, builder.toString());
+        }
+
+        private TransformMethod createReader()
+        {
+            String methodName = newMemberName("readaccess", name);
+
+            TransformMethodSignature signature = new TransformMethodSignature(Modifier.PUBLIC, type, methodName, null,
+                    null);
+
+            // Add the method as existing, so that the field access may be replaced with a FieldValueConduit
+            // if necessary.
+            return addOrReplaceMethod(signature, String.format("return %s;", name), false);
+        }
+
+        private TransformMethod createWriter()
+        {
+            String methodName = newMemberName("writeaccess", name);
+
+            TransformMethodSignature signature = new TransformMethodSignature(Modifier.PUBLIC, "void", methodName,
+                    new String[]
+                    { type }, null);
+
+            // Add the method as existing, so that the field access may be replaced with a FieldValueConduit
+            // if necessary.
+
+            return addOrReplaceMethod(signature, String.format("%s = $1;", name), false);
         }
 
         public void remove()
@@ -1076,7 +1177,8 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         addOrReplaceMethod(signature, methodBody, true);
     }
 
-    private void addOrReplaceMethod(TransformMethodSignature signature, String methodBody, boolean addAsNew)
+    private TransformMethodImpl addOrReplaceMethod(TransformMethodSignature signature, String methodBody,
+            boolean addAsNew)
     {
         failIfFrozen();
 
@@ -1087,6 +1189,8 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         String suffix = addAsNew ? "" : " transformed";
 
         String action = "add" + suffix;
+
+        TransformMethodImpl result = null;
 
         try
         {
@@ -1121,7 +1225,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
             ctClass.addMethod(method);
 
-            recordMethod(method, addAsNew);
+            result = recordMethod(method, addAsNew);
         }
         catch (CannotCompileException ex)
         {
@@ -1134,6 +1238,8 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         }
 
         addMethodToDescription(action, signature, methodBody);
+
+        return result;
     }
 
     public void addTransformedMethod(TransformMethodSignature signature, String methodBody)
