@@ -813,35 +813,6 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
         assertTextPresent("Class org.apache.tapestry5.integration.app1.pages.Datum contains field(s) (_value) that are not private. You should change these fields to private, and add accessor methods if needed.");
     }
 
-    /**
-     * TAPESTRY-2338
-     */
-    @Test
-    public void cached_properties_cleared_at_end_of_request()
-    {
-        clickThru("Clean Cache Demo");
-
-        String time1_1 = getText("time1");
-        String time1_2 = getText("time1");
-
-        // Don't know what they are but they should be the same.
-
-        assertEquals(time1_2, time1_1);
-
-        click("link=update");
-
-        sleep(250);
-
-        String time2_1 = getText("time1");
-        String time2_2 = getText("time1");
-
-        // Check that @Cache is still working
-
-        assertEquals(time2_2, time2_1);
-
-        assertFalse(time2_1.equals(time1_1),
-                "After update the nanoseconds time did not change, meaning @Cache was broken.");
-    }
 
     @Test
     public void method_advice()

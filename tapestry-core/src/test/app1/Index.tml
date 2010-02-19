@@ -132,6 +132,16 @@
           <a href="PageResetFailure">PageReset Annotation Failure</a>
           -- error when @PageReset is on a method with parameters
         </li>
+        
+        <li>
+          <a href="VoidMethodWithCached">@Cached on void method</a>
+          -- error when @Cached is used on a method that returns void
+        </li>
+        
+        <li>
+          <a href="ParamsMethodWithCached">@Cached on method with parameters</a>
+          -- error when @cached is used on a method that has parameters
+        </li>
     </ul>
 
 </html>

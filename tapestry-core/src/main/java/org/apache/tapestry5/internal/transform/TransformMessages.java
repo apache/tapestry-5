@@ -18,12 +18,12 @@ import java.util.List;
 
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.annotations.MixinClasses;
-import org.apache.tapestry5.internal.structure.InternalComponentResourcesImpl;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.MessagesImpl;
 import org.apache.tapestry5.services.TransformField;
+import org.apache.tapestry5.services.TransformMethod;
 import org.apache.tapestry5.services.TransformMethodSignature;
 
 class TransformMessages
@@ -33,16 +33,6 @@ class TransformMessages
     static String fieldInjectionError(String className, String fieldName, Throwable cause)
     {
         return MESSAGES.format("field-injection-error", className, fieldName, cause);
-    }
-
-    static String cachedMethodMustHaveReturnValue(TransformMethodSignature method)
-    {
-        return MESSAGES.format("cached-no-return-value", method);
-    }
-
-    static String cachedMethodsHaveNoParameters(TransformMethodSignature method)
-    {
-        return MESSAGES.format("cached-no-parameters", method);
     }
 
     static String illegalNumberOfPageActivationContextHandlers(List<TransformField> fields)

@@ -1,10 +1,10 @@
-// Copyright 2008 The Apache Software Foundation
+// Copyright 2008, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,15 +14,25 @@
 
 package org.apache.tapestry5.internal.transform;
 
+import java.lang.reflect.Modifier;
+import java.util.List;
+
 import org.apache.tapestry5.Binding;
 import org.apache.tapestry5.BindingConstants;
+import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.annotations.Cached;
-import org.apache.tapestry5.ioc.util.BodyBuilder;
+import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.model.MutableComponentModel;
-import org.apache.tapestry5.services.*;
-
-import static java.lang.reflect.Modifier.PRIVATE;
-import java.util.List;
+import org.apache.tapestry5.runtime.PageLifecycleAdapter;
+import org.apache.tapestry5.services.BindingSource;
+import org.apache.tapestry5.services.ClassTransformation;
+import org.apache.tapestry5.services.ComponentClassTransformWorker;
+import org.apache.tapestry5.services.ComponentMethodAdvice;
+import org.apache.tapestry5.services.ComponentMethodInvocation;
+import org.apache.tapestry5.services.FieldAccess;
+import org.apache.tapestry5.services.TransformField;
+import org.apache.tapestry5.services.TransformMethod;
+import org.apache.tapestry5.services.TransformMethodSignature;
 
 /**
  * Caches method return values for methods annotated with {@link Cached}.
@@ -31,6 +41,83 @@ public class CachedWorker implements ComponentClassTransformWorker
 {
     private final BindingSource bindingSource;
 
+    /**
+     * Manages a cache value as the result of invoking a no-arguments method.
+     */
+    public interface MethodResultCache
+    {
+        /** Returns true if the cache contains a cached value. May also check to see if the cached value is valid. */
+        boolean isCached();
+
+        /** Stores a new cached value for later reference. */
+        void set(Object cachedValue);
+
+        /** Returns the previously cached value, if any. */
+        Object get();
+
+        /** Resets the cache, discarding the cached value. */
+        void reset();
+    }
+
+    /**
+     * Handles the watching of a binding (usually a property or property expression), invalidating the
+     * cache early if the watched binding's value changes.
+     */
+    private class SimpleMethodResultCache implements MethodResultCache
+    {
+        private boolean cached;
+        private Object cachedValue;
+
+        public void set(Object cachedValue)
+        {
+            cached = true;
+            this.cachedValue = cachedValue;
+        }
+
+        public void reset()
+        {
+            cached = false;
+            cachedValue = null;
+        }
+
+        public boolean isCached()
+        {
+            return cached;
+        }
+
+        public Object get()
+        {
+            return cachedValue;
+        }
+    }
+
+    private class WatchedBindingMethodResultCache extends SimpleMethodResultCache
+    {
+        private final Binding binding;
+
+        private Object cachedBindingValue;
+
+        public WatchedBindingMethodResultCache(Binding binding)
+        {
+            this.binding = binding;
+        }
+
+        @Override
+        public boolean isCached()
+        {
+            Object currentBindingValue = binding.get();
+
+            if (!TapestryInternalUtils.isEqual(cachedBindingValue, currentBindingValue))
+            {
+                reset();
+
+                cachedBindingValue = currentBindingValue;
+            }
+
+            return super.isCached();
+        }
+    }
+
     public CachedWorker(BindingSource bindingSource)
     {
         this.bindingSource = bindingSource;
@@ -38,103 +125,108 @@ public class CachedWorker implements ComponentClassTransformWorker
 
     public void transform(ClassTransformation transformation, MutableComponentModel model)
     {
-        List<TransformMethodSignature> methods = transformation.findMethodsWithAnnotation(Cached.class);
-        if (methods.isEmpty())
-            return;
+        List<TransformMethod> methods = transformation.matchMethodsWithAnnotation(Cached.class);
 
-        for (TransformMethodSignature method : methods)
+        for (TransformMethod method : methods)
         {
-            if (method.getReturnType().equals("void"))
-                throw new IllegalArgumentException(TransformMessages.cachedMethodMustHaveReturnValue(method));
+            validateMethod(method);
 
-            if (method.getParameterTypes().length != 0)
-                throw new IllegalArgumentException(TransformMessages.cachedMethodsHaveNoParameters(method));
-
-            String propertyName = method.getMethodName();
-
-            // add a property to store whether or not the method has been called
-            String fieldName = transformation.addField(PRIVATE, method.getReturnType(), propertyName);
-            String calledField = transformation.addField(PRIVATE, "boolean", fieldName + "$called");
-
-            Cached once = transformation.getMethodAnnotation(method, Cached.class);
-            String bindingField = null;
-            String bindingValueField = null;
-            boolean watching = once.watch().length() > 0;
-
-            if (watching)
-            {
-                // add fields to store the binding and the value
-                bindingField = transformation.addField(PRIVATE, Binding.class.getCanonicalName(),
-                                                       fieldName + "$binding");
-                bindingValueField = transformation.addField(PRIVATE, "java.lang.Object", fieldName + "$bindingValue");
-
-                String bindingSourceField = transformation.addInjectedField(BindingSource.class,
-                                                                            fieldName + "$bindingsource",
-                                                                            bindingSource);
-
-                String body = String.format("%s = %s.newBinding(\"Watch expression\", %s, \"%s\", \"%s\");",
-                                            bindingField,
-                                            bindingSourceField,
-                                            transformation.getResourcesFieldName(),
-                                            BindingConstants.PROP,
-                                            once.watch());
-
-                transformation.extendMethod(TransformConstants.CONTAINING_PAGE_DID_LOAD_SIGNATURE, body);
-            }
-
-            BodyBuilder b = new BodyBuilder();
-
-            // on cleanup, reset the field values
-            b.begin();
-
-            if (!TransformUtils.isPrimitive(method.getReturnType()))
-                b.addln("%s = null;", fieldName);
-            b.addln("%s = false;", calledField);
-
-            if (watching)
-                b.addln("%s = null;", bindingValueField);
-
-            b.end();
-
-            // TAPESTRY-2338: Cleanup at page detach, not render cleanup.  In an Ajax request, the rendering
-            // objects may reference properties of components that don't render and so won't execute the
-            // PostCleanupRender phase.
-
-            transformation.extendMethod(TransformConstants.CONTAINING_PAGE_DID_DETACH_SIGNATURE, b.toString());
-
-            // prefix the existing method to cache the result
-            b.clear();
-            b.begin();
-
-            // if it has been called and watch is set and the old value is the same as the new value then return
-            // get the old value and cache it
-            /* NOTE: evaluates the binding twice when checking the new value.
-                * this is probably not a problem because in most cases properties
-                * that are being watched are not expensive operations. plus, we
-                * never guaranteed that it would be called exactly once when
-                * watching.
-                */
-            if (watching)
-            {
-                b.addln("if (%s && %s == %s.get()) return %s;",
-                        calledField, bindingValueField, bindingField, fieldName);
-                b.addln("%s = %s.get();", bindingValueField, bindingField);
-            }
-            else
-            {
-                b.addln("if (%s) return %s;", calledField, fieldName);
-            }
-
-            b.addln("%s = true;", calledField);
-            b.end();
-            transformation.prefixMethod(method, b.toString());
-
-            // cache the return value
-            b.clear();
-            b.begin();
-            b.addln("%s = $_;", fieldName);
-            b.end();
-            transformation.extendExistingMethod(method, b.toString());
+            adviseMethod(transformation, method);
         }
+    }
+
+    private void adviseMethod(ClassTransformation transformation, TransformMethod method)
+    {
+        FieldAccess resultCacheAccess = createMethodResultCacheField(transformation, method);
+
+        Cached annotation = method.getAnnotation(Cached.class);
+
+        ComponentMethodAdvice advice = createAdvice(resultCacheAccess, annotation.watch());
+
+        method.addAdvice(advice);
+    }
+
+    private FieldAccess createMethodResultCacheField(ClassTransformation transformation, TransformMethod method)
+    {
+        TransformField resultCacheField = transformation.createField(Modifier.PRIVATE, MethodResultCache.class
+                .getName(), "cache$" + method.getName());
+
+        return resultCacheField.getAccess();
+    }
+
+    private ComponentMethodAdvice createAdvice(final FieldAccess resultCacheAccess, final String watch)
+    {
+        ComponentMethodAdvice advice = new ComponentMethodAdvice()
+        {
+            public void advise(ComponentMethodInvocation invocation)
+            {
+                MethodResultCache cache = getOrCreateCache(invocation);
+
+                if (cache.isCached())
+                {
+                    invocation.overrideResult(cache.get());
+                    return;
+                }
+
+                invocation.proceed();
+
+                invocation.rethrow();
+
+                cache.set(invocation.getResult());
+            }
+
+            private MethodResultCache getOrCreateCache(ComponentMethodInvocation invocation)
+            {
+                MethodResultCache cache = (MethodResultCache) resultCacheAccess.read(invocation.getInstance());
+
+                if (cache == null)
+                    cache = createAndStoreCache(invocation);
+
+                return cache;
+            }
+
+            private MethodResultCache createAndStoreCache(ComponentMethodInvocation invocation)
+            {
+                final MethodResultCache cache = createMethodResultCache(invocation.getComponentResources());
+
+                invocation.getComponentResources().addPageLifecycleListener(new PageLifecycleAdapter()
+                {
+                    @Override
+                    public void containingPageDidDetach()
+                    {
+                        cache.reset();
+                    }
+                });
+
+                resultCacheAccess.write(invocation.getInstance(), cache);
+
+                return cache;
+            }
+
+            private SimpleMethodResultCache createMethodResultCache(ComponentResources resources)
+            {
+                if (watch.equals(""))
+                    return new SimpleMethodResultCache();
+
+                Binding binding = bindingSource.newBinding("@Cached watch", resources, BindingConstants.PROP, watch);
+
+                return new WatchedBindingMethodResultCache(binding);
+            }
+        };
+
+        return advice;
+    }
+
+    private void validateMethod(TransformMethod method)
+    {
+        TransformMethodSignature signature = method.getSignature();
+
+        if (signature.getReturnType().equals("void"))
+            throw new IllegalArgumentException(String.format(
+                    "Method %s may not be used with @Cached because it returns void.", method.getMethodIdentifier()));
+
+        if (signature.getParameterTypes().length != 0)
+            throw new IllegalArgumentException(String.format(
+                    "Method %s may not be used with @Cached because it has parameters.", method.getMethodIdentifier()));
     }
 }
