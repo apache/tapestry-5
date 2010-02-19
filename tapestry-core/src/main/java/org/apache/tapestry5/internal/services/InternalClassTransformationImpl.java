@@ -88,6 +88,8 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
         private String identifier;
 
+        private Boolean override;
+
         TransformMethodImpl(CtMethod method, boolean added)
         {
             this.method = method;
@@ -326,6 +328,31 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
             }
 
             return identifier;
+        }
+
+        public boolean isOverride()
+        {
+            if (override == null)
+                override = searchForOverride();
+
+            return override;
+        }
+
+        private boolean searchForOverride()
+        {
+            InternalClassTransformation search = parentTransformation;
+
+            while (search != null)
+            {
+                if (search.isMethod(sig))
+                    return true;
+
+                search = search.getParentTransformation();
+            }
+
+            // Not found in any super-class.
+
+            return false;
         }
 
         void doFinish()
@@ -1678,24 +1705,11 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
     public boolean isMethodOverride(TransformMethodSignature methodSignature)
     {
-        Defense.notNull(methodSignature, "methodSignature");
-
         if (!isMethod(methodSignature))
             throw new IllegalArgumentException(String.format("Method %s is not implemented by transformed class %s.",
                     methodSignature, getClassName()));
 
-        InternalClassTransformation search = parentTransformation;
-        while (search != null)
-        {
-            if (search.isMethod(methodSignature))
-                return true;
-
-            search = search.getParentTransformation();
-        }
-
-        // Not found in any super-class.
-
-        return false;
+        return getMethod(methodSignature).isOverride();
     }
 
     public InternalClassTransformation getParentTransformation()

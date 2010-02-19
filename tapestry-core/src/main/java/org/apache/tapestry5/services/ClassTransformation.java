@@ -540,6 +540,7 @@ public interface ClassTransformation extends AnnotationProvider
      * @param methodSignature
      *            signature of method to check
      * @return true if the parent class contains a method with the name signature
+     * @deprecated Use {@link TransformMethod#isOverride()} instead
      */
     boolean isMethodOverride(TransformMethodSignature methodSignature);
 

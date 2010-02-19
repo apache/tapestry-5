@@ -83,4 +83,11 @@ public interface TransformMethod extends AnnotationProvider, Comparable<Transfor
      */
     String getMethodIdentifier();
 
+    /**
+     * Returns true if the method is an override of a method from the parent class.
+     * 
+     * @return true if the parent class contains a method with the name signature
+     */
+    boolean isOverride();
+
 }
