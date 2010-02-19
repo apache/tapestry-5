@@ -20,8 +20,10 @@ import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.annotations.MixinClasses;
 import org.apache.tapestry5.internal.structure.InternalComponentResourcesImpl;
 import org.apache.tapestry5.ioc.Messages;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.MessagesImpl;
+import org.apache.tapestry5.services.TransformField;
 import org.apache.tapestry5.services.TransformMethodSignature;
 
 class TransformMessages
@@ -43,24 +45,28 @@ class TransformMessages
         return MESSAGES.format("cached-no-parameters", method);
     }
 
-    static String illegalNumberOfPageActivationContextHandlers(List<String> fields)
+    static String illegalNumberOfPageActivationContextHandlers(List<TransformField> fields)
     {
-        return MESSAGES.format("illegal-number-of-page-activation-context-handlers", InternalUtils
-                .joinSorted(fields));
+        List<String> names = CollectionFactory.newList();
+
+        for (TransformField field : fields)
+        {
+            names.add(field.getName());
+        }
+
+        return MESSAGES.format("illegal-number-of-page-activation-context-handlers", InternalUtils.joinSorted(names));
     }
 
     public static String badMixinConstraintLength(MixinClasses mixin, String fieldName)
     {
-        return MESSAGES.format("bad-mixin-constraint-length", mixin.value().length, fieldName,
-                mixin.order().length);
+        return MESSAGES.format("bad-mixin-constraint-length", mixin.value().length, fieldName, mixin.order().length);
     }
 
     /** @since 5.2.0 */
-    public static String bindParameterOnlyOnMixin(String boundParameterName,
-            ComponentResources resources)
+    public static String bindParameterOnlyOnMixin(String boundParameterName, ComponentResources resources)
     {
-        return MESSAGES.format("bind-parameter-only-on-mixin", boundParameterName,
-                resources.getComponentModel().getComponentClassName());
+        return MESSAGES.format("bind-parameter-only-on-mixin", boundParameterName, resources.getComponentModel()
+                .getComponentClassName());
     }
 
 }
