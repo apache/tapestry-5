@@ -582,7 +582,7 @@ public final class TapestryModule
         add(configuration, PageDetached.class, TransformConstants.CONTAINING_PAGE_DID_DETACH_SIGNATURE, "pageDetached");
 
         configuration.add("Retain", new RetainWorker());
-        configuration.add("Persist", new PersistWorker());
+        configuration.addInstance("Persist",  PersistWorker.class);
 
         configuration.addInstance("IncludeStylesheet", IncludeStylesheetWorker.class, "after:SetupRender");
         configuration
