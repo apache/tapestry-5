@@ -14,6 +14,7 @@
 
 package org.apache.tapestry5.internal.transform;
 
+import java.lang.reflect.Modifier;
 import java.util.List;
 import java.util.Locale;
 
@@ -27,7 +28,10 @@ import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.services.AssetSource;
 import org.apache.tapestry5.services.ClassTransformation;
 import org.apache.tapestry5.services.ComponentClassTransformWorker;
+import org.apache.tapestry5.services.ComponentMethodAdvice;
+import org.apache.tapestry5.services.ComponentMethodInvocation;
 import org.apache.tapestry5.services.ComponentValueProvider;
+import org.apache.tapestry5.services.FieldAccess;
 import org.apache.tapestry5.services.TransformConstants;
 import org.apache.tapestry5.services.TransformField;
 import org.apache.tapestry5.services.javascript.JavascriptSupport;
@@ -63,55 +67,108 @@ public abstract class AbstractIncludeAssetWorker implements ComponentClassTransf
     protected final void addOperationForAssetPaths(ClassTransformation transformation, MutableComponentModel model,
             String[] assetPaths)
     {
-        final Resource baseResource = model.getBaseResource();
-        final List<String> paths = CollectionFactory.newList();
+        List<String> expandedPaths = expandSymbolsInPaths(assetPaths);
 
-        for (String value : assetPaths)
+        // Since every instance of the component may be in a different locale, every instance
+        // will have a field to store its localized list of assets. There's room to do some
+        // sharing/caching perhaps.
+
+        FieldAccess access = createFieldForAssets(transformation);
+
+        // Inside the component's page loaded callback, convert the asset paths to assets
+
+        storeLocalizedAssetsAtPageLoad(transformation, expandedPaths, access);
+
+        handleAssetsDuringSetupRenderPhase(transformation, model, access);
+    }
+
+    private FieldAccess createFieldForAssets(ClassTransformation transformation)
+    {
+        String fieldName = transformation.addField(Modifier.PRIVATE, List.class.getName(), "includedAssets");
+
+        return transformation.getField(fieldName).getAccess();
+    }
+
+    private void handleAssetsDuringSetupRenderPhase(ClassTransformation transformation, MutableComponentModel model,
+            final FieldAccess access)
+    {
+        ComponentMethodAdvice advice = new ComponentMethodAdvice()
         {
-            String expanded = symbolSource.expandSymbols(value);
 
-            paths.add(expanded);
-        }
-
-        ComponentValueProvider<Runnable> provider = new ComponentValueProvider<Runnable>()
-        {
-            public Runnable get(final ComponentResources resources)
+            @SuppressWarnings("unchecked")
+            public void advise(ComponentMethodInvocation invocation)
             {
-                // This code is re-executed for each new component instance. We could
-                // possibly cache on resources.getCompleteId() + locale, but that's
-                // probably not worth the effort.
+                invocation.proceed();
 
-                final Locale locale = resources.getLocale();
+                List<Asset> assets = (List<Asset>) access.read(invocation.getInstance());
 
-                final List<Asset> assets = CollectionFactory.newList();
-
-                for (String assetPath : paths)
-                {
-                    Asset asset = assetSource.getAsset(baseResource, assetPath, locale);
-
-                    assets.add(asset);
-                }
-
-                return new Runnable()
-                {
-                    public void run()
-                    {
-                        for (Asset asset : assets)
-                        {
-                            handleAsset(asset);
-                        }
-                    }
-                };
+                handleAssets(assets);
             }
         };
 
-        TransformField runnableField = transformation.addIndirectInjectedField(Runnable.class, "includeAssets",
-                provider);
-
-        transformation.extendMethod(TransformConstants.SETUP_RENDER_SIGNATURE, String.format("%s.run();", runnableField
-                .getName()));
+        transformation.getMethod(TransformConstants.SETUP_RENDER_SIGNATURE).addAdvice(advice);
 
         model.addRenderPhase(SetupRender.class);
+    }
+
+    private void storeLocalizedAssetsAtPageLoad(ClassTransformation transformation, final List<String> expandedPaths,
+            final FieldAccess access)
+    {
+        ComponentMethodAdvice advice = new ComponentMethodAdvice()
+        {
+            public void advise(ComponentMethodInvocation invocation)
+            {
+                invocation.proceed();
+
+                ComponentResources resources = invocation.getComponentResources();
+
+                List<Asset> assets = convertPathsToAssets(resources, expandedPaths);
+
+                access.write(invocation.getInstance(), assets);
+            }
+        };
+
+        transformation.getMethod(TransformConstants.CONTAINING_PAGE_DID_LOAD_SIGNATURE).addAdvice(advice);
+    }
+
+    private List<String> expandSymbolsInPaths(String[] paths)
+    {
+        List<String> result = CollectionFactory.newList();
+
+        for (String path : paths)
+        {
+            String expanded = symbolSource.expandSymbols(path);
+
+            result.add(expanded);
+        }
+
+        return result;
+    }
+
+    private List<Asset> convertPathsToAssets(ComponentResources resources, List<String> assetPaths)
+    {
+        Resource baseResource = resources.getComponentModel().getBaseResource();
+
+        List<Asset> result = CollectionFactory.newList();
+
+        Locale locale = resources.getLocale();
+
+        for (String assetPath : assetPaths)
+        {
+            Asset asset = assetSource.getAsset(baseResource, assetPath, locale);
+
+            result.add(asset);
+        }
+
+        return result;
+    }
+
+    private void handleAssets(List<Asset> assets)
+    {
+        for (Asset asset : assets)
+        {
+            handleAsset(asset);
+        }
     }
 
     /**
