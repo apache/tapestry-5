@@ -43,8 +43,8 @@ public interface TransformMethod extends AnnotationProvider, Comparable<Transfor
      * The extended method is considered <em>new</em>. New methods <em>are not</em> scanned for removed fields, field
      * access changes, etc.
      * <p>
-     * This method will eventually be removed, using {@link #addAdvice(ComponentMethodAdvice)} or some other alternative is
-     * preferred.
+     * This method will eventually be removed, using {@link #addAdvice(ComponentMethodAdvice)} or some other alternative
+     * is preferred.
      * 
      * @param body
      *            the body of Javassist psuedo-code
@@ -70,4 +70,17 @@ public interface TransformMethod extends AnnotationProvider, Comparable<Transfor
      *            to receive control when the method is invoked
      */
     void addAdvice(ComponentMethodAdvice advice);
+
+    /**
+     * Converts a signature to a string used to identify the method; this consists of the
+     * {@link TransformMethodSignature#getMediumDescription()} appended with source file information
+     * and line number
+     * information (when available).
+     * 
+     * @param signature
+     * @return a string that identifies the class, method name, types of parameters, source file and
+     *         source line number
+     */
+    String getMethodIdentifier();
+
 }

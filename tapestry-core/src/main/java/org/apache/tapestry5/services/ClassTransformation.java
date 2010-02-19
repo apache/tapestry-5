@@ -108,8 +108,7 @@ public interface ClassTransformation extends AnnotationProvider
      * @return a list of method signature (which may be empty) in ascending order
      * @see #findMethods(MethodFilter)
      */
-    List<TransformMethodSignature> findMethodsWithAnnotation(
-            Class<? extends Annotation> annotationClass);
+    List<TransformMethodSignature> findMethodsWithAnnotation(Class<? extends Annotation> annotationClass);
 
     /**
      * Finds all methods matched by the provided filter.
@@ -196,8 +195,7 @@ public interface ClassTransformation extends AnnotationProvider
      * @throws IllegalArgumentException
      *             if the method signature does not correspond to a declared method
      */
-    <T extends Annotation> T getMethodAnnotation(TransformMethodSignature method,
-            Class<T> annotationClass);
+    <T extends Annotation> T getMethodAnnotation(TransformMethodSignature method, Class<T> annotationClass);
 
     /**
      * Claims a field so as to ensure that only a single annotation is applied to any single field.
@@ -316,8 +314,7 @@ public interface ClassTransformation extends AnnotationProvider
      * @return the actual name of the injected field
      * @since 5.2
      */
-    <T> TransformField addIndirectInjectedField(Class<T> type, String suggestedName,
-            ComponentValueProvider<T> provider);
+    <T> TransformField addIndirectInjectedField(Class<T> type, String suggestedName, ComponentValueProvider<T> provider);
 
     /**
      * Converts an <em>existing</em> field into a read only field whose value is the provided
@@ -503,6 +500,7 @@ public interface ClassTransformation extends AnnotationProvider
      * @param signature
      * @return a string that identifies the class, method name, types of parameters, source file and
      *         source line number
+     * @deprecated Use {@link TransformMethod#getMethodIdentifier()} instead
      */
     String getMethodIdentifier(TransformMethodSignature signature);
 
