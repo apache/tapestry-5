@@ -1,10 +1,10 @@
-// Copyright 2009 The Apache Software Foundation
+// Copyright 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -20,12 +20,11 @@ import org.apache.tapestry5.ioc.annotations.InjectService;
 import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.services.ClassTransformation;
 import org.apache.tapestry5.services.ComponentClassTransformWorker;
-
-import java.util.List;
+import org.apache.tapestry5.services.TransformField;
 
 /**
  * Processes the {@link org.apache.tapestry5.ioc.annotations.InjectService} annotation.
- *
+ * 
  * @since 5.1.0.0
  */
 public class InjectServiceWorker implements ComponentClassTransformWorker
@@ -40,25 +39,20 @@ public class InjectServiceWorker implements ComponentClassTransformWorker
         this.cache = cache;
     }
 
+    @SuppressWarnings("unchecked")
     public void transform(ClassTransformation transformation, MutableComponentModel model)
     {
-        List<String> names = transformation.findFieldsWithAnnotation(InjectService.class);
-
-        if (names.isEmpty()) return;
-
-        for (String name : names)
+        for (TransformField field : transformation.matchFieldsWithAnnotation(InjectService.class))
         {
-            InjectService annotation = transformation.getFieldAnnotation(name, InjectService.class);
+            InjectService annotation = field.getAnnotation(InjectService.class);
 
-            String typeName = transformation.getFieldType(name);
+            field.claim(annotation);
 
-            Class fieldType = cache.forName(typeName);
+            Class fieldType = cache.forName(field.getType());
 
             Object service = locator.getService(annotation.value(), fieldType);
 
-            transformation.injectField(name, service);
-
-            transformation.claimField(name, annotation);
+            field.inject(service);
         }
     }
 }
