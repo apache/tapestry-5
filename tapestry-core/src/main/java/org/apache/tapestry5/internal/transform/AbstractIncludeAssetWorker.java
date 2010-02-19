@@ -30,6 +30,7 @@ import org.apache.tapestry5.services.ComponentClassTransformWorker;
 import org.apache.tapestry5.services.ComponentValueProvider;
 import org.apache.tapestry5.services.TransformConstants;
 import org.apache.tapestry5.services.TransformField;
+import org.apache.tapestry5.services.javascript.JavascriptSupport;
 
 /**
  * Base class for workers that automatically include assets in the page (via methods on
@@ -59,8 +60,8 @@ public abstract class AbstractIncludeAssetWorker implements ComponentClassTransf
      * @param assetPaths
      *            raw paths to be converted to assets
      */
-    protected final void addOperationForAssetPaths(ClassTransformation transformation,
-            MutableComponentModel model, String[] assetPaths)
+    protected final void addOperationForAssetPaths(ClassTransformation transformation, MutableComponentModel model,
+            String[] assetPaths)
     {
         final Resource baseResource = model.getBaseResource();
         final List<String> paths = CollectionFactory.newList();
@@ -104,11 +105,11 @@ public abstract class AbstractIncludeAssetWorker implements ComponentClassTransf
             }
         };
 
-        TransformField runnableField = transformation.addIndirectInjectedField(Runnable.class,
-                "includeAssets", provider);
+        TransformField runnableField = transformation.addIndirectInjectedField(Runnable.class, "includeAssets",
+                provider);
 
-        transformation.extendMethod(TransformConstants.SETUP_RENDER_SIGNATURE, String.format(
-                "%s.run();", runnableField.getName()));
+        transformation.extendMethod(TransformConstants.SETUP_RENDER_SIGNATURE, String.format("%s.run();", runnableField
+                .getName()));
 
         model.addRenderPhase(SetupRender.class);
     }
@@ -116,7 +117,8 @@ public abstract class AbstractIncludeAssetWorker implements ComponentClassTransf
     /**
      * Invoked, from the component's setup render phase, for each asset. This method must be
      * threadsafe. Most
-     * implementations pass the asset to a particular method of {@link org.apache.tapestry5.RenderSupport}.
+     * implementations pass the asset to a particular method of {@link org.apache.tapestry5.RenderSupport} or
+     * {@link JavascriptSupport}.
      * 
      * @param asset
      *            to be processed
