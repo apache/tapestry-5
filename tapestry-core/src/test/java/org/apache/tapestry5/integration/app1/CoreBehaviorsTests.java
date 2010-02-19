@@ -813,7 +813,6 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
         assertTextPresent("Class org.apache.tapestry5.integration.app1.pages.Datum contains field(s) (_value) that are not private. You should change these fields to private, and add accessor methods if needed.");
     }
 
-
     @Test
     public void method_advice()
     {
@@ -958,7 +957,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     {
         clickThru("Getter Method Already Exists");
 
-        assertTextPresent("Unable to add new method public final java.lang.String getName() as it already exists.");
+        assertTextPresent("Unable to create new method public java.lang.String getName() as it already exists in class org.apache.tapestry5.integration.app1.pages.GetterMethodAlreadyExists.");
     }
 
     /**
