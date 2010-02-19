@@ -17,18 +17,23 @@ package org.apache.tapestry5.internal.transform;
 import java.util.List;
 
 import org.apache.tapestry5.annotations.PageReset;
+import org.apache.tapestry5.internal.InternalComponentResources;
 import org.apache.tapestry5.internal.structure.PageResetListener;
+import org.apache.tapestry5.ioc.Predicate;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.services.ClassTransformation;
 import org.apache.tapestry5.services.ComponentClassTransformWorker;
-import org.apache.tapestry5.services.MethodFilter;
+import org.apache.tapestry5.services.ComponentMethodAdvice;
+import org.apache.tapestry5.services.ComponentMethodInvocation;
+import org.apache.tapestry5.services.MethodAccess;
+import org.apache.tapestry5.services.MethodInvocationResult;
 import org.apache.tapestry5.services.TransformConstants;
+import org.apache.tapestry5.services.TransformMethod;
 import org.apache.tapestry5.services.TransformMethodSignature;
 
 /**
- * Implementation of the {@link PageReset} annotation. Makes the component implement
- * {@link PageResetListener} and,
- * optionally,
+ * Implementation of the {@link PageReset} annotation. Makes the component implement {@link PageResetListener}.
  * 
  * @since 5.2.0
  */
@@ -39,48 +44,118 @@ public class PageResetAnnotationWorker implements ComponentClassTransformWorker
     private static final TransformMethodSignature CONTAINING_PAGE_DID_RESET = new TransformMethodSignature(
             "containingPageDidReset");
 
+    private final ComponentMethodAdvice registerAsListenerAdvice = new ComponentMethodAdvice()
+    {
+        public void advise(ComponentMethodInvocation invocation)
+        {
+            invocation.proceed();
+
+            InternalComponentResources icr = (InternalComponentResources) invocation.getComponentResources();
+
+            icr.addPageResetListener((PageResetListener) invocation.getInstance());
+        }
+    };
+
     public void transform(final ClassTransformation transformation, MutableComponentModel model)
     {
-        MethodFilter filter = new MethodFilter()
-        {
-            public boolean accept(TransformMethodSignature signature)
-            {
-                return signature.getMethodName().equalsIgnoreCase("pageReset")
-                        || transformation.getMethodAnnotation(signature, PageReset.class) != null;
-            }
-        };
-
-        List<TransformMethodSignature> methods = transformation.findMethods(filter);
+        List<TransformMethod> methods = matchPageResetMethods(transformation);
 
         if (methods.isEmpty())
             return;
 
-        String resourcesFieldName = transformation.getResourcesFieldName();
+        makeComponentRegisterAsPageResetListenerAtPageLoad(transformation, model);
 
-        if (model.getMeta(META_KEY) == null)
+        adviseContainingPageDidResetMethod(transformation, methods);
+    }
+
+    private void adviseContainingPageDidResetMethod(ClassTransformation transformation, List<TransformMethod> methods)
+    {
+        List<MethodAccess> methodAccess = convertToMethodAccess(methods);
+
+        ComponentMethodAdvice advice = createMethodAccessAdvice(methodAccess);
+
+        transformation.getMethod(CONTAINING_PAGE_DID_RESET).addAdvice(advice);
+    }
+
+    private ComponentMethodAdvice createMethodAccessAdvice(final List<MethodAccess> methodAccess)
+    {
+        ComponentMethodAdvice advice = new ComponentMethodAdvice()
         {
-            transformation.addImplementedInterface(PageResetListener.class);
+            public void advise(ComponentMethodInvocation invocation)
+            {
+                invocation.proceed();
 
-            transformation.extendMethod(TransformConstants.CONTAINING_PAGE_DID_LOAD_SIGNATURE,
-                    String.format("%s.addPageResetListener(this);", resourcesFieldName));
+                invokeResetMethods(invocation.getInstance());
+            }
 
-            model.setMeta(META_KEY, "true");
+            private void invokeResetMethods(Object instance)
+            {
+                for (MethodAccess access : methodAccess)
+                {
+                    MethodInvocationResult result = access.invoke(instance);
+
+                    result.rethrow();
+                }
+            }
+        };
+        return advice;
+    }
+
+    private List<MethodAccess> convertToMethodAccess(List<TransformMethod> methods)
+    {
+        List<MethodAccess> result = CollectionFactory.newList();
+
+        for (TransformMethod method : methods)
+        {
+            result.add(toMethodAccess(method));
         }
 
-        for (TransformMethodSignature sig : methods)
+        return result;
+    }
+
+    private void makeComponentRegisterAsPageResetListenerAtPageLoad(final ClassTransformation transformation,
+            MutableComponentModel model)
+    {
+        // The meta key tracks whether this has already occurred; it is only necessary for a base class
+        // (subclasses, even if they include pageReset methods, do not need to re-register if the base class
+        // already has).
+
+        if (model.getMeta(META_KEY) != null)
+            return;
+
+        transformation.addImplementedInterface(PageResetListener.class);
+
+        transformation.getMethod(TransformConstants.CONTAINING_PAGE_DID_LOAD_SIGNATURE).addAdvice(
+                registerAsListenerAdvice);
+
+        model.setMeta(META_KEY, "true");
+    }
+
+    private List<TransformMethod> matchPageResetMethods(final ClassTransformation transformation)
+    {
+        return transformation.matchMethods(new Predicate<TransformMethod>()
         {
-            boolean valid = sig.getParameterTypes().length == 0
-                    && sig.getReturnType().equals("void") && sig.getExceptionTypes().length == 0;
 
-            if (!valid)
-                throw new RuntimeException(
-                        String
-                                .format(
-                                        "Method %s of class %s is invalid: methods with the @PageReset annotation must return void, and have no parameters or thrown exceptions.",
-                                        sig, model.getComponentClassName()));
+            public boolean accept(TransformMethod method)
+            {
+                return method.getName().equalsIgnoreCase("pageReset") || method.getAnnotation(PageReset.class) != null;
+            }
+        });
+    }
 
-            transformation.extendMethod(CONTAINING_PAGE_DID_RESET, sig.getMethodName() + "();");
-        }
+    private MethodAccess toMethodAccess(TransformMethod method)
+    {
+        TransformMethodSignature sig = method.getSignature();
 
+        boolean valid = sig.getParameterTypes().length == 0 && sig.getReturnType().equals("void");
+
+        if (!valid)
+            throw new RuntimeException(
+                    String
+                            .format(
+                                    "Method %s is invalid: methods with the @PageReset annotation must return void, and have no parameters.",
+                                    method.getMethodIdentifier()));
+
+        return method.getAccess();
     }
 }

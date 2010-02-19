@@ -1465,6 +1465,8 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     {
         clickThru("PageReset Annotation Failure");
 
-        assertTextPresent("Method void reset(java.lang.String) of class org.apache.tapestry5.integration.app1.pages.PageResetFailure is invalid: methods with the @PageReset annotation must return void, and have no parameters or thrown exceptions.");
+        assertTextPresent(
+                "Method org.apache.tapestry5.integration.app1.pages.PageResetFailure.reset(java.lang.String)",
+                "is invalid: methods with the @PageReset annotation must return void, and have no parameters.");
     }
 }
