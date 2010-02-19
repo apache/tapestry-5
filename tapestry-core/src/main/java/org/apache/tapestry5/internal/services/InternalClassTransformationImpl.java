@@ -124,6 +124,11 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
             return sig;
         }
 
+        public String getName()
+        {
+            return sig.getMethodName();
+        }
+
         public void addAdvice(ComponentMethodAdvice advice)
         {
             failIfFrozen();
@@ -549,7 +554,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
             BodyBuilder builder = new BodyBuilder().begin();
 
             builder.addln("%s instance = (%<s) $1;", getClassName());
-            builder.addln("return ($w) instance.%s();", readAccess.getSignature().getMethodName());
+            builder.addln("return ($w) instance.%s();", readAccess.getName());
 
             builder.end();
 
@@ -562,7 +567,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
             builder.addln("%s instance = (%<s) $1;", getClassName());
             builder.addln("%s value = %s;", type, ClassFabUtils.castReference("$2", type));
-            builder.addln("instance.%s(value);", writeAccess.getSignature().getMethodName());
+            builder.addln("instance.%s(value);", writeAccess.getName());
 
             builder.end();
 

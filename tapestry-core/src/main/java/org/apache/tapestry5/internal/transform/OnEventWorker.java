@@ -165,7 +165,7 @@ public class OnEventWorker implements ComponentClassTransformWorker
 
             private boolean hasCorrectPrefix(TransformMethod method)
             {
-                return method.getSignature().getMethodName().startsWith("on");
+                return method.getName().startsWith("on");
             }
 
             private boolean hasAnnotation(TransformMethod method)
@@ -191,7 +191,7 @@ public class OnEventWorker implements ComponentClassTransformWorker
     {
         OnEvent annotation = method.getAnnotation(OnEvent.class);
 
-        String methodName = method.getSignature().getMethodName();
+        String methodName = method.getName();
 
         String eventType = extractEventType(methodName, annotation);
         String componentId = extractComponentId(methodName, annotation);

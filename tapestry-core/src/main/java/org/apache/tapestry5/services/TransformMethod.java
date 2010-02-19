@@ -32,6 +32,9 @@ public interface TransformMethod extends AnnotationProvider, Comparable<Transfor
      */
     TransformMethodSignature getSignature();
 
+    /** Returns just the name of the method. */
+    String getName();
+
     /**
      * Extends an existing method. The provided method body is inserted at the end of the existing
      * method (i.e. {@link javassist.CtBehavior#insertAfter(java.lang.String)}). To access or change
