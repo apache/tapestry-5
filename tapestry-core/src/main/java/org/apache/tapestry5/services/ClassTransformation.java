@@ -24,6 +24,8 @@ import org.apache.tapestry5.ioc.AnnotationProvider;
 import org.apache.tapestry5.ioc.Predicate;
 import org.slf4j.Logger;
 
+import sun.awt.ComponentFactory;
+
 /**
  * Contains class-specific information used when transforming a raw component class into an
  * executable component class.
@@ -436,6 +438,8 @@ public interface ClassTransformation extends AnnotationProvider
      * component. This will be a protected field, accessible to the class and subclasses.
      * 
      * @return name of field
+     * @deprecated Obtain the resources from {@link ComponentMethodInvocation#getComponentResources()} or
+     *             as passed to {@link ComponentValueProvider#get(ComponentResources)} instead
      */
     String getResourcesFieldName();
 
@@ -447,8 +451,19 @@ public interface ClassTransformation extends AnnotationProvider
      * remember to invoke the super class implemetation explicitly. Use this method to control when
      * the super-class
      * implementation is invoked.
+     * 
+     * @deprecated Use {@link #createMethod(TransformMethodSignature)} instead
      */
     void addMethod(TransformMethodSignature signature, String methodBody);
+
+    /**
+     * Creates a new method as a declared method of the class, with an empty (default) body that
+     * does nothing. Non-void methods will return null, false or 0. The method must not yet exist.
+     * 
+     * @param signature
+     *            defines the method to create
+     */
+    TransformMethod createMethod(TransformMethodSignature signature);
 
     /**
      * As with {@link #addMethod(TransformMethodSignature, String)}, but field references inside the

@@ -1182,6 +1182,25 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         addOrReplaceMethod(signature, methodBody, true);
     }
 
+    public TransformMethod createMethod(TransformMethodSignature signature)
+    {
+        failIfFrozen();
+
+        if (methods.containsKey(signature))
+            throw new RuntimeException(String.format(
+                    "Unable to create new method %s as it already exists in class %s.", signature, getClassName()));
+
+        return addOrReplaceMethod(signature, null, true);
+    }
+
+    /**
+     * @param signature
+     *            of method to add
+     * @param methodBody
+     *            or null for default
+     * @param addAsNew
+     *            if true, then fields in the method will not be transformed
+     */
     private TransformMethodImpl addOrReplaceMethod(TransformMethodSignature signature, String methodBody,
             boolean addAsNew)
     {
@@ -1437,7 +1456,10 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
             description.append(exceptionTypes[i]);
         }
 
-        formatter.format("\n%s\n\n", methodBody);
+        if (methodBody != null)
+            formatter.format("\n%s", methodBody);
+
+        description.append("\n\n");
     }
 
     public TransformMethod getMethod(TransformMethodSignature signature)
