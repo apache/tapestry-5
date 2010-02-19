@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -73,11 +73,18 @@ public abstract class AbstractInvocation implements Invocation
         return thrown != null;
     }
 
+    public void rethrow()
+    {
+        if (thrown != null)
+            throw new RuntimeException(thrown);
+    }
+
     public <T extends Throwable> T getThrown(Class<T> throwableClass)
     {
         Defense.notNull(throwableClass, "throwableClass");
 
-        if (throwableClass.isInstance(thrown)) return throwableClass.cast(thrown);
+        if (throwableClass.isInstance(thrown))
+            return throwableClass.cast(thrown);
 
         return null;
     }
@@ -96,7 +103,7 @@ public abstract class AbstractInvocation implements Invocation
         }
 
         throw new IllegalArgumentException(String.format("Exception %s is not a declared exception of method %s.",
-                                                         thrown.getClass().getName(), method));
+                thrown.getClass().getName(), method));
     }
 
     public Object getResult()

@@ -96,6 +96,12 @@ public abstract class AbstractComponentMethodInvocation implements ComponentMeth
         return thrown != null;
     }
 
+    public void rethrow()
+    {
+        if (thrown != null)
+            throw new RuntimeException(thrown);
+    }
+
     public <T extends Throwable> T getThrown(Class<T> throwableClass)
     {
         if (throwableClass.isInstance(thrown))
@@ -116,8 +122,8 @@ public abstract class AbstractComponentMethodInvocation implements ComponentMeth
         }
 
         throw new IllegalArgumentException(String.format(
-                "Exception class %s is not a declared exception type for method %s().", thrown
-                        .getClass(), info.getMethodName()));
+                "Exception class %s is not a declared exception type for method %s().", thrown.getClass(), info
+                        .getMethodName()));
     }
 
     public Object getResult()
@@ -131,11 +137,9 @@ public abstract class AbstractComponentMethodInvocation implements ComponentMeth
         {
             Class expectedType = info.getEffectiveResultType();
 
-            if (!expectedType.isInstance(newResult)) { throw new IllegalArgumentException(
-                    String
-                            .format(
-                                    "Invalid result value (%s) does not match return type %s for method %s.",
-                                    newResult, expectedType.getName(), info.getMethodName())); }
+            if (!expectedType.isInstance(newResult)) { throw new IllegalArgumentException(String.format(
+                    "Invalid result value (%s) does not match return type %s for method %s.", newResult, expectedType
+                            .getName(), info.getMethodName())); }
         }
 
         result = newResult;
