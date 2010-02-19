@@ -1608,11 +1608,22 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         return toMethodSignatures(methods);
     }
 
-    public List<TransformMethod> matchMethods(final Predicate<TransformMethod> predicate)
+    public List<TransformMethod> matchMethods(Predicate<TransformMethod> predicate)
     {
         failIfFrozen();
 
         return InternalUtils.matchAndSort(methods.values(), predicate);
+    }
+
+    public List<TransformMethod> matchMethodsWithAnnotation(final Class<? extends Annotation> annotationType)
+    {
+        return matchMethods(new Predicate<TransformMethod>()
+        {
+            public boolean accept(TransformMethod method)
+            {
+                return method.getAnnotation(annotationType) != null;
+            }
+        });
     }
 
     private TransformMethodSignature toMethodSignature(CtMethod method)

@@ -133,6 +133,16 @@ public interface ClassTransformation extends AnnotationProvider
     List<TransformMethod> matchMethods(Predicate<TransformMethod> predicate);
 
     /**
+     * Finds all methods matched by the provided predicate.
+     * 
+     * @param annotationType
+     *            Used to filter the list
+     * @return a list of matching methods (which may be empty) in ascending order (by
+     *         method name), but descending order (by parameter count) within overrides of a single method name.
+     */
+    List<TransformMethod> matchMethodsWithAnnotation(Class<? extends Annotation> annotationType);
+
+    /**
      * Finds all unclaimed fields matched by the provided filter. Only considers private instance
      * fields.
      * 
