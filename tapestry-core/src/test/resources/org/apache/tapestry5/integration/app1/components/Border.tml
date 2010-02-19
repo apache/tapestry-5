@@ -39,7 +39,6 @@
                             <dd>Service proxies and interceptors</dd>
 
                             <dt>Component Layer: ${componentClassFactory.createdClassCount} classes</dt>
-                            <dd>For the most part, this is going to be prop: bindings</dd>
                             <dt>Locale:</dt>
                             <dd>${componentResources.locale}</dd>
                         </dl>
