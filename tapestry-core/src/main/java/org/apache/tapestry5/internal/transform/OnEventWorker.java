@@ -1,10 +1,10 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
 //
+// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,228 +14,297 @@
 
 package org.apache.tapestry5.internal.transform;
 
-import org.apache.tapestry5.EventContext;
-import org.apache.tapestry5.annotations.OnEvent;
-import org.apache.tapestry5.ioc.util.BodyBuilder;
-import org.apache.tapestry5.model.MutableComponentModel;
-import org.apache.tapestry5.services.*;
-
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+
+import org.apache.tapestry5.EventContext;
+import org.apache.tapestry5.annotations.OnEvent;
+import org.apache.tapestry5.ioc.Predicate;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.model.MutableComponentModel;
+import org.apache.tapestry5.runtime.ComponentEvent;
+import org.apache.tapestry5.services.ClassTransformation;
+import org.apache.tapestry5.services.ComponentClassTransformWorker;
+import org.apache.tapestry5.services.ComponentMethodAdvice;
+import org.apache.tapestry5.services.ComponentMethodInvocation;
+import org.apache.tapestry5.services.TransformConstants;
+import org.apache.tapestry5.services.TransformMethod;
 
 /**
- * Provides implementations of the {@link org.apache.tapestry5.runtime.Component#dispatchComponentEvent(org.apache.tapestry5.runtime.ComponentEvent)}
+ * Provides implementations of the
+ * {@link org.apache.tapestry5.runtime.Component#dispatchComponentEvent(org.apache.tapestry5.runtime.ComponentEvent)}
  * method, based on {@link org.apache.tapestry5.annotations.OnEvent} annotations.
  */
 public class OnEventWorker implements ComponentClassTransformWorker
 {
-    static final String OBJECT_ARRAY_TYPE = "java.lang.Object[]";
+    /**
+     * Stores a couple of special parameter type mappings that are used when matching the entire event context
+     * (either as Object[] or EventContext).
+     */
+    private final Map<String, EventHandlerMethodParameterSource> parameterTypeToSource = CollectionFactory.newMap();
 
-    static final String EVENT_CONTEXT_TYPE = EventContext.class.getName();
-
-    static final String LIST_TYPE = List.class.getName();
-
-    private final static int ANY_NUMBER_OF_PARAMETERS = -1;
-
-    public void transform(final ClassTransformation transformation, MutableComponentModel model)
     {
-        MethodFilter filter = new MethodFilter()
+        // Object[] and List are out-dated and may be deprecated some day
+
+        parameterTypeToSource.put("java.lang.Object[]", new EventHandlerMethodParameterSource()
         {
-            public boolean accept(TransformMethodSignature signature)
+
+            public Object valueForEventHandlerMethodParameter(ComponentEvent event)
             {
-                return (hasCorrectPrefix(signature) || hasAnnotation(signature)) &&
-                        !transformation.isMethodOverride(signature);
+                return event.getContext();
+            }
+        });
+
+        parameterTypeToSource.put(List.class.getName(), new EventHandlerMethodParameterSource()
+        {
+
+            public Object valueForEventHandlerMethodParameter(ComponentEvent event)
+            {
+                return Arrays.asList(event.getContext());
+            }
+        });
+
+        // This is better, as the EventContext maintains the original objects (or strings)
+        // and gives the event handler method access with coercion
+        parameterTypeToSource.put(EventContext.class.getName(), new EventHandlerMethodParameterSource()
+        {
+
+            public Object valueForEventHandlerMethodParameter(ComponentEvent event)
+            {
+                return event.getEventContext();
+            }
+        });
+    }
+
+    public void transform(ClassTransformation transformation, MutableComponentModel model)
+    {
+        List<TransformMethod> methods = matchEventHandlerMethods(transformation);
+
+        if (methods.isEmpty())
+            return;
+
+        List<EventHandlerMethodInvoker> invokers = toInvokers(methods);
+
+        updateModelWithHandledEvents(model, invokers);
+
+        adviseDispatchComponentEventMethod(transformation, invokers);
+    }
+
+    private void adviseDispatchComponentEventMethod(ClassTransformation transformation,
+            List<EventHandlerMethodInvoker> invokers)
+    {
+        ComponentMethodAdvice advice = createDispatchComponentEventAdvice(invokers);
+
+        transformation.getMethod(TransformConstants.DISPATCH_COMPONENT_EVENT).addAdvice(advice);
+    }
+
+    private ComponentMethodAdvice createDispatchComponentEventAdvice(final List<EventHandlerMethodInvoker> invokers)
+    {
+        return new ComponentMethodAdvice()
+        {
+            public void advise(ComponentMethodInvocation invocation)
+            {
+                // Invoke the super-class implementation first. If no super-class,
+                // this will do nothing and return false.
+
+                invocation.proceed();
+
+                ComponentEvent event = (ComponentEvent) invocation.getParameter(0);
+
+                if (invokeEventHandlers(event, invocation.getInstance()))
+                    invocation.overrideResult(true);
             }
 
-            private boolean hasCorrectPrefix(TransformMethodSignature signature)
+            private boolean invokeEventHandlers(ComponentEvent event, Object instance)
             {
-                return signature.getMethodName().startsWith("on");
-            }
+                // If the super-class aborted the event (some super-class method return non-null),
+                // then it's all over, don't even check for handlers in this class.
 
-            private boolean hasAnnotation(TransformMethodSignature signature)
-            {
-                return transformation.getMethodAnnotation(signature, OnEvent.class) != null;
+                if (event.isAborted())
+                    return false;
+
+                boolean didInvokeSomeHandler = false;
+
+                for (EventHandlerMethodInvoker invoker : invokers)
+                {
+                    if (event.matches(invoker.getEventType(), invoker.getComponentId(), invoker
+                            .getMinContextValueCount()))
+                    {
+                        didInvokeSomeHandler = true;
+
+                        invoker.invokeEventHandlerMethod(event, instance);
+
+                        if (event.isAborted())
+                            break;
+                    }
+                }
+
+                return didInvokeSomeHandler;
             }
         };
-
-        List<TransformMethodSignature> methods = transformation.findMethods(filter);
-
-        // No methods, no work.
-
-        if (methods.isEmpty()) return;
-
-        BodyBuilder builder = new BodyBuilder();
-        builder.begin();
-
-        builder.addln("if ($1.isAborted()) return $_;");
-
-        builder.addln("try");
-        builder.begin();
-
-        for (TransformMethodSignature method : methods)
-            addCodeForMethod(builder, method, transformation, model);
-
-        builder.end(); // try
-
-        // Runtime exceptions pass right through.
-
-        builder.addln("catch (RuntimeException ex) { throw ex; }");
-
-        // Wrap others in a RuntimeException to communicate them up.
-
-        builder.addln("catch (Exception ex) { throw new RuntimeException(ex); } ");
-
-        builder.end();
-
-        transformation.extendMethod(TransformConstants.DISPATCH_COMPONENT_EVENT, builder.toString());
     }
 
-
-    private void addCodeForMethod(BodyBuilder builder, TransformMethodSignature method,
-                                  ClassTransformation transformation, MutableComponentModel model)
+    private void updateModelWithHandledEvents(MutableComponentModel model,
+            final List<EventHandlerMethodInvoker> invokers)
     {
-        // $1 is the event
-
-        int parameterCount = getParameterCount(method);
-
-        OnEvent annotation = transformation.getMethodAnnotation(method, OnEvent.class);
-
-        String eventType = extractEventType(method, annotation);
-
-        String componentId = extractComponentId(method, annotation);
-
-
-        builder.addln("if ($1.matches(\"%s\", \"%s\", %d))", eventType, componentId, parameterCount);
-        builder.begin();
-
-        // Ensure that we return true, because *some* event handler method was invoked,
-        // even if it chose not to abort the event.
-
-        builder.addln("$_ = true;");
-
-        builder.addln("$1.setMethodDescription(\"%s\");", transformation.getMethodIdentifier(method));
-
-        boolean isNonVoid = !method.getReturnType().equals("void");
-
-        // Store the result, converting primitives to wrappers automatically.
-
-        if (isNonVoid) builder.add("if ($1.storeResult(($w) ");
-
-        builder.add("%s(", method.getMethodName());
-
-        buildMethodParameters(builder, method);
-
-        if (isNonVoid) builder.addln("))) return true;");
-        else builder.addln(");");
-
-        builder.end();
-
-        // Indicate that the eventType is handled.
-
-        model.addEventHandler(eventType);
+        for (EventHandlerMethodInvoker invoker : invokers)
+        {
+            model.addEventHandler(invoker.getEventType());
+        }
     }
 
-    private String extractComponentId(TransformMethodSignature method, OnEvent annotation)
+    private List<TransformMethod> matchEventHandlerMethods(ClassTransformation transformation)
     {
-        if (annotation != null) return annotation.component();
+        return transformation.matchMethods(new Predicate<TransformMethod>()
+        {
+            public boolean accept(TransformMethod method)
+            {
+                return (hasCorrectPrefix(method) || hasAnnotation(method)) && !method.isOverride();
+            }
+
+            private boolean hasCorrectPrefix(TransformMethod method)
+            {
+                return method.getSignature().getMethodName().startsWith("on");
+            }
+
+            private boolean hasAnnotation(TransformMethod method)
+            {
+                return method.getAnnotation(OnEvent.class) != null;
+            }
+        });
+    }
+
+    private List<EventHandlerMethodInvoker> toInvokers(List<TransformMethod> methods)
+    {
+        List<EventHandlerMethodInvoker> result = CollectionFactory.newList();
+
+        for (TransformMethod method : methods)
+        {
+            result.add(toInvoker(method));
+        }
+
+        return result;
+    }
+
+    private EventHandlerMethodInvoker toInvoker(TransformMethod method)
+    {
+        OnEvent annotation = method.getAnnotation(OnEvent.class);
+
+        String methodName = method.getSignature().getMethodName();
+
+        String eventType = extractEventType(methodName, annotation);
+        String componentId = extractComponentId(methodName, annotation);
+
+        String[] parameterTypes = method.getSignature().getParameterTypes();
+
+        if (parameterTypes.length == 0)
+            return new BaseEventHandlerMethodInvoker(method, eventType, componentId);
+
+        final List<EventHandlerMethodParameterSource> sources = CollectionFactory.newList();
+
+        // I'd refactor a bit more of this if Java had covariant return types.
+
+        int contextIndex = 0;
+        boolean catchAll = false;
+
+        for (final String type : parameterTypes)
+        {
+            EventHandlerMethodParameterSource source = parameterTypeToSource.get(type);
+
+            if (source != null)
+            {
+                sources.add(source);
+                catchAll = true;
+                continue;
+            }
+
+            // Note: probably safe to do the conversion to Class early (class load time)
+            // as parameters are rarely (if ever) component classes.
+
+            final int parameterIndex = contextIndex++;
+
+            sources.add(createParameterSource(type, parameterIndex));
+        }
+
+        int minContextCount = catchAll ? 0 : contextIndex;
+
+        return createInvoker(method, eventType, componentId, minContextCount, sources);
+    }
+
+    private EventHandlerMethodInvoker createInvoker(TransformMethod method, String eventType, String componentId,
+            final int minContextCount, final List<EventHandlerMethodParameterSource> sources)
+    {
+        return new BaseEventHandlerMethodInvoker(method, eventType, componentId)
+        {
+            final int count = sources.size();
+
+            @Override
+            public int getMinContextValueCount()
+            {
+                return minContextCount;
+            }
+
+            @Override
+            protected Object[] constructParameters(ComponentEvent event)
+            {
+                Object[] parameters = new Object[count];
+
+                for (int i = 0; i < count; i++)
+                {
+                    parameters[i] = sources.get(i).valueForEventHandlerMethodParameter(event);
+                }
+
+                return parameters;
+            }
+        };
+    }
+
+    private EventHandlerMethodParameterSource createParameterSource(final String type, final int parameterIndex)
+    {
+        return new EventHandlerMethodParameterSource()
+        {
+            public Object valueForEventHandlerMethodParameter(ComponentEvent event)
+            {
+                return event.coerceContext(parameterIndex, type);
+            }
+        };
+    }
+
+    /**
+     * Returns the component id to match against, or the empty
+     * string if the component id is not specified. The component id
+     * is provided by the OnEvent annotation or (if that is not present)
+     * by the part of the method name following "From" ("onActionFromFoo").
+     */
+    private String extractComponentId(String methodName, OnEvent annotation)
+    {
+        if (annotation != null)
+            return annotation.component();
 
         // Method name started with "on". Extract the component id, if present.
 
-        String name = method.getMethodName();
+        int fromx = methodName.indexOf("From");
 
-        int fromx = name.indexOf("From");
+        if (fromx < 0)
+            return "";
 
-        if (fromx < 0) return "";
-
-        return name.substring(fromx + 4);
+        return methodName.substring(fromx + 4);
     }
 
-    private String extractEventType(TransformMethodSignature method, OnEvent annotation)
+    /**
+     * Returns the event name to match against, as specified in the annotation
+     * or (if the annotation is not present) extracted from the name of the method.
+     * "onActionFromFoo" or just "onAction".
+     */
+    private String extractEventType(String methodName, OnEvent annotation)
     {
-        if (annotation != null) return annotation.value();
+        if (annotation != null)
+            return annotation.value();
 
-        // Method name started with "on". Extract the event type.
+        int fromx = methodName.indexOf("From");
 
-        String name = method.getMethodName();
-
-        int fromx = name.indexOf("From");
-
-        return fromx == -1 ? name.substring(2) : name.substring(2, fromx);
-    }
-
-    private int getParameterCount(TransformMethodSignature method)
-    {
-        String[] types = method.getParameterTypes();
-
-        if (types.length == 0) return 0;
-
-        if (types.length == 1)
-        {
-            String soloType = types[0];
-
-            if (soloType.equals(OBJECT_ARRAY_TYPE) || soloType.equals(EVENT_CONTEXT_TYPE) || soloType.equals(LIST_TYPE))
-                return ANY_NUMBER_OF_PARAMETERS;
-        }
-
-        return types.length;
-    }
-
-    private void buildMethodParameters(BodyBuilder builder, TransformMethodSignature method)
-    {
-        int contextIndex = 0;
-
-        for (int i = 0; i < method.getParameterTypes().length; i++)
-        {
-            if (i > 0) builder.add(", ");
-
-            String type = method.getParameterTypes()[i];
-
-            // Type Object[] is a special case, it gets all of the context parameters in one go.
-
-            if (type.equals(OBJECT_ARRAY_TYPE))
-            {
-                builder.add("$1.getContext()");
-                continue;
-            }
-
-            // Added for TAPESTRY-2177
-
-            if (type.equals(EVENT_CONTEXT_TYPE))
-            {
-                builder.add("$1.getEventContext()");
-                continue;
-            }
-
-            // Added for TAPESTRY-1999
-
-            if (type.equals(LIST_TYPE))
-            {
-                builder.add("%s.asList($1.getContext())", Arrays.class.getName());
-                continue;
-            }
-
-            boolean isPrimitive = TransformUtils.isPrimitive(type);
-            String wrapperType = TransformUtils.getWrapperTypeName(type);
-
-            // Add a cast to the wrapper type up front
-
-            if (isPrimitive) builder.add("(");
-
-            // A cast is always needed (i.e. from java.lang.Object to, say, java.lang.String, etc.).
-            // The wrapper type will be the actual type unless its a primitive, in which case it
-            // really will be the wrapper type.
-
-            builder.add("(%s)", wrapperType);
-
-            // The strings for desired type name will likely repeat a bit; it may be
-            // worth it to inject them as final fields. Could increase the number
-            // of constructor parameters pretty dramatically, however, and will reduce
-            // the readability of the output method bodies.
-
-            builder.add("$1.coerceContext(%d, \"%s\")", contextIndex++, wrapperType);
-
-            // and invoke a method on the cast value to get back to primitive
-            if (isPrimitive) builder.add(").%s()", TransformUtils.getUnwrapperMethodName(type));
-        }
+        // The first two characters are always "on" as in "onActionFromFoo".
+        return fromx == -1 ? methodName.substring(2) : methodName.substring(2, fromx);
     }
 }
