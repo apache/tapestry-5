@@ -22,7 +22,7 @@ Release 5.2.0
   has been rewritten with an eye to making class transformations easier to implement while
   removing the dependency on the Javassist library. This is of note only to <advanced> users who have implemented
   {{{apidocs/org/apache/tapestry5/services/ComponentClassTransformWorker.html}ComponentClassTransformWorker}}s, which operate on
-  the 
+  the ClassTransformation API. 
     
   Much of the existing API has been deprecated and <some> deprecated
   methods are now non-functional. The deprecated methods will be removed in Tapestry 5.3.
@@ -42,7 +42,7 @@ Release 5.2.0
 
 * Template Parser back to SAX
 
-  Tapestry no longer uses a StAX parser (it uses a normal SAX parser) to parse template. This change
+  Tapestry no longer uses a StAX parser (it uses a normal SAX parser) to parse component templates. This change
   reduces the number of dependencies for Tapestry, and is a stepping stone to compatibility with
   Google App Engine.
 
