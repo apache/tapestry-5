@@ -284,8 +284,23 @@ public interface ClassTransformation extends AnnotationProvider
      *            the desired name for the field, which may be modified (for uniqueness) when
      *            returned
      * @return the (uniqued) name for the field
+     * @deprecated Use {@link #createField(int, String, String)} instead
      */
     String addField(int modifiers, String type, String suggestedName);
+
+    /**
+     * Defines a new declared field for the class. Suggested name may be modified to ensure uniqueness.
+     * 
+     * @param modifiers
+     *            modifiers for the field (typically, {@link java.lang.reflect.Modifier#PRIVATE})
+     * @param type
+     *            the type for the field, as a string
+     * @param suggestedName
+     *            the desired name for the field, which may be modified (for uniqueness) when
+     *            returned
+     * @return new field instance
+     */
+    TransformField createField(int modifiers, String type, String suggestedName);
 
     /**
      * Defines a new <strong>protected</strong> instance variable whose initial value is provided

@@ -1692,10 +1692,10 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
     public String addField(int modifiers, String type, String suggestedName)
     {
-        return addTransformField(modifiers, type, suggestedName).getName();
+        return createField(modifiers, type, suggestedName).getName();
     }
 
-    private TransformField addTransformField(int modifiers, String type, String suggestedName)
+    public TransformField createField(int modifiers, String type, String suggestedName)
     {
         failIfFrozen();
 
@@ -1762,7 +1762,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         Defense.notNull(type, "type");
         Defense.notNull(provider, "provider");
 
-        TransformField field = addTransformField(Modifier.PRIVATE | Modifier.FINAL, type.getName(), suggestedName);
+        TransformField field = createField(Modifier.PRIVATE | Modifier.FINAL, type.getName(), suggestedName);
 
         String argName = addConstructorArg(providerType, provider);
 
