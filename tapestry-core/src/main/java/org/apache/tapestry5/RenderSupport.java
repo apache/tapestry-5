@@ -30,7 +30,7 @@ import org.apache.tapestry5.services.javascript.JavascriptSupport;
  * When rendering, a &lt;script&gt; block will be added to the bottom of the page (just before the &lt;/body&gt; tag).
  * The scripting statements added to this block will be executed, on the client, only once the page has fully loaded.
  * <p>
- * The methods in this interface are largely being replaced with a new interface, {@link JavascriptSupport}.
+ * The methods in this interface are largely being replaced with a new environmental interface, {@link JavascriptSupport}.
  * <p>
  * RenderSupport is normally accessed within a component by using the {@link Environmental} annotation on a component
  * field. In addition, RenderSupport may also be accessed as a service (the service

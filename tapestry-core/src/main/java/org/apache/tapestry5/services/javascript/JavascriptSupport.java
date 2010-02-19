@@ -16,9 +16,25 @@ package org.apache.tapestry5.services.javascript;
 
 import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.RenderSupport;
+import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.IncludeJavaScriptLibrary;
 import org.apache.tapestry5.json.JSONObject;
+import org.apache.tapestry5.services.EnvironmentalShadowBuilder;
 
+/**
+ * An environmental that acts as a replacement for the {@link RenderSupport} environmental, renaming and streamlining
+ * the the key methods. JavascriptSupport is very stateful, accumulating JavaScript libraries and initialization code
+ * until the end of the main page render; it then updates the rendered DOM (adding &lt;script&gt; tags to the
+ * &lt;head&gt; and &lt;body&gt;) before the document is streamed to the client.
+ * <p>
+ * JavascriptSupport is normally accessed within a component by using the {@link Environmental} annotation on a
+ * component field. In addition, JavascriptSupport may also be accessed as a service (the service
+ * {@linkplain EnvironmentalShadowBuilder internally delegates to the current environmental instance}), which is useful
+ * for service-layer objects.
+ * 
+ * @since 5.2.0
+ */
 public interface JavascriptSupport
 {
     /**
@@ -114,7 +130,7 @@ public interface JavascriptSupport
      *            string to pass to function (typically, a client id)
      */
     void addInitializerCall(InitializationPriority priority, String functionName, String parameter);
-    
+
     /**
      * Imports a JavaScript library as part of the rendered page. Libraries are added in the order
      * they are first imported; duplicate imports are ignored.
