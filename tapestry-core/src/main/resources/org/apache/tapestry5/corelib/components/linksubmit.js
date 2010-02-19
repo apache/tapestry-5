@@ -1,4 +1,4 @@
-//  Copyright 2008 The Apache Software Foundation
+//  Copyright 2008, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,10 +14,10 @@
 
 Tapestry.LinkSubmit = Class.create({
 
-    initialize: function(formId, clientId)
+    initialize: function(spec)
     {
-        this.form = $(formId);
-        this.element = $(clientId);
+        this.form = $(spec.form);
+        this.element = $(spec.clientId);
 
         this.element.observe("click", this.onClick.bindAsEventListener(this));
     },
@@ -52,7 +52,7 @@ Tapestry.LinkSubmit = Class.create({
     }
 });
 
-Tapestry.Initializer.linkSubmit = function(formId, clientId)
+Tapestry.Initializer.linkSubmit = function(spec)
 {
-    new Tapestry.LinkSubmit(formId, clientId);
+    new Tapestry.LinkSubmit(spec);
 }

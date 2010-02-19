@@ -83,35 +83,6 @@ public interface TransformField extends AnnotationProvider, Comparable<Transform
      */
     void replaceAccess(FieldValueConduit conduit);
 
-    /**
-     * Extends the indicated method to add an assignment of the field with
-     * the value obtained by the provider. This is used when a value
-     * to be provided can not be provided from within the transformed class'
-     * constructor.
-     * 
-     * @param <T>
-     * @param method
-     *            identifies the method where the assignment will occur, often this is
-     *            {@link TransformConstants#CONTAINING_PAGE_DID_LOAD_SIGNATURE}
-     * @param provider
-     *            provides the value of the field
-     */
-    <T> void assignIndirect(TransformMethod method, ComponentValueProvider<T> provider);
-
-    /**
-     * Alternate version of {@link #assignIndirect(TransformMethod, ComponentValueProvider)} that operates using a
-     * method signature.
-     */
-    <T> void assignIndirect(TransformMethodSignature signature, ComponentValueProvider<T> provider);
-
-    /**
-     * Marks the field for removal (at the end of the class transformation). Often, a field is deleted
-     * after access to the field is {@linkplain #replaceAccess(ComponentValueProvider) replaced}.
-     * 
-     * @throws IllegalStateException
-     *             if the field has already been marked for deletion
-     */
-    void remove();
 
     /** Returns the modifiers for the field. */
     int getModifiers();

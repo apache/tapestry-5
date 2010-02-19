@@ -17,14 +17,17 @@ package org.apache.tapestry5.internal.services;
 import org.apache.tapestry5.Block;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.annotations.Id;
+import org.apache.tapestry5.internal.transform.ReadOnlyFieldValueConduit;
 import org.apache.tapestry5.ioc.ObjectLocator;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.ioc.services.FieldValueConduit;
 import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.services.ClassTransformation;
 import org.apache.tapestry5.services.ComponentValueProvider;
 import org.apache.tapestry5.services.InjectionProvider;
 import org.apache.tapestry5.services.TransformConstants;
+import org.apache.tapestry5.services.TransformField;
 import org.apache.tapestry5.services.TransformMethod;
 
 /**
@@ -40,30 +43,40 @@ import org.apache.tapestry5.services.TransformMethod;
 public class BlockInjectionProvider implements InjectionProvider
 {
 
-    public boolean provideInjection(String fieldName, Class fieldType, ObjectLocator locator,
+    public boolean provideInjection(final String fieldName, Class fieldType, ObjectLocator locator,
             ClassTransformation transformation, MutableComponentModel componentModel)
     {
         if (!fieldType.equals(Block.class))
             return false;
 
-        Id annotation = transformation.getFieldAnnotation(fieldName, Id.class);
+        TransformField field = transformation.getField(fieldName);
 
-        final String blockId = getBlockId(fieldName, annotation);
+        Id annotation = field.getAnnotation(Id.class);
 
-        ComponentValueProvider<Block> provider = new ComponentValueProvider<Block>()
-        {
-            public Block get(ComponentResources resources)
-            {
-                return resources.getBlock(blockId);
-            }
-        };
+        String blockId = getBlockId(fieldName, annotation);
 
-        TransformMethod method = transformation
-                .getMethod(TransformConstants.CONTAINING_PAGE_DID_ATTACH_SIGNATURE);
+        ComponentValueProvider<FieldValueConduit> provider = cxreateProvider(fieldName, blockId);
 
-        transformation.getField(fieldName).assignIndirect(method, provider);
+        field.replaceAccess(provider);
 
         return true; // claim the field
+    }
+
+    private ComponentValueProvider<FieldValueConduit> cxreateProvider(final String fieldName, final String blockId)
+    {
+        return new ComponentValueProvider<FieldValueConduit>()
+        {
+            public FieldValueConduit get(final ComponentResources resources)
+            {
+                return new ReadOnlyFieldValueConduit(resources, fieldName)
+                {
+                    public Object get()
+                    {
+                        return resources.getBlock(blockId);
+                    }
+                };
+            }
+        };
     }
 
     private String getBlockId(String fieldName, Id annotation)

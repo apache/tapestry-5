@@ -1,10 +1,10 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,53 +14,107 @@
 
 package org.apache.tapestry5.internal.transform;
 
+import java.lang.reflect.Modifier;
+
+import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.internal.InternalComponentResources;
+import org.apache.tapestry5.internal.services.ComponentClassCache;
+import org.apache.tapestry5.ioc.services.FieldValueConduit;
 import org.apache.tapestry5.model.MutableComponentModel;
+import org.apache.tapestry5.runtime.PageLifecycleAdapter;
 import org.apache.tapestry5.services.ClassTransformation;
 import org.apache.tapestry5.services.ComponentClassTransformWorker;
-import static org.apache.tapestry5.services.TransformConstants.CONTAINING_PAGE_DID_DETACH_SIGNATURE;
-import static org.apache.tapestry5.services.TransformConstants.CONTAINING_PAGE_DID_LOAD_SIGNATURE;
-
-import java.lang.reflect.Modifier;
-import java.util.List;
+import org.apache.tapestry5.services.ComponentValueProvider;
+import org.apache.tapestry5.services.TransformField;
 
 /**
  * Designed to be just about the last worker in the pipeline. Its job is to add cleanup code that restores transient
- * fields back to their initial (null) value. Fields that have been previously {@link
- * org.apache.tapestry5.services.ClassTransformation#claimField(String, Object) claimed} are ignored, as are fields that
- * are final.
+ * fields back to their initial (null) value. Fields that have been previously {@linkplain TransformField#claim(Object)
+ * claimed} are ignored, as are fields that are final.
  */
 public final class UnclaimedFieldWorker implements ComponentClassTransformWorker
 {
+    private final ComponentClassCache classCache;
 
-    public void transform(ClassTransformation transformation, MutableComponentModel model)
+    public class UnclaimedFieldConduit implements FieldValueConduit
     {
-        List<String> fieldNames = transformation.findUnclaimedFields();
+        private final InternalComponentResources resources;
 
-        for (String fieldName : fieldNames)
+        private Object fieldValue, fieldDefaultValue;
+
+        private UnclaimedFieldConduit(InternalComponentResources resources, Object fieldDefaultValue)
         {
-            transformField(fieldName, transformation);
+            this.resources = resources;
+
+            this.fieldValue = fieldDefaultValue;
+            this.fieldDefaultValue = fieldDefaultValue;
+
+            resources.addPageLifecycleListener(new PageLifecycleAdapter()
+            {
+                @Override
+                public void containingPageDidDetach()
+                {
+                    reset();
+                }
+            });
+        }
+
+        public Object get()
+        {
+            return fieldValue;
+        }
+
+        public void set(Object newValue)
+        {
+            fieldValue = newValue;
+
+            if (!resources.isLoaded())
+                fieldDefaultValue = newValue;
+        }
+
+        public void reset()
+        {
+            fieldValue = fieldDefaultValue;
         }
     }
 
-    private void transformField(String fieldName, ClassTransformation transformation)
+    public UnclaimedFieldWorker(ComponentClassCache classCache)
     {
-        int modifiers = transformation.getFieldModifiers(fieldName);
+        this.classCache = classCache;
+    }
 
-        if (Modifier.isFinal(modifiers))
+    public void transform(ClassTransformation transformation, MutableComponentModel model)
+    {
+        for (TransformField field : transformation.matchUnclaimedFields())
+        {
+            transformField(field);
+        }
+    }
+
+    private void transformField(TransformField field)
+    {
+        int modifiers = field.getModifiers();
+
+        if (Modifier.isFinal(modifiers) || Modifier.isStatic(modifiers))
             return;
 
-        String type = transformation.getFieldType(fieldName);
+        ComponentValueProvider<FieldValueConduit> provider = createFieldValueConduitProvider(field);
 
-        String defaultFieldName = transformation.addField(Modifier.PRIVATE, type, fieldName
-                + "_default");
+        field.replaceAccess(provider);
+    }
 
-        transformation.extendMethod(CONTAINING_PAGE_DID_LOAD_SIGNATURE, defaultFieldName + " = "
-                + fieldName + ";");
+    private ComponentValueProvider<FieldValueConduit> createFieldValueConduitProvider(TransformField field)
+    {
+        final String fieldType = field.getType();
 
-        // At the end of the request, we want to move the default value back over the
-        // active field value. This will most often be null.
+        return new ComponentValueProvider<FieldValueConduit>()
+        {
+            public FieldValueConduit get(ComponentResources resources)
+            {
+                Object fieldDefaultValue = classCache.defaultValueForType(fieldType);
 
-        transformation.extendMethod(CONTAINING_PAGE_DID_DETACH_SIGNATURE, fieldName + " = "
-                + defaultFieldName + ";");
+                return new UnclaimedFieldConduit((InternalComponentResources) resources, fieldDefaultValue);
+            }
+        };
     }
 }

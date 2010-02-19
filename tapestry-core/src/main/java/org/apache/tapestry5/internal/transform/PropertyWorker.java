@@ -63,9 +63,11 @@ public class PropertyWorker implements ComponentClassTransformWorker
                 new String[]
                 { field.getType() }, null);
 
+        ensureNotOverride(transformation, setter);
+
         final FieldAccess access = field.getAccess();
 
-        transformation.createMethod(setter).addAdvice(new ComponentMethodAdvice()
+        transformation.getOrCreateMethod(setter).addAdvice(new ComponentMethodAdvice()
         {
             public void advise(ComponentMethodInvocation invocation)
             {
@@ -74,14 +76,24 @@ public class PropertyWorker implements ComponentClassTransformWorker
         });
     }
 
+    private void ensureNotOverride(ClassTransformation transformation, TransformMethodSignature signature)
+    {
+        if (transformation.isDeclaredMethod(signature))
+            throw new RuntimeException(String.format(
+                    "Unable to create new method %s as it already exists in class %s.", signature, transformation
+                            .getClassName()));
+    }
+
     private void addGetter(ClassTransformation transformation, TransformField field, String propertyName)
     {
         TransformMethodSignature getter = new TransformMethodSignature(Modifier.PUBLIC, field.getType(), "get"
                 + propertyName, null, null);
 
+        ensureNotOverride(transformation, getter);
+
         final FieldAccess access = field.getAccess();
 
-        transformation.createMethod(getter).addAdvice(new ComponentMethodAdvice()
+        transformation.getOrCreateMethod(getter).addAdvice(new ComponentMethodAdvice()
         {
             public void advise(ComponentMethodInvocation invocation)
             {

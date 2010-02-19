@@ -158,7 +158,7 @@ class ComponentMethodInvocationBuilder
         builder.end();
 
         /** Replace the original method with the new implementation. */
-        transformation.addMethod(advisedMethod, builder.toString());
+        transformation.addNewMethod(advisedMethod, builder.toString());
     }
 
     private void implementInvokeAdvisedMethod(String advisedMethodName)

@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -37,17 +37,13 @@ public class FormTests extends TapestryCoreTestCase
     {
         clickThru("Page Context in Form");
 
-        assertTextSeries("//li[%d]", 1, "betty", "wilma", "context with spaces",
-                "context/with/slashes");
-        assertFieldValue("t:ac",
-                "betty/wilma/context$0020with$0020spaces/context$002fwith$002fslashes");
+        assertTextSeries("//li[%d]", 1, "betty", "wilma", "context with spaces", "context/with/slashes");
+        assertFieldValue("t:ac", "betty/wilma/context$0020with$0020spaces/context$002fwith$002fslashes");
 
         clickAndWait(SUBMIT);
 
-        assertTextSeries("//li[%d]", 1, "betty", "wilma", "context with spaces",
-                "context/with/slashes");
-        assertFieldValue("t:ac",
-                "betty/wilma/context$0020with$0020spaces/context$002fwith$002fslashes");
+        assertTextSeries("//li[%d]", 1, "betty", "wilma", "context with spaces", "context/with/slashes");
+        assertFieldValue("t:ac", "betty/wilma/context$0020with$0020spaces/context$002fwith$002fslashes");
     }
 
     @Test
@@ -153,7 +149,7 @@ public class FormTests extends TapestryCoreTestCase
 
         assertTextPresent("Howard", "Lewis Ship", "1966", "U.S. Citizen");
     }
-    
+
     @Test
     public void cancel_button()
     {
@@ -165,7 +161,7 @@ public class FormTests extends TapestryCoreTestCase
         clickAndWait("link=Clear Data");
 
         clickAndWait("//input[@value='Cancel']");
-        
+
         assertText("message", "Form was cancelled.");
     }
 
@@ -226,8 +222,7 @@ public class FormTests extends TapestryCoreTestCase
 
         click("birthday-trigger");
 
-        waitForCondition(
-                "selenium.browserbot.getCurrentWindow().$$('DIV.datePicker').first().isDeepVisible() == true",
+        waitForCondition("selenium.browserbot.getCurrentWindow().$$('DIV.datePicker').first().isDeepVisible() == true",
                 PAGE_LOAD_TIMEOUT);
 
         assertText("//A[@class='topLabel']", "1966 d\u00e9cembre");
@@ -457,8 +452,7 @@ public class FormTests extends TapestryCoreTestCase
         waitForElementToAppear("amount:errorpopup");
         waitForElementToAppear("quantity:errorpopup");
 
-        assertText("//div[@id='amount:errorpopup']/span",
-                "You must provide a numeric value for Amount.");
+        assertText("//div[@id='amount:errorpopup']/span", "You must provide a numeric value for Amount.");
         assertText("//div[@id='quantity:errorpopup']/span", "Provide quantity as a number.");
     }
 
@@ -635,8 +629,7 @@ public class FormTests extends TapestryCoreTestCase
 
         waitForElementToAppear("longValue:errorpopup");
 
-        assertText("//div[@id='longValue:errorpopup']/span",
-                "You must provide an integer value for Long Value.");
+        assertText("//div[@id='longValue:errorpopup']/span", "You must provide an integer value for Long Value.");
 
         type("longValue", "37");
 
@@ -689,11 +682,15 @@ public class FormTests extends TapestryCoreTestCase
     public void link_submit_component()
     {
         clickThru("LinkSubmit Demo");
-
+        
+        // Wait a moment for the page to initialize.
+        
+        sleep(250);
+        
+        // 
         click("link=Fred");
 
-        waitForCondition("selenium.browserbot.getCurrentWindow().$('name:errorpopup')",
-                PAGE_LOAD_TIMEOUT);
+        waitForCondition("selenium.browserbot.getCurrentWindow().$('name:errorpopup')", PAGE_LOAD_TIMEOUT);
 
         assertTextPresent("You must provide a value for Name.");
 
@@ -782,13 +779,12 @@ public class FormTests extends TapestryCoreTestCase
         // Tried to use "email:" and "exact:email:" but Selenium 0.8.1 doesn't
         // seem to accept that.
 
-        assertTextPresent("[foo@bar.baz]", "[Message for you, sir!]", "[false]", "[winnt]",
-                "[RESEARCH_AND_DESIGN]");
+        assertTextPresent("[foo@bar.baz]", "[Message for you, sir!]", "[false]", "[winnt]", "[RESEARCH_AND_DESIGN]");
 
         // Haven't figured out how to get selenium to check that fields are
         // disabled.
     }
-    
+
     /**
      * TAP5-915
      */
@@ -798,12 +794,12 @@ public class FormTests extends TapestryCoreTestCase
         open(getBaseURL() + "overridedatefieldmessagecatalogdemo");
 
         type("birthday", "aaaaa");
-        
+
         clickAndWait("//input[@type='submit' and @value='Go']");
-       
+
         assertTextPresent("The input 'aaaaa' is not a valid date");
     }
-    
+
     /**
      * TAP5-52.
      */
@@ -811,23 +807,23 @@ public class FormTests extends TapestryCoreTestCase
     public void single_error_message()
     {
         open(getBaseURL() + "singleerrordemo");
-        
+
         clickAndWait(SUBMIT);
-        
+
         assertTextPresent("You must provide a value for Username");
         assertTextPresent("You must provide a value for Password");
 
         type("username", "Igor");
-        
+
         clickAndWait(SUBMIT);
-        
+
         assertFalse(isTextPresent("You must provide a value for Username"));
         assertTextPresent("You must provide a value for Password");
-        
+
         type("password", "secret");
-        
+
         clickAndWait(SUBMIT);
-        
+
         assertFalse(isTextPresent("You must provide a value for Username"));
         assertFalse(isTextPresent("You must provide a value for Password"));
     }

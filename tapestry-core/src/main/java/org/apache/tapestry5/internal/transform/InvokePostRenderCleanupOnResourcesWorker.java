@@ -49,7 +49,7 @@ public class InvokePostRenderCleanupOnResourcesWorker implements ComponentClassT
         if (!transformation.isRootTransformation())
             return;
 
-        TransformMethod method = transformation.getMethod(TransformConstants.POST_RENDER_CLEANUP_SIGNATURE);
+        TransformMethod method = transformation.getOrCreateMethod(TransformConstants.POST_RENDER_CLEANUP_SIGNATURE);
 
         method.addAdvice(advice);
     }

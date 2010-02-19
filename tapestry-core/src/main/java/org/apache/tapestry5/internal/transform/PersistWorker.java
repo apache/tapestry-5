@@ -136,8 +136,6 @@ public class PersistWorker implements ComponentClassTransformWorker
     @SuppressWarnings("unchecked")
     private Object determineDefaultValueFromFieldType(TransformField field)
     {
-        Class javaType = classCache.forName(field.getType());
-
-        return javaType.isPrimitive() ? typeCoercer.coerce(0, javaType) : null;
+        return classCache.defaultValueForType(field.getType());
     }
 }

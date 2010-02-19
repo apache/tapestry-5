@@ -36,28 +36,6 @@ public interface TransformMethod extends AnnotationProvider, Comparable<Transfor
     String getName();
 
     /**
-     * Extends an existing method. The provided method body is inserted at the end of the existing
-     * method (i.e. {@link javassist.CtBehavior#insertAfter(java.lang.String)}). To access or change
-     * the return value, use the <code>$_</code> pseudo variable.
-     * <p/>
-     * The method may be declared in the class, or may be inherited from a super-class. For inherited methods, a method
-     * body is added that first invokes the super implementation.
-     * <p/>
-     * The extended method is considered <em>new</em>. New methods <em>are not</em> scanned for removed fields, field
-     * access changes, etc.
-     * <p>
-     * This method will eventually be removed, using {@link #addAdvice(ComponentMethodAdvice)} or some other alternative
-     * is preferred.
-     * 
-     * @param body
-     *            the body of Javassist psuedo-code
-     * @throws RuntimeException
-     *             if the provided Javassist method body can not be compiled
-     * @deprecated Use {@link #addAdvice(ComponentMethodAdvice)} instead
-     */
-    void extend(String body);
-
-    /**
      * Returns an object that can be used to invoke the method on an instance of the component class (regardless
      * of the actual visibility of the method).
      */

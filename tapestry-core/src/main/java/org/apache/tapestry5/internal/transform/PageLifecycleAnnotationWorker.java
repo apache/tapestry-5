@@ -64,7 +64,7 @@ public class PageLifecycleAnnotationWorker implements ComponentClassTransformWor
 
         ComponentMethodAdvice advice = createAdviceToInvokeMethod(access);
 
-        transformation.getMethod(lifecycleMethodSignature).addAdvice(advice);
+        transformation.getOrCreateMethod(lifecycleMethodSignature).addAdvice(advice);
     }
 
     private ComponentMethodAdvice createAdviceToInvokeMethod(final MethodAccess access)

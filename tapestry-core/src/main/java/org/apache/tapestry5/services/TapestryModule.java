@@ -607,7 +607,7 @@ public final class TapestryModule
         // annotated will
         // be converted to clear out at the end of the request.
 
-        configuration.add("UnclaimedField", new UnclaimedFieldWorker(), "after:*");
+        configuration.addInstance("UnclaimedField",  UnclaimedFieldWorker.class, "after:*");
 
         configuration.add("PageActivationContext", new PageActivationContextWorker(), "before:OnEvent");
 

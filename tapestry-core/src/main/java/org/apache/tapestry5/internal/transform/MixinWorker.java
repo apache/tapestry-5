@@ -18,12 +18,12 @@ import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.annotations.Mixin;
 import org.apache.tapestry5.internal.InternalComponentResources;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.ioc.services.FieldValueConduit;
 import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.services.ClassTransformation;
 import org.apache.tapestry5.services.ComponentClassResolver;
 import org.apache.tapestry5.services.ComponentClassTransformWorker;
 import org.apache.tapestry5.services.ComponentValueProvider;
-import org.apache.tapestry5.services.TransformConstants;
 import org.apache.tapestry5.services.TransformField;
 
 /**
@@ -46,32 +46,54 @@ public class MixinWorker implements ComponentClassTransformWorker
     {
         for (TransformField field : transformation.matchFieldsWithAnnotation(Mixin.class))
         {
-            Mixin annotation = field.getAnnotation(Mixin.class);
-
-            field.claim(annotation);
-
-            String mixinType = annotation.value();
-
-            String[] order = annotation.order();
-
-            String fieldType = field.getType();
-
-            final String mixinClassName = InternalUtils.isBlank(mixinType) ? fieldType : resolver
-                    .resolveMixinTypeToClassName(mixinType);
-
-            model.addMixinClassName(mixinClassName, order);
-
-            ComponentValueProvider<Object> provider = new ComponentValueProvider<Object>()
-            {
-                public Object get(ComponentResources resources)
-                {
-                    InternalComponentResources icr = (InternalComponentResources) resources;
-
-                    return icr.getMixinByClassName(mixinClassName);
-                }
-            };
-
-            field.assignIndirect(TransformConstants.CONTAINING_PAGE_DID_LOAD_SIGNATURE, provider);
+            replaceFieldWithMixin(model, field);
         }
+    }
+
+    private void replaceFieldWithMixin(MutableComponentModel model, TransformField field)
+    {
+        Mixin annotation = field.getAnnotation(Mixin.class);
+
+        field.claim(annotation);
+
+        String mixinType = annotation.value();
+
+        String[] order = annotation.order();
+
+        String fieldType = field.getType();
+
+        String mixinClassName = InternalUtils.isBlank(mixinType) ? fieldType : resolver
+                .resolveMixinTypeToClassName(mixinType);
+
+        model.addMixinClassName(mixinClassName, order);
+
+        replaceFieldAccessWithMixin(field, mixinClassName);
+    }
+
+    private void replaceFieldAccessWithMixin(TransformField field, String mixinClassName)
+    {
+        ComponentValueProvider<FieldValueConduit> provider = createMixinFieldProvider(field.getName(), mixinClassName);
+
+        field.replaceAccess(provider);
+    }
+
+    private ComponentValueProvider<FieldValueConduit> createMixinFieldProvider(final String fieldName,
+            final String mixinClassName)
+    {
+        return new ComponentValueProvider<FieldValueConduit>()
+        {
+            public FieldValueConduit get(ComponentResources resources)
+            {
+                final InternalComponentResources icr = (InternalComponentResources) resources;
+
+                return new ReadOnlyFieldValueConduit(resources, fieldName)
+                {
+                    public Object get()
+                    {
+                        return icr.getMixinByClassName(mixinClassName);
+                    }
+                };
+            }
+        };
     }
 }

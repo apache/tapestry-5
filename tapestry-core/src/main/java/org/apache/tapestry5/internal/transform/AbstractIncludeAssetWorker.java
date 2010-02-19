@@ -106,7 +106,7 @@ public abstract class AbstractIncludeAssetWorker implements ComponentClassTransf
             }
         };
 
-        transformation.getMethod(TransformConstants.SETUP_RENDER_SIGNATURE).addAdvice(advice);
+        transformation.getOrCreateMethod(TransformConstants.SETUP_RENDER_SIGNATURE).addAdvice(advice);
 
         model.addRenderPhase(SetupRender.class);
     }
@@ -128,7 +128,7 @@ public abstract class AbstractIncludeAssetWorker implements ComponentClassTransf
             }
         };
 
-        transformation.getMethod(TransformConstants.CONTAINING_PAGE_DID_LOAD_SIGNATURE).addAdvice(advice);
+        transformation.getOrCreateMethod(TransformConstants.CONTAINING_PAGE_DID_LOAD_SIGNATURE).addAdvice(advice);
     }
 
     private List<String> expandSymbolsInPaths(String[] paths)

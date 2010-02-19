@@ -14,6 +14,8 @@
 
 package org.apache.tapestry5.internal.transform;
 
+import java.lang.reflect.Modifier;
+
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.annotations.Component;
 import org.apache.tapestry5.annotations.MixinClasses;
@@ -27,6 +29,7 @@ import org.apache.tapestry5.ioc.internal.services.StringLocation;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.TapestryException;
+import org.apache.tapestry5.ioc.services.FieldValueConduit;
 import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.model.MutableEmbeddedComponentModel;
@@ -34,7 +37,6 @@ import org.apache.tapestry5.services.ClassTransformation;
 import org.apache.tapestry5.services.ComponentClassResolver;
 import org.apache.tapestry5.services.ComponentClassTransformWorker;
 import org.apache.tapestry5.services.ComponentValueProvider;
-import org.apache.tapestry5.services.TransformConstants;
 import org.apache.tapestry5.services.TransformField;
 
 /**
@@ -56,47 +58,72 @@ public class ComponentWorker implements ComponentClassTransformWorker
     {
         for (TransformField field : transformation.matchFieldsWithAnnotation(Component.class))
         {
-            Component annotation = field.getAnnotation(Component.class);
-
-            field.claim(annotation);
-
-            String annotationId = annotation.id();
-
-            String fieldName = field.getName();
-
-            final String id = InternalUtils.isNonBlank(annotationId) ? annotationId : InternalUtils
-                    .stripMemberName(fieldName);
-
-            String type = field.getType();
-
-            Location location = new StringLocation(String.format("%s.%s", transformation
-                    .getClassName(), fieldName), 0);
-
-            MutableEmbeddedComponentModel embedded = model.addEmbeddedComponent(id, annotation
-                    .type(), type, annotation.inheritInformalParameters(), location);
-
-            addParameters(embedded, annotation.parameters());
-
-            String names = annotation.publishParameters();
-            if (InternalUtils.isNonBlank(names))
-            {
-                embedded.setPublishedParameters(CollectionFactory.newList(TapestryInternalUtils
-                        .splitAtCommas(names)));
-            }
-
-            ComponentValueProvider<Object> provider = new ComponentValueProvider<Object>()
-            {
-                public Object get(ComponentResources resources)
-                {
-                    return resources.getEmbeddedComponent(id);
-                }
-            };
-
-            field.assignIndirect(TransformConstants.CONTAINING_PAGE_DID_LOAD_SIGNATURE, provider);
-
-            addMixinClasses(field, embedded);
-            addMixinTypes(field, embedded);
+            transformField(transformation, model, field);
         }
+    }
+
+    private void transformField(ClassTransformation transformation, MutableComponentModel model, TransformField field)
+    {
+        Component annotation = field.getAnnotation(Component.class);
+
+        field.claim(annotation);
+
+        String annotationId = annotation.id();
+
+        String fieldName = field.getName();
+
+        String id = InternalUtils.isNonBlank(annotationId) ? annotationId : InternalUtils.stripMemberName(fieldName);
+
+        String type = field.getType();
+
+        Location location = new StringLocation(String.format("%s.%s", transformation.getClassName(), fieldName), 0);
+
+        MutableEmbeddedComponentModel embedded = model.addEmbeddedComponent(id, annotation.type(), type, annotation
+                .inheritInformalParameters(), location);
+
+        addParameters(embedded, annotation.parameters());
+
+        updateModelWithPublishedParameters(embedded, annotation);
+
+        convertAccessToField(transformation, field, id);
+
+        addMixinClasses(field, embedded);
+        addMixinTypes(field, embedded);
+    }
+
+    private void convertAccessToField(ClassTransformation transformation, TransformField field, String id)
+    {
+        String fieldName = field.getName();
+
+        ComponentValueProvider<FieldValueConduit> provider = createProviderForEmbeddedComponentConduit(fieldName, id);
+
+        field.replaceAccess(provider);
+    }
+
+    private ComponentValueProvider<FieldValueConduit> createProviderForEmbeddedComponentConduit(final String fieldName,
+            final String id)
+    {
+        return new ComponentValueProvider<FieldValueConduit>()
+        {
+            public FieldValueConduit get(final ComponentResources resources)
+            {
+                return new ReadOnlyFieldValueConduit(resources, fieldName)
+                {
+                    public Object get()
+                    {
+                        return resources.getEmbeddedComponent(id);
+                    }
+                };
+            }
+        };
+    }
+
+    private void updateModelWithPublishedParameters(MutableEmbeddedComponentModel embedded, Component annotation)
+    {
+        String names = annotation.publishParameters();
+
+        if (InternalUtils.isNonBlank(names))
+            embedded.setPublishedParameters(CollectionFactory.newList(TapestryInternalUtils.splitAtCommas(names)));
     }
 
     private void addMixinClasses(TransformField field, MutableEmbeddedComponentModel model)
@@ -109,13 +136,13 @@ public class ComponentWorker implements ComponentClassTransformWorker
         boolean orderEmpty = annotation.order().length == 0;
 
         if (!orderEmpty && annotation.order().length != annotation.value().length)
-            throw new TapestryException(TransformMessages.badMixinConstraintLength(annotation,
-                    field.getName()), model, null);
+            throw new TapestryException(TransformMessages.badMixinConstraintLength(annotation, field.getName()), model,
+                    null);
 
         for (int i = 0; i < annotation.value().length; i++)
         {
-            String[] constraints = orderEmpty ? InternalConstants.EMPTY_STRING_ARRAY
-                    : TapestryInternalUtils.splitMixinConstraints(annotation.order()[i]);
+            String[] constraints = orderEmpty ? InternalConstants.EMPTY_STRING_ARRAY : TapestryInternalUtils
+                    .splitMixinConstraints(annotation.order()[i]);
 
             model.addMixin(annotation.value()[i].getName(), constraints);
         }

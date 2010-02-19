@@ -58,6 +58,6 @@ public class RenderCommandWorker implements ComponentClassTransformWorker
 
         transformation.addImplementedInterface(RenderCommand.class);
 
-        transformation.getMethod(RENDER_SIGNATURE).addAdvice(advice);
+        transformation.getOrCreateMethod(RENDER_SIGNATURE).addAdvice(advice);
     }
 }

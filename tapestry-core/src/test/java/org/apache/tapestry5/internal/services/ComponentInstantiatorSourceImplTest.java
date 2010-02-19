@@ -99,56 +99,7 @@ public class ComponentInstantiatorSourceImplTest extends InternalBaseTestCase
 
         verify();
     }
-
-    /**
-     * More of an integration test.
-     */
-    @Test
-    public void load_component_via_service() throws Exception
-    {
-        Component target = createComponent(BasicComponent.class);
-
-        // Should not be an instance, since it is loaded by a different class loader.
-        assertFalse(BasicComponent.class.isInstance(target));
-
-        access.set(target, "value", "some default value");
-        assertEquals(access.get(target, "value"), "some default value");
-
-        access.set(target, "retainedValue", "some retained value");
-        assertEquals(access.get(target, "retainedValue"), "some retained value");
-
-        // Setting a property value before pageDidLoad will cause that value
-        // to be the default when the page detaches.
-
-        target.containingPageDidLoad();
-
-        access.set(target, "value", "some transient value");
-        assertEquals(access.get(target, "value"), "some transient value");
-
-        target.containingPageDidDetach();
-
-        assertEquals(access.get(target, "value"), "some default value");
-        assertEquals(access.get(target, "retainedValue"), "some retained value");
-    }
-
-    @Test
-    public void load_sub_component_via_service() throws Exception
-    {
-        Component target = createComponent(BasicSubComponent.class);
-
-        target.containingPageDidLoad();
-
-        access.set(target, "value", "base class");
-        assertEquals(access.get(target, "value"), "base class");
-
-        access.set(target, "intValue", 33);
-        assertEquals(access.get(target, "intValue"), 33);
-
-        target.containingPageDidDetach();
-
-        assertNull(access.get(target, "value"));
-        assertEquals(access.get(target, "intValue"), 0);
-    }
+ 
 
     /**
      * This allows tests the exists() method.
@@ -166,6 +117,8 @@ public class ComponentInstantiatorSourceImplTest extends InternalBaseTestCase
 
         assertTrue(source.exists(SYNTH_COMPONENT_CLASSNAME));
 
+        getMocksControl().resetToNice();
+        
         Named named = (Named) createComponent(SYNTH_COMPONENT_CLASSNAME);
 
         assertEquals(named.getName(), "Original");

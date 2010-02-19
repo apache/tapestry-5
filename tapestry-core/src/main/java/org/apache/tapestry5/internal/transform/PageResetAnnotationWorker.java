@@ -74,12 +74,12 @@ public class PageResetAnnotationWorker implements ComponentClassTransformWorker
 
         ComponentMethodAdvice advice = createMethodAccessAdvice(methodAccess);
 
-        transformation.getMethod(CONTAINING_PAGE_DID_RESET).addAdvice(advice);
+        transformation.getOrCreateMethod(CONTAINING_PAGE_DID_RESET).addAdvice(advice);
     }
 
     private ComponentMethodAdvice createMethodAccessAdvice(final List<MethodAccess> methodAccess)
     {
-        ComponentMethodAdvice advice = new ComponentMethodAdvice()
+        return new ComponentMethodAdvice()
         {
             public void advise(ComponentMethodInvocation invocation)
             {
@@ -98,7 +98,6 @@ public class PageResetAnnotationWorker implements ComponentClassTransformWorker
                 }
             }
         };
-        return advice;
     }
 
     private List<MethodAccess> convertToMethodAccess(List<TransformMethod> methods)
@@ -125,7 +124,7 @@ public class PageResetAnnotationWorker implements ComponentClassTransformWorker
 
         transformation.addImplementedInterface(PageResetListener.class);
 
-        transformation.getMethod(TransformConstants.CONTAINING_PAGE_DID_LOAD_SIGNATURE).addAdvice(
+        transformation.getOrCreateMethod(TransformConstants.CONTAINING_PAGE_DID_LOAD_SIGNATURE).addAdvice(
                 registerAsListenerAdvice);
 
         model.setMeta(META_KEY, "true");

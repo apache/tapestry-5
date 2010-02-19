@@ -62,7 +62,7 @@ public class PageActivationContextWorker implements ComponentClassTransformWorke
 
         ComponentMethodAdvice advice = createAdvice(field, annotation);
 
-        transformation.getMethod(TransformConstants.DISPATCH_COMPONENT_EVENT).addAdvice(advice);
+        transformation.getOrCreateMethod(TransformConstants.DISPATCH_COMPONENT_EVENT).addAdvice(advice);
 
         if (annotation.activate())
             model.addEventHandler(EventConstants.ACTIVATE);

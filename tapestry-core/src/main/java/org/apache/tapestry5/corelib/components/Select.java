@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -47,12 +47,13 @@ import java.util.Locale;
  * can be overriden by binding the encoder parameter, or extended by contributing a {@link ValueEncoderFactory} into the
  * service's configuration.
  */
-@Events({EventConstants.VALIDATE, EventConstants.VALUE_CHANGED + " when 'zone' parameter is bound"})
+@Events(
+{ EventConstants.VALIDATE, EventConstants.VALUE_CHANGED + " when 'zone' parameter is bound" })
 public class Select extends AbstractField
 {
     public static final String FORM_COMPONENTID_PARAMETER = "t:formcomponentid";
     public static final String CHANGE_EVENT = "change";
-    
+
     private class Renderer extends SelectModelRenderer
     {
 
@@ -71,7 +72,7 @@ public class Select extends AbstractField
     /**
      * Allows a specific implementation of {@link ValueEncoder} to be supplied. This is used to create client-side
      * string values for the different options.
-     *
+     * 
      * @see ValueEncoderSource
      */
     @Parameter
@@ -93,14 +94,14 @@ public class Select extends AbstractField
 
     /**
      * Controls whether an additional blank option is provided. The blank option precedes all other options and is never
-     * selected.  The value for the blank option is always the empty string, the label may be the blank string; the
+     * selected. The value for the blank option is always the empty string, the label may be the blank string; the
      * label is from the blankLabel parameter (and is often also the empty string).
      */
     @Parameter(value = "auto", defaultPrefix = BindingConstants.LITERAL)
     private BlankOption blankOption;
 
     /**
-     * The label to use for the blank option, if rendered.  If not specified, the container's message catalog is
+     * The label to use for the blank option, if rendered. If not specified, the container's message catalog is
      * searched for a key, <code><em>id</em>-blanklabel</code>.
      */
     @Parameter(defaultPrefix = BindingConstants.LITERAL)
@@ -127,9 +128,10 @@ public class Select extends AbstractField
      */
     @Parameter(required = true, principal = true, autoconnect = true)
     private Object value;
-    
+
     /**
-     * Binding the zone parameter will cause any change of Select's value to be handled as an Ajax request that updates the
+     * Binding the zone parameter will cause any change of Select's value to be handled as an Ajax request that updates
+     * the
      * indicated zone. The component will trigger the event {@link EventConstants#VALUE_CHANGED} to inform its
      * container that Select's value has changed.
      * 
@@ -140,7 +142,7 @@ public class Select extends AbstractField
 
     @Inject
     private FieldValidationSupport fieldValidationSupport;
-    
+
     @Environmental
     private FormSupport formSupport;
 
@@ -179,7 +181,8 @@ public class Select extends AbstractField
         return TapestryInternalUtils.isEqual(clientValue, selectedClientValue);
     }
 
-    @SuppressWarnings({ "unchecked" })
+    @SuppressWarnings(
+    { "unchecked" })
     @Override
     protected void processSubmission(String elementName)
     {
@@ -188,7 +191,7 @@ public class Select extends AbstractField
         tracker.recordInput(this, submittedValue);
 
         Object selectedValue = toValue(submittedValue);
-        
+
         putPropertyNameIntoBeanValidationContext("value");
 
         try
@@ -201,7 +204,7 @@ public class Select extends AbstractField
         {
             tracker.recordError(this, ex.getMessage());
         }
-        
+
         removePropertyNameFromBeanValidationContext();
     }
 
@@ -213,18 +216,18 @@ public class Select extends AbstractField
     void beginRender(MarkupWriter writer)
     {
         writer.element("select", "name", getControlName(), "id", getClientId());
-        
+
         putPropertyNameIntoBeanValidationContext("value");
 
         validate.render(writer);
-        
+
         removePropertyNameFromBeanValidationContext();
 
         resources.renderInformalParameters(writer);
 
         // Disabled is via a mixin
-        
-        if (this.zone != null) 
+
+        if (this.zone != null)
         {
             final Link link = this.resources.createEventLink(CHANGE_EVENT);
 
@@ -239,8 +242,8 @@ public class Select extends AbstractField
             this.renderSupport.addInit("updateZoneOnEvent", spec);
         }
     }
-    
-    Object onChange() 
+
+    Object onChange()
     {
         final String formId = this.request.getParameter(FORM_COMPONENTID_PARAMETER);
 
@@ -250,9 +253,9 @@ public class Select extends AbstractField
 
         final Holder<Object> holder = Holder.create();
 
-        final ComponentEventCallback callback = new ComponentEventCallback() 
+        final ComponentEventCallback callback = new ComponentEventCallback()
         {
-            public boolean handleResult(final Object result) 
+            public boolean handleResult(final Object result)
             {
 
                 holder.put(result);
@@ -263,20 +266,23 @@ public class Select extends AbstractField
             }
         };
 
-        this.componentResources.triggerEvent(EventConstants.VALUE_CHANGED, new Object[] { newValue }, callback);
+        this.componentResources.triggerEvent(EventConstants.VALUE_CHANGED, new Object[]
+        { newValue }, callback);
 
-        final PartialMarkupRendererFilter filter = new PartialMarkupRendererFilter() 
+        final PartialMarkupRendererFilter filter = new PartialMarkupRendererFilter()
         {
-            public void renderMarkup(MarkupWriter writer, JSONObject reply, PartialMarkupRenderer renderer) 
+            public void renderMarkup(MarkupWriter writer, JSONObject reply, PartialMarkupRenderer renderer)
             {
 
                 HiddenFieldPositioner hiddenFieldPositioner = new HiddenFieldPositioner(writer, Select.this.rules);
 
-                final ComponentActionSink actionSink = new ComponentActionSink(Select.this.logger, Select.this.clientDataEncoder);
+                final ComponentActionSink actionSink = new ComponentActionSink(Select.this.logger,
+                        Select.this.clientDataEncoder);
 
                 final Form form = (Form) Select.this.componentSource.getComponent(formId);
 
-                FormSupport formSupport = form.createRenderTimeFormSupport(form.getClientId(), actionSink, new IdAllocator());
+                FormSupport formSupport = form.createRenderTimeFormSupport(form.getClientId(), actionSink,
+                        new IdAllocator());
 
                 Select.this.environment.push(FormSupport.class, formSupport);
                 Select.this.environment.push(ValidationTracker.class, new ValidationTrackerImpl());
@@ -286,8 +292,8 @@ public class Select extends AbstractField
                 Select.this.environment.pop(ValidationTracker.class);
                 Select.this.environment.pop(FormSupport.class);
 
-                hiddenFieldPositioner.getElement().attributes("type", "hidden", "name", Form.FORM_DATA, 
-                        "value", actionSink.getClientData());
+                hiddenFieldPositioner.getElement().attributes("type", "hidden", "name", Form.FORM_DATA, "value",
+                        actionSink.getClientData());
 
             }
         };
@@ -297,7 +303,7 @@ public class Select extends AbstractField
         return holder.get();
     }
 
-    protected Object toValue(final String submittedValue) 
+    protected Object toValue(final String submittedValue)
     {
         return InternalUtils.isBlank(submittedValue) ? null : this.encoder.toValue(submittedValue);
     }
@@ -313,7 +319,8 @@ public class Select extends AbstractField
     {
         Class valueType = resources.getBoundType("value");
 
-        if (valueType == null) return null;
+        if (valueType == null)
+            return null;
 
         if (Enum.class.isAssignableFrom(valueType))
             return new EnumSelectModel(valueType, resources.getContainerMessages());
@@ -335,7 +342,8 @@ public class Select extends AbstractField
 
         String key = resources.getId() + "-blanklabel";
 
-        if (containerMessages.contains(key)) return containerMessages.get(key);
+        if (containerMessages.contains(key))
+            return containerMessages.get(key);
 
         return null;
     }
@@ -352,7 +360,8 @@ public class Select extends AbstractField
         // Failing that, see if there is a current value (via the value parameter), and
         // convert that to a client value for later comparison.
 
-        if (selectedClientValue == null) selectedClientValue = value == null ? null : encoder.toClient(value);
+        if (selectedClientValue == null)
+            selectedClientValue = value == null ? null : encoder.toClient(value);
 
         if (showBlankOption())
         {
@@ -360,7 +369,6 @@ public class Select extends AbstractField
             writer.write(blankLabel);
             writer.end();
         }
-
 
         SelectModelVisitor renderer = new Renderer(writer);
 

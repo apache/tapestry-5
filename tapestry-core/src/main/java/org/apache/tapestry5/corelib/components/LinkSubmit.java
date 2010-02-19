@@ -1,10 +1,10 @@
-//  Copyright 2008, 2009 The Apache Software Foundation
+// Copyright 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,14 +17,16 @@ package org.apache.tapestry5.corelib.components;
 import org.apache.tapestry5.*;
 import org.apache.tapestry5.annotations.*;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.FormSupport;
 import org.apache.tapestry5.services.Heartbeat;
 import org.apache.tapestry5.services.Request;
+import org.apache.tapestry5.services.javascript.JavascriptSupport;
 
 /**
  * Generates a client-side hyperlink that submits the enclosing form. If the link is clicked in the browser, the
- * component will trigger an event ({@linkplain EventConstants#SELECTED selected} by default) , just like {@link
- * Submit}.
+ * component will trigger an event ({@linkplain EventConstants#SELECTED selected} by default) , just like {@link Submit}
+ * .
  */
 @SupportsInformalParameters
 @IncludeJavaScriptLibrary("linksubmit.js")
@@ -55,7 +57,7 @@ public class LinkSubmit implements ClientElement
     private ComponentResources resources;
 
     @Inject
-    private RenderSupport renderSupport;
+    private JavascriptSupport javascriptSupport;
 
     @Environmental
     private FormSupport formSupport;
@@ -110,15 +112,15 @@ public class LinkSubmit implements ClientElement
     {
         if (!disabled)
         {
-            clientId = renderSupport.allocateClientId(resources);
+            clientId = javascriptSupport.allocateClientId(resources);
 
             formSupport.store(this, new ProcessSubmission(clientId));
 
             writer.element("a",
 
-                           "id", clientId,
+            "id", clientId,
 
-                           "href", "#");
+            "href", "#");
 
             if (!request.isXHR())
                 writer.attributes(MarkupConstants.ONCLICK, MarkupConstants.WAIT_FOR_PAGE);
@@ -133,7 +135,9 @@ public class LinkSubmit implements ClientElement
         {
             writer.end();
 
-            renderSupport.addInit("linkSubmit", formSupport.getClientId(), clientId);
+            JSONObject spec = new JSONObject("form", formSupport.getClientId(), "clientId", clientId);
+
+            javascriptSupport.addInitializerCall("linkSubmit", spec);
         }
     }
 
@@ -142,4 +146,3 @@ public class LinkSubmit implements ClientElement
         return clientId;
     }
 }
-

@@ -96,7 +96,7 @@ public class OnEventWorker implements ComponentClassTransformWorker
     {
         ComponentMethodAdvice advice = createDispatchComponentEventAdvice(invokers);
 
-        transformation.getMethod(TransformConstants.DISPATCH_COMPONENT_EVENT).addAdvice(advice);
+        transformation.getOrCreateMethod(TransformConstants.DISPATCH_COMPONENT_EVENT).addAdvice(advice);
     }
 
     private ComponentMethodAdvice createDispatchComponentEventAdvice(final List<EventHandlerMethodInvoker> invokers)

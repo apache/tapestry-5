@@ -19,6 +19,7 @@ import org.apache.tapestry5.ioc.internal.util.IdAllocator;
 import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.services.ClassTransformation;
 import org.apache.tapestry5.services.ComponentClassTransformWorker;
+import org.apache.tapestry5.services.TransformMethod;
 import org.apache.tapestry5.services.TransformMethodSignature;
 
 import java.util.List;
@@ -29,6 +30,14 @@ import java.util.List;
  */
 public interface InternalClassTransformation extends ClassTransformation
 {
+    /**
+     * Adds a new method to the transformed class, possibly replacing an existing method or
+     * overriding a base-class method.
+     * 
+     * @since 5.2.0
+     */
+    TransformMethod addNewMethod(TransformMethodSignature signature, String methodBody);
+
     /**
      * Invoked after all {@link ComponentClassTransformWorker}s have had their chance to work over the class. This
      * performs any final operations for the class transformation, which includes coming up with the final constructor
@@ -60,8 +69,7 @@ public interface InternalClassTransformation extends ClassTransformation
      */
     String searchForPreviousInjection(InjectionKey key);
 
-    InternalClassTransformation createChildTransformation(CtClass childClass,
-            MutableComponentModel childModel);
+    InternalClassTransformation createChildTransformation(CtClass childClass, MutableComponentModel childModel);
 
     /**
      * Returns the parent transformation, or null for a root class.

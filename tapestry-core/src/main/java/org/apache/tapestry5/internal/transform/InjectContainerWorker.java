@@ -17,12 +17,12 @@ package org.apache.tapestry5.internal.transform;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.annotations.InjectContainer;
 import org.apache.tapestry5.internal.services.ComponentClassCache;
+import org.apache.tapestry5.ioc.services.FieldValueConduit;
 import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.services.ClassTransformation;
 import org.apache.tapestry5.services.ComponentClassTransformWorker;
 import org.apache.tapestry5.services.ComponentValueProvider;
-import org.apache.tapestry5.services.TransformConstants;
 import org.apache.tapestry5.services.TransformField;
 
 /**
@@ -41,38 +41,57 @@ public class InjectContainerWorker implements ComponentClassTransformWorker
 
     public void transform(ClassTransformation transformation, MutableComponentModel model)
     {
-        for (final TransformField field : transformation
-                .matchFieldsWithAnnotation(InjectContainer.class))
+        for (final TransformField field : transformation.matchFieldsWithAnnotation(InjectContainer.class))
         {
-            final String fieldName = field.getName();
-
-            final String fieldTypeName = field.getType();
-
-            final String componentClassName = model.getComponentClassName();
-
-            ComponentValueProvider<Object> provider = new ComponentValueProvider<Object>()
-            {
-                public Object get(ComponentResources resources)
-                {
-                    Component container = resources.getContainer();
-
-                    Class fieldType = cache.forName(fieldTypeName);
-
-                    if (!fieldType.isInstance(container))
-                    {
-                        String message = String.format(
-                                "Component %s is not assignable to field %s.%s (of type %s).",
-                                container.getComponentResources().getCompleteId(),
-                                componentClassName, fieldName, fieldTypeName);
-
-                        throw new RuntimeException(message);
-                    }
-
-                    return container;
-                }
-            };
-
-            field.assignIndirect(TransformConstants.CONTAINING_PAGE_DID_LOAD_SIGNATURE, provider);
+            transformField(model, field);
         }
+    }
+
+    private void transformField(MutableComponentModel model, TransformField field)
+    {
+        InjectContainer annotation = field.getAnnotation(InjectContainer.class);
+
+        field.claim(annotation);
+
+        ComponentValueProvider<FieldValueConduit> provider = createFieldValueConduitProvider(field);
+
+        field.replaceAccess(provider);
+    }
+
+    private ComponentValueProvider<FieldValueConduit> createFieldValueConduitProvider(TransformField field)
+    {
+
+        final String fieldName = field.getName();
+
+        final String fieldTypeName = field.getType();
+
+        return new ComponentValueProvider<FieldValueConduit>()
+        {
+            public FieldValueConduit get(final ComponentResources resources)
+            {
+                final Class fieldType = cache.forName(fieldTypeName);
+
+                return new ReadOnlyFieldValueConduit(resources, fieldName)
+                {
+
+                    public Object get()
+                    {
+                        Component container = resources.getContainer();
+
+                        if (!fieldType.isInstance(container))
+                        {
+                            String message = String.format(
+                                    "Component %s is not assignable to field %s.%s (of type %s).", container
+                                            .getComponentResources().getCompleteId(), resources.getComponentModel()
+                                            .getComponentClassName(), fieldName, fieldTypeName);
+
+                            throw new RuntimeException(message);
+                        }
+
+                        return container;
+                    }
+                };
+            }
+        };
     }
 }

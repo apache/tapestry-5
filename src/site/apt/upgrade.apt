@@ -14,6 +14,24 @@ Upgrade Notes
 
 Release 5.2.0
 
+* ClassTransformation API changes
+
+  The
+  {{{apidocs/org/apache/tapestry5/services/ClassTransformation.html}ClassTransformation}} 
+  API, used to implement component meta-programming,
+  has been rewritten with an eye to making class transformations easier to implement while
+  removing the dependency on the Javassist library. This is of note only to <advanced> users who have implemented
+  {{{apidocs/org/apache/tapestry5/services/ComponentClassTransformWorker.html}ComponentClassTransformWorker}}s, which operate on
+  the 
+    
+  Much of the existing API has been deprecated and <some> deprecated
+  methods are now non-functional. The deprecated methods will be removed in Tapestry 5.3.
+  
+  This represents a shift in how the API operates; previously much of the logic in ComponentClassTransformWorkers
+  was built in terms of Javassist: adding new bytecode to existing methods. The new API switches away from this, and
+  now works in terms of adding new fields, initializing those fields using callbacks, providing callbacks for access
+  to fields, and adding advice to methods.
+
 * Asset Security
 
   Tapestry now includes a new mechanism for ensuring the security of server-side assets, addressing a bug

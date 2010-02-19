@@ -20,11 +20,10 @@ import java.util.List;
 import javassist.CtBehavior;
 
 import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.internal.transform.ReadOnlyFieldValueConduit;
 import org.apache.tapestry5.ioc.AnnotationProvider;
 import org.apache.tapestry5.ioc.Predicate;
 import org.slf4j.Logger;
-
-import sun.awt.ComponentFactory;
 
 /**
  * Contains class-specific information used when transforming a raw component class into an
@@ -37,6 +36,8 @@ import sun.awt.ComponentFactory;
  * {@link ComponentClassTransformWorker}.
  * <p/>
  * Much of this information is somewhat like ordinary reflection, but applies to a class that has not yet been loaded.
+ * Field types, return types, parameter types and exception types are represented as string names, since any of them may
+ * be a class that has not yet been loaded and transformed as well.
  * <p/>
  * Transformation is primarily about identifying annotations on fields and on methods and changing the class, adding new
  * interfaces, fields and methods, and deleting some existing fields.
@@ -81,7 +82,7 @@ public interface ClassTransformation extends AnnotationProvider
      * @param prefix
      *            for the generated name
      * @param baseName
-     *            an name, often of an existing field or method
+     *            a name, often of an existing field or method
      * @return a unique name
      */
     String newMemberName(String prefix, String baseName);
@@ -206,6 +207,7 @@ public interface ClassTransformation extends AnnotationProvider
      * @return the annotation if present, or null otherwise
      * @throws IllegalArgumentException
      *             if the method signature does not correspond to a declared method
+     * @deprecated Use {@link TransformMethod#getAnnotation(Class)} instead
      */
     <T extends Annotation> T getMethodAnnotation(TransformMethodSignature method, Class<T> annotationClass);
 
@@ -228,6 +230,7 @@ public interface ClassTransformation extends AnnotationProvider
      *             if the fieldName does not correspond to a declared instance field
      * @throws IllegalStateException
      *             if the field is already claimed for some other tag
+     * @deprecated Use {@link TransformField#claim(Object)} instead
      */
     void claimField(String fieldName, Object tag);
 
@@ -237,21 +240,25 @@ public interface ClassTransformation extends AnnotationProvider
      * 
      * @param fieldName
      *            name of field to so change
+     * @deprecated Use {@link TransformField#replaceAccess(TransformField)} instead
+     * @see ReadOnlyFieldValueConduit
      */
     void makeReadOnly(String fieldName);
 
     /**
      * Finds any declared <em>instance</em> fields that have not been claimed (via {@link #claimField(String, Object)})
-     * and have not been either added or deleted, and returns the names of those fields. May return an empty array.
+     * and have not been added , and returns the names of those fields. May return an empty array.
      * 
      * @deprecated Use {@link #matchUnclaimedFields()} instead
      */
     List<String> findUnclaimedFields();
 
     /**
-     * Matches all fields that are not claimed (or added or removed).
+     * Matches all fields that are not claimed. This may include static fields and final fields, but will not
+     * include fields that have been added as part of the transformation.
      * 
      * @since 5.2.0
+     * @return sorted list of unclaimed fields
      */
     List<TransformField> matchUnclaimedFields();
 
@@ -339,7 +346,7 @@ public interface ClassTransformation extends AnnotationProvider
      * @param provider
      *            injected into the component to provide the value
      * @return the actual name of the injected field
-     * @since 5.2
+     * @since 5.2.0
      */
     <T> TransformField addIndirectInjectedField(Class<T> type, String suggestedName, ComponentValueProvider<T> provider);
 
@@ -394,7 +401,7 @@ public interface ClassTransformation extends AnnotationProvider
      *            the body of code
      * @throws org.apache.tapestry5.internal.services.MethodCompileException
      *             if the provided Javassist method body can not be compiled
-     * @deprecated Use {@link TransformMethod#extend(String)} instead
+     * @deprecated Use {@link TransformMethod#extend(String)} instead. This method is non-functional as of Tapestry 5.2.
      */
     void extendMethod(TransformMethodSignature methodSignature, String methodBody);
 
@@ -411,7 +418,7 @@ public interface ClassTransformation extends AnnotationProvider
      * @throws org.apache.tapestry5.internal.services.MethodCompileException
      *             if the provided method body can not be compiled
      * @see #prefixMethod(TransformMethodSignature, String)
-     * @deprecated Use {@link TransformMethod#extend(String) instead}
+     * @deprecated Use {@link TransformMethod#extend(String) instead}. This method is non-functional as of Tapestry 5.2.
      */
     void extendExistingMethod(TransformMethodSignature methodSignature, String methodBody);
 
@@ -422,7 +429,6 @@ public interface ClassTransformation extends AnnotationProvider
      * is added that first invokes the super implementation. Use {@link #addMethod(TransformMethodSignature, String)}
      * when it is necessary to control when the super-class method is invoked.
      * <p/>
-     * <p/>
      * Like {@link #extendExistingMethod(TransformMethodSignature, String)}, this method is generally used to "wrap" an
      * existing method adding additional functionality such as caching or transaction support.
      * 
@@ -430,6 +436,8 @@ public interface ClassTransformation extends AnnotationProvider
      * @param methodBody
      * @throws org.apache.tapestry5.internal.services.MethodCompileException
      *             if the provided method body can not be compiled
+     * @deprecated Use {@link TransformMethod#addAdvice(ComponentMethodAdvice)} instead. This method is non-functional
+     *             as of Tapestry 5.2.
      */
     void prefixMethod(TransformMethodSignature methodSignature, String methodBody);
 
@@ -452,22 +460,17 @@ public interface ClassTransformation extends AnnotationProvider
      * the super-class
      * implementation is invoked.
      * 
-     * @deprecated Use {@link #createMethod(TransformMethodSignature)} instead
+     * @deprecated Use {@link #getOrCreateMethod(TransformMethodSignature)} instead. This method is non-functional as of
+     *             Tapestry 5.2.
      */
     void addMethod(TransformMethodSignature signature, String methodBody);
 
     /**
-     * Creates a new method as a declared method of the class, with an empty (default) body that
-     * does nothing. Non-void methods will return null, false or 0. The method must not yet exist.
-     * 
-     * @param signature
-     *            defines the method to create
-     */
-    TransformMethod createMethod(TransformMethodSignature signature);
-
-    /**
      * As with {@link #addMethod(TransformMethodSignature, String)}, but field references inside the
      * method <em>will</em> be transformed, and the method <em>must not already exist</em>.
+     * 
+     * @deprecated Use {@link #getOrCreateMethod(TransformMethodSignature)} instead. This method is non-functional as of
+     *             Tapestry 5.2.
      */
     void addTransformedMethod(TransformMethodSignature methodSignature, String methodBody);
 
@@ -476,6 +479,8 @@ public interface ClassTransformation extends AnnotationProvider
      * 
      * @param statement
      *            the statement to add, which should end with a semicolon
+     * @deprecated Use methods that create or inject fields (directly or indirectly)
+     * @see ComponentValueProvider
      */
     void extendConstructor(String statement);
 
@@ -508,7 +513,7 @@ public interface ClassTransformation extends AnnotationProvider
      *            the name of the field to remove
      * @see #replaceReadAccess(String, String)
      * @see #replaceWriteAccess(String, String)
-     * @deprecated Use {@link TransformField#remove()} instead
+     * @deprecated This method is non-functional as of Tapestry 5.2
      */
     void removeField(String fieldName);
 
@@ -564,6 +569,8 @@ public interface ClassTransformation extends AnnotationProvider
      *            fully qualified class name of exception
      * @param body
      *            code to execute
+     * @deprecated Use {@link TransformMethod#addAdvice(ComponentMethodAdvice)} instead. This method is non-functional
+     *             as of Tapestry 5.2.
      */
     void addCatch(TransformMethodSignature methodSignature, String exceptionType, String body);
 
@@ -585,16 +592,26 @@ public interface ClassTransformation extends AnnotationProvider
     boolean isMethodOverride(TransformMethodSignature methodSignature);
 
     /**
-     * Locates and returns the method if declared in this class; if not, locates
-     * a super-class method that is implemented into this class. In the latter
-     * case, the method will be considered "new" (i.e., no field transformations),
-     * as with {@link #extendMethod(TransformMethodSignature, String)}).
+     * Locates and returns the method if declared in this class; If not,
+     * the method is added to the class. If the method is an override
+     * of a base class method, then the method will delegate to the base
+     * class method (invoke it, return its value). If the method is entirely
+     * new, it will ignore its parameters and return a default value (null, 0 or false).
      * 
      * @param signature
-     *            identifies the method to obtain
-     * @throw RuntimeException if the signature does not match a declared method of this
-     *        class, or a overridable method of a superclass
+     *            identifies the method to locate, override or create
      * @since 5.2.0
      */
-    TransformMethod getMethod(TransformMethodSignature signature);
+    TransformMethod getOrCreateMethod(TransformMethodSignature signature);
+
+    /**
+     * Determines if the class being transformed includes a declared (not inherited) method
+     * with the provided signature.
+     * 
+     * @since 5.2.0
+     * @param signature
+     *            identifies method to search for
+     * @return true if a such a method exists
+     */
+    boolean isDeclaredMethod(TransformMethodSignature signature);
 }

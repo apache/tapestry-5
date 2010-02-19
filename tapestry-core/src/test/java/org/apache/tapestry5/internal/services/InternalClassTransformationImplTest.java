@@ -127,8 +127,7 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
         classSource = new CtClassSourceImpl(classFactoryClassPool, loader);
     }
 
-    private Object transform(Class componentClass, ComponentClassTransformWorker worker)
-            throws Exception
+    private Object transform(Class componentClass, ComponentClassTransformWorker worker) throws Exception
     {
         InternalComponentResources resources = mockInternalComponentResources();
 
@@ -139,8 +138,8 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
 
         replay();
 
-        InternalClassTransformation ct = new InternalClassTransformationImpl(classFactory,
-                targetObjectCtClass, new ComponentClassCacheImpl(classFactory), model, classSource);
+        InternalClassTransformation ct = new InternalClassTransformationImpl(classFactory, targetObjectCtClass,
+                new ComponentClassCacheImpl(classFactory, null), model, classSource);
 
         worker.transform(ct, model);
 
@@ -253,8 +252,7 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
         }
         catch (RuntimeException ex)
         {
-            assertEquals(
-                    ex.getMessage(),
+            assertEquals(ex.getMessage(),
                     "Class org.apache.tapestry5.internal.transform.pages.ParentClass does not contain a field named 'unknownField'.");
         }
 
@@ -445,8 +443,7 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
 
         replay();
 
-        ClassTransformation ct = createClassTransformation(ChildClassInheritsAnnotation.class,
-                logger);
+        ClassTransformation ct = createClassTransformation(ChildClassInheritsAnnotation.class, logger);
 
         InheritedAnnotation ia = ct.getAnnotation(InheritedAnnotation.class);
 
@@ -465,8 +462,7 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
 
         replay();
 
-        ClassTransformation ct = createClassTransformation(ChildClassInheritsAnnotation.class,
-                logger);
+        ClassTransformation ct = createClassTransformation(ChildClassInheritsAnnotation.class, logger);
 
         Meta meta = ct.getAnnotation(Meta.class);
 
@@ -503,8 +499,7 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
     }
 
     @Test
-    public void ensure_javassist_does_not_show_interface_methods_on_abstract_class()
-            throws Exception
+    public void ensure_javassist_does_not_show_interface_methods_on_abstract_class() throws Exception
     {
         CtClass ctClass = findCtClass(AbstractFoo.class);
 
@@ -524,8 +519,7 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
     }
 
     @Test
-    public void ensure_javassist_does_not_show_extended_interface_methods_on_interface()
-            throws Exception
+    public void ensure_javassist_does_not_show_extended_interface_methods_on_interface() throws Exception
     {
         CtClass ctClass = findCtClass(FooBarInterface.class);
 
@@ -548,23 +542,20 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
             {
                 transformation.addImplementedInterface(Runnable.class);
 
-                TransformMethodSignature targetMethodSignature = new TransformMethodSignature(
-                        "publicVoidNoArgs");
-                TransformMethod pvna = transformation.getMethod(targetMethodSignature);
+                TransformMethodSignature targetMethodSignature = new TransformMethodSignature("publicVoidNoArgs");
+                TransformMethod pvna = transformation.getOrCreateMethod(targetMethodSignature);
 
                 final MethodAccess pvnaAccess = pvna.getAccess();
 
-                transformation.getMethod(RUN).addAdvice(new ComponentMethodAdvice()
+                transformation.getOrCreateMethod(RUN).addAdvice(new ComponentMethodAdvice()
                 {
                     public void advise(ComponentMethodInvocation invocation)
                     {
                         invocation.proceed();
 
-                        MethodInvocationResult invocationResult = pvnaAccess.invoke(invocation
-                                .getInstance());
+                        MethodInvocationResult invocationResult = pvnaAccess.invoke(invocation.getInstance());
 
-                        assertFalse(invocationResult.isFail(),
-                                "fail should be false, no checked exception thrown");
+                        assertFalse(invocationResult.isFail(), "fail should be false, no checked exception thrown");
                     }
                 });
             }
@@ -586,24 +577,22 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
             {
                 transformation.addImplementedInterface(Runnable.class);
 
-                TransformMethodSignature targetMethodSignature = new TransformMethodSignature(
-                        Modifier.PUBLIC, "void", "publicVoidThrowsException", null, new String[]
+                TransformMethodSignature targetMethodSignature = new TransformMethodSignature(Modifier.PUBLIC, "void",
+                        "publicVoidThrowsException", null, new String[]
                         { SQLException.class.getName() });
-                TransformMethod targetMethod = transformation.getMethod(targetMethodSignature);
+                TransformMethod targetMethod = transformation.getOrCreateMethod(targetMethodSignature);
 
                 final MethodAccess targetAccess = targetMethod.getAccess();
 
-                transformation.getMethod(RUN).addAdvice(new ComponentMethodAdvice()
+                transformation.getOrCreateMethod(RUN).addAdvice(new ComponentMethodAdvice()
                 {
                     public void advise(ComponentMethodInvocation invocation)
                     {
                         invocation.proceed();
 
-                        MethodInvocationResult invocationResult = targetAccess.invoke(invocation
-                                .getInstance());
+                        MethodInvocationResult invocationResult = targetAccess.invoke(invocation.getInstance());
 
-                        assertTrue(invocationResult.isFail(),
-                                "fail should be true; checked exception thrown");
+                        assertTrue(invocationResult.isFail(), "fail should be true; checked exception thrown");
 
                         SQLException ex = invocationResult.getThrown(SQLException.class);
 
@@ -635,18 +624,17 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
             {
                 transformation.addImplementedInterface(ProcessInteger.class);
 
-                TransformMethod incrementer = transformation
-                        .getMethod(new TransformMethodSignature(Modifier.PUBLIC, "int",
-                                "incrementer", new String[]
-                                { "int" }, null));
+                TransformMethod incrementer = transformation.getOrCreateMethod(new TransformMethodSignature(
+                        Modifier.PUBLIC, "int", "incrementer", new String[]
+                        { "int" }, null));
 
                 final MethodAccess incrementerAccess = incrementer.getAccess();
 
-                TransformMethodSignature operateSig = new TransformMethodSignature(Modifier.PUBLIC,
-                        "int", "operate", new String[]
+                TransformMethodSignature operateSig = new TransformMethodSignature(Modifier.PUBLIC, "int", "operate",
+                        new String[]
                         { "int" }, null);
 
-                TransformMethod operate = transformation.getMethod(operateSig);
+                TransformMethod operate = transformation.getOrCreateMethod(operateSig);
 
                 operate.addAdvice(new ComponentMethodAdvice()
                 {
@@ -661,8 +649,7 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
 
                         Integer parameter = (Integer) invocation.getParameter(0);
 
-                        MethodInvocationResult result = incrementerAccess.invoke(invocation
-                                .getInstance(), parameter);
+                        MethodInvocationResult result = incrementerAccess.invoke(invocation.getInstance(), parameter);
 
                         invocation.overrideResult(result.getReturnValue());
                     }
@@ -691,18 +678,17 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
             {
                 transformation.addImplementedInterface(ProcessStringAndInteger.class);
 
-                TransformMethod targetMethod = transformation
-                        .getMethod(new TransformMethodSignature(Modifier.PRIVATE,
-                                "java.lang.String", "privateMethod", new String[]
-                                { "java.lang.String", "int" }, null));
+                TransformMethod targetMethod = transformation.getOrCreateMethod(new TransformMethodSignature(
+                        Modifier.PRIVATE, "java.lang.String", "privateMethod", new String[]
+                        { "java.lang.String", "int" }, null));
 
                 final MethodAccess targetMethodAccess = targetMethod.getAccess();
 
-                TransformMethodSignature processSig = new TransformMethodSignature(Modifier.PUBLIC,
-                        "java.lang.String", "process", new String[]
+                TransformMethodSignature processSig = new TransformMethodSignature(Modifier.PUBLIC, "java.lang.String",
+                        "process", new String[]
                         { "java.lang.String", "int" }, null);
 
-                TransformMethod process = transformation.getMethod(processSig);
+                TransformMethod process = transformation.getOrCreateMethod(processSig);
 
                 process.addAdvice(new ComponentMethodAdvice()
                 {
@@ -711,9 +697,8 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
                         // Don't even bother with proceed() this time, which is OK (but
                         // somewhat rare).
 
-                        MethodInvocationResult result = targetMethodAccess.invoke(invocation
-                                .getInstance(), invocation.getParameter(0), invocation
-                                .getParameter(1));
+                        MethodInvocationResult result = targetMethodAccess.invoke(invocation.getInstance(), invocation
+                                .getParameter(0), invocation.getParameter(1));
 
                         invocation.overrideResult(result.getReturnValue());
                     }
@@ -740,8 +725,8 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
 
         replay();
 
-        InternalClassTransformation ct = new InternalClassTransformationImpl(classFactory,
-                targetObjectCtClass, null, model, null);
+        InternalClassTransformation ct = new InternalClassTransformationImpl(classFactory, targetObjectCtClass, null,
+                model, null);
 
         // Default behavior is to add an injected field for the InternalComponentResources object,
         // so we'll just check that.
@@ -758,111 +743,6 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
     }
 
     @Test
-    public void add_injected_field_from_parent_transformation() throws Exception
-    {
-        final String value = "from the parent";
-
-        InternalComponentResources resources = mockInternalComponentResources();
-
-        CtClass targetObjectCtClass = findCtClass(TargetObject.class);
-
-        Logger logger = mockLogger();
-        MutableComponentModel model = mockMutableComponentModel();
-
-        train_getLogger(model, logger);
-
-        replay();
-
-        InternalClassTransformation ct = new InternalClassTransformationImpl(classFactory,
-                targetObjectCtClass, null, model, null);
-
-        String parentFieldName = ct.addInjectedField(String.class, "_value", value);
-
-        // Default behavior is to add an injected field for the InternalComponentResources object,
-        // so we'll just check that.
-
-        ct.finish();
-
-        // Now lets work on the subclass
-
-        CtClass subclassCtClass = findCtClass(TargetObjectSubclass.class);
-
-        ct = ct.createChildTransformation(subclassCtClass, model);
-
-        String subclassFieldName = ct.addInjectedField(String.class, "_childValue", value);
-
-        // This is what proves it is cached.
-
-        assertEquals(subclassFieldName, parentFieldName);
-
-        // This proves the the field is protected and can be used in subclasses.
-
-        ct.addMethod(new TransformMethodSignature(Modifier.PUBLIC, "java.lang.String", "getValue",
-                null, null), "return " + subclassFieldName + ";");
-
-        ct.finish();
-
-        Instantiator instantiator = ct.createInstantiator();
-
-        Object instance = instantiator.newInstance(resources);
-
-        Object actual = access.get(instance, "value");
-
-        assertSame(actual, value);
-
-        verify();
-    }
-
-    @Test
-    public void add_interface_to_class() throws Exception
-    {
-        InternalComponentResources resources = mockInternalComponentResources();
-
-        CtClass targetObjectCtClass = findCtClass(TargetObject.class);
-
-        Logger logger = mockLogger();
-        MutableComponentModel model = mockMutableComponentModel(logger);
-
-        replay();
-
-        InternalClassTransformation ct = new InternalClassTransformationImpl(classFactory,
-                targetObjectCtClass, null, model, null);
-
-        ct.addImplementedInterface(FooInterface.class);
-        ct.addImplementedInterface(GetterMethodsInterface.class);
-
-        ct.finish();
-
-        Class transformed = toClass(targetObjectCtClass);
-
-        Class[] interfaces = transformed.getInterfaces();
-
-        assertEquals(interfaces, new Class[]
-        { Component.class, FooInterface.class, GetterMethodsInterface.class });
-
-        Object target = ct.createInstantiator().newInstance(resources);
-
-        FooInterface asFoo = (FooInterface) target;
-
-        asFoo.foo();
-
-        GetterMethodsInterface getters = (GetterMethodsInterface) target;
-
-        assertEquals(getters.getBoolean(), false);
-        assertEquals(getters.getByte(), (byte) 0);
-        assertEquals(getters.getShort(), (short) 0);
-        assertEquals(getters.getInt(), 0);
-        assertEquals(getters.getLong(), 0l);
-        assertEquals(getters.getFloat(), 0.0f);
-        assertEquals(getters.getDouble(), 0.0d);
-        assertNull(getters.getString());
-        assertNull(getters.getObjectArray());
-        assertNull(getters.getIntArray());
-
-        verify();
-    }
-
-    @Test
     public void make_field_read_only() throws Exception
     {
         InternalComponentResources resources = mockInternalComponentResources();
@@ -874,8 +754,8 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
 
         CtClass targetObjectCtClass = findCtClass(ReadOnlyBean.class);
 
-        InternalClassTransformation ct = new InternalClassTransformationImpl(classFactory,
-                targetObjectCtClass, null, model, null);
+        InternalClassTransformation ct = new InternalClassTransformationImpl(classFactory, targetObjectCtClass, null,
+                model, null);
 
         ct.makeReadOnly("_value");
 
@@ -900,52 +780,6 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
     }
 
     @Test
-    public void removed_fields_should_not_show_up_as_unclaimed() throws Exception
-    {
-        Logger logger = mockLogger();
-        MutableComponentModel model = mockMutableComponentModel(logger);
-
-        replay();
-
-        CtClass targetObjectCtClass = findCtClass(RemoveFieldBean.class);
-
-        InternalClassTransformation ct = new InternalClassTransformationImpl(null,
-                targetObjectCtClass, null, model, null);
-
-        ct.removeField("_barney");
-
-        assertEquals(ct.findUnclaimedFields(), asList("_fred"));
-
-        verify();
-    }
-
-    @Test
-    public void add_to_constructor() throws Exception
-    {
-        InternalComponentResources resources = mockInternalComponentResources();
-
-        Logger logger = mockLogger();
-        MutableComponentModel model = mockMutableComponentModel(logger);
-
-        replay();
-
-        CtClass targetObjectCtClass = findCtClass(ReadOnlyBean.class);
-
-        InternalClassTransformation ct = new InternalClassTransformationImpl(classFactory,
-                targetObjectCtClass, null, model, null);
-
-        ct.extendConstructor("_value = \"from constructor\";");
-
-        ct.finish();
-
-        Object target = instantiate(ReadOnlyBean.class, ct, resources);
-
-        assertEquals(access.get(target, "value"), "from constructor");
-
-        verify();
-    }
-
-    @Test
     public void inject_field() throws Exception
     {
         InternalComponentResources resources = mockInternalComponentResources();
@@ -957,8 +791,8 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
 
         CtClass targetObjectCtClass = findCtClass(ReadOnlyBean.class);
 
-        InternalClassTransformation ct = new InternalClassTransformationImpl(classFactory,
-                targetObjectCtClass, null, model, null);
+        InternalClassTransformation ct = new InternalClassTransformationImpl(classFactory, targetObjectCtClass, null,
+                model, null);
 
         ct.injectField("_value", "Tapestry");
 
@@ -1000,8 +834,8 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
 
         CtClass targetObjectCtClass = findCtClass(FieldAccessBean.class);
 
-        InternalClassTransformation ct = new InternalClassTransformationImpl(classFactory,
-                targetObjectCtClass, null, model, null);
+        InternalClassTransformation ct = new InternalClassTransformationImpl(classFactory, targetObjectCtClass, null,
+                model, null);
 
         replaceAccessToField(ct, "foo");
         replaceAccessToField(ct, "bar");
@@ -1052,21 +886,19 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
         String fieldName = "_" + baseName;
         String readMethodName = "_read_" + baseName;
 
-        TransformMethodSignature readMethodSignature = new TransformMethodSignature(
-                Modifier.PRIVATE, STRING_CLASS_NAME, readMethodName, null, null);
+        TransformMethodSignature readMethodSignature = new TransformMethodSignature(Modifier.PRIVATE,
+                STRING_CLASS_NAME, readMethodName, null, null);
 
-        ct.addMethod(readMethodSignature, String.format("throw new RuntimeException(\"read %s\");",
-                baseName));
+        ct.addNewMethod(readMethodSignature, String.format("throw new RuntimeException(\"read %s\");", baseName));
 
         ct.replaceReadAccess(fieldName, readMethodName);
 
         String writeMethodName = "_write_" + baseName;
 
-        TransformMethodSignature writeMethodSignature = new TransformMethodSignature(
-                Modifier.PRIVATE, "void", writeMethodName, new String[]
+        TransformMethodSignature writeMethodSignature = new TransformMethodSignature(Modifier.PRIVATE, "void",
+                writeMethodName, new String[]
                 { STRING_CLASS_NAME }, null);
-        ct.addMethod(writeMethodSignature, String.format(
-                "throw new RuntimeException(\"write %s\");", baseName));
+        ct.addNewMethod(writeMethodSignature, String.format("throw new RuntimeException(\"write %s\");", baseName));
 
         ct.replaceWriteAccess(fieldName, writeMethodName);
     }
@@ -1181,8 +1013,8 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
         }
         catch (RuntimeException ex)
         {
-            assertMessageContains(ex, "Class " + VisibilityBean.class.getName()
-                    + " contains field(s)", "_$myPackagePrivate", "_$myProtected", "_$myPublic");
+            assertMessageContains(ex, "Class " + VisibilityBean.class.getName() + " contains field(s)",
+                    "_$myPackagePrivate", "_$myProtected", "_$myPublic");
         }
 
         verify();
@@ -1197,8 +1029,7 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
 
         ClassTransformation ct = createClassTransformation(EventHandlerTarget.class, logger);
 
-        OnEvent annotation = ct.getMethodAnnotation(new TransformMethodSignature("handler"),
-                OnEvent.class);
+        OnEvent annotation = ct.getMethodAnnotation(new TransformMethodSignature("handler"), OnEvent.class);
 
         // Check that the attributes of the annotation match the expectation.
 
@@ -1207,99 +1038,8 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
 
         verify();
     }
-
-    @Test
-    public void find_annotation_in_unknown_method() throws Exception
-    {
-        Logger logger = mockLogger();
-
-        replay();
-
-        ClassTransformation ct = createClassTransformation(ParentClass.class, logger);
-
-        try
-        {
-            ct.getMethodAnnotation(new TransformMethodSignature("foo"), OnEvent.class);
-            unreachable();
-        }
-        catch (IllegalArgumentException ex)
-        {
-            assertEquals(
-                    ex.getMessage(),
-                    "Class org.apache.tapestry5.internal.transform.pages.ParentClass does not declare method 'public void foo()'.");
-        }
-
-        verify();
-    }
-
-    @Test
-    public void prefix_method() throws Exception
-    {
-        Logger logger = mockLogger();
-        TransformMethodSignature sig = new TransformMethodSignature(Modifier.PUBLIC, "int",
-                "getParentField", null, null);
-
-        replay();
-
-        InternalClassTransformation ct = createClassTransformation(ParentClass.class, logger);
-        ct.prefixMethod(sig, "return 42;");
-
-        String desc = ct.toString();
-        assertTrue(desc.contains("prefix"));
-        assertTrue(desc.contains("getParentField"));
-
-        // fail if frozen
-        ct.finish();
-        try
-        {
-            ct.prefixMethod(sig, "return 0;");
-            unreachable();
-        }
-        catch (IllegalStateException e)
-        {
-        }
-
-        verify();
-    }
-
-    @Test
-    public void fields_in_prefixed_methods_are_transformed() throws Exception
-    {
-        Logger logger = mockLogger();
-        TransformMethodSignature sig = new TransformMethodSignature(Modifier.PUBLIC, "int",
-                "getTargetValue", null, null);
-        Runnable runnable = mockRunnable();
-
-        runnable.run();
-
-        replay();
-
-        InternalClassTransformation ct = createClassTransformation(MethodPrefixTarget.class, logger);
-
-        String name = ct.addInjectedField(Runnable.class, "runnable", runnable);
-
-        // Transform the field.
-
-        TransformMethodSignature reader = new TransformMethodSignature(Modifier.PRIVATE, "int",
-                "read_target_value", null, null);
-
-        ct.addMethod(reader, "return 66;");
-
-        ct.replaceReadAccess("_targetField", "read_target_value");
-
-        ct.prefixMethod(sig, name + ".run();");
-
-        ct.finish();
-
-        Object target = instantiate(MethodPrefixTarget.class, ct, null);
-
-        // 66 reflects the change to the field.
-
-        assertEquals(access.get(target, "targetValue"), 66);
-
-        verify();
-    }
-
+   
+ 
     private Component instantiate(Class<?> expectedClass, InternalClassTransformation ct,
             InternalComponentResources resources) throws Exception
     {
@@ -1308,102 +1048,8 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
         return ins.newInstance(resources);
     }
 
-    @Test
-    public void extend_existing_method_fields_are_transformed() throws Exception
-    {
-        Logger logger = mockLogger();
-        TransformMethodSignature sig = new TransformMethodSignature(Modifier.PUBLIC, "int",
-                "getTargetValue", null, null);
-        Runnable runnable = mockRunnable();
 
-        runnable.run();
-
-        replay();
-
-        InternalClassTransformation ct = createClassTransformation(MethodPrefixTarget.class, logger);
-
-        String name = ct.addInjectedField(Runnable.class, "runnable", runnable);
-
-        // Transform the field.
-
-        TransformMethodSignature reader = new TransformMethodSignature(Modifier.PRIVATE, "int",
-                "read_target_value", null, null);
-
-        ct.addMethod(reader, "return 66;");
-
-        ct.replaceReadAccess("_targetField", "read_target_value");
-
-        BodyBuilder builder = new BodyBuilder();
-        builder.begin();
-        builder.addln("%s.run();", name);
-        builder.addln("return $_ + 1;");
-        builder.end();
-
-        ct.extendExistingMethod(sig, builder.toString());
-
-        ct.finish();
-
-        Object target = instantiate(MethodPrefixTarget.class, ct, null);
-
-        // 66 reflects the change to the field, +1 reflects the extension of the method.
-
-        assertEquals(access.get(target, "targetValue"), 67);
-
-        verify();
-    }
-
-    @Test
-    public void invalid_code() throws Exception
-    {
-        Logger logger = mockLogger();
-        TransformMethodSignature sig = new TransformMethodSignature(Modifier.PUBLIC, "int",
-                "getParentField", null, null);
-
-        replay();
-
-        InternalClassTransformation ct = createClassTransformation(ParentClass.class, logger);
-
-        try
-        {
-            ct.prefixMethod(sig, "return supercalafragalistic;");
-            unreachable();
-        }
-        catch (MethodCompileException ex)
-        {
-
-        }
-
-        verify();
-    }
-
-    @Test
-    public void remove_field() throws Exception
-    {
-        Logger logger = mockLogger();
-        MutableComponentModel model = mockMutableComponentModel(logger);
-
-        replay();
-
-        CtClass targetObjectCtClass = findCtClass(FieldRemoval.class);
-
-        InternalClassTransformation ct = new InternalClassTransformationImpl(classFactory,
-                targetObjectCtClass, null, model, null);
-
-        ct.removeField("_fieldToRemove");
-
-        ct.finish();
-
-        Class transformed = toClass(targetObjectCtClass);
-
-        for (Field f : transformed.getDeclaredFields())
-        {
-            if (f.getName().equals("_fieldToRemove"))
-                throw new AssertionError("_fieldToRemove still in transformed class.");
-        }
-
-        verify();
-    }
-
+  
     @Test
     public void get_method_identifier() throws Exception
     {
@@ -1489,8 +1135,7 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
 
         replay();
 
-        InternalClassTransformation parentTransform = createClassTransformation(SimpleBean.class,
-                logger);
+        InternalClassTransformation parentTransform = createClassTransformation(SimpleBean.class, logger);
 
         parentTransform.finish();
 
@@ -1501,8 +1146,8 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
 
         assertFalse(childTransform.isMethodOverride(new TransformMethodSignature("notOverridden")));
 
-        assertTrue(childTransform.isMethodOverride(new TransformMethodSignature(Modifier.PUBLIC,
-                "void", "setAge", new String[]
+        assertTrue(childTransform.isMethodOverride(new TransformMethodSignature(Modifier.PUBLIC, "void", "setAge",
+                new String[]
                 { "int" }, null)));
     }
 

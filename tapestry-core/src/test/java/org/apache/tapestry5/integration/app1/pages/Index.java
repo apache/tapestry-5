@@ -14,15 +14,16 @@
 
 package org.apache.tapestry5.integration.app1.pages;
 
-import org.apache.tapestry5.ComponentResources;
-import org.apache.tapestry5.Link;
-import org.apache.tapestry5.annotations.InjectPage;
-import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
+import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.Link;
+import org.apache.tapestry5.annotations.InjectPage;
+import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 
 /**
  * Have to start somewhere!
@@ -469,6 +470,7 @@ public class Index
         Collections.sort(ITEMS);
     }
 
+    @Property
     private Item item;
 
     @InjectPage
@@ -480,16 +482,6 @@ public class Index
     public List<Item> getItems()
     {
         return ITEMS;
-    }
-
-    public Item getItem()
-    {
-        return item;
-    }
-
-    public void setItem(Item item)
-    {
-        this.item = item;
     }
 
     Object onActionFromSecurePage()
