@@ -20,8 +20,8 @@ import org.apache.tapestry5.services.ClassTransformation;
 import org.apache.tapestry5.services.ComponentClassTransformWorker;
 
 /**
- * Looks for the {@link org.apache.tapestry5.annotations.MixinAfter} annotatation and sets the {@link
- * org.apache.tapestry5.model.ComponentModel#isMixinAfter() mixinAfter flag} is present.
+ * Looks for the {@link org.apache.tapestry5.annotations.MixinAfter} annotation and sets the {@link
+ * org.apache.tapestry5.model.ComponentModel#isMixinAfter() mixinAfter flag} if present.
  */
 public class MixinAfterWorker implements ComponentClassTransformWorker
 {
