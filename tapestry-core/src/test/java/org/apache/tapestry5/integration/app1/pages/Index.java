@@ -66,6 +66,8 @@ public class Index
 
     private static final List<Item> ITEMS = CollectionFactory
             .newList(
+                    
+                    new Item("CancelDemo", "Cancel Demo", "Use of the cancel option with Submit"),
 
                     new Item("PageResetDemo", "PageReset Annotation Demo",
                             "Use of PageReset annotation to re-initialize page state"),

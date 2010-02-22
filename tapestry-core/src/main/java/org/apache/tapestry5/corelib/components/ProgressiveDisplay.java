@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -35,12 +35,10 @@ import java.io.IOException;
  * results in much faster page loads. You can
  * even nest these!
  * <p/>
- * The component simply does not render its body on initial render. On the
- * subsequent action event request, it fires a
- * {@link org.apache.tapestry5.EventConstants#PROGRESSIVE_DISPLAY} event to
- * inform the container about the (optional) event context. The event handler
- * method may return a renderable object; if not then the component's body is
- * rendered as the partial markup response.
+ * The component simply does not render its body on initial render. On the subsequent action event request, it fires a
+ * {@link org.apache.tapestry5.EventConstants#PROGRESSIVE_DISPLAY} event to inform the container about the (optional)
+ * event context. The event handler method may return a renderable object; if not then the component's body is rendered
+ * as the partial markup response.
  * 
  * @since 5.1.0.1
  */
@@ -70,8 +68,9 @@ public class ProgressiveDisplay
     @Environmental
     private RenderSupport renderSupport;
 
+    @SuppressWarnings("unchecked")
     @Environmental
-    private ComponentEventResultProcessor resultProcessor;
+    private TrackableComponentEventCallback eventCallback;
 
     /**
      * Name of a function on the client-side Tapestry.ElementEffect object that
@@ -98,7 +97,8 @@ public class ProgressiveDisplay
 
         JSONObject spec = new JSONObject();
 
-        if (InternalUtils.isNonBlank(update)) spec.put("update", update.toLowerCase());
+        if (InternalUtils.isNonBlank(update))
+            spec.put("update", update.toLowerCase());
 
         spec.put("element", clientId);
         spec.put("url", link.toAbsoluteURI());
@@ -110,12 +110,10 @@ public class ProgressiveDisplay
 
     Object onAction(EventContext context) throws IOException
     {
-        ComponentResultProcessorWrapper wrapper = new ComponentResultProcessorWrapper(
-                resultProcessor);
+        resources.triggerContextEvent(EventConstants.PROGRESSIVE_DISPLAY, context, eventCallback);
 
-        resources.triggerContextEvent(EventConstants.PROGRESSIVE_DISPLAY, context, wrapper);
-
-        if (wrapper.isAborted()) return null;
+        if (eventCallback.isAborted())
+            return null;
 
         return getBody();
     }

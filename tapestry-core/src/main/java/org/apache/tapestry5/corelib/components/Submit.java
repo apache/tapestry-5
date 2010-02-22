@@ -98,6 +98,10 @@ public class Submit implements ClientElement
 
     @Inject
     private JavascriptSupport javascriptSupport;
+    
+    @SuppressWarnings("unchecked")
+    @Environmental
+    private TrackableComponentEventCallback eventCallback;
 
     private Element element;
 
@@ -172,7 +176,8 @@ public class Submit implements ClientElement
         {
             public void run()
             {
-                resources.triggerEvent(event, context, null);
+                // TAP5-1024: allow for navigation result from the event callback
+                resources.triggerEvent(event, context, eventCallback);
             }
         };
 

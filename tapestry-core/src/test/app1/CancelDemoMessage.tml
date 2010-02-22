@@ -1,0 +1,12 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+  <h1>Cancel Demo Message</h1>
+
+  <p>
+    <strong id="message">${message}</strong>
+  </p>
+
+  <p>
+    <t:pagelink page="canceldemo">back</t:pagelink>
+  </p>
+</html>

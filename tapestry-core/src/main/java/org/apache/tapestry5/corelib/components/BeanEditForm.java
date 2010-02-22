@@ -131,12 +131,9 @@ public class BeanEditForm implements ClientElement, FormValidationControl
     @Inject
     private BeanModelSource beanModelSource;
 
-    /**
-     * Set up via the traditional or Ajax component event request handler
-     */
     @SuppressWarnings("unchecked")
     @Environmental
-    private ComponentEventResultProcessor componentEventResultProcessor;
+    private TrackableComponentEventCallback eventCallback;
 
     void onPrepareFromForm()
     {
@@ -187,10 +184,10 @@ public class BeanEditForm implements ClientElement, FormValidationControl
 
     boolean onSelectedFromCancel() throws IOException
     {
-        ComponentResultProcessorWrapper callback = new ComponentResultProcessorWrapper(componentEventResultProcessor);
+        resources.triggerEvent(EventConstants.CANCELED, null, eventCallback);
 
-        resources.triggerEvent(EventConstants.CANCELED, null, callback);
-
-        return callback.isAborted();
+        // Prevent further event handlers.
+        
+        return true;
     }
 }

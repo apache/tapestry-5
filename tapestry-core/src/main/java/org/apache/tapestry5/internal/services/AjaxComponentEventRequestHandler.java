@@ -1,10 +1,10 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,6 +14,7 @@
 
 package org.apache.tapestry5.internal.services;
 
+import org.apache.tapestry5.TrackableComponentEventCallback;
 import org.apache.tapestry5.ContentType;
 import org.apache.tapestry5.EventConstants;
 import org.apache.tapestry5.internal.InternalConstants;
@@ -30,6 +31,7 @@ import java.io.IOException;
  * Similar to {@link ComponentEventRequestHandlerImpl}, but built around the Ajax request cycle, where the action
  * request sends back an immediate JSON response containing the new content.
  */
+@SuppressWarnings("unchecked")
 public class AjaxComponentEventRequestHandler implements ComponentEventRequestHandler
 {
     private final RequestPageCache cache;
@@ -46,10 +48,9 @@ public class AjaxComponentEventRequestHandler implements ComponentEventRequestHa
 
     private final AjaxPartialResponseRenderer partialRenderer;
 
-    public AjaxComponentEventRequestHandler(RequestPageCache cache, Request request, PageRenderQueue queue,
-                                            @Ajax ComponentEventResultProcessor resultProcessor,
-                                            PageContentTypeAnalyzer pageContentTypeAnalyzer, Environment environment,
-                                            AjaxPartialResponseRenderer partialRenderer)
+    public AjaxComponentEventRequestHandler(RequestPageCache cache, Request request, PageRenderQueue queue, @Ajax
+    ComponentEventResultProcessor resultProcessor, PageContentTypeAnalyzer pageContentTypeAnalyzer,
+            Environment environment, AjaxPartialResponseRenderer partialRenderer)
     {
         this.cache = cache;
         this.queue = queue;
@@ -79,11 +80,14 @@ public class AjaxComponentEventRequestHandler implements ComponentEventRequestHa
 
         ComponentResultProcessorWrapper callback = new ComponentResultProcessorWrapper(interceptor);
 
-        activePage.getRootElement().triggerContextEvent(EventConstants.ACTIVATE,
-                                                        parameters.getPageActivationContext(), callback);
+        activePage.getRootElement().triggerContextEvent(EventConstants.ACTIVATE, parameters.getPageActivationContext(),
+                callback);
 
-
-        if (callback.isAborted()) return;
+        if (callback.isAborted())
+        {
+            callback.rethrow();
+            return;
+        }
 
         // If we end up doing a partial render, the page render queue service needs to know the
         // page that will be rendered (for logging purposes, if nothing else).
@@ -103,14 +107,16 @@ public class AjaxComponentEventRequestHandler implements ComponentEventRequestHa
         // This is certainly the case for forms.
 
         environment.push(ComponentEventResultProcessor.class, interceptor);
+        environment.push(TrackableComponentEventCallback.class, callback);
 
-        boolean handled = element.triggerContextEvent(parameters.getEventType(), parameters.getEventContext(),
-                                                      callback);
+        boolean handled = element
+                .triggerContextEvent(parameters.getEventType(), parameters.getEventContext(), callback);
 
         if (!handled)
             throw new TapestryException(ServicesMessages.eventNotHandled(element, parameters.getEventType()), element,
-                                        null);
+                    null);
 
+        environment.pop(TrackableComponentEventCallback.class);
         environment.pop(ComponentEventResultProcessor.class);
 
         if (queue.isPartialRenderInitialized())
@@ -119,10 +125,11 @@ public class AjaxComponentEventRequestHandler implements ComponentEventRequestHa
             return;
         }
 
-        // If  some other form of return value that's not a partial page render was send through to the
+        // If some other form of return value that's not a partial page render was send through to the
         // Ajax ComponentEventResultProcessor, then there's nothing more to do.
 
-        if (resultProcessorInvoked.get()) return;
+        if (resultProcessorInvoked.get())
+            return;
 
         // Send an empty JSON reply if no value was returned from the component event handler method.
 

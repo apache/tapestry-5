@@ -682,11 +682,11 @@ public class FormTests extends TapestryCoreTestCase
     public void link_submit_component()
     {
         clickThru("LinkSubmit Demo");
-        
+
         // Wait a moment for the page to initialize.
-        
+
         sleep(250);
-        
+
         // 
         click("link=Fred");
 
@@ -826,5 +826,24 @@ public class FormTests extends TapestryCoreTestCase
 
         assertFalse(isTextPresent("You must provide a value for Username"));
         assertFalse(isTextPresent("You must provide a value for Password"));
+    }
+
+    /** TAP5-1024 */
+    @Test
+    public void use_of_cancel_mode_on_submit_button()
+    {
+        clickThru("Cancel Demo");
+
+        clickAndWait("//input[@type='submit']");
+
+        assertText("message", "onSelectedFromCancel() invoked.");
+    }
+
+    @Test
+    public void use_of_cancel_mode_with_submitlink()
+    {
+        clickThru("Cancel Demo", "Cancel Form");
+
+        assertText("message", "onSelectedFromCancelLink() invoked.");
     }
 }

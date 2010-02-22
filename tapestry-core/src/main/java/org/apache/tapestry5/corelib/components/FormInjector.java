@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -79,7 +79,6 @@ public class FormInjector implements ClientElement
     @Parameter(defaultPrefix = BindingConstants.LITERAL)
     private String element;
 
-
     @Environmental
     private RenderSupport renderSupport;
 
@@ -92,10 +91,9 @@ public class FormInjector implements ClientElement
     @Environmental
     private Heartbeat heartbeat;
 
-    @Inject
-    @Ajax
-    private ComponentEventResultProcessor componentEventResultProcessor;
-
+    @SuppressWarnings("unchecked")
+    @Environmental
+    private TrackableComponentEventCallback eventCallback;
 
     @Inject
     private PageRenderQueue pageRenderQueue;
@@ -152,7 +150,6 @@ public class FormInjector implements ClientElement
         clientElement.addClassName("t-forminjector");
     }
 
-
     /**
      * Returns the unique client-side id of the rendered element.
      */
@@ -174,18 +171,16 @@ public class FormInjector implements ClientElement
     private ClientDataEncoder clientDataEncoder;
 
     /**
-     * Invoked via an Ajax request.  Triggers an action event and captures the return value. The return value from the
-     * event notification is what will ultimately render (typically, its a Block).  However, we do a <em>lot</em> of
+     * Invoked via an Ajax request. Triggers an action event and captures the return value. The return value from the
+     * event notification is what will ultimately render (typically, its a Block). However, we do a <em>lot</em> of
      * tricks to provide the desired FormSupport around the what renders.
      */
     void onInject(EventContext context) throws IOException
     {
-        ComponentResultProcessorWrapper callback = new ComponentResultProcessorWrapper(
-                componentEventResultProcessor);
+        resources.triggerContextEvent(EventConstants.ACTION, context, eventCallback);
 
-        resources.triggerContextEvent(EventConstants.ACTION, context, callback);
-
-        if (!callback.isAborted()) return;
+        if (!eventCallback.isAborted())
+            return;
 
         // Here's where it gets very, very tricky.
 
@@ -205,7 +200,7 @@ public class FormInjector implements ClientElement
 
                 // Kind of ugly, but the only way to ensure we don't have name collisions on the
                 // client side is to force a unique id into each name (as well as each id, but that's
-                // RenderSupport's job).  It would be nice if we could agree on the uid, but
+                // RenderSupport's job). It would be nice if we could agree on the uid, but
                 // not essential.
 
                 String uid = Long.toHexString(System.currentTimeMillis());
@@ -216,8 +211,8 @@ public class FormInjector implements ClientElement
 
                 reply.put("elementId", clientId);
 
-                InternalFormSupport formSupport =
-                        form.createRenderTimeFormSupport(formClientId, actionSink, idAllocator);
+                InternalFormSupport formSupport = form.createRenderTimeFormSupport(formClientId, actionSink,
+                        idAllocator);
 
                 environment.push(FormSupport.class, formSupport);
                 environment.push(ValidationTracker.class, new ValidationTrackerImpl());
@@ -233,12 +228,11 @@ public class FormInjector implements ClientElement
                 environment.pop(ValidationTracker.class);
                 environment.pop(FormSupport.class);
 
-                hiddenFieldPositioner.getElement().attributes(
-                        "type", "hidden",
+                hiddenFieldPositioner.getElement().attributes("type", "hidden",
 
-                        "name", Form.FORM_DATA,
+                "name", Form.FORM_DATA,
 
-                        "value", actionSink.getClientData());
+                "value", actionSink.getClientData());
             }
         };
 
@@ -251,8 +245,7 @@ public class FormInjector implements ClientElement
 
         if (InternalUtils.isBlank(value))
             throw new RuntimeException(String.format(
-                    "Query parameter '%s' was blank, but should have been specified in the request.",
-                    parameterName));
+                    "Query parameter '%s' was blank, but should have been specified in the request.", parameterName));
 
         return value;
     }

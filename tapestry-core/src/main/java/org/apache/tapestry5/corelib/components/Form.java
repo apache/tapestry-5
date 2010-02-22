@@ -32,7 +32,6 @@ import org.apache.tapestry5.corelib.mixins.RenderInformals;
 import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.internal.BeanValidationContext;
 import org.apache.tapestry5.internal.BeanValidationContextImpl;
-import org.apache.tapestry5.internal.services.ComponentResultProcessorWrapper;
 import org.apache.tapestry5.internal.services.HeartbeatImpl;
 import org.apache.tapestry5.internal.util.AutofocusValidationDecorator;
 import org.apache.tapestry5.ioc.Location;
@@ -46,7 +45,6 @@ import org.apache.tapestry5.ioc.util.ExceptionUtils;
 import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.services.ClientBehaviorSupport;
 import org.apache.tapestry5.services.ClientDataEncoder;
-import org.apache.tapestry5.services.ComponentEventResultProcessor;
 import org.apache.tapestry5.services.ComponentSource;
 import org.apache.tapestry5.services.Environment;
 import org.apache.tapestry5.services.FormSupport;
@@ -77,8 +75,8 @@ import org.slf4j.Logger;
  */
 @Events(
 { EventConstants.PREPARE_FOR_RENDER, EventConstants.PREPARE, EventConstants.PREPARE_FOR_SUBMIT,
-        EventConstants.VALIDATE, EventConstants.VALIDATE_FORM, EventConstants.SUBMIT,
-        EventConstants.FAILURE, EventConstants.SUCCESS })
+        EventConstants.VALIDATE, EventConstants.VALIDATE_FORM, EventConstants.SUBMIT, EventConstants.FAILURE,
+        EventConstants.SUCCESS })
 public class Form implements ClientElement, FormValidationControl
 {
     /**
@@ -235,15 +233,12 @@ public class Form implements ClientElement, FormValidationControl
     @Mixin
     private RenderInformals renderInformals;
 
-    /**
-     * Set up via the traditional or Ajax component event request handler
-     */
-    @SuppressWarnings("unchecked")
-    @Environmental
-    private ComponentEventResultProcessor componentEventResultProcessor;
-
     @Environmental
     private ClientBehaviorSupport clientBehaviorSupport;
+
+    @SuppressWarnings("unchecked")
+    @Environmental
+    private TrackableComponentEventCallback eventCallback;
 
     @Inject
     private ClientDataEncoder clientDataEncoder;
@@ -418,11 +413,10 @@ public class Form implements ClientElement, FormValidationControl
      *            used to allocate unique ids
      * @return form support object
      */
-    InternalFormSupport createRenderTimeFormSupport(String name, ComponentActionSink actionSink,
-            IdAllocator allocator)
+    InternalFormSupport createRenderTimeFormSupport(String name, ComponentActionSink actionSink, IdAllocator allocator)
     {
-        return new FormSupportImpl(resources, name, actionSink, clientBehaviorSupport,
-                clientValidation, allocator, validationId);
+        return new FormSupportImpl(resources, name, actionSink, clientBehaviorSupport, clientValidation, allocator,
+                validationId);
     }
 
     void afterRender(MarkupWriter writer)
@@ -438,8 +432,7 @@ public class Form implements ClientElement, FormValidationControl
 
         writer.end(); // form
 
-        div.element("input", "type", "hidden", "name", FORM_DATA, "value", actionSink
-                .getClientData());
+        div.element("input", "type", "hidden", "name", FORM_DATA, "value", actionSink.getClientData());
 
         if (autofocus)
             environment.pop(ValidationDecorator.class);
@@ -481,17 +474,14 @@ public class Form implements ClientElement, FormValidationControl
 
         try
         {
-            ComponentResultProcessorWrapper callback = new ComponentResultProcessorWrapper(
-                    componentEventResultProcessor);
+            resources.triggerContextEvent(EventConstants.PREPARE_FOR_SUBMIT, context, eventCallback);
 
-            resources.triggerContextEvent(EventConstants.PREPARE_FOR_SUBMIT, context, callback);
-
-            if (callback.isAborted())
+            if (eventCallback.isAborted())
                 return true;
 
-            resources.triggerContextEvent(EventConstants.PREPARE, context, callback);
+            resources.triggerContextEvent(EventConstants.PREPARE, context, eventCallback);
 
-            if (callback.isAborted())
+            if (eventCallback.isAborted())
                 return true;
 
             executeStoredActions();
@@ -500,9 +490,9 @@ public class Form implements ClientElement, FormValidationControl
 
             formSupport.executeDeferred();
 
-            fireValidateFormEvent(context, callback);
+            fireValidateFormEvent(context, eventCallback);
 
-            if (callback.isAborted())
+            if (eventCallback.isAborted())
                 return true;
 
             // Let the listeners know about overall success or failure. Most
@@ -518,17 +508,17 @@ public class Form implements ClientElement, FormValidationControl
                 activeTracker.clear();
 
             resources.triggerContextEvent(activeTracker.getHasErrors() ? EventConstants.FAILURE
-                    : EventConstants.SUCCESS, context, callback);
+                    : EventConstants.SUCCESS, context, eventCallback);
 
             // Lastly, tell anyone whose interested that the form is completely
             // submitted.
 
-            if (callback.isAborted())
+            if (eventCallback.isAborted())
                 return true;
 
-            resources.triggerContextEvent(EventConstants.SUBMIT, context, callback);
+            resources.triggerContextEvent(EventConstants.SUBMIT, context, eventCallback);
 
-            return callback.isAborted();
+            return eventCallback.isAborted();
         }
         finally
         {
@@ -543,8 +533,8 @@ public class Form implements ClientElement, FormValidationControl
         }
     }
 
-    private void fireValidateFormEvent(EventContext context,
-            ComponentResultProcessorWrapper callback) throws IOException
+    private void fireValidateFormEvent(EventContext context, TrackableComponentEventCallback callback)
+            throws IOException
     {
         fireValidateEvent(EventConstants.VALIDATE, context, callback);
 
@@ -554,8 +544,7 @@ public class Form implements ClientElement, FormValidationControl
         fireValidateEvent(EventConstants.VALIDATE_FORM, context, callback);
     }
 
-    private void fireValidateEvent(String eventName, EventContext context,
-            ComponentResultProcessorWrapper callback)
+    private void fireValidateEvent(String eventName, EventContext context, TrackableComponentEventCallback callback)
     {
         try
         {
@@ -608,7 +597,7 @@ public class Form implements ClientElement, FormValidationControl
             {
                 ois = clientDataEncoder.decodeClientData(clientEncodedActions);
 
-                while (true)
+                while (!eventCallback.isAborted())
                 {
                     String componentId = ois.readUTF();
                     ComponentAction action = (ComponentAction) ois.readObject();
@@ -628,8 +617,7 @@ public class Form implements ClientElement, FormValidationControl
             }
             catch (Exception ex)
             {
-                Location location = component == null ? null : component.getComponentResources()
-                        .getLocation();
+                Location location = component == null ? null : component.getComponentResources().getLocation();
 
                 throw new TapestryException(ex.getMessage(), location, ex);
             }
