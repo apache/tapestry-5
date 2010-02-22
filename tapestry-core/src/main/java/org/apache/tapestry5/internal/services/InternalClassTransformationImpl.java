@@ -317,23 +317,6 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
             return methodName;
         }
 
-        public void extend(String body)
-        {
-            failIfFrozen();
-
-            Defense.notBlank(body, "body");
-
-            try
-            {
-                method.insertAfter(body);
-            }
-            catch (CannotCompileException ex)
-            {
-                throw new MethodCompileException(ServicesMessages.methodCompileError(sig, body, ex), body, ex);
-            }
-
-            addMethodToDescription("extend", sig, body);
-        }
 
         public String getMethodIdentifier()
         {
