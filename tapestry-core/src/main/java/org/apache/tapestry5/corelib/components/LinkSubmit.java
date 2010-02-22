@@ -16,6 +16,7 @@ package org.apache.tapestry5.corelib.components;
 
 import org.apache.tapestry5.*;
 import org.apache.tapestry5.annotations.*;
+import org.apache.tapestry5.corelib.SubmitMode;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.FormSupport;
@@ -47,6 +48,16 @@ public class LinkSubmit implements ClientElement
     private String event = EventConstants.SELECTED;
 
     /**
+     * Defines the mode, or client-side behavior, for the submit. The default is {@link SubmitMode#NORMAL}; clicking the
+     * button submits the form with validation. {@link SubmitMode#CANCEL} indicates the client-side validation
+     * should be omitted (though server-side validation still occurs).
+     * 
+     * @since 5.2.0
+     */
+    @Parameter(allowNull = false, defaultPrefix = BindingConstants.LITERAL)
+    private SubmitMode mode = SubmitMode.NORMAL;
+
+    /**
      * If true (the default), then any notification sent by the component will be deferred until the end of the form
      * submission (this is usually desirable).
      */
@@ -67,6 +78,10 @@ public class LinkSubmit implements ClientElement
 
     @Inject
     private Request request;
+
+    @SuppressWarnings("unchecked")
+    @Environmental
+    private TrackableComponentEventCallback eventCallback;
 
     private String clientId;
 
@@ -97,7 +112,7 @@ public class LinkSubmit implements ClientElement
             {
                 public void run()
                 {
-                    resources.triggerEvent(event, null, null);
+                    resources.triggerEvent(event, null, eventCallback);
                 }
             };
 
@@ -136,6 +151,8 @@ public class LinkSubmit implements ClientElement
             writer.end();
 
             JSONObject spec = new JSONObject("form", formSupport.getClientId(), "clientId", clientId);
+
+            spec.put("validate", mode == SubmitMode.NORMAL);
 
             javascriptSupport.addInitializerCall("linkSubmit", spec);
         }
