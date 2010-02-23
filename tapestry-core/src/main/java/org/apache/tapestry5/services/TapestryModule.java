@@ -607,7 +607,7 @@ public final class TapestryModule
         // annotated will
         // be converted to clear out at the end of the request.
 
-        configuration.addInstance("UnclaimedField",  UnclaimedFieldWorker.class, "after:*");
+        configuration.addInstance("UnclaimedField", UnclaimedFieldWorker.class, "after:*");
 
         configuration.add("PageActivationContext", new PageActivationContextWorker(), "before:OnEvent");
 
@@ -2722,34 +2722,13 @@ public final class TapestryModule
      * @since 5.1.0.2
      */
     public static ComponentEventLinkEncoder decorateComponentEventLinkEncoder(ComponentEventLinkEncoder encoder,
-            URLRewriter urlRewriter, Request request, HttpServletRequest httpServletRequest, Response response,
-            AspectDecorator aspectDecorator) throws Exception
+            URLRewriter urlRewriter, Request request, Response response)
     {
-
         // no rules, no link rewriting.
-        if (!urlRewriter.hasLinkRules()) { return null; }
+        if (!urlRewriter.hasLinkRules())
+            return null;
 
-        ComponentEventLinkEncoderMethodAdvice pageLinkAdvice = new ComponentEventLinkEncoderMethodAdvice(urlRewriter,
-                request, httpServletRequest, response, true);
-
-        ComponentEventLinkEncoderMethodAdvice eventLinkAdvice = new ComponentEventLinkEncoderMethodAdvice(urlRewriter,
-                request, httpServletRequest, response, false);
-
-        Class<ComponentEventLinkEncoder> clasz = ComponentEventLinkEncoder.class;
-
-        Method createPageRenderLink = clasz.getMethod("createPageRenderLink", PageRenderRequestParameters.class);
-
-        Method createComponentEventLink = clasz.getMethod("createComponentEventLink",
-                ComponentEventRequestParameters.class, boolean.class);
-
-        final AspectInterceptorBuilder<ComponentEventLinkEncoder> builder = aspectDecorator.createBuilder(clasz,
-                encoder, "Link rewriting");
-
-        builder.adviseMethod(createComponentEventLink, eventLinkAdvice);
-        builder.adviseMethod(createPageRenderLink, pageLinkAdvice);
-
-        return builder.build();
-
+        return new URLRewriterLinkEncoderInterceptor(urlRewriter, request, response, encoder);
     }
 
     /**

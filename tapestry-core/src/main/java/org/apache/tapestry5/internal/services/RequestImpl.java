@@ -1,10 +1,10 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -26,8 +26,8 @@ import java.util.List;
 import java.util.Locale;
 
 /**
- * Basic implementation of {@link org.apache.tapestry5.services.Request} that wraps around an {@link
- * javax.servlet.http.HttpServletRequest}.
+ * Basic implementation of {@link org.apache.tapestry5.services.Request} that wraps around an
+ * {@link javax.servlet.http.HttpServletRequest}.
  */
 public class RequestImpl implements Request
 {
@@ -45,8 +45,7 @@ public class RequestImpl implements Request
 
     private Session session;
 
-    public RequestImpl(HttpServletRequest request, String requestEncoding,
-                       SessionPersistedObjectAnalyzer analyzer)
+    public RequestImpl(HttpServletRequest request, String requestEncoding, SessionPersistedObjectAnalyzer analyzer)
     {
         this.request = request;
         this.requestEncoding = requestEncoding;
@@ -88,7 +87,8 @@ public class RequestImpl implements Request
     {
         String pathInfo = request.getPathInfo();
 
-        if (pathInfo == null) return request.getServletPath();
+        if (pathInfo == null)
+            return request.getServletPath();
 
         // Websphere 6.1 is a bit wonky (see TAPESTRY-1713), and tends to return the empty string
         // for the servlet path, and return the true path in pathInfo.
@@ -113,7 +113,8 @@ public class RequestImpl implements Request
             }
         }
 
-        if (!create && session != null && session.isInvalidated()) return null;
+        if (!create && session != null && session.isInvalidated())
+            return null;
 
         return session;
     }
@@ -130,7 +131,8 @@ public class RequestImpl implements Request
 
     private void setupEncoding()
     {
-        if (encodingSet) return;
+        if (encodingSet)
+            return;
 
         try
         {
@@ -143,7 +145,6 @@ public class RequestImpl implements Request
 
         encodingSet = true;
     }
-
 
     public boolean isXHR()
     {
@@ -179,4 +180,10 @@ public class RequestImpl implements Request
     {
         return request.getServerName();
     }
+
+    public int getLocalPort()
+    {
+        return request.getLocalPort();
+    }
+
 }

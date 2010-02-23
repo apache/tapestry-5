@@ -1,10 +1,10 @@
-// Copyright 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2007, 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -136,10 +136,12 @@ public class TestableRequestImpl implements TestableRequest
     {
         Object value = parameters.get(name);
 
-        if (value == null) return null;
+        if (value == null)
+            return null;
 
         if (value instanceof String)
-            return new String[] { (String) value };
+            return new String[]
+            { (String) value };
 
         List list = (List) value;
 
@@ -160,7 +162,8 @@ public class TestableRequestImpl implements TestableRequest
     {
         Object value = parameters.get(name);
 
-        if (value == null || value instanceof String) return (String) value;
+        if (value == null || value instanceof String)
+            return (String) value;
 
         List<String> list = (List<String>) value;
 
@@ -169,9 +172,11 @@ public class TestableRequestImpl implements TestableRequest
 
     public Session getSession(boolean create)
     {
-        if (!create) return session;
+        if (!create)
+            return session;
 
-        if (session == null) session = new PageTesterSession();
+        if (session == null)
+            session = new PageTesterSession();
 
         return session;
     }
@@ -226,4 +231,13 @@ public class TestableRequestImpl implements TestableRequest
     {
         return "POST";
     }
+
+    /**
+     * Always returns 80.
+     */
+    public int getLocalPort()
+    {
+        return 80;
+    }
+
 }

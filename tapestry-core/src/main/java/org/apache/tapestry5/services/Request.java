@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -30,8 +30,9 @@ public interface Request
     /**
      * Gets the {@link Session}. If create is false and the session has not be created previously, returns null. Also,
      * if the session is invalided and create is false, returns null.
-     *
-     * @param create true to force the creation of the session
+     * 
+     * @param create
+     *            true to force the creation of the session
      * @return the session (or null if create is false the session has not been previously created)
      */
     Session getSession(boolean create);
@@ -76,19 +77,21 @@ public interface Request
 
     /**
      * Returns the value of the specified request header as a <code>long</code> value that represents a
-     * <code>Date</code> object. Use this method with headers that contain dates, such as
-     * <code>If-Modified-Since</code>.
+     * <code>Date</code> object. Use this method with headers that contain dates, such as <code>If-Modified-Since</code>
+     * .
      * <p/>
      * The date is returned as the number of milliseconds since January 1, 1970 GMT. The header name is case
      * insensitive.
      * <p/>
      * If the request did not have a header of the specified name, this method returns -1. If the header can't be
      * converted to a date, the method throws an <code>IllegalArgumentException</code>.
-     *
-     * @param name a <code>String</code> specifying the name of the header
+     * 
+     * @param name
+     *            a <code>String</code> specifying the name of the header
      * @return a <code>long</code> value representing the date specified in the header expressed as the number of
      *         milliseconds since January 1, 1970 GMT, or -1 if the named header was not included with the reqest
-     * @throws IllegalArgumentException If the header value can't be converted to a date
+     * @throws IllegalArgumentException
+     *             If the header value can't be converted to a date
      */
     long getDateHeader(String name);
 
@@ -99,17 +102,17 @@ public interface Request
 
     /**
      * Returns true if the request originated on the client using XmlHttpRequest (the core of any Ajax behavior). Ajax
-     * action requests may behave quite differently than ordinary, page-based requests.  This implementation currently
+     * action requests may behave quite differently than ordinary, page-based requests. This implementation currently
      * depends on the client side setting a header: <strong>X-Requested-With=XMLHttpRequest</strong> (this is what
      * Prototype does).
-     *
+     * 
      * @return true if the request has an XmlHttpRequest origin
      */
     boolean isXHR();
 
     /**
      * Returns a boolean indicating whether this request was made using a secure channel, such as HTTPS.
-     *
+     * 
      * @return a boolean indicating if the request was made using a secure channel
      */
     public boolean isSecure();
@@ -117,26 +120,27 @@ public interface Request
     /**
      * Returns the host name of the server to which the request was sent. It is the value of the part before ":" in the
      * <code>Host</code> header, if any, or the resolved server name, or the server IP address.
-     *
+     * 
      * @return the name of the server
      */
     public String getServerName();
 
     /**
      * Checks whether the requested session ID is still valid.
-     *
+     * 
      * @return true if the request included a session id that is still active, false if the included session id has
      *         expired
      */
     boolean isRequestedSessionIdValid();
 
-
     /**
      * Returns the value of the named attribute as an <code>Object</code>, or <code>null</code> if no attribute of the
-     * given name exists.  Because this method is a wrapper around {@link javax.servlet.ServletRequest#getAttribute(String)},
+     * given name exists. Because this method is a wrapper around
+     * {@link javax.servlet.ServletRequest#getAttribute(String)},
      * it is case <em>sensitive</em> (unlike most of Tapestry).
-     *
-     * @param name a <code>String</code> specifying the name of the attribute
+     * 
+     * @param name
+     *            a <code>String</code> specifying the name of the attribute
      * @return an <code>Object</code> containing the value of the attribute, or <code>null</code> if the attribute does
      *         not exist
      */
@@ -145,16 +149,27 @@ public interface Request
     /**
      * Stores an attribute in this request. Attributes are reset between requests (and remember that in Tapestry, there
      * is usually two requests per operation: the action request that redirects to a render request).
-     *
-     * @param name  a <code>String</code> specifying the name of the attribute
-     * @param value the <code>Object</code> to be stored, or null to remove the attribute
+     * 
+     * @param name
+     *            a <code>String</code> specifying the name of the attribute
+     * @param value
+     *            the <code>Object</code> to be stored, or null to remove the attribute
      */
     void setAttribute(String name, Object value);
 
     /**
      * Returns the name of the HTTP method with which this request was made, for example, GET, POST, or PUT.
-     *
+     * 
      * @return a string specifying the name of the method with which this request was made
      */
     public String getMethod();
+
+    /**
+     * Returns the Internet Protocol (IP) port number of the interface
+     * on which the request was received.
+     * 
+     * @return an integer specifying the port number
+     * @since 5.2.0
+     */
+    public int getLocalPort();
 }
