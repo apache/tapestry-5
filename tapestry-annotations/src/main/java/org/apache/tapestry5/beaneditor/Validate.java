@@ -1,10 +1,10 @@
-// Copyright 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2007, 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,29 +14,34 @@
 
 package org.apache.tapestry5.beaneditor;
 
-import org.apache.tapestry5.ioc.annotations.UseWith;
-import org.apache.tapestry5.ioc.annotations.AnnotationUseContext;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import static org.apache.tapestry5.ioc.annotations.AnnotationUseContext.BEAN;
+import static org.apache.tapestry5.ioc.annotations.AnnotationUseContext.COMPONENT;
+import static org.apache.tapestry5.ioc.annotations.AnnotationUseContext.MIXIN;
+import static org.apache.tapestry5.ioc.annotations.AnnotationUseContext.PAGE;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Target;
 
-import static org.apache.tapestry5.ioc.annotations.AnnotationUseContext.*;
+import org.apache.tapestry5.ioc.annotations.UseWith;
 
 /**
  * Used to attach validation constraints directly to a property (either the getter or the setter method). The annotation
  * value is a comma separated list of <em>validation constraints</em>, each one identifying a validator type (such as
  * "required", "minlength") and optionally, a constraint value. Most validators need a constraint value, which is
- * separated from the type by an equals size (i.e., "maxlength=30").
+ * separated from the type by an equals size (i.e., "maxlength=30"). In addition, the value may include
+ * validator macros.
  * <p/>
  * May be placed on any getter or setter method, or on the matching field.
  */
-@Target({ElementType.FIELD, ElementType.METHOD})
+@Target(
+{ ElementType.FIELD, ElementType.METHOD })
 @Retention(RUNTIME)
 @Documented
-@UseWith({BEAN,COMPONENT,MIXIN,PAGE})
+@UseWith(
+{ BEAN, COMPONENT, MIXIN, PAGE })
 public @interface Validate
 {
     String value();

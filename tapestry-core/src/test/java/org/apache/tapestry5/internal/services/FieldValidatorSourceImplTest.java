@@ -1,10 +1,10 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -22,11 +22,15 @@ import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.ioc.MessageFormatter;
 import org.apache.tapestry5.ioc.Messages;
 import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newMap;
+
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.services.FieldValidatorSource;
 import org.apache.tapestry5.services.FormSupport;
 import org.apache.tapestry5.services.ValidationMessagesSource;
+import org.apache.tapestry5.validator.ValidatorMacro;
+import org.easymock.EasyMock;
 import org.testng.annotations.Test;
 
 import java.util.Arrays;
@@ -63,7 +67,7 @@ public class FieldValidatorSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        FieldValidatorSource source = new FieldValidatorSourceImpl(messagesSource, coercer, null, map);
+        FieldValidatorSource source = new FieldValidatorSourceImpl(messagesSource, coercer, null, map, null);
 
         try
         {
@@ -119,7 +123,7 @@ public class FieldValidatorSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        FieldValidatorSource source = new FieldValidatorSourceImpl(messagesSource, coercer, fs, map);
+        FieldValidatorSource source = new FieldValidatorSourceImpl(messagesSource, coercer, fs, map, null);
 
         FieldValidator fieldValidator = source.createValidator(field, "required", null);
 
@@ -164,7 +168,7 @@ public class FieldValidatorSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        FieldValidatorSource source = new FieldValidatorSourceImpl(messagesSource, coercer, fs, map);
+        FieldValidatorSource source = new FieldValidatorSourceImpl(messagesSource, coercer, fs, map, null);
 
         FieldValidator fieldValidator = source.createValidator(field, "required", null);
 
@@ -207,7 +211,7 @@ public class FieldValidatorSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        FieldValidatorSource source = new FieldValidatorSourceImpl(messagesSource, coercer, fs, map);
+        FieldValidatorSource source = new FieldValidatorSourceImpl(messagesSource, coercer, fs, map, null);
 
         FieldValidator fieldValidator = source.createValidator(field, "required", null);
 
@@ -230,7 +234,6 @@ public class FieldValidatorSourceImplTest extends InternalBaseTestCase
         ComponentResources resources = mockComponentResources();
         Messages containerMessages = mockMessages();
         FormSupport fs = mockFormSupport();
-
 
         Map<String, Validator> map = singletonMap("minlength", validator);
 
@@ -262,9 +265,12 @@ public class FieldValidatorSourceImplTest extends InternalBaseTestCase
         train_getValueType(validator, Object.class);
         validator.validate(field, 5, formatter, inputValue);
 
+        ValidatorMacro macro = mockValidatorMacro();
+        train_alwaysNull(macro);
+
         replay();
 
-        FieldValidatorSource source = new FieldValidatorSourceImpl(messagesSource, coercer, fs, map);
+        FieldValidatorSource source = new FieldValidatorSourceImpl(messagesSource, coercer, fs, map, macro);
 
         FieldValidator fieldValidator = source.createValidators(field, "minlength");
 
@@ -287,7 +293,6 @@ public class FieldValidatorSourceImplTest extends InternalBaseTestCase
         ComponentResources resources = mockComponentResources();
         Messages containerMessages = mockMessages();
         FormSupport fs = mockFormSupport();
-
 
         Map<String, Validator> map = singletonMap("minlength", validator);
 
@@ -318,9 +323,12 @@ public class FieldValidatorSourceImplTest extends InternalBaseTestCase
         train_getValueType(validator, Object.class);
         validator.validate(field, 5, formatter, inputValue);
 
+        ValidatorMacro macro = mockValidatorMacro();
+        train_alwaysNull(macro);
+
         replay();
 
-        FieldValidatorSource source = new FieldValidatorSourceImpl(messagesSource, coercer, fs, map);
+        FieldValidatorSource source = new FieldValidatorSourceImpl(messagesSource, coercer, fs, map, macro);
 
         FieldValidator fieldValidator = source.createValidators(field, "minlength");
 
@@ -328,7 +336,6 @@ public class FieldValidatorSourceImplTest extends InternalBaseTestCase
 
         verify();
     }
-
 
     @SuppressWarnings("unchecked")
     @Test
@@ -356,9 +363,12 @@ public class FieldValidatorSourceImplTest extends InternalBaseTestCase
         train_contains(containerMessages, "myform-fred-minlength", false);
         train_contains(containerMessages, "fred-minlength", false);
 
+        ValidatorMacro macro = mockValidatorMacro();
+        train_alwaysNull(macro);
+
         replay();
 
-        FieldValidatorSource source = new FieldValidatorSourceImpl(messagesSource, coercer, fs, map);
+        FieldValidatorSource source = new FieldValidatorSourceImpl(messagesSource, coercer, fs, map, macro);
 
         try
         {
@@ -367,8 +377,9 @@ public class FieldValidatorSourceImplTest extends InternalBaseTestCase
         }
         catch (IllegalArgumentException ex)
         {
-            assertEquals(ex.getMessage(),
-                         "Validator 'minlength' requires a validation constraint (of type java.lang.Integer) but none was provided. The constraint may be provided inside the @Validator annotaton on the property, or in the associated component message catalog as key 'myform-fred-minlength' or key 'fred-minlength'. ");
+            assertEquals(
+                    ex.getMessage(),
+                    "Validator 'minlength' requires a validation constraint (of type java.lang.Integer) but none was provided. The constraint may be provided inside the @Validator annotaton on the property, or in the associated component message catalog as key 'myform-fred-minlength' or key 'fred-minlength'. ");
         }
 
         verify();
@@ -413,13 +424,99 @@ public class FieldValidatorSourceImplTest extends InternalBaseTestCase
         train_getValueType(validator, Object.class);
         validator.validate(field, null, formatter, inputValue);
 
+        ValidatorMacro macro = mockValidatorMacro();
+        train_alwaysNull(macro);
+
         replay();
 
-        FieldValidatorSource source = new FieldValidatorSourceImpl(messagesSource, coercer, fs, map);
+        FieldValidatorSource source = new FieldValidatorSourceImpl(messagesSource, coercer, fs, map, macro);
 
         FieldValidator fieldValidator = source.createValidators(field, "required");
 
         fieldValidator.validate(inputValue);
+
+        verify();
+    }
+
+    private void train_alwaysNull(ValidatorMacro macro)
+    {
+        expect(macro.valueForMacro(EasyMock.isA(String.class))).andReturn(null).anyTimes();
+    }
+
+    private ValidatorMacro mockValidatorMacro()
+    {
+        return newMock(ValidatorMacro.class);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test
+    public void simple_macro_expansion() throws Exception
+    {
+
+        ValidatorMacro macro = mockValidatorMacro();
+        expect(macro.valueForMacro("combo")).andReturn("required,minlength=5");
+        expect(macro.valueForMacro("required")).andReturn(null);
+        expect(macro.valueForMacro("minlength")).andReturn(null);
+
+        replay();
+
+        FieldValidatorSourceImpl source = new FieldValidatorSourceImpl(null, null, null, null, macro);
+
+        List<ValidatorSpecification> specs = source.toValidatorSpecifications("combo");
+
+        assertListsEquals(specs, new ValidatorSpecification("required"), new ValidatorSpecification("minlength", "5"));
+
+        verify();
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test
+    public void macros_can_not_have_constraints() throws Exception
+    {
+
+        ValidatorMacro macro = mockValidatorMacro();
+        expect(macro.valueForMacro("combo")).andReturn("required,minlength=5");
+
+        replay();
+
+        FieldValidatorSourceImpl source = new FieldValidatorSourceImpl(null, null, null, null, macro);
+
+        try
+        {
+            source.toValidatorSpecifications("combo=3");
+            unreachable();
+        }
+        catch (RuntimeException ex)
+        {
+            assertEquals(ex.getMessage(),
+                    "'combo' is a validator macro, not a validator, and can not have a constraint value.");
+        }
+
+        verify();
+    }
+
+    @Test
+    public void recursive_macros_are_caught()
+    {
+
+        ValidatorMacro macro = mockValidatorMacro();
+        expect(macro.valueForMacro("combo")).andReturn("required,combo");
+        expect(macro.valueForMacro("required")).andReturn(null);
+        expect(macro.valueForMacro("combo")).andReturn("required,combo");
+
+        replay();
+
+        FieldValidatorSourceImpl source = new FieldValidatorSourceImpl(null, null, null, null, macro);
+
+        try
+        {
+            source.toValidatorSpecifications("combo");
+            unreachable();
+        }
+        catch (RuntimeException ex)
+        {
+            assertEquals(ex.getMessage(), "Validator macro 'combo' appears more than once.");
+        }
 
         verify();
     }
@@ -481,9 +578,12 @@ public class FieldValidatorSourceImplTest extends InternalBaseTestCase
         train_getValueType(minLength, String.class);
         minLength.validate(field, fifteen, minLengthFormatter, inputValue);
 
+        ValidatorMacro macro = mockValidatorMacro();
+        train_alwaysNull(macro);
+
         replay();
 
-        FieldValidatorSource source = new FieldValidatorSourceImpl(messagesSource, coercer, fs, map);
+        FieldValidatorSource source = new FieldValidatorSourceImpl(messagesSource, coercer, fs, map, macro);
 
         FieldValidator fieldValidator = source.createValidators(field, "required,minLength=15");
 
@@ -535,7 +635,7 @@ public class FieldValidatorSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        FieldValidatorSource source = new FieldValidatorSourceImpl(messagesSource, coercer, fs, map);
+        FieldValidatorSource source = new FieldValidatorSourceImpl(messagesSource, coercer, fs, map, null);
 
         FieldValidator fieldValidator = source.createValidator(field, "minLength", "5");
 
@@ -571,22 +671,22 @@ public class FieldValidatorSourceImplTest extends InternalBaseTestCase
     @Test
     public void ignore_whitespace_around_type_name()
     {
-        test("  required  ,  email  ", new ValidatorSpecification("required", null),
-             new ValidatorSpecification("email", null));
+        test("  required  ,  email  ", new ValidatorSpecification("required", null), new ValidatorSpecification(
+                "email", null));
     }
 
     @Test
     public void parse_simple_type_with_value()
     {
         test("minLength=5,sameAs=otherComponentId", new ValidatorSpecification("minLength", "5"),
-             new ValidatorSpecification("sameAs", "otherComponentId"));
+                new ValidatorSpecification("sameAs", "otherComponentId"));
     }
 
     @Test
     public void whitespace_ignored_around_value()
     {
         test("minLength=  5 , sameAs  = otherComponentId ", new ValidatorSpecification("minLength", "5"),
-             new ValidatorSpecification("sameAs", "otherComponentId"));
+                new ValidatorSpecification("sameAs", "otherComponentId"));
     }
 
     @Test
@@ -620,7 +720,7 @@ public class FieldValidatorSourceImplTest extends InternalBaseTestCase
         catch (RuntimeException ex)
         {
             assertEquals(ex.getMessage(),
-                         "Unexpected character '.' at position 13 of input string: minLength=3 . email");
+                    "Unexpected character '.' at position 13 of input string: minLength=3 . email");
         }
     }
 }

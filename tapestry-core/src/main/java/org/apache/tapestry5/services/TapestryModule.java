@@ -16,7 +16,6 @@ package org.apache.tapestry5.services;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.URL;
@@ -81,6 +80,7 @@ import org.apache.tapestry5.internal.translator.StringTranslator;
 import org.apache.tapestry5.internal.util.PrimaryKeyEncoder2ValueEncoder;
 import org.apache.tapestry5.internal.util.RenderableAsBlock;
 import org.apache.tapestry5.internal.util.StringRenderable;
+import org.apache.tapestry5.internal.validator.ValidatorMacroImpl;
 import org.apache.tapestry5.ioc.*;
 import org.apache.tapestry5.ioc.annotations.*;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
@@ -104,6 +104,7 @@ import org.apache.tapestry5.validator.Min;
 import org.apache.tapestry5.validator.MinLength;
 import org.apache.tapestry5.validator.Regexp;
 import org.apache.tapestry5.validator.Required;
+import org.apache.tapestry5.validator.ValidatorMacro;
 import org.slf4j.Logger;
 
 /**
@@ -349,6 +350,7 @@ public final class TapestryModule
         binder.bind(Dispatcher.class, AssetProtectionDispatcher.class).withId("AssetProtectionDispatcher");
         binder.bind(AssetPathAuthorizer.class, WhitelistAuthorizer.class).withId("WhitelistAuthorizer");
         binder.bind(AssetPathAuthorizer.class, RegexAuthorizer.class).withId("RegexAuthorizer");
+        binder.bind(ValidatorMacro.class, ValidatorMacroImpl.class);
     }
 
     // ========================================================================
