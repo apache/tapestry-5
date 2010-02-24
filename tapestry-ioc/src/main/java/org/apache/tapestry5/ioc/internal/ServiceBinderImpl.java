@@ -201,7 +201,7 @@ public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
 
     public <T> ServiceBindingOptions bind(Class<T> serviceInterface, Class<? extends T> serviceImplementation)
     {
-        Defense.notNull(serviceInterface, "serviceIterface");
+        Defense.notNull(serviceInterface, "serviceInterface");
         Defense.notNull(serviceImplementation, "serviceImplementation");
 
         lock.check();
