@@ -30,7 +30,8 @@ import org.apache.tapestry5.services.javascript.JavascriptSupport;
  * When rendering, a &lt;script&gt; block will be added to the bottom of the page (just before the &lt;/body&gt; tag).
  * The scripting statements added to this block will be executed, on the client, only once the page has fully loaded.
  * <p>
- * The methods in this interface are largely being replaced with a new environmental interface, {@link JavascriptSupport}.
+ * The methods in this interface are largely being replaced with a new environmental interface,
+ * {@link JavascriptSupport}.
  * <p>
  * RenderSupport is normally accessed within a component by using the {@link Environmental} annotation on a component
  * field. In addition, RenderSupport may also be accessed as a service (the service
@@ -79,7 +80,7 @@ public interface RenderSupport
      * 
      * @param scriptURLs
      *            URL strings of scripts
-     * @deprecated Use {@link JavascriptSupport#importJavascriptLibrary(Asset) instead}
+     * @deprecated Use {@link JavascriptSupport#importJavascriptLibrary(Asset)} instead
      * @throws RuntimeException
      *             <strong>always</strong> as of 5.2.0
      */
@@ -92,6 +93,7 @@ public interface RenderSupport
      * @param classpaths
      *            array of paths. Symbols in the paths are expanded, then the paths are each converted into an
      *            asset.
+     * @deprecated Use {@link JavascriptSupport#importJavascriptLibrary(Asset)} instead
      */
     void addClasspathScriptLink(String... classpaths);
 
@@ -162,6 +164,7 @@ public interface RenderSupport
      *            the name of the function (on the client-side Tapestry object) to invoke.
      * @param parameter
      *            the object to pass to the function
+     * @deprecated Use {@link JavascriptSupport#addInitializerCall(String, JSONObject)} instead
      */
     void addInit(String functionName, JSONObject parameter);
 
@@ -182,7 +185,7 @@ public interface RenderSupport
 
     /**
      * Invoked to set focus on a rendered field. Takes into account priority, meaning that a field with errors will take
-     * precendence over a merely required field, and over a field that is optional. The value
+     * precedence over a merely required field, and over a field that is optional. The value
      * {@link org.apache.tapestry5.FieldFocusPriority#OVERRIDE} can be used to force a particular field to receive
      * focus.
      * 
