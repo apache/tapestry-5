@@ -64,11 +64,27 @@ public class PageCallback implements Serializable
     @Override
     public String toString()
     {
-        StringBuilder builder = new StringBuilder("PageCallback[");
+        if (hasActivationContext())
+            return String.format("PageCallback[%s %s]", pageName, activationContextDescription());
 
-        builder.append(pageName);
+        return String.format("PageCallback[%s]");
+    }
 
-        String sep = " ";
+    /** Does the activation context have any values? Used, typically, inside an override of {@link #toString()}. */
+    protected final boolean hasActivationContext()
+    {
+        return activationContext.length > 0;
+    }
+
+    /**
+     * Returns the activation context as a string of value separated by slashes. Typically used inside
+     * an override of {@link #toString()}.
+     */
+    protected final String activationContextDescription()
+    {
+        StringBuilder builder = new StringBuilder();
+
+        String sep = "";
 
         for (String c : activationContext)
         {
@@ -77,8 +93,6 @@ public class PageCallback implements Serializable
 
             sep = "/";
         }
-
-        builder.append("]");
 
         return builder.toString();
     }
