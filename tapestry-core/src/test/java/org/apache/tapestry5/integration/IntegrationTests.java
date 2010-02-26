@@ -3090,5 +3090,29 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         
         assertText("//dd[2]", "Ultra Important");
     }
+    
+    /**
+     * TAP5-707
+     */
+    
+    @Test
+    public void zone_fade_back_backgroundcolor()
+    {
+        start("Form Zone Demo");
+        
+        type("longValue", "12");
+        
+        click(SUBMIT);
+        
+        click(SUBMIT);
+        
+        // wait some time to let the fade go away
+        sleep(4050);
+
+        // will only work in firefox.
+        String color = getEval("selenium.browserbot.getCurrentWindow().getComputedStyle(this.page().findElement(\"xpath=//div[@id='valueZone']\"),'').getPropertyValue('background-color').toLowerCase()");
+        
+        assertEquals(color, "rgb(255, 255, 255)");
+    }
 
 }
