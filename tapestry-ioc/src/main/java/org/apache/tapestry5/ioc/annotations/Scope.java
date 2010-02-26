@@ -33,8 +33,8 @@ import java.lang.annotation.Target;
  * corresponding {@link ServiceLifecycle} implementation. The linkage from scope name to service lifecycle occurs via a
  * contribution to the {@link ServiceLifecycleSource} service configuration.
  * <p/>
- * The annotation may also be placed directly on a service implementation class, when using service autobuilding (via
- * the {@link ServiceBinder}.
+ * The annotation may also be placed directly on a service implementation class, when using service binding (via
+ * the {@link ServiceBinder}).
  *
  * @see org.apache.tapestry5.ioc.ScopeConstants
  */
@@ -46,7 +46,7 @@ import java.lang.annotation.Target;
 public @interface Scope
 {
     /**
-     * An identifier used to look up a non-default lifecycle.
+     * An identifier used to look up a non-default {@link ServiceLifecycle}.
      */
     String value();
 }
