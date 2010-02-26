@@ -535,7 +535,7 @@ Element.addMethods(
 
             if (current.tagName == "FORM") break;
 
-            current = $(current.parentNode)
+            current = $(current.parentNode);
         }
 
         return true;
@@ -717,7 +717,7 @@ Tapestry.Initializer = {
                 $(rowInjector).trigger();
 
                 Event.stop(event);
-            })
+            });
         });
     },
 
@@ -748,7 +748,7 @@ Tapestry.Initializer = {
                         container.remove();
                     };
                 }
-            }
+            };
 
             Tapestry.ajaxRequest(spec.url, successHandler);
         });
@@ -887,7 +887,7 @@ Tapestry.Initializer = {
 
     formFragment : function(spec)
     {
-        new Tapestry.FormFragment(spec)
+        new Tapestry.FormFragment(spec);
     },
 
     formInjector : function(spec)
@@ -1365,8 +1365,11 @@ Tapestry.ElementEffect = {
     },
 
     /** The classic yellow background fade. */
-    highlight : function(element)
+    highlight : function(element, color)
     {
+        if(color)
+            return new Effect.Highlight(element, { endcolor: color, restorecolor: color});
+        
         return new Effect.Highlight(element);
     },
 
@@ -1405,6 +1408,9 @@ Tapestry.ZoneManager = Class.create({
         this.element = $(spec.element);
         this.showFunc = Tapestry.ElementEffect[spec.show] || Tapestry.ElementEffect.show;
         this.updateFunc = Tapestry.ElementEffect[spec.update] || Tapestry.ElementEffect.highlight;
+        
+        // TAP5-707: store the old background color of the element or take white as a default
+        this.endcolor = this.element.getStyle('background-color').parseColor('#ffffff');
 
         // Link the div back to this zone.
 
@@ -1436,7 +1442,7 @@ Tapestry.ZoneManager = Class.create({
 
         var func = this.element.visible() ? this.updateFunc : this.showFunc;
 
-        func.call(this, this.element);
+        func.call(this, this.element, this.endcolor);
 
         this.element.fire(Tapestry.ZONE_UPDATED_EVENT);
     },
