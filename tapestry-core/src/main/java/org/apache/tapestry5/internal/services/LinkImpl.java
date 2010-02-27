@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -27,7 +27,7 @@ public class LinkImpl implements Link
 {
     private Map<String, String> parameters;
 
-    private final String absoluteURI;
+    private final String basePath;
 
     private final boolean optimizable;
 
@@ -39,14 +39,30 @@ public class LinkImpl implements Link
 
     private String anchor;
 
-    public LinkImpl(String absoluteURI, boolean optimizable, boolean forForm, Response response,
-                     RequestPathOptimizer optimizer)
+    public LinkImpl(String basePath, boolean optimizable, boolean forForm, Response response,
+            RequestPathOptimizer optimizer)
     {
-        this.absoluteURI = absoluteURI;
+        this.basePath = basePath;
         this.optimizable = optimizable;
         this.forForm = forForm;
         this.response = response;
         this.optimizer = optimizer;
+    }
+
+    public Link copyWithBasePath(String basePath)
+    {
+        Defense.notNull(basePath, "basePath");
+
+        LinkImpl copy = new LinkImpl(basePath, optimizable, forForm, response, optimizer);
+
+        copy.anchor = anchor;
+
+        for (String name : getParameterNames())
+        {
+            copy.addParameter(name, parameters.get(name));
+        }
+
+        return copy;
     }
 
     public void addParameter(String parameterName, String value)
@@ -58,6 +74,19 @@ public class LinkImpl implements Link
             parameters = CollectionFactory.newMap();
 
         parameters.put(parameterName, value);
+    }
+
+    public String getBasePath()
+    {
+        return basePath;
+    }
+
+    public void removeParameter(String parameterName)
+    {
+        Defense.notBlank(parameterName, "parameterName");
+
+        if (parameters != null)
+            parameters.remove(parameterName);
     }
 
     public String getAnchor()
@@ -102,9 +131,7 @@ public class LinkImpl implements Link
 
     private String appendAnchor(String path)
     {
-        return InternalUtils.isBlank(anchor)
-               ? path
-               : path + "#" + anchor;
+        return InternalUtils.isBlank(anchor) ? path : path + "#" + anchor;
     }
 
     /**
@@ -116,22 +143,21 @@ public class LinkImpl implements Link
         return toURI();
     }
 
-
     /**
      * Extends the absolute path with any query parameters. Query parameters are never added to a forForm link.
-     *
+     * 
      * @return absoluteURI appended with query parameters
      */
     private String buildURI()
     {
         if (forForm || parameters == null)
-            return absoluteURI;
+            return basePath;
 
-        StringBuilder builder = new StringBuilder(absoluteURI.length() * 2);
+        StringBuilder builder = new StringBuilder(basePath.length() * 2);
 
-        builder.append(absoluteURI);
+        builder.append(basePath);
 
-        String sep = absoluteURI.contains("?") ? "&" : "?";
+        String sep = basePath.contains("?") ? "&" : "?";
 
         for (String name : getParameterNames())
         {

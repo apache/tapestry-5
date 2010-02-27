@@ -1,10 +1,10 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,9 +14,9 @@
 
 package org.apache.tapestry5;
 
-import org.apache.commons.codec.net.URLCodec;
-
 import java.util.List;
+
+import org.apache.commons.codec.net.URLCodec;
 
 /**
  * A link is the Tapestry representation of a URL or URI that triggers dynamic behavior. This link is in three parts: a
@@ -32,7 +32,7 @@ public interface Link
      * Returns the names of any additional query parameters for the URI. Query parameters store less regular or less
      * often used values that can not be expressed in the path. They also are used to store, or link to, persistent
      * state.
-     *
+     * 
      * @return list of query parameter names, is alphabetical order
      */
     List<String> getParameterNames();
@@ -40,7 +40,7 @@ public interface Link
     /**
      * Returns the value of a specifically named query parameter, or <tt>null</tt> if no such query parameter is stored
      * in the link.
-     *
+     * 
      * @return the value of the named parameter
      */
     String getParameterValue(String name);
@@ -48,18 +48,45 @@ public interface Link
     /**
      * Adds a parameter value. The value will be added, as is, to the URL. In many cases, the value should be URL
      * encoded via {@link URLCodec}.
-     *
-     * @param parameterName the name of the parameter to store
-     * @param value         the value to store
-     * @throws IllegalArgumentException if the link already has a parameter with the given name
+     * 
+     * @param parameterName
+     *            the name of the parameter to store
+     * @param value
+     *            the value to store
+     * @throws IllegalArgumentException
+     *             if the link already has a parameter with the given name
      */
     void addParameter(String parameterName, String value);
 
     /**
+     * Removes a parameter value, which is occasionally useful when transforming a parameter into a portion of
+     * the path.
+     * 
+     * @since 5.2.0
+     */
+    void removeParameter(String parameterName);
+
+    /**
+     * Returns the completely unadorned base path. Other methods (such as {@link #toURI()}), may append
+     * an anchor or query parameters.
+     * 
+     * @since 5.2.0
+     */
+    String getBasePath();
+
+    /**
+     * Creates a copy of this link that has the same parameters, anchor, and other attributes, but a different
+     * {@linkplain #getBasePath() base path}.
+     * 
+     * @since 5.2.0
+     */
+    Link copyWithBasePath(String basePath);
+
+    /**
      * Returns the URI portion of the link. When the link is created for a form, this will not include query parameters.
-     * This is the same value returned from toString().  In some circumstances, this may be a relative URI (relative to
+     * This is the same value returned from toString(). In some circumstances, this may be a relative URI (relative to
      * the current Request's URI).
-     *
+     * 
      * @return the URI, ready to be added as an element attribute
      */
     String toURI();
@@ -71,22 +98,23 @@ public interface Link
 
     /**
      * Returns the link anchor. If this link does not have an anchor, this method returns <tt>null</tt>.
-     *
+     * 
      * @return the link anchor
      */
     String getAnchor();
 
     /**
      * Sets the link anchor. Null and empty anchors will be ignored when building the link URI.
-     *
-     * @param anchor the link anchor
+     * 
+     * @param anchor
+     *            the link anchor
      */
     void setAnchor(String anchor);
 
     /**
      * Converts the link to an absolute URI, a complete path, starting with a leading slash. This is necessary in many
      * cases for client-side JavaScript that must send a request to application via XMLHttpRequest.
-     *
+     * 
      * @return the complete URI (not abbreviated relative to the current request path)
      */
     String toAbsoluteURI();

@@ -67,7 +67,7 @@ public class PageCallback implements Serializable
         if (hasActivationContext())
             return String.format("PageCallback[%s %s]", pageName, activationContextDescription());
 
-        return String.format("PageCallback[%s]");
+        return String.format("PageCallback[%s]", pageName);
     }
 
     /** Does the activation context have any values? Used, typically, inside an override of {@link #toString()}. */

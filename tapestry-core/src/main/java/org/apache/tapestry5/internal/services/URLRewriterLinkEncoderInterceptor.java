@@ -111,40 +111,26 @@ public class URLRewriterLinkEncoderInterceptor implements ComponentEventLinkEnco
 
     private Link rewriteIfNeeded(Link link, URLRewriteContext context, boolean forForm)
     {
-        SimpleRequestWrapper fakeRequest = new SimpleRequestWrapper(request, link.toAbsoluteURI());
+        SimpleRequestWrapper fakeRequest = new SimpleRequestWrapper(request, link.getBasePath());
 
         Request rewritten = urlRewriter.processLink(fakeRequest, context);
 
         // if the original request is equal to the rewritten one, no
         // rewriting is needed
-        if (fakeRequest != rewritten)
-        {
-            String originalServerName = request.getServerName();
+        if (fakeRequest == rewritten)
+            return link;
 
-            String rewrittenServerName = rewritten.getServerName();
+        String originalServerName = request.getServerName();
 
-            boolean absolute = originalServerName.equals(rewrittenServerName) == false;
+        String rewrittenServerName = rewritten.getServerName();
 
-            String newPath = rewritten.getPath();
+        boolean absolute = originalServerName.equals(rewrittenServerName) == false;
 
-            String newUrl = absolute ? fullUrl(rewritten) : newPath;
+        String newPath = rewritten.getPath();
 
-            Link replacement = new LinkImpl(newUrl, false, forForm, response, null);
+        String baseURI = absolute ? fullUrl(rewritten) : newPath;
 
-            copyParameters(link, replacement);
-
-            return replacement;
-        }
-
-        return link;
-    }
-
-    private void copyParameters(Link link, Link replacement)
-    {
-        for (String name : link.getParameterNames())
-        {
-            replacement.addParameter(name, link.getParameterValue(name));
-        }
+        return link.copyWithBasePath(baseURI);
     }
 
     private String fullUrl(Request request)

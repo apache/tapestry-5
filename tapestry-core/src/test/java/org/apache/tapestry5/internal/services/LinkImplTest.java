@@ -1,10 +1,10 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -102,7 +102,6 @@ public class LinkImplTest extends InternalBaseTestCase
         verify();
     }
 
-
     @Test
     public void force_absolute_uri()
     {
@@ -113,11 +112,9 @@ public class LinkImplTest extends InternalBaseTestCase
 
         replay();
 
-
         Link link = new LinkImpl("/ctx/foo", true, false, response, optimizer);
 
         assertEquals(link.toAbsoluteURI(), ENCODED);
-
 
         verify();
     }
@@ -125,21 +122,55 @@ public class LinkImplTest extends InternalBaseTestCase
     @Test
     public void to_uri_with_added_parameters_and_on_construction_uri()
     {
-    	RequestPathOptimizer optimizer = mockRequestPathOptimizer();
-    	Response response = mockResponse();
-    	
-    	String expectedURI = "/ctx/foo?foo=bar&baz=barney";
-		train_encodeURL(response, expectedURI, expectedURI);
-    	
-    	replay();
-    	
-    	
-    	Link link = new LinkImpl("/ctx/foo?foo=bar", false, false, response, optimizer);
-    	link.addParameter("baz", "barney");
-    	
-    	assertEquals(link.toURI(), expectedURI);
-    	
-    	
-    	verify();
+        RequestPathOptimizer optimizer = mockRequestPathOptimizer();
+        Response response = mockResponse();
+
+        String expectedURI = "/ctx/foo?foo=bar&baz=barney";
+        train_encodeURL(response, expectedURI, expectedURI);
+
+        replay();
+
+        Link link = new LinkImpl("/ctx/foo?foo=bar", false, false, response, optimizer);
+        link.addParameter("baz", "barney");
+
+        assertEquals(link.toURI(), expectedURI);
+
+        verify();
+    }
+
+    @Test
+    public void new_base_uri()
+    {
+        RequestPathOptimizer optimizer = mockRequestPathOptimizer();
+        Response response = mockResponse();
+
+        String expectedURI = "/ctx/baz?baz=barney";
+        train_encodeURL(response, expectedURI, expectedURI);
+
+        replay();
+
+        Link link = new LinkImpl("/ctx/foo", false, false, response, optimizer);
+        link.addParameter("baz", "barney");
+        link.setAnchor("jacob");
+
+        Link copy = link.copyWithBasePath("/ctx/baz");
+
+        assertEquals(copy.toURI(), expectedURI + "#jacob");
+
+        verify();
+    }
+
+    @Test
+    public void remove_parameter()
+    {
+        Link link = new LinkImpl("/baseURI", false, false, null, null);
+
+        link.addParameter("fred", "flintstone");
+        link.addParameter("barney", "rubble");
+
+        link.removeParameter("fred");
+
+        assertNull(link.getParameterValue("fred"));
+        assertListsEquals(link.getParameterNames(), "barney");
     }
 }
