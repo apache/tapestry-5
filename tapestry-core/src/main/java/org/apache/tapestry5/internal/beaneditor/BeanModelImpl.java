@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -24,8 +24,10 @@ import org.apache.tapestry5.beaneditor.RelativePosition;
 import org.apache.tapestry5.internal.services.CoercingPropertyConduitWrapper;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.ObjectLocator;
+import org.apache.tapestry5.ioc.internal.util.AvailableValues;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.Defense;
+import org.apache.tapestry5.ioc.internal.util.UnknownValueException;
 import org.apache.tapestry5.ioc.services.ClassFabUtils;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.services.PropertyConduitSource;
@@ -48,8 +50,8 @@ public class BeanModelImpl<T> implements BeanModel<T>
 
     private final List<String> propertyNames = CollectionFactory.newList();
 
-    public BeanModelImpl(Class<T> beanType, PropertyConduitSource propertyConduitSource,
-            TypeCoercer typeCoercer, Messages messages, ObjectLocator locator)
+    public BeanModelImpl(Class<T> beanType, PropertyConduitSource propertyConduitSource, TypeCoercer typeCoercer,
+            Messages messages, ObjectLocator locator)
 
     {
         this.beanType = beanType;
@@ -81,12 +83,13 @@ public class BeanModelImpl<T> implements BeanModel<T>
         Defense.notBlank(propertyName, "propertyName");
 
         if (properties.containsKey(propertyName))
-            throw new RuntimeException(BeanEditorMessages.duplicatePropertyName(beanType,
-                    propertyName));
+            throw new RuntimeException(String.format(
+                    "Bean editor model for %s already contains a property model for property '%s'.",
+                    beanType.getName(), propertyName));
     }
 
-    public PropertyModel add(RelativePosition position, String existingPropertyName,
-            String propertyName, PropertyConduit conduit)
+    public PropertyModel add(RelativePosition position, String existingPropertyName, String propertyName,
+            PropertyConduit conduit)
     {
         Defense.notNull(position, "position");
 
@@ -111,8 +114,7 @@ public class BeanModelImpl<T> implements BeanModel<T>
         return newModel;
     }
 
-    public PropertyModel add(RelativePosition position, String existingPropertyName,
-            String propertyName)
+    public PropertyModel add(RelativePosition position, String existingPropertyName, String propertyName)
     {
         PropertyConduit conduit = createConduit(propertyName);
 
@@ -136,8 +138,7 @@ public class BeanModelImpl<T> implements BeanModel<T>
 
     private CoercingPropertyConduitWrapper createConduit(String propertyName)
     {
-        return new CoercingPropertyConduitWrapper(propertyConduitSource.create(beanType,
-                propertyName), typeCoercer);
+        return new CoercingPropertyConduitWrapper(propertyConduitSource.create(beanType, propertyName), typeCoercer);
     }
 
     public PropertyModel get(String propertyName)
@@ -145,8 +146,9 @@ public class BeanModelImpl<T> implements BeanModel<T>
         PropertyModel propertyModel = properties.get(propertyName);
 
         if (propertyModel == null)
-            throw new RuntimeException(BeanEditorMessages.unknownProperty(beanType, propertyName,
-                    properties.keySet()));
+            throw new UnknownValueException(String.format(
+                    "Bean editor model for %s does not contain a property named '%s'.", beanType.getName(),
+                    propertyName), new AvailableValues("properties", propertyNames));
 
         return propertyModel;
     }
@@ -169,8 +171,9 @@ public class BeanModelImpl<T> implements BeanModel<T>
             ids.add(model.getId());
         }
 
-        throw new RuntimeException(BeanEditorMessages.unknownPropertyId(beanType, propertyId, ids));
-
+        throw new UnknownValueException(String.format(
+                "Bean editor model for %s does not contain a property with id '%s'.", beanType.getName(), propertyId),
+                new AvailableValues("property ids", ids));
     }
 
     public List<String> getPropertyNames()

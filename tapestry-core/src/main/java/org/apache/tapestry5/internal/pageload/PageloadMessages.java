@@ -1,4 +1,4 @@
-// Copyright 2009 The Apache Software Foundation
+// Copyright 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ import java.util.Collection;
 
 /**
  * Localized exception message support for pageload-related classes.
- * @since 5.2.0.0
+ * @since 5.2.0
  */
 final class PageloadMessages
 {

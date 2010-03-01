@@ -1,10 +1,10 @@
-// Copyright 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2007, 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -22,6 +22,7 @@ import org.apache.tapestry5.internal.PropertyOrderBean;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.internal.transform.pages.ReadOnlyBean;
 import org.apache.tapestry5.ioc.Messages;
+import org.apache.tapestry5.ioc.internal.util.UnknownValueException;
 import org.apache.tapestry5.services.BeanModelSource;
 import org.easymock.EasyMock;
 import org.testng.annotations.BeforeClass;
@@ -64,7 +65,7 @@ public class BeanModelSourceImplTest extends InternalBaseTestCase
         assertEquals(model.getPropertyNames(), Arrays.asList("firstName", "lastName", "age"));
 
         assertEquals(model.toString(),
-                     "BeanModel[org.apache.tapestry5.internal.services.SimpleBean properties:firstName, lastName, age]");
+                "BeanModel[org.apache.tapestry5.internal.services.SimpleBean properties:firstName, lastName, age]");
 
         PropertyModel age = model.get("age");
 
@@ -295,8 +296,9 @@ public class BeanModelSourceImplTest extends InternalBaseTestCase
         }
         catch (RuntimeException ex)
         {
-            assertEquals(ex.getMessage(),
-                         "Bean editor model for org.apache.tapestry5.internal.services.SimpleBean already contains a property model for property \'age\'.");
+            assertEquals(
+                    ex.getMessage(),
+                    "Bean editor model for org.apache.tapestry5.internal.services.SimpleBean already contains a property model for property \'age\'.");
         }
 
         verify();
@@ -318,10 +320,13 @@ public class BeanModelSourceImplTest extends InternalBaseTestCase
             model.get("frobozz");
             unreachable();
         }
-        catch (RuntimeException ex)
+        catch (UnknownValueException ex)
         {
-            assertEquals(ex.getMessage(),
-                         "Bean editor model for org.apache.tapestry5.internal.services.SimpleBean does not contain a property named \'frobozz\'.  " + "Available properties: age, firstName, lastName.");
+            assertEquals(
+                    ex.getMessage(),
+                    "Bean editor model for org.apache.tapestry5.internal.services.SimpleBean does not contain a property named \'frobozz\'.");
+
+            assertListsEquals(ex.getAvailableValues().getValues(), "age", "firstName", "lastName");
         }
 
         verify();
@@ -345,11 +350,13 @@ public class BeanModelSourceImplTest extends InternalBaseTestCase
             model.getById("frobozz");
             unreachable();
         }
-        catch (RuntimeException ex)
+        catch (UnknownValueException ex)
         {
-            assertEquals(ex.getMessage(),
-                         "Bean editor model for org.apache.tapestry5.internal.services.SimpleBean does not contain a property with id \'frobozz\'.  "
-                                 + "Available property ids: age, firstName, lastName, shrubfoo.");
+            assertEquals(
+                    ex.getMessage(),
+                    "Bean editor model for org.apache.tapestry5.internal.services.SimpleBean does not contain a property with id \'frobozz\'.");
+
+            assertListsEquals(ex.getAvailableValues().getValues(), "age", "firstName", "lastName", "shrubfoo");
         }
 
         verify();
@@ -460,7 +467,8 @@ public class BeanModelSourceImplTest extends InternalBaseTestCase
 
         assertSame(propertyModel.getPropertyType(), String[].class);
 
-        String[] value = { "foo", "bar" };
+        String[] value =
+        { "foo", "bar" };
 
         StringArrayBean bean = new StringArrayBean();
 
