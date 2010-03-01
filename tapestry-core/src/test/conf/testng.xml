@@ -22,6 +22,7 @@
       <package name="org.apache.tapestry5.corelib.internal"/>
     </packages>
   </test>
+
   <test name="Service Unit Tests" enabled="true">
     <packages>
       <package name="org.apache.tapestry5.root"/>
@@ -29,7 +30,6 @@
       <package name="org.apache.tapestry5.json"/>
       <package name="org.apache.tapestry5.runtime"/>
       <package name="org.apache.tapestry5.services"/>
-      <package name="org.apache.tapestry5.urlrewriter"/>
       <package name="org.apache.tapestry5.util"/>
       <package name="org.apache.tapestry5.validator"/>
       <package name="org.apache.tapestry5.internal"/>
@@ -47,9 +47,11 @@
       <package name="org.apache.tapestry5.internal.services.javascript"/>
     </packages>
   </test>
-  <!--  We break these out by which of the test applications they apply to. We have a bunch. -->
+
+<!--    We break these out by which of the test applications they apply to. We have a bunch. -->
   <test name="Core Integration Tests" enabled="true">
     <parameter name="tapestry.web-app-folder" value="src/test/app1"/>
+    
     <packages>
       <package name="org.apache.tapestry5.integration.app1"/>
     </packages>
@@ -57,9 +59,10 @@
       <class name="org.apache.tapestry5.test.SeleniumLauncher"/>
     </classes>
   </test>
+  
   <test name="Additional Integration Tests" enabled="true">
     <parameter name="tapestry.web-app-folder" value="src/test/app3"/>
-
+    
     <packages>
       <package name="org.apache.tapestry5.integration.app3"/>
     </packages>
@@ -67,6 +70,7 @@
       <class name="org.apache.tapestry5.test.SeleniumLauncher"/>
     </classes>
   </test>
+  
   <test name="Immediate Mode Integration Tests" enabled="true">
     <parameter name="tapestry.web-app-folder" value="src/test/app4"/>
 
@@ -78,8 +82,20 @@
     </classes>
   </test>
 
+  <test name="URL Rewriter Tests" enabled="true">
+    <parameter name="tapestry.web-app-folder" value="src/test/app5"/>
+    
+    <packages>
+      <package name="org.apache.tapestry5.urlrewriter"/>
+    </packages>
+    <classes>
+      <class name="org.apache.tapestry5.test.SeleniumLauncher"/>
+    </classes>
+  </test>
+
   <test name="Custom App Package Tests" enabled="true">
     <parameter name="tapestry.web-app-folder" value="src/test/app6"/>
+    
     <packages>
       <package name="org.apache.tapestry5.integration.app6"/>
     </packages>
@@ -93,6 +109,7 @@
       <package name="org.apache.tapestry5.integration.reload"/>
     </packages>
   </test>
+  
   <test name="PageTester Tests" enabled="true">
     <packages>
       <package name="org.apache.tapestry5.integration.pagetester"/>

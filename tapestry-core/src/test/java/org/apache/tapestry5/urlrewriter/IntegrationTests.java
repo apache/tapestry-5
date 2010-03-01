@@ -13,7 +13,7 @@
 // limitations under the License.
 package org.apache.tapestry5.urlrewriter;
 
-import org.apache.tapestry5.test.AbstractIntegrationTestSuite;
+import org.apache.tapestry5.integration.TapestryCoreTestCase;
 import org.testng.annotations.Test;
 
 /**
@@ -24,7 +24,7 @@ import org.testng.annotations.Test;
  * order to work.
  */
 @Test(timeOut = 30000, sequential = true)
-public class IntegrationTests extends AbstractIntegrationTestSuite
+public class IntegrationTests extends TapestryCoreTestCase
 {
     final public static String DOMAIN = "somenicedomain.com";
 
@@ -32,16 +32,11 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
     final public static String SUBDOMAIN = LOGIN + "." + DOMAIN;
 
-    public IntegrationTests()
-    {
-        super("src/test/app5", DEFAULT_WEB_BROWSER_COMMAND, SUBDOMAIN, DOMAIN, "localhost");
-    }
-
     @Test
     public void test_link_rewriting_without_virtual_host()
     {
 
-        open(BASE_URL);
+        openBaseURL();
         assertAttribute("//a[@class='self']/@href", "/");
         assertAttribute("//a[@class='dummy']/@href", "/notdummy");
 
