@@ -113,7 +113,7 @@ public class TypeCoercerImplTest extends IOCInternalTestCase
             coercer.coerce("", Map.class);
             unreachable();
         }
-        catch (IllegalArgumentException ex)
+        catch (RuntimeException ex)
         {
             assertTrue(ex.getMessage().contains(
                     "Could not find a coercion from type java.lang.String to type java.util.Map"));
@@ -279,14 +279,12 @@ public class TypeCoercerImplTest extends IOCInternalTestCase
     {
         return new Object[][]
         {
-                { StringBuffer.class, Integer.class,
-                        "Object --> String, String --> Long, Long --> Integer" },
-                { void.class, Map.class, "null --> null" },
-                { void.class, Boolean.class, "null --> Boolean" },
-                { String[].class, List.class, "Object[] --> java.util.List" },
-                { Float.class, Double.class, "Float --> Double" },
-                { Double.class, BigDecimal.class,
-                        "Object --> String, String --> java.math.BigDecimal" }, };
+        { StringBuffer.class, Integer.class, "Object --> String, String --> Long, Long --> Integer" },
+        { void.class, Map.class, "null --> null" },
+        { void.class, Boolean.class, "null --> Boolean" },
+        { String[].class, List.class, "Object[] --> java.util.List" },
+        { Float.class, Double.class, "Float --> Double" },
+        { Double.class, BigDecimal.class, "Object --> String, String --> java.math.BigDecimal" }, };
     }
 
     @Test
