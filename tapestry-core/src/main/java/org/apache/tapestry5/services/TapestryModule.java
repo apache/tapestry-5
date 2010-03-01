@@ -2736,7 +2736,7 @@ public final class TapestryModule
         if (!urlRewriter.hasLinkRules())
             return null;
 
-        return new URLRewriterLinkEncoderInterceptor(urlRewriter, request, response, encoder);
+        return new URLRewriterLinkEncoderInterceptor(urlRewriter, request, encoder);
     }
 
     /**

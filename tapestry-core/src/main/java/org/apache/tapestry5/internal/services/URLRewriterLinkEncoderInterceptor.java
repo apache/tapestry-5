@@ -19,7 +19,6 @@ import org.apache.tapestry5.services.ComponentEventLinkEncoder;
 import org.apache.tapestry5.services.ComponentEventRequestParameters;
 import org.apache.tapestry5.services.PageRenderRequestParameters;
 import org.apache.tapestry5.services.Request;
-import org.apache.tapestry5.services.Response;
 import org.apache.tapestry5.services.URLRewriter;
 import org.apache.tapestry5.urlrewriter.SimpleRequestWrapper;
 import org.apache.tapestry5.urlrewriter.URLRewriteContext;
@@ -36,16 +35,13 @@ public class URLRewriterLinkEncoderInterceptor implements ComponentEventLinkEnco
 
     private final Request request;
 
-    private final Response response;
-
     private final ComponentEventLinkEncoder delegate;
 
-    public URLRewriterLinkEncoderInterceptor(URLRewriter urlRewriter, Request request, Response response,
+    public URLRewriterLinkEncoderInterceptor(URLRewriter urlRewriter, Request request,
             ComponentEventLinkEncoder delegate)
     {
         this.urlRewriter = urlRewriter;
         this.request = request;
-        this.response = response;
         this.delegate = delegate;
     }
 
@@ -71,7 +67,7 @@ public class URLRewriterLinkEncoderInterceptor implements ComponentEventLinkEnco
             }
         };
 
-        return rewriteIfNeeded(standardLink, rewriteContext, forForm);
+        return rewriteIfNeeded(standardLink, rewriteContext);
     }
 
     public Link createPageRenderLink(final PageRenderRequestParameters parameters)
@@ -96,7 +92,7 @@ public class URLRewriterLinkEncoderInterceptor implements ComponentEventLinkEnco
             }
         };
 
-        return rewriteIfNeeded(standardLink, rewriteContext, false);
+        return rewriteIfNeeded(standardLink, rewriteContext);
     }
 
     public ComponentEventRequestParameters decodeComponentEventRequest(Request request)
@@ -109,7 +105,7 @@ public class URLRewriterLinkEncoderInterceptor implements ComponentEventLinkEnco
         return delegate.decodePageRenderRequest(request);
     }
 
-    private Link rewriteIfNeeded(Link link, URLRewriteContext context, boolean forForm)
+    private Link rewriteIfNeeded(Link link, URLRewriteContext context)
     {
         SimpleRequestWrapper fakeRequest = new SimpleRequestWrapper(request, link.getBasePath());
 
@@ -126,9 +122,7 @@ public class URLRewriterLinkEncoderInterceptor implements ComponentEventLinkEnco
 
         boolean absolute = originalServerName.equals(rewrittenServerName) == false;
 
-        String newPath = rewritten.getPath();
-
-        String baseURI = absolute ? fullUrl(rewritten) : newPath;
+        String baseURI = absolute ? fullUrl(rewritten) : rewritten.getContextPath() + rewritten.getPath();
 
         return link.copyWithBasePath(baseURI);
     }
