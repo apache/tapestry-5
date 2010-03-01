@@ -235,11 +235,6 @@ final class IOCMessages
         return MESSAGES.format("service-construction-failed", serviceDef.getServiceId(), cause);
     }
 
-    static String noSuchService(String serviceId, Collection<String> serviceIds)
-    {
-        return MESSAGES.format("no-such-service", serviceId, InternalUtils.joinSorted(serviceIds));
-    }
-
     static String serviceIdConflict(String serviceId, ServiceDef existing, ServiceDef conflicting)
     {
         return MESSAGES.format("service-id-conflict", serviceId, existing, conflicting);

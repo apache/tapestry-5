@@ -25,7 +25,7 @@ import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.ioc.internal.util.InheritanceSearch;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.ioc.internal.util.PossibleValues;
+import org.apache.tapestry5.ioc.internal.util.AvailableValues;
 import org.apache.tapestry5.ioc.internal.util.UnknownValueException;
 import org.apache.tapestry5.ioc.services.ClassFabUtils;
 import org.apache.tapestry5.ioc.services.Coercion;
@@ -292,7 +292,7 @@ public class TypeCoercerImpl implements TypeCoercer
      * alphabetically.
      */
     @SuppressWarnings("unchecked")
-    private PossibleValues buildCoercionCatalog()
+    private AvailableValues buildCoercionCatalog()
     {
         List<CoercionTuple> masterList = CollectionFactory.newList();
 
@@ -301,7 +301,7 @@ public class TypeCoercerImpl implements TypeCoercer
             masterList.addAll(list);
         }
 
-        return new PossibleValues("coercions", masterList);
+        return new AvailableValues("coercions", masterList);
     }
 
     /**

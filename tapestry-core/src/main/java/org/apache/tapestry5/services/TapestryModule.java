@@ -65,6 +65,7 @@ import org.apache.tapestry5.internal.bindings.*;
 import org.apache.tapestry5.internal.grid.CollectionGridDataSource;
 import org.apache.tapestry5.internal.grid.NullDataSource;
 import org.apache.tapestry5.internal.gzip.GZipFilter;
+import org.apache.tapestry5.internal.renderers.AvailableValuesRenderer;
 import org.apache.tapestry5.internal.renderers.ComponentResourcesRenderer;
 import org.apache.tapestry5.internal.renderers.EventContextRenderer;
 import org.apache.tapestry5.internal.renderers.ListRenderer;
@@ -83,6 +84,7 @@ import org.apache.tapestry5.internal.util.StringRenderable;
 import org.apache.tapestry5.internal.validator.ValidatorMacroImpl;
 import org.apache.tapestry5.ioc.*;
 import org.apache.tapestry5.ioc.annotations.*;
+import org.apache.tapestry5.ioc.internal.util.AvailableValues;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.IdAllocator;
 import org.apache.tapestry5.ioc.services.*;
@@ -1805,8 +1807,11 @@ public final class TapestryModule
     /**
      * Contributes a default object renderer for type Object, plus specialized
      * renderers for {@link org.apache.tapestry5.services.Request}, {@link org.apache.tapestry5.ioc.Location},
-     * {@link org.apache.tapestry5.ComponentResources}, {@link org.apache.tapestry5.EventContext}, List, and Object[].
+     * {@link org.apache.tapestry5.ComponentResources}, {@link org.apache.tapestry5.EventContext},
+     * {@link AvailableValues},
+     * List, and Object[].
      */
+    @SuppressWarnings("unchecked")
     public void contributeObjectRenderer(MappedConfiguration<Class, ObjectRenderer> configuration,
 
     @InjectService("LocationRenderer")
@@ -1836,6 +1841,7 @@ public final class TapestryModule
         configuration.addInstance(Object[].class, ObjectArrayRenderer.class);
         configuration.addInstance(ComponentResources.class, ComponentResourcesRenderer.class);
         configuration.addInstance(EventContext.class, EventContextRenderer.class);
+        configuration.add(AvailableValues.class, new AvailableValuesRenderer());
     }
 
     /**

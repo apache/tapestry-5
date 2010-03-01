@@ -16,7 +16,7 @@ package org.apache.tapestry5.ioc.internal.util;
 
 /**
  * Special exception used when a value (typically from a map) is referenced that does not exist. Uses a
- * {@link PossibleValues} object
+ * {@link AvailableValues} object
  * to track what the known values are.
  * 
  * @since 5.2.0
@@ -25,23 +25,23 @@ public class UnknownValueException extends TapestryException
 {
     private static final long serialVersionUID = -8131503136299055706L;
 
-    private final PossibleValues possibleValues;
+    private final AvailableValues availableValues;
 
-    public UnknownValueException(String message, PossibleValues values)
+    public UnknownValueException(String message, AvailableValues availableValues)
     {
-        this(message, null, null, values);
+        this(message, null, null, availableValues);
     }
 
-    public UnknownValueException(String message, Object location, Throwable cause, PossibleValues values)
+    public UnknownValueException(String message, Object location, Throwable cause, AvailableValues availableValues)
     {
         super(message, location, cause);
 
-        this.possibleValues = values;
+        this.availableValues = availableValues;
     }
 
-    public PossibleValues getPossibleValues()
+    public AvailableValues getAvailableValues()
     {
-        return possibleValues;
+        return availableValues;
     }
 
 }

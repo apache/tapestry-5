@@ -25,7 +25,7 @@ import java.util.Map;
  * 
  * @since 5.2.0
  */
-public class PossibleValues
+public class AvailableValues
 {
     private final String valueType;
 
@@ -38,13 +38,13 @@ public class PossibleValues
      *            a set of objects defining the values; the values will be converted to strings and sorted into
      *            ascending order
      */
-    public PossibleValues(String valueType, Collection<?> values)
+    public AvailableValues(String valueType, Collection<?> values)
     {
         this.valueType = valueType;
         this.values = sortValues(values);
     }
 
-    public PossibleValues(String valueType, Map<?, ?> map)
+    public AvailableValues(String valueType, Map<?, ?> map)
     {
         this(valueType, map.keySet());
     }
@@ -57,6 +57,8 @@ public class PossibleValues
         {
             result.add(String.valueOf(v));
         }
+
+        Collections.sort(result);
 
         return Collections.unmodifiableList(result);
     }
@@ -76,7 +78,7 @@ public class PossibleValues
     @Override
     public String toString()
     {
-        return String.format("PossibleValues[%s: %s]", valueType, InternalUtils.join(values));
+        return String.format("AvailableValues[%s: %s]", valueType, InternalUtils.join(values));
     }
 
 }

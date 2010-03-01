@@ -1,10 +1,10 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,6 +21,8 @@ import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.ConcurrentBarrier;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.ioc.internal.util.AvailableValues;
+import org.apache.tapestry5.ioc.internal.util.UnknownValueException;
 import org.apache.tapestry5.ioc.services.ClassNameLocator;
 import org.apache.tapestry5.services.ComponentClassResolver;
 import org.apache.tapestry5.services.InvalidationListener;
@@ -77,7 +79,6 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
      */
     private final Map<String, String> pageClassNameToLogicalName = CollectionFactory.newMap();
 
-
     /**
      * Used to convert a logical page name to the canonical form of the page name; this ensures that uniform case for
      * page names is used.
@@ -94,14 +95,15 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
 
     public ComponentClassResolverImpl(Logger logger,
 
-                                      ComponentInstantiatorSource componentInstantiatorSource,
+    ComponentInstantiatorSource componentInstantiatorSource,
 
-                                      ClassNameLocator classNameLocator,
+    ClassNameLocator classNameLocator,
 
-                                      @Inject @Symbol(InternalConstants.TAPESTRY_APP_PACKAGE_PARAM)
-                                      String appRootPackage,
+    @Inject
+    @Symbol(InternalConstants.TAPESTRY_APP_PACKAGE_PARAM)
+    String appRootPackage,
 
-                                      Collection<LibraryMapping> mappings)
+    Collection<LibraryMapping> mappings)
     {
         this.logger = logger;
         this.componentInstantiatorSource = componentInstantiatorSource;
@@ -173,7 +175,8 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
      */
     private void rebuild()
     {
-        if (!needsRebuild) return;
+        if (!needsRebuild)
+            return;
 
         barrier.withWrite(new Runnable()
         {
@@ -209,7 +212,6 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
                 rebuild(folder, packageName);
         }
 
-
         showChanges("pages", savedPages, pageToClassName);
         showChanges("components", savedComponents, componentToClassName);
         showChanges("mixins", savedMixins, mixinToClassName);
@@ -219,7 +221,8 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
 
     private void showChanges(String title, Map<String, String> savedMap, Map<String, String> newMap)
     {
-        if (savedMap.equals(newMap)) return;
+        if (savedMap.equals(newMap))
+            return;
 
         Map<String, String> core = CollectionFactory.newMap();
         Map<String, String> nonCore = CollectionFactory.newMap();
@@ -267,7 +270,8 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
         {
             String className = core.get(name);
 
-            if (name.equals("")) name = "(blank)";
+            if (name.equals(""))
+                name = "(blank)";
 
             f.format(formatString, name, className);
         }
@@ -283,7 +287,7 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
     }
 
     private void fillNameToClassNameMap(String pathPrefix, String rootPackage, String subPackage,
-                                        Map<String, String> logicalNameToClassName)
+            Map<String, String> logicalNameToClassName)
     {
         String searchPackage = rootPackage + "." + subPackage;
         boolean isPage = subPackage.equals(InternalConstants.PAGES_SUBPACKAGE);
@@ -323,15 +327,17 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
         }
     }
 
-
     /**
      * Converts a fully qualified class name to a logical name
-     *
-     * @param className  fully qualified class name
-     * @param pathPrefix prefix to be placed on the logical name (to identify the library from in which the class
-     *                   lives)
-     * @param startPos   start position within the class name to extract the logical name (i.e., after the final '.' in
-     *                   "rootpackage.pages.").
+     * 
+     * @param className
+     *            fully qualified class name
+     * @param pathPrefix
+     *            prefix to be placed on the logical name (to identify the library from in which the class
+     *            lives)
+     * @param startPos
+     *            start position within the class name to extract the logical name (i.e., after the final '.' in
+     *            "rootpackage.pages.").
      * @param stripTerms
      * @return a short logical name in folder format ('.' replaced with '/')
      */
@@ -357,10 +363,12 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
 
             sep = "/";
 
-            if (stripTerms) logicalName = stripTerm(term, logicalName);
+            if (stripTerms)
+                logicalName = stripTerm(term, logicalName);
         }
 
-        if (logicalName.equals("")) logicalName = unstripped;
+        if (logicalName.equals(""))
+            logicalName = unstripped;
 
         builder.append(sep);
         builder.append(logicalName);
@@ -372,7 +380,8 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
     {
         for (String term : splitter.split(input))
         {
-            if (term.equals("")) continue;
+            if (term.equals(""))
+                continue;
 
             terms.add(term);
         }
@@ -400,8 +409,7 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
 
     private boolean isCaselessSuffix(String suffix, String string)
     {
-        return string.regionMatches(true, string.length() - suffix.length(), suffix, 0, suffix
-                .length());
+        return string.regionMatches(true, string.length() - suffix.length(), suffix, 0, suffix.length());
     }
 
     public String resolvePageNameToClassName(final String pageName)
@@ -412,8 +420,9 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
             {
                 String result = locate(pageName, pageToClassName);
 
-                if (result == null) throw new IllegalArgumentException(
-                        ServicesMessages.couldNotResolvePageName(pageName, presentableNames(pageToClassName)));
+                if (result == null)
+                    throw new UnknownValueException(String.format("Unable to resolve '%s' to a page class name.",
+                            pageName), new AvailableValues("page names", presentableNames(pageToClassName)));
 
                 return result;
             }
@@ -456,8 +465,10 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
             {
                 String result = locate(componentType, componentToClassName);
 
-                if (result == null) throw new IllegalArgumentException(ServicesMessages
-                        .couldNotResolveComponentType(componentType, presentableNames(componentToClassName)));
+                if (result == null)
+                    throw new UnknownValueException(String.format("Unable to resolve '%s' to a component class name.",
+                            componentType), new AvailableValues("component types",
+                            presentableNames(componentToClassName)));
 
                 return result;
             }
@@ -491,8 +502,9 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
             {
                 String result = locate(mixinType, mixinToClassName);
 
-                if (result == null) throw new IllegalArgumentException(
-                        ServicesMessages.couldNotResolveMixinType(mixinType, presentableNames(mixinToClassName)));
+                if (result == null)
+                    throw new UnknownValueException(String.format("Unable to resolve '%s' to a mixin class name.",
+                            mixinType), new AvailableValues("mixin types", presentableNames(mixinToClassName)));
 
                 return result;
             }
@@ -502,9 +514,11 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
     /**
      * Locates a class name within the provided map, given its logical name. If not found naturally, a search inside the
      * "core" library is included.
-     *
-     * @param logicalName            name to search for
-     * @param logicalNameToClassName mapping from logical name to class name
+     * 
+     * @param logicalName
+     *            name to search for
+     * @param logicalNameToClassName
+     *            mapping from logical name to class name
      * @return the located class name or null
      */
     private String locate(String logicalName, Map<String, String> logicalNameToClassName)
@@ -516,7 +530,8 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
         // If not found, see if it exists under the core package. In this way,
         // anything in core is "inherited" (but overridable) by the application.
 
-        if (result == null) result = logicalNameToClassName.get(CORE_LIBRARY_PREFIX + logicalName);
+        if (result == null)
+            result = logicalNameToClassName.get(CORE_LIBRARY_PREFIX + logicalName);
 
         return result;
     }
@@ -531,8 +546,8 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
 
                 String result = pageClassNameToLogicalName.get(pageClassName);
 
-                if (result == null) throw new IllegalArgumentException(ServicesMessages
-                        .pageNameUnresolved(pageClassName));
+                if (result == null)
+                    throw new IllegalArgumentException(ServicesMessages.pageNameUnresolved(pageClassName));
 
                 return result;
             }
@@ -547,8 +562,9 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
             {
                 String result = locate(pageName, pageNameToCanonicalPageName);
 
-                if (result == null) throw new IllegalArgumentException(ServicesMessages
-                        .couldNotCanonicalizePageName(pageName, presentableNames(pageNameToCanonicalPageName)));
+                if (result == null)
+                    throw new UnknownValueException(String.format("Unable to resolve '%s' to a known page name.",
+                            pageName), new AvailableValues("page names", presentableNames(pageNameToCanonicalPageName)));
 
                 return result;
             }

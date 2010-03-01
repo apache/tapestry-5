@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -104,8 +104,7 @@ class ServicesMessages
 
     static String exceptionInMethodParameter(String methodDescription, int index, Throwable cause)
     {
-        return MESSAGES
-                .format("exception-in-method-parameter", methodDescription, index + 1, cause);
+        return MESSAGES.format("exception-in-method-parameter", methodDescription, index + 1, cause);
     }
 
     static String componentEventIsAborted(String methodDescription)
@@ -117,30 +116,6 @@ class ServicesMessages
     {
         return MESSAGES.format("unknown-persistent-field-strategy", stategyName, InternalUtils
                 .joinSorted(strategyNames));
-    }
-
-    static String couldNotResolvePageName(String pageName, Collection<String> pageNames)
-    {
-        return MESSAGES.format("could-not-resolve-page-name", pageName, InternalUtils
-                .joinSorted(pageNames));
-    }
-
-    static String couldNotCanonicalizePageName(String pageName, Collection<String> pageNames)
-    {
-        return MESSAGES.format("could-not-canonicalize-page-name", pageName, InternalUtils
-                .joinSorted(pageNames));
-    }
-
-    static String couldNotResolveComponentType(String componentType, Collection<String> componentTypes)
-    {
-        return MESSAGES.format("could-not-resolve-component-type", componentType, InternalUtils
-                .joinSorted(componentTypes));
-    }
-
-    static String couldNotResolveMixinType(String mixinType, Collection<String> mixinTypes)
-    {
-        return MESSAGES.format("could-not-resolve-mixin-type", mixinType, InternalUtils
-                .joinSorted(mixinTypes));
     }
 
     static String parameterNameMustBeUnique(String parameterName, String parameterValue)
@@ -155,8 +130,7 @@ class ServicesMessages
 
     static String componentInstanceIsNotAPage(Component result)
     {
-        return MESSAGES.format("component-instance-is-not-a-page", result.getComponentResources()
-                .getCompleteId());
+        return MESSAGES.format("component-instance-is-not-a-page", result.getComponentResources().getCompleteId());
     }
 
     static String failureReadingMessages(Resource url, Throwable cause)
@@ -179,23 +153,20 @@ class ServicesMessages
         return MESSAGES.format("wrong-asset-digest", resource.getPath());
     }
 
-
     static String unknownValidatorType(String validatorType, List<String> knownValidatorTypes)
     {
-        return MESSAGES.format("unknown-validator-type", validatorType, InternalUtils
-                .join(knownValidatorTypes));
+        return MESSAGES.format("unknown-validator-type", validatorType, InternalUtils.join(knownValidatorTypes));
     }
 
     static String unknownTranslatorType(String translatorType, List<String> knownTranslatorTypes)
     {
-        return MESSAGES.format("unknown-translator-type", translatorType, InternalUtils
-                .join(knownTranslatorTypes));
+        return MESSAGES.format("unknown-translator-type", translatorType, InternalUtils.join(knownTranslatorTypes));
     }
 
     static String validatorSpecificationParseError(int cursor, String specification)
     {
         return MESSAGES.format("validator-specification-parse-error", specification.charAt(cursor), cursor + 1,
-                               specification);
+                specification);
     }
 
     static String mixinsInvalidWithoutIdOrType(String elementName)
@@ -210,12 +181,10 @@ class ServicesMessages
         for (Class c : availableTypes)
             types.add(c.getName());
 
-        return MESSAGES.format("missing-from-environment", type.getName(), InternalUtils
-                .joinSorted(types));
+        return MESSAGES.format("missing-from-environment", type.getName(), InternalUtils.joinSorted(types));
     }
 
-    static String invalidComponentEventResult(Object result,
-                                              Collection<Class> configuredResultTypes)
+    static String invalidComponentEventResult(Object result, Collection<Class> configuredResultTypes)
     {
         List<String> classNames = CollectionFactory.newList();
 
@@ -238,8 +207,8 @@ class ServicesMessages
 
     static String missingApplicationStatePersistenceStrategy(String name, Collection<String> availableNames)
     {
-        return MESSAGES.format("missing-application-state-persistence-strategy", name,
-                               InternalUtils.joinSorted(availableNames));
+        return MESSAGES.format("missing-application-state-persistence-strategy", name, InternalUtils
+                .joinSorted(availableNames));
     }
 
     static String methodIsVoid(String methodName, Class inClass, String propertyExpression)
@@ -253,10 +222,10 @@ class ServicesMessages
     }
 
     static String noSuchProperty(Class targetClass, String propertyName, String propertyExpression,
-                                 Collection<String> propertyNames)
+            Collection<String> propertyNames)
     {
         return MESSAGES.format("no-such-property", targetClass.getName(), propertyName, propertyExpression,
-                               InternalUtils.joinSorted(propertyNames));
+                InternalUtils.joinSorted(propertyNames));
     }
 
     static String writeOnlyProperty(String propertyName, Class clazz, String propertyExpression)
@@ -273,7 +242,6 @@ class ServicesMessages
     {
         return MESSAGES.format("component-recursion", componentClassName);
     }
-
 
     static String clientStateMustBeSerializable(Object newValue)
     {
@@ -301,10 +269,10 @@ class ServicesMessages
     }
 
     static String missingValidatorConstraint(String validatorType, Class type, String perFormMessageKey,
-                                             String generalMessageKey)
+            String generalMessageKey)
     {
         return MESSAGES.format("missing-validator-constraint", validatorType, type.getName(), perFormMessageKey,
-                               generalMessageKey);
+                generalMessageKey);
     }
 
     static String resourcesAccessForbidden(String URI)
@@ -344,8 +312,8 @@ class ServicesMessages
 
     public static String noTranslatorForType(Class valueType, Collection<String> typeNames)
     {
-        return MESSAGES.format("no-translator-for-type", ClassFabUtils.toJavaClassName(valueType),
-                               InternalUtils.joinSorted(typeNames));
+        return MESSAGES.format("no-translator-for-type", ClassFabUtils.toJavaClassName(valueType), InternalUtils
+                .joinSorted(typeNames));
     }
 
     static String emptyBinding(String parameterName)

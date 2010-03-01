@@ -470,3 +470,9 @@ SPAN.t-render-object-error
   font: italic;
   color: red;
 }
+
+DIV.t-available-values UL LI
+{
+  list-style-type : disc;
+  margin-left: 0px;
+}
