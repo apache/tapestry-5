@@ -112,12 +112,6 @@ class ServicesMessages
         return MESSAGES.format("component-event-is-aborted", methodDescription);
     }
 
-    static String unknownPersistentFieldStrategy(String stategyName, Collection<String> strategyNames)
-    {
-        return MESSAGES.format("unknown-persistent-field-strategy", stategyName, InternalUtils
-                .joinSorted(strategyNames));
-    }
-
     static String parameterNameMustBeUnique(String parameterName, String parameterValue)
     {
         return MESSAGES.format("parameter-name-must-be-unique", parameterName, parameterValue);
@@ -303,11 +297,6 @@ class ServicesMessages
     static String pagePoolExausted(String pageName, Locale locale, int hardLimit)
     {
         return MESSAGES.format("page-pool-exausted", pageName, locale.toString(), hardLimit);
-    }
-
-    static String unknownNullFieldStrategyName(String name, Collection<String> names)
-    {
-        return MESSAGES.format("unknown-null-field-strategy-name", name, InternalUtils.joinSorted(names));
     }
 
     public static String noTranslatorForType(Class valueType, Collection<String> typeNames)

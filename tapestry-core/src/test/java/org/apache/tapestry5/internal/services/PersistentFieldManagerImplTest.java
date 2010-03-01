@@ -1,10 +1,10 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,6 +18,8 @@ import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.PersistenceConstants;
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
+import org.apache.tapestry5.ioc.internal.util.UnknownValueException;
+
 import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newList;
 import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newMap;
 import org.apache.tapestry5.model.ComponentModel;
@@ -59,11 +61,10 @@ public class PersistentFieldManagerImplTest extends InternalBaseTestCase
             manager.postChange("foo.Bar", resources, fieldName, null);
             unreachable();
         }
-        catch (RuntimeException ex)
+        catch (UnknownValueException ex)
         {
-            assertEquals(
-                    ex.getMessage(),
-                    "\'braveheart\' is not a defined persistent strategy.  Defined strategies: bar, foo.");
+            assertEquals(ex.getMessage(), "'braveheart' is not a defined persistent strategy.");
+            assertListsEquals(ex.getAvailableValues().getValues(), "bar", "foo");
         }
 
         verify();
@@ -219,10 +220,7 @@ public class PersistentFieldManagerImplTest extends InternalBaseTestCase
 
         train_getFieldPersistenceStrategy(model, fieldName, "");
 
-        train_findMeta(
-                locator,
-                SymbolConstants.PERSISTENCE_STRATEGY,
-                resources, String.class,
+        train_findMeta(locator, SymbolConstants.PERSISTENCE_STRATEGY, resources, String.class,
                 PersistenceConstants.SESSION);
 
         train_getNestedId(resources, nestedId);

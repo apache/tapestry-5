@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,8 +16,10 @@ package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.SymbolConstants;
+import org.apache.tapestry5.ioc.internal.util.AvailableValues;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.ioc.internal.util.UnknownValueException;
 import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.services.MetaDataLocator;
 import org.apache.tapestry5.services.PersistentFieldBundle;
@@ -33,8 +35,7 @@ public class PersistentFieldManagerImpl implements PersistentFieldManager
 
     private final Map<String, PersistentFieldStrategy> strategies;
 
-    public PersistentFieldManagerImpl(MetaDataLocator locator,
-                                      Map<String, PersistentFieldStrategy> strategies)
+    public PersistentFieldManagerImpl(MetaDataLocator locator, Map<String, PersistentFieldStrategy> strategies)
     {
         metaDataLocator = locator;
 
@@ -46,9 +47,8 @@ public class PersistentFieldManagerImpl implements PersistentFieldManager
         PersistentFieldStrategy result = strategies.get(strategyName);
 
         if (result == null)
-            throw new RuntimeException(ServicesMessages.unknownPersistentFieldStrategy(
-                    strategyName,
-                    strategies.keySet()));
+            throw new UnknownValueException(String.format("'%s' is not a defined persistent strategy.", strategyName),
+                    new AvailableValues("persistent field strategies", strategies));
 
         return result;
     }
@@ -73,8 +73,7 @@ public class PersistentFieldManagerImpl implements PersistentFieldManager
         }
     }
 
-    public void postChange(String pageName, ComponentResources resources, String fieldName,
-                           Object newValue)
+    public void postChange(String pageName, ComponentResources resources, String fieldName, Object newValue)
     {
         String strategyName = findStrategy(resources, fieldName);
         PersistentFieldStrategy strategy = getStrategy(strategyName);
@@ -88,7 +87,8 @@ public class PersistentFieldManagerImpl implements PersistentFieldManager
 
         String strategy = model.getFieldPersistenceStrategy(fieldName);
 
-        if (InternalUtils.isNonBlank(strategy)) return strategy;
+        if (InternalUtils.isNonBlank(strategy))
+            return strategy;
 
         return metaDataLocator.findMeta(SymbolConstants.PERSISTENCE_STRATEGY, resources, String.class);
     }

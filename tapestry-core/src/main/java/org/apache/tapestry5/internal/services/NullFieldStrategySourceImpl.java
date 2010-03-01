@@ -1,4 +1,4 @@
-// Copyright  2008 The Apache Software Foundation
+// Copyright 2008, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,6 +15,8 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.NullFieldStrategy;
+import org.apache.tapestry5.ioc.internal.util.AvailableValues;
+import org.apache.tapestry5.ioc.internal.util.UnknownValueException;
 import org.apache.tapestry5.services.NullFieldStrategySource;
 
 import java.util.Map;
@@ -33,8 +35,9 @@ public class NullFieldStrategySourceImpl implements NullFieldStrategySource
         NullFieldStrategy result = configuration.get(name);
 
         if (result != null) return result;
+        
+        throw new UnknownValueException(String.format("Unrecognized name '%s' locating a null field strategy.", name),
+                new AvailableValues("null field strategies", configuration));
 
-        throw new IllegalArgumentException(
-                ServicesMessages.unknownNullFieldStrategyName(name, configuration.keySet()));
     }
 }
