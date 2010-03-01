@@ -516,7 +516,10 @@ public class AbstractIntegrationTestSuite extends Assert implements Selenium
 
     public void open(String url)
     {
-        selenium.open(url);
+        // open the URL but ignore the HTTP status code. Necessary if we want to check
+        // for certain contents on error pages. The behaviour changed in Selenium 1.0.2.
+        // Until then the HTTP status code was just ignored.
+        selenium.open(url, "true");
     }
 
     public void openWindow(String url, String windowID)
@@ -1176,5 +1179,21 @@ public class AbstractIntegrationTestSuite extends Assert implements Selenium
     public void selectPopUp(String windowID)
     {
         selenium.selectPopUp(windowID);
+    }
+
+    /**
+     * @since 5.2.0.0
+     */
+    public String getLog()
+    {
+        return selenium.getLog();
+    }
+
+    /**
+     * @since 5.2.0.0
+     */
+    public void open(String url, String ignoreResponseCode)
+    {
+        selenium.open(url, ignoreResponseCode);
     }
 }

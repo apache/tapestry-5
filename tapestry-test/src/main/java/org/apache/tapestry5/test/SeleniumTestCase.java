@@ -406,6 +406,11 @@ public class SeleniumTestCase extends Assert implements Selenium
         return delegate.getLocation();
     }
 
+    public String getLog()
+    {
+        return delegate.getLog();
+    }
+
     public Number getMouseSpeed()
     {
         return delegate.getMouseSpeed();
@@ -674,6 +679,11 @@ public class SeleniumTestCase extends Assert implements Selenium
     public void open(String url)
     {
         delegate.open(url);
+    }
+    
+    public void open(String url, String ignoreResponseCode)
+    {
+        delegate.open(url, ignoreResponseCode);
     }
 
     public void openWindow(String url, String windowID)
@@ -1020,5 +1030,5 @@ public class SeleniumTestCase extends Assert implements Selenium
 
             throw ex;
         }
-    }
+    }    
 }

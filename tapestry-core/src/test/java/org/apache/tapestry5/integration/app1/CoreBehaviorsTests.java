@@ -568,7 +568,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     @Test
     public void base_class_must_be_in_controlled_package() throws Exception
     {
-        open(getBaseURL() + "invalidsuperclass");
+        open(getBaseURL() + "invalidsuperclass", "true");
 
         assertTextPresent("Base class org.apache.tapestry5.integration.app1.WrongPackageForBaseClass (super class of org.apache.tapestry5.integration.app1.pages.InvalidSuperClass) is not in a controlled package and is therefore not valid. You should try moving the class to package org.apache.tapestry5.integration.app1.base.");
     }

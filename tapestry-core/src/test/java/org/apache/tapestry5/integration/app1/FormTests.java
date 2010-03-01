@@ -431,7 +431,7 @@ public class FormTests extends TapestryCoreTestCase
     @Test
     public void form_action_via_get()
     {
-        open(getBaseURL() + "validform.form");
+        open(getBaseURL() + "validform.form", "true");
 
         assertTextPresent("Forms require that the request method be POST and that the t:formdata query parameter have values.");
     }
