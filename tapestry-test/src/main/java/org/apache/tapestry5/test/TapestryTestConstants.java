@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ import java.io.File;
 import java.lang.reflect.Method;
 
 import org.testng.ITestContext;
+import org.testng.xml.XmlTest;
 
 import com.thoughtworks.selenium.Selenium;
 
@@ -73,4 +74,25 @@ public class TapestryTestConstants
      * (as a {@link Method} instance).
      */
     public static final String CURRENT_TEST_METHOD_ATTRIBUTE = "tapestry.current-test-method";
+    
+    /**
+     * {@link XmlTest} parameter holding an absolute or relative path to a web app
+     * folder.
+     */
+    public static final String WEB_APP_FOLDER_PARAMETER = "tapestry.web-app-folder";
+    
+    /**
+     * {@link XmlTest} parameter holding the context path.
+     */
+    public static final String CONTEXT_PATH_PARAMTER = "tapestry.context-path";
+    
+    /**
+     * {@link XmlTest} parameter holding the web server port.
+     */
+    public static final String PORT_PARAMETER = "tapestry.port";
+    
+    /**
+     * {@link XmlTest} parameter holding the browser command to pass to Selenium.
+     */
+    public static final String BROWSER_START_COMMAND_PARAMETER = "tapestry.browser-start-command";
 }

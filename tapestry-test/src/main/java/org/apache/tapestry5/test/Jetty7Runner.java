@@ -1,4 +1,4 @@
-// Copyright 2009 The Apache Software Foundation
+// Copyright 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -77,7 +77,8 @@ public class Jetty7Runner
 
     /**
      * Needed inside Maven multi-projects to expand a path relative to the module to a complete
-     * path.
+     * path. If the path already is absolute and points to an existing directory, it will be used
+     * unchanged.
      * 
      * @param moduleLocalPath
      * @return expanded path
@@ -85,6 +86,12 @@ public class Jetty7Runner
      */
     protected String expand(String moduleLocalPath)
     {
+        File path = new File(moduleLocalPath);
+
+        // Don't expand if the path provided already exists.
+        if(path.isAbsolute() && path.isDirectory())
+            return moduleLocalPath;
+        
         return new File(TapestryTestConstants.MODULE_BASE_DIR, moduleLocalPath).getPath();
     }
 }

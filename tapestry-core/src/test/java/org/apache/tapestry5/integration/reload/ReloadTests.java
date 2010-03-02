@@ -1,4 +1,4 @@
-// Copyright 2008, 2009 The Apache Software Foundation
+// Copyright 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -27,25 +27,28 @@ import javassist.CtClass;
 import javassist.CtMethod;
 import javassist.NotFoundException;
 
+import org.apache.tapestry5.integration.TapestryCoreTestCase;
 import org.apache.tapestry5.internal.TapestryInternalUtils;
-import org.apache.tapestry5.test.AbstractIntegrationTestSuite;
+import org.apache.tapestry5.test.TapestryTestConstants;
+import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
+import org.testng.xml.XmlTest;
 
 /**
  * Integration tests designed to test Tapestry's ability to dynamically reload component classes,
- * templates and message
- * catalogs.
+ * templates and message catalogs.
  */
-public class ReloadTests extends AbstractIntegrationTestSuite
+public class ReloadTests extends TapestryCoreTestCase
 {
-    private final File webappDir;
-    private final File webinfDir;
-    private final File classesDir;
-    private final File pagesDir;
+    private File webappDir;
+    private File webinfDir;
+    private File classesDir;
+    private File pagesDir;
 
     private static final String PACKAGE = "org.apache.tapestry5.integration.reload.pages";
-
-    public ReloadTests() throws Exception
+    
+    @BeforeTest(groups = { "beforeStartup" })
+    public void beforeStartup(XmlTest xmlTest) throws Exception
     {
         String uid = Long.toHexString(System.currentTimeMillis());
 
@@ -64,8 +67,9 @@ public class ReloadTests extends AbstractIntegrationTestSuite
         copy("Index.1.properties", pagesDir, "Index.properties");
 
         createIndexClass(100);
-
-        setWebappRoot(webappDir.getAbsolutePath());
+        
+        // overwrite the web-app-folder parameter
+        xmlTest.addParameter(TapestryTestConstants.WEB_APP_FOLDER_PARAMETER, webappDir.getAbsolutePath());
 
         System.err.println("Created: " + webappDir);
     }
@@ -123,13 +127,13 @@ public class ReloadTests extends AbstractIntegrationTestSuite
     @Test
     public void reload_class() throws Exception
     {
-        open(BASE_URL);
+        openBaseURL();
 
         assertText("property", "100");
 
         createIndexClass(200);
 
-        open(BASE_URL);
+        openBaseURL();
 
         assertText("property", "200");
     }
@@ -137,13 +141,13 @@ public class ReloadTests extends AbstractIntegrationTestSuite
     @Test
     public void reload_template() throws Exception
     {
-        open(BASE_URL);
+        openBaseURL();
 
         assertText("template", "Initial Template Version");
 
         copy("Index.2.tml", webappDir, "Index.tml");
 
-        open(BASE_URL);
+        openBaseURL();
 
         assertText("template", "Updated Template Version");
     }
@@ -151,13 +155,13 @@ public class ReloadTests extends AbstractIntegrationTestSuite
     @Test
     public void reload_message_catalog() throws Exception
     {
-        open(BASE_URL);
+        openBaseURL();
 
         assertText("message", "Initial Message");
 
         copy("Index.2.properties", pagesDir, "Index.properties");
 
-        open(BASE_URL);
+        openBaseURL();
 
         assertText("message", "Updated Message");
     }

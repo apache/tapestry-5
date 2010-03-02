@@ -108,6 +108,9 @@
     <packages>
       <package name="org.apache.tapestry5.integration.reload"/>
     </packages>
+    <classes>
+      <class name="org.apache.tapestry5.test.SeleniumLauncher"/>
+    </classes>
   </test>
   
   <test name="PageTester Tests" enabled="true">

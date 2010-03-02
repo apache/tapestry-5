@@ -1,4 +1,4 @@
-// Copyright 2009 The Apache Software Foundation
+// Copyright 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,6 +14,8 @@
 
 package org.apache.tapestry5.test;
 
+import java.util.Map;
+
 import org.openqa.selenium.server.RemoteControlConfiguration;
 import org.openqa.selenium.server.SeleniumServer;
 import org.testng.ITestContext;
@@ -21,6 +23,7 @@ import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
+import org.testng.xml.XmlTest;
 
 import com.thoughtworks.selenium.CommandProcessor;
 import com.thoughtworks.selenium.DefaultSelenium;
@@ -108,6 +111,10 @@ public class SeleniumLauncher
      * </tr>
      * </table>
      * 
+     * Tests in the <em>beforeStartup</em> group will be run before the start of Selenium. This
+     * can be used to programmatically override the above parameter values. For an example see
+     * {@link org.apache.tapestry5.integration.reload.ReloadTests#beforeStartup}. 
+     * 
      * @param webAppFolder
      * @param contextPath
      * @param port
@@ -120,9 +127,10 @@ public class SeleniumLauncher
     // setup() will invoke
     // shutdown(). Best to be safe!
     @Parameters(
-    { "tapestry.web-app-folder", "tapestry.context-path", "tapestry.port",
-            "tapestry.browser-start-command" })
-    @BeforeTest
+    { TapestryTestConstants.WEB_APP_FOLDER_PARAMETER, TapestryTestConstants.CONTEXT_PATH_PARAMTER,
+            TapestryTestConstants.PORT_PARAMETER,
+            TapestryTestConstants.BROWSER_START_COMMAND_PARAMETER })
+    @BeforeTest(dependsOnGroups = { "beforeStartup" })
     public synchronized void startup(
 
     @Optional("src/main/webapp")
@@ -135,8 +143,24 @@ public class SeleniumLauncher
     int port,
 
     @Optional("*firefox")
-    String browserStartCommand, ITestContext testContext) throws Exception
+    String browserStartCommand, ITestContext testContext, XmlTest xmlTest) throws Exception
     {
+        // If a parameter is overridden in another test method, TestNG won't pass the
+        // updated value but the original (coming from testng.xml or the default).
+        Map<String, String> testParameters = xmlTest.getParameters();
+        
+        if(testParameters.containsKey(TapestryTestConstants.WEB_APP_FOLDER_PARAMETER))
+            webAppFolder = testParameters.get(TapestryTestConstants.WEB_APP_FOLDER_PARAMETER);
+        
+        if(testParameters.containsKey(TapestryTestConstants.CONTEXT_PATH_PARAMTER))
+            contextPath = testParameters.get(TapestryTestConstants.CONTEXT_PATH_PARAMTER);
+        
+        if(testParameters.containsKey(TapestryTestConstants.PORT_PARAMETER))
+            port = Integer.parseInt(testParameters.get(TapestryTestConstants.PORT_PARAMETER));
+        
+        if(testParameters.containsKey(TapestryTestConstants.BROWSER_START_COMMAND_PARAMETER))
+            browserStartCommand = testParameters.get(TapestryTestConstants.BROWSER_START_COMMAND_PARAMETER);
+        
         stopWebServer = launchWebServer(webAppFolder, contextPath, port);
 
         seleniumServer = new SeleniumServer();
