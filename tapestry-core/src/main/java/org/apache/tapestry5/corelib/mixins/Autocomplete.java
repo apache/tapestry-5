@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -41,10 +41,11 @@ import java.util.List;
  * Multiple selection on the client is enabled by binding the tokens parameter (however, the mixin doesn't help split
  * multiple selections up on the server, that is still your code's responsibility).
  * <p/>
- * The container is responsible for providing an event handler for event "providecompletions".  The context will be the
- * partial input string sent from the client.  The return value should be an array or list of completions, in
- * presentation order.  I.e.
+ * The container is responsible for providing an event handler for event "providecompletions". The context will be the
+ * partial input string sent from the client. The return value should be an array or list of completions, in
+ * presentation order. I.e.
  * <p/>
+ * 
  * <pre>
  * String[] onProvideCompletionsFromMyField(String input)
  * {
@@ -52,7 +53,8 @@ import java.util.List;
  * }
  * </pre>
  */
-@IncludeJavaScriptLibrary({ "${tapestry.scriptaculous}/controls.js", "autocomplete.js" })
+@IncludeJavaScriptLibrary(
+{ "${tapestry.scriptaculous}/controls.js", "autocomplete.js" })
 @Events(EventConstants.PROVIDE_COMPLETIONS)
 public class Autocomplete
 {
@@ -73,9 +75,6 @@ public class Autocomplete
     private RenderSupport renderSupport;
 
     @Inject
-    private Request request;
-
-    @Inject
     private TypeCoercer coercer;
 
     @Inject
@@ -94,7 +93,6 @@ public class Autocomplete
     @Inject
     private ResponseRenderer responseRenderer;
 
-
     /**
      * Overrides the default check frequency for determining whether to send a server request. The default is .4
      * seconds.
@@ -112,7 +110,7 @@ public class Autocomplete
     /**
      * Mixin afterRender phrase occurs after the component itself. This is where we write the &lt;div&gt; element and
      * the JavaScript.
-     *
+     * 
      * @param writer
      */
     void afterRender(MarkupWriter writer)
@@ -127,32 +125,33 @@ public class Autocomplete
 
         writer.element("img",
 
-                       "src", spacerImage.toClientURL(),
+        "src", spacerImage.toClientURL(),
 
-                       "class", "t-autoloader-icon " + CSSClassConstants.INVISIBLE,
+        "class", "t-autoloader-icon " + CSSClassConstants.INVISIBLE,
 
-                       "alt", "",
+        "alt", "",
 
-                       "id", loaderId);
+        "id", loaderId);
         writer.end();
 
         writer.element("div",
 
-                       "id", menuId,
+        "id", menuId,
 
-                       "class", "t-autocomplete-menu");
+        "class", "t-autocomplete-menu");
         writer.end();
 
         Link link = resources.createEventLink(EVENT_NAME);
-
 
         JSONObject config = new JSONObject();
         config.put("paramName", PARAM_NAME);
         config.put("indicator", loaderId);
 
-        if (resources.isBound("minChars")) config.put("minChars", minChars);
+        if (resources.isBound("minChars"))
+            config.put("minChars", minChars);
 
-        if (resources.isBound("frequency")) config.put("frequency", frequency);
+        if (resources.isBound("frequency"))
+            config.put("frequency", frequency);
 
         if (resources.isBound("tokens"))
         {
@@ -168,10 +167,9 @@ public class Autocomplete
         renderSupport.addInit("autocompleter", new JSONArray(id, menuId, link.toAbsoluteURI(), config));
     }
 
-    Object onAutocomplete()
+    Object onAutocomplete(@QueryParameter(PARAM_NAME)
+    String input)
     {
-        String input = request.getParameter(PARAM_NAME);
-
         final Holder<List> matchesHolder = Holder.create();
 
         // Default it to an empty list.
@@ -190,7 +188,8 @@ public class Autocomplete
             }
         };
 
-        resources.triggerEvent(EventConstants.PROVIDE_COMPLETIONS, new Object[] { input }, callback);
+        resources.triggerEvent(EventConstants.PROVIDE_COMPLETIONS, new Object[]
+        { input }, callback);
 
         ContentType contentType = responseRenderer.findContentType(this);
 
@@ -208,8 +207,9 @@ public class Autocomplete
      * <p/>
      * <p/>
      * This implementation does nothing.
-     *
-     * @param config parameters object
+     * 
+     * @param config
+     *            parameters object
      */
     protected void configure(JSONObject config)
     {
@@ -219,9 +219,11 @@ public class Autocomplete
      * Generates the markup response that will be returned to the client; this should be an &lt;ul&gt; element with
      * nested &lt;li&gt; elements. Subclasses may override this to produce more involved markup (including images and
      * CSS class attributes).
-     *
-     * @param writer  to write the list to
-     * @param matches list of matching objects, each should be converted to a string
+     * 
+     * @param writer
+     *            to write the list to
+     * @param matches
+     *            list of matching objects, each should be converted to a string
      */
     protected void generateResponseMarkup(MarkupWriter writer, List matches)
     {

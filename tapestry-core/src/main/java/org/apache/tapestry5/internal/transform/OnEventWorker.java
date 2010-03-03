@@ -20,16 +20,22 @@ import java.util.Map;
 
 import org.apache.tapestry5.EventContext;
 import org.apache.tapestry5.annotations.OnEvent;
+import org.apache.tapestry5.annotations.QueryParameter;
+import org.apache.tapestry5.internal.services.ComponentClassCache;
 import org.apache.tapestry5.ioc.Predicate;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.runtime.ComponentEvent;
 import org.apache.tapestry5.services.ClassTransformation;
 import org.apache.tapestry5.services.ComponentClassTransformWorker;
 import org.apache.tapestry5.services.ComponentMethodAdvice;
 import org.apache.tapestry5.services.ComponentMethodInvocation;
+import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.TransformConstants;
 import org.apache.tapestry5.services.TransformMethod;
+import org.apache.tapestry5.services.TransformMethodSignature;
 
 /**
  * Provides implementations of the
@@ -38,6 +44,13 @@ import org.apache.tapestry5.services.TransformMethod;
  */
 public class OnEventWorker implements ComponentClassTransformWorker
 {
+
+    private final Request request;
+
+    private final TypeCoercer typeCoercer;
+
+    private final ComponentClassCache classCache;
+
     /**
      * Stores a couple of special parameter type mappings that are used when matching the entire event context
      * (either as Object[] or EventContext).
@@ -77,6 +90,13 @@ public class OnEventWorker implements ComponentClassTransformWorker
         });
     }
 
+    public OnEventWorker(Request request, TypeCoercer typeCoercer, ComponentClassCache classCache)
+    {
+        this.request = request;
+        this.typeCoercer = typeCoercer;
+        this.classCache = classCache;
+    }
+
     public void transform(ClassTransformation transformation, MutableComponentModel model)
     {
         List<TransformMethod> methods = matchEventHandlerMethods(transformation);
@@ -84,7 +104,7 @@ public class OnEventWorker implements ComponentClassTransformWorker
         if (methods.isEmpty())
             return;
 
-        List<EventHandlerMethodInvoker> invokers = toInvokers(methods);
+        List<EventHandlerMethodInvoker> invokers = toInvokers(transformation.getClassName(), methods);
 
         updateModelWithHandledEvents(model, invokers);
 
@@ -175,19 +195,19 @@ public class OnEventWorker implements ComponentClassTransformWorker
         });
     }
 
-    private List<EventHandlerMethodInvoker> toInvokers(List<TransformMethod> methods)
+    private List<EventHandlerMethodInvoker> toInvokers(String componentClassName, List<TransformMethod> methods)
     {
         List<EventHandlerMethodInvoker> result = CollectionFactory.newList();
 
         for (TransformMethod method : methods)
         {
-            result.add(toInvoker(method));
+            result.add(toInvoker(componentClassName, method));
         }
 
         return result;
     }
 
-    private EventHandlerMethodInvoker toInvoker(TransformMethod method)
+    private EventHandlerMethodInvoker toInvoker(final String componentClassName, TransformMethod method)
     {
         OnEvent annotation = method.getAnnotation(OnEvent.class);
 
@@ -196,7 +216,9 @@ public class OnEventWorker implements ComponentClassTransformWorker
         String eventType = extractEventType(methodName, annotation);
         String componentId = extractComponentId(methodName, annotation);
 
-        String[] parameterTypes = method.getSignature().getParameterTypes();
+        final TransformMethodSignature signature = method.getSignature();
+
+        String[] parameterTypes = signature.getParameterTypes();
 
         if (parameterTypes.length == 0)
             return new BaseEventHandlerMethodInvoker(method, eventType, componentId);
@@ -206,16 +228,27 @@ public class OnEventWorker implements ComponentClassTransformWorker
         // I'd refactor a bit more of this if Java had covariant return types.
 
         int contextIndex = 0;
-        boolean catchAll = false;
 
-        for (final String type : parameterTypes)
+        for (int i = 0; i < parameterTypes.length; i++)
         {
+            String type = parameterTypes[i];
+
             EventHandlerMethodParameterSource source = parameterTypeToSource.get(type);
 
             if (source != null)
             {
                 sources.add(source);
-                catchAll = true;
+                continue;
+            }
+
+            QueryParameter parameterAnnotation = method.getParameterAnnotation(i, QueryParameter.class);
+
+            if (parameterAnnotation != null)
+            {
+                String parameterName = parameterAnnotation.value();
+
+                sources.add(createQueryParameterSource(componentClassName, signature, i, parameterName, type,
+                        parameterAnnotation.allowBlank()));
                 continue;
             }
 
@@ -224,12 +257,54 @@ public class OnEventWorker implements ComponentClassTransformWorker
 
             final int parameterIndex = contextIndex++;
 
-            sources.add(createParameterSource(type, parameterIndex));
+            sources.add(createEventContextSource(type, parameterIndex));
         }
 
-        int minContextCount = catchAll ? 0 : contextIndex;
+        return createInvoker(method, eventType, componentId, contextIndex, sources);
+    }
 
-        return createInvoker(method, eventType, componentId, minContextCount, sources);
+    private EventHandlerMethodParameterSource createQueryParameterSource(final String componentClassName,
+            final TransformMethodSignature signature, final int parameterIndex, final String parameterName,
+            final String parameterTypeName, final boolean allowBlank)
+    {
+        return new EventHandlerMethodParameterSource()
+        {
+            @SuppressWarnings("unchecked")
+            public Object valueForEventHandlerMethodParameter(ComponentEvent event)
+            {
+                try
+                {
+                    String parameterValue = request.getParameter(parameterName);
+
+                    if (!allowBlank && InternalUtils.isBlank(parameterValue))
+                        throw new RuntimeException(String.format(
+                                "The value for query parameter '%s' was blank, but a non-blank value is needed.",
+                                parameterName));
+
+                    Class parameterType = classCache.forName(parameterTypeName);
+
+                    Object coerced = typeCoercer.coerce(parameterValue, parameterType);
+
+                    if (parameterType.isPrimitive() && coerced == null)
+                        throw new RuntimeException(
+                                String
+                                        .format(
+                                                "Query parameter '%s' evaluates to null, but the event method parameter is type %s, a primitive.",
+                                                parameterName, parameterType.getName()));
+
+                    return coerced;
+                }
+                catch (Exception ex)
+                {
+                    throw new RuntimeException(
+                            String
+                                    .format(
+                                            "Unable process query parameter '%s' as parameter #%d of event handler method %s (in class %s): %s",
+                                            parameterName, parameterIndex + 1, signature, componentClassName,
+                                            InternalUtils.toMessage(ex)), ex);
+                }
+            }
+        };
     }
 
     private EventHandlerMethodInvoker createInvoker(TransformMethod method, String eventType, String componentId,
@@ -260,7 +335,7 @@ public class OnEventWorker implements ComponentClassTransformWorker
         };
     }
 
-    private EventHandlerMethodParameterSource createParameterSource(final String type, final int parameterIndex)
+    private EventHandlerMethodParameterSource createEventContextSource(final String type, final int parameterIndex)
     {
         return new EventHandlerMethodParameterSource()
         {

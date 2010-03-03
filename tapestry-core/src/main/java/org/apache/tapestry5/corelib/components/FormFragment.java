@@ -1,10 +1,10 @@
-// Copyright 2008, 2009 The Apache Software Foundation
+// Copyright 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,7 +14,13 @@
 
 package org.apache.tapestry5.corelib.components;
 
-import org.apache.tapestry5.*;
+import org.apache.tapestry5.BindingConstants;
+import org.apache.tapestry5.CSSClassConstants;
+import org.apache.tapestry5.ClientElement;
+import org.apache.tapestry5.ComponentAction;
+import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.RenderSupport;
 import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.SupportsInformalParameters;
@@ -23,31 +29,44 @@ import org.apache.tapestry5.corelib.internal.FormSupportAdapter;
 import org.apache.tapestry5.corelib.internal.HiddenFieldPositioner;
 import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.services.*;
+import org.apache.tapestry5.services.ClientBehaviorSupport;
+import org.apache.tapestry5.services.ClientDataEncoder;
+import org.apache.tapestry5.services.Environment;
+import org.apache.tapestry5.services.FormSupport;
+import org.apache.tapestry5.services.HiddenFieldLocationRules;
 import org.slf4j.Logger;
 
 /**
- * A FormFragment is a portion of a Form that may be selectively displayed.  Form elements inside a FormFragment will
- * automatically bypass validation when the fragment is invisible.  The trick is to also bypass server-side form
- * processing for such fields when the form is submitted; client-side logic "removes" the {@link
- * org.apache.tapestry5.corelib.components.Form#FORM_DATA form data} for the fragment if it is invisible when the form
+ * A FormFragment is a portion of a Form that may be selectively displayed. Form elements inside a FormFragment will
+ * automatically bypass validation when the fragment is invisible. The trick is to also bypass server-side form
+ * processing for such fields when the form is submitted; client-side logic "removes" the
+ * {@link org.apache.tapestry5.corelib.components.Form#FORM_DATA form data} for the fragment if it is invisible when the
+ * form
  * is submitted; alternately, client-side logic can simply remove the form fragment element (including its visible and
  * hidden fields) to prevent server-side processing.
  * <p/>
- * The client-side element has a new property, formFragment, added to it.  The formFragment object has new methods to
- * control the client-side behavior of the fragment: <dl> <dt>hide()</dt> <dd>Hides the element, using the configured
- * client-side animation effect.</dd> <dt>hideAndRemove()</dt> <dd>As with hide(), but the element is removed from the
- * DOM after being hidden.</dd> <dt>show()</dt> <dd>Makes the element visible, using the configured client-side
- * animation effect.</dd> <dt>toggle()</dt> <dd>Invokes hide() or show() as necessary.</dd> <dt>setVisible()</dt>
- * <dd>Passed a boolean parameter, invokes hide() or show() as necessary.</dd> </dl>
- *
+ * The client-side element has a new property, formFragment, added to it. The formFragment object has new methods to
+ * control the client-side behavior of the fragment:
+ * <dl>
+ * <dt>hide()</dt>
+ * <dd>Hides the element, using the configured client-side animation effect.</dd>
+ * <dt>hideAndRemove()</dt>
+ * <dd>As with hide(), but the element is removed from the DOM after being hidden.</dd>
+ * <dt>show()</dt>
+ * <dd>Makes the element visible, using the configured client-side animation effect.</dd>
+ * <dt>toggle()</dt>
+ * <dd>Invokes hide() or show() as necessary.</dd>
+ * <dt>setVisible()</dt>
+ * <dd>Passed a boolean parameter, invokes hide() or show() as necessary.</dd>
+ * </dl>
+ * 
  * @see org.apache.tapestry5.corelib.mixins.TriggerFragment
  */
 @SupportsInformalParameters
 public class FormFragment implements ClientElement
 {
     /**
-     * Determines if the fragment is intially visible or initially invisible (the default). This is only used when
+     * Determines if the fragment is initially visible or initially invisible (the default). This is only used when
      * rendering; when the form is submitted, the hidden field value is used to determine whether the elements within
      * the fragment should be processed (or ignored if still invisible).
      */
@@ -82,15 +101,11 @@ public class FormFragment implements ClientElement
     @Parameter(name = "id", defaultPrefix = BindingConstants.LITERAL)
     private String idParameter;
 
-
     @Inject
     private Environment environment;
 
     @Environmental
     private RenderSupport renderSupport;
-
-    @Inject
-    private ComponentSource componentSource;
 
     @Inject
     private ComponentResources resources;
@@ -101,9 +116,6 @@ public class FormFragment implements ClientElement
     private String clientId;
 
     private ComponentActionSink componentActions;
-
-    @Inject
-    private Request request;
 
     @Inject
     private Logger logger;
@@ -166,7 +178,7 @@ public class FormFragment implements ClientElement
             }
         };
 
-        // Tada!  Now all the enclosed components will use our override of FormSupport,
+        // Tada! Now all the enclosed components will use our override of FormSupport,
         // until we pop it off.
 
         environment.push(FormSupport.class, override);
@@ -176,20 +188,18 @@ public class FormFragment implements ClientElement
     /**
      * Closes the &lt;div&gt; tag and pops off the {@link org.apache.tapestry5.services.FormSupport} environmental
      * override.
-     *
+     * 
      * @param writer
      */
     void afterRender(MarkupWriter writer)
     {
-        hiddenFieldPositioner.getElement().attributes(
-                "type", "hidden",
+        hiddenFieldPositioner.getElement().attributes("type", "hidden",
 
-                "name", Form.FORM_DATA,
+        "name", Form.FORM_DATA,
 
-                "id", clientId + "-hidden",
+        "id", clientId + "-hidden",
 
-                "value", componentActions.getClientData()
-        );
+        "value", componentActions.getClientData());
 
         writer.end(); // div
 

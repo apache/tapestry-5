@@ -555,7 +555,7 @@ public final class TapestryModule
         configuration.add("MixinAfter", new MixinAfterWorker());
         configuration.add("Component", new ComponentWorker(resolver));
         configuration.add("Mixin", new MixinWorker(resolver));
-        configuration.add("OnEvent", new OnEventWorker());
+        configuration.addInstance("OnEvent", OnEventWorker.class);
         configuration.add("SupportsInformalParameters", new SupportsInformalParametersWorker());
         configuration.addInstance("InjectPage", InjectPageWorker.class);
         configuration.addInstance("InjectContainer", InjectContainerWorker.class);

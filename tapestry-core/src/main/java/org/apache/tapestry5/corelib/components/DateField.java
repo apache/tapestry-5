@@ -1,10 +1,10 @@
-// Copyright 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2007, 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,8 +14,21 @@
 
 package org.apache.tapestry5.corelib.components;
 
+import java.text.DateFormat;
+import java.text.DateFormatSymbols;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
+
 import org.apache.tapestry5.*;
-import org.apache.tapestry5.annotations.*;
+import org.apache.tapestry5.annotations.Environmental;
+import org.apache.tapestry5.annotations.Events;
+import org.apache.tapestry5.annotations.IncludeJavaScriptLibrary;
+import org.apache.tapestry5.annotations.IncludeStylesheet;
+import org.apache.tapestry5.annotations.Parameter;
+import org.apache.tapestry5.annotations.QueryParameter;
 import org.apache.tapestry5.corelib.base.AbstractField;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
@@ -25,30 +38,21 @@ import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.ComponentDefaultProvider;
 import org.apache.tapestry5.services.Request;
 
-import java.text.DateFormat;
-import java.text.DateFormatSymbols;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Locale;
-
 /**
  * A component used to collect a provided date from the user using a client-side JavaScript calendar. Non-JavaScript
  * clients can simply type into a text field.
  * <p/>
  * One wierd aspect here is that, because client-side JavaScript formatting and parsing is so limited, we (currently)
  * use Ajax to send the user's input to the server for parsing (before raising the popup) and formatting (after closing
- * the popup).  Wierd and inefficient, but easier than writing client-side JavaScript for that purpose.
+ * the popup). Wierd and inefficient, but easier than writing client-side JavaScript for that purpose.
  * <p/>
- * Tapestry's DateField component is a wrapper around <a href="http://webfx.eae.net/dhtml/datepicker/datepicker.html">WebFX
- * DatePicker</a>.
+ * Tapestry's DateField component is a wrapper around <a
+ * href="http://webfx.eae.net/dhtml/datepicker/datepicker.html">WebFX DatePicker</a>.
  */
 // TODO: More testing; see https://issues.apache.org/jira/browse/TAPESTRY-1844
 @IncludeStylesheet("${tapestry.datepicker}/css/datepicker.css")
-@IncludeJavaScriptLibrary({ "${tapestry.datepicker}/js/datepicker.js",
-        "datefield.js"
-})
+@IncludeJavaScriptLibrary(
+{ "${tapestry.datepicker}/js/datepicker.js", "datefield.js" })
 @Events(EventConstants.VALIDATE)
 public class DateField extends AbstractField
 {
@@ -59,7 +63,7 @@ public class DateField extends AbstractField
     private Date value;
 
     /**
-     * Request attribute set to true if localization for the client-side DatePicker has been configured.  Used to ensure
+     * Request attribute set to true if localization for the client-side DatePicker has been configured. Used to ensure
      * that this only occurs once, regardless of how many DateFields are on the page.
      */
     static final String LOCALIZATION_CONFIGURED_FLAG = "tapestry.DateField.localization-configured";
@@ -73,7 +77,7 @@ public class DateField extends AbstractField
     private DateFormat format;
 
     /**
-     * If true, then  the text field will be hidden, and only the icon for the date picker will be visible. The default
+     * If true, then the text field will be hidden, and only the icon for the date picker will be visible. The default
      * is false.
      */
     @Parameter
@@ -124,7 +128,6 @@ public class DateField extends AbstractField
     private static final String ERROR = "error";
     private static final String INPUT_PARAMETER = "input";
 
-
     DateFormat defaultFormat()
     {
         DateFormat shortDateFormat = DateFormat.getDateInstance(DateFormat.SHORT, locale);
@@ -154,12 +157,12 @@ public class DateField extends AbstractField
     /**
      * Ajax event handler, used when initiating the popup. The client sends the input value form the field to the server
      * to parse it according to the server-side format. The response contains a "result" key of the formatted date in a
-     * format acceptable to the JavaScript Date() constructor.  Alternately, an "error" key indicates the the input was
+     * format acceptable to the JavaScript Date() constructor. Alternately, an "error" key indicates the the input was
      * not formatted correct.
      */
-    JSONObject onParse()
+    JSONObject onParse(@QueryParameter(INPUT_PARAMETER)
+    String input)
     {
-        String input = request.getParameter(INPUT_PARAMETER);
         JSONObject response = new JSONObject();
 
         try
@@ -181,10 +184,9 @@ public class DateField extends AbstractField
      * milliseconds since the epoch, to the server, which reformats it according to the server side format and returns
      * the result.
      */
-    JSONObject onFormat()
+    JSONObject onFormat(@QueryParameter(INPUT_PARAMETER)
+    String input)
     {
-        String input = request.getParameter(INPUT_PARAMETER);
-
         JSONObject response = new JSONObject();
 
         try
@@ -207,27 +209,28 @@ public class DateField extends AbstractField
     {
         String value = tracker.getInput(this);
 
-        if (value == null) value = formatCurrentValue();
+        if (value == null)
+            value = formatCurrentValue();
 
         String clientId = getClientId();
         String triggerId = clientId + "-trigger";
 
         writer.element("input",
 
-                       "type", hideTextField ? "hidden" : "text",
+        "type", hideTextField ? "hidden" : "text",
 
-                       "name", getControlName(),
+        "name", getControlName(),
 
-                       "id", clientId,
+        "id", clientId,
 
-                       "value", value);
+        "value", value);
 
         writeDisabled(writer);
-        
+
         putPropertyNameIntoBeanValidationContext("value");
 
         validate.render(writer);
-        
+
         removePropertyNameFromBeanValidationContext();
 
         resources.renderInformalParameters(writer);
@@ -240,13 +243,13 @@ public class DateField extends AbstractField
 
         writer.element("img",
 
-                       "id", triggerId,
+        "id", triggerId,
 
-                       "class", "t-calendar-trigger",
+        "class", "t-calendar-trigger",
 
-                       "src", icon.toClientURL(),
+        "src", icon.toClientURL(),
 
-                       "alt", "[Show]");
+        "alt", "[Show]");
         writer.end(); // img
 
         JSONObject setup = new JSONObject();
@@ -298,13 +301,14 @@ public class DateField extends AbstractField
 
     private void writeDisabled(MarkupWriter writer)
     {
-        if (isDisabled()) writer.attributes("disabled", "disabled");
+        if (isDisabled())
+            writer.attributes("disabled", "disabled");
     }
-
 
     private String formatCurrentValue()
     {
-        if (value == null) return "";
+        if (value == null)
+            return "";
 
         return format.format(value);
     }
@@ -340,7 +344,7 @@ public class DateField extends AbstractField
         {
             tracker.recordError(this, ex.getMessage());
         }
-        
+
         removePropertyNameFromBeanValidationContext();
     }
 

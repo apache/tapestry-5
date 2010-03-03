@@ -98,6 +98,8 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
         private Boolean override;
 
+        private List<List<Annotation>> parameterAnnotations;
+
         TransformMethodImpl(CtMethod method, boolean added)
         {
             this.method = method;
@@ -123,6 +125,39 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
                 annotations = extractAnnotations(method);
 
             return findAnnotationInList(annotationClass, annotations);
+        }
+
+        public <A extends Annotation> A getParameterAnnotation(int index, Class<A> annotationType)
+        {
+            if (parameterAnnotations == null)
+                extractParameterAnnotations();
+
+            return findAnnotationInList(annotationType, parameterAnnotations.get(index));
+        }
+
+        private void extractParameterAnnotations()
+        {
+            int count = sig.getParameterTypes().length;
+
+            parameterAnnotations = CollectionFactory.newList();
+
+            for (int parameterIndex = 0; parameterIndex < count; parameterIndex++)
+            {
+                List<Annotation> annotations = extractAnnotationsForParameter(parameterIndex);
+
+                parameterAnnotations.add(annotations);
+            }
+        }
+
+        private List<Annotation> extractAnnotationsForParameter(int parameterIndex)
+        {
+            List<Annotation> result = CollectionFactory.newList();
+
+            Object[] parameterAnnotations = method.getAvailableParameterAnnotations()[parameterIndex];
+
+            addAnnotationsToList(result, parameterAnnotations, false);
+
+            return result;
         }
 
         public TransformMethodSignature getSignature()
@@ -316,7 +351,6 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
             return methodName;
         }
-
 
         public String getMethodIdentifier()
         {

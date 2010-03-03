@@ -243,12 +243,14 @@ public class Select extends AbstractField
         }
     }
 
-    Object onChange()
+    Object onChange(
+
+    @QueryParameter(FORM_COMPONENTID_PARAMETER)
+    final String formId,
+
+    @QueryParameter(value = "t:selectvalue", allowBlank = true)
+    final String changedValue)
     {
-        final String formId = this.request.getParameter(FORM_COMPONENTID_PARAMETER);
-
-        final String changedValue = this.request.getParameter("t:selectvalue");
-
         final Object newValue = toValue(changedValue);
 
         final Holder<Object> holder = Holder.create();

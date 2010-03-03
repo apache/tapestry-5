@@ -1,4 +1,4 @@
-// Copyright 2008, 2009 The Apache Software Foundation
+// Copyright 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,26 +14,33 @@
 
 package org.apache.tapestry5.corelib.components;
 
+import java.io.IOException;
+
 import org.apache.tapestry5.*;
 import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.Events;
 import org.apache.tapestry5.annotations.Parameter;
+import org.apache.tapestry5.annotations.QueryParameter;
 import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.corelib.data.InsertPosition;
 import org.apache.tapestry5.corelib.internal.ComponentActionSink;
 import org.apache.tapestry5.corelib.internal.HiddenFieldPositioner;
 import org.apache.tapestry5.corelib.internal.InternalFormSupport;
 import org.apache.tapestry5.dom.Element;
-import org.apache.tapestry5.internal.services.ComponentResultProcessorWrapper;
 import org.apache.tapestry5.internal.services.PageRenderQueue;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.internal.util.IdAllocator;
-import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.json.JSONObject;
-import org.apache.tapestry5.services.*;
+import org.apache.tapestry5.services.ClientBehaviorSupport;
+import org.apache.tapestry5.services.ClientDataEncoder;
+import org.apache.tapestry5.services.ComponentSource;
+import org.apache.tapestry5.services.Environment;
+import org.apache.tapestry5.services.FormSupport;
+import org.apache.tapestry5.services.Heartbeat;
+import org.apache.tapestry5.services.HiddenFieldLocationRules;
+import org.apache.tapestry5.services.PartialMarkupRenderer;
+import org.apache.tapestry5.services.PartialMarkupRendererFilter;
 import org.slf4j.Logger;
-
-import java.io.IOException;
 
 /**
  * A way to add new content to an existing Form. The FormInjector emulates its tag from the template (or uses a
@@ -104,9 +111,6 @@ public class FormInjector implements ClientElement
     private ComponentResources resources;
 
     @Inject
-    private Request request;
-
-    @Inject
     private Environment environment;
 
     @Inject
@@ -175,7 +179,13 @@ public class FormInjector implements ClientElement
      * event notification is what will ultimately render (typically, its a Block). However, we do a <em>lot</em> of
      * tricks to provide the desired FormSupport around the what renders.
      */
-    void onInject(EventContext context) throws IOException
+    void onInject(EventContext context,
+
+    @QueryParameter(FORM_CLIENTID_PARAMETER)
+    final String formClientId,
+
+    @QueryParameter(FORM_COMPONENTID_PARAMETER)
+    String formComponentId) throws IOException
     {
         resources.triggerContextEvent(EventConstants.ACTION, context, eventCallback);
 
@@ -183,10 +193,6 @@ public class FormInjector implements ClientElement
             return;
 
         // Here's where it gets very, very tricky.
-
-        final String formClientId = readParameterValue(FORM_CLIENTID_PARAMETER);
-
-        String formComponentId = request.getParameter(FORM_COMPONENTID_PARAMETER);
 
         final Form form = (Form) componentSource.getComponent(formComponentId);
 
@@ -237,16 +243,5 @@ public class FormInjector implements ClientElement
         };
 
         pageRenderQueue.addPartialMarkupRendererFilter(filter);
-    }
-
-    private String readParameterValue(String parameterName)
-    {
-        String value = request.getParameter(parameterName);
-
-        if (InternalUtils.isBlank(value))
-            throw new RuntimeException(String.format(
-                    "Query parameter '%s' was blank, but should have been specified in the request.", parameterName));
-
-        return value;
     }
 }

@@ -14,6 +14,8 @@
 
 package org.apache.tapestry5.services;
 
+import java.lang.annotation.Annotation;
+
 import org.apache.tapestry5.ioc.AnnotationProvider;
 
 /**
@@ -71,4 +73,14 @@ public interface TransformMethod extends AnnotationProvider, Comparable<Transfor
      */
     boolean isOverride();
 
+    /**
+     * Gets an annotation on a parameter of the method.
+     * 
+     * @param index
+     *            index of parameter
+     * @param annotationType
+     *            type of annotation to check for
+     * @return the annotation, if found, or null
+     */
+    <A extends Annotation> A getParameterAnnotation(int index, Class<A> annotationType);
 }
