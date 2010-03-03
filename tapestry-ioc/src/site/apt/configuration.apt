@@ -26,7 +26,7 @@ Tapestry IoC Configurations
   A central service uses this configuration to select a particular FileService interface:
   
 +------+
-  public static FileServicer buildFileServicerDispatcher(Map<String,FileServicer> contributions)
+  public static FileServiceDispatcher buildFileServicerDispatcher(Map<String,FileServicer> contributions)
   {
     return new FileServiceDispatcherImpl(contributions);
   } 
@@ -35,7 +35,7 @@ Tapestry IoC Configurations
   In order to provide a value for the contribution parameter, Tapestry will <collect> contributions
   from service contribution methods. It will ensure that the keys and values match the generic
   types shown (String for the key, FileServicer for the value). The map will be assembled and passed into
-  the service builder method, and from there, into the FileServiceDispatcherImpl contructor.
+  the service builder method, and from there, into the FileServiceDispatcherImpl constructor.
   
   So where do the values come from?  Service contributor methods, methods that start with
   "contribute":
