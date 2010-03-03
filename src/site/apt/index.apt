@@ -34,6 +34,8 @@ What is Apache Tapestry?
 
 New And Of Note
 
+  * New {{{apidocs/org/apache/tapestry5/annotations/QueryParameter.html}QueryParameter}} annotation for parameters to event handler methods.
+
   * Submit components can now be used to cancel a form (bypassing client-side validation).
 
   * Tapestry no longer uses a StAX parser to parse templates (it uses a standard SAX parser), meaning fewer dependencies and
@@ -42,9 +44,9 @@ New And Of Note
   * A {{{guide/testing.html}guide to integration testing}} is now available.
   
   * The {{{guide/persist.html}@SessionAttribute}} annotation can be used on component fields to
-    read write HttpSession attributes.
+    read and update HttpSession attributes.
   
-  * The {{{tapestry-beanvalidator}JSR-303 Integration Library}} is now available.
+  * The {{{tapestry-beanvalidator}JSR-303 Bean Validation Integration Library}} is now available.
 
   []
   

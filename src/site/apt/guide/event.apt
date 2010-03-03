@@ -25,7 +25,7 @@ Component Events
   whether it was succesful or not.
   
   In Tapestry 4, you would configure a parameter of a component with the name of a method to invoke
-  when a certain event occured, usually a request from the client.
+  when a certain event occurred, usually a request from the client.
   
   This has some limitations, including the fact that only a single method could be invoked, and that
   it tied together a component and a method based on a method name, which required careful coordination
@@ -52,7 +52,7 @@ Component Events
 </p>
 +---+
 
-  The ActionLink component creates an action URL.
+  The ActionLink component creates an component event request URL, which the event type set to "action".
   
   The URL identifies the page that contains the component ("chooser"), the type of event
   (unless it is "action", the default and most common event type),
@@ -174,6 +174,26 @@ Event Context
   {{{../apidocs/org/apache/tapestry5/ValueEncoder.html}ValueEncoder}} is used to convert between client-side strings
   and server-side objects.  The {{{../apidocs/org/apache/tapestry5/services/ValueEncoderSource.html}ValueEncoderSource}} service
   provides the necessary value encoders.
+
+@QueryParameter Annotation
+
+  As an alternative to <positional> parameters in the URL, it is also possible to extract query parameter values from the URL
+  . The {{{../apidocs/org/apache/tapestry5/annotations/QueryParameter.html}QueryParameter}} annotation may be placed on an
+  event handler method parameter. The annotation gives the name of the query parameter to extract; the value will be coerced
+  to the type of the parameter. 
+  
+----
+  void onClientUpdate(@QueryParameter("row") int row)
+  {
+    ...
+  }  
+----
+  
+  You are free to mix-and-match positional context parameters with named query parameters.
+  
+  This is very useful when building an Ajax-oriented component. The URL constructed by Tapestry can, on the client side, have
+  query parameters attached to it. On the server-side, those parameters are extracted and converted automatically into 
+  event handler method parameters.  This is preferable to trying to "edit" the Tapestry-constructed URL on the client side.
 
 * Method Matching
 
