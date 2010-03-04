@@ -32,17 +32,11 @@ public interface TransformField extends AnnotationProvider, Comparable<Transform
     String getName();
 
     /**
-     * Returns the field's type, either a primitive name
+     * Returns the field's type, either a primitive name (such as "int" or "boolean")
      * or a fully qualified class name, or an array type name
-     * (in Java source syntax).
+     * (in Java source syntax, i.e., "java.lang.String[]").
      */
     String getType();
-
-    /**
-     * True if the field is a primitive type, not an object type.
-     * Array types are object types.
-     */
-    boolean isPrimitive();
 
     /**
      * Claims the field so as to ensure that only a single annotation is applied to any single field.
@@ -82,7 +76,6 @@ public interface TransformField extends AnnotationProvider, Comparable<Transform
      *            used to replace read and write access to the field
      */
     void replaceAccess(FieldValueConduit conduit);
-
 
     /** Returns the modifiers for the field. */
     int getModifiers();

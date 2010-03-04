@@ -31,9 +31,9 @@ public class MethodAccessSubject
         return marker;
     }
 
-    public void publicVoidNoArgs()
+    protected void protectedVoidNoArgs()
     {
-        marker = "publicVoidNoArgs";
+        marker = "protectedVoidNoArgs";
     }
 
     public void publicVoidNoArgsFail()

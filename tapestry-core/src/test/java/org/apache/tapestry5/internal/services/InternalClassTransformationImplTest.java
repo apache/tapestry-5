@@ -19,8 +19,6 @@ import static java.util.Arrays.asList;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Target;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -41,17 +39,14 @@ import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.internal.InternalComponentResources;
 import org.apache.tapestry5.internal.model.MutableComponentModelImpl;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
-import org.apache.tapestry5.internal.transform.FieldRemoval;
 import org.apache.tapestry5.internal.transform.InheritedAnnotation;
 import org.apache.tapestry5.internal.transform.TestPackageAwareLoader;
 import org.apache.tapestry5.internal.transform.pages.*;
-import org.apache.tapestry5.internal.util.Holder;
 import org.apache.tapestry5.ioc.internal.services.ClassFactoryClassPool;
 import org.apache.tapestry5.ioc.internal.services.ClassFactoryImpl;
 import org.apache.tapestry5.ioc.internal.services.CtClassSourceImpl;
 import org.apache.tapestry5.ioc.services.ClassFactory;
 import org.apache.tapestry5.ioc.services.PropertyAccess;
-import org.apache.tapestry5.ioc.util.BodyBuilder;
 import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.runtime.ComponentResourcesAware;
@@ -534,7 +529,7 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
     public static final TransformMethodSignature RUN = new TransformMethodSignature("run");
 
     @Test
-    public void access_to_public_void_no_args_method() throws Exception
+    public void access_to_protected_void_no_args_method() throws Exception
     {
         Object instance = transform(MethodAccessSubject.class, new ComponentClassTransformWorker()
         {
@@ -542,7 +537,8 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
             {
                 transformation.addImplementedInterface(Runnable.class);
 
-                TransformMethodSignature targetMethodSignature = new TransformMethodSignature("publicVoidNoArgs");
+                TransformMethodSignature targetMethodSignature = new TransformMethodSignature(Modifier.PROTECTED,
+                        "void", "protectedVoidNoArgs", null, null);
                 TransformMethod pvna = transformation.getOrCreateMethod(targetMethodSignature);
 
                 final MethodAccess pvnaAccess = pvna.getAccess();
@@ -565,7 +561,7 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
 
         r.run();
 
-        assertEquals(access.get(r, "marker"), "publicVoidNoArgs");
+        assertEquals(access.get(r, "marker"), "protectedVoidNoArgs");
     }
 
     @Test
@@ -1038,8 +1034,7 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
 
         verify();
     }
-   
- 
+
     private Component instantiate(Class<?> expectedClass, InternalClassTransformation ct,
             InternalComponentResources resources) throws Exception
     {
@@ -1048,8 +1043,6 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
         return ins.newInstance(resources);
     }
 
-
-  
     @Test
     public void get_method_identifier() throws Exception
     {

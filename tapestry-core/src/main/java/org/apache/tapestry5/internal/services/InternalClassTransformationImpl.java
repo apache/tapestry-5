@@ -196,18 +196,18 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
         private MethodAccess createMethodAccess()
         {
-            if (isPublic())
-                return createPublicMethodAccess();
+            if (isPrivate())
+                return createPrivateMethodAccess();
 
-            return createNonPublicMethodAccess();
+            return createNonPrivateMethodAccess();
         }
 
-        private boolean isPublic()
+        private boolean isPrivate()
         {
-            return Modifier.isPublic(sig.getModifiers());
+            return Modifier.isPrivate(sig.getModifiers());
         }
 
-        private MethodAccess createPublicMethodAccess()
+        private MethodAccess createNonPrivateMethodAccess()
         {
             // For a public method, given the instance, we can just invoke the method directly
             // from the MethodAccess object.
@@ -271,8 +271,12 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
         private MethodAccess instantiateMethodAccessFromBody(String body)
         {
-            ClassFab cf = classFactory.newClass(ClassFabUtils.generateClassName(MethodAccess.class),
-                    AbstractMethodAccess.class);
+            // The access object is created in the same package as the component, so that it can access
+            // protected and package private methods.
+            String accessClassName = String.format("%s$MethodAccess_%s_%s", getClassName(), sig.getMethodName(),
+                    ClassFabUtils.nextUID());
+
+            ClassFab cf = classFactory.newClass(accessClassName, AbstractMethodAccess.class);
 
             cf.addMethod(Modifier.PUBLIC, INVOKE_SIGNATURE, body);
 
@@ -293,7 +297,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
             }
         }
 
-        private MethodAccess createNonPublicMethodAccess()
+        private MethodAccess createPrivateMethodAccess()
         {
             // As with Java inner classes, we have to create a static bridge method.
 
@@ -410,8 +414,6 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
         private final String name, type;
 
-        private final boolean primitive;
-
         private boolean added;
 
         private List<Annotation> annotations;
@@ -437,8 +439,6 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
             {
                 throw new RuntimeException(ex);
             }
-
-            primitive = ClassFabUtils.isPrimitiveType(type);
         }
 
         @Override
@@ -461,11 +461,6 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         public String getType()
         {
             return type;
-        }
-
-        public boolean isPrimitive()
-        {
-            return primitive;
         }
 
         public <T extends Annotation> T getAnnotation(Class<T> annotationClass)

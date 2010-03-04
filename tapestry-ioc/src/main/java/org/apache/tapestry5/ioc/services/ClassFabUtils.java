@@ -30,7 +30,7 @@ public final class ClassFabUtils
 {
     private static final AtomicLong UID_GENERATOR = new AtomicLong(System.currentTimeMillis());
 
-    private static String nextUID()
+    public static String nextUID()
     {
         return Long.toHexString(UID_GENERATOR.getAndIncrement());
     }
