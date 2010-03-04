@@ -1282,7 +1282,9 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
         assertTextPresent(
                 "An unexpected application exception has occurred.",
 
-                "Failed to bind parameter of mixin BindParameterNoSuchParameter:throwexception$echovalue2 (type org.apache.tapestry5.integration.app1.mixins.EchoValue2). Containing component org.apache.tapestry5.corelib.components.Any does not contain a formal parameter matching any of boundParameter, value. Formal parameters: clientId, element.");
+                "Failure binding parameter field 'boundParameter' of mixin BindParameterNoSuchParameter:throwexception$echovalue2 (type org.apache.tapestry5.integration.app1.mixins.EchoValue2)",
+
+                "Containing component org.apache.tapestry5.corelib.components.Any does not contain a formal parameter matching any of boundParameter, value.");
     }
 
     @Test
