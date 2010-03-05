@@ -15,7 +15,7 @@
 package org.apache.tapestry5.integration.app1.pages;
 
 import org.apache.tapestry5.annotations.*;
-import org.apache.tapestry5.integration.app1.components.Output;
+import org.apache.tapestry5.integration.app1.components.OutputDate;
 import org.apache.tapestry5.integration.app1.mixins.Emphasis;
 
 import java.sql.Date;
@@ -31,13 +31,13 @@ public class InstanceMixin
     @Component(parameters =
             { "value=date2", "format=format", "test=showEmphasis" })
     @Mixins("Emphasis")
-    private Output output2;
+    private OutputDate output2;
 
     @SuppressWarnings("unused")
     @Component(parameters =
             { "value=date3", "format=format", "test=showEmphasis" })
     @MixinClasses(Emphasis.class)
-    private Output output3;
+    private OutputDate output3;
 
     @Retain
     private final Format format = DateFormat.getDateInstance(DateFormat.MEDIUM, Locale.US);

@@ -718,6 +718,9 @@ public class FormTests extends TapestryCoreTestCase
         clickAndWait(SUBMIT);
 
         assertTextPresent("Apr 6, 1978");
+        
+        //TAP5-1043
+        clickAndWait("link=clear");
     }
 
     @Test

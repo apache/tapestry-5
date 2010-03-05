@@ -24,4 +24,9 @@ public class ShowCalendarHolder
     @Property
     private CalendarHolder holder;
     
+    void onActionFromClear()
+    {
+        holder = null;
+    }
+    
 }

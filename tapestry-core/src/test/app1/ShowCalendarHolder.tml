@@ -4,5 +4,7 @@
   <h1>BeanEditor Calendar Demo</h1>
 
   <t:beandisplay object="holder" />
+  
+  <t:actionlink t:id="clear">clear</t:actionlink>
 
 </html>

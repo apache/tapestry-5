@@ -53,6 +53,10 @@ public class PropertyDisplayBlocks
     public Date getCalendarDate() 
     {
         Calendar calendar = (Calendar) context.getPropertyValue();
+        
+        if(calendar == null)
+            return null;
+        
         return calendar.getTime();
      }
 

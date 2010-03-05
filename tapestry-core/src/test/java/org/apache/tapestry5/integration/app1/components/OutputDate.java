@@ -22,7 +22,7 @@ import java.text.Format;
 /**
  * component that formats a value and outputs it.
  */
-public class Output
+public class OutputDate
 {
     @Parameter(required = true)
     private Object value;
