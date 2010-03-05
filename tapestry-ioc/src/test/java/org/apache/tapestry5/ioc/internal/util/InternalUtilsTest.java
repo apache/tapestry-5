@@ -377,7 +377,7 @@ public class InternalUtilsTest extends IOCTestCase
         {
             assertEquals(
                     ex.getMessage(),
-                    "Marker annotation class org.apache.tapestry5.ioc.internal.util.NotRetainedRuntime is not valid because it is not visible at runtime. Add a @RetentionPolicy(RUNTIME) to the class.");
+                    "Marker annotation class org.apache.tapestry5.ioc.internal.util.NotRetainedRuntime is not valid because it is not visible at runtime. Add a @Retention(RetentionPolicy.RUNTIME) to the class.");
         }
     }
 
