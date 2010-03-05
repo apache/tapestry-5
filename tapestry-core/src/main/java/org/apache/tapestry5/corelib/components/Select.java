@@ -153,9 +153,6 @@ public class Select extends AbstractField
     private RenderSupport renderSupport;
 
     @Inject
-    private ComponentResources componentResources;
-
-    @Inject
     private HiddenFieldLocationRules rules;
 
     @Inject
@@ -268,7 +265,7 @@ public class Select extends AbstractField
             }
         };
 
-        this.componentResources.triggerEvent(EventConstants.VALUE_CHANGED, new Object[]
+        this.resources.triggerEvent(EventConstants.VALUE_CHANGED, new Object[]
         { newValue }, callback);
 
         final PartialMarkupRendererFilter filter = new PartialMarkupRendererFilter()
