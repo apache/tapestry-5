@@ -14,15 +14,15 @@
 
 package org.apache.tapestry5.ioc.internal;
 
+import java.util.Collection;
+import java.util.Set;
+
 import org.apache.tapestry5.ioc.AdvisorDef;
 import org.apache.tapestry5.ioc.ModuleBuilderSource;
-import org.apache.tapestry5.ioc.def.ContributionDef;
+import org.apache.tapestry5.ioc.def.ContributionDef2;
 import org.apache.tapestry5.ioc.def.DecoratorDef;
 import org.apache.tapestry5.ioc.def.ServiceDef;
 import org.apache.tapestry5.ioc.def.ServiceDef2;
-
-import java.util.Collection;
-import java.util.Set;
 
 /**
  * A module within the Tapestry IoC registry. Each Module is constructed around a corresponding module builder instance;
@@ -70,9 +70,9 @@ public interface Module extends ModuleBuilderSource
     Set<AdvisorDef> findMatchingServiceAdvisors(ServiceDef serviceDef);
 
     /**
-     * Finds any contributions that are targetted at the indicated service.
+     * Finds any contributions that are targeted at the indicated service.
      */
-    Set<ContributionDef> getContributorDefsForService(String serviceId);
+    Set<ContributionDef2> getContributorDefsForService(ServiceDef serviceDef);
 
     /**
      * Locates services with the {@link org.apache.tapestry5.ioc.annotations.EagerLoad} annotation and generates proxies

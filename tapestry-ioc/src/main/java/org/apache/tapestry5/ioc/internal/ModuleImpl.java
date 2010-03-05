@@ -14,20 +14,48 @@
 
 package org.apache.tapestry5.ioc.internal;
 
-import org.apache.tapestry5.ioc.*;
-import org.apache.tapestry5.ioc.def.*;
-import org.apache.tapestry5.ioc.internal.services.JustInTimeObjectCreator;
-import org.apache.tapestry5.ioc.internal.util.*;
-import org.apache.tapestry5.ioc.services.*;
-import org.slf4j.Logger;
+import static java.lang.String.format;
 
 import java.io.ObjectStreamException;
 import java.io.Serializable;
-import static java.lang.String.format;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.Map;
+import java.util.Set;
+
+import org.apache.tapestry5.ioc.AdvisorDef;
+import org.apache.tapestry5.ioc.Invokable;
+import org.apache.tapestry5.ioc.ObjectCreator;
+import org.apache.tapestry5.ioc.ObjectLocator;
+import org.apache.tapestry5.ioc.OperationTracker;
+import org.apache.tapestry5.ioc.ServiceBuilderResources;
+import org.apache.tapestry5.ioc.ServiceLifecycle2;
+import org.apache.tapestry5.ioc.ServiceResources;
+import org.apache.tapestry5.ioc.annotations.Local;
+import org.apache.tapestry5.ioc.def.ContributionDef;
+import org.apache.tapestry5.ioc.def.ContributionDef2;
+import org.apache.tapestry5.ioc.def.DecoratorDef;
+import org.apache.tapestry5.ioc.def.ModuleDef;
+import org.apache.tapestry5.ioc.def.ModuleDef2;
+import org.apache.tapestry5.ioc.def.ServiceDef;
+import org.apache.tapestry5.ioc.def.ServiceDef2;
+import org.apache.tapestry5.ioc.internal.services.JustInTimeObjectCreator;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.internal.util.ConcurrentBarrier;
+import org.apache.tapestry5.ioc.internal.util.Defense;
+import org.apache.tapestry5.ioc.internal.util.InjectionResources;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.ioc.internal.util.MapInjectionResources;
+import org.apache.tapestry5.ioc.services.AspectDecorator;
+import org.apache.tapestry5.ioc.services.ClassFab;
+import org.apache.tapestry5.ioc.services.ClassFactory;
+import org.apache.tapestry5.ioc.services.MethodSignature;
+import org.apache.tapestry5.ioc.services.Status;
+import org.slf4j.Logger;
 
 public class ModuleImpl implements Module
 {
@@ -497,17 +525,40 @@ public class ModuleImpl implements Module
         }
     }
 
-    public Set<ContributionDef> getContributorDefsForService(String serviceId)
+    public Set<ContributionDef2> getContributorDefsForService(ServiceDef serviceDef)
     {
-        Set<ContributionDef> result = CollectionFactory.newSet();
+        Set<ContributionDef2> result = CollectionFactory.newSet();
 
-        for (ContributionDef def : moduleDef.getContributionDefs())
+        for (ContributionDef next : moduleDef.getContributionDefs())
         {
-            if (def.getServiceId().equals(serviceId)) result.add(def);
+            ContributionDef2 def = InternalUtils.toContributionDef2(next);
+            
+            if (serviceDef.getServiceId().equals(def.getServiceId())) 
+            {
+                result.add(def);
+            }
+            else
+            {
+                Set<Class> markers = CollectionFactory.newSet(def.getMarkers());
+                
+                if(markers.contains(Local.class))
+                {
+                    if(moduleDef.getServiceDef(serviceDef.getServiceId()) == null)
+                        continue;
+                    
+                    markers.remove(Local.class);
+                }
+                
+                if(serviceDef.getMarkers().equals(markers) && serviceDef.getServiceInterface() == def.getServiceInterface())
+                {
+                    result.add(def);
+                }
+            }
         }
 
         return result;
     }
+    
 
     public ServiceDef2 getServiceDef(String serviceId)
     {

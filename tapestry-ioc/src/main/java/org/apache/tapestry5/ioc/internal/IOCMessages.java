@@ -16,6 +16,7 @@ package org.apache.tapestry5.ioc.internal;
 
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.def.ContributionDef;
+import org.apache.tapestry5.ioc.def.ContributionDef2;
 import org.apache.tapestry5.ioc.def.ServiceDef;
 import org.apache.tapestry5.ioc.def.ServiceDef2;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
@@ -311,5 +312,15 @@ final class IOCMessages
     static String noConventionServiceImplementationFound(Class clazz)
     {
         return MESSAGES.format("no-convention-service-implementation-found", clazz.getName(), clazz.getName());
+    }
+    
+    static String contributionForNonexistentService(ContributionDef cd)
+    {
+        return MESSAGES.format("contribution-for-nonexistent-service", cd, cd.getServiceId());
+    }
+    
+    static String contributionForUnqualifiedService(ContributionDef2 cd)
+    {
+        return MESSAGES.format("contribution-for-unqualified-service", cd, cd.getServiceInterface(), cd.getMarkers());
     }
 }

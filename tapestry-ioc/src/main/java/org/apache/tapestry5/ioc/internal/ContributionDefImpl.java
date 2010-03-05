@@ -16,30 +16,38 @@ package org.apache.tapestry5.ioc.internal;
 
 import org.apache.tapestry5.ioc.*;
 import org.apache.tapestry5.ioc.def.ContributionDef;
+import org.apache.tapestry5.ioc.def.ContributionDef2;
 import org.apache.tapestry5.ioc.internal.util.*;
 import org.apache.tapestry5.ioc.services.ClassFactory;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Logger;
 
-public class ContributionDefImpl implements ContributionDef
+public class ContributionDefImpl implements ContributionDef2
 {
     private final String serviceId;
 
     private final Method contributorMethod;
 
     private final ClassFactory classFactory;
+    
+    private final Set<Class> markers;
+    
+    private final Class serviceInterface;
 
     private static final Class[] CONFIGURATION_TYPES = new Class[] {Configuration.class, MappedConfiguration.class,
             OrderedConfiguration.class};
 
-    public ContributionDefImpl(String serviceId, Method contributorMethod, ClassFactory classFactory)
+    public ContributionDefImpl(String serviceId, Method contributorMethod, ClassFactory classFactory, Class serviceInterface, Set<Class> markers)
     {
         this.serviceId = serviceId;
         this.contributorMethod = contributorMethod;
         this.classFactory = classFactory;
+        this.serviceInterface = serviceInterface;
+        this.markers = markers;
     }
 
     @Override
@@ -121,5 +129,15 @@ public class ContributionDefImpl implements ContributionDef
         if (fail != null)
             throw new RuntimeException(IOCMessages
                     .contributionMethodError(contributorMethod, fail), fail);
+    }
+
+    public Set<Class> getMarkers()
+    {
+        return markers;
+    }
+
+    public Class getServiceInterface()
+    {
+        return serviceInterface;
     }
 }

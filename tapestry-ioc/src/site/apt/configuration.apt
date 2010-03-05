@@ -81,6 +81,47 @@ Tapestry IoC Configurations
   a much later date. With no change to the FileServicerDispatcher service or its module class,
   the new services "plug into" the overall solution, simply by having their JAR's on runtime classpath. 
   
+Naming conventions vs. Annotations
+	
+	If you prefer annotations over naming conventions you can use the {{{apidocs/org/apache/tapestry5/ioc/annotations/Contribute.html}@Contribute}}
+	annotation. As of version 5.2 this annotation that may be placed on a contributor method of a module instead of starting the methods name 
+	with "contribute". The value of the annotation is the type of the service to contribute into. The following example is an alternative for the contribution method above.
+	
++------+
+  @Contribute(FileServiceDispatcher.class)
+  public static void arbitraryMethodName(MappedConfiguration<String,FileServicer> configuration)
+  {
+    configuration.add("doc", new WordFileServicer());
+    configuration.add("ppt", new PowerPointFileServicer());
+  }  
++------+
+
+	If you have several implementations of a service interface, you have to disambiguate the services. For this purpose the 
+	{{{apidocs/org/apache/tapestry5/ioc/annotations/Marker.html}@Marker}} annotation should be placed on the contributor method.
+	
++------+
+  @Contribute(FileServiceDispatcher.class)
+  @Marker({Red.class, Blue.class})
+  public static void arbitraryMethodName(MappedConfiguration<String,FileServicer> configuration)
+  {
+    configuration.add("doc", new WordFileServicer());
+    configuration.add("ppt", new PowerPointFileServicer());
+  }  
++------+  
+
+	If the {{{apidocs/org/apache/tapestry5/ioc/annotations/Local.html}@Local}} annotation is present, 
+	then contribution is made only to the configuration of a service being constructed in the same module.
+
++------+
+  @Contribute(FileServiceDispatcher.class)
+  @Marker(Local.class)
+  public static void arbitraryMethodName(MappedConfiguration<String,FileServicer> configuration)
+  {
+    configuration.add("doc", new WordFileServicer());
+    configuration.add("ppt", new PowerPointFileServicer());
+  }  
++------+ 
+
 Configuration Types
 
   There are three different styles of configurations (with matching contributions):

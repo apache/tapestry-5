@@ -195,10 +195,54 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         for (ContributionDef cd : contributionDefs)
         {
             String serviceId = cd.getServiceId();
-
-            if (!serviceIdToModule.containsKey(serviceId)) { throw new IllegalArgumentException(String.format(
-                    "Contribution %s is for service '%s', which does not exist.", cd, serviceId)); }
+            
+            ContributionDef2 cd2 = InternalUtils.toContributionDef2(cd);
+            
+            if (cd2.getServiceId() != null)
+            {
+                if (!serviceIdToModule.containsKey(serviceId)) 
+                { 
+                    throw new IllegalArgumentException(IOCMessages.contributionForNonexistentService(cd)); 
+                }
+            }
+            else if(!isContributionForExistentService(cd2))
+            {
+                throw new IllegalArgumentException(IOCMessages.contributionForUnqualifiedService(cd2));
+            }
         }
+            
+    }
+    
+    private boolean isContributionForExistentService(ContributionDef2 cd)
+    {
+        Set<Class> markers = CollectionFactory.newSet(cd.getMarkers());
+        markers.remove(Local.class); 
+
+        for (Class markerClass : markers)
+        {
+            boolean exists = existsServiceDefWithTypeAndMarker(cd.getServiceInterface(), markerClass);
+            
+            if(!exists)
+                return false;
+        }
+        
+        return true;
+    }
+    
+    private boolean existsServiceDefWithTypeAndMarker(Class serviceInterface, Class markerClass)
+    {
+        List<ServiceDef2> serviceDefs = markerToServiceDef.get(markerClass);
+        
+        if(serviceDefs == null)
+            return false;
+        
+        for (ServiceDef2 serviceDef : serviceDefs)
+        {
+            if(serviceDef.getServiceInterface() == serviceInterface)
+                return true;
+        }
+        
+        return false;
     }
 
     /**
@@ -444,7 +488,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
             final Module module)
     {
         String serviceId = serviceDef.getServiceId();
-        Set<ContributionDef> contributions = module.getContributorDefsForService(serviceId);
+        Set<ContributionDef2> contributions = module.getContributorDefsForService(serviceDef);
 
         if (contributions.isEmpty())
             return;
@@ -479,7 +523,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
             final Module module)
     {
         String serviceId = serviceDef.getServiceId();
-        Set<ContributionDef> contributions = module.getContributorDefsForService(serviceId);
+        Set<ContributionDef2> contributions = module.getContributorDefsForService(serviceDef);
 
         if (contributions.isEmpty())
             return;
@@ -515,7 +559,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
             final Module module)
     {
         String serviceId = serviceDef.getServiceId();
-        Set<ContributionDef> contributions = module.getContributorDefsForService(serviceId);
+        Set<ContributionDef2> contributions = module.getContributorDefsForService(serviceDef);
 
         if (contributions.isEmpty())
             return;

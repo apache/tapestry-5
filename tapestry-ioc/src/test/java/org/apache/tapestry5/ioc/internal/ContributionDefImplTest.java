@@ -14,14 +14,19 @@
 
 package org.apache.tapestry5.ioc.internal;
 
-import org.apache.tapestry5.ioc.*;
+import java.lang.reflect.Method;
+
+import org.apache.tapestry5.ioc.Configuration;
+import org.apache.tapestry5.ioc.MappedConfiguration;
+import org.apache.tapestry5.ioc.ModuleBuilderSource;
+import org.apache.tapestry5.ioc.OperationTracker;
+import org.apache.tapestry5.ioc.OrderedConfiguration;
+import org.apache.tapestry5.ioc.ServiceResources;
 import org.apache.tapestry5.ioc.annotations.InjectService;
 import org.apache.tapestry5.ioc.def.ContributionDef;
 import org.apache.tapestry5.ioc.test.IOCTestCase;
 import org.slf4j.Logger;
 import org.testng.annotations.Test;
-
-import java.lang.reflect.Method;
 
 public class ContributionDefImplTest extends IOCTestCase implements ModuleBuilderSource
 {
@@ -51,7 +56,7 @@ public class ContributionDefImplTest extends IOCTestCase implements ModuleBuilde
         replay();
 
         Method m = findMethod("contributeUnordered");
-        ContributionDef def = new ContributionDefImpl("foo.Bar", m, null);
+        ContributionDef def = new ContributionDefImpl("foo.Bar", m, null, null, null);
 
         def.contribute(this, serviceResources, configuration);
 
@@ -76,7 +81,7 @@ public class ContributionDefImplTest extends IOCTestCase implements ModuleBuilde
         replay();
 
         Method m = findMethod("contributeUnorderedParameter");
-        ContributionDef def = new ContributionDefImpl("foo.Bar", m, null);
+        ContributionDef def = new ContributionDefImpl("foo.Bar", m, null, null, null);
 
         def.contribute(this, resources, configuration);
 
@@ -96,7 +101,7 @@ public class ContributionDefImplTest extends IOCTestCase implements ModuleBuilde
         replay();
 
         Method m = findMethod("contributeUnorderedWrongParameter");
-        ContributionDef def = new ContributionDefImpl("foo.Bar", m, null);
+        ContributionDef def = new ContributionDefImpl("foo.Bar", m, null, null, null);
 
         try
         {
@@ -136,7 +141,7 @@ public class ContributionDefImplTest extends IOCTestCase implements ModuleBuilde
         replay();
 
         Method m = findMethod("contributeOrderedParameter");
-        ContributionDef def = new ContributionDefImpl("foo.Bar", m, null);
+        ContributionDef def = new ContributionDefImpl("foo.Bar", m, null, null, null);
 
         def.contribute(this, resources, configuration);
 
@@ -162,7 +167,7 @@ public class ContributionDefImplTest extends IOCTestCase implements ModuleBuilde
         replay();
 
         Method m = findMethod("contributeMappedParameter");
-        ContributionDef def = new ContributionDefImpl("foo.Bar", m, null);
+        ContributionDef def = new ContributionDefImpl("foo.Bar", m, null, null, null);
 
         def.contribute(this, resources, configuration);
 

@@ -17,6 +17,7 @@ package org.apache.tapestry5.ioc.internal;
 import org.apache.tapestry5.ioc.*;
 import org.apache.tapestry5.ioc.annotations.*;
 import org.apache.tapestry5.ioc.def.ContributionDef;
+import org.apache.tapestry5.ioc.def.ContributionDef2;
 import org.apache.tapestry5.ioc.def.DecoratorDef;
 import org.apache.tapestry5.ioc.def.ModuleDef2;
 import org.apache.tapestry5.ioc.def.ServiceDef;
@@ -218,7 +219,7 @@ public class DefaultModuleDefImpl implements ModuleDef2, ServiceDefAccumulator
                 continue;
             }
 
-            if (name.startsWith(CONTRIBUTE_METHOD_NAME_PREFIX))
+            if (name.startsWith(CONTRIBUTE_METHOD_NAME_PREFIX) || m.isAnnotationPresent(Contribute.class))
             {
                 addContributionDef(m);
                 remainingMethods.remove(m);
@@ -236,7 +237,12 @@ public class DefaultModuleDefImpl implements ModuleDef2, ServiceDefAccumulator
 
     private void addContributionDef(Method method)
     {
-        String serviceId = stripMethodPrefix(method, CONTRIBUTE_METHOD_NAME_PREFIX);
+        Contribute annotation = method.getAnnotation(Contribute.class);
+        		
+        
+        Class serviceInterface = annotation==null?null:annotation.value();
+        
+        String serviceId = annotation!=null?null:stripMethodPrefix(method, CONTRIBUTE_METHOD_NAME_PREFIX);
 
         Class returnType = method.getReturnType();
         if (!returnType.equals(void.class))
@@ -260,8 +266,11 @@ public class DefaultModuleDefImpl implements ModuleDef2, ServiceDefAccumulator
 
         if (type == null)
             throw new RuntimeException(IOCMessages.noContributionParameter(method));
+        
+        Set<Class> markers = CollectionFactory.newSet();
+        markers.addAll(extractMarkers(method));
 
-        ContributionDef def = new ContributionDefImpl(serviceId, method, classFactory);
+        ContributionDef2 def = new ContributionDefImpl(serviceId, method, classFactory, serviceInterface, markers);
 
         contributionDefs.add(def);
     }

@@ -38,6 +38,7 @@ import org.apache.tapestry5.ioc.annotations.InjectResource;
 import org.apache.tapestry5.ioc.annotations.InjectService;
 import org.apache.tapestry5.ioc.annotations.PostInjection;
 import org.apache.tapestry5.ioc.def.ContributionDef;
+import org.apache.tapestry5.ioc.def.ContributionDef2;
 import org.apache.tapestry5.ioc.def.DecoratorDef;
 import org.apache.tapestry5.ioc.def.ModuleDef;
 import org.apache.tapestry5.ioc.def.ModuleDef2;
@@ -932,5 +933,55 @@ public class InternalUtils
         Collections.sort(result);
 
         return result;
+    }
+    
+
+    
+    /**
+     * 
+     * @since 5.2.0
+     */
+    public static ContributionDef2 toContributionDef2(final ContributionDef contribution)
+    {
+        if(contribution instanceof ContributionDef2)
+            return (ContributionDef2) contribution;
+        
+        return new ContributionDef2()
+        {
+
+            public Set<Class> getMarkers()
+            {
+                return Collections.emptySet();
+            }
+
+            public Class getServiceInterface()
+            {
+                return null;
+            }
+
+            public void contribute(ModuleBuilderSource moduleSource, ServiceResources resources,
+                    Configuration configuration)
+            {
+                contribution.contribute(moduleSource, resources, configuration);
+            }
+
+            public void contribute(ModuleBuilderSource moduleSource, ServiceResources resources,
+                    OrderedConfiguration configuration)
+            {
+                contribution.contribute(moduleSource, resources, configuration);
+            }
+
+            public void contribute(ModuleBuilderSource moduleSource, ServiceResources resources,
+                    MappedConfiguration configuration)
+            {
+                contribution.contribute(moduleSource, resources, configuration);
+            }
+
+            public String getServiceId()
+            {
+                return contribution.getServiceId();
+            }
+            
+        };
     }
 }

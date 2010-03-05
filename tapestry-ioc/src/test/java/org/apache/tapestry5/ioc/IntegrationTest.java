@@ -14,18 +14,32 @@
 
 package org.apache.tapestry5.ioc;
 
-import org.apache.tapestry5.ioc.internal.*;
-import org.apache.tapestry5.ioc.services.*;
-import org.apache.tapestry5.ioc.util.NonmatchingMappedConfigurationOverrideModule;
-import org.easymock.EasyMock;
-import org.testng.Assert;
-import org.testng.annotations.Test;
-
 import java.io.File;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.sql.PreparedStatement;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.tapestry5.ioc.internal.AlphabetModule;
+import org.apache.tapestry5.ioc.internal.AlphabetModule2;
+import org.apache.tapestry5.ioc.internal.ExceptionInConstructorModule;
+import org.apache.tapestry5.ioc.internal.ExtraPublicConstructorsModule;
+import org.apache.tapestry5.ioc.internal.IOCInternalTestCase;
+import org.apache.tapestry5.ioc.internal.PrivateConstructorModule;
+import org.apache.tapestry5.ioc.internal.UpcaseService;
+import org.apache.tapestry5.ioc.services.Builtin;
+import org.apache.tapestry5.ioc.services.ServiceActivity;
+import org.apache.tapestry5.ioc.services.ServiceActivityScoreboard;
+import org.apache.tapestry5.ioc.services.Status;
+import org.apache.tapestry5.ioc.services.TypeCoercer;
+import org.apache.tapestry5.ioc.util.NonmatchingMappedConfigurationOverrideModule;
+import org.easymock.EasyMock;
+import org.testng.Assert;
+import org.testng.annotations.Test;
 
 /**
  * A few tests that are easiest (or even just possible) by building a Registry and trying out a few
@@ -1416,5 +1430,67 @@ public class IntegrationTest extends IOCInternalTestCase
         Greeter g = r.getService(Greeter.class);
 
         assertEquals(g.getGreeting(), "ADVICE IS EASY!");
+    }
+    
+    @Test
+    public void contribute_by_annotation()
+    {
+        Registry r = buildRegistry(AlphabetModule.class, AlphabetModule2.class);
+
+        NameListHolder greek = r.getService("Greek", NameListHolder.class);
+
+        assertEquals(greek.getNames(), Arrays.asList("Alpha", "Beta", "Gamma", "Delta"));
+        
+        NameListHolder anotherGreek = r.getService("AnotherGreek", NameListHolder.class);
+        
+        assertEquals(anotherGreek.getNames(), Arrays.asList("Alpha", "Beta", "Gamma", "Delta", "Epsilon"));
+        
+        NameListHolder hebrew = r.getService("Hebrew", NameListHolder.class);
+        
+        assertEquals(hebrew.getNames(), Arrays.asList("Alef", "Bet", "Gimel", "Dalet", "He", "Vav"));
+        
+        NameListHolder2 holder = r.getService("ServiceWithEmptyConfiguration", NameListHolder2.class);
+        
+        assertEquals(holder.getNames(), Arrays.asList());
+        
+    }
+    
+    @Test
+    public void contribute_by_annotation_to_nonexistent_service()
+    {
+        try
+        {
+            buildRegistry(InvalidContributeDefModule2.class);
+            unreachable();
+        }
+        catch (Exception e) 
+        {
+            assertMessageContains(
+                e,
+                "Contribution org.apache.tapestry5.ioc.InvalidContributeDefModule2.provideConfiguration(OrderedConfiguration)",
+                "is for service 'interface org.apache.tapestry5.ioc.NameListHolder'",
+                "qualified with marker annotations [",
+                "interface org.apache.tapestry5.ioc.BlueMarker", 
+                "interface org.apache.tapestry5.ioc.RedMarker",
+                "], which does not exist.");
+        }
+    }
+    
+    @Test
+    public void contribute_by_annotation_wrong_marker()
+    {
+        try
+        {
+            buildRegistry(InvalidContributeDefModule3.class);
+            unreachable();
+        }
+        catch (Exception e) 
+        {
+            assertMessageContains(
+                e,
+                "Contribution org.apache.tapestry5.ioc.InvalidContributeDefModule3.provideConfiguration(OrderedConfiguration)",
+                "is for service 'interface org.apache.tapestry5.ioc.NameListHolder'",
+                "qualified with marker annotations [interface org.apache.tapestry5.ioc.BlueMarker], which does not exist.");
+        }
     }
 }

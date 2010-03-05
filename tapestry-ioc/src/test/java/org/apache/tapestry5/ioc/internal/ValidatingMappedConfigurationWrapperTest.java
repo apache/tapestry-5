@@ -14,15 +14,16 @@
 
 package org.apache.tapestry5.ioc.internal;
 
+import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newMap;
+
+import java.util.List;
+import java.util.Map;
+
 import org.apache.tapestry5.ioc.MappedConfiguration;
 import org.apache.tapestry5.ioc.ObjectLocator;
 import org.apache.tapestry5.ioc.def.ContributionDef;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newMap;
 import org.testng.annotations.Test;
-
-import java.util.List;
-import java.util.Map;
 
 public class ValidatingMappedConfigurationWrapperTest extends IOCInternalTestCase
 {
@@ -211,7 +212,7 @@ public class ValidatingMappedConfigurationWrapperTest extends IOCInternalTestCas
 
     private ContributionDef newContributionDef(String methodName)
     {
-        return new ContributionDefImpl(SERVICE_ID, findMethod(methodName), getClassFactory());
+        return new ContributionDefImpl(SERVICE_ID, findMethod(methodName), getClassFactory(), null, null);
     }
 
     public void contributionPlaceholder1()
