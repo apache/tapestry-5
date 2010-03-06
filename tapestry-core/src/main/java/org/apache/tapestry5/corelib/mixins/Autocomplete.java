@@ -14,21 +14,25 @@
 
 package org.apache.tapestry5.corelib.mixins;
 
+import java.util.Collections;
+import java.util.List;
+
 import org.apache.tapestry5.*;
-import org.apache.tapestry5.ContentType;
-import org.apache.tapestry5.annotations.*;
+import org.apache.tapestry5.annotations.Environmental;
+import org.apache.tapestry5.annotations.Events;
+import org.apache.tapestry5.annotations.IncludeJavaScriptLibrary;
+import org.apache.tapestry5.annotations.InjectContainer;
+import org.apache.tapestry5.annotations.Parameter;
+import org.apache.tapestry5.annotations.Path;
+import org.apache.tapestry5.annotations.QueryParameter;
 import org.apache.tapestry5.internal.util.Holder;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.MarkupWriterFactory;
-import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.ResponseRenderer;
 import org.apache.tapestry5.util.TextStreamResponse;
-
-import java.util.Collections;
-import java.util.List;
 
 /**
  * A mixin for a text field that allows for autocompletion of text fields. This is based on Prototype's autocompleter

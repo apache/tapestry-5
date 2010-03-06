@@ -30,7 +30,6 @@ import org.apache.tapestry5.services.ClassTransformation;
 import org.apache.tapestry5.services.ComponentClassTransformWorker;
 import org.apache.tapestry5.services.ComponentMethodAdvice;
 import org.apache.tapestry5.services.ComponentMethodInvocation;
-import org.apache.tapestry5.services.ComponentValueProvider;
 import org.apache.tapestry5.services.FieldAccess;
 import org.apache.tapestry5.services.TransformConstants;
 import org.apache.tapestry5.services.TransformField;
@@ -77,16 +76,16 @@ public abstract class AbstractIncludeAssetWorker implements ComponentClassTransf
 
         // Inside the component's page loaded callback, convert the asset paths to assets
 
-        storeLocalizedAssetsAtPageLoad(transformation, expandedPaths, access);
+        storeLocalizedAssetsAtPageLoad(transformation, model.getBaseResource(), expandedPaths, access);
 
         handleAssetsDuringSetupRenderPhase(transformation, model, access);
     }
 
     private FieldAccess createFieldForAssets(ClassTransformation transformation)
     {
-        String fieldName = transformation.addField(Modifier.PRIVATE, List.class.getName(), "includedAssets");
+        TransformField field = transformation.createField(Modifier.PRIVATE, List.class.getName(), "includedAssets");
 
-        return transformation.getField(fieldName).getAccess();
+        return field.getAccess();
     }
 
     private void handleAssetsDuringSetupRenderPhase(ClassTransformation transformation, MutableComponentModel model,
@@ -111,8 +110,8 @@ public abstract class AbstractIncludeAssetWorker implements ComponentClassTransf
         model.addRenderPhase(SetupRender.class);
     }
 
-    private void storeLocalizedAssetsAtPageLoad(ClassTransformation transformation, final List<String> expandedPaths,
-            final FieldAccess access)
+    private void storeLocalizedAssetsAtPageLoad(ClassTransformation transformation, final Resource baseResource,
+            final List<String> expandedPaths, final FieldAccess access)
     {
         ComponentMethodAdvice advice = new ComponentMethodAdvice()
         {
@@ -122,7 +121,7 @@ public abstract class AbstractIncludeAssetWorker implements ComponentClassTransf
 
                 ComponentResources resources = invocation.getComponentResources();
 
-                List<Asset> assets = convertPathsToAssets(resources, expandedPaths);
+                List<Asset> assets = convertPathsToAssets(baseResource, resources.getLocale(), expandedPaths);
 
                 access.write(invocation.getInstance(), assets);
             }
@@ -145,13 +144,9 @@ public abstract class AbstractIncludeAssetWorker implements ComponentClassTransf
         return result;
     }
 
-    private List<Asset> convertPathsToAssets(ComponentResources resources, List<String> assetPaths)
+    private List<Asset> convertPathsToAssets(Resource baseResource, Locale locale, List<String> assetPaths)
     {
-        Resource baseResource = resources.getComponentModel().getBaseResource();
-
         List<Asset> result = CollectionFactory.newList();
-
-        Locale locale = resources.getLocale();
 
         for (String assetPath : assetPaths)
         {
