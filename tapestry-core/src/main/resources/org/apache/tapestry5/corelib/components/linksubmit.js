@@ -12,52 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-Tapestry.LinkSubmit = Class
-		.create( {
-
-			initialize : function(spec) {
-				this.form = $(spec.form);
-				this.element = $(spec.clientId);
-				this.validate = spec.validate;
-
-				this.element.observe("click", this.onClick
-						.bindAsEventListener(this));
-			},
-
-			createHidden : function() {
-				var hidden = new Element("input", {
-					"type" : "hidden",
-					"id" : this.element.id + "-hidden",
-					"name" : this.element.id + "-hidden",
-					"value" : this.element.id
-				});
-
-				if (this.form.select("input#" + this.element.id + "-hidden").length == 0)
-					this.element.insert( {
-						after : hidden
-					});
-			},
-
-			onClick : function(event) {
-				// Tapestry.debug("LinkSubmit #{id} clicked.", this.element);
-
-			Event.stop(event);
-
-			var onsubmit = this.form.onsubmit;
-
-			this.createHidden();
-
-			if (!this.validate)
-				$T(this.form).skipValidation = true;
-
-			if (onsubmit == undefined || onsubmit.call(window.document, event)) {
-				this.form.submit();
-			}
-
-			return false;
-		}
-		});
-
 Tapestry.Initializer.linkSubmit = function(spec) {
-	new Tapestry.LinkSubmit(spec);
+
+	$(spec.clientId).observeAction("click", function(event) {
+
+		var form = $(spec.form);
+
+		if (!spec.validate)
+			form.skipValidation();
+
+		form.setSubmittingElement(this);
+
+		form.performSubmit(event);
+	});
 }

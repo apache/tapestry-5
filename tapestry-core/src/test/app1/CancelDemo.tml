@@ -9,7 +9,7 @@
 
     <br/>
 
-    <t:submit mode="cancel" t:id="cancel" text="Cancel Form"/>
+    <t:submit mode="cancel" t:id="cancel" value="Cancel Form"/>
     <t:linksubmit mode="cancel" t:id="cancelLink">Cancel Form</t:linksubmit>
 
   </t:form>

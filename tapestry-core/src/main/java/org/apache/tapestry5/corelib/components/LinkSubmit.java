@@ -104,9 +104,7 @@ public class LinkSubmit implements ClientElement
     {
         this.clientId = clientId;
 
-        String hiddenFieldName = this.clientId + "-hidden";
-
-        if (request.getParameter(hiddenFieldName) != null)
+        if (clientId.equals(request.getParameter(Form.SUBMITTING_ELEMENT_ID)))
         {
             Runnable notification = new Runnable()
             {

@@ -687,10 +687,9 @@ public class FormTests extends TapestryCoreTestCase
 
         sleep(250);
 
-        // 
         click("link=Fred");
 
-        waitForCondition("selenium.browserbot.getCurrentWindow().$('name:errorpopup')", PAGE_LOAD_TIMEOUT);
+        waitForElementToAppear("name:errorpopup");
 
         assertTextPresent("You must provide a value for Name.");
 

@@ -98,27 +98,26 @@ public class Submit implements ClientElement
 
     @Inject
     private JavascriptSupport javascriptSupport;
-    
+
     @SuppressWarnings("unchecked")
     @Environmental
     private TrackableComponentEventCallback eventCallback;
-
-    private Element element;
 
     private String clientId;
 
     private static class ProcessSubmission implements ComponentAction<Submit>
     {
-        private final String elementName;
+        private final String clientId, elementName;
 
-        public ProcessSubmission(String elementName)
+        public ProcessSubmission(String clientId, String elementName)
         {
+            this.clientId = clientId;
             this.elementName = elementName;
         }
 
         public void execute(Submit component)
         {
-            component.processSubmission(elementName);
+            component.processSubmission(clientId, elementName);
         }
     }
 
@@ -133,7 +132,7 @@ public class Submit implements ClientElement
 
     void beginRender(MarkupWriter writer)
     {
-        clientId = null;
+        clientId = javascriptSupport.allocateClientId(resources);
 
         String name = formSupport.allocateControlName(resources.getId());
 
@@ -141,7 +140,13 @@ public class Submit implements ClientElement
 
         String type = image == null ? "submit" : "image";
 
-        element = writer.element("input", "type", type, "name", name);
+        writer.element("input",
+
+        "type", type,
+
+        "name", name,
+
+        "id", clientId);
 
         if (disabled)
             writer.attributes("disabled", "disabled");
@@ -149,7 +154,7 @@ public class Submit implements ClientElement
         if (image != null)
             writer.attributes("src", image.toClientURL());
 
-        formSupport.store(this, new ProcessSubmission(name));
+        formSupport.store(this, new ProcessSubmission(clientId, name));
 
         resources.renderInformalParameters(writer);
     }
@@ -162,14 +167,9 @@ public class Submit implements ClientElement
             javascriptSupport.addInitializerCall("cancelButton", getClientId());
     }
 
-    void processSubmission(String elementName)
+    void processSubmission(String clientId, String elementName)
     {
-        if (disabled)
-            return;
-
-        String value = request.getParameter(image == null ? elementName : elementName + ".x");
-
-        if (value == null)
+        if (disabled || !selected(clientId, elementName))
             return;
 
         Runnable sendNotification = new Runnable()
@@ -191,21 +191,31 @@ public class Submit implements ClientElement
             heartbeat.defer(sendNotification);
     }
 
+    private boolean selected(String clientId, String elementName)
+    {
+        // Case #1: via JavaScript, the client id is passed up.
+
+        if (clientId.equals(request.getParameter(Form.SUBMITTING_ELEMENT_ID)))
+            return true;
+
+        // Case #2: No JavaScript, look for normal semantic (non-null value for the element's name).
+        // If configured as an image submit, look for a value for the x position. Ah, the ugliness
+        // of HTML.
+
+        String name = image == null ? elementName : elementName + ".x";
+
+        String value = request.getParameter(name);
+
+        return value != null;
+    }
+
     /**
-     * Returns the component's client id. This must be called after the component has rendered. The id is allocated
-     * lazily (first time this method is invoked).
+     * Returns the component's client id. This must be called after the component has rendered.
      * 
      * @return client id for the component
      */
     public String getClientId()
     {
-        if (clientId == null)
-        {
-            clientId = javascriptSupport.allocateClientId(resources);
-
-            element.forceAttributes("id", clientId);
-        }
-
         return clientId;
     }
 }

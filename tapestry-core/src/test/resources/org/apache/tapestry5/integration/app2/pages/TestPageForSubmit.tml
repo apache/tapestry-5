@@ -10,7 +10,7 @@
 </form></p>
 <input type="submit" id="orphanedSubmit"/>
 <t:form t:id="form3">
-    <input id="submitImage" t:type="submit" image="prop:spacerImage"/>
+    <input t:id="submitImage" t:type="submit" image="prop:spacerImage"/>
 </t:form>
 <p>
 Value is: ${value}.

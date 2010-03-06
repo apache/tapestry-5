@@ -121,6 +121,14 @@ public class Form implements ClientElement, FormValidationControl
     public static final String FORM_DATA = "t:formdata";
 
     /**
+     * Used by {@link Submit}, etc., to identify which particular client-side element (by element id)
+     * was responsible for the submission. An empty hidden field is created, as needed, to store this value.
+     * 
+     * @since 5.2.0
+     */
+    public static final String SUBMITTING_ELEMENT_ID = "t:submit";
+
+    /**
      * The context for the link (optional parameter). This list of values will
      * be converted into strings and included in
      * the URI. The strings will be coerced back to whatever their values are

@@ -1,10 +1,10 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -26,7 +26,6 @@ import org.apache.tapestry5.ioc.test.TestBase;
 import org.apache.tapestry5.services.FormSupport;
 import org.apache.tapestry5.services.Heartbeat;
 import org.apache.tapestry5.services.Request;
-import org.easymock.EasyMock;
 import org.testng.annotations.Test;
 
 public class SubmitTest extends InternalBaseTestCase
@@ -38,13 +37,14 @@ public class SubmitTest extends InternalBaseTestCase
 
         String elementName = "myname";
 
+        train_getParameter(request, Form.SUBMITTING_ELEMENT_ID, null);
         train_getParameter(request, elementName, null);
 
         replay();
 
         Submit submit = new Submit(request);
 
-        submit.processSubmission(elementName);
+        submit.processSubmission("xyz", elementName);
 
         verify();
     }
@@ -58,7 +58,9 @@ public class SubmitTest extends InternalBaseTestCase
 
         String elementName = "myname";
 
-        train_getParameter(request, elementName, "login");
+        // Also: test for the alternate, JavaScript oriented way, of determining the
+        // element/component that triggered the submission.
+        train_getParameter(request, Form.SUBMITTING_ELEMENT_ID, "xyz");
 
         replay();
 
@@ -66,7 +68,7 @@ public class SubmitTest extends InternalBaseTestCase
 
         TestBase.set(submit, "resources", resources, "formSupport", support);
 
-        submit.processSubmission(elementName);
+        submit.processSubmission("xyz", elementName);
 
         verify();
 
@@ -89,6 +91,7 @@ public class SubmitTest extends InternalBaseTestCase
 
         String elementName = "myname";
 
+        train_getParameter(request, Form.SUBMITTING_ELEMENT_ID, null);
         train_getParameter(request, elementName, "login");
 
         replay();
@@ -99,7 +102,7 @@ public class SubmitTest extends InternalBaseTestCase
 
         TestBase.set(submit, "resources", resources, "formSupport", support, "heartbeat", heartbeat, "defer", false);
 
-        submit.processSubmission(elementName);
+        submit.processSubmission("xyz", elementName);
 
         verify();
 
@@ -111,7 +114,7 @@ public class SubmitTest extends InternalBaseTestCase
 
         verify();
     }
-    
+
     @Test
     public void test_imagesubmit_event_fired()
     {
@@ -122,21 +125,22 @@ public class SubmitTest extends InternalBaseTestCase
 
         String elementName = "myname";
 
+        train_getParameter(request, Form.SUBMITTING_ELEMENT_ID, null);
         train_getParameter(request, elementName + ".x", "15");
-        
+
         formSupport.defer(isA(Runnable.class));
 
         replay();
 
         Submit submit = new Submit(request);
-        
+
         TestBase.set(submit, "resources", resources, "formSupport", formSupport, "image", image);
 
-        submit.processSubmission(elementName);
+        submit.processSubmission("xyz", elementName);
 
         verify();
     }
-    
+
     @Test
     public void test_submit_event_fired()
     {
@@ -146,17 +150,18 @@ public class SubmitTest extends InternalBaseTestCase
 
         String elementName = "myname";
 
+        train_getParameter(request, Form.SUBMITTING_ELEMENT_ID, null);
         train_getParameter(request, elementName, "login");
-        
+
         formSupport.defer(isA(Runnable.class));
 
         replay();
 
         Submit submit = new Submit(request);
-        
+
         TestBase.set(submit, "resources", resources, "formSupport", formSupport);
 
-        submit.processSubmission(elementName);
+        submit.processSubmission("xyz", elementName);
 
         verify();
     }
