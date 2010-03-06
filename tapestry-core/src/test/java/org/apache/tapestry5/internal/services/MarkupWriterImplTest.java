@@ -183,6 +183,27 @@ public class MarkupWriterImplTest extends InternalBaseTestCase
 
         assertEquals(w.toString(), "<root gnip=\"gnop\" foo=\"bar\"></root>");
     }
+    
+    @Test
+    public void attributes_odd_number()
+    {
+        MarkupWriter w = new MarkupWriterImpl();
+
+        w.element("img");
+
+        try
+        {
+            w.attributes("src", "foo.png", "width", 20, 30);
+            unreachable();
+        }
+        catch (RuntimeException ex)
+        {
+            assertMessageContains(ex, 
+                    "Writing attributes of the element 'img' failed.", 
+                    "A attribute name or value is omitted [src, foo.png, width, 20, 30].",
+                    "Please provide an even number of values, alternating names and values");
+        }
+    }
 
     @Test
     public void comment()

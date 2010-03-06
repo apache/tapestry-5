@@ -29,6 +29,7 @@ import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.runtime.RenderCommand;
 import org.apache.tapestry5.services.TransformMethodSignature;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
@@ -358,5 +359,10 @@ class ServicesMessages
     static String linkRewriteReturnedNull()
     {
         return MESSAGES.get("link-rewrite-returned-null");
+    }
+
+    public static String markupWriterAttributeNameOrValueOmitted(String element, Object[] namesAndValues)
+    {
+        return MESSAGES.format("markup-writer-attribute-name-or-value-omitted", element, InternalUtils.join(Arrays.asList(namesAndValues)));
     }
 }

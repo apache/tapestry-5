@@ -117,8 +117,13 @@ public class MarkupWriterImpl implements MarkupWriter
         ensureCurrentElement();
 
         int i = 0;
+        
+        int length = namesAndValues.length;
+        
+        if(length % 2 != 0)
+            throw new IllegalArgumentException(ServicesMessages.markupWriterAttributeNameOrValueOmitted(current.getName(), namesAndValues));
 
-        while (i < namesAndValues.length)
+        while (i < length)
         {
             // name should never be null.
 
