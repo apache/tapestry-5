@@ -1,10 +1,10 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -47,18 +47,30 @@ public class TimeInterval
         UNITS.put("y", 365 * UNITS.get("d"));
     }
 
+    /**
+     * The unit keys, sorted in descending order.
+     */
+    private static final String[] UNIT_KEYS =
+    { "y", "d", "h", "m", "s", "ms" };
+
     private static final Pattern PATTERN = Pattern.compile("\\s*(\\d+)\\s*([a-z]*)", Pattern.CASE_INSENSITIVE);
 
     private final long milliseconds;
 
     /**
      * Creates a TimeInterval for a string.
-     *
-     * @param input the string specifying the amount of time in the period
+     * 
+     * @param input
+     *            the string specifying the amount of time in the period
      */
     public TimeInterval(String input)
     {
-        milliseconds = parseMilliseconds(input);
+        this(parseMilliseconds(input));
+    }
+
+    public TimeInterval(long milliseconds)
+    {
+        this.milliseconds = milliseconds;
     }
 
     public long milliseconds()
@@ -69,6 +81,43 @@ public class TimeInterval
     public long seconds()
     {
         return milliseconds / MILLISECOND;
+    }
+
+    /**
+     * Converts the milliseconds back into a string (compatible with {@link #TimeInterval(String)}).
+     * 
+     * @since 5.2.0
+     */
+    public String toDescription()
+    {
+        StringBuilder builder = new StringBuilder();
+
+        String sep = "";
+
+        long remainder = milliseconds;
+
+        for (String key : UNIT_KEYS)
+        {
+            if (remainder == 0)
+                break;
+
+            long value = UNITS.get(key);
+
+            long units = remainder / value;
+
+            if (units > 0)
+            {
+                builder.append(sep);
+                builder.append(units);
+                builder.append(key);
+
+                sep = " ";
+
+                remainder = remainder % value;
+            }
+        }
+
+        return builder.toString();
     }
 
     static long parseMilliseconds(String input)
@@ -130,7 +179,8 @@ public class TimeInterval
     @Override
     public boolean equals(Object obj)
     {
-        if (obj == null) return false;
+        if (obj == null)
+            return false;
 
         if (obj instanceof TimeInterval)
         {

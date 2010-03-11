@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2007, 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -77,7 +77,7 @@ public class TimeIntervalTest extends TestBase
     @Test(dataProvider = "mix_of_units_data")
     public void mix_of_units(String input, long expected)
     {
-        assertEquals(TimeInterval.parseMilliseconds(input), expected);
+        assertEquals(TimeInterval.parseMilliseconds(input), expected);        
     }
 
     @DataProvider
@@ -97,4 +97,21 @@ public class TimeIntervalTest extends TestBase
 
         };
     }
+    
+    @DataProvider
+    public Object[][] to_description_data()
+    {
+        return new Object[][] { { 60 * 1000, "1m" },
+                { 60 * 60 * 1000 + 35000 + 92, "1h 35s 92ms" },
+                { 0, "" }};
+    }
+    
+    
+    @Test(dataProvider="to_description_data")
+    public void to_description(long input, String expected)
+    {
+        assertEquals(new TimeInterval(input).toDescription(), expected);
+    }
+    
+   
 }
