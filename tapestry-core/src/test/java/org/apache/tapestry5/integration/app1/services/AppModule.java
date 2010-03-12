@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -22,6 +22,7 @@ import org.apache.tapestry5.internal.services.GenericValueEncoderFactory;
 import org.apache.tapestry5.ioc.Configuration;
 import org.apache.tapestry5.ioc.MappedConfiguration;
 import org.apache.tapestry5.ioc.OrderedConfiguration;
+import org.apache.tapestry5.ioc.ServiceBinder;
 import org.apache.tapestry5.ioc.annotations.Marker;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
@@ -50,12 +51,17 @@ public class AppModule
      * interface.
      */
     @Target(
-            { PARAMETER, FIELD })
+    { PARAMETER, FIELD })
     @Retention(RUNTIME)
     @Documented
     public @interface Local
     {
 
+    }
+
+    public static void bind(ServiceBinder binder)
+    {
+        binder.bind(Reloadable.class);
     }
 
     public void contributeAlias(Configuration<AliasContribution> configuration)
@@ -66,7 +72,7 @@ public class AppModule
             {
                 String protocol = secure ? "https" : "http";
 
-                // This is all a bit jury-rigged together.  This is for running the app
+                // This is all a bit jury-rigged together. This is for running the app
                 // interactively; Selenium doesn't seem to handle the transition to https.
                 int port = secure ? JettyRunner.DEFAULT_SECURE_PORT : JettyRunner.DEFAULT_PORT;
 
@@ -102,7 +108,8 @@ public class AppModule
 
     public void contributeRequestHandler(OrderedConfiguration<RequestFilter> configuration,
 
-                                         @Local RequestFilter filter)
+    @Local
+    RequestFilter filter)
     {
         configuration.add("Timing", filter);
     }
@@ -128,7 +135,7 @@ public class AppModule
         configuration.add(SymbolConstants.SECURE_ENABLED, "true");
 
         configuration.add("app.injected-symbol", "Symbol contributed to ApplicationDefaults");
-        
+
         configuration.add(SymbolConstants.BLACKBIRD_ENABLED, "true");
     }
 
@@ -161,7 +168,8 @@ public class AppModule
             {
                 Track result = idToTrack.get(id);
 
-                if (result != null) return result;
+                if (result != null)
+                    return result;
 
                 throw new IllegalArgumentException(String.format("No track with id #%d.", id));
             }
@@ -179,7 +187,8 @@ public class AppModule
 
                 for (Track t : tracks)
                 {
-                    if (t.getTitle().toLowerCase().contains(titleLower)) result.add(t);
+                    if (t.getTitle().toLowerCase().contains(titleLower))
+                        result.add(t);
                 }
 
                 return result;
@@ -213,8 +222,7 @@ public class AppModule
     }
 
     public static void contributeValueEncoderSource(MappedConfiguration<Class, ValueEncoderFactory> configuration,
-                                                    final MusicLibrary library,
-                                                    final ToDoDatabase todoDatabase)
+            final MusicLibrary library, final ToDoDatabase todoDatabase)
     {
         ValueEncoder<Track> trackEncoder = new ValueEncoder<Track>()
         {
@@ -230,7 +238,6 @@ public class AppModule
                 return library.getById(id);
             }
         };
-
 
         configuration.add(Track.class, GenericValueEncoderFactory.create(trackEncoder));
 
@@ -251,7 +258,6 @@ public class AppModule
 
         configuration.add(ToDoItem.class, GenericValueEncoderFactory.create(todoEncoder));
     }
-
 
     public static void contributeComponentClassTransformWorker(
             OrderedConfiguration<ComponentClassTransformWorker> configuration)

@@ -426,8 +426,9 @@ public class IntegrationTest extends IOCInternalTestCase
             assertMessageContains(
                     ex,
                     "Error invoking constructor",
-                    "ExceptionInConstructorServiceImpl() (at ExceptionInConstructorServiceImpl.java",
-                    "for service 'Pingable'", "Yes, we have no tomatoes.");
+                    "ExceptionInConstructorServiceImpl()",
+                    "for service 'Pingable'", 
+                    "Yes, we have no tomatoes.");
         }
 
         r.shutdown();

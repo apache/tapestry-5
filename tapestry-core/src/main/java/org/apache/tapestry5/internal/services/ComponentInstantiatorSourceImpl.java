@@ -1,10 +1,10 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -23,6 +23,7 @@ import org.apache.tapestry5.ioc.internal.services.CtClassSource;
 import org.apache.tapestry5.ioc.internal.services.CtClassSourceImpl;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.Defense;
+import org.apache.tapestry5.ioc.services.ClassFabUtils;
 import org.apache.tapestry5.ioc.services.ClassFactory;
 import org.apache.tapestry5.ioc.services.ClasspathURLConverter;
 import org.apache.tapestry5.services.InvalidationEventHub;
@@ -37,7 +38,8 @@ import java.util.Set;
 /**
  * A wrapper around a Javassist class loader that allows certain classes to be modified as they are loaded.
  */
-public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubImpl implements Translator, ComponentInstantiatorSource, UpdateListener
+public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubImpl implements Translator,
+        ComponentInstantiatorSource, UpdateListener
 {
     /**
      * Add -Djavassist-write-dir=target/transformed-classes to the command line to force output of transformed classes
@@ -78,10 +80,10 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
         }
 
         /**
-         * Determines if the class name represents a component class from a controlled package.  If so,
+         * Determines if the class name represents a component class from a controlled package. If so,
          * super.findClass() will load it and transform it. Returns null if not in a controlled package, allowing the
          * parent class loader to do the work.
-         *
+         * 
          * @param className
          * @return the loaded transformed Class, or null to force a load of the class from the parent class loader
          * @throws ClassNotFoundException
@@ -89,10 +91,7 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
         @Override
         protected Class findClass(String className) throws ClassNotFoundException
         {
-            if (inControlledPackage(className))
-            {
-                return super.findClass(className);
-            }
+            if (inControlledPackage(className)) { return super.findClass(className); }
 
             // Returning null forces delegation to the parent class loader.
 
@@ -101,8 +100,7 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
     }
 
     public ComponentInstantiatorSourceImpl(Logger logger, ClassLoader parent, ComponentClassTransformer transformer,
-                                           InternalRequestGlobals internalRequestGlobals,
-                                           ClasspathURLConverter classpathURLConverter)
+            InternalRequestGlobals internalRequestGlobals, ClasspathURLConverter classpathURLConverter)
     {
         this.parent = parent;
         this.transformer = transformer;
@@ -115,7 +113,8 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
 
     public synchronized void checkForUpdates()
     {
-        if (!changeTracker.containsChanges()) return;
+        if (!changeTracker.containsChanges())
+            return;
 
         changeTracker.clear();
         classNameToInstantiator.clear();
@@ -220,12 +219,14 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
 
         logger.debug(String.format("%5s onLoad %s", diag, classname));
 
-        if (failure != null) throw failure;
+        if (failure != null)
+            throw failure;
     }
 
     private void writeClassToFileSystemForHardCoreDebuggingPurposesOnly(CtClass ctClass)
     {
-        if (JAVASSIST_WRITE_DIR == null) return;
+        if (JAVASSIST_WRITE_DIR == null)
+            return;
 
         try
         {
@@ -242,7 +243,7 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
 
     private void addClassFileToChangeTracker(String classname)
     {
-        String path = classname.replace('.', '/') + ".class";
+        String path = ClassFabUtils.getPathForClassNamed(classname);
 
         URL url = loader.getResource(path);
 
@@ -277,7 +278,7 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
 
             // Note: this is really a create, and in fact, will create a new Class instance
             // (it doesn't cache internally). This code is the only cache, which is why
-            // the method is synchronized.  We could use a ConcurrentBarrier, but I suspect
+            // the method is synchronized. We could use a ConcurrentBarrier, but I suspect
             // that the overhead of that is greater on a typical invocation than
             // the cost of the synchronization and the Map lookup.
 
@@ -312,7 +313,8 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
 
         while (packageName != null)
         {
-            if (controlledPackageNames.contains(packageName)) return true;
+            if (controlledPackageNames.contains(packageName))
+                return true;
 
             packageName = stripTail(packageName);
         }
@@ -324,7 +326,8 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
     {
         int lastdot = input.lastIndexOf('.');
 
-        if (lastdot < 0) return null;
+        if (lastdot < 0)
+            return null;
 
         return input.substring(0, lastdot);
     }

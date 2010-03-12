@@ -15,11 +15,11 @@
 package org.apache.tapestry5.internal.util;
 
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.services.ClassFabUtils;
 import org.apache.tapestry5.ioc.services.ClasspathURLConverter;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Map;
 
@@ -80,7 +80,7 @@ public class URLChangeTracker
 
         if (!converted.getProtocol().equals("file")) return timestampForNonFileURL(converted);
 
-        File resourceFile = toFile(converted);
+        File resourceFile = ClassFabUtils.toFileFromFileProtocolURL(converted);
 
         if (fileToTimestamp.containsKey(resourceFile)) return fileToTimestamp.get(resourceFile);
 
@@ -117,20 +117,6 @@ public class URLChangeTracker
         }
 
         return applyGranularity(timestamp);
-    }
-
-    private File toFile(URL url)
-    {
-        // http://weblogs.java.net/blog/kohsuke/archive/2007/04/how_to_convert.html
-
-        try
-        {
-            return new File(url.toURI());
-        }
-        catch (URISyntaxException ex)
-        {
-            return new File(url.getPath());
-        }
     }
 
     /**

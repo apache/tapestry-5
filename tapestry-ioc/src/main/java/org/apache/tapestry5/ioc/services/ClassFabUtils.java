@@ -15,11 +15,17 @@
 package org.apache.tapestry5.ioc.services;
 
 import org.apache.tapestry5.ioc.ObjectCreator;
+import org.apache.tapestry5.ioc.internal.util.Defense;
+
 import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newMap;
 
 import static java.lang.String.format;
+
+import java.io.File;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -290,6 +296,53 @@ public final class ClassFabUtils
             // This should never happen, so we won't go to a lot of trouble
             // reporting it.
             throw new RuntimeException(ex.getMessage(), ex);
+        }
+    }
+
+    /**
+     * Given a Class instance, convert the name into a path that can be used to locate
+     * the underlying class file on the classpath.
+     * 
+     * @since 5.2.0
+     */
+    public static String getPathForClass(Class clazz)
+    {
+        Defense.notNull(clazz, "clazz");
+
+        return getPathForClassNamed(clazz.getName());
+    }
+
+    /**
+     * Given a fully qualified class name, converts to a path on the classpath.
+     * 
+     * @since 5.2.0
+     */
+    public static String getPathForClassNamed(String className)
+    {
+        return className.replace('.', '/') + ".class";
+    }
+
+    /**
+     * Converts a URL with protocol "file" to a File instance.
+     * 
+     * @since 5.2.0
+     */
+    public static File toFileFromFileProtocolURL(URL url)
+    {
+        Defense.notNull(url, "url");
+
+        if (!url.getProtocol().equals("file"))
+            throw new IllegalArgumentException(String.format("URL %s does not use the 'file' protocol.", url));
+
+        // http://weblogs.java.net/blog/kohsuke/archive/2007/04/how_to_convert.html
+
+        try
+        {
+            return new File(url.toURI());
+        }
+        catch (URISyntaxException ex)
+        {
+            return new File(url.getPath());
         }
     }
 }

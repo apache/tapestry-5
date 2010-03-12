@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -25,11 +25,13 @@ import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.OneShotLock;
+import org.apache.tapestry5.ioc.services.ClassFabUtils;
 import org.apache.tapestry5.ioc.services.ClassFactory;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.Set;
 
@@ -47,9 +49,8 @@ public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
 
     private final boolean moduleDefaultPreventDecoration;
 
-    public ServiceBinderImpl(ServiceDefAccumulator accumulator, Method bindMethod,
-                             ClassFactory classFactory,
-                             Set<Class> defaultMarkers, boolean moduleDefaultPreventDecoration)
+    public ServiceBinderImpl(ServiceDefAccumulator accumulator, Method bindMethod, ClassFactory classFactory,
+            Set<Class> defaultMarkers, boolean moduleDefaultPreventDecoration)
     {
         this.accumulator = accumulator;
         this.bindMethod = bindMethod;
@@ -85,7 +86,8 @@ public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
 
     protected void flush()
     {
-        if (serviceInterface == null) return;
+        if (serviceInterface == null)
+            return;
 
         // source will be null when the implementation class is provided; non-null when using
         // a ServiceBuilder callback
@@ -98,7 +100,7 @@ public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
         markers.addAll(this.markers);
 
         ServiceDef serviceDef = new ServiceDefImpl(serviceInterface, serviceId, markers, scope, eagerLoad,
-                                                   preventDecoration, source);
+                preventDecoration, source);
 
         accumulator.addServiceDef(serviceDef);
 
@@ -119,6 +121,38 @@ public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
 
     private ObjectCreatorSource createObjectCreatorSourceFromImplementationClass()
     {
+        if (preventDecoration || !isProxiable() || !reloadableScope() || !isLocalFile(serviceImplementation))
+            return createStandardConstructorBasedObjectCreatorSource();
+
+        return createReloadableConstructorBasedObjectCreatorSource();
+    }
+
+    private boolean isProxiable()
+    {
+        return serviceInterface.isInterface();
+    }
+
+    private boolean reloadableScope()
+    {
+        return scope.equalsIgnoreCase(ScopeConstants.DEFAULT);
+    }
+
+    /**
+     * Determines if the indicated class is stored as a locally accessible file
+     * (and not, typically, as a file inside a JAR). This is related to automatic
+     * reloading of services.
+     */
+    private boolean isLocalFile(Class clazz)
+    {
+        String path = ClassFabUtils.getPathForClass(clazz);
+
+        URL classFileURL = clazz.getClassLoader().getResource(path);
+
+        return classFileURL != null && classFileURL.getProtocol().equals("file");
+    }
+
+    private ObjectCreatorSource createStandardConstructorBasedObjectCreatorSource()
+    {
         final Constructor constructor = InternalUtils.findAutobuildConstructor(serviceImplementation);
 
         if (constructor == null)
@@ -133,11 +167,15 @@ public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
 
             public String getDescription()
             {
-                return String.format("%s via %s",
-                                     classFactory.getConstructorLocation(constructor),
-                                     classFactory.getMethodLocation(bindMethod));
+                return String.format("%s via %s", classFactory.getConstructorLocation(constructor), classFactory
+                        .getMethodLocation(bindMethod));
             }
         };
+    }
+
+    private ObjectCreatorSource createReloadableConstructorBasedObjectCreatorSource()
+    {
+        return new ReloadableObjectCreatorSource(classFactory, bindMethod, serviceInterface, serviceImplementation);
     }
 
     public <T> ServiceBindingOptions bind(Class<T> serviceClass)
@@ -148,10 +186,8 @@ public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
             {
                 Class<T> implementationClass = (Class<T>) Class.forName(serviceClass.getName() + "Impl");
 
-                if (!implementationClass.isInterface() && serviceClass.isAssignableFrom(implementationClass))
-                {
-                    return bind(serviceClass, implementationClass);
-                }
+                if (!implementationClass.isInterface() && serviceClass.isAssignableFrom(implementationClass)) { return bind(
+                        serviceClass, implementationClass); }
                 throw new RuntimeException(IOCMessages.noServiceMatchesType(serviceClass));
             }
             catch (ClassNotFoundException ex)
@@ -213,13 +249,12 @@ public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
         this.serviceImplementation = serviceImplementation;
 
         // Set defaults for the other properties.
-        
-        
+
         eagerLoad = serviceImplementation.getAnnotation(EagerLoad.class) != null;
-        
+
         ServiceId serviceIdAnnotation = serviceImplementation.getAnnotation(ServiceId.class);
-        
-        if(serviceIdAnnotation != null)
+
+        if (serviceIdAnnotation != null)
         {
             serviceId = serviceIdAnnotation.value();
         }
