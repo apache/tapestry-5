@@ -51,6 +51,7 @@
             <item name="Modules" href="module.html"/>
             <item name="Module Autoloading" href="autoload.html"/>
             <item name="Services" href="service.html"/>
+            <item name="Service Reloading" href="reload.html"/>
             <item name="Advisors" href="advice.html"/>
             <item name="Decorators" href="decorator.html"/>
             <item name="Configuration" href="configuration.html"/>

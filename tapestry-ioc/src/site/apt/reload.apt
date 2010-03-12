@@ -1,0 +1,53 @@
+ ----
+ Service Implementation Reloading
+ ----
+ 
+Service Implementation Reloading
+
+  Tapestry's ability to live reload page and component classes is a huge boon to development productivity, but what about reloading services?
+  
+  On the one hand, a good application design keeps the page and component classes "thin" and moves logic into the services layer, for easier
+  reuse across pages.  On the other hand, services don't auto-reload the way pages do, which makes developing that way less agile.
+  
+  Starting in release 5.2, service implementations now reload.  There's a number of restrictions on this, and a couple of
+  {{{http://en.wikipedia.org/wiki/Leaky_abstraction}leaky abstractions}}, but on the whole its quite servicable.
+  
+  You can change your service implementation, and Tapestry picks up the change immediately.
+  
+Limitations
+
+  * Reloading only works for services, and only for services with the default service scope (i.e., global singletons).  Live reloading
+    does not apply to <modules>, <service interfaces>, contributions, or anything but just the service implementation.
+  
+  * Reloading is limited to proxyable services: services with an interface and an implementation of that interface.
+  
+  * Reloading requires that the underlying class files be simple, local, filesystem files (not, for example, files inside a JAR).
+  
+  * Services that do not allow decorations (via the {{{../apidocs/org/apache/tapestry5/ioc/annotations/PreventServiceDecoration.html}PreventServiceDecoration}} annotation) will also
+  not enable live class reloading.
+    
+  []
+  
+Class Loader Issues
+
+  Tapestry creates a new class loader for <each service implementation>. When the underlying .class file changes, the class loader
+  is discarded along with the instance, and a new class loader is created.
+  
+  The class loader only loads the service implementation class, and any inner classes for the service implementation.  
+  All other classes are loaded by the standard class loader for the application.
+  
+  Because of how class loaders work, the class will no longer be able to access package private classes and members of other classes
+  in the same package. You may see some odd IllegalAccessErrors and need to change the visibility of package-private classes to be public.
+  
+  The JVM should be able to eventually garbage collect the class loader.  However, if the class publishes itself to some other service (for example,
+  adding itself as a listener to an event published by some other service), then the instance and the garbage collector
+  will be leaked.  <<Be careful about publishing any instances of a reloadable class>>.
+  
+Update Checks
+
+  Update checks are normally driven by tapestry-core, which periodically checks for changed templates, message catalogs, and component classes. Checks 
+  for changed service implementation classes occur at the same time.  
+  
+  In an application that is not driven by the web tier, you will need to periodically invoke the fireCheckForUpdates() method of the
+  {{{../apidocs/org/apache/tapestry5/services/UpdateListenerHub.html}UpdateListenerHub}} service (which was moved from tapestry-core to tapestry-ioc
+  for this purpose).
