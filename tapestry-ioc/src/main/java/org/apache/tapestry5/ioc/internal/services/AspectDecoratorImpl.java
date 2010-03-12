@@ -1,10 +1,10 @@
-// Copyright 2008, 2009 The Apache Software Foundation
+// Copyright 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,20 +14,23 @@
 
 package org.apache.tapestry5.ioc.internal.services;
 
+import java.lang.reflect.Method;
+
 import org.apache.tapestry5.ioc.MethodAdvice;
+import org.apache.tapestry5.ioc.annotations.PreventServiceDecoration;
 import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.ioc.services.AspectDecorator;
 import org.apache.tapestry5.ioc.services.AspectInterceptorBuilder;
 import org.apache.tapestry5.ioc.services.Builtin;
 import org.apache.tapestry5.ioc.services.ClassFactory;
 
-import java.lang.reflect.Method;
-
+@PreventServiceDecoration
 public class AspectDecoratorImpl implements AspectDecorator
 {
     private final ClassFactory classFactory;
 
-    public AspectDecoratorImpl(@Builtin ClassFactory classFactory)
+    public AspectDecoratorImpl(@Builtin
+    ClassFactory classFactory)
     {
         this.classFactory = classFactory;
     }
@@ -44,13 +47,13 @@ public class AspectDecoratorImpl implements AspectDecorator
     }
 
     public <T> AspectInterceptorBuilder<T> createBuilder(final Class<T> serviceInterface, final T delegate,
-                                                         final String description)
+            final String description)
     {
         Defense.notNull(serviceInterface, "serviceInterface");
         Defense.notNull(delegate, "delegate");
         Defense.notBlank(description, "description");
 
-        // Defer creating the real builder until a method gets advised.  If no method is advised then
+        // Defer creating the real builder until a method gets advised. If no method is advised then
         // the delegate can be used unchanged.
 
         return new AspectInterceptorBuilder<T>()
@@ -80,8 +83,7 @@ public class AspectDecoratorImpl implements AspectDecorator
             private AspectInterceptorBuilder<T> getBuilder()
             {
                 if (builder == null)
-                    builder = new AspectInterceptorBuilderImpl<T>(classFactory, serviceInterface, delegate,
-                                                                  description);
+                    builder = new AspectInterceptorBuilderImpl<T>(classFactory, serviceInterface, delegate, description);
 
                 return builder;
             }

@@ -39,7 +39,6 @@ import java.util.concurrent.TimeUnit;
  * Defines the base set of services for the Tapestry IOC container.
  */
 @Marker(Builtin.class)
-@PreventServiceDecoration
 public final class TapestryIOCModule
 {
     public static void bind(ServiceBinder binder)
@@ -77,6 +76,7 @@ public final class TapestryIOCModule
      * accessed via this service (and its mapped configuration). Only proxiable services (those with explicit service
      * interfaces) can be managed in terms of a lifecycle.
      */
+    @PreventServiceDecoration
     public static ServiceLifecycleSource build(Map<String, ServiceLifecycle> configuration)
     {
         final Map<String, ServiceLifecycle2> lifecycles = CollectionFactory.newCaseInsensitiveMap();
