@@ -195,53 +195,49 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         for (ContributionDef cd : contributionDefs)
         {
             String serviceId = cd.getServiceId();
-            
+
             ContributionDef2 cd2 = InternalUtils.toContributionDef2(cd);
-            
+
             if (cd2.getServiceId() != null)
             {
-                if (!serviceIdToModule.containsKey(serviceId)) 
-                { 
-                    throw new IllegalArgumentException(IOCMessages.contributionForNonexistentService(cd)); 
-                }
+                if (!serviceIdToModule.containsKey(serviceId)) { throw new IllegalArgumentException(IOCMessages
+                        .contributionForNonexistentService(cd)); }
             }
-            else if(!isContributionForExistentService(cd2))
-            {
-                throw new IllegalArgumentException(IOCMessages.contributionForUnqualifiedService(cd2));
-            }
+            else if (!isContributionForExistentService(cd2)) { throw new IllegalArgumentException(IOCMessages
+                    .contributionForUnqualifiedService(cd2)); }
         }
-            
+
     }
-    
+
     private boolean isContributionForExistentService(ContributionDef2 cd)
     {
         Set<Class> markers = CollectionFactory.newSet(cd.getMarkers());
-        markers.remove(Local.class); 
+        markers.remove(Local.class);
 
         for (Class markerClass : markers)
         {
             boolean exists = existsServiceDefWithTypeAndMarker(cd.getServiceInterface(), markerClass);
-            
-            if(!exists)
+
+            if (!exists)
                 return false;
         }
-        
+
         return true;
     }
-    
+
     private boolean existsServiceDefWithTypeAndMarker(Class serviceInterface, Class markerClass)
     {
         List<ServiceDef2> serviceDefs = markerToServiceDef.get(markerClass);
-        
-        if(serviceDefs == null)
+
+        if (serviceDefs == null)
             return false;
-        
+
         for (ServiceDef2 serviceDef : serviceDefs)
         {
-            if(serviceDef.getServiceInterface() == serviceInterface)
+            if (serviceDef.getServiceInterface() == serviceInterface)
                 return true;
         }
-        
+
         return false;
     }
 
@@ -981,12 +977,8 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
             }
         };
 
-        ClassFab cf = classFactory.newClass(interfaceClass);
-
-        String description = String.format("<Autobuild proxy %s(%s)>", implementationClass.getName(), interfaceClass
-                .getName());
-
-        return ClassFabUtils.createObjectCreatorProxy(cf, interfaceClass, justInTime, description);
+        return classFactory.createProxy(interfaceClass, justInTime, String.format("<Autobuild proxy %s(%s)>",
+                implementationClass.getName(), interfaceClass.getName()));
     }
 
     public Object provideServiceProxy(String serviceId)

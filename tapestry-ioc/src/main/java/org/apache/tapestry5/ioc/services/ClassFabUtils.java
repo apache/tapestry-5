@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -59,7 +59,8 @@ public final class ClassFabUtils
      */
     public static String toJavaClassName(Class inputClass)
     {
-        if (inputClass.isArray()) return toJavaClassName(inputClass.getComponentType()) + "[]";
+        if (inputClass.isArray())
+            return toJavaClassName(inputClass.getComponentType()) + "[]";
 
         return inputClass.getName();
     }
@@ -70,9 +71,11 @@ public final class ClassFabUtils
      */
     public static boolean isToString(Method method)
     {
-        if (!method.getName().equals("toString")) return false;
+        if (!method.getName().equals("toString"))
+            return false;
 
-        if (method.getParameterTypes().length > 0) return false;
+        if (method.getParameterTypes().length > 0)
+            return false;
 
         return method.getReturnType().equals(String.class);
     }
@@ -132,7 +135,8 @@ public final class ClassFabUtils
     public static String toJVMBinaryName(String type)
     {
         // if it is not an array, just return the type itself
-        if (!type.endsWith("[]")) return type;
+        if (!type.endsWith("[]"))
+            return type;
 
         // if it is an array, convert it to JavaVM-style format
         StringBuilder buffer = new StringBuilder();
@@ -168,10 +172,11 @@ public final class ClassFabUtils
     }
 
     /**
-     * Returns the wrapper type for an input type; for most types, this is the type.  For primitive types, it is the
+     * Returns the wrapper type for an input type; for most types, this is the type. For primitive types, it is the
      * corresponding wrapper type.
-     *
-     * @param type type to check
+     * 
+     * @param type
+     *            type to check
      * @return type or corresponding wrapper type
      */
     public static Class getWrapperType(Class type)
@@ -182,12 +187,14 @@ public final class ClassFabUtils
     }
 
     /**
-     * Takes a reference and casts it to the desired type.  If the desired type is a primitive type, then the reference
+     * Takes a reference and casts it to the desired type. If the desired type is a primitive type, then the reference
      * is cast to the correct wrapper type and a call to the correct unwrapper method is added. The end result is code
      * that can be assigned to a field or parameter of the desired type (even if desired type is a primitive).
-     *
-     * @param reference   to be cast
-     * @param desiredType desired object or primitive type
+     * 
+     * @param reference
+     *            to be cast
+     * @param desiredType
+     *            desired object or primitive type
      * @return Javassist code to peform the cast
      */
     public static String castReference(String reference, String desiredType)
@@ -196,9 +203,7 @@ public final class ClassFabUtils
         {
             PrimitiveInfo info = PRIMITIVE_TYPE_NAME_TO_PRIMITIVE_INFO.get(desiredType);
 
-            return String.format("((%s)%s).%s()",
-                                 info.wrapperType.getName(), reference,
-                                 info.unwrapMethod);
+            return String.format("((%s)%s).%s()", info.wrapperType.getName(), reference, info.unwrapMethod);
         }
 
         return String.format("(%s)%s", desiredType, reference);
@@ -206,7 +211,7 @@ public final class ClassFabUtils
 
     /**
      * Given a primitive type, finds the unwrap method of the corresponding wrapper type.
-     *
+     * 
      * @param primitiveType
      * @return method name
      */
@@ -214,7 +219,6 @@ public final class ClassFabUtils
     {
         return PRIMITIVE_TYPE_NAME_TO_PRIMITIVE_INFO.get(primitiveType.getName()).unwrapMethod;
     }
-
 
     /**
      * Given a type name, determines if that is the name of a primitive type.
@@ -229,11 +233,14 @@ public final class ClassFabUtils
      */
     public static String getTypeCode(Class type)
     {
-        if (type.equals(void.class)) return "V";
+        if (type.equals(void.class))
+            return "V";
 
-        if (type.isPrimitive()) return PRIMITIVE_TYPE_NAME_TO_PRIMITIVE_INFO.get(type.getName()).typeCode;
+        if (type.isPrimitive())
+            return PRIMITIVE_TYPE_NAME_TO_PRIMITIVE_INFO.get(type.getName()).typeCode;
 
-        if (type.isArray()) return "[" + getTypeCode(type.getComponentType());
+        if (type.isArray())
+            return "[" + getTypeCode(type.getComponentType());
 
         return "L" + type.getName().replace('.', '/') + ";";
     }
@@ -242,20 +249,26 @@ public final class ClassFabUtils
      * Creates a proxy for a given service interface around an {@link org.apache.tapestry5.ioc.ObjectCreator} that can
      * provide (on demand) an object (implementing the service interface) to delegate to. The ObjectCreator will be
      * invoked on every method invocation (if it is caching, that should be internal to its implementation).
-     *
+     * 
      * @param <T>
-     * @param classFab         used to create the new class
-     * @param serviceInterface the interface the proxy will implement
-     * @param creator          the createor which will provide an instance of the interface
-     * @param description      description to be returned from the proxy's toString() method
+     * @param classFab
+     *            used to create the new class
+     * @param serviceInterface
+     *            the interface the proxy will implement
+     * @param creator
+     *            the createor which will provide an instance of the interface
+     * @param description
+     *            description to be returned from the proxy's toString() method
      * @return the instantiated proxy object
+     * @deprecated Use {@link ClassFactory#createProxy(Class, ObjectCreator, String)} instead
      */
     public static <T> T createObjectCreatorProxy(ClassFab classFab, Class<T> serviceInterface, ObjectCreator creator,
-                                                 String description)
+            String description)
     {
         classFab.addField("_creator", Modifier.PRIVATE | Modifier.FINAL, ObjectCreator.class);
 
-        classFab.addConstructor(new Class[] {ObjectCreator.class}, null, "_creator = $1;");
+        classFab.addConstructor(new Class[]
+        { ObjectCreator.class }, null, "_creator = $1;");
 
         String body = format("return (%s) _creator.createObject();", serviceInterface.getName());
 

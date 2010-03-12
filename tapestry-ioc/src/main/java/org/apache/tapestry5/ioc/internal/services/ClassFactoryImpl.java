@@ -1,10 +1,10 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,16 +18,21 @@ import javassist.CtClass;
 import javassist.CtConstructor;
 import javassist.CtMethod;
 import org.apache.tapestry5.ioc.Location;
+import org.apache.tapestry5.ioc.ObjectCreator;
+
+import static java.lang.String.format;
 import static org.apache.tapestry5.ioc.internal.util.Defense.notNull;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.ClassFab;
 import org.apache.tapestry5.ioc.services.ClassFabUtils;
 import org.apache.tapestry5.ioc.services.ClassFactory;
+import org.apache.tapestry5.ioc.services.MethodSignature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 
 /**
  * Implementation of {@link org.apache.tapestry5.ioc.services.ClassFactory}.
@@ -72,7 +77,7 @@ public class ClassFactoryImpl implements ClassFactory
     }
 
     public ClassFactoryImpl(ClassLoader classLoader, ClassFactoryClassPool pool, CtClassSource classSource,
-                            Logger logger)
+            Logger logger)
     {
         loader = classLoader;
 
@@ -82,7 +87,6 @@ public class ClassFactoryImpl implements ClassFactory
 
         this.logger = logger;
     }
-
 
     public ClassFab newClass(Class serviceInterface)
     {
@@ -98,8 +102,7 @@ public class ClassFactoryImpl implements ClassFactory
     public ClassFab newClass(String name, Class superClass)
     {
         if (logger.isDebugEnabled())
-            logger.debug(String.format("Create ClassFab for %s (extends %s)", name, superClass
-                    .getName()));
+            logger.debug(String.format("Create ClassFab for %s (extends %s)", name, superClass.getName()));
 
         try
         {
@@ -188,7 +191,8 @@ public class ClassFactoryImpl implements ClassFactory
         {
             Class parameterType = parameterTypes[i];
 
-            if (i > 0) builder.append(", ");
+            if (i > 0)
+                builder.append(", ");
 
             builder.append(parameterType.getSimpleName());
 
@@ -219,4 +223,37 @@ public class ClassFactoryImpl implements ClassFactory
 
         return new StringLocation(builder.toString(), lineNumber);
     }
+
+    public <T> T createProxy(Class<T> proxyInterface, ObjectCreator delegateCreator, String description)
+    {
+        ClassFab classFab = newClass(proxyInterface);
+
+        classFab.addField("_creator", Modifier.PRIVATE | Modifier.FINAL, ObjectCreator.class);
+
+        classFab.addConstructor(new Class[]
+        { ObjectCreator.class }, null, "_creator = $1;");
+
+        String body = format("return (%s) _creator.createObject();", proxyInterface.getName());
+
+        MethodSignature sig = new MethodSignature(proxyInterface, "_delegate", null, null);
+
+        classFab.addMethod(Modifier.PRIVATE, sig, body);
+
+        classFab.proxyMethodsToDelegate(proxyInterface, "_delegate()", description);
+        Class proxyClass = classFab.createClass();
+
+        try
+        {
+            Object proxy = proxyClass.getConstructors()[0].newInstance(delegateCreator);
+
+            return proxyInterface.cast(proxy);
+        }
+        catch (Exception ex)
+        {
+            // This should never happen, so we won't go to a lot of trouble
+            // reporting it.
+            throw new RuntimeException(ex.getMessage(), ex);
+        }
+    }
+
 }
