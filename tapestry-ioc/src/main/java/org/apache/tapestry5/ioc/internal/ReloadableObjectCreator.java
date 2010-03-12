@@ -144,7 +144,7 @@ public class ReloadableObjectCreator implements ObjectCreator, UpdateListener
     private Class reloadImplementationClass()
     {
         if (logger.isDebugEnabled())
-            logger.debug("%s class %s.", firstTime ? "Loading" : "Reloading", implementationClassName);
+            logger.debug(String.format("%s class %s.", firstTime ? "Loading" : "Reloading", implementationClassName));
 
         ClassLoader reloadingClassLoader = new ReloadingClassLoader(baseClassLoader);
 

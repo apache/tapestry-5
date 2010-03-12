@@ -178,13 +178,18 @@ public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
         return new ReloadableObjectCreatorSource(classFactory, bindMethod, serviceInterface, serviceImplementation);
     }
 
+    @SuppressWarnings("unchecked")
     public <T> ServiceBindingOptions bind(Class<T> serviceClass)
     {
         if (serviceClass.isInterface())
         {
             try
             {
-                Class<T> implementationClass = (Class<T>) Class.forName(serviceClass.getName() + "Impl");
+                String expectedImplName = serviceClass.getName() + "Impl";
+
+                ClassLoader classLoader = classFactory.getClassLoader();
+
+                Class<T> implementationClass = (Class<T>) classLoader.loadClass(expectedImplName);
 
                 if (!implementationClass.isInterface() && serviceClass.isAssignableFrom(implementationClass)) { return bind(
                         serviceClass, implementationClass); }
