@@ -24,6 +24,7 @@ import org.apache.tapestry5.ioc.internal.services.*;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.util.TimeInterval;
+import org.apache.tapestry5.services.UpdateListenerHub;
 
 import java.io.File;
 import java.lang.reflect.Array;
@@ -68,6 +69,7 @@ public final class TapestryIOCModule
         binder.bind(LoggingAdvisor.class, LoggingAdvisorImpl.class);
         binder.bind(LazyAdvisor.class, LazyAdvisorImpl.class);
         binder.bind(ThunkCreator.class, ThunkCreatorImpl.class);
+        binder.bind(UpdateListenerHub.class, UpdateListenerHubImpl.class);
     }
 
     /**

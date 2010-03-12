@@ -84,6 +84,7 @@ import org.apache.tapestry5.internal.util.StringRenderable;
 import org.apache.tapestry5.internal.validator.ValidatorMacroImpl;
 import org.apache.tapestry5.ioc.*;
 import org.apache.tapestry5.ioc.annotations.*;
+import org.apache.tapestry5.ioc.internal.services.UpdateListenerHubImpl;
 import org.apache.tapestry5.ioc.internal.util.AvailableValues;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.IdAllocator;
@@ -339,7 +340,6 @@ public final class TapestryModule
                 "NullFieldStrategyBindingFactory");
         binder.bind(URLEncoder.class, URLEncoderImpl.class);
         binder.bind(ContextPathEncoder.class, ContextPathEncoderImpl.class);
-        binder.bind(UpdateListenerHub.class, UpdateListenerHubImpl.class);
         binder.bind(ApplicationStatePersistenceStrategy.class, SessionApplicationStatePersistenceStrategy.class)
                 .withId("SessionApplicationStatePersistenceStrategy");
         binder.bind(AssetPathConverter.class, IdentityAssetPathConverter.class);
@@ -2282,7 +2282,7 @@ public final class TapestryModule
         // these
         // files to o.a.t.services.
 
-        Class c = UpdateListenerHubImpl.class;
+        Class c = TemplateParserImpl.class;
 
         config.add("-//W3C//DTD XHTML 1.0 Strict//EN", c.getResource("xhtml1-strict.dtd"));
         config.add("-//W3C//DTD XHTML 1.0 Transitional//EN", c.getResource("xhtml1-transitional.dtd"));
