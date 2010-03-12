@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -38,7 +38,7 @@ public class URLChangeTracker
 
     private final boolean granularitySeconds;
     
-    private ClasspathURLConverter classpathURLConverter; 
+    private final ClasspathURLConverter classpathURLConverter; 
 
     /**
      * Creates a new URL change tracker with millisecond-level granularity.
