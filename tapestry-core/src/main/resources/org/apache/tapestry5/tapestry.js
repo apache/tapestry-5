@@ -519,7 +519,7 @@ Element.addMethods( {
 	 * makes it as far as a (visible) FORM element.
 	 * 
 	 * Note that this only applies to the CSS definition of visible; it doesn't
-	 * check that the element is scolled into view.
+	 * check that the element is scrolled into view.
 	 * 
 	 * @param element
 	 *            to search up from
@@ -749,6 +749,11 @@ Element.addMethods( [ 'INPUT', 'SELECT', 'TEXTAREA' ], {
 /** Container of functions that may be invoked by the Tapestry.init() function. */
 Tapestry.Initializer = {
 
+	/** Make the given field the active field (focus on the field). */
+	activate : function(id) {
+		$(id).activate();
+	},
+
 	ajaxFormLoop : function(spec) {
 		var rowInjector = $(spec.rowInjector);
 
@@ -867,7 +872,6 @@ Tapestry.Initializer = {
 			zoneObject.updateFromURL(newUrl);
 		});
 	},
-
 	/**
 	 * Keys in the masterSpec are ids of field control elements. Value is a list
 	 * of validation specs. Each validation spec is a 2 or 3 element array.

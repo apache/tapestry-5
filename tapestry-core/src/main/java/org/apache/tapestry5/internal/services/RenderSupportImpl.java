@@ -168,9 +168,7 @@ public class RenderSupportImpl implements RenderSupport
     public void commit()
     {
         if (focusFieldId != null)
-        {
-            addScript("$('%s').activate();", focusFieldId);
-        }
+            javascriptSupport.addInitializerCall("activate", focusFieldId);
     }
 
     public void addStylesheetLink(Asset stylesheet, String media)

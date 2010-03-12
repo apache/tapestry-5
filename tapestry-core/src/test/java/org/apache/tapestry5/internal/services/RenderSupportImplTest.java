@@ -22,11 +22,8 @@ import org.apache.tapestry5.ioc.services.SymbolSource;
 import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.AssetSource;
-import org.apache.tapestry5.services.ClientInfrastructure;
 import org.apache.tapestry5.services.javascript.JavascriptSupport;
 import org.testng.annotations.Test;
-
-import java.util.Arrays;
 
 public class RenderSupportImplTest extends InternalBaseTestCase
 {
@@ -168,7 +165,7 @@ public class RenderSupportImplTest extends InternalBaseTestCase
     {
         JavascriptSupport js = mockJavascriptSupport();
 
-        js.addScript("$('%s').activate();", "foo");
+        js.addInitializerCall("activate", "foo");
 
         replay();
 
@@ -186,7 +183,7 @@ public class RenderSupportImplTest extends InternalBaseTestCase
     {
         JavascriptSupport js = mockJavascriptSupport();
 
-        js.addScript("$('%s').activate();", "foo");
+        js.addInitializerCall("activate", "foo");
 
         replay();
 
@@ -205,7 +202,7 @@ public class RenderSupportImplTest extends InternalBaseTestCase
     {
         JavascriptSupport js = mockJavascriptSupport();
 
-        js.addScript("$('%s').activate();", "bar");
+        js.addInitializerCall("activate", "bar");
 
         replay();
 
