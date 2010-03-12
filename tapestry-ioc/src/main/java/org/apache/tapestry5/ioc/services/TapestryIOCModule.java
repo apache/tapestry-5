@@ -49,11 +49,11 @@ public final class TapestryIOCModule
         binder.bind(PropertyAccess.class, PropertyAccessImpl.class);
         binder.bind(StrategyBuilder.class, StrategyBuilderImpl.class);
         binder.bind(PropertyShadowBuilder.class, PropertyShadowBuilderImpl.class);
-        binder.bind(PipelineBuilder.class, PipelineBuilderImpl.class);
+        binder.bind(PipelineBuilder.class, PipelineBuilderImpl.class).preventReloading();
         binder.bind(DefaultImplementationBuilder.class, DefaultImplementationBuilderImpl.class);
         binder.bind(ExceptionTracker.class, ExceptionTrackerImpl.class);
         binder.bind(ExceptionAnalyzer.class, ExceptionAnalyzerImpl.class);
-        binder.bind(TypeCoercer.class, TypeCoercerImpl.class);
+        binder.bind(TypeCoercer.class, TypeCoercerImpl.class).preventReloading();
         binder.bind(ThreadLocale.class, ThreadLocaleImpl.class);
         binder.bind(SymbolSource.class, SymbolSourceImpl.class);
         binder.bind(SymbolProvider.class, MapSymbolProvider.class).withId("ApplicationDefaults")
@@ -61,7 +61,7 @@ public final class TapestryIOCModule
         binder.bind(SymbolProvider.class, MapSymbolProvider.class).withId("FactoryDefaults")
                 .withMarker(FactoryDefaults.class);
         binder.bind(Runnable.class, RegistryStartup.class).withId("RegistryStartup");
-        binder.bind(MasterObjectProvider.class, MasterObjectProviderImpl.class);
+        binder.bind(MasterObjectProvider.class, MasterObjectProviderImpl.class).preventReloading();
         binder.bind(ClassNameLocator.class, ClassNameLocatorImpl.class);
         binder.bind(AspectDecorator.class, AspectDecoratorImpl.class);
         binder.bind(ClasspathURLConverter.class, ClasspathURLConverterImpl.class);
@@ -69,7 +69,7 @@ public final class TapestryIOCModule
         binder.bind(LoggingAdvisor.class, LoggingAdvisorImpl.class);
         binder.bind(LazyAdvisor.class, LazyAdvisorImpl.class);
         binder.bind(ThunkCreator.class, ThunkCreatorImpl.class);
-        binder.bind(UpdateListenerHub.class, UpdateListenerHubImpl.class);
+        binder.bind(UpdateListenerHub.class, UpdateListenerHubImpl.class).preventReloading();
     }
 
     /**

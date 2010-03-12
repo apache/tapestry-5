@@ -77,6 +77,8 @@ public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
 
     private boolean preventDecoration;
 
+    private boolean preventReloading;
+
     public void finish()
     {
         lock.lock();
@@ -117,14 +119,15 @@ public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
         eagerLoad = false;
         scope = null;
         preventDecoration = moduleDefaultPreventDecoration;
+        preventReloading = false;
     }
 
     private ObjectCreatorSource createObjectCreatorSourceFromImplementationClass()
     {
-        if (preventDecoration || !isProxiable() || !reloadableScope() || !isLocalFile(serviceImplementation))
-            return createStandardConstructorBasedObjectCreatorSource();
+        if (!preventReloading && isProxiable() && reloadableScope() && isLocalFile(serviceImplementation))
+            return createReloadableConstructorBasedObjectCreatorSource();
 
-        return createReloadableConstructorBasedObjectCreatorSource();
+        return createStandardConstructorBasedObjectCreatorSource();
     }
 
     private boolean isProxiable()
@@ -299,6 +302,15 @@ public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
         lock.check();
 
         preventDecoration = true;
+
+        return this;
+    }
+
+    public ServiceBindingOptions preventReloading()
+    {
+        lock.check();
+
+        preventReloading = true;
 
         return this;
     }

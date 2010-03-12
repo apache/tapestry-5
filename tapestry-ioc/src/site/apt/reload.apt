@@ -10,9 +10,10 @@ Service Implementation Reloading
   reuse across pages.  On the other hand, services don't auto-reload the way pages do, which makes developing that way less agile.
   
   Starting in release 5.2, service implementations now reload.  There's a number of restrictions on this, and a couple of
-  {{{http://en.wikipedia.org/wiki/Leaky_abstraction}leaky abstractions}}, but on the whole its quite servicable.
+  {{{http://en.wikipedia.org/wiki/Leaky_abstraction}leaky abstractions}}, but on the whole its quite serviceable.
   
-  You can change your service implementation, and Tapestry picks up the change immediately.
+  As of release 5.2, you can change your service implementation, and Tapestry picks up the change immediately. A service can even change its
+  dependencies when being reloaded ... but it can't change its interface.
   
 Limitations
 
@@ -22,10 +23,13 @@ Limitations
   * Reloading is limited to proxyable services: services with an interface and an implementation of that interface.
   
   * Reloading requires that the underlying class files be simple, local, filesystem files (not, for example, files inside a JAR).
-  
-  * Services that do not allow decorations (via the {{{../apidocs/org/apache/tapestry5/ioc/annotations/PreventServiceDecoration.html}PreventServiceDecoration}} annotation) will also
-  not enable live class reloading.
+      
+  * If a service has internal state of any kind, that state is lost when the class is reloaded and the service re-instantiated. However, if
+    a service has a configuration, the configuration will be <reconstructed> and injected into the service.
     
+  * Services are decorated only once, so any decorations or advice applies to the initially loaded version of the class, and will not be
+    recalculated when the class changes.
+      
   []
   
 Class Loader Issues

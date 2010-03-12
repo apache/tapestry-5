@@ -34,7 +34,7 @@ What is Apache Tapestry?
 
 New And Of Note
 
-  * Service <implementation> classes may now be {{{tapestry-ioc/guide/reload.html}live reloaded}}, much like page and component classes. 
+  * Service <implementation> classes may now be {{{tapestry-ioc/reload.html}live reloaded}}, much like page and component classes. 
 
   * New {{{apidocs/org/apache/tapestry5/annotations/QueryParameter.html}QueryParameter}} annotation for parameters to event handler methods.
 
