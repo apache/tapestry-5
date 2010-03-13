@@ -34,11 +34,15 @@ Property Expressions
   Being able to invoke methods was originally added so that it was possible to access methods such as
   java.util.Map.size() (which is not named like a property getter method). In Tapestry 5.1, property expressions
   were extended so that parameters could be passed into methods.
-
+  
   Parameters to methods are, themselves, property expressions.  This means that you can write a property expression
   that reads a property and passes it as a parameter to a method, and then access a property of the object returns
   from the method.
 
+  Starting in release 5.2, property expressions may also reference public fields of data objects as if they were
+  true properties.  Tapestry will simply read and update the field, rather than invoking getter and setter methods.
+  
+  
 Compilation
 
   Property expressions are compiled to Java classes at runtime; there is no runtime reflection (unlike
