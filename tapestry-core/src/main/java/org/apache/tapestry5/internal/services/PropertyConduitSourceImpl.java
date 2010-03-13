@@ -1,10 +1,10 @@
-// Copyright 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2007, 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,13 +14,38 @@
 
 package org.apache.tapestry5.internal.services;
 
+import static org.apache.tapestry5.internal.antlr.PropertyExpressionParser.DECIMAL;
+import static org.apache.tapestry5.internal.antlr.PropertyExpressionParser.DEREF;
+import static org.apache.tapestry5.internal.antlr.PropertyExpressionParser.FALSE;
+import static org.apache.tapestry5.internal.antlr.PropertyExpressionParser.IDENTIFIER;
+import static org.apache.tapestry5.internal.antlr.PropertyExpressionParser.INTEGER;
+import static org.apache.tapestry5.internal.antlr.PropertyExpressionParser.INVOKE;
+import static org.apache.tapestry5.internal.antlr.PropertyExpressionParser.LIST;
+import static org.apache.tapestry5.internal.antlr.PropertyExpressionParser.NOT;
+import static org.apache.tapestry5.internal.antlr.PropertyExpressionParser.NULL;
+import static org.apache.tapestry5.internal.antlr.PropertyExpressionParser.RANGEOP;
+import static org.apache.tapestry5.internal.antlr.PropertyExpressionParser.SAFEDEREF;
+import static org.apache.tapestry5.internal.antlr.PropertyExpressionParser.STRING;
+import static org.apache.tapestry5.internal.antlr.PropertyExpressionParser.THIS;
+import static org.apache.tapestry5.internal.antlr.PropertyExpressionParser.TRUE;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
 import org.antlr.runtime.ANTLRInputStream;
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.tree.Tree;
 import org.apache.tapestry5.PropertyConduit;
 import org.apache.tapestry5.internal.antlr.PropertyExpressionLexer;
 import org.apache.tapestry5.internal.antlr.PropertyExpressionParser;
-import static org.apache.tapestry5.internal.antlr.PropertyExpressionParser.*;
 import org.apache.tapestry5.internal.util.IntegerRange;
 import org.apache.tapestry5.internal.util.MultiKey;
 import org.apache.tapestry5.ioc.AnnotationProvider;
@@ -29,31 +54,26 @@ import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.ioc.internal.util.GenericsUtils;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.ioc.services.*;
+import org.apache.tapestry5.ioc.services.ClassFab;
+import org.apache.tapestry5.ioc.services.ClassFabUtils;
+import org.apache.tapestry5.ioc.services.ClassFactory;
+import org.apache.tapestry5.ioc.services.ClassPropertyAdapter;
+import org.apache.tapestry5.ioc.services.MethodSignature;
+import org.apache.tapestry5.ioc.services.PropertyAccess;
+import org.apache.tapestry5.ioc.services.PropertyAdapter;
+import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.ioc.util.BodyBuilder;
 import org.apache.tapestry5.services.ComponentLayer;
 import org.apache.tapestry5.services.InvalidationListener;
 import org.apache.tapestry5.services.PropertyConduitSource;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
 public class PropertyConduitSourceImpl implements PropertyConduitSource, InvalidationListener
 {
-    private static final MethodSignature GET_SIGNATURE = new MethodSignature(Object.class, "get",
-            new Class[]
-            { Object.class }, null);
+    private static final MethodSignature GET_SIGNATURE = new MethodSignature(Object.class, "get", new Class[]
+    { Object.class }, null);
 
-    private static final MethodSignature SET_SIGNATURE = new MethodSignature(void.class, "set",
-            new Class[]
-            { Object.class, Object.class }, null);
+    private static final MethodSignature SET_SIGNATURE = new MethodSignature(void.class, "set", new Class[]
+    { Object.class, Object.class }, null);
 
     private static final Method RANGE;
 
@@ -140,11 +160,16 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
          * name.
          */
         String getDescription();
-        
+
         /**
-         * Returns the name of the property, if exists.
+         * Returns the name of the property, if exists. This is also the name of the public field.
          */
         String getPropertyName();
+
+        /**
+         * Returns true if the term is actually a public field.
+         */
+        boolean isField();
     }
 
     /**
@@ -335,8 +360,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
         private String addInjection(Class fieldType, Object fieldValue)
         {
-            String fieldName = String.format("injected_%s_%d", toSimpleName(fieldType), parameters
-                    .size());
+            String fieldName = String.format("injected_%s_%d", toSimpleName(fieldType), parameters.size());
 
             classFab.addField(fieldName, Modifier.PRIVATE | Modifier.FINAL, fieldType);
 
@@ -345,8 +369,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
             return fieldName;
         }
 
-        private void createNoOp(ClassFab classFab, MethodSignature signature, String format,
-                Object... values)
+        private void createNoOp(ClassFab classFab, MethodSignature signature, String format, Object... values)
         {
             String message = String.format(format, values);
 
@@ -401,8 +424,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
             while (!isLeaf(node))
             {
-                GeneratedTerm term = processDerefNode(navBuilder, activeType, node,
-                        previousReference, "$1");
+                GeneratedTerm term = processDerefNode(navBuilder, activeType, node, previousReference, "$1");
 
                 activeType = term.type;
 
@@ -425,8 +447,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
             createGetterAndSetter(activeType, sig, node);
         }
 
-        private void createGetterAndSetter(Class activeType, MethodSignature navigateMethod,
-                Tree node)
+        private void createGetterAndSetter(Class activeType, MethodSignature navigateMethod, Tree node)
         {
             switch (node.getType())
             {
@@ -439,7 +460,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
                     // ready to use the navigation
                     // method to implement get() and set().
 
-                    ExpressionTermInfo info = infoForPropertyOrMethod(activeType, node);
+                    ExpressionTermInfo info = infoForMember(activeType, node);
 
                     createSetter(navigateMethod, info);
                     createGetter(navigateMethod, node, info);
@@ -504,8 +525,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
             addRootVariable(builder);
 
-            builder.addln("return ($w) %s;", createMethodInvocation(builder, node, rootName, 0,
-                    INVERT));
+            builder.addln("return ($w) %s;", createMethodInvocation(builder, node, rootName, 0, INVERT));
 
             builder.end();
 
@@ -622,8 +642,8 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
                     case DEREF:
                     case SAFEDEREF:
 
-                        GeneratedTerm generated = processDerefNode(builder, activeType, node,
-                                previousReference, rootName);
+                        GeneratedTerm generated = processDerefNode(builder, activeType, node, previousReference,
+                                rootName);
 
                         previousReference = generated.termReference;
                         activeType = generated.type;
@@ -635,8 +655,8 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
                     case IDENTIFIER:
                     case INVOKE:
 
-                        generated = addAccessForPropertyOrMethod(builder, activeType, node,
-                                previousReference, rootName, NullHandling.IGNORE);
+                        generated = addAccessForMember(builder, activeType, node, previousReference, rootName,
+                                NullHandling.IGNORE);
 
                         previousReference = generated.termReference;
                         activeType = generated.type;
@@ -664,8 +684,8 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
                         break;
 
                     default:
-                        throw unexpectedNodeType(node, TRUE, FALSE, INTEGER, DECIMAL, STRING,
-                                DEREF, SAFEDEREF, IDENTIFIER, INVOKE, LIST);
+                        throw unexpectedNodeType(node, TRUE, FALSE, INTEGER, DECIMAL, STRING, DEREF, SAFEDEREF,
+                                IDENTIFIER, INVOKE, LIST);
                 }
             }
 
@@ -681,7 +701,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
             Method method = info.getWriteMethod();
 
-            if (method == null)
+            if (method == null && !info.isField())
             {
                 createNoOpSetter();
                 return;
@@ -691,8 +711,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
             addRootVariable(builder);
 
-            builder.addln("%s target = navigate(root);", ClassFabUtils
-                    .toJavaClassName(navigateMethod.getReturnType()));
+            builder.addln("%s target = navigate(root);", ClassFabUtils.toJavaClassName(navigateMethod.getReturnType()));
 
             // I.e. due to ?. operator. The navigate method will already have
             // checked for nulls
@@ -702,8 +721,16 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
             String propertyTypeName = ClassFabUtils.toJavaClassName(info.getType());
 
-            builder.addln("target.%s(%s);", method.getName(), ClassFabUtils.castReference("$2",
-                    propertyTypeName));
+            String reference = ClassFabUtils.castReference("$2", propertyTypeName);
+
+            if (info.isField())
+            {
+                builder.add("target.%s = %s;", info.getPropertyName(), reference);
+            }
+            else
+            {
+                builder.addln("target.%s(%s);", method.getName(), reference);
+            }
 
             builder.end();
 
@@ -712,18 +739,18 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
         private void createNoOpSetter()
         {
-            createNoOp(classFab, SET_SIGNATURE, "Expression '%s' for class %s is read-only.",
-                    expression, rootType.getName());
+            createNoOp(classFab, SET_SIGNATURE, "Expression '%s' for class %s is read-only.", expression, rootType
+                    .getName());
         }
 
         private void createGetter(MethodSignature navigateMethod, Tree node, ExpressionTermInfo info)
         {
             Method method = info.getReadMethod();
 
-            if (method == null)
+            if (method == null && !info.isField())
             {
-                createNoOp(classFab, GET_SIGNATURE, "Expression %s for class %s is write-only.",
-                        expression, rootType.getName());
+                createNoOp(classFab, GET_SIGNATURE, "Expression %s for class %s is write-only.", expression, rootType
+                        .getName());
                 return;
             }
 
@@ -731,8 +758,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
             addRootVariable(builder);
 
-            builder.addln("%s target = navigate(root);", ClassFabUtils
-                    .toJavaClassName(navigateMethod.getReturnType()));
+            builder.addln("%s target = navigate(root);", ClassFabUtils.toJavaClassName(navigateMethod.getReturnType()));
 
             // I.e. due to ?. operator. The navigate method will already have
             // checked for nulls
@@ -740,8 +766,10 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
             builder.addln("if (target == null) return null;");
 
-            builder.addln("return ($w) target.%s;", createMethodInvocation(builder, node, "root",
-                    method));
+            String reference = info.isField() ? info.getPropertyName() : createMethodInvocation(builder, node, "root",
+                    method);
+
+            builder.addln("return ($w) target.%s;", reference);
 
             builder.end();
 
@@ -759,15 +787,15 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
          *            to the method being invoked
          * @param rootName
          *            name of variable holding reference to root object of
-         *            expression * @param method
+         *            expression
+         * @param method
          *            defines the name and parameter types of the method to
          *            invoke
          * @return method invocation string (the name of the method and any
          *         parameters, ready to be added to a method
          *         body)
          */
-        private String createMethodInvocation(BodyBuilder bodyBuilder, Tree node, String rootName,
-                Method method)
+        private String createMethodInvocation(BodyBuilder bodyBuilder, Tree node, String rootName, Method method)
         {
             return createMethodInvocation(bodyBuilder, node, rootName, 1, method);
         }
@@ -793,8 +821,8 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
          *         parameters, ready to be added to a method
          *         body)
          */
-        private String createMethodInvocation(BodyBuilder bodyBuilder, Tree node, String rootName,
-                int childOffset, Method method)
+        private String createMethodInvocation(BodyBuilder bodyBuilder, Tree node, String rootName, int childOffset,
+                Method method)
         {
             Class[] parameterTypes = method.getParameterTypes();
 
@@ -808,8 +836,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
                 // child(0) is the method name, child(1) is the first parameter,
                 // etc.
 
-                GeneratedTerm generatedTerm = subexpression(bodyBuilder, node.getChild(i
-                        + childOffset), rootName);
+                GeneratedTerm generatedTerm = subexpression(bodyBuilder, node.getChild(i + childOffset), rootName);
                 String currentReference = generatedTerm.termReference;
 
                 Class actualType = generatedTerm.type;
@@ -822,28 +849,29 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
                 {
                     String coerced = nextVariableName(parameterType);
 
-                    String call = String.format("coerce(($w) %s, %s)", currentReference,
-                            addInjection(Class.class, parameterType));
+                    String call = String.format("coerce(($w) %s, %s)", currentReference, addInjection(Class.class,
+                            parameterType));
 
                     String parameterTypeName = ClassFabUtils.toJavaClassName(parameterType);
 
-                    bodyBuilder.addln("%s %s = %s;", parameterTypeName, coerced, ClassFabUtils
-                            .castReference(call, parameterTypeName));
+                    bodyBuilder.addln("%s %s = %s;", parameterTypeName, coerced, ClassFabUtils.castReference(call,
+                            parameterTypeName));
 
                     currentReference = coerced;
-                } else
+                }
+                else
                 {
                     needsUnwrap = parameterType.isPrimitive() && !actualType.isPrimitive();
                 }
 
-                if (i > 0) builder.append(", ");
+                if (i > 0)
+                    builder.append(", ");
 
                 builder.append(currentReference);
 
                 if (needsUnwrap)
                 {
-                    builder.append(".").append(ClassFabUtils.getUnwrapMethodName(parameterType))
-                            .append("()");
+                    builder.append(".").append(ClassFabUtils.getUnwrapMethodName(parameterType)).append("()");
                 }
             }
 
@@ -869,8 +897,8 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
             // that may have been associated
             // with the underlying method.
 
-            return addAccessForPropertyOrMethod(builder, activeType, term, previousVariableName,
-                    rootName, allowNull ? NullHandling.ALLOW : NullHandling.FORBID);
+            return addAccessForMember(builder, activeType, term, previousVariableName, rootName,
+                    allowNull ? NullHandling.ALLOW : NullHandling.FORBID);
         }
 
         private String nextVariableName(Class type)
@@ -884,20 +912,20 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
             return InternalUtils.lastTerm(type.getName());
         }
 
-        private GeneratedTerm addAccessForPropertyOrMethod(BodyBuilder builder, Class activeType,
-                Tree term, String previousVariableName, String rootName, NullHandling nullHandling)
+        private GeneratedTerm addAccessForMember(BodyBuilder builder, Class activeType, Tree term,
+                String previousVariableName, String rootName, NullHandling nullHandling)
         {
             assertNodeType(term, IDENTIFIER, INVOKE);
 
             // Get info about this property or method.
 
-            ExpressionTermInfo info = infoForPropertyOrMethod(activeType, term);
+            ExpressionTermInfo info = infoForMember(activeType, term);
 
             Method method = info.getReadMethod();
 
-            if (method == null)
-                throw new PropertyExpressionException(ServicesMessages.writeOnlyProperty(info
-                        .getDescription(), activeType, expression), expression, null);
+            if (method == null && !info.isField())
+                throw new PropertyExpressionException(ServicesMessages.writeOnlyProperty(info.getDescription(),
+                        activeType, expression), expression, null);
 
             // If a primitive type, convert to wrapper type
 
@@ -908,7 +936,8 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
             final String variableName = nextVariableName(wrappedType);
 
-            String invocation = createMethodInvocation(builder, term, rootName, method);
+            String reference = info.isField() ? info.getPropertyName() : createMethodInvocation(builder, term,
+                    rootName, method);
 
             builder.add("%s %s = ", wrapperTypeName, variableName);
 
@@ -918,12 +947,13 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
             if (termType.isPrimitive())
             {
                 builder.add(" ($w) ");
-            } else if (info.isCastRequired())
+            }
+            else if (info.isCastRequired())
             {
                 builder.add(" (%s) ", wrapperTypeName);
             }
 
-            builder.addln("%s.%s;", previousVariableName, invocation);
+            builder.addln("%s.%s;", previousVariableName, reference);
 
             switch (nullHandling)
             {
@@ -934,8 +964,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
                 case FORBID:
                     // Perform a null check on intermediate terms.
                     builder.addln("if (%s == null) %s.nullTerm(\"%s\", \"%s\", $1);", variableName,
-                            PropertyConduitSourceImpl.class.getName(), info.getDescription(),
-                            expression);
+                            PropertyConduitSourceImpl.class.getName(), info.getDescription(), expression);
                     break;
 
                 default:
@@ -951,7 +980,8 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
             for (int e : expected)
             {
-                if (type == e) return;
+                if (type == e)
+                    return;
             }
 
             throw unexpectedNodeType(node, expected);
@@ -964,35 +994,99 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
             for (int i = 0; i < expected.length; i++)
                 tokenNames.add(PropertyExpressionParser.tokenNames[expected[i]]);
 
-            String message = String
-                    .format(
-                            "Node %s (within expression '%s') was type %s, but was expected to be (one of) %s.",
-                            node.toStringTree(), expression,
-                            PropertyExpressionParser.tokenNames[node.getType()], InternalUtils
-                                    .joinSorted(tokenNames));
+            String message = String.format(
+                    "Node %s (within expression '%s') was type %s, but was expected to be (one of) %s.", node
+                            .toStringTree(), expression, PropertyExpressionParser.tokenNames[node.getType()],
+                    InternalUtils.joinSorted(tokenNames));
 
             return new PropertyExpressionException(message, expression, null);
         }
 
-        private ExpressionTermInfo infoForPropertyOrMethod(Class activeType, Tree node)
+        private ExpressionTermInfo infoForMember(Class activeType, Tree node)
         {
-            if (node.getType() == INVOKE) return infoForInvokeNode(activeType, node);
+            if (node.getType() == INVOKE)
+                return infoForInvokeNode(activeType, node);
 
-            return infoForPropertyNode(activeType, node);
+            return infoForPropertyOrPublicField(activeType, node);
         }
 
-        private ExpressionTermInfo infoForPropertyNode(Class activeType, Tree node)
+        private ExpressionTermInfo infoForPropertyOrPublicField(Class activeType, Tree node)
         {
-            final String propertyName = node.getText();
+            String propertyName = node.getText();
 
             ClassPropertyAdapter classAdapter = access.getAdapter(activeType);
             final PropertyAdapter adapter = classAdapter.getPropertyAdapter(propertyName);
 
             if (adapter == null)
-                throw new PropertyExpressionException(ServicesMessages.noSuchProperty(activeType,
-                        propertyName, expression, classAdapter.getPropertyNames()), expression,
-                        null);
+            {
+                ExpressionTermInfo fieldInfo = infoForPublicField(activeType, propertyName);
 
+                if (fieldInfo != null)
+                    return fieldInfo;
+
+                throw new PropertyExpressionException(ServicesMessages.noSuchProperty(activeType, propertyName,
+                        expression, classAdapter.getPropertyNames()), expression, null);
+            }
+
+            return createExpressionTermInfoForProperty(adapter);
+        }
+
+        private ExpressionTermInfo infoForPublicField(Class activeType, String fieldName)
+        {
+            // Iterate over all public fields of the type (or its super classes)
+
+            for (final Field field : activeType.getFields())
+            {
+                if (field.getName().equalsIgnoreCase(fieldName)) { return new ExpressionTermInfo()
+                {
+                    public <T extends Annotation> T getAnnotation(Class<T> annotationClass)
+                    {
+                        return field.getAnnotation(annotationClass);
+                    }
+
+                    public boolean isCastRequired()
+                    {
+                        return false;
+                    }
+
+                    public Method getWriteMethod()
+                    {
+                        return null;
+                    }
+
+                    public Class getType()
+                    {
+                        return field.getType();
+                    }
+
+                    public Method getReadMethod()
+                    {
+                        // TODO Auto-generated method stub
+                        return null;
+                    }
+
+                    public String getPropertyName()
+                    {
+                        return field.getName();
+                    }
+
+                    public String getDescription()
+                    {
+                        return "field " + field.getName();
+                    }
+
+                    public boolean isField()
+                    {
+                        return true;
+                    }
+                }; }
+            }
+
+            return null;
+        }
+
+        private ExpressionTermInfo createExpressionTermInfoForProperty(final PropertyAdapter adapter)
+        {
             return new ExpressionTermInfo()
             {
                 public Method getReadMethod()
@@ -1025,10 +1119,15 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
                     return adapter.getAnnotation(annotationClass);
                 }
 
-				public String getPropertyName() 
-				{
-					return propertyName;
-				}
+                public String getPropertyName()
+                {
+                    return adapter.getName();
+                }
+
+                public boolean isField()
+                {
+                    return false;
+                }
             };
         }
 
@@ -1043,11 +1142,10 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
                 final Method method = findMethod(activeType, methodName, parameterCount);
 
                 if (method.getReturnType().equals(void.class))
-                    throw new PropertyExpressionException(ServicesMessages.methodIsVoid(methodName,
-                            activeType, expression), expression, null);
+                    throw new PropertyExpressionException(ServicesMessages.methodIsVoid(methodName, activeType,
+                            expression), expression, null);
 
-                final Class genericType = GenericsUtils
-                        .extractGenericReturnType(activeType, method);
+                final Class genericType = GenericsUtils.extractGenericReturnType(activeType, method);
 
                 return new ExpressionTermInfo()
                 {
@@ -1081,27 +1179,32 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
                         return method.getAnnotation(annotationClass);
                     }
 
-					public String getPropertyName() 
-					{
-						return null;
-					}
+                    public String getPropertyName()
+                    {
+                        return null;
+                    }
+
+                    public boolean isField()
+                    {
+                        return false;
+                    }
                 };
             }
             catch (NoSuchMethodException ex)
             {
-                throw new PropertyExpressionException(ServicesMessages.methodNotFound(methodName,
-                        activeType, expression), expression, ex);
+                throw new PropertyExpressionException(ServicesMessages.methodNotFound(methodName, activeType,
+                        expression), expression, ex);
             }
         }
 
-        private Method findMethod(Class activeType, String methodName, int parameterCount)
-                throws NoSuchMethodException
+        private Method findMethod(Class activeType, String methodName, int parameterCount) throws NoSuchMethodException
         {
             for (Method method : activeType.getMethods())
             {
 
                 if (method.getParameterTypes().length == parameterCount
-                        && method.getName().equalsIgnoreCase(methodName)) return method;
+                        && method.getName().equalsIgnoreCase(methodName))
+                    return method;
             }
 
             // TAP5-330
@@ -1228,12 +1331,11 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
                 Tree toNode = tree.getChild(1);
 
                 // If the range is defined as integers (not properties, etc.)
-                // then
-                // it is possible to calcualte the value here, once, and not
-                // build
-                // a new class.
+                // then it is possible to calculate the value here, once, and not
+                // build a new class.
 
-                if (fromNode.getType() != INTEGER || toNode.getType() != INTEGER) break;
+                if (fromNode.getType() != INTEGER || toNode.getType() != INTEGER)
+                    break;
 
                 int from = Integer.parseInt(fromNode.getText());
                 int to = Integer.parseInt(toNode.getText());
@@ -1244,34 +1346,39 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
             case THIS:
 
-                return new PropertyConduit()
-                {
-                    public Object get(Object instance)
-                    {
-                        return instance;
-                    }
-
-                    public void set(Object instance, Object value)
-                    {
-                        throw new RuntimeException(ServicesMessages.literalConduitNotUpdateable());
-                    }
-
-                    public Class getPropertyType()
-                    {
-                        return rootClass;
-                    }
-
-                    public <T extends Annotation> T getAnnotation(Class<T> annotationClass)
-                    {
-                        return invariantAnnotationProvider.getAnnotation(annotationClass);
-                    }
-                };
+                return createLiteralThisPropertyConduit(rootClass);
 
             default:
                 break;
         }
 
         return new PropertyConduitBuilder(rootClass, expression, tree).createInstance();
+    }
+
+    private PropertyConduit createLiteralThisPropertyConduit(final Class rootClass)
+    {
+        return new PropertyConduit()
+        {
+            public Object get(Object instance)
+            {
+                return instance;
+            }
+
+            public void set(Object instance, Object value)
+            {
+                throw new RuntimeException(ServicesMessages.literalConduitNotUpdateable());
+            }
+
+            public Class getPropertyType()
+            {
+                return rootClass;
+            }
+
+            public <T extends Annotation> T getAnnotation(Class<T> annotationClass)
+            {
+                return invariantAnnotationProvider.getAnnotation(annotationClass);
+            }
+        };
     }
 
     private <T> PropertyConduit createLiteralConduit(Class<T> type, T value)
@@ -1307,8 +1414,8 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
         }
         catch (Exception ex)
         {
-            throw new RuntimeException(String.format("Error parsing property expression '%s': %s.",
-                    expression, ex.getMessage()), ex);
+            throw new RuntimeException(String.format("Error parsing property expression '%s': %s.", expression, ex
+                    .getMessage()), ex);
         }
     }
 
@@ -1317,8 +1424,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
      */
     public static void nullTerm(String term, String expression, Object root)
     {
-        String message = String.format(
-                "Property '%s' (within property expression '%s', of %s) is null.", term,
+        String message = String.format("Property '%s' (within property expression '%s', of %s) is null.", term,
                 expression, root);
 
         throw new NullPointerException(message);

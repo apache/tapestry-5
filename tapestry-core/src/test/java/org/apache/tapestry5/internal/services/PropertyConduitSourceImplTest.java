@@ -1,10 +1,10 @@
-// Copyright 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2007, 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,6 +16,7 @@ package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.Block;
 import org.apache.tapestry5.PropertyConduit;
+import org.apache.tapestry5.beaneditor.NonVisual;
 import org.apache.tapestry5.beaneditor.Validate;
 import org.apache.tapestry5.integration.app1.data.IntegerHolder;
 import org.apache.tapestry5.internal.InternalPropertyConduit;
@@ -128,12 +129,14 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
     @Test
     public void question_dot_operator_for_object_type()
     {
-        InternalPropertyConduit normal = (InternalPropertyConduit) source.create(CompositeBean.class, "simple.firstName");
-        InternalPropertyConduit smart = (InternalPropertyConduit) source.create(CompositeBean.class, "simple?.firstName");
+        InternalPropertyConduit normal = (InternalPropertyConduit) source.create(CompositeBean.class,
+                "simple.firstName");
+        InternalPropertyConduit smart = (InternalPropertyConduit) source.create(CompositeBean.class,
+                "simple?.firstName");
 
         CompositeBean bean = new CompositeBean();
         bean.setSimple(null);
-        
+
         assertEquals(normal.getPropertyName(), "firstName");
         assertEquals(smart.getPropertyName(), "firstName");
 
@@ -167,8 +170,9 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
     @Test
     public void method_names_are_matched_caselessly()
     {
-        InternalPropertyConduit conduit = (InternalPropertyConduit) source.create(CompositeBean.class, "GETSIMPLE().firstName");
-        
+        InternalPropertyConduit conduit = (InternalPropertyConduit) source.create(CompositeBean.class,
+                "GETSIMPLE().firstName");
+
         assertEquals(conduit.getPropertyName(), "firstName");
 
         CompositeBean bean = new CompositeBean();
@@ -239,8 +243,7 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
         }
         catch (NullPointerException ex)
         {
-            assertEquals(ex.getMessage(),
-                    "Root object of property expression 'value.get()' is null.");
+            assertEquals(ex.getMessage(), "Root object of property expression 'value.get()' is null.");
         }
     }
 
@@ -259,8 +262,7 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
         }
         catch (NullPointerException ex)
         {
-            assertMessageContains(ex,
-                    "Property 'simple' (within property expression 'simple.lastName', of",
+            assertMessageContains(ex, "Property 'simple' (within property expression 'simple.lastName', of",
                     ") is null.");
         }
     }
@@ -318,8 +320,7 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
     @Test
     public void method_invocation_with_string_argument()
     {
-        PropertyConduit conduit = source.create(EchoBean.class,
-                "echoString(storedString, 'B4', 'AFTER')");
+        PropertyConduit conduit = source.create(EchoBean.class, "echoString(storedString, 'B4', 'AFTER')");
         EchoBean bean = new EchoBean();
 
         bean.setStoredString("Moe");
@@ -330,8 +331,7 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
     @Test
     public void method_invocation_using_dereference()
     {
-        PropertyConduit conduit = source.create(EchoBean.class,
-                "echoString(storedString, stringSource.value, 'beta')");
+        PropertyConduit conduit = source.create(EchoBean.class, "echoString(storedString, stringSource.value, 'beta')");
         EchoBean bean = new EchoBean();
 
         StringSource source = new StringSource("alpha");
@@ -371,8 +371,7 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
     @Test
     public void list_as_method_argument()
     {
-        PropertyConduit conduit = source.create(EchoBean.class,
-                "echoList([ 1, 2.0, storedString ])");
+        PropertyConduit conduit = source.create(EchoBean.class, "echoList([ 1, 2.0, storedString ])");
         EchoBean bean = new EchoBean();
 
         bean.setStoredString("Bart");
@@ -439,8 +438,7 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
         }
         catch (RuntimeException ex)
         {
-            assertEquals(
-                    ex.getMessage(),
+            assertEquals(ex.getMessage(),
                     "Error parsing property expression 'getValue(': line 1:0 no viable alternative at input 'getValue'.");
         }
     }
@@ -484,5 +482,64 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
         co.setNestedIndex(1);
 
         assertEquals(pc.get(co), "one");
+    }
+
+    @Test
+    public void public_object_field()
+    {
+        PublicFieldBean bean = new PublicFieldBean();
+
+        bean.stringField = "x";
+
+        PropertyConduit pc = source.create(PublicFieldBean.class, "stringField");
+
+        assertEquals(pc.get(bean), "x");
+
+        pc.set(bean, "y");
+
+        assertEquals(bean.stringField, "y");
+    }
+
+    @Test
+    public void navigate_through_public_field()
+    {
+        PublicFieldBean bean = new PublicFieldBean();
+        PublicFieldBeanHolder holder = new PublicFieldBeanHolder(bean);
+
+        bean.stringField = "x";
+
+        PropertyConduit pc = source.create(PublicFieldBeanHolder.class, "bean.stringField");
+
+        assertEquals(pc.get(holder), "x");
+
+        pc.set(holder, "y");
+
+        assertEquals(bean.stringField, "y");
+    }
+
+    @Test
+    public void public_primitive_field()
+    {
+        PublicFieldBean bean = new PublicFieldBean();
+
+        bean.intField = 99;
+
+        // check out the case insensitiveness:
+
+        PropertyConduit pc = source.create(PublicFieldBean.class, "IntField");
+
+        assertEquals(pc.get(bean), new Integer(99));
+
+        pc.set(bean, 37);
+
+        assertEquals(bean.intField, 37);
+    }
+
+    @Test
+    public void annotation_of_public_field()
+    {
+        PropertyConduit pc = source.create(PublicFieldBean.class, "StringField");
+
+        assertNotNull(pc.getAnnotation(NonVisual.class));
     }
 }
