@@ -1138,6 +1138,8 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         type("zipCode", "abc");
 
         click(update); // but don't wait
+        
+        waitForCondition("selenium.browserbot.getCurrentWindow().document.getElementById('zipCode:errorpopup')", "5000");
 
         assertTextPresent("A zip code consists of five or nine digits, eg: 02134 or 90125-4472.");
 
