@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -32,7 +32,7 @@ public class RootPathDispatcher implements Dispatcher
 
     private final ComponentClassResolver componentClassResolver;
 
-    private final PageRenderRequestHandler handler;
+    private final ComponentRequestHandler handler;
 
     private final String startPageName;
 
@@ -40,7 +40,7 @@ public class RootPathDispatcher implements Dispatcher
 
     public RootPathDispatcher(ComponentClassResolver componentClassResolver,
 
-                              PageRenderRequestHandler handler,
+                              ComponentRequestHandler handler,
 
                               @Inject @Symbol("tapestry.start-page-name")
                               String startPageName)
@@ -58,7 +58,7 @@ public class RootPathDispatcher implements Dispatcher
 
         if (request.getPath().equals("/") && componentClassResolver.isPageName(startPageName))
         {
-            handler.handle(parameters);
+            handler.handlePageRender(parameters);
 
             return true;
         }
