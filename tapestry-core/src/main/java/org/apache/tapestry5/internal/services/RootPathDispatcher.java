@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.EventContext;
+import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.internal.EmptyEventContext;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
@@ -32,7 +33,7 @@ public class RootPathDispatcher implements Dispatcher
 
     private final ComponentClassResolver componentClassResolver;
 
-    private final PageRenderRequestHandler handler;
+    private final ComponentRequestHandler handler;
 
     private final String startPageName;
 
@@ -40,16 +41,16 @@ public class RootPathDispatcher implements Dispatcher
 
     public RootPathDispatcher(ComponentClassResolver componentClassResolver,
 
-                              PageRenderRequestHandler handler,
+                              ComponentRequestHandler handler,
 
-                              @Inject @Symbol("tapestry.start-page-name")
+                              @Inject @Symbol(SymbolConstants.START_PAGE_NAME)
                               String startPageName)
     {
         this.componentClassResolver = componentClassResolver;
         this.handler = handler;
         this.startPageName = startPageName;
 
-        parameters = new PageRenderRequestParameters(this.startPageName, EMPTY_CONTEXT);
+        parameters = new PageRenderRequestParameters(this.startPageName, EMPTY_CONTEXT, false);
     }
 
     public boolean dispatch(Request request, final Response response) throws IOException
@@ -58,7 +59,7 @@ public class RootPathDispatcher implements Dispatcher
 
         if (request.getPath().equals("/") && componentClassResolver.isPageName(startPageName))
         {
-            handler.handle(parameters);
+            handler.handlePageRender(parameters);
 
             return true;
         }
