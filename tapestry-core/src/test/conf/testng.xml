@@ -39,6 +39,7 @@
       <package name="org.apache.tapestry5.internal.model"/>
       <package name="org.apache.tapestry5.internal.pageload"/>
       <package name="org.apache.tapestry5.internal.services"/>
+      <package name="org.apache.tapestry5.internal.services.messages"/>
       <package name="org.apache.tapestry5.internal.structure"/>
       <package name="org.apache.tapestry5.internal.test"/>
       <package name="org.apache.tapestry5.internal.transform"/>

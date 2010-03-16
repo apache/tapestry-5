@@ -1,10 +1,10 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -23,6 +23,7 @@ import org.apache.tapestry5.ioc.services.ClasspathURLConverter;
 import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.services.InvalidationEventHub;
 import org.apache.tapestry5.services.UpdateListener;
+import org.apache.tapestry5.services.messages.PropertiesFileParser;
 
 import java.util.Locale;
 
@@ -58,26 +59,28 @@ public class ComponentMessagesSourceImpl implements ComponentMessagesSource, Upd
         {
             ComponentModel parentModel = model.getParentModel();
 
-            if (parentModel == null) return rootBundle;
+            if (parentModel == null)
+                return rootBundle;
 
             return new ComponentModelBundle(parentModel, rootBundle);
         }
     }
 
-    public ComponentMessagesSourceImpl(
-            @Symbol(SymbolConstants.APPLICATION_CATALOG)
-            Resource appCatalogResource,
+    public ComponentMessagesSourceImpl(@Symbol(SymbolConstants.APPLICATION_CATALOG)
+    Resource appCatalogResource,
 
-            ClasspathURLConverter classpathURLConverter)
+    PropertiesFileParser parser,
+
+    ClasspathURLConverter classpathURLConverter)
     {
-        this(appCatalogResource, new URLChangeTracker(classpathURLConverter));
+        this(appCatalogResource, parser, new URLChangeTracker(classpathURLConverter));
     }
 
-    ComponentMessagesSourceImpl(Resource appCatalogResource, URLChangeTracker tracker)
+    ComponentMessagesSourceImpl(Resource appCatalogResource, PropertiesFileParser parser, URLChangeTracker tracker)
     {
         this.appCatalogResource = appCatalogResource;
 
-        messagesSource = new MessagesSourceImpl(tracker);
+        messagesSource = new MessagesSourceImpl(tracker, parser);
     }
 
     public void checkForUpdates()
@@ -89,8 +92,7 @@ public class ComponentMessagesSourceImpl implements ComponentMessagesSource, Upd
     {
         // If the application catalog exists, set it up as the root, otherwise use null.
 
-        MessagesBundle appCatalogBundle = !appCatalogResource.exists() ? null
-                                                                       : rootBundle();
+        MessagesBundle appCatalogBundle = !appCatalogResource.exists() ? null : rootBundle();
 
         MessagesBundle bundle = new ComponentModelBundle(componentModel, appCatalogBundle);
 

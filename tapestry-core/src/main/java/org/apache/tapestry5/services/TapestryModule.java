@@ -74,6 +74,7 @@ import org.apache.tapestry5.internal.renderers.ObjectArrayRenderer;
 import org.apache.tapestry5.internal.renderers.RequestRenderer;
 import org.apache.tapestry5.internal.services.*;
 import org.apache.tapestry5.internal.services.javascript.JavascriptSupportImpl;
+import org.apache.tapestry5.internal.services.messages.PropertiesFileParserImpl;
 import org.apache.tapestry5.internal.transform.*;
 import org.apache.tapestry5.internal.translator.NumericTranslator;
 import org.apache.tapestry5.internal.translator.NumericTranslatorSupport;
@@ -99,6 +100,7 @@ import org.apache.tapestry5.runtime.RenderCommand;
 import org.apache.tapestry5.runtime.RenderQueue;
 import org.apache.tapestry5.services.ajax.MultiZoneUpdateEventResultProcessor;
 import org.apache.tapestry5.services.javascript.JavascriptSupport;
+import org.apache.tapestry5.services.messages.PropertiesFileParser;
 import org.apache.tapestry5.util.StringToEnumCoercion;
 import org.apache.tapestry5.validator.Email;
 import org.apache.tapestry5.validator.Max;
@@ -353,6 +355,7 @@ public final class TapestryModule
         binder.bind(AssetPathAuthorizer.class, WhitelistAuthorizer.class).withId("WhitelistAuthorizer");
         binder.bind(AssetPathAuthorizer.class, RegexAuthorizer.class).withId("RegexAuthorizer");
         binder.bind(ValidatorMacro.class, ValidatorMacroImpl.class);
+        binder.bind(PropertiesFileParser.class, PropertiesFileParserImpl.class);
     }
 
     // ========================================================================
@@ -1271,10 +1274,12 @@ public final class TapestryModule
     @ClasspathProvider
     AssetFactory classpathAssetFactory,
 
+    PropertiesFileParser parser,
+
     ClasspathURLConverter classpathURLConverter)
     {
         ValidationMessagesSourceImpl service = new ValidationMessagesSourceImpl(configuration, classpathAssetFactory
-                .getRootResource(), classpathURLConverter);
+                .getRootResource(), parser, classpathURLConverter);
         updateListenerHub.addUpdateListener(service);
 
         return service;

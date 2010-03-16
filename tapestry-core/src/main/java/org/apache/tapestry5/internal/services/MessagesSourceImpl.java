@@ -1,10 +1,10 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,22 +14,25 @@
 
 package org.apache.tapestry5.internal.services;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
 import org.apache.tapestry5.internal.event.InvalidationEventHubImpl;
 import org.apache.tapestry5.internal.util.MultiKey;
 import org.apache.tapestry5.internal.util.URLChangeTracker;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.LocalizedNameGenerator;
-
-import java.io.*;
-import java.util.*;
+import org.apache.tapestry5.services.messages.PropertiesFileParser;
 
 /**
  * A utility class that encapsulates all the logic for reading properties files and assembling {@link Messages} from
- * them, in accordance with extension rules and locale. This represents code that was refactored out of {@link
- * ComponentMessagesSourceImpl}. This class can be used as a base class, though the existing code base uses it as a
+ * them, in accordance with extension rules and locale. This represents code that was refactored out of
+ * {@link ComponentMessagesSourceImpl}. This class can be used as a base class, though the existing code base uses it as
+ * a
  * utility. Composition trumps inheritance!
  * <p/>
  * The message catalog for a component is the combination of all appropriate properties files for the component, plus
@@ -43,13 +46,15 @@ public class MessagesSourceImpl extends InvalidationEventHubImpl implements Mess
 {
     private final URLChangeTracker tracker;
 
+    private final PropertiesFileParser propertiesFileParser;
+
     /**
      * Keyed on bundle id and locale.
      */
     private final Map<MultiKey, Messages> messagesByBundleIdAndLocale = CollectionFactory.newConcurrentMap();
 
     /**
-     * Keyed on bundle id and locale, the coooked properties include properties inherited from less locale-specific
+     * Keyed on bundle id and locale, the cooked properties include properties inherited from less locale-specific
      * properties files, or inherited from parent bundles.
      */
     private final Map<MultiKey, Map<String, String>> cookedProperties = CollectionFactory.newConcurrentMap();
@@ -61,19 +66,10 @@ public class MessagesSourceImpl extends InvalidationEventHubImpl implements Mess
 
     private final Map<String, String> emptyMap = Collections.emptyMap();
 
-    /**
-     * Charset used when reading a properties file.
-     */
-    private static final String CHARSET = "UTF-8";
-
-    /**
-     * Buffer size used when reading a properties file.
-     */
-    private static final int BUFFER_SIZE = 2000;
-
-    public MessagesSourceImpl(URLChangeTracker tracker)
+    public MessagesSourceImpl(URLChangeTracker tracker, PropertiesFileParser propertiesFileParser)
     {
         this.tracker = tracker;
+        this.propertiesFileParser = propertiesFileParser;
     }
 
     public void checkForUpdates()
@@ -119,13 +115,15 @@ public class MessagesSourceImpl extends InvalidationEventHubImpl implements Mess
      */
     private Map<String, String> findBundleProperties(MessagesBundle bundle, Locale locale)
     {
-        if (bundle == null) return emptyMap;
+        if (bundle == null)
+            return emptyMap;
 
         MultiKey key = new MultiKey(bundle.getId(), locale);
 
         Map<String, String> existing = cookedProperties.get(key);
 
-        if (existing != null) return existing;
+        if (existing != null)
+            return existing;
 
         // What would be cool is if we could maintain a cache of bundle id + locale -->
         // Resource. That would optimize quite a bit of this; may need to use an alternative to
@@ -172,7 +170,8 @@ public class MessagesSourceImpl extends InvalidationEventHubImpl implements Mess
      */
     private Map<String, String> extend(Map<String, String> base, Map<String, String> rawProperties)
     {
-        if (rawProperties.isEmpty()) return base;
+        if (rawProperties.isEmpty())
+            return base;
 
         // Make a copy of the base Map
 
@@ -204,13 +203,14 @@ public class MessagesSourceImpl extends InvalidationEventHubImpl implements Mess
      */
     private Map<String, String> readProperties(Resource resource)
     {
-        if (!resource.exists()) return emptyMap;
+        if (!resource.exists())
+            return emptyMap;
 
         tracker.add(resource.toURL());
 
         try
         {
-            return readPropertiesFromStream(resource.openStream());
+            return propertiesFileParser.parsePropertiesFile(resource);
         }
         catch (Exception ex)
         {
@@ -218,80 +218,4 @@ public class MessagesSourceImpl extends InvalidationEventHubImpl implements Mess
         }
     }
 
-    static Map<String, String> readPropertiesFromStream(InputStream propertiesFileStream) throws IOException
-    {
-        Map<String, String> result = CollectionFactory.newCaseInsensitiveMap();
-
-        Properties p = new Properties();
-        InputStream is = null;
-
-        try
-        {
-
-            is = readUTFStreamToEscapedASCII(propertiesFileStream);
-
-            // Ok, now we have the content read into memory as UTF-8, not ASCII.
-
-            p.load(is);
-
-            is.close();
-
-            is = null;
-        }
-        finally
-        {
-            InternalUtils.close(is);
-        }
-
-        for (Map.Entry e : p.entrySet())
-        {
-            String key = e.getKey().toString();
-
-            String value = p.getProperty(key);
-
-            result.put(key, value);
-        }
-
-        return result;
-    }
-
-
-    /**
-     * Reads a UTF-8 stream, performing a conversion to ASCII (i.e., ISO8859-1 encoding). Characters outside the normal
-     * range for ISO8859-1 are converted to unicode escapes. In effect, Tapestry is performing native2ascii on the
-     * files, on the fly.
-     */
-    private static InputStream readUTFStreamToEscapedASCII(InputStream is) throws IOException
-    {
-        Reader reader = new InputStreamReader(is, CHARSET);
-
-        StringBuilder builder = new StringBuilder(BUFFER_SIZE);
-        char[] buffer = new char[BUFFER_SIZE];
-
-        while (true)
-        {
-            int length = reader.read(buffer);
-
-            if (length < 0) break;
-
-            for (int i = 0; i < length; i++)
-            {
-                char ch = buffer[i];
-
-                if (ch <= '\u007f')
-                {
-                    builder.append(ch);
-                    continue;
-                }
-
-                builder.append(String.format("\\u%04x", (int) ch));
-            }
-        }
-
-        reader.close();
-
-        byte[] resourceContent = builder.toString().getBytes();
-
-        return new ByteArrayInputStream(resourceContent);
-    }
 }

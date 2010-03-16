@@ -1,10 +1,10 @@
-// Copyright 2006, 2007, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,6 +14,9 @@
 
 package org.apache.tapestry5.internal.services;
 
+import java.util.Locale;
+
+import org.apache.tapestry5.internal.services.messages.PropertiesFileParserImpl;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.internal.util.URLChangeTracker;
 import org.apache.tapestry5.ioc.Messages;
@@ -24,13 +27,11 @@ import org.apache.tapestry5.ioc.services.ClasspathURLConverter;
 import org.apache.tapestry5.model.ComponentModel;
 import org.testng.annotations.Test;
 
-import java.util.Locale;
-
 /**
  * Tests {@link ComponentMessagesSourceImpl} as well as {@link MessagesSourceImpl} (which contains code refactored out
  * of CMSI).
  */
-@Test(sequential = true)
+@Test
 public class ComponentMessagesSourceImplTest extends InternalBaseTestCase
 {
     // With control of the tracker, we can force changes as if underlying files were changed.
@@ -44,8 +45,8 @@ public class ComponentMessagesSourceImplTest extends InternalBaseTestCase
     private final Resource simpleComponentResource = new ClasspathResource(
             "org/apache/tapestry5/internal/services/SimpleComponent.class");
 
-    private final ComponentMessagesSourceImpl source = new ComponentMessagesSourceImpl(
-            simpleComponentResource.forFile("AppCatalog.properties"), tracker);
+    private final ComponentMessagesSourceImpl source = new ComponentMessagesSourceImpl(simpleComponentResource
+            .forFile("AppCatalog.properties"), new PropertiesFileParserImpl(), tracker);
 
     @Test
     public void simple_component()
@@ -145,9 +146,7 @@ public class ComponentMessagesSourceImplTest extends InternalBaseTestCase
         ComponentModel model = mockComponentModel();
         ComponentModel parent = mockComponentModel();
 
-        train_getComponentClassName(
-                model,
-                "org.apache.tapestry5.internal.services.SubclassComponent");
+        train_getComponentClassName(model, "org.apache.tapestry5.internal.services.SubclassComponent");
 
         train_getBaseResource(model, new ClasspathResource(
                 "org/apache/tapestry5/internal/services/SubclassComponent.class"));
@@ -189,9 +188,7 @@ public class ComponentMessagesSourceImplTest extends InternalBaseTestCase
         ComponentModel model = mockComponentModel();
         ComponentModel parent = mockComponentModel();
 
-        train_getComponentClassName(
-                model,
-                "org.apache.tapestry5.internal.services.SubclassComponent");
+        train_getComponentClassName(model, "org.apache.tapestry5.internal.services.SubclassComponent");
 
         train_getBaseResource(model, new ClasspathResource(
                 "org/apache/tapestry5/internal/services/SubclassComponent.class"));
@@ -208,8 +205,8 @@ public class ComponentMessagesSourceImplTest extends InternalBaseTestCase
 
         forceCacheClear();
 
-        ComponentMessagesSource source = new ComponentMessagesSourceImpl(
-                simpleComponentResource.forFile("NoSuchAppCatalog.properties"), converter);
+        ComponentMessagesSource source = new ComponentMessagesSourceImpl(simpleComponentResource
+                .forFile("NoSuchAppCatalog.properties"), new PropertiesFileParserImpl(), converter);
 
         Messages messages = source.getMessages(model, Locale.ENGLISH);
 

@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -22,6 +22,7 @@ import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.services.ClasspathURLConverter;
 import org.apache.tapestry5.services.UpdateListener;
 import org.apache.tapestry5.services.ValidationMessagesSource;
+import org.apache.tapestry5.services.messages.PropertiesFileParser;
 
 import java.util.List;
 import java.util.Locale;
@@ -108,14 +109,16 @@ public class ValidationMessagesSourceImpl implements ValidationMessagesSource, U
         }
     }
 
-    public ValidationMessagesSourceImpl(List<String> bundles, Resource classpathRoot, ClasspathURLConverter classpathURLConverter)
+    public ValidationMessagesSourceImpl(List<String> bundles, Resource classpathRoot, PropertiesFileParser parser,
+            ClasspathURLConverter classpathURLConverter)
     {
-        this(bundles, classpathRoot, new URLChangeTracker(classpathURLConverter));
+        this(bundles, classpathRoot, parser, new URLChangeTracker(classpathURLConverter));
     }
 
-    ValidationMessagesSourceImpl(List<String> bundles, Resource classpathRoot, URLChangeTracker tracker)
+    ValidationMessagesSourceImpl(List<String> bundles, Resource classpathRoot, PropertiesFileParser parser,
+            URLChangeTracker tracker)
     {
-        messagesSource = new MessagesSourceImpl(tracker);
+        messagesSource = new MessagesSourceImpl(tracker, parser);
 
         MessagesBundle parent = null;
 
