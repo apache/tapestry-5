@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -42,8 +42,9 @@ public class CookiesImplTest extends Assert
         {
             Cookie c = (Cookie) obj;
 
-            return equals(getName(), c.getName()) && equals(getValue(), c.getValue()) && equals(getPath(),
-                                                                                                c.getPath()) && getMaxAge() == c.getMaxAge();
+            return equals(getName(), c.getName()) && equals(getValue(), c.getValue())
+                    && equals(getPath(), c.getPath()) && getMaxAge() == c.getMaxAge()
+                    && equals(getDomain(), c.getDomain());
         }
 
         private boolean equals(Object value, Object other)
