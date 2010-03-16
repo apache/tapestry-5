@@ -18,9 +18,9 @@ import java.util.Map;
 
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.ioc.internal.util.AvailableValues;
-import org.apache.tapestry5.ioc.internal.util.UnknownValueException;
 import org.apache.tapestry5.ioc.services.Coercion;
+import org.apache.tapestry5.ioc.util.AvailableValues;
+import org.apache.tapestry5.ioc.util.UnknownValueException;
 
 /**
  * A {@link org.apache.tapestry5.ioc.services.Coercion} for converting strings into an instance of a particular

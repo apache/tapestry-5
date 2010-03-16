@@ -12,7 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.ioc.internal.util;
+package org.apache.tapestry5.ioc.util;
+
+import org.apache.tapestry5.ioc.internal.util.TapestryException;
 
 /**
  * Special exception used when a value (typically from a map) is referenced that does not exist. Uses a
@@ -23,8 +25,6 @@ package org.apache.tapestry5.ioc.internal.util;
  */
 public class UnknownValueException extends TapestryException
 {
-    private static final long serialVersionUID = -8131503136299055706L;
-
     private final AvailableValues availableValues;
 
     public UnknownValueException(String message, AvailableValues availableValues)

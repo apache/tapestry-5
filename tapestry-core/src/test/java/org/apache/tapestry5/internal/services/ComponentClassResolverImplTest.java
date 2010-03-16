@@ -15,8 +15,8 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
-import org.apache.tapestry5.ioc.internal.util.UnknownValueException;
 import org.apache.tapestry5.ioc.services.ClassNameLocator;
+import org.apache.tapestry5.ioc.util.UnknownValueException;
 import org.apache.tapestry5.services.ComponentClassResolver;
 import org.apache.tapestry5.services.LibraryMapping;
 import org.easymock.EasyMock;

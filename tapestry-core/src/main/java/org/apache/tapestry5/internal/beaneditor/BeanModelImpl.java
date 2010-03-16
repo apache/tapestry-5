@@ -24,12 +24,12 @@ import org.apache.tapestry5.beaneditor.RelativePosition;
 import org.apache.tapestry5.internal.services.CoercingPropertyConduitWrapper;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.ObjectLocator;
-import org.apache.tapestry5.ioc.internal.util.AvailableValues;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.Defense;
-import org.apache.tapestry5.ioc.internal.util.UnknownValueException;
 import org.apache.tapestry5.ioc.services.ClassFabUtils;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
+import org.apache.tapestry5.ioc.util.AvailableValues;
+import org.apache.tapestry5.ioc.util.UnknownValueException;
 import org.apache.tapestry5.services.PropertyConduitSource;
 
 public class BeanModelImpl<T> implements BeanModel<T>

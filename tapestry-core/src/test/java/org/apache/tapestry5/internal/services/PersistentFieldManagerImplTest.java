@@ -18,7 +18,7 @@ import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.PersistenceConstants;
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
-import org.apache.tapestry5.ioc.internal.util.UnknownValueException;
+import org.apache.tapestry5.ioc.util.UnknownValueException;
 
 import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newList;
 import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newMap;

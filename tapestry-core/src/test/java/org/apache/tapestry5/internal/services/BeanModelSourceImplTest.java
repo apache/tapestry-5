@@ -22,7 +22,7 @@ import org.apache.tapestry5.internal.PropertyOrderBean;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.internal.transform.pages.ReadOnlyBean;
 import org.apache.tapestry5.ioc.Messages;
-import org.apache.tapestry5.ioc.internal.util.UnknownValueException;
+import org.apache.tapestry5.ioc.util.UnknownValueException;
 import org.apache.tapestry5.services.BeanModelSource;
 import org.easymock.EasyMock;
 import org.testng.annotations.BeforeClass;

@@ -21,6 +21,8 @@ import org.apache.tapestry5.ioc.internal.services.PerthreadManagerImpl;
 import org.apache.tapestry5.ioc.internal.services.RegistryShutdownHubImpl;
 import org.apache.tapestry5.ioc.internal.util.*;
 import org.apache.tapestry5.ioc.services.*;
+import org.apache.tapestry5.ioc.util.AvailableValues;
+import org.apache.tapestry5.ioc.util.UnknownValueException;
 import org.slf4j.Logger;
 
 import java.lang.reflect.Constructor;
