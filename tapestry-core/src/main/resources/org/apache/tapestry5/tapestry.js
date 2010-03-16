@@ -329,25 +329,41 @@ var Tapestry = {
 	},
 
 	/**
-	 * Processes a typical Ajax request for a URL invoking the provided handler
-	 * on success. On failure, error() is invoked to inform the user.
+	 * Processes a typical Ajax request for a URL. In the simple case, a success
+	 * handler is provided (as options). In a more complex case, an options
+	 * object is provided, with keys as per Ajax.Request. The onSuccess key will
+	 * be overwritten, and defaults for onException and onFailure will be
+	 * provided. The handler shoudl take up-to two parameters: the
+	 * XMLHttpRequest object itself, and the JSON Response (from the X-JSON
+	 * response header, usually null).
 	 * 
 	 * @param url
 	 *            of Ajax request
-	 * @param successHandler
-	 *            to invoke on success
+	 * @param options
+	 *            either a success handler
 	 * @return the Ajax.Request object
 	 */
-	ajaxRequest : function(url, successHandler) {
-		return new Ajax.Request(url, {
-			onSuccess : function(response, jsonResponse) {
+	ajaxRequest : function(url, options) {
 
+		if (Object.isFunction(options)) {
+			return Tapestry.ajaxRequest(url, {
+				onSuccess : options
+			});
+		}
+
+		var successHandler = options.onSuccess;
+
+		var finalOptions = $H( {
+			onException : Tapestry.ajaxFailureHandler,
+			onFailure : Tapestry.ajaxFailureHandler
+		}).update(options).update( {
+			onSuccess : function(response, jsonResponse) {
 				/*
 				 * When the page is unloaded, pending Ajax requests appear to
-				 * terminate as succesful (but with no reply value). Since we're
-				 * trying to navigate to a new page anyway, we just ignore those
-				 * false success callbacks. We have a listener for the window's
-				 * "beforeunload" event that sets this flag.
+				 * terminate as successful (but with no reply value). Since
+				 * we're trying to navigate to a new page anyway, we just ignore
+				 * those false success callbacks. We have a listener for the
+				 * window's "beforeunload" event that sets this flag.
 				 */
 				if (Tapestry.windowUnloaded)
 					return;
@@ -363,10 +379,10 @@ var Tapestry = {
 				} catch (e) {
 					Tapestry.error(Tapestry.Messages.clientException + e);
 				}
-			},
-			onException : Tapestry.ajaxFailureHandler,
-			onFailure : Tapestry.ajaxFailureHandler
+			}
 		});
+
+		return new Ajax.Request(url, finalOptions.toObject());
 	},
 
 	/**
@@ -645,10 +661,6 @@ Element.addMethods('FORM', {
 		 */
 		options = Object.clone(options || {});
 
-		/* Set a default failure handler if none is provided. */
-
-		options.onFailure |= Tapestry.ajaxFailureHandler;
-
 		/*
 		 * Find the elements, skipping over any submit buttons. This works
 		 * around bugs in Prototype 1.6.0.2.
@@ -669,7 +681,7 @@ Element.addMethods('FORM', {
 
 		/* Ajax.Request will convert the hash into a query string and post it. */
 
-		return new Ajax.Request(url, options);
+		return Tapestry.ajaxRequest(url, options);
 	}
 });
 
