@@ -1441,4 +1441,13 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
                 "Method org.apache.tapestry5.integration.app1.pages.PageResetFailure.reset(java.lang.String)",
                 "is invalid: methods with the @PageReset annotation must return void, and have no parameters.");
     }
+
+    /** TAP5-1056 */
+    @Test
+    public void injection_of_application_message_catalog_into_service()
+    {
+        clickThru("Inject Global Messages into Service Demo");
+
+        assertText("status", "Application Catalog Working");
+    }
 }

@@ -14,6 +14,8 @@
 
 package org.apache.tapestry5.internal.services;
 
+import java.util.Locale;
+
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.internal.util.URLChangeTracker;
 import org.apache.tapestry5.ioc.Messages;
@@ -25,24 +27,21 @@ import org.apache.tapestry5.services.InvalidationEventHub;
 import org.apache.tapestry5.services.UpdateListener;
 import org.apache.tapestry5.services.messages.PropertiesFileParser;
 
-import java.util.Locale;
-
 public class ComponentMessagesSourceImpl implements ComponentMessagesSource, UpdateListener
 {
     private final MessagesSource messagesSource;
 
     private final Resource appCatalogResource;
 
-    private static class ComponentModelBundle implements MessagesBundle
+    private final MessagesBundle appCatalogBundle;
+
+    private class ComponentModelBundle implements MessagesBundle
     {
         private final ComponentModel model;
 
-        private final MessagesBundle rootBundle;
-
-        public ComponentModelBundle(ComponentModel model, MessagesBundle rootBundle)
+        public ComponentModelBundle(ComponentModel model)
         {
             this.model = model;
-            this.rootBundle = rootBundle;
         }
 
         public Resource getBaseResource()
@@ -60,9 +59,9 @@ public class ComponentMessagesSourceImpl implements ComponentMessagesSource, Upd
             ComponentModel parentModel = model.getParentModel();
 
             if (parentModel == null)
-                return rootBundle;
+                return appCatalogBundle;
 
-            return new ComponentModelBundle(parentModel, rootBundle);
+            return new ComponentModelBundle(parentModel);
         }
     }
 
@@ -81,6 +80,8 @@ public class ComponentMessagesSourceImpl implements ComponentMessagesSource, Upd
         this.appCatalogResource = appCatalogResource;
 
         messagesSource = new MessagesSourceImpl(tracker, parser);
+
+        appCatalogBundle = createAppCatalogBundle();
     }
 
     public void checkForUpdates()
@@ -90,16 +91,17 @@ public class ComponentMessagesSourceImpl implements ComponentMessagesSource, Upd
 
     public Messages getMessages(ComponentModel componentModel, Locale locale)
     {
-        // If the application catalog exists, set it up as the root, otherwise use null.
-
-        MessagesBundle appCatalogBundle = !appCatalogResource.exists() ? null : rootBundle();
-
-        MessagesBundle bundle = new ComponentModelBundle(componentModel, appCatalogBundle);
+        MessagesBundle bundle = new ComponentModelBundle(componentModel);
 
         return messagesSource.getMessages(bundle, locale);
     }
 
-    private MessagesBundle rootBundle()
+    public Messages getApplicationCatalog(Locale locale)
+    {
+        return messagesSource.getMessages(appCatalogBundle, locale);
+    }
+
+    private MessagesBundle createAppCatalogBundle()
     {
         return new MessagesBundle()
         {

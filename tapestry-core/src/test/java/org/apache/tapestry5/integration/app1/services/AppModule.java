@@ -62,6 +62,7 @@ public class AppModule
     public static void bind(ServiceBinder binder)
     {
         binder.bind(Reloadable.class);
+        binder.bind(MessageAccess.class);
     }
 
     public void contributeAlias(Configuration<AliasContribution> configuration)

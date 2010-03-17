@@ -789,6 +789,8 @@ public final class TapestryModule
      * <dd>Checks for the {@link Path} annotation, and injects an {@link Asset}</dd>
      * <dt>Service</dt>
      * <dd>Injects based on the {@link Service} annotation, if present</dd>
+     * <dt>ApplicationMessages</dt>
+     * <dd>Injects the global application messages</dd>
      * </dl>
      */
     public static void contributeMasterObjectProvider(OrderedConfiguration<ObjectProvider> configuration,
@@ -797,19 +799,16 @@ public final class TapestryModule
     final Alias alias,
 
     @InjectService("AssetObjectProvider")
-    ObjectProvider assetObjectProvider)
+    ObjectProvider assetObjectProvider,
+
+    ObjectLocator locator)
     {
         // There's a nasty web of dependencies related to Alias; this wrapper
-        // class lets us
-        // defer instantiating the Alias service implementation just long enough
-        // to defuse those
-        // dependencies. The @Local annotation prevents a recursive call through
-        // the
-        // MasterObjectProvider to resolve the Alias service itself; that is
-        // MasterObjectProvider
-        // gets built using this proxy, then the proxy will trigger the
-        // construction of AliasImpl
-        // (which itself needs MasterObjectProvider to resolve some
+        // class lets us defer instantiating the Alias service implementation just long enough
+        // to defuse those dependencies. The @Local annotation prevents a recursive call through
+        // the MasterObjectProvider to resolve the Alias service itself; that is
+        // MasterObjectProvider gets built using this proxy, then the proxy will trigger the
+        // construction of AliasImpl (which itself needs MasterObjectProvider to resolve some
         // dependencies).
 
         ObjectProvider wrapper = new ObjectProvider()
@@ -825,6 +824,10 @@ public final class TapestryModule
         configuration.add("Asset", assetObjectProvider, "before:AnnotationBasedContributions");
 
         configuration.add("Service", new ServiceAnnotationObjectProvider(), "before:AnnotationBasedContributions");
+
+        configuration.add("ApplicationMessages", new ApplicationMessageCatalogObjectProvider(locator),
+                "before:AnnotationBasedContributions");
+
     }
 
     /**

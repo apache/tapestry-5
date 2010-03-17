@@ -67,9 +67,12 @@ public class Index
     private static final List<Item> ITEMS = CollectionFactory
             .newList(
 
+                    new Item("InjectMessagesDemo", "Inject Global Messages into Service Demo",
+                            "Ensure that it is possible to inject the application global message catalog into a service"),
+
                     new Item("ReloadDemo", "Reloadable Service Implementation Demo",
                             "Used when manually testing service reloads"),
-                    
+
                     new Item("QueryParameterDemo", "QueryParameter Annotation Demo",
                             "Use of @QueryParameter annotation on event handler method parameters"),
 
