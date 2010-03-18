@@ -1241,6 +1241,14 @@ Tapestry.FormEventManager = Class.create( {
 	},
 
 	handleSubmit : function(domevent) {
+
+		/**
+		 * Necessary because we set the onsubmit property of the form, rather
+		 * than observing the event. But that's because we want to specfically
+		 * overwrite any other handlers.
+		 */
+		Event.extend(domevent);
+
 		var t = $T(this.form);
 
 		t.validationError = false;
