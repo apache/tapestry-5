@@ -850,6 +850,7 @@ Tapestry.Initializer = {
 				};
 
 				element.sendAjaxRequest(url, {
+				  parameters: { "t:zoneid": zoneId },
 					onSuccess : successHandler
 				});
 			});
@@ -984,7 +985,7 @@ Tapestry.Initializer = {
 		$(clientId).observeAction("click", function(event) {
 			$(this.form).skipValidation();
 			$(this.form).setSubmittingElement(clientId);
-			$(this.form).performSubmit();
+			$(this.form).performSubmit(event);
 		});
 	}
 };
