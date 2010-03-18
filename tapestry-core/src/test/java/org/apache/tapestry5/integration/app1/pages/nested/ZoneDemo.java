@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,6 +15,7 @@
 package org.apache.tapestry5.integration.app1.pages.nested;
 
 import org.apache.tapestry5.Block;
+import org.apache.tapestry5.QueryParameterConstants;
 import org.apache.tapestry5.RenderSupport;
 import org.apache.tapestry5.ValueEncoder;
 import org.apache.tapestry5.annotations.*;
@@ -38,7 +39,8 @@ public class ZoneDemo
     @ApplicationState
     private RegistrationData registration;
 
-    private static final String[] NAMES = { "Fred & Wilma", "Mr. <Roboto>", "Grim Fandango", "Registration", "Vote" };
+    private static final String[] NAMES =
+    { "Fred & Wilma", "Mr. <Roboto>", "Grim Fandango", "Registration", "Vote" };
 
     @Inject
     private Block registrationForm, registrationOutput, voteForm, voteOutput;
@@ -60,7 +62,6 @@ public class ZoneDemo
         return NAMES;
     }
 
-
     public String getName()
     {
         return name;
@@ -72,13 +73,19 @@ public class ZoneDemo
     }
 
     @Log
-    Object onActionFromSelect(String name)
+    Object onActionFromSelect(String name, @QueryParameter(QueryParameterConstants.ZONE_ID)
+    String zoneId)
     {
+        if (!zoneId.equals("output"))
+            throw new AssertionError("Expected zoneId 'output' to be passed up in request.");
+
         this.name = name;
 
-        if (name.equals("Registration")) return registrationForm;
+        if (name.equals("Registration"))
+            return registrationForm;
 
-        if (name.equals("Vote")) return voteForm;
+        if (name.equals("Vote"))
+            return voteForm;
 
         return output.getBody();
     }
@@ -152,8 +159,9 @@ public class ZoneDemo
 
     void afterRender()
     {
-        renderSupport.addScript(
-                "$('%s').observe(Tapestry.ZONE_UPDATED_EVENT, function() { $('zone-update-message').update('Zone updated.'); });",
-                output.getClientId());
+        renderSupport
+                .addScript(
+                        "$('%s').observe(Tapestry.ZONE_UPDATED_EVENT, function() { $('zone-update-message').update('Zone updated.'); });",
+                        output.getClientId());
     }
 }

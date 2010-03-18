@@ -1582,13 +1582,25 @@ Tapestry.ZoneManager = Class.create( {
 	 * 
 	 * @param URL
 	 *            component event request URL
+	 * @param parameters
+	 *            object containing additional key/value pairs (optional)
 	 */
-	updateFromURL : function(URL) {
-		var successHandler = function(transport) {
-			this.processReply(transport.responseJSON);
-		}.bind(this);
+	updateFromURL : function(URL, parameters) {
 
-		Tapestry.ajaxRequest(URL, successHandler);
+		var finalParameters = $H( {
+			"t:zoneid" : this.element.id
+		});
+
+		/* If parameters were supplied, merge them in with the zone id */
+		if (!Object.isUndefined(parameters))
+			finalParameters.update(parameters);
+
+		Tapestry.ajaxRequest(URL, {
+			parameters : finalParameters.toObject(),
+			onSuccess : function(transport) {
+				this.processReply(transport.responseJSON);
+			}.bind(this)
+		});
 	}
 });
 
