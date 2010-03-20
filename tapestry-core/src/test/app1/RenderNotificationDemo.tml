@@ -1,0 +1,9 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+  <h1>RenderNotification Mixin Demo</h1>
+
+  <ul id="list">
+    <li t:type="any" t:id="item" t:mixins="rendernotification">item body in template</li>
+  </ul>
+
+</html>

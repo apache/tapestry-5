@@ -67,6 +67,8 @@ public class Index
     private static final List<Item> ITEMS = CollectionFactory
             .newList(
 
+                    new Item("RenderNotificationDemo", "RenderNotification Demo", "Use of RenderNotification mixin"),
+
                     new Item("InjectMessagesDemo", "Inject Global Messages into Service Demo",
                             "Ensure that it is possible to inject the application global message catalog into a service"),
 

@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,6 +19,15 @@ import org.testng.annotations.Test;
 
 public class MixinTests extends TapestryCoreTestCase
 {
+    @Test
+    public void render_notification_mixin()
+    {
+        clickThru("RenderNotification Demo");
+
+        assertTextSeries("//ul[@id='list']//li[%d]", 1, "before item render", "item body in template",
+                "after item render");
+    }
+
     @Test
     public void renderclientid_mixin()
     {
@@ -62,11 +71,10 @@ public class MixinTests extends TapestryCoreTestCase
         assertText("order7_after_but_before2", "3-after");
     }
 
-    private void assertMixinOrder(int orderNum, int echo1From, int echo2From, int echo3From,
-            int fieldFrom, boolean isField)
+    private void assertMixinOrder(int orderNum, int echo1From, int echo2From, int echo3From, int fieldFrom,
+            boolean isField)
     {
-        assertEchoMixins("order" + orderNum, "batman", echo1From, echo2From, echo3From, fieldFrom,
-                isField);
+        assertEchoMixins("order" + orderNum, "batman", echo1From, echo2From, echo3From, fieldFrom, isField);
     }
 
     /**
@@ -81,8 +89,8 @@ public class MixinTests extends TapestryCoreTestCase
      *                 "from" is < 0, checking the corresponding mixin values is disabled.
      */
 
-    private void assertEchoMixins(String fieldName, String originalValue, int echo1From,
-            int echo2From, int echo3From, int fieldFrom, boolean isField)
+    private void assertEchoMixins(String fieldName, String originalValue, int echo1From, int echo2From, int echo3From,
+            int fieldFrom, boolean isField)
     {
         String[] vals =
         { originalValue, "temporaryvaluefromechovaluemixin", "3", "world" };
