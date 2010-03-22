@@ -1,10 +1,10 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -22,11 +22,14 @@ import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+@SuppressWarnings("unchecked")
 public class PropertyAccessImpl implements PropertyAccess
 {
     private final Map<Class, ClassPropertyAdapter> adapters = CollectionFactory.newConcurrentMap();
@@ -42,7 +45,7 @@ public class PropertyAccessImpl implements PropertyAccess
     }
 
     /**
-     * Clears the cache of adapters and asks the Introspector to clear its cache.
+     * Clears the cache of adapters and asks the {@link Introspector} to clear its cache.
      */
     public synchronized void clearCache()
     {
@@ -81,15 +84,18 @@ public class PropertyAccessImpl implements PropertyAccess
 
         try
         {
-                BeanInfo info = Introspector.getBeanInfo(forClass);
+            BeanInfo info = Introspector.getBeanInfo(forClass);
 
-                List<PropertyDescriptor> descriptors = CollectionFactory.newList();
+            List<PropertyDescriptor> descriptors = CollectionFactory.newList();
 
-                addAll(descriptors, info.getPropertyDescriptors());
+            addAll(descriptors, info.getPropertyDescriptors());
 
-                if (forClass.isInterface()) addPropertiesFromExtendedInterfaces(forClass, descriptors);
+            if (forClass.isInterface())
+                addPropertiesFromExtendedInterfaces(forClass, descriptors);
 
-                return new ClassPropertyAdapterImpl(forClass, descriptors);
+            addPropertiesFromScala(forClass, descriptors);
+
+            return new ClassPropertyAdapterImpl(forClass, descriptors);
         }
         catch (Throwable ex)
         {
@@ -121,4 +127,76 @@ public class PropertyAccessImpl implements PropertyAccess
         }
     }
 
+    private void addPropertiesFromScala(Class forClass, List<PropertyDescriptor> descriptors)
+            throws IntrospectionException
+    {
+        for (Method method : forClass.getMethods())
+        {
+            addPropertyIfScalaGetterMethod(forClass, descriptors, method);
+        }
+    }
+
+    private void addPropertyIfScalaGetterMethod(Class forClass, List<PropertyDescriptor> descriptors, Method method)
+            throws IntrospectionException
+    {
+        if (!isScalaGetterMethod(method))
+            return;
+
+        PropertyDescriptor propertyDescriptor = new PropertyDescriptor(method.getName(), forClass, method.getName(),
+                null);
+
+        // found a getter, looking for the setter now
+        try
+        {
+            Method setterMethod = findScalaSetterMethod(forClass, method);
+
+            propertyDescriptor.setWriteMethod(setterMethod);
+        }
+        catch (NoSuchMethodException e)
+        {
+            // ignore
+        }
+
+        // check if the same property was already discovered with java bean accessors
+
+        addScalaPropertyIfNoJavaBeansProperty(descriptors, propertyDescriptor, method);
+    }
+
+    private void addScalaPropertyIfNoJavaBeansProperty(List<PropertyDescriptor> descriptors,
+            PropertyDescriptor propertyDescriptor, Method getterMethod)
+    {
+        boolean found = false;
+
+        for (PropertyDescriptor currentPropertyDescriptor : descriptors)
+        {
+            if (currentPropertyDescriptor.getName().equals(getterMethod.getName()))
+            {
+                found = true;
+
+                break;
+            }
+        }
+
+        if (!found)
+            descriptors.add(propertyDescriptor);
+    }
+
+    private Method findScalaSetterMethod(Class forClass, Method getterMethod) throws NoSuchMethodException
+    {
+        return forClass.getMethod(getterMethod.getName() + "_$eq", getterMethod.getReturnType());
+    }
+
+    private boolean isScalaGetterMethod(Method method)
+    {
+        try
+        {
+            return Modifier.isPublic(method.getModifiers()) && method.getParameterTypes().length == 0
+                    && !method.getReturnType().equals(Void.TYPE)
+                    && method.getDeclaringClass().getDeclaredField(method.getName()) != null;
+        }
+        catch (NoSuchFieldException ex)
+        {
+            return false;
+        }
+    }
 }

@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -143,6 +143,44 @@ public class PropertyAccessImplTest extends IOCInternalTestCase
             throw new RuntimeException("This is the UglyBean.");
         }
 
+    }
+
+    public static class ScalaBean {
+        private String value;
+
+        public String getValue()
+        {
+            return value;
+        }
+
+        public void setValue(String value)
+        {
+            this.value = value;
+        }
+
+        public String value()
+        {
+            return value;
+        }
+
+        public void value_$eq(String value)
+        {
+            this.value = value;
+        }
+    }
+
+    public static class ScalaClass {
+        private String value;
+
+        public String value()
+        {
+            return value;
+        }
+
+        public void value_$eq(String value)
+        {
+            this.value = value;
+        }
     }
 
     public static class BooleanHolder
@@ -522,5 +560,22 @@ public class PropertyAccessImplTest extends IOCInternalTestCase
         assertSame(pa2.getType(), Object.class);
         assertFalse(pa2.isCastRequired());
 
+    }
+
+    @Test
+    public void get_scala_properties_with_bean_accessors() {
+        PropertyAdapter pa = access.getAdapter(ScalaBean.class).getPropertyAdapter("value");
+
+        // even thought scala accessors are present the java bean ones should be the ones used by Tapestry
+        assertEquals(pa.getReadMethod().getName(), "getValue");
+        assertEquals(pa.getWriteMethod().getName(), "setValue");
+    }
+
+    @Test
+    public void get_scala_properties() {
+        PropertyAdapter pa = access.getAdapter(ScalaClass.class).getPropertyAdapter("value");
+
+        assertEquals(pa.getReadMethod().getName(), "value");
+        assertEquals(pa.getWriteMethod().getName(), "value_$eq");
     }
 }
