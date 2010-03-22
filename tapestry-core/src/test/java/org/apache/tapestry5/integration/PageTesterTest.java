@@ -1,10 +1,10 @@
-//  Copyright 2008, 2009 The Apache Software Foundation
+// Copyright 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -22,6 +22,7 @@ import org.apache.tapestry5.test.PageTester;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import java.util.Collections;
@@ -32,24 +33,38 @@ import java.util.Map;
  */
 public class PageTesterTest extends Assert
 {
-    private PageTester tester;
+    private PageTester nonEmptyAppNameTester;
+    
+    private PageTester emptyAppNameTester;
 
     @BeforeClass
     public void setup()
     {
-        tester = new PageTester(TestConstants.APP2_PACKAGE, TestConstants.APP2_NAME, "src/test/app2");
+        nonEmptyAppNameTester = new PageTester(TestConstants.APP2_PACKAGE, TestConstants.APP2_NAME, "src/test/app2");
+        
+        emptyAppNameTester = new PageTester(TestConstants.APP2_PACKAGE, "", "src/test/app2");
     }
 
     @AfterClass
     public void cleanup()
     {
-        tester.shutdown();
+        nonEmptyAppNameTester.shutdown();
 
-        tester = null;
+        nonEmptyAppNameTester = null;
+        
+        emptyAppNameTester.shutdown();
+
+        emptyAppNameTester = null;
     }
 
-    @Test
-    public void on_activate_chain_is_followed()
+    @DataProvider(name = "testers")
+    public Object[][] getTesters()
+    {
+        return new Object[][] { { nonEmptyAppNameTester }, { emptyAppNameTester } };
+    }
+
+    @Test(dataProvider = "testers")
+    public void on_activate_chain_is_followed(PageTester tester)
     {
         Document launchDoc = tester.renderPage("Launch");
 
@@ -63,8 +78,8 @@ public class PageTesterTest extends Assert
         assertEquals(finalDoc.getElementById("page-name").getChildMarkup(), "Final");
     }
 
-    @Test
-    public void application_path_is_defined_as_a_symbol()
+    @Test(dataProvider = "testers")
+    public void application_path_is_defined_as_a_symbol(PageTester tester)
     {
         SymbolSource source = tester.getRegistry().getService(SymbolSource.class);
 

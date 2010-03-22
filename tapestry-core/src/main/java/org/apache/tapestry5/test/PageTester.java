@@ -1,10 +1,10 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -47,7 +47,6 @@ import java.util.Map;
  */
 public class PageTester
 {
-    @SuppressWarnings({ "FieldCanBeLocal" })
     private final Logger logger = LoggerFactory.getLogger(PageTester.class);
 
     private final Registry registry;
@@ -86,10 +85,11 @@ public class PageTester
      *                      there).
      * @param moduleClasses Classes of additional modules to load
      */
+    @SuppressWarnings("unchecked")
     public PageTester(String appPackage, String appName, String contextPath, Class... moduleClasses)
     {
         Defense.notBlank(appPackage, "appPackage");
-        Defense.notBlank(appName, "appName");
+        Defense.notNull(appName, "appName");
         Defense.notBlank(contextPath, "contextPath");
 
         SymbolProvider provider = new SingleKeySymbolProvider(InternalConstants.TAPESTRY_APP_PACKAGE_PARAM, appPackage);
@@ -483,7 +483,7 @@ public class PageTester
             if (e.getName().equalsIgnoreCase(ancestorName))
                 return e;
 
-            e = e.getParent();
+            e = e.getContainer();
         }
 
         throw new RuntimeException(
