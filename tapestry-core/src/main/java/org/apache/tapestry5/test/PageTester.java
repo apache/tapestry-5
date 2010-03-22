@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -50,8 +50,6 @@ import org.slf4j.LoggerFactory;
  */
 public class PageTester
 {
-    @SuppressWarnings(
-    { "FieldCanBeLocal" })
     private final Logger logger = LoggerFactory.getLogger(PageTester.class);
 
     private final Registry registry;
@@ -99,17 +97,18 @@ public class PageTester
      * @param moduleClasses
      *            Classes of additional modules to load
      */
+    @SuppressWarnings("unchecked")
     public PageTester(String appPackage, String appName, String contextPath, Class... moduleClasses)
     {
         Defense.notBlank(appPackage, "appPackage");
-        Defense.notBlank(appName, "appName");
+        Defense.notNull(appName, "appName");
         Defense.notBlank(contextPath, "contextPath");
 
         SymbolProvider provider = new SingleKeySymbolProvider(
                 InternalConstants.TAPESTRY_APP_PACKAGE_PARAM, appPackage);
 
         TapestryAppInitializer initializer = new TapestryAppInitializer(logger, provider, appName,
-                PageTesterModule.TEST_MODE);
+                PageTesterModule.TEST_MODE, null);
 
         initializer.addModules(PageTesterModule.class);
         initializer.addModules(moduleClasses);
