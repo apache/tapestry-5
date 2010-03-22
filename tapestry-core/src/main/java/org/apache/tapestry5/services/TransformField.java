@@ -14,6 +14,8 @@
 
 package org.apache.tapestry5.services;
 
+import java.lang.reflect.Field;
+
 import org.apache.tapestry5.ioc.AnnotationProvider;
 import org.apache.tapestry5.ioc.services.FieldValueConduit;
 
@@ -77,7 +79,11 @@ public interface TransformField extends AnnotationProvider, Comparable<Transform
      */
     void replaceAccess(FieldValueConduit conduit);
 
-    /** Returns the modifiers for the field. */
+    /**
+     * Returns the modifiers for the field.
+     * 
+     * @see Field#getModifiers()
+     */
     int getModifiers();
 
     /**

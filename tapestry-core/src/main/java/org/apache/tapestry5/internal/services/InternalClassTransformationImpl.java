@@ -685,9 +685,9 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
             failIfFrozen();
 
-            String argName = addConstructorArg(providerType, provider);
+            String argReference = addConstructorArg(providerType, provider);
 
-            addToConstructor(String.format("  %s = (%s) %s.get(%s);", name, type, argName, resourcesFieldName));
+            addToConstructor(String.format("  %s = (%s) (%s).get(%s);", name, type, argReference, resourcesFieldName));
 
             makeReadOnly(name);
         }
@@ -714,7 +714,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
      */
     private StringBuilder constructor = new StringBuilder(INIT_BUFFER_SIZE);
 
-    private final List<ConstructorArg> constructorArgs;
+    private final List<Object> constructorArgs;
 
     private final ComponentModel componentModel;
 
@@ -771,7 +771,10 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
         addImplementedInterface(Component.class);
 
-        resourcesFieldName = addInjectedFieldUncached(InternalComponentResources.class, "resources", null);
+        resourcesFieldName = addField(Modifier.PROTECTED | Modifier.FINAL, InternalComponentResources.class.getName(),
+                "resources");
+
+        addToConstructor(String.format("  %s = $1;", resourcesFieldName));
 
         addNewMethod(GET_COMPONENT_RESOURCES_SIGNATURE, "return " + resourcesFieldName + ";");
 
@@ -804,25 +807,9 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
         constructorArgs = parentTransformation.getConstructorArgs();
 
-        int count = constructorArgs.size();
+        // Re-invoke the constructor, passing the resources and array of values to the super class
 
-        // Build the call to the super-constructor.
-
-        constructor.append("{ super(");
-
-        for (int i = 1; i <= count; i++)
-        {
-            if (i > 1)
-                constructor.append(", ");
-
-            // $0 is implicitly self, so the 0-index ConstructorArg will be Javassisst
-            // pseudeo-variable $1, and so forth.
-
-            constructor.append("$");
-            constructor.append(i);
-        }
-
-        constructor.append(");\n");
+        addToConstructor("{\n  super($$);");
 
         // The "}" will be added later, inside finish().
     }
@@ -1696,14 +1683,14 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
         TransformField field = createField(Modifier.PRIVATE | Modifier.FINAL, type.getName(), suggestedName);
 
-        String argName = addConstructorArg(providerType, provider);
+        String argReference = addConstructorArg(providerType, provider);
 
         // Inside the constructor,
         // pass the resources to the provider's get() method, cast to the
         // field type and assign. This will likely not work with
         // primitives and arrays, but that's ok for now.
 
-        addToConstructor(String.format("  %s = (%s) %s.get(%s);", field.getName(), type.getName(), argName,
+        addToConstructor(String.format("  %s = (%s) (%s).get(%s);", field.getName(), type.getName(), argReference,
                 resourcesFieldName));
 
         return field;
@@ -1829,18 +1816,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
     private void addConstructor(String initializer)
     {
-        int count = constructorArgs.size();
-
-        CtClass[] types = new CtClass[count];
-
-        for (int i = 0; i < count; i++)
-        {
-            ConstructorArg arg = constructorArgs.get(i);
-
-            types[i] = arg.getType();
-        }
-
-        // Add a call to the initializer; the method converted fromt the classes default
+        // Add a call to the initializer; the method converted from the class' default
         // constructor.
 
         constructor.append("  ");
@@ -1854,6 +1830,9 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
         try
         {
+            CtClass[] types = new CtClass[]
+            { toCtClass(InternalComponentResources.class), toCtClass(Object[].class) };
+
             CtConstructor cons = CtNewConstructor.make(types, null, constructorBody, ctClass);
 
             ctClass.addConstructor(cons);
@@ -1863,17 +1842,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
             throw new RuntimeException(ex);
         }
 
-        formatter.format("add constructor: %s(", getClassName());
-
-        for (int i = 0; i < count; i++)
-        {
-            if (i > 0)
-                description.append(", ");
-
-            formatter.format("%s $%d", types[i].getName(), i + 1);
-        }
-
-        formatter.format(")\n%s\n\n", constructorBody);
+        formatter.format("add constructor: %s(ComponentResources, Object[])\n%s\n\n", getClassName(), constructorBody);
     }
 
     private String convertConstructorToMethod()
@@ -1919,81 +1888,23 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
         ClassFab cf = classFactory.newClass(name, AbstractInstantiator.class);
 
-        BodyBuilder constructor = new BodyBuilder();
+        Object[] componentConstructorArgs = constructorArgs.toArray(new Object[constructorArgs.size()]);
 
-        // This is really -1 + 2: The first value in constructorArgs is the
-        // InternalComponentResources, which doesn't
-        // count toward's the Instantiator's constructor ... then we add in the Model and String
-        // description.
-        // It's tricky because there's the constructor parameters for the Instantiator, most of
-        // which are stored
-        // in fields and then used as the constructor parameters for the Component.
+        cf.addConstructor(new Class[]
+        { ComponentModel.class, String.class, Object[].class }, null, "super($1, $2, $3);");
 
-        Class[] constructorParameterTypes = new Class[constructorArgs.size() + 1];
-        Object[] constructorParameterValues = new Object[constructorArgs.size() + 1];
+        // Pass $1 (the InternalComponentResources object) and the constructorArgs (from the AbstractIntantiator
+        // base class) into the new component instance's constructor
 
-        constructorParameterTypes[0] = ComponentModel.class;
-        constructorParameterValues[0] = componentModel;
-
-        constructorParameterTypes[1] = String.class;
-        constructorParameterValues[1] = String.format("Instantiator[%s]", componentClassName);
-
-        BodyBuilder newInstance = new BodyBuilder();
-
-        newInstance.add("return new %s($1", componentClassName);
-
-        constructor.begin();
-
-        // Pass the model and description to AbstractInstantiator
-
-        constructor.addln("super($1, $2);");
-
-        // Again, skip the (implicit) InternalComponentResources field, that's
-        // supplied to the Instantiator's newInstance() method.
-
-        for (int i = 1; i < constructorArgs.size(); i++)
-        {
-            ConstructorArg arg = constructorArgs.get(i);
-
-            CtClass argCtType = arg.getType();
-            Class argType = toClass(argCtType.getName());
-
-            boolean primitive = argCtType.isPrimitive();
-
-            Class fieldType = primitive ? ClassFabUtils.getPrimitiveType(argType) : argType;
-
-            String fieldName = "_param_" + i;
-
-            constructorParameterTypes[i + 1] = argType;
-            constructorParameterValues[i + 1] = arg.getValue();
-
-            cf.addField(fieldName, fieldType);
-
-            // $1 is model, $2 is description, to $3 is first dynamic parameter.
-
-            // The arguments may be wrapper types, so we cast down to
-            // the primitive type.
-
-            String parameterReference = "$" + (i + 2);
-
-            constructor.addln("%s = %s;", fieldName, ClassFabUtils.castReference(parameterReference, fieldType
-                    .getName()));
-
-            newInstance.add(", %s", fieldName);
-        }
-
-        constructor.end();
-        newInstance.addln(");");
-
-        cf.addConstructor(constructorParameterTypes, null, constructor.toString());
-
-        cf.addMethod(Modifier.PUBLIC, NEW_INSTANCE_SIGNATURE, newInstance.toString());
+        cf.addMethod(Modifier.PUBLIC, NEW_INSTANCE_SIGNATURE, String.format("return new %s($1, constructorArgs);",
+                componentClassName));
 
         Class instantiatorClass = cf.createClass();
 
         try
         {
-            Object instance = instantiatorClass.getConstructors()[0].newInstance(constructorParameterValues);
+            Object instance = instantiatorClass.getConstructors()[0].newInstance(componentModel, String.format(
+                    "Instantiator[%s]", componentClassName), componentConstructorArgs);
 
             return (Instantiator) instance;
         }
@@ -2041,7 +1952,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         return idAllocator;
     }
 
-    public List<ConstructorArg> getConstructorArgs()
+    public List<Object> getConstructorArgs()
     {
         failIfNotFrozen();
 
@@ -2295,13 +2206,16 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
      *            type of parameter
      * @param value
      *            value of parameter
-     * @return psuedo-name of parameter (i.e., "$2", "$3", etc.)
+     * @return de-referenced argument value
      */
     private String addConstructorArg(CtClass parameterType, Object value)
     {
-        constructorArgs.add(new ConstructorArg(parameterType, value));
 
-        return "$" + constructorArgs.size();
+        int index = constructorArgs.size();
+
+        constructorArgs.add(value);
+
+        return ClassFabUtils.castReference(String.format("$2[%d]", index), parameterType.getName());
     }
 
     private static List<TransformMethodSignature> toMethodSignatures(List<TransformMethod> input)

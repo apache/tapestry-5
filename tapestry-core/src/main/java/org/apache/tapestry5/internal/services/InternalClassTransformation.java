@@ -61,7 +61,7 @@ public interface InternalClassTransformation extends ClassTransformation
     /**
      * Returns a copy of the list of constructor arguments for this class.
      */
-    List<ConstructorArg> getConstructorArgs();
+    List<Object> getConstructorArgs();
 
     /**
      * Searchs for an existing injection of an object, returning the name of the protected field into which the value
