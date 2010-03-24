@@ -19,13 +19,13 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.tapestry5.EventContext;
+import org.apache.tapestry5.ValueEncoder;
 import org.apache.tapestry5.annotations.OnEvent;
 import org.apache.tapestry5.annotations.QueryParameter;
 import org.apache.tapestry5.internal.services.ComponentClassCache;
 import org.apache.tapestry5.ioc.Predicate;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.runtime.ComponentEvent;
 import org.apache.tapestry5.services.ClassTransformation;
@@ -36,6 +36,7 @@ import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.TransformConstants;
 import org.apache.tapestry5.services.TransformMethod;
 import org.apache.tapestry5.services.TransformMethodSignature;
+import org.apache.tapestry5.services.ValueEncoderSource;
 
 /**
  * Provides implementations of the
@@ -47,7 +48,7 @@ public class OnEventWorker implements ComponentClassTransformWorker
 
     private final Request request;
 
-    private final TypeCoercer typeCoercer;
+    private final ValueEncoderSource valueEncoderSource;
 
     private final ComponentClassCache classCache;
 
@@ -90,10 +91,10 @@ public class OnEventWorker implements ComponentClassTransformWorker
         });
     }
 
-    public OnEventWorker(Request request, TypeCoercer typeCoercer, ComponentClassCache classCache)
+    public OnEventWorker(Request request, ValueEncoderSource valueEncoderSource, ComponentClassCache classCache)
     {
         this.request = request;
-        this.typeCoercer = typeCoercer;
+        this.valueEncoderSource = valueEncoderSource;
         this.classCache = classCache;
     }
 
@@ -283,16 +284,18 @@ public class OnEventWorker implements ComponentClassTransformWorker
 
                     Class parameterType = classCache.forName(parameterTypeName);
 
-                    Object coerced = typeCoercer.coerce(parameterValue, parameterType);
+                    ValueEncoder valueEncoder = valueEncoderSource.getValueEncoder(parameterType);
 
-                    if (parameterType.isPrimitive() && coerced == null)
+                    Object value = valueEncoder.toValue(parameterValue);
+
+                    if (parameterType.isPrimitive() && value == null)
                         throw new RuntimeException(
                                 String
                                         .format(
                                                 "Query parameter '%s' evaluates to null, but the event method parameter is type %s, a primitive.",
                                                 parameterName, parameterType.getName()));
 
-                    return coerced;
+                    return value;
                 }
                 catch (Exception ex)
                 {
