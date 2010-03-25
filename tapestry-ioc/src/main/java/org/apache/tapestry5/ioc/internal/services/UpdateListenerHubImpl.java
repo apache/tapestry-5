@@ -14,6 +14,8 @@
 
 package org.apache.tapestry5.ioc.internal.services;
 
+import java.lang.ref.WeakReference;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.tapestry5.ioc.annotations.PreventServiceDecoration;
@@ -25,13 +27,13 @@ import org.apache.tapestry5.services.UpdateListenerHub;
 @PreventServiceDecoration
 public class UpdateListenerHubImpl implements UpdateListenerHub
 {
-    private final List<UpdateListener> listeners = CollectionFactory.newThreadSafeList();
+    private final List<WeakReference<UpdateListener>> listeners = CollectionFactory.newThreadSafeList();
 
     public void addUpdateListener(UpdateListener listener)
     {
         Defense.notNull(listener, "listener");
 
-        listeners.add(listener);
+        listeners.add(new WeakReference<UpdateListener>(listener));
     }
 
     /**
@@ -39,9 +41,16 @@ public class UpdateListenerHubImpl implements UpdateListenerHub
      */
     public void fireCheckForUpdates()
     {
-        for (UpdateListener listener : listeners)
+        Iterator<WeakReference<UpdateListener>> i = listeners.iterator();
+
+        while (i.hasNext())
         {
-            listener.checkForUpdates();
+            UpdateListener listener = i.next().get();
+
+            if (listener == null)
+                i.remove();
+            else
+                listener.checkForUpdates();
         }
     }
 }

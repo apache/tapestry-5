@@ -14,6 +14,8 @@
 
 package org.apache.tapestry5.services;
 
+import org.apache.tapestry5.ioc.ObjectLocator;
+
 /**
  * Manages a set of {@link org.apache.tapestry5.services.UpdateListener}s. Periodically (say, every request during
  * development, or every minute or so during production), request processing is locked down so that only a single thread
@@ -24,6 +26,10 @@ package org.apache.tapestry5.services;
  * <p>
  * Note that this interface has moved from module tapestry-core to tapestry-ioc, but has kept the same package (for
  * backwards compatibility reasons).
+ * <p>
+ * A <em>weak reference</em> to the listener is kept; this ensures that registering as a listener will not prevent a
+ * listener instance from being reclaimed by the garbage collector (this is useful as proxies created by
+ * {@link ObjectLocator#proxy(Class, Class)} may register as listeners, but still be ephemeral).
  * 
  * @since 5.1.0.0
  */
