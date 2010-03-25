@@ -34,13 +34,16 @@ public class ReloadableObjectCreatorSource implements ObjectCreatorSource
 
     private final Class serviceImplementationClass;
 
+    private final boolean eagerLoad;
+
     public ReloadableObjectCreatorSource(ClassFactory classFactory, Method bindMethod, Class serviceInterfaceClass,
-            Class serviceImplementationClass)
+            Class serviceImplementationClass, boolean eagerLoad)
     {
         this.classFactory = classFactory;
         this.bindMethod = bindMethod;
         this.serviceInterfaceClass = serviceInterfaceClass;
         this.serviceImplementationClass = serviceImplementationClass;
+        this.eagerLoad = eagerLoad;
     }
 
     public ObjectCreator constructCreator(final ServiceBuilderResources resources)
@@ -62,10 +65,13 @@ public class ReloadableObjectCreatorSource implements ObjectCreatorSource
 
     private Object createReloadableProxy(ServiceBuilderResources resources)
     {
-        ReloadableServiceImplementationObjectCreator reloadableCreator = new ReloadableServiceImplementationObjectCreator(resources, classFactory
-                .getClassLoader(), serviceImplementationClass.getName());
+        ReloadableServiceImplementationObjectCreator reloadableCreator = new ReloadableServiceImplementationObjectCreator(
+                resources, classFactory.getClassLoader(), serviceImplementationClass.getName());
 
         resources.getService(UpdateListenerHub.class).addUpdateListener(reloadableCreator);
+
+        if (eagerLoad)
+            reloadableCreator.createObject();
 
         return classFactory.createProxy(serviceInterfaceClass, reloadableCreator, getDescription());
     }

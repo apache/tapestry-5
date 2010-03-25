@@ -162,7 +162,8 @@ public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
 
     private ObjectCreatorSource createReloadableConstructorBasedObjectCreatorSource()
     {
-        return new ReloadableObjectCreatorSource(classFactory, bindMethod, serviceInterface, serviceImplementation);
+        return new ReloadableObjectCreatorSource(classFactory, bindMethod, serviceInterface, serviceImplementation,
+                eagerLoad);
     }
 
     @SuppressWarnings("unchecked")

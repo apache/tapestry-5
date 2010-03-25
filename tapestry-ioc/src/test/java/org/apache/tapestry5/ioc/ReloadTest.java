@@ -46,6 +46,8 @@ public class ReloadTest extends TestBase
 
     private ClassLoader classLoader;
 
+    public static boolean eagerLoadServiceWasInstantiated;
+
     @BeforeClass
     public void setup() throws Exception
     {
@@ -209,6 +211,18 @@ public class ReloadTest extends TestBase
         ctClass.addConstructor(constructor);
 
         ctClass.writeFile(classesDir.getAbsolutePath());
+    }
 
+    @Test
+    public void eager_load_service_with_proxy()
+    {
+
+        eagerLoadServiceWasInstantiated = false;
+
+        Registry r = new RegistryBuilder().add(EagerProxyReloadModule.class).build();
+
+        r.performRegistryStartup();
+
+        assertTrue(eagerLoadServiceWasInstantiated);
     }
 }
