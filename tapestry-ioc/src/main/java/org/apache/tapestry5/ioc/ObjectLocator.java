@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,8 +18,7 @@ import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.services.MasterObjectProvider;
 
 /**
- * Defines an object which can provide access to services defined within a
- * {@link org.apache.tapestry5.ioc.Registry}, or
+ * Defines an object which can provide access to services defined within a {@link org.apache.tapestry5.ioc.Registry}, or
  * to objects or object instances available by other means. Services are accessed via service id, or
  * (when appropriate)
  * by just service interface. The Registry itself implements this interface, as does
@@ -27,7 +26,6 @@ import org.apache.tapestry5.ioc.services.MasterObjectProvider;
  */
 public interface ObjectLocator
 {
-
     /**
      * Obtains a service via its unique service id. Returns the service's proxy. The service proxy
      * implements the same
@@ -67,8 +65,7 @@ public interface ObjectLocator
     <T> T getService(Class<T> serviceInterface);
 
     /**
-     * Obtains an object indirectly, using the
-     * {@link org.apache.tapestry5.ioc.services.MasterObjectProvider} service.
+     * Obtains an object indirectly, using the {@link org.apache.tapestry5.ioc.services.MasterObjectProvider} service.
      * 
      * @param objectType
      *            the type of object to be returned
@@ -88,8 +85,7 @@ public interface ObjectLocator
     /**
      * Autobuilds a class by finding the public constructor with the most parameters. Services and
      * resources will be
-     * injected into the parameters of the constructor and private field marked with the
-     * {@link Inject} annotation.
+     * injected into the parameters of the constructor and private field marked with the {@link Inject} annotation.
      * 
      * @param <T>
      * @param clazz
@@ -104,9 +100,8 @@ public interface ObjectLocator
     /**
      * Autobuilds a class by finding the public constructor with the most parameters. Services and
      * resources will be
-     * injected into the parameters of the constructor and private field marked with the
-     * {@link Inject} annotation. This version tracks the operation using
-     * {@link OperationTracker#invoke(String, Invokable)}.
+     * injected into the parameters of the constructor and private field marked with the {@link Inject} annotation. This
+     * version tracks the operation using {@link OperationTracker#invoke(String, Invokable)}.
      * 
      * @param <T>
      * @param description
@@ -123,12 +118,14 @@ public interface ObjectLocator
 
     /**
      * Creates a proxy. The proxy will defer invocation of {@link #autobuild(Class)} until
-     * just-in-time (that is, first
-     * method invocation). In a limited number of cases, it is necessary to use such a proxy to
-     * prevent service
-     * construction cycles, particularly when contributing (directly or indirectly) to the
+     * just-in-time (that is, first method invocation). In a limited number of cases, it is necessary to use such a
+     * proxy to prevent service construction cycles, particularly when contributing (directly or indirectly) to the
      * {@link org.apache.tapestry5.ioc.services.MasterObjectProvider} (which is itself at the heart
      * of autobuilding).
+     * <p>
+     * If the class file for the class is a file on the file system (not a file packaged in a JAR), then the proxy will
+     * <em>autoreload</em>: changing the class file will result in the new class being reloaded and re-instantiated
+     * (with dependencies).
      * 
      * @param <T>
      * @param interfaceClass

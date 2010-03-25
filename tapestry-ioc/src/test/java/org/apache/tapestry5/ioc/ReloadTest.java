@@ -35,6 +35,7 @@ import com.example.ReloadableService;
 /**
  * Test the ability to perform live class reloading of a service implementation.
  */
+@SuppressWarnings("unchecked")
 public class ReloadTest extends TestBase
 {
     private static final String PACKAGE = "com.example";
@@ -92,6 +93,32 @@ public class ReloadTest extends TestBase
         fireUpdateCheck(registry);
 
         assertEquals(reloadable.getStatus(), "updated");
+
+        registry.shutdown();
+    }
+
+    @Test
+    public void reload_a_proxy_object() throws Exception
+    {
+        createImplementationClass("initial proxy");
+
+        Registry registry = createRegistry();
+
+        Class<ReloadableService> clazz = (Class<ReloadableService>) classLoader.loadClass(CLASS);
+
+        ReloadableService reloadable = registry.proxy(ReloadableService.class, clazz);
+
+        assertEquals(reloadable.getStatus(), "initial proxy");
+
+        Thread.currentThread().sleep(1500);
+
+        createImplementationClass("updated proxy");
+
+        fireUpdateCheck(registry);
+
+        assertEquals(reloadable.getStatus(), "updated proxy");
+
+        registry.shutdown();
     }
 
     private void fireUpdateCheck(Registry registry)
@@ -134,6 +161,8 @@ public class ReloadTest extends TestBase
             assertEquals(ex.getMessage(),
                     "Service implementation class com.example.ReloadableServiceImpl does not have a suitable public constructor.");
         }
+
+        registry.shutdown();
     }
 
     private void createImplementationClass(String status) throws Exception

@@ -14,20 +14,36 @@
 
 package org.apache.tapestry5.ioc.internal;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.tapestry5.ioc.*;
 import org.apache.tapestry5.ioc.annotations.Local;
-import org.apache.tapestry5.ioc.def.*;
+import org.apache.tapestry5.ioc.def.ContributionDef;
+import org.apache.tapestry5.ioc.def.ContributionDef2;
+import org.apache.tapestry5.ioc.def.DecoratorDef;
+import org.apache.tapestry5.ioc.def.ModuleDef;
+import org.apache.tapestry5.ioc.def.ServiceDef;
+import org.apache.tapestry5.ioc.def.ServiceDef2;
 import org.apache.tapestry5.ioc.internal.services.PerthreadManagerImpl;
 import org.apache.tapestry5.ioc.internal.services.RegistryShutdownHubImpl;
-import org.apache.tapestry5.ioc.internal.util.*;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.internal.util.Defense;
+import org.apache.tapestry5.ioc.internal.util.InjectionResources;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.ioc.internal.util.MapInjectionResources;
+import org.apache.tapestry5.ioc.internal.util.OneShotLock;
+import org.apache.tapestry5.ioc.internal.util.Orderer;
 import org.apache.tapestry5.ioc.services.*;
 import org.apache.tapestry5.ioc.util.AvailableValues;
 import org.apache.tapestry5.ioc.util.UnknownValueException;
+import org.apache.tapestry5.services.UpdateListenerHub;
 import org.slf4j.Logger;
-
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.util.*;
 
 public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyProvider
 {
@@ -958,6 +974,14 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         // TODO: Check really an interface
         // TODO: Check impl class extends interfaceClass and is concrete
 
+        if (InternalUtils.isLocalFile(implementationClass))
+            return createReloadingProxy(interfaceClass, implementationClass);
+
+        return createNonReloadingProxy(interfaceClass, implementationClass);
+    }
+
+    private <T> T createNonReloadingProxy(Class<T> interfaceClass, final Class<? extends T> implementationClass)
+    {
         final ObjectCreator autobuildCreator = new ObjectCreator()
         {
             public Object createObject()
@@ -980,6 +1004,17 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         };
 
         return classFactory.createProxy(interfaceClass, justInTime, String.format("<Autobuild proxy %s(%s)>",
+                implementationClass.getName(), interfaceClass.getName()));
+    }
+
+    private <T> T createReloadingProxy(Class<T> interfaceClass, final Class<? extends T> implementationClass)
+    {
+        ReloadableObjectCreator creator = new ReloadableObjectCreator(implementationClass.getClassLoader(),
+                implementationClass.getName(), loggerSource.getLogger(implementationClass), this);
+
+        getService(UpdateListenerHub.class).addUpdateListener(creator);
+
+        return classFactory.createProxy(interfaceClass, creator, String.format("<Autoreload proxy %s(%s)>",
                 implementationClass.getName(), interfaceClass.getName()));
     }
 

@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2007, 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -25,13 +25,11 @@ import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.OneShotLock;
-import org.apache.tapestry5.ioc.services.ClassFabUtils;
 import org.apache.tapestry5.ioc.services.ClassFactory;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
-import java.net.URL;
 import java.util.Arrays;
 import java.util.Set;
 
@@ -124,7 +122,7 @@ public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
 
     private ObjectCreatorSource createObjectCreatorSourceFromImplementationClass()
     {
-        if (!preventReloading && isProxiable() && reloadableScope() && isLocalFile(serviceImplementation))
+        if (!preventReloading && isProxiable() && reloadableScope() && InternalUtils.isLocalFile(serviceImplementation))
             return createReloadableConstructorBasedObjectCreatorSource();
 
         return createStandardConstructorBasedObjectCreatorSource();
@@ -138,20 +136,6 @@ public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
     private boolean reloadableScope()
     {
         return scope.equalsIgnoreCase(ScopeConstants.DEFAULT);
-    }
-
-    /**
-     * Determines if the indicated class is stored as a locally accessible file
-     * (and not, typically, as a file inside a JAR). This is related to automatic
-     * reloading of services.
-     */
-    private boolean isLocalFile(Class clazz)
-    {
-        String path = ClassFabUtils.getPathForClass(clazz);
-
-        URL classFileURL = clazz.getClassLoader().getResource(path);
-
-        return classFileURL != null && classFileURL.getProtocol().equals("file");
     }
 
     private ObjectCreatorSource createStandardConstructorBasedObjectCreatorSource()

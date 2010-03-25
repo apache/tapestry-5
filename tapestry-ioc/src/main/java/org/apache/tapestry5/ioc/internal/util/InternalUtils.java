@@ -28,6 +28,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
+import java.net.URL;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -56,15 +57,15 @@ import org.apache.tapestry5.ioc.services.ClassFactory;
 public class InternalUtils
 {
     /**
-     * Leading punctiation on member names that is stripped off to form a property name or new member name.
+     * Leading punctuation on member names that is stripped off to form a property name or new member name.
      */
     private static final String NAME_PREFIX = "_$";
 
     /**
      * Pattern used to eliminate leading and trailing underscores and dollar signs.
      */
-    private static final Pattern NAME_PATTERN = Pattern.compile(
-            "^[_|$]*([\\p{javaJavaIdentifierPart}]+?)[_|$]*$", Pattern.CASE_INSENSITIVE);
+    private static final Pattern NAME_PATTERN = Pattern.compile("^[_|$]*([\\p{javaJavaIdentifierPart}]+?)[_|$]*$",
+            Pattern.CASE_INSENSITIVE);
 
     /**
      * Converts a method to a user presentable string using a {@link ClassFactory} to obtain a {@link Location} (where
@@ -137,8 +138,7 @@ public class InternalUtils
         Matcher matcher = NAME_PATTERN.matcher(memberName);
 
         if (!matcher.matches())
-            throw new IllegalArgumentException(String.format(
-                    "Input '%s' is not a valid Java identifier.", memberName));
+            throw new IllegalArgumentException(String.format("Input '%s' is not a valid Java identifier.", memberName));
 
         return matcher.group(1);
     }
@@ -180,8 +180,7 @@ public class InternalUtils
      *            to match
      * @return the annotation instance, if found, or null otherwise
      */
-    public static <T extends Annotation> T findAnnotation(Annotation[] annotations,
-            Class<T> annotationClass)
+    public static <T extends Annotation> T findAnnotation(Annotation[] annotations, Class<T> annotationClass)
     {
         for (Annotation a : annotations)
         {
@@ -192,8 +191,8 @@ public class InternalUtils
         return null;
     }
 
-    private static Object calculateInjection(Class injectionType, Type genericType,
-            final Annotation[] annotations, ObjectLocator locator, InjectionResources resources)
+    private static Object calculateInjection(Class injectionType, Type genericType, final Annotation[] annotations,
+            ObjectLocator locator, InjectionResources resources)
     {
         AnnotationProvider provider = new AnnotationProvider()
         {
@@ -236,21 +235,21 @@ public class InternalUtils
             InjectionResources resources, OperationTracker tracker)
     {
 
-        return calculateParameters(locator, resources, method.getParameterTypes(), method
-                .getGenericParameterTypes(), method.getParameterAnnotations(), tracker);
+        return calculateParameters(locator, resources, method.getParameterTypes(), method.getGenericParameterTypes(),
+                method.getParameterAnnotations(), tracker);
     }
 
-    public static Object[] calculateParametersForConstructor(Constructor constructor,
-            ObjectLocator locator, InjectionResources resources, OperationTracker tracker)
+    public static Object[] calculateParametersForConstructor(Constructor constructor, ObjectLocator locator,
+            InjectionResources resources, OperationTracker tracker)
     {
 
         return calculateParameters(locator, resources, constructor.getParameterTypes(), constructor
                 .getGenericParameterTypes(), constructor.getParameterAnnotations(), tracker);
     }
 
-    public static Object[] calculateParameters(final ObjectLocator locator,
-            final InjectionResources resources, Class[] parameterTypes, final Type[] genericTypes,
-            Annotation[][] parameterAnnotations, OperationTracker tracker)
+    public static Object[] calculateParameters(final ObjectLocator locator, final InjectionResources resources,
+            Class[] parameterTypes, final Type[] genericTypes, Annotation[][] parameterAnnotations,
+            OperationTracker tracker)
     {
         int parameterCount = parameterTypes.length;
 
@@ -262,9 +261,8 @@ public class InternalUtils
             final Type genericType = genericTypes[i];
             final Annotation[] annotations = parameterAnnotations[i];
 
-            String description = String.format(
-                    "Determining injection value for parameter #%d (%s)", i + 1, ClassFabUtils
-                            .toJavaClassName(type));
+            String description = String.format("Determining injection value for parameter #%d (%s)", i + 1,
+                    ClassFabUtils.toJavaClassName(type));
 
             final Invokable<Object> operation = new Invokable<Object>()
             {
@@ -317,8 +315,7 @@ public class InternalUtils
                     }
                 };
 
-                String description = String.format(
-                        "Calculating injection value for field '%s' (%s)", f.getName(),
+                String description = String.format("Calculating injection value for field '%s' (%s)", f.getName(),
                         ClassFabUtils.toJavaClassName(f.getType()));
 
                 tracker.run(description, new Runnable()
@@ -345,8 +342,7 @@ public class InternalUtils
                             Object value = resources.findResource(fieldType, f.getGenericType());
 
                             if (value == null)
-                                throw new RuntimeException(UtilMessages.injectResourceFailure(f
-                                        .getName(), fieldType));
+                                throw new RuntimeException(UtilMessages.injectResourceFailure(f.getName(), fieldType));
 
                             inject(object, f, value);
 
@@ -381,8 +377,8 @@ public class InternalUtils
 
                     try
                     {
-                        Object[] parameters = InternalUtils.calculateParametersForMethod(m,
-                                locator, injectionResources, tracker);
+                        Object[] parameters = InternalUtils.calculateParametersForMethod(m, locator,
+                                injectionResources, tracker);
 
                         m.invoke(object, parameters);
                     }
@@ -396,8 +392,8 @@ public class InternalUtils
                     }
 
                     if (fail != null)
-                        throw new RuntimeException(String.format(
-                                "Exception invoking method %s: %s", m, toMessage(fail)), fail);
+                        throw new RuntimeException(String
+                                .format("Exception invoking method %s: %s", m, toMessage(fail)), fail);
                 }
             });
         }
@@ -416,8 +412,8 @@ public class InternalUtils
         }
         catch (Exception ex)
         {
-            throw new RuntimeException(String.format("Unable to set field '%s' of %s to %s: %s",
-                    field.getName(), target, value, toMessage(ex)));
+            throw new RuntimeException(String.format("Unable to set field '%s' of %s to %s: %s", field.getName(),
+                    target, value, toMessage(ex)));
         }
     }
 
@@ -917,8 +913,8 @@ public class InternalUtils
     }
 
     /** @since 5.2.0 */
-    public static <T extends Comparable<T>> List<T> matchAndSort(
-            Collection<? extends T> collection, Predicate<T> predicate)
+    public static <T extends Comparable<T>> List<T> matchAndSort(Collection<? extends T> collection,
+            Predicate<T> predicate)
     {
         Defense.notNull(predicate, "predicate");
 
@@ -934,18 +930,15 @@ public class InternalUtils
 
         return result;
     }
-    
 
-    
     /**
-     * 
      * @since 5.2.0
      */
     public static ContributionDef2 toContributionDef2(final ContributionDef contribution)
     {
-        if(contribution instanceof ContributionDef2)
+        if (contribution instanceof ContributionDef2)
             return (ContributionDef2) contribution;
-        
+
         return new ContributionDef2()
         {
 
@@ -981,7 +974,23 @@ public class InternalUtils
             {
                 return contribution.getServiceId();
             }
-            
+
         };
+    }
+
+    /**
+     * Determines if the indicated class is stored as a locally accessible file
+     * (and not, typically, as a file inside a JAR). This is related to automatic
+     * reloading of services.
+     * 
+     * @since 5.2.0
+     */
+    public static boolean isLocalFile(Class clazz)
+    {
+        String path = ClassFabUtils.getPathForClass(clazz);
+
+        URL classFileURL = clazz.getClassLoader().getResource(path);
+
+        return classFileURL != null && classFileURL.getProtocol().equals("file");
     }
 }
