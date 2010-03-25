@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,9 +18,12 @@ package org.apache.tapestry5.ioc;
  * Object passed into a service contributor method that allows the method provide contributed values to the service's
  * configuration.
  * <p/>
- * A service can <em>collect</em> contributions in three different ways: <ul> <li>As an un-ordered collection of
- * values</li> <li>As an ordered list of values (where each value has a unique id, pre-requisites and
- * post-requisites)</li> <li>As a map of keys and values </ul>
+ * A service can <em>collect</em> contributions in three different ways:
+ * <ul>
+ * <li>As an un-ordered collection of values</li>
+ * <li>As an ordered list of values (where each value has a unique id, pre-requisites and post-requisites)</li>
+ * <li>As a map of keys and values
+ * </ul>
  * <p/>
  * This implementation is used for un-ordered configuration data.
  * <p/>
@@ -31,16 +34,19 @@ public interface Configuration<T>
 {
     /**
      * Adds an object to the service's contribution.
-     *
-     * @param object to add to the service's configuration
+     * 
+     * @param object
+     *            to add to the service's configuration
      */
     void add(T object);
 
     /**
-     * Automatically instantiates an instance of the class, with dependencies injeted, and adds it to the
-     * configuration.
-     *
-     * @param clazz what class to instantiate
+     * Automatically instantiates an instance of the class, with dependencies injected, and adds it to the
+     * configuration. When the configuration type is an interface and the class to be contributed is a local file,
+     * then a reloadable proxy for the class will be created and contributed.
+     * 
+     * @param clazz
+     *            what class to instantiate
      * @since 5.1.0.0
      */
     void addInstance(Class<? extends T> clazz);

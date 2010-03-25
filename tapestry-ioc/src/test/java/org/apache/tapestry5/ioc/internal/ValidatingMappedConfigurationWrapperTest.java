@@ -43,7 +43,7 @@ public class ValidatingMappedConfigurationWrapperTest extends IOCInternalTestCas
         replay();
 
         MappedConfiguration<Class, Runnable> wrapper = new ValidatingMappedConfigurationWrapper<Class, Runnable>(
-                map, null, SERVICE_ID, def, Class.class, Runnable.class, keyToContribution, locator);
+                Runnable.class, locator, map, null, SERVICE_ID, def, Class.class, keyToContribution);
 
         wrapper.add(key, value);
 
@@ -70,7 +70,7 @@ public class ValidatingMappedConfigurationWrapperTest extends IOCInternalTestCas
         replay();
 
         MappedConfiguration<Class, Runnable> wrapper = new ValidatingMappedConfigurationWrapper<Class, Runnable>(
-                map, null, SERVICE_ID, def2, Class.class, Runnable.class, keyToContribution, locator);
+                Runnable.class, locator, map, null, SERVICE_ID, def2, Class.class, keyToContribution);
 
         try
         {
@@ -101,7 +101,7 @@ public class ValidatingMappedConfigurationWrapperTest extends IOCInternalTestCas
         replay();
 
         MappedConfiguration<Class, Runnable> wrapper = new ValidatingMappedConfigurationWrapper<Class, Runnable>(
-                map, null, SERVICE_ID, def, Class.class, Runnable.class, keyToContribution, locator);
+                Runnable.class, locator, map, null, SERVICE_ID, def, Class.class, keyToContribution);
 
         try
         {
@@ -130,9 +130,9 @@ public class ValidatingMappedConfigurationWrapperTest extends IOCInternalTestCas
 
         replay();
 
-        MappedConfiguration wrapper = new ValidatingMappedConfigurationWrapper(map, null, SERVICE_ID, def,
-                                                                               Class.class, Runnable.class,
-                                                                               keyToContribution, locator);
+        MappedConfiguration wrapper = new ValidatingMappedConfigurationWrapper(Runnable.class, locator, map, null,
+                                                                               SERVICE_ID, def,
+                                                                               Class.class, keyToContribution);
 
         try
         {
@@ -162,9 +162,9 @@ public class ValidatingMappedConfigurationWrapperTest extends IOCInternalTestCas
 
         replay();
 
-        MappedConfiguration wrapper = new ValidatingMappedConfigurationWrapper(map, null, SERVICE_ID, def,
-                                                                               Class.class, Runnable.class,
-                                                                               keyToContribution, locator);
+        MappedConfiguration wrapper = new ValidatingMappedConfigurationWrapper(Runnable.class, locator, map, null,
+                                                                               SERVICE_ID, def,
+                                                                               Class.class, keyToContribution);
 
         try
         {
@@ -193,7 +193,7 @@ public class ValidatingMappedConfigurationWrapperTest extends IOCInternalTestCas
         replay();
 
         MappedConfiguration<Class, Runnable> wrapper = new ValidatingMappedConfigurationWrapper<Class, Runnable>(
-                map, null, SERVICE_ID, def, Class.class, Runnable.class, keyToContribution, locator);
+                Runnable.class, locator, map, null, SERVICE_ID, def, Class.class, keyToContribution);
 
         try
         {

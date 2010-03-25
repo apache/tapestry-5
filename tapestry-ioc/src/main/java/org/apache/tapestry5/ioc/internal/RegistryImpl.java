@@ -515,8 +515,8 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
         for (final ContributionDef def : contributions)
         {
-            final MappedConfiguration<K, V> validating = new ValidatingMappedConfigurationWrapper<K, V>(map, overrides,
-                    serviceId, def, keyClass, valueType, keyToContribution, resources);
+            final MappedConfiguration<K, V> validating = new ValidatingMappedConfigurationWrapper<K, V>(valueType,
+                    resources, map, overrides, serviceId, def, keyClass, keyToContribution);
 
             String description = IOCMessages.invokingMethod(def);
 
@@ -550,8 +550,8 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
         for (final ContributionDef def : contributions)
         {
-            final Configuration<T> validating = new ValidatingConfigurationWrapper<T>(collection, serviceId, valueType,
-                    resources);
+            final Configuration<T> validating = new ValidatingConfigurationWrapper<T>(valueType, resources, collection,
+                    serviceId);
 
             String description = IOCMessages.invokingMethod(def);
 
@@ -585,8 +585,8 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
         for (final ContributionDef def : contributions)
         {
-            final OrderedConfiguration<T> validating = new ValidatingOrderedConfigurationWrapper<T>(orderer, overrides,
-                    def, serviceId, valueType, resources);
+            final OrderedConfiguration<T> validating = new ValidatingOrderedConfigurationWrapper<T>(valueType,
+                    resources, orderer, overrides, def, serviceId);
 
             String description = IOCMessages.invokingMethod(def);
 
@@ -966,7 +966,12 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         return result;
     }
 
-    public <T> T proxy(Class<T> interfaceClass, final Class<? extends T> implementationClass)
+    public <T> T proxy(Class<T> interfaceClass, Class<? extends T> implementationClass)
+    {
+        return proxy(interfaceClass, implementationClass, this);
+    }
+
+    public <T> T proxy(Class<T> interfaceClass, Class<? extends T> implementationClass, ObjectLocator locator)
     {
         Defense.notNull(interfaceClass, "interfaceClass");
         Defense.notNull(implementationClass, "implementationClass");
@@ -975,18 +980,19 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         // TODO: Check impl class extends interfaceClass and is concrete
 
         if (InternalUtils.isLocalFile(implementationClass))
-            return createReloadingProxy(interfaceClass, implementationClass);
+            return createReloadingProxy(interfaceClass, implementationClass, locator);
 
-        return createNonReloadingProxy(interfaceClass, implementationClass);
+        return createNonReloadingProxy(interfaceClass, implementationClass, locator);
     }
 
-    private <T> T createNonReloadingProxy(Class<T> interfaceClass, final Class<? extends T> implementationClass)
+    private <T> T createNonReloadingProxy(Class<T> interfaceClass, final Class<? extends T> implementationClass,
+            final ObjectLocator locator)
     {
         final ObjectCreator autobuildCreator = new ObjectCreator()
         {
             public Object createObject()
             {
-                return autobuild(implementationClass);
+                return locator.autobuild(implementationClass);
             }
         };
 
@@ -1007,10 +1013,11 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
                 implementationClass.getName(), interfaceClass.getName()));
     }
 
-    private <T> T createReloadingProxy(Class<T> interfaceClass, final Class<? extends T> implementationClass)
+    private <T> T createReloadingProxy(Class<T> interfaceClass, final Class<? extends T> implementationClass,
+            ObjectLocator locator)
     {
         ReloadableObjectCreator creator = new ReloadableObjectCreator(implementationClass.getClassLoader(),
-                implementationClass.getName(), loggerSource.getLogger(implementationClass), this);
+                implementationClass.getName(), loggerSource.getLogger(implementationClass), locator);
 
         getService(UpdateListenerHub.class).addUpdateListener(creator);
 

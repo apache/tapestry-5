@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -32,34 +32,41 @@ public interface InternalRegistry extends Registry, RegistryShutdownHub, Operati
     /**
      * As with {@link org.apache.tapestry5.ioc.Registry#getObject(Class, org.apache.tapestry5.ioc.AnnotationProvider)},
      * but handles the {@link org.apache.tapestry5.ioc.annotations.Local} annotation.
-     *
-     * @param objectType         type of object o be injected
-     * @param annotationProvider access to annotations at point of injection
-     * @param locator            used to resolve any subsequent injections
-     * @param localModule        module to limit services to, if Local annotaton present
+     * 
+     * @param objectType
+     *            type of object o be injected
+     * @param annotationProvider
+     *            access to annotations at point of injection
+     * @param locator
+     *            used to resolve any subsequent injections
+     * @param localModule
+     *            module to limit services to, if Local annotaton present
      * @return the service or object
      */
     <T> T getObject(Class<T> objectType, AnnotationProvider annotationProvider, ObjectLocator locator,
-                    Module localModule);
+            Module localModule);
 
     /**
      * Returns a service lifecycle by service scope name.
-     *
-     * @param scope the name of the service scope (case insensitive)
+     * 
+     * @param scope
+     *            the name of the service scope (case insensitive)
      * @return the lifecycle corresponding to the scope
-     * @throws RuntimeException if the lifecycle name does not match a known lifecycle
+     * @throws RuntimeException
+     *             if the lifecycle name does not match a known lifecycle
      */
     ServiceLifecycle2 getServiceLifecycle(String scope);
 
     /**
-     * Searches for decorators for a particular service. The resulting {@link org.apache.tapestry5.ioc.def.DecoratorDef}s
+     * Searches for decorators for a particular service. The resulting {@link org.apache.tapestry5.ioc.def.DecoratorDef}
+     * s
      * are ordered, then converted into {@link ServiceDecorator}s.
      */
     List<ServiceDecorator> findDecoratorsForService(ServiceDef serviceDef);
 
     /**
      * Searches for advisors for a particular service, returning them in order of application.
-     *
+     * 
      * @since 5.1.0.0
      */
     List<ServiceAdvisor> findAdvisorsForService(ServiceDef serviceDef);
@@ -67,10 +74,12 @@ public interface InternalRegistry extends Registry, RegistryShutdownHub, Operati
     /**
      * Builds up an unordered collection by invoking service contributor methods that target the service (from any
      * module, unless the service is private).
-     *
+     * 
      * @param <T>
-     * @param serviceDef defines the service for which configuration data is being assembled
-     * @param valueType  identifies the type of object allowed into the collection
+     * @param serviceDef
+     *            defines the service for which configuration data is being assembled
+     * @param valueType
+     *            identifies the type of object allowed into the collection
      * @return the final collection
      */
     <T> Collection<T> getUnorderedConfiguration(ServiceDef serviceDef, Class<T> valueType);
@@ -79,10 +88,12 @@ public interface InternalRegistry extends Registry, RegistryShutdownHub, Operati
      * Builds up an ordered collection by invoking service contributor methods that target the service (from any module,
      * unless the service is private). Once all values have been added (each with an id, and pre/post constraints), the
      * values are ordered, null values dropped, and the final sorted list is returned.
-     *
+     * 
      * @param <T>
-     * @param serviceDef defines the service for which configuration data is being assembled
-     * @param valueType  identifies the type of object allowed into the collection
+     * @param serviceDef
+     *            defines the service for which configuration data is being assembled
+     * @param valueType
+     *            identifies the type of object allowed into the collection
      * @return the final ordered list
      */
     <T> List<T> getOrderedConfiguration(ServiceDef serviceDef, Class<T> valueType);
@@ -91,28 +102,31 @@ public interface InternalRegistry extends Registry, RegistryShutdownHub, Operati
      * Builds up a map of key/value pairs by invoking service contribution methods that tharget the service (from any
      * module, unless the service is private). Values and keys may not be null. Invalid values (keys or values that are
      * the wrong type, or duplicate keys) result in warnings and are ignored.
-     *
-     * @param <K,        V>
-     * @param serviceDef defines the service for which configuration data is being assembled
-     * @param keyType    identifies the type of key object allowed into the map
-     * @param valueType  identifies the type of value object allowed into the map
+     * 
+     * @param <K, V>
+     * @param serviceDef
+     *            defines the service for which configuration data is being assembled
+     * @param keyType
+     *            identifies the type of key object allowed into the map
+     * @param valueType
+     *            identifies the type of value object allowed into the map
      * @return the final ordered list
      */
-    <K, V> Map<K, V> getMappedConfiguration(ServiceDef serviceDef, Class<K> keyType,
-                                            Class<V> valueType);
+    <K, V> Map<K, V> getMappedConfiguration(ServiceDef serviceDef, Class<K> keyType, Class<V> valueType);
 
     /**
-     * Convieience for creating a new {@link org.apache.tapestry5.ioc.services.ClassFab} instance using a {@link
-     * org.apache.tapestry5.ioc.services.ClassFactory}.
-     *
-     * @param serviceInterface the interface to be implemented by the provided class
+     * Convieience for creating a new {@link org.apache.tapestry5.ioc.services.ClassFab} instance using a
+     * {@link org.apache.tapestry5.ioc.services.ClassFactory}.
+     * 
+     * @param serviceInterface
+     *            the interface to be implemented by the provided class
      */
     ClassFab newClass(Class serviceInterface);
 
     /**
      * Given an input string that <em>may</em> contain symbols, returns the string with any and all symbols fully
      * expanded.
-     *
+     * 
      * @param input
      * @return expanded input
      */
@@ -121,9 +135,17 @@ public interface InternalRegistry extends Registry, RegistryShutdownHub, Operati
     /**
      * Returns a logger for the service, which consists of the Module's {@link Module#getLoggerName() log name} suffixed
      * with a period and the service id.
-     *
+     * 
      * @param serviceId
      * @return the logger for the service
      */
     Logger getServiceLogger(String serviceId);
+
+    /**
+     * Creates a just-in-time (and possibly, live reloading) proxy for the indicated class and interface, using the
+     * provided locator to autobuild the implementationClass (when necessary).
+     * 
+     * @since 5.2.0
+     */
+    <T> T proxy(Class<T> interfaceClass, Class<? extends T> implementationClass, ObjectLocator locator);
 }

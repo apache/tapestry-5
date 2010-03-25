@@ -989,7 +989,14 @@ public class InternalUtils
     {
         String path = ClassFabUtils.getPathForClass(clazz);
 
-        URL classFileURL = clazz.getClassLoader().getResource(path);
+        ClassLoader loader = clazz.getClassLoader();
+
+        // System classes have no visible class loader, and are not local files.
+
+        if (loader == null)
+            return false;
+
+        URL classFileURL = loader.getResource(path);
 
         return classFileURL != null && classFileURL.getProtocol().equals("file");
     }

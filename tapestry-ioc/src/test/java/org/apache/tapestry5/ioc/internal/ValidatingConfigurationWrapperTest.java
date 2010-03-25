@@ -34,8 +34,8 @@ public class ValidatingConfigurationWrapperTest extends IOCInternalTestCase
 
         replay();
 
-        Configuration wrapper = new ValidatingConfigurationWrapper(collection, "foo.Bar",
-                                                                   Runnable.class, null);
+        Configuration wrapper = new ValidatingConfigurationWrapper(Runnable.class, null,
+                                                                   collection, "foo.Bar");
 
         wrapper.add(value);
 
@@ -55,8 +55,8 @@ public class ValidatingConfigurationWrapperTest extends IOCInternalTestCase
 
         replay();
 
-        Configuration wrapper = new ValidatingConfigurationWrapper(collection, "foo.Bar",
-                                                                   Map.class, locator);
+        Configuration wrapper = new ValidatingConfigurationWrapper(Map.class, locator,
+                                                                   collection, "foo.Bar");
 
         wrapper.addInstance(HashMap.class);
 
@@ -71,8 +71,8 @@ public class ValidatingConfigurationWrapperTest extends IOCInternalTestCase
     {
         List<Runnable> collection = CollectionFactory.newList();
 
-        Configuration wrapper = new ValidatingConfigurationWrapper(collection, "Bar", Runnable.class,
-                                                                   null);
+        Configuration wrapper = new ValidatingConfigurationWrapper(Runnable.class, null, collection,
+                                                                   "Bar");
 
         try
         {
@@ -92,8 +92,8 @@ public class ValidatingConfigurationWrapperTest extends IOCInternalTestCase
         List<Runnable> collection = CollectionFactory.newList();
 
 
-        Configuration wrapper = new ValidatingConfigurationWrapper(collection, "Bar", Runnable.class,
-                                                                   null);
+        Configuration wrapper = new ValidatingConfigurationWrapper(Runnable.class, null, collection,
+                                                                   "Bar");
 
         try
         {

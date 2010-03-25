@@ -62,6 +62,6 @@ public class ObjectLocatorImpl implements ObjectLocator
 
     public <T> T proxy(Class<T> interfaceClass, Class<? extends T> implementationClass)
     {
-        return registry.proxy(interfaceClass, implementationClass);
+        return registry.proxy(interfaceClass, implementationClass, this);
     }
 }

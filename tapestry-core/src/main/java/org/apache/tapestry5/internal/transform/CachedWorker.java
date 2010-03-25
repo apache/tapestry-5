@@ -42,24 +42,6 @@ public class CachedWorker implements ComponentClassTransformWorker
     private final BindingSource bindingSource;
 
     /**
-     * Manages a cache value as the result of invoking a no-arguments method.
-     */
-    public interface MethodResultCache
-    {
-        /** Returns true if the cache contains a cached value. May also check to see if the cached value is valid. */
-        boolean isCached();
-
-        /** Stores a new cached value for later reference. */
-        void set(Object cachedValue);
-
-        /** Returns the previously cached value, if any. */
-        Object get();
-
-        /** Resets the cache, discarding the cached value. */
-        void reset();
-    }
-
-    /**
      * Handles the watching of a binding (usually a property or property expression), invalidating the
      * cache early if the watched binding's value changes.
      */

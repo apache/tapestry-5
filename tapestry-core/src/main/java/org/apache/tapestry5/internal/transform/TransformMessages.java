@@ -23,19 +23,17 @@ import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.MessagesImpl;
 import org.apache.tapestry5.services.TransformField;
-import org.apache.tapestry5.services.TransformMethod;
-import org.apache.tapestry5.services.TransformMethodSignature;
 
-class TransformMessages
+public class TransformMessages
 {
     private static final Messages MESSAGES = MessagesImpl.forClass(TransformMessages.class);
 
-    static String fieldInjectionError(String className, String fieldName, Throwable cause)
+    public static String fieldInjectionError(String className, String fieldName, Throwable cause)
     {
         return MESSAGES.format("field-injection-error", className, fieldName, cause);
     }
 
-    static String illegalNumberOfPageActivationContextHandlers(List<TransformField> fields)
+    public static String illegalNumberOfPageActivationContextHandlers(List<TransformField> fields)
     {
         List<String> names = CollectionFactory.newList();
 
