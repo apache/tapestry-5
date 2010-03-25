@@ -22,7 +22,7 @@ import org.apache.tapestry5.ioc.services.ClassFactory;
 import org.apache.tapestry5.services.UpdateListenerHub;
 
 /**
- * Responsible for creating a {@link ReloadableObjectCreator} for a service implementation.
+ * Responsible for creating a {@link ReloadableServiceImplementationObjectCreator} for a service implementation.
  */
 public class ReloadableObjectCreatorSource implements ObjectCreatorSource
 {
@@ -62,9 +62,8 @@ public class ReloadableObjectCreatorSource implements ObjectCreatorSource
 
     private Object createReloadableProxy(ServiceBuilderResources resources)
     {
-        ReloadableObjectCreator reloadableCreator = new ReloadableObjectCreator(resources, classFactory
-                .getClassLoader(), serviceImplementationClass.getName(), serviceImplementationClass
-                .getProtectionDomain());
+        ReloadableServiceImplementationObjectCreator reloadableCreator = new ReloadableServiceImplementationObjectCreator(resources, classFactory
+                .getClassLoader(), serviceImplementationClass.getName());
 
         resources.getService(UpdateListenerHub.class).addUpdateListener(reloadableCreator);
 

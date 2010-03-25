@@ -18,24 +18,17 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Constructor;
 import java.net.URL;
-import java.security.ProtectionDomain;
 
 import org.apache.tapestry5.ioc.ObjectCreator;
-import org.apache.tapestry5.ioc.ServiceBuilderResources;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.ClassFabUtils;
 import org.apache.tapestry5.services.UpdateListener;
 import org.slf4j.Logger;
 
-/**
- * Returns an {@link ObjectCreator} for lazily instantiation a given implementation class (with dependencies).
- * Once an instance is instantiated, it is cached ... until the underlying .class file changes, at which point
- * the class is reloaded and a new instance instantiated.
- */
-public class ReloadableObjectCreator implements ObjectCreator, UpdateListener
+public abstract class AbstractReloadableObjectCreator implements ObjectCreator, UpdateListener
 {
+
     private class ReloadingClassLoader extends ClassLoader
     {
         private ReloadingClassLoader(ClassLoader parent)
@@ -64,13 +57,9 @@ public class ReloadableObjectCreator implements ObjectCreator, UpdateListener
         }
     }
 
-    private final ServiceBuilderResources resources;
-
     private final ClassLoader baseClassLoader;
 
     private final String implementationClassName;
-
-    private final ProtectionDomain protectionDomain;
 
     private final String classFilePath;
 
@@ -84,17 +73,14 @@ public class ReloadableObjectCreator implements ObjectCreator, UpdateListener
 
     private boolean firstTime = true;
 
-    public ReloadableObjectCreator(ServiceBuilderResources resources, ClassLoader baseClassLoader,
-            String implementationClassName, ProtectionDomain protectionDomain)
+    protected AbstractReloadableObjectCreator(ClassLoader baseClassLoader, String implementationClassName, Logger logger)
     {
-        this.resources = resources;
         this.baseClassLoader = baseClassLoader;
         this.implementationClassName = implementationClassName;
-        this.protectionDomain = protectionDomain;
 
         this.classFilePath = ClassFabUtils.getPathForClassNamed(implementationClassName);
 
-        logger = resources.getLogger();
+        this.logger = logger;
     }
 
     public synchronized void checkForUpdates()
@@ -128,18 +114,16 @@ public class ReloadableObjectCreator implements ObjectCreator, UpdateListener
 
         Class reloadedClass = reloadImplementationClass();
 
-        final Constructor constructor = InternalUtils.findAutobuildConstructor(reloadedClass);
-
-        if (constructor == null)
-            throw new RuntimeException(String.format(
-                    "Service implementation class %s does not have a suitable public constructor.",
-                    implementationClassName));
-
-        ObjectCreator constructorServiceCreator = new ConstructorServiceCreator(resources, String.format(
-                "%s (last modified %tc)", constructor, lastModifiedTimestamp), constructor);
-
-        return constructorServiceCreator.createObject();
+        return createInstance(reloadedClass);
     }
+
+    /**
+     * Invoked when an instance of the class is needed. It is the responsibility of this method (as implemented in a
+     * subclass) to instantiate the class and inject dependencies into the class.
+     * 
+     * @see InternalUtils#findAutobuildConstructor(Class)
+     */
+    abstract protected Object createInstance(Class clazz);
 
     private Class reloadImplementationClass()
     {
@@ -222,4 +206,8 @@ public class ReloadableObjectCreator implements ObjectCreator, UpdateListener
         lastModifiedTimestamp = classFile.lastModified();
     }
 
+    public long getLastModifiedTimestamp()
+    {
+        return lastModifiedTimestamp;
+    }
 }
