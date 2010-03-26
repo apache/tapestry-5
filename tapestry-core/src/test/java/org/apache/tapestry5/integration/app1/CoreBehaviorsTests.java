@@ -1314,20 +1314,11 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
 
         // assertSourcePresent("<![CDATA[< & >]]>");
     }
-
-    /**
-     * This may need to be disabled or dropped from the test suite, I don't know
-     * that Selenium, especially Selenium
-     * running headless on the CI server, can handle the transition to HTTPS:
-     * there's warnings that pop up about
-     * certificates.
-     * <p/>
-     * Verified: Selenium can't handle this, even with a user manually OK-ing the certificate warning dialogs.
-     */
-    @Test(enabled = false)
+    
+    @Test
     public void secure_page_access()
     {
-        start("Secure Page Demo");
+        clickThru("Secure Page Demo");
 
         assertText("secure", "secure");
 
@@ -1348,7 +1339,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
 
         // Back to the insecure home page.
 
-        assertText("//h1", "Tapestry 5 Integration Application 1");
+        assertText("//h1", "Tapestry Integration Test Application");
     }
 
     /** TAP5-815 */

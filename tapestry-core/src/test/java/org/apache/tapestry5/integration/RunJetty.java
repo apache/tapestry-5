@@ -14,9 +14,7 @@
 
 package org.apache.tapestry5.integration;
 
-import org.apache.tapestry5.test.JettyRunner;
-
-import java.io.File;
+import org.apache.tapestry5.test.Jetty7Runner;
 
 /**
  * A "shim" to run Demo App #1 inside IntelliJ.  I still haven't found a way to get IntelliJ to export test classes and
@@ -24,13 +22,11 @@ import java.io.File;
  */
 public class RunJetty
 {
-    public static void main(String[] args) throws InterruptedException
+    public static void main(String[] args) throws Exception
     {
         String contextName = args[0];
         String path = args[1];
-
-        File workingDir = new File(System.getProperty("user.dir"));
-
-        new JettyRunner(workingDir, contextName, 8080, path);
+        
+        new Jetty7Runner(path, contextName, 9090, 8443);
     }
 }

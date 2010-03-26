@@ -14,6 +14,7 @@
 
 package org.apache.tapestry5.test;
 
+import java.io.File;
 import java.util.Map;
 
 import org.openqa.selenium.server.RemoteControlConfiguration;
@@ -104,6 +105,12 @@ public class SeleniumLauncher
      * <td>Port number for web server to listen to</td>
      * </tr>
      * <tr>
+     * <td>sslPort</td>
+     * <td>tapestry.ssl-port</td>
+     * <td>8443</td>
+     * <td>Port number for web server to listen to for secure requests</td>
+     * </tr>
+     * <tr>
      * <td>browserStartCommand</td>
      * <td>tapestry.browser-start-command</td>
      * <td>*firefox</td>
@@ -128,7 +135,7 @@ public class SeleniumLauncher
     // shutdown(). Best to be safe!
     @Parameters(
     { TapestryTestConstants.WEB_APP_FOLDER_PARAMETER, TapestryTestConstants.CONTEXT_PATH_PARAMTER,
-            TapestryTestConstants.PORT_PARAMETER,
+            TapestryTestConstants.PORT_PARAMETER, TapestryTestConstants.SSL_PORT_PARAMETER,
             TapestryTestConstants.BROWSER_START_COMMAND_PARAMETER })
     @BeforeTest(dependsOnGroups = { "beforeStartup" })
     public synchronized void startup(
@@ -141,6 +148,9 @@ public class SeleniumLauncher
 
     @Optional("9090")
     int port,
+    
+    @Optional("8443")
+    int sslPort,
 
     @Optional("*firefox")
     String browserStartCommand, ITestContext testContext, XmlTest xmlTest) throws Exception
@@ -161,9 +171,13 @@ public class SeleniumLauncher
         if(testParameters.containsKey(TapestryTestConstants.BROWSER_START_COMMAND_PARAMETER))
             browserStartCommand = testParameters.get(TapestryTestConstants.BROWSER_START_COMMAND_PARAMETER);
         
-        stopWebServer = launchWebServer(webAppFolder, contextPath, port);
+        stopWebServer = launchWebServer(webAppFolder, contextPath, port, sslPort);
 
         seleniumServer = new SeleniumServer();
+        
+        File ffProfileTemplate = new File(TapestryTestConstants.MODULE_BASE_DIR, "src/test/conf/ff_profile_template");
+        
+        seleniumServer.getConfiguration().setFirefoxProfileTemplate(ffProfileTemplate);
 
         seleniumServer.start();
 
@@ -220,13 +234,15 @@ public class SeleniumLauncher
      *            the path the context is mapped to, usually the empty string
      * @param port
      *            the port number the server should handle
+     * @param sslPort
+     *            the port number on which the server should handle secure requests
      * @return Runnable used to shut down the server
      * @throws Exception
      */
-    protected Runnable launchWebServer(String webAppFolder, String contextPath, int port)
+    protected Runnable launchWebServer(String webAppFolder, String contextPath, int port, int sslPort)
             throws Exception
     {
-        final Jetty7Runner runner = new Jetty7Runner(webAppFolder, contextPath, port);
+        final Jetty7Runner runner = new Jetty7Runner(webAppFolder, contextPath, port, sslPort);
 
         return new Runnable()
         {

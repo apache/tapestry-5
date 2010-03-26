@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,6 +14,18 @@
 
 package org.apache.tapestry5.integration.app1.services;
 
+import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.ElementType.PARAMETER;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+
+import java.io.IOException;
+import java.lang.annotation.Documented;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
+import java.net.URL;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.ValueEncoder;
 import org.apache.tapestry5.integration.app1.data.ToDoItem;
@@ -24,22 +36,16 @@ import org.apache.tapestry5.ioc.MappedConfiguration;
 import org.apache.tapestry5.ioc.OrderedConfiguration;
 import org.apache.tapestry5.ioc.ServiceBinder;
 import org.apache.tapestry5.ioc.annotations.Marker;
-import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.services.*;
-import org.apache.tapestry5.test.JettyRunner;
+import org.apache.tapestry5.services.AliasContribution;
+import org.apache.tapestry5.services.BaseURLSource;
+import org.apache.tapestry5.services.ComponentClassTransformWorker;
+import org.apache.tapestry5.services.Request;
+import org.apache.tapestry5.services.RequestFilter;
+import org.apache.tapestry5.services.RequestHandler;
+import org.apache.tapestry5.services.Response;
+import org.apache.tapestry5.services.ValueEncoderFactory;
 import org.slf4j.Logger;
-
-import java.io.IOException;
-import java.lang.annotation.Documented;
-import static java.lang.annotation.ElementType.FIELD;
-import static java.lang.annotation.ElementType.PARAMETER;
-import java.lang.annotation.Retention;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-import java.lang.annotation.Target;
-import java.net.URL;
-import java.util.List;
-import java.util.Map;
 
 /**
  * I was just dying to see how fast requests are!
@@ -75,7 +81,7 @@ public class AppModule
 
                 // This is all a bit jury-rigged together. This is for running the app
                 // interactively; Selenium doesn't seem to handle the transition to https.
-                int port = secure ? JettyRunner.DEFAULT_SECURE_PORT : JettyRunner.DEFAULT_PORT;
+                int port = secure ? 8443 : 9090;
 
                 return String.format("%s://localhost:%d", protocol, port);
             }

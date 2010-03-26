@@ -17,6 +17,7 @@ package org.apache.tapestry5.test;
 import java.io.File;
 
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.ssl.SslSelectChannelConnector;
 import org.eclipse.jetty.webapp.WebAppContext;
 
 /**
@@ -29,14 +30,18 @@ public class Jetty7Runner
     private final String description;
 
     private final int port;
+    
+    private final int sslPort;
 
-    public Jetty7Runner(String webappFolder, String contextPath, int port) throws Exception
+    public Jetty7Runner(String webappFolder, String contextPath, int port, int sslPort) throws Exception
     {
         this.port = port;
+        
+        this.sslPort = sslPort;
 
         String expandedPath = expand(webappFolder);
 
-        description = String.format("<Jetty7Runner: %s:%s (%s)", contextPath, port, expandedPath);
+        description = String.format("<Jetty7Runner: %s:%s/%s (%s)", contextPath, port, sslPort, expandedPath);
 
         jettyServer = new Server(port);
 
@@ -44,7 +49,21 @@ public class Jetty7Runner
         webapp.setContextPath(contextPath);
         webapp.setWar(expandedPath);
 
-        // TODO: SSL support
+        // SSL support
+        
+        SslSelectChannelConnector sslConnector = new SslSelectChannelConnector();
+        
+        sslConnector.setPort(sslPort);
+        
+        File keystoreFile = new File(TapestryTestConstants.MODULE_BASE_DIR, "src/test/conf/keystore");
+        
+        sslConnector.setKeystore(keystoreFile.getPath());
+        
+        sslConnector.setPassword("tapestry");
+        
+        sslConnector.setKeyPassword("tapestry");
+        
+        jettyServer.addConnector(sslConnector);
 
         jettyServer.setHandler(webapp);
 
@@ -54,7 +73,7 @@ public class Jetty7Runner
     /** Immediately shuts down the server instance. */
     public void stop()
     {
-        System.out.printf("Stopping Jetty instance on port %d\n", port);
+        System.out.printf("Stopping Jetty instance on port %d/%d\n", port, sslPort);
 
         try
         {

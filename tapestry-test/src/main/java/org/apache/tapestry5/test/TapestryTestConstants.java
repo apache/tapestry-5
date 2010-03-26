@@ -92,6 +92,11 @@ public class TapestryTestConstants
     public static final String PORT_PARAMETER = "tapestry.port";
     
     /**
+     * {@link XmlTest} parameter holding the web server ssl port.
+     */
+    public static final String SSL_PORT_PARAMETER = "tapestry.ssl-port";
+    
+    /**
      * {@link XmlTest} parameter holding the browser command to pass to Selenium.
      */
     public static final String BROWSER_START_COMMAND_PARAMETER = "tapestry.browser-start-command";
