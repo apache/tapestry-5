@@ -50,20 +50,22 @@ public class Jetty7Runner
         webapp.setWar(expandedPath);
 
         // SSL support
-        
-        SslSelectChannelConnector sslConnector = new SslSelectChannelConnector();
-        
-        sslConnector.setPort(sslPort);
-        
         File keystoreFile = new File(TapestryTestConstants.MODULE_BASE_DIR, "src/test/conf/keystore");
-        
-        sslConnector.setKeystore(keystoreFile.getPath());
-        
-        sslConnector.setPassword("tapestry");
-        
-        sslConnector.setKeyPassword("tapestry");
-        
-        jettyServer.addConnector(sslConnector);
+
+        if (keystoreFile.exists())
+        {
+            SslSelectChannelConnector sslConnector = new SslSelectChannelConnector();
+
+            sslConnector.setPort(sslPort);
+
+            sslConnector.setKeystore(keystoreFile.getPath());
+
+            sslConnector.setPassword("tapestry");
+
+            sslConnector.setKeyPassword("tapestry");
+
+            jettyServer.addConnector(sslConnector);
+        }
 
         jettyServer.setHandler(webapp);
 

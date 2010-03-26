@@ -177,7 +177,8 @@ public class SeleniumLauncher
         
         File ffProfileTemplate = new File(TapestryTestConstants.MODULE_BASE_DIR, "src/test/conf/ff_profile_template");
         
-        seleniumServer.getConfiguration().setFirefoxProfileTemplate(ffProfileTemplate);
+        if(ffProfileTemplate.isDirectory())
+            seleniumServer.getConfiguration().setFirefoxProfileTemplate(ffProfileTemplate);
 
         seleniumServer.start();
 
