@@ -85,7 +85,6 @@ import org.apache.tapestry5.internal.util.StringRenderable;
 import org.apache.tapestry5.internal.validator.ValidatorMacroImpl;
 import org.apache.tapestry5.ioc.*;
 import org.apache.tapestry5.ioc.annotations.*;
-import org.apache.tapestry5.ioc.internal.services.UpdateListenerHubImpl;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.IdAllocator;
 import org.apache.tapestry5.ioc.services.*;
@@ -2862,4 +2861,13 @@ public final class TapestryModule
         }
     }
 
+    /**
+     * Exposes the Environmental {@link Heartbeat} as an injective service.
+     * 
+     * @since 5.2.0
+     */
+    public Heartbeat buildHeartbeat()
+    {
+        return environmentalBuilder.build(Heartbeat.class);
+    }
 }
