@@ -83,9 +83,12 @@ public interface ObjectLocator
     <T> T getObject(Class<T> objectType, AnnotationProvider annotationProvider);
 
     /**
-     * Autobuilds a class by finding the public constructor with the most parameters. Services and
-     * resources will be
-     * injected into the parameters of the constructor and private field marked with the {@link Inject} annotation.
+     * Autobuilds a class by finding the public constructor with the most parameters. Services and other resources or
+     * dependencies will be injected into the parameters of the constructor and private field marked with the
+     * {@link Inject} annotation. There are two cases: constructing a service implementation, and constructing
+     * an arbitrary object. In the former case, many <em>service resources</em> are also available for injection, not
+     * just dependencies or objects provided via
+     * {@link MasterObjectProvider#provide(Class, AnnotationProvider, ObjectLocator, boolean)}.
      * 
      * @param <T>
      * @param clazz
@@ -98,10 +101,8 @@ public interface ObjectLocator
     <T> T autobuild(Class<T> clazz);
 
     /**
-     * Autobuilds a class by finding the public constructor with the most parameters. Services and
-     * resources will be
-     * injected into the parameters of the constructor and private field marked with the {@link Inject} annotation. This
-     * version tracks the operation using {@link OperationTracker#invoke(String, Invokable)}.
+     * Preferred version of {@link #autobuild(Class)} that tracks the operation using
+     * {@link OperationTracker#invoke(String, Invokable)}.
      * 
      * @param <T>
      * @param description
@@ -133,6 +134,7 @@ public interface ObjectLocator
      * @param implementationClass
      *            a concrete class that implements the interface
      * @return a proxy
+     * @see #autobuild(Class)
      */
     <T> T proxy(Class<T> interfaceClass, Class<? extends T> implementationClass);
 }

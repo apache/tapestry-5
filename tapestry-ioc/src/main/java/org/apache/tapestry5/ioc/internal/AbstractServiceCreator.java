@@ -69,7 +69,7 @@ public abstract class AbstractServiceCreator implements ObjectCreator
     }
 
     /**
-     * Returns a map (based on parameterDefaults) that includes (possibly) an additional mapping containing the
+     * Returns a map (based on injectionResources) that includes (possibly) an additional mapping containing the
      * collected configuration data. This involves scanning the parameters and generic types.
      */
     protected final InjectionResources createInjectionResources()
@@ -115,9 +115,11 @@ public abstract class AbstractServiceCreator implements ObjectCreator
         return new DelegatingInjectionResources(core, configurations);
     }
 
+    @SuppressWarnings("unchecked")
     private List getOrderedConfiguration(Type genericType)
     {
         Class valueType = findParameterizedTypeFromGenericType(genericType);
+        
         return resources.getOrderedConfiguration(valueType);
     }
 
