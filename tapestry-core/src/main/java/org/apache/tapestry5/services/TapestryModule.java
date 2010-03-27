@@ -2685,7 +2685,7 @@ public final class TapestryModule
     }
 
     /**
-     * Adds two analyzers:
+     * Contributes:
      * <dl>
      * <dt>Application</dt>
      * <dd>Checks for classes in the application package</dd>
@@ -2693,6 +2693,8 @@ public final class TapestryModule
      * <dd>Checks for classes that appear to be generated proxies.</dd>
      * <dt>SunReflect</dt>
      * <dd>Checks for <code>sun.reflect</code> (which are omitted)
+     * <dt>TapestryAOP</dt>
+     * <dd>Omits stack frames for classes related to Tapestry AOP (such as advice, etc.)</dd>
      * </dl>
      * 
      * @since 5.1.0.0
@@ -2705,6 +2707,7 @@ public final class TapestryModule
         configuration.add("Synthetic", new SyntheticStackTraceElementAnalyzer(), "before:Application");
         configuration.add("SunReflect", new PrefixCheckStackTraceElementAnalyzer(
                 StackTraceElementClassConstants.OMITTED, "sun.reflect."));
+        configuration.addInstance("TapestryAOP", TapestryAOPStackFrameAnalyzer.class, "before:Application");
     }
 
     /**
