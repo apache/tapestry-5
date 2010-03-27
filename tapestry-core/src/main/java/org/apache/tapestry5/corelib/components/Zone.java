@@ -22,6 +22,8 @@ import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.ClientBehaviorSupport;
+import org.apache.tapestry5.services.Heartbeat;
+import org.apache.tapestry5.services.javascript.JavascriptSupport;
 
 /**
  * A Zone is portion of the output page designed for easy dynamic updating via Ajax or other client-side effects. A
@@ -56,6 +58,8 @@ import org.apache.tapestry5.services.ClientBehaviorSupport;
  * be to provide new content into a Zone that updates the same Zone, when the Zone's client-side id is dynamically
  * allocated (rather than statically defined). In most cases, however, the programmer is responsible for assigning a
  * specific client-side id, via the id parameter.
+ * <p/>
+ * A Zone starts and stops a {@link Heartbeat} when it renders (both normally, and when re-rendering).
  * <p/>
  * After the client-side content is updated, a client-side event is fired on the zone's element. The constant
  * Tapestry.ZONE_UPDATED_EVENT can be used to listen to the event.
@@ -93,7 +97,7 @@ public class Zone implements ClientElement
     private String idParameter;
 
     @Environmental
-    private RenderSupport renderSupport;
+    private JavascriptSupport javascriptSupport;
 
     @Environmental
     private ClientBehaviorSupport clientBehaviorSupport;
@@ -108,6 +112,9 @@ public class Zone implements ClientElement
     @Inject
     private ComponentResources resources;
 
+    @Inject
+    private Heartbeat heartbeat;
+
     private String clientId;
 
     String defaultElementName()
@@ -117,7 +124,7 @@ public class Zone implements ClientElement
 
     void beginRender(MarkupWriter writer)
     {
-        clientId = resources.isBound("id") ? idParameter : renderSupport.allocateClientId(resources);
+        clientId = resources.isBound("id") ? idParameter : javascriptSupport.allocateClientId(resources);
 
         Element e = writer.element(elementName, "id", clientId);
 
@@ -134,10 +141,14 @@ public class Zone implements ClientElement
         spec.put("div", clientId);
 
         clientBehaviorSupport.addZone(clientId, show, update);
+
+        heartbeat.begin();
     }
 
     void afterRender(MarkupWriter writer)
     {
+        heartbeat.end();
+
         writer.end(); // div
     }
 

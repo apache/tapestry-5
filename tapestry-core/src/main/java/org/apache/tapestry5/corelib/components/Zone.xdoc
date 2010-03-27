@@ -32,7 +32,8 @@
                 </p>
 
                 <p>
-                    Binding the zone parameter of the ActionLink is what triggers the partial-render and update logic.
+                    Binding the zone parameter of the ActionLink, EventLink or Form (the "trigger"
+                    component) is what triggers the partial-render and update logic.
                 </p>
 
             </subsection>
