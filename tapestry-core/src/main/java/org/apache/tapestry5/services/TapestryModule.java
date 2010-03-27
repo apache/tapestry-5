@@ -1976,7 +1976,8 @@ public final class TapestryModule
             {
                 JavascriptSupport javascriptSupport = environment.peekRequired(JavascriptSupport.class);
 
-                ClientBehaviorSupportImpl clientBehaviorSupport = new ClientBehaviorSupportImpl(javascriptSupport);
+                ClientBehaviorSupportImpl clientBehaviorSupport = new ClientBehaviorSupportImpl(javascriptSupport,
+                        environment);
 
                 environment.push(ClientBehaviorSupport.class, clientBehaviorSupport);
 
@@ -2123,7 +2124,7 @@ public final class TapestryModule
             {
                 JavascriptSupport javascriptSupport = environment.peekRequired(JavascriptSupport.class);
 
-                ClientBehaviorSupportImpl support = new ClientBehaviorSupportImpl(javascriptSupport);
+                ClientBehaviorSupportImpl support = new ClientBehaviorSupportImpl(javascriptSupport, environment);
 
                 environment.push(ClientBehaviorSupport.class, support);
 

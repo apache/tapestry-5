@@ -67,6 +67,8 @@ public class Index
     private static final List<Item> ITEMS = CollectionFactory
             .newList(
 
+                    new Item("ZoneFormUpdateDemo", "Zone/Form Update Demo", "Updating a Zone inside a Form"),
+
                     new Item("RenderNotificationDemo", "RenderNotification Demo", "Use of RenderNotification mixin"),
 
                     new Item("InjectMessagesDemo", "Inject Global Messages into Service Demo",

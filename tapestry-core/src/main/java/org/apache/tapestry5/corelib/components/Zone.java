@@ -14,13 +14,18 @@
 
 package org.apache.tapestry5.corelib.components;
 
-import org.apache.tapestry5.*;
+import org.apache.tapestry5.BindingConstants;
+import org.apache.tapestry5.Block;
+import org.apache.tapestry5.CSSClassConstants;
+import org.apache.tapestry5.ClientElement;
+import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.QueryParameterConstants;
 import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.ClientBehaviorSupport;
 import org.apache.tapestry5.services.Heartbeat;
 import org.apache.tapestry5.services.javascript.JavascriptSupport;
@@ -134,11 +139,6 @@ public class Zone implements ClientElement
 
         if (!visible)
             e.addClassName(CSSClassConstants.INVISIBLE);
-
-        // And continue on to render the body
-
-        JSONObject spec = new JSONObject();
-        spec.put("div", clientId);
 
         clientBehaviorSupport.addZone(clientId, show, update);
 

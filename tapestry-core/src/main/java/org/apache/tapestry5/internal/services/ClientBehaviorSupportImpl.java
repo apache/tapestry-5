@@ -20,17 +20,22 @@ import org.apache.tapestry5.corelib.data.InsertPosition;
 import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.ClientBehaviorSupport;
+import org.apache.tapestry5.services.Environment;
+import org.apache.tapestry5.services.FormSupport;
 import org.apache.tapestry5.services.javascript.JavascriptSupport;
 
 public class ClientBehaviorSupportImpl implements ClientBehaviorSupport
 {
     private final JavascriptSupport javascriptSupport;
 
+    private final Environment environment;
+
     private final JSONObject validations = new JSONObject();
 
-    public ClientBehaviorSupportImpl(JavascriptSupport javascriptSupport)
+    public ClientBehaviorSupportImpl(JavascriptSupport javascriptSupport, Environment environment)
     {
         this.javascriptSupport = javascriptSupport;
+        this.environment = environment;
     }
 
     public void addZone(String clientId, String showFunctionName, String updateFunctionName)
@@ -39,6 +44,15 @@ public class ClientBehaviorSupportImpl implements ClientBehaviorSupport
 
         addFunction(spec, "show", showFunctionName);
         addFunction(spec, "update", updateFunctionName);
+
+        FormSupport formSupport = environment.peek(FormSupport.class);
+
+        if (formSupport != null)
+        {
+            JSONObject parameters = new JSONObject(RequestConstants.FORM_CLIENTID_PARAMETER, formSupport.getClientId(),
+                    RequestConstants.FORM_COMPONENTID_PARAMETER, formSupport.getFormComponentId());
+            spec.put("parameters", parameters);
+        }
 
         javascriptSupport.addInitializerCall("zone", spec);
     }

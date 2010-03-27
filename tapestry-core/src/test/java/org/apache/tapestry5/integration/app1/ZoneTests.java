@@ -1,10 +1,10 @@
-// Copyright 2009 The Apache Software Foundation
+// Copyright 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -42,8 +42,7 @@ public class ZoneTests extends TapestryCoreTestCase
 
         waitForCondition(condition, PAGE_LOAD_TIMEOUT);
 
-        assertText(String.format("//div[@class='%s']/span", "t-error-popup"),
-                "You must provide a value for Car Model.");
+        assertText(String.format("//div[@class='%s']/span", "t-error-popup"), "You must provide a value for Car Model.");
 
         type("carModel", "7 Series");
 
@@ -203,29 +202,46 @@ public class ZoneTests extends TapestryCoreTestCase
 
         assertTextPresent(Form.class.getName() + "[form--form]");
     }
-    
+
     /**
      * TAP5-707
      */
-    
+
     @Test
     public void zone_fade_back_backgroundcolor()
     {
         clickThru("Form Zone Demo");
-        
+
         type("longValue", "12");
-        
+
         click(SUBMIT);
-        
+
         click(SUBMIT);
-        
+
         // wait some time to let the fade go away
         sleep(4050);
 
         // will only work in firefox.
         String color = getEval("selenium.browserbot.getCurrentWindow().getComputedStyle(this.page().findElement(\"xpath=//div[@id='valueZone']\"),'').getPropertyValue('background-color').toLowerCase()");
-        
+
         assertEquals(color, "rgb(255, 255, 255)");
+    }
+
+    /** TAP5-1084 */
+    @Test
+    public void update_zone_inside_form()
+    {
+        clickThru("Zone/Form Update Demo");
+
+        click("link=Update the form");
+
+        waitForElementToAppear("updated");
+
+        type("//INPUT[@type='text']", "Tapestry 5.2");
+        
+        clickAndWait(SUBMIT);
+
+        assertText("output", "Tapestry 5.2");
     }
 
 }

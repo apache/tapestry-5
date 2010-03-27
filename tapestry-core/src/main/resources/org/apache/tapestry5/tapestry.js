@@ -1494,6 +1494,7 @@ Tapestry.ZoneManager = Class.create( {
 				|| Tapestry.ElementEffect.show;
 		this.updateFunc = Tapestry.ElementEffect[spec.update]
 				|| Tapestry.ElementEffect.highlight;
+		this.specParameters = spec.parameters;
 
 		/*
 		 * TAP5-707: store the old background color of the element or take white
@@ -1590,7 +1591,7 @@ Tapestry.ZoneManager = Class.create( {
 
 		var finalParameters = $H( {
 			"t:zoneid" : this.element.id
-		});
+		}).update(this.specParameters);
 
 		/* If parameters were supplied, merge them in with the zone id */
 		if (!Object.isUndefined(parameters))
