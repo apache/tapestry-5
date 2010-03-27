@@ -207,28 +207,6 @@ public class ServicesMessages
                 .joinSorted(availableNames));
     }
 
-    public static String methodIsVoid(String methodName, Class inClass, String propertyExpression)
-    {
-        return MESSAGES.format("method-is-void", methodName, inClass.getName(), propertyExpression);
-    }
-
-    public static String methodNotFound(String methodName, Class inClass, String propertyExpression)
-    {
-        return MESSAGES.format("method-not-found", methodName, inClass.getName(), propertyExpression);
-    }
-
-    public static String noSuchProperty(Class targetClass, String propertyName, String propertyExpression,
-            Collection<String> propertyNames)
-    {
-        return MESSAGES.format("no-such-property", targetClass.getName(), propertyName, propertyExpression,
-                InternalUtils.joinSorted(propertyNames));
-    }
-
-    public static String writeOnlyProperty(String propertyName, Class clazz, String propertyExpression)
-    {
-        return MESSAGES.format("write-only-property", propertyName, clazz.getName(), propertyExpression);
-    }
-
     public static String requestException(Throwable cause)
     {
         return MESSAGES.format("request-exception", cause);

@@ -39,6 +39,7 @@ import java.lang.reflect.Modifier;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import org.antlr.runtime.ANTLRInputStream;
 import org.antlr.runtime.CommonTokenStream;
@@ -62,7 +63,9 @@ import org.apache.tapestry5.ioc.services.MethodSignature;
 import org.apache.tapestry5.ioc.services.PropertyAccess;
 import org.apache.tapestry5.ioc.services.PropertyAdapter;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
+import org.apache.tapestry5.ioc.util.AvailableValues;
 import org.apache.tapestry5.ioc.util.BodyBuilder;
+import org.apache.tapestry5.ioc.util.UnknownValueException;
 import org.apache.tapestry5.services.ComponentLayer;
 import org.apache.tapestry5.services.InvalidationListener;
 import org.apache.tapestry5.services.PropertyConduitSource;
@@ -924,8 +927,9 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
             Method method = info.getReadMethod();
 
             if (method == null && !info.isField())
-                throw new PropertyExpressionException(ServicesMessages.writeOnlyProperty(info.getDescription(),
-                        activeType, expression), expression, null);
+                throw new RuntimeException(String.format(
+                        "Property '%s' of class %s is not readable (it has no read accessor method).", info
+                                .getDescription(), activeType.getName()));
 
             // If a primitive type, convert to wrapper type
 
@@ -994,12 +998,11 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
             for (int i = 0; i < expected.length; i++)
                 tokenNames.add(PropertyExpressionParser.tokenNames[expected[i]]);
 
-            String message = String.format(
-                    "Node %s (within expression '%s') was type %s, but was expected to be (one of) %s.", node
-                            .toStringTree(), expression, PropertyExpressionParser.tokenNames[node.getType()],
-                    InternalUtils.joinSorted(tokenNames));
+            String message = String.format("Node %s was type %s, but was expected to be (one of) %s.", node
+                    .toStringTree(), PropertyExpressionParser.tokenNames[node.getType()], InternalUtils
+                    .joinSorted(tokenNames));
 
-            return new PropertyExpressionException(message, expression, null);
+            return new RuntimeException(message);
         }
 
         private ExpressionTermInfo infoForMember(Class activeType, Tree node)
@@ -1024,8 +1027,18 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
                 if (fieldInfo != null)
                     return fieldInfo;
 
-                throw new PropertyExpressionException(ServicesMessages.noSuchProperty(activeType, propertyName,
-                        expression, classAdapter.getPropertyNames()), expression, null);
+                Set<String> names = CollectionFactory.newSet();
+
+                names.addAll(classAdapter.getPropertyNames());
+
+                for (Field f : activeType.getFields())
+                {
+                    names.add(f.getName());
+                }
+
+                throw new UnknownValueException(String.format(
+                        "Class %s does not contain a property (or public field) named '%s'.", activeType.getName(),
+                        propertyName), new AvailableValues("properties (and public fields)", names));
             }
 
             return createExpressionTermInfoForProperty(adapter);
@@ -1142,8 +1155,8 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
                 final Method method = findMethod(activeType, methodName, parameterCount);
 
                 if (method.getReturnType().equals(void.class))
-                    throw new PropertyExpressionException(ServicesMessages.methodIsVoid(methodName, activeType,
-                            expression), expression, null);
+                    throw new RuntimeException(String.format("Method %s.%s() returns void.", activeType.getName(),
+                            methodName));
 
                 final Class genericType = GenericsUtils.extractGenericReturnType(activeType, method);
 
@@ -1192,8 +1205,8 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
             }
             catch (NoSuchMethodException ex)
             {
-                throw new PropertyExpressionException(ServicesMessages.methodNotFound(methodName, activeType,
-                        expression), expression, ex);
+                throw new RuntimeException(String.format("No public method '%s()' in class %s.", methodName, activeType
+                        .getName()));
             }
         }
 
@@ -1293,66 +1306,74 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
     {
         Tree tree = parse(expression);
 
-        switch (tree.getType())
+        try
         {
-            case TRUE:
+            switch (tree.getType())
+            {
+                case TRUE:
 
-                return literalTrue;
+                    return literalTrue;
 
-            case FALSE:
+                case FALSE:
 
-                return literalFalse;
+                    return literalFalse;
 
-            case NULL:
+                case NULL:
 
-                return literalNull;
+                    return literalNull;
 
-            case INTEGER:
+                case INTEGER:
 
-                // Leading '+' may screw this up.
-                // TODO: Singleton instance for "0", maybe "1"?
+                    // Leading '+' may screw this up.
+                    // TODO: Singleton instance for "0", maybe "1"?
 
-                return createLiteralConduit(Long.class, new Long(tree.getText()));
+                    return createLiteralConduit(Long.class, new Long(tree.getText()));
 
-            case DECIMAL:
+                case DECIMAL:
 
-                // Leading '+' may screw this up.
-                // TODO: Singleton instance for "0.0"?
+                    // Leading '+' may screw this up.
+                    // TODO: Singleton instance for "0.0"?
 
-                return createLiteralConduit(Double.class, new Double(tree.getText()));
+                    return createLiteralConduit(Double.class, new Double(tree.getText()));
 
-            case STRING:
+                case STRING:
 
-                return createLiteralConduit(String.class, tree.getText());
+                    return createLiteralConduit(String.class, tree.getText());
 
-            case RANGEOP:
+                case RANGEOP:
 
-                Tree fromNode = tree.getChild(0);
-                Tree toNode = tree.getChild(1);
+                    Tree fromNode = tree.getChild(0);
+                    Tree toNode = tree.getChild(1);
 
-                // If the range is defined as integers (not properties, etc.)
-                // then it is possible to calculate the value here, once, and not
-                // build a new class.
+                    // If the range is defined as integers (not properties, etc.)
+                    // then it is possible to calculate the value here, once, and not
+                    // build a new class.
 
-                if (fromNode.getType() != INTEGER || toNode.getType() != INTEGER)
+                    if (fromNode.getType() != INTEGER || toNode.getType() != INTEGER)
+                        break;
+
+                    int from = Integer.parseInt(fromNode.getText());
+                    int to = Integer.parseInt(toNode.getText());
+
+                    IntegerRange ir = new IntegerRange(from, to);
+
+                    return createLiteralConduit(IntegerRange.class, ir);
+
+                case THIS:
+
+                    return createLiteralThisPropertyConduit(rootClass);
+
+                default:
                     break;
+            }
 
-                int from = Integer.parseInt(fromNode.getText());
-                int to = Integer.parseInt(toNode.getText());
-
-                IntegerRange ir = new IntegerRange(from, to);
-
-                return createLiteralConduit(IntegerRange.class, ir);
-
-            case THIS:
-
-                return createLiteralThisPropertyConduit(rootClass);
-
-            default:
-                break;
+            return new PropertyConduitBuilder(rootClass, expression, tree).createInstance();
         }
-
-        return new PropertyConduitBuilder(rootClass, expression, tree).createInstance();
+        catch (Exception ex)
+        {
+            throw new PropertyExpressionException(String.format("Exception generating conduit for expression '%s': %s",
+                    expression, InternalUtils.toMessage(ex)), expression, ex);
+        }
     }
 
     private PropertyConduit createLiteralThisPropertyConduit(final Class rootClass)

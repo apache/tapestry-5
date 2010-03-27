@@ -579,7 +579,7 @@ public class BeanModelSourceImplTest extends InternalBaseTestCase
         }
         catch (PropertyExpressionException ex)
         {
-            assertMessageContains(ex, "does not contain a property named 'doesNotExist'");
+            assertMessageContains(ex, "does not contain", "doesNotExist");
         }
 
         verify();

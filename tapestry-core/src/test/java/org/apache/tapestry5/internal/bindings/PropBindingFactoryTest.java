@@ -1,10 +1,10 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -140,12 +140,7 @@ public class PropBindingFactoryTest extends InternalBaseTestCase
 
         replay();
 
-        Binding binding = factory.newBinding(
-                "test binding",
-                resources,
-                null,
-                "stringHolderMethod()",
-                l);
+        Binding binding = factory.newBinding("test binding", resources, null, "stringHolderMethod()", l);
 
         assertNotNull(binding.getAnnotation(BeforeRenderBody.class));
 
@@ -177,12 +172,7 @@ public class PropBindingFactoryTest extends InternalBaseTestCase
 
         replay();
 
-        Binding binding = factory.newBinding(
-                "test binding",
-                resources,
-                null,
-                "stringHolder.value",
-                l);
+        Binding binding = factory.newBinding("test binding", resources, null, "stringHolder.value", l);
 
         assertSame(binding.getBindingType(), String.class);
 
@@ -194,9 +184,7 @@ public class PropBindingFactoryTest extends InternalBaseTestCase
 
         assertEquals(bean.getStringHolder().getValue(), "second");
 
-        assertEquals(
-                binding.toString(),
-                "PropBinding[test binding foo.Bar:baz(stringHolder.value)]");
+        assertEquals(binding.toString(), "PropBinding[test binding foo.Bar:baz(stringHolder.value)]");
 
         verify();
     }
@@ -213,12 +201,7 @@ public class PropBindingFactoryTest extends InternalBaseTestCase
 
         replay();
 
-        Binding binding = factory.newBinding(
-                "test binding",
-                resources,
-                null,
-                "stringHolderMethod().value",
-                l);
+        Binding binding = factory.newBinding("test binding", resources, null, "stringHolderMethod().value", l);
 
         assertSame(binding.getBindingType(), String.class);
 
@@ -226,9 +209,7 @@ public class PropBindingFactoryTest extends InternalBaseTestCase
 
         assertEquals(binding.get(), "first");
 
-        assertEquals(
-                binding.toString(),
-                "PropBinding[test binding foo.Bar:baz(stringHolderMethod().value)]");
+        assertEquals(binding.toString(), "PropBinding[test binding foo.Bar:baz(stringHolderMethod().value)]");
 
         verify();
     }
@@ -242,12 +223,7 @@ public class PropBindingFactoryTest extends InternalBaseTestCase
 
         replay();
 
-        Binding binding = factory.newBinding(
-                "test binding",
-                resources,
-                null,
-                "stringHolderMethod().stringValue()",
-                l);
+        Binding binding = factory.newBinding("test binding", resources, null, "stringHolderMethod().stringValue()", l);
 
         assertSame(binding.getBindingType(), String.class);
 
@@ -289,9 +265,8 @@ public class PropBindingFactoryTest extends InternalBaseTestCase
         }
         catch (RuntimeException ex)
         {
-            assertEquals(
-                    ex.getMessage(),
-                    "No public method \'isThatRealBlood()\' in class org.apache.tapestry5.internal.bindings.TargetBean (within property expression \'isThatRealBlood().value\').");
+            assertMessageContains(ex,
+                    "No public method \'isThatRealBlood()\' in class org.apache.tapestry5.internal.bindings.TargetBean");
         }
 
         verify();
@@ -310,19 +285,13 @@ public class PropBindingFactoryTest extends InternalBaseTestCase
 
         try
         {
-            factory.newBinding(
-                    "test binding",
-                    resources,
-                    null,
-                    "stringHolder.isThatRealBlood()",
-                    l);
+            factory.newBinding("test binding", resources, null, "stringHolder.isThatRealBlood()", l);
             unreachable();
         }
         catch (RuntimeException ex)
         {
-            assertEquals(
-                    ex.getMessage(),
-                    "No public method \'isThatRealBlood()\' in class org.apache.tapestry5.internal.bindings.StringHolder (within property expression \'stringHolder.isThatRealBlood()\').");
+            assertMessageContains(ex,
+                    "No public method \'isThatRealBlood()\' in class org.apache.tapestry5.internal.bindings.StringHolder");
         }
 
         verify();
@@ -346,9 +315,8 @@ public class PropBindingFactoryTest extends InternalBaseTestCase
         }
         catch (RuntimeException ex)
         {
-            assertEquals(
-                    ex.getMessage(),
-                    "Method \'voidMethod()\' returns void (in class org.apache.tapestry5.internal.bindings.TargetBean, within property expression \'voidMethod().value\').");
+            assertMessageContains(ex,
+                    "Method org.apache.tapestry5.internal.bindings.TargetBean.voidMethod() returns void");
         }
 
         verify();
@@ -372,9 +340,8 @@ public class PropBindingFactoryTest extends InternalBaseTestCase
         }
         catch (RuntimeException ex)
         {
-            assertEquals(
-                    ex.getMessage(),
-                    "Method \'voidMethod()\' returns void (in class org.apache.tapestry5.internal.bindings.StringHolder, within property expression \'stringHolder.voidMethod()\').");
+            assertMessageContains(ex,
+                    "Method org.apache.tapestry5.internal.bindings.StringHolder.voidMethod() returns void");
         }
 
         verify();
@@ -400,10 +367,9 @@ public class PropBindingFactoryTest extends InternalBaseTestCase
         }
         catch (RuntimeException ex)
         {
-            assertEquals(
-                    ex.getMessage(),
-                    "Class org.apache.tapestry5.internal.bindings.StringHolder does not contain a property named \'missingProperty\' "
-                            + "(within property expression \'stringHolder.missingProperty.terminalProperty\').  Available properties: value.");
+            assertMessageContains(ex,
+                    "Class org.apache.tapestry5.internal.bindings.StringHolder does not contain a property",
+                    "\'missingProperty\'");
         }
 
         verify();
@@ -429,9 +395,9 @@ public class PropBindingFactoryTest extends InternalBaseTestCase
         }
         catch (RuntimeException ex)
         {
-            assertEquals(
-                    ex.getMessage(),
-                    "Property \'writeOnly\' of class org.apache.tapestry5.internal.bindings.TargetBean (within property expression \'writeOnly.terminalProperty\') is not readable (it has no read accessor method).");
+            assertMessageContains(ex,
+                    "Property \'writeOnly\' of class org.apache.tapestry5.internal.bindings.TargetBean",
+                    "is not readable (it has no read accessor method).");
         }
 
         verify();
@@ -481,8 +447,7 @@ public class PropBindingFactoryTest extends InternalBaseTestCase
         }
         catch (TapestryException ex)
         {
-            assertEquals(
-                    ex.getMessage(),
+            assertEquals(ex.getMessage(),
                     "Expression 'readOnly' for class org.apache.tapestry5.internal.bindings.TargetBean is read-only.");
             assertEquals(ex.getLocation(), l);
         }
@@ -512,8 +477,7 @@ public class PropBindingFactoryTest extends InternalBaseTestCase
         }
         catch (TapestryException ex)
         {
-            assertEquals(
-                    ex.getMessage(),
+            assertEquals(ex.getMessage(),
                     "Expression writeOnly for class org.apache.tapestry5.internal.bindings.TargetBean is write-only.");
             assertEquals(ex.getLocation(), l);
         }
@@ -539,11 +503,9 @@ public class PropBindingFactoryTest extends InternalBaseTestCase
         }
         catch (RuntimeException ex)
         {
-            assertEquals(
-                    ex.getMessage(),
-                    "Class org.apache.tapestry5.internal.bindings.TargetBean does not contain a property named \'missingProperty\' "
-                            + "(within property expression \'missingProperty\').  "
-                            + "Available properties: class, componentResources, intValue, objectValue, readOnly, stringHolder, writeOnly.");
+            assertMessageContains(ex,
+                    "Class org.apache.tapestry5.internal.bindings.TargetBean does not contain a property",
+                    "\'missingProperty\'");
         }
 
         verify();
@@ -577,29 +539,28 @@ public class PropBindingFactoryTest extends InternalBaseTestCase
     public Object[][] values()
     {
         return new Object[][]
-                {
-                        { "true", true, },
-                        { "True", true, },
-                        { " true ", true, },
-                        { "false", false },
-                        { "null", null },
-                        { "3", 3l },
-                        { " 37 ", 37l },
-                        { " -227", -227l },
-                        { " 5.", 5d },
-                        { " -100.", -100d },
-                        { " -0.0 ", -0d },
-                        { "+50", 50l },
-                        { "+7..+20", new IntegerRange(7, 20) },
-                        { "+5.5", 5.5d },
-                        { "1..10", new IntegerRange(1, 10) },
-                        { " -20 .. -30 ", new IntegerRange(-20, -30) },
-                        { "0.", 0d },
-                        { " 227.75", 227.75d },
-                        { " -10123.67", -10123.67d },
-                        { "'Hello World'", "Hello World" },
-                        { " 'Whitespace Ignored' ", "Whitespace Ignored" },
-                        { " ' Inside ' ", " Inside " }
-                };
+        {
+        { "true", true, },
+        { "True", true, },
+        { " true ", true, },
+        { "false", false },
+        { "null", null },
+        { "3", 3l },
+        { " 37 ", 37l },
+        { " -227", -227l },
+        { " 5.", 5d },
+        { " -100.", -100d },
+        { " -0.0 ", -0d },
+        { "+50", 50l },
+        { "+7..+20", new IntegerRange(7, 20) },
+        { "+5.5", 5.5d },
+        { "1..10", new IntegerRange(1, 10) },
+        { " -20 .. -30 ", new IntegerRange(-20, -30) },
+        { "0.", 0d },
+        { " 227.75", 227.75d },
+        { " -10123.67", -10123.67d },
+        { "'Hello World'", "Hello World" },
+        { " 'Whitespace Ignored' ", "Whitespace Ignored" },
+        { " ' Inside ' ", " Inside " } };
     }
 }
