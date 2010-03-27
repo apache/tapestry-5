@@ -1,3 +1,17 @@
+// Copyright 2009, 2010 The Apache Software Foundation
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 package org.apache.tapestry5.corelib.internal;
 
 import org.apache.tapestry5.MarkupWriter;
@@ -7,9 +21,10 @@ import org.apache.tapestry5.ioc.internal.util.OneShotLock;
 import org.apache.tapestry5.services.HiddenFieldLocationRules;
 
 /**
- * Used to position a hidden field (as part of a form-related component).  Hidden fields are not allowed to go just
- * anywhere, there are rules, dicatated by the (X)HTML schema, about where they are allowed. We use the {@link
- * org.apache.tapestry5.MarkupWriterListener} interface to monitor elements as they are started and ended to find a
+ * Used to position a hidden field (as part of a form-related component). Hidden fields are not allowed to go just
+ * anywhere, there are rules, dictated by the (X)HTML schema, about where they are allowed. We use the
+ * {@link org.apache.tapestry5.MarkupWriterListener} interface to monitor elements as they are started and ended to find
+ * a
  * place to put content.
  */
 public class HiddenFieldPositioner
@@ -42,7 +57,7 @@ public class HiddenFieldPositioner
         {
             if (rules.placeHiddenFieldAfter(element))
             {
-                hiddenFieldElement = element.getParent().element(ELEMENT);
+                hiddenFieldElement = element.getContainer().element(ELEMENT);
                 writer.removeListener(this);
             }
         }
@@ -58,9 +73,10 @@ public class HiddenFieldPositioner
 
     /**
      * Returns the hidden field element, which can have its attributes filled in.
-     *
+     * 
      * @return the element
-     * @throws IllegalStateException if the element was not placed.
+     * @throws IllegalStateException
+     *             if the element was not placed.
      */
     public Element getElement()
     {
@@ -73,7 +89,6 @@ public class HiddenFieldPositioner
         if (hiddenFieldElement == null)
             throw new IllegalStateException(
                     "The rendered content did not include any elements that allow for the positioning of the hidden form field's element.");
-
 
         return hiddenFieldElement;
     }

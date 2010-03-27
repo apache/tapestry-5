@@ -28,6 +28,7 @@ import org.apache.tapestry5.corelib.internal.HiddenFieldPositioner;
 import org.apache.tapestry5.corelib.internal.InternalFormSupport;
 import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.internal.services.PageRenderQueue;
+import org.apache.tapestry5.internal.services.RequestConstants;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.internal.util.IdAllocator;
 import org.apache.tapestry5.json.JSONObject;
@@ -40,6 +41,7 @@ import org.apache.tapestry5.services.Heartbeat;
 import org.apache.tapestry5.services.HiddenFieldLocationRules;
 import org.apache.tapestry5.services.PartialMarkupRenderer;
 import org.apache.tapestry5.services.PartialMarkupRendererFilter;
+import org.apache.tapestry5.services.javascript.JavascriptSupport;
 import org.slf4j.Logger;
 
 /**
@@ -57,9 +59,15 @@ public class FormInjector implements ClientElement
 {
     public static final String INJECT_EVENT = "inject";
 
-    public static final String FORM_CLIENTID_PARAMETER = "t:formid";
+    /**
+     * @deprecated Use {@link RequestConstants#FORM_CLIENTID_PARAMETER} instead
+     */
+    public static final String FORM_CLIENTID_PARAMETER = RequestConstants.FORM_CLIENTID_PARAMETER;
 
-    public static final String FORM_COMPONENTID_PARAMETER = "t:formcomponentid";
+    /**
+     * @deprecated Use {@link RequestConstants#FORM_COMPONENTID_PARAMETER} instead
+     */
+    public static final String FORM_COMPONENTID_PARAMETER = RequestConstants.FORM_COMPONENTID_PARAMETER;
 
     /**
      * The context for the link (optional parameter). This list of values will be converted into strings and included in
@@ -87,16 +95,13 @@ public class FormInjector implements ClientElement
     private String element;
 
     @Environmental
-    private RenderSupport renderSupport;
+    private JavascriptSupport javascriptSupport;
 
     @Environmental
     private FormSupport formSupport;
 
     @Environmental
     private ClientBehaviorSupport clientBehaviorSupport;
-
-    @Environmental
-    private Heartbeat heartbeat;
 
     @SuppressWarnings("unchecked")
     @Environmental
@@ -110,15 +115,6 @@ public class FormInjector implements ClientElement
     @Inject
     private ComponentResources resources;
 
-    @Inject
-    private Environment environment;
-
-    @Inject
-    private Logger logger;
-
-    @Inject
-    private ComponentSource componentSource;
-
     private Element clientElement;
 
     String defaultElement()
@@ -128,7 +124,7 @@ public class FormInjector implements ClientElement
 
     void beginRender(MarkupWriter writer)
     {
-        clientId = renderSupport.allocateClientId(resources);
+        clientId = javascriptSupport.allocateClientId(resources);
 
         clientElement = writer.element(element, "id", clientId);
 
@@ -138,8 +134,8 @@ public class FormInjector implements ClientElement
 
         Link link = resources.createEventLink(INJECT_EVENT, context);
 
-        link.addParameter(FORM_CLIENTID_PARAMETER, formSupport.getClientId());
-        link.addParameter(FORM_COMPONENTID_PARAMETER, formSupport.getFormComponentId());
+        link.addParameter(RequestConstants.FORM_CLIENTID_PARAMETER, formSupport.getClientId());
+        link.addParameter(RequestConstants.FORM_COMPONENTID_PARAMETER, formSupport.getFormComponentId());
 
         clientBehaviorSupport.addFormInjector(clientId, link, position, show);
     }
@@ -163,82 +159,27 @@ public class FormInjector implements ClientElement
     }
 
     /**
-     * Used during Ajax partial rendering to identify the hidden field that will hold the form data (component actions,
-     * used when processing the form submission) for the injection.
-     */
-    private HiddenFieldPositioner hiddenFieldPositioner;
-
-    @Inject
-    private HiddenFieldLocationRules rules;
-
-    @Inject
-    private ClientDataEncoder clientDataEncoder;
-
-    /**
      * Invoked via an Ajax request. Triggers an action event and captures the return value. The return value from the
-     * event notification is what will ultimately render (typically, its a Block). However, we do a <em>lot</em> of
-     * tricks to provide the desired FormSupport around the what renders.
+     * event notification is what will ultimately render (typically, its a Block).
      */
-    void onInject(EventContext context,
-
-    @QueryParameter(FORM_CLIENTID_PARAMETER)
-    final String formClientId,
-
-    @QueryParameter(FORM_COMPONENTID_PARAMETER)
-    String formComponentId) throws IOException
+    void onInject(EventContext context) throws IOException
     {
         resources.triggerContextEvent(EventConstants.ACTION, context, eventCallback);
 
         if (!eventCallback.isAborted())
             return;
 
-        // Here's where it gets very, very tricky.
-
-        final Form form = (Form) componentSource.getComponent(formComponentId);
-
-        final ComponentActionSink actionSink = new ComponentActionSink(logger, clientDataEncoder);
+        // Before rendering, allocate a unique element id and record it into the JSON reply.
 
         PartialMarkupRendererFilter filter = new PartialMarkupRendererFilter()
         {
             public void renderMarkup(MarkupWriter writer, JSONObject reply, PartialMarkupRenderer renderer)
             {
-                hiddenFieldPositioner = new HiddenFieldPositioner(writer, rules);
-
-                // Kind of ugly, but the only way to ensure we don't have name collisions on the
-                // client side is to force a unique id into each name (as well as each id, but that's
-                // RenderSupport's job). It would be nice if we could agree on the uid, but
-                // not essential.
-
-                String uid = Long.toHexString(System.currentTimeMillis());
-
-                IdAllocator idAllocator = new IdAllocator("-" + uid);
-
-                clientId = renderSupport.allocateClientId(resources);
+                clientId = javascriptSupport.allocateClientId(resources);
 
                 reply.put("elementId", clientId);
 
-                InternalFormSupport formSupport = form.createRenderTimeFormSupport(formClientId, actionSink,
-                        idAllocator);
-
-                environment.push(FormSupport.class, formSupport);
-                environment.push(ValidationTracker.class, new ValidationTrackerImpl());
-
-                heartbeat.begin();
-
                 renderer.renderMarkup(writer, reply);
-
-                formSupport.executeDeferred();
-
-                heartbeat.end();
-
-                environment.pop(ValidationTracker.class);
-                environment.pop(FormSupport.class);
-
-                hiddenFieldPositioner.getElement().attributes("type", "hidden",
-
-                "name", Form.FORM_DATA,
-
-                "value", actionSink.getClientData());
             }
         };
 

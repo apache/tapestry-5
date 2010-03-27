@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,6 +13,9 @@
 // limitations under the License.
 
 package org.apache.tapestry5.internal.services;
+
+import org.apache.tapestry5.corelib.components.Form;
+import org.apache.tapestry5.corelib.components.FormInjector;
 
 /**
  * Constants used when processing requests from the client web browser.
@@ -25,22 +28,35 @@ public final class RequestConstants
      */
     public static final String ASSET_PATH_PREFIX = "/assets/";
 
-
     /**
      * Virtual folder name for assets that are actually stored in the context, but are exposed (much like classpath
      * assets) to gain far-future expires headers and automatic content compression. The application version number
      * comes after this prefix and before the true path.
-     *
+     * 
      * @since 5.1.0.0
      */
     public static final String CONTEXT_FOLDER = "ctx/";
 
-
     /**
      * Folder for virtual assets: combined JavaScript files. The file name is actualy a compressed bytestream
      * of the names of each file.
-     *
+     * 
      * @since 5.1.0.2
      */
     public static final String VIRTUAL_FOLDER = "virtual/";
+
+    /**
+     * Name of parameter, in an Ajax update, that identifies the client-side id of the {@link Form} being extended. Used
+     * with {@link Zone}, {@link FormInjector} and other similar components that may be contained within a form.
+     * 
+     * @since 5.2.0
+     */
+    public static final String FORM_CLIENTID_PARAMETER = "t:formid";
+
+    /**
+     * The server-side part of {@link #FORM_CLIENTID_PARAMETER} identifying the server-side component id.
+     * 
+     * @since 5.2.0
+     */
+    public static final String FORM_COMPONENTID_PARAMETER = "t:formcomponentid";
 }

@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,14 +15,15 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.PartialMarkupRenderer;
 
 /**
  * Terminator for the {@link org.apache.tapestry5.services.PartialMarkupRenderer} pipeline, which ultimately invokes
- * {@link org.apache.tapestry5.internal.services.PageRenderQueue#renderPartial(org.apache.tapestry5.MarkupWriter,
- * org.apache.tapestry5.json.JSONObject)}.
- *
+ * {@link org.apache.tapestry5.internal.services.PageRenderQueue#renderPartial(org.apache.tapestry5.MarkupWriter, org.apache.tapestry5.json.JSONObject)}
+ * .
+ * 
  * @since 5.1.0.0
  */
 public class PartialMarkupRendererTerminator implements PartialMarkupRenderer
@@ -36,6 +37,17 @@ public class PartialMarkupRendererTerminator implements PartialMarkupRenderer
 
     public void renderMarkup(MarkupWriter writer, JSONObject reply)
     {
+        // The partial will quite often contain multiple elements (or just a block of plain text),
+        // so those must be enclosed in a root element.
+
+        Element root = writer.element("ajax-partial");
+
         renderQueue.renderPartial(writer, reply);
+
+        writer.end();
+
+        String content = root.getChildMarkup().trim();
+
+        reply.put("content", content);
     }
 }

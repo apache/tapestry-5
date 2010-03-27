@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -25,7 +25,7 @@ import org.apache.tapestry5.services.PartialMarkupRendererFilter;
 
 /**
  * Responsible for capturing the content for a single zone and storing it into the JSON reply object.
- *
+ * 
  * @see org.apache.tapestry5.ajax.MultiZoneUpdate
  * @since 5.1.0.1
  */
@@ -50,7 +50,7 @@ public class SingleZonePartialRendererFilter implements PartialMarkupRendererFil
         {
             public void render(MarkupWriter writer, RenderQueue queue)
             {
-                // Create an element to contain the content for the zone. We give it a menumonic
+                // Create an element to contain the content for the zone. We give it a mnemonic
                 // element name and attribute just to help with debugging (the element itself is discarded).
 
                 final Element zoneContainer = writer.element("zone-update", "zoneId", zoneId);

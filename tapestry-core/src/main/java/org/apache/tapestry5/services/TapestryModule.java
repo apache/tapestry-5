@@ -73,6 +73,7 @@ import org.apache.tapestry5.internal.renderers.LocationRenderer;
 import org.apache.tapestry5.internal.renderers.ObjectArrayRenderer;
 import org.apache.tapestry5.internal.renderers.RequestRenderer;
 import org.apache.tapestry5.internal.services.*;
+import org.apache.tapestry5.internal.services.ajax.AjaxFormUpdateFilter;
 import org.apache.tapestry5.internal.services.ajax.JavascriptSupportImpl;
 import org.apache.tapestry5.internal.services.messages.PropertiesFileParserImpl;
 import org.apache.tapestry5.internal.transform.*;
@@ -151,7 +152,7 @@ public final class TapestryModule
      * services are always lazy proxies). This isn't
      * about efficiency (it may be slightly more efficient, but not in any
      * noticable way), it's about eliminating the
-     * need to keep injecting these dependencies into invividual service builder
+     * need to keep injecting these dependencies into individual service builder
      * and contribution methods.
      */
     public TapestryModule(PipelineBuilder pipelineBuilder,
@@ -2078,7 +2079,7 @@ public final class TapestryModule
             {
                 String uid = Long.toHexString(System.currentTimeMillis());
 
-                String namespace = "-" + uid;
+                String namespace = "_" + uid;
 
                 IdAllocator idAllocator = new IdAllocator(namespace);
 
@@ -2102,9 +2103,9 @@ public final class TapestryModule
             public void renderMarkup(MarkupWriter writer, JSONObject reply, PartialMarkupRenderer renderer)
             {
                 DocumentLinker linker = environment.peekRequired(DocumentLinker.class);
+                JavascriptSupport javascriptSupport = environment.peekRequired(JavascriptSupport.class);
 
-                RenderSupportImpl support = new RenderSupportImpl(linker, symbolSource, assetSource, environment
-                        .peekRequired(JavascriptSupport.class));
+                RenderSupportImpl support = new RenderSupportImpl(linker, symbolSource, assetSource, javascriptSupport);
 
                 environment.push(RenderSupport.class, support);
 
@@ -2512,6 +2513,21 @@ public final class TapestryModule
         configuration.addInstance("ImmediateRender", ImmediateActionRenderResponseFilter.class);
 
         configuration.add("Secure", secureFilter, "before:Ajax");
+    }
+
+    /**
+     * Contributes:
+     * <dl>
+     * <dt>AjaxFormUpdate</dt>
+     * <dd>{@link AjaxFormUpdateFilter}</dd>
+     * </dl>
+     * 
+     * @since 5.2.0
+     */
+    public static void contributeAjaxComponentEventRequestHandler(
+            OrderedConfiguration<ComponentEventRequestFilter> configuration)
+    {
+        configuration.addInstance("AjaxFormUpdate", AjaxFormUpdateFilter.class);
     }
 
     /**

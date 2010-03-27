@@ -58,7 +58,7 @@ public final class IdAllocator
         }
 
         /**
-         * Clones this instance, returning an equivalent but seperate copy.
+         * Clones this instance, returning an equivalent but separate copy.
          */
         @SuppressWarnings({ "CloneDoesntDeclareCloneNotSupportedException" })
         @Override

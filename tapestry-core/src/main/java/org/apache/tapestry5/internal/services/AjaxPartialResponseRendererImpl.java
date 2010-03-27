@@ -62,8 +62,8 @@ public class AjaxPartialResponseRendererImpl implements AjaxPartialResponseRende
     public void renderPartialPageMarkup() throws IOException
     {
         // This is a complex area as we are trying to keep public and private services properly
-        // seperated, and trying to keep stateless and stateful (i.e., perthread scope) services
-        // seperated. So we inform the stateful queue service what it needs to do here ...
+        // separated, and trying to keep stateless and stateful (i.e., perthread scope) services
+        // separated. So we inform the stateful queue service what it needs to do here ...
 
         ContentType pageContentType =
                 (ContentType) request.getAttribute(InternalConstants.CONTENT_TYPE_ATTRIBUTE_NAME);

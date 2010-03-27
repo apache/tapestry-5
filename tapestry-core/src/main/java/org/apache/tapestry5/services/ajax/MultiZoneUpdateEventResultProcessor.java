@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -30,11 +30,11 @@ import java.util.Map;
  * Handler for {@link org.apache.tapestry5.ajax.MultiZoneUpdate} responses from a component event handler method. Works
  * by adding {@link org.apache.tapestry5.services.ajax.SingleZonePartialRendererFilter}s for each zone to the
  * {@linkplain org.apache.tapestry5.internal.services.PageRenderQueue#addPartialMarkupRendererFilter(org.apache.tapestry5.services.PartialMarkupRendererFilter)
- * filter stack}.  Each zone writes its content as a string in the zones object of the reply, keyed on its id.
- * JavaScript and CSS are collected for all zones rendered in the request (not for each individua zone).  The final
- * repsonse will have some combination of "script", "scripts", "stylesheets", "content" (which is expected to be blank)
+ * filter stack}. Each zone writes its content as a string in the zones object of the reply, keyed on its id.
+ * JavaScript and CSS are collected for all zones rendered in the request (not for each individual zone). The final
+ * response will have some combination of "script", "scripts", "stylesheets", "content" (which is expected to be blank)
  * and "zones".
- *
+ * 
  * @since 5.1.0.1
  */
 public class MultiZoneUpdateEventResultProcessor implements ComponentEventResultProcessor<MultiZoneUpdate>
@@ -81,9 +81,8 @@ public class MultiZoneUpdateEventResultProcessor implements ComponentEventResult
         }
         catch (Exception ex)
         {
-            throw new IllegalArgumentException(String.format("Failure converting renderer for zone '%s': %s",
-                                                             zoneId,
-                                                             InternalUtils.toMessage(ex)), ex);
+            throw new IllegalArgumentException(String.format("Failure converting renderer for zone '%s': %s", zoneId,
+                    InternalUtils.toMessage(ex)), ex);
         }
     }
 }

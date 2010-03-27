@@ -23,6 +23,7 @@ import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.Events;
 import org.apache.tapestry5.annotations.Log;
 import org.apache.tapestry5.annotations.Mixin;
+import org.apache.tapestry5.annotations.OnEvent;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.corelib.internal.ComponentActionSink;
@@ -409,6 +410,8 @@ public class Form implements ClientElement, FormValidationControl
      * Creates an {@link org.apache.tapestry5.corelib.internal.InternalFormSupport} for
      * this Form. This method is used
      * by {@link org.apache.tapestry5.corelib.components.FormInjector}.
+     * <p>
+     * This method may also be invoked as the handler for the "internalCreateRenderTimeFormSupport" event.
      * 
      * @param name
      *            the client-side name and client id for the rendered form
@@ -421,6 +424,7 @@ public class Form implements ClientElement, FormValidationControl
      *            used to allocate unique ids
      * @return form support object
      */
+    @OnEvent("internalCreateRenderTimeFormSupport")
     InternalFormSupport createRenderTimeFormSupport(String name, ComponentActionSink actionSink, IdAllocator allocator)
     {
         return new FormSupportImpl(resources, name, actionSink, clientBehaviorSupport, clientValidation, allocator,
