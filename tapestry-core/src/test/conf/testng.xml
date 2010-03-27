@@ -45,7 +45,7 @@
       <package name="org.apache.tapestry5.internal.transform"/>
       <package name="org.apache.tapestry5.internal.translator"/>
       <package name="org.apache.tapestry5.internal.util"/>
-      <package name="org.apache.tapestry5.internal.services.javascript"/>
+      <package name="org.apache.tapestry5.internal.services.ajax"/>
     </packages>
   </test>
 

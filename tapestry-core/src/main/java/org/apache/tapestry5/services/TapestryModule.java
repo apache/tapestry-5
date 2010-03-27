@@ -73,7 +73,7 @@ import org.apache.tapestry5.internal.renderers.LocationRenderer;
 import org.apache.tapestry5.internal.renderers.ObjectArrayRenderer;
 import org.apache.tapestry5.internal.renderers.RequestRenderer;
 import org.apache.tapestry5.internal.services.*;
-import org.apache.tapestry5.internal.services.javascript.JavascriptSupportImpl;
+import org.apache.tapestry5.internal.services.ajax.JavascriptSupportImpl;
 import org.apache.tapestry5.internal.services.messages.PropertiesFileParserImpl;
 import org.apache.tapestry5.internal.transform.*;
 import org.apache.tapestry5.internal.translator.NumericTranslator;

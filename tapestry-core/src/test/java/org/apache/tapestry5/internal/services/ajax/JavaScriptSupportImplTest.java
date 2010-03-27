@@ -12,13 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.internal.services.javascript;
+package org.apache.tapestry5.internal.services.ajax;
 
 import java.util.List;
 
 import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.internal.services.DocumentLinker;
+import org.apache.tapestry5.internal.services.ajax.JavascriptSupportImpl;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.IdAllocator;
