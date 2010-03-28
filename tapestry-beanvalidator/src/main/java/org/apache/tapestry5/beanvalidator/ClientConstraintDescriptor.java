@@ -29,6 +29,14 @@ public final class ClientConstraintDescriptor
    private final String validatorName;
    private final Set<String> attributes;
 
+   /**
+    * Creates a {@link ClientConstraintDescriptor}.
+    * 
+    * @param annotationClass Type of the constraint annotation
+    * @param validatorName Name of the client-side validator
+    * @param attributes Attribute names of the constraint annotation to be passed (along with their values) to the JavaScript validator 
+    * function as an {@link JSONObject}.
+    */
    public ClientConstraintDescriptor(final Class annotationClass,
          final String validatorName, final String... attributes) 
    {
@@ -54,8 +62,8 @@ public final class ClientConstraintDescriptor
    }
 
    /**
-    * Returns a map containing the annotation attribute names as keys and the annotation attribute values as value.
-    * This map is passed to the client-side validator as a {@link JSONObject}.
+    * Attribute names of the constraint annotation to be passed (along with their values) to the JavaScript validator 
+    * function as an {@link JSONObject}. 
     */
    public Set<String> getAttributes() 
    {
