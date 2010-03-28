@@ -72,5 +72,33 @@ public class ImmediateModeTests extends TapestryCoreTestCase
                 "immediate mode");
 
     }
+    
+    /** TAP5-1086 */
+    @Test
+    public void localized_root_path_no_index_page()
+    {
+       openBaseURL();
+       assertTextPresent("Start Page");
+       
+       // This test relies on the fact that no 'Index' page is available 
+       // Following checks ensure that a refactoring (rename of Start to Index) breaks the test
+       assertTextPresent("Index Page Exists: false");
+       assertTextPresent("Start Page Exists: true");
+       
+       open(getBaseURL()+"en");
+       assertTextPresent("Start Page");
+       
+       open(getBaseURL()+"start");
+       assertTextPresent("Start Page");
+       
+       open(getBaseURL()+"start/en");
+       assertTextPresent("Start Page");
+       
+       open(getBaseURL()+"index");
+       assertTextPresent("Start Page");
+       
+       open(getBaseURL()+"index/en");
+       assertTextPresent("Start Page");
+    }
 
 }

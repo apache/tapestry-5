@@ -14,6 +14,7 @@
 
 package org.apache.tapestry5.internal.services;
 
+import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.ioc.Invokable;
 import org.apache.tapestry5.ioc.annotations.Inject;
@@ -43,6 +44,8 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
     private final ClassNameLocator classNameLocator;
 
     private final String appRootPackage;
+    
+    private final String startPageName;
 
     // Map from folder name to a list of root package names.
     // The key does not begin or end with a slash.
@@ -102,6 +105,10 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
     @Inject
     @Symbol(InternalConstants.TAPESTRY_APP_PACKAGE_PARAM)
     String appRootPackage,
+    
+    @Inject
+    @Symbol(SymbolConstants.START_PAGE_NAME)
+    String startPageName,
 
     Collection<LibraryMapping> mappings)
     {
@@ -110,6 +117,7 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
         this.classNameLocator = classNameLocator;
 
         this.appRootPackage = appRootPackage;
+        this.startPageName = startPageName;
 
         addPackagesToInstantiatorSource(this.appRootPackage);
 
@@ -307,7 +315,7 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
 
                 String lastTerm = lastSlashx < 0 ? logicalName : logicalName.substring(lastSlashx + 1);
 
-                if (lastTerm.equalsIgnoreCase("index"))
+                if (lastTerm.equalsIgnoreCase("index") || lastTerm.equalsIgnoreCase(startPageName))
                 {
                     String reducedName = lastSlashx < 0 ? "" : logicalName.substring(0, lastSlashx);
 

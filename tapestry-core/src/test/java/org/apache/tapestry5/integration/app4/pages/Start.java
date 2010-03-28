@@ -15,13 +15,29 @@
 package org.apache.tapestry5.integration.app4.pages;
 
 import org.apache.tapestry5.annotations.InjectPage;
+import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.services.ComponentClassResolver;
 
 public class Start
 {
     @InjectPage
     private Destination destination;
+    
+    @Inject
+    private ComponentClassResolver componentClassResolver;
 
     private String input;
+    
+    
+    public boolean getIndexPageExists()
+    {
+        return componentClassResolver.isPageName("Index");
+    }
+    
+    public boolean getStartPageExists()
+    {
+        return componentClassResolver.isPageName("Start");
+    }
 
     public String getInput()
     {

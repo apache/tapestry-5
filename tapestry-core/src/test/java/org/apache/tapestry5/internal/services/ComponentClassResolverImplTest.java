@@ -41,12 +41,13 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
 
     private static final String LIB_ROOT_PACKAGE = "org.example.lib";
 
+    
     private ComponentClassResolverImpl create(Logger logger, ComponentInstantiatorSource source,
             ClassNameLocator locator, LibraryMapping... mappings)
     {
         List<LibraryMapping> list = Arrays.asList(mappings);
 
-        return new ComponentClassResolverImpl(logger, source, locator, APP_ROOT_PACKAGE, list);
+        return new ComponentClassResolverImpl(logger, source, locator, APP_ROOT_PACKAGE, "Start", list);
     }
 
     private Logger compliantLogger()
@@ -155,6 +156,34 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
 
         verify();
     }
+    
+    @Test
+    public void canonicalize_start_page()
+    {
+        ComponentInstantiatorSource source = mockComponentInstantiatorSource();
+        ClassNameLocator locator = newClassNameLocator();
+        Logger logger = compliantLogger();
+
+        train_for_app_packages(source);
+
+        String className = APP_ROOT_PACKAGE + ".pages.HomePage";
+
+        train_locateComponentClassNames(locator, APP_ROOT_PACKAGE + ".pages", className);
+
+        replay();
+        
+        List<LibraryMapping> mappings = Arrays.asList();
+
+        ComponentClassResolver resolver = new ComponentClassResolverImpl(logger, source, locator, APP_ROOT_PACKAGE, "HomePage", mappings);
+
+        assertEquals(resolver.canonicalizePageName("HomePage"), "HomePage");
+        assertEquals(resolver.canonicalizePageName(""), "HomePage");
+        assertTrue(resolver.isPageName("HomePage"));
+
+        verify();
+    }
+    
+    
 
     @Test
     public void page_name_in_subfolder()

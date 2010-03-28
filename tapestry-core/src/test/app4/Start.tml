@@ -5,7 +5,10 @@
 
     <body>
 
-        <h1>Start</h1>
+        <h1>Start Page</h1>
+        
+        <p>Index Page Exists: ${indexPageExists}</p>
+        <p>Start Page Exists: ${startPageExists}</p>
 
         <t:beaneditform object="this"/>
 
