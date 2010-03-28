@@ -728,7 +728,7 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
             {
                 componentClassName = componentClassResolver.resolveComponentTypeToClassName(embeddedType);
             }
-            catch (IllegalArgumentException ex)
+            catch (RuntimeException ex)
             {
                 throw new TapestryException(ex.getMessage(), token, ex);
             }

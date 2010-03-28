@@ -70,4 +70,15 @@ public class GeneralComponentTests extends TapestryCoreTestCase
 
         assertTextPresent("Number: 2");
     }
+    
+    /**
+     * TAP5-1075
+     */
+    @Test
+    public void report_location_of_unavailable_component_in_error()
+    {
+        clickThru("Report Location of Unavailable Component");
+
+        assertText("//td[@class='t-location-content t-location-current']", "<t:unavailablecomponent/>");
+    }
 }

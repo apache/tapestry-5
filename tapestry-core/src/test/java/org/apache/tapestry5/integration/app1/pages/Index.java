@@ -424,7 +424,10 @@ public class Index
                             "AssetProtectionDispatcher is properly contributed and functioning"),
 
                     new Item("BeanDisplayEnumDemo", "BeanDisplay Enum Demo",
-                            "User represenation of enum values is correctly read from messages")
+                            "User represenation of enum values is correctly read from messages"),
+                            
+                    new Item("unavailablecomponentdemo", "Report Location of Unavailable Component", 
+                            "Report Location of Unavailable Component")
 
             );
 
