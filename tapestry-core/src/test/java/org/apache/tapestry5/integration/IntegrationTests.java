@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -32,7 +32,6 @@ import java.net.URL;
  * Note: If these tests fail with BindException when starting Jetty, it could be Skype. At least on my system, Skype is
  * listening on localhost:80.
  */
-@SuppressWarnings({ "JavaDoc" })
 @Test(timeOut = 50000, sequential = true)
 public class IntegrationTests extends AbstractIntegrationTestSuite
 {
@@ -1094,6 +1093,8 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     public void radio_button_and_group()
     {
         start("RadioDemo");
+        
+        clickAndWait("link=reset");
 
         String update = SUBMIT;
 
@@ -1120,11 +1121,12 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     public void radio_group_validator()
     {
         start("RadioDemo");
-
-        String update = SUBMIT;
+        
+        clickAndWait("link=reset");
 
         // Verify that the "required" validator works.
-        clickAndWait(update);
+        clickAndWait(SUBMIT);
+        
         assertTextPresent("You must provide a value for Department.");
     }
 
@@ -3003,11 +3005,11 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         
         click(SUBMIT);
         
-        String condition = String.format("selenium.browserbot.getCurrentWindow().$$(\"%s\")", "t-error-popup");
+        String condition = String.format("selenium.browserbot.getCurrentWindow().$$(\"%s\")", ".t-error-popup");
 
         waitForCondition(condition, PAGE_LOAD_TIMEOUT);
         
-        assertText(String.format("//div[@class='%s']/span", "t-error-popup"), "You must provide a value for Car Model.");
+        assertTextPresent("You must provide a value for Car Model.");
         
         type("carModel", "7 Series");
         

@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,6 +14,7 @@
 
 package org.apache.tapestry5.integration.app1.pages;
 
+import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.integration.app1.data.Department;
 import org.apache.tapestry5.internal.TapestryInternalUtils;
@@ -32,6 +33,14 @@ public class RadioDemo
 
     @Inject
     private Messages messages;
+    
+    @Inject
+    private ComponentResources resources;
+
+    void onActionFromReset()
+    {
+        resources.discardPersistentFieldChanges();
+    }
 
     public Department[] getDepartments()
     {
