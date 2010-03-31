@@ -2255,7 +2255,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
      */
     public void form_action_via_get()
     {
-        open(BASE_URL + "validform.form");
+        open(BASE_URL + "validform.form", "true");
 
         assertTextPresent(
                 "Forms require that the request method be POST and that the t:formdata query parameter have values.");

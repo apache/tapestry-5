@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2007, 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -488,7 +488,12 @@ public class AbstractIntegrationTestSuite extends Assert implements Selenium
 
     public void open(String url)
     {
-        selenium.open(url);
+        // open the URL but ignore the HTTP status code. Necessary if we want to check
+        // for certain contents on error pages. The behaviour changed in Selenium 1.0.2.
+        // Until then the HTTP status code was just ignored. To keep this backwards-compatible
+        // with older Tapestry releases, we stick with the old behaviour.
+
+        selenium.open(url, "true");
     }
 
     public void openWindow(String url, String windowID)
@@ -1133,5 +1138,21 @@ public class AbstractIntegrationTestSuite extends Assert implements Selenium
    	{
    		selenium.selectPopUp(windowID);
    	}
+
+   	/**
+   	 * @since 5.1.0.8
+   	 */
+    public String getLog()
+    {
+        return selenium.getLog();
+    }
+
+    /**
+     * @since 5.1.0.8
+     */
+    public void open(String url, String ignoreResponseCode)
+    {
+        selenium.open(url, ignoreResponseCode);
+    }
 
 }

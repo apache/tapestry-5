@@ -14,21 +14,10 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.seleniumhq.selenium.client-drivers</groupId>
-            <artifactId>selenium-java-client-driver</artifactId>
-            <version>${selenium-version}</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
             <groupId>org.seleniumhq.selenium.server</groupId>
             <artifactId>selenium-server</artifactId>
             <version>${selenium-version}</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.seleniumhq.selenium.server</groupId>
-            <artifactId>selenium-server-coreless</artifactId>
-            <version>${selenium-version}</version>
+            <classifier>standalone</classifier>
             <scope>compile</scope>
         </dependency>
         <dependency>
@@ -36,6 +25,12 @@
             <artifactId>testng</artifactId>
             <version>${testng-version}</version>
             <classifier>jdk15</classifier>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>jetty</groupId>
+            <artifactId>org.mortbay.jetty</artifactId>
+            <version>5.1.12</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>
@@ -69,6 +64,6 @@
     </reporting>
     
     <properties>
-    	<selenium-version>1.0.1</selenium-version>
+    	<selenium-version>1.0.3</selenium-version>
    	</properties> 
 </project>
