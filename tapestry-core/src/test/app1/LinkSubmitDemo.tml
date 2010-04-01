@@ -1,12 +1,14 @@
 <html t:type="border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
     <h1>Link Submit Demo</h1>
+    
+    <p>Result: ${result}.</p>
 
     <t:form>
         <t:errors/>
 
         <t:textfield t:id="name"/>
         <br/>
-        <t:linksubmit t:id="fred">Fred</t:linksubmit>
+        <t:linksubmit t:id="fred" context="formContext">Fred</t:linksubmit>
         <t:linksubmit t:id="barney" defer="true" event="neighbor">Barney</t:linksubmit>
 
     </t:form>

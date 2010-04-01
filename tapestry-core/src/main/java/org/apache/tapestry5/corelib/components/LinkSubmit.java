@@ -63,6 +63,15 @@ public class LinkSubmit implements ClientElement
      */
     @Parameter
     private boolean defer = true;
+    
+    /**
+     * The list of values that will be made available to event handler method of this component when the form is
+     * submitted.
+     * 
+     * @since 5.2.0
+     */
+    @Parameter
+    private Object[] context;
 
     @Inject
     private ComponentResources resources;
@@ -110,7 +119,7 @@ public class LinkSubmit implements ClientElement
             {
                 public void run()
                 {
-                    resources.triggerEvent(event, null, eventCallback);
+                    resources.triggerEvent(event, context, eventCallback);
                 }
             };
 

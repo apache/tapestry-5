@@ -28,8 +28,22 @@ public class LinkSubmitDemo
     @Property
     @Persist
     private String lastClicked;
+    
+    @Persist
+    @Property
+    private Double result;
+    
+    public Object[] getFormContext()
+    {
+        return new Object[]{new Integer(7), new Double(3.14159)};
+     }
 
-    void onSelectedFromFred() { lastClicked = "Fred"; }
+    void onSelectedFromFred(Integer first, Double second) 
+    { 
+        lastClicked = "Fred"; 
+        
+        result = first + second;
+    }
 
     void onNeighbor() { lastClicked = "Barney"; }
 }
