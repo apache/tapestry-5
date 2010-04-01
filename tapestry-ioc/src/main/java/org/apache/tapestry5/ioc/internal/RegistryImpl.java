@@ -1017,7 +1017,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
             ObjectLocator locator)
     {
         ReloadableObjectCreator creator = new ReloadableObjectCreator(implementationClass.getClassLoader(),
-                implementationClass.getName(), loggerSource.getLogger(implementationClass), locator);
+                implementationClass.getName(), loggerSource.getLogger(implementationClass), this, locator);
 
         getService(UpdateListenerHub.class).addUpdateListener(creator);
 

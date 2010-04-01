@@ -20,7 +20,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
+import org.apache.tapestry5.ioc.Invokable;
 import org.apache.tapestry5.ioc.ObjectCreator;
+import org.apache.tapestry5.ioc.OperationTracker;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.ClassFabUtils;
 import org.apache.tapestry5.services.UpdateListener;
@@ -65,6 +67,8 @@ public abstract class AbstractReloadableObjectCreator implements ObjectCreator, 
 
     private final Logger logger;
 
+    private final OperationTracker tracker;
+
     private Object instance;
 
     private File classFile;
@@ -73,14 +77,16 @@ public abstract class AbstractReloadableObjectCreator implements ObjectCreator, 
 
     private boolean firstTime = true;
 
-    protected AbstractReloadableObjectCreator(ClassLoader baseClassLoader, String implementationClassName, Logger logger)
+    protected AbstractReloadableObjectCreator(ClassLoader baseClassLoader, String implementationClassName,
+            Logger logger, OperationTracker tracker)
     {
         this.baseClassLoader = baseClassLoader;
         this.implementationClassName = implementationClassName;
+        this.logger = logger;
+        this.tracker = tracker;
 
         this.classFilePath = ClassFabUtils.getPathForClassNamed(implementationClassName);
 
-        this.logger = logger;
     }
 
     public synchronized void checkForUpdates()
@@ -110,11 +116,17 @@ public abstract class AbstractReloadableObjectCreator implements ObjectCreator, 
 
     private Object createInstance()
     {
-        updateTrackingInfo();
+        return tracker.invoke(String.format("Reloading class %s.", implementationClassName), new Invokable<Object>()
+        {
+            public Object invoke()
+            {
+                updateTrackingInfo();
 
-        Class reloadedClass = reloadImplementationClass();
+                Class reloadedClass = reloadImplementationClass();
 
-        return createInstance(reloadedClass);
+                return createInstance(reloadedClass);
+            };
+        });
     }
 
     /**
@@ -200,6 +212,11 @@ public abstract class AbstractReloadableObjectCreator implements ObjectCreator, 
     private void updateTrackingInfo()
     {
         URL url = baseClassLoader.getResource(classFilePath);
+
+        if (url == null)
+            throw new RuntimeException(String.format(
+                    "Unable to reload class %s as it has been deleted. You may need to restart the application.",
+                    implementationClassName));
 
         classFile = ClassFabUtils.toFileFromFileProtocolURL(url);
 

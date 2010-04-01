@@ -32,7 +32,7 @@ public class ReloadableServiceImplementationObjectCreator extends AbstractReload
     public ReloadableServiceImplementationObjectCreator(ServiceBuilderResources resources, ClassLoader baseClassLoader,
             String implementationClassName)
     {
-        super(baseClassLoader, implementationClassName, resources.getLogger());
+        super(baseClassLoader, implementationClassName, resources.getLogger(), resources.getTracker());
 
         this.resources = resources;
     }

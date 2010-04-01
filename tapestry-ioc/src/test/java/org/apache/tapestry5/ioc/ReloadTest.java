@@ -100,6 +100,38 @@ public class ReloadTest extends TestBase
     }
 
     @Test
+    public void delete_class() throws Exception
+    {
+        createImplementationClass("before delete");
+
+        Registry registry = createRegistry();
+
+        ReloadableService reloadable = registry.getService(ReloadableService.class);
+
+        assertEquals(reloadable.getStatus(), "before delete");
+
+        File classFile = new File(classesDir, "com/example/ReloadableServiceImpl.class");
+
+        assertTrue(classFile.exists(), "The class file must exist.");
+
+        classFile.delete();
+
+        fireUpdateCheck(registry);
+
+        try
+        {
+            reloadable.getStatus();
+            unreachable();
+        }
+        catch (RuntimeException ex)
+        {
+            assertMessageContains(ex, "Unable to reload", CLASS, "deleted");
+        }
+
+        registry.shutdown();
+    }
+
+    @Test
     public void reload_a_proxy_object() throws Exception
     {
         createImplementationClass("initial proxy");
@@ -225,4 +257,5 @@ public class ReloadTest extends TestBase
 
         assertTrue(eagerLoadServiceWasInstantiated);
     }
+
 }

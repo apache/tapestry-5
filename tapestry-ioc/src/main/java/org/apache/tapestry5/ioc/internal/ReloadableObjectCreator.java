@@ -15,6 +15,7 @@
 package org.apache.tapestry5.ioc.internal;
 
 import org.apache.tapestry5.ioc.ObjectLocator;
+import org.apache.tapestry5.ioc.OperationTracker;
 import org.slf4j.Logger;
 
 /**
@@ -25,9 +26,9 @@ public class ReloadableObjectCreator extends AbstractReloadableObjectCreator
     private final ObjectLocator locator;
 
     public ReloadableObjectCreator(ClassLoader baseClassLoader, String implementationClassName, Logger logger,
-            ObjectLocator locator)
+            OperationTracker tracker, ObjectLocator locator)
     {
-        super(baseClassLoader, implementationClassName, logger);
+        super(baseClassLoader, implementationClassName, logger, tracker);
 
         this.locator = locator;
     }
