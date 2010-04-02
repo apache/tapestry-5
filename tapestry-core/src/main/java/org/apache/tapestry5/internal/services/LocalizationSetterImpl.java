@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,7 +14,17 @@
 
 package org.apache.tapestry5.internal.services;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+
+import org.apache.tapestry5.OptionModel;
+import org.apache.tapestry5.SelectModel;
 import org.apache.tapestry5.SymbolConstants;
+import org.apache.tapestry5.internal.OptionModelImpl;
+import org.apache.tapestry5.internal.SelectModelImpl;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
@@ -22,10 +32,6 @@ import org.apache.tapestry5.ioc.services.ThreadLocale;
 import org.apache.tapestry5.services.LocalizationSetter;
 import org.apache.tapestry5.services.PersistentLocale;
 import org.apache.tapestry5.services.Request;
-
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * Given a set of supported locales, for a specified desired locale, sets the current thread's locale to a supported
@@ -39,7 +45,9 @@ public class LocalizationSetterImpl implements LocalizationSetter
 
     private final Locale defaultLocale;
 
-    private final Set<String> acceptedLocaleNames;
+    private final Set<String> supportedLocaleNames;
+
+    private final List<Locale> supportedLocales;
 
     private final Map<String, Locale> localeCache = CollectionFactory.newConcurrentMap();
 
@@ -47,27 +55,41 @@ public class LocalizationSetterImpl implements LocalizationSetter
 
     public LocalizationSetterImpl(Request request,
 
-                                  PersistentLocale persistentLocale,
+    PersistentLocale persistentLocale,
 
-                                  ThreadLocale threadLocale,
+    ThreadLocale threadLocale,
 
-                                  @Inject
-                                  @Symbol(SymbolConstants.SUPPORTED_LOCALES)
-                                  String acceptedLocaleNames)
+    @Inject
+    @Symbol(SymbolConstants.SUPPORTED_LOCALES)
+    String supportedLocaleNames)
     {
         this.request = request;
 
         this.persistentLocale = persistentLocale;
         this.threadLocale = threadLocale;
 
-        String[] names = acceptedLocaleNames.split(",");
+        String[] names = supportedLocaleNames.split(",");
 
-        defaultLocale = toLocale(names[0]);
+        this.supportedLocaleNames = CollectionFactory.newSet(names);
 
-        this.acceptedLocaleNames = CollectionFactory.newSet(names);
+        supportedLocales = parseNames(names);
+
+        defaultLocale = supportedLocales.get(0);
     }
 
-    Locale toLocale(String localeName)
+    private List<Locale> parseNames(String[] localeNames)
+    {
+        List<Locale> list = CollectionFactory.newList();
+
+        for (String name : localeNames)
+        {
+            list.add(toLocale(name));
+        }
+
+        return Collections.unmodifiableList(list);
+    }
+
+    public Locale toLocale(String localeName)
     {
         Locale result = localeCache.get(localeName);
 
@@ -104,7 +126,7 @@ public class LocalizationSetterImpl implements LocalizationSetter
 
     public boolean setLocaleFromLocaleName(String localeName)
     {
-        boolean supported = acceptedLocaleNames.contains(localeName);
+        boolean supported = supportedLocaleNames.contains(localeName);
 
         if (supported)
         {
@@ -141,11 +163,13 @@ public class LocalizationSetterImpl implements LocalizationSetter
 
         while (true)
         {
-            if (acceptedLocaleNames.contains(localeName)) return toLocale(localeName);
+            if (supportedLocaleNames.contains(localeName))
+                return toLocale(localeName);
 
             localeName = stripTerm(localeName);
 
-            if (localeName.length() == 0) break;
+            if (localeName.length() == 0)
+                break;
         }
 
         return defaultLocale;
@@ -157,4 +181,23 @@ public class LocalizationSetterImpl implements LocalizationSetter
 
         return scorex < 0 ? "" : localeName.substring(0, scorex);
     }
+
+    public List<Locale> getSupportedLocales()
+    {
+        return supportedLocales;
+    }
+
+    public SelectModel getSupportedLocalesModel()
+    {
+        List<OptionModel> options = CollectionFactory.newList();
+        
+        for (Locale l : supportedLocales)
+        {
+            options.add(new OptionModelImpl(l.getDisplayName(l), l));
+        }
+        
+        return new SelectModelImpl(null, options);
+    }
+    
+    
 }

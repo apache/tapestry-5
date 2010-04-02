@@ -1,10 +1,10 @@
-// Copyright 2006, 2009 The Apache Software Foundation
+// Copyright 2006, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,13 +14,17 @@
 
 package org.apache.tapestry5.internal.services;
 
+import java.util.List;
+import java.util.Locale;
+
+import org.apache.tapestry5.OptionModel;
+import org.apache.tapestry5.SelectModel;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.ioc.services.ThreadLocale;
+import org.apache.tapestry5.services.LocalizationSetter;
 import org.apache.tapestry5.services.PersistentLocale;
 import org.apache.tapestry5.services.Request;
 import org.testng.annotations.Test;
-
-import java.util.Locale;
 
 public class LocalizationSetterImplTest extends InternalBaseTestCase
 {
@@ -36,7 +40,7 @@ public class LocalizationSetterImplTest extends InternalBaseTestCase
     @Test
     public void to_locale_is_cached()
     {
-        LocalizationSetterImpl setter = new LocalizationSetterImpl(null, null, null, "en");
+        LocalizationSetter setter = new LocalizationSetterImpl(null, null, null, "en");
 
         Locale l1 = setter.toLocale("en");
 
@@ -47,8 +51,7 @@ public class LocalizationSetterImplTest extends InternalBaseTestCase
         assertSame(setter.toLocale("en"), l1);
     }
 
-    private void checkLocale(Locale l, String expectedLanguage, String expectedCountry,
-                             String expectedVariant)
+    private void checkLocale(Locale l, String expectedLanguage, String expectedCountry, String expectedVariant)
     {
         assertEquals(l.getLanguage(), expectedLanguage);
         assertEquals(l.getCountry(), expectedCountry);
@@ -77,11 +80,43 @@ public class LocalizationSetterImplTest extends InternalBaseTestCase
 
         replay();
 
-        LocalizationSetterImpl setter = new LocalizationSetterImpl(request, pl, tl, "en,fr");
+        LocalizationSetter setter = new LocalizationSetterImpl(request, pl, tl, "en,fr");
 
         assertTrue(setter.setLocaleFromLocaleName("fr"));
 
         verify();
+    }
+
+    @Test
+    public void get_selected_locales()
+    {
+        LocalizationSetter setter = new LocalizationSetterImpl(null, null, null, "en,fr");
+
+        assertListsEquals(setter.getSupportedLocales(), Locale.ENGLISH, Locale.FRENCH);
+    }
+
+    @Test
+    public void get_locale_model()
+    {
+        LocalizationSetter setter = new LocalizationSetterImpl(null, null, null, "en,fr");
+
+        SelectModel model = setter.getSupportedLocalesModel();
+
+        assertNull(model.getOptionGroups());
+
+        List<OptionModel> options = model.getOptions();
+
+        assertEquals(options.size(), 2);
+
+        assertEquals(options.get(0).getLabel(), "English");
+        // Note that the label is localized to the underlying locale, not the default locale.
+        // That's why its "français" (i.e., as a French speaker would say it), not "French"
+        // (like an English speaker).
+        assertEquals(options.get(1).getLabel(), "français");
+
+        assertEquals(options.get(0).getValue(), Locale.ENGLISH);
+        assertEquals(options.get(1).getValue(), Locale.FRENCH);
+
     }
 
     protected final PersistentLocale mockPersistentLocale()
