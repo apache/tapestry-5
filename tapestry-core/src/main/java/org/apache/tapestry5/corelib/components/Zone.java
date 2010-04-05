@@ -21,6 +21,7 @@ import org.apache.tapestry5.ClientElement;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.QueryParameterConstants;
+import org.apache.tapestry5.annotations.BeginRender;
 import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.SupportsInformalParameters;
@@ -154,12 +155,17 @@ public class Zone implements ClientElement
 
     /**
      * The client id of the Zone; this is set when the Zone renders and will either be the value bound to the id
-     * parameter, or an allocated unique id.
+     * parameter, or an allocated unique id. When the id parameter is bound, this value is always accurate.
+     * When the id parameter is not bound, the clientId is set during the {@linkplain BeginRender begin render phase}
+     * and will be null or innacurate before then.
      * 
      * @return client-side element id
      */
     public String getClientId()
     {
+        if (resources.isBound("id"))
+            return idParameter;
+
         return clientId;
     }
 
