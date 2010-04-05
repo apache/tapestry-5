@@ -18,6 +18,7 @@ import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.ClientElement;
 import org.apache.tapestry5.Field;
 import org.apache.tapestry5.annotations.Environmental;
+import org.apache.tapestry5.annotations.HeartbeatDeferred;
 import org.apache.tapestry5.annotations.InjectContainer;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.json.JSONObject;
@@ -45,25 +46,11 @@ public class TriggerFragment
     @Environmental
     private JavascriptSupport javascriptSupport;
 
-    @Environmental
-    private Heartbeat heartbeat;
-
+    @HeartbeatDeferred
     void beginRender()
     {
-        Runnable r = new Runnable()
-        {
-            public void run()
-            {
-                JSONObject spec = new JSONObject("triggerId", container.getClientId(), "fragmentId", fragment
-                        .getClientId());
+        JSONObject spec = new JSONObject("triggerId", container.getClientId(), "fragmentId", fragment.getClientId());
 
-                javascriptSupport.addInitializerCall("linkTriggerToFormFragment", spec);
-            }
-        };
-
-        // Defer generating the script to ensure that the FormFragment has rendered
-        // and generated its client id.
-
-        heartbeat.defer(r);
+        javascriptSupport.addInitializerCall("linkTriggerToFormFragment", spec);
     }
 }

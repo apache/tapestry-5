@@ -37,6 +37,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.tapestry5.*;
 import org.apache.tapestry5.ajax.MultiZoneUpdate;
+import org.apache.tapestry5.annotations.HeartbeatDeferred;
 import org.apache.tapestry5.annotations.PageAttached;
 import org.apache.tapestry5.annotations.PageDetached;
 import org.apache.tapestry5.annotations.PageLoaded;
@@ -529,6 +530,8 @@ public final class TapestryModule
      * <dd>Checks for the {@link org.apache.tapestry5.annotations.Log} annotation</dd>
      * <dt>PageReset
      * <dd>Checks for the {@link PageReset} annotation
+     * <dt>HeartbeatDeferred
+     * <dd>Support for the {@link HeartbeatDeferred} annotation
      * </dl>
      */
     public static void contributeComponentClassTransformWorker(
@@ -619,6 +622,8 @@ public final class TapestryModule
         configuration.add("PageActivationContext", new PageActivationContextWorker(), "before:OnEvent");
 
         configuration.addInstance("SessionAttribute", SessionAttributeWorker.class);
+
+        configuration.addInstance("HeartbeatDeferred", HeartbeatDeferredWorker.class, "after:RenderPhase");
     }
 
     /**

@@ -21,6 +21,7 @@ import java.io.ObjectInputStream;
 import org.apache.tapestry5.*;
 import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.Events;
+import org.apache.tapestry5.annotations.HeartbeatDeferred;
 import org.apache.tapestry5.annotations.Log;
 import org.apache.tapestry5.annotations.Mixin;
 import org.apache.tapestry5.annotations.OnEvent;
@@ -51,6 +52,7 @@ import org.apache.tapestry5.services.Environment;
 import org.apache.tapestry5.services.FormSupport;
 import org.apache.tapestry5.services.Heartbeat;
 import org.apache.tapestry5.services.Request;
+import org.apache.tapestry5.services.javascript.JavascriptSupport;
 import org.slf4j.Logger;
 
 /**
@@ -216,6 +218,9 @@ public class Form implements ClientElement, FormValidationControl
     private Messages messages;
 
     @Environmental
+    private JavascriptSupport javascriptSupport;
+
+    @Environmental
     private RenderSupport renderSupport;
 
     @Inject
@@ -252,7 +257,7 @@ public class Form implements ClientElement, FormValidationControl
     @Inject
     private ClientDataEncoder clientDataEncoder;
 
-    private String name;
+    private String clientId;
 
     // Set during rendering or submit processing to be the
     // same as the VT pushed into the Environment
@@ -345,7 +350,7 @@ public class Form implements ClientElement, FormValidationControl
 
         actionSink = new ComponentActionSink(logger, clientDataEncoder);
 
-        name = renderSupport.allocateClientId(resources);
+        clientId = javascriptSupport.allocateClientId(resources);
 
         // Pre-register some names, to prevent client-side collisions with function names
         // attached to the JS Form object.
@@ -355,10 +360,10 @@ public class Form implements ClientElement, FormValidationControl
         allocator.allocateId("reset");
         allocator.allocateId("submit");
 
-        formSupport = createRenderTimeFormSupport(name, actionSink, allocator);
+        formSupport = createRenderTimeFormSupport(clientId, actionSink, allocator);
 
         if (zone != null)
-            clientBehaviorSupport.linkZone(name, zone, link);
+            linkFormToZone(link);
 
         activeTracker = getWrappedTracker();
 
@@ -384,7 +389,7 @@ public class Form implements ClientElement, FormValidationControl
         // Save the form element for later, in case we want to write an encoding
         // type attribute.
 
-        form = writer.element("form", "id", name, "method", "post", "action", link);
+        form = writer.element("form", "id", clientId, "method", "post", "action", link);
 
         if ((zone != null || clientValidation) && !request.isXHR())
             writer.attributes("onsubmit", MarkupConstants.WAIT_FOR_PAGE);
@@ -406,6 +411,12 @@ public class Form implements ClientElement, FormValidationControl
         environment.peek(Heartbeat.class).begin();
     }
 
+    @HeartbeatDeferred
+    private void linkFormToZone(Link link)
+    {
+        clientBehaviorSupport.linkZone(clientId, zone, link);
+    }
+
     /**
      * Creates an {@link org.apache.tapestry5.corelib.internal.InternalFormSupport} for
      * this Form. This method is used
@@ -413,8 +424,8 @@ public class Form implements ClientElement, FormValidationControl
      * <p>
      * This method may also be invoked as the handler for the "internalCreateRenderTimeFormSupport" event.
      * 
-     * @param name
-     *            the client-side name and client id for the rendered form
+     * @param clientId
+     *            the client-side id for the rendered form
      *            element
      * @param actionSink
      *            used to collect component actions that will, ultimately, be
@@ -425,9 +436,10 @@ public class Form implements ClientElement, FormValidationControl
      * @return form support object
      */
     @OnEvent("internalCreateRenderTimeFormSupport")
-    InternalFormSupport createRenderTimeFormSupport(String name, ComponentActionSink actionSink, IdAllocator allocator)
+    InternalFormSupport createRenderTimeFormSupport(String clientId, ComponentActionSink actionSink,
+            IdAllocator allocator)
     {
-        return new FormSupportImpl(resources, name, actionSink, clientBehaviorSupport, clientValidation, allocator,
+        return new FormSupportImpl(resources, clientId, actionSink, clientBehaviorSupport, clientValidation, allocator,
                 validationId);
     }
 
@@ -682,6 +694,6 @@ public class Form implements ClientElement, FormValidationControl
      */
     public String getClientId()
     {
-        return name;
+        return clientId;
     }
 }
