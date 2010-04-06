@@ -64,8 +64,6 @@ public class Label
 
     boolean beginRender(MarkupWriter writer)
     {
-        final Field field = this.field;
-
         decorator.beforeLabel(field);
 
         labelElement = writer.element("label");
@@ -86,7 +84,7 @@ public class Label
     {
         String fieldId = field.getClientId();
 
-        labelElement.forceAttributes("for", fieldId, "id", fieldId + "-label");
+        labelElement.forceAttributes("for", fieldId, "id", fieldId + "_label");
 
         decorator.insideLabel(field, labelElement);
     }

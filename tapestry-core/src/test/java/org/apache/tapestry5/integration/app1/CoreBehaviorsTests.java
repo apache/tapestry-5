@@ -647,8 +647,8 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
 
         assertTextPresent("Editor for org.apache.tapestry5.integration.app1.data.Track");
 
-        assertText("//label[@id='title-label']", "Title");
-        assertAttribute("//label[@id='title-label']/@for", "title");
+        assertText("//label[@id='title_label']", "Title");
+        assertAttribute("//label[@id='title_label']/@for", "title");
     }
 
     /**

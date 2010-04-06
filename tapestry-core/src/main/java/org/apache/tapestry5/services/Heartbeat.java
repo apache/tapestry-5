@@ -1,10 +1,10 @@
-// Copyright 2006, 2008 The Apache Software Foundation
+// Copyright 2006, 2008, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,6 +13,8 @@
 // limitations under the License.
 
 package org.apache.tapestry5.services;
+
+import org.apache.tapestry5.annotations.HeartbeatDeferred;
 
 /**
  * Allows for deferred execution of logic, useful when trying to get multiple components to coordinate behavior. A
@@ -36,8 +38,10 @@ public interface Heartbeat
 
     /**
      * Adds a new command to the current Heartbeat. The command will be executed by {@link #end()}.
-     *
-     * @param command command to be executed at the end of the heartbeat
+     * 
+     * @param command
+     *            command to be executed at the end of the heartbeat
+     * @see HeartbeatDeferred
      */
     void defer(Runnable command);
 }

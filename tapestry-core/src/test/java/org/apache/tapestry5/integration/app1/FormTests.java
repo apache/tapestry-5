@@ -1,4 +1,4 @@
-// Copyright 2009 The Apache Software Foundation
+// Copyright 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -381,10 +381,10 @@ public class FormTests extends TapestryCoreTestCase
         // ComponentFieldValidator.isRequired()
 
         assertSourcePresent(
-                "[Before label for Value]<label id=\"value-label\" for=\"value\">Value</label>[After label for Value]",
+                "[Before label for Value]<label id=\"value_label\" for=\"value\">Value</label>[After label for Value]",
                 "[Before field Value]",
                 "[After field Value (optional)]",
-                "[Before label for Required Value]<label id=\"requiredValue-label\" for=\"requiredValue\">Required Value</label>[After label for Required Value]",
+                "[Before label for Required Value]<label id=\"requiredValue_label\" for=\"requiredValue\">Required Value</label>[After label for Required Value]",
                 "[Before field Required Value]", "[After field Required Value (required)]");
     }
 
@@ -749,15 +749,15 @@ public class FormTests extends TapestryCoreTestCase
     {
         clickThru("SimpleForm");
 
-        assertText("//label[@id='disabled-label']", "Disabled");
+        assertText("//label[@id='disabled_label']", "Disabled");
 
         // This demonstrates TAPESTRY-1642:
-        assertText("//label[@id='email-label']", "User Email");
+        assertText("//label[@id='email_label']", "User Email");
 
-        assertText("//label[@id='message-label']", "Incident Message");
-        assertText("//label[@id='operatingSystem-label']", "Operating System");
-        assertText("//label[@id='department-label']", "Department");
-        assertText("//label[@id='urgent-label']", "Urgent Processing Requested");
+        assertText("//label[@id='message_label']", "Incident Message");
+        assertText("//label[@id='operatingSystem_label']", "Operating System");
+        assertText("//label[@id='department_label']", "Department");
+        assertText("//label[@id='urgent_label']", "Urgent Processing Requested");
 
         assertFieldValue("email", "");
         assertFieldValue("message", "");

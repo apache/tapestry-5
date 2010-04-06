@@ -543,12 +543,6 @@ public final class TapestryModule
 
             ComponentClassResolver resolver)
     {
-        // TODO: Proper scheduling of all of this. Since a given field or method
-        // should
-        // only have a single annotation, the order doesn't matter so much, as
-        // long as
-        // UnclaimedField is last.
-
         configuration.addInstance("Cached", CachedWorker.class);
 
         configuration.add("Meta", new MetaWorker());

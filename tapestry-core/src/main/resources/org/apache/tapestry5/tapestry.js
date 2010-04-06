@@ -1317,8 +1317,8 @@ Tapestry.FieldEventManager = Class.create( {
 		this.field = $(field);
 
 		var id = this.field.id;
-		this.label = $(id + '-label');
-		this.icon = $(id + '-icon');
+		this.label = $(id + '_label');
+		this.icon = $(id + '_icon');
 
 		this.translator = Prototype.K;
 
