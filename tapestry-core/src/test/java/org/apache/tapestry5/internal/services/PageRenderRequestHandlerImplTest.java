@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,16 +14,14 @@
 
 package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry5.ComponentEventCallback;
-import org.apache.tapestry5.EventConstants;
 import org.apache.tapestry5.EventContext;
+import org.apache.tapestry5.internal.InternalComponentResources;
 import org.apache.tapestry5.internal.structure.ComponentPageElement;
 import org.apache.tapestry5.internal.structure.Page;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.services.ComponentEventResultProcessor;
 import org.apache.tapestry5.services.PageRenderRequestHandler;
 import org.apache.tapestry5.services.PageRenderRequestParameters;
-import org.easymock.EasyMock;
 import org.testng.annotations.Test;
 
 public class PageRenderRequestHandlerImplTest extends InternalBaseTestCase
@@ -37,15 +35,14 @@ public class PageRenderRequestHandlerImplTest extends InternalBaseTestCase
         Page page = mockPage();
         EventContext context = mockEventContext();
         ComponentPageElement root = mockComponentPageElement();
+        InternalComponentResources pageResources = mockInternalComponentResources();
+        PageActivator activator = newMock(PageActivator.class);
 
         train_get(cache, "foo/Bar", page);
 
         train_getRootElement(page, root);
-
-        expect(
-                root.triggerContextEvent(EasyMock.eq(EventConstants.ACTIVATE), EasyMock
-                        .same(context), EasyMock.isA(ComponentEventCallback.class))).andReturn(
-                false);
+        train_getComponentResources(root, pageResources);
+        expect(activator.activatePage(pageResources, context, processor)).andReturn(false);
 
         // Skips the pageReset()
 
@@ -53,11 +50,9 @@ public class PageRenderRequestHandlerImplTest extends InternalBaseTestCase
 
         replay();
 
-        PageRenderRequestHandler handler = new PageRenderRequestHandlerImpl(cache, processor,
-                renderer);
+        PageRenderRequestHandler handler = new PageRenderRequestHandlerImpl(cache, processor, renderer, activator);
 
-        PageRenderRequestParameters parameters = new PageRenderRequestParameters("foo/Bar",
-                context, true);
+        PageRenderRequestParameters parameters = new PageRenderRequestParameters("foo/Bar", context, true);
 
         handler.handle(parameters);
 

@@ -16,8 +16,6 @@ package org.apache.tapestry5.internal.services;
 
 import java.io.IOException;
 
-import org.apache.tapestry5.TrackableComponentEventCallback;
-import org.apache.tapestry5.EventConstants;
 import org.apache.tapestry5.internal.structure.Page;
 import org.apache.tapestry5.ioc.annotations.Primary;
 import org.apache.tapestry5.services.ComponentEventResultProcessor;
@@ -39,30 +37,26 @@ public class PageRenderRequestHandlerImpl implements PageRenderRequestHandler
 
     private final PageResponseRenderer pageResponseRenderer;
 
+    private final PageActivator pageActivator;
+
     public PageRenderRequestHandlerImpl(RequestPageCache cache, @Traditional
     @Primary
-    ComponentEventResultProcessor resultProcessor, PageResponseRenderer pageResponseRenderer)
+    ComponentEventResultProcessor resultProcessor, PageResponseRenderer pageResponseRenderer,
+            PageActivator pageActivator)
     {
         this.cache = cache;
         this.resultProcessor = resultProcessor;
         this.pageResponseRenderer = pageResponseRenderer;
+        this.pageActivator = pageActivator;
     }
 
     public void handle(PageRenderRequestParameters parameters) throws IOException
     {
         Page page = cache.get(parameters.getLogicalPageName());
 
-        TrackableComponentEventCallback callback = new ComponentResultProcessorWrapper(resultProcessor);
-
-        page.getRootElement().triggerContextEvent(EventConstants.ACTIVATE, parameters.getActivationContext(), callback);
-
-        // The handler will have asked the result processor to send a response.
-
-        if (callback.isAborted())
-        {
-            callback.rethrow();
+        if (pageActivator.activatePage(page.getRootElement().getComponentResources(),
+                parameters.getActivationContext(), resultProcessor))
             return;
-        }
 
         if (!parameters.isLoopback())
             page.pageReset();

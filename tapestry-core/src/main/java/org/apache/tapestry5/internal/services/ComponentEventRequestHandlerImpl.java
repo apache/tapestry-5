@@ -17,7 +17,6 @@ package org.apache.tapestry5.internal.services;
 import java.io.IOException;
 
 import org.apache.tapestry5.TrackableComponentEventCallback;
-import org.apache.tapestry5.EventConstants;
 import org.apache.tapestry5.internal.structure.ComponentPageElement;
 import org.apache.tapestry5.internal.structure.Page;
 import org.apache.tapestry5.ioc.annotations.Primary;
@@ -38,6 +37,8 @@ public class ComponentEventRequestHandlerImpl implements ComponentEventRequestHa
 
     private final Response response;
 
+    private final PageActivator pageActivator;
+
     private final ActionRenderResponseGenerator generator;
 
     private final Environment environment;
@@ -48,13 +49,14 @@ public class ComponentEventRequestHandlerImpl implements ComponentEventRequestHa
 
     RequestPageCache cache, Response response,
 
-    ActionRenderResponseGenerator generator,
+    PageActivator pageActivator,
 
-    Environment environment)
+    ActionRenderResponseGenerator generator, Environment environment)
     {
         this.resultProcessor = resultProcessor;
         this.cache = cache;
         this.response = response;
+        this.pageActivator = pageActivator;
         this.generator = generator;
         this.environment = environment;
     }
@@ -63,24 +65,16 @@ public class ComponentEventRequestHandlerImpl implements ComponentEventRequestHa
     {
         Page activePage = cache.get(parameters.getActivePageName());
 
+        if (pageActivator.activatePage(activePage.getRootElement().getComponentResources(), parameters
+                .getPageActivationContext(), resultProcessor))
+            return;
+
+        Page containerPage = cache.get(parameters.getContainingPageName());
+
         TrackableComponentEventCallback callback = new ComponentResultProcessorWrapper(resultProcessor);
 
         environment.push(ComponentEventResultProcessor.class, resultProcessor);
         environment.push(TrackableComponentEventCallback.class, callback);
-
-        // If activating the page returns a "navigational result", then don't trigger the action
-        // on the component.
-
-        activePage.getRootElement().triggerContextEvent(EventConstants.ACTIVATE, parameters.getPageActivationContext(),
-                callback);
-
-        if (callback.isAborted())
-        {
-            callback.rethrow();
-            return;
-        }
-
-        Page containerPage = cache.get(parameters.getContainingPageName());
 
         ComponentPageElement element = containerPage.getComponentElementByNestedId(parameters.getNestedComponentId());
 

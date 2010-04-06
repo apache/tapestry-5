@@ -48,13 +48,17 @@ public class AjaxComponentEventRequestHandler implements ComponentEventRequestHa
 
     private final AjaxPartialResponseRenderer partialRenderer;
 
+    private final PageActivator pageActivator;
+
     public AjaxComponentEventRequestHandler(RequestPageCache cache, Request request, PageRenderQueue queue, @Ajax
-    ComponentEventResultProcessor resultProcessor, PageContentTypeAnalyzer pageContentTypeAnalyzer,
-            Environment environment, AjaxPartialResponseRenderer partialRenderer)
+    ComponentEventResultProcessor resultProcessor, PageActivator pageActivator,
+            PageContentTypeAnalyzer pageContentTypeAnalyzer, Environment environment,
+            AjaxPartialResponseRenderer partialRenderer)
     {
         this.cache = cache;
         this.queue = queue;
         this.resultProcessor = resultProcessor;
+        this.pageActivator = pageActivator;
         this.pageContentTypeAnalyzer = pageContentTypeAnalyzer;
         this.request = request;
         this.environment = environment;
@@ -78,16 +82,9 @@ public class AjaxComponentEventRequestHandler implements ComponentEventRequestHa
             }
         };
 
-        ComponentResultProcessorWrapper callback = new ComponentResultProcessorWrapper(interceptor);
-
-        activePage.getRootElement().triggerContextEvent(EventConstants.ACTIVATE, parameters.getPageActivationContext(),
-                callback);
-
-        if (callback.isAborted())
-        {
-            callback.rethrow();
+        if (pageActivator.activatePage(activePage.getRootElement().getComponentResources(), parameters
+                .getPageActivationContext(), interceptor))
             return;
-        }
 
         // If we end up doing a partial render, the page render queue service needs to know the
         // page that will be rendered (for logging purposes, if nothing else).
@@ -105,6 +102,8 @@ public class AjaxComponentEventRequestHandler implements ComponentEventRequestHa
         // In many cases, the triggered element is a Form that needs to be able to
         // pass its event handler return values to the correct result processor.
         // This is certainly the case for forms.
+
+        TrackableComponentEventCallback callback = new ComponentResultProcessorWrapper(interceptor);
 
         environment.push(ComponentEventResultProcessor.class, interceptor);
         environment.push(TrackableComponentEventCallback.class, callback);

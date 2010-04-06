@@ -357,6 +357,7 @@ public final class TapestryModule
         binder.bind(AssetPathAuthorizer.class, RegexAuthorizer.class).withId("RegexAuthorizer");
         binder.bind(ValidatorMacro.class, ValidatorMacroImpl.class);
         binder.bind(PropertiesFileParser.class, PropertiesFileParserImpl.class);
+        binder.bind(PageActivator.class, PageActivatorImpl.class);
     }
 
     // ========================================================================
