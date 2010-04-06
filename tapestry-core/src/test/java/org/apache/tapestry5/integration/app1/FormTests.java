@@ -381,10 +381,10 @@ public class FormTests extends TapestryCoreTestCase
         // ComponentFieldValidator.isRequired()
 
         assertSourcePresent(
-                "[Before label for Value]<label id=\"value_label\" for=\"value\">Value</label>[After label for Value]",
+                "[Before label for Value]<label for=\"value\">Value</label>[After label for Value]",
                 "[Before field Value]",
                 "[After field Value (optional)]",
-                "[Before label for Required Value]<label id=\"requiredValue_label\" for=\"requiredValue\">Required Value</label>[After label for Required Value]",
+                "[Before label for Required Value]<label for=\"requiredValue\">Required Value</label>[After label for Required Value]",
                 "[Before field Required Value]", "[After field Required Value (required)]");
     }
 
@@ -749,15 +749,15 @@ public class FormTests extends TapestryCoreTestCase
     {
         clickThru("SimpleForm");
 
-        assertText("//label[@id='disabled_label']", "Disabled");
+        assertText("//label[@for='disabled']", "Disabled");
 
         // This demonstrates TAPESTRY-1642:
-        assertText("//label[@id='email_label']", "User Email");
+        assertText("//label[@for='email']", "User Email");
 
-        assertText("//label[@id='message_label']", "Incident Message");
-        assertText("//label[@id='operatingSystem_label']", "Operating System");
-        assertText("//label[@id='department_label']", "Department");
-        assertText("//label[@id='urgent_label']", "Urgent Processing Requested");
+        assertText("//label[@for='message']", "Incident Message");
+        assertText("//label[@for='operatingSystem']", "Operating System");
+        assertText("//label[@for='department']", "Department");
+        assertText("//label[@for='urgent']", "Urgent Processing Requested");
 
         assertFieldValue("email", "");
         assertFieldValue("message", "");

@@ -84,7 +84,7 @@ public class Label
     {
         String fieldId = field.getClientId();
 
-        labelElement.forceAttributes("for", fieldId, "id", fieldId + "_label");
+        labelElement.forceAttributes("for", fieldId);
 
         decorator.insideLabel(field, labelElement);
     }

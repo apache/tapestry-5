@@ -850,7 +850,9 @@ Tapestry.Initializer = {
 				};
 
 				element.sendAjaxRequest(url, {
-				  parameters: { "t:zoneid": zoneId },
+					parameters : {
+						"t:zoneid" : zoneId
+					},
 					onSuccess : successHandler
 				});
 			});
@@ -1317,7 +1319,10 @@ Tapestry.FieldEventManager = Class.create( {
 		this.field = $(field);
 
 		var id = this.field.id;
-		this.label = $(id + '_label');
+
+		var selector = "label[for='" + id + "']";
+
+		this.label = this.field.up("form").down(selector);
 		this.icon = $(id + '_icon');
 
 		this.translator = Prototype.K;

@@ -647,8 +647,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
 
         assertTextPresent("Editor for org.apache.tapestry5.integration.app1.data.Track");
 
-        assertText("//label[@id='title_label']", "Title");
-        assertAttribute("//label[@id='title_label']/@for", "title");
+        assertText("//label[@for='title']", "Title");
     }
 
     /**
@@ -1314,7 +1313,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
 
         // assertSourcePresent("<![CDATA[< & >]]>");
     }
-    
+
     @Test
     public void secure_page_access()
     {
