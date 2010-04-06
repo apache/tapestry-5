@@ -112,7 +112,7 @@ public class LocalizationSetterImplTest extends InternalBaseTestCase
         // Note that the label is localized to the underlying locale, not the default locale.
         // That's why its "français" (i.e., as a French speaker would say it), not "French"
         // (like an English speaker).
-        assertEquals(options.get(1).getLabel(), "français");
+        assertEquals(options.get(1).getLabel(), "fran\u00e7ais");
 
         assertEquals(options.get(0).getValue(), Locale.ENGLISH);
         assertEquals(options.get(1).getValue(), Locale.FRENCH);
