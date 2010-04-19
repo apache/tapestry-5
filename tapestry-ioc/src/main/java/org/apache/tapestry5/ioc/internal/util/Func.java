@@ -26,7 +26,7 @@ import org.apache.tapestry5.ioc.services.Coercion;
  * 
  * @since 5.2.0
  */
-public class FunctionalCollections
+public class Func
 {
 
     /**

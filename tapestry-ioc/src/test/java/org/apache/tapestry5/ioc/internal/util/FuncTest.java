@@ -21,7 +21,7 @@ import org.apache.tapestry5.ioc.services.Coercion;
 import org.apache.tapestry5.ioc.test.TestBase;
 import org.testng.annotations.Test;
 
-public class FunctionalCollectionsTest extends TestBase
+public class FuncTest extends TestBase
 {
     @Test
     public void map()
@@ -36,7 +36,7 @@ public class FunctionalCollectionsTest extends TestBase
             }
         };
 
-        List<Integer> lengths = FunctionalCollections.map(source, stringToLength);
+        List<Integer> lengths = Func.map(source, stringToLength);
 
         assertListsEquals(lengths, 4, 3, 1, 6, 4);
     }
@@ -59,7 +59,7 @@ public class FunctionalCollectionsTest extends TestBase
             }
         };
 
-        FunctionalCollections.each(source, op);
+        Func.each(source, op);
 
         assertEquals(buffer.toString(), "Mary had a little lamb");
     }
