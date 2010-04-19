@@ -15,6 +15,7 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.services.ClassNameLocator;
 import org.apache.tapestry5.ioc.util.UnknownValueException;
 import org.apache.tapestry5.services.ComponentClassResolver;
@@ -41,7 +42,6 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
 
     private static final String LIB_ROOT_PACKAGE = "org.example.lib";
 
-    
     private ComponentClassResolverImpl create(Logger logger, ComponentInstantiatorSource source,
             ClassNameLocator locator, LibraryMapping... mappings)
     {
@@ -156,7 +156,7 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
 
         verify();
     }
-    
+
     @Test
     public void canonicalize_start_page()
     {
@@ -171,10 +171,11 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
         train_locateComponentClassNames(locator, APP_ROOT_PACKAGE + ".pages", className);
 
         replay();
-        
+
         List<LibraryMapping> mappings = Arrays.asList();
 
-        ComponentClassResolver resolver = new ComponentClassResolverImpl(logger, source, locator, APP_ROOT_PACKAGE, "HomePage", mappings);
+        ComponentClassResolver resolver = new ComponentClassResolverImpl(logger, source, locator, APP_ROOT_PACKAGE,
+                "HomePage", mappings);
 
         assertEquals(resolver.canonicalizePageName("HomePage"), "HomePage");
         assertEquals(resolver.canonicalizePageName(""), "HomePage");
@@ -182,8 +183,6 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
 
         verify();
     }
-    
-    
 
     @Test
     public void page_name_in_subfolder()
@@ -925,5 +924,44 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
     private void train_for_app_packages(ComponentInstantiatorSource source)
     {
         train_for_packages(source, APP_ROOT_PACKAGE);
+    }
+
+    @Test
+    public void common_package_name()
+    {
+        List<String> packageNames = CollectionFactory.newList("org.example.app.main", "org.example.app.sub");
+
+        assertEquals(ComponentClassResolverImpl.findCommonPackageName(packageNames), "org.example.app");
+    }
+
+    @Test
+    public void common_package_name_for_single_package()
+    {
+        List<String> packageNames = CollectionFactory.newList("org.example.app.main");
+
+        assertEquals(ComponentClassResolverImpl.findCommonPackageName(packageNames), "org.example.app.main");
+    }
+
+    @Test
+    public void expect_failure_when_no_common_package()
+    {
+        List<String> packageNames = CollectionFactory.newList("org.example.app.main", "org.demo.app.sub");
+
+        // "org" isn't good enough, we expect at least two terms.
+
+        try
+        {
+
+            ComponentClassResolverImpl.findCommonPackageNameForFolder("fred", packageNames);
+
+            unreachable();
+        }
+        catch (RuntimeException ex)
+        {
+            assertEquals(
+                    ex.getMessage(),
+                    "Package names for library folder 'fred' (org.demo.app.sub, org.example.app.main) can not be reduced to a common base package (of at least two terms).");
+        }
+
     }
 }

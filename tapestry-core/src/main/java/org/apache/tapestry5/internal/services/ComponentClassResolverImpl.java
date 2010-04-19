@@ -44,7 +44,7 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
     private final ClassNameLocator classNameLocator;
 
     private final String appRootPackage;
-    
+
     private final String startPageName;
 
     // Map from folder name to a list of root package names.
@@ -105,7 +105,7 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
     @Inject
     @Symbol(InternalConstants.TAPESTRY_APP_PACKAGE_PARAM)
     String appRootPackage,
-    
+
     @Inject
     @Symbol(SymbolConstants.START_PAGE_NAME)
     String startPageName,
@@ -577,5 +577,89 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
                 return result;
             }
         });
+    }
+
+    public Map<String, String> getFolderToPackageMapping()
+    {
+        Map<String, String> result = CollectionFactory.newCaseInsensitiveMap();
+
+        for (String folder : mappings.keySet())
+        {
+            List<String> packageNames = mappings.get(folder);
+
+            String packageName = findCommonPackageNameForFolder(folder, packageNames);
+
+            result.put(folder, packageName);
+        }
+
+        return result;
+    }
+
+    static String findCommonPackageNameForFolder(String folder, List<String> packageNames)
+    {
+        String packageName = findCommonPackageName(packageNames);
+
+        if (packageName == null)
+            throw new RuntimeException(
+                    String
+                            .format(
+                                    "Package names for library folder '%s' (%s) can not be reduced to a common base package (of at least two terms).",
+                                    folder, InternalUtils.joinSorted(packageNames)));
+        return packageName;
+    }
+
+    static String findCommonPackageName(List<String> packageNames)
+    {
+        // BTW, this is what reduce is for in Clojure ...
+
+        String commonPackageName = packageNames.get(0);
+
+        for (int i = 1; i < packageNames.size(); i++)
+        {
+            commonPackageName = findCommonPackageName(commonPackageName, packageNames.get(i));
+
+            if (commonPackageName == null)
+                break;
+        }
+
+        return commonPackageName;
+    }
+
+    static String findCommonPackageName(String commonPackageName, String packageName)
+    {
+        String[] commonExploded = explode(commonPackageName);
+        String[] exploded = explode(packageName);
+
+        int count = Math.min(commonExploded.length, exploded.length);
+
+        int commonLength = 0;
+        int commonTerms = 0;
+
+        for (int i = 0; i < count; i++)
+        {
+            if (exploded[i].equals(commonExploded[i]))
+            {
+                // Keep track of the number of shared characters (including the dot seperators)
+
+                commonLength += exploded[i].length() + (i == 0 ? 0 : 1);
+                commonTerms++;
+            }
+            else
+            {
+                break;
+            }
+        }
+
+        if (commonTerms < 2)
+            return null;
+
+        return commonPackageName.substring(0, commonLength);
+    }
+
+    private static final Pattern DOT = Pattern.compile("\\.");
+
+    private static String[] explode(String packageName)
+    {
+        return DOT.split(packageName);
     }
 }

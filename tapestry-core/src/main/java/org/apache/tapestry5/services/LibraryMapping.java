@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,13 +17,21 @@ package org.apache.tapestry5.services;
 /**
  * Used to configure the {@link ComponentClassResolver}, to allow it to map prefixes to library root packages (the
  * application namespace is a special case of this). In each case, a prefix on the path is mapped to a package. Prefixes
- * should start and end with characters, such as "core". It is allowed for a prefix to contain a slash, though it is not
+ * should start and end with characters, such as "corelib". It is allowed for a prefix to contain a slash, though it is not
  * recommended.
  * <p/>
- * The root package name should have a number of sub-packages: <dl> <dt>pages</dt> <dd>contains named pages</dd>
- * <dt>components</dt> <dd>contains components</dd> <dt>mixins</dt> <dd>contains component mixins</dd> <dt>base</dt>
- * <dd>contains base classes</dd> </dl>
- *
+ * The root package name should have a number of sub-packages:
+ * <dl>
+ * <dt>pages</dt>
+ * <dd>contains named pages</dd>
+ * <dt>components</dt>
+ * <dd>contains components</dd>
+ * <dt>mixins</dt>
+ * <dd>contains component mixins</dd>
+ * <dt>base</dt>
+ * <dd>contains base classes</dd>
+ * </dl>
+ * 
  * @see org.apache.tapestry5.services.TapestryModule#contributeComponentClassResolver(org.apache.tapestry5.ioc.Configuration)
  */
 public final class LibraryMapping
