@@ -147,6 +147,10 @@
       <a href="InvalidComponentTypeDemo">Invalid Component Type</a>
       -- unknown type of component in template
     </li>
+  <li>
+    <a href="NoTypeProvidedDemo">No Component Type Provided</a> --
+    component type not defined.
+  </li>
   </ul>
 
 </html>

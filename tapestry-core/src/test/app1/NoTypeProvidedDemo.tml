@@ -1,0 +1,5 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd">
+
+  <span t:id="noTypeProvided"/>
+
+</html>
