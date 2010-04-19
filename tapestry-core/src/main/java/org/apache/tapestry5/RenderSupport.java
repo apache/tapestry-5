@@ -80,7 +80,7 @@ public interface RenderSupport
      * 
      * @param scriptURLs
      *            URL strings of scripts
-     * @deprecated Use {@link JavascriptSupport#importJavascriptLibrary(Asset)} instead
+     * @deprecated Use {@link JavascriptSupport#importJavascriptLibrary(String)} instead
      * @throws RuntimeException
      *             <strong>always</strong> as of 5.2.0
      */

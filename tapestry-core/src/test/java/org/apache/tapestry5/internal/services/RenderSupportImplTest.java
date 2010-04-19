@@ -47,19 +47,19 @@ public class RenderSupportImplTest extends InternalBaseTestCase
     }
 
     @Test
-    public void add_script_link_by_url_fails()
+    public void add_script_link_by_url()
     {
-        RenderSupport support = new RenderSupportImpl(null, null, null);
+        JavascriptSupport jss = mockJavascriptSupport();
 
-        try
-        {
-            support.addScriptLink(ASSET_URL);
-            unreachable();
-        }
-        catch (RuntimeException ex)
-        {
-            assertMessageContains(ex, "no longer supported");
-        }
+        RenderSupport support = new RenderSupportImpl(null, null, jss);
+
+        jss.importJavascriptLibrary(ASSET_URL);
+
+        replay();
+
+        support.addScriptLink(ASSET_URL);
+
+        verify();
     }
 
     @Test

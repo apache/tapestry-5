@@ -76,8 +76,8 @@ public class RenderSupportImpl implements RenderSupport
 
     public void addScriptLink(String... scriptURLs)
     {
-        throw new RuntimeException(
-                "RenderSupport.addScriptLink(String...) is no longer supported, starting in Tapestry 5.2.");
+        for (String url : scriptURLs)
+            javascriptSupport.importJavascriptLibrary(url);
     }
 
     public void addClasspathScriptLink(String... classpaths)

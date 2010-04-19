@@ -285,14 +285,17 @@ public class JavascriptSupportImpl implements JavascriptSupport
     {
         Defense.notNull(asset, "asset");
 
+        importJavascriptLibrary(asset.toClientURL());
+    }
+
+    public void importJavascriptLibrary(String libraryURL)
+    {
         addCoreStackIfNeeded();
 
-        String path = asset.toClientURL();
-
-        if (otherLibraries.contains(path))
+        if (otherLibraries.contains(libraryURL))
             return;
 
-        otherLibraries.add(path);
+        otherLibraries.add(libraryURL);
     }
 
     private void addCoreStackIfNeeded()

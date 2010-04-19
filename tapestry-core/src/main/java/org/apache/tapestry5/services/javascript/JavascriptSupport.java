@@ -177,4 +177,9 @@ public interface JavascriptSupport
      *            the name of the stack (case is ignored); the stack must exist
      */
     void importStack(String stackName);
+
+    /**
+     * Import a Javascript library with an arbitrary URL.
+     */
+    void importJavascriptLibrary(String libraryURL);
 }
