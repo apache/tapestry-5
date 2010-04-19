@@ -17,16 +17,20 @@ Component Classes
   Unlike Tapestry 4, in Tapestry 5, component classes are not <abstract>, nor do
   they extend from framework base classes. They are pure POJOs (Plain Old Java Objects).
   
-  There are only a few constraints:
+  There are only a few constraints on a component class:
   
-  * The classes must be public.
+  * The class must be public.
   
-  * The classes must be in the correct package, as per the {{{conf.html}application configuration}}.
+  * The class must be in the correct package.
+   This will be one of the <controlled packages>: <<<pages>>>, <<<components>>>, <<<mixins>>> and <<<base>>>, off
+  of the root application package.
   
   * The class must have a standard public, no arguments constructor.
   
-  []
+  * All fields of the class must be <<private>>.
   
+  []
+    
   Here's a very basic component:
   
   
@@ -48,11 +52,12 @@ public class HelloWorld
   
   This component's only job is to write out a fixed message. The
   {{{../apidocs/org/apache/tapestry5/annotations/BeginRender.html}BeginRender}} annotation is
-  a type of <{{{rendering.html}component lifecycle annotation}}>, a method annotation that instructs
+  a type of <{{{rendering.html}render phase annotation}}>, a method annotation that instructs
   Tapestry when and under what circumstances to invoke methods of your class.
  
   In another departure from Tapestry 4, these methods are not necessarily public; they
-  can have any visibility you like.
+  can have any visibility you like.  Typically, these methods are package private (that is, with no
+  specific visibility keyword).
   
 Component Packages
 
@@ -70,6 +75,11 @@ Component Packages
   In addition, it is common for an application to have base classes, often <abstract> base classes, that should not be directly referenced. These
   should not go in the <<pages>>, <<components>> or <<mixins>> packages, because they then look like valid pages, components or mixins. Instead,
   use the <root>.<<base>> package to store such base classes.
+  
+  It is very important that <only> component classes go into the controlled packages; any top-level
+  class in the controlled packages will be loaded and transformed as if it is a component class (the only exception being inner classes).  If you are getting <<<ClassCastExceptions>>>, it is likely
+  because of this.  Even interfaces must go in a different package.
+  
   
 Sub-Folders / Sub-Packages
 
@@ -122,8 +132,10 @@ Live Class Reloading
   The net result: super productivity --- change your class, see the change instantly. This is designed to be
   a blend of the best of scripting environments (such as Python or Ruby) with all the speed and power of Java backing it up.
   
-  However, class reloading <only> applies to component classes.  Other classes, such as service interfaces and implementations, or
-  other data objects, are loaded by the normal class loader and not subject to live class reloading.
+  However, class reloading <only> applies to component classes and some service implementation
+  classes.  Other classes, 
+  such as service interfaces, data objects and entities classes, 
+  are loaded by the normal class loader and not subject to live class reloading.
   
 Instance Variables
 
@@ -133,8 +145,7 @@ Instance Variables
   <<Instance variables must be private.>> Tapestry must perform runtime class modifications to
   support instance variables, and may only do so for private variables. You may have
   non-private variables in your class, but you may then see unexpected behavior in
-  a production application because of how Tapestry pools and reuses pages and components. Tapestry
-  will log an error for each component class that contains fields that are neither static nor private.  
+  a production application because of how Tapestry pools and reuses pages and components.  
   
   Be aware that you will need to provide getter and setter methods to access your classes'
   instance variables. Tapestry <does not> do this automatically unless you provide
@@ -149,14 +160,17 @@ Transient Instance Variables
   at the end of reach request (when the
   {{{lifecycle.html}page is detached from the request}}).
   
-  If you have a variable that can keep its value between requests and you would like
+  In the <<rare>> event that
+  you have a variable that can keep its value between requests and you would like
   to defeat that reset logic, then you should attach a
   {{{../apidocs/org/apache/tapestry5/annotations/Retain.html}Retain}} annotation to the field.  You should take
   care that no client-specific data is stored into such a field, since on a later request
-  the same page <instance> may be used for a different user. Likewise, on a later request for the <same> user,
+  the same page <instance> may be used for a different client. 
+  Likewise, on a later request from the <same> client,
   a <different> page instance may be used.
   
-  Use {{{persist.html}persistent fields}} to hold information from one request to the next.
+  Use {{{persist.html}persistent fields}} to hold client-specific
+  information from one request to the next.
   
   Further, final fields are (in fact) final, and will not be reset.
   
@@ -232,4 +246,4 @@ public class Countdown
   
   If you define a component in the component class, and there is no corresponding  element in the template,
   Tapestry will log an error. In the example above that would be the case if the template for the Countdown page
-  didn't contain an element with <<<&lt;t:count t:id="count"&gt;>>>.
+  didn't contain an element with <<<<t:count t:id="count">>>>.
