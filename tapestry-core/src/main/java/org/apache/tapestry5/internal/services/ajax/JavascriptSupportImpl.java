@@ -16,6 +16,7 @@ package org.apache.tapestry5.internal.services.ajax;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.ComponentResources;
@@ -65,6 +66,8 @@ public class JavascriptSupportImpl implements JavascriptSupport
     private final List<String> otherLibraries = CollectionFactory.newList();
 
     private final List<String> stackStylesheets = CollectionFactory.newList();
+
+    private final Set<String> importedStylesheets = CollectionFactory.newSet();
 
     private final List<Stylesheet> otherStylesheets = CollectionFactory.newList();
 
@@ -327,8 +330,12 @@ public class JavascriptSupportImpl implements JavascriptSupport
     {
         Defense.notBlank(stylesheetURL, "stylesheetURL");
 
-        if (otherStylesheets.contains(stylesheetURL))
+        // Assumes no overlap between stack stylesheets and all other stylesheets
+
+        if (importedStylesheets.contains(stylesheetURL))
             return;
+
+        importedStylesheets.add(stylesheetURL);
 
         otherStylesheets.add(new Stylesheet(stylesheetURL, media));
     }

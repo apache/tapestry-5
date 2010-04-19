@@ -21,13 +21,11 @@ import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.internal.services.DocumentLinker;
-import org.apache.tapestry5.internal.services.ajax.JavascriptSupportImpl;
 import org.apache.tapestry5.internal.services.javascript.JavascriptStackPathConstructor;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.IdAllocator;
 import org.apache.tapestry5.json.JSONObject;
-import org.apache.tapestry5.services.ClientInfrastructure;
 import org.apache.tapestry5.services.javascript.InitializationPriority;
 import org.apache.tapestry5.services.javascript.JavascriptStack;
 import org.apache.tapestry5.services.javascript.JavascriptStackSource;
@@ -136,17 +134,17 @@ public class JavascriptSupportImplTest extends InternalBaseTestCase
         linker.addStylesheetLink("style.css", null);
     }
 
-    private JavascriptStack mockJavascriptStack()
+    protected final JavascriptStack mockJavascriptStack()
     {
         return newMock(JavascriptStack.class);
     }
 
-    private JavascriptStackPathConstructor mockJavascriptStackPathConstructor()
+    protected final JavascriptStackPathConstructor mockJavascriptStackPathConstructor()
     {
         return newMock(JavascriptStackPathConstructor.class);
     }
 
-    protected JavascriptStackSource mockJavascriptStackSource()
+    protected final JavascriptStackSource mockJavascriptStackSource()
     {
         return newMock(JavascriptStackSource.class);
     }
@@ -237,6 +235,33 @@ public class JavascriptSupportImplTest extends InternalBaseTestCase
         JavascriptSupportImpl jss = new JavascriptSupportImpl(linker, stackSource, pathConstructor);
 
         jss.importJavascriptLibrary(library);
+
+        jss.commit();
+
+        verify();
+    }
+
+    @Test
+    public void duplicate_imported_libraries_are_filtered()
+    {
+        DocumentLinker linker = mockDocumentLinker();
+        JavascriptStackSource stackSource = mockJavascriptStackSource();
+        JavascriptStackPathConstructor pathConstructor = mockJavascriptStackPathConstructor();
+        trainForEmptyCoreStack(linker, stackSource, pathConstructor);
+
+        Asset library1 = mockAsset("mylib1.js");
+        Asset library2 = mockAsset("mylib2.js");
+
+        linker.addScriptLink("mylib1.js");
+        linker.addScriptLink("mylib2.js");
+
+        replay();
+
+        JavascriptSupportImpl jss = new JavascriptSupportImpl(linker, stackSource, pathConstructor);
+
+        jss.importJavascriptLibrary(library1);
+        jss.importJavascriptLibrary(library2);
+        jss.importJavascriptLibrary(library1);
 
         jss.commit();
 
@@ -382,17 +407,41 @@ public class JavascriptSupportImplTest extends InternalBaseTestCase
         verify();
     }
 
-    private void train_for_stack(ClientInfrastructure infra, DocumentLinker linker)
+    @Test
+    public void import_stylesheet_as_asset()
     {
-        Asset asset1 = mockAsset("script1.js");
-        Asset asset2 = mockAsset("script2.js");
+        DocumentLinker linker = mockDocumentLinker();
+        Asset stylesheet = mockAsset("style.css");
 
-        List<Asset> assets = CollectionFactory.newList(asset1, asset2);
+        linker.addStylesheetLink("style.css", "print");
 
-        expect(infra.getJavascriptStack()).andReturn(assets);
+        replay();
 
-        linker.addScriptLink("script1.js");
-        linker.addScriptLink("script2.js");
+        JavascriptSupportImpl jss = new JavascriptSupportImpl(linker, null, null);
+
+        jss.importStylesheet(stylesheet, "print");
+
+        jss.commit();
+
+        verify();
     }
 
+    @Test
+    public void duplicate_stylesheet_ignored_first_media_wins()
+    {
+        DocumentLinker linker = mockDocumentLinker();
+
+        linker.addStylesheetLink("style.css", "print");
+
+        replay();
+
+        JavascriptSupportImpl jss = new JavascriptSupportImpl(linker, null, null);
+
+        jss.importStylesheet("style.css", "print");
+        jss.importStylesheet("style.css", "screen");
+
+        jss.commit();
+
+        verify();
+    }
 }
