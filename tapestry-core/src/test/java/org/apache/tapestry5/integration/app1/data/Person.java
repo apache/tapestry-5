@@ -18,7 +18,7 @@ import org.apache.tapestry5.beaneditor.Validate;
 
 public class Person
 {
-    @Validate("required,minlength=5")
+    @Validate("required , minlength=5")
     private String name;
 
     @Validate("required,min=1")

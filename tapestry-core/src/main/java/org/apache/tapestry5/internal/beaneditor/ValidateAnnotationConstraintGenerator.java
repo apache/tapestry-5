@@ -28,7 +28,7 @@ import java.util.regex.Pattern;
 public class ValidateAnnotationConstraintGenerator implements ValidationConstraintGenerator
 {
 
-    static final String VALIDATOR_PATTERN="(?<!\\\\),(?!([0-9]*\\}))";
+    static final String VALIDATOR_PATTERN="(?<!\\\\)\\s*,\\s*(?!([0-9]*\\}))";
 
     private final Pattern validatorPattern;
 
