@@ -15,9 +15,9 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.util.UnknownValueException;
 
-import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newMap;
 import org.apache.tapestry5.services.ClasspathAssetAliasManager;
 import org.apache.tapestry5.services.Request;
 import org.testng.annotations.DataProvider;
@@ -31,13 +31,30 @@ public class ClasspathAssetAliasManagerImplTest extends InternalBaseTestCase
 
     public Map<String, String> configuration()
     {
-        Map<String, String> configuration = newMap();
+        Map<String, String> configuration = CollectionFactory.newMap();
 
         configuration.put("tapestry/4.0", "org/apache/tapestry5/");
         configuration.put("tapestry-internal/3.0", "org/apache/tapestry5/internal/");
         configuration.put("mylib/2.0/", "com/example/mylib/");
 
         return configuration;
+    }
+
+    @Test
+    public void get_mappings()
+    {
+        // Notice how all the trailing slashes (which are tolerated but not wanted)
+        // have been removed.
+        
+        Map<String, String> expected = CollectionFactory.newCaseInsensitiveMap();
+
+        expected.put("tapestry/4.0", "org/apache/tapestry5");
+        expected.put("tapestry-internal/3.0", "org/apache/tapestry5/internal");
+        expected.put("mylib/2.0", "com/example/mylib");
+
+        ClasspathAssetAliasManager manager = new ClasspathAssetAliasManagerImpl(null, APP_VERSION, configuration());
+
+        assertEquals(manager.getMappings(), expected);
     }
 
     @Test(dataProvider = "to_client_url_data")

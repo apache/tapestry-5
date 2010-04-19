@@ -14,26 +14,30 @@
 
 package org.apache.tapestry5.services;
 
+import java.util.Map;
+
+import org.apache.tapestry5.internal.services.assets.ClasspathAssetRequestHandler;
 import org.apache.tapestry5.ioc.annotations.UsesMappedConfiguration;
 
 /**
  * Used as part of the support for classpath {@link org.apache.tapestry5.Asset}s, to convert the Asset's
  * {@link org.apache.tapestry5.ioc.Resource} to a URL that can be accessed by the client. The asset path, within the
- * classpath, is converted into a shorter virtual path (one that, typically, includes some kind of version number).
+ * classpath, is converted into a shorter virtual path.
  * <p/>
- * Service configuration is a map from aliases (short names) to complete names. Names should not start or end end with a
- * slash. Generally, an alias should be a single name (not contain a slash). Paths should also not start or end with a
- * slash. An example mapping would be <code>mylib</code> to <code>com/example/mylib</code>.
+ * Service configuration is a map from folder aliases (short names) to complete paths. Names should not start or end end
+ * with a slash. Generally, an alias should be a single name (not contain a slash). Paths should also not start or end
+ * with a slash. An example mapping would be <code>mylib</code> to <code>com/example/mylib</code>.
  * <p>
  * As originally envisioned, this service would simply <em>optimize</em> classpath assets, allowing the URL path for
  * such assets to be shortened (and have a version number added, important for caching); thus the word "alias" makes
  * sense ... it was responsible for creating an "alias" URL shorter than the default "classpath" URL.
  * <p>
  * Starting in Tapestry 5.2, this changed; all classpath assets <strong>must</strong> be "aliased" to a shorter URL
- * path. Any URL that can not be shortened is now rejected.
+ * path. Any URL that can not be shortened is now rejected. This simplifies creating new libraries, but also helps with
+ * security concerns, as it limits which portions of the classpath can <em>ever</em> be exposed to the user agent.
  * <p>
- * Tapestry automatically contributes a number of mappings: for the application itself (as alias "app") and for each
- * library (via {@link ComponentClassResolver#getFolderToPackageMapping()});
+ * Tapestry automatically contributes a number of mappings: for the application root package itself (as alias "app") and
+ * for each library (via {@link ComponentClassResolver#getFolderToPackageMapping()});
  */
 @UsesMappedConfiguration(String.class)
 public interface ClasspathAssetAliasManager
@@ -51,6 +55,18 @@ public interface ClasspathAssetAliasManager
     /**
      * Reverses {@link #toClientURL(String)}, stripping off the asset prefix, and re-expanding any aliased folders back
      * to complete folders.
+     * 
+     * @deprecated No longer used as of Tapestry 5.2, may be removed in a later release.
      */
     String toResourcePath(String clientURL);
+
+    /**
+     * Returns the mappings used by the service: the keys are the folder aliases (i.e, "corelib")
+     * and the values are the corresponding paths (i.e., "org/apache/tapestry5/corelib"). This
+     * exists primarily so that {@link ClasspathAssetRequestHandler}s can be created automatically
+     * for each mapping.
+     * 
+     * @since 5.2.0
+     **/
+    Map<String, String> getMappings();
 }

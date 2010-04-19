@@ -433,42 +433,32 @@ public final class TapestryModule
 
     public static void contributeClasspathAssetAliasManager(MappedConfiguration<String, String> configuration,
 
-    @Symbol(SymbolConstants.TAPESTRY_VERSION)
-    String tapestryVersion,
-
     @Symbol(SymbolConstants.APPLICATION_VERSION)
     String applicationVersion,
 
     @Symbol(InternalConstants.TAPESTRY_APP_PACKAGE_PARAM)
     String appPackage,
 
-    // @Inject not needed, because this isn't a service builder method
-            @Symbol("tapestry.scriptaculous.path")
-            String scriptaculousPath,
-
-            @Symbol("tapestry.datepicker.path")
-            String datepickerPath,
-
-            @Symbol("tapestry.blackbird.path")
-            String blackbirdPath)
+    ComponentClassResolver resolver)
     {
-        // TAPESTRY-2159: All the classpath assets are inside a version numbered
-        // folder (i.e., 5.0.12).
-        // For scriptaculous, etc., this version is not the version of the
-        // library, but the version
-        // of Tapestry.
+        configuration.add("tapestry", "org/apache/tapestry5");
 
-        configuration.add("tapestry/" + tapestryVersion, "org/apache/tapestry5");
+        configuration.add("app", toPackagePath(appPackage));
 
-        configuration.add("scriptaculous/" + tapestryVersion, scriptaculousPath);
+        // Each library gets a mapping or its folder automatically
 
-        configuration.add("datepicker/" + tapestryVersion, datepickerPath);
+        Map<String, String> folderToPackageMapping = resolver.getFolderToPackageMapping();
 
-        configuration.add("blackbird/" + tapestryVersion, blackbirdPath);
+        for (String folder : folderToPackageMapping.keySet())
+        {
+            configuration.add(folder, toPackagePath(folderToPackageMapping.get(folder)));
+        }
 
-        configuration.add("app/" + applicationVersion, appPackage.replace('.', '/'));
+    }
 
-        configuration.add("classpath/" + applicationVersion, "");
+    private static String toPackagePath(String packageName)
+    {
+        return packageName.replace('.', '/');
     }
 
     public static void contributeComponentClassResolver(Configuration<LibraryMapping> configuration)

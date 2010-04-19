@@ -136,10 +136,16 @@ public class ClasspathAssetAliasManagerImpl implements ClasspathAssetAliasManage
 
         for (String alias : sortedAliases)
         {
-            if (basePath.startsWith(alias)) { return aliasToPathPrefix.get(alias) + "/" + basePath.substring(alias.length() + 1); }
+            if (basePath.startsWith(alias)) { return aliasToPathPrefix.get(alias) + "/"
+                    + basePath.substring(alias.length() + 1); }
         }
 
         return basePath;
+    }
+
+    public Map<String, String> getMappings()
+    {
+        return Collections.unmodifiableMap(aliasToPathPrefix);
     }
 
 }
