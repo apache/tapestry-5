@@ -2439,9 +2439,10 @@ public final class TapestryModule
      * <dd>image/jpeg</dd>
      * <dt>gif</dt>
      * <dd>image/gif</dd>
-     * <dt>png</dtt>
+     * <dt>png</dt>
      * <dd>image/png</dd>
-     * <p/>
+     * <dt>swf</dt>
+     * <dd>application/x-shockwave-flash</dd>
      * </dl>
      */
     public void contributeResourceStreamer(MappedConfiguration<String, String> configuration)
@@ -2452,6 +2453,7 @@ public final class TapestryModule
         configuration.add("jpg", "image/jpeg");
         configuration.add("jpeg", "image/jpeg");
         configuration.add("png", "image/png");
+        configuration.add("swf", "application/x-shockwave-flash");
     }
 
     /**
@@ -2684,9 +2686,10 @@ public final class TapestryModule
      * the following content types:
      * <ul>
      * <li>image/jpeg</li>
-     * <li>image/gif
-     * <li>image/png
-     * <li>application/json (see https://issues.apache.org/jira/browse/TAP5-469)
+     * <li>image/gif</li>
+     * <li>image/png</li>
+     * <li>application/json (see https://issues.apache.org/jira/browse/TAP5-469)</li>
+     * <li>application/x-shockwave-flash</li>
      * </ul>
      * 
      * @since 5.1.0.0
@@ -2697,6 +2700,7 @@ public final class TapestryModule
         configuration.add("image/gif");
         configuration.add("image/png");
         configuration.add("application/json");
+        configuration.add("application/x-shockwave-flash");
     }
 
     /**
