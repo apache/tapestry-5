@@ -1,4 +1,4 @@
-// Copyright 2007, 2009 The Apache Software Foundation
+// Copyright 2007, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -22,11 +22,12 @@ import java.lang.annotation.Target;
 
 import static org.apache.tapestry5.ioc.annotations.AnnotationUseContext.*;
 import org.apache.tapestry5.ioc.annotations.UseWith;
+import org.apache.tapestry5.services.Session;
 
 /**
  * Used to map a property of a page or component to value stored in session.
  * 
- * @since 5.2.0.0
+ * @since 5.2.0
  */
 @Target(FIELD)
 @Documented
@@ -36,7 +37,8 @@ public @interface SessionAttribute
 {
     
     /**
-     * Name of a Session-Attribute.
+     * Name of a the {@link Session} attribute to which the field will be mapped; if not specified,
+     * defaults to the name of the field.
      */
     String value() default "";
 }
