@@ -137,6 +137,24 @@ Event Handler Method Return Values
   For page navigation events (originating in components such as ActionLink and Form),
   the value returned from an event handler method {{{pagenav.html}determines how Tapestry will render a response}}.
 
+  Returning <<true>> from an event handler method will cancel event bubbling; returning <<false>> is the same are returning null (or void).
+
+Event Bubbling
+
+  The event will bubble up the hierarchy, until it is aborted. The event is aborted
+  when an event handler method returns a non-null value.
+
+  Returning a boolean value from an event handler method is special.  Returning <<true>> will abort the event
+  with no result; use this when the event is fully handled without a return value and no further event handlers
+  (in the same component, or in containing components) should be invoked.
+
+  Returning <<false>> is the same as returning null; event processing will continue to look for 
+  more event handlers, in the same component or its parent.
+  
+  When an event bubbles up from a component to its container, the origin of the event is changed
+  to be the component.  For example, a Form component inside a BeanEditForm component may fire a success event. The page containing the BeanEditForm may listen for that event, but it will be from the BeanEditForm component (which makes sense, because the id of the Form inside the BeanEditForm is part
+  of the BeanEditForm's implementation, not its public interface).
+  
 Multiple Method Matches
 
  In some cases, you may have multiple event methods match a single event.
@@ -200,23 +218,17 @@ Event Context
   An event handler method will only be invoked
     <if the context contains at least as many values as the method has parameters>.  Methods with too many parameters
     will be silently skipped.
+    
+  Parameters of type EventContext, List, or Object[], or parameters with the @QueryParameter annotation
+  do not count against the event context count.  The first three are used when the event handler
+  method will adapt to any number of context values; the latter when the method parameter value
+  doesn't come form the event context, but form a request query parameter.
 
 * Collections
 
   To designate that an event handler method should be invoked regardless of how many context parameters are available,
   change the method to accept a <single> parameter of type Object[], type List, or   type
   {{{../apidocs/org/apache/tapestry5/EventContext.html}EventContext}}.
-
-Event Bubbling
-
-  The event will bubble up the hierarchy, until it is aborted. The event is aborted
-  when an event handler method returns a non-null value.
-
-  Returning a boolean value from an event handler method is special.  Returning true will abort the event
-  with no result; use this when the event is fully handled without a return value and no further event handlers
-  (in the same component, or in containing components) should be invoked.
-
-  Returning false is the same as returning null.
 
 Event Method Exceptions
 
