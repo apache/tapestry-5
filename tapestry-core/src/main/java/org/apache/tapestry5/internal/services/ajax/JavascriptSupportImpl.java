@@ -205,7 +205,7 @@ public class JavascriptSupportImpl implements JavascriptSupport
         Defense.notNull(parameter, "parameter");
 
         addCoreStackIfNeeded();
-        
+
         JSONObject init = inits.get(priority);
 
         if (init == null)
@@ -340,6 +340,15 @@ public class JavascriptSupportImpl implements JavascriptSupport
         importedStylesheets.add(stylesheetURL);
 
         otherStylesheets.add(new Stylesheet(stylesheetURL, media));
+    }
+
+    public void importStack(String stackName)
+    {
+        Defense.notBlank(stackName, "stackName");
+
+        addCoreStackIfNeeded();
+
+        addAssetsFromStack(stackName);
     }
 
 }

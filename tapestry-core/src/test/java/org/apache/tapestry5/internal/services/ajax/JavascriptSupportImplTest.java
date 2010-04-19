@@ -242,6 +242,45 @@ public class JavascriptSupportImplTest extends InternalBaseTestCase
     }
 
     @Test
+    public void import_stack()
+    {
+        DocumentLinker linker = mockDocumentLinker();
+        JavascriptStackSource stackSource = mockJavascriptStackSource();
+        JavascriptStackPathConstructor pathConstructor = mockJavascriptStackPathConstructor();
+
+        trainForCoreStack(linker, stackSource, pathConstructor);
+
+        JavascriptStack stack = mockJavascriptStack();
+
+        Asset stylesheet = mockAsset("stack.css");
+
+        expect(stackSource.getStack("custom")).andReturn(stack);
+        expect(pathConstructor.constructPathsForJavascriptStack("custom")).andReturn(
+                CollectionFactory.newList("stack.js"));
+        expect(stack.getStylesheets()).andReturn(CollectionFactory.newList(stylesheet));
+
+        expect(stack.getInitialization()).andReturn("customInit();");
+
+        linker.addScriptLink("stack.js");
+        linker.addStylesheetLink("stack.css", null);
+
+        linker.addScript("stackInit();\ncustomInit();\n");
+
+        replay();
+
+        JavascriptSupportImpl jss = new JavascriptSupportImpl(linker, stackSource, pathConstructor);
+
+        jss.importStack("custom");
+        
+        // Duplicate calls are ignored.
+        jss.importStack("Custom");
+
+        jss.commit();
+
+        verify();
+    }
+
+    @Test
     public void duplicate_imported_libraries_are_filtered()
     {
         DocumentLinker linker = mockDocumentLinker();
