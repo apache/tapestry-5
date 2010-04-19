@@ -14,6 +14,28 @@ Upgrade Notes
 
 Release 5.2.0
 
+* Assets
+
+  There have been some changes to how assets operate in Tapestry 5.2. The previous mechanism
+  for marking assets as public (exposed to the client user agent), introduced in Tapestry 5.1,
+  have been removed in 5.2. The corresponding services (WhitelistAuthorizer, RegexAuthorizer)
+  have been deleted outright; you may need to modify your application module to no longer make
+  contributions to these services.
+  
+  Virtual folders, used to define root packages for component libraries, may no longer
+  contain slashes.  The same goes for LibraryMappings.
+  
+  Each LibraryMapping contributed to the ComponentClassResolver service
+  is now automatically converted into a matching contribution to   
+  the ClasspathAssetAliasManager service. Previously a library author was encouraged
+  to make contributions to both services. The path prefix of a LibraryMapping is also
+  now prohibited from containing the slash character.
+
+  It is now quite necessary to configure the application version number: all assets are exposed via
+  a URL that incorporates the application version number; in previous releases, each library could
+  configure its own version number. By implication, changing library versions and nothing else will now
+  require a change to the application version number.
+
 * ClassTransformation API changes
 
   The

@@ -86,10 +86,13 @@ Creating Component Libraries
   </repositories>
 
   <properties>
-    <tapestry-release-version>5.0.16</tapestry-release-version>
+    <tapestry-release-version>5.2.0</tapestry-release-version>
   </properties>
 </project>
 ---  
+
+  You will need to modify the Tapestry release version number ("5.2.0" in the listing above) to reflect the current
+  version of Tapestry when you create your component library.
 
   We'll go into more detail about the relevant portions of this POM in the later sections.
 
@@ -101,7 +104,7 @@ Step 1: Choose a base package name
   As with an application, we'll follow the conventions:  we'll place the module for this library
   inside the services package, and place pages and components under their respective packages.
 
-Step 2: Create your pages and/or components
+Step 3: Create your pages and/or components
 
   Our component is very simple:
 
@@ -133,15 +136,15 @@ public class HappyIcon
   for the file happy.jpg.  The path specified with the @Path annotation is relative to the HappyIcon.class file;
   it should be stored in the project under src/main/resources/org/example/happylib/components.
 
-  Tapestry ensures that asset can be accessed from the web browser; the src attribute of the \<img\> tag
-  will be a URL that directly accesses the image file ... there's no need to unpackage the happy.jpg file, it's
-  all handled by Tapestry.
+  Tapestry ensures that the happy.jpg asset can be accessed from the web browser; the src attribute of the \<img\> tag
+  will be a URL that directly accesses the image file ... there's no need to unpackage the happy.jpg file. This works
+  for any asset file stored under the libraries root package.
 
   This component renders out an img tag for the icon.
 
-  Often, a component library will have many different components, or even pages.
+  Typically, a component library will have many different components and/or mixins, and may even provide pages.
 
-Step 3: Choose a virtual folder name
+Step 2: Choose a virtual folder name
 
   In Tapestry, components that have been packaged in a library are referenced using a virtual folder name.
   It's effectively as if the application had a new root-level folder containing the components.
@@ -157,12 +160,33 @@ Step 3: Choose a virtual folder name
   
   Why "icon" vs. "happyicon"?  Tapestry notices that the folder name, "happy" is a prefix or suffix of the
   class name ("HappyIcon") and creates an alias that strips off the prefix (or suffix). To Tapestry, they are
-  completely identical.
+  completely identical: two different aliases for the same component class name.
+
+  The above naming is somewhat clumsy, and can be improved by introducing an additional namespace into the template:
   
-Step 4: Configure the virtual folder
+---
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd"
+  xmlns:h="tapestry-library:happy">
+  
+  ...
+  
+  <h:icon/>
+  
+  ...
+</html>
+---
+
+  The special namespace mapping for sets up namespace prefix "h:" to mean the same as "happy/". It then becomes
+  possible to reference components within the happy virtual folder directly.  
+  
+  
+Step 3: Configure the library
 
  Tapestry needs to know where to search for your component class. This is accomplished in your library's IoC module class, by
  making a  <contribution> to the ComponentClassResolver {{{../../tapestry-ioc/configuration.html}service configuration}}.
+ 
+ At application startup, Tapestry will read the library module along with all other modules and configure the
+ ComponentClassResolver service using information in the module:
 
 ----
 package org.example.happylib.services;
@@ -181,7 +205,7 @@ public class HappyModule
 
  The ComponentClassResolver service is responsible for mapping libraries to packages; it takes as a contribution
  a collection of these LibraryMapping objects.  Every module may make its own contribution to the ComponentClassResolver service,
- mapping its own package to its own folder.
+ mapping its own package ("org.example.happylib") to its own folder ("happy").
 
  This module class is also where you would define new services that can be accessed by your components (or other parts
  of the application).
@@ -193,7 +217,8 @@ public class HappyModule
  Adding to "core" is sometimes reasonable, if there is virtually no chance of a naming conflict (via different modules contributing
  packages to core with conflicting class names).
 
-Step 5: Configure the module to autoload
+
+Step 4: Configure the module to autoload
 
   For Tapestry to {{{../../tapestry-ioc/autoload.html}autoload}} your module, it is necessary to put an entry in the
   JAR manifest.  This is taken care of in the pom.xml above:
@@ -213,58 +238,23 @@ Step 5: Configure the module to autoload
 
 ----
 
-Step 6: Extending Client Access
 
-  As of Tapestry 5.2, a new step is needed: {{{../guide/assets.html}extending access for the assets}}.
-  
-  This is accomplished in your library's module class, HappyModule:
-  
-----
-  public static void contributeRegexAuthorizer(Configuration<String> configuration)
-  {
-    configuration.add("^org/example/happylib/.*\\.jpg$");
-  }  
-----
-
-  This contribution uses a regular expression to identify that any resource on the classpath under the
-  org/example/happylib folder with a <<<jpg>>> extension is allowed.  If you had a mix of different
-  image types, you could replace <<<jpg>>> with <<<(jpg|gif|png)>>>.
-
-Step 7: Versioning Assets
-
-  Classpath assets, those packaged in JAR files (such as the happy.jpg asset) are retrieved by the client web browser
-  using a URL that reflects the package name.                  Tapestry users a special virtual folder, <<</assets>>>, under
-  the context folder for this purpose.
-
-  The image file here would exposed to the web browser via the URL  <<</happyapp/assets/org/example/happylib/components/happy.jpg>>> (this assumes that
-  the application was deployed as happyapp.war).
-
-  Tapestry uses a far-future expiration date for classpath assets; this allows browsers to aggresively cache
-  the file, but this causes a problem should a later version of the library change the file.     This is discussed
-  in detail in
-  {{{http://developer.yahoo.com/performance/rules.html#expires}Yahoo's Performance Best Practices}}.
-
-  To handle this problem, you should map your library assets to a versioned folder. This can be accomplished using
-  another contribution from the HappyModule, this time to the ClasspathAssetAliasManager service
-  whose configuration maps a virtual folder underneath /assets
-  to a package:
-
-
-----
-    public static void contributeClasspathAssetAliasManager(MappedConfiguration<String, String> configuration)
-    {
-        configuration.add("happylib/1.0", "org/example/happylib");
-    }
-----
-
-  With this in place, and the library and applications rebuilt and redeployed, the URL for happy.jpg becomes
-  <<</happyapp/assets/happylib/1.0/components/happy.jpg>>>.  This is shorter, but also incorporates a version number ("1.0")
-  that can be changed in a later release.
 
 Conclusion
 
   That's it!  Autoloading plus the virtual folders for components and for assets takes care of all the issues related
   to components.  Just build your JARs, setup the JAR Manifest, and drop them into your applications.
 
+A note about Assets
 
+  Tapestry automatically creates a mapping for assets inside your JAR.  In the above example, the icon image
+  will be exposed as /assets/<application version>/happy/components/happy.jpg (the application version number
+  is incorporated into the URL).  The "happy" portion is a virtual folder that maps to the librarie's
+  root package (as folder "org/example/happylib" on the Java classpath). 
+  
+  The application version is {{{../guide/conf.html}a configurable value}}.
+  
+  In Tapestry 5.1 and earlier, it was necessary to explicitly create a mapping, 
+  via a contribution to the ClasspathAssetAliasManager service, to expose library assets.
+  This is no longer necessary in Tapestry 5.2.
 
