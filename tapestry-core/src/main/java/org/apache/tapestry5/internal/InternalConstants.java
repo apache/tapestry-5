@@ -137,20 +137,24 @@ public final class InternalConstants
      * @since 5.1.0.0
      */
     public static final String GZIP_CONTENT_ENCODING = "gzip";
+
     /**
      * Identifies the start of an expansion inside a template.
      */
     public static final String EXPANSION_START = "${";
+
     /**
      * Special prefix for parameters that are inherited from named parameters of their container.
      */
     public static final String INHERIT_BINDING_PREFIX = "inherit:";
+
     public static final long TEN_YEARS = new TimeInterval("10y").milliseconds();
 
     public static final String[] EMPTY_STRING_ARRAY = new String[0];
 
     /**
-     * Name of the core {@link JavascriptStack}.
+     * Name of the core {@link JavascriptStack}, which supplies the basic JavaScript infrastructure
+     * on the client.
      * 
      * @since 5.2.0
      */

@@ -1,4 +1,4 @@
-// Copyright 2009 The Apache Software Foundation
+// Copyright 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,10 +19,11 @@ import java.io.InputStream;
 
 /**
  * Abstracts around a {@link org.apache.tapestry5.ioc.Resource} to allow access to the resource's content either
- * compressed on uncompressed. The advantage is that, for cmpressed streams, the data is only compressed once, rather
+ * compressed on uncompressed. The advantage is that, for compressed streams, the data is only compressed once, rather
  * than for each request.
  *
  * @since 5.1.0.0
+ * @see ResourceCache
  */
 public interface StreamableResource
 {

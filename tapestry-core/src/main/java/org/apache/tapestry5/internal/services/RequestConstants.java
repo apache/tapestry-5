@@ -38,14 +38,6 @@ public final class RequestConstants
     public static final String CONTEXT_FOLDER = "ctx";
 
     /**
-     * Folder for virtual assets: combined JavaScript files. The file name is actually a compressed bytestream
-     * of the names of each file.
-     * 
-     * @since 5.1.0.2
-     */
-    public static final String VIRTUAL_FOLDER = "virtual";
-
-    /**
      * Folder for combined {@link JavascriptStack} JavaScript files. The path consists of the locale (as a folder) and
      * the name
      * of the stack (suffixed with ".js").

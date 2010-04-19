@@ -80,6 +80,7 @@ import org.apache.tapestry5.internal.services.ajax.JavascriptSupportImpl;
 import org.apache.tapestry5.internal.services.assets.AssetPathConstructorImpl;
 import org.apache.tapestry5.internal.services.assets.ClasspathAssetRequestHandler;
 import org.apache.tapestry5.internal.services.assets.ContextAssetRequestHandler;
+import org.apache.tapestry5.internal.services.assets.StackAssetRequestHandler;
 import org.apache.tapestry5.internal.services.javascript.CoreJavascriptStack;
 import org.apache.tapestry5.internal.services.javascript.JavascriptStackPathConstructor;
 import org.apache.tapestry5.internal.services.javascript.JavascriptStackSourceImpl;
@@ -476,9 +477,16 @@ public final class TapestryModule
     @ContextProvider
     AssetFactory contextAssetFactory,
 
+    @Autobuild
+    StackAssetRequestHandler stackAssetRequestHandler,
+
+    ResourceCache resourceCache,
+
     ClasspathAssetAliasManager classpathAssetAliasManager, ResourceStreamer streamer,
             AssetResourceLocator assetResourceLocator)
     {
+        resourceCache.addInvalidationListener(stackAssetRequestHandler);
+
         Map<String, String> mappings = classpathAssetAliasManager.getMappings();
 
         for (String folder : mappings.keySet())
@@ -490,6 +498,9 @@ public final class TapestryModule
 
         configuration.add(RequestConstants.CONTEXT_FOLDER, new ContextAssetRequestHandler(streamer, contextAssetFactory
                 .getRootResource()));
+
+        configuration.add(RequestConstants.STACK_FOLDER, stackAssetRequestHandler);
+
     }
 
     private static String toPackagePath(String packageName)
