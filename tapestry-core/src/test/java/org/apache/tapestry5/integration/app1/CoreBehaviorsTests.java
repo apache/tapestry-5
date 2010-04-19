@@ -1366,10 +1366,6 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
         assertTextPresent("HTTP ERROR 404");
 
         clickThru("Asset Protection Demo");
-        clickAndWait("link=Unavailable File");
-        assertTextPresent("HTTP ERROR 404");
-
-        clickThru("Asset Protection Demo");
         clickAndWait("link=Available File2");
         assertTextPresent("This file should be available to clients.");
     }

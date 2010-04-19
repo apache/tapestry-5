@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -33,13 +33,11 @@ public class GridTests extends TapestryCoreTestCase
 
         // "Sort Rating" via the header cell override (TAPESTRY-2081)
 
-        assertTextSeries("//th[%d]", 1, "Title", "Album", "Artist", "Genre", "Play Count",
-                "Sort Rating");
+        assertTextSeries("//th[%d]", 1, "Title", "Album", "Artist", "Genre", "Play Count", "Sort Rating");
 
         // Strange: I thought tr[1] was the header row ???
 
-        assertTextSeries("//tr[1]/td[%d]", 1, "Bug Juice", "Late Lounge (2 of 2)", "45 Dip",
-                "Electronica", "4", "-");
+        assertTextSeries("//tr[1]/td[%d]", 1, "Bug Juice", "Late Lounge (2 of 2)", "45 Dip", "Electronica", "4", "-");
 
         // Here were checking that the page splits are correct
 
@@ -56,9 +54,8 @@ public class GridTests extends TapestryCoreTestCase
 
         // Here's one with a customized rating cell
 
-        assertTextSeries("//tr[25]/td[%d]", 1, "Smoked",
-                "London (Original Motion Picture Soundtrack)", "The Crystal Method", "Soundtrack",
-                "30", "****");
+        assertTextSeries("//tr[25]/td[%d]", 1, "Smoked", "London (Original Motion Picture Soundtrack)",
+                "The Crystal Method", "Soundtrack", "30", "****");
 
         clickAndWait("link=69");
 
@@ -69,8 +66,8 @@ public class GridTests extends TapestryCoreTestCase
 
         clickAndWait("link=Sort Rating");
 
-        assertTextSeries("//tr[22]/td[%d]", 1, "Mona Lisa Overdrive", "Labyrinth", "Juno Reactor",
-                "Dance", "31", "*****");
+        assertTextSeries("//tr[22]/td[%d]", 1, "Mona Lisa Overdrive", "Labyrinth", "Juno Reactor", "Dance", "31",
+                "*****");
 
         // Toggle to sort descending
 
@@ -80,11 +77,8 @@ public class GridTests extends TapestryCoreTestCase
 
         clickAndWait("link=Title");
 
-        // The lack of a leading slash indicates that the path was optimized,
-        // see TAPESTRY-1502
+        assertAttributeValueEndsWith("//img[@class='t-sort-icon']/@src", "/sort-asc.png");
 
-        assertAttribute("//img[@class='t-sort-icon']/@src",
-                "/assets/tapestry/UNKNOWN/corelib/components/sort-asc.png");
         assertAttribute("//img[@class='t-sort-icon']/@alt", "[Asc]");
 
         clickAndWait("link=1");
@@ -93,16 +87,22 @@ public class GridTests extends TapestryCoreTestCase
 
         clickAndWait("link=Title");
 
-        assertAttribute("//img[@class='t-sort-icon']/@src",
-                "/assets/tapestry/UNKNOWN/corelib/components/sort-desc.png");
+        assertAttributeValueEndsWith("//img[@class='t-sort-icon']/@src", "/sort-desc.png");
         assertAttribute("//img[@class='t-sort-icon']/@alt", "[Desc]");
 
         clickAndWait("link=reset the Grid");
 
         // Back to where we started.
 
-        assertTextSeries("//tr[1]/td[%d]", 1, "Bug Juice", "Late Lounge (2 of 2)", "45 Dip",
-                "Electronica", "4", "-");
+        assertTextSeries("//tr[1]/td[%d]", 1, "Bug Juice", "Late Lounge (2 of 2)", "45 Dip", "Electronica", "4", "-");
+    }
+
+    private void assertAttributeValueEndsWith(String attributeLocator, String suffix)
+    {
+        String value = getAttribute(attributeLocator);
+
+        assertTrue(value.endsWith(suffix), String.format("Value for attribute %s (%s) should end with '%s'.", 
+                attributeLocator, value, suffix));
     }
 
     @Test
