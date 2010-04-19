@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,63 +14,34 @@
 
 package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry5.SymbolConstants;
-import org.apache.tapestry5.ioc.Resource;
-import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.ioc.annotations.Symbol;
-import org.apache.tapestry5.ioc.internal.util.ClasspathResource;
-import org.apache.tapestry5.services.AssetFactory;
-import org.apache.tapestry5.services.ClasspathAssetAliasManager;
-import org.apache.tapestry5.services.ContextProvider;
-import org.apache.tapestry5.services.Response;
+import java.io.IOException;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+
+import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.ioc.internal.util.ClasspathResource;
+import org.apache.tapestry5.services.Response;
 
 public class AssetResourceLocatorImpl implements AssetResourceLocator
 {
-
-    private final ClasspathAssetAliasManager aliasManager;
-
     private final ResourceCache resourceCache;
-
-    private final AssetFactory contextAssetFactory;
 
     private final Response response;
 
-    private final String applicationAssetPrefix;
+    public AssetResourceLocatorImpl(ResourceCache resourceCache,
 
-    public AssetResourceLocatorImpl(ClasspathAssetAliasManager aliasManager,
-
-                                    ResourceCache resourceCache,
-
-                                    @Inject @Symbol(SymbolConstants.APPLICATION_VERSION)
-                                    String applicationVersion,
-
-                                    @ContextProvider
-                                    AssetFactory contextAssetFactory,
-
-                                    Response response)
-
+    Response response)
     {
-        this.aliasManager = aliasManager;
         this.resourceCache = resourceCache;
-        this.contextAssetFactory = contextAssetFactory;
         this.response = response;
-
-        applicationAssetPrefix = RequestConstants.ASSET_PATH_PREFIX + RequestConstants.CONTEXT_FOLDER + applicationVersion + "/";
     }
 
     public Resource findResourceForPath(String path) throws IOException
     {
-        if (path.startsWith(applicationAssetPrefix))
-            return findContextResource(path.substring(applicationAssetPrefix.length()));
+        Resource resource = new ClasspathResource(path);
 
-        String resourcePath = aliasManager.toResourcePath(path);
-
-        Resource resource = new ClasspathResource(resourcePath);
-
-        if (!resourceCache.requiresDigest(resource)) return resource;
+        if (!resourceCache.requiresDigest(resource))
+            return resource;
 
         String file = resource.getFile();
 
@@ -103,19 +74,14 @@ public class AssetResourceLocatorImpl implements AssetResourceLocator
             }
         }
 
-        if (valid) return result;
+        if (valid)
+            return result;
 
         // TODO: Perhaps we should send an exception here, so that the caller can decide
         // to send the error. I'm not happy with this.
-        
-        response.sendError(HttpServletResponse.SC_FORBIDDEN,
-                           ServicesMessages.wrongAssetDigest(result));
+
+        response.sendError(HttpServletResponse.SC_FORBIDDEN, ServicesMessages.wrongAssetDigest(result));
 
         return null;
-    }
-
-    private Resource findContextResource(String contextPath)
-    {
-        return contextAssetFactory.getRootResource().forFile(contextPath);
     }
 }

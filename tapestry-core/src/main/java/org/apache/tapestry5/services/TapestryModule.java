@@ -76,6 +76,9 @@ import org.apache.tapestry5.internal.renderers.RequestRenderer;
 import org.apache.tapestry5.internal.services.*;
 import org.apache.tapestry5.internal.services.ajax.AjaxFormUpdateFilter;
 import org.apache.tapestry5.internal.services.ajax.JavascriptSupportImpl;
+import org.apache.tapestry5.internal.services.assets.AssetPathConstructorImpl;
+import org.apache.tapestry5.internal.services.assets.ClasspathAssetRequestHandler;
+import org.apache.tapestry5.internal.services.assets.ContextAssetRequestHandler;
 import org.apache.tapestry5.internal.services.messages.PropertiesFileParserImpl;
 import org.apache.tapestry5.internal.transform.*;
 import org.apache.tapestry5.internal.translator.NumericTranslator;
@@ -100,6 +103,8 @@ import org.apache.tapestry5.runtime.ComponentResourcesAware;
 import org.apache.tapestry5.runtime.RenderCommand;
 import org.apache.tapestry5.runtime.RenderQueue;
 import org.apache.tapestry5.services.ajax.MultiZoneUpdateEventResultProcessor;
+import org.apache.tapestry5.services.assets.AssetPathConstructor;
+import org.apache.tapestry5.services.assets.AssetRequestHandler;
 import org.apache.tapestry5.services.javascript.JavascriptSupport;
 import org.apache.tapestry5.services.messages.PropertiesFileParser;
 import org.apache.tapestry5.util.StringToEnumCoercion;
@@ -352,12 +357,11 @@ public final class TapestryModule
         binder.bind(PageRenderLinkSource.class, PageRenderLinkSourceImpl.class);
         binder.bind(ClientInfrastructure.class, ClientInfrastructureImpl.class);
         binder.bind(URLRewriter.class, URLRewriterImpl.class);
-        binder.bind(Dispatcher.class, AssetProtectionDispatcher.class).withId("AssetProtectionDispatcher");
-        binder.bind(AssetPathAuthorizer.class, WhitelistAuthorizer.class).withId("WhitelistAuthorizer");
-        binder.bind(AssetPathAuthorizer.class, RegexAuthorizer.class).withId("RegexAuthorizer");
         binder.bind(ValidatorMacro.class, ValidatorMacroImpl.class);
         binder.bind(PropertiesFileParser.class, PropertiesFileParserImpl.class);
         binder.bind(PageActivator.class, PageActivatorImpl.class);
+        binder.bind(Dispatcher.class, AssetDispatcher.class).withId("AssetDispatcher");
+        binder.bind(AssetPathConstructor.class, AssetPathConstructorImpl.class);
     }
 
     // ========================================================================
@@ -454,6 +458,30 @@ public final class TapestryModule
             configuration.add(folder, toPackagePath(folderToPackageMapping.get(folder)));
         }
 
+    }
+
+    /**
+     * Contributes an handler for each mapped classpath alias, as well as one for context assets.
+     */
+    public static void contributeAssetDispatcher(MappedConfiguration<String, AssetRequestHandler> configuration,
+
+    @ContextProvider
+    AssetFactory contextAssetFactory,
+
+    ClasspathAssetAliasManager classpathAssetAliasManager, ResourceStreamer streamer,
+            AssetResourceLocator assetResourceLocator)
+    {
+        Map<String, String> mappings = classpathAssetAliasManager.getMappings();
+
+        for (String folder : mappings.keySet())
+        {
+            String path = mappings.get(folder);
+
+            configuration.add(folder, new ClasspathAssetRequestHandler(streamer, assetResourceLocator, path));
+        }
+
+        configuration.add(RequestConstants.CONTEXT_FOLDER, new ContextAssetRequestHandler(streamer, contextAssetFactory
+                .getRootResource()));
     }
 
     private static String toPackagePath(String packageName)
@@ -1223,13 +1251,11 @@ public final class TapestryModule
     @Marker(ContextProvider.class)
     public AssetFactory buildContextAssetFactory(ApplicationGlobals globals,
 
-    @Inject
-    @Symbol(SymbolConstants.APPLICATION_VERSION)
-    String applicationVersion,
+    AssetPathConstructor assetPathConstructor,
 
     AssetPathConverter converter)
     {
-        return new ContextAssetFactory(request, globals.getContext(), applicationVersion, converter);
+        return new ContextAssetFactory(assetPathConstructor, globals.getContext(), converter);
     }
 
     /**
@@ -1761,9 +1787,9 @@ public final class TapestryModule
      * kind of incoming request.
      * <dl>
      * <dt>RootPath</dt>
-     * <dd>Renders the start page for the "/" request</dd>
+     * <dd>Renders the start page for the "/" request (outdated)</dd>
      * <dt>Asset</dt>
-     * <dd>Provides access to classpath assets</dd>
+     * <dd>Provides access to assets</dd>
      * <dt>VirtualAsset</dt>
      * <dd>Provides access to combined scripts</dd>
      * <dt>PageRender</dt>
@@ -1775,8 +1801,9 @@ public final class TapestryModule
      * </dl>
      */
     public static void contributeMasterDispatcher(OrderedConfiguration<Dispatcher> configuration,
-            @InjectService("AssetProtectionDispatcher")
-            Dispatcher assetProt)
+
+    @InjectService("AssetDispatcher")
+    Dispatcher assetDispatcher)
     {
         // Looks for the root path and renders the start page. This is
         // maintained for compatibility
@@ -1785,15 +1812,11 @@ public final class TapestryModule
 
         configuration.addInstance("RootPath", RootPathDispatcher.class, "before:Asset");
 
-        // this goes before asset to make sure that only allowed assets are
-        // streamed to the client.
-        configuration.add("AssetProtection", assetProt, "before:Asset");
-
         // This goes first because an asset to be streamed may have an file
         // extension, such as
         // ".html", that will confuse the later dispatchers.
 
-        configuration.addInstance("Asset", AssetDispatcher.class, "before:ComponentEvent");
+        configuration.add("Asset", assetDispatcher, "before:ComponentEvent");
 
         configuration.addInstance("VirtualAsset", VirtualAssetDispatcher.class, "before:Asset");
 
@@ -2796,79 +2819,6 @@ public final class TapestryModule
                 return fieldValidator;
             }
         };
-    }
-
-    /**
-     * Contributes the default set of AssetPathAuthorizers into the
-     * AssetProtectionDispatcher.
-     * 
-     * @param whitelist
-     *            authorization based on explicit whitelisting.
-     * @param regex
-     *            authorization based on pattern matching.
-     * @param conf
-     */
-    public static void contributeAssetProtectionDispatcher(@InjectService("WhitelistAuthorizer")
-    AssetPathAuthorizer whitelist, @InjectService("RegexAuthorizer")
-    AssetPathAuthorizer regex, OrderedConfiguration<AssetPathAuthorizer> conf)
-    {
-        // putting whitelist after everything ensures that, in fact, nothing
-        // falls through.
-        // also ensures that whitelist gives other authorizers the chance to
-        // act...
-        conf.add("regex", regex, "before:whitelist");
-        conf.add("whitelist", whitelist, "after:*");
-    }
-
-    public void contributeRegexAuthorizer(Configuration<String> regex,
-
-    @Symbol("tapestry.scriptaculous.path")
-    String scriptPath,
-
-    @Symbol("tapestry.blackbird.path")
-    String blackbirdPath,
-
-    @Symbol("tapestry.datepicker.path")
-    String datepickerPath,
-
-    @Symbol(SymbolConstants.CONTEXT_ASSETS_AVAILABLE)
-    boolean contextAvailable,
-
-    @Symbol(SymbolConstants.APPLICATION_VERSION)
-    String appVersion,
-
-    @Symbol(InternalConstants.TAPESTRY_APP_PACKAGE_PARAM)
-    String appPackageName)
-    {
-        // allow any js, jpg, jpeg, png, or css under org/apache/tapestry5,
-        // along with
-        // resources for blackbird, scriptaculous, and the date picker.
-        // The funky bit of ([^/.]+/)* is what allows
-        // multiple paths, while not allowing any of those paths to contains ./
-        // or ../ thereby preventing paths like:
-        // org/apache/tapestry5/../../../foo.js
-        String pathPattern = "([^/.]+/)*[^/.]+\\.((css)|(js)|(jpg)|(jpeg)|(png)|(gif))$";
-
-        regex.add("^org/apache/tapestry5/" + pathPattern);
-
-        regex.add(blackbirdPath + "/" + pathPattern);
-        regex.add(datepickerPath + "/" + pathPattern);
-        regex.add(scriptPath + "/" + pathPattern);
-        // allow access to virtual assets. Critical for tapestry-combined js
-        // files.
-        regex.add("virtual/" + pathPattern);
-
-        regex.add("^" + appPackageName.replace(".", "/") + "/" + pathPattern);
-
-        if (contextAvailable)
-        {
-            // we allow everything underneath the context folder, as long as it's not
-            // at or below WEB-INF.
-            // necessary since context assets are now handled via AssetDispatcher so that
-            // they can be compressed, combined, etc.
-            String contextPathPattern = "/(?!(WEB-INF)|(META-INF))([^/.]+/)*[^/]+(?<!\\.tml)$";
-            regex.add(RequestConstants.CONTEXT_FOLDER + appVersion + contextPathPattern);
-        }
     }
 
     /**

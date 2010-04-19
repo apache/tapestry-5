@@ -30,8 +30,12 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletResponse;
+
 public class ResourceStreamerImpl implements ResourceStreamer
 {
+    static final String IF_MODIFIED_SINCE_HEADER = "If-Modified-Since";
+
     private final ResourceCache resourceCache;
 
     private final Request request;
@@ -78,6 +82,36 @@ public class ResourceStreamerImpl implements ResourceStreamer
 
     public void streamResource(Resource resource) throws IOException
     {
+        if (!resource.exists())
+        {
+            response.sendError(HttpServletResponse.SC_NOT_FOUND, ServicesMessages.assetDoesNotExist(resource));
+            return;
+        }
+
+        long ifModifiedSince = 0;
+
+        try
+        {
+            ifModifiedSince = request.getDateHeader(IF_MODIFIED_SINCE_HEADER);
+        }
+        catch (IllegalArgumentException ex)
+        {
+            // Simulate the header being missing if it is poorly formatted.
+
+            ifModifiedSince = -1;
+        }
+
+        if (ifModifiedSince > 0)
+        {
+            long modified = resourceCache.getTimeModified(resource);
+
+            if (ifModifiedSince >= modified)
+            {
+                response.sendError(HttpServletResponse.SC_NOT_MODIFIED, "");
+                return;
+            }
+        }
+
         // Prevent the upstream code from compressing when we don't want to.
 
         request.setAttribute(InternalConstants.SUPPRESS_COMPRESSION, true);
@@ -93,8 +127,7 @@ public class ResourceStreamerImpl implements ResourceStreamer
 
         String contentType = identifyContentType(resource, streamble);
 
-        boolean compress = analyzer.isGZipSupported()
-                && streamble.getSize(false) >= compressionCutoff
+        boolean compress = analyzer.isGZipSupported() && streamble.getSize(false) >= compressionCutoff
                 && analyzer.isCompressable(contentType);
 
         int contentLength = streamble.getSize(compress);
@@ -103,8 +136,7 @@ public class ResourceStreamerImpl implements ResourceStreamer
             response.setContentLength(contentLength);
 
         if (compress)
-            response.setHeader(InternalConstants.CONTENT_ENCODING_HEADER,
-                    InternalConstants.GZIP_CONTENT_ENCODING);
+            response.setHeader(InternalConstants.CONTENT_ENCODING_HEADER, InternalConstants.GZIP_CONTENT_ENCODING);
 
         InputStream is = null;
 
@@ -132,8 +164,7 @@ public class ResourceStreamerImpl implements ResourceStreamer
         return identifyContentType(resource, resourceCache.getStreamableResource(resource));
     }
 
-    private String identifyContentType(Resource resource, StreamableResource streamble)
-            throws IOException
+    private String identifyContentType(Resource resource, StreamableResource streamble) throws IOException
     {
         String contentType = streamble.getContentType();
 

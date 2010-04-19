@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -30,15 +30,14 @@ public final class RequestConstants
 
     /**
      * Virtual folder name for assets that are actually stored in the context, but are exposed (much like classpath
-     * assets) to gain far-future expires headers and automatic content compression. The application version number
-     * comes after this prefix and before the true path.
+     * assets) to gain far-future expires headers and automatic content compression.
      * 
      * @since 5.1.0.0
      */
-    public static final String CONTEXT_FOLDER = "ctx/";
+    public static final String CONTEXT_FOLDER = "ctx";
 
     /**
-     * Folder for virtual assets: combined JavaScript files. The file name is actualy a compressed bytestream
+     * Folder for virtual assets: combined JavaScript files. The file name is actually a compressed bytestream
      * of the names of each file.
      * 
      * @since 5.1.0.2

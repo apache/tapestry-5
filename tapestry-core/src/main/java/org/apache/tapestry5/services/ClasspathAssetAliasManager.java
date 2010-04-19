@@ -22,7 +22,8 @@ import org.apache.tapestry5.ioc.annotations.UsesMappedConfiguration;
 /**
  * Used as part of the support for classpath {@link org.apache.tapestry5.Asset}s, to convert the Asset's
  * {@link org.apache.tapestry5.ioc.Resource} to a URL that can be accessed by the client. The asset path, within the
- * classpath, is converted into a shorter virtual path.
+ * classpath, is converted into a shorter virtual path. The term "alias" here is generally referred to as
+ * "virtual folder" elsewhere.
  * <p/>
  * Service configuration is a map from folder aliases (short names) to complete paths. Names should not start or end end
  * with a slash. Generally, an alias should be a single name (not contain a slash). Paths should also not start or end

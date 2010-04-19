@@ -271,9 +271,4 @@ public class AppModule
     {
         configuration.add("ReverseStringsWorker", new ReverseStringsWorker());
     }
-
-    public static void contributeWhitelistAuthorizer(Configuration<String> configuration)
-    {
-        configuration.add("org/apache/tapestry5/integration/app1/pages/availablefile2.txt");
-    }
 }

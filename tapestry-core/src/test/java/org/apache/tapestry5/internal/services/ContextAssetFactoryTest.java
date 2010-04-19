@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,6 +15,7 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.Asset;
+import org.apache.tapestry5.internal.services.assets.AssetPathConstructorImpl;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.services.AssetFactory;
@@ -34,7 +35,7 @@ public class ContextAssetFactoryTest extends InternalBaseTestCase
 
         replay();
 
-        AssetFactory factory = new ContextAssetFactory(request, context, "1.2.3", converter);
+        AssetFactory factory = new ContextAssetFactory(null, context, converter);
 
         assertEquals(factory.getRootResource().toString(), "context:/");
 
@@ -53,17 +54,18 @@ public class ContextAssetFactoryTest extends InternalBaseTestCase
 
         replay();
 
-        AssetFactory factory = new ContextAssetFactory(request, context, "4.5.6", new IdentityAssetPathConverter());
+        AssetFactory factory = new ContextAssetFactory(new AssetPathConstructorImpl(request, "4.5.6"), context,
+                new IdentityAssetPathConverter());
 
         Asset asset = factory.createAsset(r);
 
         assertSame(asset.getResource(), r);
-        assertEquals(asset.toClientURL(), "/context/assets/ctx/4.5.6/foo/Bar.txt");
+        assertEquals(asset.toClientURL(), "/context/assets/4.5.6/ctx/foo/Bar.txt");
 
         // In real life, toString() is the same as toClientURL(), but we're testing
         // that the optimize method is getting called, basically.
 
-        assertEquals(asset.toString(), "/context/assets/ctx/4.5.6/foo/Bar.txt");
+        assertEquals(asset.toString(), "/context/assets/4.5.6/ctx/foo/Bar.txt");
 
         verify();
     }

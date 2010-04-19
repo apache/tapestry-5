@@ -1,10 +1,10 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,18 +19,16 @@ import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.services.AssetFactory;
 import org.apache.tapestry5.services.AssetPathConverter;
 import org.apache.tapestry5.services.Context;
-import org.apache.tapestry5.services.Request;
+import org.apache.tapestry5.services.assets.AssetPathConstructor;
 
 /**
  * Implementation of {@link AssetFactory} for assets that are part of the web application context.
- *
+ * 
  * @see org.apache.tapestry5.internal.services.ContextResource
  */
 public class ContextAssetFactory implements AssetFactory
 {
-    private final Request request;
-
-    private final String pathPrefix;
+    private final AssetPathConstructor assetPathConstructor;
 
     private final Resource rootResource;
 
@@ -38,17 +36,12 @@ public class ContextAssetFactory implements AssetFactory
 
     private final boolean invariant;
 
-    public ContextAssetFactory(Request request, Context context,
+    public ContextAssetFactory(AssetPathConstructor assetPathConstructor, Context context,
 
-                               String applicationVersion,
-
-                               AssetPathConverter converter)
+    AssetPathConverter converter)
     {
-        this.request = request;
+        this.assetPathConstructor = assetPathConstructor;
         this.converter = converter;
-
-        pathPrefix = RequestConstants.ASSET_PATH_PREFIX + RequestConstants.CONTEXT_FOLDER
-                + applicationVersion + "/";
 
         rootResource = new ContextResource(context, "/");
         invariant = this.converter.isInvariant();
@@ -56,7 +49,8 @@ public class ContextAssetFactory implements AssetFactory
 
     public Asset createAsset(final Resource resource)
     {
-        final String defaultPath = request.getContextPath() + pathPrefix + resource.getPath();
+        final String defaultPath = assetPathConstructor.constructAssetPath(RequestConstants.CONTEXT_FOLDER, resource
+                .getPath());
 
         return new AbstractAsset(invariant)
         {

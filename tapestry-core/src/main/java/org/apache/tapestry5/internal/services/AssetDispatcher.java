@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,43 +14,46 @@
 
 package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry5.ioc.Resource;
+import java.io.IOException;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.tapestry5.SymbolConstants;
+import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.annotations.Symbol;
+import org.apache.tapestry5.ioc.annotations.UsesMappedConfiguration;
 import org.apache.tapestry5.services.ClasspathAssetAliasManager;
 import org.apache.tapestry5.services.Dispatcher;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.Response;
-
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+import org.apache.tapestry5.services.assets.AssetRequestHandler;
 
 /**
  * Recognizes requests where the path begins with "/asset/" and delivers the content therein as a bytestream. Also
  * handles requests that are simply polling for a change to the file.
- *
+ * 
  * @see ResourceStreamer
  * @see ClasspathAssetAliasManager
  * @see ResourceCache
+ * @see AssetRequestHandler
  */
+@UsesMappedConfiguration(AssetRequestHandler.class)
 public class AssetDispatcher implements Dispatcher
 {
-    private final ResourceStreamer streamer;
+    private final Map<String, AssetRequestHandler> configuration;
 
-    private final ResourceCache resourceCache;
+    private final String pathPrefix;
 
-    private final AssetResourceLocator assetResourceLocator;
+    public AssetDispatcher(Map<String, AssetRequestHandler> configuration,
 
-    static final String IF_MODIFIED_SINCE_HEADER = "If-Modified-Since";
-
-    public AssetDispatcher(ResourceStreamer streamer,
-
-                           ResourceCache resourceCache,
-
-                           AssetResourceLocator assetResourceLocator)
+    @Inject
+    @Symbol(SymbolConstants.APPLICATION_VERSION)
+    String applicationVersion)
     {
-        this.streamer = streamer;
-        this.resourceCache = resourceCache;
-        this.assetResourceLocator = assetResourceLocator;
+        this.configuration = configuration;
 
+        this.pathPrefix = RequestConstants.ASSET_PATH_PREFIX + applicationVersion + "/";
     }
 
     public boolean dispatch(Request request, Response response) throws IOException
@@ -60,46 +63,29 @@ public class AssetDispatcher implements Dispatcher
         // Remember that the request path does not include the context path, so we can simply start
         // looking for the asset path prefix right off the bat.
 
-        if (!path.startsWith(RequestConstants.ASSET_PATH_PREFIX)) return false;
+        if (!path.startsWith(pathPrefix))
+            return false;
 
-        // ClassLoaders like their paths to start with a leading slash.
+        String virtualPath = path.substring(pathPrefix.length());
 
-        Resource resource = assetResourceLocator.findResourceForPath(path);
+        int slashx = virtualPath.indexOf('/');
 
-        if (resource == null) return true;
+        String virtualFolder = virtualPath.substring(0, slashx);
 
-        if (!resource.exists())
+        AssetRequestHandler handler = configuration.get(virtualFolder);
+
+        if (handler != null)
         {
-            response.sendError(HttpServletResponse.SC_NOT_FOUND, ServicesMessages
-                    .assetDoesNotExist(resource));
-            return true;
-        }
 
-        long ifModifiedSince = 0;
+            String extraPath = virtualPath.substring(slashx + 1);
 
-        try
-        {
-            ifModifiedSince = request.getDateHeader(IF_MODIFIED_SINCE_HEADER);
-        }
-        catch (IllegalArgumentException ex)
-        {
-            // Simulate the header being missing if it is poorly formatted.
+            boolean handled = handler.handleAssetRequest(request, response, extraPath);
 
-            ifModifiedSince = -1;
-        }
-
-        if (ifModifiedSince > 0)
-        {
-            long modified = resourceCache.getTimeModified(resource);
-
-            if (ifModifiedSince >= modified)
-            {
-                response.sendError(HttpServletResponse.SC_NOT_MODIFIED, "");
+            if (handled)
                 return true;
-            }
         }
 
-        streamer.streamResource(resource);
+        response.sendError(HttpServletResponse.SC_NOT_FOUND, path);
 
         return true;
     }

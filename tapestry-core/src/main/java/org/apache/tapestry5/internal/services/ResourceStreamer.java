@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,27 +19,31 @@ import org.apache.tapestry5.ioc.annotations.UsesMappedConfiguration;
 
 import java.io.IOException;
 
+import javax.servlet.http.HttpServletResponse;
+
 /**
  * Responsible for streaming the contents of a resource to the client. The {@link org.apache.tapestry5.ioc.Resource} to
  * stream is almost always a {@link org.apache.tapestry5.ioc.internal.util.ClasspathResource}.
  * <p/>
  * The service's configuration is used to map file extensions to content types. Note: this only works for simple
  * extensions (i.e., "jpg") not for complex extensions (i.e., "tar.gz").
- *
+ * 
  * @since 5.1.0.0
  */
 @UsesMappedConfiguration(String.class)
 public interface ResourceStreamer
 {
     /**
-     * Streams the content of the resource to the client.
+     * Streams the content of the resource to the client (or sends
+     * an alternative response such as {@link HttpServletResponse#SC_NOT_MODIFIED}).
      */
     void streamResource(Resource resource) throws IOException;
 
     /**
      * Analyzes the resource to determine what its content type is, possibly using the service's configuration.
-     *
-     * @param resource to analyze
+     * 
+     * @param resource
+     *            to analyze
      * @return content type
      * @throws IOException
      */

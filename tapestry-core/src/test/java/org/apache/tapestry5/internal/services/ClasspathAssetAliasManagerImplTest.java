@@ -14,6 +14,7 @@
 
 package org.apache.tapestry5.internal.services;
 
+import org.apache.tapestry5.internal.services.assets.AssetPathConstructorImpl;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.util.UnknownValueException;
@@ -45,14 +46,14 @@ public class ClasspathAssetAliasManagerImplTest extends InternalBaseTestCase
     {
         // Notice how all the trailing slashes (which are tolerated but not wanted)
         // have been removed.
-        
+
         Map<String, String> expected = CollectionFactory.newCaseInsensitiveMap();
 
         expected.put("tapestry/4.0", "org/apache/tapestry5");
         expected.put("tapestry-internal/3.0", "org/apache/tapestry5/internal");
         expected.put("mylib/2.0", "com/example/mylib");
 
-        ClasspathAssetAliasManager manager = new ClasspathAssetAliasManagerImpl(null, APP_VERSION, configuration());
+        ClasspathAssetAliasManager manager = new ClasspathAssetAliasManagerImpl(null, configuration());
 
         assertEquals(manager.getMappings(), expected);
     }
@@ -66,10 +67,10 @@ public class ClasspathAssetAliasManagerImplTest extends InternalBaseTestCase
 
         replay();
 
-        ClasspathAssetAliasManager manager = new ClasspathAssetAliasManagerImpl(request, APP_VERSION, configuration());
+        ClasspathAssetAliasManager manager = new ClasspathAssetAliasManagerImpl(new AssetPathConstructorImpl(request,
+                APP_VERSION), configuration());
 
         String expectedPath = "/ctx" + RequestConstants.ASSET_PATH_PREFIX + APP_VERSION + "/" + expectedClientURL;
-
         assertEquals(manager.toClientURL(resourcePath), expectedPath);
 
         verify();
@@ -78,13 +79,7 @@ public class ClasspathAssetAliasManagerImplTest extends InternalBaseTestCase
     @Test
     public void failure_if_path_not_in_mapped_alias_folder()
     {
-        Request request = mockRequest();
-
-        train_getContextPath(request, "");
-
-        replay();
-
-        ClasspathAssetAliasManager manager = new ClasspathAssetAliasManagerImpl(request, APP_VERSION, configuration());
+        ClasspathAssetAliasManager manager = new ClasspathAssetAliasManagerImpl(null, configuration());
 
         try
         {
@@ -98,8 +93,6 @@ public class ClasspathAssetAliasManagerImplTest extends InternalBaseTestCase
             assertListsEquals(ex.getAvailableValues().getValues(), "com/example/mylib", "org/apache/tapestry5",
                     "org/apache/tapestry5/internal");
         }
-
-        verify();
     }
 
     @DataProvider
@@ -116,7 +109,7 @@ public class ClasspathAssetAliasManagerImplTest extends InternalBaseTestCase
     @Test(dataProvider = "to_resource_path_data")
     public void to_resource_path(String clientURL, String expectedResourcePath)
     {
-        ClasspathAssetAliasManager manager = new ClasspathAssetAliasManagerImpl(null, APP_VERSION, configuration());
+        ClasspathAssetAliasManager manager = new ClasspathAssetAliasManagerImpl(null, configuration());
 
         assertEquals(manager.toResourcePath(clientURL), expectedResourcePath);
     }

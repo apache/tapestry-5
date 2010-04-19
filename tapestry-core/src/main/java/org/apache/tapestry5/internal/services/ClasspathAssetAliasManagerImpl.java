@@ -14,25 +14,20 @@
 
 package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry5.SymbolConstants;
-import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.ioc.annotations.Symbol;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.util.AvailableValues;
-import org.apache.tapestry5.ioc.util.UnknownValueException;
-import org.apache.tapestry5.services.ClasspathAssetAliasManager;
-import org.apache.tapestry5.services.Request;
-
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.util.AvailableValues;
+import org.apache.tapestry5.ioc.util.UnknownValueException;
+import org.apache.tapestry5.services.ClasspathAssetAliasManager;
+import org.apache.tapestry5.services.assets.AssetPathConstructor;
+
 public class ClasspathAssetAliasManagerImpl implements ClasspathAssetAliasManager
 {
-    private final Request request;
-
-    private final String assetPathPrefix;
+    private final AssetPathConstructor assetPathConstructor;
 
     /**
      * Map from alias to path.
@@ -52,20 +47,14 @@ public class ClasspathAssetAliasManagerImpl implements ClasspathAssetAliasManage
      * Configuration is a map of aliases (short names) to complete names. Keys and values should end with a slash, but
      * one will be provided as necessary, so don't both.
      * 
-     * @param applicationVersion
+     * @param assetPathConstructor
      *            TODO
      */
-    public ClasspathAssetAliasManagerImpl(Request request,
-
-    @Inject
-    @Symbol(SymbolConstants.APPLICATION_VERSION)
-    String applicationVersion,
+    public ClasspathAssetAliasManagerImpl(AssetPathConstructor assetPathConstructor,
 
     Map<String, String> configuration)
     {
-        this.request = request;
-
-        this.assetPathPrefix = RequestConstants.ASSET_PATH_PREFIX + applicationVersion + "/";
+        this.assetPathConstructor = assetPathConstructor;
 
         for (Map.Entry<String, String> e : configuration.entrySet())
         {
@@ -102,19 +91,15 @@ public class ClasspathAssetAliasManagerImpl implements ClasspathAssetAliasManage
 
     public String toClientURL(String resourcePath)
     {
-        StringBuilder builder = new StringBuilder(request.getContextPath());
-        builder.append(assetPathPrefix);
-
         for (String pathPrefix : sortedPathPrefixes)
         {
             if (resourcePath.startsWith(pathPrefix))
             {
-                String alias = pathPrefixToAlias.get(pathPrefix);
-                builder.append(alias);
-                builder.append("/");
-                builder.append(resourcePath.substring(pathPrefix.length() + 1));
+                String virtualFolder = pathPrefixToAlias.get(pathPrefix);
 
-                return builder.toString();
+                String virtualPath = resourcePath.substring(pathPrefix.length() + 1);
+
+                return assetPathConstructor.constructAssetPath(virtualFolder, virtualPath);
             }
         }
 
