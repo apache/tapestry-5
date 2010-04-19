@@ -34,10 +34,4 @@ public interface AssetPathConstructor
      *         the virtual folder, and the path extension
      */
     String constructAssetPath(String virtualFolder, String path);
-
-    /**
-     * Returns the prefix portion of the asset URL, the portion including the context path, the /assets/ virtual folder,
-     * and the version number, and the trailing slash.
-     */
-    String getAssetPathPrefix();
 }

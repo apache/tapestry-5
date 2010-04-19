@@ -37,11 +37,6 @@ public class AssetPathConstructorImpl implements AssetPathConstructor
         this.prefix = RequestConstants.ASSET_PATH_PREFIX + applicationVersion + "/";
     }
 
-    public String getAssetPathPrefix()
-    {
-        return request.getContextPath() + prefix;
-    }
-
     public String constructAssetPath(String virtualFolder, String path)
     {
         StringBuilder builder = new StringBuilder(request.getContextPath());
