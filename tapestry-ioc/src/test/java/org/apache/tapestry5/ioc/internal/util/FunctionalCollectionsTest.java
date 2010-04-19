@@ -40,4 +40,27 @@ public class FunctionalCollectionsTest extends TestBase
 
         assertListsEquals(lengths, 4, 3, 1, 6, 4);
     }
+
+    @Test
+    public void each()
+    {
+        List<String> source = Arrays.asList("Mary", "had", "a", "little", "lamb");
+
+        final StringBuffer buffer = new StringBuffer();
+
+        Operation<String> op = new Operation<String>()
+        {
+            public void op(String value)
+            {
+                if (buffer.length() > 0)
+                    buffer.append(" ");
+
+                buffer.append(value);
+            }
+        };
+
+        FunctionalCollections.each(source, op);
+
+        assertEquals(buffer.toString(), "Mary had a little lamb");
+    }
 }

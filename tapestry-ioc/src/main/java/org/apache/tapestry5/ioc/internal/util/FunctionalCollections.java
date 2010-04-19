@@ -15,6 +15,7 @@
 package org.apache.tapestry5.ioc.internal.util;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.apache.tapestry5.ioc.services.Coercion;
@@ -50,4 +51,14 @@ public class FunctionalCollections
         return result;
     }
 
+    /**
+     * Performs an operation on each element of the source collection.
+     */
+    public static <T> void each(Collection<T> source, Operation<T> operation)
+    {
+        for (T t : source)
+        {
+            operation.op(t);
+        }
+    }
 }
