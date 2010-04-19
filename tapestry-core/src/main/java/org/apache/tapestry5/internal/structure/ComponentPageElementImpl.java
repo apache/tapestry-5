@@ -75,8 +75,7 @@ import org.slf4j.Logger;
  * lifecycle listener}. This could be done inside the constructors, but that tends to complicate unit tests, so its done
  * by {@link org.apache.tapestry5.internal.services.PageElementFactoryImpl}.
  */
-public class ComponentPageElementImpl extends BaseLocatable implements ComponentPageElement,
-        PageLifecycleListener
+public class ComponentPageElementImpl extends BaseLocatable implements ComponentPageElement, PageLifecycleListener
 {
     /**
      * Placeholder for the body used when the component has no real content.
@@ -198,8 +197,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
             return sharedEventHandler.getResult();
         }
 
-        protected abstract void invokeComponent(Component component, MarkupWriter writer,
-                Event event);
+        protected abstract void invokeComponent(Component component, MarkupWriter writer, Event event);
     }
 
     private class SetupRenderPhase extends AbstractPhase
@@ -457,8 +455,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
             Element current = writer.getElement();
 
             if (current != expectedElementAtCompletion)
-                throw new TapestryException(StructureMessages.unbalancedElements(completeId),
-                        getLocation(), null);
+                throw new TapestryException(StructureMessages.unbalancedElements(completeId), getLocation(), null);
 
             invoke(false, POST_RENDER_CLEANUP);
 
@@ -534,9 +531,8 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
 
     private boolean renderPhasesInitalized;
 
-    private RenderCommand setupRenderPhase, beginRenderPhase, beforeRenderTemplatePhase,
-            beforeRenderBodyPhase, afterRenderBodyPhase, afterRenderTemplatePhase,
-            afterRenderPhase, cleanupRenderPhase;
+    private RenderCommand setupRenderPhase, beginRenderPhase, beforeRenderTemplatePhase, beforeRenderBodyPhase,
+            afterRenderBodyPhase, afterRenderTemplatePhase, afterRenderPhase, cleanupRenderPhase;
 
     private final RenderPhaseEventHandler sharedEventHandler = new RenderPhaseEventHandler();
 
@@ -565,8 +561,8 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
      *            Provides access to common methods of various services
      */
 
-    ComponentPageElementImpl(Page page, ComponentPageElement container, String id, String nestedId,
-            String completeId, String elementName, Instantiator instantiator, Location location,
+    ComponentPageElementImpl(Page page, ComponentPageElement container, String id, String nestedId, String completeId,
+            String elementName, Instantiator instantiator, Location location,
             ComponentPageElementResources elementResources)
     {
         super(location);
@@ -579,11 +575,10 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
         this.elementName = elementName;
         this.elementResources = elementResources;
 
-        ComponentResources containerResources = container == null ? null : container
-                .getComponentResources();
+        ComponentResources containerResources = container == null ? null : container.getComponentResources();
 
-        coreResources = new InternalComponentResourcesImpl(this.page, this, containerResources,
-                this.elementResources, completeId, nestedId, instantiator, false);
+        coreResources = new InternalComponentResourcesImpl(this.page, this, containerResources, this.elementResources,
+                completeId, nestedId, instantiator, false);
 
         coreComponent = coreResources.getComponent();
 
@@ -596,14 +591,16 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
     /**
      * Constructor for the root component of a page.
      */
-    public ComponentPageElementImpl(Page page, Instantiator instantiator,
-            ComponentPageElementResources elementResources)
+    public ComponentPageElementImpl(Page page, Instantiator instantiator, ComponentPageElementResources elementResources)
     {
         this(page, null, null, null, page.getName(), null, instantiator, null, elementResources);
     }
 
     private void initializeRenderPhases()
     {
+        if (renderPhasesInitalized)
+            return;
+
         setupRenderPhase = new SetupRenderPhase();
         beginRenderPhase = new BeginRenderPhase();
         beforeRenderTemplatePhase = new BeforeRenderTemplatePhase();
@@ -656,19 +653,18 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
         renderPhasesInitalized = true;
     }
 
-    public ComponentPageElement newChild(String id, String nestedId, String completeId,
-            String elementName, Instantiator instantiator, Location location)
+    public ComponentPageElement newChild(String id, String nestedId, String completeId, String elementName,
+            Instantiator instantiator, Location location)
     {
-        ComponentPageElementImpl child = new ComponentPageElementImpl(page, this, id, nestedId,
-                completeId, elementName, instantiator, location, elementResources);
+        ComponentPageElementImpl child = new ComponentPageElementImpl(page, this, id, nestedId, completeId,
+                elementName, instantiator, location, elementResources);
 
         addEmbeddedElement(child);
 
         return child;
     }
 
-    void push(RenderQueue queue, boolean forward, RenderCommand forwardPhase,
-            RenderCommand backwardPhase)
+    void push(RenderQueue queue, boolean forward, RenderCommand forwardPhase, RenderCommand backwardPhase)
     {
         push(queue, forward ? forwardPhase : backwardPhase);
     }
@@ -689,9 +685,9 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
         ComponentPageElement existing = children.get(childId);
 
         if (existing != null)
-            throw new TapestryException(StructureMessages.duplicateChildComponent(this, childId),
-                    child, new TapestryException(StructureMessages.originalChildComponent(this,
-                            childId, existing.getLocation()), existing, null));
+            throw new TapestryException(StructureMessages.duplicateChildComponent(this, childId), child,
+                    new TapestryException(StructureMessages.originalChildComponent(this, childId, existing
+                            .getLocation()), existing, null));
 
         children.put(childId, child);
     }
@@ -706,9 +702,8 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
 
         String mixinExtension = "$" + mixinId.toLowerCase();
 
-        InternalComponentResourcesImpl resources = new InternalComponentResourcesImpl(page, this,
-                coreResources, elementResources, completeId + mixinExtension, nestedId
-                        + mixinExtension, instantiator, true);
+        InternalComponentResourcesImpl resources = new InternalComponentResourcesImpl(page, this, coreResources,
+                elementResources, completeId + mixinExtension, nestedId + mixinExtension, instantiator, true);
 
         mixinIdToComponentResources.put(mixinId, resources);
         // note that since we're using explicit ordering now,
@@ -733,8 +728,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
 
     public void bindMixinParameter(String mixinId, String parameterName, Binding binding)
     {
-        InternalComponentResources mixinResources = InternalUtils.get(mixinIdToComponentResources,
-                mixinId);
+        InternalComponentResources mixinResources = InternalUtils.get(mixinIdToComponentResources, mixinId);
 
         mixinResources.bindParameter(parameterName, binding);
     }
@@ -762,8 +756,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
         template.add(element);
     }
 
-    private void addUnboundParameterNames(String prefix, List<String> unbound,
-            InternalComponentResources resource)
+    private void addUnboundParameterNames(String prefix, List<String> unbound, InternalComponentResources resource)
     {
         ComponentModel model = resource.getComponentModel();
 
@@ -833,6 +826,11 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
 
     public void enqueueBeforeRenderBody(RenderQueue queue)
     {
+        // TAP5-1100: In certain Ajax cases, a component may be asked to render its body
+        // that has never rendered itself (and thus, never called initializeRenderPhases). Subtle.
+
+        initializeRenderPhases();
+
         // If no body, then no beforeRenderBody or afterRenderBody
 
         if (bodyBlock != null)
@@ -872,8 +870,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
         {
             Set<String> ids = InternalUtils.keys(children);
 
-            throw new TapestryException(StructureMessages.noSuchComponent(this, embeddedId, ids),
-                    this, null);
+            throw new TapestryException(StructureMessages.noSuchComponent(this, embeddedId, ids), this, null);
         }
 
         return embeddedElement;
@@ -894,8 +891,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
         Component result = mixinForClassName(mixinClassName);
 
         if (result == null)
-            throw new TapestryException(StructureMessages.unknownMixin(completeId, mixinClassName),
-                    getLocation(), null);
+            throw new TapestryException(StructureMessages.unknownMixin(completeId, mixinClassName), getLocation(), null);
 
         return result;
     }
@@ -921,8 +917,8 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
             result = mixinIdToComponentResources.get(mixinId);
 
         if (result == null)
-            throw new IllegalArgumentException(String.format(
-                    "Unable to locate mixin '%s' for component '%s'.", mixinId, completeId));
+            throw new IllegalArgumentException(String.format("Unable to locate mixin '%s' for component '%s'.",
+                    mixinId, completeId));
 
         return result;
     }
@@ -974,8 +970,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
                 return;
             }
 
-            Iterator<Component> i = reverse ? InternalUtils.reverseIterator(components)
-                    : components.iterator();
+            Iterator<Component> i = reverse ? InternalUtils.reverseIterator(components) : components.iterator();
 
             while (i.hasNext())
             {
@@ -1015,11 +1010,9 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
     public final void render(MarkupWriter writer, RenderQueue queue)
     {
         // We assume that by the time we start to render, the structure (i.e., mixins) is nailed
-        // down.
-        // We could add a lock, but that seems wasteful.
+        // down. We could add a lock, but that seems wasteful.
 
-        if (!renderPhasesInitalized)
-            initializeRenderPhases();
+        initializeRenderPhases();
 
         // TODO: An error if the render flag is already set (recursive rendering not
         // allowed or advisable).
@@ -1045,12 +1038,10 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
         return String.format("ComponentPageElement[%s]", completeId);
     }
 
-    public boolean triggerEvent(String eventType, Object[] contextValues,
-            ComponentEventCallback callback)
+    public boolean triggerEvent(String eventType, Object[] contextValues, ComponentEventCallback callback)
     {
-        return triggerContextEvent(eventType,
-                createParameterContext(contextValues == null ? new Object[0] : contextValues),
-                callback);
+        return triggerContextEvent(eventType, createParameterContext(contextValues == null ? new Object[0]
+                : contextValues), callback);
     }
 
     private EventContext createParameterContext(final Object... values)
@@ -1069,8 +1060,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
         };
     }
 
-    public boolean triggerContextEvent(String eventType, EventContext context,
-            ComponentEventCallback callback)
+    public boolean triggerContextEvent(String eventType, EventContext context, ComponentEventCallback callback)
     {
         Defense.notBlank(eventType, "eventType");
         Defense.notNull(context, "context");
@@ -1081,9 +1071,8 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
         String componentId = "";
 
         // Provide a default handler for when the provided handler is null.
-        final ComponentEventCallback providedHandler = callback == null ? new NotificationEventCallback(
-                eventType, completeId)
-                : callback;
+        final ComponentEventCallback providedHandler = callback == null ? new NotificationEventCallback(eventType,
+                completeId) : callback;
 
         ComponentEventCallback wrapped = new ComponentEventCallback()
         {
@@ -1118,8 +1107,8 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
             {
                 Logger logger = component.getEventLogger();
 
-                ComponentEvent event = new ComponentEventImpl(currentEventType, componentId,
-                        currentContext, wrapped, elementResources, logger);
+                ComponentEvent event = new ComponentEventImpl(currentEventType, componentId, currentContext, wrapped,
+                        elementResources, logger);
 
                 logger.debug(TapestryMarkers.EVENT_DISPATCH, "Dispatch event: {}", event);
 
@@ -1143,8 +1132,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
                 // method or,
                 // more likely, to the exception report page.
 
-                rootException = new ComponentEventException(ex.getMessage(), eventType, context,
-                        location, ex);
+                rootException = new ComponentEventException(ex.getMessage(), eventType, context, location, ex);
 
                 // Switch over to triggering an "exception" event, starting in the component that
                 // threw the exception.
@@ -1205,8 +1193,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
         Block result = findBlock(id);
 
         if (result == null)
-            throw new BlockNotFoundException(StructureMessages.blockNotFound(completeId, id),
-                    getLocation());
+            throw new BlockNotFoundException(StructureMessages.blockNotFound(completeId, id), getLocation());
 
         return result;
     }
@@ -1224,8 +1211,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
             blocks = CollectionFactory.newCaseInsensitiveMap();
 
         if (blocks.containsKey(blockId))
-            throw new TapestryException(StructureMessages.duplicateBlock(this, blockId), block,
-                    null);
+            throw new TapestryException(StructureMessages.duplicateBlock(this, blockId), block, null);
 
         blocks.put(blockId, block);
     }
@@ -1262,8 +1248,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
 
     public Link createActionLink(String eventType, boolean forForm, Object... context)
     {
-        return elementResources
-                .createComponentEventLink(coreResources, eventType, forForm, context);
+        return elementResources.createComponentEventLink(coreResources, eventType, forForm, context);
     }
 
     public Link createFormEventLink(String eventType, Object... context)
