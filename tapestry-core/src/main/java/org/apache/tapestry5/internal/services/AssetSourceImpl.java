@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.Asset;
+import org.apache.tapestry5.internal.AssetConstants;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.Defense;
@@ -28,10 +29,6 @@ import java.util.Map;
 
 public class AssetSourceImpl implements AssetSource
 {
-    private static final String CLASSPATH = "classpath";
-
-    private static final String CONTEXT = "context";
-
     private final StrategyRegistry<AssetFactory> registry;
 
     private final ThreadLocale threadLocale;
@@ -75,7 +72,7 @@ public class AssetSourceImpl implements AssetSource
 
     public Asset getContextAsset(String path, Locale locale)
     {
-        return getAsset(prefixToRootResource.get(CONTEXT), path, locale);
+        return getAsset(prefixToRootResource.get(AssetConstants.CONTEXT), path, locale);
     }
 
     public Asset getAsset(Resource baseResource, String path, Locale locale)
@@ -101,7 +98,7 @@ public class AssetSourceImpl implements AssetSource
 
         if (colonx < 0)
         {
-            Resource root = baseResource != null ? baseResource : prefixToRootResource.get(CLASSPATH);
+            Resource root = baseResource != null ? baseResource : prefixToRootResource.get(AssetConstants.CLASSPATH);
 
             return root.forFile(path);
         }

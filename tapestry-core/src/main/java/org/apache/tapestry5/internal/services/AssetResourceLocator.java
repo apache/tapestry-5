@@ -15,6 +15,7 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.services.assets.AssetPathConstructor;
 
 import java.io.IOException;
 
@@ -29,13 +30,25 @@ import java.io.IOException;
 public interface AssetResourceLocator
 {
     /**
-     * Analyzes the path and identifies the underying Asset Resource for that path. Handles context resources and
-     * checking for a digest.
+     * Analyzes the path and identifies the underlying Asset Resource for that path. Handles both context resources and
+     * classpath resources,
+     * as well as checking for a digest (for protected classpath resources).
      * 
      * @param path
-     *            classpath path, possibly including a checksum in the file name
-     * @return resource corresponding to path (may be for a non-existent resource), or null if path is invalid (i.e.,
+     *            path for Asset URL, as per {@link AssetPathConstructor#constructAssetPath(String, String)}
+     * @return
+     *         resource corresponding to path (may be for a non-existent resource), or null if path is invalid (i.e.,
      *         incorrect digest)
      */
-    Resource findResourceForPath(String path) throws IOException;
+    Resource findResourceForAssetPath(String path) throws IOException;
+
+    /**
+     * For a complete classpath path, returns the Resource for the path. This include checking for a
+     * digest for protected files.
+     * 
+     * @return
+     *         resource corresponding to path (may be for a non-existent resource), or null if path is invalid (i.e.,
+     *         incorrect digest)
+     */
+    Resource findClasspathResourceForPath(String path) throws IOException;
 }

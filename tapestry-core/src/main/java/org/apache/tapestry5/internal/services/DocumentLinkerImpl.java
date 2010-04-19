@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2007, 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.services.ClientDataEncoder;
 import org.apache.tapestry5.services.ClientDataSink;
+import org.apache.tapestry5.services.assets.AssetPathConstructor;
 
 import java.io.IOException;
 import java.io.ObjectOutputStream;
@@ -54,6 +55,8 @@ public class DocumentLinkerImpl implements DocumentLinker
 
     private final int contextPathLength;
 
+    private final AssetPathConstructor assetPathConstructor;
+
     /**
      * @param productionMode
      *            via symbol configuration
@@ -67,12 +70,16 @@ public class DocumentLinkerImpl implements DocumentLinker
      *            {@link org.apache.tapestry5.services.Request#getContextPath()}
      * @param clientDataEncoder
      *            used to encode data for the combined virtual asset
+     * @param assetPathConstructor
+     *            TODO
      */
     public DocumentLinkerImpl(boolean productionMode, boolean omitGeneratorMetaTag, String tapestryVersion,
-            boolean combineScripts, String contextPath, ClientDataEncoder clientDataEncoder)
+            boolean combineScripts, String contextPath, ClientDataEncoder clientDataEncoder,
+            AssetPathConstructor assetPathConstructor)
     {
         this.combineScripts = combineScripts;
         this.clientDataEncoder = clientDataEncoder;
+        this.assetPathConstructor = assetPathConstructor;
 
         developmentMode = !productionMode;
         this.omitGeneratorMetaTag = omitGeneratorMetaTag;
@@ -248,8 +255,9 @@ public class DocumentLinkerImpl implements DocumentLinker
                 stream.writeUTF(scriptURL.substring(contextPathLength));
             }
 
-            String virtualURL = fullAssetPrefix + RequestConstants.VIRTUAL_FOLDER + dataSink.getEncodedClientData()
-                    + ".js";
+            String virtualURL = assetPathConstructor.constructAssetPath(RequestConstants.VIRTUAL_FOLDER, dataSink
+                    .getEncodedClientData()
+                    + ".js");
 
             container.element("script", "type", "text/javascript", "src", virtualURL);
         }

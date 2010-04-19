@@ -114,8 +114,7 @@ public class VirtualAssetStreamerImpl implements VirtualAssetStreamer, Invalidat
         request.setAttribute(InternalConstants.SUPPRESS_COMPRESSION, true);
 
         // CSS support is problematic, because of relative URLs inside the CSS files. For the
-        // moment, only
-        // JavaScript is supported.
+        // moment, only JavaScript is supported.
 
         OutputStream output = response.getOutputStream("text/javascript");
 
@@ -221,7 +220,7 @@ public class VirtualAssetStreamerImpl implements VirtualAssetStreamer, Invalidat
 
     private void streamPath(String path, ByteArrayOutputStream output) throws IOException
     {
-        Resource resource = resourceLocator.findResourceForPath(path);
+        Resource resource = resourceLocator.findResourceForAssetPath(request.getContextPath() + path);
 
         StreamableResource streamable = resourceCache.getStreamableResource(resource);
 

@@ -51,6 +51,7 @@ import org.apache.tapestry5.corelib.data.BlankOption;
 import org.apache.tapestry5.corelib.data.GridPagerPosition;
 import org.apache.tapestry5.corelib.data.InsertPosition;
 import org.apache.tapestry5.grid.GridDataSource;
+import org.apache.tapestry5.internal.AssetConstants;
 import org.apache.tapestry5.internal.DefaultNullFieldStrategy;
 import org.apache.tapestry5.internal.DefaultValidationDecorator;
 import org.apache.tapestry5.internal.InternalConstants;
@@ -79,6 +80,7 @@ import org.apache.tapestry5.internal.services.ajax.JavascriptSupportImpl;
 import org.apache.tapestry5.internal.services.assets.AssetPathConstructorImpl;
 import org.apache.tapestry5.internal.services.assets.ClasspathAssetRequestHandler;
 import org.apache.tapestry5.internal.services.assets.ContextAssetRequestHandler;
+import org.apache.tapestry5.internal.services.assets.VirtualAssetRequestHandler;
 import org.apache.tapestry5.internal.services.messages.PropertiesFileParserImpl;
 import org.apache.tapestry5.internal.transform.*;
 import org.apache.tapestry5.internal.translator.NumericTranslator;
@@ -116,6 +118,7 @@ import org.apache.tapestry5.validator.MinLength;
 import org.apache.tapestry5.validator.Regexp;
 import org.apache.tapestry5.validator.Required;
 import org.apache.tapestry5.validator.ValidatorMacro;
+import org.apache.tools.ant.taskdefs.condition.ResourceContains;
 import org.slf4j.Logger;
 
 /**
@@ -461,7 +464,8 @@ public final class TapestryModule
     }
 
     /**
-     * Contributes an handler for each mapped classpath alias, as well as one for context assets.
+     * Contributes an handler for each mapped classpath alias, as well handlers for context assets
+     * and virtual assets (combined Javascript files).
      */
     public static void contributeAssetDispatcher(MappedConfiguration<String, AssetRequestHandler> configuration,
 
@@ -482,6 +486,8 @@ public final class TapestryModule
 
         configuration.add(RequestConstants.CONTEXT_FOLDER, new ContextAssetRequestHandler(streamer, contextAssetFactory
                 .getRootResource()));
+
+        configuration.addInstance(RequestConstants.VIRTUAL_FOLDER, VirtualAssetRequestHandler.class);
     }
 
     private static String toPackagePath(String packageName)
@@ -1688,8 +1694,8 @@ public final class TapestryModule
     @ClasspathProvider
     AssetFactory classpathAssetFactory)
     {
-        configuration.add("context", contextAssetFactory);
-        configuration.add("classpath", classpathAssetFactory);
+        configuration.add(AssetConstants.CONTEXT, contextAssetFactory);
+        configuration.add(AssetConstants.CLASSPATH, classpathAssetFactory);
     }
 
     /**
@@ -1789,9 +1795,7 @@ public final class TapestryModule
      * <dt>RootPath</dt>
      * <dd>Renders the start page for the "/" request (outdated)</dd>
      * <dt>Asset</dt>
-     * <dd>Provides access to assets</dd>
-     * <dt>VirtualAsset</dt>
-     * <dd>Provides access to combined scripts</dd>
+     * <dd>Provides access to assets (context, classpath and virtual) via {@link AssetDispatcher}</dd>
      * <dt>PageRender</dt>
      * <dd>Identifies the {@link org.apache.tapestry5.services.PageRenderRequestParameters} and forwards onto
      * {@link PageRenderRequestHandler}</dd>
@@ -1817,8 +1821,6 @@ public final class TapestryModule
         // ".html", that will confuse the later dispatchers.
 
         configuration.add("Asset", assetDispatcher, "before:ComponentEvent");
-
-        configuration.addInstance("VirtualAsset", VirtualAssetDispatcher.class, "before:Asset");
 
         configuration.addInstance("ComponentEvent", ComponentEventDispatcher.class, "before:PageRender");
 
@@ -1912,14 +1914,16 @@ public final class TapestryModule
 
     final ClientDataEncoder clientDataEncoder,
 
-    final ClientInfrastructure clientInfrastructure)
+    final ClientInfrastructure clientInfrastructure,
+
+    final AssetPathConstructor assetPathConstructor)
     {
         MarkupRendererFilter documentLinker = new MarkupRendererFilter()
         {
             public void renderMarkup(MarkupWriter writer, MarkupRenderer renderer)
             {
                 DocumentLinkerImpl linker = new DocumentLinkerImpl(productionMode, omitGeneratorMeta, tapestryVersion,
-                        combineScripts, request.getContextPath(), clientDataEncoder);
+                        combineScripts, request.getContextPath(), clientDataEncoder, assetPathConstructor);
 
                 environment.push(DocumentLinker.class, linker);
 

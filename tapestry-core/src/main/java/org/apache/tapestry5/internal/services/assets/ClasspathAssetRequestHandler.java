@@ -48,9 +48,9 @@ public class ClasspathAssetRequestHandler implements AssetRequestHandler
 
     public boolean handleAssetRequest(Request request, Response response, String extraPath) throws IOException
     {
-        String path = baseFolder + "/" + extraPath;
+        String assetPath = baseFolder + "/" + extraPath;
 
-        Resource resource = assetResourceLocator.findResourceForPath(path);
+        Resource resource = assetResourceLocator.findClasspathResourceForPath(assetPath);
 
         if (resource == null)
             return false;

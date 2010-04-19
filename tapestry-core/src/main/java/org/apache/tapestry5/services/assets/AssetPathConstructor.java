@@ -29,7 +29,15 @@ public interface AssetPathConstructor
      *            corresponds to a {@link AssetRequestHandler} contributed to the AssetDispatcher service
      * @param path
      *            within the virtual folder (should <em>not</em> start with a slash)
-     * @return path portion of asset URL
+     * @return path portion of asset URL, including the context path, the /assets/ virtual folder, the application
+     *         version number,
+     *         the virtual folder, and the path extension
      */
     String constructAssetPath(String virtualFolder, String path);
+
+    /**
+     * Returns the prefix portion of the asset URL, the portion including the context path, the /assets/ virtual folder,
+     * and the version number, and the trailing slash.
+     */
+    String getAssetPathPrefix();
 }

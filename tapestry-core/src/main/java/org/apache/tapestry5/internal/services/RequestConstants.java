@@ -42,7 +42,7 @@ public final class RequestConstants
      * 
      * @since 5.1.0.2
      */
-    public static final String VIRTUAL_FOLDER = "virtual/";
+    public static final String VIRTUAL_FOLDER = "virtual";
 
     /**
      * Name of parameter, in an Ajax update, that identifies the client-side id of the {@link Form} being extended. Used
