@@ -32,7 +32,7 @@ import org.apache.tapestry5.services.javascript.JavascriptStackSource;
 import org.apache.tapestry5.services.javascript.JavascriptSupport;
 import org.testng.annotations.Test;
 
-public class JSSIT extends InternalBaseTestCase
+public class JavascriptSupportImplTest extends InternalBaseTestCase
 {
     @Test
     public void allocate_id_from_resources()
