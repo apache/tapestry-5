@@ -204,6 +204,8 @@ public class JavascriptSupportImpl implements JavascriptSupport
         Defense.notBlank(functionName, "functionName");
         Defense.notNull(parameter, "parameter");
 
+        addCoreStackIfNeeded();
+        
         JSONObject init = inits.get(priority);
 
         if (init == null)
