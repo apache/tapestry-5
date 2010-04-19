@@ -30,11 +30,7 @@ public class CutomAppPackageIntegrationTests extends TapestryCoreTestCase
     {
        clickThru("Asset Protection Demo");
        clickAndWait("link=Show CSS");
-       assertTextPresent("//Some CSS");
-       
-       clickThru("Asset Protection Demo");
-       clickAndWait("link=Non accessible");
-       assertTextPresent("HTTP ERROR 404");
+       assertTextPresent("//Some CSS");       
     }
 
 }

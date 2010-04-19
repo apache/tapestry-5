@@ -94,17 +94,6 @@
     </classes>
   </test>
 
-  <test name="Custom App Package Tests" enabled="true">
-    <parameter name="tapestry.web-app-folder" value="src/test/app6"/>
-    
-    <packages>
-      <package name="org.apache.tapestry5.integration.app6"/>
-    </packages>
-    <classes>
-      <class name="org.apache.tapestry5.test.SeleniumLauncher"/>
-    </classes>
-  </test>
-
   <test name="Live Reload Tests" enabled="true">
     <packages>
       <package name="org.apache.tapestry5.integration.reload"/>
