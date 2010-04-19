@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,7 +14,12 @@
 
 package org.apache.tapestry5.internal.services;
 
+import org.apache.tapestry5.SymbolConstants;
+import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.util.AvailableValues;
+import org.apache.tapestry5.ioc.util.UnknownValueException;
 import org.apache.tapestry5.services.ClasspathAssetAliasManager;
 import org.apache.tapestry5.services.Request;
 
@@ -26,6 +31,8 @@ import java.util.Map;
 public class ClasspathAssetAliasManagerImpl implements ClasspathAssetAliasManager
 {
     private final Request request;
+
+    private final String assetPathPrefix;
 
     /**
      * Map from alias to path.
@@ -44,17 +51,26 @@ public class ClasspathAssetAliasManagerImpl implements ClasspathAssetAliasManage
     /**
      * Configuration is a map of aliases (short names) to complete names. Keys and values should end with a slash, but
      * one will be provided as necessary, so don't both.
+     * 
+     * @param applicationVersion
+     *            TODO
      */
     public ClasspathAssetAliasManagerImpl(Request request,
 
-                                          Map<String, String> configuration)
+    @Inject
+    @Symbol(SymbolConstants.APPLICATION_VERSION)
+    String applicationVersion,
+
+    Map<String, String> configuration)
     {
         this.request = request;
 
+        this.assetPathPrefix = RequestConstants.ASSET_PATH_PREFIX + applicationVersion + "/";
+
         for (Map.Entry<String, String> e : configuration.entrySet())
         {
-            String alias = withSlash(e.getKey());
-            String path = withSlash(e.getValue());
+            String alias = withOutSlash(e.getKey());
+            String path = withOutSlash(e.getValue());
 
             aliasToPathPrefix.put(alias, path);
             pathPrefixToAlias.put(path, alias);
@@ -76,19 +92,18 @@ public class ClasspathAssetAliasManagerImpl implements ClasspathAssetAliasManage
         Collections.sort(sortedPathPrefixes, sortDescendingByLength);
     }
 
-    private String withSlash(String input)
+    private String withOutSlash(String input)
     {
-        if (input.equals("")) return input;
+        if (input.endsWith("/"))
+            return input.substring(0, input.length() - 1);
 
-        if (input.endsWith("/")) return input;
-
-        return input + "/";
+        return input;
     }
 
     public String toClientURL(String resourcePath)
     {
         StringBuilder builder = new StringBuilder(request.getContextPath());
-        builder.append(RequestConstants.ASSET_PATH_PREFIX);
+        builder.append(assetPathPrefix);
 
         for (String pathPrefix : sortedPathPrefixes)
         {
@@ -96,29 +111,32 @@ public class ClasspathAssetAliasManagerImpl implements ClasspathAssetAliasManage
             {
                 String alias = pathPrefixToAlias.get(pathPrefix);
                 builder.append(alias);
-                builder.append(resourcePath.substring(pathPrefix.length()));
+                builder.append("/");
+                builder.append(resourcePath.substring(pathPrefix.length() + 1));
 
                 return builder.toString();
             }
         }
 
-        // No alias available as a prefix (kind of unlikely, but whatever).
+        // This is a minor misuse of the UnknownValueException but the exception reporting
+        // is too useful to pass up.
 
-        builder.append(resourcePath);
-
-        return builder.toString();
+        throw new UnknownValueException(
+                String
+                        .format(
+                                "Unable to create a client URL for classpath resource %s: The resource path was not within an aliased path.",
+                                resourcePath), new AvailableValues("aliased paths", aliasToPathPrefix.values()));
     }
 
     public String toResourcePath(String clientURL)
     {
+        // Include the slash in the base path
+
         String basePath = clientURL.substring(RequestConstants.ASSET_PATH_PREFIX.length());
 
         for (String alias : sortedAliases)
         {
-            if (basePath.startsWith(alias))
-            {
-                return aliasToPathPrefix.get(alias) + basePath.substring(alias.length());
-            }
+            if (basePath.startsWith(alias)) { return aliasToPathPrefix.get(alias) + "/" + basePath.substring(alias.length() + 1); }
         }
 
         return basePath;

@@ -119,6 +119,7 @@ public interface ComponentClassResolver
      * folder "example", then the package mapping for "example" will be <code>com.example</code>.
      * 
      * @since 5.2.0
+     * @see ClasspathAssetAliasManager
      */
     Map<String, String> getFolderToPackageMapping();
 }
