@@ -138,4 +138,28 @@ public interface JavascriptSupport
      * @see IncludeJavaScriptLibrary
      */
     void importJavascriptLibrary(Asset asset);
+
+    /**
+     * Imports a CSS stylesheet as part of the rendered page. CSS stylesheets are added in the
+     * order they are first imported; duplicate imports are ignored. However, CSS stylesheets
+     * added as part of a {@link JavascriptStack} are added before other stylesheets (in the order
+     * the stack is imported).
+     * 
+     * @param stylesheet
+     *            asset for the stylesheet
+     * @param media
+     *            media value for the stylesheet, or null to not specify a specific media type
+     */
+    void importStylesheet(Asset stylesheet, String media);
+
+    /**
+     * As with {@link #importStylesheet(Asset, String)}, but the stylesheet is represented as a URL string.
+     * 
+     * @param stylesheet
+     *            URL for the stylesheet
+     * @param media
+     *            media value for the stylesheet, or null to not specify a specific media type
+     */
+    void importStylesheet(String stylesheetURL, String media);
+
 }

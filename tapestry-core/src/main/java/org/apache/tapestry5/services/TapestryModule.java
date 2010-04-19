@@ -80,7 +80,9 @@ import org.apache.tapestry5.internal.services.ajax.JavascriptSupportImpl;
 import org.apache.tapestry5.internal.services.assets.AssetPathConstructorImpl;
 import org.apache.tapestry5.internal.services.assets.ClasspathAssetRequestHandler;
 import org.apache.tapestry5.internal.services.assets.ContextAssetRequestHandler;
-import org.apache.tapestry5.internal.services.assets.VirtualAssetRequestHandler;
+import org.apache.tapestry5.internal.services.javascript.CoreJavascriptStack;
+import org.apache.tapestry5.internal.services.javascript.JavascriptStackPathConstructor;
+import org.apache.tapestry5.internal.services.javascript.JavascriptStackSourceImpl;
 import org.apache.tapestry5.internal.services.messages.PropertiesFileParserImpl;
 import org.apache.tapestry5.internal.transform.*;
 import org.apache.tapestry5.internal.translator.NumericTranslator;
@@ -107,6 +109,8 @@ import org.apache.tapestry5.runtime.RenderQueue;
 import org.apache.tapestry5.services.ajax.MultiZoneUpdateEventResultProcessor;
 import org.apache.tapestry5.services.assets.AssetPathConstructor;
 import org.apache.tapestry5.services.assets.AssetRequestHandler;
+import org.apache.tapestry5.services.javascript.JavascriptStack;
+import org.apache.tapestry5.services.javascript.JavascriptStackSource;
 import org.apache.tapestry5.services.javascript.JavascriptSupport;
 import org.apache.tapestry5.services.messages.PropertiesFileParser;
 import org.apache.tapestry5.util.StringToEnumCoercion;
@@ -118,7 +122,6 @@ import org.apache.tapestry5.validator.MinLength;
 import org.apache.tapestry5.validator.Regexp;
 import org.apache.tapestry5.validator.Required;
 import org.apache.tapestry5.validator.ValidatorMacro;
-import org.apache.tools.ant.taskdefs.condition.ResourceContains;
 import org.slf4j.Logger;
 
 /**
@@ -365,6 +368,7 @@ public final class TapestryModule
         binder.bind(PageActivator.class, PageActivatorImpl.class);
         binder.bind(Dispatcher.class, AssetDispatcher.class).withId("AssetDispatcher");
         binder.bind(AssetPathConstructor.class, AssetPathConstructorImpl.class);
+        binder.bind(JavascriptStackSource.class, JavascriptStackSourceImpl.class);
     }
 
     // ========================================================================
@@ -465,7 +469,7 @@ public final class TapestryModule
 
     /**
      * Contributes an handler for each mapped classpath alias, as well handlers for context assets
-     * and virtual assets (combined Javascript files).
+     * and stack assets (combined {@link JavascriptStack} files).
      */
     public static void contributeAssetDispatcher(MappedConfiguration<String, AssetRequestHandler> configuration,
 
@@ -486,8 +490,6 @@ public final class TapestryModule
 
         configuration.add(RequestConstants.CONTEXT_FOLDER, new ContextAssetRequestHandler(streamer, contextAssetFactory
                 .getRootResource()));
-
-        configuration.addInstance(RequestConstants.VIRTUAL_FOLDER, VirtualAssetRequestHandler.class);
     }
 
     private static String toPackagePath(String packageName)
@@ -1892,9 +1894,6 @@ public final class TapestryModule
      */
     public void contributeMarkupRenderer(OrderedConfiguration<MarkupRendererFilter> configuration,
 
-    @Symbol(SymbolConstants.PRODUCTION_MODE)
-    final boolean productionMode,
-
     @Path("${tapestry.spacer-image}")
     final Asset spacerImage,
 
@@ -1905,25 +1904,22 @@ public final class TapestryModule
     @Symbol(SymbolConstants.TAPESTRY_VERSION)
     final String tapestryVersion,
 
-    @Symbol(SymbolConstants.COMBINE_SCRIPTS)
-    final boolean combineScripts,
-
     final SymbolSource symbolSource,
 
     final AssetSource assetSource,
 
-    final ClientDataEncoder clientDataEncoder,
+    final JavascriptStackSource javascriptStackSource,
 
-    final ClientInfrastructure clientInfrastructure,
+    final JavascriptStackPathConstructor javascriptStackPathConstructor,
 
-    final AssetPathConstructor assetPathConstructor)
+    @Path("${tapestry.default-stylesheet}")
+    final Asset defaultStylesheet)
     {
         MarkupRendererFilter documentLinker = new MarkupRendererFilter()
         {
             public void renderMarkup(MarkupWriter writer, MarkupRenderer renderer)
             {
-                DocumentLinkerImpl linker = new DocumentLinkerImpl(productionMode, omitGeneratorMeta, tapestryVersion,
-                        combineScripts, request.getContextPath(), clientDataEncoder, assetPathConstructor);
+                DocumentLinkerImpl linker = new DocumentLinkerImpl(omitGeneratorMeta, tapestryVersion);
 
                 environment.push(DocumentLinker.class, linker);
 
@@ -1941,7 +1937,8 @@ public final class TapestryModule
             {
                 DocumentLinker linker = environment.peekRequired(DocumentLinker.class);
 
-                JavascriptSupportImpl support = new JavascriptSupportImpl(linker, clientInfrastructure);
+                JavascriptSupportImpl support = new JavascriptSupportImpl(linker, javascriptStackSource,
+                        javascriptStackPathConstructor);
 
                 environment.push(JavascriptSupport.class, support);
 
@@ -1957,10 +1954,9 @@ public final class TapestryModule
         {
             public void renderMarkup(MarkupWriter writer, MarkupRenderer renderer)
             {
-                DocumentLinker linker = environment.peekRequired(DocumentLinker.class);
+                JavascriptSupport javascriptSupport = environment.peekRequired(JavascriptSupport.class);
 
-                RenderSupportImpl support = new RenderSupportImpl(linker, symbolSource, assetSource, environment
-                        .peekRequired(JavascriptSupport.class));
+                RenderSupportImpl support = new RenderSupportImpl(symbolSource, assetSource, javascriptSupport);
 
                 environment.push(RenderSupport.class, support);
 
@@ -1976,12 +1972,9 @@ public final class TapestryModule
         {
             public void renderMarkup(MarkupWriter writer, MarkupRenderer renderer)
             {
-                RenderSupport renderSupport = environment.peek(RenderSupport.class);
+                DocumentLinker linker = environment.peekRequired(DocumentLinker.class);
 
-                for (Asset stylesheet : clientInfrastructure.getStylesheetStack())
-                {
-                    renderSupport.addStylesheetLink(stylesheet, null);
-                }
+                linker.addStylesheetLink(defaultStylesheet.toClientURL(), null);
 
                 renderer.renderMarkup(writer);
             }
@@ -2071,6 +2064,10 @@ public final class TapestryModule
     @Path("${tapestry.spacer-image}")
     final Asset spacerImage,
 
+    final JavascriptStackSource javascriptStackSource,
+
+    final JavascriptStackPathConstructor javascriptStackPathConstructor,
+
     final SymbolSource symbolSource,
 
     final AssetSource assetSource)
@@ -2103,8 +2100,8 @@ public final class TapestryModule
 
                 DocumentLinker linker = environment.peekRequired(DocumentLinker.class);
 
-                JavascriptSupportImpl support = new JavascriptSupportImpl(linker, new EmptyClientInfrastructure(),
-                        idAllocator, true);
+                JavascriptSupportImpl support = new JavascriptSupportImpl(linker, javascriptStackSource,
+                        javascriptStackPathConstructor, idAllocator, true);
 
                 environment.push(JavascriptSupport.class, support);
 
@@ -2120,10 +2117,9 @@ public final class TapestryModule
         {
             public void renderMarkup(MarkupWriter writer, JSONObject reply, PartialMarkupRenderer renderer)
             {
-                DocumentLinker linker = environment.peekRequired(DocumentLinker.class);
                 JavascriptSupport javascriptSupport = environment.peekRequired(JavascriptSupport.class);
 
-                RenderSupportImpl support = new RenderSupportImpl(linker, symbolSource, assetSource, javascriptSupport);
+                RenderSupportImpl support = new RenderSupportImpl(symbolSource, assetSource, javascriptSupport);
 
                 environment.push(RenderSupport.class, support);
 
@@ -2419,8 +2415,6 @@ public final class TapestryModule
         configuration.add(SymbolConstants.ENCODE_LOCALE_INTO_PATH, "true");
 
         configuration.add(SymbolConstants.BLACKBIRD_ENABLED, "false");
-
-        configuration.add(SymbolConstants.CONTEXT_ASSETS_AVAILABLE, "true");
     }
 
     /**
@@ -2633,7 +2627,7 @@ public final class TapestryModule
     }
 
     /**
-     * The master Sessi`onPesistedObjectAnalyzer.
+     * The master SessionPesistedObjectAnalyzer.
      * 
      * @since 5.1.0.0
      */
@@ -2646,7 +2640,8 @@ public final class TapestryModule
 
     /**
      * Identifies String, Number and Boolean as immutable objects, a catch-all
-     * handler for Object (that understands {@link org.apache.tapestry5.annotations.ImmutableSessionPersistedObject},
+     * handler for Object (that understands
+     * the {@link org.apache.tapestry5.annotations.ImmutableSessionPersistedObject} annotation),
      * and handlers for {@link org.apache.tapestry5.OptimizedSessionPersistedObject} and
      * {@link org.apache.tapestry5.OptimizedApplicationStateObject}.
      * 
@@ -2674,7 +2669,7 @@ public final class TapestryModule
     }
 
     /**
-     * Contibutions are content types that do not benefit from compression. Adds
+     * Contributions are content types that do not benefit from compression. Adds
      * the following content types:
      * <ul>
      * <li>image/jpeg</li>
@@ -2826,12 +2821,22 @@ public final class TapestryModule
     }
 
     /**
-     * Exposes the Environmental {@link Heartbeat} as an injective service.
+     * Exposes the Environmental {@link Heartbeat} as an injectable service.
      * 
      * @since 5.2.0
      */
     public Heartbeat buildHeartbeat()
     {
         return environmentalBuilder.build(Heartbeat.class);
+    }
+
+    /**
+     * Contributes the "core" {@link JavascriptStack}.
+     * 
+     * @since 5.2.0
+     */
+    public static void contributeJavascriptStackSource(MappedConfiguration<String, JavascriptStack> configuration)
+    {
+        configuration.addInstance(InternalConstants.CORE_STACK_NAME, CoreJavascriptStack.class);
     }
 }

@@ -14,19 +14,14 @@
 
 package org.apache.tapestry5.internal.services;
 
+import java.util.List;
+
 import org.apache.tapestry5.dom.Document;
 import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.dom.Node;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.services.ClientDataEncoder;
-import org.apache.tapestry5.services.ClientDataSink;
-import org.apache.tapestry5.services.assets.AssetPathConstructor;
-
-import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.util.List;
-import java.util.Set;
+import org.apache.tapestry5.ioc.internal.util.Func;
+import org.apache.tapestry5.ioc.internal.util.Operation;
 
 public class DocumentLinkerImpl implements DocumentLinker
 {
@@ -34,84 +29,33 @@ public class DocumentLinkerImpl implements DocumentLinker
 
     private final StringBuilder scriptBlock = new StringBuilder();
 
-    private final Set<String> stylesheets = CollectionFactory.newSet();
-
     private final List<IncludedStylesheet> includedStylesheets = CollectionFactory.newList();
-
-    private final boolean developmentMode;
 
     private final boolean omitGeneratorMetaTag;
 
     private final String tapestryBanner;
 
-    private final ClientDataEncoder clientDataEncoder;
-
-    private boolean combineScripts;
-
     /**
-     * Full asset path prefix, including the request context path.
-     */
-    private final String fullAssetPrefix;
-
-    private final int contextPathLength;
-
-    private final AssetPathConstructor assetPathConstructor;
-
-    /**
-     * @param productionMode
-     *            via symbol configuration
      * @param omitGeneratorMetaTag
      *            via symbol configuration
      * @param tapestryVersion
      *            version of Tapestry framework (for meta tag)
-     * @param combineScripts
-     *            if true, individual JavaScript assets will be combined into a single virtual asset
-     * @param contextPath
-     *            {@link org.apache.tapestry5.services.Request#getContextPath()}
-     * @param clientDataEncoder
-     *            used to encode data for the combined virtual asset
-     * @param assetPathConstructor
-     *            TODO
      */
-    public DocumentLinkerImpl(boolean productionMode, boolean omitGeneratorMetaTag, String tapestryVersion,
-            boolean combineScripts, String contextPath, ClientDataEncoder clientDataEncoder,
-            AssetPathConstructor assetPathConstructor)
+    public DocumentLinkerImpl(boolean omitGeneratorMetaTag, String tapestryVersion)
     {
-        this.combineScripts = combineScripts;
-        this.clientDataEncoder = clientDataEncoder;
-        this.assetPathConstructor = assetPathConstructor;
-
-        developmentMode = !productionMode;
         this.omitGeneratorMetaTag = omitGeneratorMetaTag;
 
         tapestryBanner = String.format("Apache Tapestry Framework (version %s)", tapestryVersion);
-
-        fullAssetPrefix = contextPath + RequestConstants.ASSET_PATH_PREFIX;
-
-        contextPathLength = contextPath.length();
     }
 
     public void addStylesheetLink(String styleURL, String media)
     {
-        if (stylesheets.contains(styleURL))
-            return;
-
         includedStylesheets.add(new IncludedStylesheet(styleURL, media));
-
-        stylesheets.add(styleURL);
     }
 
     public void addScriptLink(String scriptURL)
     {
-        if (scripts.contains(scriptURL))
-            return;
-
         scripts.add(scriptURL);
-
-        // If a script with an external URL is added, we can't combine the scripts after all.
-
-        if (combineScripts && !scriptURL.startsWith(fullAssetPrefix))
-            combineScripts = false;
     }
 
     public void addScript(String script)
@@ -134,7 +78,6 @@ public class DocumentLinkerImpl implements DocumentLinker
         if (root == null)
             return;
 
-        if (!stylesheets.isEmpty())
             addStylesheetsToHead(root, includedStylesheets);
 
         // only add the generator meta only to html documents
@@ -193,17 +136,12 @@ public class DocumentLinkerImpl implements DocumentLinker
      */
     protected void addDynamicScriptBlock(Element body)
     {
-        boolean blockNeeded = (developmentMode && !scripts.isEmpty()) || scriptBlock.length() > 0;
+        if (scriptBlock.length() == 0)
+            return;
 
-        if (blockNeeded)
-        {
-            Element e = body.element("script", "type", "text/javascript");
+        Element e = body.element("script", "type", "text/javascript");
 
-            if (developmentMode)
-                e.raw("Tapestry.DEBUG_ENABLED = true;\n");
-
-            e.raw(scriptBlock.toString());
-        }
+        e.raw(scriptBlock.toString());
     }
 
     /**
@@ -218,53 +156,20 @@ public class DocumentLinkerImpl implements DocumentLinker
     {
         Element existing = findExistingElement(container, "script");
 
-        Element scriptContainer = container.element("script-container");
+        final Element scriptContainer = container.element("script-container");
 
-        if (combineScripts)
+        Func.each(scripts, new Operation<String>()
         {
-            addCombinedScriptLink(scriptContainer, scripts);
-        }
-        else
-        {
-            for (String scriptURL : scripts)
+            public void op(String scriptURL)
+            {
                 scriptContainer.element("script", "type", "text/javascript", "src", scriptURL);
-        }
+            }
+        });
 
         if (existing != null)
             scriptContainer.moveBefore(existing);
 
         scriptContainer.pop();
-    }
-
-    private void addCombinedScriptLink(Element container, List<String> scripts)
-    {
-        try
-        {
-            ClientDataSink dataSink = clientDataEncoder.createSink();
-
-            ObjectOutputStream stream = dataSink.getObjectOutputStream();
-
-            stream.writeInt(scripts.size());
-
-            for (String scriptURL : scripts)
-            {
-                // Each scriptURL will be prefixed with the context path, which isn't needed to build the combined
-                // virtual
-                // asset (in fact, it gets in the way).
-
-                stream.writeUTF(scriptURL.substring(contextPathLength));
-            }
-
-            String virtualURL = assetPathConstructor.constructAssetPath(RequestConstants.VIRTUAL_FOLDER, dataSink
-                    .getEncodedClientData()
-                    + ".js");
-
-            container.element("script", "type", "text/javascript", "src", virtualURL);
-        }
-        catch (IOException ex)
-        {
-            throw new RuntimeException(ex);
-        }
     }
 
     /**

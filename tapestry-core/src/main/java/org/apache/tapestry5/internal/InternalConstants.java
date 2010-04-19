@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,6 +16,7 @@ package org.apache.tapestry5.internal;
 
 import org.apache.tapestry5.internal.structure.PageResetListener;
 import org.apache.tapestry5.ioc.util.TimeInterval;
+import org.apache.tapestry5.services.javascript.JavascriptStack;
 
 public final class InternalConstants
 {
@@ -32,8 +33,7 @@ public final class InternalConstants
     public static final String DISABLE_DEFAULT_MODULES_PARAM = "tapestry.disable-default-modules";
 
     /**
-     * The extension used for Tapestry component template files, <em>T</em>apestry <em>M</em>arkup
-     * <em>L</em>anguage.
+     * The extension used for Tapestry component template files, <em>T</em>apestry <em>M</em>arkup <em>L</em>anguage.
      * Template files are well-formed XML files.
      */
     public static final String TEMPLATE_EXTENSION = "tml";
@@ -62,8 +62,8 @@ public final class InternalConstants
      * Name of query parameter that is placed on "loopback" links (page render links for the same
      * page). This mostly includes the redirects sent after a component event request. Page render
      * requests
-     * that do <em>not</em> have the LOOPBACK query parameter will trigger a
-     * {@linkplain PageResetListener reset notification} after the initialization event; the
+     * that do <em>not</em> have the LOOPBACK query parameter will trigger a {@linkplain PageResetListener reset
+     * notification} after the initialization event; the
      * LOOPBACK
      * prevents this reset notification.
      * 
@@ -93,18 +93,15 @@ public final class InternalConstants
     /**
      * Request attribute that stores a {@link org.apache.tapestry5.internal.structure.Page} instance
      * that will be
-     * rendered as the
-     * {@linkplain org.apache.tapestry5.SymbolConstants#SUPPRESS_REDIRECT_FROM_ACTION_REQUESTS
+     * rendered as the {@linkplain org.apache.tapestry5.SymbolConstants#SUPPRESS_REDIRECT_FROM_ACTION_REQUESTS
      * immediate
      * mode response}.
      */
     public static final String IMMEDIATE_RESPONSE_PAGE_ATTRIBUTE = "tapestry.immediate-response-page";
 
     /**
-     * Request attribute that forces
-     * {@link org.apache.tapestry5.internal.services.RequestPathOptimizer} to use not
-     * optimize URLs (this is necessitated by
-     * {@link org.apache.tapestry5.services.PageDocumentGenerator}). Any non-null
+     * Request attribute that forces {@link org.apache.tapestry5.internal.services.RequestPathOptimizer} to use not
+     * optimize URLs (this is necessitated by {@link org.apache.tapestry5.services.PageDocumentGenerator}). Any non-null
      * value will force the URLs to be non-optimized.
      */
     public static final String GENERATING_RENDERED_PAGE = "tapestry.generating-rendered-page";
@@ -149,6 +146,13 @@ public final class InternalConstants
      */
     public static final String INHERIT_BINDING_PREFIX = "inherit:";
     public static final long TEN_YEARS = new TimeInterval("10y").milliseconds();
-        
+
     public static final String[] EMPTY_STRING_ARRAY = new String[0];
+
+    /**
+     * Name of the core {@link JavascriptStack}.
+     * 
+     * @since 5.2.0
+     */
+    public static final String CORE_STACK_NAME = "core";
 }

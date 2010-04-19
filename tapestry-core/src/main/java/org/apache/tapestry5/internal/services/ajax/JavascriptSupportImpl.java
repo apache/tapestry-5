@@ -14,62 +14,131 @@
 
 package org.apache.tapestry5.internal.services.ajax;
 
+import java.util.List;
 import java.util.Map;
 
 import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.internal.services.DocumentLinker;
+import org.apache.tapestry5.internal.services.javascript.JavascriptStackPathConstructor;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.Defense;
+import org.apache.tapestry5.ioc.internal.util.Func;
 import org.apache.tapestry5.ioc.internal.util.IdAllocator;
+import org.apache.tapestry5.ioc.internal.util.Operation;
+import org.apache.tapestry5.ioc.services.Coercion;
 import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
-import org.apache.tapestry5.services.ClientInfrastructure;
 import org.apache.tapestry5.services.javascript.InitializationPriority;
+import org.apache.tapestry5.services.javascript.JavascriptStack;
+import org.apache.tapestry5.services.javascript.JavascriptStackSource;
 import org.apache.tapestry5.services.javascript.JavascriptSupport;
 
 public class JavascriptSupportImpl implements JavascriptSupport
 {
+    private class Stylesheet
+    {
+        final String path;
+
+        final String media;
+
+        public Stylesheet(String path, String media)
+        {
+            this.path = path;
+            this.media = media;
+        }
+    }
+
     private final IdAllocator idAllocator;
 
     private final DocumentLinker linker;
 
-    private final ClientInfrastructure clientInfrastructure;
-
     private final boolean partialMode;
 
-    private boolean stackAssetsAdded;;
+    // Using a Map as a case-insensitive set of stack names.
+
+    private final Map<String, Boolean> addedStacks = CollectionFactory.newCaseInsensitiveMap();
+
+    private final List<String> stackLibraries = CollectionFactory.newList();
+
+    private final List<String> otherLibraries = CollectionFactory.newList();
+
+    private final List<String> stackStylesheets = CollectionFactory.newList();
+
+    private final List<Stylesheet> otherStylesheets = CollectionFactory.newList();
 
     private final Map<InitializationPriority, StringBuilder> scripts = CollectionFactory.newMap();
 
     private final Map<InitializationPriority, JSONObject> inits = CollectionFactory.newMap();
 
-    public JavascriptSupportImpl(DocumentLinker linker, ClientInfrastructure clientInfrastructure)
+    private final JavascriptStackSource javascriptStackSource;
+
+    private final JavascriptStackPathConstructor stackPathConstructor;
+
+    private static final Coercion<Asset, String> toPath = new Coercion<Asset, String>()
     {
-        this(linker, clientInfrastructure, new IdAllocator(), false);
+        public String coerce(Asset input)
+        {
+            return input.toClientURL();
+        }
+    };
+
+    public JavascriptSupportImpl(DocumentLinker linker, JavascriptStackSource javascriptStackSource,
+            JavascriptStackPathConstructor stackPathConstructor)
+    {
+        this(linker, javascriptStackSource, stackPathConstructor, new IdAllocator(), false);
     }
 
-    public JavascriptSupportImpl(DocumentLinker linker, ClientInfrastructure clientInfrastructure,
-            IdAllocator idAllocator, boolean partialMode)
+    public JavascriptSupportImpl(DocumentLinker linker, JavascriptStackSource javascriptStackSource,
+            JavascriptStackPathConstructor stackPathConstructor, IdAllocator idAllocator, boolean partialMode)
     {
         this.linker = linker;
-        this.clientInfrastructure = clientInfrastructure;
         this.idAllocator = idAllocator;
+        this.javascriptStackSource = javascriptStackSource;
         this.partialMode = partialMode;
+        this.stackPathConstructor = stackPathConstructor;
 
         // In partial mode, assume that the infrastructure stack is already present
         // (from the original page render).
-        stackAssetsAdded = partialMode;
+
+        if (partialMode)
+            addedStacks.put(InternalConstants.CORE_STACK_NAME, true);
     }
 
     public void commit()
     {
+        Func.each(stackStylesheets, new Operation<String>()
+        {
+            public void op(String value)
+            {
+                linker.addStylesheetLink(value, null);
+            }
+        });
+
+        Func.each(otherStylesheets, new Operation<Stylesheet>()
+        {
+            public void op(Stylesheet value)
+            {
+                linker.addStylesheetLink(value.path, value.media);
+            }
+        });
+
+        Operation<String> linkLibrary = new Operation<String>()
+        {
+            public void op(String value)
+            {
+                linker.addScriptLink(value);
+            }
+        };
+
+        Func.each(stackLibraries, linkLibrary);
+        Func.each(otherLibraries, linkLibrary);
+
         convertInitsToScriptBlocks();
 
         if (scripts.isEmpty())
             return;
-
-        addStack();
 
         String masterBlock = assembleMasterScriptBlock();
 
@@ -168,9 +237,18 @@ public class JavascriptSupportImpl implements JavascriptSupport
 
     public void addScript(InitializationPriority priority, String format, Object... arguments)
     {
+        addCoreStackIfNeeded();
+
         Defense.notNull(priority, "priority");
         Defense.notBlank(format, "format");
 
+        String newScript = arguments.length == 0 ? format : String.format(format, arguments);
+
+        appendScript(priority, newScript);
+    }
+
+    private void appendScript(InitializationPriority priority, String newScript)
+    {
         StringBuilder script = scripts.get(priority);
 
         if (script == null)
@@ -179,11 +257,7 @@ public class JavascriptSupportImpl implements JavascriptSupport
             scripts.put(priority, script);
         }
 
-        if (arguments.length == 0)
-            script.append(format);
-        else
-            script.append(String.format(format, arguments));
-
+        script.append(newScript);
         script.append("\n");
     }
 
@@ -206,21 +280,57 @@ public class JavascriptSupportImpl implements JavascriptSupport
     {
         Defense.notNull(asset, "asset");
 
-        addStack();
+        addCoreStackIfNeeded();
 
-        linker.addScriptLink(asset.toClientURL());
+        String path = asset.toClientURL();
+
+        if (otherLibraries.contains(path))
+            return;
+
+        otherLibraries.add(path);
     }
 
-    private void addStack()
+    private void addCoreStackIfNeeded()
     {
-        if (!stackAssetsAdded)
-        {
-            for (Asset script : clientInfrastructure.getJavascriptStack())
-            {
-                linker.addScriptLink(script.toClientURL());
-            }
-
-            stackAssetsAdded = true;
-        }
+        addAssetsFromStack(InternalConstants.CORE_STACK_NAME);
     }
+
+    private void addAssetsFromStack(String stackName)
+    {
+        if (addedStacks.containsKey(stackName))
+            return;
+
+        JavascriptStack stack = javascriptStackSource.getStack(stackName);
+
+        stackLibraries.addAll(stackPathConstructor.constructPathsForJavascriptStack(stackName));
+
+        List<String> stylesheetPaths = Func.map(stack.getStylesheets(), toPath);
+
+        stackStylesheets.addAll(stylesheetPaths);
+
+        String initialization = stack.getInitialization();
+
+        if (initialization != null)
+            appendScript(InitializationPriority.IMMEDIATE, initialization);
+
+        addedStacks.put(stackName, true);
+    }
+
+    public void importStylesheet(Asset stylesheet, String media)
+    {
+        Defense.notNull(stylesheet, "stylesheet");
+
+        importStylesheet(stylesheet.toClientURL(), media);
+    }
+
+    public void importStylesheet(String stylesheetURL, String media)
+    {
+        Defense.notBlank(stylesheetURL, "stylesheetURL");
+
+        if (otherStylesheets.contains(stylesheetURL))
+            return;
+
+        otherStylesheets.add(new Stylesheet(stylesheetURL, media));
+    }
+
 }

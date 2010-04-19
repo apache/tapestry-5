@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,6 +18,7 @@ import javax.servlet.http.Cookie;
 
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.internal.pageload.PageLoaderImpl;
+import org.apache.tapestry5.internal.services.javascript.JavascriptStackPathConstructor;
 import org.apache.tapestry5.internal.structure.ComponentPageElementResourcesSource;
 import org.apache.tapestry5.internal.structure.ComponentPageElementResourcesSourceImpl;
 import org.apache.tapestry5.ioc.ObjectLocator;
@@ -33,19 +34,7 @@ import org.apache.tapestry5.ioc.services.ClassFactory;
 import org.apache.tapestry5.ioc.services.ClasspathURLConverter;
 import org.apache.tapestry5.ioc.services.PerthreadManager;
 import org.apache.tapestry5.ioc.services.PropertyShadowBuilder;
-import org.apache.tapestry5.services.AssetFactory;
-import org.apache.tapestry5.services.ComponentClassResolver;
-import org.apache.tapestry5.services.ComponentClasses;
-import org.apache.tapestry5.services.ComponentLayer;
-import org.apache.tapestry5.services.ComponentMessages;
-import org.apache.tapestry5.services.ComponentTemplates;
-import org.apache.tapestry5.services.ContextProvider;
-import org.apache.tapestry5.services.Core;
-import org.apache.tapestry5.services.InvalidationEventHub;
-import org.apache.tapestry5.services.LocalizationSetter;
-import org.apache.tapestry5.services.RequestGlobals;
-import org.apache.tapestry5.services.ResponseCompressionAnalyzer;
-import org.apache.tapestry5.services.UpdateListenerHub;
+import org.apache.tapestry5.services.*;
 import org.slf4j.Logger;
 
 /**
@@ -61,17 +50,15 @@ public class InternalModule
 
     private final InvalidationEventHub classesInvalidationEventHub;
 
-    public InternalModule(UpdateListenerHub updateListenerHub,
-                          RequestGlobals requestGlobals,
+    public InternalModule(UpdateListenerHub updateListenerHub, RequestGlobals requestGlobals,
 
-                          @ComponentClasses
-                          InvalidationEventHub classesInvalidationEventHub)
+    @ComponentClasses
+    InvalidationEventHub classesInvalidationEventHub)
     {
         this.updateListenerHub = updateListenerHub;
         this.requestGlobals = requestGlobals;
         this.classesInvalidationEventHub = classesInvalidationEventHub;
     }
-
 
     /**
      * Bind all the private/internal services of Tapestry.
@@ -98,13 +85,7 @@ public class InternalModule
         binder.bind(ResponseCompressionAnalyzer.class, ResponseCompressionAnalyzerImpl.class);
         binder.bind(ComponentModelSource.class);
         binder.bind(AssetResourceLocator.class);
-    }
-
-    public static VirtualAssetStreamer buildVirtualAssetStreamer(@Autobuild VirtualAssetStreamerImpl service, ResourceCache cache)
-    {
-        cache.addInvalidationListener(service);
-
-        return service;
+        binder.bind(JavascriptStackPathConstructor.class);
     }
 
     /**
@@ -112,50 +93,52 @@ public class InternalModule
      */
     public static ActionRenderResponseGenerator buildActionRenderResponseGenerator(
 
-            @Symbol(SymbolConstants.SUPPRESS_REDIRECT_FROM_ACTION_REQUESTS)
-            boolean immediateMode,
+    @Symbol(SymbolConstants.SUPPRESS_REDIRECT_FROM_ACTION_REQUESTS)
+    boolean immediateMode,
 
-            ObjectLocator locator)
+    ObjectLocator locator)
     {
-        if (immediateMode) return locator.autobuild(ImmediateActionRenderResponseGenerator.class);
+        if (immediateMode)
+            return locator.autobuild(ImmediateActionRenderResponseGenerator.class);
 
         return locator.autobuild(ActionRenderResponseGeneratorImpl.class);
     }
 
-
     @Scope(ScopeConstants.PERTHREAD)
-    public static RequestPageCache buildRequestPageCache(@Autobuild RequestPageCacheImpl service,
-                                                         PerthreadManager perthreadManager)
+    public static RequestPageCache buildRequestPageCache(@Autobuild
+    RequestPageCacheImpl service, PerthreadManager perthreadManager)
     {
         perthreadManager.addThreadCleanupListener(service);
 
         return service;
     }
 
-    public static PageTemplateLocator buildPageTemplateLocator(@ContextProvider AssetFactory contextAssetFactory,
+    public static PageTemplateLocator buildPageTemplateLocator(@ContextProvider
+    AssetFactory contextAssetFactory,
 
-                                                               ComponentClassResolver componentClassResolver)
+    ComponentClassResolver componentClassResolver)
     {
         return new PageTemplateLocatorImpl(contextAssetFactory.getRootResource(), componentClassResolver);
     }
 
-
-    public ComponentMessagesSource buildComponentMessagesSource(@Autobuild ComponentMessagesSourceImpl service)
+    public ComponentMessagesSource buildComponentMessagesSource(@Autobuild
+    ComponentMessagesSourceImpl service)
     {
         updateListenerHub.addUpdateListener(service);
 
         return service;
     }
 
-    public ComponentInstantiatorSource buildComponentInstantiatorSource(@Builtin ClassFactory classFactory,
+    public ComponentInstantiatorSource buildComponentInstantiatorSource(@Builtin
+    ClassFactory classFactory,
 
-                                                                        ComponentClassTransformer transformer,
+    ComponentClassTransformer transformer,
 
-                                                                        Logger logger,
+    Logger logger,
 
-                                                                        InternalRequestGlobals internalRequestGlobals,
+    InternalRequestGlobals internalRequestGlobals,
 
-                                                                        ClasspathURLConverter classpathURLConverter)
+    ClasspathURLConverter classpathURLConverter)
     {
         ComponentInstantiatorSourceImpl source = new ComponentInstantiatorSourceImpl(logger, classFactory
                 .getClassLoader(), transformer, internalRequestGlobals, classpathURLConverter);
@@ -165,21 +148,23 @@ public class InternalModule
         return source;
     }
 
-    public static ComponentClassTransformer buildComponentClassTransformer(
-            @Autobuild ComponentClassTransformerImpl transformer, @ComponentClasses InvalidationEventHub hub)
+    public static ComponentClassTransformer buildComponentClassTransformer(@Autobuild
+    ComponentClassTransformerImpl transformer, @ComponentClasses
+    InvalidationEventHub hub)
     {
         hub.addInvalidationListener(transformer);
 
         return transformer;
     }
 
-    public PageLoader buildPageLoader(@Autobuild PageLoaderImpl service,
+    public PageLoader buildPageLoader(@Autobuild
+    PageLoaderImpl service,
 
-                                      @ComponentTemplates
-                                      InvalidationEventHub templatesHub,
+    @ComponentTemplates
+    InvalidationEventHub templatesHub,
 
-                                      @ComponentMessages
-                                      InvalidationEventHub messagesHub)
+    @ComponentMessages
+    InvalidationEventHub messagesHub)
     {
         // TODO: We could combine these three using chain-of-command.
 
@@ -190,14 +175,14 @@ public class InternalModule
         return service;
     }
 
+    public PagePool buildPagePool(@Autobuild
+    PagePoolImpl service,
 
-    public PagePool buildPagePool(@Autobuild PagePoolImpl service,
+    @ComponentTemplates
+    InvalidationEventHub templatesHub,
 
-                                  @ComponentTemplates
-                                  InvalidationEventHub templatesHub,
-
-                                  @ComponentMessages
-                                  InvalidationEventHub messagesHub)
+    @ComponentMessages
+    InvalidationEventHub messagesHub)
     {
         // This covers invalidations due to changes to classes
 
@@ -218,7 +203,8 @@ public class InternalModule
         return service;
     }
 
-    public ComponentClassCache buildComponentClassCache(@Autobuild ComponentClassCacheImpl service)
+    public ComponentClassCache buildComponentClassCache(@Autobuild
+    ComponentClassCacheImpl service)
     {
         classesInvalidationEventHub.addInvalidationListener(service);
 
@@ -237,7 +223,6 @@ public class InternalModule
         };
     }
 
-
     public CookieSink buildCookieSink()
     {
         return new CookieSink()
@@ -250,17 +235,16 @@ public class InternalModule
         };
     }
 
-    public ResourceCache buildResourceCache(@Autobuild ResourceCacheImpl service)
+    public ResourceCache buildResourceCache(@Autobuild
+    ResourceCacheImpl service)
     {
         updateListenerHub.addUpdateListener(service);
 
         return service;
     }
 
-
-    public ComponentTemplateSource buildComponentTemplateSource(TemplateParser parser,
-                                                                PageTemplateLocator locator,
-                                                                ClasspathURLConverter classpathURLConverter)
+    public ComponentTemplateSource buildComponentTemplateSource(TemplateParser parser, PageTemplateLocator locator,
+            ClasspathURLConverter classpathURLConverter)
     {
         ComponentTemplateSourceImpl service = new ComponentTemplateSourceImpl(parser, locator, classpathURLConverter);
 
@@ -271,13 +255,13 @@ public class InternalModule
 
     @Marker(ComponentLayer.class)
     public static CtClassSource buildCtClassSource(PropertyShadowBuilder builder,
-                                                   ComponentInstantiatorSource componentInstantiatorSource)
+            ComponentInstantiatorSource componentInstantiatorSource)
     {
         return builder.build(componentInstantiatorSource, "classSource", CtClassSource.class);
     }
 
-    public PageActivationContextCollector buildPageActivationContextCollector(
-            @Autobuild PageActivationContextCollectorImpl service)
+    public PageActivationContextCollector buildPageActivationContextCollector(@Autobuild
+    PageActivationContextCollectorImpl service)
     {
         classesInvalidationEventHub.addInvalidationListener(service);
 
@@ -287,7 +271,8 @@ public class InternalModule
     /**
      * @since 5.1.0.0
      */
-    public StringInterner buildStringInterner(@Autobuild StringInternerImpl service)
+    public StringInterner buildStringInterner(@Autobuild
+    StringInternerImpl service)
     {
         classesInvalidationEventHub.addInvalidationListener(service);
 

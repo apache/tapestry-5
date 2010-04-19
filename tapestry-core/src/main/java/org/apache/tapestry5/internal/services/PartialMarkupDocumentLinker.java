@@ -14,9 +14,6 @@
 
 package org.apache.tapestry5.internal.services;
 
-import java.util.Set;
-
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
 
@@ -28,23 +25,13 @@ public class PartialMarkupDocumentLinker implements DocumentLinker
 
     private final JSONArray stylesheets = new JSONArray();
 
-    private final Set<String> uniquer = CollectionFactory.newSet();
-
     public void addScriptLink(String scriptURL)
     {
-        if (uniquer.contains(scriptURL))
-            return;
-
         scripts.put(scriptURL);
-
-        uniquer.add(scriptURL);
     }
 
     public void addStylesheetLink(String styleURL, String media)
     {
-        if (uniquer.contains(styleURL))
-            return;
-
         JSONObject object = new JSONObject();
         object.put("href", styleURL);
 
@@ -52,8 +39,6 @@ public class PartialMarkupDocumentLinker implements DocumentLinker
             object.put("media", media);
 
         stylesheets.put(object);
-
-        uniquer.add(styleURL);
     }
 
     public void addScript(String script)

@@ -27,8 +27,6 @@ import org.apache.tapestry5.services.javascript.JavascriptSupport;
 
 public class RenderSupportImpl implements RenderSupport
 {
-    private final DocumentLinker linker;
-
     private final SymbolSource symbolSource;
 
     private final AssetSource assetSource;
@@ -40,10 +38,8 @@ public class RenderSupportImpl implements RenderSupport
     private final JavascriptSupport javascriptSupport;
 
     /**
-     * @param linker
-     *            Used to assemble JavaScript includes and snippets
      * @param symbolSource
-     *            Used to example symbols (in {@linkplain #addClasspathScriptLink(String...)}
+     *            Used to expand symbols (in {@linkplain #addClasspathScriptLink(String...)}
      * @param assetSource
      *            Used to convert classpath scripts to {@link org.apache.tapestry5.Asset}s
      * @param javascriptSupport
@@ -51,10 +47,8 @@ public class RenderSupportImpl implements RenderSupport
      * @param ClientInfrastructure
      *            Identifies which JavaScript libraries and stylesheets are needed in a full page render
      */
-    public RenderSupportImpl(DocumentLinker linker, SymbolSource symbolSource, AssetSource assetSource,
-            JavascriptSupport javascriptSupport)
+    public RenderSupportImpl(SymbolSource symbolSource, AssetSource assetSource, JavascriptSupport javascriptSupport)
     {
-        this.linker = linker;
         this.symbolSource = symbolSource;
         this.assetSource = assetSource;
         this.javascriptSupport = javascriptSupport;
@@ -173,13 +167,11 @@ public class RenderSupportImpl implements RenderSupport
 
     public void addStylesheetLink(Asset stylesheet, String media)
     {
-        Defense.notNull(stylesheet, "stylesheet");
-
-        linker.addStylesheetLink(stylesheet.toClientURL(), media);
+        javascriptSupport.importStylesheet(stylesheet, media);
     }
 
     public void addStylesheetLink(String stylesheetURL, String media)
     {
-        linker.addStylesheetLink(stylesheetURL, media);
+        javascriptSupport.importStylesheet(stylesheetURL, media);
     }
 }

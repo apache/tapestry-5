@@ -116,7 +116,7 @@ public interface RenderSupport
      * @param stylesheetURL
      *            URL string of stylesheet
      * @param media
-     *            media value fo the stylesheet, or null to not specify a specific media type
+     *            media value for the stylesheet, or null to not specify a specific media type
      */
     void addStylesheetLink(String stylesheetURL, String media);
 

@@ -40,7 +40,7 @@ public class JavaScriptSupportImplTest extends InternalBaseTestCase
 
         replay();
 
-        JavascriptSupport jss = new JavascriptSupportImpl(null, null);
+        JavascriptSupport jss = new JavascriptSupportImpl(null, null, null);
 
         assertEquals(jss.allocateClientId(resources), "tracy");
         assertEquals(jss.allocateClientId(resources), "tracy_0");
@@ -57,7 +57,7 @@ public class JavaScriptSupportImplTest extends InternalBaseTestCase
 
         replay();
 
-        JavascriptSupportImpl jss = new JavascriptSupportImpl(linker, infra);
+        JavascriptSupportImpl jss = new JavascriptSupportImpl(linker, null, null);
 
         jss.commit();
 
@@ -74,7 +74,7 @@ public class JavaScriptSupportImplTest extends InternalBaseTestCase
 
         replay();
 
-        JavascriptSupportImpl jss = new JavascriptSupportImpl(linker, infra, new IdAllocator(), true);
+        JavascriptSupportImpl jss = new JavascriptSupportImpl(linker, null, null, new IdAllocator(), true);
 
         jss.addScript("doSomething();");
 
@@ -95,7 +95,7 @@ public class JavaScriptSupportImplTest extends InternalBaseTestCase
 
         replay();
 
-        JavascriptSupportImpl jss = new JavascriptSupportImpl(linker, infra);
+        JavascriptSupportImpl jss = new JavascriptSupportImpl(linker, null, null);
 
         jss.addScript("doSomething();");
 
@@ -116,7 +116,7 @@ public class JavaScriptSupportImplTest extends InternalBaseTestCase
 
         replay();
 
-        JavascriptSupportImpl jss = new JavascriptSupportImpl(linker, infra);
+        JavascriptSupportImpl jss = new JavascriptSupportImpl(linker, null, null);
 
         jss.addScript(InitializationPriority.IMMEDIATE, "doSomething();");
 
@@ -138,7 +138,7 @@ public class JavaScriptSupportImplTest extends InternalBaseTestCase
 
         replay();
 
-        JavascriptSupportImpl jss = new JavascriptSupportImpl(linker, infra);
+        JavascriptSupportImpl jss = new JavascriptSupportImpl(linker, null, null);
 
         jss.addScript(InitializationPriority.IMMEDIATE, "immediate1();");
         jss.addScript("normal1();");
@@ -162,7 +162,7 @@ public class JavaScriptSupportImplTest extends InternalBaseTestCase
 
         replay();
 
-        JavascriptSupportImpl jss = new JavascriptSupportImpl(linker, infra);
+        JavascriptSupportImpl jss = new JavascriptSupportImpl(linker, null, null);
 
         jss.addScript(InitializationPriority.EARLY, "early();");
         jss.addScript(InitializationPriority.NORMAL, "normal();");
@@ -186,7 +186,7 @@ public class JavaScriptSupportImplTest extends InternalBaseTestCase
 
         replay();
 
-        JavascriptSupportImpl jss = new JavascriptSupportImpl(linker, infra);
+        JavascriptSupportImpl jss = new JavascriptSupportImpl(linker, null, null);
 
         jss.importJavascriptLibrary(library);
 
@@ -209,7 +209,7 @@ public class JavaScriptSupportImplTest extends InternalBaseTestCase
 
         replay();
 
-        JavascriptSupportImpl jss = new JavascriptSupportImpl(linker, infra);
+        JavascriptSupportImpl jss = new JavascriptSupportImpl(linker, null, null);
 
         jss.addInitializerCall(InitializationPriority.IMMEDIATE, "setup", spec);
 
@@ -230,7 +230,7 @@ public class JavaScriptSupportImplTest extends InternalBaseTestCase
 
         replay();
 
-        JavascriptSupportImpl jss = new JavascriptSupportImpl(linker, infra);
+        JavascriptSupportImpl jss = new JavascriptSupportImpl(linker, null, null);
 
         jss.addInitializerCall(InitializationPriority.IMMEDIATE, "setup", "chuck");
 
@@ -252,7 +252,7 @@ public class JavaScriptSupportImplTest extends InternalBaseTestCase
 
         replay();
 
-        JavascriptSupportImpl jss = new JavascriptSupportImpl(linker, infra);
+        JavascriptSupportImpl jss = new JavascriptSupportImpl(linker, null, null);
 
         jss.addInitializerCall(InitializationPriority.IMMEDIATE, "setup", "chuck");
         jss.addInitializerCall(InitializationPriority.IMMEDIATE, "setup", "pat");
@@ -274,7 +274,7 @@ public class JavaScriptSupportImplTest extends InternalBaseTestCase
 
         replay();
 
-        JavascriptSupportImpl jss = new JavascriptSupportImpl(linker, infra);
+        JavascriptSupportImpl jss = new JavascriptSupportImpl(linker, null, null);
 
         jss.addInitializerCall("setup", "chuck");
 
@@ -298,7 +298,7 @@ public class JavaScriptSupportImplTest extends InternalBaseTestCase
 
         replay();
 
-        JavascriptSupportImpl jss = new JavascriptSupportImpl(linker, infra);
+        JavascriptSupportImpl jss = new JavascriptSupportImpl(linker, null, null);
 
         jss.addInitializerCall(InitializationPriority.IMMEDIATE, "setup", spec1);
         jss.addInitializerCall(InitializationPriority.IMMEDIATE, "setup", spec2);
@@ -323,7 +323,7 @@ public class JavaScriptSupportImplTest extends InternalBaseTestCase
 
         replay();
 
-        JavascriptSupportImpl jss = new JavascriptSupportImpl(linker, infra);
+        JavascriptSupportImpl jss = new JavascriptSupportImpl(linker, null, null);
 
         jss.addInitializerCall(InitializationPriority.EARLY, "early", new JSONObject("id", "foo"));
         jss.addInitializerCall("normal", new JSONObject("id", "bar"));

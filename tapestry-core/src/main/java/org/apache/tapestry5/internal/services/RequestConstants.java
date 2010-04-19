@@ -16,6 +16,7 @@ package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.corelib.components.Form;
 import org.apache.tapestry5.corelib.components.FormInjector;
+import org.apache.tapestry5.services.javascript.JavascriptStack;
 
 /**
  * Constants used when processing requests from the client web browser.
@@ -43,6 +44,15 @@ public final class RequestConstants
      * @since 5.1.0.2
      */
     public static final String VIRTUAL_FOLDER = "virtual";
+
+    /**
+     * Folder for combined {@link JavascriptStack} JavaScript files. The path consists of the locale (as a folder) and
+     * the name
+     * of the stack (suffixed with ".js").
+     * 
+     * @since 5.2.0
+     */
+    public static final String STACK_FOLDER = "stack";
 
     /**
      * Name of parameter, in an Ajax update, that identifies the client-side id of the {@link Form} being extended. Used

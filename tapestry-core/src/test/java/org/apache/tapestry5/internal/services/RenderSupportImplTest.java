@@ -39,7 +39,7 @@ public class RenderSupportImplTest extends InternalBaseTestCase
 
         replay();
 
-        RenderSupport support = new RenderSupportImpl(null, null, null, js);
+        RenderSupport support = new RenderSupportImpl(null, null, js);
 
         support.addScriptLink(asset);
 
@@ -49,7 +49,7 @@ public class RenderSupportImplTest extends InternalBaseTestCase
     @Test
     public void add_script_link_by_url_fails()
     {
-        RenderSupport support = new RenderSupportImpl(null, null, null, null);
+        RenderSupport support = new RenderSupportImpl(null, null, null);
 
         try
         {
@@ -71,7 +71,7 @@ public class RenderSupportImplTest extends InternalBaseTestCase
 
         replay();
 
-        RenderSupport support = new RenderSupportImpl(null, null, null, js);
+        RenderSupport support = new RenderSupportImpl(null, null, js);
 
         support.addScript("doSomething();");
 
@@ -97,7 +97,7 @@ public class RenderSupportImplTest extends InternalBaseTestCase
 
         replay();
 
-        RenderSupport support = new RenderSupportImpl(null, source, assetSource, js);
+        RenderSupport support = new RenderSupportImpl(source, assetSource, js);
 
         support.addClasspathScriptLink(path);
 
@@ -116,7 +116,7 @@ public class RenderSupportImplTest extends InternalBaseTestCase
 
         replay();
 
-        RenderSupport support = new RenderSupportImpl(linker, null, null, null);
+        RenderSupport support = new RenderSupportImpl(null, null, null);
 
         support.addStylesheetLink(asset, media);
 
@@ -133,7 +133,7 @@ public class RenderSupportImplTest extends InternalBaseTestCase
 
         replay();
 
-        RenderSupport support = new RenderSupportImpl(linker, null, null, null);
+        RenderSupport support = new RenderSupportImpl(null, null, null);
 
         support.addStylesheetLink(ASSET_URL, media);
 
@@ -151,7 +151,7 @@ public class RenderSupportImplTest extends InternalBaseTestCase
 
         replay();
 
-        RenderSupportImpl support = new RenderSupportImpl(null, null, null, js);
+        RenderSupportImpl support = new RenderSupportImpl(null, null, js);
 
         support.addInit("foo", "fred", "barney");
 
@@ -169,7 +169,7 @@ public class RenderSupportImplTest extends InternalBaseTestCase
 
         replay();
 
-        RenderSupportImpl support = new RenderSupportImpl(null, null, null, js);
+        RenderSupportImpl support = new RenderSupportImpl(null, null, js);
 
         support.autofocus(FieldFocusPriority.OPTIONAL, "foo");
 
@@ -187,7 +187,7 @@ public class RenderSupportImplTest extends InternalBaseTestCase
 
         replay();
 
-        RenderSupportImpl support = new RenderSupportImpl(null, null, null, js);
+        RenderSupportImpl support = new RenderSupportImpl(null, null, js);
 
         support.autofocus(FieldFocusPriority.OPTIONAL, "foo");
         support.autofocus(FieldFocusPriority.OPTIONAL, "bar");
@@ -206,7 +206,7 @@ public class RenderSupportImplTest extends InternalBaseTestCase
 
         replay();
 
-        RenderSupportImpl support = new RenderSupportImpl(null, null, null, js);
+        RenderSupportImpl support = new RenderSupportImpl(null, null, js);
 
         support.autofocus(FieldFocusPriority.OPTIONAL, "foo");
         support.autofocus(FieldFocusPriority.REQUIRED, "bar");
@@ -227,7 +227,7 @@ public class RenderSupportImplTest extends InternalBaseTestCase
 
         replay();
 
-        RenderSupportImpl support = new RenderSupportImpl(null, null, null, js);
+        RenderSupportImpl support = new RenderSupportImpl(null, null, js);
 
         support.addInit("setup", parameter);
 
