@@ -46,9 +46,6 @@ public class ClasspathAssetAliasManagerImpl implements ClasspathAssetAliasManage
     /**
      * Configuration is a map of aliases (short names) to complete names. Keys and values should end with a slash, but
      * one will be provided as necessary, so don't both.
-     * 
-     * @param assetPathConstructor
-     *            TODO
      */
     public ClasspathAssetAliasManagerImpl(AssetPathConstructor assetPathConstructor,
 
@@ -59,6 +56,12 @@ public class ClasspathAssetAliasManagerImpl implements ClasspathAssetAliasManage
         for (Map.Entry<String, String> e : configuration.entrySet())
         {
             String alias = withOutSlash(e.getKey());
+
+            if (alias.contains("/"))
+                throw new RuntimeException(String.format(
+                        "Virtual folder names (for component libraries) may no longer contain slashes as of Tapestry 5.2. "
+                                + "You must change the ComponentClassAsssetAliasManager contribution for '%s'.", alias));
+
             String path = withOutSlash(e.getValue());
 
             aliasToPathPrefix.put(alias, path);

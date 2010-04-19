@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -34,11 +34,29 @@ public class ClasspathAssetAliasManagerImplTest extends InternalBaseTestCase
     {
         Map<String, String> configuration = CollectionFactory.newMap();
 
-        configuration.put("tapestry/4.0", "org/apache/tapestry5/");
-        configuration.put("tapestry-internal/3.0", "org/apache/tapestry5/internal/");
-        configuration.put("mylib/2.0/", "com/example/mylib/");
+        configuration.put("tapestry", "org/apache/tapestry5/");
+        configuration.put("tapestry-internal", "org/apache/tapestry5/internal/");
+        configuration.put("mylib/", "com/example/mylib/");
 
         return configuration;
+    }
+
+    @Test
+    public void slash_not_allowed_as_alias()
+    {
+        Map<String, String> configuration = CollectionFactory.newMap();
+
+        configuration.put("old/style", "com/myco/old/style/library");
+
+        try
+        {
+            new ClasspathAssetAliasManagerImpl(null, configuration);
+            unreachable();
+        }
+        catch (RuntimeException ex)
+        {
+            assertMessageContains(ex, "change the ComponentClassAsssetAliasManager contribution for 'old/style'.");
+        }
     }
 
     @Test
@@ -49,9 +67,9 @@ public class ClasspathAssetAliasManagerImplTest extends InternalBaseTestCase
 
         Map<String, String> expected = CollectionFactory.newCaseInsensitiveMap();
 
-        expected.put("tapestry/4.0", "org/apache/tapestry5");
-        expected.put("tapestry-internal/3.0", "org/apache/tapestry5/internal");
-        expected.put("mylib/2.0", "com/example/mylib");
+        expected.put("tapestry", "org/apache/tapestry5");
+        expected.put("tapestry-internal", "org/apache/tapestry5/internal");
+        expected.put("mylib", "com/example/mylib");
 
         ClasspathAssetAliasManager manager = new ClasspathAssetAliasManagerImpl(null, configuration());
 
@@ -100,10 +118,10 @@ public class ClasspathAssetAliasManagerImplTest extends InternalBaseTestCase
     {
         return new Object[][]
         {
-        { "com/example/mylib/Foo.bar", "mylib/2.0/Foo.bar" },
-        { "com/example/mylib/nested/Foo.bar", "mylib/2.0/nested/Foo.bar" },
-        { "org/apache/tapestry5/internal/Foo.bar", "tapestry-internal/3.0/Foo.bar" },
-        { "org/apache/tapestry5/Foo.bar", "tapestry/4.0/Foo.bar" }, };
+        { "com/example/mylib/Foo.bar", "mylib/Foo.bar" },
+        { "com/example/mylib/nested/Foo.bar", "mylib/nested/Foo.bar" },
+        { "org/apache/tapestry5/internal/Foo.bar", "tapestry-internal/Foo.bar" },
+        { "org/apache/tapestry5/Foo.bar", "tapestry/Foo.bar" }, };
     }
 
     @Test(dataProvider = "to_resource_path_data")

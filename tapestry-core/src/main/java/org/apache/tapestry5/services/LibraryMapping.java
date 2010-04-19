@@ -14,11 +14,12 @@
 
 package org.apache.tapestry5.services;
 
+import org.apache.tapestry5.ioc.internal.util.Defense;
+
 /**
  * Used to configure the {@link ComponentClassResolver}, to allow it to map prefixes to library root packages (the
- * application namespace is a special case of this). In each case, a prefix on the path is mapped to a package. Prefixes
- * should start and end with characters, such as "corelib". It is allowed for a prefix to contain a slash, though it is not
- * recommended.
+ * application namespace is a special case of this). In each case, a prefix on the path is mapped to a package. Starting
+ * with Tapestry 5.2, the path prefix may not contain a slash character.
  * <p/>
  * The root package name should have a number of sub-packages:
  * <dl>
@@ -40,6 +41,13 @@ public final class LibraryMapping
 
     public LibraryMapping(String pathPrefix, String rootPackage)
     {
+        Defense.notBlank(pathPrefix, "pathPrefix");
+        Defense.notBlank(rootPackage, "rootPackage");
+
+        if (pathPrefix.contains("/"))
+            throw new RuntimeException(
+                    "LibraryMapping path prefixes may no longer contain slashes (as of Tapestry 5.2).");
+
         this.pathPrefix = pathPrefix;
         this.rootPackage = rootPackage;
     }
