@@ -318,6 +318,16 @@ var Tapestry = {
 	},
 
 	/**
+	 * Default function for handling a communication error during an Ajax
+	 * request.
+	 */
+	ajaxExceptionHander : function(response, exception) {
+		Tapestry.error(Tapestry.Messages.communicationFailed + exception);
+
+		Tapestry.debug(Tapestry.Messages.ajaxFailure + exception, response);
+	},
+
+	/**
 	 * Default function for handling Ajax-related failures.
 	 */
 	ajaxFailureHandler : function(response) {
@@ -333,7 +343,7 @@ var Tapestry = {
 	 * handler is provided (as options). In a more complex case, an options
 	 * object is provided, with keys as per Ajax.Request. The onSuccess key will
 	 * be overwritten, and defaults for onException and onFailure will be
-	 * provided. The handler shoudl take up-to two parameters: the
+	 * provided. The handler should take up-to two parameters: the
 	 * XMLHttpRequest object itself, and the JSON Response (from the X-JSON
 	 * response header, usually null).
 	 * 
@@ -354,7 +364,7 @@ var Tapestry = {
 		var successHandler = options.onSuccess;
 
 		var finalOptions = $H( {
-			onException : Tapestry.ajaxFailureHandler,
+			onException : Tapestry.ajaxExceptionHandler,
 			onFailure : Tapestry.ajaxFailureHandler
 		}).update(options).update( {
 			onSuccess : function(response, jsonResponse) {
@@ -368,7 +378,10 @@ var Tapestry = {
 				if (Tapestry.windowUnloaded)
 					return;
 
-				if (!response.request.success()) {
+				/* Prototype treats status == 0 as success, even though it seems to mean
+				 * the server didn't respond.
+				 */
+				if (!response.getStatus() || !response.request.success()) {
 					Tapestry.error(Tapestry.Messages.ajaxRequestUnsuccessful);
 					return;
 				}
@@ -377,12 +390,14 @@ var Tapestry = {
 					/* Re-invoke the success handler, capturing any exceptions. */
 					successHandler.call(this, response, jsonResponse);
 				} catch (e) {
-					Tapestry.error(Tapestry.Messages.clientException + e);
+					finalOptions.onException.call(this, ajaxRequest, e);
 				}
 			}
 		});
 
-		return new Ajax.Request(url, finalOptions.toObject());
+		var ajaxRequest = new Ajax.Request(url, finalOptions.toObject());
+
+		return ajaxRequest;
 	},
 
 	/**
