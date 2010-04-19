@@ -216,26 +216,6 @@ public class DocumentLinkerImplTest extends InternalBaseTestCase
     }
 
     @Test
-    public void duplicate_scripts_ignored_first_media_wins() throws Exception
-    {
-        Document document = new Document(new XMLMarkupModel());
-
-        document.newRootElement("html").element("body").element("p").text("Ready to be updated with styles.");
-
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(true, "1.2.3");
-
-        linker.addStylesheetLink("foo.css", null);
-        linker.addStylesheetLink("bar/baz.css", "print");
-        linker.addStylesheetLink("foo.css", "implant");
-        linker.addStylesheetLink("bar/baz.css", null);
-        linker.addStylesheetLink("bar/baz.css", "duplicate");
-
-        linker.updateDocument(document);
-
-        check(document, "duplicate_scripts_ignored_first_media_wins.txt");
-    }
-
-    @Test
     public void existing_head_used_if_present() throws Exception
     {
         Document document = new Document(new XMLMarkupModel());
@@ -253,27 +233,6 @@ public class DocumentLinkerImplTest extends InternalBaseTestCase
     }
 
     @Test
-    public void duplicate_script_links_ignored() throws Exception
-    {
-        Document document = new Document();
-
-        document.newRootElement("html").element("body").element("p").text("Ready to be updated with scripts.");
-
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(true, "1.2.3");
-
-        for (int i = 0; i < 3; i++)
-        {
-            linker.addScriptLink("foo.js");
-            linker.addScriptLink("bar/baz.js");
-            linker.addScriptLink("biff.js");
-        }
-
-        linker.updateDocument(document);
-
-        check(document, "duplicate_script_links_ignored.txt");
-    }
-
-    @Test
     public void add_script() throws Exception
     {
         Document document = new Document();
@@ -288,22 +247,6 @@ public class DocumentLinkerImplTest extends InternalBaseTestCase
         linker.updateDocument(document);
 
         assertEquals(document.toString(), readFile("add_script.txt").trim());
-    }
-
-    @Test
-    public void add_script_in_development_mode() throws Exception
-    {
-        Document document = new Document();
-
-        document.newRootElement("html").element("body").element("p").text("Ready to be updated with scripts.");
-
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(true, "1.2.3");
-
-        linker.addScriptLink("foo.js");
-
-        linker.updateDocument(document);
-
-        assertEquals(document.toString(), readFile("add_script_in_development_mode.txt").trim());
     }
 
     /**

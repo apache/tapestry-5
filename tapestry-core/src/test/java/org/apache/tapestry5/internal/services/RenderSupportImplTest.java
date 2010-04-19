@@ -108,15 +108,14 @@ public class RenderSupportImplTest extends InternalBaseTestCase
     public void add_stylesheet_link_by_asset()
     {
         String media = "print";
-        DocumentLinker linker = mockDocumentLinker();
+        JavascriptSupport javascriptSupport = mockJavascriptSupport();
         Asset asset = mockAsset();
 
-        train_toClientURL(asset, ASSET_URL);
-        linker.addStylesheetLink(ASSET_URL, media);
+        javascriptSupport.importStylesheet(asset, media);
 
         replay();
 
-        RenderSupport support = new RenderSupportImpl(null, null, null);
+        RenderSupport support = new RenderSupportImpl(null, null, javascriptSupport);
 
         support.addStylesheetLink(asset, media);
 
@@ -127,13 +126,13 @@ public class RenderSupportImplTest extends InternalBaseTestCase
     public void add_stylesheet_link_by_url()
     {
         String media = "print";
-        DocumentLinker linker = mockDocumentLinker();
+        JavascriptSupport javascriptSupport = mockJavascriptSupport();
 
-        linker.addStylesheetLink(ASSET_URL, media);
+        javascriptSupport.importStylesheet(ASSET_URL, media);
 
         replay();
 
-        RenderSupport support = new RenderSupportImpl(null, null, null);
+        RenderSupport support = new RenderSupportImpl(null, null, javascriptSupport);
 
         support.addStylesheetLink(ASSET_URL, media);
 
