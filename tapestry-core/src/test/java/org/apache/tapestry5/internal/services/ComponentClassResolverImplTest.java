@@ -566,7 +566,7 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentClassResolver resolver = create(logger, source, locator, new LibraryMapping("/" + LIB_PREFIX + "/",
+        ComponentClassResolver resolver = create(logger, source, locator, new LibraryMapping(LIB_PREFIX,
                 LIB_ROOT_PACKAGE), new LibraryMapping(CORE_PREFIX, CORE_ROOT_PACKAGE));
 
         assertEquals(resolver.resolvePageNameToClassName("lib/MyLibPage"), className);
@@ -620,34 +620,6 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
                 LIB_ROOT_PACKAGE), new LibraryMapping(CORE_PREFIX, CORE_ROOT_PACKAGE));
 
         assertEquals(resolver.resolvePageNameToClassName("lib/Page"), className);
-
-        verify();
-    }
-
-    @Test
-    public void name_stripping_for_complex_library_folder_name()
-    {
-        String libPrefix = "lib/deep";
-
-        String className = LIB_ROOT_PACKAGE + ".pages.LibDeepPage";
-
-        ComponentInstantiatorSource source = mockComponentInstantiatorSource();
-        ClassNameLocator locator = newClassNameLocator();
-        Logger logger = compliantLogger();
-
-        train_for_packages(source, LIB_ROOT_PACKAGE);
-        train_for_packages(source, CORE_ROOT_PACKAGE);
-        train_for_app_packages(source);
-
-        train_locateComponentClassNames(locator, LIB_ROOT_PACKAGE + ".pages", className);
-
-        replay();
-
-        ComponentClassResolver resolver = create(logger, source, locator, new LibraryMapping(libPrefix,
-                LIB_ROOT_PACKAGE), new LibraryMapping(CORE_PREFIX, CORE_ROOT_PACKAGE));
-
-        assertEquals(resolver.resolvePageNameToClassName("lib/deep/Page"), className);
-        assertEquals(resolver.resolvePageNameToClassName("lib/deep/LibDeepPage"), className);
 
         verify();
     }
@@ -767,40 +739,6 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
                 CORE_ROOT_PACKAGE));
 
         assertEquals(resolver.resolvePageNameToClassName("lib/MyLibPage"), className);
-
-        verify();
-    }
-
-    @Test
-    public void complex_prefix_search_fails()
-    {
-        String deepPackage = "org.deep";
-
-        ComponentInstantiatorSource source = mockComponentInstantiatorSource();
-        ClassNameLocator locator = newClassNameLocator();
-        Logger logger = mockLogger();
-
-        train_for_packages(source, deepPackage);
-        train_for_packages(source, LIB_ROOT_PACKAGE);
-        train_for_packages(source, CORE_ROOT_PACKAGE);
-        train_for_app_packages(source);
-
-        // Is this test even needed any more with the new algorithm?
-
-        replay();
-
-        ComponentClassResolver resolver = create(logger, source, locator, new LibraryMapping("lib/deep", deepPackage),
-                new LibraryMapping(LIB_PREFIX, LIB_ROOT_PACKAGE), new LibraryMapping(CORE_PREFIX, CORE_ROOT_PACKAGE));
-
-        try
-        {
-            resolver.resolvePageNameToClassName("lib/deep/DeepPage");
-            unreachable();
-        }
-        catch (UnknownValueException ex)
-        {
-            assertMessageContains(ex, "Unable to resolve 'lib/deep/DeepPage' to a page class name.");
-        }
 
         verify();
     }
