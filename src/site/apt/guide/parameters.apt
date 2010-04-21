@@ -144,6 +144,8 @@ Binding Expressions
 *------------+----------------------------------------------------------------------------------+
 | prop       | A {{{propexp.html}property expression}} to read or update.                       |
 *------------+----------------------------------------------------------------------------------+
+| symbol     | A name of a symbol.                       |
+*------------+----------------------------------------------------------------------------------+
 | translate  | The name of a configured translator.                                             |
 *------------+----------------------------------------------------------------------------------+
 | validate   | A <validator specification> used to create some number of field validators.      |
