@@ -17,6 +17,7 @@ package org.apache.tapestry5.internal.bindings;
 import org.apache.tapestry5.Binding;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.FieldTranslator;
+import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.internal.services.StringInternerImpl;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.ioc.Location;
@@ -86,6 +87,23 @@ public class BindingFactoryTest extends InternalBaseTestCase
 
         assertSame(InternalUtils.locationOf(binding), l);
 
+        verify();
+    }
+    
+    @Test
+    public void symbol_binding()
+    {
+        ComponentResources res = mockInternalComponentResources();
+        Location l = mockLocation();
+
+        replay();
+        
+        BindingFactory factory = getService("SymbolBindingFactory", BindingFactory.class);
+        
+        Binding binding = factory.newBinding("Test binding", res, null, SymbolConstants.START_PAGE_NAME, l);
+        
+        assertEquals(binding.get(), "start");
+        
         verify();
     }
 }

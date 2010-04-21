@@ -91,4 +91,12 @@ public class BindingConstants
      * @since 5.1.0.0
      */
     public static final String CONTEXT = "context";
+    
+
+    /**
+     * References a value of a symbol.
+     * 
+     * @since 5.2.0
+     */
+    public static final String SYMBOL = "symbol";
 }

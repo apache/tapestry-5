@@ -353,6 +353,7 @@ public final class TapestryModule
         binder.bind(BindingFactory.class, ContextBindingFactory.class).withId("ContextBindingFactory");
         binder.bind(BindingFactory.class, NullFieldStrategyBindingFactory.class).withId(
                 "NullFieldStrategyBindingFactory");
+        binder.bind(BindingFactory.class, SymbolBindingFactory.class).withId("SymbolBindingFactory");
         binder.bind(URLEncoder.class, URLEncoderImpl.class);
         binder.bind(ContextPathEncoder.class, ContextPathEncoderImpl.class);
         binder.bind(ApplicationStatePersistenceStrategy.class, SessionApplicationStatePersistenceStrategy.class)
@@ -427,7 +428,10 @@ public final class TapestryModule
     BindingFactory nullFieldStrategyBindingFactory,
 
     @InjectService("ContextBindingFactory")
-    BindingFactory contextBindingFactory)
+    BindingFactory contextBindingFactory,
+
+    @InjectService("SymbolBindingFactory")
+    BindingFactory symbolBindingFactory)
     {
         configuration.add(BindingConstants.LITERAL, new LiteralBindingFactory());
         configuration.add(BindingConstants.COMPONENT, new ComponentBindingFactory());
@@ -440,7 +444,7 @@ public final class TapestryModule
         configuration.add(BindingConstants.TRANSLATE, translateBindingFactory);
         configuration.add(BindingConstants.ASSET, assetBindingFactory);
         configuration.add(BindingConstants.NULLFIELDSTRATEGY, nullFieldStrategyBindingFactory);
-        configuration.add(BindingConstants.CONTEXT, contextBindingFactory);
+        configuration.add(BindingConstants.SYMBOL, symbolBindingFactory);
     }
 
     public static void contributeClasspathAssetAliasManager(MappedConfiguration<String, String> configuration,
