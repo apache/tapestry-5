@@ -42,8 +42,10 @@ public interface InternalClassTransformation extends ClassTransformation
      * Invoked after all {@link ComponentClassTransformWorker}s have had their chance to work over the class. This
      * performs any final operations for the class transformation, which includes coming up with the final constructor
      * method for the class.
+     * 
+     * @return the description of the transformation, so that it can be logged (quite verbose)
      */
-    void finish();
+    String finish();
 
     /**
      * Called (after {@link #finish()}) to construct an instantiator for the component.

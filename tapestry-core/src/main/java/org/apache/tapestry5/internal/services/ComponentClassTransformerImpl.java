@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -44,7 +44,8 @@ public class ComponentClassTransformerImpl implements ComponentClassTransformer,
     /**
      * Map from class name to class transformation.
      */
-    private final Map<String, InternalClassTransformation> nameToClassTransformation = CollectionFactory.newConcurrentMap();
+    private final Map<String, InternalClassTransformation> nameToClassTransformation = CollectionFactory
+            .newConcurrentMap();
 
     private final Map<String, ComponentModel> nameToComponentModel = CollectionFactory.newConcurrentMap();
 
@@ -58,21 +59,20 @@ public class ComponentClassTransformerImpl implements ComponentClassTransformer,
 
     private final ComponentClassCache componentClassCache;
 
-    private final String[] SUBPACKAGES = {"." + InternalConstants.PAGES_SUBPACKAGE + ".",
-            "." + InternalConstants.COMPONENTS_SUBPACKAGE + ".",
-            "." + InternalConstants.MIXINS_SUBPACKAGE + ".",
-            "." + InternalConstants.BASE_SUBPACKAGE + "."};
+    private final String[] SUBPACKAGES =
+    { "." + InternalConstants.PAGES_SUBPACKAGE + ".", "." + InternalConstants.COMPONENTS_SUBPACKAGE + ".",
+            "." + InternalConstants.MIXINS_SUBPACKAGE + ".", "." + InternalConstants.BASE_SUBPACKAGE + "." };
 
     /**
-     * @param workerChain         the ordered list of class transform works as a chain of command instance
+     * @param workerChain
+     *            the ordered list of class transform works as a chain of command instance
      * @param classSource
      * @param componentClassCache
      */
-    public ComponentClassTransformerImpl(ComponentClassTransformWorker workerChain,
-                                         LoggerSource loggerSource,
-                                         @ComponentLayer ClassFactory classFactory,
-                                         @ComponentLayer CtClassSource classSource,
-                                         ComponentClassCache componentClassCache)
+    public ComponentClassTransformerImpl(ComponentClassTransformWorker workerChain, LoggerSource loggerSource,
+            @ComponentLayer
+            ClassFactory classFactory, @ComponentLayer
+            CtClassSource classSource, ComponentClassCache componentClassCache)
     {
         this.workerChain = workerChain;
         this.loggerSource = loggerSource;
@@ -96,7 +96,8 @@ public class ComponentClassTransformerImpl implements ComponentClassTransformer,
 
         // Component classes must be public
 
-        if (!Modifier.isPublic(ctClass.getModifiers())) return;
+        if (!Modifier.isPublic(ctClass.getModifiers()))
+            return;
 
         try
         {
@@ -104,7 +105,8 @@ public class ComponentClassTransformerImpl implements ComponentClassTransformer,
 
             CtConstructor ctor = ctClass.getConstructor("()V");
 
-            if (!Modifier.isPublic(ctor.getModifiers())) return;
+            if (!Modifier.isPublic(ctor.getModifiers()))
+                return;
         }
         catch (NotFoundException ex)
         {
@@ -115,8 +117,8 @@ public class ComponentClassTransformerImpl implements ComponentClassTransformer,
         // Inner classes are loaded by the same class loader as the component, but are
         // not components and are not transformed.
 
-
-        if (ctClass.getName().contains("$")) return;
+        if (ctClass.getName().contains("$"))
+            return;
 
         // Force the creation of the parent class.
 
@@ -137,18 +139,18 @@ public class ComponentClassTransformerImpl implements ComponentClassTransformer,
         // If the parent class is in a controlled package, it will already have been loaded and
         // transformed (that is driven by the ComponentInstantiatorSource).
 
-        InternalClassTransformation parentTransformation = nameToClassTransformation
-                .get(parentClassname);
+        InternalClassTransformation parentTransformation = nameToClassTransformation.get(parentClassname);
 
         // TAPESTRY-2449: Ignore the base class that Groovy can inject
 
-        if (parentTransformation == null && !(parentClassname.equals("java.lang.Object") || parentClassname.equals(
-                "groovy.lang.GroovyObjectSupport")))
+        if (parentTransformation == null
+                && !(parentClassname.equals("java.lang.Object") || parentClassname
+                        .equals("groovy.lang.GroovyObjectSupport")))
         {
             String suggestedPackageName = buildSuggestedPackageName(classname);
 
-            throw new RuntimeException(
-                    ServicesMessages.baseClassInWrongPackage(parentClassname, classname, suggestedPackageName));
+            throw new RuntimeException(ServicesMessages.baseClassInWrongPackage(parentClassname, classname,
+                    suggestedPackageName));
         }
 
         // TODO: Check that the name is not already in the map. But I think that can't happen,
@@ -160,16 +162,17 @@ public class ComponentClassTransformerImpl implements ComponentClassTransformer,
 
         MutableComponentModel model = new MutableComponentModelImpl(classname, logger, baseResource, parentModel);
 
-        InternalClassTransformation transformation =
-                parentTransformation == null
-                ? new InternalClassTransformationImpl(classFactory, ctClass, componentClassCache, model, classSource)
+        InternalClassTransformation transformation = parentTransformation == null ? new InternalClassTransformationImpl(
+                classFactory, ctClass, componentClassCache, model, classSource)
                 : parentTransformation.createChildTransformation(ctClass, model);
+
+        String transformerDescription = null;
 
         try
         {
             workerChain.transform(transformation, model);
 
-            transformation.finish();
+            transformerDescription = transformation.finish();
         }
         catch (Throwable ex)
         {
@@ -177,7 +180,7 @@ public class ComponentClassTransformerImpl implements ComponentClassTransformer,
         }
 
         transformLogger.debug(TapestryMarkers.CLASS_TRANSFORMATION, "Finished class transformation: {}",
-                              transformation);
+                transformerDescription);
 
         nameToClassTransformation.put(classname, transformation);
         nameToComponentModel.put(classname, model);
@@ -187,7 +190,8 @@ public class ComponentClassTransformerImpl implements ComponentClassTransformer,
     {
         InternalClassTransformation ct = nameToClassTransformation.get(componentClassName);
 
-        if (ct == null) throw new RuntimeException(ServicesMessages.classNotTransformed(componentClassName));
+        if (ct == null)
+            throw new RuntimeException(ServicesMessages.classNotTransformed(componentClassName));
 
         try
         {
@@ -207,10 +211,11 @@ public class ComponentClassTransformerImpl implements ComponentClassTransformer,
 
             // Keep the leading '.' in the subpackage name and tack on "base".
 
-            if (pos > 0) return className.substring(0, pos + 1) + InternalConstants.BASE_SUBPACKAGE;
+            if (pos > 0)
+                return className.substring(0, pos + 1) + InternalConstants.BASE_SUBPACKAGE;
         }
 
-        // Is this even reachable?  className should always be in a controlled package and so
+        // Is this even reachable? className should always be in a controlled package and so
         // some subpackage above should have matched.
 
         return null;

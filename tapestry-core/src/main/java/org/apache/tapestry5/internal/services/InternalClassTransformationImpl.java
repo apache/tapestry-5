@@ -720,7 +720,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
     private final String resourcesFieldName;
 
-    private final StringBuilder description = new StringBuilder(INIT_BUFFER_SIZE);
+    private StringBuilder description = new StringBuilder(INIT_BUFFER_SIZE);
 
     private Formatter formatter = new Formatter(description);
 
@@ -832,6 +832,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         classAnnotations = null;
         constructor = null;
         formatter = null;
+        description = null;
     }
 
     public String getResourcesFieldName()
@@ -1791,7 +1792,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         return classPool.get(type);
     }
 
-    public void finish()
+    public String finish()
     {
         failIfFrozen();
 
@@ -1811,7 +1812,11 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
         addConstructor(initializer);
 
+        String description = toString();
+
         freeze();
+
+        return description;
     }
 
     private void addConstructor(String initializer)
@@ -2019,7 +2024,8 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
                 builder.append(interfaces[i].getName());
             }
 
-            formatter.format("\n\n%s", description.toString());
+            if (description != null)
+                formatter.format("\n\n%s", description.toString());
         }
         catch (NotFoundException ex)
         {
