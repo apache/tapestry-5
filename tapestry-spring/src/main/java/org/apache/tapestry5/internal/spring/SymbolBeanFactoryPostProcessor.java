@@ -27,16 +27,20 @@ public class SymbolBeanFactoryPostProcessor extends PropertyPlaceholderConfigure
     {
         super();
         this.symbolSource = symbolSource;
+        setIgnoreUnresolvablePlaceholders(true);
     }
 
     @Override
     protected String resolvePlaceholder(String placeholder, Properties props)
     {
-        String value = symbolSource.valueForSymbol(placeholder);
-        
-        if(value != null ) return value;
-        
-        return super.resolvePlaceholder(placeholder, props);
+        try
+        {
+            return symbolSource.valueForSymbol(placeholder);
+        }
+        catch(RuntimeException e)
+        {
+             return super.resolvePlaceholder(placeholder, props);
+        }
     }
 
 }

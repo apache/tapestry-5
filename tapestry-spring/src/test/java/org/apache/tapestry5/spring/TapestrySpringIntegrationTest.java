@@ -74,6 +74,6 @@ public class TapestrySpringIntegrationTest extends AbstractIntegrationTestSuite
     {
         open(BASE_URL);
 
-        assertEquals(getText("symbolValueHolder"), "Start page is 'start'");
+        assertEquals(getText("symbolValueHolder"), "Start page is 'start', Value from Spring is 'Hello'");
     }
 }

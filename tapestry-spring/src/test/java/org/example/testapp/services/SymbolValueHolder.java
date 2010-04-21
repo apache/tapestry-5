@@ -16,6 +16,8 @@ package org.example.testapp.services;
 public class SymbolValueHolder
 {
     private String value;
+    
+    private String anotherValue;
 
     public String getValue()
     {
@@ -25,5 +27,15 @@ public class SymbolValueHolder
     public void setValue(String value)
     {
         this.value = value;
+    }
+    
+    public String getAnotherValue()
+    {
+        return anotherValue;
+    }
+
+    public void setAnotherValue(String anotherValue)
+    {
+        this.anotherValue = anotherValue;
     }
 }
