@@ -444,6 +444,7 @@ public final class TapestryModule
         configuration.add(BindingConstants.TRANSLATE, translateBindingFactory);
         configuration.add(BindingConstants.ASSET, assetBindingFactory);
         configuration.add(BindingConstants.NULLFIELDSTRATEGY, nullFieldStrategyBindingFactory);
+        configuration.add(BindingConstants.CONTEXT, contextBindingFactory);
         configuration.add(BindingConstants.SYMBOL, symbolBindingFactory);
     }
 
