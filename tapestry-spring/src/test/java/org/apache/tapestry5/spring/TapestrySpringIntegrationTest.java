@@ -68,4 +68,12 @@ public class TapestrySpringIntegrationTest extends AbstractIntegrationTestSuite
 
         assertEquals(getText("viaFactory"), "Instantiated via a factory bean.");
     }
+    
+    @Test
+    public void symbol_bean_factory_post_processor() throws Exception
+    {
+        open(BASE_URL);
+
+        assertEquals(getText("symbolValueHolder"), "Start page is 'start'");
+    }
 }

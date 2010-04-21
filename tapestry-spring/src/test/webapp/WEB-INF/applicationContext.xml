@@ -31,5 +31,9 @@
     <bean id="barney" class="org.example.testapp.services.FlintstoneImpl"/>
 
     <bean id="viaFactory" class="org.example.testapp.services.ViaFactoryFactory"/>
+    
+    <bean id="symbolValueHolder" class="org.example.testapp.services.SymbolValueHolder">
+    	<property name="value" value="${tapestry.start-page-name}"/>
+    </bean>
 </beans>
 

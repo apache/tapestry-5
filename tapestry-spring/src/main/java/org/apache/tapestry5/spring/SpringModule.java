@@ -14,19 +14,24 @@
 
 package org.apache.tapestry5.spring;
 
+import java.util.List;
+
+import javax.servlet.ServletContext;
+
+import org.apache.tapestry5.internal.spring.SymbolBeanFactoryPostProcessor;
 import org.apache.tapestry5.ioc.MappedConfiguration;
 import org.apache.tapestry5.ioc.OrderedConfiguration;
 import org.apache.tapestry5.ioc.annotations.Marker;
 import org.apache.tapestry5.ioc.annotations.Primary;
 import org.apache.tapestry5.ioc.services.ChainBuilder;
+import org.apache.tapestry5.ioc.services.SymbolSource;
 import org.apache.tapestry5.services.ApplicationInitializer;
 import org.apache.tapestry5.services.ApplicationInitializerFilter;
 import org.apache.tapestry5.services.Context;
 import org.slf4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.SpringVersion;
-
-import java.util.List;
+import org.springframework.web.context.ConfigurableWebApplicationContext;
 
 /**
  * Module for Tapestry/Spring Integration. This module exists to force the load of the Spring ApplicationContext as part
@@ -77,5 +82,23 @@ public class SpringModule
             ChainBuilder builder)
     {
         return builder.build(ApplicationContextCustomizer.class, configuration);
+    }
+    
+    public static void contributeApplicationContextCustomizer(
+            OrderedConfiguration<ApplicationContextCustomizer> configuration, 
+            final SymbolSource symbolSource)
+    {
+        ApplicationContextCustomizer beanFactoryPostProcessorCustomizer = new ApplicationContextCustomizer()
+        {
+            
+            public void customizeApplicationContext(ServletContext servletContext,
+                    ConfigurableWebApplicationContext applicationContext)
+            {
+                applicationContext.addBeanFactoryPostProcessor(new SymbolBeanFactoryPostProcessor(symbolSource));
+                
+            }
+        };
+        
+        configuration.add("BeanFactoryPostProcessorCustomizer", beanFactoryPostProcessorCustomizer);
     }
 }

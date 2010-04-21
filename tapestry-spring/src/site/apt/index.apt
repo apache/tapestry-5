@@ -73,6 +73,18 @@ Usage
 
   Searching for Spring beans is threaded into the {{{../tapestry-ioc/injection.html}MasterObjectProvider service}}. The Spring context becomes one
   more place that Tapestry searches when determining the injection for a injected field or method parameter.
+  
+* Configuring Spring with Tapestry Symbols
+  
+  As of version 5.2.0 it is possible to configure individual bean property values from Tapestry symbols. This is accomplished by a BeanFactoryPostProcessors 
+  that resolves the values of 'placeholders' from symbol values. In the following example the value of the Bean's property 'productionMode' is the value of the Tapestry's 
+  symbol {{{..apidocs/org/apache/tapestry5/SymbolConstants.html#PRODUCTION_MODE}tapestry.production-mode}}
+
++----+  
+  <bean id="myBean" class="org.example.MyBean">
+    <property name="productionMode" value="${tapestry.production-mode}"/>
+  </bean> 
++----+
 
   
 ApplicationContext Service

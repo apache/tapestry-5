@@ -21,6 +21,8 @@
             <dd id="message">${statusProvider.status}</dd>
             <dt>Via factory:</dt>
             <dd id="viaFactory">${viaFactory.message}</dd>
+            <dt>Symbol Value Holder:</dt>
+            <dd id="symbolValueHolder">Start page is '${symbolValueHolder.value}'</dd>
         </dl>
 
     </body>
