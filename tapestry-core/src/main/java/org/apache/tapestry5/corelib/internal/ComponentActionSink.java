@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -36,6 +36,8 @@ public class ComponentActionSink
 
     private final ClientDataSink sink;
 
+    private boolean empty = true;
+
     public ComponentActionSink(Logger logger, ClientDataEncoder encoder)
     {
         this.logger = logger;
@@ -65,8 +67,15 @@ public class ComponentActionSink
         {
             throw new RuntimeException(InternalMessages.componentActionNotSerializable(completeId, ex), ex);
         }
+
+        empty = false;
     }
 
+    /** @since 5.2.0 */
+    public boolean isEmpty()
+    {
+        return empty;
+    }
 
     public String getClientData()
     {

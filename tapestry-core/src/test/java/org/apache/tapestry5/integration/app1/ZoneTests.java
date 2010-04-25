@@ -32,7 +32,7 @@ public class ZoneTests extends TapestryCoreTestCase
     {
         clickThru("Select Zone Demo");
 
-        type("carMaker", "BMW");
+        select("carMaker", "Bmw");
 
         waitForElementToAppear("carModelContainer");
 
@@ -44,7 +44,9 @@ public class ZoneTests extends TapestryCoreTestCase
 
         assertText(String.format("//div[@class='%s']/span", "t-error-popup"), "You must provide a value for Car Model.");
 
-        type("carModel", "7 Series");
+        String selectLocator = "//div[@id='modelZone']//select";
+
+        select(selectLocator, "7 Series");
 
         clickAndWait(SUBMIT);
 
@@ -52,13 +54,11 @@ public class ZoneTests extends TapestryCoreTestCase
 
         assertTextPresent("Car Model: 7 Series");
 
-        waitForElementToDisappear("carModelContainer");
-
-        type("carMaker", "MERCEDES");
+        select("carMaker", "Mercedes");
 
         waitForElementToAppear("carModelContainer");
 
-        type("carModel", "E-Class");
+        select(selectLocator, "E-Class");
 
         clickAndWait(SUBMIT);
 
@@ -206,7 +206,6 @@ public class ZoneTests extends TapestryCoreTestCase
     /**
      * TAP5-707
      */
-
     @Test
     public void zone_fade_back_backgroundcolor()
     {
@@ -238,10 +237,23 @@ public class ZoneTests extends TapestryCoreTestCase
         waitForElementToAppear("updated");
 
         type("//INPUT[@type='text']", "Tapestry 5.2");
-        
+
         clickAndWait(SUBMIT);
 
         assertText("output", "Tapestry 5.2");
+    }
+
+    /** TAP5-1109 */
+    @Test
+    public void update_to_zone_inside_form()
+    {
+        clickThru("MultiZone Update inside a Form");
+
+        select("selectValue1", "3 pre ajax");
+
+        waitForElementToAppear("select1ValueZone");
+
+        select("//div[@id='select2ValueZone']//select", "4 post ajax");
     }
 
 }

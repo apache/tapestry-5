@@ -54,6 +54,8 @@ import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.Orderer;
 import org.apache.tapestry5.ioc.internal.util.TapestryException;
+import org.apache.tapestry5.ioc.util.AvailableValues;
+import org.apache.tapestry5.ioc.util.UnknownValueException;
 import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.model.ParameterModel;
 import org.apache.tapestry5.runtime.Component;
@@ -870,7 +872,8 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
         {
             Set<String> ids = InternalUtils.keys(children);
 
-            throw new TapestryException(StructureMessages.noSuchComponent(this, embeddedId, ids), this, null);
+            throw new UnknownValueException(String.format("Component %s does not contain embedded component '%s'.",
+                    getCompleteId(), embeddedId), new AvailableValues("embedded components", ids));
         }
 
         return embeddedElement;

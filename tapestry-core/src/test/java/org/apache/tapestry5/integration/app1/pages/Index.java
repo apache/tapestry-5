@@ -67,6 +67,9 @@ public class Index
     private static final List<Item> ITEMS = CollectionFactory
             .newList(
 
+                    new Item("MultiZoneUpdateInsideForm", "MultiZone Update inside a Form",
+                            "Update multiple zones within a single Form."),
+
                     new Item("ZoneFormUpdateDemo", "Zone/Form Update Demo", "Updating a Zone inside a Form"),
 
                     new Item("RenderNotificationDemo", "RenderNotification Demo", "Use of RenderNotification mixin"),
@@ -425,8 +428,8 @@ public class Index
 
                     new Item("BeanDisplayEnumDemo", "BeanDisplay Enum Demo",
                             "User represenation of enum values is correctly read from messages"),
-                            
-                    new Item("unavailablecomponentdemo", "Report Location of Unavailable Component", 
+
+                    new Item("unavailablecomponentdemo", "Report Location of Unavailable Component",
                             "Report Location of Unavailable Component")
 
             );

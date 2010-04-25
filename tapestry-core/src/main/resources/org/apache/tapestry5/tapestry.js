@@ -378,8 +378,9 @@ var Tapestry = {
 				if (Tapestry.windowUnloaded)
 					return;
 
-				/* Prototype treats status == 0 as success, even though it seems to mean
-				 * the server didn't respond.
+				/*
+				 * Prototype treats status == 0 as success, even though it seems
+				 * to mean the server didn't respond.
 				 */
 				if (!response.getStatus() || !response.request.success()) {
 					Tapestry.error(Tapestry.Messages.ajaxRequestUnsuccessful);
@@ -832,6 +833,22 @@ Tapestry.Initializer = {
 				spec.zoneId, spec.url);
 	},
 
+	/**
+	 * Converts a link into an Ajax update of a Zone. The url includes the
+	 * information to reconnect with the server-side Form.
+	 * 
+	 * @param spec.selectId
+	 *            id or instance of <select>
+	 * @param spec.zoneId
+	 *            id of element to update when select is changed
+	 * @param spec.url
+	 *            component event request URL
+	 */
+	linkSelectToZone : function(spec) {
+		Tapestry.Initializer.updateZoneOnEvent("change", spec.selectId,
+				spec.zoneId, spec.url);
+	},
+
 	updateZoneOnEvent : function(eventName, element, zoneId, url) {
 		element = $(element);
 
@@ -888,20 +905,21 @@ Tapestry.Initializer = {
 			if (!zoneObject)
 				return;
 
-			var newUrl = url;
-
 			/*
 			 * A hack related to allowing a Select to perform an Ajax update of
 			 * the page.
 			 */
 
+			var parameters = {};
+
 			if (element.tagName == "SELECT" && element.value) {
-				newUrl += '&t:selectvalue=' + element.value;
+				parameters["t:selectvalue"] = element.value;
 			}
 
-			zoneObject.updateFromURL(newUrl);
+			zoneObject.updateFromURL(url, parameters);
 		});
 	},
+
 	/**
 	 * Keys in the masterSpec are ids of field control elements. Value is a list
 	 * of validation specs. Each validation spec is a 2 or 3 element array.

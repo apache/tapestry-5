@@ -1,4 +1,4 @@
-// Copyright 2009 The Apache Software Foundation
+// Copyright 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ package org.apache.tapestry5.services.ajax;
 import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.ajax.MultiZoneUpdate;
 import org.apache.tapestry5.internal.services.PageRenderQueue;
+import org.apache.tapestry5.internal.services.ajax.AjaxFormUpdateController;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.runtime.RenderCommand;
@@ -43,10 +44,14 @@ public class MultiZoneUpdateEventResultProcessor implements ComponentEventResult
 
     private final TypeCoercer typeCoercer;
 
-    public MultiZoneUpdateEventResultProcessor(PageRenderQueue queue, TypeCoercer typeCoercer)
+    private final AjaxFormUpdateController ajaxFormUpdateController;
+
+    public MultiZoneUpdateEventResultProcessor(PageRenderQueue queue, TypeCoercer typeCoercer,
+            AjaxFormUpdateController ajaxFormUpdateController)
     {
         this.queue = queue;
         this.typeCoercer = typeCoercer;
+        this.ajaxFormUpdateController = ajaxFormUpdateController;
     }
 
     public void processResultValue(final MultiZoneUpdate value) throws IOException
@@ -69,7 +74,8 @@ public class MultiZoneUpdateEventResultProcessor implements ComponentEventResult
 
             RenderCommand zoneRenderCommand = toRenderer(zoneId, provided);
 
-            queue.addPartialMarkupRendererFilter(new SingleZonePartialRendererFilter(zoneId, zoneRenderCommand, queue));
+            queue.addPartialMarkupRendererFilter(new SingleZonePartialRendererFilter(zoneId, zoneRenderCommand, queue,
+                    ajaxFormUpdateController));
         }
     }
 

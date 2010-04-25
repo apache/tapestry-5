@@ -15,27 +15,30 @@
 package org.apache.tapestry5.corelib.components;
 
 import org.apache.tapestry5.*;
-import org.apache.tapestry5.annotations.*;
+import org.apache.tapestry5.annotations.BeforeRenderTemplate;
+import org.apache.tapestry5.annotations.Environmental;
+import org.apache.tapestry5.annotations.Events;
+import org.apache.tapestry5.annotations.Mixin;
+import org.apache.tapestry5.annotations.Parameter;
+import org.apache.tapestry5.annotations.QueryParameter;
 import org.apache.tapestry5.corelib.base.AbstractField;
 import org.apache.tapestry5.corelib.data.BlankOption;
-import org.apache.tapestry5.corelib.internal.ComponentActionSink;
-import org.apache.tapestry5.corelib.internal.HiddenFieldPositioner;
 import org.apache.tapestry5.corelib.mixins.RenderDisabled;
 import org.apache.tapestry5.internal.TapestryInternalUtils;
-import org.apache.tapestry5.internal.services.PageRenderQueue;
-import org.apache.tapestry5.internal.util.Holder;
+import org.apache.tapestry5.internal.util.CaptureResultCallback;
 import org.apache.tapestry5.internal.util.SelectModelRenderer;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.ioc.internal.util.IdAllocator;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
-import org.apache.tapestry5.services.*;
+import org.apache.tapestry5.services.ComponentDefaultProvider;
+import org.apache.tapestry5.services.FieldValidatorDefaultSource;
+import org.apache.tapestry5.services.FormSupport;
+import org.apache.tapestry5.services.Request;
+import org.apache.tapestry5.services.ValueEncoderFactory;
+import org.apache.tapestry5.services.ValueEncoderSource;
+import org.apache.tapestry5.services.javascript.JavascriptSupport;
 import org.apache.tapestry5.util.EnumSelectModel;
-import org.slf4j.Logger;
-
-import java.util.Locale;
 
 /**
  * Select an item from a list of values, using an [X]HTML &lt;select&gt; element on the client side. An validation
@@ -51,7 +54,6 @@ import java.util.Locale;
 { EventConstants.VALIDATE, EventConstants.VALUE_CHANGED + " when 'zone' parameter is bound" })
 public class Select extends AbstractField
 {
-    public static final String FORM_COMPONENTID_PARAMETER = "t:formcomponentid";
     public static final String CHANGE_EVENT = "change";
 
     private class Renderer extends SelectModelRenderer
@@ -80,9 +82,6 @@ public class Select extends AbstractField
 
     @Inject
     private ComponentDefaultProvider defaultProvider;
-
-    @Inject
-    private Locale locale;
 
     // Maybe this should default to property "<componentId>Model"?
     /**
@@ -120,7 +119,6 @@ public class Select extends AbstractField
      * Performs input validation on the value supplied by the user in the form submission.
      */
     @Parameter(defaultPrefix = BindingConstants.VALIDATE)
-    @SuppressWarnings("unchecked")
     private FieldValidator<Object> validate;
 
     /**
@@ -135,7 +133,7 @@ public class Select extends AbstractField
      * indicated zone. The component will trigger the event {@link EventConstants#VALUE_CHANGED} to inform its
      * container that Select's value has changed.
      * 
-     * @since 5.2.0.0
+     * @since 5.2.0
      */
     @Parameter(defaultPrefix = BindingConstants.LITERAL)
     private String zone;
@@ -147,25 +145,7 @@ public class Select extends AbstractField
     private FormSupport formSupport;
 
     @Inject
-    private Environment environment;
-
-    @Inject
-    private RenderSupport renderSupport;
-
-    @Inject
-    private HiddenFieldLocationRules rules;
-
-    @Inject
-    private Logger logger;
-
-    @Inject
-    private ClientDataEncoder clientDataEncoder;
-
-    @Inject
-    private ComponentSource componentSource;
-
-    @Inject
-    private PageRenderQueue pageRenderQueue;
+    private JavascriptSupport javascriptSupport;
 
     @SuppressWarnings("unused")
     @Mixin
@@ -226,83 +206,30 @@ public class Select extends AbstractField
 
         if (this.zone != null)
         {
-            final Link link = this.resources.createEventLink(CHANGE_EVENT);
+            Link link = resources.createEventLink(CHANGE_EVENT);
 
-            link.addParameter(FORM_COMPONENTID_PARAMETER, this.formSupport.getFormComponentId());
+            JSONObject spec = new JSONObject("selectId", getClientId(), "zoneId", zone, "url", link.toURI());
 
-            final JSONArray spec = new JSONArray();
-            spec.put("change");
-            spec.put(getClientId());
-            spec.put(this.zone);
-            spec.put(link.toAbsoluteURI());
-
-            this.renderSupport.addInit("updateZoneOnEvent", spec);
+            javascriptSupport.addInitializerCall("linkSelectToZone", spec);
         }
     }
 
-    Object onChange(
-
-    @QueryParameter(FORM_COMPONENTID_PARAMETER)
-    final String formId,
-
-    @QueryParameter(value = "t:selectvalue", allowBlank = true)
-    final String changedValue)
+    Object onChange(@QueryParameter(value = "t:selectvalue", allowBlank = true)
+    final String selectValue)
     {
-        final Object newValue = toValue(changedValue);
+        final Object newValue = toValue(selectValue);
 
-        final Holder<Object> holder = Holder.create();
-
-        final ComponentEventCallback callback = new ComponentEventCallback()
-        {
-            public boolean handleResult(final Object result)
-            {
-
-                holder.put(result);
-
-                Select.this.value = newValue;
-
-                return true;
-            }
-        };
+        CaptureResultCallback<Object> callback = new CaptureResultCallback<Object>();
 
         this.resources.triggerEvent(EventConstants.VALUE_CHANGED, new Object[]
         { newValue }, callback);
 
-        final PartialMarkupRendererFilter filter = new PartialMarkupRendererFilter()
-        {
-            public void renderMarkup(MarkupWriter writer, JSONObject reply, PartialMarkupRenderer renderer)
-            {
+        this.value = newValue;
 
-                HiddenFieldPositioner hiddenFieldPositioner = new HiddenFieldPositioner(writer, Select.this.rules);
-
-                final ComponentActionSink actionSink = new ComponentActionSink(Select.this.logger,
-                        Select.this.clientDataEncoder);
-
-                final Form form = (Form) Select.this.componentSource.getComponent(formId);
-
-                FormSupport formSupport = form.createRenderTimeFormSupport(form.getClientId(), actionSink,
-                        new IdAllocator());
-
-                Select.this.environment.push(FormSupport.class, formSupport);
-                Select.this.environment.push(ValidationTracker.class, new ValidationTrackerImpl());
-
-                renderer.renderMarkup(writer, reply);
-
-                Select.this.environment.pop(ValidationTracker.class);
-                Select.this.environment.pop(FormSupport.class);
-
-                hiddenFieldPositioner.getElement().attributes("type", "hidden", "name", Form.FORM_DATA, "value",
-                        actionSink.getClientData());
-
-            }
-        };
-
-        this.pageRenderQueue.addPartialMarkupRendererFilter(filter);
-
-        return holder.get();
+        return callback.getResult();
     }
 
-    protected Object toValue(final String submittedValue)
+    protected Object toValue(String submittedValue)
     {
         return InternalUtils.isBlank(submittedValue) ? null : this.encoder.toValue(submittedValue);
     }

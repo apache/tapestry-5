@@ -76,7 +76,7 @@ public class HiddenFieldPositioner
      * 
      * @return the element
      * @throws IllegalStateException
-     *             if the element was not placed.
+     *             if the element was not positioned
      */
     public Element getElement()
     {
@@ -91,6 +91,23 @@ public class HiddenFieldPositioner
                     "The rendered content did not include any elements that allow for the positioning of the hidden form field's element.");
 
         return hiddenFieldElement;
+    }
+
+    /**
+     * Discard this positioner (an alternative to invoking {@link #getElement()}).
+     * If an {@link Element} has been created for the hidden field, that
+     * element is removed.
+     * 
+     * @since 5.2.0
+     */
+    public void discard()
+    {
+        lock.lock();
+
+        if (hiddenFieldElement != null)
+            hiddenFieldElement.remove();
+
+        writer.removeListener(listener);
     }
 
 }

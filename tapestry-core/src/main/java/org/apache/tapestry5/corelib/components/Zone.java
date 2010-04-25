@@ -18,6 +18,7 @@ import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.Block;
 import org.apache.tapestry5.CSSClassConstants;
 import org.apache.tapestry5.ClientElement;
+import org.apache.tapestry5.ComponentAction;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.QueryParameterConstants;
@@ -25,11 +26,19 @@ import org.apache.tapestry5.annotations.BeginRender;
 import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.SupportsInformalParameters;
+import org.apache.tapestry5.corelib.internal.ComponentActionSink;
+import org.apache.tapestry5.corelib.internal.FormSupportAdapter;
+import org.apache.tapestry5.corelib.internal.HiddenFieldPositioner;
 import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.ClientBehaviorSupport;
+import org.apache.tapestry5.services.ClientDataEncoder;
+import org.apache.tapestry5.services.Environment;
+import org.apache.tapestry5.services.FormSupport;
 import org.apache.tapestry5.services.Heartbeat;
+import org.apache.tapestry5.services.HiddenFieldLocationRules;
 import org.apache.tapestry5.services.javascript.JavascriptSupport;
+import org.slf4j.Logger;
 
 /**
  * A Zone is portion of the output page designed for easy dynamic updating via Ajax or other client-side effects. A
@@ -108,6 +117,9 @@ public class Zone implements ClientElement
     @Environmental
     private ClientBehaviorSupport clientBehaviorSupport;
 
+    @Inject
+    private Environment environment;
+
     /**
      * If true (the default) then the zone will render normally. If false, then the "t-invisible" CSS class is added,
      * which will make the zone initially invisible.
@@ -121,7 +133,22 @@ public class Zone implements ClientElement
     @Inject
     private Heartbeat heartbeat;
 
+    @Inject
+    private Logger logger;
+
+    @Inject
+    private ClientDataEncoder clientDataEncoder;
+
+    @Inject
+    private HiddenFieldLocationRules rules;
+
     private String clientId;
+
+    private boolean insideForm;
+
+    private HiddenFieldPositioner hiddenFieldPositioner;
+
+    private ComponentActionSink actionSink;
 
     String defaultElementName()
     {
@@ -143,12 +170,59 @@ public class Zone implements ClientElement
 
         clientBehaviorSupport.addZone(clientId, show, update);
 
+        FormSupport existingFormSupport = environment.peek(FormSupport.class);
+
+        insideForm = existingFormSupport != null;
+
+        if (insideForm)
+        {
+            hiddenFieldPositioner = new HiddenFieldPositioner(writer, rules);
+
+            actionSink = new ComponentActionSink(logger, clientDataEncoder);
+
+            environment.push(FormSupport.class, new FormSupportAdapter(existingFormSupport)
+            {
+                @Override
+                public <T> void store(T component, ComponentAction<T> action)
+                {
+                    actionSink.store(component, action);
+                }
+
+                @Override
+                public <T> void storeAndExecute(T component, ComponentAction<T> action)
+                {
+                    store(component, action);
+
+                    action.execute(component);
+                }
+
+            });
+        }
+
         heartbeat.begin();
     }
 
     void afterRender(MarkupWriter writer)
     {
         heartbeat.end();
+
+        if (insideForm)
+        {
+            environment.pop(FormSupport.class);
+
+            if (actionSink.isEmpty())
+            {
+                hiddenFieldPositioner.discard();
+            }
+            else
+            {
+                hiddenFieldPositioner.getElement().attributes("type", "hidden",
+
+                "name", Form.FORM_DATA,
+
+                "value", actionSink.getClientData());
+            }
+        }
 
         writer.end(); // div
     }

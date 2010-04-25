@@ -38,13 +38,7 @@ final class StructureMessages
         return MESSAGES.format("missing-parameters", InternalUtils.joinSorted(parameters), element
                 .getComponentResources().getComponentModel().getComponentClassName());
     }
-
-    static String noSuchComponent(ComponentPageElement parent, String embeddedId, Set<String> components)
-    {
-        return MESSAGES.format("no-such-component", parent.getCompleteId(), embeddedId,
-                               InternalUtils.joinSorted(components));
-    }
-
+    
     static String unknownMixin(String componentId, String mixinClassName)
     {
         return MESSAGES.format("unknown-mixin", componentId, mixinClassName);

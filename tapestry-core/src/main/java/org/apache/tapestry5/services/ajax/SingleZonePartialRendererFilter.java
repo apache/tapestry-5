@@ -1,4 +1,4 @@
-// Copyright 2009 The Apache Software Foundation
+// Copyright 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ package org.apache.tapestry5.services.ajax;
 import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.internal.services.PageRenderQueue;
+import org.apache.tapestry5.internal.services.ajax.AjaxFormUpdateController;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.runtime.RenderCommand;
 import org.apache.tapestry5.runtime.RenderQueue;
@@ -37,11 +38,15 @@ public class SingleZonePartialRendererFilter implements PartialMarkupRendererFil
 
     private final PageRenderQueue queue;
 
-    public SingleZonePartialRendererFilter(String zoneId, RenderCommand zoneRenderCommand, PageRenderQueue queue)
+    private final AjaxFormUpdateController ajaxFormUpdateController;
+
+    public SingleZonePartialRendererFilter(String zoneId, RenderCommand zoneRenderCommand, PageRenderQueue queue,
+            AjaxFormUpdateController ajaxFormUpdateController)
     {
         this.zoneId = zoneId;
         this.zoneRenderCommand = zoneRenderCommand;
         this.queue = queue;
+        this.ajaxFormUpdateController = ajaxFormUpdateController;
     }
 
     public void renderMarkup(MarkupWriter writer, final JSONObject reply, PartialMarkupRenderer renderer)
@@ -55,11 +60,17 @@ public class SingleZonePartialRendererFilter implements PartialMarkupRendererFil
 
                 final Element zoneContainer = writer.element("zone-update", "zoneId", zoneId);
 
+                ajaxFormUpdateController.setupBeforePartialZoneRender(writer);
+
                 queue.push(new RenderCommand()
                 {
                     public void render(MarkupWriter writer, RenderQueue queue)
                     {
                         writer.end(); // the zoneContainer element
+
+                        // Need to do this Ajax Form-related cleanup here, before we extract the zone content.
+
+                        ajaxFormUpdateController.cleanupAfterPartialZoneRender();
 
                         String zoneUpdateContent = zoneContainer.getChildMarkup();
 
