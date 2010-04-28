@@ -60,9 +60,9 @@ public class StackAssetRequestHandler implements AssetRequestHandler, Invalidati
     private final Pattern pathPattern = Pattern.compile("^(.+)/(.+)\\.js$");
 
     // Two caches, keyed on extra path. Both are accessed only from synchronized blocks.
-    private final Map<String, ByteArrayOutputStream> uncompressedCache = CollectionFactory.newCaseInsensitiveMap();
+    private final Map<String, BytestreamCache> uncompressedCache = CollectionFactory.newCaseInsensitiveMap();
 
-    private final Map<String, ByteArrayOutputStream> compressedCache = CollectionFactory.newCaseInsensitiveMap();
+    private final Map<String, BytestreamCache> compressedCache = CollectionFactory.newCaseInsensitiveMap();
 
     public StackAssetRequestHandler(ResourceCache resourceCache, JavascriptStackSource javascriptStackSource,
             LocalizationSetter localizationSetter, ResponseCompressionAnalyzer compressionAnalyzer,
@@ -81,7 +81,7 @@ public class StackAssetRequestHandler implements AssetRequestHandler, Invalidati
     {
         boolean compress = compressionAnalyzer.isGZipSupported();
 
-        ByteArrayOutputStream stream = getStream(extraPath, compress);
+        BytestreamCache cachedStream = getStream(extraPath, compress);
 
         // The whole point of this is to force the client to aggressively cache the combined, virtual
         // stack asset.
@@ -92,7 +92,7 @@ public class StackAssetRequestHandler implements AssetRequestHandler, Invalidati
         if (productionMode)
             response.setDateHeader("Expires", lastModified + InternalConstants.TEN_YEARS);
 
-        response.setContentLength(stream.size());
+        response.setContentLength(cachedStream.size());
 
         // Inform the upper layers that we are controlled compression here.
         request.setAttribute(InternalConstants.SUPPRESS_COMPRESSION, true);
@@ -105,7 +105,7 @@ public class StackAssetRequestHandler implements AssetRequestHandler, Invalidati
 
         OutputStream output = response.getOutputStream("text/javascript");
 
-        stream.writeTo(output);
+        cachedStream.writeTo(output);
 
         output.close();
 
@@ -119,18 +119,18 @@ public class StackAssetRequestHandler implements AssetRequestHandler, Invalidati
         compressedCache.clear();
     }
 
-    private ByteArrayOutputStream getStream(String extraPath, boolean compressed) throws IOException
+    private BytestreamCache getStream(String extraPath, boolean compressed) throws IOException
     {
         return compressed ? getCompressedStream(extraPath) : getUncompressedStream(extraPath);
     }
 
-    private synchronized ByteArrayOutputStream getCompressedStream(String extraPath) throws IOException
+    private synchronized BytestreamCache getCompressedStream(String extraPath) throws IOException
     {
-        ByteArrayOutputStream result = compressedCache.get(extraPath);
+        BytestreamCache result = compressedCache.get(extraPath);
 
         if (result == null)
         {
-            ByteArrayOutputStream uncompressed = getUncompressedStream(extraPath);
+            BytestreamCache uncompressed = getUncompressedStream(extraPath);
             result = compressStream(uncompressed);
             compressedCache.put(extraPath, result);
         }
@@ -138,9 +138,9 @@ public class StackAssetRequestHandler implements AssetRequestHandler, Invalidati
         return result;
     }
 
-    private synchronized ByteArrayOutputStream getUncompressedStream(String extraPath) throws IOException
+    private synchronized BytestreamCache getUncompressedStream(String extraPath) throws IOException
     {
-        ByteArrayOutputStream result = uncompressedCache.get(extraPath);
+        BytestreamCache result = uncompressedCache.get(extraPath);
 
         if (result == null)
         {
@@ -151,7 +151,7 @@ public class StackAssetRequestHandler implements AssetRequestHandler, Invalidati
         return result;
     }
 
-    private ByteArrayOutputStream assembleStackContent(String extraPath) throws IOException
+    private BytestreamCache assembleStackContent(String extraPath) throws IOException
     {
         Matcher matcher = pathPattern.matcher(extraPath);
 
@@ -164,7 +164,7 @@ public class StackAssetRequestHandler implements AssetRequestHandler, Invalidati
         return assembleStackContent(localeName, stackName);
     }
 
-    private ByteArrayOutputStream assembleStackContent(String localeName, String stackName) throws IOException
+    private BytestreamCache assembleStackContent(String localeName, String stackName) throws IOException
     {
         localizationSetter.setNonPeristentLocaleFromLocaleName(localeName);
 
@@ -174,10 +174,10 @@ public class StackAssetRequestHandler implements AssetRequestHandler, Invalidati
         return assembleStackContent(libraries);
     }
 
-    private ByteArrayOutputStream assembleStackContent(List<Asset> libraries) throws IOException
+    private BytestreamCache assembleStackContent(List<Asset> libraries) throws IOException
     {
-        ByteArrayOutputStream result = new ByteArrayOutputStream();
-        OutputStreamWriter osw = new OutputStreamWriter(result, "UTF-8");
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        OutputStreamWriter osw = new OutputStreamWriter(stream, "UTF-8");
         PrintWriter writer = new PrintWriter(osw, true);
 
         JSONArray paths = new JSONArray();
@@ -190,14 +190,14 @@ public class StackAssetRequestHandler implements AssetRequestHandler, Invalidati
 
             writer.format("\n/* %s */;\n", path);
 
-            streamLibraryContent(library, result);
+            streamLibraryContent(library, stream);
         }
 
         writer.format("\n;/**/\nTapestry.markScriptLibrariesLoaded(%s);\n", paths);
 
         writer.close();
 
-        return result;
+        return new BytestreamCache(stream);
     }
 
     private void streamLibraryContent(Asset library, OutputStream outputStream) throws IOException
@@ -211,16 +211,16 @@ public class StackAssetRequestHandler implements AssetRequestHandler, Invalidati
         TapestryInternalUtils.copy(inputStream, outputStream);
     }
 
-    private ByteArrayOutputStream compressStream(ByteArrayOutputStream uncompressed) throws IOException
+    private BytestreamCache compressStream(BytestreamCache uncompressed) throws IOException
     {
-        ByteArrayOutputStream result = new ByteArrayOutputStream();
-        OutputStream compressor = new GZIPOutputStream(result);
+        ByteArrayOutputStream compressed = new ByteArrayOutputStream();
+        OutputStream compressor = new GZIPOutputStream(compressed);
 
         uncompressed.writeTo(compressor);
 
         compressor.close();
 
-        return result;
+        return new BytestreamCache(compressed);
     }
 
 }
