@@ -1036,8 +1036,11 @@ Tapestry.Initializer = {
 		var trigger = $(spec.triggerId);
 
 		var update = function() {
+			var checked = trigger.checked;
+			var makeVisible = checked == ! spec.invert;
+
 			$(spec.fragmentId).fire(Tapestry.CHANGE_VISIBILITY_EVENT, {
-				visible : trigger.checked
+				visible : makeVisible
 			}, true);
 		}
 

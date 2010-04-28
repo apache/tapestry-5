@@ -27,9 +27,9 @@
             <br/>
 
             <t:radiogroup value="codeVisible">
-                <t:radio t:id="on" label="On" value="true" t:mixins="triggerfragment" fragment="codeFragment"/>
+                <t:radio t:id="on" label="On" value="true"/>
                 <t:label for="on"/>
-                <t:radio t:id="off" label="Off" value="false"/>
+                <t:radio t:id="off" label="Off"  t:mixins="triggerfragment" fragment="codeFragment" invert="true" value="false"/>
                 <t:label for="off"/>
             </t:radiogroup>
 

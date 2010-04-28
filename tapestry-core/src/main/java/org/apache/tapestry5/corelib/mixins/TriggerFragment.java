@@ -43,6 +43,15 @@ public class TriggerFragment
     @Parameter(required = true, defaultPrefix = BindingConstants.COMPONENT, allowNull = false)
     private ClientElement fragment;
 
+    /**
+     * If true then the client-side logic is inverted; the fragment is made visible when the checkbox is NOT checked.
+     * The default is false (the fragment is visible when the checkbox IS checked).
+     * 
+     * @since 5.2.0
+     */
+    @Parameter
+    private boolean invert;
+
     @Environmental
     private JavascriptSupport javascriptSupport;
 
@@ -50,6 +59,7 @@ public class TriggerFragment
     void beginRender()
     {
         JSONObject spec = new JSONObject("triggerId", container.getClientId(), "fragmentId", fragment.getClientId());
+        spec.put("invert", invert);
 
         javascriptSupport.addInitializerCall("linkTriggerToFormFragment", spec);
     }
