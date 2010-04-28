@@ -62,6 +62,19 @@ var Tapestry = {
 	ZONE_UPDATED_EVENT : "tapestry:zoneupdated",
 
 	/**
+	 * Event fired on a form fragment element to change the visibility of the
+	 * fragment. The event memo object includes a key, visible, that should be
+	 * true or false.
+	 */
+	CHANGE_VISIBILITY_EVENT : "tapestry:changevisibility",
+
+	/**
+	 * Event fired on a form fragment element to hide the element and remove it
+	 * from the DOM.
+	 */
+	HIDE_AND_REMOVE_EVENT : "tapestry:hideandremove",
+
+	/**
 	 * Event fired on a link or submit to request that it request that the
 	 * correct ZoneManager update from a provided URL.
 	 */
@@ -799,16 +812,11 @@ Tapestry.Initializer = {
 		link.observeAction("click", function(event) {
 			var successHandler = function(transport) {
 				var container = $(fragmentId);
-				var fragment = $T(container).formFragment;
 
-				if (fragment != undefined) {
-					fragment.hideAndRemove();
-				} else {
-					var effect = Tapestry.ElementEffect.fade(container);
+				var effect = Tapestry.ElementEffect.fade(container);
 
-					effect.options.afterFinish = function() {
-						container.remove();
-					};
+				effect.options.afterFinish = function() {
+					container.remove();
 				}
 			};
 
@@ -970,7 +978,48 @@ Tapestry.Initializer = {
 	},
 
 	formFragment : function(spec) {
-		new Tapestry.FormFragment(spec);
+
+		var element = $(spec.element);
+
+		var hidden = $(spec.element + "-hidden");
+		var form = $(hidden.form);
+
+		form.getFormEventManager();
+
+		function runAnimation(makeVisible) {
+			var effect = makeVisible ? Tapestry.ElementEffect[spec.show]
+					|| Tapestry.ElementEffect.slidedown
+					: Tapestry.ElementEffect[spec.hide]
+							|| Tapestry.ElementEffect.slideup;
+			return effect(element);
+		}
+
+		element.observe(Tapestry.CHANGE_VISIBILITY_EVENT, function(event) {
+			var makeVisible = event.memo.visible;
+
+			if (makeVisible == element.visible())
+				return;
+
+			runAnimation(makeVisible);
+		});
+
+		element.observe(Tapestry.HIDE_AND_REMOVE_EVENT, function() {
+			var effect = runAnimation(false);
+
+			effect.options.afterFinish = function() {
+				element.remove();
+			};
+		});
+
+		form.observe(Tapestry.FORM_PREPARE_FOR_SUBMIT_EVENT, function() {
+
+			/*
+			 * On a submission, if the fragment is not visible, then disabled
+			 * its form submission data, so that no processing or validation
+			 * occurs on the server.
+			 */
+			hidden.disabled = !element.isDeepVisible();
+		});
 	},
 
 	formInjector : function(spec) {
@@ -980,34 +1029,26 @@ Tapestry.Initializer = {
 	/*
 	 * Links a FormFragment to a trigger (a radio or a checkbox), such that
 	 * changing the trigger will hide or show the FormFragment. Care should be
-	 * taken to render the page with the checkbox and the FormFragment('s
-	 * visibility) in agreement.
+	 * taken to render the page with the checkbox and the FormFragment's
+	 * visibility in agreement.
 	 */
 	linkTriggerToFormFragment : function(spec) {
 		var trigger = $(spec.triggerId);
-		var element = $(spec.fragmentId);
 
+		var update = function() {
+			$(spec.fragmentId).fire(Tapestry.CHANGE_VISIBILITY_EVENT, {
+				visible : trigger.checked
+			}, true);
+		}
+
+		/* Let the event bubble up to the form level. */
 		if (trigger.type == "radio") {
-			/*
-			 * When a click bubbles up to the containing form, we can adjust the
-			 * visibility of the form fragment. The trigger's checked property
-			 * will already have been updated.
-			 */
-			$(trigger.form).observe("click", function() {
-				$T(element).formFragment.setVisible(trigger.checked);
-			});
-
+			$(trigger.form).observe("click", update);
 			return;
 		}
 
-		/*
-		 * Otherwise, we assume it is a checkbox. The difference is that we can
-		 * observe just the single checkbox element, rather than handling clicks
-		 * anywhere in the form (as with the radio).
-		 */
-		trigger.observe("click", function() {
-			$T(element).formFragment.setVisible(trigger.checked);
-		});
+		/* Normal trigger is a checkbox; listen just to it. */
+		trigger.observe("click", update);
 
 	},
 
@@ -1641,78 +1682,6 @@ Tapestry.ZoneManager = Class.create( {
 				this.processReply(transport.responseJSON);
 			}.bind(this)
 		});
-	}
-});
-
-/*
- * A class that managed an element (usually a <div>) that is conditionally
- * visible and part of the form when visible.
- */
-Tapestry.FormFragment = Class.create( {
-
-	initialize : function(spec) {
-		this.element = $(spec.element);
-
-		$T(this.element).formFragment = this;
-
-		this.hidden = $(spec.element + "-hidden");
-
-		this.showFunc = Tapestry.ElementEffect[spec.show]
-				|| Tapestry.ElementEffect.slidedown;
-		this.hideFunc = Tapestry.ElementEffect[spec.hide]
-				|| Tapestry.ElementEffect.slideup;
-
-		var form = $(this.hidden.form);
-
-		/*
-		 * TAP5-283: Force creation of the FormEventManager if it does not
-		 * already exist.
-		 */
-
-		form.getFormEventManager();
-
-		$(form).observe(Tapestry.FORM_PREPARE_FOR_SUBMIT_EVENT, function() {
-
-			/*
-			 * On a submission, if the fragment is not visible, then wipe out
-			 * its form submission data, so that no processing or validation
-			 * occurs on the server.
-			 */
-
-			if (!this.element.isDeepVisible())
-				this.hidden.value = "";
-		}.bind(this));
-	},
-
-	hide : function() {
-		if (this.element.visible())
-			this.hideFunc(this.element);
-	},
-
-	hideAndRemove : function() {
-		var effect = this.hideFunc(this.element);
-
-		effect.options.afterFinish = function() {
-			this.element.remove();
-		}.bind(this);
-	},
-
-	show : function() {
-		if (!this.element.visible())
-			this.showFunc(this.element);
-	},
-
-	toggle : function() {
-		this.setVisible(!this.element.visible());
-	},
-
-	setVisible : function(visible) {
-		if (visible) {
-			this.show();
-			return;
-		}
-
-		this.hide();
 	}
 });
 

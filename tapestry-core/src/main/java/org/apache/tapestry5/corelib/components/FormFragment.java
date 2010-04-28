@@ -20,7 +20,6 @@ import org.apache.tapestry5.ClientElement;
 import org.apache.tapestry5.ComponentAction;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.MarkupWriter;
-import org.apache.tapestry5.RenderSupport;
 import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.SupportsInformalParameters;
@@ -34,6 +33,7 @@ import org.apache.tapestry5.services.ClientDataEncoder;
 import org.apache.tapestry5.services.Environment;
 import org.apache.tapestry5.services.FormSupport;
 import org.apache.tapestry5.services.HiddenFieldLocationRules;
+import org.apache.tapestry5.services.javascript.JavascriptSupport;
 import org.slf4j.Logger;
 
 /**
@@ -45,19 +45,12 @@ import org.slf4j.Logger;
  * is submitted; alternately, client-side logic can simply remove the form fragment element (including its visible and
  * hidden fields) to prevent server-side processing.
  * <p/>
- * The client-side element has a new property, formFragment, added to it. The formFragment object has new methods to
- * control the client-side behavior of the fragment:
+ * The client-side element will now listen to two new event defined by client-side constants:
  * <dl>
- * <dt>hide()</dt>
- * <dd>Hides the element, using the configured client-side animation effect.</dd>
- * <dt>hideAndRemove()</dt>
- * <dd>As with hide(), but the element is removed from the DOM after being hidden.</dd>
- * <dt>show()</dt>
- * <dd>Makes the element visible, using the configured client-side animation effect.</dd>
- * <dt>toggle()</dt>
- * <dd>Invokes hide() or show() as necessary.</dd>
- * <dt>setVisible()</dt>
- * <dd>Passed a boolean parameter, invokes hide() or show() as necessary.</dd>
+ * <dt>Tapestry.CHANGE_VISIBILITY_EVENT</dt>
+ * <dd>Change the visiblity as per the event memo's visibility property. When the visiblity changes, the correct animation is executed.</dd>
+ * <dt>Tapestry.HIDE_AND_REMOVE_EVENT</dt>
+ * <dd>Hides the element, then removes it from the DOM entirely.
  * </dl>
  * 
  * @see org.apache.tapestry5.corelib.mixins.TriggerFragment
@@ -105,7 +98,7 @@ public class FormFragment implements ClientElement
     private Environment environment;
 
     @Environmental
-    private RenderSupport renderSupport;
+    private JavascriptSupport javascriptSupport;
 
     @Inject
     private ComponentResources resources;
@@ -141,7 +134,7 @@ public class FormFragment implements ClientElement
     {
         FormSupport formSupport = environment.peekRequired(FormSupport.class);
 
-        clientId = resources.isBound("id") ? idParameter : renderSupport.allocateClientId(resources);
+        clientId = resources.isBound("id") ? idParameter : javascriptSupport.allocateClientId(resources);
 
         hiddenFieldPositioner = new HiddenFieldPositioner(writer, rules);
 
