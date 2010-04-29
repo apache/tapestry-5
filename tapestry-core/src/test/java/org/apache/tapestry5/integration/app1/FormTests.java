@@ -231,6 +231,19 @@ public class FormTests extends TapestryCoreTestCase
 
         clickAndWait("link=english");
     }
+    
+    // TAP5-1057
+    @Test
+    public void xss_datefield()
+    {
+        clickThru("DateField Demo", "clear", "english");
+
+        type("asteroidImpact", "<script>alert('T5 is great'); </script>");
+
+        click("id=asteroidImpact-trigger");
+        
+        assertBubbleMessage("asteroidImpact", "Unparseable date: \"<script>alert('T5 is great'); </script>\"");
+    }
 
     @Test
     public void event_based_translate() throws Exception
