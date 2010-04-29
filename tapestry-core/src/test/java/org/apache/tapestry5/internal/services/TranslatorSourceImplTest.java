@@ -36,6 +36,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
+@SuppressWarnings("unchecked")
 public class TranslatorSourceImplTest extends InternalBaseTestCase
 {
     private TranslatorSource source;
@@ -92,6 +93,82 @@ public class TranslatorSourceImplTest extends InternalBaseTestCase
         {
             assertMessageContains(ex,
                     "Contributed translator for type java.lang.Integer reports its type as java.lang.Long.");
+        }
+
+        verify();
+    }
+
+    @Test
+    public void name_collision_with_standard_translators()
+    {
+        Translator t1 = mockTranslator("fred", Integer.class);
+        Translator t2 = mockTranslator("fred", Long.class);
+
+        Map<Class, Translator> configuration = CollectionFactory.newMap();
+        configuration.put(Integer.class, t1);
+        configuration.put(Long.class, t2);
+
+        replay();
+
+        try
+        {
+            new TranslatorSourceImpl(configuration);
+            unreachable();
+        }
+        catch (RuntimeException ex)
+        {
+            assertMessageContains(
+                    ex,
+                    "Two different Translators contributed to the TranslatorSource service use the same translator name: 'fred'.",
+                    "Translator names must be unique.");
+        }
+
+        verify();
+    }
+
+    @Test
+    public void get_alternate_translator_by_name()
+    {
+        Translator t1 = mockTranslator("fred", Integer.class);
+        Translator t2 = mockTranslator();
+
+        Map<Class, Translator> configuration = newConfiguration(Integer.class, t1);
+
+        Map<String, Translator> alternates = CollectionFactory.newMap();
+        alternates.put("barney", t2);
+
+        replay();
+
+        TranslatorSource source = new TranslatorSourceImpl(configuration, alternates);
+
+        assertSame(source.get("barney"), t2);
+
+        verify();
+    }
+
+    @Test
+    public void name_collision_between_standard_and_alternate_translator()
+    {
+        Translator t1 = mockTranslator("fred", Integer.class);
+        Translator t2 = mockTranslator();
+
+        Map<Class, Translator> configuration = newConfiguration(Integer.class, t1);
+
+        Map<String, Translator> alternates = CollectionFactory.newMap();
+        alternates.put("fred", t2);
+
+        replay();
+
+        try
+        {
+            new TranslatorSourceImpl(configuration, alternates);
+            unreachable();
+        }
+        catch (RuntimeException ex)
+        {
+            assertEquals(
+                    ex.getMessage(),
+                    "Translator 'fred' contributed to the TranslatorAlternatesSource service has the same name as a standard Translator contributed to the TranslatorSource service.");
         }
 
         verify();

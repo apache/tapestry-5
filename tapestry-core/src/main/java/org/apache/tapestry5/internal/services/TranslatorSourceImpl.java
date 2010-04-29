@@ -14,6 +14,7 @@
 
 package org.apache.tapestry5.internal.services;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -25,13 +26,21 @@ import org.apache.tapestry5.ioc.util.UnknownValueException;
 import org.apache.tapestry5.services.InvalidationListener;
 import org.apache.tapestry5.services.TranslatorSource;
 
+@SuppressWarnings("unchecked")
 public class TranslatorSourceImpl implements TranslatorSource, InvalidationListener
 {
-    private final Map<String, Translator> translators = CollectionFactory.newCaseInsensitiveMap();
+    private final Map<String, Translator> nameToTranslator = CollectionFactory.newCaseInsensitiveMap();
 
     private final StrategyRegistry<Translator> registry;
 
+    private static final Map<String, Translator> EMPTY = Collections.emptyMap();
+
     public TranslatorSourceImpl(Map<Class, Translator> configuration)
+    {
+        this(configuration, EMPTY);
+    }
+
+    public TranslatorSourceImpl(Map<Class, Translator> configuration, Map<String, Translator> alternates)
     {
         for (Map.Entry<Class, Translator> me : configuration.entrySet())
         {
@@ -45,7 +54,28 @@ public class TranslatorSourceImpl implements TranslatorSource, InvalidationListe
                                         "Contributed translator for type %s reports its type as %s. Please change the contribution so that the key matches that translator type.",
                                         type.getName(), translator.getType().getName()));
 
-            translators.put(translator.getName(), translator);
+            String name = translator.getName();
+
+            if (nameToTranslator.containsKey(name))
+                throw new RuntimeException(
+                        String
+                                .format(
+                                        "Two different Translators contributed to the TranslatorSource service use the same translator name: '%s'.  Translator names must be unique.",
+                                        name));
+
+            nameToTranslator.put(name, translator);
+        }
+
+        for (String name : alternates.keySet())
+        {
+            if (nameToTranslator.containsKey(name))
+                throw new RuntimeException(
+                        String
+                                .format(
+                                        "Translator '%s' contributed to the TranslatorAlternatesSource service has the same name as a standard Translator contributed to the TranslatorSource service.",
+                                        name));
+
+            nameToTranslator.put(name, alternates.get(name));
         }
 
         registry = StrategyRegistry.newInstance(Translator.class, configuration, true);
@@ -53,12 +83,11 @@ public class TranslatorSourceImpl implements TranslatorSource, InvalidationListe
 
     public Translator get(String name)
     {
-
-        Translator result = translators.get(name);
+        Translator result = nameToTranslator.get(name);
 
         if (result == null)
             throw new UnknownValueException(String.format("Unknown translator type '%s'.", name), new AvailableValues(
-                    "translators", translators));
+                    "translators", nameToTranslator));
 
         return result;
     }

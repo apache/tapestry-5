@@ -371,6 +371,7 @@ public final class TapestryModule
         binder.bind(Dispatcher.class, AssetDispatcher.class).withId("AssetDispatcher");
         binder.bind(AssetPathConstructor.class, AssetPathConstructorImpl.class);
         binder.bind(JavascriptStackSource.class, JavascriptStackSourceImpl.class);
+        binder.bind(TranslatorAlternatesSource.class, TranslatorAlternatesSourceImpl.class);
     }
 
     // ========================================================================
@@ -1530,10 +1531,13 @@ public final class TapestryModule
         return service;
     }
 
-    public static TranslatorSource buildTranslatorSource(@Autobuild
-    TranslatorSourceImpl service, @ComponentClasses
-    InvalidationEventHub hub)
+    public static TranslatorSource buildTranslatorSource(Map<Class, Translator> configuration,
+            TranslatorAlternatesSource alternatesSource, @ComponentClasses
+            InvalidationEventHub hub)
     {
+        TranslatorSourceImpl service = new TranslatorSourceImpl(configuration, alternatesSource
+                .getTranslatorAlternates());
+
         hub.addInvalidationListener(service);
 
         return service;
