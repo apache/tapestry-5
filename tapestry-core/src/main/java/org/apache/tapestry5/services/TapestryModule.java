@@ -631,6 +631,8 @@ public final class TapestryModule
 
         configuration.add("Retain", new RetainWorker());
         configuration.addInstance("Persist", PersistWorker.class);
+        
+        configuration.addInstance("DiscardAfter", DiscardAfterWorker.class);
 
         configuration.addInstance("IncludeStylesheet", IncludeStylesheetWorker.class, "after:SetupRender");
         configuration

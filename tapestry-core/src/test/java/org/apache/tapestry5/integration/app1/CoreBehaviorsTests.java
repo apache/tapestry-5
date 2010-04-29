@@ -1436,4 +1436,21 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
 
         assertText("status", "Application Catalog Working");
     }
+    
+    /** TAP5-1121 */
+    @Test
+    public void discard_after()
+    {
+        clickThru("@DiscardAfter Demo");
+
+        type("stringValue", "foo bar baz");
+        
+        clickAndWait("//input[@id='keep']");
+        
+        assertTextPresent("Value is: 'foo bar baz'");
+        
+        clickAndWait("//input[@id='discard']");
+        
+        assertTextPresent("Value is: ''");
+    }
 }
