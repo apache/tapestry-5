@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2010 The Apache Software Foundation
+// Copyright 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -28,15 +28,13 @@ import java.lang.annotation.Target;
 import org.apache.tapestry5.ioc.annotations.UseWith;
 
 /**
- * Used to attach validation constraints directly to a property (either the getter or the setter method). The annotation
- * value is a comma separated list of <em>validation constraints</em>, each one identifying a validator type (such as
- * "required", "minlength") and optionally, a constraint value. Most validators need a constraint value, which is
- * separated from the type by an equals size (i.e., "maxlength=30"). In addition, the value may include
- * validator macros.
+ * Used to attach the name of a Translator used to convert the associated property between server-side and
+ * client-side representations.
  * <p/>
  * May be placed on any getter or setter method, or on the matching field.
  * 
- * @see Translate
+ * @see Validate
+ * @since 5.2.0
  */
 @Target(
 { ElementType.FIELD, ElementType.METHOD })
@@ -44,7 +42,7 @@ import org.apache.tapestry5.ioc.annotations.UseWith;
 @Documented
 @UseWith(
 { BEAN, COMPONENT, MIXIN, PAGE })
-public @interface Validate
+public @interface Translate
 {
     String value();
 }

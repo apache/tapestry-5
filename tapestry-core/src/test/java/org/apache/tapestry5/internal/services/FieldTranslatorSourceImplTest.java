@@ -1,10 +1,10 @@
-//  Copyright 2008 The Apache Software Foundation
+// Copyright 2008, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,7 +15,9 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.*;
+import org.apache.tapestry5.beaneditor.Translate;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
+import org.apache.tapestry5.ioc.AnnotationProvider;
 import org.apache.tapestry5.ioc.MessageFormatter;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.root.FieldComponent;
@@ -31,6 +33,7 @@ import java.util.Map;
 /**
  * Fills in some gaps that are not currently tested by the integration tests.
  */
+@SuppressWarnings("unchecked")
 public class FieldTranslatorSourceImplTest extends InternalBaseTestCase
 {
     @Test
@@ -57,6 +60,7 @@ public class FieldTranslatorSourceImplTest extends InternalBaseTestCase
         Locale locale = Locale.ENGLISH;
         Class propertyType = Map.class;
         TranslatorSource ts = mockTranslatorSource();
+        AnnotationProvider ap = mockAnnotationProvider(null);
 
         train_findByType(ts, propertyType, null);
 
@@ -64,9 +68,45 @@ public class FieldTranslatorSourceImplTest extends InternalBaseTestCase
 
         FieldTranslatorSource source = new FieldTranslatorSourceImpl(ts, null, null);
 
-        assertNull(source.createDefaultTranslator(field, "override", messages, locale, propertyType, null));
+        assertNull(source.createDefaultTranslator(field, "override", messages, locale, propertyType, ap));
 
         verify();
+    }
+
+    @Test
+    public void create_default_translator_with_annotation()
+    {
+        TranslatorSource ts = mockTranslatorSource();
+        AnnotationProvider ap = mockAnnotationProvider("fred");
+        Translator t = mockTranslator();
+
+        expect(ts.get("fred")).andReturn(t);
+
+        replay();
+
+        FieldTranslatorSourceImpl source = new FieldTranslatorSourceImpl(ts, null, null);
+
+        assertSame(source.findTranslator(Map.class, ap), t);
+
+        verify();
+    }
+
+    private AnnotationProvider mockAnnotationProvider(String translatorName)
+    {
+        AnnotationProvider ap = mockAnnotationProvider();
+
+        if (translatorName == null)
+        {
+            train_getAnnotation(ap, Translate.class, null);
+        }
+        else
+        {
+            Translate t = newMock(Translate.class);
+            expect(t.value()).andReturn(translatorName).atLeastOnce();
+            train_getAnnotation(ap, Translate.class, t);
+        }
+
+        return ap;
     }
 
     @Test
@@ -85,7 +125,7 @@ public class FieldTranslatorSourceImplTest extends InternalBaseTestCase
         MarkupWriter writer = mockMarkupWriter();
         String label = "Field Label";
         String message = "Woops, did it again.";
-
+        AnnotationProvider ap = mockAnnotationProvider(null);
 
         train_findByType(ts, propertyType, translator);
 
@@ -106,7 +146,7 @@ public class FieldTranslatorSourceImplTest extends InternalBaseTestCase
 
         FieldTranslatorSource source = new FieldTranslatorSourceImpl(ts, vms, fs);
 
-        FieldTranslator ft = source.createDefaultTranslator(field, "myfield", messages, locale, propertyType, null);
+        FieldTranslator ft = source.createDefaultTranslator(field, "myfield", messages, locale, propertyType, ap);
 
         assertEquals(ft.getType(), Map.class);
 
@@ -130,6 +170,7 @@ public class FieldTranslatorSourceImplTest extends InternalBaseTestCase
         MarkupWriter writer = mockMarkupWriter();
         String label = "My Label";
         String message = "Formatted Message";
+        AnnotationProvider ap = mockAnnotationProvider(null);
 
         train_findByType(ts, propertyType, translator);
 
@@ -148,7 +189,7 @@ public class FieldTranslatorSourceImplTest extends InternalBaseTestCase
 
         FieldTranslatorSource source = new FieldTranslatorSourceImpl(ts, vms, fs);
 
-        FieldTranslator ft = source.createDefaultTranslator(field, "myfield", messages, locale, propertyType, null);
+        FieldTranslator ft = source.createDefaultTranslator(field, "myfield", messages, locale, propertyType, ap);
 
         assertEquals(ft.getType(), Map.class);
 
@@ -172,6 +213,7 @@ public class FieldTranslatorSourceImplTest extends InternalBaseTestCase
         MarkupWriter writer = mockMarkupWriter();
         String label = "My Label";
         String message = "Formatted Message";
+        AnnotationProvider ap = mockAnnotationProvider(null);
 
         train_findByType(ts, propertyType, translator);
 
@@ -189,7 +231,7 @@ public class FieldTranslatorSourceImplTest extends InternalBaseTestCase
 
         FieldTranslatorSource source = new FieldTranslatorSourceImpl(ts, vms, fs);
 
-        FieldTranslator ft = source.createDefaultTranslator(field, "myfield", messages, locale, propertyType, null);
+        FieldTranslator ft = source.createDefaultTranslator(field, "myfield", messages, locale, propertyType, ap);
 
         assertEquals(ft.getType(), Map.class);
 
@@ -230,7 +272,6 @@ public class FieldTranslatorSourceImplTest extends InternalBaseTestCase
 
         train_getMessageKey(translator, "mykey");
         train_getMessageFormatter(validationMessages, "mykey", formatter);
-
 
         train_getLabel(field, label);
         train_format(formatter, message, label);

@@ -1,10 +1,10 @@
-//  Copyright 2008 The Apache Software Foundation
+// Copyright 2008, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,9 +15,11 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.ComponentResources;
+
 import org.apache.tapestry5.Field;
 import org.apache.tapestry5.FieldTranslator;
 import org.apache.tapestry5.Translator;
+import org.apache.tapestry5.beaneditor.Translate;
 import org.apache.tapestry5.ioc.AnnotationProvider;
 import org.apache.tapestry5.ioc.MessageFormatter;
 import org.apache.tapestry5.ioc.Messages;
@@ -29,6 +31,7 @@ import org.apache.tapestry5.services.ValidationMessagesSource;
 
 import java.util.Locale;
 
+@SuppressWarnings("unchecked")
 public class FieldTranslatorSourceImpl implements FieldTranslatorSource
 {
     private final TranslatorSource translatorSource;
@@ -38,7 +41,7 @@ public class FieldTranslatorSourceImpl implements FieldTranslatorSource
     private final FormSupport formSupport;
 
     public FieldTranslatorSourceImpl(TranslatorSource translatorSource,
-                                     ValidationMessagesSource validationMessagesSource, FormSupport formSupport)
+            ValidationMessagesSource validationMessagesSource, FormSupport formSupport)
     {
         this.translatorSource = translatorSource;
         this.validationMessagesSource = validationMessagesSource;
@@ -53,32 +56,44 @@ public class FieldTranslatorSourceImpl implements FieldTranslatorSource
         Field field = (Field) resources.getComponent();
         Class propertyType = resources.getBoundType(parameterName);
 
-        return createDefaultTranslator(field, resources.getId(), resources.getContainerMessages(),
-                                       resources.getLocale(), propertyType,
-                                       resources.getAnnotationProvider(parameterName));
+        return createDefaultTranslator(field, resources.getId(), resources.getContainerMessages(), resources
+                .getLocale(), propertyType, resources.getAnnotationProvider(parameterName));
     }
 
     public FieldTranslator createDefaultTranslator(Field field, String overrideId, Messages overrideMessages,
-                                                   Locale locale, Class propertyType,
-                                                   AnnotationProvider propertyAnnotations)
+            Locale locale, Class propertyType, AnnotationProvider propertyAnnotations)
     {
         Defense.notNull(field, "field");
         Defense.notBlank(overrideId, "overrideId");
         Defense.notNull(overrideMessages, "overrideMessages");
         Defense.notNull(locale, "locale");
 
+        if (propertyType == null)
+            return null;
 
-        if (propertyType == null) return null;
+        Translator translator = findTranslator(propertyType, propertyAnnotations);
 
-        Translator translator = translatorSource.findByType(propertyType);
-
-        if (translator == null) return null;
+        if (translator == null)
+            return null;
 
         return createTranslator(field, overrideId, overrideMessages, locale, translator);
     }
 
+    Translator findTranslator(Class propertyType, AnnotationProvider propertyAnnotations)
+    {
+        Translate annotation = propertyAnnotations.getAnnotation(Translate.class);
+
+        if (annotation != null)
+            return translatorSource.get(annotation.value());
+
+        if (propertyType == null)
+            return null;
+
+        return translatorSource.findByType(propertyType);
+    }
+
     public FieldTranslator createTranslator(Field field, String overrideId, Messages overrideMessages, Locale locale,
-                                            Translator translator)
+            Translator translator)
     {
         MessageFormatter formatter = findFormatter(overrideId, overrideMessages, locale, translator);
 
@@ -95,12 +110,11 @@ public class FieldTranslatorSourceImpl implements FieldTranslatorSource
         Translator translator = translatorSource.get(translatorName);
 
         return createTranslator(field, resources.getId(), resources.getContainerMessages(), resources.getLocale(),
-                                translator);
+                translator);
     }
 
-
     private MessageFormatter findFormatter(String overrideId, Messages overrideMessages, Locale locale,
-                                           Translator translator)
+            Translator translator)
     {
         // TAP5-228: Try to distinguish message overrides by form id and overrideId (i.e., property name) first.
 
