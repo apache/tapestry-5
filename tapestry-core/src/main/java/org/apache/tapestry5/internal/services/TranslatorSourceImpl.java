@@ -1,10 +1,10 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,16 +14,16 @@
 
 package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry5.Translator;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.ioc.util.StrategyRegistry;
-import org.apache.tapestry5.services.InvalidationListener;
-import org.apache.tapestry5.services.TranslatorSource;
-
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.tapestry5.Translator;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.util.AvailableValues;
+import org.apache.tapestry5.ioc.util.StrategyRegistry;
+import org.apache.tapestry5.ioc.util.UnknownValueException;
+import org.apache.tapestry5.services.InvalidationListener;
+import org.apache.tapestry5.services.TranslatorSource;
 
 public class TranslatorSourceImpl implements TranslatorSource, InvalidationListener
 {
@@ -31,17 +31,24 @@ public class TranslatorSourceImpl implements TranslatorSource, InvalidationListe
 
     private final StrategyRegistry<Translator> registry;
 
-    public TranslatorSourceImpl(Collection<Translator> configuration)
+    public TranslatorSourceImpl(Map<Class, Translator> configuration)
     {
-        Map<Class, Translator> typeToTranslator = CollectionFactory.newMap();
-
-        for (Translator t : configuration)
+        for (Map.Entry<Class, Translator> me : configuration.entrySet())
         {
-            translators.put(t.getName(), t);
-            typeToTranslator.put(t.getType(), t);
+            Class type = me.getKey();
+            Translator translator = me.getValue();
+
+            if (!type.equals(translator.getType()))
+                throw new RuntimeException(
+                        String
+                                .format(
+                                        "Contributed translator for type %s reports its type as %s. Please change the contribution so that the key matches that translator type.",
+                                        type.getName(), translator.getType().getName()));
+
+            translators.put(translator.getName(), translator);
         }
 
-        registry = StrategyRegistry.newInstance(Translator.class, typeToTranslator, true);
+        registry = StrategyRegistry.newInstance(Translator.class, configuration, true);
     }
 
     public Translator get(String name)
@@ -50,8 +57,8 @@ public class TranslatorSourceImpl implements TranslatorSource, InvalidationListe
         Translator result = translators.get(name);
 
         if (result == null)
-            throw new RuntimeException(ServicesMessages.unknownTranslatorType(name, InternalUtils
-                    .sortedKeys(translators)));
+            throw new UnknownValueException(String.format("Unknown translator type '%s'.", name), new AvailableValues(
+                    "translators", translators));
 
         return result;
     }

@@ -1008,11 +1008,11 @@ public final class TapestryModule
      * <li>BigDecimal</li>
      * </ul>
      */
-    public static void contributeTranslatorSource(Configuration<Translator> configuration,
+    public static void contributeTranslatorSource(MappedConfiguration<Class, Translator> configuration,
             NumericTranslatorSupport support)
     {
 
-        configuration.add(new StringTranslator());
+        configuration.add(String.class, new StringTranslator());
 
         Class[] types = new Class[]
         { Byte.class, Short.class, Integer.class, Long.class, Float.class, Double.class, BigInteger.class,
@@ -1022,7 +1022,7 @@ public final class TapestryModule
         {
             String name = type.getSimpleName().toLowerCase();
 
-            configuration.add(new NumericTranslator(name, type, support));
+            configuration.add(type, new NumericTranslator(name, type, support));
         }
     }
 

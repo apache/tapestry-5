@@ -153,11 +153,6 @@ public class ServicesMessages
         return MESSAGES.format("unknown-validator-type", validatorType, InternalUtils.join(knownValidatorTypes));
     }
 
-    public static String unknownTranslatorType(String translatorType, List<String> knownTranslatorTypes)
-    {
-        return MESSAGES.format("unknown-translator-type", translatorType, InternalUtils.join(knownTranslatorTypes));
-    }
-
     public static String validatorSpecificationParseError(int cursor, String specification)
     {
         return MESSAGES.format("validator-specification-parse-error", specification.charAt(cursor), cursor + 1,

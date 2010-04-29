@@ -14,6 +14,12 @@ Upgrade Notes
 
 Release 5.2.0
 
+* TranslatorSource
+
+  The configuration type for TranslatorSource has changed in an <<incompatible>> way: from
+  an unordered collection to a mapped collection; this is to support overrides. This will break
+  existing module classes that contribute to the TranslatorSource service configuration.
+
 * Assets
 
   There have been some changes to how assets operate in Tapestry 5.2.
@@ -52,8 +58,8 @@ Release 5.2.0
 
 * Template Parser back to SAX
 
-  Tapestry no longer uses a StAX parser (it uses a normal SAX parser) to parse component templates. This change
-  reduces the number of dependencies for Tapestry, and is a stepping stone to compatibility with
+  Tapestry no longer uses a StAX parser to parse component templates, it has reverted to using a normal SAX parser. This change
+  reduces the number of dependencies for Tapestry, and is a stepping stone towards compatibility with
   Google App Engine.
 
 Release 5.1.0.4
