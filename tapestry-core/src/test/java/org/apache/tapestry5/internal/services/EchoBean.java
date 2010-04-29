@@ -25,6 +25,8 @@ public class EchoBean
     private String storedString;
 
     private StringSource stringSource;
+    
+    private Number[][] storedArray;
 
     public StringSource getStringSource()
     {
@@ -75,6 +77,17 @@ public class EchoBean
     {
         this.storedString = storedString;
     }
+    
+
+    public Number[][] getStoredArray()
+    {
+        return storedArray;
+    }
+
+    public void setStoredArray(Number[][] storedArray)
+    {
+        this.storedArray = storedArray;
+    }
 
     public String echoString(String value, String before, String after)
     {
@@ -82,6 +95,11 @@ public class EchoBean
     }
 
     public List echoList(List input)
+    {
+        return input;
+    }
+    
+    public Number[][] echoArray(Number[][] input)
     {
         return input;
     }

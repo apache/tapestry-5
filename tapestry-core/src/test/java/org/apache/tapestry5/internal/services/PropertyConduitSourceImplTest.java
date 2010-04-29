@@ -380,6 +380,21 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
 
         assertListsEquals(l, new Long(1), new Double(2.0), "Bart");
     }
+    
+    @Test
+    public void arrays_as_method_argument()
+    {
+        PropertyConduit conduit = source.create(EchoBean.class, "echoArray(storedArray)");
+        EchoBean bean = new EchoBean();
+
+        bean.setStoredArray(new Number[][]{ new Integer[] {1, 2}, new Double[] {3.0, 4.0}});
+
+        Number[][] array = (Number[][]) conduit.get(bean);
+
+        assertArraysEqual(array[0], 1, 2);
+        assertArraysEqual(array[1], 3.0, 4.0);
+    }
+    
 
     @Test
     public void not_operator()

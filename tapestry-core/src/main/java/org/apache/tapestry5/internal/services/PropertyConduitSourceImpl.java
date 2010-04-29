@@ -911,7 +911,17 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
         private String toSimpleName(Class type)
         {
-            // TODO: handle arrays types
+            if (type.isArray())
+            {
+                Class<?> componentType = type.getComponentType();
+                
+                while (componentType.isArray())
+                {
+                    componentType = componentType.getComponentType();
+                }
+                
+                return InternalUtils.lastTerm(componentType.getName())+"_array";
+            }
             return InternalUtils.lastTerm(type.getName());
         }
 
