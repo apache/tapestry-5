@@ -1,10 +1,10 @@
-// Copyright 2008 The Apache Software Foundation
+// Copyright 2008, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,6 +19,7 @@ import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.services.javascript.JavascriptSupport;
 
 /**
  * Renders an arbitrary element including informal parameters.
@@ -43,7 +44,7 @@ public class Any implements ClientElement
     private ComponentResources resources;
 
     @Inject
-    private RenderSupport renderSupport;
+    private JavascriptSupport javascriptSupport;
 
     String defaultElement()
     {
@@ -60,18 +61,23 @@ public class Any implements ClientElement
     }
 
     /**
-     * Returns the client id.  This has side effects: this first time this is called (after the Any component renders
+     * Returns the client id. This has side effects: this first time this is called (after the Any component renders
      * its start tag), a unique id is allocated (based on, and typically the same as, the clientId parameter, which
      * defaults to the component's id). The rendered element is updated, with its id attribute set to the unique client
      * id, which is then returned.
-     *
+     * 
      * @return unique client id for this component
      */
     public String getClientId()
     {
+        if (anyElement == null)
+            throw new IllegalStateException(String.format(
+                    "Unable to provide client id for component %s as it has not yet rendered.", resources
+                            .getCompleteId()));
+
         if (uniqueId == null)
         {
-            uniqueId = renderSupport.allocateClientId(clientId);
+            uniqueId = javascriptSupport.allocateClientId(clientId);
             anyElement.forceAttributes("id", uniqueId);
         }
 
@@ -83,9 +89,9 @@ public class Any implements ClientElement
         writer.end(); // the element
     }
 
-    void inject(RenderSupport support, ComponentResources resources, String element, String clientId)
+    void inject(JavascriptSupport javascriptSupport, ComponentResources resources, String element, String clientId)
     {
-        this.renderSupport = support;
+        this.javascriptSupport = javascriptSupport;
         this.resources = resources;
         this.element = element;
         this.clientId = clientId;
