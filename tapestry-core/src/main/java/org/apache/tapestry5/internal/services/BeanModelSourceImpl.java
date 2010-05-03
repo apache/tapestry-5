@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -99,9 +99,11 @@ public class BeanModelSourceImpl implements BeanModelSource
 
             Method readMethod = pa.getReadMethod();
 
-            Location location = classFactory.getMethodLocation(readMethod);
+            Location location = readMethod == null ? null : classFactory.getMethodLocation(readMethod);
 
-            properties.add(new PropertyOrder(name, computeDepth(readMethod), location.getLine()));
+            int line = location == null ? -1 : location.getLine();
+
+            properties.add(new PropertyOrder(name, computeDepth(readMethod), line));
         }
 
         Collections.sort(properties);
@@ -153,16 +155,14 @@ public class BeanModelSourceImpl implements BeanModelSource
         return create(beanClass, true, messages);
     }
 
-    public <T> BeanModel<T> create(Class<T> beanClass, boolean filterReadOnlyProperties,
-            Messages messages)
+    public <T> BeanModel<T> create(Class<T> beanClass, boolean filterReadOnlyProperties, Messages messages)
     {
         Defense.notNull(beanClass, "beanClass");
         Defense.notNull(messages, "messages");
 
         ClassPropertyAdapter adapter = propertyAccess.getAdapter(beanClass);
 
-        BeanModel<T> model = new BeanModelImpl<T>(beanClass, propertyConduitSource, typeCoercer,
-                messages, locator);
+        BeanModel<T> model = new BeanModelImpl<T>(beanClass, propertyConduitSource, typeCoercer, messages, locator);
 
         for (final String propertyName : adapter.getPropertyNames())
         {

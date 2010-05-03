@@ -1,10 +1,10 @@
-// Copyright 2008 The Apache Software Foundation
+// Copyright 2008, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,6 +14,7 @@
 
 package org.apache.tapestry5.ioc.internal.util;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -22,34 +23,55 @@ import java.lang.reflect.TypeVariable;
 /**
  * Static methods related to the use of JDK 1.5 generics.
  */
+@SuppressWarnings("unchecked")
 public class GenericsUtils
 {
     /**
      * Analyzes the method (often defined in a base class) in the context of a particular concrete implementation of the
      * class to establish the generic type of a property. This works when the property type is defined as a class
      * generic parameter.
-     *
-     * @param type   base type for evaluation
-     * @param method method (possibly from a base class of type) to extract
+     * 
+     * @param containingClassType
+     *            class containing the method, used to reason about generics
+     * @param method
+     *            method (possibly from a base class of type) to extract
      * @return the generic type if it may be determined, or the raw type (that is, with type erasure, most often
      *         Object)
      */
-    public static Class extractGenericReturnType(Class type, Method method)
+    public static Class extractGenericReturnType(Class containingClassType, Method method)
     {
-        Class defaultType = method.getReturnType();
+        return extractGenericType(containingClassType, method.getReturnType(), method.getGenericReturnType());
+    }
 
-        Type genericType = method.getGenericReturnType();
+    /**
+     * Analyzes the field in the context of a particular concrete implementation of the class to establish
+     * the generic type of a (public) field. This works when the field type is defined as a class
+     * generic parameter.
+     * 
+     * @param containingClassType
+     *            class containing the method, used to reason about generics
+     * @param field
+     *            public field to extract type from
+     * @return the generic type if it may be determined, or the raw type (that is, with type erasure, most often
+     * @since 5.2.0
+     */
+    public static Class extractGenericFieldType(Class containingClassType, Field field)
+    {
+        return extractGenericType(containingClassType, field.getType(), field.getGenericType());
+    }
 
+    private static Class extractGenericType(Class containingClassType, Type defaultType, Type genericType)
+    {
         // We can only handle the case where you "lock down" a generic type to a specific type.
 
         if (genericType instanceof TypeVariable)
         {
 
             // An odd name for the method that gives you access to the type parameters
-            // used when implementing this class.  When you say Bean<String>, the first
+            // used when implementing this class. When you say Bean<String>, the first
             // type variable of the generic superclass is class String.
 
-            Type superType = type.getGenericSuperclass();
+            Type superType = containingClassType.getGenericSuperclass();
 
             if (superType instanceof ParameterizedType)
             {
@@ -66,15 +88,16 @@ public class GenericsUtils
                     TypeVariable stv = typeVariables[i];
 
                     // We're trying to match the name of the type variable that is used as the return type
-                    // of the method.  With that name, we find the corresponding index in the
-                    // type declarations.  With the index, we check superPType for the Class instance
+                    // of the method. With that name, we find the corresponding index in the
+                    // type declarations. With the index, we check superPType for the Class instance
                     // that defines it. Generics has lots of other options that we simply can't handle.
 
                     if (stv.getName().equals(name))
                     {
                         Type actualType = superPType.getActualTypeArguments()[i];
 
-                        if (actualType instanceof Class) return (Class) actualType;
+                        if (actualType instanceof Class)
+                            return (Class) actualType;
 
                         break;
                     }
@@ -83,9 +106,8 @@ public class GenericsUtils
             }
         }
 
+        return (Class) defaultType;
 
-        return defaultType;
-
-        // P.S. I wrote this and I barely understand it.  Fortunately, I have tests ...
+        // P.S. I wrote this and I barely understand it. Fortunately, I have tests ...
     }
 }

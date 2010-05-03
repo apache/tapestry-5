@@ -1,10 +1,10 @@
-// Copyright 2006, 2008 The Apache Software Foundation
+// Copyright 2006, 2008, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -41,8 +41,10 @@ public class PropertyAdapterImpl implements PropertyAdapter
 
     private AnnotationProvider annotationProvider;
 
+    private final Field field;
+
     PropertyAdapterImpl(ClassPropertyAdapter classAdapter, String name, Class type, Method readMethod,
-                        Method writeMethod)
+            Method writeMethod)
     {
         this.classAdapter = classAdapter;
         this.name = name;
@@ -52,6 +54,22 @@ public class PropertyAdapterImpl implements PropertyAdapter
         this.writeMethod = writeMethod;
 
         castRequired = readMethod != null && readMethod.getReturnType() != type;
+
+        field = null;
+    }
+
+    PropertyAdapterImpl(ClassPropertyAdapter classAdapter, String name, Class type, Field field)
+    {
+        this.classAdapter = classAdapter;
+        this.name = name;
+        this.type = type;
+
+        this.field = field;
+
+        castRequired = field.getType() != type;
+
+        readMethod = null;
+        writeMethod = null;
     }
 
     public String getName()
@@ -76,24 +94,27 @@ public class PropertyAdapterImpl implements PropertyAdapter
 
     public boolean isRead()
     {
-        return readMethod != null;
+        return field != null || readMethod != null;
     }
 
     public boolean isUpdate()
     {
-        return writeMethod != null;
+        return field != null || writeMethod != null;
     }
 
     public Object get(Object instance)
     {
-        if (readMethod == null)
+        if (field == null && readMethod == null)
             throw new UnsupportedOperationException(ServiceMessages.readNotSupported(instance, name));
 
         Throwable fail;
 
         try
         {
-            return readMethod.invoke(instance);
+            if (field == null)
+                return readMethod.invoke(instance);
+            else
+                return field.get(instance);
         }
         catch (InvocationTargetException ex)
         {
@@ -109,14 +130,17 @@ public class PropertyAdapterImpl implements PropertyAdapter
 
     public void set(Object instance, Object value)
     {
-        if (writeMethod == null)
+        if (field == null && writeMethod == null)
             throw new UnsupportedOperationException(ServiceMessages.writeNotSupported(instance, name));
 
         Throwable fail;
 
         try
         {
-            writeMethod.invoke(instance, value);
+            if (field == null)
+                writeMethod.invoke(instance, value);
+            else
+                field.set(instance, value);
 
             return;
         }
@@ -159,8 +183,7 @@ public class PropertyAdapterImpl implements PropertyAdapter
 
             Class cursor = getBeanType();
 
-            out:
-            while (cursor != null)
+            out: while (cursor != null)
             {
                 for (Field f : cursor.getDeclaredFields())
                 {
@@ -195,4 +218,10 @@ public class PropertyAdapterImpl implements PropertyAdapter
     {
         return classAdapter.getBeanType();
     }
+
+    public boolean isField()
+    {
+        return field != null;
+    }
+
 }

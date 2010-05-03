@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -145,7 +145,8 @@ public class PropertyAccessImplTest extends IOCInternalTestCase
 
     }
 
-    public static class ScalaBean {
+    public static class ScalaBean
+    {
         private String value;
 
         public String getValue()
@@ -169,7 +170,8 @@ public class PropertyAccessImplTest extends IOCInternalTestCase
         }
     }
 
-    public static class ScalaClass {
+    public static class ScalaClass
+    {
         private String value;
 
         public String value()
@@ -196,6 +198,37 @@ public class PropertyAccessImplTest extends IOCInternalTestCase
         {
             this.flag = flag;
         }
+    }
+
+    public static class PublicFieldBean
+    {
+        public String value;
+    }
+
+    public static class ShadowedPublicFieldBean
+    {
+        private String _value;
+
+        public String value;
+
+        public String getValue()
+        {
+            return _value;
+        }
+
+        public void setValue(String value)
+        {
+            _value = value;
+        }
+    }
+
+    public static abstract class GenericBean<T>
+    {
+        public T value;
+    }
+
+    public static class GenericStringBean extends GenericBean<String>
+    {
     }
 
     @Test
@@ -259,8 +292,8 @@ public class PropertyAccessImplTest extends IOCInternalTestCase
         }
         catch (IllegalArgumentException ex)
         {
-            assertEquals(ex.getMessage(),
-                         "Class " + CLASS_NAME + "$Bean does not " + "contain a property named 'zaphod'.");
+            assertEquals(ex.getMessage(), "Class " + CLASS_NAME + "$Bean does not "
+                    + "contain a property named 'zaphod'.");
         }
     }
 
@@ -276,8 +309,8 @@ public class PropertyAccessImplTest extends IOCInternalTestCase
         }
         catch (UnsupportedOperationException ex)
         {
-            assertEquals(ex.getMessage(),
-                         "Class " + CLASS_NAME + "$Bean does not provide an mutator ('setter') method for property 'class'.");
+            assertEquals(ex.getMessage(), "Class " + CLASS_NAME
+                    + "$Bean does not provide an mutator ('setter') method for property 'class'.");
         }
     }
 
@@ -293,8 +326,8 @@ public class PropertyAccessImplTest extends IOCInternalTestCase
         }
         catch (UnsupportedOperationException ex)
         {
-            assertEquals(ex.getMessage(),
-                         "Class " + CLASS_NAME + "$Bean does not provide an accessor ('getter') method for property 'writeOnly'.");
+            assertEquals(ex.getMessage(), "Class " + CLASS_NAME
+                    + "$Bean does not provide an accessor ('getter') method for property 'writeOnly'.");
         }
     }
 
@@ -326,8 +359,7 @@ public class PropertyAccessImplTest extends IOCInternalTestCase
         }
         catch (RuntimeException ex)
         {
-            assertEquals(ex.getMessage(),
-                         "Error updating property 'failure' of PropertyUtilsExceptionBean: setFailure");
+            assertEquals(ex.getMessage(), "Error updating property 'failure' of PropertyUtilsExceptionBean: setFailure");
         }
     }
 
@@ -370,8 +402,8 @@ public class PropertyAccessImplTest extends IOCInternalTestCase
     {
         ClassPropertyAdapter cpa = access.getAdapter(Bean.class);
 
-        assertEquals(cpa.toString(),
-                     "<ClassPropertyAdaptor " + CLASS_NAME + "$Bean : class, readOnly, value, writeOnly>");
+        assertEquals(cpa.toString(), "<ClassPropertyAdaptor " + CLASS_NAME
+                + "$Bean : class, readOnly, value, writeOnly>");
     }
 
     @Test
@@ -464,8 +496,7 @@ public class PropertyAccessImplTest extends IOCInternalTestCase
     @Test
     public void get_annotation_when_annotation_not_present()
     {
-        PropertyAdapter pa = access.getAdapter(AnnotatedBean.class)
-                .getPropertyAdapter("readWrite");
+        PropertyAdapter pa = access.getAdapter(AnnotatedBean.class).getPropertyAdapter("readWrite");
 
         assertNull(pa.getAnnotation(Scope.class));
     }
@@ -563,7 +594,8 @@ public class PropertyAccessImplTest extends IOCInternalTestCase
     }
 
     @Test
-    public void get_scala_properties_with_bean_accessors() {
+    public void get_scala_properties_with_bean_accessors()
+    {
         PropertyAdapter pa = access.getAdapter(ScalaBean.class).getPropertyAdapter("value");
 
         // even thought scala accessors are present the java bean ones should be the ones used by Tapestry
@@ -572,10 +604,59 @@ public class PropertyAccessImplTest extends IOCInternalTestCase
     }
 
     @Test
-    public void get_scala_properties() {
+    public void get_scala_properties()
+    {
         PropertyAdapter pa = access.getAdapter(ScalaClass.class).getPropertyAdapter("value");
 
         assertEquals(pa.getReadMethod().getName(), "value");
         assertEquals(pa.getWriteMethod().getName(), "value_$eq");
+    }
+
+    @Test
+    public void access_to_public_field()
+    {
+        PropertyAdapter pa = access.getAdapter(PublicFieldBean.class).getPropertyAdapter("value");
+
+        assertTrue(pa.isField());
+        assertTrue(pa.isRead());
+        assertTrue(pa.isUpdate());
+
+        PublicFieldBean bean = new PublicFieldBean();
+
+        pa.set(bean, "fred");
+
+        assertEquals(bean.value, "fred");
+
+        bean.value = "barney";
+
+        assertEquals(pa.get(bean), "barney");
+    }
+
+    @Test
+    public void property_is_favored_over_public_field()
+    {
+        PropertyAdapter pa = access.getAdapter(ShadowedPublicFieldBean.class).getPropertyAdapter("value");
+
+        assertFalse(pa.isField());
+
+        ShadowedPublicFieldBean bean = new ShadowedPublicFieldBean();
+
+        pa.set(bean, "fred");
+
+        assertNull(bean.value);
+
+        bean.value = "barney";
+        bean.setValue("wilma");
+
+        assertEquals(pa.get(bean), "wilma");
+    }
+
+    @Test
+    public void generic_field_is_recognized()
+    {
+        PropertyAdapter pa = access.getAdapter(GenericStringBean.class).getPropertyAdapter("value");
+
+        assertTrue(pa.isCastRequired());
+        assertEquals(pa.getType(), String.class);
     }
 }

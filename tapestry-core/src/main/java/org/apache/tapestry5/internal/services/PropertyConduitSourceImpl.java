@@ -914,13 +914,13 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
             if (type.isArray())
             {
                 Class<?> componentType = type.getComponentType();
-                
+
                 while (componentType.isArray())
                 {
                     componentType = componentType.getComponentType();
                 }
-                
-                return InternalUtils.lastTerm(componentType.getName())+"_array";
+
+                return InternalUtils.lastTerm(componentType.getName()) + "_array";
             }
             return InternalUtils.lastTerm(type.getName());
         }
@@ -1032,19 +1032,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
             if (adapter == null)
             {
-                ExpressionTermInfo fieldInfo = infoForPublicField(activeType, propertyName);
-
-                if (fieldInfo != null)
-                    return fieldInfo;
-
-                Set<String> names = CollectionFactory.newSet();
-
-                names.addAll(classAdapter.getPropertyNames());
-
-                for (Field f : activeType.getFields())
-                {
-                    names.add(f.getName());
-                }
+                List<String> names = classAdapter.getPropertyNames();
 
                 throw new UnknownValueException(String.format(
                         "Class %s does not contain a property (or public field) named '%s'.", activeType.getName(),
@@ -1052,60 +1040,6 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
             }
 
             return createExpressionTermInfoForProperty(adapter);
-        }
-
-        private ExpressionTermInfo infoForPublicField(Class activeType, String fieldName)
-        {
-            // Iterate over all public fields of the type (or its super classes)
-
-            for (final Field field : activeType.getFields())
-            {
-                if (field.getName().equalsIgnoreCase(fieldName)) { return new ExpressionTermInfo()
-                {
-                    public <T extends Annotation> T getAnnotation(Class<T> annotationClass)
-                    {
-                        return field.getAnnotation(annotationClass);
-                    }
-
-                    public boolean isCastRequired()
-                    {
-                        return false;
-                    }
-
-                    public Method getWriteMethod()
-                    {
-                        return null;
-                    }
-
-                    public Class getType()
-                    {
-                        return field.getType();
-                    }
-
-                    public Method getReadMethod()
-                    {
-                        // TODO Auto-generated method stub
-                        return null;
-                    }
-
-                    public String getPropertyName()
-                    {
-                        return field.getName();
-                    }
-
-                    public String getDescription()
-                    {
-                        return "field " + field.getName();
-                    }
-
-                    public boolean isField()
-                    {
-                        return true;
-                    }
-                }; }
-            }
-
-            return null;
         }
 
         private ExpressionTermInfo createExpressionTermInfoForProperty(final PropertyAdapter adapter)
@@ -1149,7 +1083,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
                 public boolean isField()
                 {
-                    return false;
+                    return adapter.isField();
                 }
             };
         }
