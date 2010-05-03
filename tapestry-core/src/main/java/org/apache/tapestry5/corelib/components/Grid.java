@@ -1,10 +1,10 @@
-// Copyright 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2007, 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -41,7 +41,7 @@ import java.util.List;
  * the {@link org.apache.tapestry5.grid.GridDataSource} changes between render and form submission, then there's the
  * possibility that data will be applied to the wrong server-side objects. In general, when using Grid and Form
  * together, you want to provide the Grid with a {@link org.apache.tapestry5.ValueEncoder} (via the encoder parameter).
- *
+ * 
  * @see org.apache.tapestry5.beaneditor.BeanModel
  * @see org.apache.tapestry5.services.BeanModelSource
  * @see org.apache.tapestry5.grid.GridDataSource
@@ -96,7 +96,9 @@ public class Grid implements GridModel
      * The model used to identify the properties to be presented and the order of presentation. The model may be
      * omitted, in which case a default model is generated from the first object in the data source (this implies that
      * the objects provided by the source are uniform). The model may be explicitly specified to override the default
-     * behavior, say to reorder or rename columns or add additional columns.
+     * behavior, say to reorder or rename columns or add additional columns. The add, include,
+     * exclude and reorder
+     * parameters are <em>only</em> applied to a default model, not an explicitly provided one.
      */
     @Parameter
     private BeanModel model;
@@ -116,23 +118,28 @@ public class Grid implements GridModel
 
     /**
      * A comma-seperated list of property names to be added to the {@link org.apache.tapestry5.beaneditor.BeanModel}.
-     * Cells for added columns will be blank unless a cell override is provided.
+     * Cells for added columns will be blank unless a cell override is provided. This parameter is only used
+     * when a default model is created automatically.
      */
     @Parameter(defaultPrefix = BindingConstants.LITERAL)
     private String add;
 
     /**
-     * A comma-separated list of property names to be retained from the {@link org.apache.tapestry5.beaneditor.BeanModel}.
+     * A comma-separated list of property names to be retained from the
+     * {@link org.apache.tapestry5.beaneditor.BeanModel}.
      * Only these properties will be retained, and the properties will also be reordered. The names are
-     * case-insensitive.
+     * case-insensitive. This parameter is only used
+     * when a default model is created automatically.
      */
     @SuppressWarnings("unused")
     @Parameter(defaultPrefix = BindingConstants.LITERAL)
     private String include;
 
     /**
-     * A comma-separated list of property names to be removed from the {@link org.apache.tapestry5.beaneditor.BeanModel}.
-     * The names are case-insensitive.
+     * A comma-separated list of property names to be removed from the {@link org.apache.tapestry5.beaneditor.BeanModel}
+     * .
+     * The names are case-insensitive. This parameter is only used
+     * when a default model is created automatically.
      */
     @Parameter(defaultPrefix = BindingConstants.LITERAL)
     private String exclude;
@@ -140,7 +147,8 @@ public class Grid implements GridModel
     /**
      * A comma-separated list of property names indicating the order in which the properties should be presented. The
      * names are case insensitive. Any properties not indicated in the list will be appended to the end of the display
-     * order.
+     * order. This parameter is only used
+     * when a default model is created automatically.
      */
     @Parameter(defaultPrefix = BindingConstants.LITERAL)
     private String reorder;
@@ -154,7 +162,7 @@ public class Grid implements GridModel
     private Block empty;
 
     /**
-     * CSS class for the &lt;table&gt; element.  In addition, informal parameters to the Grid are rendered in the table
+     * CSS class for the &lt;table&gt; element. In addition, informal parameters to the Grid are rendered in the table
      * element.
      */
     @Parameter(name = "class", defaultPrefix = BindingConstants.LITERAL, value = "t-data-grid")
@@ -162,8 +170,9 @@ public class Grid implements GridModel
     private String tableClass;
 
     /**
-     * If true, then the Grid will be wrapped in an element that acts like a {@link
-     * org.apache.tapestry5.corelib.components.Zone}; all the paging and sorting links will refresh the zone, repainting
+     * If true, then the Grid will be wrapped in an element that acts like a
+     * {@link org.apache.tapestry5.corelib.components.Zone}; all the paging and sorting links will refresh the zone,
+     * repainting
      * the entire grid within it, but leaving the rest of the page (outside the zone) unchanged.
      */
     @Parameter
@@ -186,7 +195,6 @@ public class Grid implements GridModel
     @Persist
     private Boolean sortAscending;
 
-
     @Inject
     private ComponentResources resources;
 
@@ -196,29 +204,17 @@ public class Grid implements GridModel
     @Environmental
     private ClientBehaviorSupport clientBehaviorSupport;
 
-    @Component(
-            parameters = {
-                    "index=inherit:columnIndex",
-                    "lean=inherit:lean",
-                    "overrides=overrides",
-                    "zone=zone" })
+    @Component(parameters =
+    { "index=inherit:columnIndex", "lean=inherit:lean", "overrides=overrides", "zone=zone" })
     private GridColumns columns;
 
-    @Component(
-            parameters = {
-                    "columnIndex=inherit:columnIndex",
-                    "rowsPerPage=rowsPerPage",
-                    "currentPage=currentPage",
-                    "row=row",
-                    "overrides=overrides" },
-            publishParameters = "rowIndex,rowClass,volatile,encoder,lean")
+    @Component(parameters =
+    { "columnIndex=inherit:columnIndex", "rowsPerPage=rowsPerPage", "currentPage=currentPage", "row=row",
+            "overrides=overrides" }, publishParameters = "rowIndex,rowClass,volatile,encoder,lean")
     private GridRows rows;
 
-    @Component(parameters = {
-            "source=dataSource",
-            "rowsPerPage=rowsPerPage",
-            "currentPage=currentPage",
-            "zone=zone" })
+    @Component(parameters =
+    { "source=dataSource", "rowsPerPage=rowsPerPage", "currentPage=currentPage", "zone=zone" })
     private GridPager pager;
 
     @Component(parameters = "to=pagerTop")
@@ -323,7 +319,6 @@ public class Grid implements GridModel
             return getSortAscending() ? ColumnSort.ASCENDING : ColumnSort.DESCENDING;
         }
 
-
         public void updateSort(String columnId)
         {
             Defense.notBlank(columnId, "columnId");
@@ -364,8 +359,8 @@ public class Grid implements GridModel
     /**
      * Returns a {@link org.apache.tapestry5.Binding} instance that attempts to identify the model from the source
      * parameter (via {@link org.apache.tapestry5.grid.GridDataSource#getRowType()}. Subclasses may override to provide
-     * a different mechanism.  The returning binding is variant (not invariant).
-     *
+     * a different mechanism. The returning binding is variant (not invariant).
+     * 
      * @see BeanModelSource#createDisplayModel(Class, org.apache.tapestry5.ioc.Messages)
      */
     protected Binding defaultModel()
@@ -382,9 +377,10 @@ public class Grid implements GridModel
 
                 if (rowType == null)
                     throw new RuntimeException(
-                            String.format(
-                                    "Unable to determine the bean type for rows from %s. You should bind the model parameter explicitly.",
-                                    gridDataSource));
+                            String
+                                    .format(
+                                            "Unable to determine the bean type for rows from %s. You should bind the model parameter explicitly.",
+                                            gridDataSource));
 
                 // Properties do not have to be read/write
 
@@ -423,7 +419,8 @@ public class Grid implements GridModel
 
     Object setupRender()
     {
-        if (formSupport != null) formSupport.store(this, SETUP_DATA_SOURCE);
+        if (formSupport != null)
+            formSupport.store(this, SETUP_DATA_SOURCE);
 
         setupDataSource();
 
@@ -443,7 +440,8 @@ public class Grid implements GridModel
 
         int availableRows = cachingSource.getAvailableRows();
 
-        if (availableRows == 0) return;
+        if (availableRows == 0)
+            return;
 
         int maxPage = ((availableRows - 1) / rowsPerPage) + 1;
 
@@ -468,7 +466,8 @@ public class Grid implements GridModel
         // Skip rendering of component (template, body, etc.) when there's nothing to display.
         // The empty placeholder will already have rendered.
 
-        if (cachingSource.getAvailableRows() == 0) return false;
+        if (cachingSource.getAvailableRows() == 0)
+            return false;
 
         if (inPlace && zone == null)
         {
@@ -561,8 +560,8 @@ public class Grid implements GridModel
     }
 
     /**
-     * Resets the Grid to inital settings; this sets the current page to one, and {@linkplain
-     * org.apache.tapestry5.grid.GridSortModel#clear() clears the sort model}.
+     * Resets the Grid to inital settings; this sets the current page to one, and
+     * {@linkplain org.apache.tapestry5.grid.GridSortModel#clear() clears the sort model}.
      */
     public void reset()
     {
@@ -573,8 +572,9 @@ public class Grid implements GridModel
     /**
      * Event handler for inplaceupdate event triggered from nested components when an Ajax update occurs. The event
      * context will carry the zone, which is recorded here, to allow the Grid and its sub-components to properly
-     * re-render themselves.  Invokes {@link org.apache.tapestry5.services.ComponentEventResultProcessor#processResultValue(Object)}
-     * passing this (the Grid component) as the content provider for the update.
+     * re-render themselves. Invokes
+     * {@link org.apache.tapestry5.services.ComponentEventResultProcessor#processResultValue(Object)} passing this (the
+     * Grid component) as the content provider for the update.
      */
     void onInPlaceUpdate(String zone) throws IOException
     {

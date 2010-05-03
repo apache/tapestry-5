@@ -70,37 +70,39 @@ public class BeanEditForm implements ClientElement, FormValidationControl
 
     /**
      * A comma-separated list of property names to be retained from the
-     * {@link org.apache.tapestry5.beaneditor.BeanModel}.
+     * {@link org.apache.tapestry5.beaneditor.BeanModel} (only used
+     * when a default model is created automatically).
      * Only these properties will be retained, and the properties will also be reordered. The names are
      * case-insensitive.
      */
-    @SuppressWarnings("unused")
     @Parameter(defaultPrefix = BindingConstants.LITERAL)
     private String include;
 
     /**
-     * A comma-separated list of property names to be added to the {@link org.apache.tapestry5.beaneditor.BeanModel}.
-     */
-    @Parameter(defaultPrefix = BindingConstants.LITERAL)
-    private String add;
-
-    /**
      * A comma-separated list of property names to be removed from the {@link org.apache.tapestry5.beaneditor.BeanModel}
-     * .
+     * (only used
+     * when a default model is created automatically).
      * The names are case-insensitive.
      */
-    @SuppressWarnings("unused")
     @Parameter(defaultPrefix = BindingConstants.LITERAL)
     private String exclude;
 
     /**
      * A comma-separated list of property names indicating the order in which the properties should be presented. The
      * names are case insensitive. Any properties not indicated in the list will be appended to the end of the display
-     * order.
+     * orde. Only used
+     * when a default model is created automatically.
      */
-    @SuppressWarnings("unused")
     @Parameter(defaultPrefix = BindingConstants.LITERAL)
     private String reorder;
+
+    /**
+     * A comma-separated list of property names to be added to the {@link org.apache.tapestry5.beaneditor.BeanModel}
+     * (only used
+     * when a default model is created automatically).
+     */
+    @Parameter(defaultPrefix = BindingConstants.LITERAL)
+    private String add;
 
     @Component(parameters = "validationId=componentResources.id", publishParameters = "clientValidation,autofocus,zone")
     private Form form;
@@ -118,7 +120,8 @@ public class BeanEditForm implements ClientElement, FormValidationControl
 
     /**
      * The model that identifies the parameters to be edited, their order, and every other aspect. If not specified, a
-     * default bean model will be created from the type of the object bound to the object parameter.
+     * default bean model will be created from the type of the object bound to the object parameter. The add, include,
+     * exclude and reorder parameters are <em>only</em> applied to a default model, not an explicitly provided one.
      */
     @SuppressWarnings("unused")
     @Parameter
@@ -144,9 +147,9 @@ public class BeanEditForm implements ClientElement, FormValidationControl
             Class beanType = resources.getBoundType("object");
 
             model = beanModelSource.createEditModel(beanType, resources.getContainerMessages());
-        }
 
-        BeanModelUtils.modify(model, add, include, exclude, reorder);
+            BeanModelUtils.modify(model, add, include, exclude, reorder);
+        }
     }
 
     /**
@@ -187,7 +190,7 @@ public class BeanEditForm implements ClientElement, FormValidationControl
         resources.triggerEvent(EventConstants.CANCELED, null, eventCallback);
 
         // Prevent further event handlers.
-        
+
         return true;
     }
 }

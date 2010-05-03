@@ -1,10 +1,10 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -87,7 +87,9 @@ public class BeanEditor
     private Object object;
 
     /**
-     * A comma-separated list of property names to be retained from the {@link org.apache.tapestry5.beaneditor.BeanModel}.
+     * A comma-separated list of property names to be retained from the
+     * {@link org.apache.tapestry5.beaneditor.BeanModel} (only used
+     * when a default model is created automatically).
      * Only these properties will be retained, and the properties will also be reordered. The names are
      * case-insensitive.
      */
@@ -95,7 +97,9 @@ public class BeanEditor
     private String include;
 
     /**
-     * A comma-separated list of property names to be removed from the {@link org.apache.tapestry5.beaneditor.BeanModel}.
+     * A comma-separated list of property names to be removed from the {@link org.apache.tapestry5.beaneditor.BeanModel}
+     * (only used
+     * when a default model is created automatically).
      * The names are case-insensitive.
      */
     @Parameter(defaultPrefix = BindingConstants.LITERAL)
@@ -104,21 +108,25 @@ public class BeanEditor
     /**
      * A comma-separated list of property names indicating the order in which the properties should be presented. The
      * names are case insensitive. Any properties not indicated in the list will be appended to the end of the display
-     * order.
+     * orde. Only used
+     * when a default model is created automatically.
      */
     @Parameter(defaultPrefix = BindingConstants.LITERAL)
     private String reorder;
 
     /**
-     * A comma-separated list of property names to be added to the {@link org.apache.tapestry5.beaneditor.BeanModel}.
+     * A comma-separated list of property names to be added to the {@link org.apache.tapestry5.beaneditor.BeanModel}
+     * (only used
+     * when a default model is created automatically).
      */
     @Parameter(defaultPrefix = BindingConstants.LITERAL)
     private String add;
 
-
     /**
      * The model that identifies the parameters to be edited, their order, and every other aspect. If not specified, a
-     * default bean model will be created from the type of the object bound to the object parameter.
+     * default bean model will be created from the type of the object bound to the object parameter. The add, include,
+     * exclude and reorder
+     * parameters are <em>only</em> applied to a default model, not an explicitly provided one.
      */
     @Parameter
     @Property(write = false)
@@ -183,9 +191,9 @@ public class BeanEditor
         {
             Class type = resources.getBoundType("object");
             model = modelSource.createEditModel(type, overrides.getOverrideMessages());
-        }
 
-        BeanModelUtils.modify(model, add, include, exclude, reorder);
+            BeanModelUtils.modify(model, add, include, exclude, reorder);
+        }
 
         // The only problem here is that if the bound property is backed by a persistent field, it
         // is assigned (and stored to the session, and propagated around the cluster) first,
@@ -199,15 +207,13 @@ public class BeanEditor
             }
             catch (Exception ex)
             {
-                String message = InternalMessages.failureInstantiatingObject(model.getBeanType(),
-                                                                             resources.getCompleteId(),
-                                                                             ex);
+                String message = InternalMessages.failureInstantiatingObject(model.getBeanType(), resources
+                        .getCompleteId(), ex);
                 throw new TapestryException(message, resources.getLocation(), ex);
             }
-            
-            
-            //If 'object' parameter is bound to a null-value BeanValidationContext is empty. 
-            //This prevents JSR-303 javascript validators to be rendered properly .
+
+            // If 'object' parameter is bound to a null-value BeanValidationContext is empty.
+            // This prevents JSR-303 javascript validators to be rendered properly .
             refreshBeanValidationContext();
         }
 
@@ -224,7 +230,6 @@ public class BeanEditor
             }
         };
 
-
         cachedObject = object;
 
         environment.push(BeanEditContext.class, context);
@@ -234,20 +239,20 @@ public class BeanEditor
     {
         environment.pop(BeanEditContext.class);
     }
-    
+
     private void refreshBeanValidationContext()
     {
-        if(environment.peek(BeanValidationContext.class) != null)
+        if (environment.peek(BeanValidationContext.class) != null)
         {
             environment.pop(BeanValidationContext.class);
-            
+
             environment.push(BeanValidationContext.class, new BeanValidationContextImpl(object));
         }
     }
 
     // For testing
     void inject(ComponentResources resources, PropertyOverrides overrides, BeanModelSource source,
-                Environment environment)
+            Environment environment)
     {
         this.resources = resources;
         this.overrides = overrides;

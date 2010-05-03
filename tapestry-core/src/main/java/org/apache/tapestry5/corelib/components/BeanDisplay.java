@@ -1,10 +1,10 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -27,15 +27,15 @@ import org.apache.tapestry5.services.BeanModelSource;
 
 /**
  * Used to display the properties of a bean, using an underlying {@link BeanModel}. The output definition list: a
- * &lt;dl&gt; element containing a series of &lt;dt&gt;/&lt;dd&gt; pairs.  The property label is used as the &lt;dt&gt;
+ * &lt;dl&gt; element containing a series of &lt;dt&gt;/&lt;dd&gt; pairs. The property label is used as the &lt;dt&gt;
  * and the property value (formatted as per the datatype) is the &lt;dd&gt;. Only properties that have a known data type
  * are displayed.
  * <p/>
  * The property id is used as the class attribute of the &lt;dt&gt; and &lt;dd&gt; element, allowing CSS customization
- * per property.  This does not occur when lean is bound to true.
+ * per property. This does not occur when lean is bound to true.
  * <p/>
  * The outer &lt;dl&gt; element has the CSS class "t-beandisplay".
- *
+ * 
  * @see org.apache.tapestry5.beaneditor.DataType
  * @see BeanModel
  */
@@ -58,25 +58,29 @@ public class BeanDisplay
     private boolean lean;
 
     /**
-     * The model that identifies the parameters to be displayed, their order, and every other aspect. If not specified,
-     * a default bean model will be created from the type of the object bound to the object parameter.
+     * The model that identifies the parameters to be edited, their order, and every other aspect. If not specified, a
+     * default bean model will be created from the type of the object bound to the object parameter. The add, include,
+     * exclude and reorder
+     * parameters are <em>only</em> applied to a default model, not an explicitly provided one.
      */
     @Parameter
     @Property(write = false)
     private BeanModel model;
-
     /**
-     * A comma-separated list of property names to be retained from the {@link org.apache.tapestry5.beaneditor.BeanModel}.
+     * A comma-separated list of property names to be retained from the
+     * {@link org.apache.tapestry5.beaneditor.BeanModel} (only used
+     * when a default model is created automatically).
      * Only these properties will be retained, and the properties will also be reordered. The names are
      * case-insensitive.
      */
-    @SuppressWarnings("unused")
     @Parameter(defaultPrefix = BindingConstants.LITERAL)
     private String include;
 
     /**
-     * A comma-separated list of property names to be removed from the {@link BeanModel}. The names are
-     * case-insensitive.
+     * A comma-separated list of property names to be removed from the {@link org.apache.tapestry5.beaneditor.BeanModel}
+     * (only used
+     * when a default model is created automatically).
+     * The names are case-insensitive.
      */
     @Parameter(defaultPrefix = BindingConstants.LITERAL)
     private String exclude;
@@ -84,10 +88,19 @@ public class BeanDisplay
     /**
      * A comma-separated list of property names indicating the order in which the properties should be presented. The
      * names are case insensitive. Any properties not indicated in the list will be appended to the end of the display
-     * order.
+     * orde. Only used
+     * when a default model is created automatically.
      */
     @Parameter(defaultPrefix = BindingConstants.LITERAL)
     private String reorder;
+
+    /**
+     * A comma-separated list of property names to be added to the {@link org.apache.tapestry5.beaneditor.BeanModel}
+     * (only used
+     * when a default model is created automatically).
+     */
+    @Parameter(defaultPrefix = BindingConstants.LITERAL)
+    private String add;
 
     /**
      * Where to search for local overrides of property display blocks as block parameters. Further, the container of the
@@ -98,12 +111,6 @@ public class BeanDisplay
     @Parameter(value = "componentResources")
     @Property(write = false)
     private ComponentResources overrides;
-
-    /**
-     * A comma-separated list of property names to be added to the {@link org.apache.tapestry5.beaneditor.BeanModel}.
-     */
-    @Parameter(defaultPrefix = BindingConstants.LITERAL)
-    private String add;
 
     @Inject
     private ComponentResources resources;
@@ -116,9 +123,12 @@ public class BeanDisplay
 
     void setupRender()
     {
-        if (model == null) model = modelSource.createDisplayModel(object.getClass(), overrides.getContainerMessages());
+        if (model == null)
+        {
+            model = modelSource.createDisplayModel(object.getClass(), overrides.getContainerMessages());
 
-        BeanModelUtils.modify(model, add, include, exclude, reorder);
+            BeanModelUtils.modify(model, add, include, exclude, reorder);
+        }
     }
 
     /**
@@ -128,7 +138,6 @@ public class BeanDisplay
     {
         return model.get(propertyName);
     }
-
 
     public String getPropertyClass()
     {
