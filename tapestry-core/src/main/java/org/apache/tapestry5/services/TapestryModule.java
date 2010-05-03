@@ -2283,7 +2283,7 @@ public final class TapestryModule
                     throws IOException
             {
 
-                if (securityManager.checkForInsecureRequest(parameters.getLogicalPageName()))
+                if (securityManager.checkForInsecurePageRenderRequest(parameters))
                     return;
 
                 handler.handle(parameters);
@@ -2537,7 +2537,7 @@ public final class TapestryModule
             public void handle(ComponentEventRequestParameters parameters, ComponentEventRequestHandler handler)
                     throws IOException
             {
-                if (requestSecurityManager.checkForInsecureRequest(parameters.getActivePageName()))
+                if (requestSecurityManager.checkForInsecureComponentEventRequest(parameters))
                     return;
 
                 handler.handle(parameters);

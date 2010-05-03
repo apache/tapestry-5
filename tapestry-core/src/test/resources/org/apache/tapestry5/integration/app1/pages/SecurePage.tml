@@ -1,6 +1,10 @@
 <html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
 
     <h1>Secure Page Access</h1>
+    
+    <t:if test="context">
+      <p>Context: <span id="context">${context}</span></p>
+    </t:if>
 
 
     <t:if test="message">

@@ -1453,4 +1453,13 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
         
         assertTextPresent("Value is: ''");
     }
+    
+    /** TAP5-1080 */
+    @Test
+    public void context_lost_on_secure_page_redirect()
+    {
+        open("/securepage/mycontext");
+        
+        assertText("context", "mycontext");
+    }
 }

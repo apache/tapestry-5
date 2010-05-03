@@ -1,4 +1,4 @@
-// Copyright 2008, 2009 The Apache Software Foundation
+// Copyright 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,6 +16,9 @@ package org.apache.tapestry5.internal.services;
 
 import java.io.IOException;
 
+import org.apache.tapestry5.services.ComponentEventRequestParameters;
+import org.apache.tapestry5.services.PageRenderRequestParameters;
+
 /**
  * Used to manage the relationship between the security of a request and the security of a page. By secure, we mean
  * whether a request uses HTTPS and whether a page demands the use of HTTPS.
@@ -28,11 +31,25 @@ public interface RequestSecurityManager
      * Checks the page to see if it is secure; if so, and the request is not secure, then a redirect to the page is
      * generated and sent.
      *
-     * @param pageName page for the current request
+     * @param parameters parameters for the current request
      * @return true if a redirect was sent, false if normal processing should continue
      * @throws IOException
      */
-    boolean checkForInsecureRequest(String pageName) throws IOException;
+    boolean checkForInsecurePageRenderRequest(PageRenderRequestParameters parameters) throws IOException;
+
+    /**
+     * Checks the target page of the component event request to see if it is secure; if so, and the
+     * request is not secure, then a redirect to the page is generated and sent, preserving the
+     * original component event request.
+     * 
+     * @param parameters
+     *            parameters for the current request
+     * @return true if a redirect was sent, false if normal processing should continue
+     * @throws IOException
+     * 
+     * @since 5.2.0.0
+     */
+    boolean checkForInsecureComponentEventRequest(ComponentEventRequestParameters parameters) throws IOException;
 
     /**
      * Determines if the page security does not match the request's security. If so, returns a base URL (to which the

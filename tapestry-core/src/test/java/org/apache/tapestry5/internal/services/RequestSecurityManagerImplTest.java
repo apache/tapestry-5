@@ -1,4 +1,4 @@
-// Copyright 2008, 2009 The Apache Software Foundation
+// Copyright 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,9 +16,12 @@ package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.Link;
 import org.apache.tapestry5.MetaDataConstants;
+import org.apache.tapestry5.internal.EmptyEventContext;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.services.BaseURLSource;
+import org.apache.tapestry5.services.ComponentEventLinkEncoder;
 import org.apache.tapestry5.services.MetaDataLocator;
+import org.apache.tapestry5.services.PageRenderRequestParameters;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.Response;
 import org.testng.annotations.DataProvider;
@@ -33,18 +36,20 @@ public class RequestSecurityManagerImplTest extends InternalBaseTestCase
     {
         Request request = mockRequest();
         Response response = mockResponse();
-        LinkSource linkSource = mockLinkSource();
         MetaDataLocator locator = mockMetaDataLocator();
         BaseURLSource source = mockBaseURLSource();
+        ComponentEventLinkEncoder encoder = newMock(ComponentEventLinkEncoder.class);
 
         train_isSecure(request, true);
 
         replay();
+        
+        PageRenderRequestParameters parameters = new PageRenderRequestParameters(PAGE_NAME, new EmptyEventContext(), false);
 
         RequestSecurityManager manager
-                = new RequestSecurityManagerImpl(request, response, linkSource, locator, source, true);
+                = new RequestSecurityManagerImpl(request, response, encoder, locator, source, true);
 
-        assertFalse(manager.checkForInsecureRequest(PAGE_NAME));
+        assertFalse(manager.checkForInsecurePageRenderRequest(parameters));
 
         verify();
     }
@@ -54,20 +59,22 @@ public class RequestSecurityManagerImplTest extends InternalBaseTestCase
     {
         Request request = mockRequest();
         Response response = mockResponse();
-        LinkSource linkSource = mockLinkSource();
         MetaDataLocator locator = mockMetaDataLocator();
         BaseURLSource source = mockBaseURLSource();
+        ComponentEventLinkEncoder encoder = newMock(ComponentEventLinkEncoder.class);
 
         train_isSecure(request, false);
 
         train_isSecure(locator, PAGE_NAME, false);
 
         replay();
+        
+        PageRenderRequestParameters parameters = new PageRenderRequestParameters(PAGE_NAME, new EmptyEventContext(), false);
 
         RequestSecurityManager manager
-                = new RequestSecurityManagerImpl(request, response, linkSource, locator, source, true);
+                = new RequestSecurityManagerImpl(request, response, encoder, locator, source, true);
 
-        assertFalse(manager.checkForInsecureRequest(PAGE_NAME));
+        assertFalse(manager.checkForInsecurePageRenderRequest(parameters));
 
         verify();
     }
@@ -77,32 +84,34 @@ public class RequestSecurityManagerImplTest extends InternalBaseTestCase
     {
         Request request = mockRequest();
         Response response = mockResponse();
-        LinkSource linkSource = mockLinkSource();
         MetaDataLocator locator = mockMetaDataLocator();
         BaseURLSource source = mockBaseURLSource();
         Link link = mockLink();
+        ComponentEventLinkEncoder encoder = newMock(ComponentEventLinkEncoder.class);
 
         train_isSecure(request, false);
 
         train_isSecure(locator, PAGE_NAME, true);
+        
+        PageRenderRequestParameters parameters = new PageRenderRequestParameters(PAGE_NAME, new EmptyEventContext(), false);
 
-        train_createPageRenderLink(linkSource, PAGE_NAME, link);
+        train_createPageRenderLink(encoder, parameters, link);
 
         response.sendRedirect(link);
 
         replay();
 
         RequestSecurityManager manager
-                = new RequestSecurityManagerImpl(request, response, linkSource, locator, source, true);
+                = new RequestSecurityManagerImpl(request, response, encoder, locator, source, true);
 
-        assertTrue(manager.checkForInsecureRequest(PAGE_NAME));
+        assertTrue(manager.checkForInsecurePageRenderRequest(parameters));
 
         verify();
     }
 
-    private void train_createPageRenderLink(LinkSource linkSource, String pageName, Link link)
+    private void train_createPageRenderLink(ComponentEventLinkEncoder encoder, PageRenderRequestParameters parameters, Link link)
     {
-        expect(linkSource.createPageRenderLink(pageName, false)).andReturn(link);
+        expect(encoder.createPageRenderLink(parameters)).andReturn(link);
     }
 
     @DataProvider
@@ -121,9 +130,9 @@ public class RequestSecurityManagerImplTest extends InternalBaseTestCase
     {
         Request request = mockRequest();
         Response response = mockResponse();
-        LinkSource linkSource = mockLinkSource();
         MetaDataLocator locator = mockMetaDataLocator();
         BaseURLSource source = mockBaseURLSource();
+        ComponentEventLinkEncoder encoder = newMock(ComponentEventLinkEncoder.class);
 
         train_isSecure(request, secureRequest);
 
@@ -135,7 +144,7 @@ public class RequestSecurityManagerImplTest extends InternalBaseTestCase
         replay();
 
         RequestSecurityManager manager
-                = new RequestSecurityManagerImpl(request, response, linkSource, locator, source, true);
+                = new RequestSecurityManagerImpl(request, response, encoder, locator, source, true);
 
         assertEquals(manager.getBaseURL(PAGE_NAME), expectedURL);
 

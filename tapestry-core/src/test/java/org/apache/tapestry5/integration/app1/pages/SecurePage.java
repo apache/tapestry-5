@@ -17,9 +17,9 @@ package org.apache.tapestry5.integration.app1.pages;
 import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.annotations.Path;
 import org.apache.tapestry5.annotations.Persist;
+import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.Secure;
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.services.Request;
 
 @Secure
 public class SecurePage
@@ -29,15 +29,23 @@ public class SecurePage
     private String message;
 
     @Inject
-    private Request request;
-
-    @Inject
     @Path("context:images/tapestry_banner.gif")
     private Asset icon;
 
     @Inject
     @Path("nested/tapestry-button.png")
     private Asset button;
+    
+    @Property
+    private String context;
+
+    public void onActivate(String context) {
+        this.context = context;
+    }
+
+    public String onPassivate() {
+        return context;
+    } 
 
     public Asset getIcon()
     {

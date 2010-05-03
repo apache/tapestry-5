@@ -1,4 +1,4 @@
-// Copyright 2008, 2009 The Apache Software Foundation
+// Copyright 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,16 +14,19 @@
 
 package org.apache.tapestry5.internal.services;
 
+import java.io.IOException;
+
 import org.apache.tapestry5.Link;
 import org.apache.tapestry5.MetaDataConstants;
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.BaseURLSource;
+import org.apache.tapestry5.services.ComponentEventLinkEncoder;
+import org.apache.tapestry5.services.ComponentEventRequestParameters;
 import org.apache.tapestry5.services.MetaDataLocator;
+import org.apache.tapestry5.services.PageRenderRequestParameters;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.Response;
-
-import java.io.IOException;
 
 public class RequestSecurityManagerImpl implements RequestSecurityManager
 {
@@ -31,15 +34,15 @@ public class RequestSecurityManagerImpl implements RequestSecurityManager
 
     private final Response response;
 
-    private final LinkSource linkSource;
-
     private final MetaDataLocator locator;
 
     private final BaseURLSource baseURLSource;
 
     private final boolean securityEnabled;
+    
+    private final ComponentEventLinkEncoder componentEventLinkEncoder;
 
-    public RequestSecurityManagerImpl(Request request, Response response, LinkSource linkSource,
+    public RequestSecurityManagerImpl(Request request, Response response, ComponentEventLinkEncoder componentEventLinkEncoder,
                                       MetaDataLocator locator, BaseURLSource baseURLSource,
 
                                       @Symbol(SymbolConstants.SECURE_ENABLED)
@@ -47,28 +50,53 @@ public class RequestSecurityManagerImpl implements RequestSecurityManager
     {
         this.request = request;
         this.response = response;
-        this.linkSource = linkSource;
+        this.componentEventLinkEncoder = componentEventLinkEncoder;
         this.locator = locator;
         this.baseURLSource = baseURLSource;
         this.securityEnabled = securityEnabled;
     }
+    
+    public boolean checkForInsecureComponentEventRequest(ComponentEventRequestParameters parameters) throws IOException
+    {
+        if (!needsRedirect(parameters.getActivePageName()))
+            return false;
 
-    public boolean checkForInsecureRequest(String pageName) throws IOException
+        // Page is secure but request is not, so redirect.
+        // We can safely ignore the forForm parameter since secure form requests are alway done from
+        // an already secured page
+
+        Link link = componentEventLinkEncoder.createComponentEventLink(parameters, false);
+        
+        response.sendRedirect(link);
+        
+        return true;
+    }
+    
+
+    public boolean checkForInsecurePageRenderRequest(PageRenderRequestParameters parameters) throws IOException
+    {
+        if (!needsRedirect(parameters.getLogicalPageName()))
+            return false;
+
+        // Page is secure but request is not, so redirect.
+
+        Link link = componentEventLinkEncoder.createPageRenderLink(parameters);
+
+        response.sendRedirect(link);
+
+        return true;
+    }
+    
+    private boolean needsRedirect(String pageName)
     {
         if (!securityEnabled) return false;
 
         // We don't (at this time) redirect from secure to insecure, just from insecure to secure.
 
         if (request.isSecure()) return false;
-
+        
         if (!isSecure(pageName)) return false;
-
-        // Page is secure but request is not, so redirect.
-
-        Link link = linkSource.createPageRenderLink(pageName, false);
-
-        response.sendRedirect(link);
-
+        
         return true;
     }
 
