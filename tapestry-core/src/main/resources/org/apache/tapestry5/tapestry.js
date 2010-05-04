@@ -554,32 +554,30 @@ var Tapestry = {
 			Tapestry.ScriptManager.virtualScripts.push(complete);
 		});
 	},
-	
-	/** 
-	 * Creates a clone of the indicated element, but with the alternate tag name.
-	 * Attributes of the original node are copied to the new node. Tag names should
-	 * be all upper-case. The content of the original element is copied to the new element
-	 * and the original element is removed. Event observers on the original element will
-	 * be lost.
+
+	/**
+	 * Creates a clone of the indicated element, but with the alternate tag
+	 * name. Attributes of the original node are copied to the new node. Tag
+	 * names should be all upper-case. The content of the original element is
+	 * copied to the new element and the original element is removed. Event
+	 * observers on the original element will be lost.
 	 * 
-	 * @param element element or element id
-	 * @return the new element
-	 *  @since 5.2.0
+	 * @param element
+	 *            element or element id
+	 * @since 5.2.0
 	 */
-	replaceElementTagName : function(element, newTagName)
-	{
-		var newElement = new Element(newTagName);
-		
-		$A($(element).attributes).each(function (attribute) {
-			newElement.writeAttribute(attribute.name, attribute.value);
-		});
-		
-		/** Copy the original element's content over. */
-		newElement.update($(element).innerHTML);
-		
-		$(element).insert({ before: newElement}).remove();
-		
-		return newElement;
+	replaceElementTagName : function(element, newTagName) {
+
+		var tag = $(element).tagName;
+		var outerHTML = $(element).outerHTML;
+
+		var replaceHTML = outerHTML.replace(new RegExp("^<" + tag, "i"),
+				"<" + newTagName).replace(new RegExp("</" + tag + ">$", "i"),
+				"</" + newTagName + ">");
+
+		$(element).insert( {
+			before : replaceHTML
+		}).remove();
 	}
 };
 
@@ -1996,8 +1994,8 @@ Tapestry.ScriptManager = {
  * are not prefixed in any way, valueing readability over preventing naming
  * conflicts.
  * <p>
- * However, this technique is being phased out and will soon be deprecated
- * as it is all too easy to cause memory cycles and leaks (especially in IE).
+ * However, this technique is being phased out and will soon be deprecated as it
+ * is all too easy to cause memory cycles and leaks (especially in IE).
  * 
  * @param element
  *            an element instance or element id
