@@ -1452,6 +1452,22 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
         clickAndWait("//input[@id='discard']");
         
         assertTextPresent("Value is: ''");
+        
+        //Once again
+        
+        type("stringValue", "barney quux");
+        
+        clickAndWait("//input[@id='keep']");
+        
+        assertTextPresent("Value is: 'barney quux'");
+        
+        clickAndWait("//input[@id='discardWithCheckedException']");
+        
+        assertTextPresent("Oops! Error occured");
+        
+        clickThru("@DiscardAfter Demo");
+        
+        assertTextPresent("Value is: 'barney quux'");
     }
     
     /** TAP5-1080 */

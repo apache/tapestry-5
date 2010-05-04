@@ -34,6 +34,9 @@ public class DiscardAfterWorker implements ComponentClassTransformWorker
         {
             invocation.proceed();
             
+            if(invocation.isFail())
+                return;
+            
             ComponentResources resources = invocation.getComponentResources();
             
             resources.discardPersistentFieldChanges();

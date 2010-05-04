@@ -16,14 +16,20 @@ package org.apache.tapestry5.annotations;
 
 import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import static org.apache.tapestry5.ioc.annotations.AnnotationUseContext.COMPONENT;
+import static org.apache.tapestry5.ioc.annotations.AnnotationUseContext.MIXIN;
+import static org.apache.tapestry5.ioc.annotations.AnnotationUseContext.PAGE;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
+import org.apache.tapestry5.ioc.annotations.UseWith;
+
 /**
  * Marks a method of a page or a component to discard all persistent field changes. The changes are
- * eliminated from persistent storage after the marked method is invoked.
+ * eliminated from persistent storage after the marked method is invoked. Any exception (runtime or checked) 
+ * thrown by annotated method will cause persistent fields to keep their values.
  * 
  * @see org.apache.tapestry5.ComponentResources#discardPersistentFieldChanges()
  * @since 5.2.0
@@ -31,6 +37,7 @@ import java.lang.annotation.Target;
 @Target(METHOD)
 @Retention(RUNTIME)
 @Documented
+@UseWith({COMPONENT,MIXIN,PAGE})
 public @interface DiscardAfter
 {
 

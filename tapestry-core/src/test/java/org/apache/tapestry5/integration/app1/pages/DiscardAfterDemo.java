@@ -13,6 +13,8 @@
 // limitations under the License.
 package org.apache.tapestry5.integration.app1.pages;
 
+import java.io.IOException;
+
 import org.apache.tapestry5.annotations.DiscardAfter;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
@@ -28,5 +30,11 @@ public class DiscardAfterDemo
     void onSelectedFromDiscard()
     {
         
+    }
+    
+    @DiscardAfter
+    void onSelectedFromDiscardWithCheckedException() throws IOException
+    {
+        throw new IOException("Oops! Error occured");
     }
 }

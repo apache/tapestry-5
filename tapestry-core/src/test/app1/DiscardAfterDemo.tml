@@ -10,6 +10,7 @@
 
         <t:submit t:id="keep" value="Keep Values"/>
         <t:submit t:id="discard" value="Discard Values"/>
+        <t:submit t:id="discardWithCheckedException" value="Discard Values With Checked Exception"/>
     </t:form>
 
     <p>
