@@ -111,21 +111,21 @@ public class JavascriptSupportImpl implements JavascriptSupport
 
     public void commit()
     {
-        Func.each(stackStylesheets, new Operation<String>()
+        Func.each(new Operation<String>()
         {
             public void op(String value)
             {
                 linker.addStylesheetLink(value, null);
             }
-        });
+        }, stackStylesheets);
 
-        Func.each(otherStylesheets, new Operation<Stylesheet>()
+        Func.each(new Operation<Stylesheet>()
         {
             public void op(Stylesheet value)
             {
                 linker.addStylesheetLink(value.path, value.media);
             }
-        });
+        }, otherStylesheets);
 
         Operation<String> linkLibrary = new Operation<String>()
         {
@@ -135,8 +135,8 @@ public class JavascriptSupportImpl implements JavascriptSupport
             }
         };
 
-        Func.each(stackLibraries, linkLibrary);
-        Func.each(otherLibraries, linkLibrary);
+        Func.each(linkLibrary, stackLibraries);
+        Func.each(linkLibrary, otherLibraries);
 
         convertInitsToScriptBlocks();
 
@@ -312,7 +312,7 @@ public class JavascriptSupportImpl implements JavascriptSupport
 
         stackLibraries.addAll(stackPathConstructor.constructPathsForJavascriptStack(stackName));
 
-        List<String> stylesheetPaths = Func.map(stack.getStylesheets(), toPath);
+        List<String> stylesheetPaths = Func.map(toPath, stack.getStylesheets());
 
         stackStylesheets.addAll(stylesheetPaths);
 

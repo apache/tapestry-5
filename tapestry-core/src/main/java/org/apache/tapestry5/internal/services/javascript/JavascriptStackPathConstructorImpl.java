@@ -72,7 +72,7 @@ public class JavascriptStackPathConstructorImpl implements JavascriptStackPathCo
 
     private List<String> toPaths(List<Asset> assets)
     {
-        return Func.map(assets, toPath);
+        return Func.map(toPath, assets);
     }
 
     private List<String> combinedStackURL(String stackName)

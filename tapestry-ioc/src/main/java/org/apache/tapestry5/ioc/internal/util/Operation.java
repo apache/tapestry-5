@@ -18,7 +18,7 @@ package org.apache.tapestry5.ioc.internal.util;
  * An operational function used with a collection.
  * 
  * @since 5.2.0
- * @see Func#each(java.util.Collection, Operation)
+ * @see Func#each(Operation, java.util.Collection)
  */
 public interface Operation<T>
 {

@@ -104,7 +104,7 @@ public class MultiZoneUpdateInsideForm
 
         public List<OptionModel> getOptions()
         {
-            return Func.map(options, new Coercion<SelectObj, OptionModel>()
+            return Func.map(new Coercion<SelectObj, OptionModel>()
             {
                 public OptionModel coerce(final SelectObj input)
                 {
@@ -121,7 +121,7 @@ public class MultiZoneUpdateInsideForm
                         }
                     };
                 }
-            });
+            }, options);
         }
 
         public String toClient(SelectObj value)

@@ -78,7 +78,7 @@ public class DocumentLinkerImpl implements DocumentLinker
         if (root == null)
             return;
 
-            addStylesheetsToHead(root, includedStylesheets);
+        addStylesheetsToHead(root, includedStylesheets);
 
         // only add the generator meta only to html documents
 
@@ -158,13 +158,15 @@ public class DocumentLinkerImpl implements DocumentLinker
 
         final Element scriptContainer = container.element("script-container");
 
-        Func.each(scripts, new Operation<String>()
+        Operation<String> addScript = new Operation<String>()
         {
             public void op(String scriptURL)
             {
                 scriptContainer.element("script", "type", "text/javascript", "src", scriptURL);
             }
-        });
+        };
+
+        Func.each(addScript, scripts);
 
         if (existing != null)
             scriptContainer.moveBefore(existing);
