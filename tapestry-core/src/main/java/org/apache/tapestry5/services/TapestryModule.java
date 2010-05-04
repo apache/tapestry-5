@@ -120,6 +120,7 @@ import org.apache.tapestry5.validator.Max;
 import org.apache.tapestry5.validator.MaxLength;
 import org.apache.tapestry5.validator.Min;
 import org.apache.tapestry5.validator.MinLength;
+import org.apache.tapestry5.validator.None;
 import org.apache.tapestry5.validator.Regexp;
 import org.apache.tapestry5.validator.Required;
 import org.apache.tapestry5.validator.ValidatorMacro;
@@ -631,7 +632,7 @@ public final class TapestryModule
 
         configuration.add("Retain", new RetainWorker());
         configuration.addInstance("Persist", PersistWorker.class);
-        
+
         configuration.addInstance("DiscardAfter", DiscardAfterWorker.class);
 
         configuration.addInstance("IncludeStylesheet", IncludeStylesheetWorker.class, "after:SetupRender");
@@ -763,6 +764,8 @@ public final class TapestryModule
      * <li>min</li>
      * <li>max</li>
      * <li>regexp</li>
+     * <li>email</li>
+     * <li>none</li>
      * </ul>
      */
     public static void contributeFieldValidatorSource(MappedConfiguration<String, Validator> configuration)
@@ -774,6 +777,7 @@ public final class TapestryModule
         configuration.add("max", new Max());
         configuration.add("regexp", new Regexp());
         configuration.add("email", new Email());
+        configuration.add("none", new None());
     }
 
     /**

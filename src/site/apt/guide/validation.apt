@@ -313,6 +313,8 @@ Available Validators
 *-----------+-----------------+---------------------------------------------------------------------+-----------------------------------------------------------------------+
 | minLength | int             | Makes sure that a string value has a minimum length                 | <<<\<t:textfield value="somefield" validate="minlength=1" /\>>>>      |
 *-----------+-----------------+---------------------------------------------------------------------+-----------------------------------------------------------------------+
+| none      | -               | Does nothing (used to override a @Validate annotation)              | <<<\<t:textfield value="somefield" validate="none" /\>>>>      |
+*-----------+-----------------+---------------------------------------------------------------------+-----------------------------------------------------------------------+
 | regexp    | pattern         | Makes sure that a string value conforms to a given pattern          | <<<\<t:textfield value="otherfield" validate="regexp=^[a-z]+$" /\>>>> |
 *-----------+-----------------+---------------------------------------------------------------------+-----------------------------------------------------------------------+
 | required  | -               | Makes sure that a string value is not null and not the empty string | <<<\<t:textfield value="name" validate="required" /\>>>>              |
