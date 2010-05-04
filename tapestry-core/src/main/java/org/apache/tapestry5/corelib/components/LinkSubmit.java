@@ -60,7 +60,9 @@ public class LinkSubmit implements ClientElement
 
     /**
      * If true (the default), then any notification sent by the component will be deferred until the end of the form
-     * submission (this is usually desirable).
+     * submission (this is usually desirable).  In general, this can be left as the default except when the LinkSubmit
+     * component is rendering inside a {@link Loop}, in which case defer should be bound to false (otherwise, the
+     * event context will always be the final value of the Loop).
      */
     @Parameter
     private boolean defer = true;
