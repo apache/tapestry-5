@@ -80,7 +80,7 @@ var Tapestry = {
 	 */
 	TRIGGER_ZONE_UPDATE_EVENT : "tapestry:triggerzoneupdate",
 
-	/** Event used when intercepting and cancelling the normal click event. */
+	/** Event used when intercepting and canceling the normal click event. */
 	ACTION_EVENT : "tapestry:action",
 
 	/** When false, the default, the Tapestry.debug() function will be a no-op. */
@@ -553,6 +553,33 @@ var Tapestry = {
 			var complete = Tapestry.rebuildURL(script);
 			Tapestry.ScriptManager.virtualScripts.push(complete);
 		});
+	},
+	
+	/** 
+	 * Creates a clone of the indicated element, but with the alternate tag name.
+	 * Attributes of the original node are copied to the new node. Tag names should
+	 * be all upper-case. The content of the original element is copied to the new element
+	 * and the original element is removed. Event observers on the original element will
+	 * be lost.
+	 * 
+	 * @param element element or element id
+	 * @return the new element
+	 *  @since 5.2.0
+	 */
+	replaceElementTagName : function(element, newTagName)
+	{
+		var newElement = new Element(newTagName);
+		
+		$A($(element).attributes).each(function (attribute) {
+			newElement.writeAttribute(attribute.name, attribute.value);
+		});
+		
+		/** Copy the original element's content over. */
+		newElement.update($(element).innerHTML);
+		
+		$(element).insert({ before: newElement}).remove();
+		
+		return newElement;
 	}
 };
 
@@ -1958,7 +1985,7 @@ Tapestry.ScriptManager = {
 /**
  * In the spirit of $(), $T() exists to access the <em>Tapestry object</em>
  * for the element. The Tapestry object is used to store additional values
- * related to the element; it is simply an annoymous object stored as property
+ * related to the element; it is simply an anonymous object stored as property
  * <code>_tapestry</code> of the element, created the first time it is
  * accessed.
  * <p>
@@ -1968,6 +1995,9 @@ Tapestry.ScriptManager = {
  * place!). For the moment, added methods are stored directly on the object, and
  * are not prefixed in any way, valueing readability over preventing naming
  * conflicts.
+ * <p>
+ * However, this technique is being phased out and will soon be deprecated
+ * as it is all too easy to cause memory cycles and leaks (especially in IE).
  * 
  * @param element
  *            an element instance or element id

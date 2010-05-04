@@ -14,6 +14,10 @@
 
 Tapestry.Initializer.linkSubmit = function(spec) {
 
+	Tapestry.replaceElementTagName(spec.clientId, "A");
+	
+	$(spec.clientId).writeAttribute("href", "#");
+			
 	$(spec.clientId).observeAction("click", function(event) {
 
 		var form = $(spec.form);

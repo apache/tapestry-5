@@ -22,6 +22,7 @@ import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.FormSupport;
 import org.apache.tapestry5.services.Heartbeat;
 import org.apache.tapestry5.services.Request;
+import org.apache.tapestry5.services.javascript.InitializationPriority;
 import org.apache.tapestry5.services.javascript.JavascriptSupport;
 
 /**
@@ -63,7 +64,7 @@ public class LinkSubmit implements ClientElement
      */
     @Parameter
     private boolean defer = true;
-    
+
     /**
      * The list of values that will be made available to event handler method of this component when the form is
      * submitted.
@@ -138,14 +139,9 @@ public class LinkSubmit implements ClientElement
 
             formSupport.store(this, new ProcessSubmission(clientId));
 
-            writer.element("a",
+            writer.element("span",
 
-            "id", clientId,
-
-            "href", "#");
-
-            if (!request.isXHR())
-                writer.attributes(MarkupConstants.ONCLICK, MarkupConstants.WAIT_FOR_PAGE);
+            "id", clientId);
 
             resources.renderInformalParameters(writer);
         }
@@ -161,7 +157,7 @@ public class LinkSubmit implements ClientElement
 
             spec.put("validate", mode == SubmitMode.NORMAL);
 
-            javascriptSupport.addInitializerCall("linkSubmit", spec);
+            javascriptSupport.addInitializerCall(InitializationPriority.EARLY, "linkSubmit", spec);
         }
     }
 
