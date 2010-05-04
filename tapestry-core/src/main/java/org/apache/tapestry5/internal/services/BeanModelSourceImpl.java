@@ -103,7 +103,7 @@ public class BeanModelSourceImpl implements BeanModelSource
 
             int line = location == null ? -1 : location.getLine();
 
-            properties.add(new PropertyOrder(name, computeDepth(readMethod), line));
+            properties.add(new PropertyOrder(name, computeDepth(pa), line));
         }
 
         Collections.sort(properties);
@@ -116,10 +116,10 @@ public class BeanModelSourceImpl implements BeanModelSource
         }
     }
 
-    private static int computeDepth(Method method)
+    private static int computeDepth(PropertyAdapter pa)
     {
         int depth = 0;
-        Class c = method.getDeclaringClass();
+        Class c = pa.getDeclaringClass();
 
         // When the method originates in an interface, the parent may be null, not Object.
 

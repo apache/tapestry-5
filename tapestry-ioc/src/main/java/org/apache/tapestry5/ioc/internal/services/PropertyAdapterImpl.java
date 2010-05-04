@@ -43,6 +43,8 @@ public class PropertyAdapterImpl implements PropertyAdapter
 
     private final Field field;
 
+    private final Class declaringClass;
+
     PropertyAdapterImpl(ClassPropertyAdapter classAdapter, String name, Class type, Method readMethod,
             Method writeMethod)
     {
@@ -52,6 +54,8 @@ public class PropertyAdapterImpl implements PropertyAdapter
 
         this.readMethod = readMethod;
         this.writeMethod = writeMethod;
+
+        declaringClass = readMethod != null ? readMethod.getDeclaringClass() : writeMethod.getDeclaringClass();
 
         castRequired = readMethod != null && readMethod.getReturnType() != type;
 
@@ -65,6 +69,8 @@ public class PropertyAdapterImpl implements PropertyAdapter
         this.type = type;
 
         this.field = field;
+
+        declaringClass = field.getDeclaringClass();
 
         castRequired = field.getType() != type;
 
@@ -224,4 +230,8 @@ public class PropertyAdapterImpl implements PropertyAdapter
         return field != null;
     }
 
+    public Class getDeclaringClass()
+    {
+        return declaringClass;
+    }
 }

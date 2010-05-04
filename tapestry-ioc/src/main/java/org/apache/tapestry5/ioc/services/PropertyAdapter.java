@@ -108,4 +108,11 @@ public interface PropertyAdapter extends AnnotationProvider
      * @since 5.2
      */
     boolean isField();
+
+    /**
+     * The class in which the property (or public field) is defined.
+     * 
+     * @since 5.2
+     */
+    Class getDeclaringClass();
 }

@@ -574,6 +574,8 @@ public class PropertyAccessImplTest extends IOCInternalTestCase
         assertSame(pa1.getType(), String.class);
         assertTrue(pa1.isCastRequired());
 
+        assertSame(pa1.getDeclaringClass(), Pair.class);
+
         PropertyAdapter pa2 = cpa1.getPropertyAdapter("value");
         assertSame(pa2.getType(), Long.class);
         assertTrue(pa2.isCastRequired());
@@ -658,5 +660,6 @@ public class PropertyAccessImplTest extends IOCInternalTestCase
 
         assertTrue(pa.isCastRequired());
         assertEquals(pa.getType(), String.class);
+        assertSame(pa.getDeclaringClass(), GenericBean.class);
     }
 }

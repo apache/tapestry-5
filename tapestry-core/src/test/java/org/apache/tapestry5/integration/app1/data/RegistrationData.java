@@ -1,10 +1,10 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,13 +14,13 @@
 
 package org.apache.tapestry5.integration.app1.data;
 
+import java.util.List;
+
 import org.apache.tapestry5.beaneditor.DataType;
 import org.apache.tapestry5.beaneditor.ReorderProperties;
 import org.apache.tapestry5.beaneditor.Validate;
 import org.apache.tapestry5.beaneditor.Width;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-
-import java.util.List;
 
 @ReorderProperties("firstname,lastname,birthyear,sex")
 public class RegistrationData
@@ -31,7 +31,7 @@ public class RegistrationData
 
     private int birthYear;
 
-    private Sex sex = Sex.MALE;
+    public Sex sex = Sex.MALE;
 
     private boolean citizen;
 
@@ -46,11 +46,6 @@ public class RegistrationData
     public int getBirthYear()
     {
         return birthYear;
-    }
-
-    public Sex getSex()
-    {
-        return sex;
     }
 
     public String getFirstName()
@@ -95,11 +90,6 @@ public class RegistrationData
     public void setLastName(String lastName)
     {
         this.lastName = lastName;
-    }
-
-    public void setSex(Sex sex)
-    {
-        this.sex = sex;
     }
 
     public void setCitizen(boolean citizen)
