@@ -24,7 +24,7 @@ public class None extends AbstractValidator<Void, Object>
 {
     public None()
     {
-        super(Void.class, Object.class, "not-used");
+        super(null, Object.class, "required");
     }
 
     /** Does nothing. */
