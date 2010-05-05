@@ -2441,6 +2441,8 @@ public final class TapestryModule
         configuration.add(SymbolConstants.ENCODE_LOCALE_INTO_PATH, "true");
 
         configuration.add(SymbolConstants.BLACKBIRD_ENABLED, "false");
+        
+        configuration.add(InternalSymbols.PRE_SELECTED_FORM_NAMES, "reset,submit,select");
     }
 
     /**
