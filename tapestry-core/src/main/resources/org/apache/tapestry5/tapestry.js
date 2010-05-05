@@ -89,8 +89,7 @@ var Tapestry = {
 	/** Time, in seconds, that console messages are visible. */
 	CONSOLE_DURATION : 10,
 
-	/* Initially, false, set to true once the page is fully loaded. */
-
+	/** Initially, false, set to true once the page is fully loaded. */
 	pageLoaded : false,
 
 	/**
@@ -1062,7 +1061,7 @@ Tapestry.Initializer = {
 
 		var update = function() {
 			var checked = trigger.checked;
-			var makeVisible = checked == ! spec.invert;
+			var makeVisible = checked == !spec.invert;
 
 			$(spec.fragmentId).fire(Tapestry.CHANGE_VISIBILITY_EVENT, {
 				visible : makeVisible

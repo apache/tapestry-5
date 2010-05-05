@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -53,9 +53,7 @@ public class AjaxTests extends TapestryCoreTestCase
         click("subscribeToEmail");
         click("on");
 
-        waitForCondition(
-                "selenium.browserbot.getCurrentWindow().$('code').isDeepVisible() == true",
-                PAGE_LOAD_TIMEOUT);
+        waitForCondition("selenium.browserbot.getCurrentWindow().$('code').isDeepVisible() == true", PAGE_LOAD_TIMEOUT);
 
         type("name", "Barney");
         type("email", "rubble@bedrock.gov");
@@ -63,9 +61,7 @@ public class AjaxTests extends TapestryCoreTestCase
 
         click("off");
 
-        waitForCondition(
-                "selenium.browserbot.getCurrentWindow().$('code').isDeepVisible() == false",
-                PAGE_LOAD_TIMEOUT);
+        waitForCondition("selenium.browserbot.getCurrentWindow().$('code').isDeepVisible() == false", PAGE_LOAD_TIMEOUT);
 
         clickAndWait(SUBMIT);
 
@@ -121,39 +117,24 @@ public class AjaxTests extends TapestryCoreTestCase
 
     /**
      * TAP5-544
+     * Disabled until Selenium can handle DOM elements changing.
      */
-    @Test
+    @Test(enabled = false)
     public void slow_ajax_load_warning()
     {
         clickThru("Slow Ajax Demo");
 
         // ActionLink
 
-        click("link=action");
+        click("//a[@id='link']");
 
         waitForElementToAppear("slow");
 
-        click("link=action");
+        click("//a[@id='link']");
 
         waitForElementToAppear("zoneOutput");
 
         assertText("zoneOutput", "Updated via an ActionLink");
-
-        // LinkSubmit
-
-        clickAndWait("link=refresh");
-
-        click("link=link submit");
-
-        waitForElementToAppear("slow");
-
-        click("link=link submit");
-
-        waitForElementToAppear("zoneOutput");
-
-        assertText("zoneOutput", "Updated via form submission.");
-
-        // Normal submit
 
         clickAndWait("link=refresh");
 

@@ -8,9 +8,7 @@
 
     <t:textfield t:id="name"/>
     <br/>
-    <t:linksubmit t:id="fred" context="formContext" alt="f">
-      <span class="nested">Fred</span>
-    </t:linksubmit>
+    <t:linksubmit t:id="fred" context="formContext" alt="f">Fred</t:linksubmit>
     <t:linksubmit t:id="barney" defer="true" event="neighbor" alt="b">Barney</t:linksubmit>
 
   </t:form>
