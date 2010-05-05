@@ -35,6 +35,7 @@ import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.internal.BeanValidationContext;
 import org.apache.tapestry5.internal.BeanValidationContextImpl;
 import org.apache.tapestry5.internal.InternalSymbols;
+import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.internal.services.HeartbeatImpl;
 import org.apache.tapestry5.internal.util.AutofocusValidationDecorator;
 import org.apache.tapestry5.ioc.Location;
@@ -362,7 +363,7 @@ public class Form implements ClientElement, FormValidationControl
 
         IdAllocator allocator = new IdAllocator();
 
-        for (String name : preselectedFormNames.split("\\s*,\\s*"))
+        for (String name : TapestryInternalUtils.splitAtCommas(preselectedFormNames))
         {
             allocator.allocateId(name);
         }
