@@ -14,6 +14,8 @@
 
 package org.apache.tapestry5.ioc.internal.services;
 
+import java.lang.ref.WeakReference;
+
 import org.apache.tapestry5.ioc.internal.services.UpdateListenerHubImpl;
 import org.apache.tapestry5.ioc.test.TestBase;
 import org.apache.tapestry5.services.UpdateListener;
@@ -38,5 +40,32 @@ public class UpdateListenerHubImplTest extends TestBase
         hub.fireCheckForUpdates();
 
         verify();
+    }
+
+    @Test
+    public void weak_references_are_not_invoked_once_clears() throws Exception
+    {
+        UpdateListener listener = new UpdateListener()
+        {
+            public void checkForUpdates()
+            {
+                throw new RuntimeException("checkForUpdates() should not be invoked on a dead reference.");
+            }
+        };
+
+        WeakReference<UpdateListener> ref = new WeakReference<UpdateListener>(listener);
+
+        UpdateListenerHub hub = new UpdateListenerHubImpl();
+
+        hub.addUpdateListener(listener);
+
+        listener = null;
+
+        while (ref.get() != null)
+        {
+            System.gc();
+        }
+
+        hub.fireCheckForUpdates();
     }
 }

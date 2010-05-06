@@ -41,16 +41,23 @@ public class UpdateListenerHubImpl implements UpdateListenerHub
      */
     public void fireCheckForUpdates()
     {
+        List<WeakReference<UpdateListener>> deadReferences = CollectionFactory.newList();
+
         Iterator<WeakReference<UpdateListener>> i = listeners.iterator();
 
         while (i.hasNext())
         {
-            UpdateListener listener = i.next().get();
+            WeakReference<UpdateListener> reference = i.next();
+
+            UpdateListener listener = reference.get();
 
             if (listener == null)
-                i.remove();
+                deadReferences.add(reference);
             else
                 listener.checkForUpdates();
         }
+
+        if (!deadReferences.isEmpty())
+            listeners.removeAll(deadReferences);
     }
 }
