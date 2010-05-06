@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2007, 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -123,7 +123,7 @@ public interface BeanModel<T>
      * @param propertyNames the names of properties to be removed (case insensitive)
      * @return the model for further modifications
      */
-    BeanModel exclude(String... propertyNames);
+    BeanModel<T> exclude(String... propertyNames);
 
     /**
      * Re-orders the properties of the model into the specified order. Existing properties that are not indicated are
@@ -132,7 +132,7 @@ public interface BeanModel<T>
      * @param propertyNames property names in order they should be displayed (case insensitive)
      * @return the model for further modifications
      */
-    BeanModel reorder(String... propertyNames);
+    BeanModel<T> reorder(String... propertyNames);
 
     /**
      * Re-orders the properties of the model into the specified order. Existing properties that are not indicated are
@@ -141,5 +141,5 @@ public interface BeanModel<T>
      * @param propertyNames the names of properties to be retained
      * @return the model for further modifications
      */
-    BeanModel include(String... propertyNames);
+    BeanModel<T> include(String... propertyNames);
 }

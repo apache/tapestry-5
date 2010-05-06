@@ -181,7 +181,7 @@ public class BeanModelImpl<T> implements BeanModel<T>
         return CollectionFactory.newList(propertyNames);
     }
 
-    public BeanModel exclude(String... propertyNames)
+    public BeanModel<T> exclude(String... propertyNames)
     {
         for (String propertyName : propertyNames)
         {
@@ -202,7 +202,7 @@ public class BeanModelImpl<T> implements BeanModel<T>
         return this;
     }
 
-    public BeanModel reorder(String... propertyNames)
+    public BeanModel<T> reorder(String... propertyNames)
     {
         List<String> remainingPropertyNames = CollectionFactory.newList(this.propertyNames);
         List<String> reorderedPropertyNames = CollectionFactory.newList();
@@ -228,7 +228,7 @@ public class BeanModelImpl<T> implements BeanModel<T>
         return this;
     }
 
-    public BeanModel include(String... propertyNames)
+    public BeanModel<T> include(String... propertyNames)
     {
         List<String> reorderedPropertyNames = CollectionFactory.newList();
         Map<String, PropertyModel> reduced = CollectionFactory.newCaseInsensitiveMap();
