@@ -1772,66 +1772,6 @@ Tapestry.FormInjector = Class.create( {
 	}
 });
 
-/**
- * Wait for a set of JavaScript libraries to load (in terms of DOM script
- * elements), then invokes a callback function.
- */
-Tapestry.ScriptLoadMonitor = Class
-		.create( {
-
-			initialize : function(scriptElements, callback) {
-				this.callback = callback;
-				this.loaded = 0;
-				this.toload = scriptElements.length;
-
-				var executor = this;
-
-				scriptElements
-						.each(function(scriptElement) {
-							if (Prototype.Browser.IE) {
-								var loaded = false;
-
-								scriptElement.onreadystatechange = function() {
-									/*
-									 * IE may fire either loaded or complete, or
-									 * perhaps even both.
-									 */
-									if (!loaded
-											&& (this.readyState == 'loaded' || this.readyState == 'complete')) {
-										loaded = true;
-										executor.loadComplete(scriptElement);
-									}
-								};
-							} else {
-								/* Much simpler in FF, Safari, etc. */
-								scriptElement.onload = executor.loadComplete
-										.bindAsEventListener(executor,
-												scriptElement);
-							}
-						});
-
-				/*
-				 * If no scripts to actually load, call the callback
-				 * immediately.
-				 */
-
-				if (this.toload == 0)
-					this.callback.call(this);
-			},
-
-			loadComplete : function() {
-				this.loaded++;
-
-				/*
-				 * Evaluated the dependent script only once all the elements
-				 * have loaded.
-				 */
-
-				if (this.loaded == this.toload)
-					this.callback.call(this);
-			}
-		});
-
 Tapestry.ScriptManager = {
 
 	/**
@@ -1846,7 +1786,6 @@ Tapestry.ScriptManager = {
 		 * Check to see if document.scripts is supported; if not (for example,
 		 * FireFox), we can fake it.
 		 */
-
 		this.emulated = false;
 
 		if (!document.scripts) {
@@ -1858,6 +1797,41 @@ Tapestry.ScriptManager = {
 				document.scripts.push(s);
 			});
 		}
+	},
+
+	loadScript : function(scriptURL, callback) {
+		/* IE needs the type="text/javascript" as well. */
+		var element = new Element('script', {
+			src : scriptURL,
+			type : 'text/javascript'
+		});
+
+		$$("head").first().insert( {
+			bottom : element
+		});
+
+		if (this.emulated)
+			document.scripts.push(element);
+
+		if (Prototype.Browser.IE) {
+			var loaded = false;
+
+			element.onreadystatechange = function() {
+				/* IE may fire either 'loaded' or 'complete', or possibly both. */
+				if (!loaded && this.readyState == 'loaded'
+						|| this.readyState == 'complete') {
+					loaded = true;
+
+					callback.call(this);
+				}
+			};
+
+			return;
+		}
+
+		/* Safari, Firefox, etc. are easier. */
+
+		element.onload = callback.bindAsEventListener(this);
 	},
 
 	/**
@@ -1897,51 +1871,44 @@ Tapestry.ScriptManager = {
 	 *            invoked after scripts are loaded
 	 */
 	addScripts : function(scripts, callback) {
-		var added = new Array();
 
-		if (scripts) {
-			var emulated = this.emulated;
+		var scriptsToLoad = [];
+
+		/* scripts may be null or undefined */
+		(scripts || []).each(function(s) {
+			var assetURL = Tapestry.rebuildURL(s);
+
 			/*
-			 * Looks like IE really needs the new <script> tag to be in the
-			 * <head>. FF doesn't seem to care. See
-			 * http://unixpapa.com/js/dyna.html
+			 * Check to see if the script is already loaded, either as a virtual
+			 * script, or as an individual script src="" element.
 			 */
-			var head = $$("head").first();
+			if (Tapestry.ScriptManager.virtualScripts.member(assetURL))
+				return;
 
-			scripts.each(function(s) {
-				var assetURL = Tapestry.rebuildURL(s);
+			if (Tapestry.ScriptManager.contains(document.scripts, "src",
+					assetURL))
+				return;
 
-				/*
-				 * Check to see if the script is already loaded, either as a
-				 * virtual script, or as an individual script src="" element.
-				 */
+			scriptsToLoad.push(assetURL);
+		});
 
-				if (Tapestry.ScriptManager.virtualScripts.member(assetURL))
-					return;
-				if (Tapestry.ScriptManager.contains(document.scripts, "src",
-						assetURL))
-					return;
+		/*
+		 * Set it up last script to first script. The last script's callback is
+		 * the main callback (the code to execute after all scripts are loaded).
+		 * The 2nd to last script's callback loads the last script. Prototype's
+		 * Array.inject() is effectively the same as Clojure's reduce().
+		 */
+		scriptsToLoad.reverse();
 
-				/* IE needs the type="text/javascript" as well. */
+		var topCallback = scriptsToLoad.inject(callback, function(nextCallback,
+				scriptURL) {
+			return function() {
+				Tapestry.ScriptManager.loadScript(scriptURL, nextCallback);
+			};
+		});
 
-				var element = new Element('script', {
-					src : assetURL,
-					type : 'text/javascript'
-				});
-
-				head.insert( {
-					bottom : element
-				});
-
-				added.push(element);
-
-				if (emulated)
-					document.scripts.push(element);
-			});
-
-		}
-
-		new Tapestry.ScriptLoadMonitor(added, callback);
+		/* Kick it off with the callback that loads the first script. */
+		topCallback.call();
 	},
 
 	addStylesheets : function(stylesheets) {
@@ -1967,7 +1934,6 @@ Tapestry.ScriptManager = {
 					 * Careful about media types, some browser will break if it
 					 * ends up as 'null'.
 					 */
-
 					if (s.media != undefined)
 						element.writeAttribute('media', s.media);
 
