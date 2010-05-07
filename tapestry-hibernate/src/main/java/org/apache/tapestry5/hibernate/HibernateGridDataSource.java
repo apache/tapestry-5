@@ -63,9 +63,9 @@ public class HibernateGridDataSource implements GridDataSource
 
         criteria.setProjection(Projections.rowCount());
 
-        Integer result = (Integer) criteria.uniqueResult();
+        Number result = (Number) criteria.uniqueResult();
 
-        return result;
+        return result.intValue();
     }
 
     /**
