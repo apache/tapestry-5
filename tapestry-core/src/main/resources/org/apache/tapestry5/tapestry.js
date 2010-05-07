@@ -1330,7 +1330,7 @@ Tapestry.FormEventManager = Class.create( {
 				var firstHidden = this.form.getInputs("hidden").first();
 
 				this.submitHidden = new Element("input", {
-					type : "input",
+					type : "hidden",
 					name : "t:submit"
 				});
 
