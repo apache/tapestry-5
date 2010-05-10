@@ -282,6 +282,7 @@ public class TypeCoercerImplTest extends IOCInternalTestCase
         { StringBuffer.class, Integer.class, "Object --> String, String --> Long, Long --> Integer" },
         { void.class, Map.class, "null --> null" },
         { void.class, Boolean.class, "null --> Boolean" },
+        { Object[].class, Boolean.class, "Object[] --> java.util.List, java.util.Collection --> Boolean" },
         { String[].class, List.class, "Object[] --> java.util.List" },
         { Float.class, Double.class, "Float --> Double" },
         { Double.class, BigDecimal.class, "Object --> String, String --> java.math.BigDecimal" }, };
@@ -306,5 +307,26 @@ public class TypeCoercerImplTest extends IOCInternalTestCase
         Object[] result = coercer.coerce(input, Object[].class);
 
         assertArraysEqual(result, input.toArray());
+    }
+
+    /** TAP5-1141 */
+    @Test
+    public void object_whose_toString_returns_null_to_boolean()
+    {
+        Object idiot = new Object()
+        {
+            public String toString()
+            {
+                return null;
+            }
+        };
+
+        // To be honest, the proper result here is up for grabs. The object is not null, so you'd kind of think that the
+        // result should be true ... but the rules are to look for a known coercion, and it finds Object --> String,
+        // String --> Boolean. Converting a null String is the same as an empty String : false.
+
+        assertFalse(coercer.coerce(idiot, Boolean.class));
+
+        assertEquals(coercer.explain(idiot.getClass(), Boolean.class), "Object --> String, String --> Boolean");
     }
 }

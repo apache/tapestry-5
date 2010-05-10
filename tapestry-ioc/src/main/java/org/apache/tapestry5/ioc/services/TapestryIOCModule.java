@@ -252,7 +252,7 @@ public final class TapestryIOCModule
         {
             public Boolean coerce(String input)
             {
-                String trimmed = input.trim();
+                String trimmed = input == null ? "" : input.trim();
 
                 if (trimmed.equalsIgnoreCase("false") || trimmed.length() == 0) return false;
 
