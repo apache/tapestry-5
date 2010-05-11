@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.services.ClasspathURLConverter;
 import org.apache.tapestry5.services.UpdateListener;
 import org.apache.tapestry5.services.ValidationMessagesSource;
+import org.apache.tapestry5.services.messages.ComponentMessagesSource;
 import org.apache.tapestry5.services.messages.PropertiesFileParser;
 
 import java.util.List;
@@ -30,6 +31,8 @@ import java.util.Map;
 
 public class ValidationMessagesSourceImpl implements ValidationMessagesSource, UpdateListener
 {
+    private final ComponentMessagesSource componentMessagesSource;
+
     private final MessagesSource messagesSource;
 
     private final MessagesBundle bundle;
@@ -110,15 +113,16 @@ public class ValidationMessagesSourceImpl implements ValidationMessagesSource, U
     }
 
     public ValidationMessagesSourceImpl(List<String> bundles, Resource classpathRoot, PropertiesFileParser parser,
-            ClasspathURLConverter classpathURLConverter)
+            ComponentMessagesSource componentMessagesSource, ClasspathURLConverter classpathURLConverter)
     {
-        this(bundles, classpathRoot, parser, new URLChangeTracker(classpathURLConverter));
+        this(bundles, classpathRoot, parser, componentMessagesSource, new URLChangeTracker(classpathURLConverter));
     }
 
     ValidationMessagesSourceImpl(List<String> bundles, Resource classpathRoot, PropertiesFileParser parser,
-            URLChangeTracker tracker)
+            ComponentMessagesSource componentMessagesSource, URLChangeTracker tracker)
     {
         messagesSource = new MessagesSourceImpl(tracker, parser);
+        this.componentMessagesSource = componentMessagesSource;
 
         MessagesBundle parent = null;
 
@@ -138,7 +142,10 @@ public class ValidationMessagesSourceImpl implements ValidationMessagesSource, U
 
         if (result == null)
         {
-            result = new ValidationMessages(locale);
+            Messages appCatalog = componentMessagesSource.getApplicationCatalog(locale);
+            Messages validation = new ValidationMessages(locale);
+            result = new DelegatingMessagesImpl(appCatalog, validation);
+
             cache.put(locale, result);
         }
 

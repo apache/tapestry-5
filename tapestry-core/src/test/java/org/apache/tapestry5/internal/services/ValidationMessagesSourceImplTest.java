@@ -14,19 +14,22 @@
 
 package org.apache.tapestry5.internal.services;
 
+import java.util.Arrays;
+import java.util.Locale;
+
 import org.apache.tapestry5.internal.services.messages.PropertiesFileParserImpl;
 import org.apache.tapestry5.ioc.MessageFormatter;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.internal.services.ClasspathURLConverterImpl;
 import org.apache.tapestry5.ioc.internal.util.ClasspathResource;
+import org.apache.tapestry5.model.ComponentModel;
+import org.apache.tapestry5.services.InvalidationEventHub;
 import org.apache.tapestry5.services.ValidationMessagesSource;
+import org.apache.tapestry5.services.messages.ComponentMessagesSource;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-
-import java.util.Arrays;
-import java.util.Locale;
 
 public class ValidationMessagesSourceImplTest extends Assert
 {
@@ -35,10 +38,54 @@ public class ValidationMessagesSourceImplTest extends Assert
     @BeforeClass
     public void setup()
     {
+        final Messages mockMessages = new Messages()
+        {
+
+            public boolean contains(String key)
+            {
+                return key.equalsIgnoreCase("braniac");
+            }
+
+            public String format(String key, Object... args)
+            {
+                return null;
+            }
+
+            public String get(String key)
+            {
+                return "Braniac";
+            }
+
+            public MessageFormatter getFormatter(String key)
+            {
+                return null;
+            }
+
+        };
+
+        ComponentMessagesSource mockMessagesSource = new ComponentMessagesSource()
+        {
+
+            public Messages getMessages(ComponentModel componentModel, Locale locale)
+            {
+                return null;
+            }
+
+            public InvalidationEventHub getInvalidationEventHub()
+            {
+                return null;
+            }
+
+            public Messages getApplicationCatalog(Locale locale)
+            {
+                return mockMessages;
+            }
+        };
+
         Resource rootResource = new ClasspathResource("/");
         source = new ValidationMessagesSourceImpl(Arrays.asList("org/apache/tapestry5/internal/ValidationMessages",
                 "org/apache/tapestry5/internal/ValidationTestMessages"), rootResource, new PropertiesFileParserImpl(),
-                new ClasspathURLConverterImpl());
+                mockMessagesSource, new ClasspathURLConverterImpl());
     }
 
     @Test
@@ -47,6 +94,17 @@ public class ValidationMessagesSourceImplTest extends Assert
         Messages messages = source.getValidationMessages(Locale.ENGLISH);
 
         assertEquals(messages.format("required", "My Field"), "You must provide a value for My Field.");
+    }
+
+    /** TAP5-424 */
+    @Test
+    public void application_catalog_override()
+    {
+        Messages messages = source.getValidationMessages(Locale.ENGLISH);
+
+        assertTrue(messages.contains("braniac"));
+
+        assertEquals(messages.get("braniac"), "Braniac");
     }
 
     @Test

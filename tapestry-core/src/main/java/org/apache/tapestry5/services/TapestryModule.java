@@ -1327,10 +1327,12 @@ public final class TapestryModule
 
     PropertiesFileParser parser,
 
+    ComponentMessagesSource componentMessagesSource,
+
     ClasspathURLConverter classpathURLConverter)
     {
         ValidationMessagesSourceImpl service = new ValidationMessagesSourceImpl(configuration, classpathAssetFactory
-                .getRootResource(), parser, classpathURLConverter);
+                .getRootResource(), parser, componentMessagesSource, classpathURLConverter);
         updateListenerHub.addUpdateListener(service);
 
         return service;
