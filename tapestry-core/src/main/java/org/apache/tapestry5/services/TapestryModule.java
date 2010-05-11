@@ -113,6 +113,7 @@ import org.apache.tapestry5.services.assets.AssetRequestHandler;
 import org.apache.tapestry5.services.javascript.JavascriptStack;
 import org.apache.tapestry5.services.javascript.JavascriptStackSource;
 import org.apache.tapestry5.services.javascript.JavascriptSupport;
+import org.apache.tapestry5.services.messages.ComponentMessagesSource;
 import org.apache.tapestry5.services.messages.PropertiesFileParser;
 import org.apache.tapestry5.util.StringToEnumCoercion;
 import org.apache.tapestry5.validator.Email;
@@ -2441,7 +2442,7 @@ public final class TapestryModule
         configuration.add(SymbolConstants.ENCODE_LOCALE_INTO_PATH, "true");
 
         configuration.add(SymbolConstants.BLACKBIRD_ENABLED, "false");
-        
+
         configuration.add(InternalSymbols.PRE_SELECTED_FORM_NAMES, "reset,submit,select");
     }
 
@@ -2756,7 +2757,7 @@ public final class TapestryModule
     }
 
     /**
-     * Advises the {@link org.apache.tapestry5.internal.services.ComponentMessagesSource} service so
+     * Advises the {@link org.apache.tapestry5.services.messages.ComponentMessagesSource} service so
      * that the creation
      * of {@link org.apache.tapestry5.ioc.Messages} instances can be deferred.
      * 
@@ -2871,4 +2872,13 @@ public final class TapestryModule
     {
         configuration.addInstance(InternalConstants.CORE_STACK_NAME, CoreJavascriptStack.class);
     }
+
+    public static ComponentMessagesSource buildComponentMessagesSource(UpdateListenerHub updateListenerHub, @Autobuild
+    ComponentMessagesSourceImpl service)
+    {
+        updateListenerHub.addUpdateListener(service);
+
+        return service;
+    }
+
 }

@@ -26,6 +26,7 @@ import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.services.ClassFactory;
 import org.apache.tapestry5.ioc.services.ThreadLocale;
 import org.apache.tapestry5.services.InvalidationListener;
+import org.apache.tapestry5.services.messages.ComponentMessagesSource;
 
 /**
  * Allows for injection of the global application message catalog into services. The injected value

@@ -123,14 +123,6 @@ public class InternalModule
         return new PageTemplateLocatorImpl(contextAssetFactory.getRootResource(), componentClassResolver);
     }
 
-    public ComponentMessagesSource buildComponentMessagesSource(@Autobuild
-    ComponentMessagesSourceImpl service)
-    {
-        updateListenerHub.addUpdateListener(service);
-
-        return service;
-    }
-
     public ComponentInstantiatorSource buildComponentInstantiatorSource(@Builtin
     ClassFactory classFactory,
 

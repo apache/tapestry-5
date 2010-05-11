@@ -17,7 +17,6 @@ package org.apache.tapestry5.internal.structure;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.Link;
 import org.apache.tapestry5.internal.services.ComponentClassCache;
-import org.apache.tapestry5.internal.services.ComponentMessagesSource;
 import org.apache.tapestry5.internal.services.LinkSource;
 import org.apache.tapestry5.internal.services.RequestPageCache;
 import org.apache.tapestry5.ioc.LoggerSource;
@@ -27,6 +26,7 @@ import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.services.ComponentClassResolver;
 import org.apache.tapestry5.services.ContextValueEncoder;
+import org.apache.tapestry5.services.messages.ComponentMessagesSource;
 import org.slf4j.Logger;
 
 import java.util.Locale;

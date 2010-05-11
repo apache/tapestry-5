@@ -25,6 +25,7 @@ import org.apache.tapestry5.ioc.internal.services.ClasspathURLConverterImpl;
 import org.apache.tapestry5.ioc.internal.util.ClasspathResource;
 import org.apache.tapestry5.ioc.services.ClasspathURLConverter;
 import org.apache.tapestry5.model.ComponentModel;
+import org.apache.tapestry5.services.messages.ComponentMessagesSource;
 import org.testng.annotations.Test;
 
 /**
