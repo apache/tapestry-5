@@ -17,13 +17,19 @@ package org.apache.tapestry5.services.messages;
 import java.util.Locale;
 
 import org.apache.tapestry5.ioc.Messages;
+import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.annotations.NotLazy;
+import org.apache.tapestry5.ioc.annotations.UsesOrderedConfiguration;
 import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.services.InvalidationEventHub;
 
 /**
- * Used to connect a Tapestry component to its message catalog.
+ * Used to connect a Tapestry component to its message catalog, or to obtain the application catalog (that all
+ * component message catalogs extend from). The application catalog is defined by the collection of {@link Resource}s
+ * contributed to the service. In general, component libraries will contribute a Resource before the "AppCatalog" resource (representing
+ * the application message catalog, WEB-INF/app.properties) so that the application can override messages of the component library.
  */
+@UsesOrderedConfiguration(Resource.class)
 public interface ComponentMessagesSource
 {
     /**

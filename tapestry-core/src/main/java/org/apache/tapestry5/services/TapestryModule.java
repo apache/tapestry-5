@@ -2881,4 +2881,15 @@ public final class TapestryModule
         return service;
     }
 
+    /**
+     * Contributes "AppCatalog" as the Resource defined by {@link SymbolConstants#APPLICATION_CATALOG}.
+     * 
+     * @since 5.2.0
+     */
+    public static void contributeComponentMessagesSource(@Symbol(SymbolConstants.APPLICATION_CATALOG)
+    Resource applicationCatalog, OrderedConfiguration<Resource> configuration)
+    {
+        configuration.add("AppCatalog", applicationCatalog);
+    }
+
 }

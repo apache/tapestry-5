@@ -67,6 +67,9 @@ public class Index
     private static final List<Item> ITEMS = CollectionFactory
             .newList(
 
+                    new Item("LibraryMessagesDemo", "Library Messages Demo",
+                            "Demo ability to contribute additional message catalog resources to the application global catalog."),
+
                     new Item("MultiZoneUpdateInsideForm", "MultiZone Update inside a Form",
                             "Update multiple zones within a single Form."),
 
@@ -432,8 +435,7 @@ public class Index
                     new Item("unavailablecomponentdemo", "Report Location of Unavailable Component",
                             "Report Location of Unavailable Component"),
 
-                    new Item("discardafterdemo", "@DiscardAfter Demo",
-                                    "Demo using @DiscardAfter annotation")
+                    new Item("discardafterdemo", "@DiscardAfter Demo", "Demo using @DiscardAfter annotation")
 
             );
 

@@ -14,6 +14,8 @@
 
 package org.apache.tapestry5.internal.services;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 
 import org.apache.tapestry5.internal.services.messages.PropertiesFileParserImpl;
@@ -206,8 +208,11 @@ public class ComponentMessagesSourceImplTest extends InternalBaseTestCase
 
         forceCacheClear();
 
-        ComponentMessagesSource source = new ComponentMessagesSourceImpl(simpleComponentResource
-                .forFile("NoSuchAppCatalog.properties"), new PropertiesFileParserImpl(), converter);
+        Resource resource = simpleComponentResource.forFile("NoSuchAppCatalog.properties");
+        List<Resource> resources = Arrays.asList(resource);
+
+        ComponentMessagesSource source = new ComponentMessagesSourceImpl(resources, new PropertiesFileParserImpl(),
+                converter);
 
         Messages messages = source.getMessages(model, Locale.ENGLISH);
 

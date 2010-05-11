@@ -1436,7 +1436,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
 
         assertText("status", "Application Catalog Working");
     }
-    
+
     /** TAP5-1121 */
     @Test
     public void discard_after()
@@ -1444,38 +1444,48 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
         clickThru("@DiscardAfter Demo");
 
         type("stringValue", "foo bar baz");
-        
+
         clickAndWait("//input[@id='keep']");
-        
+
         assertTextPresent("Value is: 'foo bar baz'");
-        
+
         clickAndWait("//input[@id='discard']");
-        
+
         assertTextPresent("Value is: ''");
-        
-        //Once again
-        
+
+        // Once again
+
         type("stringValue", "barney quux");
-        
+
         clickAndWait("//input[@id='keep']");
-        
+
         assertTextPresent("Value is: 'barney quux'");
-        
+
         clickAndWait("//input[@id='discardWithCheckedException']");
-        
+
         assertTextPresent("Oops! Error occured");
-        
+
         clickThru("@DiscardAfter Demo");
-        
+
         assertTextPresent("Value is: 'barney quux'");
     }
-    
+
     /** TAP5-1080 */
     @Test
     public void context_lost_on_secure_page_redirect()
     {
         open("/securepage/mycontext");
-        
+
         assertText("context", "mycontext");
+    }
+
+    /** TAP5-424 */
+    @Test
+    public void multiple_resources_contributed_to_global_message_catalog()
+    {
+        clickThru("Library Messages Demo");
+
+        assertText("id=no-override", "[pre-app]");
+        assertText("id=override", "[app]");
     }
 }

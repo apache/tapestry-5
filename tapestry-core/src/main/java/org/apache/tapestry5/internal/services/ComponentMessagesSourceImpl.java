@@ -14,6 +14,9 @@
 
 package org.apache.tapestry5.internal.services;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
 
 import org.apache.tapestry5.SymbolConstants;
@@ -21,6 +24,8 @@ import org.apache.tapestry5.internal.util.URLChangeTracker;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.annotations.Symbol;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.internal.util.Operation;
 import org.apache.tapestry5.ioc.services.ClasspathURLConverter;
 import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.services.InvalidationEventHub;
@@ -31,8 +36,6 @@ import org.apache.tapestry5.services.messages.PropertiesFileParser;
 public class ComponentMessagesSourceImpl implements ComponentMessagesSource, UpdateListener
 {
     private final MessagesSource messagesSource;
-
-    private final Resource appCatalogResource;
 
     private final MessagesBundle appCatalogBundle;
 
@@ -66,23 +69,23 @@ public class ComponentMessagesSourceImpl implements ComponentMessagesSource, Upd
         }
     }
 
-    public ComponentMessagesSourceImpl(@Symbol(SymbolConstants.APPLICATION_CATALOG)
-    Resource appCatalogResource,
-
-    PropertiesFileParser parser,
-
-    ClasspathURLConverter classpathURLConverter)
+    public ComponentMessagesSourceImpl(List<Resource> appCatalogResources, PropertiesFileParser parser,
+            ClasspathURLConverter classpathURLConverter)
     {
-        this(appCatalogResource, parser, new URLChangeTracker(classpathURLConverter));
+        this(appCatalogResources, parser, new URLChangeTracker(classpathURLConverter));
     }
 
     ComponentMessagesSourceImpl(Resource appCatalogResource, PropertiesFileParser parser, URLChangeTracker tracker)
     {
-        this.appCatalogResource = appCatalogResource;
+        this(Arrays.asList(appCatalogResource), parser, tracker);
+    }
 
+    ComponentMessagesSourceImpl(List<Resource> appCatalogResources, PropertiesFileParser parser,
+            URLChangeTracker tracker)
+    {
         messagesSource = new MessagesSourceImpl(tracker, parser);
 
-        appCatalogBundle = createAppCatalogBundle();
+        appCatalogBundle = createAppCatalogBundle(appCatalogResources);
     }
 
     public void checkForUpdates()
@@ -102,23 +105,35 @@ public class ComponentMessagesSourceImpl implements ComponentMessagesSource, Upd
         return messagesSource.getMessages(appCatalogBundle, locale);
     }
 
-    private MessagesBundle createAppCatalogBundle()
+    private MessagesBundle createAppCatalogBundle(List<Resource> resources)
+    {
+        MessagesBundle current = null;
+
+        for (Resource r : resources)
+        {
+            current = createMessagesBundle(r, current);
+        }
+
+        return current;
+    }
+
+    private MessagesBundle createMessagesBundle(final Resource resource, final MessagesBundle parent)
     {
         return new MessagesBundle()
         {
             public Resource getBaseResource()
             {
-                return appCatalogResource;
+                return resource;
             }
 
             public Object getId()
             {
-                return appCatalogResource.getPath();
+                return resource.getPath();
             }
 
             public MessagesBundle getParent()
             {
-                return null;
+                return parent;
             }
         };
     }
