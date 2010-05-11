@@ -36,9 +36,10 @@ import org.apache.tapestry5.ioc.MappedConfiguration;
 import org.apache.tapestry5.ioc.OrderedConfiguration;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.ServiceBinder;
+import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Marker;
+import org.apache.tapestry5.ioc.annotations.Value;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.services.AliasContribution;
 import org.apache.tapestry5.services.BaseURLSource;
 import org.apache.tapestry5.services.ComponentClassTransformWorker;
@@ -274,10 +275,10 @@ public class AppModule
         configuration.add("ReverseStringsWorker", new ReverseStringsWorker());
     }
 
-    public static void contributeComponentMessagesSource(TypeCoercer coercer,
-            OrderedConfiguration<Resource> configuration)
+    public static void contributeComponentMessagesSource(@Inject
+    @Value("context:WEB-INF/pre-app.properties")
+    Resource preappResource, OrderedConfiguration<Resource> configuration)
     {
-        configuration.add("PreApp", coercer.coerce("context:WEB-INF/pre-app.properties", Resource.class),
-                "before:AppCatalog");
+        configuration.add("PreApp", preappResource, "before:AppCatalog");
     }
 }
