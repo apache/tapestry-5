@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -43,7 +43,7 @@ public class MarkupWriterImplTest extends InternalBaseTestCase
         catch (RuntimeException ex)
         {
             assertEquals(ex.getMessage(),
-                         "A document must have exactly one root element. Element <root1> is already the root element.");
+                    "A document must have exactly one root element. Element <root1> is already the root element.");
         }
     }
 
@@ -57,8 +57,7 @@ public class MarkupWriterImplTest extends InternalBaseTestCase
         w.element("root");
         w.end();
 
-        assertEquals(w.toString(), "<?xml version=\"1.0\"?>\n" +
-                "  <root/>");
+        assertEquals(w.toString(), "<?xml version=\"1.0\"?>\n" + "  <root/>");
     }
 
     @Test
@@ -74,7 +73,7 @@ public class MarkupWriterImplTest extends InternalBaseTestCase
         assertEquals(w.toString(), "<?xml version=\"1.0\"?>\n  <root/>");
     }
 
-    @Test()
+    @Test
     public void preamble_content() throws Exception
     {
         MarkupWriter w = new MarkupWriterImpl(new XMLMarkupModel());
@@ -90,6 +89,17 @@ public class MarkupWriterImplTest extends InternalBaseTestCase
         w.comment("content after root element in preamble");
 
         assertEquals(w.getDocument().toString(), readFile("preamble_content.txt"));
+    }
+
+    /** TAP5-1145 */
+    @Test
+    public void document_without_root_element()
+    {
+        MarkupWriter w = new MarkupWriterImpl(new XMLMarkupModel());
+
+        w.write("preamble text");
+
+        assertEquals(w.getDocument().toString(), "<?xml version=\"1.0\"?>\n" + "preamble text");
     }
 
     @Test(expectedExceptions = IllegalStateException.class)
@@ -156,7 +166,7 @@ public class MarkupWriterImplTest extends InternalBaseTestCase
         root.attribute("gnip", "gnop");
 
         assertEquals(w.toString(),
-                     "<root gnip=\"gnop\" foo=\"bar\">before child<nested>inner text</nested>after child</root>");
+                "<root gnip=\"gnop\" foo=\"bar\">before child<nested>inner text</nested>after child</root>");
     }
 
     @Test
@@ -183,7 +193,7 @@ public class MarkupWriterImplTest extends InternalBaseTestCase
 
         assertEquals(w.toString(), "<root gnip=\"gnop\" foo=\"bar\"></root>");
     }
-    
+
     @Test
     public void attributes_odd_number()
     {
@@ -198,8 +208,7 @@ public class MarkupWriterImplTest extends InternalBaseTestCase
         }
         catch (RuntimeException ex)
         {
-            assertMessageContains(ex, 
-                    "Writing attributes of the element 'img' failed.", 
+            assertMessageContains(ex, "Writing attributes of the element 'img' failed.",
                     "A attribute name or value is omitted [src, foo.png, width, 20, 30].",
                     "Please provide an even number of values, alternating names and values");
         }
@@ -266,7 +275,6 @@ public class MarkupWriterImplTest extends InternalBaseTestCase
         assertEquals(w.toString(), "<root>Test name: writef</root>");
     }
 
-
     @Test
     public void write_raw()
     {
@@ -301,8 +309,9 @@ public class MarkupWriterImplTest extends InternalBaseTestCase
         w.end(); // child
         w.end(); // root
 
-        assertEquals(w.toString(),
-                     "<?xml version=\"1.0\"?>\n<fred:root fred:foo=\"bar\" xmlns:barney=\"barneyns\" xmlns:fred=\"fredns\"><barney:child/></fred:root>");
+        assertEquals(
+                w.toString(),
+                "<?xml version=\"1.0\"?>\n<fred:root fred:foo=\"bar\" xmlns:barney=\"barneyns\" xmlns:fred=\"fredns\"><barney:child/></fred:root>");
     }
 
     @Test
@@ -316,7 +325,7 @@ public class MarkupWriterImplTest extends InternalBaseTestCase
         w.write("More Normal Text");
 
         assertEquals(w.toString(),
-                     "<?xml version=\"1.0\"?>\n<root>Normal Text <![CDATA[< & >]]>More Normal Text</root>");
+                "<?xml version=\"1.0\"?>\n<root>Normal Text <![CDATA[< & >]]>More Normal Text</root>");
     }
 
     @Test
@@ -359,10 +368,13 @@ public class MarkupWriterImplTest extends InternalBaseTestCase
         w.end();
         w.end();
 
-        // Because we are invoking Element.text(), the text added by the listener is appended to the body of the element,
+        // Because we are invoking Element.text(), the text added by the listener is appended to the body of the
+        // element,
         // which is correct but may not be what you'd expect.
 
-        assertEquals(w.toString(), "<?xml version=\"1.0\"?>\n" +
-                "<root><no-listener>before listener<listener>[Start: listener]before n-w-l<nested-with-listener>[Start: nested-with-listener]n-w-l text[End: nested-with-listener]</nested-with-listener>after n-w-l[End: listener]</listener>after listener</no-listener></root>");
+        assertEquals(
+                w.toString(),
+                "<?xml version=\"1.0\"?>\n"
+                        + "<root><no-listener>before listener<listener>[Start: listener]before n-w-l<nested-with-listener>[Start: nested-with-listener]n-w-l text[End: nested-with-listener]</nested-with-listener>after n-w-l[End: listener]</listener>after listener</no-listener></root>");
     }
 }
