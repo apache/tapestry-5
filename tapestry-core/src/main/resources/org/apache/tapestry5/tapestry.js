@@ -567,14 +567,22 @@ var Tapestry = {
 	 */
 	replaceElementTagName : function(element, newTagName) {
 
-		var tag = $(element).tagName;
-		var outerHTML = $(element).outerHTML;
+		element = $(element);
+
+		var tag = element.tagName;
+
+		/* outerHTML is IE only; this simulates it on any browser. */
+
+		var dummy = document.createElement('html');
+		dummy.appendChild(element.cloneNode(true));
+		var outerHTML = dummy.innerHTML;
+		dummy.innerHTML = '';
 
 		var replaceHTML = outerHTML.replace(new RegExp("^<" + tag, "i"),
 				"<" + newTagName).replace(new RegExp("</" + tag + ">$", "i"),
 				"</" + newTagName + ">");
 
-		$(element).insert( {
+		element.insert( {
 			before : replaceHTML
 		}).remove();
 	}
