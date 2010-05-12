@@ -117,9 +117,8 @@ public class AjaxTests extends TapestryCoreTestCase
 
     /**
      * TAP5-544
-     * Disabled until Selenium can handle DOM elements changing.
      */
-    @Test(enabled = false)
+    @Test
     public void slow_ajax_load_warning()
     {
         clickThru("Slow Ajax Demo");

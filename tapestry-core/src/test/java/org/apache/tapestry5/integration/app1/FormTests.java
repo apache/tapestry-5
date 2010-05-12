@@ -562,9 +562,8 @@ public class FormTests extends TapestryCoreTestCase
 
     /**
      * TAP5-719
-     * Disabled until Selenium can handle DOM elements changing.
      */
-    @Test(enabled = false)
+    @Test
     public void link_submit_without_validator()
     {
         clickThru("LinkSubmit Without Validator Demo");
@@ -693,9 +692,8 @@ public class FormTests extends TapestryCoreTestCase
 
     /**
      * TAP5-157
-     * Disabled until Selenium can handle DOM elements changing.
      */
-    @Test(enabled = false)
+    @Test
     public void link_submit_component()
     {
         clickThru("LinkSubmit Demo");
@@ -712,7 +710,7 @@ public class FormTests extends TapestryCoreTestCase
 
         type("name", "Wilma");
 
-        click("//a[@id='fred']");
+        clickAndWait("link=Fred");
 
         assertText("name-value", "Wilma");
         assertText("last-clicked", "Fred");
@@ -859,8 +857,7 @@ public class FormTests extends TapestryCoreTestCase
         assertText("message", "onSelectedFromCancel() invoked.");
     }
 
-    /** Disabled until Selenium can handle DOM elements changing. */
-    @Test(enabled = false)
+    @Test
     public void use_of_cancel_mode_with_submitlink()
     {
         clickThru("Cancel Demo");

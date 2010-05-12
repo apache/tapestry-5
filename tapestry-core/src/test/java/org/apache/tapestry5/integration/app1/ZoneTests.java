@@ -169,24 +169,23 @@ public class ZoneTests extends TapestryCoreTestCase
 
     /**
      * TAP5-389
-     * Disabled until Selenium can handle DOM elements changing.
      */
-    @Test(enabled = false)
+    @Test
     public void link_submit_inside_form_that_updates_a_zone()
     {
         clickThru("LinkSubmit inside Zone");
 
         String now = getText("now");
 
-        waitForCSSSelectedElementToAppear("//a[@id='submit']");
+        waitForCSSSelectedElementToAppear("//a[@id='mySubmit']");
 
-        click("//a[@id='submit']");
+        click("//a[@id='mySubmit']");
 
         waitForElementToAppear("value:errorpopup");
 
         type("value", "robot chicken");
 
-        click("//a[@id='submit']");
+        click("//a[@id='mySubmit']");
 
         waitForElementToAppear("outputvalue");
 
