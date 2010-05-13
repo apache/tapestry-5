@@ -1,4 +1,4 @@
-// Copyright 2009 The Apache Software Foundation
+// Copyright 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -72,13 +72,13 @@ Tapestry.Logging = {
             var effect = new Effect.Fade(div, { delay: Tapestry.CONSOLE_DURATION,
                 afterFinish: function()
                 {
-                    div.remove();
+            		Tapestry.remove(div);
                 }});
 
             div.observe("click", function()
             {
                 effect.cancel();
-                div.remove();
+        		Tapestry.remove(div);
             });
         }
                 

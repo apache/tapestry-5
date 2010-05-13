@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2007, 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -134,7 +134,7 @@ var Tapestry = {
 			new Effect.Fade(overlay, {
 				duration : 0.2,
 				afterFinish : function() {
-					overlay.remove();
+					Tapestry.remove(overlay);
 				}
 			});
 		};
@@ -576,7 +576,6 @@ var Tapestry = {
 		var dummy = document.createElement('html');
 		dummy.appendChild(element.cloneNode(true));
 		var outerHTML = dummy.innerHTML;
-		dummy.innerHTML = '';
 
 		var replaceHTML = outerHTML.replace(new RegExp("^<" + tag, "i"),
 				"<" + newTagName).replace(new RegExp("</" + tag + ">$", "i"),
@@ -584,7 +583,69 @@ var Tapestry = {
 
 		element.insert( {
 			before : replaceHTML
-		}).remove();
+		});
+
+		Tapestry.remove(element);
+	},
+
+	/**
+	 * Removes an element and all of its direct and indirect children. The
+	 * element is first purged, to ensure that Internet Explorer doesn't leak
+	 * memory if event handlers associated with the element (or its children)
+	 * have references back to the element.
+	 * 
+	 * @since 5.2.0
+	 */
+	remove : function(element) {
+		Tapestry.purge(element);
+
+		element.remove();
+	},
+
+	/**
+	 * Purges the element of any event handlers (necessary in IE to ensure that
+	 * memory leaks do not occur, and harmless in other browsers). The element
+	 * is purged, then any children of the element are purged.
+	 */
+	purge : function(element) {
+
+		/* Adapted from http://javascript.crockford.com/memory/leak.html */
+		var attrs = element.attributes;
+		if (attrs) {
+			var l = attrs.length, i, name;
+			for (i = 0; i < l; i++) {
+				name = attrs[i].name;
+				/* Looking for onclick, etc. */
+				if (typeof element[name] == 'function') {
+					element[name] = null;
+				}
+			}
+		}
+
+		/* Get rid of any Prototype event handlers as well. */
+		Event.stopObserving(element);
+
+		Tapestry.purgeChildren(element);
+	},
+
+	/**
+	 * Invokes purge() on all the children of the element.
+	 */
+	purgeChildren : function(element) {
+
+		var children = element.childNodes;
+
+		if (children) {
+			var l = children.length, i, child;
+
+			for (i = 0; i < l; i++) {
+				var child = children[i];
+
+				/* Just purge element nodes, not text, etc. */
+				if (child.nodeType == 1)
+					Tapestry.purge(children[i]);
+			}
+		}
 	}
 };
 
@@ -848,7 +909,7 @@ Tapestry.Initializer = {
 				var effect = Tapestry.ElementEffect.fade(container);
 
 				effect.options.afterFinish = function() {
-					container.remove();
+					Tapestry.remove(container);
 				}
 			};
 
@@ -1039,7 +1100,7 @@ Tapestry.Initializer = {
 			var effect = runAnimation(false);
 
 			effect.options.afterFinish = function() {
-				element.remove();
+				Tapestry.remove(element);
 			};
 		});
 
@@ -1649,6 +1710,9 @@ Tapestry.ZoneManager = Class.create( {
 	 * @param content
 	 */
 	show : function(content) {
+
+		Tapestry.purgeChildren(this.updateElement);
+
 		this.updateElement.update(content);
 
 		var func = this.element.visible() ? this.updateFunc : this.showFunc;
@@ -1954,36 +2018,18 @@ Tapestry.ScriptManager = {
 };
 
 /**
- * In the spirit of $(), $T() exists to access the <em>Tapestry object</em>
- * for the element. The Tapestry object is used to store additional values
- * related to the element; it is simply an anonymous object stored as property
- * <code>_tapestry</code> of the element, created the first time it is
- * accessed.
- * <p>
- * This mechanism acts as a namespace, and so helps prevent name conflicts that
- * would occur if properties were stored directly on DOM elements, and makes
- * debugging a bit easier (the Tapestry-specific properties are all in one
- * place!). For the moment, added methods are stored directly on the object, and
- * are not prefixed in any way, valueing readability over preventing naming
- * conflicts.
- * <p>
- * However, this technique is being phased out and will soon be deprecated as it
- * is all too easy to cause memory cycles and leaks (especially in IE).
+ * In the spirit of $(), $T() exists to access a hash of extra data about an
+ * element. In release 5.1 and prior, a hash attached to the element by
+ * Tapestry was returned. In 5.2, Prototype's storage object is returned, which
+ * is less like to cause memory leaks in IE.
  * 
+ * @deprecated With no specific replacement
  * @param element
  *            an element instance or element id
- * @return object Tapestry object for the element
+ * @return object Prototype storage object for the element
  */
 function $T(element) {
-	var e = $(element);
-	var t = e._tapestry;
-
-	if (!t) {
-		t = {};
-		e._tapestry = t;
-	}
-
-	return t;
+	return $(element).getStorage();
 }
 
 Tapestry.onDOMLoaded(Tapestry.onDomLoadedCallback);
