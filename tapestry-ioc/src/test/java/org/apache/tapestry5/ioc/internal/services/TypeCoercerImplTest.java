@@ -16,6 +16,7 @@ package org.apache.tapestry5.ioc.internal.services;
 
 import org.apache.tapestry5.ioc.internal.IOCInternalTestCase;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.services.Coercion;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.ioc.util.TimeInterval;
 import org.testng.annotations.AfterClass;
@@ -63,12 +64,17 @@ public class TypeCoercerImplTest extends IOCInternalTestCase
         assertEquals(coercer.coerce(227l, int.class), new Integer(227));
     }
 
+    @SuppressWarnings("unchecked")
     @Test
     public void no_coercion_necessary()
     {
         Object input = new Integer(-37);
 
         assertSame(coercer.coerce(input, Number.class), input);
+
+        Coercion coercion = coercer.getCoercion(int.class, Number.class);
+
+        assertSame(coercion.coerce(input), input);
     }
 
     @Test
@@ -145,6 +151,10 @@ public class TypeCoercerImplTest extends IOCInternalTestCase
         Object actual = coercer.coerce(input, targetType);
 
         assertEquals(actual, expected);
+
+        Coercion c = coercer.getCoercion(input == null ? void.class : input.getClass(), targetType);
+
+        assertEquals(c.coerce(input), expected);
     }
 
     @SuppressWarnings("unchecked")

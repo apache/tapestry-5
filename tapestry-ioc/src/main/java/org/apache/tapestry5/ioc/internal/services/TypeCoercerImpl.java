@@ -100,6 +100,14 @@ public class TypeCoercerImpl implements TypeCoercer
      */
     private final Map<Class, TargetCoercion> typeToTargetCoercion = new WeakHashMap<Class, TargetCoercion>();
 
+    private static final Coercion NO_COERCION = new Coercion<Object, Object>()
+    {
+        public Object coerce(Object input)
+        {
+            return input;
+        }
+    };
+
     private static final Coercion COERCION_NULL_TO_OBJECT = new Coercion<Void, Object>()
     {
         public Object coerce(Void input)
@@ -138,21 +146,36 @@ public class TypeCoercerImpl implements TypeCoercer
     }
 
     @SuppressWarnings("unchecked")
-    public <S, T> String explain(Class<S> inputType, Class<T> targetType)
+    public <S, T> Coercion<S, T> getCoercion(Class<S> sourceType, Class<T> targetType)
     {
-        Defense.notNull(inputType, "inputType");
+        Defense.notNull(sourceType, "sourceType");
+        Defense.notNull(targetType, "targetType");
+
+        Class effectiveSourceType = ClassFabUtils.getWrapperType(sourceType);
+        Class effectiveTargetType = ClassFabUtils.getWrapperType(targetType);
+
+        if (effectiveTargetType.isAssignableFrom(effectiveSourceType))
+            return NO_COERCION;
+
+        return getTargetCoercion(effectiveTargetType).getCoercion(effectiveSourceType);
+    }
+
+    @SuppressWarnings("unchecked")
+    public <S, T> String explain(Class<S> sourceType, Class<T> targetType)
+    {
+        Defense.notNull(sourceType, "effectiveInputType");
         Defense.notNull(targetType, "targetType");
 
         Class effectiveTargetType = ClassFabUtils.getWrapperType(targetType);
-        Class effctiveInputType = ClassFabUtils.getWrapperType(inputType);
+        Class effectiveSourceType = ClassFabUtils.getWrapperType(sourceType);
 
         // Is a coercion even necessary? Not if the target type is assignable from the
         // input value.
 
-        if (effectiveTargetType.isAssignableFrom(effctiveInputType))
+        if (effectiveTargetType.isAssignableFrom(effectiveSourceType))
             return "";
 
-        return getTargetCoercion(targetType).explain(inputType);
+        return getTargetCoercion(targetType).explain(sourceType);
     }
 
     private synchronized TargetCoercion getTargetCoercion(Class targetType)
