@@ -410,7 +410,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
         if (module == null)
             throw new UnknownValueException(String.format("Service id '%s' is not defined by any module.", serviceId),
-                    new AvailableValues("service ids", serviceIdToModule));
+                    new AvailableValues("Defined service ids", serviceIdToModule));
 
         return module;
     }

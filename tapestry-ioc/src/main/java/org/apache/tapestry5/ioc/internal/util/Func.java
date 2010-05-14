@@ -33,9 +33,9 @@ public class Func
 {
 
     /**
-     * Functional map (i.e., transform operation) from a List&lt;S&gt; to List&lt;T&gt;.
+     * Functional map (i.e., transform operation) from a Collection&lt;S&gt; to List&lt;T&gt;.
      */
-    public static <S, T> List<T> map(Coercion<S, T> coercion, List<S> source)
+    public static <S, T> List<T> map(Coercion<S, T> coercion, Collection<S> source)
     {
         Defense.notNull(source, "source");
         Defense.notNull(coercion, "coercion");

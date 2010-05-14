@@ -36,7 +36,7 @@ public class JavascriptStackSourceImpl implements JavascriptStackSource
 
         if (stack == null)
             throw new UnknownValueException(String.format("No JavascriptStack with name '%s'.", name),
-                    new AvailableValues("JavaScript stacks", configuration));
+                    new AvailableValues("Configured JavaScript stacks", configuration));
 
         return stack;
     }

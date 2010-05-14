@@ -148,7 +148,7 @@ public class BeanModelImpl<T> implements BeanModel<T>
         if (propertyModel == null)
             throw new UnknownValueException(String.format(
                     "Bean editor model for %s does not contain a property named '%s'.", beanType.getName(),
-                    propertyName), new AvailableValues("properties", propertyNames));
+                    propertyName), new AvailableValues("Defined properties", propertyNames));
 
         return propertyModel;
     }
@@ -173,7 +173,7 @@ public class BeanModelImpl<T> implements BeanModel<T>
 
         throw new UnknownValueException(String.format(
                 "Bean editor model for %s does not contain a property with id '%s'.", beanType.getName(), propertyId),
-                new AvailableValues("property ids", ids));
+                new AvailableValues("Defined property ids", ids));
     }
 
     public List<String> getPropertyNames()

@@ -48,7 +48,7 @@ public class PersistentFieldManagerImpl implements PersistentFieldManager
 
         if (result == null)
             throw new UnknownValueException(String.format("'%s' is not a defined persistent strategy.", strategyName),
-                    new AvailableValues("persistent field strategies", strategies));
+                    new AvailableValues("Configured persistent field strategies", strategies));
 
         return result;
     }

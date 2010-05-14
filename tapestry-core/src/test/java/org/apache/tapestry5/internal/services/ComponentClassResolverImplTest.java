@@ -301,7 +301,7 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
         catch (UnknownValueException ex)
         {
             assertEquals(ex.getMessage(), "Unable to resolve \'Unknown\' to a page class name.");
-            assertEquals(ex.getAvailableValues().toString(), "AvailableValues[page names: Barney, Betty, Fred, Wilma]");
+            assertEquals(ex.getAvailableValues().toString(), "AvailableValues[Page names: Barney, Betty, Fred, Wilma]");
         }
 
         verify();

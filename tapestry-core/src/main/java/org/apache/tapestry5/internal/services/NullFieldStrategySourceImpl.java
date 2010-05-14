@@ -37,7 +37,7 @@ public class NullFieldStrategySourceImpl implements NullFieldStrategySource
         if (result != null) return result;
         
         throw new UnknownValueException(String.format("Unrecognized name '%s' locating a null field strategy.", name),
-                new AvailableValues("null field strategies", configuration));
+                new AvailableValues("Configured null field strategies", configuration));
 
     }
 }

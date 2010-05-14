@@ -31,7 +31,7 @@ public class AvailableValuesRenderer implements ObjectRenderer<AvailableValues>
 
         writer.element("p");
 
-        writer.writef("Available %s:", values.getValueType());
+        writer.writef("%s:", values.getValueType());
 
         writer.end();
 

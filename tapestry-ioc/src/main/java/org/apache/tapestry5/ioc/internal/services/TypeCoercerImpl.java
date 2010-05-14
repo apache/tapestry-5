@@ -301,7 +301,7 @@ public class TypeCoercerImpl implements TypeCoercer
             masterList.addAll(list);
         }
 
-        return new AvailableValues("coercions", masterList);
+        return new AvailableValues("Configured coercions", masterList);
     }
 
     /**

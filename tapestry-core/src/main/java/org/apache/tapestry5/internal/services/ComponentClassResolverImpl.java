@@ -430,7 +430,7 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
 
                 if (result == null)
                     throw new UnknownValueException(String.format("Unable to resolve '%s' to a page class name.",
-                            pageName), new AvailableValues("page names", presentableNames(pageToClassName)));
+                            pageName), new AvailableValues("Page names", presentableNames(pageToClassName)));
 
                 return result;
             }
@@ -475,7 +475,7 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
 
                 if (result == null)
                     throw new UnknownValueException(String.format("Unable to resolve '%s' to a component class name.",
-                            componentType), new AvailableValues("component types",
+                            componentType), new AvailableValues("Component types",
                             presentableNames(componentToClassName)));
 
                 return result;
@@ -512,7 +512,7 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
 
                 if (result == null)
                     throw new UnknownValueException(String.format("Unable to resolve '%s' to a mixin class name.",
-                            mixinType), new AvailableValues("mixin types", presentableNames(mixinToClassName)));
+                            mixinType), new AvailableValues("Mixin types", presentableNames(mixinToClassName)));
 
                 return result;
             }
@@ -572,7 +572,7 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
 
                 if (result == null)
                     throw new UnknownValueException(String.format("Unable to resolve '%s' to a known page name.",
-                            pageName), new AvailableValues("page names", presentableNames(pageNameToCanonicalPageName)));
+                            pageName), new AvailableValues("Page names", presentableNames(pageNameToCanonicalPageName)));
 
                 return result;
             }

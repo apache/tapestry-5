@@ -113,7 +113,7 @@ public class ClasspathAssetAliasManagerImpl implements ClasspathAssetAliasManage
                 String
                         .format(
                                 "Unable to create a client URL for classpath resource %s: The resource path was not within an aliased path.",
-                                resourcePath), new AvailableValues("aliased paths", aliasToPathPrefix.values()));
+                                resourcePath), new AvailableValues("Aliased paths", aliasToPathPrefix.values()));
     }
 
     public String toResourcePath(String clientURL)

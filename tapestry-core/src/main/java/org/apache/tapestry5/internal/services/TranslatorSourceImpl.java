@@ -87,7 +87,7 @@ public class TranslatorSourceImpl implements TranslatorSource, InvalidationListe
 
         if (result == null)
             throw new UnknownValueException(String.format("Unknown translator type '%s'.", name), new AvailableValues(
-                    "translators", nameToTranslator));
+                    "Configured translators", nameToTranslator));
 
         return result;
     }

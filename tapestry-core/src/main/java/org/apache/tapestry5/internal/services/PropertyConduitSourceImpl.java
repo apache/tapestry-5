@@ -1036,7 +1036,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
                 throw new UnknownValueException(String.format(
                         "Class %s does not contain a property (or public field) named '%s'.", activeType.getName(),
-                        propertyName), new AvailableValues("properties (and public fields)", names));
+                        propertyName), new AvailableValues("Properties (and public fields)", names));
             }
 
             return createExpressionTermInfoForProperty(adapter);

@@ -873,7 +873,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
             Set<String> ids = InternalUtils.keys(children);
 
             throw new UnknownValueException(String.format("Component %s does not contain embedded component '%s'.",
-                    getCompleteId(), embeddedId), new AvailableValues("embedded components", ids));
+                    getCompleteId(), embeddedId), new AvailableValues("Embedded components", ids));
         }
 
         return embeddedElement;
@@ -901,14 +901,15 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
 
     private Component mixinForClassName(String mixinClassName)
     {
-
         if (mixinIdToComponentResources == null)
             return null;
+
         for (InternalComponentResources resources : mixinIdToComponentResources.values())
         {
             if (resources.getComponentModel().getComponentClassName().equals(mixinClassName)) { return resources
                     .getComponent(); }
         }
+
         return null;
     }
 

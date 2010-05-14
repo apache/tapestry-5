@@ -190,7 +190,7 @@ public class BindParameterWorker implements ComponentClassTransformWorker
 
         InternalUtils.joinSorted(guesses));
 
-        throw new UnknownValueException(message, new AvailableValues("formal parameters", model
+        throw new UnknownValueException(message, new AvailableValues("Formal parameters", model
                 .getDeclaredParameterNames()));
     }
 }
