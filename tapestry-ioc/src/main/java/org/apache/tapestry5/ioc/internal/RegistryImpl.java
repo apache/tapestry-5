@@ -917,11 +917,8 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         if (constructor == null)
             throw new RuntimeException(IOCMessages.noAutobuildConstructor(clazz));
 
-        final ObjectLocator locator = this;
-        final OperationTracker tracker = this;
-
         Map<Class, Object> resourcesMap = CollectionFactory.newMap();
-        resourcesMap.put(OperationTracker.class, tracker);
+        resourcesMap.put(OperationTracker.class, RegistryImpl.this);
 
         final InjectionResources resources = new MapInjectionResources(resourcesMap);
 
@@ -929,39 +926,19 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         {
             public T invoke()
             {
-                Throwable failure;
+                InternalUtils.validateConstructorForAutobuild(constructor);
 
-                try
-                {
-                    InternalUtils.validateConstructorForAutobuild(constructor);
+                Object result = invokeConstructor(constructor, resources);
 
-                    Object[] parameters = InternalUtils.calculateParametersForConstructor(constructor, locator,
-                            resources, tracker);
+                InternalUtils.injectIntoFields(result, RegistryImpl.this, resources, RegistryImpl.this);
 
-                    Object result = constructor.newInstance(parameters);
-
-                    InternalUtils.injectIntoFields(result, locator, resources, tracker);
-
-                    return clazz.cast(result);
-                }
-                catch (InvocationTargetException ite)
-                {
-                    failure = ite.getTargetException();
-                }
-                catch (Exception ex)
-                {
-                    failure = ex;
-                }
-
-                String description = classFactory.getConstructorLocation(constructor).toString();
-
-                throw new RuntimeException(IOCMessages.autobuildConstructorError(description, failure), failure);
+                return clazz.cast(result);
             }
         };
 
         T result = invoke("Autobuilding instance of class " + clazz.getName(), operation);
 
-        InternalUtils.invokePostInjectionMethods(result, locator, resources, this);
+        InternalUtils.invokePostInjectionMethods(result, this, resources, this);
 
         return result;
     }
@@ -1038,5 +1015,36 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
     public <T> T invoke(String description, Invokable<T> operation)
     {
         return operationTracker.invoke(description, operation);
+    }
+
+    private Object invokeConstructor(final Constructor constructor, final InjectionResources resources)
+    {
+        final String description = classFactory.getConstructorLocation(constructor).toString();
+
+        return invoke("Invoking " + description, new Invokable<Object>()
+        {
+            public Object invoke()
+            {
+                Throwable failure;
+
+                try
+                {
+                    Object[] parameters = InternalUtils.calculateParametersForConstructor(constructor,
+                            RegistryImpl.this, resources, RegistryImpl.this);
+
+                    return constructor.newInstance(parameters);
+                }
+                catch (InvocationTargetException ite)
+                {
+                    failure = ite.getTargetException();
+                }
+                catch (Exception ex)
+                {
+                    failure = ex;
+                }
+
+                throw new RuntimeException(IOCMessages.autobuildConstructorError(description, failure), failure);
+            }
+        });
     }
 }
