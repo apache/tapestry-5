@@ -110,6 +110,7 @@ public interface ClassTransformation extends AnnotationProvider
      * @param annotationClass
      * @return a list of method signature (which may be empty) in ascending order
      * @see #findMethods(MethodFilter)
+     * @deprecated Use {@link #matchMethodsWithAnnotation(Class)} instead
      */
     List<TransformMethodSignature> findMethodsWithAnnotation(Class<? extends Annotation> annotationClass);
 
@@ -401,7 +402,8 @@ public interface ClassTransformation extends AnnotationProvider
      *            the body of code
      * @throws org.apache.tapestry5.internal.services.MethodCompileException
      *             if the provided Javassist method body can not be compiled
-     * @deprecated Use {@link TransformMethod#extend(String)} instead. This method is non-functional as of Tapestry 5.2.
+     * @deprecated Use {@link TransformMethod#addAdvice(ComponentMethodAdvice)} instead. This method is non-functional
+     *             as of Tapestry 5.2.
      */
     void extendMethod(TransformMethodSignature methodSignature, String methodBody);
 
@@ -418,7 +420,8 @@ public interface ClassTransformation extends AnnotationProvider
      * @throws org.apache.tapestry5.internal.services.MethodCompileException
      *             if the provided method body can not be compiled
      * @see #prefixMethod(TransformMethodSignature, String)
-     * @deprecated Use {@link TransformMethod#extend(String) instead}. This method is non-functional as of Tapestry 5.2.
+     * @deprecated Use {@link TransformMethod#addAdvice(ComponentMethodAdvice) instead}. This method is non-functional
+     *             as of Tapestry 5.2.
      */
     void extendExistingMethod(TransformMethodSignature methodSignature, String methodBody);
 
@@ -551,8 +554,7 @@ public interface ClassTransformation extends AnnotationProvider
 
     /**
      * Returns true if this transformation represents a root class (one that extends directly from
-     * Object), or false if
-     * this transformation is an extension of another transformed class.
+     * Object), or false if this transformation is an sub-class of another transformed class.
      * 
      * @return true if root class, false if sub-class
      */
