@@ -64,7 +64,6 @@
             <!-- Looks like if you override scope, you have to provide version (and classifier) as well.
    Or perhaps this has something to do with classifier. -->
             <version>${testng-version}</version>
-            <classifier>jdk15</classifier>
             <scope>provided</scope>
         </dependency>
     </dependencies>

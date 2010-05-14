@@ -432,7 +432,7 @@
         <!-- Version 2.1 lists everything as 100% covered, weird. -->
         <cobertura-plugin-version>2.2</cobertura-plugin-version>
         <update-release-info>false</update-release-info>
-        <testng-version>5.11</testng-version>
+        <testng-version>5.12.1</testng-version>
     </properties>
 
 </project>
