@@ -78,7 +78,7 @@ public class MarkupWriterImplTest extends InternalBaseTestCase
     {
         MarkupWriter w = new MarkupWriterImpl(new XMLMarkupModel());
 
-        w.comment("preamble start");
+        w.comment(" preamble start ");
         w.write("preamble text");
         w.cdata("CDATA content");
         w.writeRaw("&nbsp;");
@@ -86,7 +86,7 @@ public class MarkupWriterImplTest extends InternalBaseTestCase
         w.end();
         // You really shouldn't have any text after the close tag of the document, so it
         // gets moved to the top, to the "preamble", before the first element.
-        w.comment("content after root element in preamble");
+        w.comment(" content after root element in preamble ");
 
         assertEquals(w.getDocument().toString(), readFile("preamble_content.txt"));
     }
@@ -220,7 +220,7 @@ public class MarkupWriterImplTest extends InternalBaseTestCase
         MarkupWriter w = new MarkupWriterImpl();
 
         w.element("root");
-        w.comment("A comment");
+        w.comment(" A comment ");
         w.end();
 
         assertEquals(w.toString(), "<root><!-- A comment --></root>");
@@ -232,7 +232,7 @@ public class MarkupWriterImplTest extends InternalBaseTestCase
         MarkupWriter w = new MarkupWriterImpl();
 
         w.element("root");
-        w.comment("<&>");
+        w.comment(" <&> ");
         w.end();
 
         assertEquals(w.toString(), "<root><!-- <&> --></root>");
@@ -245,7 +245,7 @@ public class MarkupWriterImplTest extends InternalBaseTestCase
 
         w.element("root");
         w.write("before");
-        w.comment("A comment");
+        w.comment(" A comment ");
         w.write("after");
         w.end();
 

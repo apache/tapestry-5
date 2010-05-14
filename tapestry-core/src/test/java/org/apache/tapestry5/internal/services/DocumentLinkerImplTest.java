@@ -19,13 +19,8 @@ import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.dom.XMLMarkupModel;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.services.URLEncoder;
-import org.apache.tapestry5.services.assets.AssetPathConstructor;
-import org.easymock.EasyMock;
-import org.easymock.IAnswer;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-
-import java.io.ObjectInputStream;
 
 public class DocumentLinkerImplTest extends InternalBaseTestCase
 {
@@ -220,7 +215,7 @@ public class DocumentLinkerImplTest extends InternalBaseTestCase
     {
         Document document = new Document(new XMLMarkupModel());
 
-        document.newRootElement("html").element("head").comment("existing head").getParent().element("body").text(
+        document.newRootElement("html").element("head").comment(" existing head ").getParent().element("body").text(
                 "body content");
 
         DocumentLinkerImpl linker = new DocumentLinkerImpl(true, "1.2.3");

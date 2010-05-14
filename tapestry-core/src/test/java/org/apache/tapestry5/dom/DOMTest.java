@@ -14,14 +14,14 @@
 
 package org.apache.tapestry5.dom;
 
+import java.util.Collection;
+import java.util.List;
+
 import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.internal.services.MarkupWriterImpl;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.testng.annotations.Test;
-
-import java.util.Collection;
-import java.util.List;
 
 /**
  * Tests for a number of DOM node classes, including {@link org.apache.tapestry5.dom.Element} and {@link
@@ -208,7 +208,7 @@ public class DOMTest extends InternalBaseTestCase
 
         Element e = d.newRootElement("html");
 
-        e.comment("Created by Tapestry 5.0");
+        e.comment(" Created by Tapestry 5.0 ");
 
         assertEquals(d.toString(), "<html><!-- Created by Tapestry 5.0 --></html>");
     }

@@ -1,4 +1,4 @@
-// Copyright 2006, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -34,8 +34,8 @@ public final class Comment extends Node
     @Override
     void toMarkup(Document document, PrintWriter writer, Map<String, String> namespaceURIToPrefix)
     {
-        writer.print("<!-- ");
+        writer.print("<!--");
         writer.print(comment);
-        writer.print(" -->");
+        writer.print("-->");
     }
 }

@@ -74,6 +74,7 @@ public interface MarkupWriter
 
     /**
      * Adds an XML comment. The text should be just the comment content, the comment delimiters will be provided.
+     * Note that, as of Tapestry 5.2., no extra whitespace is added (previous releases added a space around the text).
      */
     void comment(String text);
 

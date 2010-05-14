@@ -1013,10 +1013,7 @@ public class SaxTemplateParser
     {
         processTextBuffer(state);
 
-        // Trim the excess whitespace; the Comment DOM node will add a
-        // leading/trailing space.
-
-        String comment = tokenStream.getText().trim();
+        String comment = tokenStream.getText();
 
         tokenAccumulator.add(new CommentToken(comment, getLocation()));
     }

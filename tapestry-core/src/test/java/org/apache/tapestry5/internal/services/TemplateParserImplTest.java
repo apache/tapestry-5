@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -280,11 +280,7 @@ public class TemplateParserImplTest extends InternalBaseTestCase
 
         CommentToken token1 = get(tokens, 1);
 
-        // Comments are now trimmed of leading and trailing whitespace. This may mean
-        // that the output isn't precisely what's in the template, but a) its a comment
-        // and b) that's pretty much true of everything in the templates.
-
-        assertEquals(token1.getComment(), "Single line comment");
+        assertEquals(token1.getComment(), " Single line comment ");
     }
 
     @Test
@@ -577,7 +573,7 @@ public class TemplateParserImplTest extends InternalBaseTestCase
         assertEquals(token4.getName(), "fred");
 
         CommentToken token6 = get(tokens, 6);
-        assertEquals(token6.getComment(), "fred content");
+        assertEquals(token6.getComment(), " fred content ");
 
         TemplateToken token8 = get(tokens, 8);
 
@@ -596,7 +592,7 @@ public class TemplateParserImplTest extends InternalBaseTestCase
         assertEquals(token4.getName(), "fred");
 
         CommentToken token6 = get(tokens, 6);
-        assertEquals(token6.getComment(), "fred content");
+        assertEquals(token6.getComment(), " fred content ");
 
         TemplateToken token8 = get(tokens, 8);
 
@@ -639,13 +635,13 @@ public class TemplateParserImplTest extends InternalBaseTestCase
         assertEquals(token1.getId(), "block0");
 
         CommentToken token2 = get(tokens, 2);
-        assertEquals(token2.getComment(), "block0 content");
+        assertEquals(token2.getComment(), " block0 content ");
 
         BlockToken token4 = get(tokens, 4);
         assertNull(token4.getId());
 
         CommentToken token5 = get(tokens, 5);
-        assertEquals(token5.getComment(), "anon block content");
+        assertEquals(token5.getComment(), " anon block content ");
     }
 
     @DataProvider
