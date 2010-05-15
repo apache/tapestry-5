@@ -293,4 +293,12 @@ public class SymbolConstants
      */
     public static final String DEFAULT_JAVASCRIPT = "tapestry.default-javascript";
 
+    /**
+     * If "true", then JSON page initialization content is compressed; if false
+     * then extra white space is added (pretty printing). Defaults to "true" in production mode.
+     * 
+     * @since 5.2.0
+     */
+    public static final String COMPACT_JSON = "tapestry.compact-json";
+
 }

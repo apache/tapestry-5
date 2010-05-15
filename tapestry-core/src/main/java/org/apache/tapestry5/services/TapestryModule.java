@@ -1933,6 +1933,9 @@ public final class TapestryModule
     @Symbol(SymbolConstants.TAPESTRY_VERSION)
     final String tapestryVersion,
 
+    @Symbol(SymbolConstants.COMPACT_JSON)
+    final boolean compactJSON,
+
     final SymbolSource symbolSource,
 
     final AssetSource assetSource,
@@ -1967,7 +1970,7 @@ public final class TapestryModule
                 DocumentLinker linker = environment.peekRequired(DocumentLinker.class);
 
                 JavascriptSupportImpl support = new JavascriptSupportImpl(linker, javascriptStackSource,
-                        javascriptStackPathConstructor);
+                        javascriptStackPathConstructor, compactJSON);
 
                 environment.push(JavascriptSupport.class, support);
 
@@ -2130,7 +2133,7 @@ public final class TapestryModule
                 DocumentLinker linker = environment.peekRequired(DocumentLinker.class);
 
                 JavascriptSupportImpl support = new JavascriptSupportImpl(linker, javascriptStackSource,
-                        javascriptStackPathConstructor, idAllocator, true);
+                        javascriptStackPathConstructor, idAllocator, true, true);
 
                 environment.push(JavascriptSupport.class, support);
 
@@ -2440,6 +2443,7 @@ public final class TapestryModule
 
         configuration.add(SymbolConstants.SECURE_ENABLED, matchProductionMode);
         configuration.add(SymbolConstants.COMBINE_SCRIPTS, matchProductionMode);
+        configuration.add(SymbolConstants.COMPACT_JSON, matchProductionMode);
 
         configuration.add(SymbolConstants.ENCODE_LOCALE_INTO_PATH, "true");
 

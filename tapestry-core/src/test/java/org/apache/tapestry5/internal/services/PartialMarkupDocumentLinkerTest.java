@@ -1,10 +1,10 @@
-// Copyright 2008 The Apache Software Foundation
+// Copyright 2008, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -47,7 +47,7 @@ public class PartialMarkupDocumentLinkerTest extends Assert
 
         linker.commit(reply);
 
-        assertEquals(reply.toString(), "{\"scripts\":[\"foo.js\",\"bar.js\"]}");
+        assertEquals(reply.toCompactString(), "{\"scripts\":[\"foo.js\",\"bar.js\"]}");
 
     }
 
@@ -62,10 +62,10 @@ public class PartialMarkupDocumentLinkerTest extends Assert
         JSONObject reply = new JSONObject();
 
         linker.commit(reply);
-        
+
         JSONObject expected = new JSONObject(
-        		"{\"stylesheets\":[{\"href\":\"foo.css\",\"media\":\"print\"},{\"href\":\"bar.css\"}]}");
-        
+                "{\"stylesheets\":[{\"href\":\"foo.css\",\"media\":\"print\"},{\"href\":\"bar.css\"}]}");
+
         assertEquals(reply, expected);
 
     }

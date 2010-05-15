@@ -18,6 +18,8 @@ import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
+import java.io.CharArrayWriter;
+import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -43,7 +45,8 @@ public class JSONObjectTest extends Assert
 
         JSONObject fullCopy = new JSONObject(master, "fred", "barney");
 
-        assertEquals(fullCopy.toString(), "{\"fred\":\"flintstone\",\"barney\":\"rubble\"}");
+        assertEquals(fullCopy.toString(), "{\n  \"fred\" : \"flintstone\",\n  \"barney\" : \"rubble\"\n"
+                + "}");
 
         JSONObject limitedCopy2 = new JSONObject(master, "fred", "wilma");
         assertEquals(limitedCopy2.keys().size(), 1);
@@ -141,7 +144,8 @@ public class JSONObjectTest extends Assert
         object.accumulate(key, "beta");
         object.accumulate(key, "gamma");
 
-        assertEquals(object.toString(), "{\"key\":[\"alpha\",\"beta\",\"gamma\"]}");
+        assertEquals(object.toString(), "{\n  \"key\" : [\n    \"alpha\",\n    \"beta\",\n"
+                + "    \"gamma\"\n  ]\n}");
 
         JSONArray array = object.getJSONArray(key);
 
@@ -164,7 +168,8 @@ public class JSONObjectTest extends Assert
 
         array.put("gamma");
 
-        assertEquals(object.toString(), "{\"key\":[\"alpha\",\"beta\",\"gamma\"]}");
+        assertEquals(object.toString(), "{\n  \"key\" : [\n    \"alpha\",\n    \"beta\",\n"
+                + "    \"gamma\"\n  ]\n}");
     }
 
     @Test
@@ -189,11 +194,12 @@ public class JSONObjectTest extends Assert
 
         object.append(key, "alpha");
 
-        assertEquals(object.toString(), "{\"fubar\":[\"alpha\"]}");
+        assertEquals(object.toString(), "{\n  \"fubar\" : [\n    \"alpha\"\n  ]\n}");
 
         object.append(key, "beta");
 
-        assertEquals(object.toString(), "{\"fubar\":[\"alpha\",\"beta\"]}");
+        assertEquals(object.toString(), "{\n  \"fubar\" : [\n    \"alpha\",\n    \"beta\"\n  ]\n"
+                + "}");
     }
 
     @Test
@@ -370,6 +376,14 @@ public class JSONObjectTest extends Assert
     }
 
     @Test
+    public void boolean_as_value()
+    {
+        JSONObject object = new JSONObject().put("t", true).put("f", false);
+
+        assertEquals(object.toString(), "{\n  \"f\" : false,\n  \"t\" : true\n}");
+    }
+
+    @Test
     public void length()
     {
         JSONObject object = new JSONObject();
@@ -432,7 +446,7 @@ public class JSONObjectTest extends Assert
 
         object.put("nullkey", JSONObject.NULL);
 
-        assertEquals(object.toString(), "{\"nullkey\":null}");
+        assertEquals(object.toString(), "{\n  \"nullkey\" : null\n}");
 
         assertTrue(object.isNull("nullkey"));
     }
@@ -510,7 +524,7 @@ public class JSONObjectTest extends Assert
 
         object.put("key", new BigDecimal("100.0000000"));
 
-        assertEquals(object.toString(), "{\"key\":100}");
+        assertEquals(object.toString(), "{\n  \"key\" : 100\n}");
     }
 
     @Test
@@ -609,7 +623,10 @@ public class JSONObjectTest extends Assert
 
         object.put("key", string);
 
-        assertEquals(object.toString(), "{\"key\":\"*VALUE*\"}");
+        // The implementation of this in Tapestry 5.1 put quotes around *VALUE*. That did not seem to
+        // be in accordance with intent, so in 5.2 the toJSONString value is printed without quotes.
+
+        assertEquals(object.toString(), "{\n  \"key\" : *VALUE*\n}");
     }
 
     @Test
@@ -673,7 +690,8 @@ public class JSONObjectTest extends Assert
     @Test
     public void json_array_from_values()
     {
-        assertEquals(new JSONArray("fred", "barney", "wilma").toString(), "[\"fred\",\"barney\",\"wilma\"]");
+        assertEquals(new JSONArray("fred", "barney", "wilma").toString(), "[\n  \"fred\",\n  \"barney\",\n"
+                + "  \"wilma\"\n]");
     }
 
     @Test
@@ -896,6 +914,44 @@ public class JSONObjectTest extends Assert
 
         obj.put("callback", new JSONLiteral("function(x) { $('bar').show(); }"));
 
-        assertEquals(obj.toString(), "{\"callback\":function(x) { $('bar').show(); }}");
+        assertEquals(obj.toString(), "{\n  \"callback\" : function(x) { $('bar').show(); }\n}");
+    }
+
+    @Test
+    public void object_print_and_pretty_print()
+    {
+        JSONObject o = new JSONObject("fred", "flintstone", "barney", "rubble");
+
+        CharArrayWriter caw = new CharArrayWriter();
+        PrintWriter pw = new PrintWriter(caw);
+
+        o.prettyPrint(pw);
+
+        String pretty = caw.toString();
+
+        assertEquals(o.toCompactString(), "{\"fred\":\"flintstone\",\"barney\":\"rubble\"}");
+        assertEquals(pretty, "{\n  \"fred\" : \"flintstone\",\n  \"barney\" : \"rubble\"\n}");
+    }
+
+    @Test
+    public void array_print_and_pretty_print()
+    {
+        JSONArray a = new JSONArray("fred", "barney");
+
+        CharArrayWriter caw = new CharArrayWriter();
+        PrintWriter pw = new PrintWriter(caw);
+
+        a.print(pw);
+
+        String compact = caw.toString();
+
+        caw.reset();
+
+        a.prettyPrint(pw);
+
+        String pretty = caw.toString();
+
+        assertEquals(compact, "[\"fred\",\"barney\"]");
+        assertEquals(pretty, "[\n  \"fred\",\n  \"barney\"\n]");
     }
 }

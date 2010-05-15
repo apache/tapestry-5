@@ -37,6 +37,8 @@ package org.apache.tapestry5.json;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 
+import java.io.CharArrayWriter;
+import java.io.PrintWriter;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -90,7 +92,7 @@ import java.util.Set;
  * <p/>
  * Finally, support for the {@link org.apache.tapestry5.json.JSONLiteral} type has been added, which allow the exact
  * output to be controlled; useful when a JSONObject is being used as a configuration object, and must contain values
- * that are not simple data, such as an inline function.
+ * that are not simple data, such as an inline function (technically making the result not JSON).
  * 
  * @author JSON.org
  * @version 2
@@ -104,7 +106,7 @@ public final class JSONObject
      * JSONObject.NULL is equivalent to the value that JavaScript calls null, whilst Java's null is equivalent to the
      * value that JavaScript calls undefined.
      */
-    private static final class Null
+    private static final class Null implements JSONString
     {
         /**
          * A Null object is equal to the null value and to itself.
@@ -126,6 +128,11 @@ public final class JSONObject
          */
         @Override
         public String toString()
+        {
+            return "null";
+        }
+
+        public String toJSONString()
         {
             return "null";
         }
@@ -799,9 +806,11 @@ public final class JSONObject
 
     /**
      * Make a JSON text of this JSONObject. For compactness, no whitespace is added. If this would not result in a
-     * syntactically correct JSON text, then null will be returned instead.
+     * syntactically correct JSON text, then null will be returned instead
      * <p/>
      * Warning: This method assumes that the data structure is acyclical.
+     * <p>
+     * Starting in release 5.2, the result will be pretty printed for readability.
      * 
      * @return a printable, displayable, portable, transmittable representation of the object, beginning with
      *         <code>{</code>&nbsp;<small>(left brace)</small> and ending with <code>}</code>&nbsp;<small>(right
@@ -810,70 +819,156 @@ public final class JSONObject
     @Override
     public String toString()
     {
-        boolean comma = false;
+        return toString(this);
+    }
 
-        StringBuilder buffer = new StringBuilder("{");
+    /**
+     * Prints the JSONArray as a compact string (not extra punctuation). This is, essentially, what
+     * Tapestry 5.1 did inside {@link #toString()}.
+     * 
+     * @since 5.2.0
+     */
+    public String toCompactString()
+    {
+        CharArrayWriter caw = new CharArrayWriter();
+        PrintWriter pw = new PrintWriter(caw);
+
+        print(pw);
+
+        pw.close();
+
+        return caw.toString();
+    }
+
+    /**
+     * Creates a {@link PrettyPrintSession} to print the value (a JSONArray or JSONObject).
+     * 
+     * @since 5.2.0
+     */
+    static String toString(Object value)
+    {
+        CharArrayWriter caw = new CharArrayWriter();
+        PrintWriter pw = new PrintWriter(caw);
+
+        JSONPrintSession session = new PrettyPrintSession(pw);
+
+        printValue(session, value);
+
+        pw.close();
+
+        return caw.toString();
+    }
+
+    /**
+     * Prints the JSONObject to the writer compactly (with no extra whitespace).
+     * 
+     * @since 5.2.0
+     */
+    public JSONObject print(PrintWriter writer)
+    {
+        print(new CompactSession(writer));
+
+        return this;
+    }
+
+    /**
+     * Prints the JSONObject to the writer using indentation (two spaces per indentation level).
+     * 
+     * @since 5.2.0
+     */
+    public JSONObject prettyPrint(PrintWriter writer)
+    {
+        print(new PrettyPrintSession(writer));
+
+        return this;
+    }
+
+    /**
+     * Prints the JSONObject using the session.
+     * 
+     * @since 5.2.0
+     */
+    void print(JSONPrintSession session)
+    {
+        session.printSymbol('{');
+
+        session.indent();
+
+        boolean comma = false;
 
         for (String key : keys())
         {
             if (comma)
-                buffer.append(',');
+                session.printSymbol(',');
 
-            buffer.append(quote(key));
-            buffer.append(':');
-            buffer.append(valueToString(properties.get(key)));
+            session.newline();
+
+            session.printQuoted(key);
+
+            session.printSymbol(':');
+
+            printValue(session, properties.get(key));
 
             comma = true;
         }
 
-        buffer.append('}');
+        session.outdent();
 
-        return buffer.toString();
+        if (comma)
+            session.newline();
+
+        session.printSymbol('}');
     }
 
     /**
-     * Make a JSON text of an Object value. If the object has an value.toJSONString() method, then that method will be
-     * used to produce the JSON text. The method is required to produce a strictly conforming text. If the object does
-     * not contain a toJSONString method (which is the most common case), then a text will be produced by the rules.
-     * <p/>
-     * Warning: This method assumes that the data structure is acyclical.
+     * Prints a value (a JSONArray or JSONObject, or a value stored in an array or object) using
+     * the session.
      * 
-     * @param value
-     *            The value to be serialized.
-     * @return a printable, displayable, transmittable representation of the object, beginning with <code>{</code>
-     *         &nbsp;<small>(left brace)</small> and ending with <code>}</code>&nbsp;<small>(right
-     *         brace)</small>. @ If the value is or contains an invalid number.
+     * @since 5.2.0
      */
-    static String valueToString(Object value)
+    static void printValue(JSONPrintSession session, Object value)
     {
-        if (value == null || value.equals(null)) { return "null"; }
+        if (value instanceof JSONObject)
+        {
+            ((JSONObject) value).print(session);
+            return;
+        }
+
+        if (value instanceof JSONArray)
+        {
+            ((JSONArray) value).print(session);
+            return;
+        }
 
         if (value instanceof JSONString)
         {
-            try
-            {
-                String json = ((JSONString) value).toJSONString();
+            String printValue = ((JSONString) value).toJSONString();
 
-                return quote(json);
-            }
-            catch (Exception e)
-            {
-                throw new RuntimeException(e);
-            }
+            session.print(printValue);
+
+            return;
         }
 
-        if (value instanceof Number) { return numberToString((Number) value); }
+        if (value instanceof Number)
+        {
+            String printValue = numberToString((Number) value);
+            session.print(printValue);
+            return;
+        }
 
-        if (value instanceof Boolean || value instanceof JSONObject || value instanceof JSONArray
-                || value instanceof JSONLiteral) { return value.toString(); }
+        if (value instanceof Boolean)
+        {
+            session.print(value.toString());
 
-        return quote(value.toString());
+            return;
+        }
+
+        // Otherwise it really should just be a string. Nothing else can go in.
+        session.printQuoted(value.toString());
     }
 
     /**
      * Returns true if the other object is a JSONObject and its set of properties matches this object's properties.
-     * <p/>
-     * '
      */
     @Override
     public boolean equals(Object obj)

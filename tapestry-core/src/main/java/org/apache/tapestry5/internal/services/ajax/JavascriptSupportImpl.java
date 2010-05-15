@@ -57,6 +57,8 @@ public class JavascriptSupportImpl implements JavascriptSupport
 
     private final boolean partialMode;
 
+    private final boolean compactMode;
+
     // Using a Map as a case-insensitive set of stack names.
 
     private final Map<String, Boolean> addedStacks = CollectionFactory.newCaseInsensitiveMap();
@@ -88,18 +90,20 @@ public class JavascriptSupportImpl implements JavascriptSupport
     };
 
     public JavascriptSupportImpl(DocumentLinker linker, JavascriptStackSource javascriptStackSource,
-            JavascriptStackPathConstructor stackPathConstructor)
+            JavascriptStackPathConstructor stackPathConstructor, boolean compactMode)
     {
-        this(linker, javascriptStackSource, stackPathConstructor, new IdAllocator(), false);
+        this(linker, javascriptStackSource, stackPathConstructor, new IdAllocator(), false, compactMode);
     }
 
     public JavascriptSupportImpl(DocumentLinker linker, JavascriptStackSource javascriptStackSource,
-            JavascriptStackPathConstructor stackPathConstructor, IdAllocator idAllocator, boolean partialMode)
+            JavascriptStackPathConstructor stackPathConstructor, IdAllocator idAllocator, boolean partialMode,
+            boolean compactMode)
     {
         this.linker = linker;
         this.idAllocator = idAllocator;
         this.javascriptStackSource = javascriptStackSource;
         this.partialMode = partialMode;
+        this.compactMode = compactMode | partialMode;
         this.stackPathConstructor = stackPathConstructor;
 
         // In partial mode, assume that the infrastructure stack is already present
@@ -183,7 +187,11 @@ public class JavascriptSupportImpl implements JavascriptSupport
             JSONObject init = inits.get(p);
 
             if (init != null)
-                addScript(p, "Tapestry.init(%s);", init);
+            {
+                String printed = compactMode ? init.toCompactString() : init.toString();
+
+                addScript(p, "Tapestry.init(%s);", printed);
+            }
         }
     }
 
