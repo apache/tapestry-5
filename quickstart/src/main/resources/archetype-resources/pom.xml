@@ -18,7 +18,7 @@ of testing facilities designed for use with TestNG (http://testng.org/), so it's
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
-            <version>5.8</version>
+            <version>5.12.1</version>
             <scope>test</scope>
         </dependency>
 
@@ -97,26 +97,15 @@ of testing facilities designed for use with TestNG (http://testng.org/), so it's
 
     <repositories>
 
-        <!-- This repository is only needed if the Tapestry released artifacts haven't made it to the central Maven repository yet. -->
-        <repository>
-            <id>tapestry</id>
-            <url>http://tapestry.formos.com/maven-repository/</url>
-        </repository>
-
         <!-- This repository is only needed when the tapestry-release-version is a snapshot release. -->
         <repository>
             <id>tapestry-snapshots</id>
-            <url>http://tapestry.formos.com/maven-snapshot-repository/</url>
+            <url>http://repository.apache.org/snapshots/</url>
         </repository>
 
         <repository>
             <id>codehaus.snapshots</id>
             <url>http://snapshots.repository.codehaus.org</url>
-        </repository>
-        <repository>
-            <id>OpenQA_Release</id>
-            <name>OpenQA Release Repository</name>
-            <url>http://archiva.openqa.org/repository/releases/</url>
         </repository>
     </repositories>
 
@@ -126,9 +115,8 @@ of testing facilities designed for use with TestNG (http://testng.org/), so it's
 of a Tapestry Maven plugin is not required.   -->
         <pluginRepository>
             <id>tapestry-snapshots</id>
-            <url>http://tapestry.formos.com/maven-snapshot-repository/</url>
+            <url>http://repository.apache.org/snapshots/</url>
         </pluginRepository>
-
 
     </pluginRepositories>
 
